@@ -39,6 +39,9 @@ def main() -> int:
             if isinstance(value, dict):
                 if "ncu_signals" in value:
                     errors.append(f"{index_path.relative_to(root)}: ncu_signals is not allowed")
+                for stale_key in ("page", "deep_reference", "pr_reference"):
+                    if stale_key in value:
+                        errors.append(f"{index_path.relative_to(root)}: {stale_key} is not allowed")
                 stack.extend(value.values())
             elif isinstance(value, list):
                 stack.extend(value)
