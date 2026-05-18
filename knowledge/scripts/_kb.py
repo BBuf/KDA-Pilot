@@ -7,7 +7,7 @@ from typing import Any
 
 import yaml
 
-from _wiki_root import relpath, wiki_root
+from _knowledge_root import knowledge_root, relpath
 
 
 FRONTMATTER_RE = re.compile(r"\A---\n(.*?)\n---\n?", re.S)
@@ -32,7 +32,7 @@ class Page:
     def kind(self) -> str:
         if self.relpath.startswith("sources/"):
             return str(self.meta.get("source_type") or self.meta.get("source_category") or "source")
-        return str(self.meta.get("type") or "wiki")
+        return str(self.meta.get("type") or "page")
 
 
 def parse_markdown(path: Path) -> Page:
@@ -46,10 +46,8 @@ def parse_markdown(path: Path) -> Page:
 
 
 def iter_pages(*, include_queries: bool = False) -> list[Page]:
-    root = wiki_root()
-    bases = [root / "wiki", root / "sources"]
-    if include_queries:
-        bases.append(root / "queries")
+    root = knowledge_root()
+    bases = [root / "sources" / "prs"]
     pages: list[Page] = []
     for base in bases:
         if not base.exists():
@@ -60,7 +58,7 @@ def iter_pages(*, include_queries: bool = False) -> list[Page]:
 
 
 def load_aliases() -> dict[str, str]:
-    path = wiki_root() / "data/aliases.yaml"
+    path = knowledge_root() / "data/aliases.yaml"
     if not path.exists():
         return {}
     data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
@@ -97,7 +95,7 @@ def page_text(page: Page) -> str:
 
 def id_map() -> dict[str, Page]:
     out: dict[str, Page] = {}
-    for page in iter_pages(include_queries=True):
+    for page in iter_pages():
         if page.id:
             out[page.id] = page
         out[page.relpath] = page

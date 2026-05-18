@@ -14,7 +14,7 @@ from typing import Any
 
 import yaml
 
-from _wiki_root import wiki_root
+from _knowledge_root import knowledge_root
 
 
 FRONTMATTER_RE = re.compile(r"\A---\s*\n(.*?)\n---\s*\n", re.S)
@@ -324,7 +324,7 @@ def main() -> int:
     parser.add_argument("--repo", action="append", help="limit to repo id; repeatable")
     args = parser.parse_args()
 
-    root = wiki_root()
+    root = knowledge_root()
     repos = {repo.lower() for repo in args.repo or []}
     results: list[AuditResult] = []
     for bundle in sorted((root / "evidence" / "pull-bundles").glob("*/*")):

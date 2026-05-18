@@ -16,7 +16,7 @@ from typing import Any
 
 import yaml
 
-from _wiki_root import wiki_root
+from _knowledge_root import knowledge_root
 
 
 CATALOG_PATH = Path("data") / "repo-catalog.yaml"
@@ -442,7 +442,7 @@ def main() -> int:
     parser.add_argument("--sleep", type=float, default=0.0)
     args = parser.parse_args()
 
-    root = wiki_root()
+    root = knowledge_root()
     cutoff_date = date.fromisoformat(args.cutoff)
 
     old_index = read_legacy_json(args.legacy_ref, "knowledge/index.json")

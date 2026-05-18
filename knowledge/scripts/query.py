@@ -44,13 +44,14 @@ def score_page(text: str, terms: list[str]) -> int:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Unified search across KernelPilot knowledge pages")
+    parser = argparse.ArgumentParser(description="Search KernelPilot PR diff evidence pages")
     parser.add_argument("query", nargs="*", help="keyword query")
     parser.add_argument("--type", dest="type_filter")
     parser.add_argument("--tag")
     parser.add_argument("--repo")
     parser.add_argument("--language")
     parser.add_argument("--architecture")
+    parser.add_argument("--kernel-type")
     parser.add_argument("--symptom")
     parser.add_argument("--confidence")
     parser.add_argument("--limit", type=int, default=20)
@@ -73,6 +74,8 @@ def main() -> int:
             continue
         if not matches_filter(as_list(meta.get("architectures")), args.architecture, aliases):
             continue
+        if not matches_filter(as_list(meta.get("kernel_types")), args.kernel_type, aliases):
+            continue
         if not matches_filter(as_list(meta.get("symptoms")), args.symptom, aliases):
             continue
         if args.confidence and meta.get("confidence") != args.confidence:
@@ -92,13 +95,15 @@ def main() -> int:
     if args.compact:
         for score, page in rows:
             tags = ",".join(as_list(page.meta.get("tags"))[:5])
-            print(f"{page.id or '-'} | {page.kind} | score={score} | {page.relpath} | {tags} | {page.title}")
+            artifact_dir = page.meta.get("artifact_dir", "-")
+            print(f"{page.id or '-'} | PR | score={score} | {page.relpath} | {artifact_dir} | {tags} | {page.title}")
         return 0
-    print("| ID | Type | Score | Path | Title | Tags |")
-    print("| --- | --- | ---: | --- | --- | --- |")
+    print("| ID | Score | Path | Evidence Bundle | Title | Tags |")
+    print("| --- | ---: | --- | --- | --- | --- |")
     for score, page in rows:
         tags = ", ".join(as_list(page.meta.get("tags"))[:8])
-        print(f"| `{page.id or '-'}` | {page.kind} | {score} | `{page.relpath}` | {page.title} | {tags} |")
+        artifact_dir = page.meta.get("artifact_dir", "-")
+        print(f"| `{page.id or '-'}` | {score} | `{page.relpath}` | `{artifact_dir}` | {page.title} | {tags} |")
     return 0
 
 

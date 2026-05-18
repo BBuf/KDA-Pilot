@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 
-def wiki_root() -> Path:
+def knowledge_root() -> Path:
     override = os.environ.get("KERNEL_KNOWLEDGE_ROOT")
     if override:
         return Path(override).expanduser().resolve()
@@ -12,7 +12,7 @@ def wiki_root() -> Path:
 
 
 def relpath(path: Path) -> str:
-    root = wiki_root()
+    root = knowledge_root()
     try:
         return path.resolve().relative_to(root).as_posix()
     except ValueError:

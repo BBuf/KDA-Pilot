@@ -10,7 +10,6 @@ standalone benchmark repos.**
 [![GitHub forks](https://img.shields.io/github/forks/BBuf/kernel-pilot?style=social)](https://github.com/BBuf/kernel-pilot/forks)
 [![Last commit](https://img.shields.io/github/last-commit/BBuf/kernel-pilot?style=flat-square)](https://github.com/BBuf/kernel-pilot/commits/main)
 [![PR evidence](https://img.shields.io/badge/PR_evidence-3660-2ea44f?style=flat-square)](knowledge/evidence/pull-bundles/)
-[![Wiki pages](https://img.shields.io/badge/wiki_pages-52-0969da?style=flat-square)](knowledge/wiki/)
 [![Knowledge cutoff](https://img.shields.io/badge/cutoff-2026--05--16-8250df?style=flat-square)](knowledge/data/refresh-cutoff.yaml)
 
 </div>
@@ -25,7 +24,7 @@ The project packages three cooperating skills:
 | Skill | Role |
 | --- | --- |
 | [`humanize-kernel-agent-loop`](humanize/skills/humanize-kernel-agent-loop/) | Turns kernel definition `K`, reference `R`, and workload distribution `W` into task-acceptance pairs, a standalone optimization repo, autonomous research/iteration/autotuning, correctness tests, benchmarks, ledgers, dispatcher, tuning decisions, and review-gated iteration. |
-| [`kernel-knowledge`](knowledge/SKILL.md) | A local PR-diff-first CUDA kernel evidence corpus. It routes by architecture, repo, topic, technique, profile symptom, operator, and DSL, then opens PR diffs, source snapshots, wiki pages, docs, and blogs as needed. |
+| [`kernel-knowledge`](knowledge/SKILL.md) | A local PR-diff-only CUDA kernel evidence corpus. It searches upstream PR pages, then opens materialized `review.diff` and source snapshots. |
 | [`ncu-report`](humanize/skills/ncu-report/) | Converts Nsight Compute reports into a reproducible profile digest: metrics, source counters, PM sampling, PTX/SASS hotspots, bottleneck diagnosis, and exactly one next kernel edit. |
 
 Together they make an optimization loop that can work from a simple request:
@@ -52,9 +51,10 @@ the target when it is ambiguous; the loop owns the rest.
 - **Evidence-driven profiling.** The loop decides when `ncu-report` is worth
   running, then uses it to move from vague labels like "memory-bound" toward
   measured bottlenecks and one concrete next edit.
-- **Knowledge-backed edits.** The agent can read PRs, wiki pages, official
-  docs, blog/code notes, and profiler examples when they help explain a
-  benchmark result, profile symptom, regression, plateau, or next edit.
+- **PR-backed edits.** The agent can search local upstream PR diffs and source
+  snapshots. If the local PR corpus has no relevant match, it should use live
+  web search, official docs, or related upstream source-code research instead of
+  falling back to cached summaries.
 - **Review-gated iteration.** Humanize RLCR keeps the loop from declaring
   victory too early; default loop budget is 84 iterations unless configured
   otherwise.
@@ -72,7 +72,7 @@ flowchart LR
     P --> S[Clean standalone repo]
 
     subgraph R0[Stage 1: Research]
-        KW[kernel-knowledge / KernelWiki]
+        KW[kernel-knowledge / PR evidence]
         B[Baseline and repo inspection]
         RD[Research digest and recipes]
         KW --> RD
@@ -116,10 +116,10 @@ KernelPilot turns that into a task-acceptance plan, an isolated implementation
 workspace, repeatable measurements, profiler evidence, lineage, performance
 map, dispatcher/tuning decisions, and Humanize review rounds.
 
-Existing implementations, PR diffs, docs, blogs, and profile reports are working
-materials for the loop. When external source or design evidence materially
-influences a candidate, the standalone repo records the provenance, license or
-notice requirements, and the optimization delta.
+Existing implementations, PR diffs, live upstream sources, official docs, and
+profile reports are working materials for the loop. When external source or
+design evidence materially influences a candidate, the standalone repo records
+the provenance, license or notice requirements, and the optimization delta.
 
 ## Knowledge Base
 
@@ -130,10 +130,7 @@ Current snapshot:
 
 | Corpus layer | Contents |
 | --- | --- |
-| PR evidence | 3,660 merged CUDA/Triton/CuTe/CUTLASS-related PR bundles from 14 upstream repos, Jan 2024 through May 16 2026. |
-| Synthesized wiki | 52 pages across hardware features, techniques, kernels, problem patterns, DSL guides, and migration notes. |
-| Source notes | 26 blog/community summaries, 17 doc/reference summaries, and 7 competition pages. |
-| Query indices | Auto-generated views by problem, technique, hardware feature, repo, kernel type, and language. |
+| PR evidence | 3,660 merged CUDA/Triton/CuTe/CUTLASS-related PR pages and bundles from 14 upstream repos, Jan 2024 through May 16 2026. |
 | Candidate ledgers | 14 include/defer ledgers for PR ingestion. Dropped PRs are not kept as per-PR rows. |
 
 Primary organization:
@@ -142,44 +139,25 @@ Primary organization:
 knowledge/
 |-- SKILL.md
 |-- README.md
-|-- index.md
 |-- scripts/
 |   |-- query.py
 |   |-- get_page.py
-|   |-- grep_wiki.py
 |   |-- fetch-pr-evidence.py
 |   `-- validate.py
 |-- sources/
-|   |-- prs/
-|   |-- docs/
-|   |-- blogs/
-|   `-- contests/
+|   `-- prs/
 |-- evidence/
-|   |-- pull-bundles/
-|   |-- blog-capsules/
-|   |-- challenge-capsules/
-|   `-- kernel-cases/
-|-- wiki/
-|   |-- hardware/
-|   |-- techniques/
-|   |-- kernels/
-|   |-- patterns/
-|   |-- languages/
-|   `-- migration/
-|-- queries/
+|   `-- pull-bundles/
 |-- candidates/
 `-- data/
 ```
 
-The important rule is **PR-diff first, not PR-only**. PR diffs and materialized
-source snapshots are the strongest implementation evidence. Wiki pages, docs,
-blogs, contests, and query indices are still first-class support material for
-hardware contracts, DSL semantics, profile interpretation, and technique
-selection.
+The important rule is **PR-diff only**. Local knowledge must resolve to a PR
+page and a materialized evidence bundle with `review.diff` and
+`source-snapshot/`. There is no local wiki/doc/blog/contest fallback.
 
-Knowledge artifacts are available throughout the loop. Record the material
-source or profile evidence in lineage, ledgers, or profile digests when it
-changes the candidate or the next edit.
+If the local PR corpus has no relevant evidence, report that plainly and use
+live web search, official docs, or related upstream source code.
 
 ## Query Examples
 
@@ -189,20 +167,8 @@ Run knowledge tools from the knowledge root:
 cd knowledge
 python3 scripts/query.py "tcgen05" --architecture B200 --limit 10
 python3 scripts/query.py --repo pytorch/pytorch --compact
-python3 scripts/get_page.py pr-pytorch-157241 --follow-sources
-python3 scripts/grep_wiki.py "warp_issue_stalled" --only sources --any
+python3 scripts/get_page.py pr-pytorch-157241
 python3 scripts/validate.py
-```
-
-Wiki, doc, and blog support queries:
-
-```bash
-cd knowledge
-python3 scripts/query.py "Blackwell memory hierarchy" --type hardware --limit 10
-python3 scripts/query.py --type technique --tag pipeline-stages --compact
-python3 scripts/query.py "PTX cache policy" --type language --compact
-python3 scripts/query.py "tcgen05 tmem tuning guide" --type official-doc --limit 10
-python3 scripts/query.py "Blackwell microbenchmark tensor memory" --type benchmark-blog --limit 10
 ```
 
 ## ncu-report
@@ -358,14 +324,6 @@ Validate the knowledge base:
 ```bash
 cd knowledge
 pip install -r requirements.txt
-python3 scripts/validate.py
-```
-
-Regenerate query indices after editing wiki/source frontmatter:
-
-```bash
-cd knowledge
-python3 scripts/generate-indices.py
 python3 scripts/validate.py
 ```
 

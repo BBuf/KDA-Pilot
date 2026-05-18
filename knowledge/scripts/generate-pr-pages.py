@@ -6,7 +6,7 @@ from pathlib import Path
 
 import yaml
 
-from _wiki_root import wiki_root
+from _knowledge_root import knowledge_root
 
 
 def list_value(values) -> str:
@@ -77,7 +77,7 @@ def main() -> int:
     parser.add_argument("--repo", default=None, help="candidate repo id")
     parser.add_argument("--overwrite", action="store_true", help="rewrite existing PR source pages")
     args = parser.parse_args()
-    root = wiki_root()
+    root = knowledge_root()
     count = 0
     skipped = 0
     for ledger in sorted((root / "candidates").glob("*.yaml")):

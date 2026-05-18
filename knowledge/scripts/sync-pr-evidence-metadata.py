@@ -12,7 +12,7 @@ from typing import Any
 
 import yaml
 
-from _wiki_root import wiki_root
+from _knowledge_root import knowledge_root
 
 
 FRONTMATTER_RE = re.compile(r"\A---\s*\n(.*?)\n---\s*\n", re.S)
@@ -139,7 +139,7 @@ def main() -> int:
     parser.add_argument("--remove-stale-bundles", action="store_true")
     args = parser.parse_args()
 
-    root = wiki_root()
+    root = knowledge_root()
     page_meta: dict[tuple[str, int], dict[str, Any]] = {}
     removed: set[tuple[str, int]] = set()
     updated = pruned = missing = 0

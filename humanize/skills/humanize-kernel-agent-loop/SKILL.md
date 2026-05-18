@@ -43,7 +43,7 @@ for each (t_i, ac_i) in P:
     done = false
     while not done:
         writer executes t_i in the standalone repo
-        # inspect/edit code, compile, test, benchmark, profile, query KernelWiki
+        # inspect/edit code, compile, test, benchmark, profile, query PR evidence
         verdict, feedback = reviewer checks evidence against ac_i
         if verdict == pass:
             done = true
@@ -171,10 +171,9 @@ tracking local loop state.
 KernelPilot provides a PR-driven evidence corpus. Use it whenever it helps the
 current plan, implementation choice, benchmark result, profile digest,
 plateau/regression explanation, reviewer question, or next kernel edit.
-PR diffs and materialized source snapshots are the primary evidence, while
-wiki syntheses, docs, blogs, contest notes, and query indices are supporting
-knowledge that Humanize may use whenever they clarify hardware behavior,
-techniques, profile interpretation, or implementation choices.
+PR diffs and materialized source snapshots are the only local knowledge
+evidence. The local knowledge base intentionally has no wiki, doc, blog,
+contest, pseudocode, or generated topic-index fallback.
 
 Useful entry points from `{{KERNELPILOT_ROOT}}/knowledge`:
 
@@ -182,30 +181,19 @@ Useful entry points from `{{KERNELPILOT_ROOT}}/knowledge`:
 cd {{KERNELPILOT_ROOT}}/knowledge
 python3 scripts/query.py "tcgen05" --architecture B200 --limit 10
 python3 scripts/query.py --repo pytorch/pytorch --compact
-python3 scripts/get_page.py pr-pytorch-157241 --follow-sources
+python3 scripts/get_page.py pr-pytorch-157241
 ```
 
-Useful wiki/doc/blog entry points:
+If no relevant local PR evidence exists, say that plainly. Continue by using
+live web search, official docs, related upstream source code, or fresh code
+search. Do not pivot a kernel route from local cached summaries.
+
+Useful PR evidence paths:
 
 ```bash
 cd {{KERNELPILOT_ROOT}}/knowledge
-
-# Synthesized wiki pages: hardware, techniques, patterns, languages, kernels.
-python3 scripts/query.py "Blackwell memory hierarchy" --type hardware --limit 10
-python3 scripts/query.py --type technique --tag pipeline-stages --compact
-python3 scripts/query.py "tail effect persistent scheduling" --type pattern --compact
-python3 scripts/query.py "PTX cache policy" --type language --compact
-
-# Source docs and blogs. Source pages use source_category values as --type.
-python3 scripts/query.py "tcgen05 tmem tuning guide" --type official-doc --limit 10
-python3 scripts/query.py "Blackwell microbenchmark tensor memory" --type benchmark-blog --limit 10
-python3 scripts/query.py "CuTe DSL TMA swizzle" --type community-note --limit 10
-python3 scripts/get_page.py doc-nvidia-tuning-guide --body-only
-python3 scripts/get_page.py blog-blackwell-microbenchmarking --body-only
-
-# Regex search: wiki-only for synthesized pages, sources-only for docs/blogs.
-python3 scripts/grep_wiki.py "tcgen05\\.fence" --only wiki
-python3 scripts/grep_wiki.py "long scoreboard" "prefetch" --only sources --any
+less evidence/pull-bundles/<repo-id>/gh-<number>/review.diff
+find evidence/pull-bundles/<repo-id>/gh-<number>/source-snapshot -type f
 ```
 
 Prefer materialized bundles under:
@@ -221,16 +209,11 @@ Typical query flow:
 
 1. Use `scripts/query.py` for broad routing by architecture, repo, tag,
    operator, bottleneck, or exact instruction/feature term.
-2. Use `scripts/get_page.py --follow-sources` to expand a promising wiki or PR
-   page into its cited evidence.
+2. Use `scripts/get_page.py` to open a promising PR page.
 3. Open the materialized `review.diff`, `ORIGIN.yaml`, `upstream.json`, and
    `source-snapshot/` files for the PR before borrowing any idea.
-4. Use `scripts/grep_wiki.py` for exact terms such as instruction mnemonics,
-   CuTe atoms, profiler counters, dtype names, and memory/cache policy names.
-5. Use wiki syntheses to choose techniques and interpret profiler symptoms; use
-   docs/blogs to understand hardware contracts, DSL semantics, and public
-   performance claims; then ground implementation choices back in PR/source
-   evidence when code is borrowed or adapted.
+4. If the PR corpus is missing the needed evidence, leave the local KB path and
+   use live web search, official docs, or related upstream source code.
 
 A separate reading ledger is unnecessary just to prove that pages were opened.
 When a source directly affects code, record the actionable provenance in the
@@ -256,7 +239,7 @@ use the Humanize gen-plan schema and include these acceptance criteria:
   boundaries, and baseline/reference parity.
 - Benchmark harness records per-shape timing, geomean, best/worst cases,
   workload coverage, and environment metadata.
-- Stage 1 research digest records baseline/source findings, KernelWiki evidence
+- Stage 1 research digest records baseline/source findings, PR evidence
   that materially affects the plan, candidate implementation routes, suspected
   bottlenecks, and first benchmark/profile priorities.
 - A baseline profile decision is recorded after baseline benchmark succeeds:

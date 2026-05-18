@@ -7,7 +7,7 @@ from pathlib import Path
 import yaml
 
 from _kb import id_map, parse_markdown
-from _wiki_root import wiki_root
+from _knowledge_root import knowledge_root
 
 
 def render_page(path: Path, *, frontmatter_only: bool, body_only: bool) -> str:
@@ -20,32 +20,20 @@ def render_page(path: Path, *, frontmatter_only: bool, body_only: bool) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Fetch a KernelPilot knowledge page by id or path")
+    parser = argparse.ArgumentParser(description="Fetch a KernelPilot PR evidence page by id or path")
     parser.add_argument("page")
-    parser.add_argument("--follow-sources", action="store_true")
+    parser.add_argument("--follow-sources", action="store_true", help="Deprecated no-op kept for compatibility; PR pages are the source.")
     parser.add_argument("--frontmatter-only", action="store_true")
     parser.add_argument("--body-only", action="store_true")
     args = parser.parse_args()
 
-    root = wiki_root()
+    root = knowledge_root()
     pages = id_map()
     page = pages.get(args.page)
     path = page.path if page else root / args.page
     if not path.exists():
         raise SystemExit(f"page not found: {args.page}")
     print(render_page(path, frontmatter_only=args.frontmatter_only, body_only=args.body_only), end="")
-    if args.follow_sources and not args.frontmatter_only:
-        current = parse_markdown(path)
-        sources = current.meta.get("sources") or []
-        if sources:
-            print("\n\n---\n\n# Followed Sources\n")
-        for source_id in sources:
-            source = pages.get(str(source_id))
-            if not source:
-                print(f"\n## Missing source `{source_id}`\n")
-                continue
-            print(f"\n## {source.id} — {source.relpath}\n")
-            print(source.path.read_text(encoding="utf-8"), end="")
     return 0
 
 

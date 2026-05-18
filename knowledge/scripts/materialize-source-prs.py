@@ -20,7 +20,7 @@ from urllib.request import Request, urlopen
 
 import yaml
 
-from _wiki_root import wiki_root
+from _knowledge_root import knowledge_root
 
 
 FRONTMATTER_RE = re.compile(r"\A---\s*\n(.*?)\n---\s*\n", re.S)
@@ -399,7 +399,7 @@ def main() -> int:
     parser.add_argument("--use-files-api", action="store_true", help="Fetch GitHub PR file list instead of parsing review.diff")
     args = parser.parse_args()
 
-    root = wiki_root()
+    root = knowledge_root()
     token = get_token()
     repos = None
     if args.repo:

@@ -14,7 +14,7 @@ from urllib.parse import quote
 
 import yaml
 
-from _wiki_root import wiki_root
+from _knowledge_root import knowledge_root
 
 
 SOURCE_SUFFIXES = {
@@ -332,7 +332,7 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
-    root = wiki_root()
+    root = knowledge_root()
     ledgers = load_ledgers(root)
     allowed_repos = set(args.repo or [])
     allowed_decisions = set(args.decision or [])
