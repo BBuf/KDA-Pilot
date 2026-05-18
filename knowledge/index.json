@@ -1,362 +1,7 @@
 {
   "schema_version": 1,
-  "description": "PR- and code-first production kernel knowledge base for Humanize-driven GPU kernel optimization. Framework entries point to upstream repos, kernel directories, source guides, and curated production PR case notes; topic entries map kernel topics to per-framework references.",
+  "description": "Complementary kernel knowledge map for Humanize-driven GPU kernel optimization. Lists code repositories that have no curated PR diffs in the local Route A corpus (NVIDIA developer samples, Colfax research kernels, simveit micro-tutorials); each framework entry points to upstream repos, kernel directories, and source guides. Topic entries map kernel topics to per-framework references for live clone/grep workflows. Frameworks already covered by Route A PR bundles (SGLang, vLLM, TensorRT-LLM, PyTorch, FlashAttention, FlashInfer, CUTLASS/CuTe, CCCL, Triton, DeepGEMM, ThunderKittens, TileLang, QuACK, DeepSeek TileKernels) are intentionally excluded.",
   "frameworks": [
-    {
-      "id": "sglang",
-      "name": "SGLang",
-      "repo": "sgl-project/sglang",
-      "url": "https://github.com/sgl-project/sglang",
-      "kernel_paths": [
-        "python/sglang/srt/layers/attention",
-        "python/sglang/srt/layers/moe",
-        "python/sglang/srt/layers/quantization",
-        "python/sglang/srt/layers/sampler.py",
-        "sgl-kernel/csrc",
-        "sgl-kernel/csrc/attention",
-        "sgl-kernel/csrc/moe",
-        "sgl-kernel/csrc/elementwise",
-        "sgl-kernel/csrc/gemm",
-        "sgl-kernel/csrc/spec_decode",
-        "sgl-kernel/python/sgl_kernel"
-      ],
-      "tags": [
-        "llm-serving",
-        "attention",
-        "moe",
-        "fp8",
-        "speculative-decoding",
-        "sampling",
-        "cuda",
-        "triton"
-      ]
-    },
-    {
-      "id": "vllm",
-      "name": "vLLM",
-      "repo": "vllm-project/vllm",
-      "url": "https://github.com/vllm-project/vllm",
-      "kernel_paths": [
-        "csrc",
-        "csrc/attention",
-        "csrc/moe",
-        "csrc/quantization",
-        "csrc/cutlass_extensions",
-        "vllm/attention",
-        "vllm/model_executor/layers"
-      ],
-      "tags": [
-        "llm-serving",
-        "paged-attention",
-        "moe",
-        "awq",
-        "gptq",
-        "fp8",
-        "cuda"
-      ]
-    },
-    {
-      "id": "tensorrt-llm",
-      "name": "TensorRT-LLM",
-      "repo": "NVIDIA/TensorRT-LLM",
-      "url": "https://github.com/NVIDIA/TensorRT-LLM",
-      "kernel_paths": [
-        "cpp/tensorrt_llm/kernels",
-        "cpp/tensorrt_llm/kernels/decoderMaskedMultiheadAttention",
-        "cpp/tensorrt_llm/kernels/mixtureOfExperts",
-        "cpp/tensorrt_llm/kernels/quantization",
-        "cpp/tensorrt_llm/kernels/cutlass_kernels",
-        "cpp/tensorrt_llm/kernels/internal_cutlass_kernels",
-        "cpp/tensorrt_llm/kernels/userbuffers"
-      ],
-      "tags": [
-        "llm-serving",
-        "cutlass",
-        "fmha",
-        "moe",
-        "fp8",
-        "fp4",
-        "tma",
-        "wgmma",
-        "nvls",
-        "userbuffers"
-      ]
-    },
-    {
-      "id": "pytorch",
-      "name": "PyTorch",
-      "repo": "pytorch/pytorch",
-      "url": "https://github.com/pytorch/pytorch",
-      "kernel_paths": [
-        "aten/src/ATen/native/cuda",
-        "aten/src/ATen/native/transformers/cuda",
-        "aten/src/ATen/native/cudnn",
-        "torch/_inductor",
-        "torch/csrc/distributed"
-      ],
-      "tags": [
-        "aten",
-        "elementwise",
-        "reduction",
-        "attention",
-        "sdpa",
-        "cudnn",
-        "inductor",
-        "nccl"
-      ]
-    },
-    {
-      "id": "flash-attention",
-      "name": "FlashAttention",
-      "repo": "Dao-AILab/flash-attention",
-      "url": "https://github.com/Dao-AILab/flash-attention",
-      "kernel_paths": [
-        "csrc/flash_attn/src",
-        "csrc/flash_attn/src/flash_fwd_kernel.h",
-        "flash_attn/cute",
-        "hopper",
-        "benchmarks/benchmark_attn.py",
-        "benchmarks/bench_sm90.py"
-      ],
-      "tags": [
-        "attention",
-        "fmha",
-        "online-softmax",
-        "tma",
-        "wgmma",
-        "hopper",
-        "sm80",
-        "sm90",
-        "cutlass",
-        "cute"
-      ]
-    },
-    {
-      "id": "flashinfer",
-      "name": "FlashInfer",
-      "repo": "flashinfer-ai/flashinfer",
-      "url": "https://github.com/flashinfer-ai/flashinfer",
-      "kernel_paths": [
-        "csrc",
-        "csrc/fmha_v2/fmha",
-        "csrc/fmha_v2/fmha/hopper",
-        "csrc/fmha_v2/fmha/warpspec",
-        "include/flashinfer",
-        "benchmarks/bench_blackwell_attention.py",
-        "python/flashinfer"
-      ],
-      "tags": [
-        "attention",
-        "fmha",
-        "kv-cache",
-        "page-table",
-        "sampling",
-        "speculative",
-        "hopper",
-        "blackwell"
-      ]
-    },
-    {
-      "id": "cutlass",
-      "name": "CUTLASS / CuTe",
-      "repo": "NVIDIA/cutlass",
-      "url": "https://github.com/NVIDIA/cutlass",
-      "kernel_paths": [
-        "include/cutlass",
-        "include/cute",
-        "examples",
-        "tools/profiler",
-        "python",
-        "media/docs"
-      ],
-      "tags": [
-        "gemm",
-        "matmul",
-        "epilogue",
-        "cute",
-        "tma",
-        "wgmma",
-        "block-scaled",
-        "fp8",
-        "fp4"
-      ]
-    },
-    {
-      "id": "cccl-cub",
-      "name": "CCCL (CUB / Thrust / libcu++)",
-      "repo": "NVIDIA/cccl",
-      "url": "https://github.com/NVIDIA/cccl",
-      "kernel_paths": [
-        "cub",
-        "thrust",
-        "libcudacxx"
-      ],
-      "tags": [
-        "reduction",
-        "scan",
-        "sort",
-        "block",
-        "warp",
-        "cooperative-groups"
-      ]
-    },
-    {
-      "id": "triton",
-      "name": "Triton",
-      "repo": "triton-lang/triton",
-      "url": "https://github.com/triton-lang/triton",
-      "kernel_paths": [
-        "python/tutorials",
-        "python/triton/language",
-        "python/triton/runtime",
-        "lib/Conversion",
-        "test/TritonGPU"
-      ],
-      "tags": [
-        "triton",
-        "block-pointer",
-        "tma",
-        "atomic",
-        "autotune",
-        "softmax",
-        "matmul"
-      ]
-    },
-    {
-      "id": "deepgemm",
-      "name": "DeepGEMM",
-      "repo": "deepseek-ai/DeepGEMM",
-      "url": "https://github.com/deepseek-ai/DeepGEMM",
-      "kernel_paths": [
-        "csrc/apis",
-        "csrc/jit",
-        "csrc/jit_kernels/heuristics",
-        "csrc/jit_kernels/impls",
-        "deep_gemm/include/deep_gemm",
-        "deep_gemm/testing",
-        "tests"
-      ],
-      "tags": [
-        "fp8",
-        "block-scaled",
-        "grouped-gemm",
-        "moe-gemm",
-        "jit",
-        "hopper",
-        "blackwell"
-      ]
-    },
-    {
-      "id": "thunderkittens",
-      "name": "ThunderKittens",
-      "repo": "HazyResearch/ThunderKittens",
-      "url": "https://github.com/HazyResearch/ThunderKittens",
-      "kernel_paths": [
-        "include/kittens.cuh",
-        "examples"
-      ],
-      "tags": [
-        "tile-primitives",
-        "attention",
-        "matmul",
-        "warpgroup",
-        "hopper"
-      ]
-    },
-    {
-      "id": "tilelang",
-      "name": "TileLang",
-      "repo": "tile-ai/tilelang",
-      "url": "https://github.com/tile-ai/tilelang",
-      "kernel_paths": [
-        "examples",
-        "examples/deepseek_mla",
-        "python/tilelang",
-        "python/tilelang/language",
-        "python/tilelang/engine",
-        "tests",
-        "benchmark"
-      ],
-      "tags": [
-        "tile-dsl",
-        "schedule",
-        "matmul",
-        "attention",
-        "fused-op",
-        "moe",
-        "mla"
-      ]
-    },
-    {
-      "id": "cute-dsl",
-      "name": "CuTe DSL",
-      "repo": "NVIDIA/cutlass",
-      "url": "https://github.com/NVIDIA/cutlass",
-      "kernel_paths": [
-        "python",
-        "include/cute",
-        "examples",
-        "examples/48_hopper_*",
-        "examples/50_blackwell_*",
-        "examples/60_*",
-        "test/unit"
-      ],
-      "tags": [
-        "cute-dsl",
-        "cutlass",
-        "gemm",
-        "attention",
-        "tma",
-        "wgmma",
-        "tcgen05",
-        "sm90",
-        "sm100"
-      ]
-    },
-    {
-      "id": "quack",
-      "name": "QuACK",
-      "repo": "Dao-AILab/quack",
-      "url": "https://github.com/Dao-AILab/quack",
-      "kernel_paths": [
-        "quack",
-        "benchmarks",
-        "microbenchmarks",
-        "examples",
-        "tests",
-        "docs"
-      ],
-      "tags": [
-        "cute-dsl",
-        "quack",
-        "gemm",
-        "softmax",
-        "norm",
-        "cross-entropy",
-        "hopper",
-        "blackwell"
-      ]
-    },
-    {
-      "id": "tilekernels",
-      "name": "DeepSeek TileKernels",
-      "repo": "deepseek-ai/TileKernels",
-      "url": "https://github.com/deepseek-ai/TileKernels",
-      "kernel_paths": [
-        "tile_kernels",
-        "tests",
-        "README.md"
-      ],
-      "tags": [
-        "tilelang",
-        "deepseek",
-        "moe",
-        "quantization",
-        "transpose",
-        "swiglu",
-        "engram"
-      ]
-    },
     {
       "id": "nvidia-code-samples",
       "name": "NVIDIA Developer Code Samples",
@@ -486,18 +131,6 @@
       "id": "attention",
       "name": "Attention / FMHA / Paged",
       "applies_to": [
-        "sglang",
-        "vllm",
-        "tensorrt-llm",
-        "flash-attention",
-        "flashinfer",
-        "pytorch",
-        "thunderkittens",
-        "cutlass",
-        "triton",
-        "tilelang",
-        "cute-dsl",
-        "quack",
         "simveit-effective-transpose",
         "simveit-load-and-store",
         "colfax-article-src",
@@ -516,18 +149,6 @@
       "id": "matmul-gemm",
       "name": "GEMM / Tensor-Core matmul",
       "applies_to": [
-        "cutlass",
-        "deepgemm",
-        "tensorrt-llm",
-        "sglang",
-        "vllm",
-        "triton",
-        "thunderkittens",
-        "pytorch",
-        "tilelang",
-        "cute-dsl",
-        "quack",
-        "tilekernels",
         "nvidia-code-samples",
         "simveit-effective-transpose",
         "simveit-load-and-store",
@@ -547,14 +168,6 @@
       "id": "moe",
       "name": "Mixture of Experts",
       "applies_to": [
-        "sglang",
-        "vllm",
-        "tensorrt-llm",
-        "deepgemm",
-        "triton",
-        "tilelang",
-        "tilekernels",
-        "cute-dsl",
         "simveit-effective-transpose",
         "simveit-load-and-store",
         "colfax-article-src",
@@ -573,14 +186,6 @@
       "id": "normalization",
       "name": "RMSNorm / LayerNorm fused norms",
       "applies_to": [
-        "sglang",
-        "vllm",
-        "tensorrt-llm",
-        "pytorch",
-        "triton",
-        "cccl-cub",
-        "tilelang",
-        "quack",
         "nvidia-code-samples",
         "simveit-effective-transpose"
       ],
@@ -593,35 +198,9 @@
       ]
     },
     {
-      "id": "rope",
-      "name": "RoPE / position embeddings",
-      "applies_to": [
-        "sglang",
-        "vllm",
-        "tensorrt-llm",
-        "flashinfer",
-        "triton"
-      ],
-      "tags": [
-        "rope",
-        "rotary",
-        "embedding",
-        "interleaved",
-        "neox"
-      ]
-    },
-    {
       "id": "activation-fusion",
       "name": "Activation / element-wise fusion",
       "applies_to": [
-        "sglang",
-        "vllm",
-        "tensorrt-llm",
-        "pytorch",
-        "triton",
-        "tilelang",
-        "tilekernels",
-        "quack",
         "simveit-effective-transpose"
       ],
       "tags": [
@@ -633,37 +212,9 @@
       ]
     },
     {
-      "id": "sampling",
-      "name": "Top-k / Top-p sampling, speculative",
-      "applies_to": [
-        "sglang",
-        "vllm",
-        "tensorrt-llm",
-        "flashinfer"
-      ],
-      "tags": [
-        "top-k",
-        "top-p",
-        "sampling",
-        "logits",
-        "tree-decode",
-        "speculative",
-        "eagle"
-      ]
-    },
-    {
       "id": "quantization-fp8",
       "name": "FP8 / FP4 / INT8 quantization",
       "applies_to": [
-        "sglang",
-        "vllm",
-        "tensorrt-llm",
-        "deepgemm",
-        "cutlass",
-        "tilelang",
-        "tilekernels",
-        "cute-dsl",
-        "quack",
         "simveit-effective-transpose",
         "simveit-load-and-store",
         "colfax-article-src",
@@ -678,41 +229,6 @@
         "block-scaled",
         "per-tensor",
         "per-channel"
-      ]
-    },
-    {
-      "id": "kv-cache",
-      "name": "KV-cache / paged memory",
-      "applies_to": [
-        "sglang",
-        "vllm",
-        "tensorrt-llm",
-        "flashinfer"
-      ],
-      "tags": [
-        "paged-kv",
-        "block-table",
-        "hi-cache",
-        "radix-cache",
-        "prefix-cache"
-      ]
-    },
-    {
-      "id": "communication",
-      "name": "Collectives / overlap (NCCL, NVLS, userbuffers)",
-      "applies_to": [
-        "pytorch",
-        "tensorrt-llm",
-        "sglang"
-      ],
-      "tags": [
-        "allreduce",
-        "reducescatter",
-        "allgather",
-        "nccl",
-        "nvls",
-        "userbuffers",
-        "comm-overlap"
       ]
     }
   ]

@@ -7,58 +7,67 @@ allowed-tools: "Bash Read Grep Glob"
 
 # KernelPilot Kernel Knowledge
 
-This skill provides three equal evidence-acquisition routes:
+This skill turns kernel research questions into citable evidence through three
+peer routes with non-overlapping scopes. Pick one, or combine them.
 
-1. Local PR diff corpus.
-2. External source-map repositories from `index.json`.
-3. Live web search, official docs, and related upstream source code.
-
-The agent may choose any route, or combine them. None of the three routes is a
-fallback for the others. The agent MUST NOT draw conclusions from a chosen
-route before broad search evidence for that route exists.
+- **Route A — Local PR diffs.** Materialized merged-PR pages and review diffs
+  for ~3.6k upstream GPU kernel PRs across SGLang, vLLM, TensorRT-LLM,
+  PyTorch, FlashAttention, FlashInfer, CUTLASS/CuTe, CCCL, Triton, DeepGEMM,
+  ThunderKittens, TileLang, QuACK, DeepSeek TileKernels.
+- **Route B — External source map.** `index.json` lists complementary code
+  repositories that have no curated PR diffs in Route A: NVIDIA developer
+  code samples, Colfax research kernels, simveit micro-tutorials. The agent
+  clones them locally to grep live source.
+- **Route C — Live web / official / upstream.** Web search, official docs,
+  GitHub PR pages, and upstream source code consulted online.
 
 ## Route A: Local PR Diffs
 
-The PR route uses local PR pages and materialized `review.diff` files.
+Use Route A to answer "has someone shipped this kernel/feature/fix upstream?"
+or "what does a real PR-grade implementation look like?".
 
 ```bash
-python3 scripts/query.py "flash attention sm100 splitkv" --compact --limit 50
-python3 scripts/search-pr-diffs.py SplitKV Sm100 --any --limit 200
-```
-
-Then fetch and inspect relevant PR pages and bundles:
-
-```bash
+python3 scripts/query.py "<keywords>" --compact --limit 50
+python3 scripts/search-pr-diffs.py <term1> <term2> [--any] [--limit 200]
 python3 scripts/get_page.py pr-flash-attention-1940
 less evidence/pull-bundles/flash-attention/gh-1940/review.diff
 find evidence/pull-bundles/flash-attention/gh-1940/source-snapshot -type f
 ```
 
+`query.py` filters by `--type`, `--tag`, `--repo`, `--language`,
+`--architecture`, `--kernel-type`, `--symptom`, and `--confidence`. Combine
+filters to keep results scoped to the current kernel context.
+
+Open the bundle named by `artifact_dir` before borrowing any idea: the
+implementation evidence lives in `review.diff`, `source-snapshot/`,
+`upstream.json`, and `ORIGIN.yaml`.
+
 ## Route B: External Source Map
 
-`index.json` is a source-map reference for live source research. It is not a
-local summary index. It contains repositories, kernel paths, tags, and topic
-routing hints.
+`index.json` lists the complementary repositories not covered by Route A's PR
+corpus — NVIDIA developer samples, Colfax research kernels, simveit
+micro-tutorials. Use Route B when the question is about a supporting
+technique (TMA/swizzle/pipelining/stream-K/persistent kernels/transposes/
+block-scaled NVFP4 plumbing) that the PR diffs alone do not fully explain.
 
-Clone command for the full referenced GitHub repo set:
+To use it, clone the referenced repos first, then grep across the cloned
+tree:
 
 ```bash
 python3 scripts/clone-index-repos.py
+python3 scripts/search-index-repos.py <term1> <term2> [<term3>]
 ```
 
-MUST NOT start searching any `index.json` repository before the full clone step
-has completed. MUST NOT ignore the current kernel's operator, dtype,
-architecture, or framework context during source-map searches.
-
-```bash
-python3 scripts/search-index-repos.py SplitKV Sm100 flash_fwd_sm100
-```
+`search-index-repos.py` exits with a clear error if any referenced repo is
+still missing, so the clone step is the only gate. Keep the current kernel
+context (operator, dtype, architecture, framework) in the search terms so the
+match set stays meaningful.
 
 ## Route C: Live Web / Official / Upstream
 
-Use live web search, official docs, GitHub PR pages, and upstream repository
-search as a peer evidence route. Prefer official docs and upstream code over
-blogs or snippets when implementation details matter.
+Use live web search, official docs, GitHub PR pages, and current upstream
+source as a peer evidence route. When implementation details matter, lean on
+official docs and upstream code over blogs or snippets.
 
 For the same example kernel, useful live searches include:
 
@@ -68,37 +77,41 @@ Dao-AILab flash-attention flash_fwd_sm100 SplitKV
 CUTLASS Blackwell FMHA SplitKV Sm100
 ```
 
-MUST NOT let external-source-influenced code lack URLs, commit SHAs, source
-paths, and license/notice details.
+When external-route findings shape the kernel, record URLs, commit SHAs,
+source paths, and license/notice details with the change.
 
 ## Shared Example
 
-For `FlashAttention SM100 SplitKV`, all three routes are valid:
+For `FlashAttention SM100 SplitKV` all three routes contribute different
+evidence:
 
-- PR route example: `query.py "flash attention sm100 splitkv"` surfaces
-  `pr-flash-attention-1940`; its `review.diff` and `source-snapshot/` contain
-  the implementation evidence.
-- Source route example: after the full `index.json` clone step, search terms
-  such as `SplitKV`, `Sm100`, and `flash_fwd_sm100` apply across the cloned
-  repo set.
-- Web route example: GitHub/web searches can find the upstream FlashAttention
-  PR/page, current upstream source, and official docs for architecture
-  constraints.
+- **Route A:** `query.py "flash attention sm100 splitkv"` surfaces
+  `pr-flash-attention-1940`; the matching `review.diff` and `source-snapshot/`
+  hold the implementation.
+- **Route B:** after `clone-index-repos.py`, grep the Colfax/simveit/NVIDIA
+  sample repos for supporting techniques such as `tma`, `swizzle`,
+  `pipeline`, `stream-k`, or `block-scaled` plumbing that the PR diff alone
+  does not explain.
+- **Route C:** find the upstream FlashAttention PR/page, current upstream
+  source, and architecture-level docs.
 
-## Answer Contract
+## Citation Checklist
 
-When using this skill:
+Use the same shape for every finding, regardless of route:
 
-1. MUST NOT leave route selection ambiguous; name which route or routes were
-   used.
-2. MUST NOT cite PR evidence without PR page IDs, paths, and `artifact_dir`
-   bundles.
-3. MUST NOT cite source-map evidence without recording that the full clone step
-   completed before repo search, plus repo paths and source files.
-4. MUST NOT cite web/upstream evidence without URLs, commits, source paths, or
-   doc pages.
-5. MUST NOT quote or rely on removed local wiki/doc/blog/contest material.
-6. MUST NOT turn a weak match or no-match result into a technical route.
+- Name the route(s) used.
+- **Route A:** PR page ID, page path under `sources/prs/`, `artifact_dir`, and
+  the specific `source-snapshot/` files that informed the kernel.
+- **Route B:** confirm `clone-index-repos.py` completed, list the cloned repo
+  paths searched, and the matched source files.
+- **Route C:** URLs, commit SHAs or version tags, source paths, and any
+  license/notice text required when the code is reused.
+- If a route returns a thin or empty match, widen the search inside that route
+  or cross-check against another route before treating it as a finding.
+
+The local corpus deliberately excludes wiki, doc, blog, contest, pseudocode,
+and topic-index summaries; evidence comes from PR pages, cloned upstream
+source, or live upstream/official material.
 
 ## Validate
 

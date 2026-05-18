@@ -1,10 +1,18 @@
 # KernelPilot Knowledge Schema — Evidence Routes
 
-This directory supports three equal evidence-acquisition routes for GPU kernel
-work: local PR diffs, cloned external source-map repositories, and live
-web/official/upstream source research. It deliberately does not include local
-wiki pages, doc summaries, blog summaries, contest notes, pseudocode, or
-generated topic indices.
+This directory supports three peer evidence-acquisition routes for GPU kernel
+work with non-overlapping scopes:
+
+- Route A: local PR diffs for the major kernel frameworks (SGLang, vLLM,
+  TensorRT-LLM, PyTorch, FlashAttention, FlashInfer, CUTLASS/CuTe, CCCL,
+  Triton, DeepGEMM, ThunderKittens, TileLang, QuACK, DeepSeek TileKernels).
+- Route B: cloned complementary repositories not covered by Route A's PR
+  corpus (NVIDIA developer samples, Colfax research kernels, simveit
+  micro-tutorials).
+- Route C: live web/official/upstream source research.
+
+It deliberately does not include local wiki pages, doc summaries, blog
+summaries, contest notes, pseudocode, or generated topic indices.
 
 ## Navigation
 
@@ -51,8 +59,9 @@ Use web search, official docs, GitHub PR pages, and upstream source search.
 - `evidence/pull-bundles/{repo}/gh-{N}/ORIGIN.yaml` — provenance
 - `candidates/*.yaml` — PR candidate ledgers
 - `data/*.yaml` — PR corpus metadata, aliases, tags, schema, refresh state
-- `index.json` — external source map for live repository research; not indexed
-  by the local PR query path
+- `index.json` — external source map for live repository research over the
+  complementary code repositories not in the PR corpus; not indexed by the
+  local PR query path
 
 ## Page Type
 
@@ -73,19 +82,18 @@ retrieval are:
 - `changed_paths`
 - `artifact_dir`
 
-## Policy
+## Working Rules
 
-- MUST NOT treat local knowledge as evidence unless it resolves to a PR page
-  and PR evidence bundle.
-- The PR, source-map, and live routes are peer evidence routes. The agent may
-  choose any route, or combine them.
-- MUST NOT search any `index.json` repository until
-  `python3 scripts/clone-index-repos.py` has cloned every referenced GitHub
-  repository.
-- MUST NOT rely on snippets or blogs over official docs and upstream source for
-  implementation details.
-- MUST NOT write kernels or pivot technical direction from cached local docs,
-  wiki pages, blog notes, contests, pseudocode, or generated summaries.
+- Treat the PR, source-map, and live routes as peer evidence routes; pick one
+  or combine them.
+- Local evidence counts only when it resolves to a PR page and the matching
+  evidence bundle.
+- Route B searches run after `clone-index-repos.py` finishes the full set; the
+  script enforces this.
+- For implementation details, prefer official docs and upstream source over
+  blog snippets.
+- Kernel writes and direction changes rest on the three live routes, not on
+  cached wiki/doc/blog/contest/pseudocode/topic-index material.
 
 ## Validation
 

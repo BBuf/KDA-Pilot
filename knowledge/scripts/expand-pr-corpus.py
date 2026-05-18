@@ -164,12 +164,35 @@ def save_yaml(path: Path, payload: Any) -> None:
     path.write_text(yaml.safe_dump(payload, sort_keys=False, allow_unicode=True, width=200), encoding="utf-8")
 
 
-def build_catalog(root: Path, start: str, cutoff: str) -> dict[str, Any]:
+def _iter_framework_sources(root: Path) -> list[dict[str, Any]]:
+    """Yield framework metadata entries from both source files.
+
+    `index.json` scopes Route B to complementary repos; `data/pr-frameworks.yaml`
+    keeps metadata for the Route A PR-bundled frameworks so the PR pipeline can
+    still refresh them after they were removed from `index.json`.
+    """
+
+    sources: list[dict[str, Any]] = []
     index = load_json(root / "index.json")
+    for framework in index.get("frameworks", []):
+        sources.append(framework)
+    pr_frameworks_path = root / "data" / "pr-frameworks.yaml"
+    if pr_frameworks_path.exists():
+        pr_data = load_yaml(pr_frameworks_path)
+        for framework in pr_data.get("frameworks", []):
+            sources.append(framework)
+    return sources
+
+
+def build_catalog(root: Path, start: str, cutoff: str) -> dict[str, Any]:
     candidate_ids = {path.stem for path in (root / "candidates").glob("*.yaml")}
     frameworks = []
-    for framework in index.get("frameworks", []):
+    seen_ids: set[str] = set()
+    for framework in _iter_framework_sources(root):
         rid = framework["id"]
+        if rid in seen_ids:
+            continue
+        seen_ids.add(rid)
         entry = {
             "id": rid,
             "name": framework.get("name", rid),
@@ -190,7 +213,7 @@ def build_catalog(root: Path, start: str, cutoff: str) -> dict[str, Any]:
         "generated_at": today_utc(),
         "start_date": start,
         "cutoff_date": cutoff,
-        "source": "knowledge/index.json plus PR candidate ledgers",
+        "source": "knowledge/index.json plus knowledge/data/pr-frameworks.yaml plus PR candidate ledgers",
         "frameworks": frameworks,
     }
 

@@ -1,127 +1,7 @@
 schema_version: 1
-generated_at: '2026-05-18'
-start_date: '2024-01-01'
-cutoff_date: '2026-05-16'
-source: knowledge/index.json plus knowledge/data/pr-frameworks.yaml plus PR candidate ledgers
+description: Framework metadata for repositories covered by the local PR diff corpus (Route A). These entries are intentionally NOT in index.json, which scopes Route B to complementary code repositories.
+  Used by scripts/expand-pr-corpus.py to refresh the PR pipeline.
 frameworks:
-- id: nvidia-code-samples
-  name: NVIDIA Developer Code Samples
-  repo: NVIDIA-developer-blog/code-samples
-  url: https://github.com/NVIDIA-developer-blog/code-samples
-  kernel_paths:
-  - posts
-  - Samples
-  - src
-  - README.md
-  tags:
-  - cuda-samples
-  - gemm
-  - transpose
-  - coalescing
-  - shared-memory
-  - bank-conflicts
-  - reduction
-  - occupancy
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: source-reference
-- id: simveit-effective-transpose
-  name: simveit effective_transpose
-  repo: simveit/effective_transpose
-  url: https://github.com/simveit/effective_transpose
-  kernel_paths:
-  - .
-  - src
-  - examples
-  - README.md
-  tags:
-  - cute-dsl
-  - quack
-  - gemm
-  - tma
-  - wgmma
-  - swizzle
-  - transpose
-  - rmsnorm
-  - block-scaled
-  - nvfp4
-  - gdn
-  - hopper
-  - blackwell
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: source-reference
-- id: simveit-load-and-store
-  name: simveit load_and_store
-  repo: simveit/load_and_store
-  url: https://github.com/simveit/load_and_store
-  kernel_paths:
-  - .
-  - src
-  - examples
-  - README.md
-  tags:
-  - cute-dsl
-  - load-store
-  - gemm
-  - tma
-  - wgmma
-  - shared-memory
-  - hopper
-  - blackwell
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: source-reference
-- id: colfax-article-src
-  name: Colfax article source kernels
-  repo: ColfaxResearch/cfx-article-src
-  url: https://github.com/ColfaxResearch/cfx-article-src
-  kernel_paths:
-  - tma
-  - pipeline-gemm
-  - streamk
-  - transpose-cute
-  - cutlass_gemm
-  tags:
-  - cutlass
-  - cute
-  - cute-dsl
-  - gemm
-  - attention
-  - tma
-  - wgmma
-  - stream-k
-  - persistent
-  - transpose
-  - block-scaled
-  - blackwell
-  - hopper
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: source-reference
-- id: colfax-cutlass-kernels
-  name: Colfax CUTLASS kernels
-  repo: ColfaxResearch/cutlass-kernels
-  url: https://github.com/ColfaxResearch/cutlass-kernels
-  kernel_paths:
-  - src
-  - lib/gemm
-  - include
-  - examples
-  - README.md
-  tags:
-  - cutlass
-  - cute
-  - gemm
-  - tma
-  - wgmma
-  - stream-k
-  - persistent
-  - blackwell
-  - hopper
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: source-reference
 - id: sglang
   name: SGLang
   repo: sgl-project/sglang
@@ -147,9 +27,6 @@ frameworks:
   - sampling
   - cuda
   - triton
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: pr-diff
 - id: vllm
   name: vLLM
   repo: vllm-project/vllm
@@ -170,9 +47,6 @@ frameworks:
   - gptq
   - fp8
   - cuda
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: pr-diff
 - id: tensorrt-llm
   name: TensorRT-LLM
   repo: NVIDIA/TensorRT-LLM
@@ -196,9 +70,6 @@ frameworks:
   - wgmma
   - nvls
   - userbuffers
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: pr-diff
 - id: pytorch
   name: PyTorch
   repo: pytorch/pytorch
@@ -218,9 +89,6 @@ frameworks:
   - cudnn
   - inductor
   - nccl
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: pr-diff
 - id: flash-attention
   name: FlashAttention
   repo: Dao-AILab/flash-attention
@@ -243,9 +111,6 @@ frameworks:
   - sm90
   - cutlass
   - cute
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: pr-diff
 - id: flashinfer
   name: FlashInfer
   repo: flashinfer-ai/flashinfer
@@ -267,9 +132,6 @@ frameworks:
   - speculative
   - hopper
   - blackwell
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: pr-diff
 - id: cutlass
   name: CUTLASS / CuTe
   repo: NVIDIA/cutlass
@@ -291,9 +153,6 @@ frameworks:
   - block-scaled
   - fp8
   - fp4
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: pr-diff
 - id: cccl-cub
   name: CCCL (CUB / Thrust / libcu++)
   repo: NVIDIA/cccl
@@ -309,9 +168,6 @@ frameworks:
   - block
   - warp
   - cooperative-groups
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: pr-diff
 - id: triton
   name: Triton
   repo: triton-lang/triton
@@ -330,9 +186,6 @@ frameworks:
   - autotune
   - softmax
   - matmul
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: pr-diff
 - id: deepgemm
   name: DeepGEMM
   repo: deepseek-ai/DeepGEMM
@@ -353,9 +206,6 @@ frameworks:
   - jit
   - hopper
   - blackwell
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: pr-diff
 - id: thunderkittens
   name: ThunderKittens
   repo: HazyResearch/ThunderKittens
@@ -369,9 +219,6 @@ frameworks:
   - matmul
   - warpgroup
   - hopper
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: pr-diff
 - id: tilelang
   name: TileLang
   repo: tile-ai/tilelang
@@ -392,9 +239,6 @@ frameworks:
   - fused-op
   - moe
   - mla
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: pr-diff
 - id: cute-dsl
   name: CuTe DSL
   repo: NVIDIA/cutlass
@@ -417,10 +261,6 @@ frameworks:
   - tcgen05
   - sm90
   - sm100
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: duplicate-pr-view
-  duplicate_of: cutlass
 - id: quack
   name: QuACK
   repo: Dao-AILab/quack
@@ -441,9 +281,6 @@ frameworks:
   - cross-entropy
   - hopper
   - blackwell
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: pr-diff
 - id: tilekernels
   name: DeepSeek TileKernels
   repo: deepseek-ai/TileKernels
@@ -460,6 +297,3 @@ frameworks:
   - transpose
   - swiglu
   - engram
-  start_date: '2024-01-01'
-  cutoff_date: '2026-05-16'
-  scan_mode: pr-diff

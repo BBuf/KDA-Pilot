@@ -51,10 +51,10 @@ the target when it is ambiguous; the loop owns the rest.
 - **Evidence-driven profiling.** The loop decides when `ncu-report` is worth
   running, then uses it to move from vague labels like "memory-bound" toward
   measured bottlenecks and one concrete next edit.
-- **Evidence-backed edits.** The agent can use local upstream PR diffs, cloned
+- **Evidence-backed edits.** The agent draws on local upstream PR diffs, cloned
   source-map repositories, and live web/official/upstream source research as
-  peer evidence routes. The agent MUST NOT draw route conclusions before broad
-  route-level search evidence exists.
+  peer evidence routes, widening the search inside a route or cross-checking
+  against another route before letting a thin match shape the kernel.
 - **Review-gated iteration.** Humanize RLCR keeps the loop from declaring
   victory too early; default loop budget is 84 iterations unless configured
   otherwise.
@@ -99,7 +99,7 @@ flowchart LR
     E -->|profile evidence needed| NCU[ncu-report / Nsight Compute]
     NCU --> T
     E -->|prior art needed| KW
-    TD --> O[Final kernels, dispatcher, correctness matrix, benchmark matrix]
+    TD --> O[Final kernels, dispatcher, correctness/benchmark matrix, fallback paths, unsupported regimes]
 ```
 
 The writer agent is not hardcoded. In Codex it can be Codex; in Claude Code it
@@ -130,8 +130,8 @@ Current snapshot:
 
 | Corpus layer | Contents |
 | --- | --- |
-| PR evidence | 3,660 merged CUDA/Triton/CuTe/CUTLASS-related PR pages and bundles from 14 upstream repos, Jan 2024 through May 16 2026. |
-| External source map | `knowledge/index.json` points at upstream repos and kernel topic hints for live clone/search workflows. |
+| PR evidence | 3,660 merged CUDA/Triton/CuTe/CUTLASS-related PR pages and bundles from 14 upstream repos (SGLang, vLLM, TensorRT-LLM, PyTorch, FlashAttention, FlashInfer, CUTLASS/CuTe, CCCL, Triton, DeepGEMM, ThunderKittens, TileLang, QuACK, DeepSeek TileKernels), Jan 2024 through May 16 2026. |
+| External source map | `knowledge/index.json` points at the **complementary** code repositories not in the PR corpus (NVIDIA developer samples, Colfax research kernels, simveit micro-tutorials) for live clone/search workflows. |
 | Candidate ledgers | 14 include/defer ledgers for PR ingestion. Dropped PRs are not kept as per-PR rows. |
 
 Primary organization:
@@ -157,9 +157,11 @@ The important rule is **no local summaries as evidence**. The supported routes
 are local PR diffs, cloned source-map repositories, and live web/official/
 upstream source research. There is no local wiki/doc/blog/contest fallback.
 
-`knowledge/index.json` is kept as an external source map. When an agent uses it,
-the agent MUST NOT search any referenced repository until every referenced
-GitHub repository has been cloned.
+`knowledge/index.json` is kept as an external source map over the
+complementary repositories not covered by the PR corpus. Working with it is a
+two-step flow: clone the referenced repos with `scripts/clone-index-repos.py`,
+then grep them with `scripts/search-index-repos.py`. The search script enforces
+the clone step, so the clone is the only gate.
 
 ## Query Examples
 
@@ -172,7 +174,7 @@ python3 scripts/search-pr-diffs.py tcgen05 tmem --any --limit 200
 python3 scripts/query.py --repo pytorch/pytorch --compact
 python3 scripts/get_page.py pr-pytorch-157241
 python3 scripts/clone-index-repos.py
-python3 scripts/search-index-repos.py SplitKV Sm100 flash_fwd_sm100
+python3 scripts/search-index-repos.py tma swizzle transpose
 python3 scripts/validate.py
 ```
 

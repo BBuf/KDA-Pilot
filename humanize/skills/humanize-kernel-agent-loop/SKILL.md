@@ -22,7 +22,10 @@ Ensure: kernel implementation K_hat that passes correctness checks on W and
         multiple regimes.
 ```
 
-The loop has three stages:
+The loop has three stages that run in order: Stage 1 closes with a research
+digest before Stage 2's first lineage, and Stage 2 closes when the reviewer
+accepts the correctness/benchmark evidence before Stage 3 starts the autotune
+pass.
 
 - Research: inspect the target kernel contract, baseline/reference behavior,
   workload distribution, repository context, and `kernel-knowledge` evidence.
@@ -57,6 +60,11 @@ In diagrams or papers that say "Claude executes, Codex reviews", read "Claude"
 as "the current writer agent". In a Claude Code session that may be Claude; in
 a Codex session that may be Codex. The review model is controlled by Humanize
 configuration or CLI flags, not by this skill.
+
+The reviewer in the diagram is the Humanize Stop hook. After each round the
+hook runs the configured review against the round's evidence and either accepts
+the round (pass) or emits a next-round prompt (blocked feedback) that the
+writer follows verbatim before the next round.
 
 The installer hydrates these paths:
 
@@ -168,86 +176,116 @@ tracking local loop state.
 
 ## Knowledge Evidence
 
-KernelPilot provides three peer evidence routes. Use any route, or combine
-routes, whenever evidence helps the current plan, implementation choice,
-benchmark result, profile digest, plateau/regression explanation, reviewer
-question, or next kernel edit.
+The installed sibling skill `kernel-knowledge` carries the full protocol; this
+section is the loop-specific summary. Stage 1 findings land in
+`ledgers/research-digest.md`, and any code-level borrowing shows up in the
+matching attempt row, lineage entry, or profile digest.
 
-- Local PR diffs and materialized source snapshots.
-- External source-map repositories from `knowledge/index.json`.
-- Live web search, official docs, GitHub PR pages, and related upstream source
-  code.
+Three peer routes are available. They cover non-overlapping evidence:
 
-The local knowledge base intentionally has no wiki, doc, blog, contest,
-pseudocode, or generated topic-index fallback.
+- **Route A — Local PR diffs.** Materialized merged-PR pages and bundles for
+  ~3.6k curated upstream PRs from the major kernel frameworks (SGLang, vLLM,
+  TensorRT-LLM, PyTorch, FlashAttention, FlashInfer, CUTLASS/CuTe, CCCL,
+  Triton, DeepGEMM, ThunderKittens, TileLang, QuACK, DeepSeek TileKernels).
+- **Route B — External source map.** `index.json` lists complementary
+  repositories not covered by the PR corpus: NVIDIA developer code samples,
+  Colfax research kernels, simveit micro-tutorials. The loop clones them
+  locally to grep live source.
+- **Route C — Live web / official / upstream.** Web search, official docs,
+  GitHub PR pages, and upstream source consulted online.
 
-Useful entry points from `{{KERNELPILOT_ROOT}}/knowledge`:
+### Stage 1 Three-Route Sweep (Required)
+
+Before plan refinement closes, run all three routes to build the research
+digest. Combining all three is how the plan picks an implementation route,
+expected bottlenecks, and benchmark/profile priorities. Each route gets at
+least one citation in `ledgers/research-digest.md`, or an explicit "no relevant
+material" note when the route returned nothing.
+
+### Later Stages (Agent-Driven)
+
+After Stage 1, the loop owns the call on when to query, which routes to use,
+and how deep to go. Use the routes whenever evidence helps the current
+implementation choice, benchmark result, profile digest, plateau/regression
+explanation, reviewer question, or next kernel edit.
+
+Run knowledge scripts from `{{KERNELPILOT_ROOT}}/knowledge` so that
+`clone-index-repos.py` deposits external repos into the source checkout under
+`external-repos/`.
+
+### Route A: Local PR Diffs
 
 ```bash
 cd {{KERNELPILOT_ROOT}}/knowledge
 python3 scripts/query.py "tcgen05" --architecture B200 --limit 10
+python3 scripts/query.py --repo pytorch/pytorch --tag tma --compact
 python3 scripts/search-pr-diffs.py tcgen05 tmem --any --limit 200
-python3 scripts/query.py --repo pytorch/pytorch --compact
 python3 scripts/get_page.py pr-pytorch-157241
-```
-
-`knowledge/index.json` may be used as a source-map reference for live research.
-Clone command for the full referenced GitHub repo set:
-
-```bash
-python3 scripts/clone-index-repos.py
-```
-
-MUST NOT start searching any `index.json` repository before the full clone step
-has completed. MUST NOT ignore the current kernel's operator, dtype,
-architecture, or framework context during source-map searches.
-
-```bash
-python3 scripts/search-index-repos.py SplitKV Sm100 flash_fwd_sm100
-```
-
-Live web search, official docs, GitHub PR pages, and upstream source search are
-equally valid. Prefer official docs and upstream source code over snippets when
-implementation details matter.
-
-Useful PR evidence paths:
-
-```bash
-cd {{KERNELPILOT_ROOT}}/knowledge
 less evidence/pull-bundles/<repo-id>/gh-<number>/review.diff
 find evidence/pull-bundles/<repo-id>/gh-<number>/source-snapshot -type f
 ```
 
-Prefer materialized bundles under:
+`query.py` filters by `--type`, `--tag`, `--repo`, `--language`,
+`--architecture`, `--kernel-type`, `--symptom`, and `--confidence`. Combine
+filters with the current kernel context. Open the bundle named by
+`artifact_dir` (`review.diff`, `source-snapshot/`, `upstream.json`,
+`ORIGIN.yaml`) before borrowing an idea.
 
-```text
-knowledge/evidence/pull-bundles/<repo-id>/gh-<number>/
+### Route B: External Source Map
+
+`index.json` lists complementary code repositories (NVIDIA developer code
+samples, Colfax research kernels, simveit micro-tutorials) that have no
+curated PR diffs in Route A. Two-step workflow: clone first, then grep across
+the cloned tree. `search-index-repos.py` errors out if any referenced repo is
+missing, so the clone step is the only gate.
+
+```bash
+cd {{KERNELPILOT_ROOT}}/knowledge
+python3 scripts/clone-index-repos.py
+python3 scripts/search-index-repos.py tma swizzle transpose
 ```
 
-Each bundle should contain `review.diff`, `ORIGIN.yaml`, `upstream.json`,
-and key changed source/test/benchmark files under `source-snapshot/`.
+Keep the current operator, dtype, architecture, and framework in the search
+terms so the matches stay relevant.
 
-Typical query flow:
+### Route C: Live Web / Official / Upstream
 
-Guardrails for knowledge research:
+Use live web search, official docs, GitHub PR pages, and current upstream
+source as a peer route. When implementation details matter, prefer official
+docs and upstream source over blogs or snippets. Record URLs, commit SHAs,
+source paths, and license/notice text whenever an external-route finding
+directly shapes the kernel.
 
-1. MUST NOT claim full PR-route coverage without diff-level search across all
-   repositories when the implementation detail matters.
-2. MUST NOT borrow an idea from a PR page before opening the materialized
-   `review.diff`, `ORIGIN.yaml`, `upstream.json`, and `source-snapshot/` files.
-3. MUST NOT use `knowledge/index.json` source discovery before the complete
-   referenced repo set has been cloned.
-4. MUST NOT demote live web search, official docs, GitHub PR pages, or related
-   upstream source code below the PR/source-map routes.
+### Shared Example
 
-Shared example: for `FlashAttention SM100 SplitKV`, the PR route can find
-`pr-flash-attention-1940`; the source-map route can search all cloned repos for
-`SplitKV`, `Sm100`, and `flash_fwd_sm100`; the live route can search the
-upstream FlashAttention PR/page and current upstream source.
+For `FlashAttention SM100 SplitKV`:
 
-A separate reading ledger is unnecessary just to prove that pages were opened.
-When a source directly affects code, record the actionable provenance in the
-relevant attempt row, lineage entry, or profile digest.
+- Route A surfaces `pr-flash-attention-1940` via `query.py`; its `review.diff`
+  and `source-snapshot/` carry the implementation.
+- Route B, after the clone step, greps the Colfax/simveit/NVIDIA samples for
+  the supporting techniques (`tma`, `swizzle`, `pipeline`, `stream-k`,
+  `block-scaled`) that the PR diff alone does not explain.
+- Route C reads the upstream FlashAttention PR/page, current upstream source,
+  and architecture-level docs.
+
+### Citation Checklist
+
+Apply the same shape to every finding before letting it shape code or reviews:
+
+- Name the route(s) used.
+- **Route A:** PR page ID, page path under `sources/prs/`, `artifact_dir`, and
+  the specific `source-snapshot/` files cited.
+- **Route B:** confirmation that `clone-index-repos.py` completed, cloned repo
+  paths searched, and the matched source files.
+- **Route C:** URLs, commit SHAs or version tags, source paths, and any
+  license/notice text required when the code is reused.
+- If a route returns a thin or empty match for a detail that matters, widen
+  the search inside that route or cross-check against another route before
+  treating it as a finding.
+
+The local corpus deliberately excludes wiki, doc, blog, contest, pseudocode,
+and topic-index summaries; evidence comes from PR pages, cloned upstream
+source, or live upstream/official material.
 
 ## Plan Requirements
 
@@ -269,10 +307,16 @@ use the Humanize gen-plan schema and include these acceptance criteria:
   boundaries, and baseline/reference parity.
 - Benchmark harness records per-shape timing, geomean, best/worst cases,
   workload coverage, and environment metadata.
+- Stage 1 research digest records baseline and reference inspection: how the
+  reference implementation lays out memory, launches kernels, handles
+  dispatch/dtype/layout branches, and where its hot path lives.
+- Stage 1 runs all three knowledge routes (A: local PR diffs, B: cloned
+  source-map repos, C: live web/official/upstream). Each route gets at least
+  one citation in `ledgers/research-digest.md`, or an explicit "no relevant
+  material" note when the route returned nothing.
 - Stage 1 research digest records baseline/source findings, evidence from the
-  selected route or routes that materially affects the plan, candidate
-  implementation routes, suspected bottlenecks, and first benchmark/profile
-  priorities.
+  three routes that materially affects the plan, candidate implementation
+  routes, suspected bottlenecks, and first benchmark/profile priorities.
 - A baseline profile decision is recorded after baseline benchmark succeeds:
   either capture a representative `ncu-report` digest or explain why the loop is
   using cheaper evidence first.
