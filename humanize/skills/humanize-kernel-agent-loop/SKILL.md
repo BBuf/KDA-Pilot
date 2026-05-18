@@ -191,21 +191,21 @@ python3 scripts/query.py --repo pytorch/pytorch --compact
 python3 scripts/get_page.py pr-pytorch-157241
 ```
 
-If using the PR route, first search all local PR pages or all materialized
-`review.diff` files before narrowing to a repository. Do not stop at the first
-familiar repo hit.
+If using the PR route, MUST NOT narrow to a repository before all local PR pages
+or all materialized `review.diff` files have been searched. MUST NOT stop at the
+first familiar repo hit.
 
 `knowledge/index.json` may be used as a source-map reference for live research.
-Before searching repositories named by that JSON, clone the full referenced
-GitHub repo set:
+Clone command for the full referenced GitHub repo set:
 
 ```bash
 python3 scripts/clone-index-repos.py
 ```
 
 MUST NOT start searching any `index.json` repository before the full clone step
-has completed. Once the clone set is complete, inspect the repositories one by
-one for code implementations or upstream docs related to the current kernel.
+has completed. MUST NOT treat one cloned repository as representative of the
+source-map route. MUST NOT ignore the current kernel's operator, dtype,
+architecture, or framework context during source-map searches.
 
 ```bash
 python3 scripts/search-index-repos.py SplitKV Sm100 flash_fwd_sm100
@@ -234,21 +234,22 @@ and key changed source/test/benchmark files under `source-snapshot/`.
 
 Typical query flow:
 
-1. Use `scripts/query.py` for broad routing by architecture, repo, tag,
-   operator, bottleneck, or exact instruction/feature term.
-2. Use `scripts/search-pr-diffs.py` when the PR route needs full diff-level
-   coverage across all repositories.
-3. Use `scripts/get_page.py` to open a promising PR page.
-4. Open the materialized `review.diff`, `ORIGIN.yaml`, `upstream.json`, and
-   `source-snapshot/` files for the PR before borrowing any idea.
-5. If using `knowledge/index.json` for related source discovery, first clone
-   the complete referenced repo set, then search each cloned repo in turn.
-6. If using live research, use web search, official docs, GitHub PR pages, and
-   related upstream source code as first-class evidence.
+Guardrails for knowledge research:
 
-Shared example: for `FlashAttention SM100 SplitKV`, the PR route should find
-`pr-flash-attention-1940`; the source-map route should search all cloned repos
-for `SplitKV`, `Sm100`, and `flash_fwd_sm100`; the live route should search the
+1. MUST NOT use PR-route evidence without broad routing by architecture, repo,
+   tag, operator, bottleneck, or exact instruction/feature term.
+2. MUST NOT claim full PR-route coverage without diff-level search across all
+   repositories when the implementation detail matters.
+3. MUST NOT borrow an idea from a PR page before opening the materialized
+   `review.diff`, `ORIGIN.yaml`, `upstream.json`, and `source-snapshot/` files.
+4. MUST NOT use `knowledge/index.json` source discovery before the complete
+   referenced repo set has been cloned.
+5. MUST NOT demote live web search, official docs, GitHub PR pages, or related
+   upstream source code below the PR/source-map routes.
+
+Shared example: for `FlashAttention SM100 SplitKV`, the PR route can find
+`pr-flash-attention-1940`; the source-map route can search all cloned repos for
+`SplitKV`, `Sm100`, and `flash_fwd_sm100`; the live route can search the
 upstream FlashAttention PR/page and current upstream source.
 
 A separate reading ledger is unnecessary just to prove that pages were opened.

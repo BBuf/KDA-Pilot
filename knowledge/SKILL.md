@@ -14,14 +14,15 @@ This skill provides three equal evidence-acquisition routes:
 3. Live web search, official docs, and related upstream source code.
 
 The agent may choose any route, or combine them. None of the three routes is a
-fallback for the others. Whichever route is chosen, search comprehensively before
-drawing a conclusion.
+fallback for the others. The agent MUST NOT draw conclusions from a chosen
+route before broad search evidence for that route exists.
 
 ## Route A: Local PR Diffs
 
-The PR route searches the whole local PR corpus. Do not start by narrowing to a
-single familiar repo. First run a corpus-wide search across all PR pages and/or
-all materialized `review.diff` files.
+The PR route searches the whole local PR corpus. The agent MUST NOT start by
+narrowing to a single familiar repo. It MUST NOT treat a PR match as sufficient
+until corpus-wide search across all PR pages and/or all materialized
+`review.diff` files has been attempted.
 
 ```bash
 python3 scripts/query.py "flash attention sm100 splitkv" --compact --limit 50
@@ -42,16 +43,16 @@ find evidence/pull-bundles/flash-attention/gh-1940/source-snapshot -type f
 local summary index. It contains repositories, kernel paths, tags, and topic
 routing hints.
 
-Before searching repositories listed in `index.json`, clone the full referenced
-GitHub repo set:
+Clone command for the full referenced GitHub repo set:
 
 ```bash
 python3 scripts/clone-index-repos.py
 ```
 
 MUST NOT start searching any `index.json` repository before the full clone step
-has completed. After that, search the cloned repositories one by one. Use the
-current kernel's operator, dtype, architecture, and framework context.
+has completed. MUST NOT treat one cloned repository as representative of the
+source-map route. MUST NOT ignore the current kernel's operator, dtype,
+architecture, or framework context during source-map searches.
 
 ```bash
 python3 scripts/search-index-repos.py SplitKV Sm100 flash_fwd_sm100
@@ -71,34 +72,37 @@ Dao-AILab flash-attention flash_fwd_sm100 SplitKV
 CUTLASS Blackwell FMHA SplitKV Sm100
 ```
 
-Record URLs, commit SHAs, source paths, and license/notice details when the
-source directly affects code.
+MUST NOT let external-source-influenced code lack URLs, commit SHAs, source
+paths, and license/notice details.
 
 ## Shared Example
 
 For `FlashAttention SM100 SplitKV`, all three routes are valid:
 
-- PR route: `query.py "flash attention sm100 splitkv"` should surface
-  `pr-flash-attention-1940`; inspect its `review.diff` and
-  `source-snapshot/`.
-- Source route: clone the full `index.json` repo set, then search all cloned
-  repositories for `SplitKV`, `Sm100`, and `flash_fwd_sm100`.
-- Web route: search GitHub/web for the upstream FlashAttention PR, current
-  upstream source, and any official docs needed to understand architecture
+- PR route example: `query.py "flash attention sm100 splitkv"` surfaces
+  `pr-flash-attention-1940`; its `review.diff` and `source-snapshot/` contain
+  the implementation evidence.
+- Source route example: after the full `index.json` clone step, search terms
+  such as `SplitKV`, `Sm100`, and `flash_fwd_sm100` apply across the cloned
+  repo set.
+- Web route example: GitHub/web searches can find the upstream FlashAttention
+  PR/page, current upstream source, and official docs for architecture
   constraints.
 
 ## Answer Contract
 
 When using this skill:
 
-1. State which route or routes were used.
-2. For PR evidence, cite PR page IDs, paths, and `artifact_dir` bundles.
-3. For source-map evidence, confirm the full clone step completed before repo
-   search, then cite repo paths and source files.
-4. For web/upstream evidence, cite URLs, commits, source paths, or doc pages.
-5. Do not quote or rely on removed local wiki/doc/blog/contest material.
-6. If a route finds no relevant evidence, say so explicitly; do not turn a weak
-   match into a technical route.
+1. MUST NOT leave route selection ambiguous; name which route or routes were
+   used.
+2. MUST NOT cite PR evidence without PR page IDs, paths, and `artifact_dir`
+   bundles.
+3. MUST NOT cite source-map evidence without recording that the full clone step
+   completed before repo search, plus repo paths and source files.
+4. MUST NOT cite web/upstream evidence without URLs, commits, source paths, or
+   doc pages.
+5. MUST NOT quote or rely on removed local wiki/doc/blog/contest material.
+6. MUST NOT turn a weak match or no-match result into a technical route.
 
 ## Validate
 

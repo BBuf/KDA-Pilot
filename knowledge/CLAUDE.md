@@ -75,19 +75,19 @@ retrieval are:
 
 ## Policy
 
-- Local knowledge must resolve to a PR page and PR evidence bundle.
+- MUST NOT treat local knowledge as evidence unless it resolves to a PR page
+  and PR evidence bundle.
 - The PR, source-map, and live routes are peer evidence routes. The agent may
   choose any route, or combine them.
-- If the PR route is used, search all PR pages or all materialized
-  `review.diff` files before narrowing to one repository.
-- When using `index.json`, first run
-  `python3 scripts/clone-index-repos.py`.
-  Do not search any listed repository until every referenced GitHub repository
-  has been cloned. Then search the cloned repositories one by one for relevant
-  code implementations or upstream docs.
-- If the live route is used, prefer official docs and upstream source over
-  snippets or blogs for implementation details.
-- Do not write kernels or pivot technical direction from cached local docs,
+- MUST NOT narrow PR-route research to one repository before searching all PR
+  pages or all materialized `review.diff` files.
+- MUST NOT search any `index.json` repository until
+  `python3 scripts/clone-index-repos.py` has cloned every referenced GitHub
+  repository. MUST NOT treat one cloned repository as representative of the
+  source-map route.
+- MUST NOT rely on snippets or blogs over official docs and upstream source for
+  implementation details.
+- MUST NOT write kernels or pivot technical direction from cached local docs,
   wiki pages, blog notes, contests, pseudocode, or generated summaries.
 
 ## Validation

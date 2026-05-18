@@ -53,8 +53,8 @@ the target when it is ambiguous; the loop owns the rest.
   measured bottlenecks and one concrete next edit.
 - **Evidence-backed edits.** The agent can use local upstream PR diffs, cloned
   source-map repositories, and live web/official/upstream source research as
-  peer evidence routes. PR/source routes must be searched comprehensively before
-  narrowing to a favorite repository.
+  peer evidence routes. The agent MUST NOT narrow PR/source research to a
+  favorite repository before broad route-level search evidence exists.
 - **Review-gated iteration.** Humanize RLCR keeps the loop from declaring
   victory too early; default loop budget is 84 iterations unless configured
   otherwise.
@@ -158,8 +158,8 @@ are local PR diffs, cloned source-map repositories, and live web/official/
 upstream source research. There is no local wiki/doc/blog/contest fallback.
 
 `knowledge/index.json` is kept as an external source map. When an agent uses it,
-it must first clone every referenced GitHub repository, then inspect those
-clones one by one for current-kernel-related code or upstream docs.
+the agent MUST NOT search any referenced repository until every referenced
+GitHub repository has been cloned.
 
 ## Query Examples
 
