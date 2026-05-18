@@ -43,7 +43,7 @@ for each (t_i, ac_i) in P:
     done = false
     while not done:
         writer executes t_i in the standalone repo
-        # inspect/edit code, compile, test, benchmark, profile, query PR evidence
+        # inspect/edit code, compile, test, benchmark, profile, query evidence
         verdict, feedback = reviewer checks evidence against ac_i
         if verdict == pass:
             done = true
@@ -168,25 +168,32 @@ tracking local loop state.
 
 ## Knowledge Evidence
 
-KernelPilot provides a PR-driven evidence corpus. Use it whenever it helps the
-current plan, implementation choice, benchmark result, profile digest,
-plateau/regression explanation, reviewer question, or next kernel edit.
-PR diffs and materialized source snapshots are the only local knowledge
-evidence. The local knowledge base intentionally has no wiki, doc, blog,
-contest, pseudocode, or generated topic-index fallback.
+KernelPilot provides three peer evidence routes. Use any route, or combine
+routes, whenever evidence helps the current plan, implementation choice,
+benchmark result, profile digest, plateau/regression explanation, reviewer
+question, or next kernel edit.
+
+- Local PR diffs and materialized source snapshots.
+- External source-map repositories from `knowledge/index.json`.
+- Live web search, official docs, GitHub PR pages, and related upstream source
+  code.
+
+The local knowledge base intentionally has no wiki, doc, blog, contest,
+pseudocode, or generated topic-index fallback.
 
 Useful entry points from `{{KERNELPILOT_ROOT}}/knowledge`:
 
 ```bash
 cd {{KERNELPILOT_ROOT}}/knowledge
 python3 scripts/query.py "tcgen05" --architecture B200 --limit 10
+python3 scripts/search-pr-diffs.py tcgen05 tmem --any --limit 200
 python3 scripts/query.py --repo pytorch/pytorch --compact
 python3 scripts/get_page.py pr-pytorch-157241
 ```
 
-If no relevant local PR evidence exists, say that plainly. Continue by using
-live web search, official docs, related upstream source code, or fresh code
-search. Do not pivot a kernel route from local cached summaries.
+If using the PR route, first search all local PR pages or all materialized
+`review.diff` files before narrowing to a repository. Do not stop at the first
+familiar repo hit.
 
 `knowledge/index.json` may be used as a source-map reference for live research.
 Before searching repositories named by that JSON, clone the full referenced
@@ -199,6 +206,14 @@ python3 scripts/clone-index-repos.py
 MUST NOT start searching any `index.json` repository before the full clone step
 has completed. Once the clone set is complete, inspect the repositories one by
 one for code implementations or upstream docs related to the current kernel.
+
+```bash
+python3 scripts/search-index-repos.py SplitKV Sm100 flash_fwd_sm100
+```
+
+Live web search, official docs, GitHub PR pages, and upstream source search are
+equally valid. Prefer official docs and upstream source code over snippets when
+implementation details matter.
 
 Useful PR evidence paths:
 
@@ -221,13 +236,20 @@ Typical query flow:
 
 1. Use `scripts/query.py` for broad routing by architecture, repo, tag,
    operator, bottleneck, or exact instruction/feature term.
-2. Use `scripts/get_page.py` to open a promising PR page.
-3. Open the materialized `review.diff`, `ORIGIN.yaml`, `upstream.json`, and
+2. Use `scripts/search-pr-diffs.py` when the PR route needs full diff-level
+   coverage across all repositories.
+3. Use `scripts/get_page.py` to open a promising PR page.
+4. Open the materialized `review.diff`, `ORIGIN.yaml`, `upstream.json`, and
    `source-snapshot/` files for the PR before borrowing any idea.
-4. If the PR corpus is missing the needed evidence, leave the local KB path and
-   use live web search, official docs, or related upstream source code.
 5. If using `knowledge/index.json` for related source discovery, first clone
    the complete referenced repo set, then search each cloned repo in turn.
+6. If using live research, use web search, official docs, GitHub PR pages, and
+   related upstream source code as first-class evidence.
+
+Shared example: for `FlashAttention SM100 SplitKV`, the PR route should find
+`pr-flash-attention-1940`; the source-map route should search all cloned repos
+for `SplitKV`, `Sm100`, and `flash_fwd_sm100`; the live route should search the
+upstream FlashAttention PR/page and current upstream source.
 
 A separate reading ledger is unnecessary just to prove that pages were opened.
 When a source directly affects code, record the actionable provenance in the
@@ -253,9 +275,10 @@ use the Humanize gen-plan schema and include these acceptance criteria:
   boundaries, and baseline/reference parity.
 - Benchmark harness records per-shape timing, geomean, best/worst cases,
   workload coverage, and environment metadata.
-- Stage 1 research digest records baseline/source findings, PR evidence
-  that materially affects the plan, candidate implementation routes, suspected
-  bottlenecks, and first benchmark/profile priorities.
+- Stage 1 research digest records baseline/source findings, evidence from the
+  selected route or routes that materially affects the plan, candidate
+  implementation routes, suspected bottlenecks, and first benchmark/profile
+  priorities.
 - A baseline profile decision is recorded after baseline benchmark succeeds:
   either capture a representative `ncu-report` digest or explain why the loop is
   using cheaper evidence first.
@@ -275,8 +298,9 @@ use the Humanize gen-plan schema and include these acceptance criteria:
 - The final answer and ledgers identify final kernels, fallback paths if any,
   dispatcher policy, tuning decisions, correctness matrix, benchmark matrix, and
   remaining unsupported regimes.
-- When progress stalls, expand PR research with unread PR bundles, changed
-  kernel files, linked tests, benchmarks, and profiler notes, guided by the
+- When progress stalls, expand evidence research across the selected peer
+  routes: unread PR bundles, cloned upstream source files, official docs,
+  GitHub PR pages, linked tests, benchmarks, and profiler notes, guided by the
   current task context and existing attempt/lineage notes.
 - When profiling shows a candidate is far below the target or in a different
   bottleneck class than the baseline, use the profile evidence to reassess the

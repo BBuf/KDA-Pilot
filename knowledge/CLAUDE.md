@@ -1,15 +1,18 @@
-# KernelPilot Knowledge Schema — PR Diff Evidence Only
+# KernelPilot Knowledge Schema — Evidence Routes
 
-This directory is a PR evidence index for GPU kernel work. It deliberately does
-not include local wiki pages, doc summaries, blog summaries, contest notes,
-pseudocode, or generated topic indices.
+This directory supports three equal evidence-acquisition routes for GPU kernel
+work: local PR diffs, cloned external source-map repositories, and live
+web/official/upstream source research. It deliberately does not include local
+wiki pages, doc summaries, blog summaries, contest notes, pseudocode, or
+generated topic indices.
 
 ## Navigation
 
-Use one discovery command:
+PR route:
 
 ```bash
 python3 scripts/query.py "<keywords>" --compact
+python3 scripts/search-pr-diffs.py <term1> <term2> [--any]
 ```
 
 Fetch a selected PR page:
@@ -23,6 +26,19 @@ Then inspect the evidence bundle named by `artifact_dir`:
 ```bash
 less evidence/pull-bundles/flash-attention/gh-1940/review.diff
 find evidence/pull-bundles/flash-attention/gh-1940/source-snapshot -type f
+```
+
+Source-map route:
+
+```bash
+python3 scripts/clone-index-repos.py
+python3 scripts/search-index-repos.py <term1> <term2> <term3>
+```
+
+Live route:
+
+```text
+Use web search, official docs, GitHub PR pages, and upstream source search.
 ```
 
 ## Data Shape
@@ -60,14 +76,17 @@ retrieval are:
 ## Policy
 
 - Local knowledge must resolve to a PR page and PR evidence bundle.
-- A missing local PR match is not a failure. Do not force-fit weak evidence.
-- Use live web search, official docs, related upstream source code, or fresh
-  code search when the PR corpus does not cover the question.
+- The PR, source-map, and live routes are peer evidence routes. The agent may
+  choose any route, or combine them.
+- If the PR route is used, search all PR pages or all materialized
+  `review.diff` files before narrowing to one repository.
 - When using `index.json`, first run
   `python3 scripts/clone-index-repos.py`.
   Do not search any listed repository until every referenced GitHub repository
   has been cloned. Then search the cloned repositories one by one for relevant
   code implementations or upstream docs.
+- If the live route is used, prefer official docs and upstream source over
+  snippets or blogs for implementation details.
 - Do not write kernels or pivot technical direction from cached local docs,
   wiki pages, blog notes, contests, pseudocode, or generated summaries.
 

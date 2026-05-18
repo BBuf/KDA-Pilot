@@ -2,9 +2,9 @@
 
 # KernelPilot
 
-**An autonomous Humanize-powered GPU kernel optimization loop with a local
-PR-driven CUDA knowledge base, Nsight Compute report skills, and clean
-standalone benchmark repos.**
+**An autonomous Humanize-powered GPU kernel optimization loop with peer
+evidence routes, Nsight Compute report skills, and clean standalone benchmark
+repos.**
 
 [![GitHub stars](https://img.shields.io/github/stars/BBuf/kernel-pilot?style=social)](https://github.com/BBuf/kernel-pilot/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/BBuf/kernel-pilot?style=social)](https://github.com/BBuf/kernel-pilot/forks)
@@ -24,7 +24,7 @@ The project packages three cooperating skills:
 | Skill | Role |
 | --- | --- |
 | [`humanize-kernel-agent-loop`](humanize/skills/humanize-kernel-agent-loop/) | Turns kernel definition `K`, reference `R`, and workload distribution `W` into task-acceptance pairs, a standalone optimization repo, autonomous research/iteration/autotuning, correctness tests, benchmarks, ledgers, dispatcher, tuning decisions, and review-gated iteration. |
-| [`kernel-knowledge`](knowledge/SKILL.md) | A local PR-diff-only CUDA kernel evidence corpus. It searches upstream PR pages, then opens materialized `review.diff` and source snapshots. |
+| [`kernel-knowledge`](knowledge/SKILL.md) | Kernel evidence acquisition through peer routes: local PR diffs, cloned external source-map repos, and live web/official/upstream source research. |
 | [`ncu-report`](humanize/skills/ncu-report/) | Converts Nsight Compute reports into a reproducible profile digest: metrics, source counters, PM sampling, PTX/SASS hotspots, bottleneck diagnosis, and exactly one next kernel edit. |
 
 Together they make an optimization loop that can work from a simple request:
@@ -40,9 +40,9 @@ the target when it is ambiguous; the loop owns the rest.
 
 ## Why Use It
 
-- **PR-diff-grounded prior art.** The knowledge base is organized around real
-  merged kernel PRs, with review diffs and source snapshots materialized under
-  `knowledge/evidence/pull-bundles/`.
+- **Peer evidence routes.** The agent can use local PR diffs, cloned upstream
+  source-map repositories, and live web/official/upstream research as equal
+  ways to gather kernel evidence.
 - **Standalone by default.** Candidate kernels do not pollute SGLang, vLLM,
   PyTorch, or other large framework repos. The loop creates an isolated repo
   with bindings, tests, benchmarks, ledgers, lineage, and profile artifacts.
@@ -51,10 +51,10 @@ the target when it is ambiguous; the loop owns the rest.
 - **Evidence-driven profiling.** The loop decides when `ncu-report` is worth
   running, then uses it to move from vague labels like "memory-bound" toward
   measured bottlenecks and one concrete next edit.
-- **PR-backed edits.** The agent can search local upstream PR diffs and source
-  snapshots. If the local PR corpus has no relevant match, it should use live
-  web search, official docs, or related upstream source-code research instead of
-  falling back to cached summaries.
+- **Evidence-backed edits.** The agent can use local upstream PR diffs, cloned
+  source-map repositories, and live web/official/upstream source research as
+  peer evidence routes. PR/source routes must be searched comprehensively before
+  narrowing to a favorite repository.
 - **Review-gated iteration.** Humanize RLCR keeps the loop from declaring
   victory too early; default loop budget is 84 iterations unless configured
   otherwise.
@@ -72,7 +72,7 @@ flowchart LR
     P --> S[Clean standalone repo]
 
     subgraph R0[Stage 1: Research]
-        KW[kernel-knowledge / PR evidence]
+        KW[kernel-knowledge / evidence routes]
         B[Baseline and repo inspection]
         RD[Research digest and recipes]
         KW --> RD
@@ -131,6 +131,7 @@ Current snapshot:
 | Corpus layer | Contents |
 | --- | --- |
 | PR evidence | 3,660 merged CUDA/Triton/CuTe/CUTLASS-related PR pages and bundles from 14 upstream repos, Jan 2024 through May 16 2026. |
+| External source map | `knowledge/index.json` points at upstream repos and kernel topic hints for live clone/search workflows. |
 | Candidate ledgers | 14 include/defer ledgers for PR ingestion. Dropped PRs are not kept as per-PR rows. |
 
 Primary organization:
@@ -152,12 +153,9 @@ knowledge/
 `-- data/
 ```
 
-The important rule is **PR-diff only**. Local knowledge must resolve to a PR
-page and a materialized evidence bundle with `review.diff` and
-`source-snapshot/`. There is no local wiki/doc/blog/contest fallback.
-
-If the local PR corpus has no relevant evidence, report that plainly and use
-live web search, official docs, or related upstream source code.
+The important rule is **no local summaries as evidence**. The supported routes
+are local PR diffs, cloned source-map repositories, and live web/official/
+upstream source research. There is no local wiki/doc/blog/contest fallback.
 
 `knowledge/index.json` is kept as an external source map. When an agent uses it,
 it must first clone every referenced GitHub repository, then inspect those
@@ -170,8 +168,11 @@ Run knowledge tools from the knowledge root:
 ```bash
 cd knowledge
 python3 scripts/query.py "tcgen05" --architecture B200 --limit 10
+python3 scripts/search-pr-diffs.py tcgen05 tmem --any --limit 200
 python3 scripts/query.py --repo pytorch/pytorch --compact
 python3 scripts/get_page.py pr-pytorch-157241
+python3 scripts/clone-index-repos.py
+python3 scripts/search-index-repos.py SplitKV Sm100 flash_fwd_sm100
 python3 scripts/validate.py
 ```
 
