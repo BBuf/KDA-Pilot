@@ -35,6 +35,8 @@ find evidence/pull-bundles/flash-attention/gh-1940/source-snapshot -type f
 - `evidence/pull-bundles/{repo}/gh-{N}/ORIGIN.yaml` — provenance
 - `candidates/*.yaml` — PR candidate ledgers
 - `data/*.yaml` — PR corpus metadata, aliases, tags, schema, refresh state
+- `index.json` — external source map for live repository research; not indexed
+  by the local PR query path
 
 ## Page Type
 
@@ -61,6 +63,11 @@ retrieval are:
 - A missing local PR match is not a failure. Do not force-fit weak evidence.
 - Use live web search, official docs, related upstream source code, or fresh
   code search when the PR corpus does not cover the question.
+- When using `index.json`, first run
+  `python3 scripts/clone-index-repos.py`.
+  Do not search any listed repository until every referenced GitHub repository
+  has been cloned. Then search the cloned repositories one by one for relevant
+  code implementations or upstream docs.
 - Do not write kernels or pivot technical direction from cached local docs,
   wiki pages, blog notes, contests, pseudocode, or generated summaries.
 

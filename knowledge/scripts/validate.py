@@ -25,6 +25,24 @@ def source_pr_bundle(root: Path, repo: str, number: object, fallback_repo_id: st
 def main() -> int:
     root = knowledge_root()
     errors: list[str] = []
+    index_repos = 0
+    index_path = root / "index.json"
+    if index_path.exists():
+        try:
+            index_data = json.loads(index_path.read_text(encoding="utf-8"))
+        except Exception as exc:  # noqa: BLE001
+            errors.append(f"{index_path.relative_to(root)}: invalid json: {exc}")
+            index_data = {}
+        stack = [index_data]
+        while stack:
+            value = stack.pop()
+            if isinstance(value, dict):
+                if "ncu_signals" in value:
+                    errors.append(f"{index_path.relative_to(root)}: ncu_signals is not allowed")
+                stack.extend(value.values())
+            elif isinstance(value, list):
+                stack.extend(value)
+        index_repos = len({str(item.get("repo")) for item in index_data.get("frameworks", []) if isinstance(item, dict) and item.get("repo")})
     pages = iter_pages()
     ids: dict[str, str] = {}
     for page in pages:
@@ -99,6 +117,7 @@ def main() -> int:
         "complete_source_pr_bundles": complete_source_pr_bundles,
         "candidate_prs": candidate_prs,
         "candidate_ledgers": len(ledgers),
+        "index_repos": index_repos,
         "errors": len(errors),
     }
     print(json.dumps(summary, indent=2, ensure_ascii=False))

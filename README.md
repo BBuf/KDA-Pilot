@@ -159,6 +159,10 @@ page and a materialized evidence bundle with `review.diff` and
 If the local PR corpus has no relevant evidence, report that plainly and use
 live web search, official docs, or related upstream source code.
 
+`knowledge/index.json` is kept as an external source map. When an agent uses it,
+it must first clone every referenced GitHub repository, then inspect those
+clones one by one for current-kernel-related code or upstream docs.
+
 ## Query Examples
 
 Run knowledge tools from the knowledge root:

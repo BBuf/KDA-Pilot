@@ -14,8 +14,8 @@ wiki, blog, doc, contest, pseudocode, or technique-guide layer.
 
 Use local knowledge only to find upstream PR pages and their materialized
 evidence bundles. If no relevant PR evidence exists, say so and continue with
-live research or implementation in the target repo. Do not synthesize a kernel
-route from local cached docs, wiki pages, blog notes, or pseudocode.
+live research. Do not synthesize a kernel route from local cached docs, wiki
+pages, blog notes, or pseudocode.
 
 ## Query
 
@@ -54,6 +54,22 @@ Then inspect the referenced bundle:
 less evidence/pull-bundles/flash-attention/gh-1940/review.diff
 find evidence/pull-bundles/flash-attention/gh-1940/source-snapshot -type f
 ```
+
+## External Source Map
+
+`index.json` is a source-map reference for live research. It is not part of the
+local PR query index.
+
+Before searching repositories listed in `index.json`, clone the full referenced
+GitHub repo set:
+
+```bash
+python3 scripts/clone-index-repos.py
+```
+
+MUST NOT start searching any `index.json` repository before the full clone step
+has completed. After that, search the cloned repositories one by one for code
+implementations or upstream docs related to the current kernel.
 
 ## Answer Contract
 

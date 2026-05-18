@@ -188,6 +188,18 @@ If no relevant local PR evidence exists, say that plainly. Continue by using
 live web search, official docs, related upstream source code, or fresh code
 search. Do not pivot a kernel route from local cached summaries.
 
+`knowledge/index.json` may be used as a source-map reference for live research.
+Before searching repositories named by that JSON, clone the full referenced
+GitHub repo set:
+
+```bash
+python3 scripts/clone-index-repos.py
+```
+
+MUST NOT start searching any `index.json` repository before the full clone step
+has completed. Once the clone set is complete, inspect the repositories one by
+one for code implementations or upstream docs related to the current kernel.
+
 Useful PR evidence paths:
 
 ```bash
@@ -214,6 +226,8 @@ Typical query flow:
    `source-snapshot/` files for the PR before borrowing any idea.
 4. If the PR corpus is missing the needed evidence, leave the local KB path and
    use live web search, official docs, or related upstream source code.
+5. If using `knowledge/index.json` for related source discovery, first clone
+   the complete referenced repo set, then search each cloned repo in turn.
 
 A separate reading ledger is unnecessary just to prove that pages were opened.
 When a source directly affects code, record the actionable provenance in the

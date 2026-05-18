@@ -1,0 +1,739 @@
+{
+  "schema_version": 1,
+  "description": "PR- and code-first production kernel knowledge base for Humanize-driven GPU kernel optimization. Framework entries point to upstream repos, kernel directories, source guides, and curated production PR case notes; topic entries map kernel topics to per-framework references.",
+  "frameworks": [
+    {
+      "id": "sglang",
+      "name": "SGLang",
+      "repo": "sgl-project/sglang",
+      "url": "https://github.com/sgl-project/sglang",
+      "kernel_paths": [
+        "python/sglang/srt/layers/attention",
+        "python/sglang/srt/layers/moe",
+        "python/sglang/srt/layers/quantization",
+        "python/sglang/srt/layers/sampler.py",
+        "sgl-kernel/csrc",
+        "sgl-kernel/csrc/attention",
+        "sgl-kernel/csrc/moe",
+        "sgl-kernel/csrc/elementwise",
+        "sgl-kernel/csrc/gemm",
+        "sgl-kernel/csrc/spec_decode",
+        "sgl-kernel/python/sgl_kernel"
+      ],
+      "tags": [
+        "llm-serving",
+        "attention",
+        "moe",
+        "fp8",
+        "speculative-decoding",
+        "sampling",
+        "cuda",
+        "triton"
+      ],
+      "page": "routing/frameworks/sglang.md",
+      "deep_reference": "references/source-guides/sglang.md",
+      "pr_reference": "references/prs/sglang.md"
+    },
+    {
+      "id": "vllm",
+      "name": "vLLM",
+      "repo": "vllm-project/vllm",
+      "url": "https://github.com/vllm-project/vllm",
+      "kernel_paths": [
+        "csrc",
+        "csrc/attention",
+        "csrc/moe",
+        "csrc/quantization",
+        "csrc/cutlass_extensions",
+        "vllm/attention",
+        "vllm/model_executor/layers"
+      ],
+      "tags": [
+        "llm-serving",
+        "paged-attention",
+        "moe",
+        "awq",
+        "gptq",
+        "fp8",
+        "cuda"
+      ],
+      "page": "routing/frameworks/vllm.md",
+      "deep_reference": "references/source-guides/vllm.md",
+      "pr_reference": "references/prs/vllm.md"
+    },
+    {
+      "id": "tensorrt-llm",
+      "name": "TensorRT-LLM",
+      "repo": "NVIDIA/TensorRT-LLM",
+      "url": "https://github.com/NVIDIA/TensorRT-LLM",
+      "kernel_paths": [
+        "cpp/tensorrt_llm/kernels",
+        "cpp/tensorrt_llm/kernels/decoderMaskedMultiheadAttention",
+        "cpp/tensorrt_llm/kernels/mixtureOfExperts",
+        "cpp/tensorrt_llm/kernels/quantization",
+        "cpp/tensorrt_llm/kernels/cutlass_kernels",
+        "cpp/tensorrt_llm/kernels/internal_cutlass_kernels",
+        "cpp/tensorrt_llm/kernels/userbuffers"
+      ],
+      "tags": [
+        "llm-serving",
+        "cutlass",
+        "fmha",
+        "moe",
+        "fp8",
+        "fp4",
+        "tma",
+        "wgmma",
+        "nvls",
+        "userbuffers"
+      ],
+      "page": "routing/frameworks/tensorrt-llm.md",
+      "deep_reference": "references/source-guides/tensorrt-llm.md",
+      "pr_reference": "references/prs/tensorrt-llm.md"
+    },
+    {
+      "id": "pytorch",
+      "name": "PyTorch",
+      "repo": "pytorch/pytorch",
+      "url": "https://github.com/pytorch/pytorch",
+      "kernel_paths": [
+        "aten/src/ATen/native/cuda",
+        "aten/src/ATen/native/transformers/cuda",
+        "aten/src/ATen/native/cudnn",
+        "torch/_inductor",
+        "torch/csrc/distributed"
+      ],
+      "tags": [
+        "aten",
+        "elementwise",
+        "reduction",
+        "attention",
+        "sdpa",
+        "cudnn",
+        "inductor",
+        "nccl"
+      ],
+      "page": "routing/frameworks/pytorch.md",
+      "deep_reference": "references/source-guides/pytorch.md",
+      "pr_reference": "references/prs/pytorch.md"
+    },
+    {
+      "id": "flash-attention",
+      "name": "FlashAttention",
+      "repo": "Dao-AILab/flash-attention",
+      "url": "https://github.com/Dao-AILab/flash-attention",
+      "kernel_paths": [
+        "csrc/flash_attn/src",
+        "csrc/flash_attn/src/flash_fwd_kernel.h",
+        "flash_attn/cute",
+        "hopper",
+        "benchmarks/benchmark_attn.py",
+        "benchmarks/bench_sm90.py"
+      ],
+      "tags": [
+        "attention",
+        "fmha",
+        "online-softmax",
+        "tma",
+        "wgmma",
+        "hopper",
+        "sm80",
+        "sm90",
+        "cutlass",
+        "cute"
+      ],
+      "page": "routing/frameworks/flash-attention.md",
+      "deep_reference": "references/source-guides/flash-attention.md",
+      "pr_reference": "references/prs/flash-attention.md"
+    },
+    {
+      "id": "flashinfer",
+      "name": "FlashInfer",
+      "repo": "flashinfer-ai/flashinfer",
+      "url": "https://github.com/flashinfer-ai/flashinfer",
+      "kernel_paths": [
+        "csrc",
+        "csrc/fmha_v2/fmha",
+        "csrc/fmha_v2/fmha/hopper",
+        "csrc/fmha_v2/fmha/warpspec",
+        "include/flashinfer",
+        "benchmarks/bench_blackwell_attention.py",
+        "python/flashinfer"
+      ],
+      "tags": [
+        "attention",
+        "fmha",
+        "kv-cache",
+        "page-table",
+        "sampling",
+        "speculative",
+        "hopper",
+        "blackwell"
+      ],
+      "page": "routing/frameworks/flashinfer.md",
+      "deep_reference": "references/source-guides/flashinfer.md",
+      "pr_reference": "references/prs/flashinfer.md"
+    },
+    {
+      "id": "cutlass",
+      "name": "CUTLASS / CuTe",
+      "repo": "NVIDIA/cutlass",
+      "url": "https://github.com/NVIDIA/cutlass",
+      "kernel_paths": [
+        "include/cutlass",
+        "include/cute",
+        "examples",
+        "tools/profiler",
+        "python",
+        "media/docs"
+      ],
+      "tags": [
+        "gemm",
+        "matmul",
+        "epilogue",
+        "cute",
+        "tma",
+        "wgmma",
+        "block-scaled",
+        "fp8",
+        "fp4"
+      ],
+      "page": "routing/frameworks/cutlass.md",
+      "deep_reference": "references/source-guides/cutlass.md",
+      "pr_reference": "references/prs/cutlass.md"
+    },
+    {
+      "id": "cccl-cub",
+      "name": "CCCL (CUB / Thrust / libcu++)",
+      "repo": "NVIDIA/cccl",
+      "url": "https://github.com/NVIDIA/cccl",
+      "kernel_paths": [
+        "cub",
+        "thrust",
+        "libcudacxx"
+      ],
+      "tags": [
+        "reduction",
+        "scan",
+        "sort",
+        "block",
+        "warp",
+        "cooperative-groups"
+      ],
+      "page": "routing/frameworks/cccl-cub.md",
+      "pr_reference": "references/prs/cccl-cub.md",
+      "deep_reference": "references/source-guides/cccl-cub.md"
+    },
+    {
+      "id": "triton",
+      "name": "Triton",
+      "repo": "triton-lang/triton",
+      "url": "https://github.com/triton-lang/triton",
+      "kernel_paths": [
+        "python/tutorials",
+        "python/triton/language",
+        "python/triton/runtime",
+        "lib/Conversion",
+        "test/TritonGPU"
+      ],
+      "tags": [
+        "triton",
+        "block-pointer",
+        "tma",
+        "atomic",
+        "autotune",
+        "softmax",
+        "matmul"
+      ],
+      "page": "routing/frameworks/triton.md",
+      "deep_reference": "references/source-guides/triton.md",
+      "pr_reference": "references/prs/triton.md"
+    },
+    {
+      "id": "deepgemm",
+      "name": "DeepGEMM",
+      "repo": "deepseek-ai/DeepGEMM",
+      "url": "https://github.com/deepseek-ai/DeepGEMM",
+      "kernel_paths": [
+        "csrc/apis",
+        "csrc/jit",
+        "csrc/jit_kernels/heuristics",
+        "csrc/jit_kernels/impls",
+        "deep_gemm/include/deep_gemm",
+        "deep_gemm/testing",
+        "tests"
+      ],
+      "tags": [
+        "fp8",
+        "block-scaled",
+        "grouped-gemm",
+        "moe-gemm",
+        "jit",
+        "hopper",
+        "blackwell"
+      ],
+      "page": "routing/frameworks/deepgemm.md",
+      "deep_reference": "references/source-guides/deepgemm.md",
+      "pr_reference": "references/prs/deepgemm.md"
+    },
+    {
+      "id": "thunderkittens",
+      "name": "ThunderKittens",
+      "repo": "HazyResearch/ThunderKittens",
+      "url": "https://github.com/HazyResearch/ThunderKittens",
+      "kernel_paths": [
+        "include/kittens.cuh",
+        "examples"
+      ],
+      "tags": [
+        "tile-primitives",
+        "attention",
+        "matmul",
+        "warpgroup",
+        "hopper"
+      ],
+      "page": "routing/frameworks/thunderkittens.md",
+      "deep_reference": "references/source-guides/thunderkittens.md",
+      "pr_reference": "references/prs/thunderkittens.md"
+    },
+    {
+      "id": "tilelang",
+      "name": "TileLang",
+      "repo": "tile-ai/tilelang",
+      "url": "https://github.com/tile-ai/tilelang",
+      "kernel_paths": [
+        "examples",
+        "examples/deepseek_mla",
+        "python/tilelang",
+        "python/tilelang/language",
+        "python/tilelang/engine",
+        "tests",
+        "benchmark"
+      ],
+      "tags": [
+        "tile-dsl",
+        "schedule",
+        "matmul",
+        "attention",
+        "fused-op",
+        "moe",
+        "mla"
+      ],
+      "page": "routing/frameworks/tilelang.md",
+      "deep_reference": "references/source-guides/tilelang.md",
+      "pr_reference": "references/prs/tilelang.md"
+    },
+    {
+      "id": "cute-dsl",
+      "name": "CuTe DSL",
+      "repo": "NVIDIA/cutlass",
+      "url": "https://github.com/NVIDIA/cutlass",
+      "kernel_paths": [
+        "python",
+        "include/cute",
+        "examples",
+        "examples/48_hopper_*",
+        "examples/50_blackwell_*",
+        "examples/60_*",
+        "test/unit"
+      ],
+      "tags": [
+        "cute-dsl",
+        "cutlass",
+        "gemm",
+        "attention",
+        "tma",
+        "wgmma",
+        "tcgen05",
+        "sm90",
+        "sm100"
+      ],
+      "page": "routing/frameworks/cute-dsl.md",
+      "deep_reference": "references/source-guides/cute-dsl.md",
+      "pr_reference": "references/prs/cutlass.md"
+    },
+    {
+      "id": "quack",
+      "name": "QuACK",
+      "repo": "Dao-AILab/quack",
+      "url": "https://github.com/Dao-AILab/quack",
+      "kernel_paths": [
+        "quack",
+        "benchmarks",
+        "microbenchmarks",
+        "examples",
+        "tests",
+        "docs"
+      ],
+      "tags": [
+        "cute-dsl",
+        "quack",
+        "gemm",
+        "softmax",
+        "norm",
+        "cross-entropy",
+        "hopper",
+        "blackwell"
+      ],
+      "page": "routing/frameworks/quack.md",
+      "deep_reference": "references/source-guides/quack.md",
+      "pr_reference": "references/prs/quack.md"
+    },
+    {
+      "id": "tilekernels",
+      "name": "DeepSeek TileKernels",
+      "repo": "deepseek-ai/TileKernels",
+      "url": "https://github.com/deepseek-ai/TileKernels",
+      "kernel_paths": [
+        "tile_kernels",
+        "tests",
+        "README.md"
+      ],
+      "tags": [
+        "tilelang",
+        "deepseek",
+        "moe",
+        "quantization",
+        "transpose",
+        "swiglu",
+        "engram"
+      ],
+      "page": "routing/frameworks/tilekernels.md",
+      "deep_reference": "references/source-guides/tilekernels.md",
+      "pr_reference": "references/prs/tilekernels.md"
+    },
+    {
+      "id": "cuda-blog-kernels",
+      "name": "CUDA Blog Companion Kernels",
+      "repo": "NVIDIA-developer-blog/code-samples",
+      "url": "https://github.com/NVIDIA-developer-blog/code-samples",
+      "kernel_paths": [
+        "posts",
+        "Samples",
+        "src",
+        "README.md"
+      ],
+      "tags": [
+        "cuda-blog",
+        "gemm",
+        "transpose",
+        "coalescing",
+        "shared-memory",
+        "bank-conflicts",
+        "reduction",
+        "occupancy"
+      ],
+      "page": "routing/frameworks/cuda-blog-kernels.md",
+      "deep_reference": "references/source-guides/cuda-blog-kernels.md",
+      "pr_reference": "references/prs/cccl-cub.md"
+    },
+    {
+      "id": "veitner-blog",
+      "name": "Veitner Blog And Code",
+      "repo": "simveit/effective_transpose",
+      "url": "https://veitner.bearblog.dev/blog/",
+      "kernel_paths": [
+        "https://github.com/simveit/effective_transpose",
+        "https://github.com/simveit/load_and_store",
+        "https://gist.github.com/simveit",
+        "an-applied-introduction-to-cutedsl",
+        "sgemm-in-cutedsl",
+        "making-matrix-transpose-really-fast-on-hopper-gpus",
+        "simple-reduction-in-cutedsl",
+        "grouped-blockscaled-gemm-kernel"
+      ],
+      "tags": [
+        "blog-code",
+        "cute-dsl",
+        "quack",
+        "gemm",
+        "tma",
+        "wgmma",
+        "swizzle",
+        "transpose",
+        "rmsnorm",
+        "block-scaled",
+        "nvfp4",
+        "gdn",
+        "hopper",
+        "blackwell"
+      ],
+      "page": "routing/frameworks/veitner-blog.md",
+      "deep_reference": "references/source-guides/veitner-blog.md",
+      "pr_reference": "references/prs/quack.md"
+    },
+    {
+      "id": "colfax-research",
+      "name": "Colfax Research Blog And Code",
+      "repo": "ColfaxResearch/cfx-article-src",
+      "url": "https://research.colfax-intl.com/blog/",
+      "kernel_paths": [
+        "https://github.com/ColfaxResearch/cfx-article-src",
+        "https://github.com/ColfaxResearch/cutlass-kernels",
+        "cfx-article-src/tma",
+        "cfx-article-src/pipeline-gemm",
+        "cfx-article-src/streamk",
+        "cfx-article-src/transpose-cute",
+        "cfx-article-src/cutlass_gemm",
+        "cutlass-kernels/src",
+        "cutlass-kernels/lib/gemm"
+      ],
+      "tags": [
+        "blog-code",
+        "cutlass",
+        "cute",
+        "cute-dsl",
+        "gemm",
+        "attention",
+        "tma",
+        "wgmma",
+        "stream-k",
+        "persistent",
+        "transpose",
+        "block-scaled",
+        "blackwell",
+        "hopper"
+      ],
+      "page": "routing/frameworks/colfax-research.md",
+      "deep_reference": "references/source-guides/colfax-research.md",
+      "pr_reference": "references/prs/cutlass.md"
+    }
+  ],
+  "topics": [
+    {
+      "id": "attention",
+      "name": "Attention / FMHA / Paged",
+      "applies_to": [
+        "sglang",
+        "vllm",
+        "tensorrt-llm",
+        "flash-attention",
+        "flashinfer",
+        "pytorch",
+        "thunderkittens",
+        "cutlass",
+        "triton",
+        "tilelang",
+        "cute-dsl",
+        "quack",
+        "veitner-blog",
+        "colfax-research"
+      ],
+      "tags": [
+        "attention",
+        "fmha",
+        "paged",
+        "kv-cache",
+        "softmax",
+        "online"
+      ],
+      "page": "routing/topics/attention.md"
+    },
+    {
+      "id": "matmul-gemm",
+      "name": "GEMM / Tensor-Core matmul",
+      "applies_to": [
+        "cutlass",
+        "deepgemm",
+        "tensorrt-llm",
+        "sglang",
+        "vllm",
+        "triton",
+        "thunderkittens",
+        "pytorch",
+        "tilelang",
+        "cute-dsl",
+        "quack",
+        "tilekernels",
+        "cuda-blog-kernels",
+        "veitner-blog",
+        "colfax-research"
+      ],
+      "tags": [
+        "gemm",
+        "matmul",
+        "tensor-core",
+        "wgmma",
+        "tma",
+        "epilogue"
+      ],
+      "page": "routing/topics/matmul-gemm.md"
+    },
+    {
+      "id": "moe",
+      "name": "Mixture of Experts",
+      "applies_to": [
+        "sglang",
+        "vllm",
+        "tensorrt-llm",
+        "deepgemm",
+        "triton",
+        "tilelang",
+        "tilekernels",
+        "cute-dsl",
+        "veitner-blog",
+        "colfax-research"
+      ],
+      "tags": [
+        "moe",
+        "fused-moe",
+        "grouped-gemm",
+        "align-block-size",
+        "top-k",
+        "permute"
+      ],
+      "page": "routing/topics/moe.md"
+    },
+    {
+      "id": "normalization",
+      "name": "RMSNorm / LayerNorm fused norms",
+      "applies_to": [
+        "sglang",
+        "vllm",
+        "tensorrt-llm",
+        "pytorch",
+        "triton",
+        "cccl-cub",
+        "tilelang",
+        "quack",
+        "cuda-blog-kernels",
+        "veitner-blog"
+      ],
+      "tags": [
+        "rmsnorm",
+        "layernorm",
+        "fused-add-norm",
+        "qk-norm",
+        "qknorm"
+      ],
+      "page": "routing/topics/normalization.md"
+    },
+    {
+      "id": "rope",
+      "name": "RoPE / position embeddings",
+      "applies_to": [
+        "sglang",
+        "vllm",
+        "tensorrt-llm",
+        "flashinfer",
+        "triton"
+      ],
+      "tags": [
+        "rope",
+        "rotary",
+        "embedding",
+        "interleaved",
+        "neox"
+      ],
+      "page": "routing/topics/rope.md"
+    },
+    {
+      "id": "activation-fusion",
+      "name": "Activation / element-wise fusion",
+      "applies_to": [
+        "sglang",
+        "vllm",
+        "tensorrt-llm",
+        "pytorch",
+        "triton",
+        "tilelang",
+        "tilekernels",
+        "quack",
+        "veitner-blog"
+      ],
+      "tags": [
+        "silu",
+        "gelu",
+        "swiglu",
+        "fused-add",
+        "fused-residual"
+      ],
+      "page": "routing/topics/activation-fusion.md"
+    },
+    {
+      "id": "sampling",
+      "name": "Top-k / Top-p sampling, speculative",
+      "applies_to": [
+        "sglang",
+        "vllm",
+        "tensorrt-llm",
+        "flashinfer"
+      ],
+      "tags": [
+        "top-k",
+        "top-p",
+        "sampling",
+        "logits",
+        "tree-decode",
+        "speculative",
+        "eagle"
+      ],
+      "page": "routing/topics/sampling.md"
+    },
+    {
+      "id": "quantization-fp8",
+      "name": "FP8 / FP4 / INT8 quantization",
+      "applies_to": [
+        "sglang",
+        "vllm",
+        "tensorrt-llm",
+        "deepgemm",
+        "cutlass",
+        "tilelang",
+        "tilekernels",
+        "cute-dsl",
+        "quack",
+        "veitner-blog",
+        "colfax-research"
+      ],
+      "tags": [
+        "fp8",
+        "fp4",
+        "int8",
+        "awq",
+        "gptq",
+        "block-scaled",
+        "per-tensor",
+        "per-channel"
+      ],
+      "page": "routing/topics/quantization-fp8.md"
+    },
+    {
+      "id": "kv-cache",
+      "name": "KV-cache / paged memory",
+      "applies_to": [
+        "sglang",
+        "vllm",
+        "tensorrt-llm",
+        "flashinfer"
+      ],
+      "tags": [
+        "paged-kv",
+        "block-table",
+        "hi-cache",
+        "radix-cache",
+        "prefix-cache"
+      ],
+      "page": "routing/topics/kv-cache.md"
+    },
+    {
+      "id": "communication",
+      "name": "Collectives / overlap (NCCL, NVLS, userbuffers)",
+      "applies_to": [
+        "pytorch",
+        "tensorrt-llm",
+        "sglang"
+      ],
+      "tags": [
+        "allreduce",
+        "reducescatter",
+        "allgather",
+        "nccl",
+        "nvls",
+        "userbuffers",
+        "comm-overlap"
+      ],
+      "page": "routing/topics/communication.md"
+    }
+  ]
+}

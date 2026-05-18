@@ -14,6 +14,8 @@ summaries, contest notes, pseudocode, or technique guides.
 - **3,660 PR pages** under `sources/prs/`
 - **3,660 PR evidence bundles** under `evidence/pull-bundles/`
 - **14 candidate ledgers** under `candidates/`
+- **External source map** in `index.json`; this is a repo/topic map for live
+  research, not a local evidence index.
 - PR ingestion, materialization, metadata sync, search, fetch, and validation
   scripts under `scripts/`
 - PR corpus metadata under `data/`
@@ -45,6 +47,24 @@ find evidence/pull-bundles/flash-attention/gh-1940/source-snapshot -type f
 If no relevant local PR evidence exists, say that plainly. Do not infer from a
 local wiki/doc/blog fallback. Use live web search, official docs, related
 upstream source code, or fresh code search as needed.
+
+## External Source Map
+
+`index.json` lists upstream repositories and topic-to-repository routing hints
+that can help live research. It intentionally has no `ncu_signals` fields and is
+not searched by `scripts/query.py`.
+
+When using `index.json`, first clone every GitHub repository referenced by the
+file:
+
+```bash
+python3 scripts/clone-index-repos.py
+```
+
+Do not begin searching the referenced repositories until that command has
+finished successfully for the full set. After cloning, inspect the repositories
+one by one, using the current kernel's operator, dtype, architecture, and
+framework context to search for relevant implementation code or upstream docs.
 
 ## Maintenance
 
@@ -79,12 +99,14 @@ knowledge/
 |   |-- materialize-source-prs.py
 |   |-- expand-pr-corpus.py
 |   |-- refresh_candidate_ledger.py
-|   `-- sync-pr-evidence-metadata.py
+|   |-- sync-pr-evidence-metadata.py
+|   `-- clone-index-repos.py
 |-- sources/
 |   `-- prs/
 |-- evidence/
 |   `-- pull-bundles/
 |-- candidates/
+|-- index.json
 `-- data/
 ```
 
