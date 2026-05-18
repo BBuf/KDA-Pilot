@@ -191,9 +191,8 @@ python3 scripts/query.py --repo pytorch/pytorch --compact
 python3 scripts/get_page.py pr-pytorch-157241
 ```
 
-If using the PR route, MUST NOT narrow to a repository before all local PR pages
-or all materialized `review.diff` files have been searched. MUST NOT stop at the
-first familiar repo hit.
+If using the PR route, MUST NOT treat a PR match as sufficient before all local
+PR pages or all materialized `review.diff` files have been searched.
 
 `knowledge/index.json` may be used as a source-map reference for live research.
 Clone command for the full referenced GitHub repo set:
@@ -203,8 +202,7 @@ python3 scripts/clone-index-repos.py
 ```
 
 MUST NOT start searching any `index.json` repository before the full clone step
-has completed. MUST NOT treat one cloned repository as representative of the
-source-map route. MUST NOT ignore the current kernel's operator, dtype,
+has completed. MUST NOT ignore the current kernel's operator, dtype,
 architecture, or framework context during source-map searches.
 
 ```bash

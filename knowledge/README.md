@@ -30,9 +30,8 @@ others.
 
 ### Route A: Local PR Diffs
 
-The agent MUST NOT start by narrowing to one familiar repo. It MUST NOT treat a
-PR match as sufficient until broad search across all local PR pages or all
-materialized PR diffs has been attempted.
+The agent MUST NOT treat a PR match as sufficient until broad search across all
+local PR pages or all materialized PR diffs has been attempted.
 
 ```bash
 python3 scripts/query.py "<keywords>" [--repo owner/name] [--tag tag] [--architecture sm100] [--language cute-dsl] [--kernel-type attention] --compact
@@ -65,8 +64,7 @@ python3 scripts/clone-index-repos.py
 ```
 
 MUST NOT begin searching the referenced repositories until that command has
-finished successfully for the full set. MUST NOT treat one cloned repository as
-representative of the source-map route. MUST NOT ignore the current kernel's
+finished successfully for the full set. MUST NOT ignore the current kernel's
 operator, dtype, architecture, or framework context during source-map searches.
 
 ```bash
@@ -149,8 +147,6 @@ knowledge/
 ## Scope Rules
 
 - Local synthesized explanations are deliberately excluded.
-- MUST NOT narrow PR-route research to one repo before whole-corpus PR search
-  has been attempted.
 - MUST NOT search source-map repositories before every referenced repo has been
   cloned.
 - MUST NOT replace live official docs, related upstream source code, or web

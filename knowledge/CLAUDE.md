@@ -79,12 +79,9 @@ retrieval are:
   and PR evidence bundle.
 - The PR, source-map, and live routes are peer evidence routes. The agent may
   choose any route, or combine them.
-- MUST NOT narrow PR-route research to one repository before searching all PR
-  pages or all materialized `review.diff` files.
 - MUST NOT search any `index.json` repository until
   `python3 scripts/clone-index-repos.py` has cloned every referenced GitHub
-  repository. MUST NOT treat one cloned repository as representative of the
-  source-map route.
+  repository.
 - MUST NOT rely on snippets or blogs over official docs and upstream source for
   implementation details.
 - MUST NOT write kernels or pivot technical direction from cached local docs,

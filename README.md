@@ -53,8 +53,8 @@ the target when it is ambiguous; the loop owns the rest.
   measured bottlenecks and one concrete next edit.
 - **Evidence-backed edits.** The agent can use local upstream PR diffs, cloned
   source-map repositories, and live web/official/upstream source research as
-  peer evidence routes. The agent MUST NOT narrow PR/source research to a
-  favorite repository before broad route-level search evidence exists.
+  peer evidence routes. The agent MUST NOT draw route conclusions before broad
+  route-level search evidence exists.
 - **Review-gated iteration.** Humanize RLCR keeps the loop from declaring
   victory too early; default loop budget is 84 iterations unless configured
   otherwise.

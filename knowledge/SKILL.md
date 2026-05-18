@@ -19,10 +19,9 @@ route before broad search evidence for that route exists.
 
 ## Route A: Local PR Diffs
 
-The PR route searches the whole local PR corpus. The agent MUST NOT start by
-narrowing to a single familiar repo. It MUST NOT treat a PR match as sufficient
-until corpus-wide search across all PR pages and/or all materialized
-`review.diff` files has been attempted.
+The PR route searches the whole local PR corpus. The agent MUST NOT treat a PR
+match as sufficient until corpus-wide search across all PR pages and/or all
+materialized `review.diff` files has been attempted.
 
 ```bash
 python3 scripts/query.py "flash attention sm100 splitkv" --compact --limit 50
@@ -50,8 +49,7 @@ python3 scripts/clone-index-repos.py
 ```
 
 MUST NOT start searching any `index.json` repository before the full clone step
-has completed. MUST NOT treat one cloned repository as representative of the
-source-map route. MUST NOT ignore the current kernel's operator, dtype,
+has completed. MUST NOT ignore the current kernel's operator, dtype,
 architecture, or framework context during source-map searches.
 
 ```bash
