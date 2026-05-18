@@ -8,6 +8,7 @@ import yaml
 
 from _kb import iter_pages, parse_markdown
 from _knowledge_root import knowledge_root
+from clone_index_repos_support import extract_repos
 
 
 PULL_BUNDLE_ROOT = Path("evidence") / "pull-bundles"
@@ -45,7 +46,7 @@ def main() -> int:
                 stack.extend(value.values())
             elif isinstance(value, list):
                 stack.extend(value)
-        index_repos = len({str(item.get("repo")) for item in index_data.get("frameworks", []) if isinstance(item, dict) and item.get("repo")})
+        index_repos = len(extract_repos(index_data))
     pages = iter_pages()
     ids: dict[str, str] = {}
     for page in pages:

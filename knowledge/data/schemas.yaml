@@ -101,26 +101,32 @@ pr-page-skipped-audit:
   constraints:
     sort_order: "rows sorted by (repo, pr_number) ascending; byte-stable across re-runs"
 
-## Phase 4: data/refresh-cutoff.yaml (per AC-5). Single-field record of the
-## refresh cutoff date used by scripts/refresh_candidate_ledger.py.
+## data/refresh-cutoff.yaml. Refresh window record maintained by
+## scripts/expand-pr-corpus.py.
 refresh-cutoff:
   required:
+    - start_date
     - cutoff_date
+    - updated_at
+    - policy
+    - repo_ids
   optional:
     - notes
 
-## Phase 4: data/refresh-search-results.yaml (per AC-5). Per-repo search
-## results from scripts/refresh_candidate_ledger.py. Byte-stable for
-## identical query inputs.
+## data/refresh-search-results.yaml. Per-repo GitHub search results from
+## scripts/expand-pr-corpus.py --live-search.
 refresh-search-results:
   required:
+    - schema_version
+    - start_date
     - cutoff_date
+    - generated_at
     - repos
   repo_schema:
     required:
       - repo_slug
       - searched_at
-      - cutoff_date_used
+      - scan_start_date
       - pr_numbers_seen
       - last_pr_date_seen
     constraints:

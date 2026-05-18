@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""Expand the PR-diff-driven kernel corpus from legacy seeds and GitHub search."""
+"""Expand the PR candidate corpus from the current source map and GitHub search."""
 
 from __future__ import annotations
 
 import argparse
 import json
-import re
 import subprocess
 import sys
 import time
@@ -20,27 +19,8 @@ from _knowledge_root import knowledge_root
 
 
 CATALOG_PATH = Path("data") / "repo-catalog.yaml"
-LEGACY_SEEDS_PATH = Path("data") / "legacy-pr-seeds.yaml"
-OPEN_WATCHLIST_PATH = Path("data") / "open-pr-watchlist.yaml"
 REFRESH_CUTOFF_PATH = Path("data") / "refresh-cutoff.yaml"
 REFRESH_RESULTS_PATH = Path("data") / "refresh-search-results.yaml"
-
-PR_DRIVEN_IDS = {
-    "sglang",
-    "vllm",
-    "tensorrt-llm",
-    "pytorch",
-    "flash-attention",
-    "flashinfer",
-    "cutlass",
-    "cccl-cub",
-    "triton",
-    "deepgemm",
-    "thunderkittens",
-    "tilelang",
-    "quack",
-    "tilekernels",
-}
 
 DUPLICATE_OF = {
     "cute-dsl": "cutlass",
@@ -81,28 +61,8 @@ def run(cmd: list[str], *, timeout: int = 120) -> str:
     return subprocess.check_output(cmd, text=True, timeout=timeout)
 
 
-def git_show(ref: str, path: str) -> str | None:
-    try:
-        return run(["git", "show", f"{ref}:{path}"], timeout=60)
-    except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
-        return None
-
-
-def read_legacy_json(ref: str, path: str) -> dict[str, Any] | None:
-    text = git_show(ref, path)
-    if not text:
-        return None
-    return json.loads(text)
-
-
 def today_utc() -> str:
     return datetime.now(timezone.utc).date().isoformat()
-
-
-def normalize_repo_id(value: str) -> str:
-    value = value.strip()
-    value = value.split("/")[-1] if "/" in value and not value.startswith("http") else value
-    return re.sub(r"[^a-z0-9._-]+", "-", value.lower()).strip("-")
 
 
 def infer_architectures(text: str) -> list[str]:
@@ -189,98 +149,8 @@ def infer_techniques(text: str) -> list[str]:
     return sorted({technique for token, technique in pairs if token in lower})
 
 
-def entry_text(entry: dict[str, Any]) -> str:
-    bits = [
-        str(entry.get("title") or ""),
-        str(entry.get("what_changed") or ""),
-        " ".join(entry.get("matched_queries") or []),
-        " ".join(entry.get("categories") or []),
-        " ".join(entry.get("key_paths") or entry.get("changed_paths") or entry.get("files_changed") or []),
-    ]
-    buckets = entry.get("path_buckets") or {}
-    for values in buckets.values():
-        bits.append(" ".join(values or []))
-    return " ".join(bits)
-
-
-def path_buckets_to_paths(entry: dict[str, Any]) -> list[str]:
-    paths = list(entry.get("key_paths") or entry.get("changed_paths") or entry.get("files_changed") or [])
-    buckets = entry.get("path_buckets") or {}
-    for values in buckets.values():
-        paths.extend(values or [])
-    seen = set()
-    out = []
-    for path in paths:
-        if path not in seen:
-            out.append(path)
-            seen.add(path)
-    return out[:80]
-
-
-def convert_legacy_pr(repo_id: str, repo_full: str, pr: dict[str, Any], cutoff: date) -> dict[str, Any] | None:
-    merged_at = pr.get("merged_at") or pr.get("updated_at") or ""
-    if merged_at:
-        merged_date = date.fromisoformat(merged_at[:10])
-        if merged_date > cutoff:
-            return None
-    text = entry_text(pr)
-    categories = list(pr.get("categories") or [])
-    number = int(pr["number"])
-    tags = sorted(set(categories + list(pr.get("matched_queries") or [])))
-    return {
-        "number": number,
-        "pr": number,
-        "title": pr.get("title", f"PR-{number}"),
-        "repo": repo_full,
-        "url": pr.get("url", f"https://github.com/{repo_full}/pull/{number}"),
-        "date": (merged_at or pr.get("updated_at") or "")[:10],
-        "merged_at": merged_at,
-        "decision": "include",
-        "status": "merged",
-        "reason": "legacy PR seed promoted into PR-diff corpus",
-        "inclusion_reason": pr.get("optimization_recipe") or pr.get("what_changed") or "curated CUDA kernel optimization PR seed",
-        "seed_source": "legacy-pr-index",
-        "primary_category": pr.get("primary_category"),
-        "categories": categories,
-        "tags": tags,
-        "architectures": infer_architectures(text),
-        "techniques": infer_techniques(text),
-        "hardware_features": infer_hardware_features(text),
-        "kernel_types": infer_kernel_types(text, categories),
-        "languages": infer_languages(text),
-        "changed_paths": path_buckets_to_paths(pr),
-        "score": pr.get("score"),
-        "ncu_hint": pr.get("ncu_hint"),
-    }
-
-
-def make_catalog(old_index: dict[str, Any] | None, start: str, cutoff: str) -> dict[str, Any]:
-    frameworks = []
-    for framework in (old_index or {}).get("frameworks", []):
-        rid = framework["id"]
-        entry = {
-            "id": rid,
-            "name": framework.get("name", rid),
-            "repo": framework.get("repo"),
-            "url": framework.get("url"),
-            "kernel_paths": framework.get("kernel_paths") or [],
-            "tags": framework.get("tags") or [],
-            "start_date": start,
-            "cutoff_date": cutoff,
-            "scan_mode": "pr-diff" if rid in PR_DRIVEN_IDS else "source-reference",
-        }
-        if rid in DUPLICATE_OF:
-            entry["scan_mode"] = "duplicate-pr-view"
-            entry["duplicate_of"] = DUPLICATE_OF[rid]
-        frameworks.append(entry)
-    return {
-        "schema_version": 1,
-        "generated_at": today_utc(),
-        "start_date": start,
-        "cutoff_date": cutoff,
-        "source": "legacy knowledge/index.json plus PR-diff policy",
-        "frameworks": frameworks,
-    }
+def load_json(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def load_yaml(path: Path) -> dict[str, Any]:
@@ -292,6 +162,37 @@ def load_yaml(path: Path) -> dict[str, Any]:
 def save_yaml(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(yaml.safe_dump(payload, sort_keys=False, allow_unicode=True, width=200), encoding="utf-8")
+
+
+def build_catalog(root: Path, start: str, cutoff: str) -> dict[str, Any]:
+    index = load_json(root / "index.json")
+    candidate_ids = {path.stem for path in (root / "candidates").glob("*.yaml")}
+    frameworks = []
+    for framework in index.get("frameworks", []):
+        rid = framework["id"]
+        entry = {
+            "id": rid,
+            "name": framework.get("name", rid),
+            "repo": framework.get("repo"),
+            "url": framework.get("url"),
+            "kernel_paths": framework.get("kernel_paths") or [],
+            "tags": framework.get("tags") or [],
+            "start_date": start,
+            "cutoff_date": cutoff,
+            "scan_mode": "pr-diff" if rid in candidate_ids else "source-reference",
+        }
+        if rid in DUPLICATE_OF:
+            entry["scan_mode"] = "duplicate-pr-view"
+            entry["duplicate_of"] = DUPLICATE_OF[rid]
+        frameworks.append(entry)
+    return {
+        "schema_version": 1,
+        "generated_at": today_utc(),
+        "start_date": start,
+        "cutoff_date": cutoff,
+        "source": "knowledge/index.json plus PR candidate ledgers",
+        "frameworks": frameworks,
+    }
 
 
 def merge_entries(ledger: dict[str, Any], entries: list[dict[str, Any]], repo: str, cutoff: str, start: str) -> tuple[dict[str, Any], int]:
@@ -382,7 +283,7 @@ def live_search_entries(repo_id: str, repo: str, keywords: list[str], start: str
                 "status": "merged",
                 "reason": f"github search seed: {', '.join(sorted(reasons.get(number, [])))}",
                 "inclusion_reason": "Search-matched CUDA kernel optimization PR; materialize diff/source before synthesis.",
-                "seed_source": "github-search-2024-window",
+                "seed_source": "github-search",
                 "tags": sorted(reasons.get(number, [])),
                 "architectures": infer_architectures(text),
                 "techniques": infer_techniques(text),
@@ -432,7 +333,6 @@ def write_refresh_results(root: Path, start: str, cutoff: str, per_repo: dict[st
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--legacy-ref", default="origin/main")
     parser.add_argument("--start", default="2024-01-01")
     parser.add_argument("--cutoff", default=date.today().isoformat())
     parser.add_argument("--live-search", action="store_true")
@@ -443,72 +343,16 @@ def main() -> int:
     args = parser.parse_args()
 
     root = knowledge_root()
-    cutoff_date = date.fromisoformat(args.cutoff)
+    catalog = build_catalog(root, args.start, args.cutoff)
+    save_yaml(root / CATALOG_PATH, catalog)
 
-    old_index = read_legacy_json(args.legacy_ref, "knowledge/index.json")
-    legacy_pr_index = read_legacy_json(args.legacy_ref, "knowledge/references/prs/pr-index.json")
-    if old_index:
-        save_yaml(root / CATALOG_PATH, make_catalog(old_index, args.start, args.cutoff))
-
-    legacy_seed_rows: dict[str, list[dict[str, Any]]] = {}
-    legacy_seed_doc = {
-        "schema_version": 1,
-        "generated_at": today_utc(),
-        "source": f"{args.legacy_ref}:knowledge/references/prs/pr-index.json",
-        "start_date": args.start,
-        "cutoff_date": args.cutoff,
-        "repos": [],
-    }
-    if legacy_pr_index:
-        for repo_entry in legacy_pr_index.get("repositories", []):
-            repo_id = repo_entry["id"]
-            repo_full = repo_entry["repo"]
-            entries = []
-            for pr in repo_entry.get("pull_requests", []):
-                converted = convert_legacy_pr(repo_id, repo_full, pr, cutoff_date)
-                if converted:
-                    entries.append(converted)
-            legacy_seed_rows[repo_id] = entries
-            legacy_seed_doc["repos"].append(
-                {
-                    "repo_id": repo_id,
-                    "repo": repo_full,
-                    "selected_count": len(entries),
-                    "pr_numbers": [entry["number"] for entry in entries],
-                }
-            )
-        watchlist = {
-            "schema_version": 1,
-            "generated_at": today_utc(),
-            "source": f"{args.legacy_ref}:knowledge/references/prs/pr-index.json",
-            "note": "Open PRs are watchlist seeds only; they are not materialized as merged evidence bundles.",
-            "entries": legacy_pr_index.get("open_watchlist", []),
-        }
-        save_yaml(root / OPEN_WATCHLIST_PATH, watchlist)
-    save_yaml(root / LEGACY_SEEDS_PATH, legacy_seed_doc)
-
-    catalog = load_yaml(root / CATALOG_PATH)
     repo_catalog = {entry["id"]: entry for entry in catalog.get("frameworks", []) if entry.get("scan_mode") == "pr-diff"}
-    if not repo_catalog and legacy_pr_index:
-        repo_catalog = {repo["id"]: {"repo": repo["repo"], "tags": []} for repo in legacy_pr_index.get("repositories", [])}
-
     target_live_repos = sorted(repo_catalog)
     if args.repos:
         requested = {item.strip() for item in args.repos.split(",") if item.strip()}
         target_live_repos = [repo_id for repo_id in target_live_repos if repo_id in requested]
 
     all_seen: dict[str, list[dict[str, Any]]] = {}
-    for repo_id, entries in legacy_seed_rows.items():
-        repo_full = entries[0]["repo"] if entries else (repo_catalog.get(repo_id) or {}).get("repo")
-        if not repo_full:
-            continue
-        ledger_path = root / "candidates" / f"{repo_id}.yaml"
-        ledger = load_yaml(ledger_path)
-        ledger, added = merge_entries(ledger, entries, repo_full, args.cutoff, args.start)
-        save_yaml(ledger_path, ledger)
-        all_seen.setdefault(repo_id, []).extend(entries)
-        print(f"legacy {repo_id}: {len(entries)} seeds, +{added} ledger rows")
-
     if args.live_search:
         for repo_id in target_live_repos:
             info = repo_catalog[repo_id]
@@ -526,11 +370,22 @@ def main() -> int:
             print(f"  -> {len(entries)} search seeds, +{added} ledger rows", flush=True)
             if args.sleep:
                 time.sleep(args.sleep)
+        write_refresh_results(root, args.start, args.cutoff, all_seen)
+    else:
+        print("live search disabled; refreshed repo catalog only")
 
     write_cutoff(root, args.start, args.cutoff, sorted(repo_catalog))
-    write_refresh_results(root, args.start, args.cutoff, all_seen)
 
-    print(json.dumps({"repos": len(repo_catalog), "seed_repos": len(legacy_seed_rows), "seen_prs": sum(len(v) for v in all_seen.values())}, indent=2))
+    print(
+        json.dumps(
+            {
+                "catalog_entries": len(catalog.get("frameworks", [])),
+                "pr_repos": len(repo_catalog),
+                "seen_prs": sum(len(v) for v in all_seen.values()),
+            },
+            indent=2,
+        )
+    )
     return 0
 
 

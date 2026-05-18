@@ -45,7 +45,7 @@ def parse_markdown(path: Path) -> Page:
     return Page(path, relpath(path), meta, body)
 
 
-def iter_pages(*, include_queries: bool = False) -> list[Page]:
+def iter_pages() -> list[Page]:
     root = knowledge_root()
     bases = [root / "sources" / "prs"]
     pages: list[Page] = []

@@ -1,8 +1,8 @@
 schema_version: 1
-generated_at: '2026-05-16'
+generated_at: '2026-05-18'
 start_date: '2024-01-01'
 cutoff_date: '2026-05-16'
-source: legacy knowledge/index.json plus PR-diff policy
+source: knowledge/index.json plus PR candidate ledgers
 frameworks:
 - id: sglang
   name: SGLang
@@ -345,3 +345,121 @@ frameworks:
   start_date: '2024-01-01'
   cutoff_date: '2026-05-16'
   scan_mode: pr-diff
+- id: nvidia-code-samples
+  name: NVIDIA Developer Code Samples
+  repo: NVIDIA-developer-blog/code-samples
+  url: https://github.com/NVIDIA-developer-blog/code-samples
+  kernel_paths:
+  - posts
+  - Samples
+  - src
+  - README.md
+  tags:
+  - cuda-samples
+  - gemm
+  - transpose
+  - coalescing
+  - shared-memory
+  - bank-conflicts
+  - reduction
+  - occupancy
+  start_date: '2024-01-01'
+  cutoff_date: '2026-05-16'
+  scan_mode: source-reference
+- id: simveit-effective-transpose
+  name: simveit effective_transpose
+  repo: simveit/effective_transpose
+  url: https://github.com/simveit/effective_transpose
+  kernel_paths:
+  - .
+  - src
+  - examples
+  - README.md
+  tags:
+  - cute-dsl
+  - quack
+  - gemm
+  - tma
+  - wgmma
+  - swizzle
+  - transpose
+  - rmsnorm
+  - block-scaled
+  - nvfp4
+  - gdn
+  - hopper
+  - blackwell
+  start_date: '2024-01-01'
+  cutoff_date: '2026-05-16'
+  scan_mode: source-reference
+- id: simveit-load-and-store
+  name: simveit load_and_store
+  repo: simveit/load_and_store
+  url: https://github.com/simveit/load_and_store
+  kernel_paths:
+  - .
+  - src
+  - examples
+  - README.md
+  tags:
+  - cute-dsl
+  - load-store
+  - gemm
+  - tma
+  - wgmma
+  - shared-memory
+  - hopper
+  - blackwell
+  start_date: '2024-01-01'
+  cutoff_date: '2026-05-16'
+  scan_mode: source-reference
+- id: colfax-article-src
+  name: Colfax article source kernels
+  repo: ColfaxResearch/cfx-article-src
+  url: https://github.com/ColfaxResearch/cfx-article-src
+  kernel_paths:
+  - tma
+  - pipeline-gemm
+  - streamk
+  - transpose-cute
+  - cutlass_gemm
+  tags:
+  - cutlass
+  - cute
+  - cute-dsl
+  - gemm
+  - attention
+  - tma
+  - wgmma
+  - stream-k
+  - persistent
+  - transpose
+  - block-scaled
+  - blackwell
+  - hopper
+  start_date: '2024-01-01'
+  cutoff_date: '2026-05-16'
+  scan_mode: source-reference
+- id: colfax-cutlass-kernels
+  name: Colfax CUTLASS kernels
+  repo: ColfaxResearch/cutlass-kernels
+  url: https://github.com/ColfaxResearch/cutlass-kernels
+  kernel_paths:
+  - src
+  - lib/gemm
+  - include
+  - examples
+  - README.md
+  tags:
+  - cutlass
+  - cute
+  - gemm
+  - tma
+  - wgmma
+  - stream-k
+  - persistent
+  - blackwell
+  - hopper
+  start_date: '2024-01-01'
+  cutoff_date: '2026-05-16'
+  scan_mode: source-reference

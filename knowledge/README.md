@@ -116,7 +116,6 @@ Useful PR-corpus tooling:
 - `scripts/fetch-pr-evidence.py`
 - `scripts/materialize-source-prs.py`
 - `scripts/sync-pr-evidence-metadata.py`
-- `scripts/refresh_candidate_ledger.py`
 
 ## Layout
 
@@ -135,7 +134,6 @@ knowledge/
 |   |-- generate-pr-pages.py
 |   |-- materialize-source-prs.py
 |   |-- expand-pr-corpus.py
-|   |-- refresh_candidate_ledger.py
 |   |-- sync-pr-evidence-metadata.py
 |   |-- clone-index-repos.py
 |   `-- search-index-repos.py

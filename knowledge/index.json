@@ -358,8 +358,8 @@
       ]
     },
     {
-      "id": "cuda-blog-kernels",
-      "name": "CUDA Blog Companion Kernels",
+      "id": "nvidia-code-samples",
+      "name": "NVIDIA Developer Code Samples",
       "repo": "NVIDIA-developer-blog/code-samples",
       "url": "https://github.com/NVIDIA-developer-blog/code-samples",
       "kernel_paths": [
@@ -369,7 +369,7 @@
         "README.md"
       ],
       "tags": [
-        "cuda-blog",
+        "cuda-samples",
         "gemm",
         "transpose",
         "coalescing",
@@ -380,22 +380,17 @@
       ]
     },
     {
-      "id": "veitner-blog",
-      "name": "Veitner Blog And Code",
+      "id": "simveit-effective-transpose",
+      "name": "simveit effective_transpose",
       "repo": "simveit/effective_transpose",
-      "url": "https://veitner.bearblog.dev/blog/",
+      "url": "https://github.com/simveit/effective_transpose",
       "kernel_paths": [
-        "https://github.com/simveit/effective_transpose",
-        "https://github.com/simveit/load_and_store",
-        "https://gist.github.com/simveit",
-        "an-applied-introduction-to-cutedsl",
-        "sgemm-in-cutedsl",
-        "making-matrix-transpose-really-fast-on-hopper-gpus",
-        "simple-reduction-in-cutedsl",
-        "grouped-blockscaled-gemm-kernel"
+        ".",
+        "src",
+        "examples",
+        "README.md"
       ],
       "tags": [
-        "blog-code",
         "cute-dsl",
         "quack",
         "gemm",
@@ -412,23 +407,40 @@
       ]
     },
     {
-      "id": "colfax-research",
-      "name": "Colfax Research Blog And Code",
-      "repo": "ColfaxResearch/cfx-article-src",
-      "url": "https://research.colfax-intl.com/blog/",
+      "id": "simveit-load-and-store",
+      "name": "simveit load_and_store",
+      "repo": "simveit/load_and_store",
+      "url": "https://github.com/simveit/load_and_store",
       "kernel_paths": [
-        "https://github.com/ColfaxResearch/cfx-article-src",
-        "https://github.com/ColfaxResearch/cutlass-kernels",
-        "cfx-article-src/tma",
-        "cfx-article-src/pipeline-gemm",
-        "cfx-article-src/streamk",
-        "cfx-article-src/transpose-cute",
-        "cfx-article-src/cutlass_gemm",
-        "cutlass-kernels/src",
-        "cutlass-kernels/lib/gemm"
+        ".",
+        "src",
+        "examples",
+        "README.md"
       ],
       "tags": [
-        "blog-code",
+        "cute-dsl",
+        "load-store",
+        "gemm",
+        "tma",
+        "wgmma",
+        "shared-memory",
+        "hopper",
+        "blackwell"
+      ]
+    },
+    {
+      "id": "colfax-article-src",
+      "name": "Colfax article source kernels",
+      "repo": "ColfaxResearch/cfx-article-src",
+      "url": "https://github.com/ColfaxResearch/cfx-article-src",
+      "kernel_paths": [
+        "tma",
+        "pipeline-gemm",
+        "streamk",
+        "transpose-cute",
+        "cutlass_gemm"
+      ],
+      "tags": [
         "cutlass",
         "cute",
         "cute-dsl",
@@ -440,6 +452,30 @@
         "persistent",
         "transpose",
         "block-scaled",
+        "blackwell",
+        "hopper"
+      ]
+    },
+    {
+      "id": "colfax-cutlass-kernels",
+      "name": "Colfax CUTLASS kernels",
+      "repo": "ColfaxResearch/cutlass-kernels",
+      "url": "https://github.com/ColfaxResearch/cutlass-kernels",
+      "kernel_paths": [
+        "src",
+        "lib/gemm",
+        "include",
+        "examples",
+        "README.md"
+      ],
+      "tags": [
+        "cutlass",
+        "cute",
+        "gemm",
+        "tma",
+        "wgmma",
+        "stream-k",
+        "persistent",
         "blackwell",
         "hopper"
       ]
@@ -462,8 +498,10 @@
         "tilelang",
         "cute-dsl",
         "quack",
-        "veitner-blog",
-        "colfax-research"
+        "simveit-effective-transpose",
+        "simveit-load-and-store",
+        "colfax-article-src",
+        "colfax-cutlass-kernels"
       ],
       "tags": [
         "attention",
@@ -490,9 +528,11 @@
         "cute-dsl",
         "quack",
         "tilekernels",
-        "cuda-blog-kernels",
-        "veitner-blog",
-        "colfax-research"
+        "nvidia-code-samples",
+        "simveit-effective-transpose",
+        "simveit-load-and-store",
+        "colfax-article-src",
+        "colfax-cutlass-kernels"
       ],
       "tags": [
         "gemm",
@@ -515,8 +555,10 @@
         "tilelang",
         "tilekernels",
         "cute-dsl",
-        "veitner-blog",
-        "colfax-research"
+        "simveit-effective-transpose",
+        "simveit-load-and-store",
+        "colfax-article-src",
+        "colfax-cutlass-kernels"
       ],
       "tags": [
         "moe",
@@ -539,8 +581,8 @@
         "cccl-cub",
         "tilelang",
         "quack",
-        "cuda-blog-kernels",
-        "veitner-blog"
+        "nvidia-code-samples",
+        "simveit-effective-transpose"
       ],
       "tags": [
         "rmsnorm",
@@ -580,7 +622,7 @@
         "tilelang",
         "tilekernels",
         "quack",
-        "veitner-blog"
+        "simveit-effective-transpose"
       ],
       "tags": [
         "silu",
@@ -622,8 +664,10 @@
         "tilekernels",
         "cute-dsl",
         "quack",
-        "veitner-blog",
-        "colfax-research"
+        "simveit-effective-transpose",
+        "simveit-load-and-store",
+        "colfax-article-src",
+        "colfax-cutlass-kernels"
       ],
       "tags": [
         "fp8",
