@@ -191,9 +191,6 @@ python3 scripts/query.py --repo pytorch/pytorch --compact
 python3 scripts/get_page.py pr-pytorch-157241
 ```
 
-If using the PR route, MUST NOT treat a PR match as sufficient before all local
-PR pages or all materialized `review.diff` files have been searched.
-
 `knowledge/index.json` may be used as a source-map reference for live research.
 Clone command for the full referenced GitHub repo set:
 
@@ -234,15 +231,13 @@ Typical query flow:
 
 Guardrails for knowledge research:
 
-1. MUST NOT use PR-route evidence without broad routing by architecture, repo,
-   tag, operator, bottleneck, or exact instruction/feature term.
-2. MUST NOT claim full PR-route coverage without diff-level search across all
+1. MUST NOT claim full PR-route coverage without diff-level search across all
    repositories when the implementation detail matters.
-3. MUST NOT borrow an idea from a PR page before opening the materialized
+2. MUST NOT borrow an idea from a PR page before opening the materialized
    `review.diff`, `ORIGIN.yaml`, `upstream.json`, and `source-snapshot/` files.
-4. MUST NOT use `knowledge/index.json` source discovery before the complete
+3. MUST NOT use `knowledge/index.json` source discovery before the complete
    referenced repo set has been cloned.
-5. MUST NOT demote live web search, official docs, GitHub PR pages, or related
+4. MUST NOT demote live web search, official docs, GitHub PR pages, or related
    upstream source code below the PR/source-map routes.
 
 Shared example: for `FlashAttention SM100 SplitKV`, the PR route can find

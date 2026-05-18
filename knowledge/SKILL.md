@@ -19,9 +19,7 @@ route before broad search evidence for that route exists.
 
 ## Route A: Local PR Diffs
 
-The PR route searches the whole local PR corpus. The agent MUST NOT treat a PR
-match as sufficient until corpus-wide search across all PR pages and/or all
-materialized `review.diff` files has been attempted.
+The PR route uses local PR pages and materialized `review.diff` files.
 
 ```bash
 python3 scripts/query.py "flash attention sm100 splitkv" --compact --limit 50

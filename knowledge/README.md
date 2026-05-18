@@ -30,8 +30,7 @@ others.
 
 ### Route A: Local PR Diffs
 
-The agent MUST NOT treat a PR match as sufficient until broad search across all
-local PR pages or all materialized PR diffs has been attempted.
+The PR route uses local PR pages and materialized PR diffs.
 
 ```bash
 python3 scripts/query.py "<keywords>" [--repo owner/name] [--tag tag] [--architecture sm100] [--language cute-dsl] [--kernel-type attention] --compact
