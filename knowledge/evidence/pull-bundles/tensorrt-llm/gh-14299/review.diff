@@ -1,0 +1,90 @@
+diff --git a/tensorrt_llm/_torch/model_config.py b/tensorrt_llm/_torch/model_config.py
+index 308f079ea1e0..b7fba4c9f993 100644
+--- a/tensorrt_llm/_torch/model_config.py
++++ b/tensorrt_llm/_torch/model_config.py
+@@ -538,6 +538,16 @@ def _detect_deepseek_v4_routed_moe_layout(
+             return "nvfp4"
+         return None
+ 
++    @staticmethod
++    def _is_deepseek_v4_base_checkpoint(checkpoint_dir: str) -> bool:
++        tensor_info = ModelConfig._get_safetensors_header_for_tensor(
++            checkpoint_dir, _DEEPSEEK_V4_ROUTED_EXPERT_WEIGHT)
++        if tensor_info is None:
++            return False
++
++        return ModelConfig._detect_deepseek_v4_routed_moe_layout(
++            checkpoint_dir) not in ("mxfp4", "nvfp4")
++
+     @staticmethod
+     def _has_deepseek_v4_layer_only_modelopt_quant_config(
+             quant_config_file: str) -> bool:
+@@ -779,6 +789,11 @@ def update_sparse_attention_indexer_config(pretrained_config, kwargs):
+                             indexer_k_dtype=indexer_k_dtype)
+                 elif pretrained_config.architectures[
+                         0] == "DeepseekV4ForCausalLM":
++                    if cls._is_deepseek_v4_base_checkpoint(checkpoint_dir):
++                        logger.warning(
++                            "Support for DeepSeek-V4 Base checkpoints is "
++                            "experimental. For better supported behavior, use "
++                            "a DeepSeek-V4 Instruct checkpoint.")
+                     indexer_config = update_sparse_attention_indexer_config(
+                         pretrained_config, kwargs)
+                     checkpoint_compress_ratios = getattr(
+diff --git a/tests/unittest/_torch/test_model_config.py b/tests/unittest/_torch/test_model_config.py
+index ba879df12c0d..78e5e6910265 100644
+--- a/tests/unittest/_torch/test_model_config.py
++++ b/tests/unittest/_torch/test_model_config.py
+@@ -1,9 +1,11 @@
++import json
++import struct
+ import types
+ 
+ import pytest
+ import torch
+ 
+-from tensorrt_llm._torch.model_config import ModelConfig
++from tensorrt_llm._torch.model_config import _DEEPSEEK_V4_ROUTED_EXPERT_WEIGHT, ModelConfig
+ from tensorrt_llm._torch.pyexecutor.model_loader import validate_and_set_kv_cache_quant
+ from tensorrt_llm.mapping import Mapping
+ from tensorrt_llm.models.modeling_utils import QuantAlgo, QuantConfig
+@@ -116,3 +118,39 @@ def test_validate_and_set_kv_cache_quant_rejects_invalid_dtype():
+     model_config = _make_model_config_with_kv_quant(QuantAlgo.FP8)
+     with pytest.raises(ValueError, match="Accepted types are"):
+         validate_and_set_kv_cache_quant(model_config, "invalid_dtype")
++
++
++def _write_safetensors_header(checkpoint_dir, tensor_dtype, tensor_shape):
++    shard_name = "model-00001-of-00001.safetensors"
++    header = {
++        _DEEPSEEK_V4_ROUTED_EXPERT_WEIGHT: {
++            "dtype": tensor_dtype,
++            "shape": tensor_shape,
++            "data_offsets": [0, 0],
++        }
++    }
++    encoded_header = json.dumps(header).encode("utf-8")
++
++    with open(checkpoint_dir / shard_name, "wb") as f:
++        f.write(struct.pack("<Q", len(encoded_header)))
++        f.write(encoded_header)
++
++    with open(checkpoint_dir / "model.safetensors.index.json", "w") as f:
++        json.dump({"weight_map": {_DEEPSEEK_V4_ROUTED_EXPERT_WEIGHT: shard_name}}, f)
++
++
++@pytest.mark.parametrize(
++    "tensor_dtype,tensor_shape,expected_layout,expected_is_base",
++    [
++        pytest.param("I8", [2048, 2048], "mxfp4", False, id="mxfp4"),
++        pytest.param("U8", [2048, 2048], "nvfp4", False, id="nvfp4"),
++        pytest.param("F8_E4M3", [2048, 4096], None, True, id="base-fp8"),
++    ],
++)
++def test_deepseek_v4_base_checkpoint_detection(
++    tmp_path, tensor_dtype, tensor_shape, expected_layout, expected_is_base
++):
++    _write_safetensors_header(tmp_path, tensor_dtype, tensor_shape)
++
++    assert ModelConfig._detect_deepseek_v4_routed_moe_layout(str(tmp_path)) == expected_layout
++    assert ModelConfig._is_deepseek_v4_base_checkpoint(str(tmp_path)) is expected_is_base

@@ -1,0 +1,45 @@
+schema_version: 1
+source_key: flashinfer-ai/flashinfer#3268
+repo: flashinfer-ai/flashinfer
+repo_id: flashinfer
+pr_number: 3268
+title: Ameyn/gdn bf16 dispatcher and 4d pool
+url: https://github.com/flashinfer-ai/flashinfer/pull/3268
+state: closed
+merged_at: '2026-05-19T21:33:55Z'
+base_ref_oid: 194930ce26d07a7d9d558f29d98f0502baf9a22a
+head_ref_oid: 33df1480cc5c2f0f52902a86fc942df2b0341552
+captured_at: '2026-05-20T14:43:22.120610+00:00'
+architectures:
+- sm90
+architecture_families:
+- hopper
+tags:
+- cuda kernel
+- sm90
+techniques: []
+hardware_features:
+- hopper
+kernel_types:
+- decode
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: flashinfer/gdn_decode.py
+    local_path: source-snapshot/flashinfer/gdn_decode.py
+    ref: 33df1480cc5c2f0f52902a86fc942df2b0341552
+    status: modified
+    fetched: true
+  - source_path: flashinfer/gdn_kernels/gdn_decode_bf16_state.py
+    local_path: source-snapshot/flashinfer/gdn_kernels/gdn_decode_bf16_state.py
+    ref: 33df1480cc5c2f0f52902a86fc942df2b0341552
+    status: modified
+    fetched: true
+  - source_path: tests/gdn/test_decode_pretranspose_bf16_padded_pool.py
+    local_path: source-snapshot/tests/gdn/test_decode_pretranspose_bf16_padded_pool.py
+    ref: 33df1480cc5c2f0f52902a86fc942df2b0341552
+    status: added
+    fetched: true

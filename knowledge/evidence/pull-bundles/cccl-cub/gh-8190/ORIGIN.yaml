@@ -1,0 +1,53 @@
+schema_version: 1
+source_key: NVIDIA/cccl#8190
+repo: NVIDIA/cccl
+repo_id: cccl-cub
+pr_number: 8190
+title: '[STF] Move unstable_unique from STF to generic cudax utility'
+url: https://github.com/NVIDIA/cccl/pull/8190
+state: closed
+merged_at: '2026-05-19T20:49:03Z'
+base_ref_oid: 9378ff3ceda6f0b0e23474541c3645dac284317a
+head_ref_oid: b8f43826c98266a3ff84ff2e81c72d854f33abb1
+captured_at: '2026-05-20T14:48:35.665608+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- sort
+techniques: []
+hardware_features: []
+kernel_types:
+- sort
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: cudax/include/cuda/experimental/__stf/stream/internal/event_types.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__stf/stream/internal/event_types.cuh
+    ref: b8f43826c98266a3ff84ff2e81c72d854f33abb1
+    status: modified
+    fetched: true
+  - source_path: cudax/include/cuda/experimental/__utility/unstable_unique.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__utility/unstable_unique.cuh
+    ref: b8f43826c98266a3ff84ff2e81c72d854f33abb1
+    status: added
+    fetched: true
+  - source_path: cudax/test/CMakeLists.txt
+    local_path: source-snapshot/cudax/test/CMakeLists.txt
+    ref: b8f43826c98266a3ff84ff2e81c72d854f33abb1
+    status: modified
+    fetched: true
+  - source_path: cudax/test/stf/CMakeLists.txt
+    local_path: source-snapshot/cudax/test/stf/CMakeLists.txt
+    ref: b8f43826c98266a3ff84ff2e81c72d854f33abb1
+    status: modified
+    fetched: true
+  - source_path: cudax/test/utility/unstable_unique.cu
+    local_path: source-snapshot/cudax/test/utility/unstable_unique.cu
+    ref: b8f43826c98266a3ff84ff2e81c72d854f33abb1
+    status: added
+    fetched: true

@@ -1,0 +1,48 @@
+schema_version: 1
+source_key: vllm-project/vllm#42541
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42541
+title: '[Bugfix] fix swiglu limit issue for humming backend + deepseek v4'
+url: https://github.com/vllm-project/vllm/pull/42541
+state: closed
+merged_at: '2026-05-18T17:32:27Z'
+base_ref_oid: f5d3dc7115cf77472ba5e274f6becbbeddbf4bd5
+head_ref_oid: 39948aa7cf79f33ffeb31a43644d6dc27aa0357c
+captured_at: '2026-05-20T15:09:37.128881+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- moe
+- moe kernel
+techniques:
+- fine-grained-quantization
+- kernel-fusion
+hardware_features:
+- fp4
+- mxfp4
+kernel_types:
+- moe
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: vllm/model_executor/layers/fused_moe/experts/fused_humming_moe.py
+    local_path: source-snapshot/vllm/model_executor/layers/fused_moe/experts/fused_humming_moe.py
+    ref: 39948aa7cf79f33ffeb31a43644d6dc27aa0357c
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/fused_moe/oracle/mxfp4.py
+    local_path: source-snapshot/vllm/model_executor/layers/fused_moe/oracle/mxfp4.py
+    ref: 39948aa7cf79f33ffeb31a43644d6dc27aa0357c
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/quantization/utils/humming_utils.py
+    local_path: source-snapshot/vllm/model_executor/layers/quantization/utils/humming_utils.py
+    ref: 39948aa7cf79f33ffeb31a43644d6dc27aa0357c
+    status: modified
+    fetched: true

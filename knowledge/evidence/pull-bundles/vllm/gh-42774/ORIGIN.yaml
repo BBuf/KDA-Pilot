@@ -1,0 +1,63 @@
+schema_version: 1
+source_key: vllm-project/vllm#42774
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42774
+title: '[Perf] Padded nvfp4 quant kernel to remove additional copy, 2.4%~5.7% e2e
+  performance improvement'
+url: https://github.com/vllm-project/vllm/pull/42774
+state: closed
+merged_at: '2026-05-18T23:38:13Z'
+base_ref_oid: 78e7a7b9b0b9c285bf6978c3fc09eeecea3ff230
+head_ref_oid: 2ab18f0f9a750ce4c1aed1b3eaa0eeab7cbe83ef
+captured_at: '2026-05-20T15:08:24.487087+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- benchmark kernel
+- cuda kernel
+- cutlass
+- fp4
+- nvfp4
+- triton kernel
+techniques:
+- fine-grained-quantization
+hardware_features:
+- fp4
+- nvfp4
+kernel_types: []
+languages:
+- cuda-cpp
+- cute-dsl
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: csrc/libtorch_stable/quantization/fp4/nvfp4_quant_kernels.cu
+    local_path: source-snapshot/csrc/libtorch_stable/quantization/fp4/nvfp4_quant_kernels.cu
+    ref: 2ab18f0f9a750ce4c1aed1b3eaa0eeab7cbe83ef
+    status: modified
+    fetched: true
+  - source_path: tests/kernels/quantization/test_nvfp4_quant.py
+    local_path: source-snapshot/tests/kernels/quantization/test_nvfp4_quant.py
+    ref: 2ab18f0f9a750ce4c1aed1b3eaa0eeab7cbe83ef
+    status: modified
+    fetched: true
+  - source_path: vllm/_custom_ops.py
+    local_path: source-snapshot/vllm/_custom_ops.py
+    ref: 2ab18f0f9a750ce4c1aed1b3eaa0eeab7cbe83ef
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/kernels/linear/nvfp4/cutlass.py
+    local_path: source-snapshot/vllm/model_executor/kernels/linear/nvfp4/cutlass.py
+    ref: 2ab18f0f9a750ce4c1aed1b3eaa0eeab7cbe83ef
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/kernels/linear/nvfp4/flashinfer.py
+    local_path: source-snapshot/vllm/model_executor/kernels/linear/nvfp4/flashinfer.py
+    ref: 2ab18f0f9a750ce4c1aed1b3eaa0eeab7cbe83ef
+    status: modified
+    fetched: true

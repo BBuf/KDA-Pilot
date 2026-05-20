@@ -1,0 +1,48 @@
+schema_version: 1
+source_key: sgl-project/sglang#24611
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 24611
+title: '[Codex] Opt Mistral Large performace '
+url: https://github.com/sgl-project/sglang/pull/24611
+state: closed
+merged_at: '2026-05-19T02:59:52Z'
+base_ref_oid: be3c425788db359a8b47f832469e870078254944
+head_ref_oid: 366578aeb14d4c306153a29fa7d7ae39037257de
+captured_at: '2026-05-20T14:53:07.931896+00:00'
+architectures:
+- sm90
+architecture_families:
+- hopper
+tags:
+- cuda
+- fp8
+- moe
+- triton
+techniques: []
+hardware_features:
+- fp8
+kernel_types:
+- moe
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=128,N=1024,device_name=NVIDIA_H100_80GB_HBM3,dtype=fp8_w8a8.json
+    local_path: source-snapshot/python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=128,N=1024,device_name=NVIDIA_H100_80GB_HBM3,dtype=fp8_w8a8.json
+    ref: 366578aeb14d4c306153a29fa7d7ae39037257de
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=128,N=1024,device_name=NVIDIA_H100_80GB_HBM3,dtype=fp8_w8a8_down.json
+    local_path: source-snapshot/python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=128,N=1024,device_name=NVIDIA_H100_80GB_HBM3,dtype=fp8_w8a8_down.json
+    ref: 366578aeb14d4c306153a29fa7d7ae39037257de
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/server_args.py
+    local_path: source-snapshot/python/sglang/srt/server_args.py
+    ref: 366578aeb14d4c306153a29fa7d7ae39037257de
+    status: modified
+    fetched: true

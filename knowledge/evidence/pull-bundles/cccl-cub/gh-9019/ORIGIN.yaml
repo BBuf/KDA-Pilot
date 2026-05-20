@@ -1,0 +1,48 @@
+schema_version: 1
+source_key: NVIDIA/cccl#9019
+repo: NVIDIA/cccl
+repo_id: cccl-cub
+pr_number: 9019
+title: '[libcu++] Always suppress C++ extensions warnings in prologue'
+url: https://github.com/NVIDIA/cccl/pull/9019
+state: closed
+merged_at: '2026-05-19T17:22:19Z'
+base_ref_oid: 9c11be28468cb255aae5092d364fdd152de113f3
+head_ref_oid: 178905568cc03de216e3f7cd5d6327eaf487e67c
+captured_at: '2026-05-20T14:47:25.422484+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- block
+techniques:
+- epilogue-fusion
+hardware_features: []
+kernel_types: []
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: cudax/include/cuda/experimental/__execution/visit.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__execution/visit.cuh
+    ref: 178905568cc03de216e3f7cd5d6327eaf487e67c
+    status: modified
+    fetched: true
+  - source_path: libcudacxx/codegen/generate_prologue_epilogue.py
+    local_path: source-snapshot/libcudacxx/codegen/generate_prologue_epilogue.py
+    ref: 178905568cc03de216e3f7cd5d6327eaf487e67c
+    status: modified
+    fetched: true
+  - source_path: libcudacxx/include/cuda/std/__cccl/prologue.h
+    local_path: source-snapshot/libcudacxx/include/cuda/std/__cccl/prologue.h
+    ref: 178905568cc03de216e3f7cd5d6327eaf487e67c
+    status: modified
+    fetched: true
+  - source_path: libcudacxx/include/cuda/std/__type_traits/type_list.h
+    local_path: source-snapshot/libcudacxx/include/cuda/std/__type_traits/type_list.h
+    ref: 178905568cc03de216e3f7cd5d6327eaf487e67c
+    status: modified
+    fetched: true

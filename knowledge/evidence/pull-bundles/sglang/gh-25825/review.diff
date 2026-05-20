@@ -1,0 +1,362 @@
+diff --git a/python/sglang/srt/models/glm4_moe.py b/python/sglang/srt/models/glm4_moe.py
+index 155173731a2b..33ea9631d7e2 100644
+--- a/python/sglang/srt/models/glm4_moe.py
++++ b/python/sglang/srt/models/glm4_moe.py
+@@ -28,6 +28,7 @@
+ from sglang.srt.distributed import (
+     get_moe_expert_parallel_world_size,
+     get_pp_group,
++    get_pp_indices,
+     get_tensor_model_parallel_rank,
+     get_tensor_model_parallel_world_size,
+     parallel_state,
+@@ -187,6 +188,7 @@ def __init__(
+         num_heads: int,
+         num_kv_heads: int,
+         layer_id: int = 0,
++        start_layer: int = 0,
+         rope_theta: float = 1000000,
+         partial_rotary_factor: float = 0.5,
+         rope_scaling: Optional[Dict[str, Any]] = None,
+@@ -201,6 +203,7 @@ def __init__(
+     ) -> None:
+         super().__init__()
+         self.hidden_size = hidden_size
++        self.start_layer = start_layer
+ 
+         attn_tp_rank = get_attention_tp_rank()
+         attn_tp_size = get_attention_tp_size()
+@@ -312,7 +315,7 @@ def forward_prepare(
+                 )
+             q, k = self.rotary_emb(positions, q, k)
+         else:
+-            if self.attn.layer_id == forward_batch.token_to_kv_pool.start_layer:
++            if self.attn.layer_id == self.start_layer:
+                 self.rotary_emb.get_cos_sin_with_position(positions)
+             if self.use_qk_norm:
+                 eps = self.q_norm.variance_epsilon
+@@ -788,6 +791,7 @@ def __init__(
+         self,
+         config: PretrainedConfig,
+         layer_id: int,
++        start_layer: int = 0,
+         quant_config: Optional[QuantizationConfig] = None,
+         is_nextn: bool = False,
+         prefix: str = "",
+@@ -815,6 +819,7 @@ def __init__(
+             num_heads=config.num_attention_heads,
+             num_kv_heads=config.num_key_value_heads,
+             layer_id=layer_id,
++            start_layer=start_layer,
+             rope_theta=rope_theta,
+             rope_scaling=rope_scaling,
+             partial_rotary_factor=partial_rotary_factor,
+@@ -1073,10 +1078,16 @@ def __init__(
+             self.embed_tokens = PPMissingLayer()
+ 
+         self.alt_stream = torch.cuda.Stream() if _is_cuda else None
++        pp_start_layer, _ = get_pp_indices(
++            config.num_hidden_layers,
++            self.pp_group.rank_in_group,
++            self.pp_group.world_size,
++        )
+         self.layers, self.start_layer, self.end_layer = make_layers(
+             config.num_hidden_layers,
+             lambda idx, prefix: Glm4MoeDecoderLayer(
+                 layer_id=idx,
++                start_layer=pp_start_layer,
+                 config=config,
+                 quant_config=quant_config,
+                 prefix=prefix,
+diff --git a/python/sglang/srt/models/llama.py b/python/sglang/srt/models/llama.py
+index 9fc16874d082..22fa71563c72 100644
+--- a/python/sglang/srt/models/llama.py
++++ b/python/sglang/srt/models/llama.py
+@@ -27,6 +27,7 @@
+ 
+ from sglang.srt.distributed import (
+     get_pp_group,
++    get_pp_indices,
+     get_tensor_model_parallel_rank,
+     get_tensor_model_parallel_world_size,
+ )
+@@ -131,6 +132,7 @@ def __init__(
+         num_heads: int,
+         num_kv_heads: int,
+         layer_id: int = 0,
++        start_layer: int = 0,
+         rope_theta: float = 10000,
+         rope_scaling: Optional[Dict[str, Any]] = None,
+         rope_is_neox_style: bool = True,
+@@ -141,6 +143,7 @@ def __init__(
+     ) -> None:
+         super().__init__()
+         self.hidden_size = hidden_size
++        self.start_layer = start_layer
+         tp_size = get_tensor_model_parallel_world_size()
+         self.total_num_heads = num_heads
+         assert self.total_num_heads % tp_size == 0
+@@ -210,7 +213,7 @@ def forward_prepare_native(self, positions, hidden_states):
+ 
+     def forward_prepare_npu(self, positions, hidden_states, forward_batch):
+         qkv, _ = self.qkv_proj(hidden_states)
+-        if self.attn.layer_id == forward_batch.token_to_kv_pool.start_layer:
++        if self.attn.layer_id == self.start_layer:
+             self.rotary_emb.get_cos_sin_with_position(positions)
+         q, k, v = split_qkv_rmsnorm_rope(
+             qkv,
+@@ -254,6 +257,7 @@ def __init__(
+         self,
+         config: LlamaConfig,
+         layer_id: int = 0,
++        start_layer: int = 0,
+         quant_config: Optional[QuantizationConfig] = None,
+         prefix: str = "",
+     ) -> None:
+@@ -285,6 +289,7 @@ def __init__(
+             num_heads=config.num_attention_heads,
+             num_kv_heads=config.num_key_value_heads,
+             layer_id=layer_id,
++            start_layer=start_layer,
+             rope_theta=rope_theta,
+             rope_scaling=rope_scaling,
+             rope_is_neox_style=rope_is_neox_style,
+@@ -352,10 +357,19 @@ def __init__(
+         else:
+             self.embed_tokens = PPMissingLayer()
+ 
++        pp_start_layer, _ = get_pp_indices(
++            config.num_hidden_layers,
++            self.pp_group.rank_in_group,
++            self.pp_group.world_size,
++        )
+         self.layers, self.start_layer, self.end_layer = make_layers(
+             config.num_hidden_layers,
+             lambda idx, prefix: LlamaDecoderLayer(
+-                config=config, quant_config=quant_config, layer_id=idx, prefix=prefix
++                config=config,
++                quant_config=quant_config,
++                layer_id=idx,
++                start_layer=pp_start_layer,
++                prefix=prefix,
+             ),
+             pp_rank=self.pp_group.rank_in_group,
+             pp_size=self.pp_group.world_size,
+diff --git a/python/sglang/srt/models/llama_eagle.py b/python/sglang/srt/models/llama_eagle.py
+index 881731fdf2f3..30dc09b7cec4 100644
+--- a/python/sglang/srt/models/llama_eagle.py
++++ b/python/sglang/srt/models/llama_eagle.py
+@@ -44,7 +44,7 @@ def __init__(
+         quant_config: Optional[QuantizationConfig] = None,
+         prefix: str = "",
+     ) -> None:
+-        super().__init__(config, layer_id, quant_config, prefix)
++        super().__init__(config, layer_id, quant_config=quant_config, prefix=prefix)
+ 
+         # Skip the input_layernorm
+         # https://github.com/SafeAILab/EAGLE/blob/35c78f6cdc19a73e05cf5c330b4c358dad970c6a/eagle/model/cnets.py#L427
+diff --git a/python/sglang/srt/models/llama_eagle3.py b/python/sglang/srt/models/llama_eagle3.py
+index 1b2531c766fa..3ce58194313b 100644
+--- a/python/sglang/srt/models/llama_eagle3.py
++++ b/python/sglang/srt/models/llama_eagle3.py
+@@ -49,7 +49,7 @@ def __init__(
+         quant_config: Optional[QuantizationConfig] = None,
+         prefix: str = "",
+     ) -> None:
+-        super().__init__(config, layer_id, quant_config, prefix)
++        super().__init__(config, layer_id, quant_config=quant_config, prefix=prefix)
+ 
+         # Input layer concats embeds + target_hidden before qkv (input dim 2x).
+         self.is_input_layer = layer_id == 0
+diff --git a/python/sglang/srt/models/qwen2.py b/python/sglang/srt/models/qwen2.py
+index 39e404884d55..b7ddc653601d 100644
+--- a/python/sglang/srt/models/qwen2.py
++++ b/python/sglang/srt/models/qwen2.py
+@@ -24,6 +24,7 @@
+ 
+ from sglang.srt.distributed import (
+     get_pp_group,
++    get_pp_indices,
+     get_tensor_model_parallel_rank,
+     get_tensor_model_parallel_world_size,
+ )
+@@ -200,12 +201,14 @@ def __init__(
+         self,
+         config: Qwen2Config,
+         layer_id: int = 0,
++        start_layer: int = 0,
+         quant_config: Optional[QuantizationConfig] = None,
+         prefix: str = "",
+         alt_stream: Optional[torch.cuda.Stream] = None,
+     ) -> None:
+         super().__init__()
+         self.hidden_size = config.hidden_size
++        self.start_layer = start_layer
+         rope_theta, rope_scaling = get_rope_config(config)
+         max_position_embeddings = getattr(config, "max_position_embeddings", 32768)
+         head_dim = getattr(config, "head_dim", None)
+@@ -295,10 +298,16 @@ def __init__(
+ 
+         # Use the provided decoder layer type or default to Qwen2DecoderLayer
+         decoder_layer_type = decoder_layer_type or Qwen2DecoderLayer
++        pp_start_layer, _ = get_pp_indices(
++            config.num_hidden_layers,
++            self.pp_group.rank_in_group,
++            self.pp_group.world_size,
++        )
+         self.layers, self.start_layer, self.end_layer = make_layers(
+             config.num_hidden_layers,
+             lambda idx, prefix: decoder_layer_type(
+                 layer_id=idx,
++                start_layer=pp_start_layer,
+                 config=config,
+                 quant_config=quant_config,
+                 prefix=prefix,
+diff --git a/python/sglang/srt/models/qwen2_eagle.py b/python/sglang/srt/models/qwen2_eagle.py
+index 4b4c0ec41cdc..b5944d183499 100644
+--- a/python/sglang/srt/models/qwen2_eagle.py
++++ b/python/sglang/srt/models/qwen2_eagle.py
+@@ -45,7 +45,7 @@ def __init__(
+         quant_config: Optional[QuantizationConfig] = None,
+         prefix: str = "",
+     ) -> None:
+-        super().__init__(config, layer_id, quant_config, prefix=prefix)
++        super().__init__(config, layer_id, quant_config=quant_config, prefix=prefix)
+ 
+         # Skip the input_layernorm
+         # https://github.com/SafeAILab/EAGLE/blob/35c78f6cdc19a73e05cf5c330b4c358dad970c6a/eagle/model/cnets.py#L427
+diff --git a/python/sglang/srt/models/qwen2_moe.py b/python/sglang/srt/models/qwen2_moe.py
+index 8bdc0598e12a..aa79fb9436fc 100644
+--- a/python/sglang/srt/models/qwen2_moe.py
++++ b/python/sglang/srt/models/qwen2_moe.py
+@@ -32,6 +32,7 @@
+     get_moe_data_parallel_world_size,
+     get_moe_expert_parallel_world_size,
+     get_pp_group,
++    get_pp_indices,
+     get_tensor_model_parallel_world_size,
+     tensor_model_parallel_all_reduce,
+ )
+@@ -600,6 +601,7 @@ def __init__(
+         self,
+         config: PretrainedConfig,
+         layer_id: int,
++        start_layer: int = 0,
+         quant_config: Optional[QuantizationConfig] = None,
+         prefix: str = "",
+         alt_stream: Optional[torch.cuda.Stream] = None,
+@@ -607,6 +609,7 @@ def __init__(
+         super().__init__()
+         self.config = config
+         self.hidden_size = config.hidden_size
++        self.start_layer = start_layer
+         rope_theta, rope_scaling = get_rope_config(config)
+         max_position_embeddings = getattr(config, "max_position_embeddings", 8192)
+         qkv_bias = getattr(config, "qkv_bias", True)
+@@ -747,10 +750,16 @@ def __init__(
+ 
+         # Use the provided decoder layer type or default to Qwen2MoeDecoderLayer
+         decoder_layer_type = decoder_layer_type or Qwen2MoeDecoderLayer
++        pp_start_layer, _ = get_pp_indices(
++            config.num_hidden_layers,
++            self.pp_group.rank_in_group,
++            self.pp_group.world_size,
++        )
+         self.layers, self.start_layer, self.end_layer = make_layers(
+             config.num_hidden_layers,
+             lambda idx, prefix: decoder_layer_type(
+                 layer_id=idx,
++                start_layer=pp_start_layer,
+                 config=config,
+                 quant_config=quant_config,
+                 prefix=prefix,
+diff --git a/python/sglang/srt/models/qwen3.py b/python/sglang/srt/models/qwen3.py
+index 30333f9998c9..21d262b71806 100644
+--- a/python/sglang/srt/models/qwen3.py
++++ b/python/sglang/srt/models/qwen3.py
+@@ -64,6 +64,7 @@ def __init__(
+         num_heads: int,
+         num_kv_heads: int,
+         layer_id: int = 0,
++        start_layer: int = 0,
+         rope_theta: float = 1000000,
+         rope_scaling: Optional[Dict[str, Any]] = None,
+         head_dim: Optional[int] = None,
+@@ -76,6 +77,7 @@ def __init__(
+     ) -> None:
+         super().__init__()
+         self.hidden_size = hidden_size
++        self.start_layer = start_layer
+         self.tp_size = get_tensor_model_parallel_world_size()
+         self.total_num_heads = num_heads
+         attn_tp_rank = get_attention_tp_rank()
+@@ -181,7 +183,7 @@ def forward_prepare_native(self, positions, hidden_states):
+     def forward_prepare_npu(self, positions, hidden_states, forward_batch):
+         qkv, _ = self.qkv_proj(hidden_states)
+ 
+-        if self.attn.layer_id == forward_batch.token_to_kv_pool.start_layer:
++        if self.attn.layer_id == self.start_layer:
+             self.rotary_emb.get_cos_sin_with_position(positions)
+         q, k, v = split_qkv_rmsnorm_rope(
+             qkv,
+@@ -310,6 +312,7 @@ def __init__(
+         self,
+         config: Qwen3Config,
+         layer_id: int = 0,
++        start_layer: int = 0,
+         quant_config: Optional[QuantizationConfig] = None,
+         prefix: str = "",
+         alt_stream: Optional[torch.cuda.Stream] = None,
+@@ -333,6 +336,7 @@ def __init__(
+             num_heads=config.num_attention_heads,
+             num_kv_heads=config.num_key_value_heads,
+             layer_id=layer_id,
++            start_layer=start_layer,
+             rope_theta=rope_theta,
+             rope_scaling=rope_scaling,
+             head_dim=head_dim,
+diff --git a/python/sglang/srt/models/qwen3_moe.py b/python/sglang/srt/models/qwen3_moe.py
+index f255b90fde99..0887bfc3f6ad 100644
+--- a/python/sglang/srt/models/qwen3_moe.py
++++ b/python/sglang/srt/models/qwen3_moe.py
+@@ -445,6 +445,7 @@ def __init__(
+         num_heads: int,
+         num_kv_heads: int,
+         layer_id: int = 0,
++        start_layer: int = 0,
+         rope_theta: float = 10000,
+         rope_scaling: Optional[Dict[str, Any]] = None,
+         max_position_embeddings: int = 8192,
+@@ -459,6 +460,7 @@ def __init__(
+     ) -> None:
+         super().__init__()
+         self.hidden_size = hidden_size
++        self.start_layer = start_layer
+ 
+         attn_tp_rank = get_attention_tp_rank()
+         attn_tp_size = get_attention_tp_size()
+@@ -568,7 +570,7 @@ def forward_prepare_npu(
+         forward_batch: ForwardBatch,
+     ):
+         qkv, _ = self.qkv_proj(hidden_states)
+-        if self.attn.layer_id == forward_batch.token_to_kv_pool.start_layer:
++        if self.attn.layer_id == self.start_layer:
+             self.rotary_emb.get_cos_sin_with_position(positions)
+         q, k, v = split_qkv_rmsnorm_rope(
+             qkv,
+@@ -721,6 +723,7 @@ def __init__(
+         self,
+         config: Qwen3MoeConfig,
+         layer_id: int,
++        start_layer: int = 0,
+         quant_config: Optional[QuantizationConfig] = None,
+         prefix: str = "",
+         alt_stream: Optional[torch.cuda.Stream] = None,
+@@ -744,6 +747,7 @@ def __init__(
+             num_heads=config.num_attention_heads,
+             num_kv_heads=config.num_key_value_heads,
+             layer_id=layer_id,
++            start_layer=start_layer,
+             rope_theta=rope_theta,
+             rope_scaling=rope_scaling,
+             max_position_embeddings=max_position_embeddings,

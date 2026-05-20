@@ -1,0 +1,40 @@
+schema_version: 1
+source_key: tile-ai/tilelang#2219
+repo: tile-ai/tilelang
+repo_id: tilelang
+pr_number: 2219
+title: '[Perf] Enable fast math in sparse MLA example'
+url: https://github.com/tile-ai/tilelang/pull/2219
+state: closed
+merged_at: '2026-05-19T04:11:37Z'
+base_ref_oid: c2a9d9872de1bcba83851560c48d6b1c5b1db7bd
+head_ref_oid: 7b14deff047abae53d355eea079299632d93d074
+captured_at: '2026-05-20T15:03:01.922178+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- benchmark kernel
+- mla
+techniques:
+- pipeline-stages
+hardware_features: []
+kernel_types:
+- mla
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: examples/deepseek_v32/sparse_mla_fwd.py
+    local_path: source-snapshot/examples/deepseek_v32/sparse_mla_fwd.py
+    ref: 7b14deff047abae53d355eea079299632d93d074
+    status: modified
+    fetched: true
+  - source_path: examples/deepseek_v32/sparse_mla_fwd_pipelined.py
+    local_path: source-snapshot/examples/deepseek_v32/sparse_mla_fwd_pipelined.py
+    ref: 7b14deff047abae53d355eea079299632d93d074
+    status: modified
+    fetched: true

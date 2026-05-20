@@ -1,0 +1,60 @@
+schema_version: 1
+source_key: sgl-project/sglang#25554
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25554
+title: amd/deepseek_v4 27/N [fix] Reduce Triton autotune configs for faster first-time
+  server launch
+url: https://github.com/sgl-project/sglang/pull/25554
+state: closed
+merged_at: '2026-05-18T05:57:18Z'
+base_ref_oid: 054dd32ab3023559f9f88df65d565f57d233f3ca
+head_ref_oid: f6828b7ffd35ce1e839f680e5c60adfc0ddac5be
+captured_at: '2026-05-20T14:50:03.029717+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention kernel
+- benchmark kernel
+- cuda kernel
+- fp8
+- triton
+- triton kernel
+techniques:
+- autotuning
+- kernel-fusion
+hardware_features:
+- fp8
+kernel_types:
+- attention
+- decode
+- mla
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/layers/attention/nsa/triton_decode/triton_mla_kernels_decode_common.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/nsa/triton_decode/triton_mla_kernels_decode_common.py
+    ref: f6828b7ffd35ce1e839f680e5c60adfc0ddac5be
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/nsa/triton_decode/triton_mla_kernels_decode_dsv4.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/nsa/triton_decode/triton_mla_kernels_decode_dsv4.py
+    ref: f6828b7ffd35ce1e839f680e5c60adfc0ddac5be
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/nsa/triton_decode/triton_mla_kernels_decode_fused.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/nsa/triton_decode/triton_mla_kernels_decode_fused.py
+    ref: f6828b7ffd35ce1e839f680e5c60adfc0ddac5be
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/nsa/triton_decode/triton_mla_kernels_decode_splitk.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/nsa/triton_decode/triton_mla_kernels_decode_splitk.py
+    ref: f6828b7ffd35ce1e839f680e5c60adfc0ddac5be
+    status: modified
+    fetched: true

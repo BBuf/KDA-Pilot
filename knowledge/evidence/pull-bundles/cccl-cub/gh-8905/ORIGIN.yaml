@@ -1,0 +1,139 @@
+schema_version: 1
+source_key: NVIDIA/cccl#8905
+repo: NVIDIA/cccl
+repo_id: cccl-cub
+pr_number: 8905
+title: '[STF] Add per-handle exec_place stream resources'
+url: https://github.com/NVIDIA/cccl/pull/8905
+state: closed
+merged_at: '2026-05-19T08:10:09Z'
+base_ref_oid: 9378ff3ceda6f0b0e23474541c3645dac284317a
+head_ref_oid: 72143a73382e359e820d57c9b0cf5a2213845188
+captured_at: '2026-05-20T14:48:08.332255+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- block
+- reduction
+techniques: []
+hardware_features: []
+kernel_types:
+- reduction
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: c/experimental/stf/include/cccl/c/experimental/stf/stf.h
+    local_path: source-snapshot/c/experimental/stf/include/cccl/c/experimental/stf/stf.h
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: c/experimental/stf/src/stf.cu
+    local_path: source-snapshot/c/experimental/stf/src/stf.cu
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: c/experimental/stf/test/test_places.cpp
+    local_path: source-snapshot/c/experimental/stf/test/test_places.cpp
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/include/cuda/experimental/__places/exec/cuda_stream.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__places/exec/cuda_stream.cuh
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/include/cuda/experimental/__places/exec/green_context.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__places/exec/green_context.cuh
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/include/cuda/experimental/__places/exec_place_resources.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__places/exec_place_resources.cuh
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: added
+    fetched: true
+  - source_path: cudax/include/cuda/experimental/__places/place_partition.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__places/place_partition.cuh
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/include/cuda/experimental/__places/places.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__places/places.cuh
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/include/cuda/experimental/__stf/graph/graph_task.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__stf/graph/graph_task.cuh
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/include/cuda/experimental/__stf/internal/async_resources_handle.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__stf/internal/async_resources_handle.cuh
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/include/cuda/experimental/__stf/internal/backend_ctx.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__stf/internal/backend_ctx.cuh
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/include/cuda/experimental/__stf/internal/stf_places_extended_exports.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__stf/internal/stf_places_extended_exports.cuh
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/include/cuda/experimental/__stf/stream/interfaces/slice.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__stf/stream/interfaces/slice.cuh
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/include/cuda/experimental/__stf/stream/internal/event_types.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__stf/stream/internal/event_types.cuh
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/include/cuda/experimental/__stf/stream/reduction.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__stf/stream/reduction.cuh
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/include/cuda/experimental/__stf/stream/stream_ctx.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__stf/stream/stream_ctx.cuh
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/include/cuda/experimental/__stf/stream/stream_task.cuh
+    local_path: source-snapshot/cudax/include/cuda/experimental/__stf/stream/stream_task.cuh
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/test/places/stream_pool.cu
+    local_path: source-snapshot/cudax/test/places/stream_pool.cu
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/test/stf/CMakeLists.txt
+    local_path: source-snapshot/cudax/test/stf/CMakeLists.txt
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/test/stf/cpp/test_pick_stream.cu
+    local_path: source-snapshot/cudax/test/stf/cpp/test_pick_stream.cu
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: cudax/test/stf/cpp/test_pick_stream_green_context.cu
+    local_path: source-snapshot/cudax/test/stf/cpp/test_pick_stream_green_context.cu
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true
+  - source_path: docs/cudax/places.rst
+    local_path: source-snapshot/docs/cudax/places.rst
+    ref: 72143a73382e359e820d57c9b0cf5a2213845188
+    status: modified
+    fetched: true

@@ -1,0 +1,125 @@
+schema_version: 1
+source_key: sgl-project/sglang#24933
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 24933
+title: Amd/deepseek v4 rebase main 0509
+url: https://github.com/sgl-project/sglang/pull/24933
+state: closed
+merged_at: '2026-05-18T16:15:08Z'
+base_ref_oid: c67b2870569a1a639459389b0355641074ea9a74
+head_ref_oid: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+captured_at: '2026-05-20T14:52:49.882275+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention kernel
+- benchmark kernel
+- cuda kernel
+- fp8
+- moe kernel
+- triton
+- triton kernel
+techniques:
+- cache-policy
+- fine-grained-quantization
+hardware_features:
+- fp8
+kernel_types:
+- attention
+- mla
+- moe
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/jit_kernel/deepseek_v4.py
+    local_path: source-snapshot/python/sglang/jit_kernel/deepseek_v4.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/environ.py
+    local_path: source-snapshot/python/sglang/srt/environ.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/attention_registry.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/attention_registry.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/deepseek_v4_backend_hip_radix.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/deepseek_v4_backend_hip_radix.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/dsv4/compress_hip.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/dsv4/compress_hip.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/dsv4/compressor.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/dsv4/compressor.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/dsv4/indexer.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/dsv4/indexer.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/hip_flash_mla.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/hip_flash_mla.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/nsa/index_buf_accessor.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/nsa/index_buf_accessor.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/nsa/tilelang_kernel.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/nsa/tilelang_kernel.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/deepseek_v4_rope.py
+    local_path: source-snapshot/python/sglang/srt/layers/deepseek_v4_rope.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/topk.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/topk.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/quantization/fp8.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/fp8.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/mem_cache/deepseek_v4_compress_state.py
+    local_path: source-snapshot/python/sglang/srt/mem_cache/deepseek_v4_compress_state.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/mem_cache/deepseek_v4_memory_pool.py
+    local_path: source-snapshot/python/sglang/srt/mem_cache/deepseek_v4_memory_pool.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/models/deepseek_v2.py
+    local_path: source-snapshot/python/sglang/srt/models/deepseek_v2.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/models/deepseek_v4.py
+    local_path: source-snapshot/python/sglang/srt/models/deepseek_v4.py
+    ref: 2f2b6996850df750ef32bf01f2c891db570c5b4f
+    status: modified
+    fetched: true

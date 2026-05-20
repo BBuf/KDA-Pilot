@@ -1,0 +1,57 @@
+schema_version: 1
+source_key: sgl-project/sglang#25284
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25284
+title: Support Gemma4 Pipeline Parallelism
+url: https://github.com/sgl-project/sglang/pull/25284
+state: closed
+merged_at: '2026-05-19T14:40:12Z'
+base_ref_oid: fbfddfd5c7dcdf01903c2696d75f72caf334f324
+head_ref_oid: de70b9ea3ab084a7aa62eae3b21721e8e7244978
+captured_at: '2026-05-20T14:52:06.186008+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cuda
+- speculative-decoding
+- triton
+techniques:
+- pipeline-stages
+hardware_features: []
+kernel_types:
+- gemm
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/models/gemma4_causal.py
+    local_path: source-snapshot/python/sglang/srt/models/gemma4_causal.py
+    ref: de70b9ea3ab084a7aa62eae3b21721e8e7244978
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/models/gemma4_mm.py
+    local_path: source-snapshot/python/sglang/srt/models/gemma4_mm.py
+    ref: de70b9ea3ab084a7aa62eae3b21721e8e7244978
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/server_args.py
+    local_path: source-snapshot/python/sglang/srt/server_args.py
+    ref: de70b9ea3ab084a7aa62eae3b21721e8e7244978
+    status: modified
+    fetched: true
+  - source_path: python/sglang/test/test_utils.py
+    local_path: source-snapshot/python/sglang/test/test_utils.py
+    ref: de70b9ea3ab084a7aa62eae3b21721e8e7244978
+    status: modified
+    fetched: true
+  - source_path: test/registered/distributed/test_pp_single_node.py
+    local_path: source-snapshot/test/registered/distributed/test_pp_single_node.py
+    ref: de70b9ea3ab084a7aa62eae3b21721e8e7244978
+    status: modified
+    fetched: true

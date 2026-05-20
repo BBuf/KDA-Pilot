@@ -1,0 +1,199 @@
+schema_version: 1
+source_key: sgl-project/sglang#25831
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25831
+title: '[Test] Stage-a sanity kits; consolidate core/ + models_e2e/ tests'
+url: https://github.com/sgl-project/sglang/pull/25831
+state: closed
+merged_at: '2026-05-20T08:58:48Z'
+base_ref_oid: a1843524a5ccba645b361d9e22ebbc833f1feaea
+head_ref_oid: 413237da8a419c1045e1913776b7aaa6efebcc88
+captured_at: '2026-05-20T14:45:03.702222+00:00'
+architectures:
+- sm100
+- sm90
+architecture_families:
+- blackwell
+- hopper
+tags:
+- attention
+- triton
+techniques:
+- cache-policy
+- tile-scheduling
+hardware_features:
+- fp4
+- fp8
+kernel_types:
+- attention
+- decode
+- gemm
+- moe
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/test/kits/basic_api_contract_kit.py
+    local_path: source-snapshot/python/sglang/test/kits/basic_api_contract_kit.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: added
+    fetched: true
+  - source_path: python/sglang/test/kits/basic_decode_correctness_kit.py
+    local_path: source-snapshot/python/sglang/test/kits/basic_decode_correctness_kit.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: added
+    fetched: true
+  - source_path: python/sglang/test/kits/basic_scheduler_stress_kit.py
+    local_path: source-snapshot/python/sglang/test/kits/basic_scheduler_stress_kit.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: added
+    fetched: true
+  - source_path: test/manual/dsv4/test_dsv4_flash_sanity_dp4.py
+    local_path: source-snapshot/test/manual/dsv4/test_dsv4_flash_sanity_dp4.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: modified
+    fetched: true
+  - source_path: test/manual/dsv4/test_dsv4_flash_sanity_tp8.py
+    local_path: source-snapshot/test/manual/dsv4/test_dsv4_flash_sanity_tp8.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: modified
+    fetched: true
+  - source_path: test/manual/models/test_nvidia_nemotron_3_nano_archived.py
+    local_path: source-snapshot/test/manual/models/test_nvidia_nemotron_3_nano_archived.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: modified
+    fetched: true
+  - source_path: test/registered/attention/test_deepseek_v3_deterministic.py
+    local_path: source-snapshot/test/registered/attention/test_deepseek_v3_deterministic.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/attention/test_deterministic.py
+    local_path: source-snapshot/test/registered/attention/test_deterministic.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/attention/test_gemma4_swa_triton_oob_regression.py
+    local_path: source-snapshot/test/registered/attention/test_gemma4_swa_triton_oob_regression.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/attention/test_qwen3_next_deterministic.py
+    local_path: source-snapshot/test/registered/attention/test_qwen3_next_deterministic.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/core/test_basic_sanity.py
+    local_path: source-snapshot/test/registered/core/test_basic_sanity.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: added
+    fetched: true
+  - source_path: test/registered/core/test_engine_child_pids.py
+    local_path: source-snapshot/test/registered/core/test_engine_child_pids.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: modified
+    fetched: true
+  - source_path: test/registered/core/test_hidden_states.py
+    local_path: source-snapshot/test/registered/core/test_hidden_states.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: modified
+    fetched: true
+  - source_path: test/registered/core/test_srt_endpoint.py
+    local_path: source-snapshot/test/registered/core/test_srt_endpoint.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: modified
+    fetched: true
+  - source_path: test/registered/core/test_srt_engine.py
+    local_path: source-snapshot/test/registered/core/test_srt_engine.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: modified
+    fetched: true
+  - source_path: test/registered/models_e2e/test_deepseek_v4_flash_fp4_b200.py
+    local_path: source-snapshot/test/registered/models_e2e/test_deepseek_v4_flash_fp4_b200.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/models_e2e/test_deepseek_v4_flash_fp4_h200.py
+    local_path: source-snapshot/test/registered/models_e2e/test_deepseek_v4_flash_fp4_h200.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/models_e2e/test_deepseek_v4_flash_fp4_megamoe_b200.py
+    local_path: source-snapshot/test/registered/models_e2e/test_deepseek_v4_flash_fp4_megamoe_b200.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/models_e2e/test_deepseek_v4_flash_fp8_h200.py
+    local_path: source-snapshot/test/registered/models_e2e/test_deepseek_v4_flash_fp8_h200.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/models_e2e/test_dsa_dsv32_dp_mtp.py
+    local_path: source-snapshot/test/registered/models_e2e/test_dsa_dsv32_dp_mtp.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/models_e2e/test_dsa_dsv32_tp_mtp.py
+    local_path: source-snapshot/test/registered/models_e2e/test_dsa_dsv32_tp_mtp.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/models_e2e/test_dsa_glm5_dp_mtp.py
+    local_path: source-snapshot/test/registered/models_e2e/test_dsa_glm5_dp_mtp.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/models_e2e/test_dsa_glm5_tp_mtp.py
+    local_path: source-snapshot/test/registered/models_e2e/test_dsa_glm5_tp_mtp.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/models_e2e/test_dummy_grok_models.py
+    local_path: source-snapshot/test/registered/models_e2e/test_dummy_grok_models.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/models_e2e/test_gemma4_fp8_per_expert_loading.py
+    local_path: source-snapshot/test/registered/models_e2e/test_gemma4_fp8_per_expert_loading.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/models_e2e/test_gpt_oss_sm120.py
+    local_path: source-snapshot/test/registered/models_e2e/test_gpt_oss_sm120.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/models_e2e/test_kimi_linear_models.py
+    local_path: source-snapshot/test/registered/models_e2e/test_kimi_linear_models.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/models_e2e/test_ministral3_models.py
+    local_path: source-snapshot/test/registered/models_e2e/test_ministral3_models.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/models_e2e/test_ministral4_models.py
+    local_path: source-snapshot/test/registered/models_e2e/test_ministral4_models.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/models_e2e/test_nvidia_nemotron_3_nano.py
+    local_path: source-snapshot/test/registered/models_e2e/test_nvidia_nemotron_3_nano.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/models_e2e/test_qwen3_next_models_fp4.py
+    local_path: source-snapshot/test/registered/models_e2e/test_qwen3_next_models_fp4.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true
+  - source_path: test/registered/radix_cache/test_cpp_radix_cache.py
+    local_path: source-snapshot/test/registered/radix_cache/test_cpp_radix_cache.py
+    ref: 413237da8a419c1045e1913776b7aaa6efebcc88
+    status: renamed
+    fetched: true

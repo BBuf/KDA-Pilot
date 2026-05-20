@@ -1,0 +1,1955 @@
+diff --git a/cub/benchmarks/bench/select/flagged.cu b/cub/benchmarks/bench/select/flagged.cu
+index f7c3a63190c..7464fcad110 100644
+--- a/cub/benchmarks/bench/select/flagged.cu
++++ b/cub/benchmarks/bench/select/flagged.cu
+@@ -19,75 +19,29 @@
+ // %RANGE% TUNE_L2_WRITE_LATENCY_NS l2w 0:1200:5
+ 
+ #if !TUNE_BASE
+-#  if TUNE_TRANSPOSE == 0
+-#    define TUNE_LOAD_ALGORITHM cub::BLOCK_LOAD_DIRECT
+-#  else // TUNE_TRANSPOSE == 1
+-#    define TUNE_LOAD_ALGORITHM cub::BLOCK_LOAD_WARP_TRANSPOSE
+-#  endif // TUNE_TRANSPOSE
+-
+-#  if TUNE_LOAD == 0
+-#    define TUNE_LOAD_MODIFIER cub::LOAD_DEFAULT
+-#  else // TUNE_LOAD == 1
+-#    define TUNE_LOAD_MODIFIER cub::LOAD_CA
+-#  endif // TUNE_LOAD
+-
+ template <typename InputT>
+-struct policy_hub_t
++struct bench_policy_selector
+ {
+-  struct policy_t : cub::ChainedPolicy<300, policy_t, policy_t>
++  [[nodiscard]] _CCCL_API constexpr auto operator()(cuda::compute_capability) const
++    -> cub::detail::select::select_if_policy
+   {
+-    using SelectIfPolicyT =
+-      cub::AgentSelectIfPolicy<TUNE_THREADS_PER_BLOCK,
+-                               TUNE_ITEMS_PER_THREAD,
+-                               TUNE_LOAD_ALGORITHM,
+-                               TUNE_LOAD_MODIFIER,
+-                               cub::BLOCK_SCAN_WARP_SCANS,
+-                               delay_constructor_t>;
+-  };
+-
+-  using MaxPolicy = policy_t;
++    return {TUNE_THREADS_PER_BLOCK,
++            TUNE_ITEMS_PER_THREAD,
++            (TUNE_TRANSPOSE == 0 ? cub::BLOCK_LOAD_DIRECT : cub::BLOCK_LOAD_WARP_TRANSPOSE),
++            (TUNE_LOAD == 0 ? cub::LOAD_DEFAULT : cub::LOAD_CA),
++            cub::BLOCK_SCAN_WARP_SCANS,
++            delay_constructor_policy};
++  }
+ };
+ #endif // !TUNE_BASE
+ 
+-template <typename T, typename OffsetT, typename InPlace>
+-void select(nvbench::state& state, nvbench::type_list<T, OffsetT, InPlace>)
++template <typename T, typename InPlace>
++void select(nvbench::state& state, nvbench::type_list<T, InPlace>)
+ {
+-  using input_it_t        = const T*;
+-  using flag_it_t         = const bool*;
+-  using output_it_t       = T*;
+-  using num_selected_it_t = OffsetT*;
+-  using select_op_t       = cub::NullType;
+-  using equality_op_t     = cub::NullType;
+-  using offset_t          = OffsetT;
+-  constexpr cub::SelectImpl selection_option =
+-    InPlace::value ? cub::SelectImpl::SelectPotentiallyInPlace : cub::SelectImpl::Select;
+-
+-#if !TUNE_BASE
+-  using policy_t   = policy_hub_t<T>;
+-  using dispatch_t = cub::DispatchSelectIf<
+-    input_it_t,
+-    flag_it_t,
+-    output_it_t,
+-    num_selected_it_t,
+-    select_op_t,
+-    equality_op_t,
+-    offset_t,
+-    selection_option,
+-    policy_t>;
+-#else // TUNE_BASE
+-  using dispatch_t =
+-    cub::DispatchSelectIf<input_it_t,
+-                          flag_it_t,
+-                          output_it_t,
+-                          num_selected_it_t,
+-                          select_op_t,
+-                          equality_op_t,
+-                          offset_t,
+-                          selection_option>;
+-#endif // !TUNE_BASE
++  using offset_t = int64_t;
+ 
+   // Retrieve axis parameters
+-  const auto elements       = static_cast<std::size_t>(state.get_int64("Elements{io}"));
++  const auto elements       = state.get_int64("Elements{io}");
+   const bit_entropy entropy = str_to_entropy(state.get_string("Entropy"));
+ 
+   auto generator = generate(elements, entropy);
+@@ -98,12 +52,12 @@ void select(nvbench::state& state, nvbench::type_list<T, OffsetT, InPlace>)
+ 
+   // TODO Extract into helper TU
+   const auto selected_elements = thrust::count(flags.cbegin(), flags.cend(), true);
+-  thrust::device_vector<T> out(selected_elements);
++  thrust::device_vector<T> out(selected_elements, thrust::no_init);
+ 
+-  input_it_t d_in                  = thrust::raw_pointer_cast(in.data());
+-  output_it_t d_out                = thrust::raw_pointer_cast(out.data());
+-  flag_it_t d_flags                = thrust::raw_pointer_cast(flags.data());
+-  num_selected_it_t d_num_selected = thrust::raw_pointer_cast(num_selected.data());
++  T* d_in                  = thrust::raw_pointer_cast(in.data());
++  T* d_out                 = thrust::raw_pointer_cast(out.data());
++  const bool* d_flags      = thrust::raw_pointer_cast(flags.data());
++  offset_t* d_num_selected = thrust::raw_pointer_cast(num_selected.data());
+ 
+   state.add_element_count(elements);
+   state.add_global_memory_reads<T>(elements);
+@@ -111,25 +65,39 @@ void select(nvbench::state& state, nvbench::type_list<T, OffsetT, InPlace>)
+   state.add_global_memory_writes<T>(selected_elements);
+   state.add_global_memory_writes<offset_t>(1);
+ 
+-  std::size_t temp_size{};
+-  dispatch_t::Dispatch(
+-    nullptr, temp_size, d_in, d_flags, d_out, d_num_selected, select_op_t{}, equality_op_t{}, elements, nullptr);
+-
+-  thrust::device_vector<nvbench::uint8_t> temp(temp_size);
+-  auto* temp_storage = thrust::raw_pointer_cast(temp.data());
+-
++  caching_allocator_t alloc;
+   state.exec(nvbench::exec_tag::gpu | nvbench::exec_tag::no_batch, [&](nvbench::launch& launch) {
+-    dispatch_t::Dispatch(
+-      temp_storage,
+-      temp_size,
+-      d_in,
+-      d_flags,
+-      d_out,
+-      d_num_selected,
+-      select_op_t{},
+-      equality_op_t{},
+-      elements,
+-      launch.get_stream());
++    auto env = cub_bench_env(
++      alloc,
++      launch
++#if !TUNE_BASE
++      ,
++      cuda::execution::tune(bench_policy_selector<T>{})
++#endif // !TUNE_BASE
++    );
++    if constexpr (InPlace::value)
++    {
++      _CCCL_TRY_CUDA_API(
++        cub::DeviceSelect::Flagged,
++        "DeviceSelect::Flagged failed",
++        d_in,
++        d_flags,
++        d_num_selected,
++        static_cast<offset_t>(elements),
++        env);
++    }
++    else
++    {
++      _CCCL_TRY_CUDA_API(
++        cub::DeviceSelect::Flagged,
++        "DeviceSelect::Flagged failed",
++        static_cast<const T*>(d_in),
++        d_flags,
++        d_out,
++        d_num_selected,
++        static_cast<offset_t>(elements),
++        env);
++    }
+   });
+ }
+ 
+@@ -141,12 +109,8 @@ using is_in_place = nvbench::type_list<TUNE_InPlace>; // expands to "false_type"
+ using is_in_place = nvbench::type_list<false_type, true_type>;
+ #endif // TUNE_InPlace
+ 
+-// The implementation of DeviceSelect for 64-bit offset types uses a streaming approach, where it runs multiple passes
+-// using a 32-bit offset type, so we only need to test one (to save time for tuning and the benchmark CI).
+-using select_offset_types = nvbench::type_list<int64_t>;
+-
+-NVBENCH_BENCH_TYPES(select, NVBENCH_TYPE_AXES(fundamental_types, select_offset_types, is_in_place))
++NVBENCH_BENCH_TYPES(select, NVBENCH_TYPE_AXES(fundamental_types, is_in_place))
+   .set_name("base")
+-  .set_type_axes_names({"T{ct}", "OffsetT{ct}", "InPlace{ct}"})
++  .set_type_axes_names({"T{ct}", "InPlace{ct}"})
+   .add_int64_power_of_two_axis("Elements{io}", nvbench::range(16, 28, 4))
+   .add_string_axis("Entropy", {"1.000", "0.544", "0.000"});
+diff --git a/cub/benchmarks/bench/select/if.cu b/cub/benchmarks/bench/select/if.cu
+index d0659adb42e..95b2043909f 100644
+--- a/cub/benchmarks/bench/select/if.cu
++++ b/cub/benchmarks/bench/select/if.cu
+@@ -21,75 +21,30 @@
+ // %RANGE% TUNE_L2_WRITE_LATENCY_NS l2w 0:1200:5
+ 
+ #if !TUNE_BASE
+-#  if TUNE_TRANSPOSE == 0
+-#    define TUNE_LOAD_ALGORITHM cub::BLOCK_LOAD_DIRECT
+-#  else // TUNE_TRANSPOSE == 1
+-#    define TUNE_LOAD_ALGORITHM cub::BLOCK_LOAD_WARP_TRANSPOSE
+-#  endif // TUNE_TRANSPOSE
+-
+-#  if TUNE_LOAD == 0
+-#    define TUNE_LOAD_MODIFIER cub::LOAD_DEFAULT
+-#  else // TUNE_LOAD == 1
+-#    define TUNE_LOAD_MODIFIER cub::LOAD_CA
+-#  endif // TUNE_LOAD
+-
+ template <typename InputT>
+-struct policy_hub_t
++struct bench_policy_selector
+ {
+-  struct policy_t : cub::ChainedPolicy<300, policy_t, policy_t>
++  [[nodiscard]] _CCCL_API constexpr auto operator()(cuda::compute_capability) const
++    -> cub::detail::select::select_if_policy
+   {
+-    using SelectIfPolicyT =
+-      cub::AgentSelectIfPolicy<TUNE_THREADS_PER_BLOCK,
+-                               TUNE_ITEMS_PER_THREAD,
+-                               TUNE_LOAD_ALGORITHM,
+-                               TUNE_LOAD_MODIFIER,
+-                               cub::BLOCK_SCAN_WARP_SCANS,
+-                               delay_constructor_t>;
+-  };
+-
+-  using MaxPolicy = policy_t;
++    return {TUNE_THREADS_PER_BLOCK,
++            TUNE_ITEMS_PER_THREAD,
++            (TUNE_TRANSPOSE == 0 ? cub::BLOCK_LOAD_DIRECT : cub::BLOCK_LOAD_WARP_TRANSPOSE),
++            (TUNE_LOAD == 0 ? cub::LOAD_DEFAULT : cub::LOAD_CA),
++            cub::BLOCK_SCAN_WARP_SCANS,
++            delay_constructor_policy};
++  }
+ };
+ #endif // !TUNE_BASE
+ 
+-template <typename T, typename OffsetT, typename InPlace>
+-void select(nvbench::state& state, nvbench::type_list<T, OffsetT, InPlace>)
++template <typename T, typename InPlace>
++void select(nvbench::state& state, nvbench::type_list<T, InPlace>)
+ {
+-  using input_it_t        = const T*;
+-  using flag_it_t         = cub::NullType*;
+-  using output_it_t       = T*;
+-  using num_selected_it_t = OffsetT*;
+-  using select_op_t       = less_then_t<T>;
+-  using equality_op_t     = cub::NullType;
+-  using offset_t          = OffsetT;
+-  constexpr cub::SelectImpl selection_option =
+-    InPlace::value ? cub::SelectImpl::SelectPotentiallyInPlace : cub::SelectImpl::Select;
+-
+-#if !TUNE_BASE
+-  using policy_t   = policy_hub_t<T>;
+-  using dispatch_t = cub::DispatchSelectIf<
+-    input_it_t,
+-    flag_it_t,
+-    output_it_t,
+-    num_selected_it_t,
+-    select_op_t,
+-    equality_op_t,
+-    offset_t,
+-    selection_option,
+-    policy_t>;
+-#else // TUNE_BASE
+-  using dispatch_t =
+-    cub::DispatchSelectIf<input_it_t,
+-                          flag_it_t,
+-                          output_it_t,
+-                          num_selected_it_t,
+-                          select_op_t,
+-                          equality_op_t,
+-                          offset_t,
+-                          selection_option>;
+-#endif // TUNE_BASE
++  using offset_t    = int64_t;
++  using select_op_t = less_then_t<T>;
+ 
+   // Retrieve axis parameters
+-  const auto elements       = static_cast<std::size_t>(state.get_int64("Elements{io}"));
++  const auto elements       = state.get_int64("Elements{io}");
+   const bit_entropy entropy = str_to_entropy(state.get_string("Entropy"));
+ 
+   const T val = lerp_min_max<T>(entropy_to_probability(entropy));
+@@ -100,37 +55,50 @@ void select(nvbench::state& state, nvbench::type_list<T, OffsetT, InPlace>)
+ 
+   // TODO Extract into helper TU
+   const auto selected_elements = thrust::count_if(in.cbegin(), in.cend(), select_op);
+-  thrust::device_vector<T> out(selected_elements);
++  thrust::device_vector<T> out(selected_elements, thrust::no_init);
+ 
+-  input_it_t d_in                  = thrust::raw_pointer_cast(in.data());
+-  output_it_t d_out                = thrust::raw_pointer_cast(out.data());
+-  flag_it_t d_flags                = nullptr;
+-  num_selected_it_t d_num_selected = thrust::raw_pointer_cast(num_selected.data());
++  T* d_in                  = thrust::raw_pointer_cast(in.data());
++  T* d_out                 = thrust::raw_pointer_cast(out.data());
++  offset_t* d_num_selected = thrust::raw_pointer_cast(num_selected.data());
+ 
+   state.add_element_count(elements);
+   state.add_global_memory_reads<T>(elements);
+   state.add_global_memory_writes<T>(selected_elements);
+   state.add_global_memory_writes<offset_t>(1);
+ 
+-  std::size_t temp_size{};
+-  dispatch_t::Dispatch(
+-    nullptr, temp_size, d_in, d_flags, d_out, d_num_selected, select_op, equality_op_t{}, elements, nullptr);
+-
+-  thrust::device_vector<nvbench::uint8_t> temp(temp_size);
+-  auto* temp_storage = thrust::raw_pointer_cast(temp.data());
+-
++  caching_allocator_t alloc;
+   state.exec(nvbench::exec_tag::gpu | nvbench::exec_tag::no_batch, [&](nvbench::launch& launch) {
+-    dispatch_t::Dispatch(
+-      temp_storage,
+-      temp_size,
+-      d_in,
+-      d_flags,
+-      d_out,
+-      d_num_selected,
+-      select_op,
+-      equality_op_t{},
+-      elements,
+-      launch.get_stream());
++    auto env = cub_bench_env(
++      alloc,
++      launch
++#if !TUNE_BASE
++      ,
++      cuda::execution::tune(bench_policy_selector<T>{})
++#endif // !TUNE_BASE
++    );
++    if constexpr (InPlace::value)
++    {
++      _CCCL_TRY_CUDA_API(
++        cub::DeviceSelect::If,
++        "select_if failed",
++        d_in,
++        d_num_selected,
++        static_cast<offset_t>(elements),
++        select_op,
++        env);
++    }
++    else
++    {
++      _CCCL_TRY_CUDA_API(
++        cub::DeviceSelect::If,
++        "select_if failed",
++        static_cast<const T*>(d_in),
++        d_out,
++        d_num_selected,
++        static_cast<offset_t>(elements),
++        select_op,
++        env);
++    }
+   });
+ }
+ 
+@@ -142,12 +110,8 @@ using is_in_place = nvbench::type_list<TUNE_InPlace>; // expands to "false_type"
+ using is_in_place = nvbench::type_list<false_type, true_type>;
+ #endif // TUNE_InPlace
+ 
+-// The implementation of DeviceSelect for 64-bit offset types uses a streaming approach, where it runs multiple passes
+-// using a 32-bit offset type, so we only need to test one (to save time for tuning and the benchmark CI).
+-using select_offset_types = nvbench::type_list<int64_t>;
+-
+-NVBENCH_BENCH_TYPES(select, NVBENCH_TYPE_AXES(fundamental_types, select_offset_types, is_in_place))
++NVBENCH_BENCH_TYPES(select, NVBENCH_TYPE_AXES(fundamental_types, is_in_place))
+   .set_name("base")
+-  .set_type_axes_names({"T{ct}", "OffsetT{ct}", "InPlace{ct}"})
++  .set_type_axes_names({"T{ct}", "InPlace{ct}"})
+   .add_int64_power_of_two_axis("Elements{io}", nvbench::range(16, 28, 4))
+   .add_string_axis("Entropy", {"1.000", "0.544", "0.000"});
+diff --git a/cub/benchmarks/bench/select/unique.cu b/cub/benchmarks/bench/select/unique.cu
+index c3f7b22e4af..09ccf224a99 100644
+--- a/cub/benchmarks/bench/select/unique.cu
++++ b/cub/benchmarks/bench/select/unique.cu
+@@ -19,119 +19,82 @@
+ // %RANGE% TUNE_L2_WRITE_LATENCY_NS l2w 0:1200:5
+ 
+ #if !TUNE_BASE
+-#  if TUNE_TRANSPOSE == 0
+-#    define TUNE_LOAD_ALGORITHM cub::BLOCK_LOAD_DIRECT
+-#  else // TUNE_TRANSPOSE == 1
+-#    define TUNE_LOAD_ALGORITHM cub::BLOCK_LOAD_WARP_TRANSPOSE
+-#  endif // TUNE_TRANSPOSE
+-
+-#  if TUNE_LOAD == 0
+-#    define TUNE_LOAD_MODIFIER cub::LOAD_DEFAULT
+-#  else // TUNE_LOAD == 1
+-#    define TUNE_LOAD_MODIFIER cub::LOAD_CA
+-#  endif // TUNE_LOAD
+-
+ template <typename InputT>
+-struct policy_hub_t
++struct bench_policy_selector
+ {
+-  struct policy_t : cub::ChainedPolicy<300, policy_t, policy_t>
++  [[nodiscard]] _CCCL_API constexpr auto operator()(cuda::compute_capability) const
++    -> cub::detail::select::select_if_policy
+   {
+-    using SelectIfPolicyT =
+-      cub::AgentSelectIfPolicy<TUNE_THREADS_PER_BLOCK,
+-                               TUNE_ITEMS_PER_THREAD,
+-                               TUNE_LOAD_ALGORITHM,
+-                               TUNE_LOAD_MODIFIER,
+-                               cub::BLOCK_SCAN_WARP_SCANS,
+-                               delay_constructor_t>;
+-  };
+-
+-  using MaxPolicy = policy_t;
++    return {TUNE_THREADS_PER_BLOCK,
++            TUNE_ITEMS_PER_THREAD,
++            (TUNE_TRANSPOSE == 0 ? cub::BLOCK_LOAD_DIRECT : cub::BLOCK_LOAD_WARP_TRANSPOSE),
++            (TUNE_LOAD == 0 ? cub::LOAD_DEFAULT : cub::LOAD_CA),
++            cub::BLOCK_SCAN_WARP_SCANS,
++            delay_constructor_policy};
++  }
+ };
+ #endif // !TUNE_BASE
+ 
+-template <typename T, typename OffsetT, typename InPlace>
+-static void unique(nvbench::state& state, nvbench::type_list<T, OffsetT, InPlace>)
++template <typename T, typename InPlace>
++static void unique(nvbench::state& state, nvbench::type_list<T, InPlace>)
+ {
+-  using input_it_t        = const T*;
+-  using flag_it_t         = cub::NullType*;
+-  using output_it_t       = T*;
+-  using num_selected_it_t = OffsetT*;
+-  using select_op_t       = cub::NullType;
+-  using equality_op_t     = ::cuda::std::equal_to<>;
+-  using offset_t          = OffsetT;
+-  constexpr cub::SelectImpl selection_option =
+-    InPlace::value ? cub::SelectImpl::SelectPotentiallyInPlace : cub::SelectImpl::Select;
+-
+-#if !TUNE_BASE
+-  using policy_t   = policy_hub_t<T>;
+-  using dispatch_t = cub::DispatchSelectIf<
+-    input_it_t,
+-    flag_it_t,
+-    output_it_t,
+-    num_selected_it_t,
+-    select_op_t,
+-    equality_op_t,
+-    offset_t,
+-    selection_option,
+-    policy_t>;
+-#else // TUNE_BASE
+-  using dispatch_t =
+-    cub::DispatchSelectIf<input_it_t,
+-                          flag_it_t,
+-                          output_it_t,
+-                          num_selected_it_t,
+-                          select_op_t,
+-                          equality_op_t,
+-                          offset_t,
+-                          selection_option>;
+-#endif // TUNE_BASE
++  using offset_t = int64_t;
+ 
+   // Retrieve axis parameters
+-  const auto elements                    = static_cast<std::size_t>(state.get_int64("Elements{io}"));
+-  constexpr std::size_t min_segment_size = 1;
+-  const std::size_t max_segment_size     = static_cast<std::size_t>(state.get_int64("MaxSegSize"));
++  const auto elements         = state.get_int64("Elements{io}");
++  const auto max_segment_size = state.get_int64("MaxSegSize");
+ 
+-  thrust::device_vector<T> in = generate.uniform.key_segments(elements, min_segment_size, max_segment_size);
+-  thrust::device_vector<T> out(elements);
++  thrust::device_vector<T> in = generate.uniform.key_segments(elements, /* min_segmented_size */ 1, max_segment_size);
++  thrust::device_vector<T> out(elements, thrust::no_init);
+   thrust::device_vector<offset_t> num_unique_out(1);
+ 
+-  input_it_t d_in                = thrust::raw_pointer_cast(in.data());
+-  output_it_t d_out              = thrust::raw_pointer_cast(out.data());
+-  flag_it_t d_flags              = nullptr;
+-  num_selected_it_t d_num_unique = thrust::raw_pointer_cast(num_unique_out.data());
+-
+-  // Get temporary storage requirements
+-  std::size_t temp_size{};
+-  dispatch_t::Dispatch(
+-    nullptr, temp_size, d_in, d_flags, d_out, d_num_unique, select_op_t{}, equality_op_t{}, elements, nullptr);
+-
+-  thrust::device_vector<nvbench::uint8_t> temp(temp_size);
+-  auto* temp_storage = thrust::raw_pointer_cast(temp.data());
+-
+-  // Get number of unique elements
+-  dispatch_t::Dispatch(
+-    temp_storage, temp_size, d_in, d_flags, d_out, d_num_unique, select_op_t{}, equality_op_t{}, elements, nullptr);
++  T* d_in                = thrust::raw_pointer_cast(in.data());
++  T* d_out               = thrust::raw_pointer_cast(out.data());
++  offset_t* d_num_unique = thrust::raw_pointer_cast(num_unique_out.data());
+ 
++  // Get number of unique elements for metrics
++  cub::DeviceSelect::Unique(d_in, d_out, d_num_unique, static_cast<offset_t>(elements), ::cuda::std::equal_to<>{});
+   cudaDeviceSynchronize();
+-  const OffsetT num_unique = num_unique_out[0];
++  const offset_t num_unique = num_unique_out[0];
+ 
+   state.add_element_count(elements);
+   state.add_global_memory_reads<T>(elements);
+   state.add_global_memory_writes<T>(num_unique);
+   state.add_global_memory_writes<offset_t>(1);
+ 
++  caching_allocator_t alloc;
+   state.exec(nvbench::exec_tag::gpu | nvbench::exec_tag::no_batch, [&](nvbench::launch& launch) {
+-    dispatch_t::Dispatch(
+-      temp_storage,
+-      temp_size,
+-      d_in,
+-      d_flags,
+-      d_out,
+-      d_num_unique,
+-      select_op_t{},
+-      equality_op_t{},
+-      elements,
+-      launch.get_stream());
++    auto env = cub_bench_env(
++      alloc,
++      launch
++#if !TUNE_BASE
++      ,
++      cuda::execution::tune(bench_policy_selector<T>{})
++#endif // !TUNE_BASE
++    );
++    if constexpr (InPlace::value)
++    {
++      _CCCL_TRY_CUDA_API(
++        cub::DeviceSelect::Unique,
++        "select_unique failed",
++        d_in,
++        d_num_unique,
++        static_cast<offset_t>(elements),
++        ::cuda::std::equal_to<>{},
++        env);
++    }
++    else
++    {
++      _CCCL_TRY_CUDA_API(
++        cub::DeviceSelect::Unique,
++        "select_unique failed",
++        d_in,
++        d_out,
++        d_num_unique,
++        static_cast<offset_t>(elements),
++        ::cuda::std::equal_to<>{},
++        env);
++    }
+   });
+ }
+ 
+@@ -143,12 +106,8 @@ using is_in_place = nvbench::type_list<TUNE_InPlace>; // expands to "false_type"
+ using is_in_place = nvbench::type_list<false_type, true_type>;
+ #endif // TUNE_InPlace
+ 
+-// The implementation of DeviceSelect for 64-bit offset types uses a streaming approach, where it runs multiple passes
+-// using a 32-bit offset type, so we only need to test one (to save time for tuning and the benchmark CI).
+-using select_offset_types = nvbench::type_list<int64_t>;
+-
+-NVBENCH_BENCH_TYPES(unique, NVBENCH_TYPE_AXES(fundamental_types, select_offset_types, is_in_place))
++NVBENCH_BENCH_TYPES(unique, NVBENCH_TYPE_AXES(fundamental_types, is_in_place))
+   .set_name("base")
+-  .set_type_axes_names({"T{ct}", "OffsetT{ct}", "InPlace{ct}"})
++  .set_type_axes_names({"T{ct}", "InPlace{ct}"})
+   .add_int64_power_of_two_axis("Elements{io}", nvbench::range(16, 28, 4))
+   .add_int64_power_of_two_axis("MaxSegSize", {1, 4, 8});
+diff --git a/cub/cub/device/device_select.cuh b/cub/cub/device/device_select.cuh
+index 4bb9e61d1a5..9ae02723531 100644
+--- a/cub/cub/device/device_select.cuh
++++ b/cub/cub/device/device_select.cuh
+@@ -35,28 +35,6 @@
+ 
+ CUB_NAMESPACE_BEGIN
+ 
+-namespace detail::unique_by_key_tuning
+-{
+-// TODO(bgruber): drop this after rewriting to the new tuning API
+-struct get_tuning_query_t
+-{};
+-
+-template <class Derived>
+-struct tuning
+-{
+-  [[nodiscard]] _CCCL_TRIVIAL_API constexpr auto query(const get_tuning_query_t&) const noexcept -> Derived
+-  {
+-    return static_cast<const Derived&>(*this);
+-  }
+-};
+-
+-struct default_tuning : tuning<default_tuning>
+-{
+-  template <class KeyT, class ValueT>
+-  using fn = unique_by_key::policy_selector_from_types<KeyT, ValueT>;
+-};
+-} // namespace detail::unique_by_key_tuning
+-
+ //! @rst
+ //! DeviceSelect provides device-wide, parallel operations for compacting selected items from sequences of data items
+ //! residing within device-accessible memory. It is similar to DevicePartition, except that non-selected items are
+@@ -81,89 +59,6 @@ struct default_tuning : tuning<default_tuning>
+ //! @endrst
+ struct DeviceSelect
+ {
+-private:
+-  template <typename TuningEnvT,
+-            SelectImpl SelectionMode,
+-            typename InputIteratorT,
+-            typename FlagIteratorT,
+-            typename OutputIteratorT,
+-            typename NumSelectedIteratorT,
+-            typename SelectOpT,
+-            typename EqualityOpT,
+-            typename OffsetT>
+-  CUB_RUNTIME_FUNCTION static cudaError_t select_impl(
+-    void* d_temp_storage,
+-    size_t& temp_storage_bytes,
+-    InputIteratorT d_in,
+-    FlagIteratorT d_flags,
+-    OutputIteratorT d_out,
+-    NumSelectedIteratorT d_num_selected_out,
+-    OffsetT num_items,
+-    SelectOpT select_op,
+-    EqualityOpT equality_op,
+-    cudaStream_t stream)
+-  {
+-    using default_policy_selector =
+-      detail::select::policy_selector_from_types<InputIteratorT, FlagIteratorT, OutputIteratorT, OffsetT, SelectionMode>;
+-    using policy_selector =
+-      ::cuda::std::execution::__query_result_or_t<TuningEnvT, detail::select::select_if_policy, default_policy_selector>;
+-    return detail::select::dispatch<SelectionMode>(
+-      d_temp_storage,
+-      temp_storage_bytes,
+-      d_in,
+-      d_flags,
+-      d_out,
+-      d_num_selected_out,
+-      select_op,
+-      equality_op,
+-      num_items,
+-      stream,
+-      policy_selector{});
+-  }
+-
+-  template <typename TuningEnvT,
+-            typename KeyInputIteratorT,
+-            typename ValueInputIteratorT,
+-            typename KeyOutputIteratorT,
+-            typename ValueOutputIteratorT,
+-            typename NumSelectedIteratorT,
+-            typename EqualityOpT,
+-            typename OffsetT>
+-  CUB_RUNTIME_FUNCTION static cudaError_t unique_by_key_impl(
+-    void* d_temp_storage,
+-    size_t& temp_storage_bytes,
+-    KeyInputIteratorT d_keys_in,
+-    ValueInputIteratorT d_values_in,
+-    KeyOutputIteratorT d_keys_out,
+-    ValueOutputIteratorT d_values_out,
+-    NumSelectedIteratorT d_num_selected_out,
+-    EqualityOpT equality_op,
+-    OffsetT num_items,
+-    cudaStream_t stream)
+-  {
+-    using select_tuning_t =
+-      ::cuda::std::execution::__query_result_or_t<TuningEnvT,
+-                                                  detail::unique_by_key_tuning::get_tuning_query_t,
+-                                                  detail::unique_by_key_tuning::default_tuning>;
+-
+-    using policy_selector_t = typename select_tuning_t::template fn<detail::it_value_t<KeyInputIteratorT>,
+-                                                                    detail::it_value_t<ValueInputIteratorT>>;
+-
+-    return detail::unique_by_key::dispatch(
+-      d_temp_storage,
+-      temp_storage_bytes,
+-      d_keys_in,
+-      d_values_in,
+-      d_keys_out,
+-      d_values_out,
+-      d_num_selected_out,
+-      equality_op,
+-      num_items,
+-      stream,
+-      policy_selector_t{});
+-  }
+-
+-public:
+   //! @rst
+   //! Uses the ``d_flags`` sequence to selectively copy the corresponding items from ``d_in`` into ``d_out``.
+   //! The total number of items selected is written to ``d_num_selected_out``.
+@@ -270,7 +165,6 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE_IF(d_temp_storage, "cub::DeviceSelect::Flagged");
+ 
+-    using OffsetT    = ::cuda::std::int64_t; // Signed integer type for global offsets
+     using SelectOp   = NullType; // Selection op (not used)
+     using EqualityOp = NullType; // Equality operator (not used)
+ 
+@@ -283,7 +177,7 @@ public:
+       d_num_selected_out,
+       SelectOp{},
+       EqualityOp{},
+-      static_cast<OffsetT>(num_items),
++      num_items,
+       stream);
+   }
+ 
+@@ -369,12 +263,23 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE("cub::DeviceSelect::Flagged");
+ 
+-    // Dispatch with environment - handles all boilerplate
+-    return detail::dispatch_with_env(env, [&]([[maybe_unused]] auto tuning, void* storage, size_t& bytes, auto stream) {
+-      using tuning_t = decltype(tuning);
+-      return select_impl<tuning_t, SelectImpl::Select>(
+-        storage, bytes, d_in, d_flags, d_out, d_num_selected_out, num_items, NullType{}, NullType{}, stream);
+-    });
++    using default_policy_selector = detail::select::
++      policy_selector_from_types<InputIteratorT, FlagIterator, OutputIteratorT, ::cuda::std::int64_t, SelectImpl::Select>;
++    return detail::dispatch_with_env_and_tuning<default_policy_selector>(
++      env, [&](auto policy_selector, void* storage, size_t& bytes, auto stream) {
++        return detail::select::dispatch<SelectImpl::Select>(
++          storage,
++          bytes,
++          d_in,
++          d_flags,
++          d_out,
++          d_num_selected_out,
++          NullType{},
++          NullType{},
++          num_items,
++          stream,
++          policy_selector);
++      });
+   }
+ 
+   //! @rst
+@@ -451,11 +356,27 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE("cub::DeviceSelect::Flagged");
+ 
+-    return detail::dispatch_with_env(env, [&]([[maybe_unused]] auto tuning, void* storage, size_t& bytes, auto stream) {
+-      using tuning_t = decltype(tuning);
+-      return select_impl<tuning_t, SelectImpl::SelectPotentiallyInPlace>(
+-        storage, bytes, d_data, d_flags, d_data, d_num_selected_out, num_items, NullType{}, NullType{}, stream);
+-    });
++    using default_policy_selector = detail::select::policy_selector_from_types<
++      IteratorT,
++      FlagIterator,
++      IteratorT,
++      ::cuda::std::int64_t,
++      SelectImpl::SelectPotentiallyInPlace>;
++    return detail::dispatch_with_env_and_tuning<default_policy_selector>(
++      env, [&](auto policy_selector, void* storage, size_t& bytes, auto stream) {
++        return detail::select::dispatch<SelectImpl::SelectPotentiallyInPlace>(
++          storage,
++          bytes,
++          d_data,
++          d_flags,
++          d_data,
++          d_num_selected_out,
++          NullType{},
++          NullType{},
++          num_items,
++          stream,
++          policy_selector);
++      });
+   }
+ 
+   //! @rst
+@@ -539,21 +460,23 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE("cub::DeviceSelect::If");
+ 
+-    // Dispatch with environment - handles all boilerplate
+-    return detail::dispatch_with_env(env, [&]([[maybe_unused]] auto tuning, void* storage, size_t& bytes, auto stream) {
+-      using tuning_t = decltype(tuning);
+-      return select_impl<tuning_t, SelectImpl::Select>(
+-        storage,
+-        bytes,
+-        d_in,
+-        static_cast<NullType*>(nullptr),
+-        d_out,
+-        d_num_selected_out,
+-        num_items,
+-        select_op,
+-        NullType{},
+-        stream);
+-    });
++    using default_policy_selector = detail::select::
++      policy_selector_from_types<InputIteratorT, NullType*, OutputIteratorT, ::cuda::std::int64_t, SelectImpl::Select>;
++    return detail::dispatch_with_env_and_tuning<default_policy_selector>(
++      env, [&](auto policy_selector, void* storage, size_t& bytes, auto stream) {
++        return detail::select::dispatch<SelectImpl::Select>(
++          storage,
++          bytes,
++          d_in,
++          static_cast<NullType*>(nullptr),
++          d_out,
++          d_num_selected_out,
++          select_op,
++          NullType{},
++          num_items,
++          stream,
++          policy_selector);
++      });
+   }
+ 
+   //! @rst
+@@ -626,20 +549,27 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE("cub::DeviceSelect::If");
+ 
+-    return detail::dispatch_with_env(env, [&]([[maybe_unused]] auto tuning, void* storage, size_t& bytes, auto stream) {
+-      using tuning_t = decltype(tuning);
+-      return select_impl<tuning_t, SelectImpl::SelectPotentiallyInPlace>(
+-        storage,
+-        bytes,
+-        d_data,
+-        static_cast<NullType*>(nullptr),
+-        d_data,
+-        d_num_selected_out,
+-        num_items,
+-        select_op,
+-        NullType{},
+-        stream);
+-    });
++    using default_policy_selector = detail::select::policy_selector_from_types<
++      IteratorT,
++      NullType*,
++      IteratorT,
++      ::cuda::std::int64_t,
++      SelectImpl::SelectPotentiallyInPlace>;
++    return detail::dispatch_with_env_and_tuning<default_policy_selector>(
++      env, [&](auto policy_selector, void* storage, size_t& bytes, auto stream) {
++        return detail::select::dispatch<SelectImpl::SelectPotentiallyInPlace>(
++          storage,
++          bytes,
++          d_data,
++          static_cast<NullType*>(nullptr),
++          d_data,
++          d_num_selected_out,
++          select_op,
++          NullType{},
++          num_items,
++          stream,
++          policy_selector);
++      });
+   }
+ 
+   //! @rst
+@@ -736,7 +666,6 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE_IF(d_temp_storage, "cub::DeviceSelect::Flagged");
+ 
+-    using OffsetT    = ::cuda::std::int64_t; // Signed integer type for global offsets
+     using SelectOp   = NullType; // Selection op (not used)
+     using EqualityOp = NullType; // Equality operator (not used)
+ 
+@@ -749,7 +678,7 @@ public:
+       d_num_selected_out,
+       SelectOp{},
+       EqualityOp{},
+-      static_cast<OffsetT>(num_items),
++      num_items,
+       stream);
+   }
+ 
+@@ -870,7 +799,6 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE_IF(d_temp_storage, "cub::DeviceSelect::If");
+ 
+-    using OffsetT    = ::cuda::std::int64_t; // Signed integer type for global offsets
+     using EqualityOp = NullType; // Equality operator (not used)
+ 
+     return detail::select::dispatch<SelectImpl::Select, InputIteratorT>(
+@@ -882,7 +810,7 @@ public:
+       d_num_selected_out,
+       select_op,
+       EqualityOp{},
+-      static_cast<OffsetT>(num_items),
++      num_items,
+       stream);
+   }
+ 
+@@ -992,7 +920,6 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE_IF(d_temp_storage, "cub::DeviceSelect::If");
+ 
+-    using OffsetT    = ::cuda::std::int64_t; // Signed integer type for global offsets
+     using EqualityOp = NullType; // Equality operator (not used)
+ 
+     return detail::select::dispatch<SelectImpl::SelectPotentiallyInPlace>(
+@@ -1004,7 +931,7 @@ public:
+       d_num_selected_out,
+       select_op,
+       EqualityOp{},
+-      static_cast<OffsetT>(num_items),
++      num_items,
+       stream);
+   }
+ 
+@@ -1106,7 +1033,6 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE_IF(d_temp_storage, "cub::DeviceSelect::FlaggedIf");
+ 
+-    using OffsetT    = ::cuda::std::int64_t; // Signed integer type for global offsets
+     using EqualityOp = NullType; // Equality operator (not used)
+ 
+     return detail::select::dispatch<SelectImpl::Select>(
+@@ -1118,7 +1044,7 @@ public:
+       d_num_selected_out,
+       select_op,
+       EqualityOp{},
+-      static_cast<OffsetT>(num_items),
++      num_items,
+       stream);
+   }
+ 
+@@ -1207,7 +1133,6 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE_IF(d_temp_storage, "cub::DeviceSelect::FlaggedIf");
+ 
+-    using OffsetT    = ::cuda::std::int64_t; // Signed integer type for global offsets
+     using EqualityOp = NullType; // Equality operator (not used)
+ 
+     return detail::select::dispatch<SelectImpl::SelectPotentiallyInPlace>(
+@@ -1219,7 +1144,7 @@ public:
+       d_num_selected_out,
+       select_op,
+       EqualityOp{},
+-      static_cast<OffsetT>(num_items),
++      num_items,
+       stream);
+   }
+ 
+@@ -1315,11 +1240,23 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE("cub::DeviceSelect::FlaggedIf");
+ 
+-    return detail::dispatch_with_env(env, [&]([[maybe_unused]] auto tuning, void* storage, size_t& bytes, auto stream) {
+-      using tuning_t = decltype(tuning);
+-      return select_impl<tuning_t, SelectImpl::Select>(
+-        storage, bytes, d_in, d_flags, d_out, d_num_selected_out, num_items, select_op, NullType{}, stream);
+-    });
++    using default_policy_selector = detail::select::
++      policy_selector_from_types<InputIteratorT, FlagIterator, OutputIteratorT, ::cuda::std::int64_t, SelectImpl::Select>;
++    return detail::dispatch_with_env_and_tuning<default_policy_selector>(
++      env, [&](auto policy_selector, void* storage, size_t& bytes, auto stream) {
++        return detail::select::dispatch<SelectImpl::Select>(
++          storage,
++          bytes,
++          d_in,
++          d_flags,
++          d_out,
++          d_num_selected_out,
++          select_op,
++          NullType{},
++          num_items,
++          stream,
++          policy_selector);
++      });
+   }
+ 
+   //! @rst
+@@ -1404,11 +1341,27 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE("cub::DeviceSelect::FlaggedIf");
+ 
+-    return detail::dispatch_with_env(env, [&]([[maybe_unused]] auto tuning, void* storage, size_t& bytes, auto stream) {
+-      using tuning_t = decltype(tuning);
+-      return select_impl<tuning_t, SelectImpl::SelectPotentiallyInPlace>(
+-        storage, bytes, d_data, d_flags, d_data, d_num_selected_out, num_items, select_op, NullType{}, stream);
+-    });
++    using default_policy_selector = detail::select::policy_selector_from_types<
++      IteratorT,
++      FlagIterator,
++      IteratorT,
++      ::cuda::std::int64_t,
++      SelectImpl::SelectPotentiallyInPlace>;
++    return detail::dispatch_with_env_and_tuning<default_policy_selector>(
++      env, [&](auto policy_selector, void* storage, size_t& bytes, auto stream) {
++        return detail::select::dispatch<SelectImpl::SelectPotentiallyInPlace>(
++          storage,
++          bytes,
++          d_data,
++          d_flags,
++          d_data,
++          d_num_selected_out,
++          select_op,
++          NullType{},
++          num_items,
++          stream,
++          policy_selector);
++      });
+   }
+ 
+   //! @rst
+@@ -1487,20 +1440,23 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE("cub::DeviceSelect::Unique");
+ 
+-    return detail::dispatch_with_env(env, [&]([[maybe_unused]] auto tuning, void* storage, size_t& bytes, auto stream) {
+-      using tuning_t = decltype(tuning);
+-      return select_impl<tuning_t, SelectImpl::Select>(
+-        storage,
+-        bytes,
+-        d_in,
+-        static_cast<NullType*>(nullptr),
+-        d_out,
+-        d_num_selected_out,
+-        num_items,
+-        NullType{},
+-        ::cuda::std::equal_to<>{},
+-        stream);
+-    });
++    using default_policy_selector = detail::select::
++      policy_selector_from_types<InputIteratorT, NullType*, OutputIteratorT, ::cuda::std::int64_t, SelectImpl::Select>;
++    return detail::dispatch_with_env_and_tuning<default_policy_selector>(
++      env, [&](auto policy_selector, void* storage, size_t& bytes, auto stream) {
++        return detail::select::dispatch<SelectImpl::Select>(
++          storage,
++          bytes,
++          d_in,
++          static_cast<NullType*>(nullptr),
++          d_out,
++          d_num_selected_out,
++          NullType{},
++          ::cuda::std::equal_to<>{},
++          num_items,
++          stream,
++          policy_selector);
++      });
+   }
+ 
+   //! @rst
+@@ -1589,20 +1545,23 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE("cub::DeviceSelect::Unique");
+ 
+-    return detail::dispatch_with_env(env, [&]([[maybe_unused]] auto tuning, void* storage, size_t& bytes, auto stream) {
+-      using tuning_t = decltype(tuning);
+-      return select_impl<tuning_t, SelectImpl::Select>(
+-        storage,
+-        bytes,
+-        d_in,
+-        static_cast<NullType*>(nullptr),
+-        d_out,
+-        d_num_selected_out,
+-        num_items,
+-        NullType{},
+-        equality_op,
+-        stream);
+-    });
++    using default_policy_selector = detail::select::
++      policy_selector_from_types<InputIteratorT, NullType*, OutputIteratorT, ::cuda::std::int64_t, SelectImpl::Select>;
++    return detail::dispatch_with_env_and_tuning<default_policy_selector>(
++      env, [&](auto policy_selector, void* storage, size_t& bytes, auto stream) {
++        return detail::select::dispatch<SelectImpl::Select>(
++          storage,
++          bytes,
++          d_in,
++          static_cast<NullType*>(nullptr),
++          d_out,
++          d_num_selected_out,
++          NullType{},
++          equality_op,
++          num_items,
++          stream,
++          policy_selector);
++      });
+   }
+ 
+   //! @rst
+@@ -1666,22 +1625,27 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE("cub::DeviceSelect::Unique");
+ 
+-    using offset_t = ::cuda::std::int64_t;
+-
+-    return detail::dispatch_with_env(env, [&]([[maybe_unused]] auto tuning, void* storage, size_t& bytes, auto stream) {
+-      using tuning_t = decltype(tuning);
+-      return select_impl<tuning_t, SelectImpl::SelectPotentiallyInPlace>(
+-        storage,
+-        bytes,
+-        d_data,
+-        static_cast<NullType*>(nullptr),
+-        d_data,
+-        d_num_selected_out,
+-        static_cast<offset_t>(num_items),
+-        NullType{},
+-        ::cuda::std::equal_to<>{},
+-        stream);
+-    });
++    using default_policy_selector = detail::select::policy_selector_from_types<
++      IteratorT,
++      NullType*,
++      IteratorT,
++      ::cuda::std::int64_t,
++      SelectImpl::SelectPotentiallyInPlace>;
++    return detail::dispatch_with_env_and_tuning<default_policy_selector>(
++      env, [&](auto policy_selector, void* storage, size_t& bytes, auto stream) {
++        return detail::select::dispatch<SelectImpl::SelectPotentiallyInPlace>(
++          storage,
++          bytes,
++          d_data,
++          static_cast<NullType*>(nullptr),
++          d_data,
++          d_num_selected_out,
++          NullType{},
++          ::cuda::std::equal_to<>{},
++          num_items,
++          stream,
++          policy_selector);
++      });
+   }
+ 
+   //! @rst
+@@ -1758,22 +1722,27 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE("cub::DeviceSelect::Unique");
+ 
+-    using offset_t = ::cuda::std::int64_t;
+-
+-    return detail::dispatch_with_env(env, [&]([[maybe_unused]] auto tuning, void* storage, size_t& bytes, auto stream) {
+-      using tuning_t = decltype(tuning);
+-      return select_impl<tuning_t, SelectImpl::SelectPotentiallyInPlace>(
+-        storage,
+-        bytes,
+-        d_data,
+-        static_cast<NullType*>(nullptr),
+-        d_data,
+-        d_num_selected_out,
+-        static_cast<offset_t>(num_items),
+-        NullType{},
+-        equality_op,
+-        stream);
+-    });
++    using default_policy_selector = detail::select::policy_selector_from_types<
++      IteratorT,
++      NullType*,
++      IteratorT,
++      ::cuda::std::int64_t,
++      SelectImpl::SelectPotentiallyInPlace>;
++    return detail::dispatch_with_env_and_tuning<default_policy_selector>(
++      env, [&](auto policy_selector, void* storage, size_t& bytes, auto stream) {
++        return detail::select::dispatch<SelectImpl::SelectPotentiallyInPlace>(
++          storage,
++          bytes,
++          d_data,
++          static_cast<NullType*>(nullptr),
++          d_data,
++          d_num_selected_out,
++          NullType{},
++          equality_op,
++          num_items,
++          stream,
++          policy_selector);
++      });
+   }
+ 
+   //! @rst
+@@ -1884,20 +1853,24 @@ public:
+ 
+     using offset_t = detail::choose_offset_t<NumItemsT>;
+ 
+-    return detail::dispatch_with_env(env, [&]([[maybe_unused]] auto tuning, void* storage, size_t& bytes, auto stream) {
+-      using tuning_t = decltype(tuning);
+-      return unique_by_key_impl<tuning_t>(
+-        storage,
+-        bytes,
+-        d_keys_in,
+-        d_values_in,
+-        d_keys_out,
+-        d_values_out,
+-        d_num_selected_out,
+-        equality_op,
+-        static_cast<offset_t>(num_items),
+-        stream);
+-    });
++    using default_policy_selector =
++      detail::unique_by_key::policy_selector_from_types<detail::it_value_t<KeyInputIteratorT>,
++                                                        detail::it_value_t<ValueInputIteratorT>>;
++    return detail::dispatch_with_env_and_tuning<default_policy_selector>(
++      env, [&](auto policy_selector, void* storage, size_t& bytes, auto stream) {
++        return detail::unique_by_key::dispatch(
++          storage,
++          bytes,
++          d_keys_in,
++          d_values_in,
++          d_keys_out,
++          d_values_out,
++          d_num_selected_out,
++          equality_op,
++          static_cast<offset_t>(num_items),
++          stream,
++          policy_selector);
++      });
+   }
+ 
+   //! @rst
+@@ -2108,7 +2081,6 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE_IF(d_temp_storage, "cub::DeviceSelect::Unique");
+ 
+-    using OffsetT   = ::cuda::std::int64_t;
+     using SelectOpT = NullType; // Selection op (not used)
+ 
+     return detail::select::dispatch<SelectImpl::Select>(
+@@ -2120,7 +2092,7 @@ public:
+       d_num_selected_out,
+       SelectOpT{},
+       equality_op,
+-      static_cast<OffsetT>(num_items),
++      num_items,
+       stream);
+   }
+ 
+@@ -2220,7 +2192,6 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE_IF(d_temp_storage, "cub::DeviceSelect::Unique");
+ 
+-    using OffsetT    = ::cuda::std::int64_t;
+     using SelectOp   = NullType; // Selection op (not used)
+     using EqualityOp = ::cuda::std::equal_to<>; // Default == operator
+ 
+@@ -2233,7 +2204,7 @@ public:
+       d_num_selected_out,
+       SelectOp{},
+       EqualityOp{},
+-      static_cast<OffsetT>(num_items),
++      num_items,
+       stream);
+   }
+ 
+@@ -2553,7 +2524,7 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE_IF(d_temp_storage, "cub::DeviceSelect::UniqueByKey");
+ 
+-    using OffsetT = detail::choose_offset_t<NumItemsT>;
++    using offset_t = detail::choose_offset_t<NumItemsT>;
+ 
+     return detail::unique_by_key::dispatch(
+       d_temp_storage,
+@@ -2564,7 +2535,7 @@ public:
+       d_values_out,
+       d_num_selected_out,
+       equality_op,
+-      static_cast<OffsetT>(num_items),
++      static_cast<offset_t>(num_items),
+       stream);
+   }
+ 
+diff --git a/cub/test/catch2_test_device_select_env.cu b/cub/test/catch2_test_device_select_env.cu
+index e6a668b691a..662a651c3f9 100644
+--- a/cub/test/catch2_test_device_select_env.cu
++++ b/cub/test/catch2_test_device_select_env.cu
+@@ -9,9 +9,11 @@ struct stream_registry_factory_t;
+ 
+ #include <cub/device/device_select.cuh>
+ 
++#include <thrust/detail/raw_pointer_cast.h>
+ #include <thrust/device_vector.h>
+ 
+ #include <cuda/__device/compute_capability.h>
++#include <cuda/__execution/tune.h>
+ #include <cuda/__iterator/constant_iterator.h>
+ #include <cuda/iterator>
+ 
+@@ -1073,3 +1075,203 @@ TEST_CASE("Device select unique_by_key uses custom stream", "[select][device]")
+ 
+   REQUIRE(cudaSuccess == cudaStreamDestroy(custom_stream));
+ }
++
++#if TEST_LAUNCH != 1
++
++struct less_than_5_t
++{
++  __host__ __device__ bool operator()(int val) const
++  {
++    return val < 5;
++  }
++};
++
++struct even_flag_t
++{
++  __host__ __device__ bool operator()(int flag) const
++  {
++    return (flag % 2) == 0;
++  }
++};
++
++template <unsigned int BlockThreads>
++struct select_tuning
++{
++  _CCCL_API constexpr auto operator()(cuda::compute_capability) const -> cub::detail::select::select_if_policy
++  {
++    return {static_cast<int>(BlockThreads),
++            10,
++            cub::BLOCK_LOAD_DIRECT,
++            cub::LOAD_DEFAULT,
++            cub::BLOCK_SCAN_WARP_SCANS,
++            cub::detail::delay_constructor_policy{cub::detail::delay_constructor_kind::fixed_delay, 350, 450}};
++  }
++};
++
++template <unsigned int BlockThreads>
++struct unique_by_key_tuning
++{
++  _CCCL_API constexpr auto operator()(cuda::compute_capability) const
++    -> cub::detail::unique_by_key::unique_by_key_policy
++  {
++    return {static_cast<int>(BlockThreads),
++            10,
++            cub::BLOCK_LOAD_DIRECT,
++            cub::LOAD_DEFAULT,
++            cub::BLOCK_SCAN_WARP_SCANS,
++            cub::detail::delay_constructor_policy{cub::detail::delay_constructor_kind::fixed_delay, 350, 450}};
++  }
++};
++
++using block_sizes =
++  c2h::type_list<cuda::std::integral_constant<unsigned int, 64>, cuda::std::integral_constant<unsigned int, 128>>;
++
++C2H_TEST("DeviceSelect::If can be tuned", "[select][device]", block_sizes)
++{
++  constexpr unsigned int target_block_size = c2h::get<0, TestType>::value;
++  auto d_in                                = c2h::device_vector<int>{1, 2, 3, 4, 5, 6, 7, 8};
++  auto d_out                               = c2h::device_vector<int>(8);
++  auto d_num_selected                      = c2h::device_vector<unsigned int>(1);
++  auto d_block_size                        = c2h::device_vector<unsigned int>(1);
++
++  block_size_extracting_op<less_than_5_t> select_op{thrust::raw_pointer_cast(d_block_size.data())};
++
++  auto env = cuda::execution::tune(select_tuning<target_block_size>{});
++
++  device_select_if(d_in.begin(), d_out.begin(), d_num_selected.begin(), 8, select_op, env);
++  REQUIRE(d_num_selected[0] == 4);
++  REQUIRE(d_block_size[0] == target_block_size);
++}
++
++C2H_TEST("DeviceSelect::If in-place can be tuned", "[select][device]", block_sizes)
++{
++  constexpr unsigned int target_block_size = c2h::get<0, TestType>::value;
++  auto d_data                              = c2h::device_vector<int>{1, 2, 3, 4, 5, 6, 7, 8};
++  auto d_num_selected                      = c2h::device_vector<unsigned int>(1);
++  auto d_block_size                        = c2h::device_vector<unsigned int>(1);
++
++  block_size_extracting_op<less_than_5_t> select_op{thrust::raw_pointer_cast(d_block_size.data())};
++
++  auto env = cuda::execution::tune(select_tuning<target_block_size>{});
++
++  REQUIRE(cudaSuccess == cub::DeviceSelect::If(d_data.begin(), d_num_selected.begin(), 8, select_op, env));
++  REQUIRE(d_num_selected[0] == 4);
++  REQUIRE(d_block_size[0] == target_block_size);
++}
++
++C2H_TEST("DeviceSelect::Flagged can be tuned", "[select][device]", block_sizes)
++{
++  constexpr unsigned int target_block_size = c2h::get<0, TestType>::value;
++  auto d_in                                = c2h::device_vector<int>{1, 2, 3, 4, 5, 6, 7, 8};
++  auto d_out                               = c2h::device_vector<int>(8);
++  auto d_num_selected                      = c2h::device_vector<unsigned int>(1);
++  auto d_block_size                        = c2h::device_vector<unsigned int>(1);
++
++  block_size_extracting_constant_iterator flags_begin(1, thrust::raw_pointer_cast(d_block_size.data()));
++
++  auto env = cuda::execution::tune(select_tuning<target_block_size>{});
++
++  device_select_flagged(d_in.begin(), flags_begin, d_out.begin(), d_num_selected.begin(), 8, env);
++  REQUIRE(d_num_selected[0] == 8);
++  REQUIRE(d_block_size[0] == target_block_size);
++}
++
++C2H_TEST("DeviceSelect::Flagged in-place can be tuned", "[select][device]", block_sizes)
++{
++  constexpr unsigned int target_block_size = c2h::get<0, TestType>::value;
++  auto d_data                              = c2h::device_vector<int>{1, 2, 3, 4, 5, 6, 7, 8};
++  auto d_num_selected                      = c2h::device_vector<unsigned int>(1);
++  auto d_block_size                        = c2h::device_vector<unsigned int>(1);
++
++  block_size_extracting_constant_iterator flags_begin(1, thrust::raw_pointer_cast(d_block_size.data()));
++
++  auto env = cuda::execution::tune(select_tuning<target_block_size>{});
++
++  REQUIRE(cudaSuccess == cub::DeviceSelect::Flagged(d_data.begin(), flags_begin, d_num_selected.begin(), 8, env));
++  REQUIRE(d_num_selected[0] == 8);
++  REQUIRE(d_block_size[0] == target_block_size);
++}
++
++C2H_TEST("DeviceSelect::FlaggedIf can be tuned", "[select][device]", block_sizes)
++{
++  constexpr unsigned int target_block_size = c2h::get<0, TestType>::value;
++  auto d_in                                = c2h::device_vector<int>{1, 2, 3, 4, 5, 6, 7, 8};
++  auto d_flags                             = c2h::device_vector<int>{2, 1, 2, 1, 2, 1, 2, 1};
++  auto d_out                               = c2h::device_vector<int>(8);
++  auto d_num_selected                      = c2h::device_vector<unsigned int>(1);
++  auto d_block_size                        = c2h::device_vector<unsigned int>(1);
++
++  block_size_extracting_op<even_flag_t> select_op{thrust::raw_pointer_cast(d_block_size.data())};
++
++  auto env = cuda::execution::tune(select_tuning<target_block_size>{});
++
++  device_select_flagged_if(d_in.begin(), d_flags.begin(), d_out.begin(), d_num_selected.begin(), 8, select_op, env);
++  REQUIRE(d_num_selected[0] == 4);
++  REQUIRE(d_block_size[0] == target_block_size);
++}
++
++C2H_TEST("DeviceSelect::FlaggedIf in-place can be tuned", "[select][device]", block_sizes)
++{
++  constexpr unsigned int target_block_size = c2h::get<0, TestType>::value;
++  auto d_data                              = c2h::device_vector<int>{1, 2, 3, 4, 5, 6, 7, 8};
++  auto d_flags                             = c2h::device_vector<int>{2, 1, 2, 1, 2, 1, 2, 1};
++  auto d_num_selected                      = c2h::device_vector<unsigned int>(1);
++  auto d_block_size                        = c2h::device_vector<unsigned int>(1);
++
++  block_size_extracting_op<even_flag_t> select_op{thrust::raw_pointer_cast(d_block_size.data())};
++
++  auto env = cuda::execution::tune(select_tuning<target_block_size>{});
++
++  REQUIRE(cudaSuccess
++          == cub::DeviceSelect::FlaggedIf(d_data.begin(), d_flags.begin(), d_num_selected.begin(), 8, select_op, env));
++  REQUIRE(d_num_selected[0] == 4);
++  REQUIRE(d_block_size[0] == target_block_size);
++}
++
++C2H_TEST("DeviceSelect::Unique can be tuned", "[select][device]", block_sizes)
++{
++  constexpr unsigned int target_block_size = c2h::get<0, TestType>::value;
++  auto d_in                                = c2h::device_vector<int>{0, 0, 1, 1, 2, 2, 3, 3};
++  auto d_out                               = c2h::device_vector<int>(8);
++  auto d_num_selected                      = c2h::device_vector<unsigned int>(1);
++  auto d_block_size                        = c2h::device_vector<unsigned int>(1);
++
++  using eq_op_t = block_size_extracting_op<cuda::std::equal_to<>>;
++  eq_op_t equality_op{thrust::raw_pointer_cast(d_block_size.data())};
++
++  auto env = cuda::execution::tune(select_tuning<target_block_size>{});
++
++  device_select_unique(d_in.begin(), d_out.begin(), d_num_selected.begin(), 8, equality_op, env);
++  REQUIRE(d_num_selected[0] == 4);
++  REQUIRE(d_block_size[0] == target_block_size);
++}
++
++C2H_TEST("DeviceSelect::UniqueByKey can be tuned", "[select][device]", block_sizes)
++{
++  constexpr unsigned int target_block_size = c2h::get<0, TestType>::value;
++  auto d_keys_in                           = c2h::device_vector<int>{0, 0, 1, 1, 2, 2, 3, 3};
++  auto d_values_in                         = c2h::device_vector<int>{1, 2, 3, 4, 5, 6, 7, 8};
++  auto d_keys_out                          = c2h::device_vector<int>(8);
++  auto d_values_out                        = c2h::device_vector<int>(8);
++  auto d_num_selected                      = c2h::device_vector<unsigned int>(1);
++  auto d_block_size                        = c2h::device_vector<unsigned int>(1);
++
++  using eq_op_t = block_size_extracting_op<cuda::std::equal_to<>>;
++  eq_op_t equality_op{thrust::raw_pointer_cast(d_block_size.data())};
++
++  auto env = cuda::execution::tune(unique_by_key_tuning<target_block_size>{});
++
++  device_select_unique_by_key(
++    d_keys_in.begin(),
++    d_values_in.begin(),
++    d_keys_out.begin(),
++    d_values_out.begin(),
++    d_num_selected.begin(),
++    8,
++    equality_op,
++    env);
++  REQUIRE(d_num_selected[0] == 4);
++  REQUIRE(d_block_size[0] == target_block_size);
++}
++
++#endif // TEST_LAUNCH != 1
+diff --git a/thrust/thrust/system/cuda/detail/copy_if.h b/thrust/thrust/system/cuda/detail/copy_if.h
+index 65533cb08c6..0cfab857934 100644
+--- a/thrust/thrust/system/cuda/detail/copy_if.h
++++ b/thrust/thrust/system/cuda/detail/copy_if.h
+@@ -18,16 +18,11 @@
+ #  include <thrust/system/cuda/config.h>
+ 
+ #  include <cub/device/device_select.cuh>
+-#  include <cub/util_math.cuh>
+ #  include <cub/util_temporary_storage.cuh>
+-#  include <cub/util_type.cuh>
+ 
+ #  include <thrust/detail/alignment.h>
+-#  include <thrust/detail/function.h>
+ #  include <thrust/detail/temporary_array.h>
+ #  include <thrust/system/cuda/detail/cdp_dispatch.h>
+-#  include <thrust/system/cuda/detail/core/util.h>
+-#  include <thrust/system/cuda/detail/dispatch.h>
+ #  include <thrust/system/cuda/detail/execution_policy.h>
+ #  include <thrust/system/cuda/detail/util.h>
+ 
+@@ -63,100 +58,8 @@ namespace cuda_cub
+ {
+ namespace detail
+ {
+-template <cub::SelectImpl SelectionOpt,
+-          typename Derived,
+-          typename InputIt,
+-          typename StencilIt,
+-          typename OutputIt,
+-          typename Predicate,
+-          typename OffsetT>
+-struct DispatchCopyIf
+-{
+-  static cudaError_t THRUST_RUNTIME_FUNCTION dispatch(
+-    execution_policy<Derived>& policy,
+-    void* d_temp_storage,
+-    size_t& temp_storage_bytes,
+-    InputIt first,
+-    StencilIt stencil,
+-    OutputIt& output,
+-    Predicate predicate,
+-    OffsetT num_items)
+-  {
+-    using num_selected_out_it_t = OffsetT*;
+-    using equality_op_t         = cub::NullType;
+-
+-    cudaError_t status  = cudaSuccess;
+-    cudaStream_t stream = cuda_cub::stream(policy);
+-
+-    std::size_t allocation_sizes[2] = {0, sizeof(OffsetT)};
+-    void* allocations[2]            = {nullptr, nullptr};
+-
+-    // Query algorithm memory requirements
+-    status = cub::
+-      DispatchSelectIf<InputIt, StencilIt, OutputIt, num_selected_out_it_t, Predicate, equality_op_t, OffsetT, SelectionOpt>::
+-        Dispatch(
+-          nullptr,
+-          allocation_sizes[0],
+-          first,
+-          stencil,
+-          output,
+-          static_cast<num_selected_out_it_t>(nullptr),
+-          predicate,
+-          equality_op_t{},
+-          num_items,
+-          stream);
+-    _CUDA_CUB_RET_IF_FAIL(status);
+-
+-    status = cub::detail::alias_temporaries(d_temp_storage, temp_storage_bytes, allocations, allocation_sizes);
+-    _CUDA_CUB_RET_IF_FAIL(status);
+-
+-    // Return if we're only querying temporary storage requirements
+-    if (d_temp_storage == nullptr)
+-    {
+-      return status;
+-    }
+-
+-    // Return for empty problems
+-    if (num_items == 0)
+-    {
+-      return status;
+-    }
+-
+-    // Memory allocation for the number of selected output items
+-    OffsetT* d_num_selected_out = thrust::detail::aligned_reinterpret_cast<OffsetT*>(allocations[1]);
+-
+-    // Run algorithm
+-    status = cub::
+-      DispatchSelectIf<InputIt, StencilIt, OutputIt, num_selected_out_it_t, Predicate, equality_op_t, OffsetT, SelectionOpt>::
+-        Dispatch(
+-          allocations[0],
+-          allocation_sizes[0],
+-          first,
+-          stencil,
+-          output,
+-          d_num_selected_out,
+-          predicate,
+-          equality_op_t{},
+-          num_items,
+-          stream);
+-    _CUDA_CUB_RET_IF_FAIL(status);
+-
+-    // Get number of selected items
+-    status = cuda_cub::synchronize(policy);
+-    _CUDA_CUB_RET_IF_FAIL(status);
+-    OffsetT num_selected = get_value(policy, d_num_selected_out);
+-    ::cuda::std::advance(output, num_selected);
+-    return status;
+-  }
+-};
+-
+-template <cub::SelectImpl SelectionOpt,
+-          typename Derived,
+-          typename InputIt,
+-          typename StencilIt,
+-          typename OutputIt,
+-          typename Predicate>
+-THRUST_RUNTIME_FUNCTION OutputIt copy_if(
++template <bool InPlace, typename Derived, typename InputIt, typename StencilIt, typename OutputIt, typename Predicate>
++THRUST_RUNTIME_FUNCTION OutputIt copy_if_with_stencil(
+   execution_policy<Derived>& policy,
+   InputIt first,
+   InputIt last,
+@@ -164,33 +67,89 @@ THRUST_RUNTIME_FUNCTION OutputIt copy_if(
+   OutputIt output,
+   Predicate predicate)
+ {
+-  using size_type = thrust::detail::it_difference_t<InputIt>;
++  using offset_t            = std::int64_t;
++  const auto num_items      = ::cuda::std::distance(first, last);
++  const cudaStream_t stream = cuda_cub::stream(policy);
+ 
+-  size_type num_items       = static_cast<size_type>(::cuda::std::distance(first, last));
+-  cudaError_t status        = cudaSuccess;
+-  size_t temp_storage_bytes = 0;
+-
+-  // 64-bit offset-type dispatch
+-  // Since https://github.com/NVIDIA/cccl/pull/2400, cub::DeviceSelect is using a streaming approach that splits up
+-  // inputs larger than INT_MAX into partitions of up to `INT_MAX` items each, repeatedly invoking the respective
+-  // algorithm. With that approach, we can always use i64 offset types for DispatchSelectIf, because there's only very
+-  // limited performance upside for using i32 offset types. This avoids potentially duplicate kernel compilation.
+-  using dispatch64_t = DispatchCopyIf<SelectionOpt, Derived, InputIt, StencilIt, OutputIt, Predicate, std::int64_t>;
++  // We need to allocate space for the num_selected output alongside the algorithm's temp storage
++  std::size_t allocation_sizes[2] = {0, sizeof(offset_t)};
++  void* allocations[2]            = {nullptr, nullptr};
+ 
+-  // Query temporary storage requirements
+-  status = dispatch64_t::dispatch(
+-    policy, nullptr, temp_storage_bytes, first, stencil, output, predicate, static_cast<std::int64_t>(num_items));
++  // Query temp storage for the algorithm
++  cudaError_t status;
++  if constexpr (InPlace)
++  {
++    status = cub::DeviceSelect::FlaggedIf(
++      nullptr,
++      allocation_sizes[0],
++      first,
++      stencil,
++      static_cast<offset_t*>(nullptr),
++      static_cast<offset_t>(num_items),
++      predicate,
++      stream);
++  }
++  else
++  {
++    status = cub::DeviceSelect::FlaggedIf(
++      nullptr,
++      allocation_sizes[0],
++      first,
++      stencil,
++      output,
++      static_cast<offset_t*>(nullptr),
++      static_cast<offset_t>(num_items),
++      predicate,
++      stream);
++  }
+   cuda_cub::throw_on_error(status, "copy_if failed on 1st step");
+ 
+-  // Allocate temporary storage.
++  size_t temp_storage_bytes = 0;
++  status = cub::detail::alias_temporaries(nullptr, temp_storage_bytes, allocations, allocation_sizes);
++  cuda_cub::throw_on_error(status, "copy_if failed on temp storage query");
++
++  // Allocate temporary storage
+   thrust::detail::temporary_array<std::uint8_t, Derived> tmp(policy, temp_storage_bytes);
+   void* temp_storage = static_cast<void*>(tmp.data().get());
+ 
++  status = cub::detail::alias_temporaries(temp_storage, temp_storage_bytes, allocations, allocation_sizes);
++  cuda_cub::throw_on_error(status, "copy_if failed on temp storage alias");
++
++  offset_t* d_num_selected_out = thrust::detail::aligned_reinterpret_cast<offset_t*>(allocations[1]);
++
+   // Run algorithm
+-  status = dispatch64_t::dispatch(
+-    policy, temp_storage, temp_storage_bytes, first, stencil, output, predicate, static_cast<std::int64_t>(num_items));
++  if constexpr (InPlace)
++  {
++    status = cub::DeviceSelect::FlaggedIf(
++      allocations[0],
++      allocation_sizes[0],
++      first,
++      stencil,
++      d_num_selected_out,
++      static_cast<offset_t>(num_items),
++      predicate,
++      stream);
++  }
++  else
++  {
++    status = cub::DeviceSelect::FlaggedIf(
++      allocations[0],
++      allocation_sizes[0],
++      first,
++      stencil,
++      output,
++      d_num_selected_out,
++      static_cast<offset_t>(num_items),
++      predicate,
++      stream);
++  }
+   cuda_cub::throw_on_error(status, "copy_if failed on 2nd step");
+ 
++  // Get number of selected items
++  status = cuda_cub::synchronize(policy);
++  cuda_cub::throw_on_error(status, "copy_if failed on sync");
++  offset_t num_selected = get_value(policy, d_num_selected_out);
++  ::cuda::std::advance(output, num_selected);
+   return output;
+ }
+ } // namespace detail
+@@ -203,7 +162,7 @@ template <class Derived, class InputIterator, class OutputIterator, class Predic
+ OutputIterator _CCCL_HOST_DEVICE copy_if(
+   execution_policy<Derived>& policy, InputIterator first, InputIterator last, OutputIterator result, Predicate pred)
+ {
+-  THRUST_CDP_DISPATCH((return detail::copy_if<cub::SelectImpl::Select>(
++  THRUST_CDP_DISPATCH((return detail::copy_if_with_stencil</* InPlace */ false>(
+                                 policy, first, last, static_cast<cub::NullType*>(nullptr), result, pred);),
+                       (return thrust::copy_if(cvt_to_seq(derived_cast(policy)), first, last, result, pred);));
+ }
+@@ -218,8 +177,9 @@ OutputIterator _CCCL_HOST_DEVICE copy_if(
+   OutputIterator result,
+   Predicate pred)
+ {
+-  THRUST_CDP_DISPATCH((return detail::copy_if<cub::SelectImpl::Select>(policy, first, last, stencil, result, pred);),
+-                      (return thrust::copy_if(cvt_to_seq(derived_cast(policy)), first, last, stencil, result, pred);));
++  THRUST_CDP_DISPATCH(
++    (return detail::copy_if_with_stencil</* InPlace */ false>(policy, first, last, stencil, result, pred);),
++    (return thrust::copy_if(cvt_to_seq(derived_cast(policy)), first, last, stencil, result, pred);));
+ }
+ } // namespace cuda_cub
+ THRUST_NAMESPACE_END
+diff --git a/thrust/thrust/system/cuda/detail/remove.h b/thrust/thrust/system/cuda/detail/remove.h
+index 513a49e31e8..e909c1be55d 100644
+--- a/thrust/thrust/system/cuda/detail/remove.h
++++ b/thrust/thrust/system/cuda/detail/remove.h
+@@ -28,7 +28,7 @@ template <class Derived, class InputIt, class StencilIt, class Predicate>
+ InputIt _CCCL_HOST_DEVICE
+ remove_if(execution_policy<Derived>& policy, InputIt first, InputIt last, StencilIt stencil, Predicate predicate)
+ {
+-  THRUST_CDP_DISPATCH((return cuda_cub::detail::copy_if<cub::SelectImpl::SelectPotentiallyInPlace>(
++  THRUST_CDP_DISPATCH((return cuda_cub::detail::copy_if_with_stencil</* InPlace */ true>(
+                                 policy, first, last, stencil, first, ::cuda::std::not_fn(predicate));),
+                       (return thrust::remove_if(cvt_to_seq(derived_cast(policy)), first, last, stencil, predicate);));
+ }
+@@ -38,7 +38,7 @@ template <class Derived, class InputIt, class Predicate>
+ InputIt _CCCL_HOST_DEVICE remove_if(execution_policy<Derived>& policy, InputIt first, InputIt last, Predicate predicate)
+ {
+   THRUST_CDP_DISPATCH(
+-    (return cuda_cub::detail::copy_if<cub::SelectImpl::SelectPotentiallyInPlace>(
++    (return cuda_cub::detail::copy_if_with_stencil</* InPlace */ true>(
+               policy, first, last, static_cast<cub::NullType*>(nullptr), first, ::cuda::std::not_fn(predicate));),
+     (return thrust::remove_if(cvt_to_seq(derived_cast(policy)), first, last, predicate);));
+ }
+diff --git a/thrust/thrust/system/cuda/detail/unique.h b/thrust/thrust/system/cuda/detail/unique.h
+index e6544b79d01..852ef25096c 100644
+--- a/thrust/thrust/system/cuda/detail/unique.h
++++ b/thrust/thrust/system/cuda/detail/unique.h
+@@ -19,8 +19,11 @@
+ 
+ #  include <cub/device/device_select.cuh>
+ #  include <cub/util_math.cuh>
++#  include <cub/util_temporary_storage.cuh>
+ 
+ #  include <thrust/count.h>
++#  include <thrust/detail/alignment.h>
++#  include <thrust/detail/temporary_array.h>
+ #  include <thrust/functional.h>
+ #  include <thrust/system/cuda/detail/cdp_dispatch.h>
+ #  include <thrust/system/cuda/detail/core/agent_launcher.h>
+@@ -62,132 +65,64 @@ namespace cuda_cub
+ {
+ namespace detail
+ {
+-template <cub::SelectImpl SelectionOpt,
+-          typename Derived,
+-          typename InputIt,
+-          typename OutputIt,
+-          typename EqualityOpT,
+-          typename OffsetT>
+-THRUST_RUNTIME_FUNCTION cudaError_t dispatch_select_unique(
+-  execution_policy<Derived>& policy,
+-  void* d_temp_storage,
+-  size_t& temp_storage_bytes,
+-  InputIt first,
+-  OutputIt& output,
+-  EqualityOpT equality_op,
+-  OffsetT num_items)
++template <bool InPlace, typename Derived, typename InputIt, typename OutputIt, typename EqualityOpT>
++THRUST_RUNTIME_FUNCTION OutputIt
++select_unique(execution_policy<Derived>& policy, InputIt first, InputIt last, OutputIt output, EqualityOpT equality_op)
+ {
+-  using flag_iterator_t       = cub::NullType*; // flag iterator type (not used for unique)
+-  using num_selected_out_it_t = OffsetT*; // number of selected output items iterator type
+-  using select_op             = cub::NullType; // selection op (not used for unique)
+-  using equality_op_t         = EqualityOpT;
++  using offset_t       = ::cuda::std::int64_t; // cub::DeviceSelect uses a single offset type at the public API
++  const auto num_items = static_cast<offset_t>(::cuda::std::distance(first, last));
++  cudaStream_t stream  = cuda_cub::stream(policy);
+ 
+-  cudaError_t status  = cudaSuccess;
+-  cudaStream_t stream = cuda_cub::stream(policy);
+-
+-  std::size_t allocation_sizes[2] = {0, sizeof(OffsetT)};
++  // We need to allocate space for the num_selected output alongside the algorithm's temp storage
++  std::size_t allocation_sizes[2] = {0, sizeof(offset_t)};
+   void* allocations[2]            = {nullptr, nullptr};
+ 
+-  // The flag iterator is not used for unique, so we set it to nullptr.
+-  flag_iterator_t flag_it = static_cast<flag_iterator_t>(nullptr);
+-
+-  // Query algorithm memory requirements
+-  status = cub::DispatchSelectIf<
+-    InputIt,
+-    flag_iterator_t,
+-    OutputIt,
+-    num_selected_out_it_t,
+-    select_op,
+-    equality_op_t,
+-    OffsetT,
+-    SelectionOpt>::Dispatch(nullptr,
+-                            allocation_sizes[0],
+-                            first,
+-                            flag_it,
+-                            output,
+-                            static_cast<num_selected_out_it_t>(nullptr),
+-                            select_op{},
+-                            equality_op,
+-                            num_items,
+-                            stream);
+-  _CUDA_CUB_RET_IF_FAIL(status);
+-
+-  status = cub::detail::alias_temporaries(d_temp_storage, temp_storage_bytes, allocations, allocation_sizes);
+-  _CUDA_CUB_RET_IF_FAIL(status);
+-
+-  // Return if we're only querying temporary storage requirements
+-  if (d_temp_storage == nullptr)
++  // Query temp storage
++  cudaError_t status{};
++  if constexpr (InPlace)
+   {
+-    return status;
++    status = cub::DeviceSelect::Unique(
++      nullptr, allocation_sizes[0], first, static_cast<offset_t*>(nullptr), num_items, equality_op, stream);
+   }
+-
+-  // Return for empty problems
+-  if (num_items == 0)
++  else
+   {
+-    return status;
++    status = cub::DeviceSelect::Unique(
++      nullptr, allocation_sizes[0], first, output, static_cast<offset_t*>(nullptr), num_items, equality_op, stream);
+   }
++  throw_on_error(status, "unique failed on 1st step");
+ 
+-  // Memory allocation for the number of selected output items
+-  OffsetT* d_num_selected_out = thrust::detail::aligned_reinterpret_cast<OffsetT*>(allocations[1]);
+-
+-  // Run algorithm
+-  status = cub::DispatchSelectIf<
+-    InputIt,
+-    flag_iterator_t,
+-    OutputIt,
+-    num_selected_out_it_t,
+-    select_op,
+-    equality_op_t,
+-    OffsetT,
+-    SelectionOpt>::Dispatch(allocations[0],
+-                            allocation_sizes[0],
+-                            first,
+-                            flag_it,
+-                            output,
+-                            d_num_selected_out,
+-                            select_op{},
+-                            equality_op,
+-                            num_items,
+-                            stream);
+-  _CUDA_CUB_RET_IF_FAIL(status);
+-
+-  // Get number of selected items
+-  status = cuda_cub::synchronize(policy);
+-  _CUDA_CUB_RET_IF_FAIL(status);
+-  OffsetT num_selected = get_value(policy, d_num_selected_out);
+-  ::cuda::std::advance(output, num_selected);
+-  return status;
+-}
+-
+-template <cub::SelectImpl SelectionOpt, typename Derived, typename InputIt, typename OutputIt, typename EqualityOpT>
+-THRUST_RUNTIME_FUNCTION OutputIt
+-select_unique(execution_policy<Derived>& policy, InputIt first, InputIt last, OutputIt output, EqualityOpT equality_op)
+-{
+-  // 64-bit offset-type dispatch
+-  // Since https://github.com/NVIDIA/cccl/pull/2400, cub::DeviceSelect is using a streaming approach that splits up
+-  // inputs larger than INT_MAX into partitions of up to `INT_MAX` items each, repeatedly invoking the respective
+-  // algorithm. With that approach, we can always use i64 offset types for DispatchSelectIf, because there's only very
+-  // limited performance upside for using i32 offset types. This avoids potentially duplicate kernel compilation.
+-  using offset_t = ::cuda::std::int64_t;
+-
+-  const auto num_items      = static_cast<offset_t>(::cuda::std::distance(first, last));
+-  cudaError_t status        = cudaSuccess;
+   size_t temp_storage_bytes = 0;
++  status = cub::detail::alias_temporaries(nullptr, temp_storage_bytes, allocations, allocation_sizes);
++  throw_on_error(status, "unique failed on temp storage query");
+ 
+-  // Query temporary storage requirements
+-  status =
+-    dispatch_select_unique<SelectionOpt>(policy, nullptr, temp_storage_bytes, first, output, equality_op, num_items);
+-  cuda_cub::throw_on_error(status, "unique failed on 1st step");
+-
+-  // Allocate temporary storage.
++  // Allocate temporary storage
+   thrust::detail::temporary_array<std::uint8_t, Derived> tmp(policy, temp_storage_bytes);
+   void* temp_storage = static_cast<void*>(tmp.data().get());
+ 
++  status = cub::detail::alias_temporaries(temp_storage, temp_storage_bytes, allocations, allocation_sizes);
++  throw_on_error(status, "unique failed on temp storage alias");
++
++  offset_t* d_num_selected_out = thrust::detail::aligned_reinterpret_cast<offset_t*>(allocations[1]);
++
+   // Run algorithm
+-  status = dispatch_select_unique<SelectionOpt>(
+-    policy, temp_storage, temp_storage_bytes, first, output, equality_op, num_items);
+-  cuda_cub::throw_on_error(status, "unique failed on 2nd step");
++  if constexpr (InPlace)
++  {
++    status = cub::DeviceSelect::Unique(
++      allocations[0], allocation_sizes[0], first, d_num_selected_out, num_items, equality_op, stream);
++  }
++  else
++  {
++    status = cub::DeviceSelect::Unique(
++      allocations[0], allocation_sizes[0], first, output, d_num_selected_out, num_items, equality_op, stream);
++  }
++  throw_on_error(status, "unique failed on 2nd step");
+ 
++  // Get number of selected items
++  status = cuda_cub::synchronize(policy);
++  throw_on_error(status, "unique failed on sync");
++  const offset_t num_selected = get_value(policy, d_num_selected_out);
++
++  ::cuda::std::advance(output, num_selected);
+   return output;
+ }
+ } // namespace detail
+@@ -202,7 +137,7 @@ OutputIt _CCCL_HOST_DEVICE
+ unique_copy(execution_policy<Derived>& policy, InputIt first, InputIt last, OutputIt result, BinaryPred binary_pred)
+ {
+   THRUST_CDP_DISPATCH(
+-    (return detail::select_unique<cub::SelectImpl::Select>(policy, first, last, result, binary_pred);),
++    (return detail::select_unique</* InPlace */ false>(policy, first, last, result, binary_pred);),
+     (return thrust::unique_copy(cvt_to_seq(derived_cast(policy)), first, last, result, binary_pred);));
+ }
+ 
+@@ -218,9 +153,8 @@ template <class Derived, class ForwardIt, class BinaryPred>
+ ForwardIt _CCCL_HOST_DEVICE
+ unique(execution_policy<Derived>& policy, ForwardIt first, ForwardIt last, BinaryPred binary_pred)
+ {
+-  THRUST_CDP_DISPATCH(
+-    (return detail::select_unique<cub::SelectImpl::SelectPotentiallyInPlace>(policy, first, last, first, binary_pred);),
+-    (return thrust::unique(cvt_to_seq(derived_cast(policy)), first, last, binary_pred);));
++  THRUST_CDP_DISPATCH((return detail::select_unique</* InPlace */ true>(policy, first, last, first, binary_pred);),
++                      (return thrust::unique(cvt_to_seq(derived_cast(policy)), first, last, binary_pred);));
+ }
+ 
+ template <class Derived, class ForwardIt>

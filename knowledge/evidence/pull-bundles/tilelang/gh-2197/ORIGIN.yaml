@@ -1,0 +1,67 @@
+schema_version: 1
+source_key: tile-ai/tilelang#2197
+repo: tile-ai/tilelang
+repo_id: tilelang
+pr_number: 2197
+title: Allow variable barrier id in `T.sync_threads()`
+url: https://github.com/tile-ai/tilelang/pull/2197
+state: closed
+merged_at: '2026-05-18T06:50:44Z'
+base_ref_oid: bcb2da336a28cf641f88e7f1ae53a95c475b6202
+head_ref_oid: 9b9c9e7f2b86f7d56d9ede4baf1adacdfc3d8921
+captured_at: '2026-05-20T15:04:17.836075+00:00'
+architectures:
+- sm100
+- sm90
+architecture_families:
+- blackwell
+- hopper
+tags:
+- cuda kernel
+- fp4
+- fp8
+- gemm
+- hopper
+- mla
+- mxfp4
+techniques: []
+hardware_features:
+- fp4
+- fp8
+- hopper
+- mxfp4
+kernel_types:
+- gemm
+- mla
+languages:
+- cuda-cpp
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: src/backend/cuda/codegen/codegen_cuda.cc
+    local_path: source-snapshot/src/backend/cuda/codegen/codegen_cuda.cc
+    ref: 9b9c9e7f2b86f7d56d9ede4baf1adacdfc3d8921
+    status: modified
+    fetched: true
+  - source_path: src/backend/cuda/codegen/codegen_cutedsl.cc
+    local_path: source-snapshot/src/backend/cuda/codegen/codegen_cutedsl.cc
+    ref: 9b9c9e7f2b86f7d56d9ede4baf1adacdfc3d8921
+    status: modified
+    fetched: true
+  - source_path: src/tl_templates/cuda/common.h
+    local_path: source-snapshot/src/tl_templates/cuda/common.h
+    ref: 9b9c9e7f2b86f7d56d9ede4baf1adacdfc3d8921
+    status: modified
+    fetched: true
+  - source_path: testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py
+    local_path: source-snapshot/testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py
+    ref: 9b9c9e7f2b86f7d56d9ede4baf1adacdfc3d8921
+    status: modified
+    fetched: true
+  - source_path: testing/python/language/test_tilelang_language_sync_threads.py
+    local_path: source-snapshot/testing/python/language/test_tilelang_language_sync_threads.py
+    ref: 9b9c9e7f2b86f7d56d9ede4baf1adacdfc3d8921
+    status: added
+    fetched: true

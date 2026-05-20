@@ -1,0 +1,342 @@
+diff --git a/tests/kernels/attention/test_triton_unified_attention.py b/tests/kernels/attention/test_triton_unified_attention.py
+index 0d9ba92295dc..6440ba3156e3 100644
+--- a/tests/kernels/attention/test_triton_unified_attention.py
++++ b/tests/kernels/attention/test_triton_unified_attention.py
+@@ -9,6 +9,7 @@
+ from vllm.utils.math_utils import next_power_of_2
+ from vllm.utils.torch_utils import set_random_seed
+ from vllm.v1.attention.ops.triton_unified_attention import unified_attention
++from vllm.v1.kv_cache_interface import KVQuantMode
+ 
+ DEVICE_TYPE = current_platform.device_type
+ 
+@@ -153,16 +154,20 @@ def test_triton_unified_attn(
+     q_descale = None
+     k_descale = None
+     v_descale = None
++    kv_quant_mode = KVQuantMode.NONE
+     if q_dtype is not None:
+-        # QKV are drawn from N(0, 1): no need for a fp8 scaling factor
+-        maybe_quantized_query = query.to(q_dtype)
+-        maybe_quantized_key_cache = key_cache.to(q_dtype)
+-        maybe_quantized_value_cache = value_cache.to(q_dtype)
+-
++        # Use non-1 scales so FP8 Q/K/V descale handling is tested explicitly.
++        q_scale = torch.tensor(0.75, dtype=torch.float32)
++        k_scale = torch.tensor(0.5, dtype=torch.float32)
++        v_scale = torch.tensor(0.25, dtype=torch.float32)
++        q_descale = q_scale
+         scale_shape = (num_seqs, num_kv_heads)
+-        q_descale = None  # Not yet supported
+-        k_descale = torch.rand(scale_shape, dtype=torch.float32)
+-        v_descale = torch.rand(scale_shape, dtype=torch.float32)
++        k_descale = torch.full(scale_shape, k_scale.item(), dtype=torch.float32)
++        v_descale = torch.full(scale_shape, v_scale.item(), dtype=torch.float32)
++        maybe_quantized_query = (query / q_scale).to(q_dtype)
++        maybe_quantized_key_cache = (key_cache / k_scale).to(q_dtype)
++        maybe_quantized_value_cache = (value_cache / v_scale).to(q_dtype)
++        kv_quant_mode = KVQuantMode.FP8_PER_TENSOR
+ 
+     num_par_softmax_segments = 16
+     head_size_padded = next_power_of_2(head_size)
+@@ -201,6 +206,7 @@ def test_triton_unified_attn(
+         softmax_segm_output=softmax_segm_output,
+         softmax_segm_max=softmax_segm_max,
+         softmax_segm_expsum=softmax_segm_expsum,
++        kv_quant_mode=kv_quant_mode,
+     )
+ 
+     ref_output = ref_paged_attn(
+@@ -223,6 +229,123 @@ def test_triton_unified_attn(
+     )
+ 
+ 
++@pytest.mark.parametrize(
++    "seq_lens", [[(1, 1328), (5, 18), (129, 463)], [(1, 523), (1, 37), (1, 2011)]]
++)
++@pytest.mark.parametrize("num_heads", NUM_HEADS)
++@pytest.mark.parametrize("head_size", HEAD_SIZES)
++@pytest.mark.parametrize("block_size", BLOCK_SIZES)
++@pytest.mark.parametrize("num_blocks", NUM_BLOCKS)
++@pytest.mark.parametrize("seq_threshold_3D", SEQ_THRESHOLD_3D_VALUES)
++@torch.inference_mode()
++def test_triton_unified_attn_bf16_query_fp8_kv(
++    seq_lens: list[tuple[int, int]],
++    num_heads: tuple[int, int],
++    head_size: int,
++    block_size: int,
++    num_blocks: int,
++    seq_threshold_3D: int,
++) -> None:
++    """Test bf16 Q with FP8 per-tensor KV cache (dequant via _cast_kv_tile)."""
++    torch.set_default_device(DEVICE_TYPE)
++    set_random_seed(0)
++
++    num_seqs = len(seq_lens)
++    query_lens = [x[0] for x in seq_lens]
++    kv_lens = [x[1] for x in seq_lens]
++    num_query_heads = num_heads[0]
++    num_kv_heads = num_heads[1]
++    assert num_query_heads % num_kv_heads == 0
++    max_query_len = max(query_lens)
++    max_kv_len = max(kv_lens)
++    window_size = (-1, -1)
++    scale = head_size**-0.5
++
++    dtype = torch.bfloat16
++    query = torch.randn(sum(query_lens), num_query_heads, head_size, dtype=dtype)
++    key_cache = torch.randn(
++        num_blocks, block_size, num_kv_heads, head_size, dtype=dtype
++    )
++    value_cache = torch.randn_like(key_cache)
++
++    k_scale = torch.tensor(0.5, dtype=torch.float32)
++    v_scale = torch.tensor(0.25, dtype=torch.float32)
++    fp8_key_cache = (key_cache / k_scale).to(FP8_DTYPE)
++    fp8_value_cache = (value_cache / v_scale).to(FP8_DTYPE)
++
++    scale_shape = (num_seqs, num_kv_heads)
++    k_descale = torch.full(scale_shape, k_scale.item(), dtype=torch.float32)
++    v_descale = torch.full(scale_shape, v_scale.item(), dtype=torch.float32)
++
++    cu_query_lens = torch.tensor([0] + query_lens, dtype=torch.int32).cumsum(
++        dim=0, dtype=torch.int32
++    )
++    kv_lens_t = torch.tensor(kv_lens, dtype=torch.int32)
++
++    max_num_blocks_per_seq = (max_kv_len + block_size - 1) // block_size
++    block_tables = torch.randint(
++        0, num_blocks, (num_seqs, max_num_blocks_per_seq), dtype=torch.int32
++    )
++
++    output = torch.empty_like(query)
++
++    num_par_softmax_segments = 16
++    head_size_padded = next_power_of_2(head_size)
++    softmax_segm_output = torch.empty(
++        (seq_threshold_3D, num_query_heads, num_par_softmax_segments, head_size_padded),
++        dtype=torch.float32,
++    )
++    softmax_segm_max = torch.empty(
++        (seq_threshold_3D, num_query_heads, num_par_softmax_segments),
++        dtype=torch.float32,
++    )
++    softmax_segm_expsum = torch.empty(
++        (seq_threshold_3D, num_query_heads, num_par_softmax_segments),
++        dtype=torch.float32,
++    )
++
++    unified_attention(
++        q=query,
++        k=fp8_key_cache,
++        v=fp8_value_cache,
++        out=output,
++        cu_seqlens_q=cu_query_lens,
++        seqused_k=kv_lens_t,
++        max_seqlen_q=max_query_len,
++        max_seqlen_k=max_kv_len,
++        softmax_scale=scale,
++        causal=True,
++        window_size=window_size,
++        block_table=block_tables,
++        softcap=0,
++        q_descale=None,
++        k_descale=k_descale,
++        v_descale=v_descale,
++        seq_threshold_3D=seq_threshold_3D,
++        num_par_softmax_segments=num_par_softmax_segments,
++        softmax_segm_output=softmax_segm_output,
++        softmax_segm_max=softmax_segm_max,
++        softmax_segm_expsum=softmax_segm_expsum,
++        kv_quant_mode=KVQuantMode.FP8_PER_TENSOR,
++    )
++
++    ref_output = ref_paged_attn(
++        query=query,
++        key_cache=key_cache,
++        value_cache=value_cache,
++        query_lens=query_lens,
++        kv_lens=kv_lens,
++        block_tables=block_tables,
++        scale=scale,
++    )
++
++    atol, rtol = 1.5e-1, 1.5e-1
++    (
++        torch.testing.assert_close(output, ref_output, atol=atol, rtol=rtol),
++        f"{torch.max(torch.abs(output - ref_output))}",
++    )
++
++
+ @pytest.mark.parametrize(
+     "seq_lens",
+     [
+diff --git a/vllm/v1/attention/backends/triton_attn.py b/vllm/v1/attention/backends/triton_attn.py
+index 96784ca1fe1e..aa7645f3e294 100644
+--- a/vllm/v1/attention/backends/triton_attn.py
++++ b/vllm/v1/attention/backends/triton_attn.py
+@@ -39,6 +39,7 @@
+ from vllm.v1.attention.ops.triton_unified_attention import unified_attention
+ from vllm.v1.kv_cache_interface import (
+     AttentionSpec,
++    KVQuantMode,
+     get_kv_quant_mode,
+     kv_cache_uses_per_token_head_scales,
+ )
+@@ -585,6 +586,7 @@ def forward(
+             if key_cache.dtype == torch.uint8:
+                 key_cache = key_cache.view(self.fp8_dtype)
+                 value_cache = value_cache.view(self.fp8_dtype)
++            q_descale = None
+             k_descale = None
+             v_descale = None
+             k_scale_cache = self._k_scale_cache
+@@ -592,17 +594,24 @@ def forward(
+         # FP8 per-tensor / auto path (original flow).
+         else:
+             key_cache, value_cache = kv_cache.unbind(1)
+-            if is_quantized_kv_cache(self.kv_cache_dtype):
+-                if key_cache.dtype != self.fp8_dtype:
+-                    key_cache = key_cache.view(self.fp8_dtype)
+-                    value_cache = value_cache.view(self.fp8_dtype)
+-                assert layer._q_scale_float == 1.0, (
+-                    "A non 1.0 q_scale is not currently supported."
+-                )
++            if (
++                is_quantized_kv_cache(self.kv_cache_dtype)
++                and key_cache.dtype != self.fp8_dtype
++            ):
++                key_cache = key_cache.view(self.fp8_dtype)
++                value_cache = value_cache.view(self.fp8_dtype)
+             descale_shape = (
+                 attn_metadata.query_start_loc.shape[0] - 1,
+                 key_cache.shape[2],
+             )
++            q_descale = (
++                layer._q_scale
++                if (
++                    self._kv_quant_mode == KVQuantMode.FP8_PER_TENSOR
++                    and query.dtype == self.fp8_dtype
++                )
++                else None
++            )
+             k_descale = layer._k_scale.expand(descale_shape)
+             v_descale = layer._v_scale.expand(descale_shape)
+             k_scale_cache = None
+@@ -638,7 +647,7 @@ def forward(
+             window_size=self.sliding_window,
+             block_table=block_table,
+             softcap=self.logits_soft_cap,
+-            q_descale=None,  # Not supported
++            q_descale=q_descale,
+             k_descale=k_descale,
+             v_descale=v_descale,
+             seq_threshold_3D=seq_threshold_3D,
+diff --git a/vllm/v1/attention/ops/triton_unified_attention.py b/vllm/v1/attention/ops/triton_unified_attention.py
+index c3435b082285..56f1d1c1d084 100644
+--- a/vllm/v1/attention/ops/triton_unified_attention.py
++++ b/vllm/v1/attention/ops/triton_unified_attention.py
+@@ -45,7 +45,8 @@ def _cast_kv_tile(data, Q, tensor_scale, KV_QUANT_MODE: tl.constexpr):
+       ``3`` (FP8 per-token-head): plain cast.  Per-token-head modes apply
+       their scales separately on S/P inside the loop.
+     - ``KV_QUANT_MODE == 1`` (FP8 per-tensor): dequantize using the
+-      tensor-wide scale.
++      tensor-wide scale, unless Q is also FP8 and the caller folds the scales
++      into the attention score and output accumulator.
+     """
+     if KV_QUANT_MODE == 1:
+         if Q.dtype.is_fp8():
+@@ -191,6 +192,7 @@ def kernel_unified_attention(
+     qq_bias_ptr,
+     # Scalars
+     scale,
++    q_scale,
+     k_scale,
+     v_scale,
+     out_scale,
+@@ -268,8 +270,10 @@ def kernel_unified_attention(
+     # (see ``unified_attention`` wrapper for the gating rules).
+     USE_TD: tl.constexpr = False,
+     USE_TD_QO: tl.constexpr = False,
++    Q_IS_FP8: tl.constexpr = False,
+ ):
+     USE_PER_TOKEN_HEAD_SCALES: tl.constexpr = KV_QUANT_MODE >= 2
++    USE_FP8_Q_DESCALE: tl.constexpr = KV_QUANT_MODE == 1 and Q_IS_FP8
+ 
+     if USE_TD:
+         tl.static_assert(
+@@ -355,6 +359,11 @@ def kernel_unified_attention(
+     L = tl.full([BLOCK_M], 1.0, dtype=tl.float32)
+     # acc : (BLOCK_M, HEAD_SIZE_PADDED)
+     acc = tl.zeros([BLOCK_M, HEAD_SIZE_PADDED], dtype=tl.float32)
++    score_scale = scale
++    value_scale = 1.0
++    if USE_FP8_Q_DESCALE:
++        score_scale = scale * tl.load(q_scale) * tl.load(k_scale)
++        value_scale = tl.load(v_scale)
+ 
+     context_len = seq_len - cur_batch_query_len
+ 
+@@ -497,9 +506,9 @@ def kernel_unified_attention(
+         if USE_PER_TOKEN_HEAD_SCALES:
+             # Per-token-head quant: fuse softmax_scale with per-head k_scale
+             # to avoid a separate BLOCK_M × TILE_SIZE multiply on S.
+-            S += tl.dot(Q, K) * (scale * k_token_head_scales[None, :])
++            S += tl.dot(Q, K) * (score_scale * k_token_head_scales[None, :])
+         else:
+-            S += scale * tl.dot(Q, K)
++            S += score_scale * tl.dot(Q, K)
+ 
+         if USE_SOFTCAP:
+             S = apply_softcap(S, softcap)
+@@ -537,6 +546,8 @@ def kernel_unified_attention(
+ 
+     # ---- Epilogue ---------------------------------------------------------
+     if IS_3D:
++        if USE_FP8_Q_DESCALE:
++            acc *= value_scale
+         # Store per-segment partials; finalized by ``reduce_segments``.
+         if USE_TD_QO:
+             # 3D target: segm_output[token, head, segm_idx, :].  Advance
+@@ -592,6 +603,8 @@ def kernel_unified_attention(
+         )
+     else:
+         acc = acc / L[:, None]
++        if USE_FP8_Q_DESCALE:
++            acc *= value_scale
+         if USE_FP8:
+             acc = acc * tl.load(out_scale)
+             acc = tl.clamp(acc, FP8_MIN, FP8_MAX)
+@@ -790,8 +803,6 @@ def unified_attention(
+     use_td: bool = False,
+ ):
+     assert causal, "Only causal attention is supported"
+-    assert q_descale is None, "Q scales not supported"
+-
+     if sinks is not None:
+         assert sinks.shape[0] == q.shape[1], "Sinks must be num_query_heads size"
+ 
+@@ -938,7 +949,6 @@ def unified_attention(
+         # Pass the K cache as a stand-in pointer; never dereferenced.
+         k_scale_ptr = k
+         v_scale_ptr = v
+-
+     # 3D needs real segm tensors; 2D never touches them but Triton wants
+     # a non-null pointer.  Reuse ``out`` as the placeholder.
+     segm_output_ptr = softmax_segm_output if use_3d else out
+@@ -970,6 +980,7 @@ def unified_attention(
+         k_scale_cache_ptr=k_scale_ptr,
+         v_scale_cache_ptr=v_scale_ptr,
+         scale=softmax_scale,
++        q_scale=q_descale,
+         k_scale=k_descale,
+         v_scale=v_descale,
+         out_scale=1 / output_scale if output_scale is not None else 1.0,
+@@ -1017,6 +1028,7 @@ def unified_attention(
+         USE_FP8=output_scale is not None,
+         IS_3D=use_3d,
+         KV_QUANT_MODE=kv_quant_mode,
++        Q_IS_FP8=(q.dtype == current_platform.fp8_dtype()),
+         CHUNK_LOOKBACK=chunk_lookback,
+         CHUNK_SIZE=chunk_size,
+         USE_TD=use_td,

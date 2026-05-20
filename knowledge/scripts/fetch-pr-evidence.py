@@ -167,6 +167,31 @@ def select_key_files(files: list[dict], max_files: int) -> list[dict]:
     return fetchable[:max_files]
 
 
+def render_diff_fallback(files: list[dict], reason: str) -> bytes:
+    lines = [
+        "# GitHub diff fallback",
+        "# The PR-wide diff endpoint was unavailable for this PR.",
+        f"# Reason: {reason}",
+        "# This file is reconstructed from the GitHub Pull Request files API.",
+        "",
+    ]
+    for item in files:
+        filename = item.get("filename") or "unknown"
+        previous = item.get("previous_filename") or filename
+        status = item.get("status") or "unknown"
+        additions = item.get("additions", 0)
+        deletions = item.get("deletions", 0)
+        lines.append(f"diff --git a/{previous} b/{filename}")
+        lines.append(f"# status={status} additions={additions} deletions={deletions}")
+        patch = item.get("patch")
+        if patch:
+            lines.append(str(patch))
+        else:
+            lines.append("# GitHub files API did not provide a textual patch for this file.")
+        lines.append("")
+    return ("\n".join(lines) + "\n").encode("utf-8")
+
+
 def write_text(path: Path, data: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(data, encoding="utf-8")
@@ -194,10 +219,10 @@ def bundle_path(root: Path, rid: str, pr: int) -> Path:
     return root / BUNDLE_ROOT / rid / f"gh-{pr}"
 
 
-def materialize(entry: dict, root: Path, args: argparse.Namespace) -> tuple[bool, str]:
+def materialize(entry: dict, root: Path, args: argparse.Namespace, rid: str | None = None) -> tuple[bool, str]:
     repo = entry["repo"]
     pr = int(entry.get("pr", entry.get("number")))
-    rid = repo_id(repo)
+    rid = rid or repo_id(repo)
     bundle = bundle_path(root, rid, pr)
     if artifact_complete(bundle) and not args.force:
         entry["artifact_dir"] = str(bundle.relative_to(root))
@@ -209,11 +234,19 @@ def materialize(entry: dict, root: Path, args: argparse.Namespace) -> tuple[bool
 
     pull = gh_json(f"repos/{repo}/pulls/{pr}")
     files = gh_json_paginated(f"repos/{repo}/pulls/{pr}/files?per_page=100")
-    diff = gh_api(
-        f"repos/{repo}/pulls/{pr}",
-        accept="application/vnd.github.v3.diff",
-        raw=True,
-    )
+    diff_fallback_error = ""
+    try:
+        diff = gh_api(
+            f"repos/{repo}/pulls/{pr}",
+            accept="application/vnd.github.v3.diff",
+            raw=True,
+        )
+    except RuntimeError as exc:
+        message = str(exc)
+        if "diff exceeded" not in message and "maximum number" not in message:
+            raise
+        diff_fallback_error = message
+        diff = render_diff_fallback(files, message)
 
     (bundle / DIFF_NAME).write_bytes(diff)
     (bundle / UPSTREAM_NAME).write_text(
@@ -290,6 +323,9 @@ def materialize(entry: dict, root: Path, args: argparse.Namespace) -> tuple[bool
             "source_snapshot": key_files,
         },
     }
+    if diff_fallback_error:
+        provenance["bundle"]["diff_fallback"] = "github-files-api"
+        provenance["bundle"]["diff_fallback_reason"] = diff_fallback_error
     (bundle / ORIGIN_NAME).write_text(
         yaml.safe_dump(provenance, sort_keys=False, allow_unicode=True),
         encoding="utf-8",
@@ -354,7 +390,10 @@ def main() -> int:
                 continue
             if args.limit and fetched >= args.limit:
                 break
-            bundle = bundle_path(root, repo_id(entry["repo"]), int(entry["pr"]))
+            if entry.get("artifact_dir"):
+                bundle = root / str(entry["artifact_dir"])
+            else:
+                bundle = bundle_path(root, path.stem, int(entry["pr"]))
             if artifact_complete(bundle) and not args.force:
                 entry["artifact_dir"] = str(bundle.relative_to(root))
                 skipped += 1
@@ -366,7 +405,7 @@ def main() -> int:
                 fetched += 1
                 continue
             try:
-                did_fetch, status = materialize(entry, root, args)
+                did_fetch, status = materialize(entry, root, args, path.stem)
                 changed = True
                 if did_fetch:
                     fetched += 1

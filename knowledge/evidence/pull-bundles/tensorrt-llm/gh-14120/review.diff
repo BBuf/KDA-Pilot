@@ -1,0 +1,26 @@
+diff --git a/tensorrt_llm/_torch/custom_ops/torch_custom_ops.py b/tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
+index 3b3d8a0d4c6b..ff99ab961099 100644
+--- a/tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
++++ b/tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
+@@ -1530,7 +1530,7 @@ def _(
+ # deep_gemm_gen_tuning_buckets is imported from ..utils
+ 
+ _USE_FUSED_FP8_QUANT_PACK = os.environ.get("TRTLLM_FUSED_FP8_QUANT_PACK",
+-                                           "0") == "1"
++                                           "1") == "1"
+ 
+ 
+ def _fp8_quantize_1x128_ue8m0(input: torch.Tensor, tactic: int):
+diff --git a/tensorrt_llm/_torch/modules/attention.py b/tensorrt_llm/_torch/modules/attention.py
+index f25ea20f7c86..681155029064 100644
+--- a/tensorrt_llm/_torch/modules/attention.py
++++ b/tensorrt_llm/_torch/modules/attention.py
+@@ -2195,7 +2195,7 @@ def forward_impl_with_deepseek_v4(self,
+         # with q_b_proj + q_b_layernorm. The indexer is launched on a
+         # dedicated stream and still uses a different aux stream for its
+         # internal q-proj/weights-proj split.
+-        _v4_extra_overlap = (os.environ.get("TRTLLM_MLA_EXTRA_OVERLAP", "0")
++        _v4_extra_overlap = (os.environ.get("TRTLLM_MLA_EXTRA_OVERLAP", "1")
+                              == "1" and self.compressor is not None
+                              and self.aux_stream is not None)
+ 

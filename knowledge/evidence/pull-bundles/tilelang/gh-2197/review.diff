@@ -1,0 +1,149 @@
+diff --git a/src/backend/cuda/codegen/codegen_cuda.cc b/src/backend/cuda/codegen/codegen_cuda.cc
+index 832a8fba90..db9c0d66dc 100644
+--- a/src/backend/cuda/codegen/codegen_cuda.cc
++++ b/src/backend/cuda/codegen/codegen_cuda.cc
+@@ -1399,13 +1399,20 @@ void CodeGenTileLangCUDA::PrintStorageSync(const CallNode *op) {
+     if (args.size() == 1) {
+       this->stream << "__syncthreads();\n";
+     } else if (args.size() == 2) {
+-      auto barrier_id = args[1].as<IntImmNode>()->value;
+-      this->stream << "tl::__sync_thread_partial<" << barrier_id << ">();\n";
++      ICHECK(args[1].dtype().is_int())
++          << "storage_sync barrier_id must be integer type, got "
++          << args[1].dtype();
++      this->stream << "tl::__sync_thread_partial(" << PrintExpr(args[1])
++                   << ");\n";
+     } else if (args.size() == 3) {
+-      auto barrier_id = args[1].as<IntImmNode>()->value;
+-      auto thread_count = args[2].as<IntImmNode>()->value;
+-      this->stream << "tl::__sync_thread_partial<" << barrier_id << ", "
+-                   << thread_count << ">();\n";
++      ICHECK(args[1].dtype().is_int())
++          << "storage_sync barrier_id must be integer type, got "
++          << args[1].dtype();
++      ICHECK(args[2].dtype().is_int())
++          << "storage_sync thread_count must be integer type, got "
++          << args[2].dtype();
++      this->stream << "tl::__sync_thread_partial(" << PrintExpr(args[1]) << ", "
++                   << PrintExpr(args[2]) << ");\n";
+     } else {
+       LOG(FATAL) << "Invalid number of arguments for storage sync: "
+                  << args.size();
+diff --git a/src/backend/cuda/codegen/codegen_cutedsl.cc b/src/backend/cuda/codegen/codegen_cutedsl.cc
+index d30e7c6877..2dc45d279b 100644
+--- a/src/backend/cuda/codegen/codegen_cutedsl.cc
++++ b/src/backend/cuda/codegen/codegen_cutedsl.cc
+@@ -2383,25 +2383,19 @@ void CodeGenTileLangCuTeDSL::PrintStorageSync_(const CallNode *op) {
+     if (args.size() == 1) {
+       stream << "tl.sync_threads()\n";
+     } else if (args.size() == 2) {
+-      auto barrier_id_ptr = args[1].as<IntImmNode>();
+-      ICHECK(barrier_id_ptr)
+-          << "storage_sync barrier_id (args[1]) must be IntImm, got "
+-          << args[1]->GetTypeKey();
+-      auto barrier_id = barrier_id_ptr->value;
+-      stream << "tl.sync_thread_partial(" << barrier_id << ")\n";
++      ICHECK(args[1].dtype().is_int())
++          << "storage_sync barrier_id must be integer type, got "
++          << args[1].dtype();
++      stream << "tl.sync_thread_partial(" << PrintExpr_(args[1]) << ")\n";
+     } else if (args.size() == 3) {
+-      auto barrier_id_ptr = args[1].as<IntImmNode>();
+-      ICHECK(barrier_id_ptr)
+-          << "storage_sync barrier_id (args[1]) must be IntImm, got "
+-          << args[1]->GetTypeKey();
+-      auto thread_count_ptr = args[2].as<IntImmNode>();
+-      ICHECK(thread_count_ptr)
+-          << "storage_sync thread_count (args[2]) must be IntImm, got "
+-          << args[2]->GetTypeKey();
+-      auto barrier_id = barrier_id_ptr->value;
+-      auto thread_count = thread_count_ptr->value;
+-      stream << "tl.sync_thread_partial(" << barrier_id << ", " << thread_count
+-             << ")\n";
++      ICHECK(args[1].dtype().is_int())
++          << "storage_sync barrier_id must be integer type, got "
++          << args[1].dtype();
++      ICHECK(args[2].dtype().is_int())
++          << "storage_sync thread_count must be integer type, got "
++          << args[2].dtype();
++      stream << "tl.sync_thread_partial(" << PrintExpr_(args[1]) << ", "
++             << PrintExpr_(args[2]) << ")\n";
+     } else {
+       LOG(FATAL) << "Invalid number of arguments for storage sync: "
+                  << args.size();
+diff --git a/src/tl_templates/cuda/common.h b/src/tl_templates/cuda/common.h
+index 77ead126d8..16d2c9f511 100644
+--- a/src/tl_templates/cuda/common.h
++++ b/src/tl_templates/cuda/common.h
+@@ -582,8 +582,7 @@ template <int y = 1, typename T> TL_DEVICE T pow_of_int(T x) {
+ 
+ // Thread partial barrier synchronization
+ // https://docs.nvidia.com/cuda/parallel-thread-execution/#memory-consistency-model
+-template <int barrier_id = 0, int thread_count = 0>
+-TL_DEVICE void __sync_thread_partial() {
++TL_DEVICE void __sync_thread_partial(int barrier_id = 0, int thread_count = 0) {
+   asm volatile("bar.sync %0, %1;" : : "r"(barrier_id), "r"(thread_count));
+ }
+ 
+diff --git a/testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py b/testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py
+index 34b1b1dba1..1fefb3d2b1 100644
+--- a/testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py
++++ b/testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py
+@@ -67,7 +67,7 @@ def main(
+     assert "__launch_bounds__(512, 1)" in src
+     assert "if (256 <= ((int)threadIdx.x)) {" in flat_src
+     assert "tl::tl_shuffle_elect<256>()" in src or "if (((int)threadIdx.x) == 256) {" in src
+-    assert re.search(r"tl::__sync_thread_partial<\d+, 256>\(\);", src), src
++    assert re.search(r"tl::__sync_thread_partial\(\d+, 256\);", src), src
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/testing/python/language/test_tilelang_language_sync_threads.py b/testing/python/language/test_tilelang_language_sync_threads.py
+new file mode 100644
+index 0000000000..13c8007cdd
+--- /dev/null
++++ b/testing/python/language/test_tilelang_language_sync_threads.py
+@@ -0,0 +1,43 @@
++import tilelang
++import tilelang.testing
++from tilelang import language as T
++
++
++def _compile_cuda(func):
++    tilelang.disable_cache()
++    try:
++        return tilelang.compile(func, target="cuda", execution_backend="tvm_ffi")
++    finally:
++        tilelang.enable_cache()
++
++
++@tilelang.testing.requires_cuda
++def test_sync_threads_with_variable_barrier_id():
++    @T.prim_func
++    def kernel():
++        with T.Kernel(1, threads=256) as (bx,):
++            barrier_id = T.int32(1)
++            T.sync_threads(barrier_id)
++            T.sync_threads(barrier_id, 128)
++
++    kernel = _compile_cuda(kernel)
++    src = kernel.get_kernel_source()
++    assert "tl::__sync_thread_partial(" in src, src
++
++
++@tilelang.testing.requires_cuda
++def test_sync_threads_with_computed_barrier_id():
++    @T.prim_func
++    def kernel():
++        with T.Kernel(1, threads=256) as (bx,):
++            tx = T.launch_thread("threadIdx.x", 256)
++            barrier_id = tx % 4
++            T.sync_threads(barrier_id, 256)
++
++    kernel = _compile_cuda(kernel)
++    src = kernel.get_kernel_source()
++    assert "tl::__sync_thread_partial(" in src, src
++
++
++if __name__ == "__main__":
++    tilelang.testing.main()

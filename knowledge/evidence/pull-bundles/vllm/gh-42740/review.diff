@@ -1,0 +1,23 @@
+diff --git a/vllm/v1/attention/backends/cpu_attn.py b/vllm/v1/attention/backends/cpu_attn.py
+index e28e20045148..801a16d319e1 100644
+--- a/vllm/v1/attention/backends/cpu_attn.py
++++ b/vllm/v1/attention/backends/cpu_attn.py
+@@ -25,6 +25,7 @@
+     MultipleOf,
+ )
+ from vllm.v1.attention.backends.utils import (
++    KVCacheLayoutType,
+     split_decodes_and_prefills,
+ )
+ from vllm.v1.kv_cache_interface import AttentionSpec, CrossAttentionSpec
+@@ -94,6 +95,10 @@ def get_kv_cache_shape(
+     ) -> tuple[int, ...]:
+         return 2, num_blocks, num_kv_heads, block_size, head_size
+ 
++    @classmethod
++    def get_required_kv_cache_layout(cls) -> "KVCacheLayoutType | None":
++        return "HND"
++
+     @staticmethod
+     def use_cascade_attention(*args, **kwargs) -> bool:
+         return False

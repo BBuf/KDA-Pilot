@@ -11,9 +11,10 @@ This skill turns kernel research questions into citable evidence through three
 peer routes with non-overlapping scopes. Pick one, or combine them.
 
 - **Route A — Local PR diffs.** Materialized merged-PR pages and review diffs
-  for ~3.6k upstream GPU kernel PRs across SGLang, vLLM, TensorRT-LLM,
+  for ~3.8k upstream GPU kernel PRs across SGLang, vLLM, TensorRT-LLM,
   PyTorch, FlashAttention, FlashInfer, CUTLASS/CuTe, CCCL, Triton, DeepGEMM,
-  ThunderKittens, TileLang, QuACK, DeepSeek TileKernels.
+  ThunderKittens, TileLang, QuACK, DeepSeek TileKernels, plus per-PR
+  `discussion.md` review/comment digests.
 - **Route B — External source map.** `index.json` lists complementary code
   repositories that have no curated PR diffs in Route A: NVIDIA developer
   code samples, Colfax research kernels, simveit micro-tutorials. The agent
@@ -31,6 +32,7 @@ python3 scripts/query.py "<keywords>" --compact --limit 50
 python3 scripts/search-pr-diffs.py <term1> <term2> [--any] [--limit 200]
 python3 scripts/get_page.py pr-flash-attention-1940
 less evidence/pull-bundles/flash-attention/gh-1940/review.diff
+less evidence/pull-bundles/flash-attention/gh-1940/discussion.md
 find evidence/pull-bundles/flash-attention/gh-1940/source-snapshot -type f
 ```
 
@@ -39,8 +41,8 @@ find evidence/pull-bundles/flash-attention/gh-1940/source-snapshot -type f
 filters to keep results scoped to the current kernel context.
 
 Open the bundle named by `artifact_dir` before borrowing any idea: the
-implementation evidence lives in `review.diff`, `source-snapshot/`,
-`upstream.json`, and `ORIGIN.yaml`.
+implementation evidence lives in `review.diff`, `discussion.md`,
+`source-snapshot/`, `upstream.json`, and `ORIGIN.yaml`.
 
 ## Route B: External Source Map
 

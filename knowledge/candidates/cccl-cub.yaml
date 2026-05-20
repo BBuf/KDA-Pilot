@@ -1,9 +1,9 @@
 repo: NVIDIA/cccl
-searched_at: '2026-05-16'
+searched_at: '2026-05-20'
 scan_start_date: '2024-01-01'
-cutoff_date: '2026-05-16'
-total_candidates: 228
-included: 62
+cutoff_date: '2026-05-20'
+total_candidates: 239
+included: 73
 excluded: 0
 deferred: 166
 prs:
@@ -8739,3 +8739,482 @@ prs:
   changed_paths:
   - cub/cub/device/dispatch/tuning/tuning_transform.cuh
   artifact_dir: evidence/pull-bundles/cccl-cub/gh-3543
+- number: 9056
+  pr: 9056
+  title: Vectorize contiguous iterators in `cub::BlockLoad`/`Store`
+  repo: NVIDIA/cccl
+  url: https://github.com/NVIDIA/cccl/pull/9056
+  date: '2026-05-19'
+  merged_at: '2026-05-19T07:30:04Z'
+  author: bernhardmgruber
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: cub/cub/block/block_load.cuh, cub/cub/block/block_store.cuh'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - block
+  architectures:
+  - sm100
+  techniques:
+  - vectorized-loads
+  hardware_features: []
+  kernel_types: []
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - cub/cub/block/block_load.cuh
+  - cub/cub/block/block_store.cuh
+  path_signals:
+  - cub/cub/block/block_load.cuh
+  - cub/cub/block/block_store.cuh
+  borderline_path_signals: []
+  selection_text_signals: []
+  additions: 5
+  deletions: 6
+  changed_file_count: 2
+  artifact_dir: evidence/pull-bundles/cccl-cub/gh-9056
+- number: 9044
+  pr: 9044
+  title: '[libcu++] Fix default make_shared_resource construction'
+  repo: NVIDIA/cccl
+  url: https://github.com/NVIDIA/cccl/pull/9044
+  date: '2026-05-17'
+  merged_at: '2026-05-17T15:14:25Z'
+  author: bdice
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: libcudacxx/include/cuda/__memory_resource/shared_block_ptr.h, libcudacxx/include/cuda/__memory_resource/shared_resource.h, libcudacxx/test/libcudacxx/cuda/memory_resource/shared_resource.cu'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - block
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types: []
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - libcudacxx/include/cuda/__memory_resource/shared_block_ptr.h
+  - libcudacxx/include/cuda/__memory_resource/shared_resource.h
+  - libcudacxx/test/libcudacxx/cuda/memory_resource/shared_resource.cu
+  path_signals:
+  - libcudacxx/include/cuda/__memory_resource/shared_block_ptr.h
+  - libcudacxx/include/cuda/__memory_resource/shared_resource.h
+  - libcudacxx/test/libcudacxx/cuda/memory_resource/shared_resource.cu
+  borderline_path_signals:
+  - libcudacxx/test/libcudacxx/cuda/memory_resource/shared_resource.cu
+  selection_text_signals: []
+  additions: 46
+  deletions: 2
+  changed_file_count: 3
+  artifact_dir: evidence/pull-bundles/cccl-cub/gh-9044
+- number: 9039
+  pr: 9039
+  title: Fix segmented radix sort benchmark segment size type
+  repo: NVIDIA/cccl
+  url: https://github.com/NVIDIA/cccl/pull/9039
+  date: '2026-05-18'
+  merged_at: '2026-05-18T07:18:14Z'
+  author: bernhardmgruber
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: cub/benchmarks/bench/segmented_radix_sort/keys.cu'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - sort
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types:
+  - sort
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - cub/benchmarks/bench/segmented_radix_sort/keys.cu
+  path_signals:
+  - cub/benchmarks/bench/segmented_radix_sort/keys.cu
+  borderline_path_signals:
+  - cub/benchmarks/bench/segmented_radix_sort/keys.cu
+  selection_text_signals: []
+  additions: 1
+  deletions: 1
+  changed_file_count: 1
+  artifact_dir: evidence/pull-bundles/cccl-cub/gh-9039
+- number: 9036
+  pr: 9036
+  title: Complex tanh (and thus tan) accuracy refinement
+  repo: NVIDIA/cccl
+  url: https://github.com/NVIDIA/cccl/pull/9036
+  date: '2026-05-18'
+  merged_at: '2026-05-18T23:16:44Z'
+  author: s-oboyle
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h, libcudacxx/test/libcudacxx/std/numerics/complex.number/complex.transcendentals/tanh.pass.cpp'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - reduction
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types:
+  - reduction
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h
+  - libcudacxx/test/libcudacxx/std/numerics/complex.number/complex.transcendentals/tanh.pass.cpp
+  path_signals:
+  - libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h
+  - libcudacxx/test/libcudacxx/std/numerics/complex.number/complex.transcendentals/tanh.pass.cpp
+  borderline_path_signals:
+  - libcudacxx/test/libcudacxx/std/numerics/complex.number/complex.transcendentals/tanh.pass.cpp
+  selection_text_signals: []
+  additions: 130
+  deletions: 23
+  changed_file_count: 2
+  artifact_dir: evidence/pull-bundles/cccl-cub/gh-9036
+- number: 9019
+  pr: 9019
+  title: '[libcu++] Always suppress C++ extensions warnings in prologue'
+  repo: NVIDIA/cccl
+  url: https://github.com/NVIDIA/cccl/pull/9019
+  date: '2026-05-19'
+  merged_at: '2026-05-19T17:22:19Z'
+  author: davebayer
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: cudax/include/cuda/experimental/__execution/visit.cuh, libcudacxx/codegen/generate_prologue_epilogue.py, libcudacxx/include/cuda/std/__cccl/prologue.h, libcudacxx/include/cuda/std/__type_traits/type_list.h'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - block
+  architectures:
+  - sm100
+  techniques:
+  - epilogue-fusion
+  hardware_features: []
+  kernel_types: []
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - cudax/include/cuda/experimental/__execution/visit.cuh
+  - libcudacxx/codegen/generate_prologue_epilogue.py
+  - libcudacxx/include/cuda/std/__cccl/prologue.h
+  - libcudacxx/include/cuda/std/__type_traits/type_list.h
+  path_signals:
+  - cudax/include/cuda/experimental/__execution/visit.cuh
+  - libcudacxx/codegen/generate_prologue_epilogue.py
+  - libcudacxx/include/cuda/std/__cccl/prologue.h
+  - libcudacxx/include/cuda/std/__type_traits/type_list.h
+  borderline_path_signals: []
+  selection_text_signals: []
+  additions: 34
+  deletions: 30
+  changed_file_count: 4
+  artifact_dir: evidence/pull-bundles/cccl-cub/gh-9019
+- number: 8927
+  pr: 8927
+  title: Use the new tuning API internally for `detail::segmented_radix_sort::dispatch`
+  repo: NVIDIA/cccl
+  url: https://github.com/NVIDIA/cccl/pull/8927
+  date: '2026-05-18'
+  merged_at: '2026-05-18T09:53:04Z'
+  author: bernhardmgruber
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: cub/benchmarks/bench/segmented_radix_sort/keys.cu, cub/cub/device/device_segmented_radix_sort.cuh, cub/cub/device/dispatch/dispatch_segmented_radix_sort.cuh, cub/test/catch2_test_device_segmented_radix_sort_env.cu'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  - block
+  - cuda kernel
+  - sort
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types:
+  - sort
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - cub/benchmarks/bench/segmented_radix_sort/keys.cu
+  - cub/cub/device/device_segmented_radix_sort.cuh
+  - cub/cub/device/dispatch/dispatch_segmented_radix_sort.cuh
+  - cub/test/catch2_test_device_segmented_radix_sort_env.cu
+  path_signals:
+  - cub/benchmarks/bench/segmented_radix_sort/keys.cu
+  - cub/cub/device/device_segmented_radix_sort.cuh
+  - cub/cub/device/dispatch/dispatch_segmented_radix_sort.cuh
+  - cub/test/catch2_test_device_segmented_radix_sort_env.cu
+  borderline_path_signals:
+  - cub/benchmarks/bench/segmented_radix_sort/keys.cu
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  additions: 339
+  deletions: 68
+  changed_file_count: 4
+  artifact_dir: evidence/pull-bundles/cccl-cub/gh-8927
+- number: 8925
+  pr: 8925
+  title: Use the new tuning API internally for `detail::select|three_way_partition::dispatch` and `DevicePartition`
+  repo: NVIDIA/cccl
+  url: https://github.com/NVIDIA/cccl/pull/8925
+  date: '2026-05-18'
+  merged_at: '2026-05-18T12:58:58Z'
+  author: bernhardmgruber
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: cub/benchmarks/bench/partition/flagged.cu, cub/benchmarks/bench/partition/if.cu, cub/benchmarks/bench/partition/three_way.cu, cub/cub/device/device_partition.cuh'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - block
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types: []
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - cub/benchmarks/bench/partition/flagged.cu
+  - cub/benchmarks/bench/partition/if.cu
+  - cub/benchmarks/bench/partition/three_way.cu
+  - cub/cub/device/device_partition.cuh
+  - cub/test/catch2_test_device_partition_env.cu
+  - thrust/thrust/system/cuda/detail/partition.h
+  path_signals:
+  - cub/benchmarks/bench/partition/flagged.cu
+  - cub/benchmarks/bench/partition/if.cu
+  - cub/benchmarks/bench/partition/three_way.cu
+  - cub/cub/device/device_partition.cuh
+  - cub/test/catch2_test_device_partition_env.cu
+  - thrust/thrust/system/cuda/detail/partition.h
+  borderline_path_signals:
+  - cub/benchmarks/bench/partition/flagged.cu
+  - cub/benchmarks/bench/partition/if.cu
+  - cub/benchmarks/bench/partition/three_way.cu
+  selection_text_signals: []
+  additions: 351
+  deletions: 378
+  changed_file_count: 6
+  artifact_dir: evidence/pull-bundles/cccl-cub/gh-8925
+- number: 8905
+  pr: 8905
+  title: '[STF] Add per-handle exec_place stream resources'
+  repo: NVIDIA/cccl
+  url: https://github.com/NVIDIA/cccl/pull/8905
+  date: '2026-05-19'
+  merged_at: '2026-05-19T08:10:09Z'
+  author: caugonnet
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: cudax/include/cuda/experimental/__places/exec/cuda_stream.cuh, cudax/include/cuda/experimental/__places/exec/green_context.cuh, cudax/include/cuda/experimental/__places/exec_place_resources.cuh,
+    cudax/include/cuda/experimental/__places/place_partition.cuh'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - block
+  - reduction
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types:
+  - reduction
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - c/experimental/stf/include/cccl/c/experimental/stf/stf.h
+  - c/experimental/stf/src/stf.cu
+  - c/experimental/stf/test/test_places.cpp
+  - cudax/include/cuda/experimental/__places/exec/cuda_stream.cuh
+  - cudax/include/cuda/experimental/__places/exec/green_context.cuh
+  - cudax/include/cuda/experimental/__places/exec_place_resources.cuh
+  - cudax/include/cuda/experimental/__places/place_partition.cuh
+  - cudax/include/cuda/experimental/__places/places.cuh
+  - cudax/include/cuda/experimental/__stf/graph/graph_task.cuh
+  - cudax/include/cuda/experimental/__stf/internal/async_resources_handle.cuh
+  - cudax/include/cuda/experimental/__stf/internal/backend_ctx.cuh
+  - cudax/include/cuda/experimental/__stf/internal/stf_places_extended_exports.cuh
+  - cudax/include/cuda/experimental/__stf/stream/interfaces/slice.cuh
+  - cudax/include/cuda/experimental/__stf/stream/internal/event_types.cuh
+  - cudax/include/cuda/experimental/__stf/stream/reduction.cuh
+  - cudax/include/cuda/experimental/__stf/stream/stream_ctx.cuh
+  - cudax/include/cuda/experimental/__stf/stream/stream_task.cuh
+  - cudax/test/places/stream_pool.cu
+  - cudax/test/stf/CMakeLists.txt
+  - cudax/test/stf/cpp/test_pick_stream.cu
+  - cudax/test/stf/cpp/test_pick_stream_green_context.cu
+  - docs/cudax/places.rst
+  path_signals:
+  - cudax/include/cuda/experimental/__places/exec/cuda_stream.cuh
+  - cudax/include/cuda/experimental/__places/exec/green_context.cuh
+  - cudax/include/cuda/experimental/__places/exec_place_resources.cuh
+  - cudax/include/cuda/experimental/__places/place_partition.cuh
+  - cudax/include/cuda/experimental/__places/places.cuh
+  - cudax/include/cuda/experimental/__stf/graph/graph_task.cuh
+  - cudax/include/cuda/experimental/__stf/internal/async_resources_handle.cuh
+  - cudax/include/cuda/experimental/__stf/internal/backend_ctx.cuh
+  - cudax/include/cuda/experimental/__stf/internal/stf_places_extended_exports.cuh
+  - cudax/include/cuda/experimental/__stf/stream/interfaces/slice.cuh
+  - cudax/include/cuda/experimental/__stf/stream/internal/event_types.cuh
+  - cudax/include/cuda/experimental/__stf/stream/reduction.cuh
+  borderline_path_signals:
+  - cudax/test/places/stream_pool.cu
+  - cudax/test/stf/CMakeLists.txt
+  - cudax/test/stf/cpp/test_pick_stream.cu
+  - cudax/test/stf/cpp/test_pick_stream_green_context.cu
+  - docs/cudax/places.rst
+  selection_text_signals: []
+  additions: 633
+  deletions: 80
+  changed_file_count: 22
+  artifact_dir: evidence/pull-bundles/cccl-cub/gh-8905
+- number: 8880
+  pr: 8880
+  title: Use the new tuning API internally for `detail::select::dispatch` and `DeviceSelect`
+  repo: NVIDIA/cccl
+  url: https://github.com/NVIDIA/cccl/pull/8880
+  date: '2026-05-18'
+  merged_at: '2026-05-18T10:42:03Z'
+  author: bernhardmgruber
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: cub/benchmarks/bench/select/flagged.cu, cub/benchmarks/bench/select/if.cu, cub/benchmarks/bench/select/unique.cu, cub/cub/device/device_select.cuh'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - block
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types: []
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - cub/benchmarks/bench/select/flagged.cu
+  - cub/benchmarks/bench/select/if.cu
+  - cub/benchmarks/bench/select/unique.cu
+  - cub/cub/device/device_select.cuh
+  - cub/test/catch2_test_device_select_env.cu
+  - thrust/thrust/system/cuda/detail/copy_if.h
+  - thrust/thrust/system/cuda/detail/remove.h
+  - thrust/thrust/system/cuda/detail/unique.h
+  path_signals:
+  - cub/benchmarks/bench/select/flagged.cu
+  - cub/benchmarks/bench/select/if.cu
+  - cub/benchmarks/bench/select/unique.cu
+  - cub/cub/device/device_select.cuh
+  - cub/test/catch2_test_device_select_env.cu
+  - thrust/thrust/system/cuda/detail/copy_if.h
+  - thrust/thrust/system/cuda/detail/remove.h
+  - thrust/thrust/system/cuda/detail/unique.h
+  borderline_path_signals:
+  - cub/benchmarks/bench/select/flagged.cu
+  - cub/benchmarks/bench/select/if.cu
+  - cub/benchmarks/bench/select/unique.cu
+  selection_text_signals: []
+  additions: 712
+  deletions: 758
+  changed_file_count: 8
+  artifact_dir: evidence/pull-bundles/cccl-cub/gh-8880
+- number: 8756
+  pr: 8756
+  title: Use the new tuning API internally for `detail::reduce_by_key::dispatch`
+  repo: NVIDIA/cccl
+  url: https://github.com/NVIDIA/cccl/pull/8756
+  date: '2026-05-18'
+  merged_at: '2026-05-18T16:11:16Z'
+  author: bernhardmgruber
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: cub/benchmarks/bench/reduce/by_key.cu, cub/benchmarks/bench/select/unique.cu, cub/cub/device/device_reduce.cuh, cub/test/catch2_test_device_reduce_env.cu'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - block
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types: []
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - cub/benchmarks/bench/reduce/by_key.cu
+  - cub/benchmarks/bench/select/unique.cu
+  - cub/cub/device/device_reduce.cuh
+  - cub/test/catch2_test_device_reduce_env.cu
+  path_signals:
+  - cub/benchmarks/bench/reduce/by_key.cu
+  - cub/benchmarks/bench/select/unique.cu
+  - cub/cub/device/device_reduce.cuh
+  - cub/test/catch2_test_device_reduce_env.cu
+  borderline_path_signals:
+  - cub/benchmarks/bench/reduce/by_key.cu
+  - cub/benchmarks/bench/select/unique.cu
+  selection_text_signals: []
+  additions: 108
+  deletions: 51
+  changed_file_count: 4
+  artifact_dir: evidence/pull-bundles/cccl-cub/gh-8756
+- number: 8190
+  pr: 8190
+  title: '[STF] Move unstable_unique from STF to generic cudax utility'
+  repo: NVIDIA/cccl
+  url: https://github.com/NVIDIA/cccl/pull/8190
+  date: '2026-05-19'
+  merged_at: '2026-05-19T20:49:03Z'
+  author: caugonnet
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: cudax/include/cuda/experimental/__stf/stream/internal/event_types.cuh, cudax/include/cuda/experimental/__stf/utility/unstable_unique.cuh, cudax/include/cuda/experimental/__utility/unstable_unique.cuh,
+    cudax/test/CMakeLists.txt'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - sort
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types:
+  - sort
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - cudax/include/cuda/experimental/__stf/stream/internal/event_types.cuh
+  - cudax/include/cuda/experimental/__stf/utility/unstable_unique.cuh
+  - cudax/include/cuda/experimental/__utility/unstable_unique.cuh
+  - cudax/test/CMakeLists.txt
+  - cudax/test/stf/CMakeLists.txt
+  - cudax/test/utility/unstable_unique.cu
+  path_signals:
+  - cudax/include/cuda/experimental/__stf/stream/internal/event_types.cuh
+  - cudax/include/cuda/experimental/__stf/utility/unstable_unique.cuh
+  - cudax/include/cuda/experimental/__utility/unstable_unique.cuh
+  - cudax/test/CMakeLists.txt
+  - cudax/test/stf/CMakeLists.txt
+  - cudax/test/utility/unstable_unique.cu
+  borderline_path_signals:
+  - cudax/test/CMakeLists.txt
+  - cudax/test/stf/CMakeLists.txt
+  - cudax/test/utility/unstable_unique.cu
+  selection_text_signals: []
+  additions: 212
+  deletions: 180
+  changed_file_count: 6
+  artifact_dir: evidence/pull-bundles/cccl-cub/gh-8190

@@ -1,0 +1,77 @@
+schema_version: 1
+source_key: vllm-project/vllm#41436
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 41436
+title: '[ROCm][Quantization][3/N] Refactor quark_moe w4a4 w/ oracle'
+url: https://github.com/vllm-project/vllm/pull/41436
+state: closed
+merged_at: '2026-05-18T17:46:13Z'
+base_ref_oid: ca7e4546da4cb716df671dfcf26e459dd3dfd9f0
+head_ref_oid: 139daf02f1643fab8a3a1623108b5fa8a6831776
+captured_at: '2026-05-20T15:11:43.202153+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cuda kernel
+- moe
+- moe kernel
+- mxfp4
+- triton kernel
+techniques:
+- fine-grained-quantization
+- kernel-fusion
+hardware_features:
+- fp4
+- mxfp4
+kernel_types:
+- moe
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: tests/evals/gsm8k/configs/Qwen3.5-35B-A3B-MXFP4-AITER-TP2.yaml
+    local_path: source-snapshot/tests/evals/gsm8k/configs/Qwen3.5-35B-A3B-MXFP4-AITER-TP2.yaml
+    ref: 139daf02f1643fab8a3a1623108b5fa8a6831776
+    status: added
+    fetched: true
+  - source_path: tests/evals/gsm8k/configs/Qwen3.5-35B-A3B-MXFP4-EMU-TP2.yaml
+    local_path: source-snapshot/tests/evals/gsm8k/configs/Qwen3.5-35B-A3B-MXFP4-EMU-TP2.yaml
+    ref: 139daf02f1643fab8a3a1623108b5fa8a6831776
+    status: renamed
+    fetched: true
+  - source_path: tests/evals/gsm8k/configs/models-mi3xx.txt
+    local_path: source-snapshot/tests/evals/gsm8k/configs/models-mi3xx.txt
+    ref: 139daf02f1643fab8a3a1623108b5fa8a6831776
+    status: modified
+    fetched: true
+  - source_path: tests/evals/gsm8k/configs/models-qwen35-mi355.txt
+    local_path: source-snapshot/tests/evals/gsm8k/configs/models-qwen35-mi355.txt
+    ref: 139daf02f1643fab8a3a1623108b5fa8a6831776
+    status: modified
+    fetched: true
+  - source_path: tests/quantization/test_gfx950_moe.py
+    local_path: source-snapshot/tests/quantization/test_gfx950_moe.py
+    ref: 139daf02f1643fab8a3a1623108b5fa8a6831776
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/fused_moe/experts/rocm_aiter_moe.py
+    local_path: source-snapshot/vllm/model_executor/layers/fused_moe/experts/rocm_aiter_moe.py
+    ref: 139daf02f1643fab8a3a1623108b5fa8a6831776
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/fused_moe/oracle/mxfp4.py
+    local_path: source-snapshot/vllm/model_executor/layers/fused_moe/oracle/mxfp4.py
+    ref: 139daf02f1643fab8a3a1623108b5fa8a6831776
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/quantization/quark/quark_moe.py
+    local_path: source-snapshot/vllm/model_executor/layers/quantization/quark/quark_moe.py
+    ref: 139daf02f1643fab8a3a1623108b5fa8a6831776
+    status: modified
+    fetched: true

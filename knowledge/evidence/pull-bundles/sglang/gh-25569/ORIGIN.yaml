@@ -1,0 +1,45 @@
+schema_version: 1
+source_key: sgl-project/sglang#25569
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25569
+title: Add DeepSeekV4 fused MoE Triton autotune support
+url: https://github.com/sgl-project/sglang/pull/25569
+state: closed
+merged_at: '2026-05-18T13:35:33Z'
+base_ref_oid: abe2ec2aff6f10d3a9c719a3b505d23858d797b6
+head_ref_oid: 2ec33142f5b9aa7df389dcbe46f8081d455e25ad
+captured_at: '2026-05-20T14:49:54.843575+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- benchmark kernel
+- moe
+- moe kernel
+- triton
+- triton kernel
+techniques:
+- autotuning
+- kernel-fusion
+hardware_features: []
+kernel_types:
+- moe
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: benchmark/kernels/fused_moe_triton/common_utils.py
+    local_path: source-snapshot/benchmark/kernels/fused_moe_triton/common_utils.py
+    ref: 2ec33142f5b9aa7df389dcbe46f8081d455e25ad
+    status: modified
+    fetched: true
+  - source_path: benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py
+    local_path: source-snapshot/benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py
+    ref: 2ec33142f5b9aa7df389dcbe46f8081d455e25ad
+    status: modified
+    fetched: true

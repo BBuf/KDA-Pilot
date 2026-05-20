@@ -1,0 +1,65 @@
+schema_version: 1
+source_key: sgl-project/sglang#25525
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25525
+title: '[MoE Refactor] Migrate flashinfer_cutedsl + DeepEP to MoeRunner'
+url: https://github.com/sgl-project/sglang/pull/25525
+state: closed
+merged_at: '2026-05-17T21:48:18Z'
+base_ref_oid: be3c425788db359a8b47f832469e870078254944
+head_ref_oid: 01225c45cf72e957e27e571863f967179db00f73
+captured_at: '2026-05-20T14:50:26.961440+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention kernel
+- cuda kernel
+- fp4
+- gemm
+- moe
+- moe kernel
+- nvfp4
+techniques:
+- fine-grained-quantization
+hardware_features:
+- fp4
+- nvfp4
+kernel_types:
+- attention
+- gemm
+- moe
+languages:
+- cuda-cpp
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/layers/moe/ep_moe/layer.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/ep_moe/layer.py
+    ref: 01225c45cf72e957e27e571863f967179db00f73
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/moe_runner/flashinfer_cutedsl.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/moe_runner/flashinfer_cutedsl.py
+    ref: 01225c45cf72e957e27e571863f967179db00f73
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/moe_runner/runner.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/moe_runner/runner.py
+    ref: 01225c45cf72e957e27e571863f967179db00f73
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/quantization/modelopt_quant.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/modelopt_quant.py
+    ref: 01225c45cf72e957e27e571863f967179db00f73
+    status: modified
+    fetched: true
+  - source_path: test/registered/moe/test_cutedsl_moe.py
+    local_path: source-snapshot/test/registered/moe/test_cutedsl_moe.py
+    ref: 01225c45cf72e957e27e571863f967179db00f73
+    status: modified
+    fetched: true

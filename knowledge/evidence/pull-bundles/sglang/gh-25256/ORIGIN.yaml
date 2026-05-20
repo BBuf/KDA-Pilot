@@ -1,0 +1,51 @@
+schema_version: 1
+source_key: sgl-project/sglang#25256
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25256
+title: '[MUSA][Diffusion] Improve  wan model inference speed using torch.compile'
+url: https://github.com/sgl-project/sglang/pull/25256
+state: closed
+merged_at: '2026-05-17T14:10:25Z'
+base_ref_oid: 229cadec0409478977859abace5abb53264624b3
+head_ref_oid: f6f1f11ab61f61028454d929596d8574c7498ef0
+captured_at: '2026-05-20T14:52:13.350592+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cuda
+- cuda kernel
+techniques:
+- kernel-fusion
+hardware_features: []
+kernel_types:
+- norm
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/jit_kernel/diffusion/triton/scale_shift.py
+    local_path: source-snapshot/python/sglang/jit_kernel/diffusion/triton/scale_shift.py
+    ref: f6f1f11ab61f61028454d929596d8574c7498ef0
+    status: modified
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/runtime/layers/elementwise.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/layers/elementwise.py
+    ref: f6f1f11ab61f61028454d929596d8574c7498ef0
+    status: modified
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/runtime/layers/layernorm.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/layers/layernorm.py
+    ref: f6f1f11ab61f61028454d929596d8574c7498ef0
+    status: modified
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/runtime/models/dits/wanvideo.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/models/dits/wanvideo.py
+    ref: f6f1f11ab61f61028454d929596d8574c7498ef0
+    status: modified
+    fetched: true

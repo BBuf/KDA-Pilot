@@ -1,0 +1,68 @@
+schema_version: 1
+source_key: NVIDIA/TensorRT-LLM#14219
+repo: NVIDIA/TensorRT-LLM
+repo_id: tensorrt-llm
+pr_number: 14219
+title: '[None][feat] DSv4: enable GVR Heuristic Top-K for compress_ratio=4'
+url: https://github.com/NVIDIA/TensorRT-LLM/pull/14219
+state: closed
+merged_at: '2026-05-19T05:29:46Z'
+base_ref_oid: 37c2e05ecfdd9e1ae641744dfc962f9d785c1d30
+head_ref_oid: 41995249692a0b639497d19da8f394e4917ed26d
+captured_at: '2026-05-20T14:58:38.321463+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention kernel
+- benchmark kernel
+- blackwell
+- cuda kernel
+techniques: []
+hardware_features:
+- blackwell
+kernel_types:
+- attention
+- decode
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: cpp/tensorrt_llm/kernels/heuristicTopKDecode.cu
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/heuristicTopKDecode.cu
+    ref: 41995249692a0b639497d19da8f394e4917ed26d
+    status: modified
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/heuristicTopKDecode.h
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/heuristicTopKDecode.h
+    ref: 41995249692a0b639497d19da8f394e4917ed26d
+    status: modified
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/indexerTopK.cu
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/indexerTopK.cu
+    ref: 41995249692a0b639497d19da8f394e4917ed26d
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+    local_path: source-snapshot/tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+    ref: 41995249692a0b639497d19da8f394e4917ed26d
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/model_config.py
+    local_path: source-snapshot/tensorrt_llm/_torch/model_config.py
+    ref: 41995249692a0b639497d19da8f394e4917ed26d
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/llmapi/llm_args.py
+    local_path: source-snapshot/tensorrt_llm/llmapi/llm_args.py
+    ref: 41995249692a0b639497d19da8f394e4917ed26d
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/_torch/thop/parallel/test_indexer_topk.py
+    local_path: source-snapshot/tests/unittest/_torch/thop/parallel/test_indexer_topk.py
+    ref: 41995249692a0b639497d19da8f394e4917ed26d
+    status: modified
+    fetched: true

@@ -1,0 +1,36 @@
+schema_version: 1
+source_key: sgl-project/sglang#25522
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25522
+title: Fix logging for inplace setting in the flashInfer-trtllm backend
+url: https://github.com/sgl-project/sglang/pull/25522
+state: closed
+merged_at: '2026-05-17T09:20:14Z'
+base_ref_oid: e547f3f80463686e91d8a63b728707a82c480a7e
+head_ref_oid: f272ba5b84569bd6be9e885764303d5a5ca2b43d
+captured_at: '2026-05-20T14:50:35.527959+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- fp4
+- moe
+techniques:
+- kernel-fusion
+hardware_features:
+- fp4
+kernel_types:
+- moe
+languages:
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/layers/moe/fused_moe_triton/layer.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/fused_moe_triton/layer.py
+    ref: f272ba5b84569bd6be9e885764303d5a5ca2b43d
+    status: modified
+    fetched: true

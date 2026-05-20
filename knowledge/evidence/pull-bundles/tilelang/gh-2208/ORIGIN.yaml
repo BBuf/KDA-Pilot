@@ -1,0 +1,58 @@
+schema_version: 1
+source_key: tile-ai/tilelang#2208
+repo: tile-ai/tilelang
+repo_id: tilelang
+pr_number: 2208
+title: '[Fix][AMD] Fix Roller autotuner for RDNA3 WMMA targets'
+url: https://github.com/tile-ai/tilelang/pull/2208
+state: closed
+merged_at: '2026-05-18T10:08:42Z'
+base_ref_oid: bcb2da336a28cf641f88e7f1ae53a95c475b6202
+head_ref_oid: fa8236cb8aff0383569eccc65580eabc0ec4e287
+captured_at: '2026-05-20T15:03:58.298114+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- benchmark kernel
+- cuda kernel
+- gemm
+- matmul
+- schedule
+techniques:
+- autotuning
+hardware_features: []
+kernel_types:
+- gemm
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: benchmark/matmul/benchmark_matmul.py
+    local_path: source-snapshot/benchmark/matmul/benchmark_matmul.py
+    ref: fa8236cb8aff0383569eccc65580eabc0ec4e287
+    status: modified
+    fetched: true
+  - source_path: testing/python/target/test_tilelang_rocm_target.py
+    local_path: source-snapshot/testing/python/target/test_tilelang_rocm_target.py
+    ref: fa8236cb8aff0383569eccc65580eabc0ec4e287
+    status: modified
+    fetched: true
+  - source_path: tilelang/carver/arch/rdna.py
+    local_path: source-snapshot/tilelang/carver/arch/rdna.py
+    ref: fa8236cb8aff0383569eccc65580eabc0ec4e287
+    status: modified
+    fetched: true
+  - source_path: tilelang/carver/matmul_analysis.py
+    local_path: source-snapshot/tilelang/carver/matmul_analysis.py
+    ref: fa8236cb8aff0383569eccc65580eabc0ec4e287
+    status: modified
+    fetched: true
+  - source_path: tilelang/carver/roller/policy/tensorcore.py
+    local_path: source-snapshot/tilelang/carver/roller/policy/tensorcore.py
+    ref: fa8236cb8aff0383569eccc65580eabc0ec4e287
+    status: modified
+    fetched: true

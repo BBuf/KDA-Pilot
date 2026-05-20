@@ -1,0 +1,35 @@
+diff --git a/cub/cub/block/block_load.cuh b/cub/cub/block/block_load.cuh
+index aff256fe5bb..ca045df83bf 100644
+--- a/cub/cub/block/block_load.cuh
++++ b/cub/cub/block/block_load.cuh
+@@ -980,10 +980,10 @@ public:
+       {
+         InternalLoadDirectBlockedVectorized<RandomAccessIterator::__modifier>(linear_tid, block_src_it.ptr, dst_items);
+       }
+-      // FIXME(bgruber): we should test for contiguous iterator here
+-      else if constexpr (::cuda::std::is_pointer_v<RandomAccessIterator>)
++      else if constexpr (::cuda::std::contiguous_iterator<RandomAccessIterator>
++                         && ::cuda::std::__can_to_address<RandomAccessIterator>)
+       {
+-        InternalLoadDirectBlockedVectorized<LOAD_DEFAULT>(linear_tid, block_src_it, dst_items);
++        InternalLoadDirectBlockedVectorized<LOAD_DEFAULT>(linear_tid, ::cuda::std::to_address(block_src_it), dst_items);
+       }
+       else
+       {
+diff --git a/cub/cub/block/block_store.cuh b/cub/cub/block/block_store.cuh
+index bda042c85b5..f3f60da126f 100644
+--- a/cub/cub/block/block_store.cuh
++++ b/cub/cub/block/block_store.cuh
+@@ -812,10 +812,9 @@ public:
+     }
+     else if constexpr (Algorithm == BLOCK_STORE_VECTORIZE)
+     {
+-      // FIXME(bgruber): we should test for contiguous iterator here
+-      if constexpr (::cuda::std::is_pointer_v<OutputIteratorT>)
++      if constexpr (::cuda::std::contiguous_iterator<OutputIteratorT> && ::cuda::std::__can_to_address<OutputIteratorT>)
+       {
+-        StoreDirectBlockedVectorized(linear_tid, block_itr, items);
++        StoreDirectBlockedVectorized(linear_tid, ::cuda::std::to_address(block_itr), items);
+       }
+       else
+       {

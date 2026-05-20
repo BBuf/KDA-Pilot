@@ -1,0 +1,57 @@
+schema_version: 1
+source_key: vllm-project/vllm#40717
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 40717
+title: '[GDN] Enable FI Blackwell GDN prefill kernel'
+url: https://github.com/vllm-project/vllm/pull/40717
+state: closed
+merged_at: '2026-05-20T08:46:56Z'
+base_ref_oid: 4a4fdabe28f3e2c8f9d05bcc80c4bf6d656b1ead
+head_ref_oid: 203a1b790fa7b1ae682b6e8caadb23bfec43d485
+captured_at: '2026-05-20T15:12:03.160376+00:00'
+architectures:
+- sm100
+- sm90
+architecture_families:
+- blackwell
+- hopper
+tags:
+- attention kernel
+- benchmark kernel
+- blackwell
+- cuda
+- cuda kernel
+- cute
+- cutlass
+- hopper
+- nvfp4
+- sm100
+- sm90
+- triton kernel
+techniques: []
+hardware_features:
+- blackwell
+- fp4
+- hopper
+- nvfp4
+kernel_types:
+- attention
+languages:
+- cuda-cpp
+- cute-dsl
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: vllm/model_executor/layers/mamba/gdn_linear_attn.py
+    local_path: source-snapshot/vllm/model_executor/layers/mamba/gdn_linear_attn.py
+    ref: 203a1b790fa7b1ae682b6e8caadb23bfec43d485
+    status: modified
+    fetched: true
+  - source_path: vllm/platforms/cuda.py
+    local_path: source-snapshot/vllm/platforms/cuda.py
+    ref: 203a1b790fa7b1ae682b6e8caadb23bfec43d485
+    status: modified
+    fetched: true

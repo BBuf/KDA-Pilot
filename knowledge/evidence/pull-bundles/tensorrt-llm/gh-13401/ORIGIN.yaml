@@ -1,0 +1,57 @@
+schema_version: 1
+source_key: NVIDIA/TensorRT-LLM#13401
+repo: NVIDIA/TensorRT-LLM
+repo_id: tensorrt-llm
+pr_number: 13401
+title: '[TRTLLM-11127][feat] add W4A8_MXFP4_FP8 MoE unit test support'
+url: https://github.com/NVIDIA/TensorRT-LLM/pull/13401
+state: closed
+merged_at: '2026-05-19T13:19:29Z'
+base_ref_oid: a6fc155178a1f1eefd40d4a93af771e003cd9983
+head_ref_oid: fc0fa7b8599e51aa616f754df46fab4f8e29225c
+captured_at: '2026-05-20T15:01:59.693537+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cutlass
+- fp8
+- moe
+- moe kernel
+- mxfp4
+techniques:
+- fine-grained-quantization
+hardware_features:
+- fp4
+- fp8
+- mxfp4
+kernel_types:
+- moe
+languages:
+- cuda-cpp
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: tests/unittest/_torch/modules/moe/moe_test_utils.py
+    local_path: source-snapshot/tests/unittest/_torch/modules/moe/moe_test_utils.py
+    ref: fc0fa7b8599e51aa616f754df46fab4f8e29225c
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/_torch/modules/moe/quantize_utils.py
+    local_path: source-snapshot/tests/unittest/_torch/modules/moe/quantize_utils.py
+    ref: fc0fa7b8599e51aa616f754df46fab4f8e29225c
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/_torch/modules/moe/test_moe_backend.py
+    local_path: source-snapshot/tests/unittest/_torch/modules/moe/test_moe_backend.py
+    ref: fc0fa7b8599e51aa616f754df46fab4f8e29225c
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/_torch/modules/moe/test_moe_module.py
+    local_path: source-snapshot/tests/unittest/_torch/modules/moe/test_moe_module.py
+    ref: fc0fa7b8599e51aa616f754df46fab4f8e29225c
+    status: modified
+    fetched: true

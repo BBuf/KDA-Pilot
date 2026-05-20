@@ -1,0 +1,71 @@
+schema_version: 1
+source_key: NVIDIA/TensorRT-LLM#14134
+repo: NVIDIA/TensorRT-LLM
+repo_id: tensorrt-llm
+pr_number: 14134
+title: '[None][feat] Add chunked prefill support for Gemma4 (text + vision multimodal)'
+url: https://github.com/NVIDIA/TensorRT-LLM/pull/14134
+state: closed
+merged_at: '2026-05-19T08:19:53Z'
+base_ref_oid: 50590a3b08651a91caf1bc32180868ede4aa4b99
+head_ref_oid: 6b3bef606e6fd8114a2c36facd9312b38df83aa6
+captured_at: '2026-05-20T14:59:55.325173+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention kernel
+- cuda kernel
+- moe kernel
+- triton kernel
+techniques:
+- cache-policy
+- tile-scheduling
+hardware_features: []
+kernel_types:
+- attention
+- gemm
+- moe
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: tensorrt_llm/_torch/attention_backend/flashinfer.py
+    local_path: source-snapshot/tensorrt_llm/_torch/attention_backend/flashinfer.py
+    ref: 6b3bef606e6fd8114a2c36facd9312b38df83aa6
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/attention_backend/triton_prefill.py
+    local_path: source-snapshot/tensorrt_llm/_torch/attention_backend/triton_prefill.py
+    ref: 6b3bef606e6fd8114a2c36facd9312b38df83aa6
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/models/modeling_gemma4.py
+    local_path: source-snapshot/tensorrt_llm/_torch/models/modeling_gemma4.py
+    ref: 6b3bef606e6fd8114a2c36facd9312b38df83aa6
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/models/modeling_gemma4mm.py
+    local_path: source-snapshot/tensorrt_llm/_torch/models/modeling_gemma4mm.py
+    ref: 6b3bef606e6fd8114a2c36facd9312b38df83aa6
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/pyexecutor/scheduler/scheduler_v2.py
+    local_path: source-snapshot/tensorrt_llm/_torch/pyexecutor/scheduler/scheduler_v2.py
+    ref: 6b3bef606e6fd8114a2c36facd9312b38df83aa6
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/inputs/registry.py
+    local_path: source-snapshot/tensorrt_llm/inputs/registry.py
+    ref: 6b3bef606e6fd8114a2c36facd9312b38df83aa6
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/_torch/executor/test_kv_cache_v2_scheduler.py
+    local_path: source-snapshot/tests/unittest/_torch/executor/test_kv_cache_v2_scheduler.py
+    ref: 6b3bef606e6fd8114a2c36facd9312b38df83aa6
+    status: modified
+    fetched: true

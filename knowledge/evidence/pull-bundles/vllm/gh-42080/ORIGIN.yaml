@@ -1,0 +1,47 @@
+schema_version: 1
+source_key: vllm-project/vllm#42080
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42080
+title: '[feat] Add FP8 per-tensor Q scale support to Triton attention backend'
+url: https://github.com/vllm-project/vllm/pull/42080
+state: closed
+merged_at: '2026-05-19T16:02:06Z'
+base_ref_oid: 256dbcaabf2acc38dad804e8beac7ea0887e72d4
+head_ref_oid: b17366f2cd4f52f183ddc4a9b91cf212fd555012
+captured_at: '2026-05-20T15:11:08.308388+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention kernel
+- fp8
+- triton kernel
+techniques: []
+hardware_features:
+- fp8
+kernel_types:
+- attention
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: tests/kernels/attention/test_triton_unified_attention.py
+    local_path: source-snapshot/tests/kernels/attention/test_triton_unified_attention.py
+    ref: b17366f2cd4f52f183ddc4a9b91cf212fd555012
+    status: modified
+    fetched: true
+  - source_path: vllm/v1/attention/backends/triton_attn.py
+    local_path: source-snapshot/vllm/v1/attention/backends/triton_attn.py
+    ref: b17366f2cd4f52f183ddc4a9b91cf212fd555012
+    status: modified
+    fetched: true
+  - source_path: vllm/v1/attention/ops/triton_unified_attention.py
+    local_path: source-snapshot/vllm/v1/attention/ops/triton_unified_attention.py
+    ref: b17366f2cd4f52f183ddc4a9b91cf212fd555012
+    status: modified
+    fetched: true

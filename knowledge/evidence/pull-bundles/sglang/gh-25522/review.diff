@@ -1,0 +1,21 @@
+diff --git a/python/sglang/srt/layers/moe/fused_moe_triton/layer.py b/python/sglang/srt/layers/moe/fused_moe_triton/layer.py
+index 9b84319506c2..d8fc286fb3d6 100644
+--- a/python/sglang/srt/layers/moe/fused_moe_triton/layer.py
++++ b/python/sglang/srt/layers/moe/fused_moe_triton/layer.py
+@@ -70,6 +70,7 @@
+     get_bool_env_var,
+     is_cpu,
+     is_hip,
++    print_info_once,
+     round_up,
+ )
+ from sglang.srt.utils.custom_op import register_custom_op
+@@ -313,7 +314,7 @@ def __init__(
+             or get_moe_runner_backend().is_flashinfer_trtllm()
+         ):
+             if self.moe_runner_config.inplace:
+-                logging.info(
++                print_info_once(
+                     "Setting inplace to False for FlashInfer TRTLLM MoE backend."
+                 )
+             self.moe_runner_config.inplace = False

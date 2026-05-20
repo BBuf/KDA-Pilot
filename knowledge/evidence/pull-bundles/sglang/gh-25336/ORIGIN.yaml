@@ -1,0 +1,163 @@
+schema_version: 1
+source_key: sgl-project/sglang#25336
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25336
+title: '[Intel GPU] Enable DeepSeek V4 Inference on XPU'
+url: https://github.com/sgl-project/sglang/pull/25336
+state: closed
+merged_at: '2026-05-18T01:33:00Z'
+base_ref_oid: 3a442e103b99d43221ec2d0b9b0a2bed221f4017
+head_ref_oid: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+captured_at: '2026-05-20T14:51:42.145966+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- fp8
+- triton
+techniques:
+- fine-grained-quantization
+- kernel-fusion
+hardware_features:
+- fp4
+- fp8
+- mxfp4
+kernel_types:
+- attention
+- gemm
+- mla
+- moe
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/bench_offline_throughput.py
+    local_path: source-snapshot/python/sglang/bench_offline_throughput.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/jit_kernel/deepseek_v4.py
+    local_path: source-snapshot/python/sglang/jit_kernel/deepseek_v4.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/jit_kernel/utils.py
+    local_path: source-snapshot/python/sglang/jit_kernel/utils.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/environ.py
+    local_path: source-snapshot/python/sglang/srt/environ.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/deepseek_v4_backend.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/deepseek_v4_backend.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/dsv4/indexer.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/dsv4/indexer.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/dsv4/metadata.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/dsv4/metadata.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/dsv4/triton_fp8_paged_mqa_logits.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/dsv4/triton_fp8_paged_mqa_logits.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/flash_mla_sm120_fallback.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/flash_mla_sm120_fallback.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/flash_mla_sm120_triton.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/flash_mla_sm120_triton.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/nsa/nsa_indexer.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/nsa/nsa_indexer.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/nsa/sm120_mqa_fallback.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/nsa/sm120_mqa_fallback.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/nsa/sm120_mqa_triton.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/nsa/sm120_mqa_triton.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/nsa_backend.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/nsa_backend.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/deep_gemm_wrapper/configurer.py
+    local_path: source-snapshot/python/sglang/srt/layers/deep_gemm_wrapper/configurer.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/deepseek_v4_rope.py
+    local_path: source-snapshot/python/sglang/srt/layers/deepseek_v4_rope.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/fused_moe_triton/mxfp4_moe_fallback.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/fused_moe_triton/mxfp4_moe_fallback.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/fused_moe_triton/mxfp4_moe_sm120_triton.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/fused_moe_triton/mxfp4_moe_sm120_triton.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/moe_runner/triton_utils/fused_moe.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/moe_runner/triton_utils/fused_moe.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/moe_runner/triton_utils/fused_moe_triton_config.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/moe_runner/triton_utils/fused_moe_triton_config.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/topk.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/topk.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/quantization/mxfp4_marlin_moe.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/mxfp4_marlin_moe.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/models/deepseek_v4.py
+    local_path: source-snapshot/python/sglang/srt/models/deepseek_v4.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/server_args.py
+    local_path: source-snapshot/python/sglang/srt/server_args.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/test/test_sm120_mqa_fallback.py
+    local_path: source-snapshot/python/sglang/test/test_sm120_mqa_fallback.py
+    ref: 7aa7d3ac7bbf073f41991305b2ef628f541c9bd9
+    status: added
+    fetched: true

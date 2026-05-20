@@ -1,0 +1,74 @@
+diff --git a/vllm/distributed/device_communicators/xpu_communicator.py b/vllm/distributed/device_communicators/xpu_communicator.py
+index 209005c5b10a..1b6ce9e8aae4 100644
+--- a/vllm/distributed/device_communicators/xpu_communicator.py
++++ b/vllm/distributed/device_communicators/xpu_communicator.py
+@@ -22,6 +22,7 @@ def __init__(
+         unique_name: str = "",
+     ):
+         super().__init__(cpu_group, device, device_group, unique_name)
++        self.ca_comm: None = None
+         if self.use_all2all:
+             if self.all2all_backend in ("naive", "allgather_reducescatter"):
+                 from .all2all import AgRsAll2AllManager
+diff --git a/vllm/distributed/parallel_state.py b/vllm/distributed/parallel_state.py
+index 58c49c09dc54..2a9452fc2541 100644
+--- a/vllm/distributed/parallel_state.py
++++ b/vllm/distributed/parallel_state.py
+@@ -476,9 +476,15 @@ def graph_capture(self, graph_capture_context: GraphCaptureContext | None = None
+         from vllm.distributed.device_communicators.cuda_communicator import (
+             CudaCommunicator,
+         )
++        from vllm.distributed.device_communicators.xpu_communicator import (
++            XpuCommunicator,
++        )
+ 
+         if self.device_communicator is not None:
+-            assert isinstance(self.device_communicator, CudaCommunicator)
++            assert isinstance(
++                self.device_communicator,
++                (CudaCommunicator, XpuCommunicator),
++            )
+             ca_comm = self.device_communicator.ca_comm
+             if ca_comm is not None:
+                 maybe_ca_context = ca_comm.capture()  # type: ignore
+diff --git a/vllm/platforms/xpu.py b/vllm/platforms/xpu.py
+index bd9006f3f8fc..5fdd7ca1326b 100644
+--- a/vllm/platforms/xpu.py
++++ b/vllm/platforms/xpu.py
+@@ -195,23 +195,6 @@ def check_and_update_config(cls, vllm_config: VllmConfig) -> None:
+                 "XPU Graph is disabled by environment variable, "
+                 "please set VLLM_XPU_ENABLE_XPU_GRAPH=1 to enable it."
+             )
+-        elif parallel_config.world_size_across_dp > 1:
+-            compilation_config.cudagraph_mode = CUDAGraphMode.NONE
+-            logger.warning(
+-                "XPU Graph doesn't support capture communication ops, "
+-                "disabling cudagraph_mode."
+-            )
+-        else:
+-            if (
+-                attention_config.backend == AttentionBackendEnum.FLASH_ATTN
+-                and compilation_config.cudagraph_mode
+-                not in {CUDAGraphMode.NONE, CUDAGraphMode.PIECEWISE}
+-            ):
+-                compilation_config.cudagraph_mode = CUDAGraphMode.PIECEWISE
+-                logger.warning(
+-                    "FMHA sycl-tla kernels cannot be captured with XPU graphs, "
+-                    "falling back to PIECEWISE graph mode on XPU platform."
+-                )
+ 
+         # Disable fusion passes not yet supported on XPU.
+         pass_config = compilation_config.pass_config
+diff --git a/vllm/v1/attention/backends/flash_attn.py b/vllm/v1/attention/backends/flash_attn.py
+index cfb52dee3baa..dc041485bd12 100755
+--- a/vllm/v1/attention/backends/flash_attn.py
++++ b/vllm/v1/attention/backends/flash_attn.py
+@@ -294,7 +294,7 @@ class FlashAttentionMetadataBuilder(AttentionMetadataBuilder[FlashAttentionMetad
+     #  https://github.com/vllm-project/vllm/issues/22945
+     _cudagraph_support = (
+         AttentionCGSupport.ALWAYS
+-        if get_flash_attn_version() == 3
++        if get_flash_attn_version() == 3 or current_platform.is_xpu()
+         else AttentionCGSupport.UNIFORM_BATCH
+     )
+     supports_update_block_table: bool = True

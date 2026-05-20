@@ -1,0 +1,79 @@
+diff --git a/requirements/cuda.txt b/requirements/cuda.txt
+index 43b26e2b42e0..65a67e19f173 100644
+--- a/requirements/cuda.txt
++++ b/requirements/cuda.txt
+@@ -25,4 +25,7 @@ nvidia-cutlass-dsl[cu13]==4.5.0
+ quack-kernels>=0.3.3
+ 
+ # Tokenspeed_MLA for faster mla with spec decode
+-tokenspeed-mla==0.1.2
+\ No newline at end of file
++tokenspeed-mla==0.1.2
++
++# Humming kernels for quantization gemm
++humming-kernels[cu13]==0.1.0
+diff --git a/setup.py b/setup.py
+index 738a89a4775d..d8b97e33e5cb 100644
+--- a/setup.py
++++ b/setup.py
+@@ -973,6 +973,8 @@ def _read_requirements(filename: str) -> list[str]:
+             if "nvidia-cutlass-dsl[cu13]" in req and cuda_major == "12":
+                 # [cu13] extra is the default; strip it on CUDA 12 builds.
+                 req = req.replace("nvidia-cutlass-dsl[cu13]", "nvidia-cutlass-dsl")
++            if "humming-kernels[cu13]" in req and cuda_major == "12":
++                req = req.replace("humming-kernels[cu13]", "humming-kernels[cu12]")
+             modified_requirements.append(req)
+         requirements = modified_requirements
+     elif _is_hip():
+diff --git a/vllm/model_executor/layers/quantization/humming.py b/vllm/model_executor/layers/quantization/humming.py
+index 8139b2441b70..12bb07a4022d 100644
+--- a/vllm/model_executor/layers/quantization/humming.py
++++ b/vllm/model_executor/layers/quantization/humming.py
+@@ -43,12 +43,9 @@
+     RowvLLMParameter,
+ )
+ from vllm.model_executor.utils import set_weight_attrs
++from vllm.platforms import current_platform
+ 
+-if TYPE_CHECKING:
+-    from vllm.model_executor.models.utils import WeightsMapper
+-
+-
+-try:
++if current_platform.is_cuda():
+     from humming.dtypes import DataType
+     from humming.layer import HummingMethod
+     from humming.schema import (
+@@ -65,16 +62,17 @@
+         HummingIndexedExperts,
+         get_humming_moe_gemm_type,
+     )
+-except ModuleNotFoundError:
+-    HummingMethod = None
+ 
+-
+-def assert_humming_available():
+-    assert HummingMethod is not None, (
+-        "humming is not available, please run "
+-        "'pip install git+https://github.com/inclusionAI/humming' to install it."
++if TYPE_CHECKING:
++    from humming.schema import (
++        BaseInputSchema,
++        BaseWeightSchema,
++        HummingInputSchema,
++        HummingWeightSchema,
+     )
+ 
++    from vllm.model_executor.models.utils import WeightsMapper
++
+ 
+ def prepare_padded_shape(shape, x):
+     padded_shape = math.ceil(shape / x) * x
+@@ -186,7 +184,6 @@ class HummingConfig(QuantizationConfig):
+     packed_modules_mapping: dict[str, list[str]] = {}
+ 
+     def __init__(self, full_config: dict[str, Any] | None = None):
+-        assert_humming_available()
+         self.full_config: dict[str, Any] = full_config or {}
+ 
+     @classmethod

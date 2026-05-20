@@ -1,0 +1,37 @@
+schema_version: 1
+source_key: tile-ai/tilelang#2227
+repo: tile-ai/tilelang
+repo_id: tilelang
+pr_number: 2227
+title: '[Transform] Fix CPU while fallback thread lowering'
+url: https://github.com/tile-ai/tilelang/pull/2227
+state: closed
+merged_at: '2026-05-20T03:41:45Z'
+base_ref_oid: a7d9380e5af394cee50378827ac2ed490d14b206
+head_ref_oid: a412c8d4db22bb1858945971176046b30925ae26
+captured_at: '2026-05-20T15:02:30.597196+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- benchmark kernel
+techniques: []
+hardware_features: []
+kernel_types: []
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: src/transform/lower_tile_op.cc
+    local_path: source-snapshot/src/transform/lower_tile_op.cc
+    ref: a412c8d4db22bb1858945971176046b30925ae26
+    status: modified
+    fetched: true
+  - source_path: testing/python/cpu/test_tilelang_cpu_while_repro.py
+    local_path: source-snapshot/testing/python/cpu/test_tilelang_cpu_while_repro.py
+    ref: a412c8d4db22bb1858945971176046b30925ae26
+    status: added
+    fetched: true

@@ -1,0 +1,43 @@
+schema_version: 1
+source_key: sgl-project/sglang#25588
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25588
+title: 'perf(mimo-v2-epd): enable GPU image preprocess and parallel video decode'
+url: https://github.com/sgl-project/sglang/pull/25588
+state: closed
+merged_at: '2026-05-19T03:47:21Z'
+base_ref_oid: 54eb2904a46e430e85fca8365b9142292a21c021
+head_ref_oid: 964cf330e458c3660e7085e0f7e68b6d3b7c9ce9
+captured_at: '2026-05-20T14:49:40.245579+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- benchmark kernel
+techniques: []
+hardware_features: []
+kernel_types:
+- decode
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/managers/tokenizer_manager.py
+    local_path: source-snapshot/python/sglang/srt/managers/tokenizer_manager.py
+    ref: 964cf330e458c3660e7085e0f7e68b6d3b7c9ce9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/multimodal/processors/mimo_v2.py
+    local_path: source-snapshot/python/sglang/srt/multimodal/processors/mimo_v2.py
+    ref: 964cf330e458c3660e7085e0f7e68b6d3b7c9ce9
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/utils/video_decoder.py
+    local_path: source-snapshot/python/sglang/srt/utils/video_decoder.py
+    ref: 964cf330e458c3660e7085e0f7e68b6d3b7c9ce9
+    status: modified
+    fetched: true

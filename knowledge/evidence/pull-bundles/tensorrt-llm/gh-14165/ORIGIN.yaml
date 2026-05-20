@@ -1,0 +1,43 @@
+schema_version: 1
+source_key: NVIDIA/TensorRT-LLM#14165
+repo: NVIDIA/TensorRT-LLM
+repo_id: tensorrt-llm
+pr_number: 14165
+title: '[TRTLLM-12462][fix] Fix FP8 block scaling GEMM autotuner cache growth'
+url: https://github.com/NVIDIA/TensorRT-LLM/pull/14165
+state: closed
+merged_at: '2026-05-18T20:14:37Z'
+base_ref_oid: d75df195c562d4ef607f01606875051d45f35549
+head_ref_oid: 4a26d1efbf821af2c75494499d9a3b869cbff63e
+captured_at: '2026-05-20T14:59:32.231314+00:00'
+architectures:
+- sm100
+- sm90
+architecture_families:
+- blackwell
+- hopper
+tags:
+- fp8
+- gemm
+- llm-serving
+- sm100
+- sm90
+techniques:
+- autotuning
+- cache-policy
+hardware_features:
+- blackwell
+- fp8
+- hopper
+kernel_types:
+- gemm
+languages: []
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
+    local_path: source-snapshot/tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
+    ref: 4a26d1efbf821af2c75494499d9a3b869cbff63e
+    status: modified
+    fetched: true

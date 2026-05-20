@@ -1,0 +1,101 @@
+schema_version: 1
+source_key: tile-ai/tilelang#2129
+repo: tile-ai/tilelang
+repo_id: tilelang
+pr_number: 2129
+title: '[CUDA][TMA] Add TMA tile::gather4 / tile::scatter4 support'
+url: https://github.com/tile-ai/tilelang/pull/2129
+state: closed
+merged_at: '2026-05-20T07:09:12Z'
+base_ref_oid: 53f195c476a5670795498953e3b0564fbeb5c7b8
+head_ref_oid: 2739df81b4751b47129bde8528196a75f55ff470
+captured_at: '2026-05-20T15:05:10.157006+00:00'
+architectures:
+- sm100
+- sm90
+architecture_families:
+- blackwell
+- hopper
+tags:
+- attention
+- benchmark kernel
+- blackwell
+- cuda kernel
+- gemm
+- hopper
+- moe
+- sm100
+- sm90
+- triton kernel
+techniques:
+- async-copy
+hardware_features:
+- blackwell
+- hopper
+- tma
+kernel_types:
+- attention
+- gemm
+- moe
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: src/backend/cuda/codegen/codegen_cuda.cc
+    local_path: source-snapshot/src/backend/cuda/codegen/codegen_cuda.cc
+    ref: 2739df81b4751b47129bde8528196a75f55ff470
+    status: modified
+    fetched: true
+  - source_path: src/backend/cuda/op/copy.cc
+    local_path: source-snapshot/src/backend/cuda/op/copy.cc
+    ref: 2739df81b4751b47129bde8528196a75f55ff470
+    status: modified
+    fetched: true
+  - source_path: src/backend/cuda/op/copy.h
+    local_path: source-snapshot/src/backend/cuda/op/copy.h
+    ref: 2739df81b4751b47129bde8528196a75f55ff470
+    status: modified
+    fetched: true
+  - source_path: src/backend/cuda/op/copy_analysis.cc
+    local_path: source-snapshot/src/backend/cuda/op/copy_analysis.cc
+    ref: 2739df81b4751b47129bde8528196a75f55ff470
+    status: modified
+    fetched: true
+  - source_path: src/layout/gemm_layouts.cc
+    local_path: source-snapshot/src/layout/gemm_layouts.cc
+    ref: 2739df81b4751b47129bde8528196a75f55ff470
+    status: modified
+    fetched: true
+  - source_path: src/op/builtin.cc
+    local_path: source-snapshot/src/op/builtin.cc
+    ref: 2739df81b4751b47129bde8528196a75f55ff470
+    status: modified
+    fetched: true
+  - source_path: src/op/builtin.h
+    local_path: source-snapshot/src/op/builtin.h
+    ref: 2739df81b4751b47129bde8528196a75f55ff470
+    status: modified
+    fetched: true
+  - source_path: src/tl_templates/cuda/copy_sm100.h
+    local_path: source-snapshot/src/tl_templates/cuda/copy_sm100.h
+    ref: 2739df81b4751b47129bde8528196a75f55ff470
+    status: modified
+    fetched: true
+  - source_path: testing/python/language/test_tilelang_language_tma_gather_scatter.py
+    local_path: source-snapshot/testing/python/language/test_tilelang_language_tma_gather_scatter.py
+    ref: 2739df81b4751b47129bde8528196a75f55ff470
+    status: added
+    fetched: true
+  - source_path: tilelang/language/__init__.py
+    local_path: source-snapshot/tilelang/language/__init__.py
+    ref: 2739df81b4751b47129bde8528196a75f55ff470
+    status: modified
+    fetched: true
+  - source_path: tilelang/language/copy_op.py
+    local_path: source-snapshot/tilelang/language/copy_op.py
+    ref: 2739df81b4751b47129bde8528196a75f55ff470
+    status: modified
+    fetched: true

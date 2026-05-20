@@ -1,0 +1,40 @@
+schema_version: 1
+source_key: sgl-project/sglang#25489
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25489
+title: Support draft extend cuda graph for tokenspeed_mla attention backend
+url: https://github.com/sgl-project/sglang/pull/25489
+state: closed
+merged_at: '2026-05-18T18:26:16Z'
+base_ref_oid: 5147de26e4ea6b18a656a8250b27e87bb40bf032
+head_ref_oid: f92368e4608543f2d4c79208742f4383717775d2
+captured_at: '2026-05-20T14:50:49.495719+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention
+- cuda
+techniques: []
+hardware_features: []
+kernel_types:
+- attention
+- mla
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/layers/attention/tokenspeed_mla_backend.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/tokenspeed_mla_backend.py
+    ref: f92368e4608543f2d4c79208742f4383717775d2
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/speculative/eagle_worker_v2.py
+    local_path: source-snapshot/python/sglang/srt/speculative/eagle_worker_v2.py
+    ref: f92368e4608543f2d4c79208742f4383717775d2
+    status: modified
+    fetched: true

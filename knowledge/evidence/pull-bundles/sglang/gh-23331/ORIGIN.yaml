@@ -1,0 +1,81 @@
+schema_version: 1
+source_key: sgl-project/sglang#23331
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 23331
+title: '[BugFix] Resolve adaptive speculative decoding conflicts for Qwen3.5 (hybrid
+  GDN)'
+url: https://github.com/sgl-project/sglang/pull/23331
+state: closed
+merged_at: '2026-05-19T22:09:50Z'
+base_ref_oid: 54eb2904a46e430e85fca8365b9142292a21c021
+head_ref_oid: c7a234cce066d2b998ab9944745e4799d31d1929
+captured_at: '2026-05-20T14:54:31.026044+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention kernel
+- cuda kernel
+- speculative-decoding
+- triton
+- triton kernel
+techniques:
+- cache-policy
+- kernel-fusion
+hardware_features: []
+kernel_types:
+- attention
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/layers/attention/fla/fused_sigmoid_gating_recurrent.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/fla/fused_sigmoid_gating_recurrent.py
+    ref: c7a234cce066d2b998ab9944745e4799d31d1929
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/hybrid_linear_attn_backend.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/hybrid_linear_attn_backend.py
+    ref: c7a234cce066d2b998ab9944745e4799d31d1929
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/model_executor/model_runner_kv_cache_mixin.py
+    local_path: source-snapshot/python/sglang/srt/model_executor/model_runner_kv_cache_mixin.py
+    ref: c7a234cce066d2b998ab9944745e4799d31d1929
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/models/qwen3_5_mtp.py
+    local_path: source-snapshot/python/sglang/srt/models/qwen3_5_mtp.py
+    ref: c7a234cce066d2b998ab9944745e4799d31d1929
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/models/qwen3_next_mtp.py
+    local_path: source-snapshot/python/sglang/srt/models/qwen3_next_mtp.py
+    ref: c7a234cce066d2b998ab9944745e4799d31d1929
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/server_args.py
+    local_path: source-snapshot/python/sglang/srt/server_args.py
+    ref: c7a234cce066d2b998ab9944745e4799d31d1929
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/speculative/adaptive_runtime_state.py
+    local_path: source-snapshot/python/sglang/srt/speculative/adaptive_runtime_state.py
+    ref: c7a234cce066d2b998ab9944745e4799d31d1929
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/speculative/adaptive_spec_params.py
+    local_path: source-snapshot/python/sglang/srt/speculative/adaptive_spec_params.py
+    ref: c7a234cce066d2b998ab9944745e4799d31d1929
+    status: modified
+    fetched: true
+  - source_path: test/registered/unit/spec/test_adaptive_spec_params.py
+    local_path: source-snapshot/test/registered/unit/spec/test_adaptive_spec_params.py
+    ref: c7a234cce066d2b998ab9944745e4799d31d1929
+    status: modified
+    fetched: true

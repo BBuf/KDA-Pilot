@@ -1,0 +1,72 @@
+schema_version: 1
+source_key: sgl-project/sglang#22918
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 22918
+title: '[FlashInfer v0.6.11] [RL] Support FlashInfer per-token NVFP4 MoE'
+url: https://github.com/sgl-project/sglang/pull/22918
+state: closed
+merged_at: '2026-05-19T08:04:49Z'
+base_ref_oid: 6f892047ecad16e265bfc5461c5051714fc5c60b
+head_ref_oid: bbcbf3594fdb8e4ffabed0552935861053632167
+captured_at: '2026-05-20T14:54:40.694733+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- blackwell
+- cuda kernel
+- cute
+- cutlass
+- fp4
+- gemm
+- moe
+- moe kernel
+- nvfp4
+techniques:
+- fine-grained-quantization
+hardware_features:
+- blackwell
+- fp4
+- nvfp4
+kernel_types:
+- gemm
+- moe
+languages:
+- cuda-cpp
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: docs/references/environment_variables.md
+    local_path: source-snapshot/docs/references/environment_variables.md
+    ref: bbcbf3594fdb8e4ffabed0552935861053632167
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/environ.py
+    local_path: source-snapshot/python/sglang/srt/environ.py
+    ref: bbcbf3594fdb8e4ffabed0552935861053632167
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/moe_runner/flashinfer_trtllm.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/moe_runner/flashinfer_trtllm.py
+    ref: bbcbf3594fdb8e4ffabed0552935861053632167
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/quantization/modelopt_quant.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/modelopt_quant.py
+    ref: bbcbf3594fdb8e4ffabed0552935861053632167
+    status: modified
+    fetched: true
+  - source_path: test/registered/backends/test_flashinfer_trtllm_gen_moe_backend.py
+    local_path: source-snapshot/test/registered/backends/test_flashinfer_trtllm_gen_moe_backend.py
+    ref: bbcbf3594fdb8e4ffabed0552935861053632167
+    status: modified
+    fetched: true
+  - source_path: docs_new/docs/references/environment_variables.mdx
+    local_path: source-snapshot/docs_new/docs/references/environment_variables.mdx
+    ref: bbcbf3594fdb8e4ffabed0552935861053632167
+    status: modified
+    fetched: true

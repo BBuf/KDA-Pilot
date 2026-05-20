@@ -1,0 +1,45 @@
+schema_version: 1
+source_key: sgl-project/sglang#25540
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25540
+title: Use DeepGEMM BF16 for unquantized DeepEP LL MoE
+url: https://github.com/sgl-project/sglang/pull/25540
+state: closed
+merged_at: '2026-05-18T06:33:24Z'
+base_ref_oid: a080358cac7d590bc6582cccf7ec001e62ffd5af
+head_ref_oid: 9adcb9ba6e1edd6d19c55fbf75f51864bb22cc2d
+captured_at: '2026-05-20T14:50:08.334706+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- fp8
+- gemm
+- moe
+- nvfp4
+techniques:
+- fine-grained-quantization
+hardware_features:
+- fp4
+- fp8
+- nvfp4
+kernel_types:
+- gemm
+- moe
+languages: []
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/layers/moe/ep_moe/layer.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/ep_moe/layer.py
+    ref: 9adcb9ba6e1edd6d19c55fbf75f51864bb22cc2d
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/quantization/unquant.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/unquant.py
+    ref: 9adcb9ba6e1edd6d19c55fbf75f51864bb22cc2d
+    status: modified
+    fetched: true

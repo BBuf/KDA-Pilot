@@ -1,0 +1,1452 @@
+diff --git a/docs/advanced_features/server_arguments.md b/docs/advanced_features/server_arguments.md
+index 1bef438c3493..072679b5e1d8 100644
+--- a/docs/advanced_features/server_arguments.md
++++ b/docs/advanced_features/server_arguments.md
+@@ -320,6 +320,7 @@ Please consult the documentation below and [server_args.py](https://github.com/s
+ | `--enable-flashinfer-allreduce-fusion` | Enable FlashInfer allreduce fusion with Residual RMSNorm. | `False` | bool flag (set to enable) |
+ | `--enable-aiter-allreduce-fusion` | Enable aiter allreduce fusion with Residual RMSNorm. | `False` | bool flag (set to enable) |
+ | `--deepep-mode` | Select the mode when enable DeepEP MoE, could be `normal`, `low_latency` or `auto`. Default is `auto`, which means `low_latency` for decode batch and `normal` for prefill batch. | `auto` | `normal`, `low_latency`, `auto` |
++|  `--deepep-dispatcher-output-dtype` | Select DeepEP dispather output dtype, could be `bf16`, `fp8`, `int8` (only Ascend A2/A3 NPU), `nvfp4` or `auto`. Default is `auto`, which follows a priority order (server argument → deprecated env var → input_global_scale check → dispatcher_output_dtype from quant_config → flashinfer/cutlass backend → NPU BF16 default → GPU FP8 default) | `auto` | `bf16`, `fp8`, `int8`, `nvfp4`, `auto` |
+ | `--ep-num-redundant-experts` | Allocate this number of redundant experts in expert parallel. | `0` | Type: int |
+ | `--ep-dispatch-algorithm` | The algorithm to choose ranks for redundant experts in expert parallel. | `None` | Type: str |
+ | `--init-expert-location` | Initial location of EP experts. | `trivial` | Type: str |
+diff --git a/docs/platforms/ascend/ascend_npu_best_practice.md b/docs/platforms/ascend/ascend_npu_best_practice.md
+index 91eb59a454b0..4ec6d3a8c9c8 100644
+--- a/docs/platforms/ascend/ascend_npu_best_practice.md
++++ b/docs/platforms/ascend/ascend_npu_best_practice.md
+@@ -127,7 +127,6 @@ do
+         echo "${P_IP[$i]}"
+         export SGLANG_USE_AG_AFTER_QLORA=1
+         export HCCL_BUFFSIZE=800
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+         export TASK_QUEUE_ENABLE=2
+         export SGLANG_NPU_FUSED_MOE_MODE=2
+         export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=131072
+@@ -136,7 +135,7 @@ do
+         export GLOO_SOCKET_IFNAME=lo
+         python -m sglang.launch_server --model-path ${MODEL_PATH}  --disaggregation-mode prefill --host ${P_IP[$i]} \
+         --port 8000 --disaggregation-bootstrap-port $((8998+$i)) --trust-remote-code --nnodes 1 --node-rank 0 \
+-        --tp-size 16 --mem-fraction-static 0.778 --attention-backend ascend --device npu --quantization modelslim \
++        --tp-size 16 --mem-fraction-static 0.778 --attention-backend ascend --device npu \
+         --disaggregation-transfer-backend ascend --max-running-requests 16 --disable-radix-cache \
+         --chunked-prefill-size -1 --max-prefill-tokens 60000 --moe-a2a-backend ascend_fuseep --deepep-mode normal \
+         --speculative-algorithm NEXTN --speculative-num-steps 1 --speculative-eagle-topk 1 --speculative-num-draft-tokens 2  \
+@@ -248,7 +247,6 @@ do
+     then
+         echo "${P_IP[$i]}"
+         export HCCL_BUFFSIZE=1600
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+         export TASK_QUEUE_ENABLE=2
+         export SGLANG_USE_AG_AFTER_QLORA=1
+         export HCCL_SOCKET_IFNAME=lo
+@@ -375,7 +373,6 @@ do
+     then
+         echo "${P_IP[$i]}"
+         export HCCL_BUFFSIZE=1536
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+         export TASK_QUEUE_ENABLE=2
+ 
+         export HCCL_SOCKET_IFNAME=lo
+@@ -501,7 +498,6 @@ do
+     then
+         echo "${P_IP[$i]}"
+         export HCCL_BUFFSIZE=1536
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+         export TASK_QUEUE_ENABLE=2
+         export HCCL_SOCKET_IFNAME=lo
+         export GLOO_SOCKET_IFNAME=lo
+@@ -690,7 +686,6 @@ export DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS=512
+ 
+ MODEL_PATH=xxx
+ 
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export SGLANG_NPU_USE_MLAPO=1
+ export SGLANG_ENABLE_SPEC_V2=1
+ export SGLANG_ENABLE_OVERLAP_PLAN_STREAM=1
+@@ -781,7 +776,6 @@ do
+     then
+         echo "${P_IP[$i]}"
+         export HCCL_BUFFSIZE=2600
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+         export TASK_QUEUE_ENABLE=2
+ 
+         export HCCL_SOCKET_IFNAME=lo
+@@ -888,7 +882,6 @@ export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=56
+ export HCCL_BUFFSIZE=1200
+ export DEEPEP_NORMAL_LONG_SEQ_ROUND=10
+ export DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS=512
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export SGLANG_NPU_USE_MLAPO=1
+ export SGLANG_ENABLE_SPEC_V2=1
+ export SGLANG_ENABLE_OVERLAP_PLAN_STREAM=1
+@@ -981,7 +974,6 @@ do
+     then
+         echo "${P_IP[$i]}"
+         export HCCL_BUFFSIZE=3500
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+         export TASK_QUEUE_ENABLE=2
+ 
+         export HCCL_SOCKET_IFNAME=lo
+@@ -1099,7 +1091,6 @@ do
+     then
+         echo "${P_IP[$i]}"
+         export HCCL_BUFFSIZE=1200
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+         export TASK_QUEUE_ENABLE=2
+         export HCCL_SOCKET_IFNAME=xxx
+         export GLOO_SOCKET_IFNAME=xxx
+@@ -1266,7 +1257,6 @@ do
+         export HCCL_SOCKET_IFNAME=lo
+         export GLOO_SOCKET_IFNAME=lo
+         export STREAMS_PER_DEVICE=32
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ 
+         # P节点
+         python -m sglang.launch_server --model-path ${MODEL_PATH} --disaggregation-mode prefill \
+@@ -2202,7 +2192,6 @@ do
+         export TASK_QUEUE_ENABLE=2
+         export HCCL_SOCKET_IFNAME=lo
+         export GLOO_SOCKET_IFNAME=lo
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ 
+         python -m sglang.launch_server --model-path ${MODEL_PATH} --disaggregation-mode prefill \
+         --host ${P_IP[$i]} --port 8000 --disaggregation-bootstrap-port 8995 --trust-remote-code \
+@@ -2299,7 +2288,6 @@ source /usr/local/Ascend/ascend-toolkit/latest/opp/vendors/customize/bin/set_env
+ export SGLANG_SET_CPU_AFFINITY=1
+ export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
+ export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=72
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export SGLANG_DISAGGREGATION_BOOTSTRAP_TIMEOUT=600
+ 
+ MODEL_PATH=xxx
+@@ -3213,7 +3201,6 @@ export PATH=/usr/local/Ascend/8.5.0/compiler/bishengir/bin:$PATH
+ 
+ export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
+ export STREAMS_PER_DEVICE=32
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=330
+ export DEEPEP_NORMAL_LONG_SEQ_ROUND=5
+ export DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS=3000
+@@ -3260,7 +3247,6 @@ python3 -m sglang.launch_server --model-path ${MODEL_PATH} \
+     --mamba-ssm-dtype bfloat16 \
+     --base-gpu-id 0 \
+     --speculative-draft-model-path /home/weights/Qwen3-Next-80B-A3B-Instruct \
+-    --quantization modelslim \
+     --moe-a2a-backend deepep --deepep-mode auto \
+ ```
+ 
+@@ -3308,7 +3294,6 @@ export PATH=/usr/local/Ascend/8.5.0/compiler/bishengir/bin:$PATH
+ 
+ export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
+ export STREAMS_PER_DEVICE=32
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=330
+ export DEEPEP_NORMAL_LONG_SEQ_ROUND=5
+ export DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS=3000
+@@ -3703,7 +3688,6 @@ export PATH=/usr/local/Ascend/8.5.0/compiler/bishengir/bin:$PATH
+ export SGLANG_SET_CPU_AFFINITY=1
+ export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
+ export STREAMS_PER_DEVICE=32
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=400
+ export DEEPEP_NORMAL_LONG_SEQ_ROUND=10
+ export DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS=2048
+diff --git a/docs/platforms/ascend/ascend_npu_deepseek_example.md b/docs/platforms/ascend/ascend_npu_deepseek_example.md
+index abda404d5995..0312633b7f81 100644
+--- a/docs/platforms/ascend/ascend_npu_deepseek_example.md
++++ b/docs/platforms/ascend/ascend_npu_deepseek_example.md
+@@ -11,7 +11,6 @@ export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
+ export STREAMS_PER_DEVICE=32
+ 
+ #Deepep communication settings
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=32
+ export HCCL_BUFFSIZE=1600
+ 
+@@ -64,7 +63,6 @@ export STREAMS_PER_DEVICE=32
+ export ASCEND_MF_STORE_URL="tcp://<PREFILL_HOST_IP>:<PORT>"
+ 
+ #Deepep communication settings
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export HCCL_BUFFSIZE=1536
+ 
+ #npu acceleration operator
+@@ -214,7 +212,6 @@ do
+     then
+         echo "${P_IP[$i]}"
+         export HCCL_BUFFSIZE=1536
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+         export TASK_QUEUE_ENABLE=2
+ 
+         export HCCL_SOCKET_IFNAME=lo
+diff --git a/docs/platforms/ascend/ascend_npu_environment_variables.md b/docs/platforms/ascend/ascend_npu_environment_variables.md
+index fce333ba2022..cfb1bb0b82dc 100644
+--- a/docs/platforms/ascend/ascend_npu_environment_variables.md
++++ b/docs/platforms/ascend/ascend_npu_environment_variables.md
+@@ -21,7 +21,6 @@ This document provides a list of commonly used environment variables and aims to
+ | `DEEPEP_NORMAL_LONG_SEQ_ROUND`            | Enable ant-moving function in dispatch stage. Indicates <br/> the number of rounds transmitted on each rank.           | `1`           |
+ | `DEEPEP_NORMAL_COMBINE_ENABLE_LONG_SEQ`   | Enable ant-moving function in combine stage. <br/> The value `0` means disabled.                                       | `0`           |
+ | `MOE_ENABLE_TOPK_NEG_ONE`                 | Needs to be enabled when the expert ID to be processed by <br/> DEEPEP contains -1.                                    | `0`           |
+-| `DEEP_NORMAL_MODE_USE_INT8_QUANT`         | Quantizes x to int8 and returns (tensor, scales) in dispatch operator.                                                 | `0`           |
+ 
+ ## Others
+ 
+diff --git a/docs/platforms/ascend/ascend_npu_qwen3_examples.md b/docs/platforms/ascend/ascend_npu_qwen3_examples.md
+index f17ed6b71ef5..059a2a041393 100644
+--- a/docs/platforms/ascend/ascend_npu_qwen3_examples.md
++++ b/docs/platforms/ascend/ascend_npu_qwen3_examples.md
+@@ -61,7 +61,6 @@ export STREAMS_PER_DEVICE=32
+ export HCCL_BUFFSIZE=1536
+ export HCCL_OP_EXPANSION_MODE=AIV
+ export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=32
+-export SGLANG_DEEPEP_BF16_DISPATCH=1
+ 
+ python -m sglang.launch_server \
+    --device npu \
+@@ -82,7 +81,6 @@ export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
+ export STREAMS_PER_DEVICE=32
+ export HCCL_BUFFSIZE=1536
+ export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=32
+-export SGLANG_DEEPEP_BF16_DISPATCH=1
+ 
+ python -m sglang.launch_server \
+    --model-path Qwen/Qwen3-235B-A22B-Instruct-2507 \
+@@ -114,7 +112,6 @@ MODEL_PATH=/root/.cache/modelscope/hub/models/zcgy26/Qwen3-235B-A22B-Instruct-25
+ 
+ ```shell
+ export ASCEND_LAUNCH_BLOCKING=1
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export HCCL_BUFFSIZE=1500
+ export DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS=1024
+ export DEEPEP_NORMAL_LONG_SEQ_ROUND=128
+@@ -146,7 +143,6 @@ python3 -m sglang.launch_server \
+ **Decode node:**
+ 
+ ```shell
+-export SGLANG_DEEPEP_BF16_DISPATCH=0
+ export HCCL_BUFFSIZE=4000
+ export DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS=4096
+ export DEEPEP_NORMAL_LONG_SEQ_ROUND=16
+diff --git a/docs/references/environment_variables.md b/docs/references/environment_variables.md
+index 4b6be1a21684..0171bdc05dba 100644
+--- a/docs/references/environment_variables.md
++++ b/docs/references/environment_variables.md
+@@ -69,7 +69,6 @@ SGLang supports various environment variables that can be used to configure its
+ 
+ | Environment Variable | Description | Default Value |
+ | --- | --- | --- |
+-| `SGLANG_DEEPEP_BF16_DISPATCH` | Use Bfloat16 for dispatch | `"false"` |
+ | `SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK` | The maximum number of dispatched tokens on each GPU | `"128"` |
+ | `SGLANG_FLASHINFER_NUM_MAX_DISPATCH_TOKENS_PER_RANK` | The maximum number of dispatched tokens on each GPU for --moe-a2a-backend=flashinfer | `"1024"` |
+ | `SGLANG_DEEPEP_LL_COMBINE_SEND_NUM_SMS` | Number of SMs used for DeepEP combine when single batch overlap is enabled | `"32"` |
+diff --git a/docs_new/docs/advanced_features/server_arguments.mdx b/docs_new/docs/advanced_features/server_arguments.mdx
+index 7feacb4e5d3b..134a99123215 100644
+--- a/docs_new/docs/advanced_features/server_arguments.mdx
++++ b/docs_new/docs/advanced_features/server_arguments.mdx
+@@ -1472,6 +1472,12 @@ Please consult the documentation below and [server_args.py](https://github.com/s
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}><code>auto</code></td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}><code>normal</code>, <code>low_latency</code>, <code>auto</code></td>
+     </tr>
++    <tr>
++      <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}><code>--deepep-dispatcher-output-dtype</code></td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>Select DeepEP dispather output dtype, could be <code>bf16</code>, <code>fp8</code>, <code>int8</code> (only Ascend A2/A3 NPU), <code>nvfp4</code> or <code>auto</code>. Default is <code>auto</code>, which follows a priority order (server argument → deprecated env var → input_global_scale check → dispatcher_output_dtype from quant_config → flashinfer/cutlass backend → NPU BF16 default → GPU FP8 default).</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}><code>auto</code></td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}><code>bf16</code>, <code>fp8</code>, <code>int8</code>, <code>nvfp4</code>, <code>auto</code></td>
++    </tr>
+     <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}><code>--ep-num-redundant-experts</code></td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>Allocate this number of redundant experts in expert parallel.</td>
+diff --git a/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_best_practice.mdx b/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_best_practice.mdx
+index e57d590d1889..38a4ac0aac2d 100644
+--- a/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_best_practice.mdx
++++ b/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_best_practice.mdx
+@@ -622,7 +622,6 @@ do
+         echo "${P_IP[$i]}"
+         export SGLANG_USE_AG_AFTER_QLORA=1
+         export HCCL_BUFFSIZE=800
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+         export TASK_QUEUE_ENABLE=2
+         export SGLANG_NPU_FUSED_MOE_MODE=2
+         export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=131072
+@@ -743,7 +742,6 @@ do
+     then
+         echo "${P_IP[$i]}"
+         export HCCL_BUFFSIZE=1600
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+         export TASK_QUEUE_ENABLE=2
+         export SGLANG_USE_AG_AFTER_QLORA=1
+         export HCCL_SOCKET_IFNAME=lo
+@@ -870,7 +868,6 @@ do
+     then
+         echo "${P_IP[$i]}"
+         export HCCL_BUFFSIZE=1536
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+         export TASK_QUEUE_ENABLE=2
+ 
+         export HCCL_SOCKET_IFNAME=lo
+@@ -996,7 +993,6 @@ do
+     then
+         echo "${P_IP[$i]}"
+         export HCCL_BUFFSIZE=1536
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+         export TASK_QUEUE_ENABLE=2
+         export HCCL_SOCKET_IFNAME=lo
+         export GLOO_SOCKET_IFNAME=lo
+@@ -1185,7 +1181,6 @@ export DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS=512
+ 
+ MODEL_PATH=xxx
+ 
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export SGLANG_NPU_USE_MLAPO=1
+ export SGLANG_ENABLE_SPEC_V2=1
+ export SGLANG_ENABLE_OVERLAP_PLAN_STREAM=1
+@@ -1276,7 +1271,6 @@ do
+     then
+         echo "${P_IP[$i]}"
+         export HCCL_BUFFSIZE=2600
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+         export TASK_QUEUE_ENABLE=2
+ 
+         export HCCL_SOCKET_IFNAME=lo
+@@ -1383,7 +1377,6 @@ export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=56
+ export HCCL_BUFFSIZE=1200
+ export DEEPEP_NORMAL_LONG_SEQ_ROUND=10
+ export DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS=512
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export SGLANG_NPU_USE_MLAPO=1
+ export SGLANG_ENABLE_SPEC_V2=1
+ export SGLANG_ENABLE_OVERLAP_PLAN_STREAM=1
+@@ -1476,7 +1469,6 @@ do
+     then
+         echo "${P_IP[$i]}"
+         export HCCL_BUFFSIZE=3500
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+         export TASK_QUEUE_ENABLE=2
+ 
+         export HCCL_SOCKET_IFNAME=lo
+@@ -1594,7 +1586,6 @@ do
+     then
+         echo "${P_IP[$i]}"
+         export HCCL_BUFFSIZE=1200
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+         export TASK_QUEUE_ENABLE=2
+         export HCCL_SOCKET_IFNAME=xxx
+         export GLOO_SOCKET_IFNAME=xxx
+@@ -1761,7 +1752,6 @@ do
+         export HCCL_SOCKET_IFNAME=lo
+         export GLOO_SOCKET_IFNAME=lo
+         export STREAMS_PER_DEVICE=32
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ 
+         # P节点
+         python -m sglang.launch_server --model-path ${MODEL_PATH} --disaggregation-mode prefill \
+@@ -2697,7 +2687,6 @@ do
+         export TASK_QUEUE_ENABLE=2
+         export HCCL_SOCKET_IFNAME=lo
+         export GLOO_SOCKET_IFNAME=lo
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ 
+         python -m sglang.launch_server --model-path ${MODEL_PATH} --disaggregation-mode prefill \
+         --host ${P_IP[$i]} --port 8000 --disaggregation-bootstrap-port 8995 --trust-remote-code \
+@@ -2794,7 +2783,6 @@ source /usr/local/Ascend/ascend-toolkit/latest/opp/vendors/customize/bin/set_env
+ export SGLANG_SET_CPU_AFFINITY=1
+ export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
+ export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=72
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export SGLANG_DISAGGREGATION_BOOTSTRAP_TIMEOUT=600
+ 
+ MODEL_PATH=xxx
+@@ -3458,7 +3446,7 @@ export SGLANG_ENABLE_SPEC_V2=1
+ 
+ python -m sglang.launch_server --model-path $MODEL_PATH \
+     --host 127.0.0.1 --port 7239 --trust-remote-code --nnodes 1 --node-rank 0  \
+-    --attention-backend ascend --device npu  --quantization modelslim  \
++    --attention-backend ascend --device npu \
+     --max-running-requests 78 \
+     --disable-radix-cache --speculative-draft-model-quantization unquant \
+     --chunked-prefill-size -1 --max-prefill-tokens 65536  \
+@@ -3527,7 +3515,7 @@ export SGLANG_ENABLE_SPEC_V2=1
+ 
+ python -m sglang.launch_server --model-path $MODEL_PATH \
+     --host 127.0.0.1 --port 7239 --trust-remote-code --nnodes 1 --node-rank 0  \
+-    --attention-backend ascend --device npu  --quantization modelslim  \
++    --attention-backend ascend --device npu \
+     --max-running-requests 120 \
+     --disable-radix-cache \
+     --speculative-algorithm EAGLE3 --speculative-draft-model-path xxx \
+@@ -3590,7 +3578,7 @@ export SGLANG_ENABLE_SPEC_V2=1
+ 
+ python -m sglang.launch_server --model-path $MODEL_PATH \
+     --host 127.0.0.1 --port 7339 --trust-remote-code --nnodes 1 --node-rank 0  \
+-    --attention-backend ascend --device npu --quantization modelslim \
++    --attention-backend ascend --device npu \
+     --max-running-requests 16 \
+     --disable-radix-cache \
+     --speculative-draft-model-quantization unquant \
+@@ -3654,7 +3642,7 @@ export SGLANG_ENABLE_SPEC_V2=1
+ 
+ python -m sglang.launch_server --model-path $MODEL_PATH \
+     --host 127.0.0.1 --port 7339 --trust-remote-code --nnodes 1 --node-rank 0  \
+-    --attention-backend ascend --device npu --quantization modelslim \
++    --attention-backend ascend --device npu \
+     --max-running-requests 8 \
+     --disable-radix-cache \
+     --speculative-draft-model-quantization unquant \
+@@ -3708,7 +3696,6 @@ export PATH=/usr/local/Ascend/8.5.0/compiler/bishengir/bin:$PATH
+ 
+ export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
+ export STREAMS_PER_DEVICE=32
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=330
+ export DEEPEP_NORMAL_LONG_SEQ_ROUND=5
+ export DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS=3000
+@@ -3755,7 +3742,6 @@ python3 -m sglang.launch_server --model-path ${MODEL_PATH} \
+     --mamba-ssm-dtype bfloat16 \
+     --base-gpu-id 0 \
+     --speculative-draft-model-path /home/weights/Qwen3-Next-80B-A3B-Instruct \
+-    --quantization modelslim \
+     --moe-a2a-backend deepep --deepep-mode auto \
+ ```
+ 
+@@ -3803,7 +3789,6 @@ export PATH=/usr/local/Ascend/8.5.0/compiler/bishengir/bin:$PATH
+ 
+ export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
+ export STREAMS_PER_DEVICE=32
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=330
+ export DEEPEP_NORMAL_LONG_SEQ_ROUND=5
+ export DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS=3000
+@@ -3850,7 +3835,6 @@ python3 -m sglang.launch_server --model-path ${MODEL_PATH} \
+     --mamba-ssm-dtype bfloat16 \
+     --base-gpu-id 0 \
+     --speculative-draft-model-path /home/weights/Qwen3-Next-80B-A3B-Instruct \
+-    --quantization modelslim \
+     --moe-a2a-backend deepep --deepep-mode auto \
+ ```
+ 
+@@ -3915,7 +3899,7 @@ echo "${LOCAL_HOST2}"
+ 
+ python -m sglang.launch_server --model-path $MODEL_PATH \
+     --host 127.0.0.1 --port 7239 --trust-remote-code --nnodes 1 --node-rank 0 \
+-    --attention-backend ascend --device npu --quantization modelslim \
++    --attention-backend ascend --device npu \
+     --disable-radix-cache --mem-fraction-static 0.8 \
+     --tp-size 1 --dp-size 1 \
+     --sampling-backend ascend --max-running-requests 8 \
+@@ -3992,7 +3976,7 @@ echo "${LOCAL_HOST2}"
+ 
+ python -m sglang.launch_server --model-path $MODEL_PATH \
+     --host 127.0.0.1 --port 7239 --trust-remote-code --nnodes 1 --node-rank 0 \
+-    --attention-backend ascend --device npu --quantization modelslim \
++    --attention-backend ascend --device npu \
+     --disable-radix-cache --mem-fraction-static 0.89 \
+     --tp-size 1 --dp-size 2 \
+     --sampling-backend ascend --max-running-requests 144 \
+@@ -4068,7 +4052,7 @@ echo "${LOCAL_HOST2}"
+ 
+ python -m sglang.launch_server --model-path $MODEL_PATH \
+     --host 127.0.0.1 --port 7239 --trust-remote-code --nnodes 1 --node-rank 0 \
+-    --attention-backend ascend --device npu --quantization modelslim \
++    --attention-backend ascend --device npu \
+     --disable-radix-cache --mem-fraction-static 0.9 \
+     --tp-size 1 \
+     --max-running-requests 70 \
+@@ -4141,7 +4125,7 @@ echo "${LOCAL_HOST2}"
+ 
+ python -m sglang.launch_server --model-path $MODEL_PATH \
+     --host 127.0.0.1 --port 7239 --trust-remote-code --nnodes 1 --node-rank 0 \
+-    --attention-backend ascend --device npu --quantization modelslim \
++    --attention-backend ascend --device npu \
+     --disable-radix-cache --mem-fraction-static 0.894 \
+     --tp-size 2 \
+     --max-running-requests 1 \
+@@ -4198,7 +4182,6 @@ export PATH=/usr/local/Ascend/8.5.0/compiler/bishengir/bin:$PATH
+ export SGLANG_SET_CPU_AFFINITY=1
+ export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
+ export STREAMS_PER_DEVICE=32
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=400
+ export DEEPEP_NORMAL_LONG_SEQ_ROUND=10
+ export DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS=2048
+@@ -4235,7 +4218,6 @@ python3 -m sglang.launch_server --model-path ${MODEL_PATH} \
+     --trust-remote-code \
+     --attention-backend ascend \
+     --device npu \
+-    --quantization modelslim \
+     --watchdog-timeout 9000 \
+     --host 127.0.0.1 --port 6699 \
+     --mem-fraction-static 0.85 \
+diff --git a/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_deepseek_example.mdx b/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_deepseek_example.mdx
+index 6bf89d21f963..dc99df7ddf7b 100644
+--- a/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_deepseek_example.mdx
++++ b/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_deepseek_example.mdx
+@@ -15,7 +15,6 @@ export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
+ export STREAMS_PER_DEVICE=32
+ 
+ #Deepep communication settings
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=32
+ export HCCL_BUFFSIZE=1600
+ 
+@@ -33,7 +32,6 @@ python3 -m sglang.launch_server \
+     --trust-remote-code \
+     --attention-backend ascend \
+     --device npu \
+-    --quantization modelslim \
+     --watchdog-timeout 9000 \
+     --cuda-graph-bs 8 16 24 28 32 \
+     --mem-fraction-static 0.68 \
+@@ -68,7 +66,6 @@ export STREAMS_PER_DEVICE=32
+ export ASCEND_MF_STORE_URL="tcp://<PREFILL_HOST_IP>:<PORT>"
+ 
+ #Deepep communication settings
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export HCCL_BUFFSIZE=1536
+ 
+ #npu acceleration operator
+@@ -90,7 +87,6 @@ python -m sglang.launch_server \
+     --mem-fraction-static 0.6 \
+     --attention-backend ascend \
+     --device npu \
+-    --quantization modelslim \
+     --load-balance-method round_robin \
+     --max-running-requests 8 \
+     --context-length 8192 \
+@@ -146,7 +142,6 @@ python -m sglang.launch_server \
+     --max-running-requests 352 \
+     --attention-backend ascend \
+     --device npu \
+-    --quantization modelslim \
+     --moe-a2a-backend deepep \
+     --enable-dp-attention \
+     --deepep-mode low_latency \
+@@ -218,14 +213,13 @@ do
+     then
+         echo "${P_IP[$i]}"
+         export HCCL_BUFFSIZE=1536
+-        export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+         export TASK_QUEUE_ENABLE=2
+ 
+         export HCCL_SOCKET_IFNAME=lo
+         export GLOO_SOCKET_IFNAME=lo
+         python -m sglang.launch_server --model-path ${MODEL_PATH}  --disaggregation-mode prefill --host ${P_IP[$i]} \
+         --port 8000 --disaggregation-bootstrap-port $((8998+$i)) --trust-remote-code --nnodes 1 --node-rank 0 \
+-        --tp-size 16 --mem-fraction-static 0.81 --attention-backend ascend --device npu --quantization modelslim \
++        --tp-size 16 --mem-fraction-static 0.81 --attention-backend ascend --device npu \
+         --disaggregation-transfer-backend ascend --max-running-requests 8 --context-length 8192  --disable-radix-cache \
+         --chunked-prefill-size -1 --max-prefill-tokens 28680 --moe-a2a-backend deepep --deepep-mode normal \
+         --speculative-algorithm NEXTN --speculative-num-steps 1 --speculative-eagle-topk 1 --speculative-num-draft-tokens 2  \
+@@ -251,7 +245,7 @@ do
+         export GLOO_SOCKET_IFNAME=xxx
+         python -m sglang.launch_server --model-path ${MODEL_PATH} --disaggregation-mode decode --host ${D_IP[$i]} \
+         --port 8001 --trust-remote-code --dist-init-addr ${D_IP[0]}:5000 --nnodes 2 --node-rank $i --tp-size 32 --dp-size 32 \
+-        --mem-fraction-static 0.815 --max-running-requests 832 --attention-backend ascend --device npu --quantization modelslim \
++        --mem-fraction-static 0.815 --max-running-requests 832 --attention-backend ascend --device npu \
+         --moe-a2a-backend deepep --enable-dp-attention --deepep-mode low_latency --enable-dp-lm-head --moe-dense-tp 1 \
+         --cuda-graph-bs 12 14 16 18 20 22 24 26 --disaggregation-transfer-backend ascend --watchdog-timeout 9000 --context-length 8192 \
+         --speculative-algorithm NEXTN --speculative-num-steps 2 --speculative-eagle-topk 1 --speculative-num-draft-tokens 3  \
+diff --git a/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_environment_variables.mdx b/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_environment_variables.mdx
+index 586421a1cef3..f403f19b1c13 100644
+--- a/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_environment_variables.mdx
++++ b/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_environment_variables.mdx
+@@ -76,11 +76,6 @@ This document provides a list of commonly used environment variables and aims to
+       <td>Needs to be enabled when the expert ID to be processed by <br/> DEEPEP contains -1.</td>
+       <td><code>0</code></td>
+     </tr>
+-    <tr>
+-      <td><code>DEEP_NORMAL_MODE_USE_INT8_QUANT</code></td>
+-      <td>Quantizes x to int8 and returns (tensor, scales) in dispatch operator.</td>
+-      <td><code>0</code></td>
+-    </tr>
+   </tbody>
+ </table>
+ 
+diff --git a/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_glm5_examples.mdx b/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_glm5_examples.mdx
+index 0f2fd5ce7886..333f07c8c014 100644
+--- a/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_glm5_examples.mdx
++++ b/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_glm5_examples.mdx
+@@ -116,7 +116,6 @@ python3 -m sglang.launch_server \
+         --port 8000 \
+         --served-model-name glm-5 \
+         --cuda-graph-bs 16 \
+-        --quantization modelslim \
+         --moe-a2a-backend deepep --deepep-mode auto
+ ```
+ 
+diff --git a/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_qwen3_5_examples.mdx b/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_qwen3_5_examples.mdx
+index 73a6b065a484..93144929dffa 100644
+--- a/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_qwen3_5_examples.mdx
++++ b/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_qwen3_5_examples.mdx
+@@ -93,7 +93,6 @@ python3 -m sglang.launch_server \
+         --mem-fraction-static 0.7 \
+         --port 8000 \
+         --cuda-graph-bs 16 \
+-        --quantization modelslim \
+         --enable-multimodal \
+         --mm-attention-backend ascend_attn \
+         --dtype bfloat16
+@@ -141,7 +140,6 @@ python3 -m sglang.launch_server \
+         --mem-fraction-static 0.7 \
+         --port 8000 \
+         --cuda-graph-bs 16 \
+-        --quantization modelslim \
+         --enable-multimodal \
+         --mm-attention-backend ascend_attn \
+         --dtype bfloat16
+@@ -189,7 +187,6 @@ python3 -m sglang.launch_server \
+         --mem-fraction-static 0.7 \
+         --port 8000 \
+         --cuda-graph-bs 16 \
+-        --quantization modelslim \
+         --enable-multimodal \
+         --mm-attention-backend ascend_attn \
+         --dtype bfloat16
+diff --git a/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_qwen3_examples.mdx b/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_qwen3_examples.mdx
+index 22bcb24bca35..0bb0947ad628 100644
+--- a/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_qwen3_examples.mdx
++++ b/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_qwen3_examples.mdx
+@@ -66,7 +66,6 @@ export STREAMS_PER_DEVICE=32
+ export HCCL_BUFFSIZE=1536
+ export HCCL_OP_EXPANSION_MODE=AIV
+ export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=32
+-export SGLANG_DEEPEP_BF16_DISPATCH=1
+ 
+ python -m sglang.launch_server \
+    --device npu \
+@@ -87,7 +86,6 @@ export PYTORCH_NPU_ALLOC_CONF=expandable_segments:True
+ export STREAMS_PER_DEVICE=32
+ export HCCL_BUFFSIZE=1536
+ export SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK=32
+-export SGLANG_DEEPEP_BF16_DISPATCH=1
+ 
+ python -m sglang.launch_server \
+    --model-path Qwen/Qwen3-235B-A22B-Instruct-2507 \
+@@ -119,7 +117,6 @@ MODEL_PATH=/root/.cache/modelscope/hub/models/zcgy26/Qwen3-235B-A22B-Instruct-25
+ 
+ ```bash Command
+ export ASCEND_LAUNCH_BLOCKING=1
+-export DEEP_NORMAL_MODE_USE_INT8_QUANT=1
+ export HCCL_BUFFSIZE=1500
+ export DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS=1024
+ export DEEPEP_NORMAL_LONG_SEQ_ROUND=128
+@@ -132,7 +129,6 @@ python3 -m sglang.launch_server \
+    --disaggregation-bootstrap-port 8995 \
+    --attention-backend ascend \
+    --disable-radix-cache \
+-   --quantization modelslim \
+    --chunked-prefill-size -1 \
+    --skip-server-warmup \
+    --device npu \
+@@ -151,7 +147,6 @@ python3 -m sglang.launch_server \
+ **Decode node:**
+ 
+ ```bash Command
+-export SGLANG_DEEPEP_BF16_DISPATCH=0
+ export HCCL_BUFFSIZE=4000
+ export DEEPEP_NORMAL_LONG_SEQ_PER_ROUND_TOKENS=4096
+ export DEEPEP_NORMAL_LONG_SEQ_ROUND=16
+@@ -165,7 +160,6 @@ python3 -m sglang.launch_server \
+    --disable-cuda-graph \
+    --device npu \
+    --disable-radix-cache \
+-   --quantization modelslim \
+    --chunked-prefill-size 8192 \
+    --skip-server-warmup \
+    --tp-size 16 \
+diff --git a/docs_new/docs/references/environment_variables.mdx b/docs_new/docs/references/environment_variables.mdx
+index 4ab44d01d3f9..f412c471856d 100644
+--- a/docs_new/docs/references/environment_variables.mdx
++++ b/docs_new/docs/references/environment_variables.mdx
+@@ -306,11 +306,6 @@ SGLang supports various environment variables that can be used to configure its
+     </tr>
+   </thead>
+   <tbody>
+-    <tr>
+-      <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>`SGLANG_DEEPEP_BF16_DISPATCH`</td>
+-      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>Use Bfloat16 for dispatch</td>
+-      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>`"false"`</td>
+-    </tr>
+     <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>`SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK`</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>The maximum number of dispatched tokens on each GPU</td>
+diff --git a/python/sglang/srt/environ.py b/python/sglang/srt/environ.py
+index b4bf8d308a80..eb2292bd5e6e 100644
+--- a/python/sglang/srt/environ.py
++++ b/python/sglang/srt/environ.py
+@@ -346,7 +346,7 @@ class Envs:
+     # Delay all-gather after qlora for better performance for Deepseek v3.2
+     SGLANG_USE_AG_AFTER_QLORA = EnvBool(False)
+     # Quantize x to int8 in the dispatch operator
+-    DEEP_NORMAL_MODE_USE_INT8_QUANT = EnvBool(False)
++    DEEP_NORMAL_MODE_USE_INT8_QUANT = EnvBool(False) # This argument is deprecated
+     SGLANG_NPU_FUSED_MOE_MODE = EnvInt(1)
+ 
+     # MTHREADS & MUSA
+@@ -411,7 +411,7 @@ class Envs:
+     SGLANG_MAX_KV_CHUNK_CAPACITY = EnvInt(128 * 1024)
+ 
+     # DeepEP
+-    SGLANG_DEEPEP_BF16_DISPATCH = EnvBool(False)
++    SGLANG_DEEPEP_BF16_DISPATCH = EnvBool(False) # This argument is deprecated
+     SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK = EnvInt(128)
+     SGLANG_DEEPEP_LL_COMBINE_SEND_NUM_SMS = EnvInt(32)
+     SGLANG_BLACKWELL_OVERLAP_SHARED_EXPERTS_OUTSIDE_SBO = EnvBool(False)
+diff --git a/python/sglang/srt/hardware_backend/npu/quantization/awq_kernels.py b/python/sglang/srt/hardware_backend/npu/quantization/awq_kernels.py
+index 166a5441a9d0..9d66ab722e63 100644
+--- a/python/sglang/srt/hardware_backend/npu/quantization/awq_kernels.py
++++ b/python/sglang/srt/hardware_backend/npu/quantization/awq_kernels.py
+@@ -154,3 +154,21 @@ def apply(
+         dispatch_output: "StandardDispatchOutput",
+     ) -> torch.Tensor:
+         return self.kernel.apply(layer, dispatch_output)
++
++    def apply_without_routing_weights(
++        self,
++        layer,
++        hidden_states,
++        hidden_states_scale,
++        group_list_type,
++        group_list,
++        output_dtype,
++    ):
++        return self.kernel.apply_without_routing_weights(
++            layer,
++            hidden_states,
++            hidden_states_scale,
++            group_list_type,
++            group_list,
++            output_dtype,
++        )
+diff --git a/python/sglang/srt/hardware_backend/npu/quantization/fused_moe_method_npu.py b/python/sglang/srt/hardware_backend/npu/quantization/fused_moe_method_npu.py
+index 4a893149edbb..31aeb25cf505 100644
+--- a/python/sglang/srt/hardware_backend/npu/quantization/fused_moe_method_npu.py
++++ b/python/sglang/srt/hardware_backend/npu/quantization/fused_moe_method_npu.py
+@@ -426,6 +426,12 @@ def process_weights_after_loading(self, layer: torch.nn.Module) -> None:
+                 requires_grad=False,
+             )
+ 
++        # Quantizes in int4 separately from the dispatcher
++        # since deep_ep does not support quantization in int4
++        # dispatching works in bf16
++        if hasattr(layer, "dispatcher"):
++            layer.dispatcher.set_quant_config({"dispatcher_output_dtype": "bf16"})
++
+     def _pack_to_int32(self, weight: torch.Tensor):
+         # pack 8 int4 to int32, we use a int32 to represent a int4
+         assert (
+@@ -460,6 +466,48 @@ def apply(
+         )
+         return StandardCombineInput(hidden_states=output)
+ 
++    def apply_without_routing_weights(
++        self,
++        layer,
++        hidden_states,
++        hidden_states_scale,
++        group_list_type,
++        group_list,
++        output_dtype,
++    ):
++        hidden_states, hidden_states_scale = torch.ops.npu.npu_dynamic_quant(
++            hidden_states, dst_type=torch.quint4x2
++        )
++        # gmm1: up_gate_proj
++        hidden_states = torch.ops.npu.npu_grouped_matmul(
++            x=[hidden_states],
++            weight=[layer.w13_weight],
++            scale=[layer.w13_weight_scale],
++            per_token_scale=[hidden_states_scale],
++            split_item=2,
++            group_list_type=group_list_type,
++            group_type=0,
++            group_list=group_list,
++            output_dtype=output_dtype,
++        )[0]
++        # act_fn: swiglu
++        hidden_states = torch.ops.npu.npu_swiglu(hidden_states)
++        hidden_states, pertoken_scale = torch.ops.npu.npu_dynamic_quant(hidden_states)
++
++        # gmm2: down_proj
++        hidden_states = torch.ops.npu.npu_grouped_matmul(
++            x=[hidden_states],
++            weight=[layer.w2_weight],
++            scale=[layer.w2_weight_scale.to(output_dtype)],
++            per_token_scale=[pertoken_scale],
++            split_item=2,
++            group_list_type=group_list_type,
++            group_type=0,
++            group_list=group_list,
++            output_dtype=output_dtype,
++        )[0]
++        return hidden_states
++
+ 
+ class NPUW8A8Int8DynamicMoEMethod(_NPUFusedMoEMethodBase):
+ 
+@@ -490,6 +538,9 @@ def process_weights_after_loading(self, layer: torch.nn.Module) -> None:
+                 requires_grad=False,
+             )
+ 
++        if hasattr(layer, "dispatcher"):
++            layer.dispatcher.set_quant_config({"dispatcher_output_dtype": "int8"})
++
+     def apply(
+         self,
+         layer,
+@@ -656,6 +707,9 @@ def process_weights_after_loading(
+         layer.w13_weight.data = self._pack_to_int32(layer.w13_weight.data)
+         layer.w2_weight.data = self._pack_to_int32(layer.w2_weight.data)
+ 
++        if hasattr(layer, "dispatcher"):
++            layer.dispatcher.set_quant_config({"dispatcher_output_dtype": "int8"})
++
+     def _process_weights_without_clip(
+         self, layer: torch.nn.Module, is_per_channel_weight
+     ) -> None:
+@@ -960,6 +1014,9 @@ def process_weights_after_loading(self, layer: torch.nn.Module) -> None:
+         layer.w13_weight = torch.nn.Parameter(w13_weight, requires_grad=False)
+         layer.w2_weight = torch.nn.Parameter(w2_weight, requires_grad=False)
+ 
++        if hasattr(layer, "dispatcher"):
++            layer.dispatcher.set_quant_config({"dispatcher_output_dtype": "bf16"})
++
+     def apply(
+         self,
+         layer,
+diff --git a/python/sglang/srt/layers/moe/ep_moe/layer.py b/python/sglang/srt/layers/moe/ep_moe/layer.py
+index 3696cff43a30..e297164616f7 100644
+--- a/python/sglang/srt/layers/moe/ep_moe/layer.py
++++ b/python/sglang/srt/layers/moe/ep_moe/layer.py
+@@ -25,12 +25,6 @@
+ )
+ from sglang.srt.layers.moe.topk import TopKOutput, TopKOutputChecker
+ from sglang.srt.layers.quantization.base_config import QuantizationConfig
+-from sglang.srt.layers.quantization.compressed_tensors.compressed_tensors import (
+-    CompressedTensorsFusedMoEMethod,
+-)
+-from sglang.srt.layers.quantization.compressed_tensors.schemes import (
+-    NPUCompressedTensorsW4A16Int4DynamicMoE,
+-)
+ from sglang.srt.layers.quantization.fp8 import Fp8Config
+ from sglang.srt.layers.quantization.fp8_kernel import is_fp8_fnuz
+ from sglang.srt.layers.quantization.w4afp8 import W4AFp8Config, W4AFp8MoEMethod
+@@ -48,9 +42,6 @@
+ _is_fp8_fnuz = is_fp8_fnuz()
+ _use_aiter = get_bool_env_var("SGLANG_USE_AITER") and _is_hip
+ 
+-if _is_npu:
+-    import torch_npu
+-
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -127,8 +118,13 @@ def __init__(
+ 
+         self.deepep_mode = get_deepep_mode()
+ 
++        # TODO: move this logic to process_weigths_after_loading, like:
++        # def process_weights_after_loading(self, layer: torch.nn.Module) -> None:
++        #    if hasattr(layer, "dispatcher"):
++        #       layer.dispatcher.set_quant_config({"dispatcher_output_dtype": "bf16"})
++
+         if quant_config is None and hasattr(self.dispatcher, "set_quant_config"):
+-            self.dispatcher.set_quant_config({"bf16_dispatch": True})
++            self.dispatcher.set_quant_config({"dispatcher_output_dtype": "bf16"})
+ 
+         if (
+             self.deepep_mode.enable_low_latency()
+@@ -360,17 +356,6 @@ def forward_npu(
+                     self, hidden_states, group_list_type, group_list, output_dtype
+                 )
+             else:
+-                input_quant = get_bool_env_var("DEEP_NORMAL_MODE_USE_INT8_QUANT")
+-                if not input_quant and not isinstance(
+-                    self.quant_method,
+-                    (
+-                        NPUCompressedTensorsW4A16Int4DynamicMoE,
+-                        CompressedTensorsFusedMoEMethod,
+-                    ),
+-                ):
+-                    hidden_states, hidden_states_scale = torch_npu.npu_dynamic_quant(
+-                        hidden_states
+-                    )
+                 hidden_states = self.quant_method.apply_without_routing_weights(
+                     self,
+                     hidden_states,
+diff --git a/python/sglang/srt/layers/moe/token_dispatcher/deepep.py b/python/sglang/srt/layers/moe/token_dispatcher/deepep.py
+index c29cc5fc7f32..57fa4f27aecc 100644
+--- a/python/sglang/srt/layers/moe/token_dispatcher/deepep.py
++++ b/python/sglang/srt/layers/moe/token_dispatcher/deepep.py
+@@ -1,6 +1,7 @@
+ from __future__ import annotations
+ 
+ import logging
++import os
+ from contextlib import nullcontext
+ from dataclasses import dataclass
+ from typing import TYPE_CHECKING, List, NamedTuple, Optional, Tuple, Union
+@@ -22,8 +23,9 @@
+ from sglang.srt.layers.moe.topk import TopKOutput
+ from sglang.srt.layers.moe.utils import (
+     DeepEPMode,
++    DeepEPOutputDtype,
+     get_deepep_config,
+-    get_moe_runner_backend,
++    get_deepep_output_dtype,
+     is_tbo_enabled,
+ )
+ from sglang.srt.utils import (
+@@ -344,6 +346,8 @@ def __init__(
+         self.overlap_args: Optional[CombineOverlapArgs] = None
+         self.meta_overlap_args: Optional[dict] = None
+ 
++        self.set_deepep_dispatcher_dtype()
++
+     def dispatch_a(
+         self,
+         hidden_states: torch.Tensor,
+@@ -370,6 +374,74 @@ def _get_buffer(self):
+ 
+     def set_quant_config(self, quant_config: dict) -> None:
+         self.quant_config = quant_config
++        self.set_deepep_dispatcher_dtype()
++
++    def set_deepep_dispatcher_dtype(self) -> None:
++        self.deepep_output_dtype = get_deepep_output_dtype(self)
++
++        # Configuration mapping for each dtype
++        config_map = {
++            DeepEPOutputDtype.BF16: {
++                "use_fp8": False,
++                "use_nvfp4": False,
++            },
++            DeepEPOutputDtype.FP8: {
++                "use_fp8": True,
++                "use_nvfp4": False,
++            },
++            # Needed for Ascend A2/A3 NPU case,
++            # despite the use_fp8 flag,
++            # quantization will be performed in int8
++            DeepEPOutputDtype.INT8: {
++                "use_fp8": True,
++                "use_nvfp4": False,
++            },
++            DeepEPOutputDtype.NVFP4: {
++                "use_fp8": False,
++                "use_nvfp4": True,
++            },
++        }
++
++        # Validate and apply hardware-specific adjustments
++        self._validate_and_adjust_dtype()
++
++        # Apply configuration
++        config = config_map[self.deepep_output_dtype]
++        self.use_fp8 = config["use_fp8"]
++        self.use_nvfp4 = config["use_nvfp4"]
++
++        # Handle environment variables
++        if _is_npu:
++            self._update_int8_quant_env()
++
++    def _validate_and_adjust_dtype(self) -> None:
++        """Validate dtype against hardware and adjust if necessary."""
++        if _is_npu:
++            if self.deepep_output_dtype == DeepEPOutputDtype.FP8:
++                logger.warning_once(
++                    "Ascend A2/A3 NPU does not support fp8 "
++                    "deepep_dispatcher_output_dtype, switching to int8..."
++                )
++                self.deepep_output_dtype = DeepEPOutputDtype.INT8
++            elif self.deepep_output_dtype == DeepEPOutputDtype.NVFP4:
++                raise RuntimeError(
++                    "Ascend A2/A3 NPU does not support nvfp4 deepep_dispatcher_output_dtype."
++                )
++        else:
++            if self.deepep_output_dtype == DeepEPOutputDtype.INT8:
++                logger.warning_once(
++                    "GPU does not support int8 "
++                    "deepep_dispatcher_output_dtype, switching to fp8..."
++                )
++                self.deepep_output_dtype = DeepEPOutputDtype.FP8
++            # NVFP4 is supported on GPU, no adjustment needed
++
++    def _update_int8_quant_env(self) -> None:
++        """Update the DEEP_NORMAL_MODE_USE_INT8_QUANT environment variable."""
++        if self.use_fp8:
++            os.environ["DEEP_NORMAL_MODE_USE_INT8_QUANT"] = "1"
++        else:
++            os.environ["DEEP_NORMAL_MODE_USE_INT8_QUANT"] = "0"
+ 
+     def set_overlap_args(
+         self, combine_overlap_args: CombineOverlapArgs, meta_overlap_args: dict
+@@ -397,14 +469,7 @@ def dispatch_a(
+     ):
+         topk_weights, topk_ids = topk_output.topk_weights, topk_output.topk_ids
+         topk_ids = topk_ids.to(torch.int64)
+-        backend = get_moe_runner_backend()
+-        # BF16 dispatch is needed when:
+-        #   - cutlass backend (uses different kernel)
+-        #   - deep_gemm backend with SGLANG_DEEPEP_BF16_DISPATCH enabled
+-        need_bf16_dispatch = backend.is_cutlass() or (
+-            backend.is_deep_gemm() and envs.SGLANG_DEEPEP_BF16_DISPATCH.get()
+-        )
+-        if deep_gemm_wrapper.ENABLE_JIT_DEEPGEMM and not need_bf16_dispatch:
++        if deep_gemm_wrapper.ENABLE_JIT_DEEPGEMM and self.use_fp8:
+             # TODO hard code 128 block quant,use fp8 communication
+             hidden_states = sglang_per_token_group_quant_fp8(
+                 hidden_states,
+@@ -623,26 +688,7 @@ def _dispatch_core(
+         hidden_states: torch.Tensor,
+         topk_ids: torch.Tensor,
+     ):
+-        use_nvfp4 = use_fp8 = False
+         input_global_scale = self.quant_config.get("input_global_scale", None)
+-        bf16_dispatch = self.quant_config.get("bf16_dispatch", False)
+-        if input_global_scale is not None:
+-            use_nvfp4 = True
+-        else:
+-            backend = get_moe_runner_backend()
+-            # BF16 dispatch is needed when:
+-            #   - quant_config requests BF16 dispatch explicitly
+-            #   - flashinfer_cutedsl: kernel quantizes to NVFP4 internally
+-            #   - NPU with SGLANG_DEEPEP_BF16_DISPATCH: INT8 input + BF16 weight GMM not supported
+-            #   - deep_gemm with SGLANG_DEEPEP_BF16_DISPATCH: user requests BF16 dispatch
+-            need_bf16_dispatch = (
+-                bf16_dispatch
+-                or backend.is_flashinfer_cutedsl()
+-                or (_is_npu and envs.SGLANG_DEEPEP_BF16_DISPATCH.get())
+-                or (backend.is_deep_gemm() and envs.SGLANG_DEEPEP_BF16_DISPATCH.get())
+-            )
+-            if not need_bf16_dispatch:
+-                use_fp8 = True
+ 
+         # round_scale / use_ue8m0 are FP8-DeepGEMM specific; they cause DeepEP
+         # to return int32-packed UE8M0 scales that don't feed the flashinfer
+@@ -654,7 +700,7 @@ def _dispatch_core(
+                 use_ue8m0=deep_gemm_wrapper.ENABLE_JIT_DEEPGEMM
+                 and deep_gemm_wrapper.DEEPGEMM_BLACKWELL,
+             )
+-            if use_fp8
++            if self.use_fp8
+             else dict()
+         )
+ 
+@@ -666,8 +712,8 @@ def _dispatch_core(
+                 topk_ids,
+                 self.num_max_dispatch_tokens_per_rank,
+                 self.num_experts,
+-                use_fp8=use_fp8,
+-                **(dict(use_nvfp4=True) if use_nvfp4 else dict()),
++                use_fp8=self.use_fp8,
++                **(dict(use_nvfp4=True) if self.use_nvfp4 else dict()),
+                 **(
+                     dict(x_global_scale=input_global_scale)
+                     if input_global_scale is not None
+diff --git a/python/sglang/srt/layers/moe/utils.py b/python/sglang/srt/layers/moe/utils.py
+index 7041e67adc88..78bd3abd5968 100644
+--- a/python/sglang/srt/layers/moe/utils.py
++++ b/python/sglang/srt/layers/moe/utils.py
+@@ -9,14 +9,20 @@
+ import torch
+ 
+ from sglang.srt.distributed.parallel_state import get_moe_expert_parallel_world_size
++from sglang.srt.environ import envs
+ from sglang.srt.layers.dp_attention import (
+     get_attention_dp_size,
+     is_dp_attention_enabled,
+ )
++from sglang.srt.utils import is_npu
++
++_is_npu = is_npu()
+ 
+ if TYPE_CHECKING:
+     from sglang.srt.server_args import ServerArgs
+ 
++from sglang.srt.server_args import get_global_server_args
++
+ logger = logging.getLogger(__name__)
+ 
+ 
+@@ -161,6 +167,76 @@ def is_auto(self) -> bool:
+         return self == DeepEPMode.AUTO
+ 
+ 
++class DeepEPOutputDtype(Enum):
++    """
++    Describes the dispatch output data type for DeepEP.
++
++    - BF16: dispatch hidden states in bf16
++    - FP8: dispatch hidden states in fp8
++    - INT8: dispatch hidden states in int8
++    - NVFP4: dispatch hidden states in nvfp4
++    """
++
++    BF16 = "bf16"
++    FP8 = "fp8"
++    INT8 = "int8"
++    NVFP4 = "nvfp4"
++
++
++def get_deepep_output_dtype(self) -> DeepEPOutputDtype:
++    """
++    Automatically choose the dispatch output dtype for DeepEP.
++
++    The decision follows several checks in priority order:
++    0. Parse server argument.
++    1. Parse deprecated environment variables.
++    2. If quant_config contains input_global_scale → NVFP4 path.
++    3. Parse quant config
++    4. If flashinfer_cutedsl or is_cutlass backend is active → BF16 (it quantizes hidden_states internally).
++    5. Otherwise default for NPU → BF16 (the default for NPU).
++    6. Otherwise → FP8 (the default for most models like DeepSeek-V3).
++    """
++
++    # 0. Parse server argument.
++    server_args = get_global_server_args()
++    if server_args and server_args.deepep_dispatcher_output_dtype != "auto":
++        return DeepEPOutputDtype(server_args.deepep_dispatcher_output_dtype)
++
++    # 1. Parse deprecated environment variables.
++    if envs.SGLANG_DEEPEP_BF16_DISPATCH.get():
++        logger.warning_once(
++            "Warning: The env variable SGLANG_DEEPEP_BF16_DISPATCH deprecated "
++            "and will be removed in future releases. Please use a new "
++            "`--deepep-dispatcher-output-dtype bf16` argument instead."
++        )
++        return DeepEPOutputDtype.BF16
++
++    # 2. NVFP4 is detected inside dispatch_a / _dispatch_core via quant_config; no need to infer here.
++    if self.quant_config is not None:
++        input_global_scale = self.quant_config.get("input_global_scale", None)
++        if input_global_scale is not None:
++            return DeepEPOutputDtype.NVFP4
++
++        # 3. Parse quant config to determine the output dtype of dispatcher
++        dispatcher_output_dtype = self.quant_config.get("dispatcher_output_dtype", None)
++        if dispatcher_output_dtype is not None:
++            return DeepEPOutputDtype(dispatcher_output_dtype)
++
++    # 4. flashinfer_cutedsl and is_cutlass expects BF16 dispatch
++    if (
++        get_moe_runner_backend().is_flashinfer_cutedsl()
++        or get_moe_runner_backend().is_cutlass()
++    ):
++        return DeepEPOutputDtype.BF16
++
++    # 5. Default on NPU → BF16
++    if _is_npu:
++        return DeepEPOutputDtype.BF16
++
++    # 6. Default → FP8
++    return DeepEPOutputDtype.FP8
++
++
+ MOE_A2A_BACKEND: Optional[MoeA2ABackend] = None
+ MOE_RUNNER_BACKEND: Optional[MoeRunnerBackend] = None
+ SPECULATIVE_MOE_RUNNER_BACKEND: Optional[MoeRunnerBackend] = None
+diff --git a/python/sglang/srt/layers/quantization/compressed_tensors/schemes/compressed_tensors_wNa16_moe.py b/python/sglang/srt/layers/quantization/compressed_tensors/schemes/compressed_tensors_wNa16_moe.py
+index 0ac18784c316..645807e84382 100644
+--- a/python/sglang/srt/layers/quantization/compressed_tensors/schemes/compressed_tensors_wNa16_moe.py
++++ b/python/sglang/srt/layers/quantization/compressed_tensors/schemes/compressed_tensors_wNa16_moe.py
+@@ -606,6 +606,18 @@ def create_weights(
+         layer.register_parameter("w2_weight_offset", w2_weight_offset)
+         set_weight_attrs(w2_weight_offset, extra_weight_attrs)
+ 
++        w13_weight_shape = torch.nn.Parameter(
++            torch.empty(num_experts, 2), requires_grad=False
++        )
++        layer.register_parameter("w13_weight_shape", w13_weight_shape)
++        set_weight_attrs(w13_weight_shape, extra_weight_attrs)
++
++        w2_weight_shape = torch.nn.Parameter(
++            torch.empty(num_experts, 2), requires_grad=False
++        )
++        layer.register_parameter("w2_weight_shape", w2_weight_shape)
++        set_weight_attrs(w2_weight_shape, extra_weight_attrs)
++
+     def process_weights_after_loading(self, layer: torch.nn.Module) -> None:
+         self.kernel.process_weights_after_loading(layer)
+ 
+diff --git a/python/sglang/srt/layers/quantization/modelslim/schemes/modelslim_w4a4_int4_moe.py b/python/sglang/srt/layers/quantization/modelslim/schemes/modelslim_w4a4_int4_moe.py
+index 9faf1b7a42cb..fce46cb1f8a3 100644
+--- a/python/sglang/srt/layers/quantization/modelslim/schemes/modelslim_w4a4_int4_moe.py
++++ b/python/sglang/srt/layers/quantization/modelslim/schemes/modelslim_w4a4_int4_moe.py
+@@ -129,7 +129,15 @@ def apply_without_routing_weights(
+         group_list,
+         output_dtype,
+     ):
+-        # FIXME W4A4 MoE does not work with DeepEP
+-        raise NotImplementedError(
+-            f"DeepEP currently does not support quantization in int4, please disable --moe-a2a-backend deepep"
++        logger.warning_once(
++            "Warning: Performance may be reduced, because DeepEP Dispatcher does not support 4-bit quantization, "
++            "switching to the bf16 dispatcher, quantization will be performed separately..."
++        )
++        return self.kernel.apply_without_routing_weights(
++            layer,
++            hidden_states,
++            hidden_states_scale,
++            group_list_type,
++            group_list,
++            output_dtype,
+         )
+diff --git a/python/sglang/srt/models/deepseek_nextn.py b/python/sglang/srt/models/deepseek_nextn.py
+index 2196a9b26f62..acc893370090 100644
+--- a/python/sglang/srt/models/deepseek_nextn.py
++++ b/python/sglang/srt/models/deepseek_nextn.py
+@@ -161,9 +161,6 @@ def forward(
+         forward_batch: ForwardBatch,
+         input_embeds: torch.Tensor = None,
+     ) -> torch.Tensor:
+-        if _is_npu and self.quant_config is None:
+-            os.environ["SGLANG_DEEPEP_BF16_DISPATCH"] = "1"
+-            os.environ["DEEP_NORMAL_MODE_USE_INT8_QUANT"] = "0"
+         zero_allocator = BumpAllocator(
+             buffer_size=2,
+             dtype=torch.float32,
+@@ -224,9 +221,6 @@ def forward(
+                     torch.cuda.current_stream(),
+                 )
+ 
+-        if _is_npu and self.quant_config is None:
+-            os.environ["SGLANG_DEEPEP_BF16_DISPATCH"] = "0"
+-            os.environ["DEEP_NORMAL_MODE_USE_INT8_QUANT"] = "1"
+         return hidden_states
+ 
+ 
+diff --git a/python/sglang/srt/models/glm4_moe_nextn.py b/python/sglang/srt/models/glm4_moe_nextn.py
+index dfbd4583dbd2..a123b4924436 100644
+--- a/python/sglang/srt/models/glm4_moe_nextn.py
++++ b/python/sglang/srt/models/glm4_moe_nextn.py
+@@ -160,9 +160,11 @@ def forward(
+         if self.needs_quant_draft:
+             cxt = contextlib.nullcontext()
+         else:
++            # SGLANG_DEEPEP_BF16_DISPATCH is deprecated, will need
++            # to be removed in the future and moved to a new
++            # --deepep-dispatcher-output-dtype server argument.
+             unquant_patch = {
+                 "SGLANG_DEEPEP_BF16_DISPATCH": "1",
+-                "DEEP_NORMAL_MODE_USE_INT8_QUANT": "0",
+             }
+             cxt = temp_set_env(allow_sglang=True, **unquant_patch)
+ 
+diff --git a/python/sglang/srt/models/qwen3_5_mtp.py b/python/sglang/srt/models/qwen3_5_mtp.py
+index a548900afeab..454105185a9e 100644
+--- a/python/sglang/srt/models/qwen3_5_mtp.py
++++ b/python/sglang/srt/models/qwen3_5_mtp.py
+@@ -15,7 +15,6 @@
+ """Inference-only Qwen3_5 MTP model."""
+ 
+ import logging
+-from contextlib import ExitStack
+ from typing import Iterable, Optional, Tuple
+ 
+ import torch
+@@ -23,7 +22,6 @@
+ from transformers import PretrainedConfig
+ 
+ from sglang.srt.distributed import get_pp_group, get_tensor_model_parallel_world_size
+-from sglang.srt.environ import envs
+ from sglang.srt.eplb.expert_distribution import get_global_expert_distribution_recorder
+ from sglang.srt.eplb.expert_location import ModelConfigForExpertLocation
+ from sglang.srt.layers.layernorm import GemmaRMSNorm
+@@ -138,17 +136,6 @@ def forward(
+         input_embeds: Optional[torch.Tensor] = None,
+         **kwargs,
+     ):
+-        exit_stack = ExitStack()
+-        if (
+-            is_npu()
+-            and self.quant_config is None
+-            and get_global_server_args().quantization is not None
+-        ):
+-            # ascend mtp unquant
+-            exit_stack.enter_context(envs.SGLANG_DEEPEP_BF16_DISPATCH.override(True))
+-            exit_stack.enter_context(
+-                envs.DEEP_NORMAL_MODE_USE_INT8_QUANT.override(False)
+-            )
+ 
+         assert input_embeds is None
+         input_embeds = forward_batch.mm_input_embeds
+@@ -182,8 +169,6 @@ def forward(
+                 hidden_states,
+             )
+ 
+-        exit_stack.close()
+-
+         return self.logits_processor(
+             input_ids, hidden_states, self.lm_head, forward_batch
+         )
+diff --git a/python/sglang/srt/models/qwen3_next_mtp.py b/python/sglang/srt/models/qwen3_next_mtp.py
+index 5f0dcb5e0c96..d81ea387fa04 100644
+--- a/python/sglang/srt/models/qwen3_next_mtp.py
++++ b/python/sglang/srt/models/qwen3_next_mtp.py
+@@ -15,7 +15,6 @@
+ """Inference-only Qwen3Next MTP Speculative Decoding."""
+ 
+ import logging
+-from contextlib import ExitStack
+ from typing import Iterable, Optional, Tuple
+ 
+ import torch
+@@ -23,7 +22,6 @@
+ from transformers import PretrainedConfig
+ 
+ from sglang.srt.distributed import get_pp_group, get_tensor_model_parallel_world_size
+-from sglang.srt.environ import envs
+ from sglang.srt.eplb.expert_distribution import get_global_expert_distribution_recorder
+ from sglang.srt.layers.layernorm import GemmaRMSNorm
+ from sglang.srt.layers.logits_processor import LogitsProcessor
+@@ -93,17 +91,6 @@ def forward(
+         input_embeds: Optional[torch.Tensor] = None,
+         **kwargs,
+     ):
+-        exit_stack = ExitStack()
+-        if (
+-            is_npu()
+-            and self.quant_config is None
+-            and get_global_server_args().quantization is not None
+-        ):
+-            # ascend mtp unquant
+-            exit_stack.enter_context(envs.SGLANG_DEEPEP_BF16_DISPATCH.override(True))
+-            exit_stack.enter_context(
+-                envs.DEEP_NORMAL_MODE_USE_INT8_QUANT.override(False)
+-            )
+ 
+         if input_embeds is None:
+             input_embeds = self.model.embed_tokens(input_ids)
+@@ -123,8 +110,6 @@ def forward(
+                 hidden_states,
+             )
+ 
+-        exit_stack.close()
+-
+         return self.logits_processor(
+             input_ids, hidden_states, self.lm_head, forward_batch
+         )
+diff --git a/python/sglang/srt/server_args.py b/python/sglang/srt/server_args.py
+index 96e40b2cb90a..3b8ef32a6458 100644
+--- a/python/sglang/srt/server_args.py
++++ b/python/sglang/srt/server_args.py
+@@ -595,6 +595,9 @@ class ServerArgs:
+     enforce_disable_flashinfer_allreduce_fusion: bool = False
+     enable_aiter_allreduce_fusion: bool = False
+     deepep_mode: Literal["auto", "normal", "low_latency"] = "auto"
++    deepep_dispatcher_output_dtype: Literal["auto", "bf16", "fp8", "int8", "nvfp4"] = (
++        "auto"
++    )
+     ep_num_redundant_experts: int = 0
+     ep_dispatch_algorithm: Optional[Literal["static", "dynamic", "fake"]] = None
+     init_expert_location: str = "trivial"
+@@ -5630,6 +5633,13 @@ def add_cli_args(parser: argparse.ArgumentParser):
+             default="auto",
+             help="Select the mode when enable DeepEP or MoriEP MoE, could be `normal`, `low_latency` or `auto`. Default is `auto`, which means `low_latency` for decode batch and `normal` for prefill batch.",
+         )
++        parser.add_argument(
++            "--deepep-dispatcher-output-dtype",
++            type=str,
++            choices=["auto", "bf16", "fp8", "int8", "nvfp4"],
++            default="auto",
++            help="Select DeepEP dispatcher output dtype",
++        )
+         parser.add_argument(
+             "--ep-num-redundant-experts",
+             type=int,
+diff --git a/test/manual/layers/moe/test_moe_runners_4gpu.py b/test/manual/layers/moe/test_moe_runners_4gpu.py
+index 58a21887445e..2bd68c2c9030 100644
+--- a/test/manual/layers/moe/test_moe_runners_4gpu.py
++++ b/test/manual/layers/moe/test_moe_runners_4gpu.py
+@@ -55,7 +55,6 @@ class TestMoERunner4GPU(CustomTestCase):
+         },
+         "moe_runner_cutlass_w4a8_deepep_ll": {
+             "model": "tencent/DeepSeek-V3.1-Terminus-W4AFP8",  # FP8 W8A8 MoE model
+-            "env_overrides": {"SGLANG_DEEPEP_BF16_DISPATCH": "1"},
+             "other_args": [
+                 "--trust-remote-code",
+                 "--moe-runner-backend",
+@@ -64,6 +63,8 @@ class TestMoERunner4GPU(CustomTestCase):
+                 "deepep",
+                 "--deepep-mode",
+                 "low_latency",
++                "--deepep-dispatcher-output-dtype",
++                "bf16",
+                 "--attention-backend",
+                 "triton",
+                 "--sampling-backend",
+diff --git a/test/manual/test_w4a8_deepseek_v3.py b/test/manual/test_w4a8_deepseek_v3.py
+index 8d91f9128add..679e3d6635f6 100644
+--- a/test/manual/test_w4a8_deepseek_v3.py
++++ b/test/manual/test_w4a8_deepseek_v3.py
+@@ -192,6 +192,8 @@ def setUpClass(cls):
+             "deepep",
+             "--deepep-mode",
+             "auto",
++            "--deepep-dispatcher-output-dtype",
++            "bf16",
+             "--dp",
+             "8",
+             "--enable-dp-attention",
+@@ -215,7 +217,6 @@ def setUpClass(cls):
+             other_args=other_args,
+             env={
+                 **os.environ,
+-                "SGLANG_DEEPEP_BF16_DISPATCH": "1",
+                 "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "256",
+             },
+         )
+diff --git a/test/registered/4-gpu-models/test_deepseek_v3_cutedsl_4gpu.py b/test/registered/4-gpu-models/test_deepseek_v3_cutedsl_4gpu.py
+index c59389f402a0..dd50fdf2d4e1 100644
+--- a/test/registered/4-gpu-models/test_deepseek_v3_cutedsl_4gpu.py
++++ b/test/registered/4-gpu-models/test_deepseek_v3_cutedsl_4gpu.py
+@@ -46,12 +46,14 @@ def setUpClass(cls):
+             "modelopt_fp4",
+             "--attention-backend",
+             "trtllm_mla",
+-            "--moe-a2a-backend",
+-            "deepep",
+             "--moe-runner-backend",
+             "flashinfer_cutedsl",
++            "--moe-a2a-backend",
++            "deepep",
+             "--deepep-mode",
+             "low_latency",
++            "--deepep-dispatcher-output-dtype",
++            "bf16",
+         ]
+         cls.process = popen_launch_server(
+             cls.model,
+@@ -60,7 +62,6 @@ def setUpClass(cls):
+             other_args=other_args,
+             env={
+                 **os.environ,
+-                "SGLANG_DEEPEP_BF16_DISPATCH": "1",
+                 "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "256",
+                 "SGLANG_MOE_NVFP4_DISPATCH": "0",
+             },
+@@ -117,12 +118,14 @@ def setUpClass(cls):
+             "modelopt_fp4",
+             "--attention-backend",
+             "trtllm_mla",
+-            "--moe-a2a-backend",
+-            "deepep",
+             "--moe-runner-backend",
+             "flashinfer_cutedsl",
++            "--moe-a2a-backend",
++            "deepep",
+             "--deepep-mode",
+             "low_latency",
++            "--deepep-dispatcher-output-dtype",
++            "bf16",
+             "--json-model-override-args",
+             '{"num_hidden_layers": 1, "first_k_dense_replace": 0, "n_routed_experts": 24}',
+             "--enable-single-batch-overlap",
+@@ -136,7 +139,6 @@ def setUpClass(cls):
+             other_args=other_args,
+             env={
+                 **os.environ,
+-                "SGLANG_DEEPEP_BF16_DISPATCH": "1",
+                 "SGLANG_DEEPEP_NUM_MAX_DISPATCH_TOKENS_PER_RANK": "256",
+                 "SGLANG_MOE_NVFP4_DISPATCH": "0",
+             },

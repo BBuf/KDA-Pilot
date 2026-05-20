@@ -1,0 +1,181 @@
+diff --git a/docs/references/environment_variables.md b/docs/references/environment_variables.md
+index 0171bdc05dba..99f65c7c53fd 100644
+--- a/docs/references/environment_variables.md
++++ b/docs/references/environment_variables.md
+@@ -127,6 +127,7 @@ SGLang supports various environment variables that can be used to configure its
+ | `SGLANG_FORCE_FP8_MARLIN` | Force using FP8 MARLIN kernels even if other FP8 kernels are available | `false` |
+ | `SGLANG_NVFP4_CKPT_FP8_GEMM_IN_ATTN` | Quantize q_b_proj from BF16 to FP8 when launching DeepSeek NVFP4 checkpoint | `false` |
+ | `SGLANG_MOE_NVFP4_DISPATCH` | Use nvfp4 for moe dispatch (on flashinfer_cutlass or flashinfer_cutedsl moe runner backend) | `"false"` |
++| `SGLANG_FLASHINFER_NVFP4_PER_TOKEN_ACTIVATION` | Enable FlashInfer TRTLLM per-token NVFP4 activation scaling; ignores checkpoint activation FP32 scale by treating it as `1` | `false` |
+ | `SGLANG_NVFP4_CKPT_FP8_NEXTN_MOE` | Quantize moe of nextn layer from BF16 to FP8 when launching DeepSeek NVFP4 checkpoint | `false` |
+ | `SGLANG_QUANT_ALLOW_DOWNCASTING` | Allow weight dtype downcasting during loading (e.g., fp32 → fp16). By default, SGLang rejects this kind of downcasting when using quantization. | `false` |
+ | `SGLANG_FP8_IGNORED_LAYERS` | A comma-separated list of layer names to ignore during FP8 quantization. For example: `model.layers.0,model.layers.1.,qkv_proj`. | `""` |
+diff --git a/docs_new/docs/references/environment_variables.mdx b/docs_new/docs/references/environment_variables.mdx
+index f412c471856d..af52bd385a9c 100644
+--- a/docs_new/docs/references/environment_variables.mdx
++++ b/docs_new/docs/references/environment_variables.mdx
+@@ -549,6 +549,11 @@ SGLang supports various environment variables that can be used to configure its
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>Use nvfp4 for moe dispatch (on flashinfer_cutlass or flashinfer_cutedsl moe runner backend)</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}><code>"false"</code></td>
+     </tr>
++    <tr>
++      <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}><code>SGLANG_FLASHINFER_NVFP4_PER_TOKEN_ACTIVATION</code></td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>Enable FlashInfer TRTLLM per-token NVFP4 activation scaling; ignores checkpoint activation FP32 scale by treating it as <code>1</code></td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}><code>false</code></td>
++    </tr>
+ <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}><code>SGLANG_NVFP4_CKPT_FP8_NEXTN_MOE</code></td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>Quantize moe of nextn layer from BF16 to FP8 when launching DeepSeek NVFP4 checkpoint</td>
+diff --git a/python/sglang/srt/environ.py b/python/sglang/srt/environ.py
+index 9f791751a6f0..d0a4ac8b1551 100644
+--- a/python/sglang/srt/environ.py
++++ b/python/sglang/srt/environ.py
+@@ -369,6 +369,8 @@ class Envs:
+     SGLANG_FLASHINFER_USE_PAGED = EnvBool(False)
+     # Default to the pick from flashinfer
+     SGLANG_FLASHINFER_WORKSPACE_SIZE = EnvInt(384 * 1024 * 1024)
++    # Enable per-token NVFP4 activation scaling path for FlashInfer TRT-LLM MoE.
++    SGLANG_FLASHINFER_NVFP4_PER_TOKEN_ACTIVATION = EnvBool(False)
+     # Skip-softmax threshold scale factor for TRT-LLM attention (prefill and decode separately).
+     # None = standard attention. See https://arxiv.org/abs/2512.12087
+     SGLANG_SKIP_SOFTMAX_PREFILL_THRESHOLD_SCALE_FACTOR = EnvFloat(None)
+diff --git a/python/sglang/srt/layers/moe/moe_runner/flashinfer_trtllm.py b/python/sglang/srt/layers/moe/moe_runner/flashinfer_trtllm.py
+index 61dddd6ac548..e3336636b70a 100644
+--- a/python/sglang/srt/layers/moe/moe_runner/flashinfer_trtllm.py
++++ b/python/sglang/srt/layers/moe/moe_runner/flashinfer_trtllm.py
+@@ -14,6 +14,7 @@
+     is_tensor_in_symmetric_mempool,
+     use_symmetric_memory,
+ )
++from sglang.srt.environ import envs
+ from sglang.srt.layers.dp_attention import is_allocation_symmetric
+ from sglang.srt.layers.moe.flashinfer_trtllm_moe import (
+     trtllm_fp8_block_scale_moe_wrapper,
+@@ -872,9 +873,26 @@ def fused_experts_none_to_flashinfer_trtllm_fp4(
+     topk_output = dispatch_output.topk_output
+ 
+     # Quantize hidden states to FP4
+-    hs_fp4, hs_scale_linear = quantize_hidden_states_fp4(
+-        hidden_states, quant_info.w13_input_scale_quant
+-    )
++    if envs.SGLANG_FLASHINFER_NVFP4_PER_TOKEN_ACTIVATION.get():
++        from flashinfer import SfLayout, nvfp4_quantize
++
++        hs_fp4_bytes, hs_sf_bytes, per_token_scale = nvfp4_quantize(
++            hidden_states,
++            1.0 / (448.0 * 6.0),
++            sfLayout=SfLayout.layout_linear,
++            per_token_activation=True,
++        )
++
++        seq_len, hidden_size = hidden_states.shape
++        hs_fp4 = hs_fp4_bytes.reshape(seq_len, hidden_size // 2)
++        hs_scale_linear = hs_sf_bytes.view(torch.float8_e4m3fn).reshape(
++            seq_len, hidden_size // 16
++        )
++    else:
++        per_token_scale = None
++        hs_fp4, hs_scale_linear = quantize_hidden_states_fp4(
++            hidden_states, quant_info.w13_input_scale_quant
++        )
+     hs_scale = hs_scale_linear.view(torch.float8_e4m3fn).reshape(
+         *hs_scale_linear.shape[:-1], -1
+     )
+@@ -927,6 +945,7 @@ def fused_experts_none_to_flashinfer_trtllm_fp4(
+             output1_scale_scalar=quant_info.g1_scale_c,
+             output1_scale_gate_scalar=quant_info.g1_alphas,
+             output2_scale_scalar=quant_info.g2_alphas,
++            per_token_scale=per_token_scale,
+             num_experts=quant_info.global_num_experts,
+             top_k=topk_output.topk_ids.shape[1],
+             n_group=0,
+@@ -974,6 +993,7 @@ def fused_experts_none_to_flashinfer_trtllm_fp4(
+             output1_scale_scalar=quant_info.g1_scale_c,
+             output1_scale_gate_scalar=quant_info.g1_alphas,
+             output2_scale_scalar=quant_info.g2_alphas,
++            per_token_scale=per_token_scale,
+             num_experts=quant_info.global_num_experts,
+             top_k=topk_config.top_k,
+             n_group=topk_config.num_expert_group,
+diff --git a/python/sglang/srt/layers/quantization/modelopt_quant.py b/python/sglang/srt/layers/quantization/modelopt_quant.py
+index bab2e6f59d03..2eb8f909db59 100755
+--- a/python/sglang/srt/layers/quantization/modelopt_quant.py
++++ b/python/sglang/srt/layers/quantization/modelopt_quant.py
+@@ -1758,6 +1758,13 @@ def _slice_scale(w):
+             w13_input_scale = layer.w13_input_scale.max(dim=-1).values.to(torch.float32)
+             w2_input_scale = layer.w2_input_scale
+ 
++        if (
++            self.enable_flashinfer_trtllm_moe
++            and envs.SGLANG_FLASHINFER_NVFP4_PER_TOKEN_ACTIVATION.get()
++        ):
++            w13_input_scale = torch.ones_like(w13_input_scale, dtype=torch.float32)
++            w2_input_scale = torch.ones_like(w2_input_scale, dtype=torch.float32)
++
+         # Create shared parameters
+         copy_or_rebind_param(
+             layer,
+diff --git a/test/registered/backends/test_flashinfer_trtllm_gen_moe_backend.py b/test/registered/backends/test_flashinfer_trtllm_gen_moe_backend.py
+index aff581054838..e483fa56248d 100644
+--- a/test/registered/backends/test_flashinfer_trtllm_gen_moe_backend.py
++++ b/test/registered/backends/test_flashinfer_trtllm_gen_moe_backend.py
+@@ -157,6 +157,7 @@ def test_gsm8k(self):
+ 
+ class FlashinferTrtllmGenMoeBackendNVFP4Base:
+     backend = None
++    extra_env = {}
+ 
+     @classmethod
+     def setUpClass(cls):
+@@ -166,7 +167,7 @@ def setUpClass(cls):
+             cls.model,
+             cls.base_url,
+             timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
+-            env={**os.environ, "SGLANG_ENABLE_JIT_DEEPGEMM": "False"},
++            env={**os.environ, **cls.extra_env, "SGLANG_ENABLE_JIT_DEEPGEMM": "False"},
+             other_args=[
+                 "--moe-runner-backend",
+                 cls.backend,
+@@ -204,30 +205,12 @@ class TestFlashinferTrtllmGenMoeBackendFP8(
+     backend = "flashinfer_trtllm"
+ 
+ 
+-class TestFlashinferTrtllmGenMoeBackendMXFP8(
+-    FlashinferTrtllmGenMoeBackendMXFP8Base, CustomTestCase
+-):
+-    backend = "flashinfer_trtllm"
+-
+-
+-class TestFlashinferTrtllmGenMoeBackendBF16(
+-    FlashinferTrtllmGenMoeBackendBF16Base, CustomTestCase
+-):
+-    backend = "flashinfer_trtllm"
+-
+-
+ class TestFlashinferTrtllmGenMoeBackendNVFP4(
+     FlashinferTrtllmGenMoeBackendNVFP4Base, CustomTestCase
+ ):
+     backend = "flashinfer_trtllm"
+ 
+ 
+-class TestFlashinferTrtllmGenMoeBackendFP8Routed(
+-    FlashinferTrtllmGenMoeBackendFP8Base, CustomTestCase
+-):
+-    backend = "flashinfer_trtllm_routed"
+-
+-
+ class TestFlashinferTrtllmGenMoeBackendMXFP8Routed(
+     FlashinferTrtllmGenMoeBackendMXFP8Base, CustomTestCase
+ ):
+@@ -240,9 +223,10 @@ class TestFlashinferTrtllmGenMoeBackendBF16Routed(
+     backend = "flashinfer_trtllm_routed"
+ 
+ 
+-class TestFlashinferTrtllmGenMoeBackendNVFP4Routed(
++class TestFlashinferTrtllmGenMoeBackendPerTokenNVFP4Routed(
+     FlashinferTrtllmGenMoeBackendNVFP4Base, CustomTestCase
+ ):
++    extra_env = {"SGLANG_FLASHINFER_NVFP4_PER_TOKEN_ACTIVATION": "1"}
+     backend = "flashinfer_trtllm_routed"
+ 
+ 

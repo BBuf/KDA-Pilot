@@ -1,0 +1,46 @@
+schema_version: 1
+source_key: sgl-project/sglang#25390
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25390
+title: '[AMD] Enable shared-experts fusion with new KIMI-K2.5-MXFP4 model.'
+url: https://github.com/sgl-project/sglang/pull/25390
+state: closed
+merged_at: '2026-05-18T08:30:58Z'
+base_ref_oid: eec5ba26cf38a78427ce2f5bead5e4976c2898ba
+head_ref_oid: 4e940575b122d133c6ad801591fb0fde66aa84bf
+captured_at: '2026-05-20T14:51:07.642793+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- benchmark kernel
+- gemm
+- moe kernel
+- mxfp4
+techniques:
+- fine-grained-quantization
+- kernel-fusion
+hardware_features:
+- fp4
+- mxfp4
+kernel_types:
+- gemm
+- moe
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/layers/quantization/quark/quark.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/quark/quark.py
+    ref: 4e940575b122d133c6ad801591fb0fde66aa84bf
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/models/deepseek_v2.py
+    local_path: source-snapshot/python/sglang/srt/models/deepseek_v2.py
+    ref: 4e940575b122d133c6ad801591fb0fde66aa84bf
+    status: modified
+    fetched: true

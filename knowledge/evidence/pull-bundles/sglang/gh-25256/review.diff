@@ -1,0 +1,74 @@
+diff --git a/python/sglang/jit_kernel/diffusion/triton/scale_shift.py b/python/sglang/jit_kernel/diffusion/triton/scale_shift.py
+index fc0746613384..8f594b894901 100644
+--- a/python/sglang/jit_kernel/diffusion/triton/scale_shift.py
++++ b/python/sglang/jit_kernel/diffusion/triton/scale_shift.py
+@@ -664,6 +664,11 @@ def fuse_residual_layernorm_scale_shift_gate_select01_kernel(
+ 
+     fuse_scale_shift_kernel = fuse_scale_shift_kernel_native
+ 
++if current_platform.is_musa():
++    from .torch_fallback import fuse_scale_shift_kernel_native
++
++    fuse_scale_shift_kernel = fuse_scale_shift_kernel_native
++
+ if current_platform.is_cpu():
+     from .torch_fallback import (
+         fuse_scale_shift_kernel_native,
+diff --git a/python/sglang/multimodal_gen/runtime/layers/elementwise.py b/python/sglang/multimodal_gen/runtime/layers/elementwise.py
+index 181ed143dc8c..87eec7600675 100644
+--- a/python/sglang/multimodal_gen/runtime/layers/elementwise.py
++++ b/python/sglang/multimodal_gen/runtime/layers/elementwise.py
+@@ -39,6 +39,12 @@ def forward_xpu(
+     ):
+         return self.forward_native(a, b, c, k=k)
+ 
++    @torch.compile
++    def forward_musa(
++        self, a: torch.Tensor, b: torch.Tensor, c: torch.Tensor, k: int = 0
++    ):
++        return self.forward_native(a, b, c, k=k)
++
+     def forward_npu(
+         self, a: torch.Tensor, b: torch.Tensor, c: torch.Tensor, k: int = 0
+     ):
+diff --git a/python/sglang/multimodal_gen/runtime/layers/layernorm.py b/python/sglang/multimodal_gen/runtime/layers/layernorm.py
+index d5e16c48826d..bbb54b178b33 100755
+--- a/python/sglang/multimodal_gen/runtime/layers/layernorm.py
++++ b/python/sglang/multimodal_gen/runtime/layers/layernorm.py
+@@ -490,6 +490,7 @@ def forward_xpu(self, *args, **kwargs):
+         # so we fall back to the native PyTorch implementation.
+         return self.forward_native(*args, **kwargs)
+ 
++    @torch.compile(disable=current_platform.is_npu())
+     def forward_native(
+         self,
+         residual: torch.Tensor,
+@@ -631,6 +632,7 @@ def forward_xpu(self, *args, **kwargs):
+         # so we fall back to the native PyTorch implementation.
+         return self.forward_native(*args, **kwargs)
+ 
++    @torch.compile(disable=current_platform.is_npu())
+     def forward_native(
+         self, x: torch.Tensor, shift: torch.Tensor, scale: torch.Tensor
+     ) -> torch.Tensor:
+@@ -715,6 +717,7 @@ def forward_hip(self, *args, **kwargs):
+         # Fallback to native because ROCm does not support CuTeDSL.
+         return self.forward_native(*args, **kwargs)
+ 
++    @torch.compile(disable=current_platform.is_npu())
+     def forward_native(
+         self, x: torch.Tensor, scale: torch.Tensor, shift: torch.Tensor
+     ) -> torch.Tensor:
+diff --git a/python/sglang/multimodal_gen/runtime/models/dits/wanvideo.py b/python/sglang/multimodal_gen/runtime/models/dits/wanvideo.py
+index 427ab3bc4485..89f5c14e971a 100755
+--- a/python/sglang/multimodal_gen/runtime/models/dits/wanvideo.py
++++ b/python/sglang/multimodal_gen/runtime/models/dits/wanvideo.py
+@@ -1050,7 +1050,7 @@ def forward(
+             )
+ 
+         hidden_states = self.patch_embedding(hidden_states)
+-        hidden_states = hidden_states.flatten(2).transpose(1, 2)
++        hidden_states = hidden_states.flatten(2).transpose(1, 2).contiguous()
+ 
+         # shape is [B, T' * H' * W', C]
+         seq_len_orig = hidden_states.shape[1]

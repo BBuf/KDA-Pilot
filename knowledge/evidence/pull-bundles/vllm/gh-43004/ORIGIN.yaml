@@ -1,0 +1,90 @@
+schema_version: 1
+source_key: vllm-project/vllm#43004
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 43004
+title: '[Model Refactoring] Migrate DeepSeek V4 to vllm/models/ [1/N] '
+url: https://github.com/vllm-project/vllm/pull/43004
+state: closed
+merged_at: '2026-05-19T02:50:03Z'
+base_ref_oid: 239b5ff30cf46f9196149c888a20be2096fdff03
+head_ref_oid: 22a286a6775c2cda1d09e1f9e8f36700893a10a0
+captured_at: '2026-05-20T15:07:39.024382+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cuda
+- moe
+techniques:
+- fine-grained-quantization
+hardware_features: []
+kernel_types:
+- moe
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: tests/models/test_deepseek_v4_mega_moe.py
+    local_path: source-snapshot/tests/models/test_deepseek_v4_mega_moe.py
+    ref: 22a286a6775c2cda1d09e1f9e8f36700893a10a0
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/quantization/__init__.py
+    local_path: source-snapshot/vllm/model_executor/layers/quantization/__init__.py
+    ref: 22a286a6775c2cda1d09e1f9e8f36700893a10a0
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/models/registry.py
+    local_path: source-snapshot/vllm/model_executor/models/registry.py
+    ref: 22a286a6775c2cda1d09e1f9e8f36700893a10a0
+    status: modified
+    fetched: true
+  - source_path: vllm/models/__init__.py
+    local_path: source-snapshot/vllm/models/__init__.py
+    ref: 22a286a6775c2cda1d09e1f9e8f36700893a10a0
+    status: added
+    fetched: true
+  - source_path: vllm/models/deepseek_v4/__init__.py
+    local_path: source-snapshot/vllm/models/deepseek_v4/__init__.py
+    ref: 22a286a6775c2cda1d09e1f9e8f36700893a10a0
+    status: added
+    fetched: true
+  - source_path: vllm/models/deepseek_v4/amd/__init__.py
+    local_path: source-snapshot/vllm/models/deepseek_v4/amd/__init__.py
+    ref: 22a286a6775c2cda1d09e1f9e8f36700893a10a0
+    status: added
+    fetched: true
+  - source_path: vllm/models/deepseek_v4/amd/deepseek_v4.py
+    local_path: source-snapshot/vllm/models/deepseek_v4/amd/deepseek_v4.py
+    ref: 22a286a6775c2cda1d09e1f9e8f36700893a10a0
+    status: added
+    fetched: true
+  - source_path: vllm/models/deepseek_v4/amd/deepseek_v4_mtp.py
+    local_path: source-snapshot/vllm/models/deepseek_v4/amd/deepseek_v4_mtp.py
+    ref: 22a286a6775c2cda1d09e1f9e8f36700893a10a0
+    status: added
+    fetched: true
+  - source_path: vllm/models/deepseek_v4/nvidia/__init__.py
+    local_path: source-snapshot/vllm/models/deepseek_v4/nvidia/__init__.py
+    ref: 22a286a6775c2cda1d09e1f9e8f36700893a10a0
+    status: added
+    fetched: true
+  - source_path: vllm/models/deepseek_v4/nvidia/deepseek_v4.py
+    local_path: source-snapshot/vllm/models/deepseek_v4/nvidia/deepseek_v4.py
+    ref: 22a286a6775c2cda1d09e1f9e8f36700893a10a0
+    status: renamed
+    fetched: true
+  - source_path: vllm/models/deepseek_v4/nvidia/deepseek_v4_mtp.py
+    local_path: source-snapshot/vllm/models/deepseek_v4/nvidia/deepseek_v4_mtp.py
+    ref: 22a286a6775c2cda1d09e1f9e8f36700893a10a0
+    status: renamed
+    fetched: true
+  - source_path: vllm/models/deepseek_v4/quant_config.py
+    local_path: source-snapshot/vllm/models/deepseek_v4/quant_config.py
+    ref: 22a286a6775c2cda1d09e1f9e8f36700893a10a0
+    status: added
+    fetched: true

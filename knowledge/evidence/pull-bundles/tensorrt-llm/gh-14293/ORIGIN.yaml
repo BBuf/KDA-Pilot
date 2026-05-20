@@ -1,0 +1,44 @@
+schema_version: 1
+source_key: NVIDIA/TensorRT-LLM#14293
+repo: NVIDIA/TensorRT-LLM
+repo_id: tensorrt-llm
+pr_number: 14293
+title: '[https://nvbugs/6185234][fix] register deepseek_v32 / kimi_k2 with transformers
+  AutoConfig'
+url: https://github.com/NVIDIA/TensorRT-LLM/pull/14293
+state: closed
+merged_at: '2026-05-19T21:29:13Z'
+base_ref_oid: 89e1410d6cddaf4c49a89dec8541e9a6baf76aa5
+head_ref_oid: 1c47176535e8e6e1f4079c8b35d185f32eecf3db
+captured_at: '2026-05-20T14:56:54.300719+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- fp4
+- llm-serving
+techniques: []
+hardware_features:
+- fp4
+kernel_types: []
+languages: []
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: tensorrt_llm/_torch/configs/__init__.py
+    local_path: source-snapshot/tensorrt_llm/_torch/configs/__init__.py
+    ref: 1c47176535e8e6e1f4079c8b35d185f32eecf3db
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/models/__init__.py
+    local_path: source-snapshot/tensorrt_llm/_torch/models/__init__.py
+    ref: 1c47176535e8e6e1f4079c8b35d185f32eecf3db
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/_torch/test_custom_config_registration.py
+    local_path: source-snapshot/tests/unittest/_torch/test_custom_config_registration.py
+    ref: 1c47176535e8e6e1f4079c8b35d185f32eecf3db
+    status: added
+    fetched: true

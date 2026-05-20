@@ -1,0 +1,38 @@
+schema_version: 1
+source_key: sgl-project/sglang#25285
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25285
+title: Fix EPLB mapping for TopK paths
+url: https://github.com/sgl-project/sglang/pull/25285
+state: closed
+merged_at: '2026-05-18T06:26:05Z'
+base_ref_oid: 3f7e538b2ffabb6ed7cfa39d9c97095e50b23e40
+head_ref_oid: c5369d615da76cf76b99f5a88225580d702382f3
+captured_at: '2026-05-20T14:51:57.101565+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- moe kernel
+techniques: []
+hardware_features: []
+kernel_types:
+- moe
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/layers/moe/topk.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/topk.py
+    ref: c5369d615da76cf76b99f5a88225580d702382f3
+    status: modified
+    fetched: true
+  - source_path: test/registered/cpu/test_topk.py
+    local_path: source-snapshot/test/registered/cpu/test_topk.py
+    ref: c5369d615da76cf76b99f5a88225580d702382f3
+    status: modified
+    fetched: true

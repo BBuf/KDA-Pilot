@@ -1,5 +1,5 @@
 repo: NVIDIA/cutlass
-searched_at: '2026-05-16'
+searched_at: '2026-05-20'
 keywords_used:
 - blackwell
 - sm100
@@ -25,8 +25,8 @@ keywords_used:
 - sub_byte
 total_candidates: 65
 included: 47
-excluded: 0
-deferred: 18
+excluded: 1
+deferred: 17
 prs:
 - number: 2033
   title: '[EVT] Add support for Row/Col broadcast PtrArray'
@@ -150,6 +150,7 @@ prs:
   - examples/68_hopper_flash_mla/static_switch.h
   - examples/68_hopper_flash_mla/utils.h
   - examples/CMakeLists.txt
+  pr: 2130
 - number: 2134
   title: Flash MLA Support - Step 2
   date: '2025-02-26'
@@ -165,6 +166,7 @@ prs:
   - examples/68_hopper_flash_mla/softmax.h
   - examples/68_hopper_flash_mla/transform.h
   - examples/68_hopper_flash_mla/utils.h
+  pr: 2134
 - number: 2139
   title: Blockwise and Groupwise GEMM for Blackwell and Improvements for Hopper
   date: '2025-02-26'
@@ -293,6 +295,7 @@ prs:
   - include/cutlass/gemm/kernel/sm100_gemm_array_tma_warpspecialized.hpp
   - include/cutlass/gemm/kernel/sm100_gemm_tma_warpspecialized.hpp
   - include/cutlass/gemm/kernel/sm100_gemm_tma_warpspecialized_mma_transform.hpp
+  pr: 2167
 - number: 2185
   title: v3.9
   date: '2025-03-21'
@@ -423,6 +426,7 @@ prs:
   - include/cutlass/gemm/collective/builders/sm100_umma_builder.inl
   - include/cutlass/gemm/collective/builders/sm120_blockscaled_mma_builder.inl
   - include/cutlass/gemm/collective/builders/sm120_blockscaled_sparse_mma_builder.inl
+  pr: 2185
 - number: 2203
   title: v3.9 update
   date: '2025-04-02'
@@ -553,6 +557,7 @@ prs:
   - test/unit/gemm/device/sm120_tensorop_gemm/sm120_gemm_f4_f8_f16_tensor_op.cu
   - test/unit/gemm/device/sm120_tensorop_gemm/sm120_gemm_f4_f8_f32_tensor_op.cu
   - test/unit/gemm/device/sm120_tensorop_gemm/sm120_gemm_f6_f6_f16_tensor_op.cu
+  pr: 2203
 - number: 2220
   title: Set EpiTile correctly when TileN is not divisible by 32
   date: '2025-04-21'
@@ -564,6 +569,7 @@ prs:
   artifact_dir: evidence/pull-bundles/cutlass/gh-2220
   changed_paths:
   - include/cutlass/epilogue/collective/builders/sm90_builder.inl
+  pr: 2220
 - number: 2267
   title: war to fix blackwell grouped groupwise hang
   date: '2025-04-29'
@@ -624,6 +630,7 @@ prs:
   artifact_dir: evidence/pull-bundles/cutlass/gh-2291
   changed_paths:
   - examples/77_blackwell_fmha/kernel/fmha_tile_scheduler.hpp
+  pr: 2291
 - number: 2292
   title: Handle get_masked_trip_count for small length in fmha example
   date: '2025-05-31'
@@ -635,6 +642,7 @@ prs:
   artifact_dir: evidence/pull-bundles/cutlass/gh-2292
   changed_paths:
   - examples/77_blackwell_fmha/collective/fmha_fusion.hpp
+  pr: 2292
 - number: 2333
   title: Fix epilogue::thread::Convert cannot be used with DefaultEpilogue
   date: '2025-07-31'
@@ -646,6 +654,7 @@ prs:
   artifact_dir: evidence/pull-bundles/cutlass/gh-2333
   changed_paths:
   - include/cutlass/epilogue/thread/conversion_op.h
+  pr: 2333
 - number: 2366
   title: '[ex77] fix mla split; add fwd lse; add bwd varlen'
   date: '2025-06-05'
@@ -675,6 +684,7 @@ prs:
   - examples/77_blackwell_fmha/reference/fmha_bwd_reference.hpp
   - examples/77_blackwell_fmha/reference/fmha_fwd_reference.hpp
   - examples/77_blackwell_fmha/reference/reference_abs_error.hpp
+  pr: 2366
 - number: 2378
   title: support fp16 accmulator for sm89 fp8 mma
   date: '2025-07-31'
@@ -743,6 +753,7 @@ prs:
   - examples/77_blackwell_fmha/kernel/sm100_fmha_mla_reduction.hpp
   - examples/77_blackwell_fmha/kernel/sm100_fmha_mla_tma_warpspecialized.hpp
   - examples/77_blackwell_fmha/kernel/sm100_mla_tile_scheduler.hpp
+  pr: 2466
 - number: 2472
   title: 'Add Blackwell MLA forward (shape: d=192, dv=128) implementation'
   date: '2025-07-18'
@@ -766,6 +777,7 @@ prs:
   - examples/77_blackwell_fmha/kernel/sm100_fmha_bwd_kernel_tma_warpspecialized.hpp
   - examples/77_blackwell_fmha/kernel/sm100_fmha_fwd_kernel_tma_warpspecialized.hpp
   - examples/77_blackwell_fmha/reference/fmha_fwd_reference.hpp
+  pr: 2472
 - number: 2480
   title: Feature/add bottom causal mask
   date: '2025-09-18'
@@ -778,6 +790,7 @@ prs:
   changed_paths:
   - examples/77_blackwell_fmha/CMakeLists.txt
   - examples/77_blackwell_fmha/collective/fmha_fusion.hpp
+  pr: 2480
 - number: 2492
   title: 'fix: examples/cute/tutorial/blackwell/04_mma_tma_2sm_sm100.cu GridDim miscalculated'
   date: '2025-07-31'
@@ -789,6 +802,7 @@ prs:
   artifact_dir: evidence/pull-bundles/cutlass/gh-2492
   changed_paths:
   - examples/cute/tutorial/blackwell/04_mma_tma_2sm_sm100.cu
+  pr: 2492
 - number: 2599
   title: fix gqa issue for blackwell fmha.py
   date: '2025-08-28'
@@ -800,6 +814,7 @@ prs:
   artifact_dir: evidence/pull-bundles/cutlass/gh-2599
   changed_paths:
   - examples/python/CuTeDSL/blackwell/fmha.py
+  pr: 2599
 - number: 2713
   title: DistGEMM bug fixes
   date: '2025-11-06'
@@ -814,6 +829,7 @@ prs:
   - examples/82_blackwell_distributed_gemm/82_blackwell_distributed_gemm.cu
   - include/cutlass/experimental/distributed/device/dist_gemm_universal_wrapper.hpp
   - include/cutlass/gemm/device/gemm_universal_adapter.h
+  pr: 2713
 - number: 2719
   title: Support PDL for SM90 Array TMA GEMM
   date: '2025-12-09'
@@ -884,6 +900,7 @@ prs:
   - include/cutlass/epilogue/collective/sm100_epilogue_array_tma_warpspecialized.hpp
   - include/cutlass/gemm/collective/sm100_blockscaled_mma_array_warpspecialized.hpp
   - include/cutlass/gemm/kernel/sm100_gemm_array_tma_warpspecialized.hpp
+  pr: 2746
 - number: 2750
   title: Add tutorial fp16_gemm_1
   date: '2025-11-07'
@@ -895,6 +912,7 @@ prs:
   artifact_dir: evidence/pull-bundles/cutlass/gh-2750
   changed_paths:
   - examples/python/CuTeDSL/blackwell/tutorial_gemm/fp16_gemm_1.py
+  pr: 2750
 - number: 2865
   title: '[Bug Fix]Bypass launch grids for SM120 Kernel with SM90 Mainloop & SM100 TileScheduler'
   date: '2025-12-18'
@@ -907,6 +925,7 @@ prs:
   changed_paths:
   - include/cutlass/gemm/kernel/sm90_gemm_tma_warpspecialized_cooperative.hpp
   - include/cutlass/gemm/kernel/sm90_gemm_tma_warpspecialized_pingpong.hpp
+  pr: 2865
 - number: 2881
   title: new example with TMA prefetch feature targeting for DRAM latency boun…
   date: '2025-12-23'
@@ -921,6 +940,7 @@ prs:
   - examples/python/CuTeDSL/blackwell/dense_gemm_persistent_prefetch.py
   - test/examples/CuTeDSL/sm_100a/test_dense_blockscaled_gemm_persistent_prefetch.py
   - test/examples/CuTeDSL/sm_100a/test_dense_gemm_persistent_prefetch.py
+  pr: 2881
 - number: 2917
   title: New RMS Norm example with unit tests
   date: '2026-01-13'
@@ -934,6 +954,7 @@ prs:
   - examples/python/CuTeDSL/blackwell/reduce.py
   - examples/python/CuTeDSL/blackwell/rmsnorm.py
   - test/examples/CuTeDSL/sm_100a/test_rmsnorm.py
+  pr: 2917
 - number: 2921
   title: Fix incorrect tensor layout strides in Blackwell MMA tutorial comments
   date: '2026-01-09'
@@ -945,6 +966,7 @@ prs:
   artifact_dir: evidence/pull-bundles/cutlass/gh-2921
   changed_paths:
   - examples/cute/tutorial/blackwell/01_mma_sm100.cu
+  pr: 2921
 - number: 2946
   title: '[Cutlass profiler] Fix SM100 FP8 nosmem epilogue shape_div “Divisibility Condition” for non‑multiple‑of‑64 N tiles'
   date: '2026-01-20'
@@ -1008,6 +1030,7 @@ prs:
   artifact_dir: evidence/pull-bundles/cutlass/gh-2965
   changed_paths:
   - include/cutlass/gemm/collective/sm90_mma_array_tma_gmma_ss_warpspecialized_fp8_blockwise_scaling.hpp
+  pr: 2965
 - number: 2995
   title: '[CuTeDSL] Fix: SM100 block-scale gemm overlapping accumulator'
   date: '2026-02-03'
@@ -1020,6 +1043,7 @@ prs:
   changed_paths:
   - examples/python/CuTeDSL/blackwell/dense_blockscaled_gemm_persistent.py
   - examples/python/CuTeDSL/blackwell/dense_blockscaled_gemm_persistent_prefetch.py
+  pr: 2995
 - number: 3021
   title: '[Cute-DSL] Add option for issue_clc_query without multicast'
   date: '2026-02-13'
@@ -1031,6 +1055,7 @@ prs:
   artifact_dir: evidence/pull-bundles/cutlass/gh-3021
   changed_paths:
   - python/CuTeDSL/cutlass/cute/arch/clc.py
+  pr: 3021
 - number: 3091
   title: '[Hopper CuTeDSL] Add grouped GEMM kernel example'
   date: '2026-03-18'
@@ -1046,6 +1071,7 @@ prs:
   - test/examples/CuTeDSL/hopper/conftest.py
   - test/examples/CuTeDSL/hopper/test_grouped_gemm.py
   - test/utils/test_sharding.py
+  pr: 3091
 - number: 3106
   title: '[CLI] add cutedsl fp16 gemm tutorial from 2 to 6'
   date: '2026-03-17'
@@ -1065,6 +1091,7 @@ prs:
   - examples/python/CuTeDSL/blackwell/tutorial_gemm/fp16_gemm_5.py
   - examples/python/CuTeDSL/blackwell/tutorial_gemm/fp16_gemm_6.py
   - test/examples/CuTeDSL/sm_100a/test_tutorial_gemm.py
+  pr: 3106
 - number: 3130
   title: Update blackwell tutorial to be compatible with 4.5-dev version
   date: '2026-04-09'
@@ -1087,6 +1114,7 @@ prs:
   - examples/python/CuTeDSL/distributed/distributed_gemm_all_reduce_blackwell.py
   - examples/python/CuTeDSL/distributed/distributed_gemm_reduce_scatter_blackwell.py
   - examples/python/CuTeDSL/notebooks/tour_to_sol_gemm.ipynb
+  pr: 3130
 - number: 1189
   title: Add support for sparse GEMM with visitor epilogue
   date: '2024-01-04'
@@ -1104,12 +1132,15 @@ prs:
   - include/cutlass/gemm/kernel/params_sparse_base.h
   - include/cutlass/gemm/kernel/sparse_gemm.h
   - include/cutlass/gemm/kernel/sparse_gemm_with_visitor.h
+  pr: 1189
 - number: 1224
   title: ''
   date: '2026-04-25'
-  decision: defer
-  reason: from refresh search; needs-triage
+  decision: exclude
+  reason: outside PR evidence window or failed materialization; start_date=2024-01-01
   files_changed: []
+  repo: NVIDIA/cutlass
+  pr: 1224
 - number: 1275
   title: Allow per-column bias in EpilogueTensorBroadcast
   date: '2024-01-04'
@@ -1124,6 +1155,7 @@ prs:
   - test/unit/gemm/device/gemm_testbed_3x_tensor_broadcast.hpp
   - test/unit/gemm/device/sm90_gemm_f32_f32_f32_tensor_op_f32_tensor_broadcast.cu
   - tools/util/include/cutlass/util/reference/host/gett.hpp
+  pr: 1275
 - number: 1302
   title: Remove sparse GEMM with row broadcasted bias vector
   date: '2024-01-17'
@@ -1141,6 +1173,7 @@ prs:
   - include/cutlass/gemm/kernel/sparse_gemm_row_broadcast.h
   - test/unit/gemm/device/gemm_f16n_f16n_f16t_tensor_op_f32_sparse_sm80.cu
   - test/unit/gemm/device/testbed_sparse.h
+  pr: 1302
 - number: 1350
   title: Add couple configs into generator.py for mixed input MM
   date: '2024-08-16'
@@ -1230,6 +1263,7 @@ prs:
   - tools/library/CMakeLists.txt
   - tools/library/src/reference/gemm_int_mixed_input.cu
   - tools/library/src/reference/initialize_reference_operations.cu
+  pr: 1413
 - number: 1543
   title: Fix potential out-of-bounds access in 3.x grouped gemm kernel
   date: '2024-07-10'
@@ -1241,6 +1275,7 @@ prs:
   artifact_dir: evidence/pull-bundles/cutlass/gh-1543
   changed_paths:
   - include/cutlass/gemm/kernel/sm90_gemm_array_tma_warpspecialized_cooperative.hpp
+  pr: 1543
 - number: 1661
   title: Skip void-C kernels in the profiler when beta is non zero
   date: '2024-07-31'
@@ -1311,6 +1346,7 @@ prs:
   - test/unit/gemm/device/syrk_f32t_f32t_tensor_op_fast_f32_sm80.cu
   - test/unit/gemm/device/syrk_tf32n_f32t_tensor_op_f32_sm80.cu
   - test/unit/gemm/device/syrk_tf32t_f32t_tensor_op_f32_sm80.cu
+  pr: 1713
 - number: 1753
   title: Fix EVT for cutlass::gemm::kernel::DefaultGemmWithVisitor's behavior when constructing GemmUniversalAdapter
   date: '2024-10-23'
@@ -1429,6 +1465,7 @@ prs:
   artifact_dir: evidence/pull-bundles/cutlass/gh-1796
   changed_paths:
   - include/cutlass/epilogue/collective/sm90_epilogue_tma_warpspecialized.hpp
+  pr: 1796
 - number: 1833
   title: 'EVT: add maximum/minimum evt support'
   date: '2024-10-23'
@@ -1443,6 +1480,7 @@ prs:
   - python/cutlass/epilogue/__init__.py
   - python/cutlass/epilogue/evt_ops.py
   - test/python/cutlass/evt/evt_compute_sm80_90.py
+  pr: 1833
 - number: 1932
   title: Blockwise Scaling for FP8
   date: '2025-01-09'
@@ -1525,6 +1563,7 @@ prs:
   changed_paths:
   - examples/61_hopper_gemm_with_topk_and_softmax/61_hopper_gemm_with_topk_and_softmax.cu
   - include/cutlass/epilogue/fusion/sm90_visitor_topk_softmax.hpp
+  pr: 1993
 - number: 3149
   title: '[Hopper CuTeDSL] Add FP8 GEMM with 2xAcc'
   date: '2026-04-25'
@@ -1539,6 +1578,7 @@ prs:
   - test/examples/CuTeDSL/conftest.py
   - test/examples/CuTeDSL/hopper/conftest.py
   - test/examples/CuTeDSL/hopper/test_dense_gemm_fp8_2xacc.py
+  pr: 3149
 - number: 3176
   pr: 3176
   title: Small Tile N BlockScaled GEMM + Grouped GEMM on SM12x
@@ -2136,4 +2176,4 @@ prs:
   ncu_hint: Tensor pipe %, memory pipe utilization, barrier stalls, wait groups, and occupancy.
   artifact_dir: evidence/pull-bundles/cutlass/gh-2172
 scan_start_date: '2024-01-01'
-cutoff_date: '2026-05-16'
+cutoff_date: '2026-05-20'

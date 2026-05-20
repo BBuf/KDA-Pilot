@@ -1,0 +1,47 @@
+schema_version: 1
+source_key: sgl-project/sglang#24640
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 24640
+title: Support spec v2 for FlashMLA speculative decoding
+url: https://github.com/sgl-project/sglang/pull/24640
+state: closed
+merged_at: '2026-05-19T22:23:18Z'
+base_ref_oid: a080358cac7d590bc6582cccf7ec001e62ffd5af
+head_ref_oid: 0ac4bbfea3320914af7e5cf10ad4473e074c4da3
+captured_at: '2026-05-20T14:53:01.795501+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention
+- attention kernel
+- cuda kernel
+- speculative-decoding
+techniques: []
+hardware_features: []
+kernel_types:
+- attention
+- mla
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/layers/attention/flashmla_backend.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/flashmla_backend.py
+    ref: 0ac4bbfea3320914af7e5cf10ad4473e074c4da3
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/models/deepseek_v2.py
+    local_path: source-snapshot/python/sglang/srt/models/deepseek_v2.py
+    ref: 0ac4bbfea3320914af7e5cf10ad4473e074c4da3
+    status: modified
+    fetched: true
+  - source_path: test/registered/mla/test_flashmla.py
+    local_path: source-snapshot/test/registered/mla/test_flashmla.py
+    ref: 0ac4bbfea3320914af7e5cf10ad4473e074c4da3
+    status: modified
+    fetched: true

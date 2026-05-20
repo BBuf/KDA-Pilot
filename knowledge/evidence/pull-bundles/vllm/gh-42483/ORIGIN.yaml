@@ -1,0 +1,65 @@
+schema_version: 1
+source_key: vllm-project/vllm#42483
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42483
+title: Refactor AWQ Marlin MoE onto modular WNA16 oracle
+url: https://github.com/vllm-project/vllm/pull/42483
+state: closed
+merged_at: '2026-05-18T15:02:43Z'
+base_ref_oid: bd9dbe60601c986b50260f299fe279d057d7d89f
+head_ref_oid: 7193a9c2fed168931f1f3ebb51c551e4424d6ba1
+captured_at: '2026-05-20T15:10:10.524683+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- awq
+- gemm
+- gptq
+- moe
+- moe kernel
+techniques:
+- fine-grained-quantization
+- kernel-fusion
+hardware_features: []
+kernel_types:
+- gemm
+- moe
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: tests/kernels/moe/test_moe.py
+    local_path: source-snapshot/tests/kernels/moe/test_moe.py
+    ref: 7193a9c2fed168931f1f3ebb51c551e4424d6ba1
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/fused_moe/config.py
+    local_path: source-snapshot/vllm/model_executor/layers/fused_moe/config.py
+    ref: 7193a9c2fed168931f1f3ebb51c551e4424d6ba1
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/fused_moe/experts/marlin_moe.py
+    local_path: source-snapshot/vllm/model_executor/layers/fused_moe/experts/marlin_moe.py
+    ref: 7193a9c2fed168931f1f3ebb51c551e4424d6ba1
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/fused_moe/oracle/int_wna16.py
+    local_path: source-snapshot/vllm/model_executor/layers/fused_moe/oracle/int_wna16.py
+    ref: 7193a9c2fed168931f1f3ebb51c551e4424d6ba1
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/quantization/auto_gptq.py
+    local_path: source-snapshot/vllm/model_executor/layers/quantization/auto_gptq.py
+    ref: 7193a9c2fed168931f1f3ebb51c551e4424d6ba1
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/quantization/awq_marlin.py
+    local_path: source-snapshot/vllm/model_executor/layers/quantization/awq_marlin.py
+    ref: 7193a9c2fed168931f1f3ebb51c551e4424d6ba1
+    status: modified
+    fetched: true

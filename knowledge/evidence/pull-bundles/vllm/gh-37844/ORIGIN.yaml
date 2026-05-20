@@ -1,0 +1,48 @@
+schema_version: 1
+source_key: vllm-project/vllm#37844
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 37844
+title: '[XPU] add gptq(int4) support'
+url: https://github.com/vllm-project/vllm/pull/37844
+state: closed
+merged_at: '2026-05-19T03:17:09Z'
+base_ref_oid: f85c76d701fc049a722c17b3affd9401380be1bf
+head_ref_oid: 2b986b50ff33ced916632368531a7245527e9aee
+captured_at: '2026-05-20T15:12:14.896596+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- gptq
+techniques:
+- fine-grained-quantization
+hardware_features: []
+kernel_types: []
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: .buildkite/intel_jobs/test-intel.yaml
+    local_path: source-snapshot/.buildkite/intel_jobs/test-intel.yaml
+    ref: 2b986b50ff33ced916632368531a7245527e9aee
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/kernels/linear/mixed_precision/MPLinearKernel.py
+    local_path: source-snapshot/vllm/model_executor/kernels/linear/mixed_precision/MPLinearKernel.py
+    ref: 2b986b50ff33ced916632368531a7245527e9aee
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/kernels/linear/mixed_precision/xpu.py
+    local_path: source-snapshot/vllm/model_executor/kernels/linear/mixed_precision/xpu.py
+    ref: 2b986b50ff33ced916632368531a7245527e9aee
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/quantization/utils/marlin_utils.py
+    local_path: source-snapshot/vllm/model_executor/layers/quantization/utils/marlin_utils.py
+    ref: 2b986b50ff33ced916632368531a7245527e9aee
+    status: modified
+    fetched: true

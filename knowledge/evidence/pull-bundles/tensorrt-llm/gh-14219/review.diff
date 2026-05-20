@@ -1,0 +1,661 @@
+diff --git a/cpp/tensorrt_llm/kernels/heuristicTopKDecode.cu b/cpp/tensorrt_llm/kernels/heuristicTopKDecode.cu
+index 25b0de3ef0a5..839ae5483c05 100644
+--- a/cpp/tensorrt_llm/kernels/heuristicTopKDecode.cu
++++ b/cpp/tensorrt_llm/kernels/heuristicTopKDecode.cu
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2019-2025, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2019-2026, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -47,15 +47,19 @@ using heuristic_topk::KernelSmemTplK;
+ // same kernel template. Smem layout is derived from GvrParams<float, TopK>
+ // at compile time.
+ template <int TopK>
+-__global__ void __launch_bounds__(BLOCK_SIZE) heuristicTopKMultiRowKernel(float const* __restrict__ logits,
+-    int const* __restrict__ seqLens, int const* __restrict__ preIdx, float* __restrict__ scratchValues,
+-    int* __restrict__ outIndices, int stride0, int next_n, int topK, int preIdxStride, int preIdxCount)
++__global__ void __launch_bounds__(BLOCK_SIZE)
++    heuristicTopKMultiRowKernel(float const* __restrict__ logits, int const* __restrict__ seqLens,
++        int const* __restrict__ preIdx, float* __restrict__ scratchValues, int* __restrict__ outIndices, int stride0,
++        int next_n, int topK, int preIdxStride, int preIdxCount, int compressRatio)
+ {
+     using SmemT = KernelSmemTplK<float, GvrParams<float, TopK>::kC, GvrParams<float, TopK>::kNumBins>;
+ 
+     int const rowIdx = blockIdx.x;
+     int const seq_len = seqLens[rowIdx / next_n];
+-    int const N = seq_len - next_n + (rowIdx % next_n) + 1;
++    // seqLens is in uncompressed token space; the logits/preIdx live in
++    // compressed-index space when compressRatio > 1 (DSv4 indexer).
++    int const actual_kv_len = seq_len - next_n + (rowIdx % next_n) + 1;
++    int const N = actual_kv_len / compressRatio;
+ 
+     float const* __restrict__ input = logits + static_cast<int64_t>(rowIdx) * stride0;
+     int const* __restrict__ rowPreIdx = preIdx + static_cast<int64_t>(rowIdx / next_n) * preIdxStride;
+@@ -84,9 +88,19 @@ __global__ void __launch_bounds__(BLOCK_SIZE) heuristicTopKMultiRowKernel(float
+         return;
+     }
+ 
+-    // +1 accounts for the temporal shift: prev_topk indices were computed at
+-    // seq_len-1, but the current step has one additional KV token appended.
+-    int const preIdxOffset = (rowIdx % next_n) + 1;
++    // Temporal-shift offset to map prev-step's top-K indices into this step's
++    // KV index space.
++    //   compressRatio == 1 (DSv3.2):   +1 — KV grew by exactly 1 token per
++    //     decode step; prev indices were at seq_len-1 so a uniform +1 maps
++    //     them to the equivalent positions under the indexer's "newest-first"
++    //     layout. The (rowIdx % next_n) addend extends this to MTP windows.
++    //   compressRatio == 4 (DSv4):     0 — in compressed-index space new
++    //     compressed entries are appended at the end; prev indices in
++    //     [0, c_prev-1] remain valid as-is. Per-row Δc varies (0 or 1) with
++    //     prev kv_len mod 4 alignment, but a uniform offset of 0 stays
++    //     within-bounds for all rows and preserves the temporal-correlation
++    //     hint (vertical top-K consistency validated offline).
++    int const preIdxOffset = (compressRatio == 1) ? ((rowIdx % next_n) + 1) : 0;
+     gvrTopKJob<TopK>(input, N, rowPreIdx, preIdxCount, topK, outputValues, outputIndices, smem, preIdxOffset);
+ #if (defined(__CUDA_ARCH__) && (__CUDA_ARCH__ >= 900))
+     cudaTriggerProgrammaticLaunchCompletion();
+@@ -103,16 +117,18 @@ __global__ void __launch_bounds__(BLOCK_SIZE) heuristicTopKMultiRowKernel(float
+ // Templated on (InputT, TopK). Smem layout is derived from
+ // GvrParams<InputT, TopK>.
+ template <typename InputT, int TopK>
+-__global__ void __launch_bounds__(BLOCK_SIZE) heuristicTopKMultiRowKernelDtype(InputT const* __restrict__ logits,
+-    int const* __restrict__ seqLens, int const* __restrict__ preIdx, InputT* __restrict__ scratchValues,
+-    int* __restrict__ outIndices, int stride0, int next_n, int topK, int preIdxStride, int preIdxCount)
++__global__ void __launch_bounds__(BLOCK_SIZE)
++    heuristicTopKMultiRowKernelDtype(InputT const* __restrict__ logits, int const* __restrict__ seqLens,
++        int const* __restrict__ preIdx, InputT* __restrict__ scratchValues, int* __restrict__ outIndices, int stride0,
++        int next_n, int topK, int preIdxStride, int preIdxCount, int compressRatio)
+ {
+     // dtype path uses fp32 keys[] in smem (down-conversion deferred to writeback).
+     using SmemT = KernelSmemTplK<float, GvrParams<InputT, TopK>::kC, GvrParams<InputT, TopK>::kNumBins>;
+ 
+     int const rowIdx = blockIdx.x;
+     int const seq_len = seqLens[rowIdx / next_n];
+-    int const N = seq_len - next_n + (rowIdx % next_n) + 1;
++    int const actual_kv_len = seq_len - next_n + (rowIdx % next_n) + 1;
++    int const N = actual_kv_len / compressRatio;
+ 
+     InputT const* __restrict__ input = logits + static_cast<int64_t>(rowIdx) * stride0;
+     int const* __restrict__ rowPreIdx = preIdx + static_cast<int64_t>(rowIdx / next_n) * preIdxStride;
+@@ -142,7 +158,8 @@ __global__ void __launch_bounds__(BLOCK_SIZE) heuristicTopKMultiRowKernelDtype(I
+         return;
+     }
+ 
+-    int const preIdxOffset = (rowIdx % next_n) + 1;
++    // See fp32 path: cr==1 → (rowIdx % next_n)+1; cr!=1 (DSv4) → 0.
++    int const preIdxOffset = (compressRatio == 1) ? ((rowIdx % next_n) + 1) : 0;
+     gvrTopKJobDtype<InputT, TopK>(
+         input, N, rowPreIdx, preIdxCount, topK, outputValues, outputIndices, smem, preIdxOffset);
+ #if (defined(__CUDA_ARCH__) && (__CUDA_ARCH__ >= 900))
+@@ -152,24 +169,25 @@ __global__ void __launch_bounds__(BLOCK_SIZE) heuristicTopKMultiRowKernelDtype(I
+ 
+ // Explicit instantiations — 6 (dtype × K) combos. Launchers dispatch on
+ // runtime topK via switch, so all 6 must be available at link time.
++// Trailing `int` is the compressRatio parameter (1 = V3.2, 4 = V4 indexer).
+ template __global__ void heuristicTopKMultiRowKernelDtype<__nv_bfloat16, 512>(
+-    __nv_bfloat16 const*, int const*, int const*, __nv_bfloat16*, int*, int, int, int, int, int);
++    __nv_bfloat16 const*, int const*, int const*, __nv_bfloat16*, int*, int, int, int, int, int, int);
+ template __global__ void heuristicTopKMultiRowKernelDtype<__nv_bfloat16, 1024>(
+-    __nv_bfloat16 const*, int const*, int const*, __nv_bfloat16*, int*, int, int, int, int, int);
++    __nv_bfloat16 const*, int const*, int const*, __nv_bfloat16*, int*, int, int, int, int, int, int);
+ template __global__ void heuristicTopKMultiRowKernelDtype<__nv_bfloat16, 2048>(
+-    __nv_bfloat16 const*, int const*, int const*, __nv_bfloat16*, int*, int, int, int, int, int);
++    __nv_bfloat16 const*, int const*, int const*, __nv_bfloat16*, int*, int, int, int, int, int, int);
+ template __global__ void heuristicTopKMultiRowKernelDtype<__half, 512>(
+-    __half const*, int const*, int const*, __half*, int*, int, int, int, int, int);
++    __half const*, int const*, int const*, __half*, int*, int, int, int, int, int, int);
+ template __global__ void heuristicTopKMultiRowKernelDtype<__half, 1024>(
+-    __half const*, int const*, int const*, __half*, int*, int, int, int, int, int);
++    __half const*, int const*, int const*, __half*, int*, int, int, int, int, int, int);
+ template __global__ void heuristicTopKMultiRowKernelDtype<__half, 2048>(
+-    __half const*, int const*, int const*, __half*, int*, int, int, int, int, int);
++    __half const*, int const*, int const*, __half*, int*, int, int, int, int, int, int);
+ template __global__ void heuristicTopKMultiRowKernel<512>(
+-    float const*, int const*, int const*, float*, int*, int, int, int, int, int);
++    float const*, int const*, int const*, float*, int*, int, int, int, int, int, int);
+ template __global__ void heuristicTopKMultiRowKernel<1024>(
+-    float const*, int const*, int const*, float*, int*, int, int, int, int, int);
++    float const*, int const*, int const*, float*, int*, int, int, int, int, int, int);
+ template __global__ void heuristicTopKMultiRowKernel<2048>(
+-    float const*, int const*, int const*, float*, int*, int, int, int, int, int);
++    float const*, int const*, int const*, float*, int*, int, int, int, int, int, int);
+ 
+ // Dispatch on topK at runtime — each TopK-instantiation gets its own smem
+ // size (driven by GvrParams<InputT, TopK>::kC/kNumBins) and own kfn pointer
+@@ -184,7 +202,7 @@ template __global__ void heuristicTopKMultiRowKernel<2048>(
+ template <typename InputT>
+ void launchHeuristicTopKDecodeImpl(InputT const* logits, int const* seqLens, int const* preIdx, int* outIndices,
+     InputT* scratchValues, int stride0, int next_n, int topK, int preIdxStride, int preIdxCount, int numRows,
+-    cudaStream_t stream)
++    int compressRatio, cudaStream_t stream)
+ {
+     TLLM_CHECK_WITH_INFO(
+         topK == 512 || topK == 1024 || topK == 2048, "heuristicTopKDecode requires topK ∈ {512, 1024, 2048}");
+@@ -224,7 +242,7 @@ void launchHeuristicTopKDecodeImpl(InputT const* logits, int const* seqLens, int
+         config.attrs = attrs;
+ 
+         cudaLaunchKernelEx(&config, kfn, logits, seqLens, preIdx, scratchValues, outIndices, stride0, next_n, topK,
+-            preIdxStride, preIdxCount);
++            preIdxStride, preIdxCount, compressRatio);
+     };
+ 
+     switch (topK)
+@@ -240,26 +258,26 @@ void launchHeuristicTopKDecodeImpl(InputT const* logits, int const* seqLens, int
+ 
+ void launchHeuristicTopKDecode(float const* logits, int const* seqLens, int const* preIdx, int* outIndices,
+     float* scratchValues, int stride0, int next_n, int topK, int preIdxStride, int preIdxCount, int numRows,
+-    cudaStream_t stream)
++    int compressRatio, cudaStream_t stream)
+ {
+     launchHeuristicTopKDecodeImpl<float>(logits, seqLens, preIdx, outIndices, scratchValues, stride0, next_n, topK,
+-        preIdxStride, preIdxCount, numRows, stream);
++        preIdxStride, preIdxCount, numRows, compressRatio, stream);
+ }
+ 
+ void launchHeuristicTopKDecode(__nv_bfloat16 const* logits, int const* seqLens, int const* preIdx, int* outIndices,
+     __nv_bfloat16* scratchValues, int stride0, int next_n, int topK, int preIdxStride, int preIdxCount, int numRows,
+-    cudaStream_t stream)
++    int compressRatio, cudaStream_t stream)
+ {
+     launchHeuristicTopKDecodeImpl<__nv_bfloat16>(logits, seqLens, preIdx, outIndices, scratchValues, stride0, next_n,
+-        topK, preIdxStride, preIdxCount, numRows, stream);
++        topK, preIdxStride, preIdxCount, numRows, compressRatio, stream);
+ }
+ 
+ void launchHeuristicTopKDecode(__half const* logits, int const* seqLens, int const* preIdx, int* outIndices,
+     __half* scratchValues, int stride0, int next_n, int topK, int preIdxStride, int preIdxCount, int numRows,
+-    cudaStream_t stream)
++    int compressRatio, cudaStream_t stream)
+ {
+     launchHeuristicTopKDecodeImpl<__half>(logits, seqLens, preIdx, outIndices, scratchValues, stride0, next_n, topK,
+-        preIdxStride, preIdxCount, numRows, stream);
++        preIdxStride, preIdxCount, numRows, compressRatio, stream);
+ }
+ 
+ } // namespace kernels
+diff --git a/cpp/tensorrt_llm/kernels/heuristicTopKDecode.h b/cpp/tensorrt_llm/kernels/heuristicTopKDecode.h
+index 5e38c64cba06..0d2330f76545 100644
+--- a/cpp/tensorrt_llm/kernels/heuristicTopKDecode.h
++++ b/cpp/tensorrt_llm/kernels/heuristicTopKDecode.h
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2019-2025, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2019-2026, NVIDIA CORPORATION.  All rights reserved.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -33,21 +33,28 @@ inline constexpr int kHeuristicSize = 2048;
+ /// Launch heuristic TopK decode kernel — fp32 input.
+ /// @param scratchValues Caller-owned buffer of size [numRows * topK] floats.
+ ///        Required for CUDA Graph compatibility — must have a stable device address.
++/// @param compressRatio  KV compression ratio (1 = V3.2 indexer; 4 = V4 indexer
++///        whose logits/preIdx live in compressed-token-index space). For
++///        compressRatio != 1, preIdxOffset is forced to 0 (append-at-end in
++///        compressed space → prev-step indices remain valid as-is); the
++///        existing (rowIdx % next_n)+1 shift is used only when compressRatio==1.
+ void launchHeuristicTopKDecode(float const* logits, int const* seqLens, int const* preIdx, int* outIndices,
+     float* scratchValues, int stride0, int next_n, int topK, int preIdxStride, int preIdxCount, int numRows,
+-    cudaStream_t stream);
++    int compressRatio, cudaStream_t stream);
+ 
+ /// Launch heuristic TopK decode kernel — bf16 input.
+ /// scratchValues is [numRows * topK] of bf16 (matches input dtype).
++/// @param compressRatio  See fp32 overload.
+ void launchHeuristicTopKDecode(__nv_bfloat16 const* logits, int const* seqLens, int const* preIdx, int* outIndices,
+     __nv_bfloat16* scratchValues, int stride0, int next_n, int topK, int preIdxStride, int preIdxCount, int numRows,
+-    cudaStream_t stream);
++    int compressRatio, cudaStream_t stream);
+ 
+ /// Launch heuristic TopK decode kernel — fp16 input.
+ /// scratchValues is [numRows * topK] of fp16 (matches input dtype).
++/// @param compressRatio  See fp32 overload.
+ void launchHeuristicTopKDecode(__half const* logits, int const* seqLens, int const* preIdx, int* outIndices,
+     __half* scratchValues, int stride0, int next_n, int topK, int preIdxStride, int preIdxCount, int numRows,
+-    cudaStream_t stream);
++    int compressRatio, cudaStream_t stream);
+ 
+ } // namespace kernels
+ 
+diff --git a/cpp/tensorrt_llm/kernels/indexerTopK.cu b/cpp/tensorrt_llm/kernels/indexerTopK.cu
+index abebf4263606..b35531a480a2 100644
+--- a/cpp/tensorrt_llm/kernels/indexerTopK.cu
++++ b/cpp/tensorrt_llm/kernels/indexerTopK.cu
+@@ -902,7 +902,12 @@ void invokeIndexerTopKDecode(float const* logits, int const* seqLens, int* indic
+     int const kSeqSmall = bounds.kSeqSmall;
+ 
+     bool const isSupportedTopK = (topK == 512 || topK == 1024 || topK == 2048);
+-    bool const canUseHeuristic = compressRatio == 1 && preIdx != nullptr && stride1 == 1 && isSupportedTopK
++    // compressRatio == 1: DSv3.2 indexer (no compressor).
++    // compressRatio == 4: DSv4 indexer (overlap compressor); logits/preIdx in
++    //   compressed-token-index space. Kernel handles N = actual_kv_len/cr and
++    //   forces preIdxOffset=0 internally for cr != 1.
++    bool const compressRatioOk = (compressRatio == 1 || compressRatio == 4);
++    bool const canUseHeuristic = compressRatioOk && preIdx != nullptr && stride1 == 1 && isSupportedTopK
+         && preIdxCount == topK && preIdxStride >= preIdxCount && numColumns < effectiveSplitWorkThreshold
+         && numColumns >= kSeqSmall && heuristicScratch != nullptr && numRows < kBsLarge;
+ 
+@@ -930,7 +935,7 @@ void invokeIndexerTopKDecode(float const* logits, int const* seqLens, int* indic
+     if (canUseHeuristic)
+     {
+         launchHeuristicTopKDecode(logits, seqLens, preIdx, indices, heuristicScratch, stride0, next_n, topK,
+-            preIdxStride, preIdxCount, numRows, stream);
++            preIdxStride, preIdxCount, numRows, compressRatio, stream);
+         sync_check_cuda_error(stream);
+         return;
+     }
+@@ -1035,14 +1040,16 @@ void invokeIndexerTopKDecodeDtype(InputT const* logits, int const* seqLens, int*
+     int const kSeqSmall = bounds.kSeqSmall;
+ 
+     bool const isSupportedTopK = (topK == 512 || topK == 1024 || topK == 2048);
+-    bool const canUseHeuristic = compressRatio == 1 && preIdx != nullptr && stride1 == 1 && isSupportedTopK
++    // See fp32 path: cr==1 (V3.2) and cr==4 (V4 indexer) are both supported.
++    bool const compressRatioOk = (compressRatio == 1 || compressRatio == 4);
++    bool const canUseHeuristic = compressRatioOk && preIdx != nullptr && stride1 == 1 && isSupportedTopK
+         && preIdxCount == topK && preIdxStride >= preIdxCount && numColumns < effectiveSplitWorkThreshold
+         && numColumns >= kSeqSmall && heuristicScratch != nullptr && numRows < kBsLarge;
+ 
+     if (canUseHeuristic)
+     {
+         launchHeuristicTopKDecode(logits, seqLens, preIdx, indices, heuristicScratch, stride0, next_n, topK,
+-            preIdxStride, preIdxCount, numRows, stream);
++            preIdxStride, preIdxCount, numRows, compressRatio, stream);
+     }
+     else if (numColumns < kSortingAlgorithmThreshold)
+     {
+diff --git a/tensorrt_llm/_torch/attention_backend/sparse/dsa.py b/tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+index 08559ae82784..d342771e8369 100644
+--- a/tensorrt_llm/_torch/attention_backend/sparse/dsa.py
++++ b/tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+@@ -2199,6 +2199,31 @@ def sparse_attn_indexer(
+             topk_indices_buffer[:num_ctx_tokens, :] = \
+                 metadata.topk_indices_buffer[:num_ctx_tokens, :]
+ 
++        # Prefill→decode GVR handoff: seed each finishing-prefill sequence's
++        # heuristic_prev_topk slot with its own last-context-token top-K, so
++        # the FIRST decode step of that sequence gets a warm-started preIdx
++        # (~60-75% set-overlap with the eventual decode top-K on this
++        # workload) instead of the all-zero / all-(-1) cold start that the
++        # default `heuristic_prev_topk.zero_()` initialization leaves behind.
++        # Without this, GVR P2 secant on decode step 0 runs from a benign
++        # but uninformative seed (kernel +1 offset on zeros → all indices
++        # point at compressed-token position 1), wasting iterations.
++        # Slot convention (mirrors the existing decode write-back at the
++        # bottom of the decode block): new gens from finishing prefill
++        # append after currently-active gens, i.e., slots
++        # [num_generations : num_generations + num_contexts].
++        if (self._enable_heuristic_topk and has_prefill
++                and not metadata.skip_indexer_for_ctx_reqs):
++            local_layer = metadata.kv_cache_manager.layer_offsets[
++                self.layer_idx]
++            ctx_seq_lens = metadata.seq_lens[:num_contexts]
++            # Per-sequence last context-token offset (exclusive cumsum minus 1).
++            last_ctx_idx = (torch.cumsum(ctx_seq_lens, dim=0) -
++                            1).to(dtype=torch.long)
++            metadata.heuristic_prev_topk[
++                local_layer, num_generations:num_generations +
++                num_contexts].copy_(topk_indices_buffer[last_ctx_idx, :])
++
+         if has_decode and not metadata.skip_indexer_for_gen_reqs:
+             # Get decode lengths per request (from seq_lens) for validation
+             gen_seq_lens = metadata.seq_lens[num_contexts:num_contexts +
+diff --git a/tensorrt_llm/_torch/model_config.py b/tensorrt_llm/_torch/model_config.py
+index a5909191cb64..308f079ea1e0 100644
+--- a/tensorrt_llm/_torch/model_config.py
++++ b/tensorrt_llm/_torch/model_config.py
+@@ -681,12 +681,31 @@ def update_sparse_attention_indexer_config(pretrained_config, kwargs):
+                 index_topk = sparse_attention_config.index_topk or pretrained_config.index_topk
+                 indexer_max_chunk_size = sparse_attention_config.indexer_max_chunk_size
+                 skip_indexer_for_short_seqs = sparse_attention_config.skip_indexer_for_short_seqs
++                # Pass-through DSA tuning flags so user-set values survive the
++                # V4 sparse_attention_config rebuild below. The V3.2 path
++                # already threads these explicitly (lines 723-727); without
++                # this block the V4 rebuild silently drops any user override
++                # back to subclass defaults (e.g., enable_heuristic_topk=False
++                # even when the user set it to True in --extra_llm_api_options).
++                use_cute_dsl_topk = sparse_attention_config.use_cute_dsl_topk
++                use_cute_dsl_paged_mqa_logits = sparse_attention_config.use_cute_dsl_paged_mqa_logits
++                q_split_threshold = sparse_attention_config.q_split_threshold
++                indexer_rope_interleave = sparse_attention_config.indexer_rope_interleave
++                enable_heuristic_topk = sparse_attention_config.enable_heuristic_topk
++                indexer_k_dtype = sparse_attention_config.indexer_k_dtype
+             else:
+                 index_n_heads = pretrained_config.index_n_heads
+                 index_head_dim = pretrained_config.index_head_dim
+                 index_topk = pretrained_config.index_topk
+                 indexer_max_chunk_size = None
+                 skip_indexer_for_short_seqs = True
++                # Defaults match DeepSeekSparseAttentionConfig field defaults.
++                use_cute_dsl_topk = False
++                use_cute_dsl_paged_mqa_logits = False
++                q_split_threshold = 8192
++                indexer_rope_interleave = False
++                enable_heuristic_topk = False
++                indexer_k_dtype = "fp8"
+             indexer_config = {}
+             indexer_config['index_n_heads'] = index_n_heads
+             indexer_config['index_head_dim'] = index_head_dim
+@@ -694,6 +713,13 @@ def update_sparse_attention_indexer_config(pretrained_config, kwargs):
+             indexer_config['indexer_max_chunk_size'] = indexer_max_chunk_size
+             indexer_config[
+                 'skip_indexer_for_short_seqs'] = skip_indexer_for_short_seqs
++            indexer_config['use_cute_dsl_topk'] = use_cute_dsl_topk
++            indexer_config[
++                'use_cute_dsl_paged_mqa_logits'] = use_cute_dsl_paged_mqa_logits
++            indexer_config['q_split_threshold'] = q_split_threshold
++            indexer_config['indexer_rope_interleave'] = indexer_rope_interleave
++            indexer_config['enable_heuristic_topk'] = enable_heuristic_topk
++            indexer_config['indexer_k_dtype'] = indexer_k_dtype
+             return indexer_config
+ 
+         # Use file lock to prevent race conditions when multiple processes
+diff --git a/tensorrt_llm/llmapi/llm_args.py b/tensorrt_llm/llmapi/llm_args.py
+index e621433cc1d1..8312fbe6cfc8 100644
+--- a/tensorrt_llm/llmapi/llm_args.py
++++ b/tensorrt_llm/llmapi/llm_args.py
+@@ -352,9 +352,10 @@ class DeepSeekSparseAttentionConfig(BaseSparseAttentionConfig):
+         description=
+         "Whether to enable Guess-Verify-Refine (GVR) Top-K for the DSA decode "
+         "indexer. GVR reuses previous-step Top-K indices as hints to reduce "
+-        "threshold search iterations. Currently supported for index_topk=2048 "
+-        "on Blackwell (SM100+) and falls back to the production insertion/radix "
+-        "Top-K path when prerequisites are not met.")
++        "threshold search iterations. Currently supported for index_topk ∈ "
++        "{512, 1024, 2048} on Blackwell (SM100+), with compress_ratio ∈ {1, 4} "
++        "(DSv3.2 + DSv4 indexers). Falls back to the production insertion/"
++        "radix Top-K path when prerequisites are not met.")
+     indexer_k_dtype: Literal["fp8", "fp4"] = Field(
+         default="fp8",
+         description=
+diff --git a/tests/unittest/_torch/thop/parallel/test_indexer_topk.py b/tests/unittest/_torch/thop/parallel/test_indexer_topk.py
+index 1647be6d5450..90304a0b3071 100644
+--- a/tests/unittest/_torch/thop/parallel/test_indexer_topk.py
++++ b/tests/unittest/_torch/thop/parallel/test_indexer_topk.py
+@@ -856,6 +856,131 @@ def generate_pre_idx(
+     return pre_idx
+ 
+ 
++def apply_mtp_structure_compressed(
++    logits: torch.Tensor,
++    batch_size: int,
++    next_n: int,
++    row_ends: torch.Tensor,
++) -> torch.Tensor:
++    """
++    cr=4-safe variant of apply_mtp_structure.
++
++    apply_mtp_structure assumes ``row_ends[b*next_n + nni] == row_ends[b*next_n]
++    + nni`` (the V3.2 cr=1 invariant where each MTP draft adds exactly one KV
++    token). Under cr=4, ``row_ends = floor(actual_kv_len / 4)`` and that
++    invariant breaks: when ``actual_kv_len[base] mod 4`` lies in {1, 2, 3}
++    (75% of seq_lens) we get ``row_ends[base+nni] == row_ends[base]``, so the
++    copy ``[nni : nni+valid_base]`` overruns ``row_ends[base+nni]`` and writes
++    finite values into what create_distributed_logits left as -inf. The
++    polluted positions then leak into torch.topk's reference (which doesn't
++    know about the row's true compressed N), producing off-by-one counts vs.
++    the kernel.
++
++    This variant clips the per-row copy length to fit within row b*next_n+nni's
++    valid compressed range, preserving MTP correlation where it fits and
++    leaving -inf positions untouched.
++    """
++    if next_n == 1:
++        return logits
++
++    for b in range(batch_size):
++        base = b * next_n
++        valid_base = int(row_ends[base].item())
++        for nni in range(1, next_n):
++            row = base + nni
++            valid_row = int(row_ends[row].item())
++            # Largest copy_len such that [nni, nni+copy_len) ⊆ [0, valid_row).
++            copy_len = max(0, min(valid_base, valid_row - nni))
++            if copy_len > 0:
++                logits[row, nni : nni + copy_len] = logits[base, :copy_len]
++
++    return logits
++
++
++def generate_pre_idx_v4(
++    logits: torch.Tensor,
++    row_ends: torch.Tensor,
++    batch_size: int,
++    next_n: int,
++    index_topk: int,
++    success_ratio: float = 0.6,
++    seed: int = 0,
++) -> torch.Tensor:
++    """
++    DSv4 (compress_ratio=4) variant of generate_pre_idx — no `-1` shift.
++
++    Unlike V3.2 where the kernel applies preIdxOffset = (rowIdx % next_n) + 1
++    to every preIdx entry (KV grew by 1 per decode step in uncompressed space),
++    the V4 indexer operates in compressed-token-index space where consecutive
++    decode steps may add 0 or 1 compressed entries (each compressed entry
++    fuses 4 real tokens). Per-row Δc varies with prev kv_len mod 4 alignment,
++    but new compressed entries are always appended at the end so prev-step
++    indices in [0, c_prev-1] remain valid as-is in [0, c_curr-1]. The kernel
++    therefore forces preIdxOffset = 0 when compressRatio != 1, and tests must
++    pass preIdx in CURRENT-step coordinates (no -1 shift).
++
++    Structure of the returned pre_idx[b]:
++      - pre_idx[b, 0]              = argmax of the base row (kernel invariant)
++      - floor(K * success_ratio) slots from the actual top-K (without replace)
++      - remaining slots from non-top-K pool (without replace)
++
++    Edge case (valid_len < K) handled identically to generate_pre_idx.
++
++    Args:
++        logits, row_ends, batch_size, next_n, index_topk, success_ratio, seed:
++            See generate_pre_idx — the V4 helper mirrors its sampling logic.
++
++    Returns:
++        pre_idx: int32 tensor of shape (batch_size, index_topk), entries in
++        the compressed current-step index space (no negative entries since
++        the kernel uses offset = 0).
++    """
++    torch.manual_seed(seed)
++    pre_idx = torch.zeros(batch_size, index_topk, dtype=torch.int32, device=logits.device)
++
++    for b in range(batch_size):
++        base = b * next_n
++        valid_len = int(row_ends[base].item())
++        k = min(index_topk, valid_len)
++
++        # Actual top-K of the base row; index 0 = argmax (kernel invariant).
++        _, topk_idx = logits[base, :valid_len].topk(k)
++
++        n_hit = max(1, int(k * success_ratio))
++        n_hit = min(n_hit, k)
++
++        if n_hit > 1:
++            perm = torch.randperm(k - 1, device=logits.device)[: n_hit - 1]
++            hits = torch.cat([topk_idx[:1], topk_idx[1:][perm]])
++        else:
++            hits = topk_idx[:1]
++
++        pre_idx[b, :n_hit] = hits.int()
++
++        n_fill = index_topk - n_hit
++        if n_fill > 0:
++            topk_mask = torch.zeros(valid_len, dtype=torch.bool, device=logits.device)
++            topk_mask[topk_idx] = True
++            non_topk = torch.where(~topk_mask)[0]
++
++            if len(non_topk) >= n_fill:
++                perm = torch.randperm(len(non_topk), device=logits.device)[:n_fill]
++                pre_idx[b, n_hit:] = non_topk[perm].int()
++            else:
++                pre_idx[b, n_hit : n_hit + len(non_topk)] = non_topk.int()
++                leftover = n_fill - len(non_topk)
++                topk_tail = topk_idx[n_hit:]
++                take = min(leftover, len(topk_tail))
++                if take > 0:
++                    pre_idx[b, n_hit + len(non_topk) : n_hit + len(non_topk) + take] = topk_tail[
++                        :take
++                    ].int()
++
++    # No shift: kernel reads input[preIdx[i] + 0] = input[preIdx[i]] directly
++    # in compressed current-step coordinates.
++    return pre_idx
++
++
+ @pytest.mark.skipif(not IS_CUTLASS_DSL_AVAILABLE, reason="CuTE DSL not available")
+ @skip_pre_blackwell
+ @pytest.mark.parametrize("batch_size", [1, 4, 64, 256])
+@@ -1105,3 +1230,154 @@ def test_indexer_topk_decode_dist(
+         f"mean={dist_cfg['mean']}, std={dist_cfg['std']}, "
+         f"next_n={next_n}, success_ratio={success_ratio}, dtype={dtype}"
+     )
++
++
++# ============================================================================
++# DSv4 Heuristic Decode Test (compress_ratio = 4)
++# ============================================================================
++#
++# Exercises the V4 indexer GVR Top-K path enabled by the
++# `compressRatio == 1 || compressRatio == 4` relaxation in
++# canUseHeuristic (cpp/tensorrt_llm/kernels/indexerTopK.cu). For
++# compressRatio != 1 the kernel:
++#   1. Computes N = (seq_len - next_n + (rowIdx % next_n) + 1) / compressRatio,
++#      i.e. the row's compressed-KV length (vs. uncompressed N in the V3.2
++#      path).
++#   2. Forces preIdxOffset = 0 (vs. (rowIdx % next_n) + 1 in V3.2), since
++#      compressed entries are appended at the end of the compressed KV and
++#      prev-step indices remain valid as-is.
++#
++# To reach the GVR (Heuristic) path with cr=4 we need the *compressed*
++# numColumns ≥ kSeqSmall (≈12288), so the test uses num_tokens ∈
++# {65536, 131072} which gives compressed range ≈ {16K, 32K}. Smaller cr=4
++# cases (where compressed N falls below kSeqSmall) are already covered by
++# test_indexer_topk_decode parametrized on compress_ratio ∈ [1, 4] — those
++# exercise the Radix/Insertion fallback for the same gate.
++
++
++def _run_indexer_topk_decode_v4_gvr_check(
++    batch_size: int,
++    next_n: int,
++    index_topk: int,
++    num_tokens: int,
++    dtype: torch.dtype,
++    dist_cfg: dict,
++    success_ratio: float,
++):
++    """Run the V4 (compress_ratio=4) heuristic indexer_topk_decode check."""
++    torch.manual_seed(24)
++    torch.cuda.manual_seed(24)
++
++    compress_ratio = 4
++    num_gen_tokens = batch_size * next_n
++    row_starts = torch.zeros(num_gen_tokens, dtype=torch.int32, device="cuda")
++    row_indices = torch.arange(num_gen_tokens, device="cuda") // next_n
++    next_n_offset = torch.arange(num_gen_tokens, device="cuda") % next_n
++
++    # Uncompressed seq_lens are what the kernel receives in `seq_lens`.
++    # Clamp so that compressed_actual_kv_len ≥ kSeqSmall (= 12288) for every
++    # row; the kernel will divide actual_kv_len by compress_ratio internally,
++    # so a floor of (kSeqSmall + 1) * compress_ratio + next_n on the
++    # uncompressed seq_len guarantees compressed N stays in the GVR window.
++    min_uncompressed = (12288 + 1) * compress_ratio + next_n
++    seq_lens = generate_seq_lens(batch_size, min_uncompressed, num_tokens)
++    seq_lens = seq_lens.clamp(min=min_uncompressed)
++
++    # row_ends is the compressed-KV length per row (= what logits' columns
++    # represent in V4 — the indexer operates in compressed-token-index space).
++    actual_kv_lens = seq_lens[row_indices] - next_n + next_n_offset + 1
++    row_ends = actual_kv_lens // compress_ratio
++
++    # 1. Sample logits over the compressed shape.
++    logits = create_distributed_logits(dist_cfg, row_starts, row_ends, dtype, seed=42)
++
++    # 2. Apply MTP correlation between rows within each batch element.
++    # Use the compressed-aware variant: cr=4 breaks the cr=1 invariant
++    # row_ends[base+nni] = row_ends[base]+nni, so the copy length must be
++    # clipped per-row to avoid overrunning the row's valid range.
++    if next_n > 1:
++        logits = apply_mtp_structure_compressed(logits, batch_size, next_n, row_ends)
++
++    # 3. Build heuristic pre-prediction indices — V4 variant (no -1 shift).
++    pre_idx = generate_pre_idx_v4(
++        logits,
++        row_ends,
++        batch_size,
++        next_n,
++        index_topk,
++        success_ratio=success_ratio,
++        seed=7,
++    )
++
++    # 4. Run heuristic CUDA kernel with compress_ratio=4. The kernel:
++    #    - reads logits in compressed-index space (numColumns = logits.shape[1])
++    #    - divides seq_lens by compress_ratio to derive per-row N
++    #    - uses preIdxOffset = 0 (preIdx already in current-step coords)
++    indices = torch.empty((num_gen_tokens, index_topk), dtype=torch.int32, device="cuda")
++    heuristic_scratch = torch.empty(num_gen_tokens * index_topk, dtype=dtype, device="cuda")
++    torch.ops.trtllm.indexer_topk_decode(
++        logits,
++        seq_lens,
++        indices,
++        next_n,
++        index_topk,
++        pre_idx,
++        heuristic_scratch,
++        compress_ratio=compress_ratio,
++    )
++    torch.cuda.synchronize()
++
++    # 5. Reference: torch.topk masked to the compressed row_ends.
++    max_row_len = int(row_ends.max().item())
++    torch_indices = logits.topk(min(index_topk, max_row_len), dim=-1)[1]
++    mask = (torch_indices >= 0) & ((torch_indices - (row_ends - row_starts)[:, None]) < 0)
++    torch_indices = torch_indices.masked_fill(~mask, -1)
++
++    assert compare_top_k_results(
++        logits, indices, torch_indices, row_starts, row_ends, index_topk
++    ), (
++        f"V4 heuristic indexer_topk_decode (cr=4) mismatch: dist={dist_cfg['dist']}, "
++        f"mean={dist_cfg['mean']}, std={dist_cfg['std']}, batch_size={batch_size}, "
++        f"next_n={next_n}, index_topk={index_topk}, num_tokens={num_tokens}, "
++        f"success_ratio={success_ratio}, dtype={dtype}"
++    )
++
++
++# Param matrix is intentionally tighter than test_indexer_topk_decode_dist:
++# only one logit distribution and one success_ratio because the GVR algorithm
++# is dist-/hint-quality-invariant for correctness (an exact algorithm). The
++# axes that *do* differ in V4 vs V3.2 are exercised in full:
++#   compress_ratio = 4         (fixed — sole purpose of this test)
++#   next_n in {1, 2, 3}         (decode + MTP windows)
++#   index_topk in {512, 1024, 2048}  (all GVR-supported K)
++#   num_tokens in {65536, 131072}    (compressed N ≈ 16K and 32K)
++#   dtype: fp32 / bf16 / fp16   (both kernel templates)
++#   batch_size: 1 (single-row), 64 (multi-row)
++@skip_pre_blackwell
++@pytest.mark.skipif(not _HAS_SCIPY, reason="scipy required for distribution tests")
++@pytest.mark.parametrize("success_ratio", [0.7])
++@pytest.mark.parametrize("batch_size", [1, 64])
++@pytest.mark.parametrize("next_n", [1, 2, 3])
++@pytest.mark.parametrize("index_topk", [512, 1024, 2048])
++@pytest.mark.parametrize("num_tokens", [65536, 131072])
++@pytest.mark.parametrize(
++    "dtype",
++    [torch.float32, torch.bfloat16, torch.float16],
++    ids=["fp32", "bf16", "fp16"],
++)
++def test_indexer_topk_decode_dist_v4_cr4(
++    batch_size, next_n, index_topk, num_tokens, success_ratio, dtype
++):
++    """
++    Correctness test for the DSv4 heuristic indexer_topk_decode with
++    compress_ratio=4 across MTP windows, all GVR-supported K, and all
++    supported logit dtypes. Uses one representative distribution; broader
++    distribution coverage is left to test_indexer_topk_decode_dist (cr=1).
++    """
++    # Logistic chosen as the single representative distribution — its
++    # heavy-tailed symmetric shape produces the wide K-th-value spread that
++    # stresses GVR's secant threshold search most.
++    dist_cfg = dict(dist="logistic", mean=-0.47, std=1.46, full_range=12.32)
++    _run_indexer_topk_decode_v4_gvr_check(
++        batch_size, next_n, index_topk, num_tokens, dtype, dist_cfg, success_ratio
++    )

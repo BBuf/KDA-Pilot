@@ -1,0 +1,1447 @@
+diff --git a/.agents/skills/tilelang-tvm-ir/SKILL.md b/.agents/skills/tilelang-tvm-ir/SKILL.md
+new file mode 100644
+index 0000000000..0597097f9c
+--- /dev/null
++++ b/.agents/skills/tilelang-tvm-ir/SKILL.md
+@@ -0,0 +1,105 @@
++---
++name: tilelang-tvm-ir
++description: Use when editing TileLang C++ passes or TVM TIR code that handles ObjectRef/NodeRef types such as For, Buffer, Var, Block, Stmt, PrimExpr, or their *Node raw node counterparts; especially when choosing function parameters, optional values, identity maps/sets, or equality checks.
++---
++
++# TileLang TVM IR Handle Conventions
++
++## Core Rule
++
++In TVM C++, `For`, `Buffer`, `Var`, `Block`, `Stmt`, `PrimExpr`, `SeqStmt`, etc. are `ObjectRef` smart handles. `ForNode`, `BufferNode`, `VarNode`, `BlockNode`, etc. are raw node structs reached through visitor callbacks, `as<TNode>()`, `operator->`, or `.get()`.
++
++When a value needs to cross a function boundary, be stored, be optional, be used as an identity key, or survive beyond a local inspection branch, prefer the handle type over `const *Node`.
++
++## Preferred Patterns
++
++- Function parameters and return values: use handles such as `For`, `Buffer`, `Var`, `Block`, `Stmt`, or `SeqStmt`.
++- Nullable AST values: use `Optional<For>`, `Optional<SeqStmt>`, etc., not `const ForNode* = nullptr`.
++- Identity maps and sets: use handle keys with TVM identity hashing:
++
++```cpp
++using BufferSet = std::unordered_set<Buffer, ObjectPtrHash, ObjectPtrEqual>;
++using BufferMap = std::unordered_map<Buffer, Buffer, ObjectPtrHash, ObjectPtrEqual>;
++using VarMap = std::unordered_map<Var, PrimExpr, ObjectPtrHash, ObjectPtrEqual>;
++```
++
++- Identity comparisons: use `.same_as(other)` when comparing two handles.
++- Visitor callback node pointers: convert to a handle with `GetRef<T>(op)` when the value must be retained or passed elsewhere.
++
++```cpp
++Stmt VisitStmt_(const ForNode* op) final {
++  For loop = GetRef<For>(op);
++  Optional<For> candidate = FindPipelineLoop(loop->body);
++  if (candidate.defined() && candidate.value().same_as(loop)) {
++    ...
++  }
++}
++```
++
++- Pattern matching and local mutation may still use node pointers:
++  - `if (const auto* seq = stmt.as<SeqStmtNode>()) { ... }`
++  - `BufferStoreNode* n = store.CopyOnWrite();`
++  - visitor overrides such as `VisitStmt_(const SeqStmtNode* op)`
++
++Keep these raw pointers local to the immediate inspection or mutation site.
++
++## Avoid
++
++- Passing `const ForNode*`, `const BufferNode*`, `const VarNode*`, or `const Block*` between helper functions when a handle exists.
++- Storing raw node pointers in `std::unordered_map` or `std::unordered_set` for identity tracking.
++- Using `.get()` as a key unless a callee requires a raw TVM node API and the pointer is not retained.
++- Comparing handles through `.get() == other.get()`; prefer `.same_as()`.
++- Reconstructing handles from raw pointers repeatedly when a handle is already available.
++
++## Common Refactors
++
++```cpp
++// Before
++const SeqStmtNode* pipeline_body_seq = nullptr;
++pipeline_body_seq = seq_stmt;
++ICHECK(pipeline_body_seq != nullptr);
++
++// After
++Optional<SeqStmt> pipeline_body_seq;
++pipeline_body_seq = GetRef<SeqStmt>(seq_stmt);
++ICHECK(pipeline_body_seq.defined());
++SeqStmt pipeline_body = pipeline_body_seq.value();
++```
++
++```cpp
++// Before
++std::unordered_set<const BufferNode*> seen;
++seen.insert(buffer.get());
++if (seen.count(read->buffer.get())) { ... }
++
++// After
++BufferSet seen;
++seen.insert(buffer);
++if (seen.count(read->buffer)) { ... }
++```
++
++```cpp
++// Before
++std::unordered_set<const VarNode*> vars;
++vars.insert(loop->loop_var.get());
++bool uses = UsesVar(expr, [&](const VarNode* vn) {
++  return vars.count(vn) > 0;
++});
++
++// After
++VarSet vars;
++vars.insert(loop->loop_var);
++bool uses = UsesVar(expr, [&](const VarNode* vn) {
++  return vars.count(GetRef<Var>(vn)) > 0;
++});
++```
++
++## Review Checklist
++
++When reviewing TileLang TIR passes, search for:
++
++```bash
++rg -n "std::unordered_(set|map)<const .*Node \\*|const (For|SeqStmt|Block).*Node \\*|\\.get\\(\\) ==|\\.find\\([^\\n]*\\.get\\(\\)|\\.count\\([^\\n]*\\.get\\(\\)|\\.insert\\([^\\n]*\\.get\\(\\)" src/transform
++```
++
++Do not mechanically remove every raw node pointer. Keep visitor signatures, `as<TNode>()` pattern checks, and `CopyOnWrite()` mutation pointers. Refactor only the places that store, pass, compare, or key identities through raw pointers.
+diff --git a/benchmark/matmul/benchmark_matmul_sp_compress.py b/benchmark/matmul/benchmark_matmul_sp_compress.py
+index fdb79eff3d..d18683e4ac 100644
+--- a/benchmark/matmul/benchmark_matmul_sp_compress.py
++++ b/benchmark/matmul/benchmark_matmul_sp_compress.py
+@@ -1,5 +1,4 @@
+ import argparse
+-from typing import Optional
+ 
+ import torch
+ from tilelang.profiler import do_bench
+@@ -34,7 +33,7 @@ def benchmark_compress(
+     m: int,
+     k: int,
+     dtype: torch.dtype,
+-    meta_dtype: Optional[torch.dtype] = None,  # noqa: FA100
++    meta_dtype: torch.dtype | None = None,  # noqa: FA100
+ ):
+     a0 = _generate_semi_sparse(m, k, dtype)
+ 
+diff --git a/src/transform/inject_pipeline.cc b/src/transform/inject_pipeline.cc
+index f5d47a6b5b..427f3b8821 100644
+--- a/src/transform/inject_pipeline.cc
++++ b/src/transform/inject_pipeline.cc
+@@ -35,6 +35,15 @@ using namespace tir;
+ using namespace ffi;
+ namespace software_pipeline {
+ 
++using BufferSet = std::unordered_set<Buffer, ObjectPtrHash, ObjectPtrEqual>;
++using VarSet = std::unordered_set<Var, ObjectPtrHash, ObjectPtrEqual>;
++using BufferMap =
++    std::unordered_map<Buffer, Buffer, ObjectPtrHash, ObjectPtrEqual>;
++using BufferShapeMap =
++    std::unordered_map<Buffer, PrimExpr, ObjectPtrHash, ObjectPtrEqual>;
++using BufferCommitGroupMap =
++    std::unordered_map<Buffer, int, ObjectPtrHash, ObjectPtrEqual>;
++
+ namespace {
+ 
+ bool GetBoolAnnotation(const CopyNode &op, const char *key) {
+@@ -135,10 +144,10 @@ bool UpdateExpandedLayoutMapForRemappedAllocs(
+   }
+ 
+   Map<Var, Layout> updated_layout_map = layout_map.value();
+-  std::unordered_set<const VarNode *> visited;
++  VarSet visited;
+   bool changed = false;
+   for (const auto &[old_buffer, new_buffer] : remapped_allocs) {
+-    if (!visited.insert(old_buffer->data.get()).second ||
++    if (!visited.insert(old_buffer->data).second ||
+         !updated_layout_map.count(old_buffer->data)) {
+       continue;
+     }
+@@ -913,11 +922,11 @@ class PipelineRewriter : public StmtExprMutator {
+   }
+ 
+   struct AsyncStateGlobal {
+-    std::unordered_set<const BufferNode *> dst_buffers;
++    BufferSet dst_buffers;
+     Optional<PrimExpr> producer_head{PrimExpr(-1)};
+ 
+     bool writes(const Buffer &buffer) const {
+-      return dst_buffers.count(buffer.get()) > 0;
++      return dst_buffers.count(buffer) > 0;
+     }
+   };
+ 
+@@ -929,7 +938,7 @@ class PipelineRewriter : public StmtExprMutator {
+       bool valid() const { return wait_count.defined(); }
+     };
+ 
+-    std::unordered_set<const BufferNode *> seen;
++    BufferSet seen;
+     Optional<PrimExpr> producer_head;
+     Optional<PrimExpr> predicate;
+     std::vector<std::vector<size_t>> commit_groups;
+@@ -1839,16 +1848,15 @@ class PipelineRewriter : public StmtExprMutator {
+     return seq;
+   }
+ 
+-  void PopulateWaitCounts(
+-      const std::vector<RewrittenStmtInfo> &new_stmts,
+-      arith::Analyzer *ana_normalized,
+-      const std::unordered_map<const BufferNode *, int> &buffer_to_commit_group,
+-      std::map<int, AsyncStateLocal> *async_states_local) {
++  void PopulateWaitCounts(const std::vector<RewrittenStmtInfo> &new_stmts,
++                          arith::Analyzer *ana_normalized,
++                          const BufferCommitGroupMap &buffer_to_commit_group,
++                          std::map<int, AsyncStateLocal> *async_states_local) {
+     for (size_t i = 0; i < new_stmts.size(); ++i) {
+       if (new_stmts[i].is_async) {
+         for (const BufferRegion &write_region : new_stmts[i].writes) {
+           (*async_states_local)[new_stmts[i].stage].seen.insert(
+-              write_region->buffer.get());
++              write_region->buffer);
+         }
+         continue;
+       }
+@@ -1886,13 +1894,12 @@ class PipelineRewriter : public StmtExprMutator {
+           if (!async_states_[producer_stage_idx].writes(read_region->buffer)) {
+             continue;
+           }
+-          auto commit_group_id =
+-              buffer_to_commit_group.at(read_region->buffer.get());
++          auto commit_group_id = buffer_to_commit_group.at(read_region->buffer);
+           if (!need_wait_count[commit_group_id]) {
+             continue;
+           }
+           dependent_commit_groups.push_back(commit_group_id);
+-          if (!dep_local_state.seen.count(read_region->buffer.get())) {
++          if (!dep_local_state.seen.count(read_region->buffer)) {
+             producer_head_per_commit.push_back(
+                 dep_local_state.producer_head.value() - 1);
+           } else {
+@@ -2124,7 +2131,7 @@ class PipelineRewriter : public StmtExprMutator {
+ 
+     std::vector<RewrittenStmtInfo> new_stmts;
+     std::map<int, AsyncStateLocal> async_states_local;
+-    std::unordered_map<const BufferNode *, int> buffer_to_commit_group;
++    BufferCommitGroupMap buffer_to_commit_group;
+ 
+     for (const Block &block : ordered_stmts_) {
+       const auto &pipeline_anno = pipeline_info_.at(block);
+@@ -2195,8 +2202,8 @@ class PipelineRewriter : public StmtExprMutator {
+         }
+ 
+         for (const BufferRegion &write_region : new_block->writes) {
+-          async_states_[stage].dst_buffers.insert(write_region->buffer.get());
+-          buffer_to_commit_group[write_region->buffer.get()] = commit_group_id;
++          async_states_[stage].dst_buffers.insert(write_region->buffer);
++          buffer_to_commit_group[write_region->buffer] = commit_group_id;
+         }
+         async_states_[stage].producer_head = normalized_access_index;
+         local_state.producer_head = normalized_access_index;
+@@ -2411,8 +2418,8 @@ class BarrierBufferCollector : public StmtExprVisitor {
+   void VisitExpr_(const BufferLoadNode *op) final {
+     if (op->buffer.scope() == "shared.barrier" ||
+         op->buffer.scope() == "shared.cluster_barrier") {
+-      if (!seen_.count(op->buffer.get())) {
+-        seen_.insert(op->buffer.get());
++      if (!seen_.count(op->buffer)) {
++        seen_.insert(op->buffer);
+         barriers_.push_back(op->buffer);
+       }
+     }
+@@ -2422,8 +2429,8 @@ class BarrierBufferCollector : public StmtExprVisitor {
+   void VisitStmt_(const BufferStoreNode *op) final {
+     if (op->buffer.scope() == "shared.barrier" ||
+         op->buffer.scope() == "shared.cluster_barrier") {
+-      if (!seen_.count(op->buffer.get())) {
+-        seen_.insert(op->buffer.get());
++      if (!seen_.count(op->buffer)) {
++        seen_.insert(op->buffer);
+         barriers_.push_back(op->buffer);
+       }
+     }
+@@ -2436,8 +2443,8 @@ class BarrierBufferCollector : public StmtExprVisitor {
+       if (auto load = val.as<BufferLoadNode>()) {
+         if (load->buffer.scope() == "shared.barrier" ||
+             load->buffer.scope() == "shared.cluster_barrier") {
+-          if (!seen_.count(load->buffer.get())) {
+-            seen_.insert(load->buffer.get());
++          if (!seen_.count(load->buffer)) {
++            seen_.insert(load->buffer);
+             barriers_.push_back(load->buffer);
+           }
+         }
+@@ -2447,18 +2454,16 @@ class BarrierBufferCollector : public StmtExprVisitor {
+   }
+ 
+   const Map<Var, Buffer> &buf_map_;
+-  std::unordered_set<const BufferNode *> seen_;
++  BufferSet seen_;
+   std::vector<Buffer> barriers_;
+ };
+ 
+ /// Rewrite barrier references: expand indices and rewrite parity.
+ class BarrierIndexRewriter : public StmtExprMutator {
+ public:
+-  BarrierIndexRewriter(
+-      const std::unordered_map<const BufferNode *, Buffer> &old_to_new,
+-      const std::unordered_map<const BufferNode *, PrimExpr> &old_shapes,
+-      PrimExpr stage_expr, PrimExpr parity_cycle, Var loop_var,
+-      PrimExpr loop_min)
++  BarrierIndexRewriter(const BufferMap &old_to_new,
++                       const BufferShapeMap &old_shapes, PrimExpr stage_expr,
++                       PrimExpr parity_cycle, Var loop_var, PrimExpr loop_min)
+       : old_to_new_(old_to_new), old_shapes_(old_shapes),
+         stage_expr_(std::move(stage_expr)),
+         parity_cycle_(std::move(parity_cycle)), loop_var_(std::move(loop_var)),
+@@ -2466,10 +2471,10 @@ class BarrierIndexRewriter : public StmtExprMutator {
+ 
+   PrimExpr VisitExpr_(const BufferLoadNode *op) final {
+     BufferLoad load = Downcast<BufferLoad>(StmtExprMutator::VisitExpr_(op));
+-    auto it = old_to_new_.find(load->buffer.get());
++    auto it = old_to_new_.find(load->buffer);
+     if (it != old_to_new_.end()) {
+       auto *n = load.CopyOnWrite();
+-      PrimExpr old_size = old_shapes_.at(load->buffer.get());
++      PrimExpr old_size = old_shapes_.at(load->buffer);
+       n->buffer = it->second;
+       n->indices.Set(0, stage_expr_ * old_size + n->indices[0]);
+     }
+@@ -2478,10 +2483,10 @@ class BarrierIndexRewriter : public StmtExprMutator {
+ 
+   Stmt VisitStmt_(const BufferStoreNode *op) final {
+     BufferStore store = Downcast<BufferStore>(StmtExprMutator::VisitStmt_(op));
+-    auto it = old_to_new_.find(store->buffer.get());
++    auto it = old_to_new_.find(store->buffer);
+     if (it != old_to_new_.end()) {
+       auto *n = store.CopyOnWrite();
+-      PrimExpr old_size = old_shapes_.at(store->buffer.get());
++      PrimExpr old_size = old_shapes_.at(store->buffer);
+       n->buffer = it->second;
+       n->indices.Set(0, stage_expr_ * old_size + n->indices[0]);
+     }
+@@ -2496,9 +2501,9 @@ class BarrierIndexRewriter : public StmtExprMutator {
+     Map<String, ObjectRef> new_annos = call->annotations;
+     for (const auto &[key, val] : call->annotations) {
+       if (auto load = val.as<BufferLoadNode>()) {
+-        auto it = old_to_new_.find(load->buffer.get());
++        auto it = old_to_new_.find(load->buffer);
+         if (it != old_to_new_.end()) {
+-          PrimExpr old_size = old_shapes_.at(load->buffer.get());
++          PrimExpr old_size = old_shapes_.at(load->buffer);
+           auto new_load = BufferLoad(
+               it->second, {stage_expr_ * old_size + load->indices[0]});
+           new_annos.Set(key, new_load);
+@@ -2515,10 +2520,9 @@ class BarrierIndexRewriter : public StmtExprMutator {
+       if (auto load = call->args[0].as<BufferLoadNode>()) {
+         // Check if the barrier ref (possibly already rewritten above)
+         // targets one of our expanded barriers.
+-        const BufferNode *target = load->buffer.get();
+         bool is_expanded = false;
+-        for (const auto &[old_buf, new_buf] : old_to_new_) {
+-          if (new_buf.get() == target) {
++        for (const auto &kv : old_to_new_) {
++          if (load->buffer.same_as(kv.second)) {
+             is_expanded = true;
+             break;
+           }
+@@ -2546,8 +2550,8 @@ class BarrierIndexRewriter : public StmtExprMutator {
+   }
+ 
+ private:
+-  const std::unordered_map<const BufferNode *, Buffer> &old_to_new_;
+-  const std::unordered_map<const BufferNode *, PrimExpr> &old_shapes_;
++  const BufferMap &old_to_new_;
++  const BufferShapeMap &old_shapes_;
+   PrimExpr stage_expr_;
+   PrimExpr parity_cycle_;
+   Var loop_var_;
+@@ -2579,21 +2583,21 @@ Map<Buffer, Buffer> ExpandPipelineBarriers(
+   // arrive barriers) — those should NOT be pipeline-expanded.
+   // ISP-created pipeline_mbar is handled specially: it's always in
+   // block_local_allocs and was just created, so include it too.
+-  std::unordered_set<const BufferNode *> local_barrier_set;
++  BufferSet local_barrier_set;
+   for (const Buffer &buf : block_local_allocs) {
+     if (buf.scope() == "shared.barrier" ||
+         buf.scope() == "shared.cluster_barrier")
+-      local_barrier_set.insert(buf.get());
++      local_barrier_set.insert(buf);
+   }
+ 
+   // Find barriers that have explicit ptx_arrive_barrier calls.
+   class ArriveBarrierDetector : public StmtExprVisitor {
+   public:
+-    std::unordered_set<const BufferNode *> arrived_;
++    BufferSet arrived_;
+     void VisitExpr_(const CallNode *op) final {
+       if (op->op.same_as(builtin::ptx_arrive_barrier()) && !op->args.empty()) {
+         if (auto load = op->args[0].as<BufferLoadNode>()) {
+-          arrived_.insert(load->buffer.get());
++          arrived_.insert(load->buffer);
+         }
+       }
+       StmtExprVisitor::VisitExpr_(op);
+@@ -2610,8 +2614,7 @@ Map<Buffer, Buffer> ExpandPipelineBarriers(
+   for (const Buffer &buf : all_referenced) {
+     // Include if: (a) it's an ISP-created local barrier, OR
+     //             (b) it has explicit ptx_arrive_barrier calls.
+-    if (local_barrier_set.count(buf.get()) ||
+-        arrive_det.arrived_.count(buf.get())) {
++    if (local_barrier_set.count(buf) || arrive_det.arrived_.count(buf)) {
+       barriers.push_back(buf);
+     }
+   }
+@@ -2632,15 +2635,15 @@ Map<Buffer, Buffer> ExpandPipelineBarriers(
+   };
+ 
+   // Create expanded buffer for each barrier.
+-  std::unordered_map<const BufferNode *, Buffer> old_to_new;
+-  std::unordered_map<const BufferNode *, PrimExpr> old_shapes;
++  BufferMap old_to_new;
++  BufferShapeMap old_shapes;
+   for (const Buffer &buf : barriers) {
+-    old_shapes[buf.get()] = buf->shape[0];
++    old_shapes[buf] = buf->shape[0];
+     ObjectPtr<BufferNode> new_node =
+         tvm::ffi::make_object<BufferNode>(*(buf.get()));
+     new_node->shape = {PrimExpr(num_stages) * buf->shape[0]};
+     Buffer new_buf(new_node);
+-    old_to_new[buf.get()] = new_buf;
++    old_to_new[buf] = new_buf;
+ 
+     // Update all maps and alloc arrays.
+     buffer_data_to_buffer.Set(buf->data, new_buf);
+@@ -2661,7 +2664,7 @@ Map<Buffer, Buffer> ExpandPipelineBarriers(
+       // here).
+       Array<Buffer> new_allocs;
+       for (const Buffer &ab : old_block->alloc_buffers) {
+-        auto it = old_to_new.find(ab.get());
++        auto it = old_to_new.find(ab);
+         new_allocs.push_back(it != old_to_new.end() ? it->second : ab);
+       }
+       Block new_block(old_block->iter_vars, old_block->reads, old_block->writes,
+@@ -2677,13 +2680,8 @@ Map<Buffer, Buffer> ExpandPipelineBarriers(
+ 
+   // Return the old→new mapping for outer block alloc_buffers update.
+   Map<Buffer, Buffer> result;
+-  for (const auto &[old_ptr, new_buf] : old_to_new) {
+-    for (const Buffer &old_buf : barriers) {
+-      if (old_buf.get() == old_ptr) {
+-        result.Set(old_buf, new_buf);
+-        break;
+-      }
+-    }
++  for (const auto &[old_buf, new_buf] : old_to_new) {
++    result.Set(old_buf, new_buf);
+   }
+   return result;
+ }
+@@ -2834,9 +2832,6 @@ class PipelineInjector : private StmtExprMutator {
+   void ValidatePipelineBody(const PipelineInfo &pipeline_info,
+                             const Array<Block> &original_order) {
+     std::unordered_set<int> used_orders;
+-    std::unordered_map<int, int> stage_max_order;
+-    std::unordered_map<int, const Block *> order_to_block;
+-    std::unordered_map<const Block *, int> block_to_stage;
+     for (const Block &block : original_order) {
+       const auto &stmt_info = pipeline_info.at(block);
+       int order = stmt_info.order;
+@@ -2928,7 +2923,7 @@ class PipelineInjector : private StmtExprMutator {
+       pipeline_body_root = for_node->body;
+     }
+ 
+-    const SeqStmtNode *pipeline_body_seq = nullptr;
++    Optional<SeqStmt> pipeline_body_seq;
+     std::vector<std::function<Stmt(Stmt)>> rewrap_fns;
+     std::vector<LetWrapper> loop_var_let_wrappers;
+     std::vector<IfWrapper> loop_var_if_wrappers;
+@@ -2947,7 +2942,7 @@ class PipelineInjector : private StmtExprMutator {
+       Stmt current = pipeline_body_root;
+       while (true) {
+         if (const auto *seq_stmt = current.as<SeqStmtNode>()) {
+-          pipeline_body_seq = seq_stmt;
++          pipeline_body_seq = GetRef<SeqStmt>(seq_stmt);
+           break;
+         }
+         if (const auto *if_then_else = current.as<IfThenElseNode>()) {
+@@ -2957,14 +2952,14 @@ class PipelineInjector : private StmtExprMutator {
+ 
+           // Check if the condition depends on the loop variable or any
+           // transitively dependent variables (similar to LetStmt handling)
+-          std::unordered_set<const VarNode *> dependent_vars;
+-          dependent_vars.insert(op->loop_var.get());
++          VarSet dependent_vars;
++          dependent_vars.insert(for_node->loop_var);
+           for (const auto &lw : loop_var_let_wrappers) {
+-            dependent_vars.insert(lw.var.get());
++            dependent_vars.insert(lw.var);
+           }
+           bool condition_depends_on_loop = UsesVar(
+               if_then_else->condition, [&dependent_vars](const VarNode *vn) {
+-                return dependent_vars.count(vn) > 0;
++                return dependent_vars.count(GetRef<Var>(vn)) > 0;
+               });
+ 
+           if (condition_depends_on_loop) {
+@@ -2993,14 +2988,14 @@ class PipelineInjector : private StmtExprMutator {
+           // This handles transitive dependencies like:
+           //   id = ids[i]      # depends on loop var
+           //   id2 = ids2[id]   # depends on id, so transitively on loop var
+-          std::unordered_set<const VarNode *> dependent_vars;
+-          dependent_vars.insert(op->loop_var.get());
++          VarSet dependent_vars;
++          dependent_vars.insert(for_node->loop_var);
+           for (const auto &lw : loop_var_let_wrappers) {
+-            dependent_vars.insert(lw.var.get());
++            dependent_vars.insert(lw.var);
+           }
+           bool depends_on_loop =
+               UsesVar(let_stmt->value, [&dependent_vars](const VarNode *vn) {
+-                return dependent_vars.count(vn) > 0;
++                return dependent_vars.count(GetRef<Var>(vn)) > 0;
+               });
+           if (depends_on_loop) {
+             loop_var_let_wrappers.push_back({let_stmt->var, let_stmt->value});
+@@ -3026,7 +3021,9 @@ class PipelineInjector : private StmtExprMutator {
+                    << "SeqStmt, got " << current->GetTypeKey();
+       }
+     }
+-    ICHECK(pipeline_body_seq != nullptr);
++    ICHECK(pipeline_body_seq.defined());
++    SeqStmt pipeline_body = pipeline_body_seq.value();
++    const Array<Stmt> &pipeline_body_stmts = pipeline_body->seq;
+ 
+     // Step 3: Blockize the components of the pipeline. Each child of the
+     // pipelined loop will be converted into a block.
+@@ -3036,8 +3033,8 @@ class PipelineInjector : private StmtExprMutator {
+     auto f_add_child = [&](const Stmt &child) {
+       original_order.push_back(MakeBlock(child, buffer_data_to_buffer_));
+     };
+-    for (size_t i = 0; i < pipeline_body_seq->seq.size(); i++) {
+-      const Stmt &child = pipeline_body_seq->seq[i];
++    for (size_t i = 0; i < pipeline_body_stmts.size(); i++) {
++      const Stmt &child = pipeline_body_stmts[i];
+       const auto *nested_block_realize = child.as<BlockRealizeNode>();
+       if (nested_block_realize && is_one(nested_block_realize->predicate) &&
+           nested_block_realize->block->body->IsInstance<SeqStmtNode>()) {
+@@ -3056,7 +3053,7 @@ class PipelineInjector : private StmtExprMutator {
+     // This includes buffers allocated in outer blocks (like logits_smem) that
+     // are used inside the pipeline loop.
+     BufferUsageCollector collector(buffer_data_to_buffer_, allocated_buffers_);
+-    pipeline_allocs = collector.Collect(SeqStmt(pipeline_body_seq->seq));
++    pipeline_allocs = collector.Collect(SeqStmt(pipeline_body_stmts));
+ 
+     auto pipeline_stages = Downcast<Array<Integer>>(
+         op->annotations.at(tir::attr::software_pipeline_stage));
+@@ -3136,7 +3133,7 @@ class PipelineInjector : private StmtExprMutator {
+     ValidatePipelineBody(pipeline_info, original_order);
+ 
+     if (!HasOverlappableStages(pipeline_info)) {
+-      if (const auto *realize = op->body.as<BlockRealizeNode>()) {
++      if (const auto *realize = for_node->body.as<BlockRealizeNode>()) {
+         const auto &block = realize->block;
+         for (const auto &buffer : block->alloc_buffers) {
+           buffer_data_to_buffer_.erase(buffer->data);
+@@ -3185,7 +3182,8 @@ class PipelineInjector : private StmtExprMutator {
+               pipeline_barrier_buf = RewritePipelineTmaBarriers(
+                   original_order, pipeline_info, tma_copies,
+                   buffer_data_to_buffer_, allocated_buffers_,
+-                  block_local_allocs, op->loop_var, op->min, pipeline_depth);
++                  block_local_allocs, for_node->loop_var, for_node->min,
++                  pipeline_depth);
+             }
+           }
+         }
+@@ -3212,8 +3210,8 @@ class PipelineInjector : private StmtExprMutator {
+       }
+       Map<Buffer, Buffer> barrier_remap = ExpandPipelineBarriers(
+           original_order, pipeline_info, buffer_data_to_buffer_,
+-          allocated_buffers_, block_local_allocs, pipeline_allocs, op->loop_var,
+-          op->min, barrier_depth);
++          allocated_buffers_, block_local_allocs, pipeline_allocs,
++          for_node->loop_var, for_node->min, barrier_depth);
+       // Register expanded barriers for outer block alloc_buffers update.
+       for (const auto &[old_buf, new_buf] : barrier_remap) {
+         pending_buffer_remap_.Set(old_buf, new_buf);
+@@ -3222,8 +3220,8 @@ class PipelineInjector : private StmtExprMutator {
+ 
+     Array<Buffer> local_allocs = block_local_allocs;
+     // Add nested block allocs to local_allocs
+-    for (size_t i = 0; i < pipeline_body_seq->seq.size(); i++) {
+-      const Stmt &child = pipeline_body_seq->seq[i];
++    for (size_t i = 0; i < pipeline_body_stmts.size(); i++) {
++      const Stmt &child = pipeline_body_stmts[i];
+       const auto *nested_block_realize = child.as<BlockRealizeNode>();
+       if (nested_block_realize && is_one(nested_block_realize->predicate) &&
+           nested_block_realize->block->body->IsInstance<SeqStmtNode>()) {
+@@ -3235,9 +3233,8 @@ class PipelineInjector : private StmtExprMutator {
+     }
+ 
+     PipelineRewriter rewriter(buffer_data_to_buffer_, pipeline_allocs,
+-                              local_allocs, tvm::ffi::GetRef<For>(op),
+-                              pipeline_info, target_, loop_var_let_wrappers,
+-                              loop_var_if_wrappers);
++                              local_allocs, for_node, pipeline_info, target_,
++                              loop_var_let_wrappers, loop_var_if_wrappers);
+     Stmt pipeline = rewriter.BuildPipeline();
+     subtree_modified_ = true;
+ 
+@@ -3352,7 +3349,7 @@ class PipelineInjector : private StmtExprMutator {
+ 
+     pipeline = AsyncCommitWaitAttrLowerer::Lower(pipeline);
+ 
+-    if (const auto *realize = op->body.as<BlockRealizeNode>()) {
++    if (const auto *realize = for_node->body.as<BlockRealizeNode>()) {
+       const auto &block = realize->block;
+       for (const auto &buffer : block->alloc_buffers) {
+         buffer_data_to_buffer_.erase(buffer->data);
+@@ -3457,17 +3454,17 @@ class PipelineInjector : private StmtExprMutator {
+       //    in this block or any nested block. This prevents
+       //    downstream LCA analysis from seeing those vars at the
+       //    outer scope and promoting them to kernel parameters.
+-      std::unordered_set<const BufferNode *> local_bufs;
+-      std::unordered_set<const VarNode *> local_data_vars;
++      BufferSet local_bufs;
++      VarSet local_data_vars;
+       for (const auto &buf : block->alloc_buffers) {
+-        local_bufs.insert(buf.get());
+-        local_data_vars.insert(buf->data.get());
++        local_bufs.insert(buf);
++        local_data_vars.insert(buf->data);
+       }
+       // Also collect data vars from all nested blocks.
+       PostOrderVisit(block->body, [&](const ObjectRef &obj) {
+         if (auto *inner = obj.as<BlockNode>()) {
+           for (const auto &buf : inner->alloc_buffers) {
+-            local_data_vars.insert(buf->data.get());
++            local_data_vars.insert(buf->data);
+           }
+         }
+       });
+@@ -3478,12 +3475,12 @@ class PipelineInjector : private StmtExprMutator {
+             if (found)
+               return;
+             if (auto *load = obj.as<BufferLoadNode>()) {
+-              if (local_data_vars.count(load->buffer->data.get())) {
++              if (local_data_vars.count(load->buffer->data)) {
+                 found = true;
+               }
+             }
+             if (auto *var = obj.as<VarNode>()) {
+-              if (local_data_vars.count(var)) {
++              if (local_data_vars.count(GetRef<Var>(var))) {
+                 found = true;
+               }
+             }
+@@ -3494,12 +3491,12 @@ class PipelineInjector : private StmtExprMutator {
+             if (found)
+               return;
+             if (auto *load = obj.as<BufferLoadNode>()) {
+-              if (local_data_vars.count(load->buffer->data.get())) {
++              if (local_data_vars.count(load->buffer->data)) {
+                 found = true;
+               }
+             }
+             if (auto *var = obj.as<VarNode>()) {
+-              if (local_data_vars.count(var)) {
++              if (local_data_vars.count(GetRef<Var>(var))) {
+                 found = true;
+               }
+             }
+@@ -3514,7 +3511,7 @@ class PipelineInjector : private StmtExprMutator {
+       auto sanitize = [&](const Array<BufferRegion> &regions) {
+         Array<BufferRegion> out;
+         for (const auto &br : regions) {
+-          if (local_bufs.count(br->buffer.get())) {
++          if (local_bufs.count(br->buffer)) {
+             continue; // drop block-local buffer
+           }
+           if (region_uses_local_var(br)) {
+diff --git a/src/transform/pipeline_planning.cc b/src/transform/pipeline_planning.cc
+index 3bb38f043d..af3aaffabb 100644
+--- a/src/transform/pipeline_planning.cc
++++ b/src/transform/pipeline_planning.cc
+@@ -29,6 +29,10 @@ namespace tl {
+ 
+ using namespace tir;
+ 
++using BufferSet = std::unordered_set<Buffer, ObjectPtrHash, ObjectPtrEqual>;
++using BufferRegionMap = std::unordered_map<Buffer, Array<BufferRegion>,
++                                           ObjectPtrHash, ObjectPtrEqual>;
++
+ /*!
+  * \brief Check whether two regions have intersections.
+  * \param region1 The first region.
+@@ -86,11 +90,9 @@ class AsyncDependencyChainBuilder : public StmtExprVisitor {
+   AsyncDependencyChainBuilder(Map<Var, Buffer> buffer_data_to_buffer)
+       : buffer_data_to_buffer_(buffer_data_to_buffer) {}
+ 
+-  std::unordered_map<const BufferNode *, Array<BufferRegion>>
+-      mbar_to_buffer_reads_;
++  BufferRegionMap mbar_to_buffer_reads_;
+ 
+-  std::unordered_map<const BufferNode *, Array<BufferRegion>>
+-      mbar_to_buffer_writes_;
++  BufferRegionMap mbar_to_buffer_writes_;
+ 
+ private:
+   Map<Var, Buffer> buffer_data_to_buffer_;
+@@ -151,15 +153,15 @@ class AsyncDependencyChainBuilder : public StmtExprVisitor {
+         Buffer c_buf = tmem_collector.result;
+ 
+         PrimExpr clear_accum = args[5];
+-        mbar_to_buffer_reads_[mbar_buf.get()].push_back(
++        mbar_to_buffer_reads_[mbar_buf].push_back(
+             BufferRegion::FullRegion(a_buf));
+-        mbar_to_buffer_reads_[mbar_buf.get()].push_back(
++        mbar_to_buffer_reads_[mbar_buf].push_back(
+             BufferRegion::FullRegion(b_buf));
+-        mbar_to_buffer_writes_[mbar_buf.get()].push_back(
++        mbar_to_buffer_writes_[mbar_buf].push_back(
+             BufferRegion::FullRegion(c_buf));
+         auto analyzer = std::make_shared<arith::Analyzer>();
+         if (!analyzer->CanProveEqual(clear_accum, Bool(true))) {
+-          mbar_to_buffer_reads_[mbar_buf.get()].push_back(
++          mbar_to_buffer_reads_[mbar_buf].push_back(
+               BufferRegion::FullRegion(c_buf));
+         }
+       }
+@@ -194,12 +196,11 @@ class AsyncDependencyChainBuilder : public StmtExprVisitor {
+       // Link accumulated shared memory reads to mbar.
+       if (!args.empty()) {
+         if (auto mbar_buf = TryGetBufFromAccessPtr(args[0])) {
+-          const BufferNode *mbar_key = mbar_buf.value().get();
+           for (const auto &region : pending_tcgen05_smem_reads_) {
+-            mbar_to_buffer_reads_[mbar_key].push_back(region);
++            mbar_to_buffer_reads_[mbar_buf.value()].push_back(region);
+           }
+           if (pending_tcgen05_c_buf_.defined()) {
+-            mbar_to_buffer_writes_[mbar_key].push_back(
++            mbar_to_buffer_writes_[mbar_buf.value()].push_back(
+                 BufferRegion::FullRegion(pending_tcgen05_c_buf_.value()));
+           }
+         } else if (!pending_tcgen05_smem_reads_.empty() ||
+@@ -443,19 +444,16 @@ class BufferRegionCollector : public StmtExprVisitor {
+       // barriers.
+       if (auto *buf_load = args[0].as<BufferLoadNode>()) {
+         Buffer mbar_buf = buf_load->buffer;
+-        auto buffer_reads =
+-            chain_builder_.mbar_to_buffer_reads_.find(mbar_buf.get());
++        auto buffer_reads = chain_builder_.mbar_to_buffer_reads_.find(mbar_buf);
+         auto buffer_writes =
+-            chain_builder_.mbar_to_buffer_writes_.find(mbar_buf.get());
++            chain_builder_.mbar_to_buffer_writes_.find(mbar_buf);
+         if (buffer_reads != chain_builder_.mbar_to_buffer_reads_.end()) {
+           reads_.insert(reads_.end(), buffer_reads->second.begin(),
+                         buffer_reads->second.end());
+         }
+         if (buffer_writes != chain_builder_.mbar_to_buffer_writes_.end()) {
+-          writes_.insert(
+-              writes_.end(),
+-              chain_builder_.mbar_to_buffer_writes_.at(mbar_buf.get()).begin(),
+-              chain_builder_.mbar_to_buffer_writes_.at(mbar_buf.get()).end());
++          writes_.insert(writes_.end(), buffer_writes->second.begin(),
++                         buffer_writes->second.end());
+         }
+       }
+     } else {
+@@ -1023,7 +1021,7 @@ class PipelinePlanner : public StmtExprMutator {
+                         Array<Integer>{0});
+       }
+       Stmt pipeline_body_root{nullptr};
+-      const SeqStmtNode *pipeline_body_seq = nullptr;
++      Optional<SeqStmt> pipeline_body_seq;
+       if (const auto *realize = loop->body.as<BlockRealizeNode>()) {
+         const auto &block = realize->block;
+         for (const auto &buffer : block->alloc_buffers) {
+@@ -1038,7 +1036,7 @@ class PipelinePlanner : public StmtExprMutator {
+         Stmt current = pipeline_body_root;
+         while (true) {
+           if (const auto *seq_stmt = current.as<SeqStmtNode>()) {
+-            pipeline_body_seq = seq_stmt;
++            pipeline_body_seq = tvm::ffi::GetRef<SeqStmt>(seq_stmt);
+             break;
+           }
+           if (const auto *if_then_else = current.as<IfThenElseNode>()) {
+@@ -1058,10 +1056,10 @@ class PipelinePlanner : public StmtExprMutator {
+                      << current->GetTypeKey();
+         }
+       }
+-      ICHECK(pipeline_body_seq != nullptr);
+-      MaybeAnnotateLegacyAsyncPipelineLoop(pipeline_body_root,
+-                                           pipeline_body_seq->seq, order_array,
+-                                           stage_array, &annotations);
++      ICHECK(pipeline_body_seq.defined());
++      MaybeAnnotateLegacyAsyncPipelineLoop(
++          pipeline_body_root, pipeline_body_seq.value()->seq, order_array,
++          stage_array, &annotations);
+       auto for_node = tvm::ffi::GetRef<For>(loop);
+       for_node.CopyOnWrite()->annotations = annotations;
+       return for_node;
+@@ -1104,12 +1102,12 @@ class PipelinePlanner : public StmtExprMutator {
+     } else {
+       pipeline_body_root = loop->body;
+     }
+-    const SeqStmtNode *pipeline_body_seq = nullptr;
++    Optional<SeqStmt> pipeline_body_seq;
+     {
+       Stmt current = pipeline_body_root;
+       while (true) {
+         if (const auto *seq_stmt = current.as<SeqStmtNode>()) {
+-          pipeline_body_seq = seq_stmt;
++          pipeline_body_seq = tvm::ffi::GetRef<SeqStmt>(seq_stmt);
+           break;
+         }
+         if (const auto *if_then_else = current.as<IfThenElseNode>()) {
+@@ -1129,7 +1127,7 @@ class PipelinePlanner : public StmtExprMutator {
+                    << current->GetTypeKey();
+       }
+     }
+-    ICHECK(pipeline_body_seq != nullptr);
++    ICHECK(pipeline_body_seq.defined());
+ 
+     CHECK(num_stages >= 1);
+     CHECK(loop->kind == ForKind::kSerial);
+@@ -1148,8 +1146,8 @@ class PipelinePlanner : public StmtExprMutator {
+         flat_stmts.push_back(s);
+       }
+     };
+-    for (size_t i = 0; i < pipeline_body_seq->size(); i++) {
+-      flatten_seq(pipeline_body_seq->seq[i]);
++    for (size_t i = 0; i < pipeline_body_seq.value()->size(); i++) {
++      flatten_seq(pipeline_body_seq.value()->seq[i]);
+     }
+ 
+     AsyncDependencyChainBuilder chain_builder(buffer_data_to_buffer_);
+@@ -1170,7 +1168,7 @@ class PipelinePlanner : public StmtExprMutator {
+       int anchor_cp_async_stmt = -1;
+       std::vector<int> cp_async_stmt_indices;
+       std::vector<int> commit_stmt_indices;
+-      std::unordered_set<const BufferNode *> written_buffers;
++      BufferSet written_buffers;
+       int last_use_stmt_index = -1;
+     };
+     struct WaitDependencyInfo {
+@@ -1205,7 +1203,7 @@ class PipelinePlanner : public StmtExprMutator {
+           group.anchor_cp_async_stmt = static_cast<int>(i);
+         }
+         for (const auto &write : pinfo.writes) {
+-          group.written_buffers.insert(write->buffer.get());
++          group.written_buffers.insert(write->buffer);
+         }
+       }
+       if (pinfo.has_cp_async_commit()) {
+@@ -1241,14 +1239,13 @@ class PipelinePlanner : public StmtExprMutator {
+ 
+     const int pipeline_stmt_count =
+         static_cast<int>(pipeline_stage_infos.size());
+-    auto stmt_reads_buffer_set =
+-        [&](int stmt_idx,
+-            const std::unordered_set<const BufferNode *> &buffers) -> bool {
++    auto stmt_reads_buffer_set = [&](int stmt_idx,
++                                     const BufferSet &buffers) -> bool {
+       if (buffers.empty() || stmt_idx < 0 || stmt_idx >= pipeline_stmt_count) {
+         return false;
+       }
+       for (const BufferRegion &read : pipeline_stage_infos[stmt_idx].reads) {
+-        if (buffers.count(read->buffer.get())) {
++        if (buffers.count(read->buffer)) {
+           return true;
+         }
+       }
+@@ -1257,7 +1254,7 @@ class PipelinePlanner : public StmtExprMutator {
+ 
+     // Record earliest consumers for each cp.async group, and track all
+     // cp.async-written buffers for wait remapping.
+-    std::unordered_set<const BufferNode *> async_written_buffers;
++    BufferSet async_written_buffers;
+     std::vector<int> cp_async_group_first_consumer(
+         cp_async_groups.size(), std::numeric_limits<int>::max());
+     for (size_t group_id = 0; group_id < cp_async_groups.size(); ++group_id) {
+@@ -1650,7 +1647,7 @@ class PipelinePlanner : public StmtExprMutator {
+       }
+ 
+       int required_stage = pipeline_stage_infos[wait_dep.wait_stmt_index].stage;
+-      std::unordered_set<const BufferNode *> waited_buffers;
++      BufferSet waited_buffers;
+       for (int group_id : wait_dep.required_group_ids) {
+         required_stage = std::max(required_stage, get_group_stage(group_id));
+         if (group_id >= 0 &&
+@@ -1672,7 +1669,7 @@ class PipelinePlanner : public StmtExprMutator {
+           bool dependent_read = false;
+           for (const BufferRegion &read :
+                pipeline_stage_infos[stmt_idx].reads) {
+-            if (waited_buffers.count(read->buffer.get())) {
++            if (waited_buffers.count(read->buffer)) {
+               dependent_read = true;
+               break;
+             }
+@@ -1816,7 +1813,7 @@ class PipelinePlanner : public StmtExprMutator {
+           continue;
+         }
+ 
+-        std::unordered_set<const BufferNode *> waited_buffers;
++        BufferSet waited_buffers;
+         for (int group_id : wait_dep.required_group_ids) {
+           if (group_id < 0 ||
+               group_id >= static_cast<int>(cp_async_groups.size())) {
+@@ -1852,7 +1849,7 @@ class PipelinePlanner : public StmtExprMutator {
+           bool dependent_read = false;
+           for (const BufferRegion &read :
+                pipeline_stage_infos[consumer_stmt_idx].reads) {
+-            if (waited_buffers.count(read->buffer.get())) {
++            if (waited_buffers.count(read->buffer)) {
+               dependent_read = true;
+               break;
+             }
+@@ -1888,14 +1885,14 @@ class PipelinePlanner : public StmtExprMutator {
+             }
+             bool touches_waited_buffers = false;
+             for (const BufferRegion &read : mid_stmt_info.reads) {
+-              if (waited_buffers.count(read->buffer.get())) {
++              if (waited_buffers.count(read->buffer)) {
+                 touches_waited_buffers = true;
+                 break;
+               }
+             }
+             if (!touches_waited_buffers) {
+               for (const BufferRegion &write : mid_stmt_info.writes) {
+-                if (waited_buffers.count(write->buffer.get())) {
++                if (waited_buffers.count(write->buffer)) {
+                   touches_waited_buffers = true;
+                   break;
+                 }
+@@ -2062,8 +2059,8 @@ class PipelinePlanner : public StmtExprMutator {
+       const auto &block = realize->block;
+       // Rebuild: body_root → ... → new_body_seq
+       // We need to reconstruct the chain from block->body to the SeqStmt.
+-      Stmt rebuilt_inner =
+-          RebuildBodyWrapper(block->body, pipeline_body_seq, new_body_seq);
++      Stmt rebuilt_inner = RebuildBodyWrapper(
++          block->body, pipeline_body_seq.value(), new_body_seq);
+       Block new_block(block->iter_vars, block->reads, block->writes,
+                       block->name_hint, rebuilt_inner, block->init,
+                       block->alloc_buffers, block->match_buffers,
+@@ -2071,8 +2068,8 @@ class PipelinePlanner : public StmtExprMutator {
+       new_loop_body =
+           BlockRealize(realize->iter_values, realize->predicate, new_block);
+     } else {
+-      new_loop_body =
+-          RebuildBodyWrapper(loop->body, pipeline_body_seq, new_body_seq);
++      new_loop_body = RebuildBodyWrapper(loop->body, pipeline_body_seq.value(),
++                                         new_body_seq);
+     }
+ 
+     return For(loop->loop_var, loop->min, loop->extent, loop->kind,
+@@ -2095,9 +2092,9 @@ class PipelinePlanner : public StmtExprMutator {
+    *        between the loop body root and the inner SeqStmt, replacing
+    *        the old SeqStmt with the new (flattened) one.
+    */
+-  Stmt RebuildBodyWrapper(const Stmt &current, const SeqStmtNode *old_seq,
++  Stmt RebuildBodyWrapper(const Stmt &current, const SeqStmt &old_seq,
+                           const Stmt &new_seq) {
+-    if (current.get() == old_seq) {
++    if (current.same_as(old_seq)) {
+       return new_seq;
+     }
+     if (const auto *if_node = current.as<IfThenElseNode>()) {
+diff --git a/src/transform/producer_consumer_ws.cc b/src/transform/producer_consumer_ws.cc
+index c1598e909f..6bdb487035 100644
+--- a/src/transform/producer_consumer_ws.cc
++++ b/src/transform/producer_consumer_ws.cc
+@@ -161,8 +161,14 @@ using BufferDataToBufferMap =
+     std::unordered_map<Var, Buffer, ObjectPtrHash, ObjectPtrEqual>;
+ using BufferSet = std::unordered_set<Buffer, ObjectPtrHash, ObjectPtrEqual>;
+ using VarSet = std::unordered_set<Var, ObjectPtrHash, ObjectPtrEqual>;
+-using BufferNodeMap = std::unordered_map<const BufferNode *, Buffer>;
+-using VarExprMap = std::unordered_map<const VarNode *, PrimExpr>;
++using BufferMap =
++    std::unordered_map<Buffer, Buffer, ObjectPtrHash, ObjectPtrEqual>;
++using VarExprMap =
++    std::unordered_map<Var, PrimExpr, ObjectPtrHash, ObjectPtrEqual>;
++using StmtRewriteMap =
++    std::unordered_map<Stmt, Stmt, ObjectPtrHash, ObjectPtrEqual>;
++using BufferLayoutMap = std::unordered_map<Var, std::pair<Buffer, Layout>,
++                                           ObjectPtrHash, ObjectPtrEqual>;
+ 
+ struct LocalAccessSummary {
+   BufferSet read_buffers;
+@@ -224,7 +230,7 @@ static Buffer CloneBranchPrivateBuffer(const Buffer &buffer,
+ 
+ class BufferRemapper : public StmtExprMutator {
+ public:
+-  static Stmt Rewrite(const Stmt &stmt, const BufferNodeMap &buffer_remap) {
++  static Stmt Rewrite(const Stmt &stmt, const BufferMap &buffer_remap) {
+     if (buffer_remap.empty()) {
+       return stmt;
+     }
+@@ -233,15 +239,15 @@ class BufferRemapper : public StmtExprMutator {
+   }
+ 
+ private:
+-  explicit BufferRemapper(const BufferNodeMap &buffer_remap)
++  explicit BufferRemapper(const BufferMap &buffer_remap)
+       : buffer_remap_(buffer_remap) {
+     for (const auto &[old_buf, new_buf] : buffer_remap_) {
+-      var_remap_.emplace(old_buf->data.get(), new_buf->data);
++      var_remap_.emplace(old_buf->data, new_buf->data);
+     }
+   }
+ 
+   Buffer RemapBuffer(const Buffer &buffer) const {
+-    auto it = buffer_remap_.find(buffer.get());
++    auto it = buffer_remap_.find(buffer);
+     if (it != buffer_remap_.end()) {
+       return it->second;
+     }
+@@ -249,7 +255,7 @@ class BufferRemapper : public StmtExprMutator {
+   }
+ 
+   PrimExpr VisitExpr_(const VarNode *op) final {
+-    auto it = var_remap_.find(op);
++    auto it = var_remap_.find(ffi::GetRef<Var>(op));
+     if (it != var_remap_.end()) {
+       return it->second;
+     }
+@@ -275,7 +281,7 @@ class BufferRemapper : public StmtExprMutator {
+     return store;
+   }
+ 
+-  const BufferNodeMap &buffer_remap_;
++  const BufferMap &buffer_remap_;
+   VarExprMap var_remap_;
+ };
+ 
+@@ -881,7 +887,6 @@ struct BufferDataAccessInfo {
+ 
+ struct PreludeTmaLoadPlan {
+   Stmt stmt;
+-  const StmtNode *stmt_node{nullptr};
+   int wait_pos{-1};
+ };
+ 
+@@ -966,9 +971,9 @@ AnalyzeBufferDataAccess(const Stmt &stmt, const Var &buffer_data,
+ }
+ 
+ static bool CollectPreludeStmtsToPipelineLoop(const Stmt &stmt,
+-                                              const ForNode *pipeline_loop,
++                                              const For &pipeline_loop,
+                                               Array<Stmt> *prelude_stmts) {
+-  if (stmt.get() == pipeline_loop) {
++  if (stmt.same_as(pipeline_loop)) {
+     return true;
+   }
+   if (const auto *seq = stmt.as<SeqStmtNode>()) {
+@@ -1002,6 +1007,24 @@ static bool CollectPreludeStmtsToPipelineLoop(const Stmt &stmt,
+     return CollectPreludeStmtsToPipelineLoop(attr->body, pipeline_loop,
+                                              prelude_stmts);
+   }
++  if (const auto *if_stmt = stmt.as<IfThenElseNode>()) {
++    Array<Stmt> nested_prelude;
++    if (CollectPreludeStmtsToPipelineLoop(if_stmt->then_case, pipeline_loop,
++                                          &nested_prelude)) {
++      prelude_stmts->insert(prelude_stmts->end(), nested_prelude.begin(),
++                            nested_prelude.end());
++      return true;
++    }
++    if (if_stmt->else_case.defined()) {
++      nested_prelude.clear();
++      if (CollectPreludeStmtsToPipelineLoop(if_stmt->else_case.value(),
++                                            pipeline_loop, &nested_prelude)) {
++        prelude_stmts->insert(prelude_stmts->end(), nested_prelude.begin(),
++                              nested_prelude.end());
++        return true;
++      }
++    }
++  }
+   return false;
+ }
+ 
+@@ -1187,9 +1210,10 @@ class ProducerConsumerWSRewriter : public StmtExprMutator {
+     const Block &orig_block = op->block;
+ 
+     // Find the pipelined loop.
+-    const ForNode *pipeline_loop = FindPipelineLoop(orig_block->body);
+-    if (!pipeline_loop)
++    Optional<For> pipeline_loop_opt = FindPipelineLoop(orig_block->body);
++    if (!pipeline_loop_opt.defined())
+       return StmtExprMutator::VisitStmt_(op);
++    For pipeline_loop = pipeline_loop_opt.value();
+ 
+     auto num_stages_anno = pipeline_loop->annotations.Get("num_stages");
+     if (!num_stages_anno)
+@@ -1257,7 +1281,7 @@ class ProducerConsumerWSRewriter : public StmtExprMutator {
+ 
+   Stmt
+   BuildWSBlock(const BlockRealizeNode *orig_realize, const Block &orig_block,
+-               const ForNode *pipeline_loop, int num_stages,
++               const For &pipeline_loop, int num_stages,
+                const Array<Stmt> &flat_stmts,
+                const std::vector<TileStmtKind> &kinds,
+                const std::vector<std::pair<Var, PrimExpr>> &outer_let_bindings,
+@@ -1348,7 +1372,7 @@ class ProducerConsumerWSRewriter : public StmtExprMutator {
+       if (first_read < 0) {
+         continue;
+       }
+-      prelude_tma_plans.push_back({stmt, stmt.get(), first_read});
++      prelude_tma_plans.push_back({stmt, first_read});
+     }
+ 
+     int total_barriers = num_fwd + num_bp + prelude_tma_plans.size();
+@@ -1518,10 +1542,10 @@ class ProducerConsumerWSRewriter : public StmtExprMutator {
+     int prelude_barrier_base = num_fwd + num_bp;
+     for (size_t i = 0; i < prelude_tma_plans.size(); ++i) {
+       PrimExpr barrier_id = IntImm(DataType::Int(32), prelude_barrier_base + i);
+-      common_prelude_rewrites_.emplace(
+-          prelude_tma_plans[i].stmt_node,
+-          RewritePreludeTmaProducerStmt(prelude_tma_plans[i].stmt, barrier_buf,
+-                                        barrier_id));
++      Stmt rewritten_prelude = RewritePreludeTmaProducerStmt(
++          prelude_tma_plans[i].stmt, barrier_buf, barrier_id);
++      common_prelude_rewrites_.emplace(prelude_tma_plans[i].stmt,
++                                       rewritten_prelude);
+       int wait_pos = prelude_tma_plans[i].wait_pos;
+       ICHECK_GE(wait_pos, 0);
+       ICHECK_LT(wait_pos, static_cast<int>(consumer_compute_stmts.size()));
+@@ -1818,12 +1842,12 @@ class ProducerConsumerWSRewriter : public StmtExprMutator {
+     // LayoutInference: a single fragment layout cannot represent both thread
+     // ranges. Clone every branch-private buffer touched by the producer so
+     // LayoutInference can infer an independent producer-side thread range.
+-    BufferNodeMap producer_buffer_remap;
++    BufferMap producer_buffer_remap;
+     Array<Buffer> producer_private_buffers;
+     {
+-      std::unordered_set<const BufferNode *> block_alloc_buffers;
++      BufferSet block_alloc_buffers;
+       for (const auto &buffer : orig_block->alloc_buffers) {
+-        block_alloc_buffers.insert(buffer.get());
++        block_alloc_buffers.insert(buffer);
+       }
+       LocalAccessSummary producer_access = LocalAccessCollector::Collect(
+           rewritten_producer, buffer_data_to_buffer_);
+@@ -1835,12 +1859,12 @@ class ProducerConsumerWSRewriter : public StmtExprMutator {
+       auto maybe_clone = [&](const Buffer &buffer) {
+         if (!buffer.defined() ||
+             !(IsFragmentBuffer(buffer) || IsLocalBuffer(buffer)) ||
+-            !block_alloc_buffers.count(buffer.get()) ||
+-            producer_buffer_remap.count(buffer.get())) {
++            !block_alloc_buffers.count(buffer) ||
++            producer_buffer_remap.count(buffer)) {
+           return;
+         }
+         Buffer cloned = CloneBranchPrivateBuffer(buffer, "_producer_ws");
+-        producer_buffer_remap.emplace(buffer.get(), cloned);
++        producer_buffer_remap.emplace(buffer, cloned);
+         producer_private_buffers.push_back(cloned);
+       };
+       for (const auto &buffer : producer_access.read_buffers) {
+@@ -1897,9 +1921,8 @@ class ProducerConsumerWSRewriter : public StmtExprMutator {
+       // extracted_consumer_init_ is already empty (stmts were removed
+       // from the prelude in the first pass result).
+       // We need to replace in the ALREADY-modified body from pass 1.
+-      // But ReplacePipelineLoopInStmt finds the pipeline_loop by
+-      // pointer comparison, which won't match in the modified tree.
+-      // Instead, just substitute the dummy_ws in the replaced result.
++      // The pipeline loop has already been replaced by dummy_ws in that
++      // tree, so do a direct substitution of the placeholder WS body.
+       // Since dummy_ws appears exactly once in replaced.stmt, do a
+       // simple statement replacement on the full placeholder stmt.
+       class SubstWsBody : public StmtExprMutator {
+@@ -1958,34 +1981,31 @@ class ProducerConsumerWSRewriter : public StmtExprMutator {
+     return new_realize;
+   }
+ 
+-  // --- Find the first For loop with num_stages annotation ---
+-  const ForNode *FindPipelineLoop(const Stmt &stmt) {
+-    if (auto *for_node = stmt.as<ForNode>()) {
+-      if (for_node->annotations.Get("num_stages")) {
+-        return for_node;
+-      }
++  class PipelineLoopFinder : public StmtExprVisitor {
++  public:
++    static Optional<For> Find(const Stmt &stmt) {
++      PipelineLoopFinder finder;
++      finder(stmt);
++      return finder.pipeline_loop_;
+     }
+-    // Walk through SeqStmt, LetStmt, etc.
+-    if (auto *seq = stmt.as<SeqStmtNode>()) {
+-      for (const Stmt &s : seq->seq) {
+-        if (auto *result = FindPipelineLoop(s)) {
+-          return result;
+-        }
++
++  private:
++    void VisitStmt_(const ForNode *op) final {
++      if (pipeline_loop_.defined()) {
++        return;
+       }
++      if (op->annotations.Get("num_stages")) {
++        pipeline_loop_ = ffi::GetRef<For>(op);
++        return;
++      }
++      StmtExprVisitor::VisitStmt_(op);
+     }
+-    if (auto *let = stmt.as<LetStmtNode>()) {
+-      return FindPipelineLoop(let->body);
+-    }
+-    if (auto *realize = stmt.as<BlockRealizeNode>()) {
+-      return FindPipelineLoop(realize->block->body);
+-    }
+-    if (auto *block = stmt.as<BlockNode>()) {
+-      return FindPipelineLoop(block->body);
+-    }
+-    if (auto *attr = stmt.as<AttrStmtNode>()) {
+-      return FindPipelineLoop(attr->body);
+-    }
+-    return nullptr;
++
++    Optional<For> pipeline_loop_;
++  };
++
++  Optional<For> FindPipelineLoop(const Stmt &stmt) {
++    return PipelineLoopFinder::Find(stmt);
+   }
+ 
+   struct ReplaceResult {
+@@ -2021,7 +2041,7 @@ class ProducerConsumerWSRewriter : public StmtExprMutator {
+         return false;
+       }
+       const auto *lhs = ge->a.as<VarNode>();
+-      if (!lhs || lhs != thread_var_.get()) {
++      if (!lhs || !ffi::GetRef<Var>(lhs).same_as(thread_var_)) {
+         return false;
+       }
+       if (!SameExpr(ge->b, consumer_extent_)) {
+@@ -2058,7 +2078,7 @@ class ProducerConsumerWSRewriter : public StmtExprMutator {
+         return false;
+       }
+       const auto *lhs = lt->a.as<VarNode>();
+-      if (!lhs || lhs != thread_var_.get()) {
++      if (!lhs || !ffi::GetRef<Var>(lhs).same_as(thread_var_)) {
+         return false;
+       }
+       if (!SameExpr(lt->b, consumer_extent_)) {
+@@ -2147,10 +2167,10 @@ class ProducerConsumerWSRewriter : public StmtExprMutator {
+   }
+ 
+   ReplaceResult ReplacePipelineLoopInStmt(const Stmt &stmt,
+-                                          const ForNode *pipeline_loop,
++                                          const For &pipeline_loop,
+                                           const Stmt &ws_body,
+                                           PrimExpr consumer_extent) {
+-    if (stmt.get() == pipeline_loop) {
++    if (stmt.same_as(pipeline_loop)) {
+       return {ws_body, true};
+     }
+     if (auto *seq = stmt.as<SeqStmtNode>()) {
+@@ -2211,7 +2231,7 @@ class ProducerConsumerWSRewriter : public StmtExprMutator {
+           extracted_consumer_init_.push_back(seq->seq[i]);
+           break;
+         case PreludeStmtPlacement::kKeepSharedPrelude:
+-          if (auto it = common_prelude_rewrites_.find(seq->seq[i].get());
++          if (auto it = common_prelude_rewrites_.find(seq->seq[i]);
+               it != common_prelude_rewrites_.end()) {
+             new_seq.push_back(it->second);
+           } else {
+@@ -2282,6 +2302,27 @@ class ProducerConsumerWSRewriter : public StmtExprMutator {
+       new_attr.CopyOnWrite()->body = result.stmt;
+       return {new_attr, true};
+     }
++    if (auto *if_stmt = stmt.as<IfThenElseNode>()) {
++      ReplaceResult then_result = ReplacePipelineLoopInStmt(
++          if_stmt->then_case, pipeline_loop, ws_body, consumer_extent);
++      Optional<Stmt> new_else = if_stmt->else_case;
++      bool found = then_result.found;
++      if (!found && if_stmt->else_case.defined()) {
++        ReplaceResult else_result =
++            ReplacePipelineLoopInStmt(if_stmt->else_case.value(), pipeline_loop,
++                                      ws_body, consumer_extent);
++        if (else_result.found) {
++          new_else = else_result.stmt;
++          found = true;
++        }
++      }
++      if (!found) {
++        return {stmt, false};
++      }
++      Stmt new_then = then_result.found ? then_result.stmt : if_stmt->then_case;
++      return {IfThenElse(if_stmt->condition, new_then, new_else, if_stmt->span),
++              true};
++    }
+     return {stmt, false};
+   }
+ 
+@@ -2302,7 +2343,7 @@ class ProducerConsumerWSRewriter : public StmtExprMutator {
+           thread_extent_(std::move(thread_extent)) {}
+ 
+     PrimExpr VisitExpr_(const VarNode *var) final {
+-      if (var == thread_var_.get()) {
++      if (ffi::GetRef<Var>(var).same_as(thread_var_)) {
+         return replaced_;
+       }
+       return StmtExprMutator::VisitExpr_(var);
+@@ -2319,7 +2360,7 @@ class ProducerConsumerWSRewriter : public StmtExprMutator {
+   Optional<PrimExpr> num_threads_; // total (consumer + producer)
+   bool ws_transformed_{false};
+   BufferDataToBufferMap buffer_data_to_buffer_;
+-  std::unordered_map<const StmtNode *, Stmt> common_prelude_rewrites_;
++  StmtRewriteMap common_prelude_rewrites_;
+   LocalLiveSet shared_prelude_live_seed_;
+   LocalLiveSet producer_prelude_live_seed_;
+   LocalLiveSet consumer_prelude_live_seed_;
+@@ -2425,11 +2466,11 @@ class TiledWSCandidate : public StmtExprVisitor {
+           if (auto l = val.as<Layout>(); l.has_value())
+             layout = l.value();
+           if (auto buf = key.as<Buffer>(); buf.has_value()) {
+-            layout_map_[buf.value()->data.get()] = {buf.value(), layout};
++            layout_map_[buf.value()->data] = {buf.value(), layout};
+           } else if (auto var = key.as<Var>(); var.has_value()) {
+             for (const auto &buf : op->alloc_buffers) {
+               if (buf->data.same_as(var.value())) {
+-                layout_map_[buf->data.get()] = {buf, layout};
++                layout_map_[buf->data] = {buf, layout};
+                 break;
+               }
+             }
+@@ -2443,7 +2484,7 @@ class TiledWSCandidate : public StmtExprVisitor {
+   /// A copy destination is TMA-compatible if it has no layout annotation,
+   /// or its annotated layout is a recognised swizzle / linear layout.
+   bool HasTmaCompatibleLayout(const Buffer &dst) const {
+-    auto it = layout_map_.find(dst->data.get());
++    auto it = layout_map_.find(dst->data);
+     if (it == layout_map_.end()) {
+       return true; // no annotation → identity layout → TMA OK
+     }
+@@ -2458,8 +2499,8 @@ class TiledWSCandidate : public StmtExprVisitor {
+   bool in_pipeline_{false};
+   bool has_pipeline_loop_{false};
+   bool has_tma_tile_op_{false};
+-  // Map from buffer data Var pointer → (Buffer, Layout) for layout_map entries.
+-  std::unordered_map<const Object *, std::pair<Buffer, Layout>> layout_map_;
++  // Map from buffer data Var to (Buffer, Layout) for layout_map entries.
++  BufferLayoutMap layout_map_;
+ };
+ 
+ } // namespace
+diff --git a/testing/python/issue/test_tilelang_issue_tma_no_ws.py b/testing/python/issue/test_tilelang_issue_tma_no_ws.py
+index 22d966c02b..316a9972d5 100644
+--- a/testing/python/issue/test_tilelang_issue_tma_no_ws.py
++++ b/testing/python/issue/test_tilelang_issue_tma_no_ws.py
+@@ -112,6 +112,53 @@ def copy_loop_num_stages_one(
+     torch.cuda.synchronize()
+ 
+ 
++@tilelang.testing.requires_cuda_compute_version(9, 0)
++def test_guarded_pure_tma_pipeline_keeps_auto_warp_specialize():
++    """A pipeline loop nested under a runtime guard should still auto-WS."""
++
++    M, K = 8, 256
++    block_m, block_k = 4, 128
++    threads = 32
++
++    @T.prim_func
++    def guarded_copy_loop(
++        x: T.Tensor((M, K), T.float16),
++        y: T.Tensor((M, K), T.float16),
++        valid_m: T.int32,
++    ):
++        with T.Kernel(T.ceildiv(M, block_m), threads=threads) as pid_m:
++            x_shared = T.alloc_shared((block_m, block_k), dtype=T.float16)
++            if pid_m * block_m < valid_m:
++                for ko in T.Pipelined(T.ceildiv(K, block_k), num_stages=1):
++                    T.copy(
++                        x[
++                            pid_m * block_m : (pid_m + 1) * block_m,
++                            ko * block_k : (ko + 1) * block_k,
++                        ],
++                        x_shared,
++                    )
++                    T.copy(
++                        x_shared,
++                        y[
++                            pid_m * block_m : (pid_m + 1) * block_m,
++                            ko * block_k : (ko + 1) * block_k,
++                        ],
++                    )
++
++    pass_configs = {tilelang.PassConfigKey.TL_ENABLE_FAST_MATH: False, tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: False}
++    kernel = _compile_tvm_ffi(guarded_copy_loop, pass_configs, out_idx=[1])
++
++    src = kernel.get_kernel_source()
++    assert "tl::tma_load" in src
++    assert "__launch_bounds__(160, 1)" in src
++    assert "if (32 <= ((int)threadIdx.x))" in src
++
++    x = torch.randn((M, K), device="cuda", dtype=torch.float16)
++    y = kernel(x, M)
++    torch.testing.assert_close(y, x)
++    torch.cuda.synchronize()
++
++
+ @tilelang.testing.requires_cuda_compute_version(9, 0)
+ def test_num_stages_zero_cp_async_only_does_not_auto_warp_specialize():
+     """num_stages=0 should keep cp.async-only loops out of auto-WS."""
+diff --git a/tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py b/tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py
+index 54e8968b84..7bdfc584bc 100644
+--- a/tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py
++++ b/tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py
+@@ -15,7 +15,7 @@
+ from tvm import tir
+ from tilelang import language as T
+ from tilelang.transform.simplify import _Simplify
+-from typing import Callable
++from collections.abc import Callable
+ 
+ GEMM_SP_INST_WGMMA_SP = "cuda.wgmma.sp"
+ 
+diff --git a/tilelang/tileop/gemm_sp/gemm_sp_wgmma.py b/tilelang/tileop/gemm_sp/gemm_sp_wgmma.py
+index 676164c900..58c1570508 100644
+--- a/tilelang/tileop/gemm_sp/gemm_sp_wgmma.py
++++ b/tilelang/tileop/gemm_sp/gemm_sp_wgmma.py
+@@ -16,7 +16,7 @@
+ from tvm import tir
+ from tilelang import language as T
+ from tilelang.transform.simplify import _Simplify
+-from typing import Callable
++from collections.abc import Callable
+ 
+ 
+ class GemmSPWGMMA(GemmSPBase):
+diff --git a/tilelang/utils/sparse.py b/tilelang/utils/sparse.py
+index ff745702c1..3f00593fbd 100644
+--- a/tilelang/utils/sparse.py
++++ b/tilelang/utils/sparse.py
+@@ -1,5 +1,4 @@
+ import torch
+-from typing import Optional
+ import tilelang
+ import tilelang.language as T
+ from tilelang.language.dtypes import _TORCH_DTYPE_TO_STR, dtype
+@@ -189,7 +188,7 @@ def compress_32bit_ordered_metadata(
+         return compress_32bit_ordered_metadata
+ 
+ 
+-def torch_compress(dense: torch.Tensor, meta_dtype: Optional[torch.dtype] = None) -> tuple[torch.Tensor, torch.Tensor]:  # noqa: FA100
++def torch_compress(dense: torch.Tensor, meta_dtype: torch.dtype | None = None) -> tuple[torch.Tensor, torch.Tensor]:  # noqa: FA100
+     """
+     Reference 2:4 sparse compressor in pure PyTorch with natural row-major metadata. Modified from https://github.com/pytorch/pytorch/blob/bfa6895a345f6568624a4769238af6a9225e3fb8/torch/sparse/_semi_structured_conversions.py#L47
+ 
+@@ -251,9 +250,9 @@ def torch_compress(dense: torch.Tensor, meta_dtype: Optional[torch.dtype] = None
+ 
+ def compress(
+     A: torch.Tensor,
+-    meta_dtype: Optional[torch.dtype] = None,  # noqa: FA100
+-    block_m: Optional[int] = None,  # noqa: FA100
+-    block_k: Optional[int] = None,  # noqa: FA100
++    meta_dtype: torch.dtype | None = None,  # noqa: FA100
++    block_m: int | None = None,  # noqa: FA100
++    block_k: int | None = None,  # noqa: FA100
+ ) -> tuple[torch.Tensor, torch.Tensor]:
+     assert A.is_contiguous(), "Input must be contiguous"
+     assert A.dim() == 2, "Input must be 2D"

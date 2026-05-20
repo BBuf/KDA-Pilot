@@ -1,0 +1,76 @@
+schema_version: 1
+source_key: tile-ai/tilelang#2198
+repo: tile-ai/tilelang
+repo_id: tilelang
+pr_number: 2198
+title: '[CUDA] Add native SM75 MMA GEMM support for FP16, INT8 and INT4'
+url: https://github.com/tile-ai/tilelang/pull/2198
+state: closed
+merged_at: '2026-05-20T04:40:06Z'
+base_ref_oid: bcb2da336a28cf641f88e7f1ae53a95c475b6202
+head_ref_oid: ddf5917c1367d998101b338cbfb1ae949df404da
+captured_at: '2026-05-20T15:04:09.168529+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- benchmark kernel
+- cuda kernel
+- cute
+- cutlass
+- gemm
+- matmul
+- triton kernel
+techniques: []
+hardware_features: []
+kernel_types:
+- gemm
+languages:
+- cuda-cpp
+- cute-dsl
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: src/tl_templates/cuda/instruction/mma.h
+    local_path: source-snapshot/src/tl_templates/cuda/instruction/mma.h
+    ref: ddf5917c1367d998101b338cbfb1ae949df404da
+    status: modified
+    fetched: true
+  - source_path: testing/python/cuda/test_cuda_mma_sm75_dispatch.py
+    local_path: source-snapshot/testing/python/cuda/test_cuda_mma_sm75_dispatch.py
+    ref: ddf5917c1367d998101b338cbfb1ae949df404da
+    status: added
+    fetched: true
+  - source_path: testing/python/kernel/test_tilelang_kernel_gemm_sm75.py
+    local_path: source-snapshot/testing/python/kernel/test_tilelang_kernel_gemm_sm75.py
+    ref: ddf5917c1367d998101b338cbfb1ae949df404da
+    status: added
+    fetched: true
+  - source_path: tilelang/cuda/intrinsics/macro/mma_macro_generator.py
+    local_path: source-snapshot/tilelang/cuda/intrinsics/macro/mma_macro_generator.py
+    ref: ddf5917c1367d998101b338cbfb1ae949df404da
+    status: modified
+    fetched: true
+  - source_path: tilelang/cuda/intrinsics/macro/mma_sm75_macro_generator.py
+    local_path: source-snapshot/tilelang/cuda/intrinsics/macro/mma_sm75_macro_generator.py
+    ref: ddf5917c1367d998101b338cbfb1ae949df404da
+    status: added
+    fetched: true
+  - source_path: tilelang/cuda/op/gemm/__init__.py
+    local_path: source-snapshot/tilelang/cuda/op/gemm/__init__.py
+    ref: ddf5917c1367d998101b338cbfb1ae949df404da
+    status: modified
+    fetched: true
+  - source_path: tilelang/cuda/op/gemm/gemm_mma.py
+    local_path: source-snapshot/tilelang/cuda/op/gemm/gemm_mma.py
+    ref: ddf5917c1367d998101b338cbfb1ae949df404da
+    status: modified
+    fetched: true
+  - source_path: tilelang/cuda/op/gemm/gemm_mma_sm75.py
+    local_path: source-snapshot/tilelang/cuda/op/gemm/gemm_mma_sm75.py
+    ref: ddf5917c1367d998101b338cbfb1ae949df404da
+    status: added
+    fetched: true

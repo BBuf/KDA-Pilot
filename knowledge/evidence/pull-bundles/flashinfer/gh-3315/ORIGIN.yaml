@@ -1,0 +1,101 @@
+schema_version: 1
+source_key: flashinfer-ai/flashinfer#3315
+repo: flashinfer-ai/flashinfer
+repo_id: flashinfer
+pr_number: 3315
+title: Ep api design - Build Infra dependencies
+url: https://github.com/flashinfer-ai/flashinfer/pull/3315
+state: closed
+merged_at: '2026-05-18T23:47:29Z'
+base_ref_oid: ce43023803d7ad80f14b9c5333c32acef897bd14
+head_ref_oid: ae542608c4c65437e12d1276847da26458d729fe
+captured_at: '2026-05-20T14:43:07.071734+00:00'
+architectures:
+- sm100
+- sm90
+architecture_families:
+- blackwell
+- hopper
+tags:
+- benchmark kernel
+- blackwell
+- cuda kernel
+- hopper
+- moe kernel
+techniques: []
+hardware_features:
+- blackwell
+- hopper
+kernel_types:
+- moe
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: 3rdparty_patches/nixl/0001-meson-add-blackwell-arches.patch
+    local_path: source-snapshot/3rdparty_patches/nixl/0001-meson-add-blackwell-arches.patch
+    ref: ae542608c4c65437e12d1276847da26458d729fe
+    status: added
+    fetched: true
+  - source_path: build_backend.py
+    local_path: source-snapshot/build_backend.py
+    ref: ae542608c4c65437e12d1276847da26458d729fe
+    status: modified
+    fetched: true
+  - source_path: flashinfer/moe_ep/__init__.py
+    local_path: source-snapshot/flashinfer/moe_ep/__init__.py
+    ref: ae542608c4c65437e12d1276847da26458d729fe
+    status: added
+    fetched: true
+  - source_path: flashinfer/moe_ep/nccl_ep/__init__.py
+    local_path: source-snapshot/flashinfer/moe_ep/nccl_ep/__init__.py
+    ref: ae542608c4c65437e12d1276847da26458d729fe
+    status: added
+    fetched: true
+  - source_path: flashinfer/moe_ep/nixl_ep/__init__.py
+    local_path: source-snapshot/flashinfer/moe_ep/nixl_ep/__init__.py
+    ref: ae542608c4c65437e12d1276847da26458d729fe
+    status: added
+    fetched: true
+  - source_path: .dockerignore
+    local_path: source-snapshot/.dockerignore
+    ref: ae542608c4c65437e12d1276847da26458d729fe
+    status: added
+    fetched: true
+  - source_path: .gitignore
+    local_path: source-snapshot/.gitignore
+    ref: ae542608c4c65437e12d1276847da26458d729fe
+    status: modified
+    fetched: true
+  - source_path: .gitmodules
+    local_path: source-snapshot/.gitmodules
+    ref: ae542608c4c65437e12d1276847da26458d729fe
+    status: modified
+    fetched: true
+  - source_path: 3rdparty/nccl
+    local_path: source-snapshot/3rdparty/nccl
+    ref: ae542608c4c65437e12d1276847da26458d729fe
+    status: added
+    fetched: true
+  - source_path: 3rdparty/nixl
+    local_path: source-snapshot/3rdparty/nixl
+    ref: ae542608c4c65437e12d1276847da26458d729fe
+    status: added
+    fetched: true
+  - source_path: 3rdparty_patches/nixl/0002-ep-only-build.patch
+    local_path: source-snapshot/3rdparty_patches/nixl/0002-ep-only-build.patch
+    ref: ae542608c4c65437e12d1276847da26458d729fe
+    status: added
+    fetched: true
+  - source_path: docker/Dockerfile.flashinfer-nvep
+    local_path: source-snapshot/docker/Dockerfile.flashinfer-nvep
+    ref: ae542608c4c65437e12d1276847da26458d729fe
+    status: added
+    fetched: true
+  - source_path: pyproject.toml
+    local_path: source-snapshot/pyproject.toml
+    ref: ae542608c4c65437e12d1276847da26458d729fe
+    status: modified
+    fetched: true

@@ -1,0 +1,56 @@
+schema_version: 1
+source_key: vllm-project/vllm#42810
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42810
+title: '[ROCm] [Bugfix] Fix DeepSeek V4 Functionality and Accuracy'
+url: https://github.com/vllm-project/vllm/pull/42810
+state: closed
+merged_at: '2026-05-17T16:18:50Z'
+base_ref_oid: 8a56da3845270837424ef4b7ee83ca97a7883025
+head_ref_oid: bd0004f20d377328b4dc484ea4926c29fefaf0ae
+captured_at: '2026-05-20T15:08:15.986411+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention kernel
+- cuda kernel
+- fp8
+- moe kernel
+- triton kernel
+techniques: []
+hardware_features:
+- fp8
+kernel_types:
+- attention
+- mla
+- moe
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: vllm/model_executor/layers/mhc.py
+    local_path: source-snapshot/vllm/model_executor/layers/mhc.py
+    ref: bd0004f20d377328b4dc484ea4926c29fefaf0ae
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/sparse_attn_indexer.py
+    local_path: source-snapshot/vllm/model_executor/layers/sparse_attn_indexer.py
+    ref: bd0004f20d377328b4dc484ea4926c29fefaf0ae
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/models/deepseek_v4.py
+    local_path: source-snapshot/vllm/model_executor/models/deepseek_v4.py
+    ref: bd0004f20d377328b4dc484ea4926c29fefaf0ae
+    status: modified
+    fetched: true
+  - source_path: vllm/v1/attention/ops/rocm_aiter_mla_sparse.py
+    local_path: source-snapshot/vllm/v1/attention/ops/rocm_aiter_mla_sparse.py
+    ref: bd0004f20d377328b4dc484ea4926c29fefaf0ae
+    status: modified
+    fetched: true

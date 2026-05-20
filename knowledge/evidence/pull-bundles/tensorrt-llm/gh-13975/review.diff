@@ -1,0 +1,392 @@
+diff --git a/cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.cu b/cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.cu
+new file mode 100644
+index 000000000000..c840e8b47bf8
+--- /dev/null
++++ b/cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.cu
+@@ -0,0 +1,141 @@
++#include "tensorrt_llm/kernels/deepseekV4QNormKernel.h"
++
++#include <cassert>
++#include <cuda_bf16.h>
++#include <cuda_fp16.h>
++#include <cuda_runtime.h>
++
++TRTLLM_NAMESPACE_BEGIN
++
++namespace kernels
++{
++namespace
++{
++
++constexpr int kWarpSize = 32;
++constexpr int kWarpsPerBlock = 4;
++constexpr int kThreadsPerBlock = kWarpSize * kWarpsPerBlock;
++
++template <typename T>
++struct Vec2Traits;
++
++template <>
++struct Vec2Traits<half>
++{
++    using Type = half2;
++
++    __device__ static float2 toFloat2(Type value)
++    {
++        return __half22float2(value);
++    }
++
++    __device__ static Type fromFloat2(float2 value)
++    {
++        return __floats2half2_rn(value.x, value.y);
++    }
++};
++
++template <>
++struct Vec2Traits<__nv_bfloat16>
++{
++    using Type = __nv_bfloat162;
++
++    __device__ static float2 toFloat2(Type value)
++    {
++        return __bfloat1622float2(value);
++    }
++
++    __device__ static Type fromFloat2(float2 value)
++    {
++        return __floats2bfloat162_rn(value.x, value.y);
++    }
++};
++
++__device__ __forceinline__ float warpReduceSum(float value)
++{
++    for (int mask = kWarpSize / 2; mask > 0; mask >>= 1)
++    {
++        value += __shfl_xor_sync(0xFFFFFFFF, value, mask);
++    }
++    return value;
++}
++
++template <typename T, int kHeadDim>
++__global__ void deepseekV4QNormKernel(T const* input, T* output, int totalRows, float eps)
++{
++    static_assert(kHeadDim % (2 * kWarpSize) == 0);
++    constexpr int kPairsPerRow = kHeadDim / 2;
++    constexpr int kPairsPerLane = kPairsPerRow / kWarpSize;
++
++    using Vec2 = typename Vec2Traits<T>::Type;
++
++    int const warpId = threadIdx.x / kWarpSize;
++    int const laneId = threadIdx.x % kWarpSize;
++    int const row = blockIdx.x * kWarpsPerBlock + warpId;
++
++    if (row >= totalRows)
++    {
++        return;
++    }
++
++    auto const* inputPair = reinterpret_cast<Vec2 const*>(input + static_cast<int64_t>(row) * kHeadDim);
++    auto* outputPair = reinterpret_cast<Vec2*>(output + static_cast<int64_t>(row) * kHeadDim);
++
++    float2 values[kPairsPerLane];
++    float sumSquares = 0.0F;
++
++#pragma unroll
++    for (int i = 0; i < kPairsPerLane; ++i)
++    {
++        int const pairIdx = i * kWarpSize + laneId;
++        values[i] = Vec2Traits<T>::toFloat2(inputPair[pairIdx]);
++        sumSquares += values[i].x * values[i].x + values[i].y * values[i].y;
++    }
++
++    sumSquares = warpReduceSum(sumSquares);
++    float const scale = rsqrtf(sumSquares / static_cast<float>(kHeadDim) + eps);
++
++#pragma unroll
++    for (int i = 0; i < kPairsPerLane; ++i)
++    {
++        int const pairIdx = i * kWarpSize + laneId;
++        float2 value{values[i].x * scale, values[i].y * scale};
++        outputPair[pairIdx] = Vec2Traits<T>::fromFloat2(value);
++    }
++}
++
++template <typename T>
++void dispatchDeepseekV4QNorm(
++    void const* input, void* output, int totalRows, int headDim, float eps, cudaStream_t stream)
++{
++    assert(headDim == 512);
++
++    dim3 const block(kThreadsPerBlock);
++    dim3 const grid((totalRows + kWarpsPerBlock - 1) / kWarpsPerBlock);
++    deepseekV4QNormKernel<T, 512>
++        <<<grid, block, 0, stream>>>(static_cast<T const*>(input), static_cast<T*>(output), totalRows, eps);
++}
++
++} // namespace
++
++void invokeDeepseekV4QNorm(
++    void const* input, void* output, int totalRows, int headDim, bool isBfloat16, float eps, cudaStream_t stream)
++{
++    if (totalRows == 0)
++    {
++        return;
++    }
++
++    if (isBfloat16)
++    {
++        dispatchDeepseekV4QNorm<__nv_bfloat16>(input, output, totalRows, headDim, eps, stream);
++    }
++    else
++    {
++        dispatchDeepseekV4QNorm<half>(input, output, totalRows, headDim, eps, stream);
++    }
++}
++
++} // namespace kernels
++
++TRTLLM_NAMESPACE_END
+diff --git a/cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.h b/cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.h
+new file mode 100644
+index 000000000000..11b514316fbe
+--- /dev/null
++++ b/cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.h
+@@ -0,0 +1,17 @@
++#pragma once
++
++#include "tensorrt_llm/common/config.h"
++
++#include <cuda_runtime.h>
++
++TRTLLM_NAMESPACE_BEGIN
++
++namespace kernels
++{
++
++void invokeDeepseekV4QNorm(
++    void const* input, void* output, int totalRows, int headDim, bool isBfloat16, float eps, cudaStream_t stream);
++
++} // namespace kernels
++
++TRTLLM_NAMESPACE_END
+diff --git a/cpp/tensorrt_llm/thop/CMakeLists.txt b/cpp/tensorrt_llm/thop/CMakeLists.txt
+index 4b2d85864673..72e0f93895d9 100644
+--- a/cpp/tensorrt_llm/thop/CMakeLists.txt
++++ b/cpp/tensorrt_llm/thop/CMakeLists.txt
+@@ -65,6 +65,7 @@ add_library(
+   fp8RowwiseGemm.cpp
+   fp8Quantize.cpp
+   dsv3FusedAGemmOp.cpp
++  deepseekV4QNormOp.cpp
+   fusedQKNormRopeOp.cpp
+   fusedDiTQKNormRopeOp.cpp
+   fusedAddRMSNormQuant.cpp
+diff --git a/cpp/tensorrt_llm/thop/deepseekV4QNormOp.cpp b/cpp/tensorrt_llm/thop/deepseekV4QNormOp.cpp
+new file mode 100644
+index 000000000000..ba2cb3360af8
+--- /dev/null
++++ b/cpp/tensorrt_llm/thop/deepseekV4QNormOp.cpp
+@@ -0,0 +1,54 @@
++#include "tensorrt_llm/kernels/deepseekV4QNormKernel.h"
++
++#include <ATen/cuda/CUDAContext.h>
++#include <limits>
++#include <torch/extension.h>
++
++TRTLLM_NAMESPACE_BEGIN
++
++namespace torch_ext
++{
++
++torch::Tensor deepseekV4QNorm(torch::Tensor q, int64_t numHeads, int64_t headDim, double eps)
++{
++    TORCH_CHECK(q.is_cuda(), "deepseek_v4_q_norm expects a CUDA tensor");
++    TORCH_CHECK(q.is_contiguous(), "deepseek_v4_q_norm expects a contiguous tensor");
++    TORCH_CHECK(q.scalar_type() == torch::kFloat16 || q.scalar_type() == torch::kBFloat16,
++        "deepseek_v4_q_norm expects fp16/bf16 input, got ", q.scalar_type());
++    TORCH_CHECK(headDim == 512, "deepseek_v4_q_norm only supports head_dim=512, got ", headDim);
++
++    TORCH_CHECK(q.dim() == 2, "deepseek_v4_q_norm expects 2D q [num_tokens, num_heads * head_dim], got ", q.dim(), "D");
++    TORCH_CHECK(q.size(1) == numHeads * headDim, "q.shape[1] must equal num_heads * head_dim");
++
++    auto output = torch::empty_like(q);
++    int64_t const totalRows64 = q.size(0) * numHeads;
++    TORCH_CHECK(totalRows64 <= std::numeric_limits<int>::max(), "deepseek_v4_q_norm total rows exceed int range");
++    int const totalRows = static_cast<int>(totalRows64);
++    auto stream = at::cuda::getCurrentCUDAStream(q.get_device());
++
++    if (q.scalar_type() == torch::kFloat16)
++    {
++        tensorrt_llm::kernels::invokeDeepseekV4QNorm(q.data_ptr(), output.data_ptr(), totalRows,
++            static_cast<int>(headDim), false, static_cast<float>(eps), stream);
++    }
++    else
++    {
++        tensorrt_llm::kernels::invokeDeepseekV4QNorm(q.data_ptr(), output.data_ptr(), totalRows,
++            static_cast<int>(headDim), true, static_cast<float>(eps), stream);
++    }
++    return output;
++}
++
++} // namespace torch_ext
++
++TRTLLM_NAMESPACE_END
++
++TORCH_LIBRARY_FRAGMENT(trtllm, m)
++{
++    m.def("deepseek_v4_q_norm(Tensor q, int num_heads, int head_dim, float eps) -> Tensor");
++}
++
++TORCH_LIBRARY_IMPL(trtllm, CUDA, m)
++{
++    m.impl("deepseek_v4_q_norm", &tensorrt_llm::torch_ext::deepseekV4QNorm);
++}
+diff --git a/tensorrt_llm/_torch/custom_ops/cpp_custom_ops.py b/tensorrt_llm/_torch/custom_ops/cpp_custom_ops.py
+index 489559352504..e450c264e862 100644
+--- a/tensorrt_llm/_torch/custom_ops/cpp_custom_ops.py
++++ b/tensorrt_llm/_torch/custom_ops/cpp_custom_ops.py
+@@ -107,6 +107,10 @@ def _(q, k, norm_weight_q, norm_weight_k, workspace, rank, nranks, eps,
+           trigger_completion_at_end):
+         return [torch.empty_like(q), torch.empty_like(k)]
+ 
++    @torch.library.register_fake("trtllm::deepseek_v4_q_norm")
++    def _(q: torch.Tensor, num_heads: int, head_dim: int, eps: float):
++        return torch.empty_like(q)
++
+     @torch.library.register_fake("trtllm::allgather")
+     def allgather(input, sizes, group):
+         if sizes is None:
+@@ -655,8 +659,8 @@ def _(input: torch.Tensor):
+         num_n_blocks = (k + 127) // 128
+         num_packed_sf_k = (num_n_blocks + 3) // 4
+         return torch.empty_like(input,
+-                                 dtype=torch.float8_e4m3fn), input.new_empty(
+-                                     (m, num_packed_sf_k), dtype=torch.int32)
++                                dtype=torch.float8_e4m3fn), input.new_empty(
++                                    (m, num_packed_sf_k), dtype=torch.int32)
+ 
+     @torch.library.register_fake("trtllm::causal_conv1d_fwd")
+     def _(
+diff --git a/tensorrt_llm/_torch/modules/attention.py b/tensorrt_llm/_torch/modules/attention.py
+index c343bbf58ee6..9fffc9dcf23d 100644
+--- a/tensorrt_llm/_torch/modules/attention.py
++++ b/tensorrt_llm/_torch/modules/attention.py
+@@ -1727,6 +1727,13 @@ def apply_rope(
+                                                    self.qk_rope_head_dim)
+         return k_pe
+ 
++    def _deepseek_v4_q_b_layernorm(self, q: torch.Tensor) -> torch.Tensor:
++        assert (q.dim() == 2
++                and q.shape[1] == self.num_heads_tp * self.qk_head_dim)
++        return torch.ops.trtllm.deepseek_v4_q_norm(
++            q, self.num_heads_tp, self.qk_head_dim,
++            float(self.q_b_layernorm.variance_epsilon))
++
+     def _attn_forward_gen(self, attn_backend: AttentionBackend, q: torch.Tensor,
+                           k: torch.Tensor, v: torch.Tensor,
+                           position_ids: Optional[torch.Tensor],
+@@ -2202,10 +2209,7 @@ def forward_impl_with_deepseek_v4(self,
+ 
+         def _q_branch():
+             q_proj = self.q_b_proj(q)
+-            # Per-head RMS: view as [N*n_heads, head_dim] so RMSNorm
+-            # reduces per-head.
+-            return self.q_b_layernorm(q_proj.view(
+-                -1, self.qk_head_dim)).view_as(q_proj)
++            return self._deepseek_v4_q_b_layernorm(q_proj)
+ 
+         def _compressor_branch():
+             self.compressor(hidden_states, attn_metadata)
+diff --git a/tests/unittest/_torch/custom_ops/test_deepseek_v4_q_norm.py b/tests/unittest/_torch/custom_ops/test_deepseek_v4_q_norm.py
+new file mode 100644
+index 000000000000..3905c0974b1d
+--- /dev/null
++++ b/tests/unittest/_torch/custom_ops/test_deepseek_v4_q_norm.py
+@@ -0,0 +1,57 @@
++import pytest
++import torch
++
++import tensorrt_llm._torch.custom_ops  # noqa: F401
++
++pytestmark = pytest.mark.skipif(not torch.cuda.is_available(), reason="Requires CUDA")
++
++
++def _reference_q_norm(q: torch.Tensor, head_dim: int, eps: float) -> torch.Tensor:
++    q_view = q.view(-1, head_dim).float()
++    inv_rms = torch.rsqrt(q_view.pow(2).mean(dim=-1, keepdim=True) + eps)
++    return (q_view * inv_rms).to(q.dtype).view_as(q)
++
++
++@pytest.mark.parametrize("num_tokens", [1, 7, 129])
++@pytest.mark.parametrize("num_heads", [1, 16])
++@pytest.mark.parametrize(
++    "dtype",
++    [
++        torch.float16,
++        pytest.param(
++            torch.bfloat16,
++            marks=pytest.mark.skipif(
++                not torch.cuda.is_bf16_supported(), reason="Requires BF16 support"
++            ),
++        ),
++    ],
++)
++def test_deepseek_v4_q_norm_matches_reference(num_tokens, num_heads, dtype):
++    torch.manual_seed(0)
++    device = "cuda"
++    head_dim = 512
++    eps = 1e-6
++    q = torch.randn(num_tokens, num_heads * head_dim, dtype=dtype, device=device).contiguous()
++
++    out = torch.ops.trtllm.deepseek_v4_q_norm(q, num_heads, head_dim, eps)
++    ref = _reference_q_norm(q, head_dim, eps)
++
++    atol = 3.2e-2 if dtype == torch.bfloat16 else 5e-3
++    rtol = 8e-3 if dtype == torch.bfloat16 else 5e-3
++    torch.testing.assert_close(out, ref, atol=atol, rtol=rtol)
++
++
++def test_deepseek_v4_q_norm_torch_compile_fullgraph():
++    torch.manual_seed(0)
++    num_heads = 16
++    head_dim = 512
++    eps = 1e-6
++    q = torch.randn(8, num_heads * head_dim, dtype=torch.float16, device="cuda").contiguous()
++
++    def q_norm(q):
++        return torch.ops.trtllm.deepseek_v4_q_norm(q, num_heads, head_dim, eps)
++
++    out = torch.compile(q_norm, backend="eager", fullgraph=True)(q)
++    ref = _reference_q_norm(q, head_dim, eps)
++
++    torch.testing.assert_close(out, ref, atol=5e-3, rtol=5e-3)
+diff --git a/tests/unittest/_torch/modeling/test_modeling_deepseekv4.py b/tests/unittest/_torch/modeling/test_modeling_deepseekv4.py
+index a3dd472a80aa..e1d8a7490b84 100644
+--- a/tests/unittest/_torch/modeling/test_modeling_deepseekv4.py
++++ b/tests/unittest/_torch/modeling/test_modeling_deepseekv4.py
+@@ -334,6 +334,7 @@ def test_deepseek_v4_mla_q_b_layernorm_init_and_forward_shape():
+     from tensorrt_llm._torch.modules.attention import MLA
+ 
+     init_src = inspect.getsource(MLA.__init__)
++    helper_src = inspect.getsource(MLA._deepseek_v4_q_b_layernorm)
+     forward_src = inspect.getsource(MLA.forward_impl_with_deepseek_v4)
+ 
+     assert "self.q_b_layernorm = RMSNorm(hidden_size=self.qk_head_dim" in init_src
+@@ -341,9 +342,15 @@ def test_deepseek_v4_mla_q_b_layernorm_init_and_forward_shape():
+     assert "kv_a_layernorm_hidden_size = (" in init_src
+     assert "self.kv_lora_rank + self.qk_rope_head_dim" in init_src
+     assert "self.kv_a_layernorm = RMSNorm(hidden_size=kv_a_layernorm_hidden_size" in init_src
+-    assert "self.q_b_layernorm(q_proj.view(-1, self.qk_head_dim)).view_as(q_proj)" in _source_calls(
+-        forward_src
+-    )
++    assert "q.dim() == 2" in helper_src
++    assert "self.num_heads_tp * self.qk_head_dim" in helper_src
++    assert "torch.ops.trtllm.deepseek_v4_q_norm" in helper_src
++    assert ".is_cuda" not in helper_src
++    assert ".is_contiguous" not in helper_src
++    assert "q.dtype" not in helper_src
++    assert "total_rows" not in helper_src
++    assert "self.q_b_layernorm(" not in helper_src
++    assert "self._deepseek_v4_q_b_layernorm(q_proj)" in _source_calls(forward_src)
+ 
+ 
+ def test_deepseek_v4_compressor_rotate_and_indexer_rope_contracts():

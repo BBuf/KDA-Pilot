@@ -1,0 +1,69 @@
+schema_version: 1
+source_key: vllm-project/vllm#42707
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42707
+title: '[CPU] Add fused GDN support for AMX CPU platform'
+url: https://github.com/vllm-project/vllm/pull/42707
+state: closed
+merged_at: '2026-05-18T10:04:37Z'
+base_ref_oid: c1f7854342d1e80f7f2406524d242b8ee5476d6d
+head_ref_oid: b23c54408968db8cf103730317053c95ce3bda5e
+captured_at: '2026-05-20T15:08:55.282751+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention kernel
+techniques:
+- kernel-fusion
+hardware_features: []
+kernel_types:
+- attention
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: csrc/cpu/sgl-kernels/conv.cpp
+    local_path: source-snapshot/csrc/cpu/sgl-kernels/conv.cpp
+    ref: b23c54408968db8cf103730317053c95ce3bda5e
+    status: modified
+    fetched: true
+  - source_path: csrc/cpu/sgl-kernels/fla.cpp
+    local_path: source-snapshot/csrc/cpu/sgl-kernels/fla.cpp
+    ref: b23c54408968db8cf103730317053c95ce3bda5e
+    status: modified
+    fetched: true
+  - source_path: csrc/cpu/torch_bindings.cpp
+    local_path: source-snapshot/csrc/cpu/torch_bindings.cpp
+    ref: b23c54408968db8cf103730317053c95ce3bda5e
+    status: modified
+    fetched: true
+  - source_path: vllm/_custom_ops.py
+    local_path: source-snapshot/vllm/_custom_ops.py
+    ref: b23c54408968db8cf103730317053c95ce3bda5e
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/linear.py
+    local_path: source-snapshot/vllm/model_executor/layers/linear.py
+    ref: b23c54408968db8cf103730317053c95ce3bda5e
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/mamba/ops/cpu/gdn_attention.py
+    local_path: source-snapshot/vllm/model_executor/layers/mamba/ops/cpu/gdn_attention.py
+    ref: b23c54408968db8cf103730317053c95ce3bda5e
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/utils.py
+    local_path: source-snapshot/vllm/model_executor/layers/utils.py
+    ref: b23c54408968db8cf103730317053c95ce3bda5e
+    status: modified
+    fetched: true
+  - source_path: vllm/platforms/cpu.py
+    local_path: source-snapshot/vllm/platforms/cpu.py
+    ref: b23c54408968db8cf103730317053c95ce3bda5e
+    status: modified
+    fetched: true

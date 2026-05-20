@@ -1,0 +1,189 @@
+diff --git a/cpp/tensorrt_llm/kernels/cutlass_kernels/cutlass_heuristic.cpp b/cpp/tensorrt_llm/kernels/cutlass_kernels/cutlass_heuristic.cpp
+index 50794769b5ec..b0ea6333a88c 100644
+--- a/cpp/tensorrt_llm/kernels/cutlass_kernels/cutlass_heuristic.cpp
++++ b/cpp/tensorrt_llm/kernels/cutlass_kernels/cutlass_heuristic.cpp
+@@ -587,7 +587,12 @@ std::vector<CutlassGemmConfig> get_candidate_configs(
+     {
+         return get_candidate_configs_sm100(config_type_param, sm);
+     }
+-    if (sm >= 120 && (config_type_param & CutlassGemmConfig::BLACKWELL))
++    // Use the Blackwell (SM120+) specialized candidate list only for these cases:
++    //   - FP4 dense GEMM (FP4_ONLY)
++    //   - Mixed FP8/FP4 (FP8FP4_MIXED, e.g., W4A8_MXFP4_*)
++    // If neither applies, fall through (e.g. pure int W4A16/W8A16 handled elsewhere).
++    if (sm >= 120 && (config_type_param & CutlassGemmConfig::BLACKWELL)
++        && ((config_type_param & CutlassGemmConfig::FP4_ONLY) || (config_type_param & CutlassGemmConfig::FP8FP4_MIXED)))
+     {
+         return get_candidate_configs_sm120(config_type_param);
+     }
+diff --git a/tensorrt_llm/_torch/custom_ops/torch_custom_ops.py b/tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
+index 42f41de8b911..285faf5b762a 100644
+--- a/tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
++++ b/tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
+@@ -1412,7 +1412,9 @@ def _(
+ 
+ class FinegrainedMixedDtypeGemm(TunableRunner):
+     _runner_dict = dict()
+-    MAX_SUPPORTED_SM_VERSION = 103
++    MAX_SUPPORTED_SM_VERSION_W4A8 = 103
++    # W4A16 (FP16/BF16 activation): SM120/121 dispatch via cutlass::arch::Sm80.
++    MAX_SUPPORTED_SM_VERSION_W4A16 = 121
+ 
+     def __init__(self, activation_dtype: torch.dtype, output_dtype: torch.dtype,
+                  quant_mode: int):
+@@ -1445,9 +1447,16 @@ def forward(self,
+                 do_preparation: bool = False,
+                 **kwargs) -> torch.Tensor:
+ 
+-        if get_sm_version() > self.MAX_SUPPORTED_SM_VERSION:
++        sm = get_sm_version()
++        if (self.activation_dtype == torch.float8_e4m3fn
++                and sm > self.MAX_SUPPORTED_SM_VERSION_W4A8):
+             raise ValueError(
+-                f"SM version {get_sm_version()} is not supported for W4A16/W4A8 finegrained mixed dtype GEMM"
++                f"SM version {sm} is not supported for W4A8 finegrained mixed dtype GEMM"
++            )
++        if (self.activation_dtype in (torch.float16, torch.bfloat16)
++                and sm > self.MAX_SUPPORTED_SM_VERSION_W4A16):
++            raise ValueError(
++                f"SM version {sm} is not supported for W4A16 finegrained mixed dtype GEMM"
+             )
+ 
+         activation, weights_packed, scales = inputs
+diff --git a/tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py b/tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py
+index fcd31ada5596..ba4ce303fe23 100755
+--- a/tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py
++++ b/tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py
+@@ -84,9 +84,6 @@ class CutlassFusedMoE(MoE):
+             "dtypes": {torch.bfloat16},
+         },
+         # NVFP4: SM in {100, 103, 120, 121}
+-        # SM 120 = desktop Blackwell (e.g. RTX 5090 / GB202)
+-        # SM 121 = GB10 / DGX Spark
+-        # C++ kernel: isValidSM120MOESpecialisation() supports FP4xFP4 and FP8xFP4
+         QuantAlgo.NVFP4: {
+             "sm_constraint": ("in", {100, 103, 120, 121}),
+             "dtypes": {torch.float16, torch.bfloat16, torch.float8_e4m3fn},
+@@ -111,9 +108,9 @@ class CutlassFusedMoE(MoE):
+             "sm_constraint": ("in", {100, 103}),
+             "dtypes": {torch.float16, torch.bfloat16, torch.float32},
+         },
+-        # W4A8_MXFP4_MXFP8: SM in {100, 103}
++        # W4A8_MXFP4_MXFP8: SM in {100, 103, 120, 121}
+         QuantAlgo.W4A8_MXFP4_MXFP8: {
+-            "sm_constraint": ("in", {100, 103}),
++            "sm_constraint": ("in", {100, 103, 120, 121}),
+             "dtypes": {torch.float16, torch.bfloat16},
+         },
+     }
+@@ -140,7 +137,7 @@ def can_implement(
+         - W8A16: SM >= 80
+         - W4A16_MXFP4: SM == 90 only
+         - W4A8_MXFP4_FP8: SM in {100, 103}
+-        - W4A8_MXFP4_MXFP8: SM in {100, 103}
++        - W4A8_MXFP4_MXFP8: SM in {100, 103, 120, 121}
+ 
+         Args:
+             quant_algo: The quantization algorithm to check (None for unquantized)
+diff --git a/tensorrt_llm/quantization/functional.py b/tensorrt_llm/quantization/functional.py
+index bdfa6a07964d..ddaa7394eb5b 100644
+--- a/tensorrt_llm/quantization/functional.py
++++ b/tensorrt_llm/quantization/functional.py
+@@ -1,4 +1,4 @@
+-# SPDX-FileCopyrightText: Copyright (c) 2022-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-FileCopyrightText: Copyright (c) 2022-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ # SPDX-License-Identifier: Apache-2.0
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+@@ -957,10 +957,12 @@ def preprocess_weights_for_mixed_gemm(
+         sm_: int = -1,
+         do_weight_interleave: bool = True) -> torch.Tensor:
+     sm_ = sm_ if sm_ > 0 else get_sm_version()
++    # 3-D inputs (MoE) on Hopper+ and any input on SM120/SM121 reuse the SM80
++    # interleaved layout. Check the original rank before unsqueeze.
++    if (len(tensor.shape) == 3 and sm_ >= 90) or sm_ >= 120:
++        sm_ = 80
+     if len(tensor.shape) == 2:
+         tensor = tensor.unsqueeze(0)
+-    elif sm_ >= 90:
+-        sm_ = 80
+     if sm_ == 100 or sm_ == 103:
+         do_weight_interleave = False
+ 
+diff --git a/tests/integration/test_lists/test-db/l0_rtx_pro_6000.yml b/tests/integration/test_lists/test-db/l0_rtx_pro_6000.yml
+index b4187e6a08cc..81afed83e2ca 100644
+--- a/tests/integration/test_lists/test-db/l0_rtx_pro_6000.yml
++++ b/tests/integration/test_lists/test-db/l0_rtx_pro_6000.yml
+@@ -17,6 +17,13 @@ l0_rtx_pro_6000:
+   - unittest/_torch/modeling -k "modeling_out_of_tree"
+   # - unittest/_torch/modeling -k "modeling_qwen" # https://nvbugs/5234573
+   - unittest/_torch/attention/test_attention_mla.py
++  # SM120 W4A16 / W4A8 mixed-dtype GEMM coverage (paired with FinegrainedMixedDtypeGemm
++  # MAX_SUPPORTED_SM_VERSION_W4A* gates and cutlass_heuristic.cpp SM120 routing).
++  - unittest/_torch/thop/parallel/test_w4a16_linear.py
++  - unittest/_torch/thop/parallel/test_finegrained_mixed_dtype_gemm.py
++  - unittest/_torch/thop/parallel/test_weight_only_quant_linear.py
++  - unittest/_torch/thop/parallel/test_weight_only_quant_gemm.py
++  - unittest/_torch/thop/parallel/test_w4a8_linear.py
+   - test_e2e.py::test_ptp_quickstart_bert[VANILLA-BertForSequenceClassification-bert/bert-base-uncased-yelp-polarity]
+   - test_e2e.py::test_ptp_quickstart_bert[TRTLLM-BertForSequenceClassification-bert/bert-base-uncased-yelp-polarity]
+   - test_e2e.py::test_ptp_quickstart_advanced[Llama3.1-8B-BF16-llama-3.1-model/Meta-Llama-3.1-8B]
+diff --git a/tests/unittest/_torch/thop/parallel/test_finegrained_mixed_dtype_gemm.py b/tests/unittest/_torch/thop/parallel/test_finegrained_mixed_dtype_gemm.py
+index 0041f11da6b7..211398c6028a 100644
+--- a/tests/unittest/_torch/thop/parallel/test_finegrained_mixed_dtype_gemm.py
++++ b/tests/unittest/_torch/thop/parallel/test_finegrained_mixed_dtype_gemm.py
+@@ -51,9 +51,13 @@ def test_matmul_activation_int4_input(m, n, k, group_size, activation_dtype,
+     torch.manual_seed(0)
+     device = "cuda"
+ 
+-    if get_sm_version() > FinegrainedMixedDtypeGemm.MAX_SUPPORTED_SM_VERSION:
+-        pytest.skip(
+-            f"W4A16/W4A8 not supported for SM version {get_sm_version()}")
++    sm = get_sm_version()
++    if (use_w4a8_awq
++            and sm > FinegrainedMixedDtypeGemm.MAX_SUPPORTED_SM_VERSION_W4A8):
++        pytest.skip(f"W4A8 not supported for SM version {sm}")
++    if (not use_w4a8_awq
++            and sm > FinegrainedMixedDtypeGemm.MAX_SUPPORTED_SM_VERSION_W4A16):
++        pytest.skip(f"W4A16 not supported for SM version {sm}")
+ 
+     total_groups = (k + group_size - 1) // group_size
+     scale_zero_dtype = torch.float16 if use_w4a8_awq else activation_dtype
+diff --git a/tests/unittest/_torch/thop/parallel/test_w4a16_linear.py b/tests/unittest/_torch/thop/parallel/test_w4a16_linear.py
+index 8aac068211a8..48fdcb16b915 100644
+--- a/tests/unittest/_torch/thop/parallel/test_w4a16_linear.py
++++ b/tests/unittest/_torch/thop/parallel/test_w4a16_linear.py
+@@ -17,10 +17,10 @@
+ )
+ def test_w4a16_linear(dtype, weights_dtype, has_zero=False):
+ 
+-    if get_sm_version() > FinegrainedMixedDtypeGemm.MAX_SUPPORTED_SM_VERSION:
++    if get_sm_version(
++    ) > FinegrainedMixedDtypeGemm.MAX_SUPPORTED_SM_VERSION_W4A16:
+         pytest.skip(
+-            f"W4A16/W4A8 is not supported in this SM version {get_sm_version()}"
+-        )
++            f"W4A16 is not supported in this SM version {get_sm_version()}")
+ 
+     SEQ_LEN = 10
+     HIDDEN_SIZE = 128
+diff --git a/tests/unittest/_torch/thop/parallel/test_w4a8_linear.py b/tests/unittest/_torch/thop/parallel/test_w4a8_linear.py
+index 20187385a6d0..458146a24c0c 100644
+--- a/tests/unittest/_torch/thop/parallel/test_w4a8_linear.py
++++ b/tests/unittest/_torch/thop/parallel/test_w4a8_linear.py
+@@ -18,10 +18,12 @@
+ )
+ def test_w4a8_linear(dtype, weights_dtype, has_zero=False):
+ 
+-    if get_sm_version() > FinegrainedMixedDtypeGemm.MAX_SUPPORTED_SM_VERSION:
++    # W4A8 requires an FP8-capable mixed-dtype dispatch; SM120/121 fall back
++    # to the Sm80 MMA path which has no FP8, so W4A8 stays gated on SM>103.
++    if get_sm_version(
++    ) > FinegrainedMixedDtypeGemm.MAX_SUPPORTED_SM_VERSION_W4A8:
+         pytest.skip(
+-            f"W4A16/W4A8 is not supported in this SM version {get_sm_version()}"
+-        )
++            f"W4A8 is not supported in this SM version {get_sm_version()}")
+ 
+     SEQ_LEN = 10
+     HIDDEN_SIZE = 128

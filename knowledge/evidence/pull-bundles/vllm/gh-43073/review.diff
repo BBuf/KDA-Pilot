@@ -1,0 +1,291 @@
+diff --git a/.github/CODEOWNERS b/.github/CODEOWNERS
+index 3fc8818387fc..467bb35840b9 100644
+--- a/.github/CODEOWNERS
++++ b/.github/CODEOWNERS
+@@ -154,7 +154,6 @@ mkdocs.yaml @hmellor
+ 
+ # DeepseekV4-specific files
+ /vllm/models/deepseek_v4 @zyongye
+-/vllm/v1/attention/ops/deepseek_v4_ops @zyongye
+ /vllm/model_executor/layers/sparse_attn_indexer.py @zyongye
+ 
+ # Mistral-specific files
+diff --git a/tests/kernels/core/test_fused_q_kv_rmsnorm.py b/tests/kernels/core/test_fused_q_kv_rmsnorm.py
+index 1017dc52ff98..b6a70b19b03d 100644
+--- a/tests/kernels/core/test_fused_q_kv_rmsnorm.py
++++ b/tests/kernels/core/test_fused_q_kv_rmsnorm.py
+@@ -13,8 +13,8 @@
+ import pytest
+ import torch
+ 
++from vllm.models.deepseek_v4.common.ops import fused_q_kv_rmsnorm
+ from vllm.platforms import current_platform
+-from vllm.v1.attention.ops.deepseek_v4_ops import fused_q_kv_rmsnorm
+ 
+ pytestmark = pytest.mark.skipif(
+     not current_platform.is_cuda_alike(),
+diff --git a/tests/kernels/test_compressor_kv_cache.py b/tests/kernels/test_compressor_kv_cache.py
+index ef9fda050830..c6daab2d86be 100644
+--- a/tests/kernels/test_compressor_kv_cache.py
++++ b/tests/kernels/test_compressor_kv_cache.py
+@@ -17,11 +17,11 @@
+ import torch
+ 
+ from vllm import _custom_ops as ops
+-from vllm.v1.attention.ops.deepseek_v4_ops import (
++from vllm.models.deepseek_v4.common.ops import (
+     dequantize_and_gather_k_cache,
+     quantize_and_insert_k_cache,
+ )
+-from vllm.v1.attention.ops.deepseek_v4_ops.fused_compress_quant_cache import (
++from vllm.models.deepseek_v4.common.ops.fused_compress_quant_cache import (
+     _fused_kv_compress_norm_rope_insert_indexer_attn,
+     _fused_kv_compress_norm_rope_insert_indexer_mxfp4_attn,
+ )
+diff --git a/tests/kernels/test_fused_deepseek_v4_qnorm_rope_kv_insert.py b/tests/kernels/test_fused_deepseek_v4_qnorm_rope_kv_insert.py
+index 46d226e0f74e..9706778ac86f 100644
+--- a/tests/kernels/test_fused_deepseek_v4_qnorm_rope_kv_insert.py
++++ b/tests/kernels/test_fused_deepseek_v4_qnorm_rope_kv_insert.py
+@@ -19,7 +19,7 @@
+ import pytest
+ import torch
+ 
+-from vllm.v1.attention.ops.deepseek_v4_ops import (
++from vllm.models.deepseek_v4.common.ops import (
+     dequantize_and_gather_k_cache,
+     quantize_and_insert_k_cache,
+ )
+diff --git a/tests/kernels/test_fused_indexer_q_rope_quant.py b/tests/kernels/test_fused_indexer_q_rope_quant.py
+index dd94dafd9585..6114b7efd6e7 100644
+--- a/tests/kernels/test_fused_indexer_q_rope_quant.py
++++ b/tests/kernels/test_fused_indexer_q_rope_quant.py
+@@ -23,10 +23,8 @@
+ from vllm.model_executor.layers.quantization.utils.fp8_utils import (
+     per_token_group_quant_fp8,
+ )
++from vllm.models.deepseek_v4.common.ops import fused_indexer_q_rope_quant
+ from vllm.utils.import_utils import has_cutedsl
+-from vllm.v1.attention.ops.deepseek_v4_ops.fused_indexer_q import (
+-    fused_indexer_q_rope_quant,
+-)
+ 
+ HEAD_DIM = 128
+ ROPE_DIM = 64
+@@ -156,7 +154,7 @@ def test_fused_indexer_q_rope_quant_matches_unfused(
+     # by patching the dispatcher's has_cutedsl() binding to return False.
+     cutedsl_patch = (
+         mock.patch(
+-            "vllm.v1.attention.ops.deepseek_v4_ops.fused_indexer_q.has_cutedsl",
++            "vllm.models.deepseek_v4.common.ops.fused_indexer_q.has_cutedsl",
+             return_value=False,
+         )
+         if not use_cutedsl
+diff --git a/tests/kernels/test_fused_inv_rope_fp8_quant.py b/tests/kernels/test_fused_inv_rope_fp8_quant.py
+index 10561a8a0304..84d64bbf83bf 100644
+--- a/tests/kernels/test_fused_inv_rope_fp8_quant.py
++++ b/tests/kernels/test_fused_inv_rope_fp8_quant.py
+@@ -21,7 +21,7 @@
+ import pytest
+ import torch
+ 
+-from vllm.v1.attention.ops.deepseek_v4_ops import fused_inv_rope_fp8_quant
++from vllm.models.deepseek_v4.common.ops import fused_inv_rope_fp8_quant
+ 
+ # -- Default dimensions matching DeepSeek V3/V4 --------------------------
+ HEAD_DIM = 512
+diff --git a/vllm/models/deepseek_v4/attention.py b/vllm/models/deepseek_v4/attention.py
+index 68d05234145c..b773f9cbbc30 100644
+--- a/vllm/models/deepseek_v4/attention.py
++++ b/vllm/models/deepseek_v4/attention.py
+@@ -19,9 +19,7 @@
+     ReplicatedLinear,
+ )
+ from vllm.model_executor.layers.sparse_attn_indexer import SparseAttnIndexer
+-from vllm.utils.deep_gemm import fp8_einsum
+-from vllm.utils.torch_utils import direct_register_custom_op
+-from vllm.v1.attention.ops.deepseek_v4_ops import (
++from vllm.models.deepseek_v4.common.ops import (
+     combine_topk_swa_indices,
+     compute_global_topk_indices_and_lens,
+     dequantize_and_gather_k_cache,
+@@ -29,6 +27,8 @@
+     fused_inv_rope_fp8_quant,
+     fused_q_kv_rmsnorm,
+ )
++from vllm.utils.deep_gemm import fp8_einsum
++from vllm.utils.torch_utils import direct_register_custom_op
+ from vllm.v1.attention.ops.rocm_aiter_mla_sparse import rocm_inv_rope_einsum
+ 
+ if TYPE_CHECKING:
+diff --git a/vllm/models/deepseek_v4/common/__init__.py b/vllm/models/deepseek_v4/common/__init__.py
+new file mode 100644
+index 000000000000..208f01a7cb5e
+--- /dev/null
++++ b/vllm/models/deepseek_v4/common/__init__.py
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
+diff --git a/vllm/v1/attention/ops/deepseek_v4_ops/__init__.py b/vllm/models/deepseek_v4/common/ops/__init__.py
+similarity index 100%
+rename from vllm/v1/attention/ops/deepseek_v4_ops/__init__.py
+rename to vllm/models/deepseek_v4/common/ops/__init__.py
+diff --git a/vllm/v1/attention/ops/deepseek_v4_ops/cache_utils.py b/vllm/models/deepseek_v4/common/ops/cache_utils.py
+similarity index 99%
+rename from vllm/v1/attention/ops/deepseek_v4_ops/cache_utils.py
+rename to vllm/models/deepseek_v4/common/ops/cache_utils.py
+index dfb107b515eb..ac66751e3111 100644
+--- a/vllm/v1/attention/ops/deepseek_v4_ops/cache_utils.py
++++ b/vllm/models/deepseek_v4/common/ops/cache_utils.py
+@@ -366,7 +366,9 @@ def dequantize_and_gather_k_cache(
+ ) -> None:
+     if has_cutedsl():
+         # lazily import, otherwise some tests fail due to CUDA driver init failure.
+-        from .dequant_gather_k_cutedsl import dequantize_and_gather_k_cache_cutedsl
++        from vllm.models.deepseek_v4.nvidia.ops.dequant_gather_k_cutedsl import (
++            dequantize_and_gather_k_cache_cutedsl,
++        )
+ 
+         dequantize_and_gather_k_cache_cutedsl(
+             out, k_cache, seq_lens, gather_lens, block_table, block_size, offset
+diff --git a/vllm/v1/attention/ops/deepseek_v4_ops/fused_compress_quant_cache.py b/vllm/models/deepseek_v4/common/ops/fused_compress_quant_cache.py
+similarity index 100%
+rename from vllm/v1/attention/ops/deepseek_v4_ops/fused_compress_quant_cache.py
+rename to vllm/models/deepseek_v4/common/ops/fused_compress_quant_cache.py
+diff --git a/vllm/v1/attention/ops/deepseek_v4_ops/fused_indexer_q.py b/vllm/models/deepseek_v4/common/ops/fused_indexer_q.py
+similarity index 98%
+rename from vllm/v1/attention/ops/deepseek_v4_ops/fused_indexer_q.py
+rename to vllm/models/deepseek_v4/common/ops/fused_indexer_q.py
+index d9c1e93f2b56..d5aaf10feba4 100644
+--- a/vllm/v1/attention/ops/deepseek_v4_ops/fused_indexer_q.py
++++ b/vllm/models/deepseek_v4/common/ops/fused_indexer_q.py
+@@ -346,7 +346,7 @@ def fused_indexer_q_rope_quant(
+         )
+         if has_cutedsl():
+             # lazily import, otherwise some tests fail due to CUDA driver init failure.
+-            from .fused_indexer_q_cutedsl import (
++            from vllm.models.deepseek_v4.nvidia.ops.fused_indexer_q_cutedsl import (
+                 fused_indexer_q_rope_quant_mxfp4_cutedsl,
+             )
+ 
+@@ -400,7 +400,7 @@ def fused_indexer_q_rope_quant(
+     index_q_fp8 = torch.empty_like(index_q, dtype=torch.float8_e4m3fn)
+     if has_cutedsl():
+         # lazily import, otherwise some tests fail due to CUDA driver init failure.
+-        from .fused_indexer_q_cutedsl import (
++        from vllm.models.deepseek_v4.nvidia.ops.fused_indexer_q_cutedsl import (
+             fused_indexer_q_rope_quant_fp8_cutedsl,
+         )
+ 
+diff --git a/vllm/v1/attention/ops/deepseek_v4_ops/fused_inv_rope_fp8_quant.py b/vllm/models/deepseek_v4/common/ops/fused_inv_rope_fp8_quant.py
+similarity index 100%
+rename from vllm/v1/attention/ops/deepseek_v4_ops/fused_inv_rope_fp8_quant.py
+rename to vllm/models/deepseek_v4/common/ops/fused_inv_rope_fp8_quant.py
+diff --git a/vllm/v1/attention/ops/deepseek_v4_ops/fused_qk_rmsnorm.py b/vllm/models/deepseek_v4/common/ops/fused_qk_rmsnorm.py
+similarity index 100%
+rename from vllm/v1/attention/ops/deepseek_v4_ops/fused_qk_rmsnorm.py
+rename to vllm/models/deepseek_v4/common/ops/fused_qk_rmsnorm.py
+diff --git a/vllm/models/deepseek_v4/compressor.py b/vllm/models/deepseek_v4/compressor.py
+index 48628fec46e0..3768aad1ee29 100644
+--- a/vllm/models/deepseek_v4/compressor.py
++++ b/vllm/models/deepseek_v4/compressor.py
+@@ -11,9 +11,13 @@
+ from vllm.forward_context import get_forward_context
+ from vllm.model_executor.layers.attention_layer_base import AttentionLayerBase
+ from vllm.model_executor.layers.layernorm import RMSNorm
+-from vllm.model_executor.layers.linear import (
+-    MergedColumnParallelLinear,
++from vllm.model_executor.layers.linear import MergedColumnParallelLinear
++from vllm.models.deepseek_v4.common.ops.fused_compress_quant_cache import (
++    _fused_kv_compress_norm_rope_insert_indexer_attn,
++    _fused_kv_compress_norm_rope_insert_indexer_mxfp4_attn,
++    _fused_kv_compress_norm_rope_insert_sparse_attn,
+ )
++from vllm.models.deepseek_v4.common.ops.fused_indexer_q import MXFP4_BLOCK_SIZE
+ from vllm.platforms import current_platform
+ from vllm.triton_utils import tl, triton
+ from vllm.v1.attention.backend import (
+@@ -23,14 +27,6 @@
+     CommonAttentionMetadata,
+     MultipleOf,
+ )
+-from vllm.v1.attention.ops.deepseek_v4_ops.fused_compress_quant_cache import (
+-    _fused_kv_compress_norm_rope_insert_indexer_attn,
+-    _fused_kv_compress_norm_rope_insert_indexer_mxfp4_attn,
+-    _fused_kv_compress_norm_rope_insert_sparse_attn,
+-)
+-from vllm.v1.attention.ops.deepseek_v4_ops.fused_indexer_q import (
+-    MXFP4_BLOCK_SIZE,
+-)
+ from vllm.v1.kv_cache_interface import (
+     KVCacheSpec,
+     MLAAttentionSpec,
+diff --git a/vllm/models/deepseek_v4/nvidia/ops/__init__.py b/vllm/models/deepseek_v4/nvidia/ops/__init__.py
+new file mode 100644
+index 000000000000..37276e1816f0
+--- /dev/null
++++ b/vllm/models/deepseek_v4/nvidia/ops/__init__.py
+@@ -0,0 +1,8 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++"""NVIDIA-only (cutedsl/cutlass) kernels for DeepSeek V4.
++
++These modules import ``cutlass``/``cutedsl`` at module top level, so they must
++not be imported on non-CUDA platforms. Callers should gate on
++``vllm.utils.import_utils.has_cutedsl()`` before importing from here.
++"""
+diff --git a/vllm/v1/attention/ops/deepseek_v4_ops/cutedsl_utils.py b/vllm/models/deepseek_v4/nvidia/ops/cutedsl_utils.py
+similarity index 100%
+rename from vllm/v1/attention/ops/deepseek_v4_ops/cutedsl_utils.py
+rename to vllm/models/deepseek_v4/nvidia/ops/cutedsl_utils.py
+diff --git a/vllm/v1/attention/ops/deepseek_v4_ops/dequant_gather_k_cutedsl.py b/vllm/models/deepseek_v4/nvidia/ops/dequant_gather_k_cutedsl.py
+similarity index 99%
+rename from vllm/v1/attention/ops/deepseek_v4_ops/dequant_gather_k_cutedsl.py
+rename to vllm/models/deepseek_v4/nvidia/ops/dequant_gather_k_cutedsl.py
+index bb0818ada39f..8ff349cbfe13 100644
+--- a/vllm/v1/attention/ops/deepseek_v4_ops/dequant_gather_k_cutedsl.py
++++ b/vllm/models/deepseek_v4/nvidia/ops/dequant_gather_k_cutedsl.py
+@@ -11,7 +11,7 @@
+ from cutlass.cute.nvgpu import cpasync
+ from quack.compile_utils import make_fake_tensor
+ 
+-from vllm.v1.attention.ops.deepseek_v4_ops.cutedsl_utils import (
++from vllm.models.deepseek_v4.nvidia.ops.cutedsl_utils import (
+     _bf16x2_mul,
+     _fp8x4_to_bf16x4,
+ )
+diff --git a/vllm/v1/attention/ops/deepseek_v4_ops/fused_indexer_q_cutedsl.py b/vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py
+similarity index 99%
+rename from vllm/v1/attention/ops/deepseek_v4_ops/fused_indexer_q_cutedsl.py
+rename to vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py
+index 01ace330855d..e1e2b40b8be7 100644
+--- a/vllm/v1/attention/ops/deepseek_v4_ops/fused_indexer_q_cutedsl.py
++++ b/vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py
+@@ -9,7 +9,7 @@
+ from cutlass import BFloat16, Float32, Int64, Uint8, Uint32, const_expr
+ from quack.compile_utils import make_fake_tensor
+ 
+-from vllm.v1.attention.ops.deepseek_v4_ops.cutedsl_utils import (
++from vllm.models.deepseek_v4.nvidia.ops.cutedsl_utils import (
+     _bf16x2_abs,
+     _bf16x2_max,
+     _bf16x2_to_fp32,
+diff --git a/vllm/v1/attention/backends/mla/rocm_aiter_mla_sparse_dsv4.py b/vllm/v1/attention/backends/mla/rocm_aiter_mla_sparse_dsv4.py
+index d225c8d78586..c29ad2bd1ace 100644
+--- a/vllm/v1/attention/backends/mla/rocm_aiter_mla_sparse_dsv4.py
++++ b/vllm/v1/attention/backends/mla/rocm_aiter_mla_sparse_dsv4.py
+@@ -7,6 +7,7 @@
+ import torch
+ 
+ from vllm.forward_context import get_forward_context
++from vllm.models.deepseek_v4.common.ops import dequantize_and_gather_k_cache
+ from vllm.triton_utils import tl, triton
+ from vllm.v1.attention.backend import (
+     AttentionLayer,
+@@ -22,7 +23,6 @@
+     DeepseekSparseSWAMetadata,
+     DeepseekSparseSWAMetadataBuilder,
+ )
+-from vllm.v1.attention.ops.deepseek_v4_ops import dequantize_and_gather_k_cache
+ from vllm.v1.attention.ops.rocm_aiter_mla_sparse import (
+     build_ragged_indices_from_dense,
+     rocm_sparse_attn_decode,

@@ -1,0 +1,2130 @@
+diff --git a/tensorrt_llm/_torch/auto_deploy/config/default.yaml b/tensorrt_llm/_torch/auto_deploy/config/default.yaml
+index bd86ea17cfa0..166ff6b965f4 100644
+--- a/tensorrt_llm/_torch/auto_deploy/config/default.yaml
++++ b/tensorrt_llm/_torch/auto_deploy/config/default.yaml
+@@ -1,3 +1,18 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
+ # This is the set of transforms running in "graph" mode. In this mode, we capture the full graph
+ # of the model and optimize it for inference.
+ transforms:
+diff --git a/tensorrt_llm/_torch/auto_deploy/config/transformers.yaml b/tensorrt_llm/_torch/auto_deploy/config/transformers.yaml
+index 07d40c072f76..5e03a1fd61eb 100644
+--- a/tensorrt_llm/_torch/auto_deploy/config/transformers.yaml
++++ b/tensorrt_llm/_torch/auto_deploy/config/transformers.yaml
+@@ -1,3 +1,18 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
+ # This is the set of transforms running in "transformers" mode. In this mode, we hook into the
+ # HF attention mechanism and replace it with our custom cached attention mechanism.
+ transforms:
+diff --git a/tests/unittest/auto_deploy/_utils_test/_custom_op_utils.py b/tests/unittest/auto_deploy/_utils_test/_custom_op_utils.py
+index 865d71a52337..9426d8deeda0 100644
+--- a/tests/unittest/auto_deploy/_utils_test/_custom_op_utils.py
++++ b/tests/unittest/auto_deploy/_utils_test/_custom_op_utils.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import torch
+ 
+ 
+diff --git a/tests/unittest/auto_deploy/_utils_test/_dist_test_utils.py b/tests/unittest/auto_deploy/_utils_test/_dist_test_utils.py
+index 4c627c72cc02..3162b1fcd46b 100644
+--- a/tests/unittest/auto_deploy/_utils_test/_dist_test_utils.py
++++ b/tests/unittest/auto_deploy/_utils_test/_dist_test_utils.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ 
+diff --git a/tests/unittest/auto_deploy/_utils_test/_graph_test_helpers.py b/tests/unittest/auto_deploy/_utils_test/_graph_test_helpers.py
+index ad9832921c67..06368342e2dd 100644
+--- a/tests/unittest/auto_deploy/_utils_test/_graph_test_helpers.py
++++ b/tests/unittest/auto_deploy/_utils_test/_graph_test_helpers.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import copy
+ from typing import Callable, Dict, List, Optional
+ 
+diff --git a/tests/unittest/auto_deploy/_utils_test/_model_test_utils.py b/tests/unittest/auto_deploy/_utils_test/_model_test_utils.py
+index bd9fdbbe1cf9..6069e8a0526c 100644
+--- a/tests/unittest/auto_deploy/_utils_test/_model_test_utils.py
++++ b/tests/unittest/auto_deploy/_utils_test/_model_test_utils.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import copy
+ from typing import Any, Dict, Optional
+ 
+diff --git a/tests/unittest/auto_deploy/_utils_test/_torch_test_utils.py b/tests/unittest/auto_deploy/_utils_test/_torch_test_utils.py
+index 48cc7e5d8f1e..447f6733e949 100644
+--- a/tests/unittest/auto_deploy/_utils_test/_torch_test_utils.py
++++ b/tests/unittest/auto_deploy/_utils_test/_torch_test_utils.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ from typing import Tuple, Union
+ 
+ import torch
+diff --git a/tests/unittest/auto_deploy/_utils_test/torch_attention_reference.py b/tests/unittest/auto_deploy/_utils_test/torch_attention_reference.py
+index d9ce083c9c53..36293c0fe87d 100644
+--- a/tests/unittest/auto_deploy/_utils_test/torch_attention_reference.py
++++ b/tests/unittest/auto_deploy/_utils_test/torch_attention_reference.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Torch attention reference implementations for testing.
+ 
+ This module provides clean reference implementations using the torch backend
+diff --git a/tests/unittest/auto_deploy/multigpu/custom_ops/test_ad_dist_strategies.py b/tests/unittest/auto_deploy/multigpu/custom_ops/test_ad_dist_strategies.py
+index 307b7ed7a3ef..63a316c5830c 100644
+--- a/tests/unittest/auto_deploy/multigpu/custom_ops/test_ad_dist_strategies.py
++++ b/tests/unittest/auto_deploy/multigpu/custom_ops/test_ad_dist_strategies.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import signal
+ import subprocess
+ import tempfile
+diff --git a/tests/unittest/auto_deploy/multigpu/custom_ops/test_dist.py b/tests/unittest/auto_deploy/multigpu/custom_ops/test_dist.py
+index 743fc698f93f..8b25fd1d4754 100644
+--- a/tests/unittest/auto_deploy/multigpu/custom_ops/test_dist.py
++++ b/tests/unittest/auto_deploy/multigpu/custom_ops/test_dist.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Unit tests for custom dist ops."""
+ 
+ import pytest
+diff --git a/tests/unittest/auto_deploy/multigpu/custom_ops/test_moe_ep.py b/tests/unittest/auto_deploy/multigpu/custom_ops/test_moe_ep.py
+index b09ad1b2aa5a..8ef3adb77e5e 100644
+--- a/tests/unittest/auto_deploy/multigpu/custom_ops/test_moe_ep.py
++++ b/tests/unittest/auto_deploy/multigpu/custom_ops/test_moe_ep.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ from functools import partial
+ 
+ import pytest
+diff --git a/tests/unittest/auto_deploy/multigpu/custom_ops/test_mxfp4_moe_ep.py b/tests/unittest/auto_deploy/multigpu/custom_ops/test_mxfp4_moe_ep.py
+index 12ef18218a75..6b525839c88f 100644
+--- a/tests/unittest/auto_deploy/multigpu/custom_ops/test_mxfp4_moe_ep.py
++++ b/tests/unittest/auto_deploy/multigpu/custom_ops/test_mxfp4_moe_ep.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ from functools import partial
+ 
+ import pytest
+diff --git a/tests/unittest/auto_deploy/multigpu/custom_ops/test_sharded_rmsnorm.py b/tests/unittest/auto_deploy/multigpu/custom_ops/test_sharded_rmsnorm.py
+index 15f32223e06f..666c48e84cf0 100644
+--- a/tests/unittest/auto_deploy/multigpu/custom_ops/test_sharded_rmsnorm.py
++++ b/tests/unittest/auto_deploy/multigpu/custom_ops/test_sharded_rmsnorm.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Functional tests for sharded_rmsnorm custom op.
+ 
+ This module tests that the sharded_rmsnorm op produces correct
+diff --git a/tests/unittest/auto_deploy/multigpu/smoke/test_ad_build_small_multi.py b/tests/unittest/auto_deploy/multigpu/smoke/test_ad_build_small_multi.py
+index 75b4539f2051..5320fdf65eb9 100644
+--- a/tests/unittest/auto_deploy/multigpu/smoke/test_ad_build_small_multi.py
++++ b/tests/unittest/auto_deploy/multigpu/smoke/test_ad_build_small_multi.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Testing build_and_run_ad end2end."""
+ 
+ import pytest
+diff --git a/tests/unittest/auto_deploy/multigpu/transformations/library/test_allreduce_residual_rmsnorm_fusion.py b/tests/unittest/auto_deploy/multigpu/transformations/library/test_allreduce_residual_rmsnorm_fusion.py
+index 98d10c30e91c..f9602d84b8e9 100644
+--- a/tests/unittest/auto_deploy/multigpu/transformations/library/test_allreduce_residual_rmsnorm_fusion.py
++++ b/tests/unittest/auto_deploy/multigpu/transformations/library/test_allreduce_residual_rmsnorm_fusion.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for basic fusion of the allreduce, residual, and rmsnorm."""
+ 
+ import pytest
+diff --git a/tests/unittest/auto_deploy/multigpu/transformations/library/test_bmm_sharding.py b/tests/unittest/auto_deploy/multigpu/transformations/library/test_bmm_sharding.py
+index 00d9f01f54c5..25f20551dfc8 100644
+--- a/tests/unittest/auto_deploy/multigpu/transformations/library/test_bmm_sharding.py
++++ b/tests/unittest/auto_deploy/multigpu/transformations/library/test_bmm_sharding.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for basic graph sharding."""
+ 
+ from functools import partial
+diff --git a/tests/unittest/auto_deploy/multigpu/transformations/library/test_dist_backend.py b/tests/unittest/auto_deploy/multigpu/transformations/library/test_dist_backend.py
+index f0f5d012304f..30f2d3e08cf7 100644
+--- a/tests/unittest/auto_deploy/multigpu/transformations/library/test_dist_backend.py
++++ b/tests/unittest/auto_deploy/multigpu/transformations/library/test_dist_backend.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Test dist_backend configuration for sharding transformations."""
+ 
+ from typing import Optional
+diff --git a/tests/unittest/auto_deploy/multigpu/transformations/library/test_ep_sharding.py b/tests/unittest/auto_deploy/multigpu/transformations/library/test_ep_sharding.py
+index 4c0c2a3201cf..f8d4233618f8 100644
+--- a/tests/unittest/auto_deploy/multigpu/transformations/library/test_ep_sharding.py
++++ b/tests/unittest/auto_deploy/multigpu/transformations/library/test_ep_sharding.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for EP sharding transformation."""
+ 
+ from functools import partial
+diff --git a/tests/unittest/auto_deploy/multigpu/transformations/library/test_rmsnorm_sharding.py b/tests/unittest/auto_deploy/multigpu/transformations/library/test_rmsnorm_sharding.py
+index 09dcfc71476a..86be9759c95f 100644
+--- a/tests/unittest/auto_deploy/multigpu/transformations/library/test_rmsnorm_sharding.py
++++ b/tests/unittest/auto_deploy/multigpu/transformations/library/test_rmsnorm_sharding.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for RMSNorm sharding detection and transformation.
+ 
+ This module tests that the sharding transform correctly detects and transforms
+diff --git a/tests/unittest/auto_deploy/multigpu/transformations/library/test_tp_sharding.py b/tests/unittest/auto_deploy/multigpu/transformations/library/test_tp_sharding.py
+index 4102d0040800..32a7adcbf4cc 100644
+--- a/tests/unittest/auto_deploy/multigpu/transformations/library/test_tp_sharding.py
++++ b/tests/unittest/auto_deploy/multigpu/transformations/library/test_tp_sharding.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for basic graph sharding."""
+ 
+ import copy
+diff --git a/tests/unittest/auto_deploy/singlegpu/compile/test_captured_graph.py b/tests/unittest/auto_deploy/singlegpu/compile/test_captured_graph.py
+index e379f1a0f6fa..d45424ce7fa4 100644
+--- a/tests/unittest/auto_deploy/singlegpu/compile/test_captured_graph.py
++++ b/tests/unittest/auto_deploy/singlegpu/compile/test_captured_graph.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import operator
+ from contextlib import contextmanager
+ from unittest.mock import MagicMock
+diff --git a/tests/unittest/auto_deploy/singlegpu/compile/test_compiler.py b/tests/unittest/auto_deploy/singlegpu/compile/test_compiler.py
+index 2bb0a046dc80..7f3e2153473a 100644
+--- a/tests/unittest/auto_deploy/singlegpu/compile/test_compiler.py
++++ b/tests/unittest/auto_deploy/singlegpu/compile/test_compiler.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ from _model_test_utils import (
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_attention_op.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_attention_op.py
+index b1dcaf6cfc88..90193f6459c0 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_attention_op.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_attention_op.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ from torch_attention_reference import TorchAttentionReference
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_flashinfer_attention_op.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_flashinfer_attention_op.py
+index 8493bd8e2014..b0c50f492f37 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_flashinfer_attention_op.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_flashinfer_attention_op.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import flashinfer
+ import pytest
+ import torch
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_torch_attention_op.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_torch_attention_op.py
+index d8d565137560..f7881816ea52 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_torch_attention_op.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_torch_attention_op.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Concise test suite for torch attention backend operations."""
+ 
+ import math
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_attention_with_kv_cache.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_attention_with_kv_cache.py
+index 371637c5aa0e..00a67908bb8d 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_attention_with_kv_cache.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_attention_with_kv_cache.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import math
+ import random
+ 
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/fla/test_fla_cached_gated_delta_rule.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/fla/test_fla_cached_gated_delta_rule.py
+index 6ad670d87520..7da99898a806 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/fla/test_fla_cached_gated_delta_rule.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/fla/test_fla_cached_gated_delta_rule.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Unit tests for the fla_cached_gated_delta_rule custom op.
+ 
+ Covers:
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/fla/test_torch_cached_gated_delta_rule.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/fla/test_torch_cached_gated_delta_rule.py
+index f96b5eef6a0c..bf9cbda8156c 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/fla/test_torch_cached_gated_delta_rule.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/fla/test_torch_cached_gated_delta_rule.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Unit tests for the torch_cached_gated_delta_rule custom op.
+ 
+ Covers:
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_cuda_causal_conv_cached_op.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_cuda_causal_conv_cached_op.py
+index ea1462cf6725..0333ad96a0b3 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_cuda_causal_conv_cached_op.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_cuda_causal_conv_cached_op.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Unit tests for CUDA-backed cached causal conv1d custom ops.
+ 
+ Covers:
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_flashinfer_mamba_cached_op.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_flashinfer_mamba_cached_op.py
+index e449789c8aac..8a29a0167217 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_flashinfer_mamba_cached_op.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_flashinfer_mamba_cached_op.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ from test_triton_mamba_cached_op import _random_params
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_torch_causal_conv_cached_op.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_torch_causal_conv_cached_op.py
+index 7feda0b49368..c838114b46c0 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_torch_causal_conv_cached_op.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_torch_causal_conv_cached_op.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Unit tests for cached causal conv1d custom ops.
+ 
+ Covers:
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_torch_mamba_cached_op.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_torch_mamba_cached_op.py
+index 32761338a814..83520b827b91 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_torch_mamba_cached_op.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_torch_mamba_cached_op.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Unit tests for cached Mamba (SSM) custom ops.
+ 
+ Covers:
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_triton_mamba_cached_op.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_triton_mamba_cached_op.py
+index 0562488c6372..6d0da096caef 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_triton_mamba_cached_op.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_triton_mamba_cached_op.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ 
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_mla_op.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_mla_op.py
+index 3110cec5c148..bcae138ca6f6 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_mla_op.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_mla_op.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Test FlashInfer MLA backend operations.
+ 
+ Tests the flashinfer_mla_with_cache cached op and compares it with the
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_trtllm_mla_op.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_trtllm_mla_op.py
+index 2d3a5ad64cce..90765434ebaa 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_trtllm_mla_op.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_trtllm_mla_op.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ from unittest.mock import patch
+ 
+ import pytest
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_torch_mla_op.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_torch_mla_op.py
+index e7b090fb4df7..89b22bd3738d 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_torch_mla_op.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_torch_mla_op.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Comprehensive test suite for torch MLA backend operations.
+ 
+ Tests the torch_mla source op and torch_backend_mla_with_cache cached op
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/moe/test_ad_moe_op.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/moe/test_ad_moe_op.py
+index 90d170448012..1bcd958afcc1 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/moe/test_ad_moe_op.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/moe/test_ad_moe_op.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ import torch.nn.functional as F
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/moe/test_triton_moe.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/moe/test_triton_moe.py
+index c908978cc9d7..239d871a18b9 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/moe/test_triton_moe.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/moe/test_triton_moe.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ from utils.util import skip_pre_hopper
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/moe/test_trtllm_moe.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/moe/test_trtllm_moe.py
+index 5a627e3c859e..bfb79a4d3e37 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/moe/test_trtllm_moe.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/moe/test_trtllm_moe.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Test functions copied from flashinfer for TRT-LLM cutlass fused MoE.
+ 
+ Source: https://github.com/flashinfer-ai/flashinfer/blob/main/tests/moe/test_trtllm_cutlass_fused_moe.py
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/normalization/test_flashinfer_fused_add_rms_norm_op.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/normalization/test_flashinfer_fused_add_rms_norm_op.py
+index d6bc714eede4..ddad270cc28d 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/normalization/test_flashinfer_fused_add_rms_norm_op.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/normalization/test_flashinfer_fused_add_rms_norm_op.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ 
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/normalization/test_mamba_rms_norm.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/normalization/test_mamba_rms_norm.py
+index 0917090f642c..927e3fcdb853 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/normalization/test_mamba_rms_norm.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/normalization/test_mamba_rms_norm.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ 
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/normalization/test_triton_rms_norm.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/normalization/test_triton_rms_norm.py
+index 41c2c7e6d983..610c9881e094 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/normalization/test_triton_rms_norm.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/normalization/test_triton_rms_norm.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ 
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/quantization/test_quant.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/quantization/test_quant.py
+index 7b622aceb6db..5d669e7ff480 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/quantization/test_quant.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/quantization/test_quant.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ import torch.nn.functional as F
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/rope/test_rope_op_variants.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/rope/test_rope_op_variants.py
+index 712c7bf6aec0..a7fdb7db9d4e 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/rope/test_rope_op_variants.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/rope/test_rope_op_variants.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import flashinfer
+ import pytest
+ import torch
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/rope/test_triton_rope.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/rope/test_triton_rope.py
+index 988feebdd31c..4877ff29ebd7 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/rope/test_triton_rope.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/rope/test_triton_rope.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ from typing import Optional, Tuple
+ 
+ import pytest
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/test_gptq_op.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/test_gptq_op.py
+index 8f957790b403..72f7cc88ce7c 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/test_gptq_op.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/test_gptq_op.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ 
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/test_multi_stream_attn.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/test_multi_stream_attn.py
+index f64fb1ebaf26..119315000fee 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/test_multi_stream_attn.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/test_multi_stream_attn.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for multi-stream Q/KV projection parallelism in MLA attention.
+ 
+ The test builds a minimal mock model that mirrors the MLA fork pattern:
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/test_multi_stream_moe.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/test_multi_stream_moe.py
+index 12406afa52fd..569713af2c4f 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/test_multi_stream_moe.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/test_multi_stream_moe.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for multi-stream MoE shared-expert transform across model architectures.
+ 
+ Verifies that ``_execute_shared_expert_in_aux_stream`` correctly identifies the
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/test_resource_handlers.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/test_resource_handlers.py
+index 5ee2e7c06aa7..769108e32544 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/test_resource_handlers.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/test_resource_handlers.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Unit tests for ResourceHandler classes in attention_interface.py.
+ 
+ Tests the new resource handler abstraction for cache management:
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/test_triton_causal_conv_cached_op.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/test_triton_causal_conv_cached_op.py
+index c5932aefbe81..9a44eecb1f68 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/test_triton_causal_conv_cached_op.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/test_triton_causal_conv_cached_op.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Unit tests for Triton-backed cached causal conv1d custom ops.
+ 
+ Covers:
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/test_update_kv_cache.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/test_update_kv_cache.py
+index 47681b559602..0e95fd5f7c4d 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/test_update_kv_cache.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/test_update_kv_cache.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import torch
+ 
+ from tensorrt_llm._torch.auto_deploy.custom_ops.attention.torch_backend_attention import (
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/utils/test_triton_utils.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/utils/test_triton_utils.py
+index 4d68ec9d541a..798fdc35cd4f 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/utils/test_triton_utils.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/utils/test_triton_utils.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Unit tests for triton utility custom ops."""
+ 
+ import pytest
+diff --git a/tests/unittest/auto_deploy/singlegpu/mlir/__init__.py b/tests/unittest/auto_deploy/singlegpu/mlir/__init__.py
+index e69de29bb2d1..bd904e89959e 100644
+--- a/tests/unittest/auto_deploy/singlegpu/mlir/__init__.py
++++ b/tests/unittest/auto_deploy/singlegpu/mlir/__init__.py
+@@ -0,0 +1,14 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+diff --git a/tests/unittest/auto_deploy/singlegpu/models/test_deepseek_custom.py b/tests/unittest/auto_deploy/singlegpu/models/test_deepseek_custom.py
+index b1cfe11410ba..b6c253442987 100644
+--- a/tests/unittest/auto_deploy/singlegpu/models/test_deepseek_custom.py
++++ b/tests/unittest/auto_deploy/singlegpu/models/test_deepseek_custom.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Testing custom DeepSeekV3 model implementation for auto_deploy export."""
+ 
+ import pytest
+diff --git a/tests/unittest/auto_deploy/singlegpu/models/test_glm4_moe_lite_modeling.py b/tests/unittest/auto_deploy/singlegpu/models/test_glm4_moe_lite_modeling.py
+index 486ffe7d3137..e6481ed7e0ff 100644
+--- a/tests/unittest/auto_deploy/singlegpu/models/test_glm4_moe_lite_modeling.py
++++ b/tests/unittest/auto_deploy/singlegpu/models/test_glm4_moe_lite_modeling.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for GLM4 MoE Lite custom model implementation.
+ 
+ This module tests the custom GLM4 MoE Lite model implementation which uses
+diff --git a/tests/unittest/auto_deploy/singlegpu/models/test_hf.py b/tests/unittest/auto_deploy/singlegpu/models/test_hf.py
+index b68368c31127..55ff51603bdb 100644
+--- a/tests/unittest/auto_deploy/singlegpu/models/test_hf.py
++++ b/tests/unittest/auto_deploy/singlegpu/models/test_hf.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import copy
+ from unittest.mock import MagicMock, patch
+ 
+diff --git a/tests/unittest/auto_deploy/singlegpu/models/test_hybrid_patches.py b/tests/unittest/auto_deploy/singlegpu/models/test_hybrid_patches.py
+index 102a5497b440..3d6af0fb2c27 100644
+--- a/tests/unittest/auto_deploy/singlegpu/models/test_hybrid_patches.py
++++ b/tests/unittest/auto_deploy/singlegpu/models/test_hybrid_patches.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ import transformers
+diff --git a/tests/unittest/auto_deploy/singlegpu/models/test_kimi_k2_modeling.py b/tests/unittest/auto_deploy/singlegpu/models/test_kimi_k2_modeling.py
+index ebca427cf8f2..818bcc1db78a 100644
+--- a/tests/unittest/auto_deploy/singlegpu/models/test_kimi_k2_modeling.py
++++ b/tests/unittest/auto_deploy/singlegpu/models/test_kimi_k2_modeling.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for Kimi-K2 / Kimi-K2.5 custom model implementation.
+ 
+ This module tests the custom Kimi-K2 model implementation (DeepSeek-V3 variant)
+diff --git a/tests/unittest/auto_deploy/singlegpu/models/test_modeling_nemotron_h.py b/tests/unittest/auto_deploy/singlegpu/models/test_modeling_nemotron_h.py
+index 0b17839a9dd5..03a85b9a1b18 100644
+--- a/tests/unittest/auto_deploy/singlegpu/models/test_modeling_nemotron_h.py
++++ b/tests/unittest/auto_deploy/singlegpu/models/test_modeling_nemotron_h.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import importlib.util
+ import sys
+ import types
+diff --git a/tests/unittest/auto_deploy/singlegpu/models/test_qwen3_5_moe.py b/tests/unittest/auto_deploy/singlegpu/models/test_qwen3_5_moe.py
+index 44ae368c817e..9729b6b9f6db 100644
+--- a/tests/unittest/auto_deploy/singlegpu/models/test_qwen3_5_moe.py
++++ b/tests/unittest/auto_deploy/singlegpu/models/test_qwen3_5_moe.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for the custom Qwen3.5 MoE model implementation.
+ 
+ Validates that the prefill-only custom model (with autodeploy custom ops)
+diff --git a/tests/unittest/auto_deploy/singlegpu/models/test_qwen3_next_gdn_patches.py b/tests/unittest/auto_deploy/singlegpu/models/test_qwen3_next_gdn_patches.py
+index 90a87620f34a..ea99ca3baa5d 100644
+--- a/tests/unittest/auto_deploy/singlegpu/models/test_qwen3_next_gdn_patches.py
++++ b/tests/unittest/auto_deploy/singlegpu/models/test_qwen3_next_gdn_patches.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Testing GDN (Gated Delta Net) patches for Qwen3Next.
+ 
+ This test verifies that:
+diff --git a/tests/unittest/auto_deploy/singlegpu/models/test_qwen3_next_patches.py b/tests/unittest/auto_deploy/singlegpu/models/test_qwen3_next_patches.py
+index 4a3e146633ca..545acc127793 100644
+--- a/tests/unittest/auto_deploy/singlegpu/models/test_qwen3_next_patches.py
++++ b/tests/unittest/auto_deploy/singlegpu/models/test_qwen3_next_patches.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Testing module patches that enable export of Qwen3Next MoE.
+ 
+ This test verifies that the patched Qwen3NextSparseMoeBlock forward function
+diff --git a/tests/unittest/auto_deploy/singlegpu/shim/test_cached_sequence_interface.py b/tests/unittest/auto_deploy/singlegpu/shim/test_cached_sequence_interface.py
+index dc13ff67652b..58bcc3985b06 100644
+--- a/tests/unittest/auto_deploy/singlegpu/shim/test_cached_sequence_interface.py
++++ b/tests/unittest/auto_deploy/singlegpu/shim/test_cached_sequence_interface.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Unit tests for CachedSequenceInterface in interface.py.
+ 
+ Tests the refactored CachedSequenceInterface which now:
+diff --git a/tests/unittest/auto_deploy/singlegpu/shim/test_engine.py b/tests/unittest/auto_deploy/singlegpu/shim/test_engine.py
+index 0c9ec8692c88..2741e623dc60 100644
+--- a/tests/unittest/auto_deploy/singlegpu/shim/test_engine.py
++++ b/tests/unittest/auto_deploy/singlegpu/shim/test_engine.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ from typing import List, Optional, Type
+ 
+ import pytest
+diff --git a/tests/unittest/auto_deploy/singlegpu/shim/test_llm_config.py b/tests/unittest/auto_deploy/singlegpu/shim/test_llm_config.py
+index 84f1d9dd520d..539f9ba7fd2a 100644
+--- a/tests/unittest/auto_deploy/singlegpu/shim/test_llm_config.py
++++ b/tests/unittest/auto_deploy/singlegpu/shim/test_llm_config.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ from unittest.mock import MagicMock, patch
+ 
+ import pydantic
+diff --git a/tests/unittest/auto_deploy/singlegpu/smoke/test_ad_build_small_single.py b/tests/unittest/auto_deploy/singlegpu/smoke/test_ad_build_small_single.py
+index 208232e6636b..f3c93a078f83 100644
+--- a/tests/unittest/auto_deploy/singlegpu/smoke/test_ad_build_small_single.py
++++ b/tests/unittest/auto_deploy/singlegpu/smoke/test_ad_build_small_single.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Testing build_and_run_ad end2end."""
+ 
+ import pytest
+diff --git a/tests/unittest/auto_deploy/singlegpu/smoke/test_ad_trtllm_bench.py b/tests/unittest/auto_deploy/singlegpu/smoke/test_ad_trtllm_bench.py
+index 86f47c3c70d0..644b97401129 100644
+--- a/tests/unittest/auto_deploy/singlegpu/smoke/test_ad_trtllm_bench.py
++++ b/tests/unittest/auto_deploy/singlegpu/smoke/test_ad_trtllm_bench.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import subprocess
+ import tempfile
+ from pathlib import Path
+diff --git a/tests/unittest/auto_deploy/singlegpu/smoke/test_ad_trtllm_serve.py b/tests/unittest/auto_deploy/singlegpu/smoke/test_ad_trtllm_serve.py
+index edd09a2127b9..01456c01712e 100644
+--- a/tests/unittest/auto_deploy/singlegpu/smoke/test_ad_trtllm_serve.py
++++ b/tests/unittest/auto_deploy/singlegpu/smoke/test_ad_trtllm_serve.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import multiprocessing as mp
+ import time
+ 
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_attention_matcher.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_attention_matcher.py
+index 5b6e16715f14..0e6dab992d94 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_attention_matcher.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_attention_matcher.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ from typing import Callable
+ 
+ import pytest
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_attention_matcher_hf.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_attention_matcher_hf.py
+index 9b91cb688255..d09f07f8a447 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_attention_matcher_hf.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_attention_matcher_hf.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Test that the attention matcher works with HF's SDPA backends."""
+ 
+ import copy
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_bmm_moe_hooks.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_bmm_moe_hooks.py
+index c558c5ab1473..4439659a355c 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_bmm_moe_hooks.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_bmm_moe_hooks.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for BMM MoE checkpoint loading hooks."""
+ 
+ import pytest
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_l2norm.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_l2norm.py
+index ce8c0d50d62f..c5d89349ece3 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_l2norm.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_l2norm.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ from _graph_test_helpers import run_test_transformed_gm
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_relu2_quant_nvfp4.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_relu2_quant_nvfp4.py
+index dd56d6c6e2fc..1c13d737bcd7 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_relu2_quant_nvfp4.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_relu2_quant_nvfp4.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ import torch.nn as nn
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_rmsnorm.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_rmsnorm.py
+index c6a13b80a7e1..5c3c52366132 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_rmsnorm.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_rmsnorm.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ from _graph_test_helpers import run_test_transformed_gm
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_swiglu.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_swiglu.py
+index 038527dfb982..f3377e4b2e08 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_swiglu.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_swiglu.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ from torch.export import Dim
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_trtllm_attention_quant_fp8.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_trtllm_attention_quant_fp8.py
+index 650a58ebda25..38b6c257b532 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_trtllm_attention_quant_fp8.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_trtllm_attention_quant_fp8.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ import torch.nn as nn
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fused_add_rms_norm.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fused_add_rms_norm.py
+index 28b939468a73..c9af4b5ab6ee 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fused_add_rms_norm.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_fused_add_rms_norm.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import operator
+ 
+ import torch
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_gated_delta_rule_cache.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_gated_delta_rule_cache.py
+index 70ec95be3bba..99394f02ca88 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_gated_delta_rule_cache.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_gated_delta_rule_cache.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Transform unit test for insert_cached_gated_delta_rule with the fla_gated_delta backend.
+ 
+ Verifies the full pipeline:
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_gemm_fusion.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_gemm_fusion.py
+index 48f3c2a50c41..5e62540e4a23 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_gemm_fusion.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_gemm_fusion.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for basic GEMM fusion."""
+ 
+ import operator
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_gemm_fusion_trtllm.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_gemm_fusion_trtllm.py
+index 4b2864c91c3b..8d7fef95f1db 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_gemm_fusion_trtllm.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_gemm_fusion_trtllm.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for QKV GEMM fusion chained with TRT-LLM attention cache insertion.
+ 
+ These tests are split from ``test_gemm_fusion.py`` because they depend on the
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_kv_cache.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_kv_cache.py
+index bd448a88d8d2..594e0f5a0d69 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_kv_cache.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_kv_cache.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ from types import SimpleNamespace
+ from typing import List, Optional
+ from unittest.mock import MagicMock
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_moe_fusion.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_moe_fusion.py
+index c1ff076de8fb..290f7921583c 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_moe_fusion.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_moe_fusion.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import json
+ import operator
+ from pathlib import Path
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_mrope_delta_cache.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_mrope_delta_cache.py
+index 3e6748de67c0..5930e9d6e0f3 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_mrope_delta_cache.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_mrope_delta_cache.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ from pathlib import Path
+ 
+ import torch
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_nvfp4_swiglu.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_nvfp4_swiglu.py
+index 0687b1fd53d6..d89de5051688 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_nvfp4_swiglu.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_nvfp4_swiglu.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for NVFP4 quantized SwiGLU pattern matching and fusion transforms.
+ 
+ Tests the parallel NVFP4 SwiGLU path:
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_quant_fusion.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_quant_fusion.py
+index 80f224962f4e..3be43e8c70cd 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_quant_fusion.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_quant_fusion.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import operator
+ 
+ # test_quant_fusion.py
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_quant_moe.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_quant_moe.py
+index 15f5ecbcfcb7..acf7b5c00a97 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_quant_moe.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_quant_moe.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ from _graph_test_helpers import FakeFactory, run_test_transformed_gm
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_quantization.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_quantization.py
+index 668155f36b0c..e595a9e94f87 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_quantization.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_quantization.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for basic graph quantization."""
+ 
+ from typing import List
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_redundant_transposes.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_redundant_transposes.py
+index 4458337cf788..6fb22fb8388a 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_redundant_transposes.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_redundant_transposes.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for elimination of redundant transpose operations."""
+ 
+ import pytest
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_rope_transformation.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_rope_transformation.py
+index c21822001eb5..402f694092ac 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_rope_transformation.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_rope_transformation.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ from functools import partial
+ 
+ import pytest
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_torch_gated_delta_rule_cache.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_torch_gated_delta_rule_cache.py
+index 49f9622eb9ee..2062c860274c 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_torch_gated_delta_rule_cache.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_torch_gated_delta_rule_cache.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Transform unit test for insert_cached_gated_delta_rule with the torch_gated_delta backend.
+ 
+ Verifies the full pipeline:
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_trtllm_gen_diag.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_trtllm_gen_diag.py
+index 92750ba18c2a..b980ca954071 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/library/test_trtllm_gen_diag.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_trtllm_gen_diag.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Diagnostic: compare TRTLLM-Gen accuracy with Cutlass and larger dimensions."""
+ 
+ import torch
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/test_bf16_gemm.py b/tests/unittest/auto_deploy/singlegpu/transformations/test_bf16_gemm.py
+index d73149efb292..a149672f923c 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/test_bf16_gemm.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/test_bf16_gemm.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for basic bf16 GEMMs."""
+ 
+ import pytest
+diff --git a/tests/unittest/auto_deploy/singlegpu/transformations/test_export.py b/tests/unittest/auto_deploy/singlegpu/transformations/test_export.py
+index cd9529c22de1..ccad56207b39 100644
+--- a/tests/unittest/auto_deploy/singlegpu/transformations/test_export.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/test_export.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ from abc import ABC, abstractmethod
+ from typing import Optional, Set, Type
+ 
+diff --git a/tests/unittest/auto_deploy/singlegpu/utils/test_config.py b/tests/unittest/auto_deploy/singlegpu/utils/test_config.py
+index a23b9e7b8c90..796fec34ab13 100644
+--- a/tests/unittest/auto_deploy/singlegpu/utils/test_config.py
++++ b/tests/unittest/auto_deploy/singlegpu/utils/test_config.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Test suite for DynamicYamlMixInForSettings utility class."""
+ 
+ import os
+diff --git a/tests/unittest/auto_deploy/singlegpu/utils/test_create_derived_custom_op.py b/tests/unittest/auto_deploy/singlegpu/utils/test_create_derived_custom_op.py
+index 14eed45a63f9..faf3cd9a0cf8 100644
+--- a/tests/unittest/auto_deploy/singlegpu/utils/test_create_derived_custom_op.py
++++ b/tests/unittest/auto_deploy/singlegpu/utils/test_create_derived_custom_op.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ """Tests for ``create_derived_custom_op`` in ``_graph.py``."""
+ 
+ import torch
+diff --git a/tests/unittest/auto_deploy/singlegpu/utils/test_quantization_utils.py b/tests/unittest/auto_deploy/singlegpu/utils/test_quantization_utils.py
+index 5fa024e1107e..a8790288ce85 100644
+--- a/tests/unittest/auto_deploy/singlegpu/utils/test_quantization_utils.py
++++ b/tests/unittest/auto_deploy/singlegpu/utils/test_quantization_utils.py
+@@ -1,3 +1,17 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
+ import pytest
+ import torch
+ 
+diff --git a/tests/unittest/auto_deploy/standalone/__init__.py b/tests/unittest/auto_deploy/standalone/__init__.py
+index e69de29bb2d1..bd904e89959e 100644
+--- a/tests/unittest/auto_deploy/standalone/__init__.py
++++ b/tests/unittest/auto_deploy/standalone/__init__.py
+@@ -0,0 +1,14 @@
++# SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.

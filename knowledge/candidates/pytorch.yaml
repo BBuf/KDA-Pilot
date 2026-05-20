@@ -1,5 +1,5 @@
 repo: pytorch/pytorch
-searched_at: '2026-04-27'
+searched_at: '2026-05-20'
 keywords_used:
 - blackwell
 - sm100
@@ -154,6 +154,7 @@ prs:
   - .github/workflows/xpu.yml
   - scripts/release/apply-release-changes.sh
   - tools/stats/import_test_stats.py
+  pr: 180470
 - number: 178009
   title: '[MPS] fix compiling of SDPA producing nan results'
   date: '2026-03-21'
@@ -168,6 +169,7 @@ prs:
   - test/inductor/test_mps_basic.py
   - test/test_mps.py
   - torch/_inductor/codegen/mps.py
+  pr: 178009
 - number: 177144
   title: '[Inductor] Don''t unfuse addmm for bf16/fp16 to avoid precision loss'
   date: '2026-03-11'
@@ -180,6 +182,7 @@ prs:
   changed_paths:
   - test/inductor/test_pattern_matcher.py
   - torch/_inductor/fx_passes/post_grad.py
+  pr: 177144
 - number: 177142
   title: fix acc failure for vit_base_patch14_dinov2.lvd142m
   date: '2026-03-11'
@@ -191,6 +194,7 @@ prs:
   artifact_dir: evidence/pull-bundles/pytorch/gh-177142
   changed_paths:
   - benchmarks/dynamo/timm_models.py
+  pr: 177142
 - number: 176410
   title: '[Inductor] Reject non-contiguous subnode fusion in mix-order reduction.'
   date: '2026-03-09'
@@ -203,6 +207,7 @@ prs:
   changed_paths:
   - test/inductor/test_mix_order_reduction.py
   - torch/_inductor/scheduler.py
+  pr: 176410
 - number: 176495
   title: '[inductor] avoid multi-stage for mix-order-red by default (#176228)'
   date: '2026-03-04'
@@ -217,6 +222,7 @@ prs:
   - torch/_inductor/codegen/triton.py
   - torch/_inductor/config.py
   - torch/_inductor/runtime/triton_heuristics.py
+  pr: 176495
 - number: 175299
   title: '[benchmark] Skip pytorch_CycleGAN_and_pix2pix from inductor benchmarks'
   date: '2026-02-19'
@@ -259,6 +265,7 @@ prs:
   - benchmarks/dynamo/ci_expected_accuracy/rocm/inductor_torchbench_inference.csv
   - benchmarks/dynamo/ci_expected_accuracy/rocm/inductor_torchbench_training.csv
   - benchmarks/dynamo/torchbench.yaml
+  pr: 175299
 - number: 175091
   title: '[RELEASE 2.11] Release only changes'
   date: '2026-02-16'
@@ -387,6 +394,7 @@ prs:
   - .github/workflows/weekly.yml
   - .github/workflows/xpu.yml
   - tools/stats/import_test_stats.py
+  pr: 175091
 - number: 175096
   title: Update inductor expected accuracy files
   date: '2026-02-16'
@@ -398,6 +406,7 @@ prs:
   artifact_dir: evidence/pull-bundles/pytorch/gh-175096
   changed_paths:
   - benchmarks/dynamo/ci_expected_accuracy/cpu_inductor_torchbench_inference.csv
+  pr: 175096
 - number: 172577
   title: '[Graph Partition] Improve support for mutation ops'
   date: '2026-01-15'
@@ -410,6 +419,7 @@ prs:
   changed_paths:
   - test/inductor/test_cudagraph_trees.py
   - torch/_inductor/scheduler.py
+  pr: 172577
 - number: 172141
   title: Skip modded_nanogpt model in TorchInductor benchmark
   date: '2026-01-09'
@@ -421,6 +431,7 @@ prs:
   artifact_dir: evidence/pull-bundles/pytorch/gh-172141
   changed_paths:
   - benchmarks/dynamo/torchbench.yaml
+  pr: 172141
 - number: 171895
   title: '[cherry-pick][cuDNN][SDPA] cuDNN SDPA off-by-default for cuDNN versions < 12.9 (#171627)'
   date: '2026-01-07'
@@ -432,6 +443,7 @@ prs:
   artifact_dir: evidence/pull-bundles/pytorch/gh-171895
   changed_paths:
   - aten/src/ATen/native/transformers/cuda/sdp_utils.cpp
+  pr: 171895
 - number: 171247
   title: '[xpu][fix][inductor] fallback bfloat16 atomics to eager'
   date: '2025-12-24'
@@ -444,6 +456,7 @@ prs:
   changed_paths:
   - test/inductor/test_torchinductor.py
   - torch/_inductor/utils.py
+  pr: 171247
 - number: 171129
   title: '[Inductor] Fix constants handling for Triton constexpr (triton#8248)'
   date: '2025-12-22'
@@ -456,6 +469,7 @@ prs:
   changed_paths:
   - test/inductor/test_triton_kernels.py
   - torch/_higher_order_ops/triton_kernel_wrap.py
+  pr: 171129
 - number: 171140
   title: '[ROCm] Make grouped GEMM CK opt‑in via env and default to fallback path'
   date: '2026-01-08'
@@ -470,6 +484,7 @@ prs:
   - aten/src/ATen/Context.h
   - aten/src/ATen/native/cuda/GroupedBlas.cpp
   - test/test_matmul_cuda.py
+  pr: 171140
 - number: 170884
   title: '[inductor] Fix cudagraph skip for index_put_ with boolean indices, gr…'
   date: '2025-12-22'
@@ -487,6 +502,7 @@ prs:
   - torch/_inductor/lowering.py
   - torch/_inductor/scheduler.py
   - torch/_inductor/utils.py
+  pr: 170884
 - number: 170555
   title: '[cherry-pick] Fix vllm issue for flex (#170499)'
   date: '2025-12-17'
@@ -499,6 +515,7 @@ prs:
   changed_paths:
   - test/inductor/test_flex_attention.py
   - torch/_dynamo/variables/higher_order_ops.py
+  pr: 170555
 - number: 170486
   title: '[flex_attention] adds support for low precision K/V inputs in compiled mode with GPU'
   date: '2026-01-05'
@@ -519,6 +536,7 @@ prs:
   - torch/_inductor/kernel/flex/templates/common.py.jinja
   - torch/nn/attention/_utils.py
   - torch/nn/attention/flex_attention.py
+  pr: 170486
 - number: 170190
   title: '[ROCm] Enable shared memory based pruning for Triton configs'
   date: '2025-12-16'
@@ -533,6 +551,7 @@ prs:
   - torch/_C/__init__.pyi.in
   - torch/_inductor/template_heuristics/triton.py
   - torch/csrc/cuda/Module.cpp
+  pr: 170190
 - number: 170112
   title: '[RELEASE 2.10] Release only changes'
   date: '2025-12-10'
@@ -653,6 +672,7 @@ prs:
   - .github/workflows/weekly.yml
   - .github/workflows/xpu.yml
   - tools/stats/import_test_stats.py
+  pr: 170112
 - number: 167327
   title: '[cuDNN][SDPA][Convolution] Expose cuDNN runtime version in CUDA hooks'
   date: '2025-11-07'
@@ -670,6 +690,7 @@ prs:
   - aten/src/ATen/native/Convolution.cpp
   - aten/src/ATen/native/transformers/cuda/sdp_utils.cpp
   - torch/csrc/cuda/shared/cudnn.cpp
+  pr: 167327
 - number: 166967
   title: '[Graph Partition] move custom rules to inductor config (#166458)'
   date: '2025-11-05'
@@ -683,6 +704,7 @@ prs:
   - test/inductor/test_cudagraph_trees.py
   - torch/_inductor/config.py
   - torch/_inductor/scheduler.py
+  pr: 166967
 - number: 166910
   title: '[inductor] don''t try to reorder loops for template'
   date: '2025-11-05'
@@ -695,6 +717,7 @@ prs:
   changed_paths:
   - test/inductor/test_loop_ordering.py
   - torch/_inductor/scheduler.py
+  pr: 166910
 - number: 166922
   title: '[Inductor] No longer throw error in bmm out_dtype lowering due to tem…'
   date: '2025-11-07'
@@ -707,6 +730,7 @@ prs:
   changed_paths:
   - test/inductor/test_max_autotune.py
   - torch/_inductor/kernel/bmm.py
+  pr: 166922
 - number: 166913
   title: '[Dynamo] Don''t guard data ptrs by default with mark_static_address'
   date: '2025-11-05'
@@ -720,6 +744,7 @@ prs:
   - test/inductor/test_compiled_optimizers.py
   - torch/_dynamo/decorators.py
   - torch/_dynamo/variables/optimizer.py
+  pr: 166913
 - number: 166985
   title: '[Graph Partition] fix graph partition input signature for fallback kernels'
   date: '2025-11-05'
@@ -732,6 +757,7 @@ prs:
   changed_paths:
   - test/inductor/test_cudagraph_trees.py
   - torch/_inductor/scheduler.py
+  pr: 166985
 - number: 164368
   title: '[Flex attention] Fix flex attention head broadcast'
   date: '2025-10-01'
@@ -744,6 +770,7 @@ prs:
   changed_paths:
   - test/inductor/test_flex_attention.py
   - torch/nn/attention/flex_attention.py
+  pr: 164368
 - number: 164364
   title: '[SDPA] [MPS] Fixes regression in 2.8.0 for scaled_dot_product_attention using mps'
   date: '2025-10-01'
@@ -757,6 +784,7 @@ prs:
   - aten/src/ATen/native/mps/kernels/Attention.metal
   - aten/src/ATen/native/mps/operations/Attention.mm
   - test/test_mps.py
+  pr: 164364
 - number: 164026
   title: '[cuDNN][SDPA] Disable dropout for cuDNN SDPA on 9.11 - 9.13'
   date: '2025-09-29'
@@ -769,6 +797,7 @@ prs:
   changed_paths:
   - aten/src/ATen/native/transformers/cuda/sdp_utils.cpp
   - test/test_transformers.py
+  pr: 164026
 - number: 163954
   title: Move inductor jobs 3.9->3.10
   date: '2025-09-26'
@@ -799,6 +828,7 @@ prs:
   - benchmarks/dynamo/ci_expected_accuracy/rocm/dynamic_inductor_torchbench_inference.csv
   - benchmarks/dynamo/ci_expected_accuracy/rocm/dynamo_eager_torchbench_inference.csv
   - benchmarks/dynamo/ci_expected_accuracy/rocm/inductor_torchbench_inference.csv
+  pr: 163954
 - number: 163633
   title: CUDA 13.0 Warning update for supported architectures
   date: '2025-09-23'
@@ -810,6 +840,7 @@ prs:
   artifact_dir: evidence/pull-bundles/pytorch/gh-163633
   changed_paths:
   - torch/cuda/__init__.py
+  pr: 163633
 - number: 163388
   title: '[Inductor][Intel GPU] Save `threads_per_warp` from tirton compiled kernel for launching kernel correctly in cpp wrapper.'
   date: '2025-09-26'
@@ -823,6 +854,7 @@ prs:
   - torch/_inductor/codegen/cpp_wrapper_gpu.py
   - torch/_inductor/runtime/triton_heuristics.py
   - torch/csrc/inductor/aoti_runtime/sycl_runtime_wrappers.h
+  pr: 163388
 - number: 163395
   title: '[graph partition] Add way to register custom rule (#163310)'
   date: '2025-09-23'
@@ -835,6 +867,7 @@ prs:
   changed_paths:
   - test/inductor/test_cudagraph_trees.py
   - torch/_inductor/scheduler.py
+  pr: 163395
 - number: 163380
   title: '[Graph Partition] improve custom op output alias'
   date: '2025-09-19'
@@ -848,6 +881,7 @@ prs:
   - test/inductor/test_cudagraph_trees.py
   - test/inductor/test_perf.py
   - torch/_inductor/ir.py
+  pr: 163380
 - number: 163097
   title: '[Cherry Pick][Graph Partition] allow sharing default device context'
   date: '2025-09-19'
@@ -862,6 +896,7 @@ prs:
   - torch/_inductor/codegen/wrapper.py
   - torch/_inductor/scheduler.py
   - torch/_inductor/utils.py
+  pr: 163097
 - number: 161816
   title: '[Reland][Inductor] Prune configs that require more shared memory than the hardware limit'
   date: '2025-08-30'
@@ -877,6 +912,7 @@ prs:
   - torch/_inductor/config.py
   - torch/_inductor/select_algorithm.py
   - torch/_inductor/template_heuristics/triton.py
+  pr: 161816
 - number: 158646
   title: '[cherry-pick][inductor][triton] Update HAS_WARP_SPEC to check triton.Config params. Update Triton Hash to top of release/3.4.x stack'
   date: '2025-07-18'
@@ -891,6 +927,7 @@ prs:
   - .ci/docker/common/install_conda.sh
   - test/inductor/test_static_cuda_launcher.py
   - torch/_inductor/runtime/triton_compat.py
+  pr: 158646
 - number: 158478
   title: Add warning about removed sm50 and sm60 arches
   date: '2025-07-16'
@@ -902,6 +939,7 @@ prs:
   artifact_dir: evidence/pull-bundles/pytorch/gh-158478
   changed_paths:
   - torch/cuda/__init__.py
+  pr: 158478
 - number: 158237
   title: '[MPS] Switch Cholesky  decomp to column wise'
   date: '2025-07-22'
@@ -917,6 +955,7 @@ prs:
   - aten/src/ATen/native/mps/operations/LinearAlgebra.mm
   - aten/src/ATen/native/native_functions.yaml
   - test/inductor/test_mps_basic.py
+  pr: 158237
 - number: 157422
   title: '[PowerPC] Fixed build issue for vsx vec256 complexfloat and scaled_mm_out_cpu '
   date: '2025-07-07'
@@ -930,6 +969,7 @@ prs:
   - aten/src/ATen/cpu/vec/vec256/vsx/vec256_complex_double_vsx.h
   - aten/src/ATen/native/Blas.cpp
   - cmake/Modules/FindMKLDNN.cmake
+  pr: 157422
 - number: 157241
   title: '[user triton] AOT inductor support for device-side TMA'
   date: '2025-06-29'
@@ -947,6 +987,7 @@ prs:
   - torch/_inductor/codegen/cuda/device_op_overrides.py
   - torch/_inductor/codegen/xpu/device_op_overrides.py
   - torch/_inductor/runtime/triton_heuristics.py
+  pr: 157241
 - number: 156932
   title: Fix macOS build with `USE_MPS=OFF`
   date: '2025-07-07'
@@ -958,6 +999,7 @@ prs:
   artifact_dir: evidence/pull-bundles/pytorch/gh-156932
   changed_paths:
   - torch/csrc/inductor/aoti_runner/pybind.cpp
+  pr: 156932
 - number: 153641
   title: '[FlexAttention] explicilty create grad_q w/ strides'
   date: '2025-05-21'
@@ -970,6 +1012,7 @@ prs:
   changed_paths:
   - torch/_higher_order_ops/flex_attention.py
   - torch/_inductor/kernel/flex_attention.py
+  pr: 153641
 - number: 153104
   title: '[FlexAttention] Remove Old Constraint on lastdim strides'
   date: '2025-05-15'
@@ -982,6 +1025,7 @@ prs:
   changed_paths:
   - test/inductor/test_flex_attention.py
   - torch/_inductor/kernel/flex_attention.py
+  pr: 153104
 - number: 152967
   title: '[ATen][CUDA] Optimize 128 bit vectorization'
   date: '2025-05-07'
@@ -993,6 +1037,7 @@ prs:
   artifact_dir: evidence/pull-bundles/pytorch/gh-152967
   changed_paths:
   - aten/src/ATen/native/cuda/CUDALoops.cuh
+  pr: 152967
 - number: 152774
   title: '[dynamo][super variable] Fix bug to use correct source'
   date: '2025-05-06'
@@ -1020,6 +1065,7 @@ prs:
   - torch/_dynamo/source.py
   - torch/_dynamo/variables/misc.py
   - torch/csrc/dynamo/guards.cpp
+  pr: 152774
 - number: 150676
   title: '[CUDA][avgpool2d] Fix backward launch bounds again for `sm100`, `sm120`'
   date: '2025-04-04'
@@ -1031,6 +1077,7 @@ prs:
   artifact_dir: evidence/pull-bundles/pytorch/gh-150676
   changed_paths:
   - aten/src/ATen/native/cuda/AveragePool2d.cu
+  pr: 150676
 - number: 150145
   title: Dont exclude constant_pad_nd in prologue fusion
   date: '2025-04-03'
@@ -1045,6 +1092,7 @@ prs:
   - torch/_inductor/analyze_preserves_zero_mask.py
   - torch/_inductor/ir.py
   - torch/_inductor/scheduler.py
+  pr: 150145
 - number: 149644
   title: op should NOT be static in aoti_torch_call_dispatcher
   date: '2025-03-25'
@@ -1057,6 +1105,7 @@ prs:
   changed_paths:
   - test/test_cpp_extensions_jit.py
   - torch/csrc/inductor/aoti_torch/shim_common.cpp
+  pr: 149644
 - number: 149386
   title: Add AOTI shim for _weight_int4pack_mm_cpu_tensor (#149031)
   date: '2025-03-20'
@@ -1073,6 +1122,7 @@ prs:
   - torch/_inductor/quantized_lowerings.py
   - torch/csrc/inductor/aoti_torch/c/shim_mkldnn.h
   - torch/csrc/inductor/aoti_torch/shim_mkldnn.cpp
+  pr: 149386
 - number: 149125
   title: Remove runtime dependency on packaging
   date: '2025-03-13'
@@ -1084,6 +1134,7 @@ prs:
   artifact_dir: evidence/pull-bundles/pytorch/gh-149125
   changed_paths:
   - torch/_inductor/kernel/mm.py
+  pr: 149125
 - number: 144484
   title: Cleanup gpt_fast benchmark
   date: '2025-01-10'
@@ -1095,6 +1146,7 @@ prs:
   artifact_dir: evidence/pull-bundles/pytorch/gh-144484
   changed_paths:
   - benchmarks/gpt_fast/benchmark.py
+  pr: 144484
 - number: 144398
   title: 'ROCm SDPA: Ensure attn_mask has the same dtype with q'
   date: '2025-01-10'
@@ -1106,6 +1158,7 @@ prs:
   artifact_dir: evidence/pull-bundles/pytorch/gh-144398
   changed_paths:
   - aten/src/ATen/native/transformers/cuda/sdp_utils.cpp
+  pr: 144398
 - number: 144248
   title: '[inductor][cpu] Fix bmm b_index for dynamic expressions in inductor autotuner'
   date: '2025-01-10'
@@ -1119,6 +1172,7 @@ prs:
   - test/inductor/test_cpu_select_algorithm.py
   - torch/_inductor/codegen/cpp_bmm_template.py
   - torch/_inductor/codegen/cpp_gemm_template.py
+  pr: 144248
 - number: 116518
   title: '[CUDA] baddmm should fall back to addmm for batch=1 (#114992)'
   date: '2024-01-02'
@@ -1131,6 +1185,7 @@ prs:
   changed_paths:
   - aten/src/ATen/native/cuda/Blas.cpp
   - torch/testing/_internal/common_methods_invocations.py
+  pr: 116518
 - number: 119003
   title: '[Inductor max autotune] Multithreaded Precompilation'
   date: '2024-02-07'
@@ -1146,6 +1201,7 @@ prs:
   - torch/_inductor/codecache.py
   - torch/_inductor/codegen/cuda/cuda_kernel.py
   - torch/_inductor/select_algorithm.py
+  pr: 119003
 - number: 122139
   title: necessary change to make torch2.3 work with triton2.2
   date: '2024-03-21'
@@ -1158,6 +1214,7 @@ prs:
   changed_paths:
   - torch/_higher_order_ops/triton_kernel_wrap.py
   - torch/utils/_triton.py
+  pr: 122139
 - number: 122967
   title: Fix performance regression and memory storage handling of Flash Attention on ROCM (#122857)
   date: '2024-04-02'
@@ -1171,6 +1228,7 @@ prs:
   - aten/src/ATen/native/transformers/hip/flash_attn/flash_api.hip
   - cmake/External/aotriton.cmake
   - test/test_transformers.py
+  pr: 122967
 - number: 128539
   title: Revert "[cuDNN][SDPA] Remove `TORCH_CUDNN_SDPA_ENABLED=1`, enable cuDNN SDPA by default on H100 and 2nd on other archs >= sm80 (#125343)"
   date: '2024-06-19'
@@ -1198,6 +1256,7 @@ prs:
   - torch/csrc/Module.cpp
   - torch/testing/_internal/common_cuda.py
   - torch/utils/flop_counter.py
+  pr: 128539
 - number: 129499
   title: '  TunableOp hotfix'
   date: '2024-06-27'
@@ -1210,6 +1269,7 @@ prs:
   changed_paths:
   - aten/src/ATen/cuda/tunable/GemmCommon.h
   - aten/src/ATen/cuda/tunable/TunableOp.h
+  pr: 129499
 - number: 130788
   title: Add flex decoding to score_mod benchmark
   date: '2024-07-17'
@@ -1221,6 +1281,7 @@ prs:
   artifact_dir: evidence/pull-bundles/pytorch/gh-130788
   changed_paths:
   - benchmarks/transformer/score_mod.py
+  pr: 130788
 - number: 130854
   title: Add flex decoding + block mask support to score_mod benchmark
   date: '2024-07-17'
@@ -1232,6 +1293,7 @@ prs:
   artifact_dir: evidence/pull-bundles/pytorch/gh-130854
   changed_paths:
   - benchmarks/transformer/score_mod.py
+  pr: 130854
 - number: 135561
   title: '[inductor] [cpp] fix the input contiguous check in max-autotune'
   date: '2024-09-20'
@@ -1244,6 +1306,7 @@ prs:
   changed_paths:
   - test/inductor/test_cpu_select_algorithm.py
   - torch/_inductor/utils.py
+  pr: 135561
 - number: 135869
   title: '[ROCm] Update to AOTriton 0.7b (Cherry-picked)'
   date: '2024-09-30'
@@ -1270,6 +1333,7 @@ prs:
   - test/test_nn.py
   - test/test_transformers.py
   - torch/testing/_internal/common_methods_invocations.py
+  pr: 135869
 - number: 136536
   title: SDPA regression fix to work around high-precision by default
   date: '2024-09-27'
@@ -1290,6 +1354,7 @@ prs:
   - torch/_dynamo/trace_rules.py
   - torch/backends/cuda/__init__.py
   - torch/csrc/Module.cpp
+  pr: 136536
 - number: 136885
   title: '[cuDNN][SDPA] cherrypick Support `attn_bias` in cuDNN (#130482)'
   date: '2024-09-30'
@@ -1308,6 +1373,7 @@ prs:
   - aten/src/ATen/native/transformers/cuda/sdp_utils.cpp
   - aten/src/ATen/native/transformers/sdp_utils_cpp.h
   - test/test_transformers.py
+  pr: 136885
 - number: 138587
   title: '[SDPA-CUDNN] Make CuDNN Attention Opt in'
   date: '2024-10-22'
@@ -1320,6 +1386,7 @@ prs:
   changed_paths:
   - aten/src/ATen/native/transformers/cuda/sdp_utils.cpp
   - test/test_transformers.py
+  pr: 138587
 - number: 180691
   title: '[ROCm] Enable ROCm swizzle check and update scaled_mm swizzle tests'
   date: '2026-04-19'
@@ -1332,6 +1399,7 @@ prs:
   changed_paths:
   - aten/src/ATen/native/cuda/ScaledBlas.cpp
   - test/test_scaled_matmul_cuda.py
+  pr: 180691
 - number: 180692
   title: '[ROCm] Resolve timeouts caused due to hipblasLT module creation during graph capture'
   date: '2026-04-20'
@@ -1343,6 +1411,7 @@ prs:
   artifact_dir: evidence/pull-bundles/pytorch/gh-180692
   changed_paths:
   - aten/src/ATen/cuda/CUDAGraph.cpp
+  pr: 180692
 - number: 180815
   title: '[xpu][fix] Include lazy_triton_compile.h in XPU cpp_wrapper header'
   date: '2026-04-20'
@@ -1355,6 +1424,7 @@ prs:
   changed_paths:
   - test/inductor/test_gpu_cpp_wrapper.py
   - torch/csrc/inductor/cpp_wrapper/xpu.h
+  pr: 180815
 - number: 181287
   title: '[inductor] makes cuda 13.0 cross compliation works (#179229)'
   date: '2026-04-23'
@@ -1372,3 +1442,6 @@ prs:
   - .github/workflows/trunk.yml
   - test/inductor/test_aoti_cross_compile_windows.py
   - torch/_inductor/cpp_builder.py
+  pr: 181287
+scan_start_date: '2024-01-01'
+cutoff_date: '2026-05-20'

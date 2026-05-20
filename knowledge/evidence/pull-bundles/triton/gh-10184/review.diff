@@ -1,0 +1,121 @@
+diff --git a/lib/Dialect/TritonGPU/IR/Ops.cpp b/lib/Dialect/TritonGPU/IR/Ops.cpp
+index a397f106c117..33eed176ca5a 100644
+--- a/lib/Dialect/TritonGPU/IR/Ops.cpp
++++ b/lib/Dialect/TritonGPU/IR/Ops.cpp
+@@ -656,6 +656,36 @@ OpFoldResult MemDescReinterpretOp::fold(FoldAdaptor adaptor) {
+ LogicalResult MemDescReinterpretOp::verify() {
+   auto srcTy = getSrc().getType();
+   auto dstTy = getResult().getType();
++
++  // Padded layout creates some "holes". The hole patterns of the source and
++  // the destination layouts must be equal.
++  auto srcEnc = srcTy.getEncoding();
++  auto dstEnc = dstTy.getEncoding();
++  if (isPaddedEncoding(srcEnc) != isPaddedEncoding(dstEnc))
++    return emitError(
++        "cannot reinterpret between padded and non-padded layouts");
++
++  if (isPaddedEncoding(srcEnc)) {
++    auto getPadPattern = [](MemDescType ty) {
++      auto enc = getPaddedEncoding(ty.getEncoding());
++      auto elmtSize = ty.getElementType().getIntOrFloatBitWidth() / 8;
++      llvm::MapVector<int32_t, int32_t> pattern;
++
++      for (auto [interval, padding] :
++           llvm::zip_equal(enc.getIntervals(), enc.getPaddings())) {
++        pattern.insert({interval * elmtSize, padding * elmtSize});
++      }
++      return pattern;
++    };
++
++    auto srcPat = getPadPattern(srcTy);
++    auto dstPat = getPadPattern(dstTy);
++    if (srcPat.size() != dstPat.size() ||
++        !std::equal(srcPat.begin(), srcPat.end(), dstPat.begin())) {
++      return emitError("cannot reinterpret with different padding pattern");
++    }
++  }
++
+   if (srcTy.getMemorySpace() != dstTy.getMemorySpace())
+     return emitError("source and result must have the same memory space");
+   if (srcTy.getMutableMemory() != dstTy.getMutableMemory())
+@@ -672,8 +702,11 @@ LogicalResult MemDescReinterpretOp::verify() {
+           "expected shared or tensor memory"));
+   auto getViewNumBits = [](MemDescType ty) {
+     auto rank = cast<LayoutEncodingTrait>(ty.getEncoding()).getRank();
+-    auto layout =
+-        toLinearLayout(ty.getAllocShape().take_back(rank), ty.getEncoding());
++    auto shape = ty.getAllocShape().take_back(rank);
++    auto encoding = ty.getEncoding();
++    LinearLayout layout = isPaddedEncoding(encoding)
++                              ? paddedLinearLayout(shape, encoding)
++                              : toLinearLayout(shape, encoding);
+     int64_t numLayoutCopies = 1;
+     for (int64_t dim : ty.getAllocShape().drop_back(rank))
+       numLayoutCopies *= dim;
+diff --git a/test/TritonGPU/amd/amd-convert-lds-ops.mlir b/test/TritonGPU/amd/amd-convert-lds-ops.mlir
+new file mode 100644
+index 000000000000..1d2503eb01e0
+--- /dev/null
++++ b/test/TritonGPU/amd/amd-convert-lds-ops.mlir
+@@ -0,0 +1,21 @@
++// RUN: triton-opt %s -split-input-file --tritonamdgpu-convert-buffer-ops="gfx-arch=gfx1250" | FileCheck %s
++
++// CHECK-LABEL: memdesc_reinterpret_0
++
++// This testing is just to make sure MemDescReinterpretOp::verify do not
++// trigger assertion when it comes across padded-shared layout. No need to
++// inspect resulting IR.
++
++#mma = #ttg.amd_wmma<{version = 3, isTranspose = true, ctaLayout = {warp = [[0, 1], [1, 0]]}, instrShape = [16, 16, 32]}>
++//#shared = #ttg.padded_shared<[128:+8] {order = [1, 0], shape = [16, 128]}>
++#shared = #ttg.padded_shared<[128:+8,256:+4] {order = [1, 0], shape = [16, 128]}>
++#shared2 = #ttg.padded_shared<[128:+8,256:+4] {order = [1, 0], shape = [16, 128]}>
++#smem = #ttg.shared_memory
++module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.shared = 17376 : i32, ttg.target = "hip:gfx1250", "ttg.threads-per-warp" = 32 : i32, "ttg.total-num-warps" = 4 : i32} {
++  tt.func public @memdesc_reinterpret_0() {
++    %cst = arith.constant dense<0.000000e+00> : tensor<16x16xbf16, #mma>
++    %0 = ttg.local_alloc {allocation.offset = 0 : i32} : () -> !ttg.memdesc<2x16x128xf16, #shared, #smem, mutable>
++    %1 = ttg.memdesc_reinterpret %0 : !ttg.memdesc<2x16x128xf16, #shared, #smem, mutable> -> !ttg.memdesc<2x16x128xf16, #shared2, #smem, mutable>
++    tt.return
++  }
++}
+diff --git a/test/TritonGPU/invalid.mlir b/test/TritonGPU/invalid.mlir
+index 4baefe53883d..5f4b84502bc1 100644
+--- a/test/TritonGPU/invalid.mlir
++++ b/test/TritonGPU/invalid.mlir
+@@ -247,6 +247,34 @@ module attributes {"ttg.num-warps" = 1 : i32} {
+   }
+ }
+ 
++// -----
++#shared = #ttg.padded_shared<[128:+8] {order = [1, 0], shape = [16, 128]}>
++#shared1 = #ttg.swizzled_shared<{vec = 1, perPhase = 1, maxPhase = 1, order = [1, 0]}>
++#smem = #ttg.shared_memory
++module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.shared = 17376 : i32, ttg.target = "hip:gfx1250", "ttg.threads-per-warp" = 32 : i32, "ttg.total-num-warps" = 4 : i32} {
++  tt.func public @memdesc_reinterpret_between_padded_nonpadded() {
++    %0 = ttg.local_alloc {allocation.offset = 0 : i32} : () -> !ttg.memdesc<2x16x128xf16, #shared, #smem, mutable>
++    // expected-error @+1 {{reinterpret between padded and non-padded}}
++    %1 = ttg.memdesc_reinterpret %0 : !ttg.memdesc<2x16x128xf16, #shared, #smem, mutable> -> !ttg.memdesc<16x16xbf16, #shared1, #smem, mutable>
++    tt.return
++  }
++}
++
++// -----
++#mma = #ttg.amd_wmma<{version = 3, isTranspose = true, ctaLayout = {warp = [[0, 1], [1, 0]]}, instrShape = [16, 16, 32]}>
++#shared = #ttg.padded_shared<[128:+8,256:+4] {order = [1, 0], shape = [16, 128]}>
++#shared2 = #ttg.padded_shared<[128:+8] {order = [1, 0], shape = [16, 128]}>
++#smem = #ttg.shared_memory
++module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.shared = 17376 : i32, ttg.target = "hip:gfx1250", "ttg.threads-per-warp" = 32 : i32, "ttg.total-num-warps" = 4 : i32} {
++  tt.func public @memdesc_reinterpret_different_padding() {
++    %cst = arith.constant dense<0.000000e+00> : tensor<16x16xbf16, #mma>
++    %0 = ttg.local_alloc {allocation.offset = 0 : i32} : () -> !ttg.memdesc<2x16x128xf16, #shared, #smem, mutable>
++    // expected-error @+1 {{cannot reinterpret with different padding pattern}}
++    %1 = ttg.memdesc_reinterpret %0 : !ttg.memdesc<2x16x128xf16, #shared, #smem, mutable> -> !ttg.memdesc<2x16x128xf16, #shared2, #smem, mutable>
++    tt.return
++  }
++}
++
+ // -----
+ 
+ #mma0 = #ttg.nvidia_mma<{versionMajor=2, warpsPerCTA=[1,1], instrShape = [16, 8]}>

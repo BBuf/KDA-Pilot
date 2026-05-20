@@ -1,0 +1,140 @@
+diff --git a/cpp/tensorrt_llm/batch_manager/kvCacheTransferManager.cpp b/cpp/tensorrt_llm/batch_manager/kvCacheTransferManager.cpp
+index 5cdb2171b0e6..0b6abf361182 100644
+--- a/cpp/tensorrt_llm/batch_manager/kvCacheTransferManager.cpp
++++ b/cpp/tensorrt_llm/batch_manager/kvCacheTransferManager.cpp
+@@ -419,7 +419,7 @@ std::size_t KVCacheTransferManager::computeBlockTransferBytes(
+     std::size_t totalBytes = 0;
+     for (auto const& pool : pools)
+     {
+-        if (!pool.primaryPtr)
++        if (!pool.primaryPtr || pool.primaryPtr->getSize() == 0)
+         {
+             continue;
+         }
+diff --git a/tensorrt_llm/_torch/models/checkpoints/__init__.py b/tensorrt_llm/_torch/models/checkpoints/__init__.py
+index 94dd32fb91b8..f4094417b3ca 100644
+--- a/tensorrt_llm/_torch/models/checkpoints/__init__.py
++++ b/tensorrt_llm/_torch/models/checkpoints/__init__.py
+@@ -7,6 +7,7 @@
+ from .hf.llava_next_weight_mapper import LlavaNextHfWeightMapper
+ from .hf.mixtral_weight_mapper import MixtralHfWeightMapper
+ from .hf.nemotron_h_weight_mapper import NemotronHHfWeightMapper
++from .hf.nemotron_nas_weight_mapper import NemotronNasHfWeightMapper
+ from .hf.qwen2_moe_weight_mapper import Qwen2MoeHfWeightMapper
+ from .hf.qwen2vl_weight_mapper import Qwen2VLHfWeightMapper
+ from .hf.qwen3_5_weight_mapper import Qwen3_5MoeHfWeightMapper
+@@ -25,7 +26,8 @@
+ __all__ = [
+     "HfConfigLoader", "HfWeightLoader", "HfWeightMapper", "MistralConfigLoader",
+     "MistralWeightMapper", "MistralCheckpointLoader", "BaseCheckpointLoader",
+-    "HfCheckpointLoader", "NemotronHHfWeightMapper", "Gemma3HfWeightMapper",
++    "HfCheckpointLoader", "NemotronHHfWeightMapper",
++    "NemotronNasHfWeightMapper", "Gemma3HfWeightMapper",
+     "MixtralHfWeightMapper", "Llama4HfWeightMapper", "Qwen2MoeHfWeightMapper",
+     "Qwen3MoeHfWeightMapper", "Qwen2VLHfWeightMapper",
+     "Qwen3_5MoeHfWeightMapper", "Qwen3NextHfWeightMapper",
+diff --git a/tensorrt_llm/_torch/models/checkpoints/hf/nemotron_nas_weight_mapper.py b/tensorrt_llm/_torch/models/checkpoints/hf/nemotron_nas_weight_mapper.py
+new file mode 100644
+index 000000000000..ede259abf7ae
+--- /dev/null
++++ b/tensorrt_llm/_torch/models/checkpoints/hf/nemotron_nas_weight_mapper.py
+@@ -0,0 +1,64 @@
++from torch import nn
++
++from tensorrt_llm._torch.models.checkpoints.hf.weight_mapper import HfWeightMapper
++from tensorrt_llm._torch.models.modeling_utils import register_mapper
++
++
++@register_mapper("HF", "DeciLMForCausalLM")
++class NemotronNasHfWeightMapper(HfWeightMapper):
++    """Weight mapper for Nemotron-NAS / DeciLM.
++
++    Nemotron-NAS sets ``config.num_key_value_heads`` to a *per-layer* list
++    (see ``NemotronNASModel.__init__``), because layers can have differing
++    KV-head counts (and no-op attention layers have 0). The base
++    ``HfWeightMapper._duplicate_kv_weights`` assumes a single int, so this
++    override resolves the layer index from the weight path and uses the
++    per-layer KV-head count for k_proj / v_proj duplication.
++    """
++
++    def apply_callbacks(
++        self, module: nn.Module, module_name: str, module_names_breakdown: list[str], weights: dict
++    ) -> list[dict]:
++        num_kv_heads = self._num_kv_heads
++        if not isinstance(num_kv_heads, (list, tuple)):
++            return super().apply_callbacks(module, module_name, module_names_breakdown, weights)
++
++        layer_idx = self._layer_idx_from_breakdown(module_names_breakdown)
++        assert layer_idx is not None, (
++            "Nemotron-NAS uses per-layer num_key_value_heads but layer index "
++            f"could not be inferred from {module_names_breakdown}"
++        )
++        layer_num_kv_heads = num_kv_heads[layer_idx]
++
++        module_weights = []
++        for new_name in self._mapping[module_name]:
++            fw = self.filter_weights(".".join(module_names_breakdown + [new_name]), weights)
++            fw = self._duplicate_kv_weights_for_layer(module, new_name, fw, layer_num_kv_heads)
++            module_weights.append(fw)
++        return module_weights
++
++    @staticmethod
++    def _layer_idx_from_breakdown(module_names_breakdown: list[str]):
++        for i in range(len(module_names_breakdown) - 1):
++            if module_names_breakdown[i] == "layers" and module_names_breakdown[i + 1].isdigit():
++                return int(module_names_breakdown[i + 1])
++        return None
++
++    def _duplicate_kv_weights_for_layer(
++        self, module: nn.Module, new_name: str, weights: dict, num_kv_heads: int
++    ):
++        if new_name not in ["k_proj", "v_proj"]:
++            return weights
++
++        duplicated_keys = ["weight", "bias"]
++        if module.quant_config.quant_mode.has_nvfp4():
++            duplicated_keys.append("weight_scale")
++
++        return {
++            k: self._duplicate_kv(
++                weight=v[:], num_kv_heads=num_kv_heads, tensor_parallel_size=self._tp_size
++            )
++            if k in duplicated_keys
++            else v
++            for k, v in weights.items()
++        }
+diff --git a/tests/integration/test_lists/waives.txt b/tests/integration/test_lists/waives.txt
+index c845ca7dc5e4..aace50e2f238 100644
+--- a/tests/integration/test_lists/waives.txt
++++ b/tests/integration/test_lists/waives.txt
+@@ -152,8 +152,6 @@ accuracy/test_llm_api_pytorch.py::TestMiniMaxM2::test_4gpus[attention_dp=False-c
+ accuracy/test_llm_api_pytorch.py::TestMistralLarge3_675B::test_fp8[latency_moe_deepgemm] SKIP (https://nvbugs/6163033)
+ accuracy/test_llm_api_pytorch.py::TestMistralLarge3_675B::test_nvfp4_4gpus[latency_moe_trtllm] SKIP (https://nvbugs/6162121)
+ accuracy/test_llm_api_pytorch.py::TestMistralLarge3_675B::test_nvfp4_4gpus[latency_moe_trtllm_eagle] SKIP (https://nvbugs/6157892)
+-accuracy/test_llm_api_pytorch.py::TestNemotronNas::test_auto_dtype_tp8 SKIP (https://nvbugs/6070857)
+-accuracy/test_llm_api_pytorch.py::TestNemotronV3Super::test_auto_dtype_4gpus[4-1-True-True-False] SKIP (https://nvbugs/6163032)
+ accuracy/test_llm_api_pytorch.py::TestPhi4MiniInstruct::test_auto_dtype SKIP (https://nvbugs/6076767)
+ accuracy/test_llm_api_pytorch.py::TestQwen3NextInstruct::test_bf16_4gpu[tp4ep4_cudagraph_overlap_adp_on] SKIP (https://nvbugs/6094068)
+ accuracy/test_llm_api_pytorch.py::TestQwen3NextInstruct::test_nvfp4[tp1-cutlass] SKIP (https://nvbugs/6116088)
+@@ -482,8 +480,6 @@ unittest/executor/test_rpc_worker.py SKIP (https://nvbugs/5605741)
+ unittest/kv_cache_manager_v2_tests/test_kv_cache_salting.py::TestKVCacheSaltCounters::test_aggregate_counters_match_expected SKIP (https://nvbugs/6172980)
+ unittest/llmapi/test_llm_multi_gpu.py -m "gpu4 and part0" SKIP (https://nvbugs/5348958)
+ unittest/llmapi/test_llm_multi_gpu_pytorch.py::test_phi3_lora_fused_modules_output_on_tp2_identical_to_tp1 SKIP (https://nvbugs/6109745)
+-unittest/llmapi/test_llm_pytorch.py::test_nemotron_nas_lora[None] SKIP (https://nvbugs/6140399)
+-unittest/llmapi/test_llm_pytorch.py::test_nemotron_nas_lora[cuda_graph_config0] SKIP (https://nvbugs/6140399)
+ unittest/llmapi/test_memory_profiling.py::test_profile_kvcache SKIP (https://nvbugs/5580781)
+ unittest/tools/test_layer_wise_benchmarks.py::test_performance_alignment[1] SKIP (https://nvbugs/6127669)
+ unittest/tools/test_layer_wise_benchmarks.py::test_qwen3_next_gen_tep[1] SKIP (https://nvbugs/6153575)
+diff --git a/tests/unittest/llmapi/test_llm_pytorch.py b/tests/unittest/llmapi/test_llm_pytorch.py
+index 93b157e5c934..53b64a972898 100644
+--- a/tests/unittest/llmapi/test_llm_pytorch.py
++++ b/tests/unittest/llmapi/test_llm_pytorch.py
+@@ -617,7 +617,7 @@ def test_nemotron_nas_lora(cuda_graph_config) -> None:
+         "Hello, how are you?",
+     ]
+ 
+-    sampling_params = SamplingParams(max_tokens=10, add_special_tokens=False)
++    sampling_params = SamplingParams(max_tokens=3, add_special_tokens=False)
+     lora_req = LoRARequest(
+         "task-0", 0,
+         f"{llm_models_root()}/nemotron-nas/Llama-3_3-Nemotron-Super-49B-v1-lora-adapter_r64"

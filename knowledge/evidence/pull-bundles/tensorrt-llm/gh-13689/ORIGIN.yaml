@@ -1,0 +1,111 @@
+schema_version: 1
+source_key: NVIDIA/TensorRT-LLM#13689
+repo: NVIDIA/TensorRT-LLM
+repo_id: tensorrt-llm
+pr_number: 13689
+title: '[None][feat] Add bf16 trtllm moe through flashinfer.'
+url: https://github.com/NVIDIA/TensorRT-LLM/pull/13689
+state: closed
+merged_at: '2026-05-18T02:14:53Z'
+base_ref_oid: 6ccb07a2b0b4572c26f48a2579d7d466e0e2fc2e
+head_ref_oid: 332e9dee221c9658a6dfc228151a7abb723424d3
+captured_at: '2026-05-20T15:01:02.497376+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cutlass
+- fp4
+- moe
+- moe kernel
+techniques:
+- fine-grained-quantization
+- kernel-fusion
+- tile-scheduling
+hardware_features:
+- fp4
+kernel_types:
+- moe
+languages:
+- cuda-cpp
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py
+    local_path: source-snapshot/tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py
+    ref: 332e9dee221c9658a6dfc228151a7abb723424d3
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/modules/fused_moe/create_moe.py
+    local_path: source-snapshot/tensorrt_llm/_torch/modules/fused_moe/create_moe.py
+    ref: 332e9dee221c9658a6dfc228151a7abb723424d3
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py
+    local_path: source-snapshot/tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py
+    ref: 332e9dee221c9658a6dfc228151a7abb723424d3
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/modules/fused_moe/moe_op_backend.py
+    local_path: source-snapshot/tensorrt_llm/_torch/modules/fused_moe/moe_op_backend.py
+    ref: 332e9dee221c9658a6dfc228151a7abb723424d3
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/modules/fused_moe/moe_scheduler.py
+    local_path: source-snapshot/tensorrt_llm/_torch/modules/fused_moe/moe_scheduler.py
+    ref: 332e9dee221c9658a6dfc228151a7abb723424d3
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/modules/fused_moe/quantization.py
+    local_path: source-snapshot/tensorrt_llm/_torch/modules/fused_moe/quantization.py
+    ref: 332e9dee221c9658a6dfc228151a7abb723424d3
+    status: modified
+    fetched: true
+  - source_path: tests/integration/defs/.test_durations
+    local_path: source-snapshot/tests/integration/defs/.test_durations
+    ref: 332e9dee221c9658a6dfc228151a7abb723424d3
+    status: modified
+    fetched: true
+  - source_path: tests/integration/defs/accuracy/references/gsm8k.yaml
+    local_path: source-snapshot/tests/integration/defs/accuracy/references/gsm8k.yaml
+    ref: 332e9dee221c9658a6dfc228151a7abb723424d3
+    status: modified
+    fetched: true
+  - source_path: tests/integration/defs/accuracy/test_llm_api_pytorch.py
+    local_path: source-snapshot/tests/integration/defs/accuracy/test_llm_api_pytorch.py
+    ref: 332e9dee221c9658a6dfc228151a7abb723424d3
+    status: modified
+    fetched: true
+  - source_path: tests/integration/test_lists/qa/llm_function_core.txt
+    local_path: source-snapshot/tests/integration/test_lists/qa/llm_function_core.txt
+    ref: 332e9dee221c9658a6dfc228151a7abb723424d3
+    status: modified
+    fetched: true
+  - source_path: tests/integration/test_lists/test-db/l0_b200.yml
+    local_path: source-snapshot/tests/integration/test_lists/test-db/l0_b200.yml
+    ref: 332e9dee221c9658a6dfc228151a7abb723424d3
+    status: modified
+    fetched: true
+  - source_path: tests/integration/test_lists/test-db/l0_dgx_b200.yml
+    local_path: source-snapshot/tests/integration/test_lists/test-db/l0_dgx_b200.yml
+    ref: 332e9dee221c9658a6dfc228151a7abb723424d3
+    status: modified
+    fetched: true
+  - source_path: tests/integration/test_lists/waives.txt
+    local_path: source-snapshot/tests/integration/test_lists/waives.txt
+    ref: 332e9dee221c9658a6dfc228151a7abb723424d3
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/_torch/modules/moe/moe_test_utils.py
+    local_path: source-snapshot/tests/unittest/_torch/modules/moe/moe_test_utils.py
+    ref: 332e9dee221c9658a6dfc228151a7abb723424d3
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/_torch/modules/moe/test_moe_module.py
+    local_path: source-snapshot/tests/unittest/_torch/modules/moe/test_moe_module.py
+    ref: 332e9dee221c9658a6dfc228151a7abb723424d3
+    status: modified
+    fetched: true

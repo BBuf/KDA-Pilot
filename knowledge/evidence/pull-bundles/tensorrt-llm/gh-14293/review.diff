@@ -1,0 +1,105 @@
+diff --git a/tensorrt_llm/_torch/configs/__init__.py b/tensorrt_llm/_torch/configs/__init__.py
+index 619a015769ff..6496e3283451 100644
+--- a/tensorrt_llm/_torch/configs/__init__.py
++++ b/tensorrt_llm/_torch/configs/__init__.py
+@@ -1,3 +1,27 @@
+ from tensorrt_llm._torch.configs.deepseek_v3 import DeepseekV3Config
+ 
++
++def _register_custom_configs_with_transformers() -> None:
++    # Make AutoConfig.from_pretrained / AutoTokenizer.from_pretrained accept
++    # model_types that TRT-LLM understands but upstream transformers does not
++    # (DeepSeek-V3.2 and Kimi K2 both ship config.json with these model_types
++    # and rely on TRT-LLM's local DeepseekV3Config workaround).
++    #
++    # Without this, transformers 5.5.x falls back to a bare PreTrainedConfig
++    # that lacks attributes like `max_position_embeddings`, and
++    # AutoTokenizer.from_pretrained then raises AttributeError before any
++    # tokenizer can be constructed. Bypass AutoConfig.register's model_type
++    # consistency check (DeepseekV3Config.model_type is "deepseek_v3") by
++    # writing into the underlying mapping directly.
++    from transformers.models.auto.configuration_auto import CONFIG_MAPPING
++
++    for model_type in ("deepseek_v32", "kimi_k2"):
++        if model_type in CONFIG_MAPPING:
++            continue
++        CONFIG_MAPPING.register(model_type, DeepseekV3Config, exist_ok=True)
++
++
++_register_custom_configs_with_transformers()
++del _register_custom_configs_with_transformers
++
+ __all__ = ["DeepseekV3Config"]
+diff --git a/tensorrt_llm/_torch/models/__init__.py b/tensorrt_llm/_torch/models/__init__.py
+index fe53f9d3c90d..55177767ac5a 100644
+--- a/tensorrt_llm/_torch/models/__init__.py
++++ b/tensorrt_llm/_torch/models/__init__.py
+@@ -1,5 +1,10 @@
+ import transformers
+ 
++# Importing _torch.configs triggers AutoConfig registration for TRT-LLM-only
++# model_types (deepseek_v32, kimi_k2) so AutoTokenizer.from_pretrained works
++# under transformers >= 5.5; see _torch/configs/__init__.py.
++import tensorrt_llm._torch.configs  # noqa: F401
++
+ from .modeling_auto import AutoModelForCausalLM
+ from .modeling_bert import BertForSequenceClassification
+ from .modeling_clip import CLIPVisionModel
+diff --git a/tests/unittest/_torch/test_custom_config_registration.py b/tests/unittest/_torch/test_custom_config_registration.py
+new file mode 100644
+index 000000000000..acd8393ed053
+--- /dev/null
++++ b/tests/unittest/_torch/test_custom_config_registration.py
+@@ -0,0 +1,52 @@
++# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++"""Regression tests for the transformers AutoConfig / AutoTokenizer dispatch
++for TRT-LLM-only model_types (deepseek_v32, kimi_k2).
++
++Before this registration, transformers >= 5.5 falls back to a bare
++PreTrainedConfig that lacks `max_position_embeddings`, and
++AutoTokenizer.from_pretrained then raises AttributeError on it. The
++broken test that motivated this — perf/test_perf_sanity.py disagg gen_only
++on GB200 — only runs in L0_PostMerge because it needs 12 GB200 GPUs across
++3 nodes, so a cheap pre-merge unit test is the right place to catch
++regressions.
++"""
++
++import json
++
++import pytest
++
++import tensorrt_llm  # noqa: F401  triggers AutoConfig registration
++from tensorrt_llm._torch.configs import DeepseekV3Config
++
++
++@pytest.mark.parametrize("model_type", ["deepseek_v32", "kimi_k2"])
++def test_custom_model_type_registered_with_autoconfig(model_type):
++    from transformers.models.auto.configuration_auto import CONFIG_MAPPING
++
++    assert model_type in CONFIG_MAPPING
++    assert CONFIG_MAPPING[model_type] is DeepseekV3Config
++
++
++@pytest.mark.parametrize("model_type", ["deepseek_v32", "kimi_k2"])
++def test_autoconfig_from_pretrained_resolves_to_local_config(tmp_path, model_type):
++    # Mirrors what the benchmark_serving subprocess does under the hood:
++    # AutoTokenizer.from_pretrained -> AutoConfig.from_pretrained. Without
++    # the registration this fails through to a bare PreTrainedConfig that
++    # lacks `max_position_embeddings`.
++    from transformers import AutoConfig
++
++    model_dir = tmp_path / model_type
++    model_dir.mkdir()
++    (model_dir / "config.json").write_text(
++        json.dumps(
++            {
++                "model_type": model_type,
++                "max_position_embeddings": 16384,
++            }
++        )
++    )
++
++    cfg = AutoConfig.from_pretrained(str(model_dir))
++    assert isinstance(cfg, DeepseekV3Config)
++    assert cfg.max_position_embeddings == 16384

@@ -1,0 +1,672 @@
+diff --git a/docs/features/lora.md b/docs/features/lora.md
+index d78fdc05792e..839624542ec5 100644
+--- a/docs/features/lora.md
++++ b/docs/features/lora.md
+@@ -248,6 +248,57 @@ Now, you can specify a base_model_name alongside the name and path using JSON fo
+ 
+ To provide the backward compatibility support, you can still use the old key-value format (name=path), but the `base_model_name` will remain unspecified in that case.
+ 
++## Mixing 2D and 3D MoE LoRA Adapters
++
++To serve 2D-format(based on `megatron`) and 3D-format (based on `peft`) adapters from the same engine instance, start the server with `--enable-mixed-moe-lora-format`
++and declare the layout of each adapter explicitly via the `is_3d_lora_weight` field.
++
++Server startup (static modules):
++
++```bash
++vllm serve Qwen/Qwen3.6-35B-A3B \
++    --enable-lora \
++    --enable-mixed-moe-lora-format \
++    --tensor-parallel-size 4 \
++    --enable-expert-parallel \
++    --lora-modules \
++        '{"name": "lora-2d", "path": "jeeejeee/qwen36-35ba3b-2d-weights-poken-lora", "is_3d_lora_weight": false}' \
++        '{"name": "lora-3d", "path": "jeeejeee/qwen36-35ba3b-moe-all-linear-poken-lora", "is_3d_lora_weight": true}'
++```
++
++Dynamic load via `/v1/load_lora_adapter`:
++
++```bash
++curl -X POST http://localhost:8000/v1/load_lora_adapter \
++-H "Content-Type: application/json" \
++-d '{
++    "lora_name": "lora-3d",
++    "lora_path": "/path/to/3d-format-lora",
++    "is_3d_lora_weight": true
++}'
++```
++
++!!! warning "You must know your adapter's layout"
++    Under `--enable-mixed-moe-lora-format`, vLLM trusts whatever
++    `is_3d_lora_weight` the caller declares — it does **not** inspect the
++    checkpoint to verify. A wrong declaration will load weights into the
++    wrong stacked buffers and silently produce garbage outputs, with no
++    error at load time. Confirm the layout before serving:
++
++    - **2D (per-expert, megatron-style)** → set `is_3d_lora_weight: false`.
++      Adapter keys look like `...experts.{idx}.gate_proj.lora_A.weight`,
++      `...experts.{idx}.up_proj.lora_A.weight`,
++      `...experts.{idx}.down_proj.lora_A.weight` — one set per expert.
++    - **3D (fused, peft-style)** → set `is_3d_lora_weight: true`.
++      Adapter keys look like `...experts.gate_up_proj.lora_A.weight`,
++      `...experts.down_proj.lora_A.weight` — a single tensor that stacks
++      all experts on the leading dim.
++
++When `--enable-mixed-moe-lora-format` is **not** set, `is_3d_lora_weight`
++is ignored: vLLM picks the wrapper from the base model's
++`is_3d_moe_weight` and the adapter is required to match. The field is
++also ignored for non-MoE models.
++
+ ## LoRA model lineage in model card
+ 
+ The new format of `--lora-modules` is mainly to support the display of parent model information in the model card. Here's an explanation of how your current response supports this:
+diff --git a/tests/lora/conftest.py b/tests/lora/conftest.py
+index bfe796d66c3f..dea54ed21aea 100644
+--- a/tests/lora/conftest.py
++++ b/tests/lora/conftest.py
+@@ -313,6 +313,16 @@ def qwen35_vl_lora_files():
+     return snapshot_download(repo_id="jeeejeee/qwen35-4b-all-linear-pokemon-lora")
+ 
+ 
++@pytest.fixture(scope="session")
++def qwen36_moe_2d_lora_files():
++    return snapshot_download(repo_id="jeeejeee/qwen36-35ba3b-2d-weights-poken-lora")
++
++
++@pytest.fixture(scope="session")
++def qwen36_moe_3d_lora_files():
++    return snapshot_download(repo_id="jeeejeee/qwen36-35ba3b-moe-all-linear-poken-lora")
++
++
+ @pytest.fixture
+ def reset_default_device():
+     """
+diff --git a/tests/lora/test_qwen36_moe_lora.py b/tests/lora/test_qwen36_moe_lora.py
+new file mode 100644
+index 000000000000..cb1b9cb87c95
+--- /dev/null
++++ b/tests/lora/test_qwen36_moe_lora.py
+@@ -0,0 +1,156 @@
++# SPDX-License-Identifier: Apache-2.0
++# SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++
++import pytest
++
++import vllm
++import vllm.config
++from vllm.assets.image import ImageAsset
++from vllm.lora.request import LoRARequest
++
++from ..utils import multi_gpu_test
++
++MODEL_PATH = "Qwen/Qwen3.6-35B-A3B"
++
++LORA_2D_ID = 1
++LORA_3D_ID = 2
++
++PROMPT_TEMPLATE = """<|im_start|>user
++<|vision_start|><|image_pad|><|vision_end|>What is in the image?<|im_end|>
++<|im_start|>assistant
++<think>
++
++</think>
++"""
++
++# Visual captioning prompts: each image will be paired with one LoRA in the
++# mixed-batch case so we can check per-prompt routing.
++VL_TEST_IMAGES = [
++    ImageAsset("stop_sign"),
++    ImageAsset("cherry_blossom"),
++]
++
++
++def _build_prompts() -> list[dict]:
++    return [
++        {
++            "prompt": PROMPT_TEMPLATE,
++            "multi_modal_data": {"image": asset.pil_image},
++        }
++        for asset in VL_TEST_IMAGES
++    ]
++
++
++def _generate(llm: vllm.LLM, lora_request) -> list[str]:
++    outputs = llm.generate(
++        _build_prompts(),
++        vllm.SamplingParams(temperature=0, max_tokens=128),
++        lora_request=lora_request,
++    )
++    return [out.outputs[0].text.strip() for out in outputs]
++
++
++def _run_mixed_2d_3d_lora_test(
++    lora_2d_files: str,
++    lora_3d_files: str,
++    tensor_parallel_size: int,
++    fully_sharded_loras: bool,
++) -> None:
++    llm = vllm.LLM(
++        model=MODEL_PATH,
++        max_model_len=4096,
++        enable_lora=True,
++        enable_mixed_moe_lora_format=True,
++        max_loras=2,
++        max_lora_rank=8,
++        max_num_seqs=4,
++        enforce_eager=True,
++        tensor_parallel_size=tensor_parallel_size,
++        enable_expert_parallel=not fully_sharded_loras,
++        fully_sharded_loras=fully_sharded_loras,
++        trust_remote_code=True,
++        enable_tower_connector_lora=True,
++        mm_processor_cache_gb=0,
++        limit_mm_per_prompt={"image": 1},
++        compilation_config=vllm.config.CompilationConfig(
++            cudagraph_specialize_lora=False,
++        ),
++    )
++
++    lora_2d = LoRARequest(
++        "lora_2d",
++        LORA_2D_ID,
++        lora_2d_files,
++        is_3d_lora_weight=False,
++    )
++    lora_3d = LoRARequest(
++        "lora_3d",
++        LORA_3D_ID,
++        lora_3d_files,
++        is_3d_lora_weight=True,
++    )
++
++    # Reference: each adapter alone over both prompts.
++    outputs_2d_alone = _generate(llm, lora_2d)
++    outputs_3d_alone = _generate(llm, lora_3d)
++
++    assert len(outputs_2d_alone) == len(VL_TEST_IMAGES)
++    assert len(outputs_3d_alone) == len(VL_TEST_IMAGES)
++    for text in outputs_2d_alone + outputs_3d_alone:
++        assert text, "Empty output from single-adapter LoRA generation"
++
++    # Mixed batch: prompt 0 uses the 2D adapter, prompt 1 uses the 3D
++    # adapter. Per-prompt outputs must match the standalone runs.
++    mixed_outputs = _generate(llm, [lora_2d, lora_3d])
++
++    assert mixed_outputs[0] == outputs_2d_alone[0], (
++        f"Mixed-batch 2D output {mixed_outputs[0]!r} does not match "
++        f"standalone 2D output {outputs_2d_alone[0]!r}"
++    )
++    assert mixed_outputs[1] == outputs_3d_alone[1], (
++        f"Mixed-batch 3D output {mixed_outputs[1]!r} does not match "
++        f"standalone 3D output {outputs_3d_alone[1]!r}"
++    )
++
++    # Reverse assignment: neither adapter should be silently aliased.
++    swapped_outputs = _generate(llm, [lora_3d, lora_2d])
++    assert swapped_outputs[0] == outputs_3d_alone[0], (
++        f"Swapped-batch 3D output {swapped_outputs[0]!r} does not match "
++        f"standalone 3D output {outputs_3d_alone[0]!r}"
++    )
++    assert swapped_outputs[1] == outputs_2d_alone[1], (
++        f"Swapped-batch 2D output {swapped_outputs[1]!r} does not match "
++        f"standalone 2D output {outputs_2d_alone[1]!r}"
++    )
++
++
++@pytest.mark.skip(reason="This model is too big, so skip this test temporarily.")
++@pytest.mark.parametrize("fully_sharded_loras", [False, True])
++@multi_gpu_test(num_gpus=2)
++def test_qwen36_moe_mixed_2d_3d_lora_tp2(
++    qwen36_moe_2d_lora_files,
++    qwen36_moe_3d_lora_files,
++    fully_sharded_loras,
++):
++    _run_mixed_2d_3d_lora_test(
++        lora_2d_files=qwen36_moe_2d_lora_files,
++        lora_3d_files=qwen36_moe_3d_lora_files,
++        tensor_parallel_size=2,
++        fully_sharded_loras=fully_sharded_loras,
++    )
++
++
++@pytest.mark.skip(reason="This model is too big, so skip this test temporarily.")
++@pytest.mark.parametrize("fully_sharded_loras", [False, True])
++@multi_gpu_test(num_gpus=4)
++def test_qwen36_moe_mixed_2d_3d_lora_tp4(
++    qwen36_moe_2d_lora_files,
++    qwen36_moe_3d_lora_files,
++    fully_sharded_loras,
++):
++    _run_mixed_2d_3d_lora_test(
++        lora_2d_files=qwen36_moe_2d_lora_files,
++        lora_3d_files=qwen36_moe_3d_lora_files,
++        tensor_parallel_size=4,
++        fully_sharded_loras=fully_sharded_loras,
++    )
+diff --git a/tests/lora/test_qwen3moe_tp.py b/tests/lora/test_qwen3moe_tp.py
+index 9af142f6f388..16d8354d4d18 100644
+--- a/tests/lora/test_qwen3moe_tp.py
++++ b/tests/lora/test_qwen3moe_tp.py
+@@ -77,6 +77,7 @@ def test_qwen3moe_lora(qwen3moe_lora_files):
+         enforce_eager=True,
+         trust_remote_code=True,
+         enable_chunked_prefill=True,
++        enable_mixed_moe_lora_format=True,
+     )
+ 
+     generate_and_test(llm, qwen3moe_lora_files, lora_id=1)
+@@ -85,7 +86,8 @@ def test_qwen3moe_lora(qwen3moe_lora_files):
+ 
+ @multi_gpu_test(num_gpus=2)
+ @pytest.mark.parametrize("ep", [False, True])
+-def test_qwen3moe_lora_tp2(ep, qwen3moe_lora_files):
++@pytest.mark.parametrize("enable_mixed_moe_lora_format", [False, True])
++def test_qwen3moe_lora_tp2(ep, qwen3moe_lora_files, enable_mixed_moe_lora_format):
+     llm = vllm.LLM(
+         MODEL_PATH,
+         max_model_len=1024,
+@@ -94,6 +96,7 @@ def test_qwen3moe_lora_tp2(ep, qwen3moe_lora_files):
+         trust_remote_code=True,
+         enable_expert_parallel=ep,
+         tensor_parallel_size=2,
++        enable_mixed_moe_lora_format=enable_mixed_moe_lora_format,
+     )
+ 
+     generate_and_test(llm, qwen3moe_lora_files, lora_id=1)
+@@ -102,7 +105,8 @@ def test_qwen3moe_lora_tp2(ep, qwen3moe_lora_files):
+ 
+ @multi_gpu_test(num_gpus=4)
+ @pytest.mark.parametrize("ep", [False, True])
+-def test_qwen3moe_lora_tp4(ep, qwen3moe_lora_files):
++@pytest.mark.parametrize("enable_mixed_moe_lora_format", [False, True])
++def test_qwen3moe_lora_tp4(ep, qwen3moe_lora_files, enable_mixed_moe_lora_format):
+     llm = vllm.LLM(
+         MODEL_PATH,
+         max_model_len=1024,
+@@ -111,6 +115,7 @@ def test_qwen3moe_lora_tp4(ep, qwen3moe_lora_files):
+         trust_remote_code=True,
+         enable_expert_parallel=ep,
+         tensor_parallel_size=4,
++        enable_mixed_moe_lora_format=enable_mixed_moe_lora_format,
+     )
+ 
+     generate_and_test(llm, qwen3moe_lora_files, lora_id=1)
+diff --git a/vllm/config/lora.py b/vllm/config/lora.py
+index bf47887c7e0e..94a679941c85 100644
+--- a/vllm/config/lora.py
++++ b/vllm/config/lora.py
+@@ -71,6 +71,12 @@ class LoRAConfig:
+     for variable LoRA usage patterns at the cost of increased startup time and
+     memory usage. Only takes effect when cudagraph_specialize_lora is True.
+     """
++    enable_mixed_moe_lora_format: bool = False
++    """If True, force the engine to use the universal 2D MoE LoRA wrapper
++    (`FusedMoEWithLoRA`) regardless of the model's `is_3d_moe_weight` flag, so
++    that 2D-format and 3D-format MoE LoRA adapters can be served in the same
++    deployment. Only meaningful forMoE models; ignored otherwise. Default False 
++    keeps the existing model-driven behavior."""
+ 
+     def compute_hash(self) -> str:
+         """
+@@ -90,6 +96,7 @@ def compute_hash(self) -> str:
+         factors.append(self.fully_sharded_loras)
+         factors.append(self.lora_dtype)
+         factors.append(self.enable_tower_connector_lora)
++        factors.append(self.enable_mixed_moe_lora_format)
+         # target_modules affects which modules get LoRA applied
+         factors.append(
+             tuple(sorted(self.target_modules)) if self.target_modules else None
+diff --git a/vllm/engine/arg_utils.py b/vllm/engine/arg_utils.py
+index d6e3770d4c35..3f8889c5bc19 100644
+--- a/vllm/engine/arg_utils.py
++++ b/vllm/engine/arg_utils.py
+@@ -584,6 +584,7 @@ class EngineArgs:
+     lora_target_modules: list[str] | None = LoRAConfig.target_modules
+     enable_tower_connector_lora: bool = LoRAConfig.enable_tower_connector_lora
+     specialize_active_lora: bool = LoRAConfig.specialize_active_lora
++    enable_mixed_moe_lora_format: bool = LoRAConfig.enable_mixed_moe_lora_format
+ 
+     ray_workers_use_nsight: bool = ParallelConfig.ray_workers_use_nsight
+     num_gpu_blocks_override: int | None = CacheConfig.num_gpu_blocks_override
+@@ -1272,6 +1273,10 @@ def add_cli_args(parser: FlexibleArgumentParser) -> FlexibleArgumentParser:
+         lora_group.add_argument(
+             "--specialize-active-lora", **lora_kwargs["specialize_active_lora"]
+         )
++        lora_group.add_argument(
++            "--enable-mixed-moe-lora-format",
++            **lora_kwargs["enable_mixed_moe_lora_format"],
++        )
+ 
+         # Observability arguments
+         observability_kwargs = get_kwargs(ObservabilityConfig)
+@@ -2009,6 +2014,7 @@ def create_engine_config(
+                 target_modules=self.lora_target_modules,
+                 enable_tower_connector_lora=self.enable_tower_connector_lora,
+                 specialize_active_lora=self.specialize_active_lora,
++                enable_mixed_moe_lora_format=self.enable_mixed_moe_lora_format,
+                 max_cpu_loras=self.max_cpu_loras
+                 if self.max_cpu_loras and self.max_cpu_loras > 0
+                 else None,
+diff --git a/vllm/entrypoints/openai/models/protocol.py b/vllm/entrypoints/openai/models/protocol.py
+index e7b96476c6ea..b383b018c39c 100644
+--- a/vllm/entrypoints/openai/models/protocol.py
++++ b/vllm/entrypoints/openai/models/protocol.py
+@@ -16,3 +16,4 @@ class LoRAModulePath:
+     name: str
+     path: str
+     base_model_name: str | None = None
++    is_3d_lora_weight: bool = False
+diff --git a/vllm/entrypoints/openai/models/serving.py b/vllm/entrypoints/openai/models/serving.py
+index ba1902d5b772..347752c912ca 100644
+--- a/vllm/entrypoints/openai/models/serving.py
++++ b/vllm/entrypoints/openai/models/serving.py
+@@ -121,7 +121,9 @@ async def init_static_loras(self):
+             return
+         for lora in self.static_lora_modules:
+             load_request = LoadLoRAAdapterRequest(
+-                lora_path=lora.path, lora_name=lora.name
++                lora_path=lora.path,
++                lora_name=lora.name,
++                is_3d_lora_weight=lora.is_3d_lora_weight,
+             )
+             load_result = await self.load_lora_adapter(
+                 request=load_request, base_model_name=lora.base_model_name
+@@ -177,6 +179,7 @@ async def load_lora_adapter(
+                 lora_int_id=lora_int_id,
+                 lora_path=lora_path,
+                 load_inplace=request.load_inplace,
++                is_3d_lora_weight=request.is_3d_lora_weight,
+             )
+             if base_model_name is not None and self.is_base_model(base_model_name):
+                 lora_request.base_model_name = base_model_name
+diff --git a/vllm/entrypoints/serve/lora/api_router.py b/vllm/entrypoints/serve/lora/api_router.py
+index 057bf5c2e2c8..39ca0ec91b21 100644
+--- a/vllm/entrypoints/serve/lora/api_router.py
++++ b/vllm/entrypoints/serve/lora/api_router.py
+@@ -37,6 +37,7 @@ def attach_router(app: FastAPI):
+             "lora_name": "body.name",
+             "lora_path": "body.src",
+             "load_inplace": "body.load_inplace || `false`",
++            "is_3d_lora_weight": "body.is_3d_lora_weight || `false`",
+         },
+     )
+     @router.post("/v1/load_lora_adapter", dependencies=[Depends(validate_json_request)])
+diff --git a/vllm/entrypoints/serve/lora/protocol.py b/vllm/entrypoints/serve/lora/protocol.py
+index 3e3a30cf3f2e..e0786717d67b 100644
+--- a/vllm/entrypoints/serve/lora/protocol.py
++++ b/vllm/entrypoints/serve/lora/protocol.py
+@@ -8,6 +8,7 @@ class LoadLoRAAdapterRequest(BaseModel):
+     lora_name: str
+     lora_path: str
+     load_inplace: bool = False
++    is_3d_lora_weight: bool = False
+ 
+ 
+ class UnloadLoRAAdapterRequest(BaseModel):
+diff --git a/vllm/lora/layers/fused_moe.py b/vllm/lora/layers/fused_moe.py
+index 9cb2fe914745..dc83143a751a 100644
+--- a/vllm/lora/layers/fused_moe.py
++++ b/vllm/lora/layers/fused_moe.py
+@@ -37,6 +37,10 @@ def __init__(self, base_layer: FusedMoE) -> None:
+         # For non-gated MoE (is_act_and_mul=False), only 1 slice is needed
+         # since there's only up_proj (w1), not gate_proj + up_proj (w1 + w3)
+         self._w13_slices = 2 if base_layer.moe_config.is_act_and_mul else 1
++        # Mirrors per-(lora_id) layout of `self.lora_a_stacked` (built in
++        # `create_lora_weights`) so `create_dummy_lora`'s n_slices fallback
++        # matches `lora_a_stacked` length under EP.
++        self.n_slices = base_layer.local_num_experts * (self._w13_slices + 1)
+ 
+         self.base_layer.ensure_moe_quant_config_init()
+         if getattr(self.base_layer.quant_method, "supports_internal_mk", False):
+diff --git a/vllm/lora/lora_model.py b/vllm/lora/lora_model.py
+index 48a2f6a1edd0..357c1b58181b 100644
+--- a/vllm/lora/lora_model.py
++++ b/vllm/lora/lora_model.py
+@@ -29,12 +29,17 @@ def __init__(
+         lora_model_id: int,
+         rank: int,
+         loras: dict[str, LoRALayerWeights],
++        is_3d_lora_weight: bool = False,
+     ) -> None:
+         """
+         Args:
+             lora_model_id: The integer id for the lora model.
+             rank: lora rank.
+             loras: module name -> weights for lora-replaced layers.
++            is_3d_lora_weight: Whether the on-disk MoE adapter is in the 3D
++                fused (gate_up_proj / down_proj) layout. Propagated from the
++                originating LoRARequest. Only consulted by the LoRA model
++                manager when enable_mixed_moe_lora_format is on.
+ 
+         """
+         self.id = lora_model_id
+@@ -44,6 +49,7 @@ def __init__(
+         )
+         self.rank = rank
+         self.loras: dict[str, LoRALayerWeights] = loras
++        self.is_3d_lora_weight = is_3d_lora_weight
+ 
+     def clone(self, lora_model_id: int) -> "LoRAModel":
+         """Return a copy of the object with different ids.
+@@ -53,6 +59,7 @@ def clone(self, lora_model_id: int) -> "LoRAModel":
+             lora_model_id,
+             rank=self.rank,
+             loras=self.loras.copy(),
++            is_3d_lora_weight=self.is_3d_lora_weight,
+         )
+ 
+     def get_lora(self, module_name: str) -> LoRALayerWeights | None:
+diff --git a/vllm/lora/model_manager.py b/vllm/lora/model_manager.py
+index 93f57f8fe8ad..bb471daf5d63 100644
+--- a/vllm/lora/model_manager.py
++++ b/vllm/lora/model_manager.py
+@@ -102,7 +102,6 @@ def __init__(
+         self.max_num_batched_tokens = math.ceil(max_num_batched_tokens / 8) * 8
+         self.lora_index_to_id: list[int | None] = [None] * self.lora_slots
+         self.vocab_size = vocab_size
+-        self.packed_modules_mapping = process_packed_modules_mapping(self.model)
+ 
+         self.is_pooling_model = is_pooling_model(self.model)
+         self.packed_modules: dict[str, list[str]] = {}
+@@ -110,7 +109,20 @@ def __init__(
+         # Dict instead of a set for compatibility with LRUCache.
+         self._last_mapping: LoRAMapping | None = None
+         is_moe = is_moe_model(self.model)
+-        self._is_3d_moe_model = is_moe and self.model.is_3d_moe_weight
++        # Whether the underlying model class declares 3D fused MoE weights.
++        self._model_is_3d_moe = is_moe and self.model.is_3d_moe_weight
++        # When the engine is started with enable_mixed_moe_lora_format=True
++        # we force the universal 2D wrapper (FusedMoEWithLoRA) regardless of
++        # the model's 3D flag, so 2D and 3D adapters can coexist.
++        self._enable_mixed_moe_lora_format = (
++            is_moe and lora_config.enable_mixed_moe_lora_format
++        )
++        self._is_3d_moe_model = (
++            self._model_is_3d_moe and not self._enable_mixed_moe_lora_format
++        )
++        self.packed_modules_mapping = process_packed_modules_mapping(
++            self.model, force_2d_moe=self._enable_mixed_moe_lora_format
++        )
+         self._is_non_gated_moe = is_moe and self.model.is_non_gated_moe
+         self._init_punica_wrapper(max_num_batched_tokens, vllm_config)
+         self._create_lora_modules()
+@@ -748,7 +760,16 @@ def _create_merged_loras_inplace(self, lora_model: LoRAModel) -> None:
+             if isinstance(module, FusedMoE3DWithLoRA):
+                 self._stack_moe_lora_weights(lora_model, module, module_name)
+             elif isinstance(module, FusedMoEWithLoRA):
+-                self._slice_moe_lora_ep(lora_model, module, module_name)
++                # When mixed mode is enabled the universal 2D wrapper has to
++                # absorb both 2D and 3D-format adapters. 3D-format adapters
++                # need to be split into per-(w1, w2, w3) tensors before the
++                # 2D set_lora can copy them into the stacked buffers.
++                if self._enable_mixed_moe_lora_format and getattr(
++                    lora_model, "is_3d_lora_weight", False
++                ):
++                    self._convert_3d_to_2d_moe_lora(lora_model, module, module_name)
++                else:
++                    self._slice_moe_lora_ep(lora_model, module, module_name)
+ 
+         first_lora: LoRALayerWeights = next(iter(lora_model.loras.values()))
+         assert first_lora.lora_a is not None
+@@ -871,6 +892,99 @@ def _stack_moe_lora_weights(
+                 module_lora.lora_a = lora_a
+                 module_lora.lora_b = lora_b
+ 
++    def _convert_3d_to_2d_moe_lora(
++        self,
++        lora_model: LoRAModel,
++        module: FusedMoEWithLoRA,
++        module_name: str,
++    ) -> None:
++        """Convert a 3D-format MoE LoRA checkpoint into the 2D pack layout
++        that `FusedMoEWithLoRA.set_lora` expects.
++
++        On disk the 3D PEFT layout stores two flat tensor pairs per layer:
++          - `{module}.base_layer.lora_{A,B}`: gate_up_proj, with shapes
++                `(rank * num_experts, hidden)` / `(intermediate * 2,
++                rank * num_experts)`
++          - `{module}.lora_{A,B}`: down_proj, with shapes
++                `(rank * num_experts, intermediate)` / `(hidden,
++                rank * num_experts)`
++        The 2D wrapper expects three stacked per-expert tensors,
++        `[w1, w2, w3]`, with `(num_experts, rank, in)` for lora_a and
++        `(num_experts, out, rank)` for lora_b. In the 3D layout w1
++        (gate_proj) and w3 (up_proj) share the rank-r intermediate
++        representation, so both halves use the same lora_a tensor.
++
++        Only invoked when `enable_mixed_moe_lora_format=True` and the
++        source LoRARequest declares `is_3d_lora_weight=True`.
++        """
++        gate_up_proj_lora = self._get_lora_layer_weights(
++            lora_model, module_name + ".base_layer"
++        )
++        down_proj_lora = self._get_lora_layer_weights(lora_model, module_name)
++        if gate_up_proj_lora is None or down_proj_lora is None:
++            # Either the adapter omits the experts entirely or the file
++            # layout differs from what this path supports; leave the entry
++            # untouched so set_lora can raise a clear error if needed.
++            return
++
++        local_num_experts = module.base_layer.local_num_experts
++        global_num_experts = module.base_layer.global_num_experts
++        ep_rank = module.base_layer.ep_rank
++        expert_start = ep_rank * local_num_experts
++        expert_end = expert_start + local_num_experts
++
++        # Reshape and EP-slice into per-expert 3D tensors. This mirrors
++        # `_stack_moe_lora_weights`; for non-EP runs the slice is a no-op.
++        gate_up_a = gate_up_proj_lora.lora_a.reshape(
++            global_num_experts, -1, gate_up_proj_lora.lora_a.shape[-1]
++        )[expert_start:expert_end].contiguous()
++        gate_up_b = (
++            gate_up_proj_lora.lora_b.reshape(
++                gate_up_proj_lora.lora_b.shape[0], -1, global_num_experts
++            )[..., expert_start:expert_end]
++            .permute(2, 0, 1)
++            .contiguous()
++        )
++        down_a = down_proj_lora.lora_a.reshape(
++            global_num_experts, -1, down_proj_lora.lora_a.shape[-1]
++        )[expert_start:expert_end].contiguous()
++        down_b = (
++            down_proj_lora.lora_b.reshape(
++                down_proj_lora.lora_b.shape[0], -1, global_num_experts
++            )[..., expert_start:expert_end]
++            .permute(2, 0, 1)
++            .contiguous()
++        )
++
++        # Split the fused gate_up_proj output dim into separate w1 / w3
++        # halves. GPT-OSS interleaves them along the output dim, all other
++        # 3D MoE checkpoints we know about concatenate them.
++        intermediate_x2 = gate_up_b.shape[1]
++        if intermediate_x2 % 2 != 0:
++            raise ValueError(
++                "Expected gate_up_proj LoRA-B output dim to be 2 * intermediate, "
++                f"got {intermediate_x2}."
++            )
++        intermediate = intermediate_x2 // 2
++        base_arch = self.model.config.architectures[0]
++        if base_arch == "GptOssForCausalLM":
++            w1_b = gate_up_b[:, ::2, :].contiguous()
++            w3_b = gate_up_b[:, 1::2, :].contiguous()
++        else:
++            w1_b = gate_up_b[:, :intermediate, :].contiguous()
++            w3_b = gate_up_b[:, intermediate:, :].contiguous()
++
++        # In the 3D layout w1 and w3 share the same rank-r mid
++        # representation, so they reuse the same lora_a tensor. The 2D
++        # wrapper's set_lora copies whatever it gets here into independent
++        # per-slice buffers, so the sharing is purely a CPU-side memory
++        # optimization and does not affect numerics.
++        down_proj_lora.lora_a = [gate_up_a, down_a, gate_up_a]
++        down_proj_lora.lora_b = [w1_b, down_b, w3_b]
++        # Drop the redundant base_layer entry to avoid double pin_memory
++        # and to keep the activation path looking up only the wrapper key.
++        lora_model.loras.pop(module_name + ".base_layer", None)
++
+     def _slice_moe_lora_ep(
+         self,
+         lora_model: LoRAModel,
+diff --git a/vllm/lora/request.py b/vllm/lora/request.py
+index 008ade5e5f1f..7ba1725fa2e8 100644
+--- a/vllm/lora/request.py
++++ b/vllm/lora/request.py
+@@ -28,6 +28,13 @@ class LoRARequest(
+     base_model_name: str | None = msgspec.field(default=None)
+     tensorizer_config_dict: dict | None = None
+     load_inplace: bool = False
++    is_3d_lora_weight: bool = False
++    """Whether this adapter's MoE weights are stored in the 3D fused
++    `gate_up_proj` / `down_proj` layout (one fused tensor per layer) or the
++    2D per-expert split layout (separate `gate_proj` / `up_proj` / `down_proj`
++    tensors per expert). Only consulted when the engine is started with
++    `enable_mixed_moe_lora_format=True`; otherwise it is ignored and the
++    on-disk format is inferred from the base model."""
+ 
+     def __post_init__(self):
+         if self.lora_int_id < 1:
+diff --git a/vllm/lora/utils.py b/vllm/lora/utils.py
+index 2991447a6ad4..7b68c1f952aa 100644
+--- a/vllm/lora/utils.py
++++ b/vllm/lora/utils.py
+@@ -355,7 +355,9 @@ def get_adapter_absolute_path(lora_path: str) -> str:
+     return local_snapshot_path
+ 
+ 
+-def process_packed_modules_mapping(model: nn.Module) -> dict[str, list[str]]:
++def process_packed_modules_mapping(
++    model: nn.Module, force_2d_moe: bool = False
++) -> dict[str, list[str]]:
+     if is_moe_model(model):
+         if moe_packed_mapping := get_moe_expert_mapping(model):
+             # This method generates and returns a dictionary mapping packed module
+@@ -364,8 +366,11 @@ def process_packed_modules_mapping(model: nn.Module) -> dict[str, list[str]]:
+             # the expert indices are expanded based on the configured number
+             # of routed experts.
+             packed_modules_mapping = get_packed_modules_mapping(model)
+-            if not model.is_3d_moe_weight:
+-                # 3D MoE LoRA does not need `packed_modules_mapping`
++            # The 2D mapping is needed when the model itself is 2D, or when
++            # the engine forces the universal 2D wrapper via
++            # enable_mixed_moe_lora_format (so 3D models can also load 2D
++            # adapters through FusedMoEWithLoRA).
++            if (not model.is_3d_moe_weight) or force_2d_moe:
+                 # Filter out malformed entries: non-gated MoE has empty
+                 # ckpt_up_proj_name which results in weight_name containing ".."
+                 # (e.g., "experts.0.." instead of "experts.0.layer_name.")
+diff --git a/vllm/lora/worker_manager.py b/vllm/lora/worker_manager.py
+index 5b9bf2d76fbb..32d26fa6dc13 100644
+--- a/vllm/lora/worker_manager.py
++++ b/vllm/lora/worker_manager.py
+@@ -141,6 +141,10 @@ def _load_adapter(self, lora_request: LoRARequest) -> LoRAModel:
+                 weights_mapper=hf_to_vllm_mapper,
+                 skip_prefixes=lora_skip_prefixes,
+             )
++            # Stamp the on-disk MoE layout onto the loaded model so the
++            # adapter manager can route 3D-format checkpoints through the
++            # 3D->2D conversion when running under the universal 2D wrapper.
++            lora.is_3d_lora_weight = lora_request.is_3d_lora_weight
+ 
+         except FileNotFoundError as e:
+             # FileNotFoundError should be raised if both

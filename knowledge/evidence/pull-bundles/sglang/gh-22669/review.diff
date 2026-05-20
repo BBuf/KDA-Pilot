@@ -1,0 +1,476 @@
+diff --git a/python/sglang/srt/layers/moe/moe_runner/flashinfer_cutedsl.py b/python/sglang/srt/layers/moe/moe_runner/flashinfer_cutedsl.py
+index 5e1f69978014..6b16841a51d7 100644
+--- a/python/sglang/srt/layers/moe/moe_runner/flashinfer_cutedsl.py
++++ b/python/sglang/srt/layers/moe/moe_runner/flashinfer_cutedsl.py
+@@ -21,6 +21,10 @@
+         StandardCombineInput,
+         StandardDispatchOutput,
+     )
++    from sglang.srt.layers.moe.token_dispatcher.flashinfer import (
++        FlashinferCombineInput,
++        FlashinferDispatchOutput,
++    )
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -217,9 +221,17 @@ def _resolve_w2_alpha_from_scalar_fc2_input_scale(
+     return w1_alpha, fc2_input_scale, w2_alpha, used_input_scale
+ 
+ 
+-def ensure_cutedsl_wrapper(layer: torch.nn.Module) -> None:
++def ensure_cutedsl_wrapper(layer: torch.nn.Module, num_tokens: int = 0) -> None:
+     """Lazily create CuteDslMoEWrapper and resolve scales on first forward.
+ 
++    Args:
++        layer: The FusedMoE layer module.
++        num_tokens: Current token count entering the MoE layer.  Used as
++            the buffer size for the non-a2a (allgather) path, where the
++            autotune dummy run passes req_to_token_pool.size * dp_size —
++            the worst-case post-allgather batch.  For the a2a path this
++            is ignored in favour of the dispatcher's workspace limit.
++
+     The wrapper is created lazily (not in __init__ / create_weights) because
+     it depends on final weight shapes and EP configuration.  The wrapper's
+     CUDA-graph buffers are allocated inside CuteDslMoEWrapper.__init__, which
+@@ -248,10 +260,19 @@ def ensure_cutedsl_wrapper(layer: torch.nn.Module) -> None:
+ 
+     server_args = get_global_server_args()
+     use_cuda_graph = server_args is not None and not server_args.disable_cuda_graph
+-    max_num_tokens = max(
+-        getattr(server_args, "cuda_graph_max_bs", None) or 512,
+-        getattr(server_args, "chunked_prefill_size", None) or 8192,
+-    )
++
++    # Buffer size must cover the worst-case token count the MoE layer can see.
++    # - A2A path: dispatch returns tensors flattened from
++    #   [ep_size, max_tokens_per_rank, ...].
++    # - Standard allgather path: dp_size * max local tokens per rank.
++    dispatcher = getattr(layer, "dispatcher", None)
++    if hasattr(dispatcher, "max_num_tokens"):
++        max_num_tokens = dispatcher.max_num_tokens * getattr(dispatcher, "ep_size", 1)
++    else:
++        # Standard allgather path: num_tokens from the first forward is
++        # req_to_token_pool.size * dp_size (the autotune dummy run's batch),
++        # which is the worst-case post-allgather token count.
++        max_num_tokens = max(num_tokens, 1)
+     top_k = layer.top_k if layer.top_k is not None else layer.moe_runner_config.top_k
+     # inference_mode(False) ensures the wrapper's pre-allocated CUDA-graph
+     # buffers are normal tensors.  This call typically happens inside
+@@ -377,6 +398,72 @@ def fused_experts_none_to_flashinfer_cutedsl_fp4(
+     return StandardCombineInput(hidden_states=output)
+ 
+ 
++@register_fused_func("flashinfer", "flashinfer_cutedsl")
++def fused_experts_flashinfer_to_flashinfer_cutedsl_fp4(
++    dispatch_output: FlashinferDispatchOutput,
++    quant_info: CuteDslFp4MoeQuantInfo,
++    runner_config: MoeRunnerConfig,
++) -> FlashinferCombineInput:
++    """CuteDSL fused func for flashinfer alltoall dispatcher.
++
++    Two cases depending on whether the dispatcher did FP4 quantization:
++    - bf16 input (SGLANG_MOE_NVFP4_DISPATCH=0): quantize with cutedsl's scale
++    - FP4 input (SGLANG_MOE_NVFP4_DISPATCH=1): pass through (same fp4_quantize params)
++    """
++    from sglang.srt.layers.moe.token_dispatcher.flashinfer import (
++        FlashinferCombineInput,
++    )
++    from sglang.srt.layers.moe.topk import TopKOutputChecker
++    from sglang.srt.layers.quantization.fp4_utils import fp4_quantize
++
++    assert runner_config.activation == "silu", "Only silu is supported for CuteDSL MoE."
++    assert quant_info.wrapper is not None, "CuteDSL v2 path requires CuteDslMoEWrapper."
++
++    hidden_states = dispatch_output.hidden_states
++    x_sf = dispatch_output.hidden_states_scale
++    topk_output = dispatch_output.topk_output
++    assert TopKOutputChecker.format_is_standard(topk_output)
++
++    topk_ids = topk_output.topk_ids
++    topk_weights = topk_output.topk_weights
++    if topk_ids.dtype != torch.int32:
++        topk_ids = topk_ids.to(torch.int32)
++
++    if x_sf is not None:
++        # NVFP4 dispatch, inputs are already quantized.
++        x_fp4 = hidden_states
++    else:
++        x_fp4, x_sf = fp4_quantize(
++            hidden_states,
++            quant_info.a1_scale,
++            sf_vec_size=_FP4_SF_VEC_SIZE,
++            is_sf_swizzled_layout=False,
++        )
++
++    output = quant_info.wrapper.run(
++        x=x_fp4,
++        x_sf=x_sf,
++        token_selected_experts=topk_ids,
++        token_final_scales=topk_weights,
++        w1_weight=quant_info.w13_weight,
++        w1_weight_sf=quant_info.w13_weight_sf,
++        w1_alpha=quant_info.w1_alpha,
++        fc2_input_scale=quant_info.a2_scale,
++        w2_weight=quant_info.w2_weight,
++        w2_weight_sf=quant_info.w2_weight_sf,
++        w2_alpha=quant_info.w2_alpha,
++    )
++
++    # Note: output contains routed expert results; shared_expert is handled separately
++
++    # Write into pre-allocated workspace buffer if available
++    if dispatch_output.moe_output is not None:
++        dispatch_output.moe_output.copy_(output)
++        output = dispatch_output.moe_output
++
++    return FlashinferCombineInput(hidden_states=output)
++
++
+ @register_fused_func("deepep", "flashinfer_cutedsl")
+ def fused_experts_deepep_to_flashinfer_cutedsl_fp4(
+     dispatch_output: DeepEPLLDispatchOutput,
+diff --git a/python/sglang/srt/layers/moe/token_dispatcher/flashinfer.py b/python/sglang/srt/layers/moe/token_dispatcher/flashinfer.py
+index f052011430bb..5ec7e4d52559 100644
+--- a/python/sglang/srt/layers/moe/token_dispatcher/flashinfer.py
++++ b/python/sglang/srt/layers/moe/token_dispatcher/flashinfer.py
+@@ -149,17 +149,9 @@ def __init__(
+             mnnvl_config=MnnvlConfig(comm_backend=TorchDistributedCommBackend(group)),
+         )
+ 
+-        # Preallocate dummy tensors (to overcome numLocalTokens > 0 restriction)
+-        self.dummy_x = torch.empty(
+-            (1, hidden_size),
+-            dtype=torch.bfloat16,
+-            device="cuda",
+-        )
+-        # -1 will be ignored by flashinfer cutlass moe
+         self.dummy_topk_ids = torch.full(
+-            (1, self.router_topk), -1, dtype=torch.int32, device="cuda"
++            (1, self.router_topk), self.num_experts, dtype=torch.int32, device="cuda"
+         )
+-        # Hack for dispatch with dummy token - will route the dummy token to this rank so it doesn't require any transfer.
+         self.dummy_topk_ids_current_rank = torch.full(
+             (1, self.router_topk),
+             self.ep_rank * self.num_local_experts,
+@@ -180,27 +172,15 @@ def dispatch(
+         topk_ids = topk_output.topk_ids
+         topk_weights = topk_output.topk_weights
+ 
+-        # Handle case where there are no tokens on this DP worker
+-        # moe_a2a.dispatch requires at least one token
+-        self.has_dummy_token = False
+-        if x.shape[0] == 0:
+-            logger.warning("No tokens on this DP worker, using dummy token")
+-            self.has_dummy_token = True
+-            x = self.dummy_x
++        self.has_dummy_token = x.shape[0] == 0
++        if self.has_dummy_token:
++            x = hidden_states.new_zeros((1, self.hidden_size))
+             topk_ids = self.dummy_topk_ids
+             topk_weights = self.dummy_topk_weights
+ 
+         global_scale = self.quant_config.get("input_global_scale", None)
+         if global_scale is not None:
+-            if x.shape[0] > 0:
+-                x, x_sf = fp4_quantize(x, global_scale, is_sf_swizzled_layout=False)
+-            else:
+-                x = torch.zeros(
+-                    0, self.hidden_size // 2, dtype=torch.uint8, device=x.device
+-                )
+-                x_sf = torch.zeros(
+-                    0, self.hidden_size // 16, dtype=torch.uint8, device=x.device
+-                )
++            x, x_sf = fp4_quantize(x, global_scale, is_sf_swizzled_layout=False)
+ 
+         payloads = []
+         payloads.append(x)
+@@ -222,18 +202,28 @@ def dispatch(
+             # in SP mode, full batch otherwise).  Avoids the pre-scatter
+             # scheduler count which can exceed the workspace cap.
+             self.runtime_max_tokens_per_rank = x.shape[0]
++        if self.has_dummy_token:
++            self.runtime_max_tokens_per_rank = max(self.runtime_max_tokens_per_rank, 1)
++
++        # Passing topk_ids + invalid_token_expert_id triggers the sanitize step
++        # inside moe_a2a. The recv buffer has shape
++        # [ep_size, max_tokens_per_rank, ...], so any rank below max leaves
++        # padding slots whose expert_id would otherwise route to a real expert
++        # and waste downstream MoE compute. Sanitizing the padding to a
++        # sentinel id is structural, not optional.
+         recv_tensors = self.moe_a2a.dispatch(
+             self.dummy_topk_ids_current_rank if self.has_dummy_token else topk_ids,
+             payloads,
+             self.runtime_max_tokens_per_rank,
+-            invalid_token_expert_id=-1,
++            invalid_token_expert_id=self.num_experts,
+             expert_id_payload_index=expert_id_payload_index,
+         )
+         if x_sf is not None:
+             x_recv, x_sf_recv, topk_ids_recv, topk_weights_recv = recv_tensors
+             x_sf = x_sf_recv.view(-1, x_sf_recv.shape[-1])
+             # TODO: fuse interleave into cutlass moe
+-            x_sf = nvfp4_block_scale_interleave(x_sf)
++            if get_moe_runner_backend().is_flashinfer_cutlass():
++                x_sf = nvfp4_block_scale_interleave(x_sf)
+         else:
+             x_recv, topk_ids_recv, topk_weights_recv = recv_tensors
+         x = x_recv.view(-1, x_recv.shape[-1])
+@@ -265,7 +255,6 @@ def combine(self, combine_input: FlashinferCombineInput) -> torch.Tensor:
+             payload_in_workspace=self.payload_in_workspace,
+         )
+ 
+-        # Remove dummy token if it was added in dispatch
+         if self.has_dummy_token:
+             hidden_states = hidden_states[1:, :]
+ 
+diff --git a/python/sglang/srt/layers/quantization/modelopt_quant.py b/python/sglang/srt/layers/quantization/modelopt_quant.py
+index fd7cfb4ffef4..9afdb54968cc 100755
+--- a/python/sglang/srt/layers/quantization/modelopt_quant.py
++++ b/python/sglang/srt/layers/quantization/modelopt_quant.py
+@@ -2082,7 +2082,7 @@ def apply(
+ 
+             # v2 standard path (a2a=none/flashinfer): uses CuteDslMoEWrapper
+             # with [Up, Gate] interleaved weights and MMA blockscales.
+-            ensure_cutedsl_wrapper(layer)
++            ensure_cutedsl_wrapper(layer, dispatch_output.hidden_states.shape[0])
+             w1_alpha, fc2_input_scale, w2_alpha = layer._cutedsl_scales
+             quant_info = CuteDslFp4MoeQuantInfo(
+                 w13_weight=layer.w13_weight,
+diff --git a/python/sglang/srt/models/qwen2_moe.py b/python/sglang/srt/models/qwen2_moe.py
+index 8bdc0598e12a..12aeb466887a 100644
+--- a/python/sglang/srt/models/qwen2_moe.py
++++ b/python/sglang/srt/models/qwen2_moe.py
+@@ -297,7 +297,10 @@ def __init__(
+                 prefix=add_prefix("shared_expert", prefix),
+                 **(
+                     dict(tp_rank=0, tp_size=1)
+-                    if get_moe_a2a_backend().is_deepep()
++                    if (
++                        get_moe_a2a_backend().is_deepep()
++                        or get_moe_a2a_backend().is_flashinfer()
++                    )
+                     else {}
+                 ),
+             )
+@@ -471,11 +474,14 @@ def forward(
+         if get_moe_a2a_backend().is_deepep():
+             return self._forward_deepep(hidden_states, forward_batch)
+ 
+-        if (
+-            self.alt_stream is not None
+-            and hidden_states.shape[0] > 0
+-            and get_is_capture_mode()
+-        ):
++        if hidden_states.shape[0] == 0:
++            # M=0 guard for idle DP ranks: skip shared_experts and gate
++            # (which crash on empty tensors in FP4 GEMM), but still call
++            # self.experts() to participate in alltoall collective.
++            shared_output = None
++            topk_output = self.topk.empty_topk_output(hidden_states.device)
++            final_hidden_states = self.experts(hidden_states, topk_output)
++        elif self.alt_stream is not None and get_is_capture_mode():
+             final_hidden_states, shared_output = self.forward_normal_dual_stream(
+                 hidden_states
+             )
+@@ -484,18 +490,20 @@ def forward(
+             final_hidden_states = self._forward_router_experts(hidden_states)
+ 
+         if shared_output is not None:
+-            # In-place add is required to keep final_hidden_states in the
+-            # symmetric memory pool (when --enable-symm-mem is used).
+-            # An out-of-place add would allocate a new tensor outside symm
+-            # memory, breaking subsequent symmetric collective operations.
+             final_hidden_states += shared_output
+-        if self.tp_size > 1 and not should_skip_post_experts_all_reduce(
+-            is_tp_path=True,
+-            use_reduce_scatter=use_reduce_scatter,
+-            should_allreduce_fusion=should_allreduce_fusion,
++        if (
++            self.tp_size > 1
++            and not should_skip_post_experts_all_reduce(
++                is_tp_path=True,
++                use_reduce_scatter=use_reduce_scatter,
++                should_allreduce_fusion=should_allreduce_fusion,
++            )
++            and not get_moe_a2a_backend().is_flashinfer()
+         ):
+             final_hidden_states = tensor_model_parallel_all_reduce(final_hidden_states)
+ 
++        # Debug removed - was causing issues during CUDA graph capture
++
+         return final_hidden_states.view(num_tokens, hidden_dim)
+ 
+ 
+diff --git a/python/sglang/srt/server_args.py b/python/sglang/srt/server_args.py
+index 9c5e2822f55e..45733f7fbff4 100644
+--- a/python/sglang/srt/server_args.py
++++ b/python/sglang/srt/server_args.py
+@@ -48,6 +48,7 @@
+     get_device_memory_capacity,
+     get_device_name,
+     get_device_sm,
++    get_int_env_var,
+     get_nvidia_driver_version,
+     get_quantization_config,
+     has_fp8_weights_in_checkpoint,
+@@ -3111,9 +3112,10 @@ def _handle_moe_kernel_config(self):
+             assert self.moe_a2a_backend in [
+                 "none",
+                 "deepep",
++                "flashinfer",
+             ], (
+-                f"flashinfer_cutedsl supports moe_a2a_backend='none' (standard path) "
+-                f"or 'deepep' (DeepEP low-latency path), got '{self.moe_a2a_backend}'."
++                f"flashinfer_cutedsl supports moe_a2a_backend='none', 'deepep', or 'flashinfer', "
++                f"got '{self.moe_a2a_backend}'."
+             )
+             self.disable_shared_experts_fusion = True
+             logger.warning(
+@@ -3253,6 +3255,9 @@ def _handle_a2a_moe(self):
+                     self.quantization == "modelslim"
+                 ), "When fuse_mode is set to 2, the NPU supports only ModelSlim quantization."
+         if self.moe_a2a_backend == "flashinfer":
++            assert (
++                self.enable_dp_attention and self.dp_size == self.tp_size
++            ), "Flashinfer MoE A2A is only supported with dp_size == tp_size and --enable-dp-attention"
+             self.ep_size = self.tp_size
+             logger.warning(
+                 f"Flashinfer MoE A2A is enabled. The expert parallel size is adjusted to be the same as the tensor parallel size[{self.tp_size}]."
+@@ -3269,8 +3274,40 @@ def _handle_a2a_moe(self):
+                     "SGLANG_MOE_NVFP4_DISPATCH is set to True for Flashinfer MoE A2A"
+                 )
+             assert self.moe_runner_backend in [
+-                "flashinfer_cutlass"
+-            ], "Flashinfer MoE A2A is only supported with flashinfer_cutlass moe runner backend"
++                "flashinfer_cutlass",
++                "flashinfer_cutedsl",
++            ], "Flashinfer MoE A2A is only supported with flashinfer_cutlass or flashinfer_cutedsl moe runner backend"
++            if (
++                self.moe_runner_backend == "flashinfer_cutedsl"
++                and self.max_prefill_tokens is not None
++                and self.max_prefill_tokens > 0
++                and self.disaggregation_mode != "decode"
++            ):
++                max_dispatch_tokens_per_rank = get_int_env_var(
++                    "SGLANG_FLASHINFER_NUM_MAX_DISPATCH_TOKENS_PER_RANK", 1024
++                )
++                max_cutedsl_tokens = max_dispatch_tokens_per_rank * self.ep_size
++                if max_cutedsl_tokens < self.max_prefill_tokens:
++                    required_per_rank = (
++                        self.max_prefill_tokens + self.ep_size - 1
++                    ) // self.ep_size
++                    raise ValueError(
++                        "FlashInfer MoE A2A with flashinfer_cutedsl requires "
++                        "SGLANG_FLASHINFER_NUM_MAX_DISPATCH_TOKENS_PER_RANK * "
++                        "ep_size to cover --max-prefill-tokens. Otherwise the "
++                        "FlashInfer dispatcher can crash at runtime with "
++                        "`ValueError: num_tokens (...) exceeds max_num_tokens (...)` "
++                        "when a local DP rank schedules too many prefill tokens. "
++                        "Current values: "
++                        f"SGLANG_FLASHINFER_NUM_MAX_DISPATCH_TOKENS_PER_RANK="
++                        f"{max_dispatch_tokens_per_rank}, ep_size={self.ep_size}, "
++                        f"capacity={max_cutedsl_tokens}, "
++                        f"max_prefill_tokens={self.max_prefill_tokens}. "
++                        f"Set `export "
++                        f"SGLANG_FLASHINFER_NUM_MAX_DISPATCH_TOKENS_PER_RANK="
++                        f"{required_per_rank}` or lower `--max-prefill-tokens` "
++                        f"to <= {max_cutedsl_tokens}."
++                    )
+ 
+         if self.moe_a2a_backend == "mori":
+             self.ep_size = self.tp_size
+diff --git a/test/registered/moe/test_flashinfer_a2a_cutedsl_v2.py b/test/registered/moe/test_flashinfer_a2a_cutedsl_v2.py
+new file mode 100644
+index 000000000000..251f9a38c593
+--- /dev/null
++++ b/test/registered/moe/test_flashinfer_a2a_cutedsl_v2.py
+@@ -0,0 +1,89 @@
++"""Test CuteDSL FP4 MoE + FlashInfer alltoall on B200 with DP attention.
++
++Config: Qwen3.5-397B-A17B-NVFP4, B200x4, EP=4 DP=4, cutedsl + flashinfer a2a.
++"""
++
++import unittest
++from types import SimpleNamespace
++
++import torch
++
++from sglang.srt.utils import kill_process_tree
++from sglang.test.ci.ci_register import register_cuda_ci
++from sglang.test.run_eval import run_eval
++from sglang.test.test_utils import (
++    DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
++    DEFAULT_URL_FOR_TEST,
++    CustomTestCase,
++    popen_launch_server,
++)
++
++register_cuda_ci(est_time=600, stage="extra-b", runner_config="4-gpu-b200")
++
++MODEL = "nvidia/Qwen3.5-397B-A17B-NVFP4"
++
++SKIP_TEST = torch.cuda.get_device_capability() < (10, 0)
++SKIP_REASON = "Requires Blackwell (B200, sm_100a) or above."
++
++
++@unittest.skipIf(SKIP_TEST, SKIP_REASON)
++class TestCuteDslFlashinferA2A(CustomTestCase):
++    """CuteDSL FP4 MoE + FlashInfer one-sided alltoall + DP4 EP4 on B200."""
++
++    @classmethod
++    def setUpClass(cls):
++        cls.model = MODEL
++        cls.base_url = DEFAULT_URL_FOR_TEST
++        cls.process = popen_launch_server(
++            cls.model,
++            cls.base_url,
++            timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH * 3,
++            other_args=[
++                "--trust-remote-code",
++                "--quantization",
++                "modelopt_fp4",
++                "--tp",
++                "4",
++                "--ep-size",
++                "4",
++                "--dp",
++                "4",
++                "--enable-dp-attention",
++                "--enable-dp-lm-head",
++                "--moe-runner-backend",
++                "flashinfer_cutedsl",
++                "--moe-a2a-backend",
++                "flashinfer",
++                "--max-prefill-tokens",
++                "4096",
++                "--disable-radix-cache",
++                "--disable-flashinfer-autotune",
++                "--watchdog-timeout",
++                "900",
++            ],
++        )
++
++    @classmethod
++    def tearDownClass(cls):
++        kill_process_tree(cls.process.pid)
++
++    def test_gsm8k(self):
++        args = SimpleNamespace(
++            base_url=self.base_url,
++            eval_name="gsm8k",
++            num_examples=1319,
++            max_tokens=10240,
++            repeat=1,
++            num_threads=1319,
++            num_shots=8,
++            temperature=0.6,
++            top_p=0.95,
++            top_k=20,
++        )
++        metrics = run_eval(args)
++        print(metrics)
++        self.assertGreater(metrics["score"], 0.90)
++
++
++if __name__ == "__main__":
++    unittest.main()

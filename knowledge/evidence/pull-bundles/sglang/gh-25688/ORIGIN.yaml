@@ -1,0 +1,44 @@
+schema_version: 1
+source_key: sgl-project/sglang#25688
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25688
+title: Add no_combine support to cutlass_moe_fp4
+url: https://github.com/sgl-project/sglang/pull/25688
+state: closed
+merged_at: '2026-05-18T22:59:55Z'
+base_ref_oid: c904fdd20eef167d5b129769905f22938426f01c
+head_ref_oid: e04a50b3f6028a51f5eace17fe22e31ea14b5754
+captured_at: '2026-05-20T14:49:06.879966+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cutlass
+- fp4
+- moe
+- triton
+techniques:
+- fine-grained-quantization
+hardware_features:
+- fp4
+kernel_types:
+- moe
+languages:
+- cute-dsl
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/layers/moe/cutlass_moe.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/cutlass_moe.py
+    ref: e04a50b3f6028a51f5eace17fe22e31ea14b5754
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/quantization/modelopt_quant.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/modelopt_quant.py
+    ref: e04a50b3f6028a51f5eace17fe22e31ea14b5754
+    status: modified
+    fetched: true

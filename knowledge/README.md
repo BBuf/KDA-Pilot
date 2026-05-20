@@ -1,6 +1,6 @@
 # KernelPilot Knowledge — Kernel Evidence Acquisition
 
-> **Knowledge cutoff: 2026-05-16.** Merged PR evidence is collected from
+> **Knowledge cutoff: 2026-05-20.** Merged PR evidence is collected from
 > **2024-01-01** through this date, recorded in
 > [`data/refresh-cutoff.yaml`](data/refresh-cutoff.yaml).
 
@@ -12,11 +12,11 @@ complementary code samples, and live web/official/upstream source research.
 
 ## What's Here
 
-- **3,660 PR pages** under `sources/prs/` for the major kernel frameworks
+- **3,827 PR pages** under `sources/prs/` for the major kernel frameworks
   (SGLang, vLLM, TensorRT-LLM, PyTorch, FlashAttention, FlashInfer,
   CUTLASS/CuTe, CCCL, Triton, DeepGEMM, ThunderKittens, TileLang, QuACK,
   DeepSeek TileKernels).
-- **3,660 PR evidence bundles** under `evidence/pull-bundles/`
+- **3,827 PR evidence bundles** under `evidence/pull-bundles/`
 - **14 candidate ledgers** under `candidates/`
 - **External source map** in `index.json`; this is a repo/topic map for live
   research over the **complementary** code repositories that are not in the
@@ -27,7 +27,8 @@ complementary code samples, and live web/official/upstream source research.
 - PR corpus metadata under `data/`
 
 Each PR page points at its evidence bundle via `artifact_dir`. Each bundle
-contains `review.diff`, `upstream.json`, `ORIGIN.yaml`, and `source-snapshot/`.
+contains `review.diff`, `upstream.json`, `ORIGIN.yaml`, `discussion.md`, and
+`source-snapshot/`.
 
 ## Three Peer Routes
 
@@ -54,6 +55,7 @@ Open the bundle named by `artifact_dir` when implementation details matter:
 
 ```bash
 less evidence/pull-bundles/flash-attention/gh-1940/review.diff
+less evidence/pull-bundles/flash-attention/gh-1940/discussion.md
 find evidence/pull-bundles/flash-attention/gh-1940/source-snapshot -type f
 ```
 
@@ -124,6 +126,7 @@ Useful PR-corpus tooling:
 - `scripts/expand-pr-corpus.py`
 - `scripts/generate-pr-pages.py`
 - `scripts/fetch-pr-evidence.py`
+- `scripts/fetch-pr-discussions.py`
 - `scripts/materialize-source-prs.py`
 - `scripts/sync-pr-evidence-metadata.py`
 
@@ -150,7 +153,8 @@ knowledge/
 |-- sources/
 |   `-- prs/
 |-- evidence/
-|   `-- pull-bundles/
+|   `-- pull-bundles/   # each PR bundle includes review.diff, discussion.md,
+|                       # upstream.json, ORIGIN.yaml, and source-snapshot/
 |-- candidates/
 |-- index.json
 `-- data/

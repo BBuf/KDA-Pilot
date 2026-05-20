@@ -1,0 +1,30 @@
+diff --git a/vllm/model_executor/models/qwen3_5_mtp.py b/vllm/model_executor/models/qwen3_5_mtp.py
+index e86b205b9f31..5622065a7ff3 100644
+--- a/vllm/model_executor/models/qwen3_5_mtp.py
++++ b/vllm/model_executor/models/qwen3_5_mtp.py
+@@ -175,8 +175,8 @@ def load_fused_expert_weights(
+                 param,
+                 curr_expert_weight,
+                 name,
+-                shard_id,
+-                expert_id,
++                shard_id=shard_id,
++                expert_id=expert_id,
+                 return_success=True,
+             )
+             if success:
+diff --git a/vllm/model_executor/models/qwen3_vl_moe.py b/vllm/model_executor/models/qwen3_vl_moe.py
+index 4b38ff9b9e12..195b3355e3e3 100644
+--- a/vllm/model_executor/models/qwen3_vl_moe.py
++++ b/vllm/model_executor/models/qwen3_vl_moe.py
+@@ -152,8 +152,8 @@ def load_fused_expert_weights(
+                 param,
+                 curr_expert_weight,
+                 name,
+-                shard_id,
+-                expert_id,
++                shard_id=shard_id,
++                expert_id=expert_id,
+                 return_success=True,
+             )
+             if success:

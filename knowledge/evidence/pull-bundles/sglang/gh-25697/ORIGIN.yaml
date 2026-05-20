@@ -1,0 +1,51 @@
+schema_version: 1
+source_key: sgl-project/sglang#25697
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25697
+title: '[diffusion] Fix GLM-Image /v1/images/edits support'
+url: https://github.com/sgl-project/sglang/pull/25697
+state: closed
+merged_at: '2026-05-20T09:11:52Z'
+base_ref_oid: 4c0ce0345d0d842d91d3802fdeec29bfc5caa5b0
+head_ref_oid: ef1940622209bb2df05fdb26032e4921fcd45880
+captured_at: '2026-05-20T14:48:51.666390+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cuda
+techniques:
+- kernel-fusion
+- pipeline-stages
+hardware_features: []
+kernel_types:
+- norm
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/jit_kernel/diffusion/triton/scale_shift.py
+    local_path: source-snapshot/python/sglang/jit_kernel/diffusion/triton/scale_shift.py
+    ref: ef1940622209bb2df05fdb26032e4921fcd45880
+    status: modified
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/configs/pipeline_configs/glm_image.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/configs/pipeline_configs/glm_image.py
+    ref: ef1940622209bb2df05fdb26032e4921fcd45880
+    status: modified
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/runtime/layers/layernorm.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/layers/layernorm.py
+    ref: ef1940622209bb2df05fdb26032e4921fcd45880
+    status: modified
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/runtime/pipelines_core/stages/model_specific_stages/glm_image.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/pipelines_core/stages/model_specific_stages/glm_image.py
+    ref: ef1940622209bb2df05fdb26032e4921fcd45880
+    status: modified
+    fetched: true

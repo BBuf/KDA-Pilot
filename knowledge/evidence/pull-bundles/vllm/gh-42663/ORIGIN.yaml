@@ -1,0 +1,180 @@
+schema_version: 1
+source_key: vllm-project/vllm#42663
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42663
+title: '[6/n] Migrate activation kernels, gptq, gguf, non cutlass w8a8 to libtorch
+  stable ABI (continued)'
+url: https://github.com/vllm-project/vllm/pull/42663
+state: closed
+merged_at: '2026-05-20T07:18:12Z'
+base_ref_oid: 5774aaed0cbeaa74ca7a75d372c1e8bd4aa11cdb
+head_ref_oid: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+captured_at: '2026-05-20T15:09:30.691330+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention kernel
+- cute
+- cutlass
+- fp8
+- gptq
+techniques:
+- fine-grained-quantization
+hardware_features:
+- fp8
+kernel_types:
+- attention
+- gemm
+- moe
+languages:
+- cuda-cpp
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: CMakeLists.txt
+    local_path: source-snapshot/CMakeLists.txt
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: modified
+    fetched: true
+  - source_path: csrc/attention/dtype_fp8.cuh
+    local_path: source-snapshot/csrc/attention/dtype_fp8.cuh
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: modified
+    fetched: true
+  - source_path: csrc/cuda_vec_utils.cuh
+    local_path: source-snapshot/csrc/cuda_vec_utils.cuh
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: modified
+    fetched: true
+  - source_path: csrc/cutlass_extensions/torch_utils.hpp
+    local_path: source-snapshot/csrc/cutlass_extensions/torch_utils.hpp
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: modified
+    fetched: true
+  - source_path: csrc/libtorch_stable/activation_kernels.cu
+    local_path: source-snapshot/csrc/libtorch_stable/activation_kernels.cu
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: renamed
+    fetched: true
+  - source_path: csrc/libtorch_stable/ops.h
+    local_path: source-snapshot/csrc/libtorch_stable/ops.h
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: modified
+    fetched: true
+  - source_path: csrc/libtorch_stable/quantization/gguf/gguf_kernel.cu
+    local_path: source-snapshot/csrc/libtorch_stable/quantization/gguf/gguf_kernel.cu
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: renamed
+    fetched: true
+  - source_path: csrc/libtorch_stable/quantization/gguf/moe.cuh
+    local_path: source-snapshot/csrc/libtorch_stable/quantization/gguf/moe.cuh
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: renamed
+    fetched: true
+  - source_path: csrc/libtorch_stable/quantization/gguf/moe_vec.cuh
+    local_path: source-snapshot/csrc/libtorch_stable/quantization/gguf/moe_vec.cuh
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: renamed
+    fetched: true
+  - source_path: csrc/libtorch_stable/quantization/gptq/compat.cuh
+    local_path: source-snapshot/csrc/libtorch_stable/quantization/gptq/compat.cuh
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: renamed
+    fetched: true
+  - source_path: csrc/libtorch_stable/quantization/gptq/matrix_view.cuh
+    local_path: source-snapshot/csrc/libtorch_stable/quantization/gptq/matrix_view.cuh
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: renamed
+    fetched: true
+  - source_path: csrc/libtorch_stable/quantization/gptq/q_gemm.cu
+    local_path: source-snapshot/csrc/libtorch_stable/quantization/gptq/q_gemm.cu
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: renamed
+    fetched: true
+  - source_path: csrc/libtorch_stable/quantization/gptq/qdq_2.cuh
+    local_path: source-snapshot/csrc/libtorch_stable/quantization/gptq/qdq_2.cuh.ERROR.txt
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: renamed
+    fetched: false
+    error: 'Get "https://api.github.com/repos/vllm-project/vllm/contents/csrc/libtorch_stable/quantization/gptq/qdq_2.cuh?ref=95c566f46f97a601fe4443fb94e6bcf7e042fd0c":
+      EOF'
+  - source_path: csrc/libtorch_stable/quantization/gptq/qdq_3.cuh
+    local_path: source-snapshot/csrc/libtorch_stable/quantization/gptq/qdq_3.cuh
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: renamed
+    fetched: true
+  - source_path: csrc/libtorch_stable/quantization/gptq/qdq_4.cuh
+    local_path: source-snapshot/csrc/libtorch_stable/quantization/gptq/qdq_4.cuh
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: renamed
+    fetched: true
+  - source_path: csrc/libtorch_stable/quantization/gptq/qdq_8.cuh
+    local_path: source-snapshot/csrc/libtorch_stable/quantization/gptq/qdq_8.cuh
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: renamed
+    fetched: true
+  - source_path: csrc/libtorch_stable/quantization/gptq/qdq_util.cuh
+    local_path: source-snapshot/csrc/libtorch_stable/quantization/gptq/qdq_util.cuh
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: renamed
+    fetched: true
+  - source_path: csrc/libtorch_stable/quantization/w8a8/fp8/common.cu
+    local_path: source-snapshot/csrc/libtorch_stable/quantization/w8a8/fp8/common.cu
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: renamed
+    fetched: true
+  - source_path: csrc/libtorch_stable/quantization/w8a8/int8/scaled_quant.cu
+    local_path: source-snapshot/csrc/libtorch_stable/quantization/w8a8/int8/scaled_quant.cu
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: renamed
+    fetched: true
+  - source_path: csrc/libtorch_stable/torch_bindings.cpp
+    local_path: source-snapshot/csrc/libtorch_stable/torch_bindings.cpp
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: modified
+    fetched: true
+  - source_path: csrc/libtorch_stable/torch_utils.h
+    local_path: source-snapshot/csrc/libtorch_stable/torch_utils.h
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: modified
+    fetched: true
+  - source_path: csrc/ops.h
+    local_path: source-snapshot/csrc/ops.h
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: modified
+    fetched: true
+  - source_path: csrc/quantization/utils.cuh
+    local_path: source-snapshot/csrc/quantization/utils.cuh
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: modified
+    fetched: true
+  - source_path: csrc/quantization/w8a8/fp8/common.cuh
+    local_path: source-snapshot/csrc/quantization/w8a8/fp8/common.cuh
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: modified
+    fetched: true
+  - source_path: csrc/torch_bindings.cpp
+    local_path: source-snapshot/csrc/torch_bindings.cpp
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: modified
+    fetched: true
+  - source_path: csrc/torch_utils.h
+    local_path: source-snapshot/csrc/torch_utils.h
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: added
+    fetched: true
+  - source_path: setup.py
+    local_path: source-snapshot/setup.py
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: modified
+    fetched: true
+  - source_path: vllm/platforms/rocm.py
+    local_path: source-snapshot/vllm/platforms/rocm.py
+    ref: 95c566f46f97a601fe4443fb94e6bcf7e042fd0c
+    status: modified
+    fetched: true

@@ -1,0 +1,68 @@
+schema_version: 1
+source_key: sgl-project/sglang#25532
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25532
+title: '[fp8] SM90 swap-AB scaled_mm dispatch (~1.16x kernel geomean, +5.8-18.5% end-to-end)'
+url: https://github.com/sgl-project/sglang/pull/25532
+state: closed
+merged_at: '2026-05-20T05:20:37Z'
+base_ref_oid: 4c0ce0345d0d842d91d3802fdeec29bfc5caa5b0
+head_ref_oid: 081653115b09393f5b971a1765f1ba04c56bd49f
+captured_at: '2026-05-20T14:50:18.287393+00:00'
+architectures:
+- sm90
+architecture_families:
+- hopper
+tags:
+- benchmark kernel
+- cutlass
+- fp8
+- gemm
+- sm90
+- triton kernel
+techniques:
+- epilogue-fusion
+hardware_features:
+- fp8
+- hopper
+kernel_types:
+- gemm
+languages:
+- cuda-cpp
+- cute-dsl
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: sgl-kernel/benchmark/bench_fp8_gemm_swap_ab.py
+    local_path: source-snapshot/sgl-kernel/benchmark/bench_fp8_gemm_swap_ab.py
+    ref: 081653115b09393f5b971a1765f1ba04c56bd49f
+    status: added
+    fetched: true
+  - source_path: sgl-kernel/csrc/cutlass_extensions/epilogue/broadcast_load_epilogue_c3x.hpp
+    local_path: source-snapshot/sgl-kernel/csrc/cutlass_extensions/epilogue/broadcast_load_epilogue_c3x.hpp
+    ref: 081653115b09393f5b971a1765f1ba04c56bd49f
+    status: added
+    fetched: true
+  - source_path: sgl-kernel/csrc/cutlass_extensions/epilogue/scaled_mm_epilogues_c3x.hpp
+    local_path: source-snapshot/sgl-kernel/csrc/cutlass_extensions/epilogue/scaled_mm_epilogues_c3x.hpp
+    ref: 081653115b09393f5b971a1765f1ba04c56bd49f
+    status: added
+    fetched: true
+  - source_path: sgl-kernel/csrc/cutlass_extensions/gemm/fp8_gemm_sm90_dispatch.cuh
+    local_path: source-snapshot/sgl-kernel/csrc/cutlass_extensions/gemm/fp8_gemm_sm90_dispatch.cuh
+    ref: 081653115b09393f5b971a1765f1ba04c56bd49f
+    status: added
+    fetched: true
+  - source_path: sgl-kernel/csrc/gemm/fp8_gemm_kernel.cu
+    local_path: source-snapshot/sgl-kernel/csrc/gemm/fp8_gemm_kernel.cu
+    ref: 081653115b09393f5b971a1765f1ba04c56bd49f
+    status: modified
+    fetched: true
+  - source_path: sgl-kernel/tests/test_fp8_gemm.py
+    local_path: source-snapshot/sgl-kernel/tests/test_fp8_gemm.py
+    ref: 081653115b09393f5b971a1765f1ba04c56bd49f
+    status: modified
+    fetched: true

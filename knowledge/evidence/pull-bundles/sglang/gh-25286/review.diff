@@ -1,0 +1,69 @@
+diff --git a/python/sglang/srt/layers/quantization/fp8_kernel.py b/python/sglang/srt/layers/quantization/fp8_kernel.py
+index 258394b64006..30a035a23c01 100644
+--- a/python/sglang/srt/layers/quantization/fp8_kernel.py
++++ b/python/sglang/srt/layers/quantization/fp8_kernel.py
+@@ -1937,6 +1937,17 @@ def is_weak_contiguous(x: torch.Tensor):
+     return is_transpose or is_not_transpose
+ 
+ 
++def _as_column_scale(scale: torch.Tensor, expected_len: int) -> torch.Tensor:
++    if scale.dim() <= 1:
++        return scale.reshape(-1, 1)
++    if scale.dim() == 2:
++        if scale.shape[1] == 1:
++            return scale
++        if scale.shape[0] == 1 and scale.shape[1] == expected_len:
++            return scale.t()
++    return scale
++
++
+ @triton.jit
+ def scaled_mm_kernel(
+     a_ptr,
+@@ -2080,9 +2091,10 @@ def triton_scaled_mm(
+     assert weight.shape[0] == K
+     assert input.dtype == weight.dtype
+ 
+-    scale_a = scale_a.reshape(-1, 1) if scale_a.dim() <= 1 else scale_a
+-    scale_b = scale_b.reshape(-1, 1) if scale_b.dim() <= 1 else scale_b
++    scale_a = _as_column_scale(scale_a, M)
++    scale_b = _as_column_scale(scale_b, N)
+ 
++    assert scale_a.dim() == 2 and scale_b.dim() == 2
+     assert scale_a.dtype == scale_b.dtype and scale_a.is_floating_point()
+     assert scale_a.shape[1] == 1 and (scale_a.shape[0] == 1 or scale_a.shape[0] == M)
+     assert scale_b.shape[1] == 1 and (scale_b.shape[0] == 1 or scale_b.shape[0] == N)
+diff --git a/test/registered/quant/test_triton_scaled_mm.py b/test/registered/quant/test_triton_scaled_mm.py
+index 3d5dc802299a..c00a7459a8e5 100644
+--- a/test/registered/quant/test_triton_scaled_mm.py
++++ b/test/registered/quant/test_triton_scaled_mm.py
+@@ -58,12 +58,14 @@ def test_basic_cases(self):
+         """Test core functionality with reduced precision requirements"""
+         test_configs = [
+             (32, 32, 32, torch.int8, torch.float16, False),
++            (17, 64, 96, torch.int8, torch.float16, False),
+             (64, 64, 64, torch.int8, torch.float16, True),
+         ]
+ 
+         try:
+             torch.tensor([1.0], dtype=torch.float8_e4m3fn, device=self._device)
+             test_configs.append((32, 32, 32, torch.float8_e4m3fn, torch.float16, False))
++            test_configs.append((17, 64, 96, torch.float8_e4m3fn, torch.float16, False))
+         except:
+             print("FP8 not supported, skipping")
+ 
+@@ -98,6 +100,14 @@ def test_basic_cases(self):
+ 
+                 torch.testing.assert_close(triton_out, ref_out, rtol=rtol, atol=atol)
+ 
++                scale_b_row = scale_b.t().contiguous()
++                triton_out_row_scale = triton_scaled_mm(
++                    input, weight, scale_a, scale_b_row, out_dtype, bias
++                )
++                torch.testing.assert_close(
++                    triton_out_row_scale, ref_out, rtol=rtol, atol=atol
++                )
++
+ 
+ if __name__ == "__main__":
+     unittest.main(verbosity=2)

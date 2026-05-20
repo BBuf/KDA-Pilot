@@ -1,0 +1,59 @@
+schema_version: 1
+source_key: sgl-project/sglang#25611
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25611
+title: Introduce SchedulerDPAttnAdapter to own DP-attention state
+url: https://github.com/sgl-project/sglang/pull/25611
+state: closed
+merged_at: '2026-05-18T10:31:46Z'
+base_ref_oid: 0e9eab19a971ba1f4802dc463b34059c12de80ed
+head_ref_oid: bd286d798926e4a5755e2a8fafa153369959dfb5
+captured_at: '2026-05-20T14:49:33.312167+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention
+techniques:
+- tile-scheduling
+hardware_features: []
+kernel_types:
+- attention
+- decode
+languages: []
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/disaggregation/decode.py
+    local_path: source-snapshot/python/sglang/srt/disaggregation/decode.py
+    ref: bd286d798926e4a5755e2a8fafa153369959dfb5
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/disaggregation/prefill.py
+    local_path: source-snapshot/python/sglang/srt/disaggregation/prefill.py
+    ref: bd286d798926e4a5755e2a8fafa153369959dfb5
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/managers/scheduler.py
+    local_path: source-snapshot/python/sglang/srt/managers/scheduler.py
+    ref: bd286d798926e4a5755e2a8fafa153369959dfb5
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/managers/scheduler_components/dp_attn.py
+    local_path: source-snapshot/python/sglang/srt/managers/scheduler_components/dp_attn.py
+    ref: bd286d798926e4a5755e2a8fafa153369959dfb5
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/managers/scheduler_dp_attn_mixin.py
+    local_path: source-snapshot/python/sglang/srt/managers/scheduler_dp_attn_mixin.py
+    ref: bd286d798926e4a5755e2a8fafa153369959dfb5
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/managers/scheduler_pp_mixin.py
+    local_path: source-snapshot/python/sglang/srt/managers/scheduler_pp_mixin.py
+    ref: bd286d798926e4a5755e2a8fafa153369959dfb5
+    status: modified
+    fetched: true

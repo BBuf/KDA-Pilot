@@ -1,10 +1,10 @@
 repo: triton-lang/triton
-searched_at: '2026-05-16'
+searched_at: '2026-05-20'
 scan_start_date: '2024-01-01'
-cutoff_date: '2026-05-16'
-total_candidates: 57
-included: 0
-excluded: 0
+cutoff_date: '2026-05-20'
+total_candidates: 60
+included: 2
+excluded: 1
 deferred: 57
 prs:
 - number: 10324
@@ -1893,3 +1893,135 @@ prs:
   - python/triton_kernels/triton_kernels/topk.py
   - python/triton_kernels/triton_kernels/topk_details/_topk.py
   artifact_dir: evidence/pull-bundles/triton/gh-6896
+- number: 10332
+  pr: 10332
+  title: '[AMD][BACKEND][GFX9] Optimize warp-uniform predicates for BufferLoadToLocal and AsyncCopyGlobalToLocal'
+  repo: triton-lang/triton
+  url: https://github.com/triton-lang/triton/pull/10332
+  date: '2026-05-19'
+  merged_at: '2026-05-19T15:01:13Z'
+  author: AlexAUT
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: third_party/amd/lib/TritonAMDGPUToLLVM/LoadStoreOpToLLVM.cpp'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - gemm
+  architectures:
+  - sm100
+  techniques:
+  - warp-specialization
+  hardware_features: []
+  kernel_types:
+  - gemm
+  languages:
+  - triton
+  changed_paths:
+  - test/Conversion/amd/async_ops_to_llvm.mlir
+  - test/Conversion/amd/buffer_load_to_local_to_llvm.mlir
+  - third_party/amd/lib/TritonAMDGPUToLLVM/LoadStoreOpToLLVM.cpp
+  path_signals:
+  - third_party/amd/lib/TritonAMDGPUToLLVM/LoadStoreOpToLLVM.cpp
+  borderline_path_signals: []
+  selection_text_signals:
+  - gemm
+  - optimize
+  additions: 160
+  deletions: 50
+  changed_file_count: 3
+  artifact_dir: evidence/pull-bundles/triton/gh-10332
+- number: 10246
+  pr: 10246
+  title: '[Proton] Allow out-of-tree backends to register Proton profilers, devices and runtimes.'
+  repo: triton-lang/triton
+  url: https://github.com/triton-lang/triton/pull/10246
+  date: '2026-05-19'
+  merged_at: '2026-05-19T12:20:09Z'
+  author: GeorgeWigley
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - cuda kernel
+  - triton
+  - triton kernel
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types: []
+  languages:
+  - cuda-cpp
+  - triton
+  changed_paths:
+  - third_party/proton/Backend.cmake
+  - third_party/proton/CMakeLists.txt
+  - third_party/proton/README.md
+  - third_party/proton/common/include/Device.h
+  - third_party/proton/common/include/DeviceType.in
+  - third_party/proton/csrc/Proton.cpp
+  - third_party/proton/csrc/include/Backend/Backend.h
+  - third_party/proton/csrc/lib/Backend/Backend.cpp
+  - third_party/proton/csrc/lib/Backend/CMakeLists.txt
+  - third_party/proton/csrc/lib/Backend/RegisteredBackends.in
+  - third_party/proton/csrc/lib/CMakeLists.txt
+  - third_party/proton/csrc/lib/Data/TreeData.cpp
+  - third_party/proton/csrc/lib/Driver/Device.cpp
+  - third_party/proton/csrc/lib/Profiler/Instrumentation/InstrumentationProfiler.cpp
+  - third_party/proton/csrc/lib/Session/Session.cpp
+  - third_party/proton/proton/profile.py
+  - third_party/proton/proton/proton.py
+  - third_party/proton/test/test_lib.py
+  - third_party/proton/test/unittest/Backend/BackendRegistrationTest.cpp
+  - third_party/proton/test/unittest/Backend/CMakeLists.txt
+  - third_party/proton/test/unittest/Backend/TestBackend.cpp
+  - third_party/proton/test/unittest/CMakeLists.txt
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cuda kernel
+  - triton kernel
+  additions: 626
+  deletions: 65
+  changed_file_count: 22
+- number: 10184
+  pr: 10184
+  title: '[AMD] Handle padded layout in MemDescReinterpretOp verifier'
+  repo: triton-lang/triton
+  url: https://github.com/triton-lang/triton/pull/10184
+  date: '2026-05-20'
+  merged_at: '2026-05-20T00:09:37Z'
+  author: yangshuxin
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: lib/Dialect/TritonGPU/IR/Ops.cpp, test/TritonGPU/amd/amd-convert-lds-ops.mlir, test/TritonGPU/invalid.mlir'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - triton
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types: []
+  languages:
+  - triton
+  changed_paths:
+  - lib/Dialect/TritonGPU/IR/Ops.cpp
+  - test/TritonGPU/amd/amd-convert-lds-ops.mlir
+  - test/TritonGPU/invalid.mlir
+  path_signals:
+  - lib/Dialect/TritonGPU/IR/Ops.cpp
+  - test/TritonGPU/amd/amd-convert-lds-ops.mlir
+  - test/TritonGPU/invalid.mlir
+  borderline_path_signals:
+  - test/TritonGPU/amd/amd-convert-lds-ops.mlir
+  - test/TritonGPU/invalid.mlir
+  selection_text_signals: []
+  additions: 84
+  deletions: 2
+  changed_file_count: 3
+  artifact_dir: evidence/pull-bundles/triton/gh-10184

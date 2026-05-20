@@ -1,0 +1,40 @@
+schema_version: 1
+source_key: sgl-project/sglang#25180
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25180
+title: Fix AMX GQA extend attention
+url: https://github.com/sgl-project/sglang/pull/25180
+state: closed
+merged_at: '2026-05-18T01:30:03Z'
+base_ref_oid: 4b6b434dfe23c1da8652510d34c0da2375749e86
+head_ref_oid: 394a8d1e77250c6e1d39265ef9a68b9c93926651
+captured_at: '2026-05-20T14:52:23.206554+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention
+- gemm
+techniques: []
+hardware_features: []
+kernel_types:
+- attention
+- gemm
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: sgl-kernel/csrc/cpu/flash_attn.h
+    local_path: source-snapshot/sgl-kernel/csrc/cpu/flash_attn.h
+    ref: 394a8d1e77250c6e1d39265ef9a68b9c93926651
+    status: modified
+    fetched: true
+  - source_path: test/srt/cpu/test_extend.py
+    local_path: source-snapshot/test/srt/cpu/test_extend.py
+    ref: 394a8d1e77250c6e1d39265ef9a68b9c93926651
+    status: modified
+    fetched: true

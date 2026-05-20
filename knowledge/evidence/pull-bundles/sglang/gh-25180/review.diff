@@ -1,0 +1,40 @@
+diff --git a/sgl-kernel/csrc/cpu/flash_attn.h b/sgl-kernel/csrc/cpu/flash_attn.h
+index 106bffee8851..3aad15f44903 100644
+--- a/sgl-kernel/csrc/cpu/flash_attn.h
++++ b/sgl-kernel/csrc/cpu/flash_attn.h
+@@ -134,9 +134,10 @@ struct flash_attn_softmax {
+           v_prime + row * head_size_v,
+           head_size_v);
+ 
+-      // pad s_delta with 0 first and then convert to scalar_t
++      // Keep s_delta row-major for the following brgemm(P @ V), and only
++      // convert the columns that brgemm will consume.
+       fill_stub(s_delta + row * BLOCK_N + n_size, 0.f, padded_n_size - n_size);
+-      copy_stub<scalar_t, BLOCK_N>(s_delta2 + row * BLOCK_N, s_delta + row * BLOCK_N);
++      copy_stub<scalar_t>(s_delta2 + row * BLOCK_N, s_delta + row * BLOCK_N, 1.f, padded_n_size);
+     }
+   }
+ };
+diff --git a/test/srt/cpu/test_extend.py b/test/srt/cpu/test_extend.py
+index ce1a888be7f1..215241862674 100644
+--- a/test/srt/cpu/test_extend.py
++++ b/test/srt/cpu/test_extend.py
+@@ -217,6 +217,18 @@ def test_extend_attention_large_seq_causal_mask(self):
+             b_seq_len_extend=[5000],
+         )
+ 
++    def test_extend_attention_gqa_partial_extend_with_prefix(self):
++        self._test_extend_attention_once(
++            B=1,
++            N_CTX=256,
++            H_Q=16,
++            H_KV=4,
++            D=128,
++            DV=96,
++            b_seq_len_prefix=[97],
++            b_seq_len_extend=[37],
++        )
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

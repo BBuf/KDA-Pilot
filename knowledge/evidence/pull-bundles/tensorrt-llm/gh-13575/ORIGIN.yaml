@@ -1,0 +1,96 @@
+schema_version: 1
+source_key: NVIDIA/TensorRT-LLM#13575
+repo: NVIDIA/TensorRT-LLM
+repo_id: tensorrt-llm
+pr_number: 13575
+title: '[TRTLLM-12316][feat] Integrate FP4 indexer for DSv4'
+url: https://github.com/NVIDIA/TensorRT-LLM/pull/13575
+state: closed
+merged_at: '2026-05-18T02:18:47Z'
+base_ref_oid: 37c2e05ecfdd9e1ae641744dfc962f9d785c1d30
+head_ref_oid: d07d38397062f52a8dd491b7b7b93238d2c7317e
+captured_at: '2026-05-20T15:01:51.996248+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- fp4
+- fp8
+techniques:
+- cache-policy
+hardware_features:
+- fp4
+- fp8
+kernel_types:
+- attention
+languages: []
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/cache_manager.py
+    local_path: source-snapshot/tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/cache_manager.py
+    ref: d07d38397062f52a8dd491b7b7b93238d2c7317e
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/deepseek_v4.py
+    local_path: source-snapshot/tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/deepseek_v4.py
+    ref: d07d38397062f52a8dd491b7b7b93238d2c7317e
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+    local_path: source-snapshot/tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+    ref: d07d38397062f52a8dd491b7b7b93238d2c7317e
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/model_config.py
+    local_path: source-snapshot/tensorrt_llm/_torch/model_config.py
+    ref: d07d38397062f52a8dd491b7b7b93238d2c7317e
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/modules/attention.py
+    local_path: source-snapshot/tensorrt_llm/_torch/modules/attention.py
+    ref: d07d38397062f52a8dd491b7b7b93238d2c7317e
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/llmapi/llm_args.py
+    local_path: source-snapshot/tensorrt_llm/llmapi/llm_args.py
+    ref: d07d38397062f52a8dd491b7b7b93238d2c7317e
+    status: modified
+    fetched: true
+  - source_path: tests/integration/test_lists/test-db/l0_dgx_b200.yml
+    local_path: source-snapshot/tests/integration/test_lists/test-db/l0_dgx_b200.yml
+    ref: d07d38397062f52a8dd491b7b7b93238d2c7317e
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_cache_manager.py
+    local_path: source-snapshot/tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_cache_manager.py
+    ref: d07d38397062f52a8dd491b7b7b93238d2c7317e
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_fp4_indexer.py
+    local_path: source-snapshot/tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_fp4_indexer.py
+    ref: d07d38397062f52a8dd491b7b7b93238d2c7317e
+    status: added
+    fetched: true
+  - source_path: tests/unittest/_torch/attention/sparse/dsa/test_dsa_fp4_indexer.py
+    local_path: source-snapshot/tests/unittest/_torch/attention/sparse/dsa/test_dsa_fp4_indexer.py
+    ref: d07d38397062f52a8dd491b7b7b93238d2c7317e
+    status: added
+    fetched: true
+  - source_path: tests/unittest/_torch/attention/sparse/dsa/test_dsa_indexer.py
+    local_path: source-snapshot/tests/unittest/_torch/attention/sparse/dsa/test_dsa_indexer.py
+    ref: d07d38397062f52a8dd491b7b7b93238d2c7317e
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/_torch/attention/sparse/test_cpp_custom_ops.py
+    local_path: source-snapshot/tests/unittest/_torch/attention/sparse/test_cpp_custom_ops.py
+    ref: d07d38397062f52a8dd491b7b7b93238d2c7317e
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/_torch/attention/sparse/test_dsa_fp4_indexer.py
+    local_path: source-snapshot/tests/unittest/_torch/attention/sparse/test_dsa_fp4_indexer.py
+    ref: d07d38397062f52a8dd491b7b7b93238d2c7317e
+    status: modified
+    fetched: true

@@ -1,0 +1,72 @@
+schema_version: 1
+source_key: sgl-project/sglang#22338
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 22338
+title: ':sparkles: [diffusion][npu][quant] Add MXFP4 quantization support for Wan2.2
+  Diffusion on Ascend NPU'
+url: https://github.com/sgl-project/sglang/pull/22338
+state: closed
+merged_at: '2026-05-19T04:46:52Z'
+base_ref_oid: e4d81e48c91354d442f235102ae84e6be66fe266
+head_ref_oid: 5a2befa888901a4e21774c5ce25fb2de3391c25b
+captured_at: '2026-05-20T14:55:39.795350+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- fp4
+- fp8
+- moe kernel
+- mxfp4
+techniques:
+- fine-grained-quantization
+- kernel-fusion
+hardware_features:
+- fp4
+- fp8
+- mxfp4
+kernel_types:
+- moe
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/multimodal_gen/runtime/layers/quantization/__init__.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/layers/quantization/__init__.py
+    ref: 5a2befa888901a4e21774c5ce25fb2de3391c25b
+    status: modified
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/runtime/layers/quantization/modelslim.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/layers/quantization/modelslim.py
+    ref: 5a2befa888901a4e21774c5ce25fb2de3391c25b
+    status: modified
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/runtime/layers/quantization/modelslim_mxfp4_scheme.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/layers/quantization/modelslim_mxfp4_scheme.py
+    ref: 5a2befa888901a4e21774c5ce25fb2de3391c25b
+    status: added
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/runtime/layers/quantization/mxfp4_npu.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/layers/quantization/mxfp4_npu.py
+    ref: 5a2befa888901a4e21774c5ce25fb2de3391c25b
+    status: added
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/runtime/loader/transformer_load_utils.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/loader/transformer_load_utils.py
+    ref: 5a2befa888901a4e21774c5ce25fb2de3391c25b
+    status: modified
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/runtime/server_args.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/server_args.py
+    ref: 5a2befa888901a4e21774c5ce25fb2de3391c25b
+    status: modified
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/tools/wan_repack.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/tools/wan_repack.py
+    ref: 5a2befa888901a4e21774c5ce25fb2de3391c25b
+    status: modified
+    fetched: true

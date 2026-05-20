@@ -1,10 +1,10 @@
 repo: tile-ai/tilelang
-searched_at: '2026-05-16'
+searched_at: '2026-05-20'
 scan_start_date: '2024-01-01'
-cutoff_date: '2026-05-16'
-total_candidates: 195
-included: 34
-excluded: 0
+cutoff_date: '2026-05-20'
+total_candidates: 215
+included: 53
+excluded: 1
 deferred: 161
 prs:
 - number: 1945
@@ -8071,3 +8071,1390 @@ prs:
   - tilelang/utils/sparse.py
   - tilelang/utils/tensor.py
   artifact_dir: evidence/pull-bundles/tilelang/gh-1056
+- number: 2231
+  pr: 2231
+  title: '[Transform] Refactor TIR statement traversal helpers'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2231
+  date: '2026-05-20'
+  merged_at: '2026-05-20T10:00:29Z'
+  author: LeiWang1999
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - mla
+  - mxfp4
+  architectures:
+  - sm100
+  - sm90
+  techniques:
+  - pipeline-stages
+  hardware_features:
+  - fp4
+  - fp8
+  - hopper
+  - mxfp4
+  kernel_types:
+  - gemm
+  - mla
+  languages: []
+  changed_paths:
+  - src/transform/inject_pipeline.cc
+  - src/transform/pipeline_planning.cc
+  - src/transform/producer_consumer_ws.cc
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - mxfp4
+  additions: 801
+  deletions: 536
+  changed_file_count: 3
+- number: 2230
+  pr: 2230
+  title: '[ROCm] Match CUDA path debug-info and temp-file plumbing'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2230
+  date: '2026-05-20'
+  merged_at: '2026-05-20T07:49:32Z'
+  author: yyccli
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tilelang/contrib/hipcc.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - cuda kernel
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types: []
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - tilelang/contrib/hipcc.py
+  path_signals:
+  - tilelang/contrib/hipcc.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - cuda kernel
+  additions: 23
+  deletions: 3
+  changed_file_count: 1
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2230
+- number: 2227
+  pr: 2227
+  title: '[Transform] Fix CPU while fallback thread lowering'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2227
+  date: '2026-05-20'
+  merged_at: '2026-05-20T03:41:45Z'
+  author: LeiWang1999
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: testing/python/cpu/test_tilelang_cpu_while_repro.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types: []
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - src/transform/lower_tile_op.cc
+  - testing/python/cpu/test_tilelang_cpu_while_repro.py
+  path_signals:
+  - testing/python/cpu/test_tilelang_cpu_while_repro.py
+  borderline_path_signals:
+  - testing/python/cpu/test_tilelang_cpu_while_repro.py
+  selection_text_signals:
+  - benchmark kernel
+  additions: 71
+  deletions: 0
+  changed_file_count: 2
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2227
+- number: 2225
+  pr: 2225
+  title: ' [Enhancement]Support mixed-sign ramp indices in LegalizeNegativeIndex'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2225
+  date: '2026-05-19'
+  merged_at: '2026-05-19T10:03:44Z'
+  author: TerminusAkivili
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: testing/python/transform/test_tilelang_transform_legalize_negative_index.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - cuda kernel
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types: []
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - src/transform/legalize_negative_index.cc
+  - testing/python/transform/test_tilelang_transform_legalize_negative_index.py
+  path_signals:
+  - testing/python/transform/test_tilelang_transform_legalize_negative_index.py
+  borderline_path_signals:
+  - testing/python/transform/test_tilelang_transform_legalize_negative_index.py
+  selection_text_signals:
+  - cuda kernel
+  additions: 147
+  deletions: 3
+  changed_file_count: 2
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2225
+- number: 2224
+  pr: 2224
+  title: '[Pipeline] Fix guarded TMA pipeline handling'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2224
+  date: '2026-05-19'
+  merged_at: '2026-05-19T07:53:27Z'
+  author: LeiWang1999
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: benchmark/matmul/benchmark_matmul_sp_compress.py, testing/python/issue/test_tilelang_issue_tma_no_ws.py, tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py, tilelang/tileop/gemm_sp/gemm_sp_wgmma.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  - cuda kernel
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - matmul
+  - mla
+  - mxfp4
+  - schedule
+  architectures:
+  - sm100
+  - sm90
+  techniques:
+  - async-copy
+  - pipeline-stages
+  hardware_features:
+  - fp4
+  - fp8
+  - hopper
+  - mxfp4
+  - tma
+  - wgmma
+  kernel_types:
+  - gemm
+  - mla
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - .agents/skills/tilelang-tvm-ir/SKILL.md
+  - benchmark/matmul/benchmark_matmul_sp_compress.py
+  - src/transform/inject_pipeline.cc
+  - src/transform/pipeline_planning.cc
+  - src/transform/producer_consumer_ws.cc
+  - testing/python/issue/test_tilelang_issue_tma_no_ws.py
+  - tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py
+  - tilelang/tileop/gemm_sp/gemm_sp_wgmma.py
+  - tilelang/utils/sparse.py
+  path_signals:
+  - benchmark/matmul/benchmark_matmul_sp_compress.py
+  - testing/python/issue/test_tilelang_issue_tma_no_ws.py
+  - tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py
+  - tilelang/tileop/gemm_sp/gemm_sp_wgmma.py
+  - tilelang/utils/sparse.py
+  borderline_path_signals:
+  - benchmark/matmul/benchmark_matmul_sp_compress.py
+  - testing/python/issue/test_tilelang_issue_tma_no_ws.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - mxfp4
+  additions: 402
+  deletions: 217
+  changed_file_count: 9
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2224
+- number: 2220
+  pr: 2220
+  title: '[CuTeDSL] Add PDL codegen and launcher support'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2220
+  date: '2026-05-19'
+  merged_at: '2026-05-19T09:15:55Z'
+  author: JayceSu98
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: src/backend/cuda/codegen/codegen_cutedsl.cc, testing/python/language/test_tilelang_language_pdl.py, tilelang/contrib/cutedsl/__init__.py, tilelang/contrib/cutedsl/threadblock_swizzle.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  - cuda kernel
+  - cute
+  - cutlass
+  - hopper
+  - sm90
+  - tile-dsl
+  architectures:
+  - sm90
+  techniques:
+  - swizzling
+  hardware_features:
+  - hopper
+  - pdl
+  kernel_types: []
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - requirements-test-cuda.txt
+  - src/backend/cuda/codegen/codegen_cutedsl.cc
+  - testing/python/language/test_tilelang_language_pdl.py
+  - tilelang/contrib/cutedsl/__init__.py
+  - tilelang/contrib/cutedsl/threadblock_swizzle.py
+  - tilelang/jit/adapter/cutedsl/wrapper.py
+  path_signals:
+  - src/backend/cuda/codegen/codegen_cutedsl.cc
+  - testing/python/language/test_tilelang_language_pdl.py
+  - tilelang/contrib/cutedsl/__init__.py
+  - tilelang/contrib/cutedsl/threadblock_swizzle.py
+  - tilelang/jit/adapter/cutedsl/wrapper.py
+  borderline_path_signals:
+  - requirements-test-cuda.txt
+  - testing/python/language/test_tilelang_language_pdl.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - cute
+  - cutlass
+  - hopper
+  - sm90
+  additions: 473
+  deletions: 6
+  changed_file_count: 6
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2220
+- number: 2219
+  pr: 2219
+  title: '[Perf] Enable fast math in sparse MLA example'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2219
+  date: '2026-05-19'
+  merged_at: '2026-05-19T04:11:37Z'
+  author: Rachmanino
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: examples/deepseek_v32/sparse_mla_fwd.py, examples/deepseek_v32/sparse_mla_fwd_pipelined.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  - mla
+  architectures:
+  - sm100
+  techniques:
+  - pipeline-stages
+  hardware_features: []
+  kernel_types:
+  - mla
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - examples/deepseek_v32/sparse_mla_fwd.py
+  - examples/deepseek_v32/sparse_mla_fwd_pipelined.py
+  path_signals:
+  - examples/deepseek_v32/sparse_mla_fwd.py
+  - examples/deepseek_v32/sparse_mla_fwd_pipelined.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  additions: 25
+  deletions: 39
+  changed_file_count: 2
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2219
+- number: 2218
+  pr: 2218
+  title: '[Python] Drop Python 3.9 support'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2218
+  date: '2026-05-18'
+  merged_at: '2026-05-18T09:49:32Z'
+  author: LeiWang1999
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tilelang/_typing.py, tilelang/autodd.py, tilelang/autotuner/grouped_compile.py, tilelang/autotuner/param.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - cuda kernel
+  - gemm
+  architectures:
+  - sm100
+  - sm90
+  techniques:
+  - autotuning
+  - cache-policy
+  hardware_features:
+  - tcgen05
+  - wgmma
+  kernel_types:
+  - gemm
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - .github/workflows/ci.yml
+  - .github/workflows/dist.yml
+  - docs/get_started/Installation.md
+  - maint/scripts/docker_local_distribute.sh
+  - maint/scripts/docker_pypi_distribute.sh
+  - pyproject.toml
+  - tilelang/_typing.py
+  - tilelang/autodd.py
+  - tilelang/autotuner/grouped_compile.py
+  - tilelang/autotuner/param.py
+  - tilelang/autotuner/tuner.py
+  - tilelang/cache/kernel_cache.py
+  - tilelang/carver/analysis.py
+  - tilelang/carver/common_schedules.py
+  - tilelang/cuda/intrinsics/macro/mma_macro_generator.py
+  - tilelang/cuda/intrinsics/macro/mma_sm70_macro_generator.py
+  - tilelang/cuda/intrinsics/macro/mma_sp_macro_generator.py
+  - tilelang/cuda/intrinsics/macro/wgmma_macro_generator.py
+  - tilelang/cuda/op/gemm/gemm_tcgen05.py
+  - tilelang/cuda/op/gemm/gemm_wgmma.py
+  - tilelang/engine/callback.py
+  - tilelang/engine/lower.py
+  - tilelang/jit/__init__.py
+  - tilelang/jit/adapter/base.py
+  - tilelang/jit/adapter/cutedsl/adapter.py
+  - tilelang/jit/adapter/cython/adapter.py
+  - tilelang/jit/adapter/nvrtc/adapter.py
+  - tilelang/jit/adapter/torch/metal.py
+  - tilelang/jit/adapter/tvm_ffi.py
+  - tilelang/jit/adapter/utils.py
+  - tilelang/jit/kernel.py
+  - tilelang/language/annotations.py
+  - tilelang/language/dtypes.py
+  - tilelang/language/eager/ast.py
+  - tilelang/language/eager/builder.py
+  - tilelang/language/eager/utils.py
+  - tilelang/language/tir/entry.py
+  - tilelang/profiler/__init__.py
+  - tilelang/profiler/bench.py
+  - tilelang/rocm/intrinsics/mfma_macro_generator.py
+  - tilelang/testing/perf_regression.py
+  - tilelang/tileop/gemm/registry.py
+  - tilelang/tileop/gemm_sp/registry.py
+  - tilelang/transform/simplify.py
+  path_signals:
+  - tilelang/_typing.py
+  - tilelang/autodd.py
+  - tilelang/autotuner/grouped_compile.py
+  - tilelang/autotuner/param.py
+  - tilelang/autotuner/tuner.py
+  - tilelang/cache/kernel_cache.py
+  - tilelang/carver/analysis.py
+  - tilelang/carver/common_schedules.py
+  - tilelang/cuda/intrinsics/macro/mma_macro_generator.py
+  - tilelang/cuda/intrinsics/macro/mma_sm70_macro_generator.py
+  - tilelang/cuda/intrinsics/macro/mma_sp_macro_generator.py
+  - tilelang/cuda/intrinsics/macro/wgmma_macro_generator.py
+  borderline_path_signals:
+  - tilelang/profiler/bench.py
+  - tilelang/testing/perf_regression.py
+  selection_text_signals:
+  - cuda kernel
+  - cute
+  - gemm
+  - regression
+  additions: 91
+  deletions: 109
+  changed_file_count: 44
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2218
+- number: 2216
+  pr: 2216
+  title: '[TIR][IR] Update to use tirx'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2216
+  date: '2026-05-20'
+  merged_at: '2026-05-20T07:38:13Z'
+  author: LeiWang1999
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: examples/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py, examples/dequantize_gemm/example_dequant_gemm_bf16_mxfp4_hopper.py, examples/dequantize_gemm/example_dequant_gemm_fp4_hopper.py,
+    examples/dequantize_gemm/example_dequant_gemm_w4a8.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - attention
+  - blackwell
+  - cuda kernel
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - matmul
+  - mla
+  - mxfp4
+  architectures:
+  - sm100
+  - sm90
+  techniques:
+  - async-copy
+  - autotuning
+  - cache-policy
+  - fine-grained-quantization
+  - kernel-fusion
+  - persistent-kernels
+  - pipeline-stages
+  - swizzling
+  - vectorized-loads
+  - warp-specialization
+  hardware_features:
+  - blackwell
+  - fp4
+  - fp8
+  - hopper
+  - mxfp4
+  - pdl
+  - tcgen05
+  - tma
+  - tmem
+  - wgmma
+  kernel_types:
+  - attention
+  - gemm
+  - mla
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  - ptx
+  changed_paths:
+  - .agents/skills/tilelang-tvm-ir/SKILL.md
+  - 3rdparty/tvm
+  - CMakeLists.txt
+  - cmake/load_tvm.cmake
+  - cmake/pypi-z3/FindZ3.cmake
+  - docs/get_started/targets.md
+  - examples/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py
+  - examples/dequantize_gemm/example_dequant_gemm_bf16_mxfp4_hopper.py
+  - examples/dequantize_gemm/example_dequant_gemm_fp4_hopper.py
+  - examples/dequantize_gemm/example_dequant_gemm_w4a8.py
+  - examples/eager_jit/eagerjit.en.ipynb
+  - examples/eager_jit/eagerjit.zh.ipynb
+  - examples/plot_layout/README.md
+  - examples/plot_layout/fragment_mfma_load_a.py
+  - examples/plot_layout/fragment_mma_load_a.py
+  - pyproject.toml
+  - requirements-dev.txt
+  - requirements.txt
+  - src/backend/common/op/atomic_reduce.h
+  - src/backend/common/op/cumsum.h
+  - src/backend/common/op/fill.h
+  - src/backend/common/op/finalize_reducer.h
+  - src/backend/common/op/reduce.h
+  - src/backend/common/op/transpose.h
+  - src/backend/cpu/op/copy.cc
+  - src/backend/cpu/op/fill.cc
+  - src/backend/cpu/op/gemm.cc
+  - src/backend/cpu/op/transpose.cc
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/codegen/codegen_cuda.h
+  - src/backend/cuda/codegen/codegen_cutedsl.cc
+  - src/backend/cuda/codegen/codegen_cutedsl.h
+  - src/backend/cuda/codegen/codegen_py.cc
+  - src/backend/cuda/codegen/codegen_py.h
+  - src/backend/cuda/codegen/intrin_rule_cuda.cc
+  - src/backend/cuda/codegen/ptx.cc
+  - src/backend/cuda/codegen/rt_mod_cuda.cc
+  - src/backend/cuda/codegen/rt_mod_cutedsl.cc
+  - src/backend/cuda/op/atomic_add.cc
+  - src/backend/cuda/op/copy.cc
+  - src/backend/cuda/op/copy.h
+  - src/backend/cuda/op/copy_analysis.cc
+  - src/backend/cuda/op/finalize_reducer.cc
+  - src/backend/cuda/op/gemm.cc
+  - src/backend/cuda/op/gemm_sp.cc
+  - src/backend/cuda/op/reduce.cc
+  - src/backend/cuda/runtime.cc
+  - src/backend/metal/codegen/rt_mod_metal.cc
+  - src/backend/metal/op/copy.cc
+  - src/backend/metal/op/fill.cc
+  - src/backend/metal/op/transpose.cc
+  - src/backend/rocm/codegen/codegen_hip.cc
+  - src/backend/rocm/codegen/codegen_hip.h
+  - src/backend/rocm/codegen/intrin_rule_hip.cc
+  - src/backend/rocm/codegen/rt_mod_hip.cc
+  - src/backend/rocm/op/atomic_add.cc
+  - src/backend/rocm/op/copy.cc
+  - src/backend/rocm/op/finalize_reducer.cc
+  - src/backend/rocm/op/gemm.cc
+  - src/backend/rocm/op/reduce.cc
+  - src/backend/webgpu/op/copy.cc
+  - src/backend/webgpu/op/fill.cc
+  - src/backend/webgpu/op/transpose.cc
+  - src/config.h
+  - src/ir.cc
+  - src/layout/gemm_layouts.cc
+  - src/layout/layout.cc
+  - src/layout/layout.h
+  - src/layout/tcgen05_layout.cc
+  - src/layout/utils.cc
+  - src/layout/utils.h
+  - src/op/atomic_add.cc
+  - src/op/atomic_add.h
+  - src/op/atomic_reduce.cc
+  - src/op/atomic_reduce.h
+  - src/op/builtin.cc
+  - src/op/builtin.h
+  - src/op/copy.cc
+  - src/op/copy.h
+  - src/op/fill.cc
+  - src/op/fill.h
+  - src/op/finalize_reducer.cc
+  - src/op/finalize_reducer.h
+  - src/op/gemm.cc
+  - src/op/gemm.h
+  - src/op/gemm_sp.cc
+  - src/op/gemm_sp.h
+  - src/op/logical.cc
+  - src/op/math.cc
+  - src/op/operator.cc
+  - src/op/operator.h
+  - src/op/parallel.cc
+  - src/op/parallel.h
+  - src/op/reduce.cc
+  - src/op/reduce.h
+  - src/op/region.cc
+  - src/op/region.h
+  - src/op/tcgen5_meta.h
+  - src/op/transpose.cc
+  - src/op/transpose.h
+  - src/op/utils.cc
+  - src/op/utils.h
+  - src/runtime/error_helpers.cc
+  - src/runtime/logging.cc
+  - src/support/check.h
+  - src/support/ffi_aliases.h
+  - src/target/codegen_c.cc
+  - src/target/codegen_c.h
+  - src/target/codegen_c_host.cc
+  - src/target/codegen_c_host.h
+  - src/target/rt_mod_c.cc
+  - src/target/utils.cc
+  - src/transform/annotate_device_regions.cc
+  - src/transform/annotate_read_only_params.cc
+  - src/transform/annotate_warp_group_reg_alloc.cc
+  - src/transform/arg_binder.cc
+  - src/transform/arg_binder.h
+  - src/transform/cluster_planning.cc
+  - src/transform/common/assume.cc
+  - src/transform/common/assume.h
+  path_signals:
+  - examples/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py
+  - examples/dequantize_gemm/example_dequant_gemm_bf16_mxfp4_hopper.py
+  - examples/dequantize_gemm/example_dequant_gemm_fp4_hopper.py
+  - examples/dequantize_gemm/example_dequant_gemm_w4a8.py
+  - examples/eager_jit/eagerjit.en.ipynb
+  - examples/eager_jit/eagerjit.zh.ipynb
+  - examples/plot_layout/README.md
+  - examples/plot_layout/fragment_mfma_load_a.py
+  - examples/plot_layout/fragment_mma_load_a.py
+  - src/backend/cpu/op/gemm.cc
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/codegen/codegen_cuda.h
+  borderline_path_signals:
+  - testing/python/cuda/test_cuda_f32x2_intrinsics.py
+  - testing/python/cuda/test_cuda_mma_sm75_dispatch.py
+  - testing/python/fastmath/test_mathops_fastmath.py
+  - testing/python/issue/test_tilelang_issue_sm120_tma_smem_alignment.py
+  - testing/python/jit/test_tilelang_jit_cutedsl.py
+  - testing/python/kernel/test_tilelang_kernel_bf16_gemm_mma.py
+  - testing/python/kernel/test_tilelang_kernel_fp8_gemm.py
+  - testing/python/kernel/test_tilelang_kernel_fp8_gemv_simt.py
+  - testing/python/language/test_tilelang_language_access_ptr.py
+  - testing/python/language/test_tilelang_language_frontend_v2.py
+  - testing/python/language/test_tilelang_language_pdl.py
+  - testing/python/language/test_tilelang_language_view.py
+  selection_text_signals:
+  - blackwell
+  - cuda kernel
+  - cute
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - mxfp4
+  additions: 6928
+  deletions: 6831
+  changed_file_count: 357
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2216
+- number: 2215
+  pr: 2215
+  title: '[NFC] Align stale fallback comment with CUDA 12.8 guard'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2215
+  date: '2026-05-18'
+  merged_at: '2026-05-18T04:33:31Z'
+  author: GoldenStain
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: src/tl_templates/cuda/cuda_fp8.h'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - fp8
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp8
+  kernel_types: []
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - src/tl_templates/cuda/cuda_fp8.h
+  path_signals:
+  - src/tl_templates/cuda/cuda_fp8.h
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  additions: 1
+  deletions: 1
+  changed_file_count: 1
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2215
+- number: 2212
+  pr: 2212
+  title: '[Compat] Bump __nv_fp8_e8m0 guard from CUDA 12.6 to 12.8'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2212
+  date: '2026-05-17'
+  merged_at: '2026-05-17T12:31:24Z'
+  author: GoldenStain
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: src/tl_templates/cuda/cuda_fp8.h'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - cuda kernel
+  - fp8
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp8
+  kernel_types: []
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - src/tl_templates/cuda/cuda_fp8.h
+  path_signals:
+  - src/tl_templates/cuda/cuda_fp8.h
+  borderline_path_signals: []
+  selection_text_signals:
+  - cuda kernel
+  - fp8
+  additions: 2
+  deletions: 2
+  changed_file_count: 1
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2212
+- number: 2208
+  pr: 2208
+  title: '[Fix][AMD] Fix Roller autotuner for RDNA3 WMMA targets'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2208
+  date: '2026-05-18'
+  merged_at: '2026-05-18T10:08:42Z'
+  author: lhl
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: benchmark/matmul/benchmark_matmul.py, testing/python/target/test_tilelang_rocm_target.py, tilelang/carver/arch/rdna.py, tilelang/carver/matmul_analysis.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  - cuda kernel
+  - gemm
+  - matmul
+  - schedule
+  architectures:
+  - sm100
+  techniques:
+  - autotuning
+  hardware_features: []
+  kernel_types:
+  - gemm
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - benchmark/matmul/benchmark_matmul.py
+  - testing/python/target/test_tilelang_rocm_target.py
+  - tilelang/carver/arch/rdna.py
+  - tilelang/carver/matmul_analysis.py
+  - tilelang/carver/roller/policy/tensorcore.py
+  path_signals:
+  - benchmark/matmul/benchmark_matmul.py
+  - testing/python/target/test_tilelang_rocm_target.py
+  - tilelang/carver/arch/rdna.py
+  - tilelang/carver/matmul_analysis.py
+  - tilelang/carver/roller/policy/tensorcore.py
+  borderline_path_signals:
+  - benchmark/matmul/benchmark_matmul.py
+  - testing/python/target/test_tilelang_rocm_target.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - gemm
+  additions: 119
+  deletions: 22
+  changed_file_count: 5
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2208
+- number: 2198
+  pr: 2198
+  title: '[CUDA] Add native SM75 MMA GEMM support for FP16, INT8 and INT4'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2198
+  date: '2026-05-20'
+  merged_at: '2026-05-20T04:40:06Z'
+  author: Tokimorphling
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: src/tl_templates/cuda/instruction/mma.h, testing/python/cuda/test_cuda_mma_sm75_dispatch.py, testing/python/kernel/test_tilelang_kernel_gemm_sm75.py, tilelang/cuda/intrinsics/macro/mma_macro_generator.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  - cuda kernel
+  - cute
+  - cutlass
+  - gemm
+  - matmul
+  - triton kernel
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types:
+  - gemm
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  - triton
+  changed_paths:
+  - src/tl_templates/cuda/instruction/mma.h
+  - testing/python/cuda/test_cuda_mma_sm75_dispatch.py
+  - testing/python/kernel/test_tilelang_kernel_gemm_sm75.py
+  - tilelang/cuda/intrinsics/macro/mma_macro_generator.py
+  - tilelang/cuda/intrinsics/macro/mma_sm75_macro_generator.py
+  - tilelang/cuda/op/gemm/__init__.py
+  - tilelang/cuda/op/gemm/gemm_mma.py
+  - tilelang/cuda/op/gemm/gemm_mma_sm75.py
+  path_signals:
+  - src/tl_templates/cuda/instruction/mma.h
+  - testing/python/cuda/test_cuda_mma_sm75_dispatch.py
+  - testing/python/kernel/test_tilelang_kernel_gemm_sm75.py
+  - tilelang/cuda/intrinsics/macro/mma_macro_generator.py
+  - tilelang/cuda/intrinsics/macro/mma_sm75_macro_generator.py
+  - tilelang/cuda/op/gemm/__init__.py
+  - tilelang/cuda/op/gemm/gemm_mma.py
+  - tilelang/cuda/op/gemm/gemm_mma_sm75.py
+  borderline_path_signals:
+  - testing/python/cuda/test_cuda_mma_sm75_dispatch.py
+  - testing/python/kernel/test_tilelang_kernel_gemm_sm75.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - cute
+  - cutlass
+  - gemm
+  - triton kernel
+  additions: 441
+  deletions: 18
+  changed_file_count: 8
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2198
+- number: 2197
+  pr: 2197
+  title: Allow variable barrier id in `T.sync_threads()`
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2197
+  date: '2026-05-18'
+  merged_at: '2026-05-18T06:50:44Z'
+  author: bucket-xv
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: src/backend/cuda/codegen/codegen_cuda.cc, src/backend/cuda/codegen/codegen_cutedsl.cc, src/tl_templates/cuda/common.h, testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - cuda kernel
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - mla
+  - mxfp4
+  architectures:
+  - sm100
+  - sm90
+  techniques: []
+  hardware_features:
+  - fp4
+  - fp8
+  - hopper
+  - mxfp4
+  kernel_types:
+  - gemm
+  - mla
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/codegen/codegen_cutedsl.cc
+  - src/tl_templates/cuda/common.h
+  - testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py
+  - testing/python/language/test_tilelang_language_sync_threads.py
+  path_signals:
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/codegen/codegen_cutedsl.cc
+  - src/tl_templates/cuda/common.h
+  - testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py
+  - testing/python/language/test_tilelang_language_sync_threads.py
+  borderline_path_signals:
+  - testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py
+  - testing/python/language/test_tilelang_language_sync_threads.py
+  selection_text_signals:
+  - cuda kernel
+  - cute
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - mxfp4
+  additions: 70
+  deletions: 27
+  changed_file_count: 5
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2197
+- number: 2195
+  pr: 2195
+  title: '[BugFix] Vendor HIP headers and build fat CUDA+ROCm linux wheels'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2195
+  date: '2026-05-18'
+  merged_at: '2026-05-18T06:01:39Z'
+  author: benenzhu
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tilelang/autotuner/grouped_compile.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  - cuda kernel
+  - triton kernel
+  architectures:
+  - sm100
+  techniques:
+  - autotuning
+  - vectorized-loads
+  - warp-specialization
+  hardware_features: []
+  kernel_types: []
+  languages:
+  - cuda-cpp
+  - triton
+  changed_paths:
+  - 3rdparty/hip-headers/include/hip/amd_detail/amd_channel_descriptor.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/amd_device_functions.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/amd_hip_atomic.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/amd_hip_common.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/amd_hip_gl_interop.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/amd_hip_runtime.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/amd_hip_runtime_pt_api.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/amd_hip_unsafe_atomics.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/amd_hip_vector_types.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/amd_math_functions.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/amd_surface_functions.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/amd_warp_functions.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/amd_warp_sync_functions.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/device_library_decls.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/hip_api_trace.hpp
+  - 3rdparty/hip-headers/include/hip/amd_detail/hip_assert.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/hip_fp16_math_fwd.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/hip_ldg.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/hip_prof_str.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/hip_runtime_prof.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/host_defines.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/math_fwd.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/ockl_image.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/texture_fetch_functions.h
+  - 3rdparty/hip-headers/include/hip/amd_detail/texture_indirect_functions.h
+  - 3rdparty/hip-headers/include/hip/channel_descriptor.h
+  - 3rdparty/hip-headers/include/hip/driver_types.h
+  - 3rdparty/hip-headers/include/hip/hip_common.h
+  - 3rdparty/hip-headers/include/hip/hip_deprecated.h
+  - 3rdparty/hip-headers/include/hip/hip_runtime.h
+  - 3rdparty/hip-headers/include/hip/hip_runtime_api.h
+  - 3rdparty/hip-headers/include/hip/hip_texture_types.h
+  - 3rdparty/hip-headers/include/hip/hip_vector_types.h
+  - 3rdparty/hip-headers/include/hip/hip_version.h
+  - 3rdparty/hip-headers/include/hip/library_types.h
+  - 3rdparty/hip-headers/include/hip/linker_types.h
+  - 3rdparty/hip-headers/include/hip/surface_types.h
+  - 3rdparty/hip-headers/include/hip/texture_types.h
+  - 3rdparty/hip-headers/include/hsa/hsa.h
+  - CMakeLists.txt
+  - pyproject.toml
+  - src/backend/rocm/CMakeLists.txt
+  - src/backend/rocm/codegen/rt_mod_hip.cc
+  - tilelang/autotuner/grouped_compile.py
+  - version_provider.py
+  path_signals:
+  - tilelang/autotuner/grouped_compile.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - triton kernel
+  additions: 40351
+  deletions: 14
+  changed_file_count: 45
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2195
+- number: 2129
+  pr: 2129
+  title: '[CUDA][TMA] Add TMA tile::gather4 / tile::scatter4 support'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2129
+  date: '2026-05-20'
+  merged_at: '2026-05-20T07:09:12Z'
+  author: ighoshsubho
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: src/backend/cuda/codegen/codegen_cuda.cc, src/backend/cuda/op/copy.cc, src/backend/cuda/op/copy.h, src/backend/cuda/op/copy_analysis.cc'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - attention
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  - gemm
+  - hopper
+  - moe
+  - sm100
+  - sm90
+  - triton kernel
+  architectures:
+  - sm100
+  - sm90
+  techniques:
+  - async-copy
+  hardware_features:
+  - blackwell
+  - hopper
+  - tma
+  kernel_types:
+  - attention
+  - gemm
+  - moe
+  languages:
+  - cuda-cpp
+  - triton
+  changed_paths:
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/op/copy.cc
+  - src/backend/cuda/op/copy.h
+  - src/backend/cuda/op/copy_analysis.cc
+  - src/layout/gemm_layouts.cc
+  - src/op/builtin.cc
+  - src/op/builtin.h
+  - src/tl_templates/cuda/copy_sm100.h
+  - testing/python/language/test_tilelang_language_tma_gather_scatter.py
+  - tilelang/language/__init__.py
+  - tilelang/language/copy_op.py
+  path_signals:
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/op/copy.cc
+  - src/backend/cuda/op/copy.h
+  - src/backend/cuda/op/copy_analysis.cc
+  - src/layout/gemm_layouts.cc
+  - src/tl_templates/cuda/copy_sm100.h
+  - testing/python/language/test_tilelang_language_tma_gather_scatter.py
+  - tilelang/language/__init__.py
+  - tilelang/language/copy_op.py
+  borderline_path_signals:
+  - testing/python/language/test_tilelang_language_tma_gather_scatter.py
+  selection_text_signals:
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  - gemm
+  - hopper
+  - sm100
+  - sm90
+  - triton kernel
+  additions: 678
+  deletions: 8
+  changed_file_count: 11
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2129
+- number: 2112
+  pr: 2112
+  title: 'feat: auto-vectorize bf16/fp16 reduce with packed add2 intrinsics'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2112
+  date: '2026-05-19'
+  merged_at: '2026-05-19T07:03:44Z'
+  author: kurisu6912
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: benchmark/matmul/benchmark_matmul_sp_compress.py, src/backend/cuda/codegen/codegen_cuda.cc, src/backend/cuda/op/reduce.cc, src/tl_templates/cuda/common.h'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  - cuda kernel
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - mla
+  - mxfp4
+  architectures:
+  - sm100
+  - sm90
+  techniques:
+  - vectorized-loads
+  hardware_features:
+  - fp4
+  - fp8
+  - hopper
+  - mxfp4
+  - wgmma
+  kernel_types:
+  - gemm
+  - mla
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - benchmark/matmul/benchmark_matmul_sp_compress.py
+  - src/backend/common/op/reduce.h
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/op/reduce.cc
+  - src/backend/rocm/op/reduce.cc
+  - src/op/builtin.cc
+  - src/op/builtin.h
+  - src/tl_templates/cuda/common.h
+  - src/tl_templates/cuda/reduce.h
+  - testing/python/language/test_tilelang_language_reduce.py
+  - tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py
+  - tilelang/tileop/gemm_sp/gemm_sp_wgmma.py
+  - tilelang/utils/sparse.py
+  path_signals:
+  - benchmark/matmul/benchmark_matmul_sp_compress.py
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/op/reduce.cc
+  - src/tl_templates/cuda/common.h
+  - src/tl_templates/cuda/reduce.h
+  - testing/python/language/test_tilelang_language_reduce.py
+  - tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py
+  - tilelang/tileop/gemm_sp/gemm_sp_wgmma.py
+  - tilelang/utils/sparse.py
+  borderline_path_signals:
+  - benchmark/matmul/benchmark_matmul_sp_compress.py
+  - testing/python/language/test_tilelang_language_reduce.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - mxfp4
+  additions: 615
+  deletions: 114
+  changed_file_count: 13
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2112
+- number: 2084
+  pr: 2084
+  title: '[Enhance] Reject default scalar params and support `do_not_specialize` for autotune '
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2084
+  date: '2026-05-20'
+  merged_at: '2026-05-20T06:53:49Z'
+  author: Rachmanino
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: testing/python/autotune/test_tilelang_autotune_do_not_specialize.py, testing/python/autotune/test_tilelang_autotune_scalar_inputs.py, tilelang/autotuner/tuner.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  - cuda kernel
+  - gemm
+  - matmul
+  architectures:
+  - sm100
+  techniques:
+  - autotuning
+  hardware_features: []
+  kernel_types:
+  - gemm
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - testing/python/autotune/test_tilelang_autotune_do_not_specialize.py
+  - testing/python/autotune/test_tilelang_autotune_scalar_inputs.py
+  - tilelang/autotuner/tuner.py
+  path_signals:
+  - testing/python/autotune/test_tilelang_autotune_do_not_specialize.py
+  - testing/python/autotune/test_tilelang_autotune_scalar_inputs.py
+  - tilelang/autotuner/tuner.py
+  borderline_path_signals:
+  - testing/python/autotune/test_tilelang_autotune_do_not_specialize.py
+  - testing/python/autotune/test_tilelang_autotune_scalar_inputs.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - gemm
+  additions: 241
+  deletions: 5
+  changed_file_count: 3
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2084
+- number: 2048
+  pr: 2048
+  title: '[Backend] Refactor gemm_sp'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/2048
+  date: '2026-05-19'
+  merged_at: '2026-05-19T05:33:41Z'
+  author: botbw
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: benchmark/matmul/benchmark_matmul_sp.py, benchmark/matmul/benchmark_matmul_sp_compress.py, examples/gemm_sp/example_custom_compress.py, examples/gemm_sp/example_gemm_sp.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  - cuda kernel
+  - cute
+  - cutlass
+  - fp8
+  - gemm
+  - hopper
+  - matmul
+  - sm90
+  architectures:
+  - sm90
+  techniques:
+  - async-copy
+  hardware_features:
+  - fp8
+  - hopper
+  - tma
+  - wgmma
+  kernel_types:
+  - gemm
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - benchmark/matmul/benchmark_matmul_sp.py
+  - benchmark/matmul/benchmark_matmul_sp_compress.py
+  - docs/deeplearning_operators/matmul_sparse.md
+  - examples/gemm_sp/example_custom_compress.py
+  - examples/gemm_sp/example_gemm_sp.py
+  - examples/gemm_sp/test_example_gemm_sp.py
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/codegen/codegen_cuda.h
+  - src/backend/cuda/op/gemm_sp.cc
+  - src/op/builtin.cc
+  - src/op/builtin.h
+  - src/op/gemm.cc
+  - src/op/gemm_sp.cc
+  - src/op/gemm_sp.h
+  - src/op/gemm_sp_py.cc
+  - src/op/gemm_sp_py.h
+  - src/tl_templates/cuda/compress_sm90.cu
+  - src/tl_templates/cuda/gemm_sp.h
+  - src/tl_templates/cuda/gemm_sp_sm80.h
+  - src/tl_templates/cuda/gemm_sp_sm90.h
+  - src/tl_templates/cuda/instruction/cute_extension/mma_sm80_sparse.hpp
+  - src/tl_templates/cuda/instruction/cute_extension/mma_sm89_sparse.hpp
+  - src/tl_templates/cuda/instruction/mma_sp.h
+  - src/tl_templates/cuda/instruction/wgmma_sp.h
+  - src/transform/lower_opaque_block.cc
+  - testing/python/issue/test_tilelang_issue_tma_no_ws.py
+  - testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py
+  - testing/python/tilelibrary/test_tilelang_tilelibrary_gemm_sp.py
+  - testing/python/tilelibrary/test_tilelang_tilelibrary_gemm_sp_v2.py
+  - testing/python/utils/test_compress_utils.py
+  - tilelang/cuda/intrinsics/layout/mma_sp_layout.py
+  - tilelang/cuda/intrinsics/macro/mma_sp_macro_generator.py
+  - tilelang/cuda/intrinsics/macro/wgmma_sp_macro_generator.py
+  - tilelang/cuda/op/gemm_sp/__init__.py
+  - tilelang/cuda/op/gemm_sp/gemm_sp_mma.py
+  - tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py
+  - tilelang/ir.py
+  - tilelang/language/__init__.py
+  - tilelang/language/ast/ir.py
+  - tilelang/language/experimental/gemm_sp.py
+  - tilelang/language/experimental/gemm_sp_op.py
+  - tilelang/language/tir/ir.py
+  - tilelang/language/tir/op.py
+  - tilelang/tileop/__init__.py
+  - tilelang/tileop/gemm_sp/__init__.py
+  - tilelang/tileop/gemm_sp/gemm_sp_base.py
+  - tilelang/tileop/gemm_sp/gemm_sp_wgmma.py
+  - tilelang/tileop/gemm_sp/registry.py
+  - tilelang/utils/sparse.py
+  path_signals:
+  - benchmark/matmul/benchmark_matmul_sp.py
+  - benchmark/matmul/benchmark_matmul_sp_compress.py
+  - examples/gemm_sp/example_custom_compress.py
+  - examples/gemm_sp/example_gemm_sp.py
+  - examples/gemm_sp/test_example_gemm_sp.py
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/codegen/codegen_cuda.h
+  - src/backend/cuda/op/gemm_sp.cc
+  - src/op/gemm.cc
+  - src/op/gemm_sp.cc
+  - src/op/gemm_sp.h
+  - src/op/gemm_sp_py.cc
+  borderline_path_signals:
+  - benchmark/matmul/benchmark_matmul_sp.py
+  - benchmark/matmul/benchmark_matmul_sp_compress.py
+  - examples/gemm_sp/test_example_gemm_sp.py
+  - testing/python/issue/test_tilelang_issue_tma_no_ws.py
+  - testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py
+  - testing/python/tilelibrary/test_tilelang_tilelibrary_gemm_sp.py
+  - testing/python/tilelibrary/test_tilelang_tilelibrary_gemm_sp_v2.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - cute
+  - cutlass
+  - fp8
+  - gemm
+  - hopper
+  - sm90
+  additions: 4800
+  deletions: 3197
+  changed_file_count: 49
+  artifact_dir: evidence/pull-bundles/tilelang/gh-2048
+- number: 1908
+  pr: 1908
+  title: '[Feature] Add T.copy_cluster to support TMA multicast and SM-to-SM cluster copy'
+  repo: tile-ai/tilelang
+  url: https://github.com/tile-ai/tilelang/pull/1908
+  date: '2026-05-20'
+  merged_at: '2026-05-20T06:44:17Z'
+  author: He-Jingkai
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: src/backend/cuda/codegen/codegen_cuda.cc, src/backend/cuda/op/copy.cc, src/backend/cuda/op/copy_analysis.cc, src/tl_templates/cuda/copy_sm90.h'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  - cuda kernel
+  - cutlass
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - mla
+  - mxfp4
+  - schedule
+  - sm90
+  architectures:
+  - sm100
+  - sm90
+  techniques:
+  - async-copy
+  - pipeline-stages
+  hardware_features:
+  - fp4
+  - fp8
+  - hopper
+  - mxfp4
+  - tma
+  kernel_types:
+  - gemm
+  - mla
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - docs/programming_guides/cluster_tma.md
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/op/copy.cc
+  - src/backend/cuda/op/copy_analysis.cc
+  - src/op/builtin.cc
+  - src/op/builtin.h
+  - src/op/copy.cc
+  - src/op/copy.h
+  - src/op/operator.h
+  - src/tl_templates/cuda/copy_sm90.h
+  - src/transform/inject_fence_proxy.cc
+  - src/transform/lower_hopper_intrin.cc
+  - src/transform/lower_tile_op.cc
+  - src/transform/multi_version_buffer_rewriter.cc
+  - src/transform/pipeline_planning.cc
+  - src/transform/thread_storage_sync.cc
+  - testing/python/cuda/test_tma_dsmem.py
+  - testing/python/cuda/test_tma_multicast_demo.py
+  - tilelang/language/__init__.py
+  - tilelang/language/copy_op.py
+  path_signals:
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/op/copy.cc
+  - src/backend/cuda/op/copy_analysis.cc
+  - src/tl_templates/cuda/copy_sm90.h
+  - src/transform/lower_hopper_intrin.cc
+  - testing/python/cuda/test_tma_dsmem.py
+  - testing/python/cuda/test_tma_multicast_demo.py
+  - tilelang/language/__init__.py
+  - tilelang/language/copy_op.py
+  borderline_path_signals:
+  - docs/programming_guides/cluster_tma.md
+  - testing/python/cuda/test_tma_dsmem.py
+  - testing/python/cuda/test_tma_multicast_demo.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - cutlass
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - mxfp4
+  - sm90
+  additions: 1595
+  deletions: 14
+  changed_file_count: 20
+  artifact_dir: evidence/pull-bundles/tilelang/gh-1908

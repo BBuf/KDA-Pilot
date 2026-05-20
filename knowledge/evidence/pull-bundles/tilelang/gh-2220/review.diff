@@ -1,0 +1,662 @@
+diff --git a/requirements-test-cuda.txt b/requirements-test-cuda.txt
+index 420d6f1f52..6e8690f44c 100644
+--- a/requirements-test-cuda.txt
++++ b/requirements-test-cuda.txt
+@@ -7,5 +7,7 @@
+ # CUDA specific requirements
+ flash-attn==2.5.8
+ cuda-python==12.9.4
+-# CuTeDSL (CUTLASS Python DSL with CuTe support)
+-nvidia-cutlass-dsl==4.3.5
++# CuTeDSL test environment. Version 4.5.0 is pinned to match the CUDA CI wheel
++# stack while covering PDL APIs introduced in 4.3.4. The backend runtime check
++# still accepts older compatible CuTeDSL versions.
++nvidia-cutlass-dsl==4.5.0
+diff --git a/src/backend/cuda/codegen/codegen_cutedsl.cc b/src/backend/cuda/codegen/codegen_cutedsl.cc
+index 2dc45d279b..67b5a08679 100644
+--- a/src/backend/cuda/codegen/codegen_cutedsl.cc
++++ b/src/backend/cuda/codegen/codegen_cutedsl.cc
+@@ -736,6 +736,12 @@ void CodeGenTileLangCuTeDSL::VisitExpr_(const CallNode *op,
+   } else if (op->op.same_as(tl::sync_grid())) {
+     PrintIndent();
+     stream << "tl.sync_grid()\n";
++  } else if (op->op.same_as(tl::pdl_trigger())) {
++    PrintIndent();
++    stream << "tl.griddepcontrol_launch_dependents()\n";
++  } else if (op->op.same_as(tl::pdl_sync())) {
++    PrintIndent();
++    stream << "tl.griddepcontrol_wait()\n";
+   } else if (op->op.same_as(tl::loop_break()) ||
+              op->op.same_as(builtin::break_loop())) {
+     if (in_break_loop_) {
+diff --git a/testing/python/language/test_tilelang_language_pdl.py b/testing/python/language/test_tilelang_language_pdl.py
+index 3f9a3d782f..389589d7bc 100644
+--- a/testing/python/language/test_tilelang_language_pdl.py
++++ b/testing/python/language/test_tilelang_language_pdl.py
+@@ -1,13 +1,26 @@
++import importlib.metadata
++import os
++import platform
++import shutil
++import statistics
++import subprocess
++import sys
++
+ import tilelang.testing
+ import tilelang.language as T
++import pytest
+ 
+ 
+ def kernels_with_pdl_trigger(N, block_size=256, dtype=T.float32):
++    """Create a TileLang kernel that triggers dependent PDL launches."""
++
+     @T.prim_func
+     def main(
+         A: T.Tensor((N,), dtype),
+         B: T.Tensor((N,), dtype),
+     ):
++        """Trigger dependent PDL launches after writing the output tensor."""
++
+         with T.Kernel(T.ceildiv(N, block_size), threads=block_size) as (bx,):
+             for i in T.Parallel(block_size):
+                 idx = bx * block_size + i
+@@ -19,11 +32,15 @@ def main(
+ 
+ 
+ def kernels_with_pdl_sync(N, block_size=256, dtype=T.float32):
++    """Create a TileLang kernel that waits for PDL dependencies."""
++
+     @T.prim_func
+     def main(
+         A: T.Tensor((N,), dtype),
+         B: T.Tensor((N,), dtype),
+     ):
++        """Wait for PDL dependencies before writing the output tensor."""
++
+         with T.Kernel(T.ceildiv(N, block_size), threads=block_size) as (bx2,):
+             T.pdl_sync()
+             for i in T.Parallel(block_size):
+@@ -34,8 +51,220 @@ def main(
+     return main
+ 
+ 
++def kernels_with_pdl_pipeline(N, block_size=256, dtype=T.float32):
++    """Create a two-kernel TileLang pipeline using PDL trigger and sync."""
++
++    @T.prim_func
++    def main(
++        A: T.Tensor((N,), dtype),
++        B: T.Tensor((N,), dtype),
++        C: T.Tensor((N,), dtype),
++    ):
++        """Launch a producer kernel and a PDL-dependent consumer kernel."""
++
++        with T.Kernel(T.ceildiv(N, block_size), threads=block_size) as (bx,):
++            for i in T.Parallel(block_size):
++                idx = bx * block_size + i
++                if idx < N:
++                    B[idx] = A[idx] + 1.0
++            T.pdl_trigger()
++
++        with T.Kernel(T.ceildiv(N, block_size), threads=block_size) as (bx2,):
++            T.pdl_sync()
++            for i in T.Parallel(block_size):
++                idx = bx2 * block_size + i
++                if idx < N:
++                    C[idx] = B[idx] * 2.0
++
++    return main
++
++
++def kernels_without_pdl_overlap_window(N, block_size=256, work_iters=8192, dtype=T.float32):
++    """Create a strict same-stream two-kernel baseline for the PDL overlap benchmark."""
++
++    @T.prim_func
++    def main(
++        A: T.Tensor((N,), dtype),
++        B: T.Tensor((N,), dtype),
++        C: T.Tensor((N,), dtype),
++        Tail: T.Tensor((N,), dtype),
++        Pre: T.Tensor((N,), dtype),
++    ):
++        """Run producer tail work before the consumer can start."""
++
++        with T.Kernel(T.ceildiv(N, block_size), threads=block_size) as (bx,):
++            for i in T.Parallel(block_size):
++                idx = bx * block_size + i
++                B[idx] = A[idx] + 1.0
++            for i in T.Parallel(block_size):
++                idx = bx * block_size + i
++                x = T.alloc_var(T.float32, init=A[idx])
++                for _ in T.serial(work_iters):
++                    x = x * 1.000001 + 0.000001
++                Tail[idx] = x
++
++        with T.Kernel(T.ceildiv(N, block_size), threads=block_size) as (bx2,):
++            for i in T.Parallel(block_size):
++                idx = bx2 * block_size + i
++                y = T.alloc_var(T.float32, init=A[idx])
++                for _ in T.serial(work_iters):
++                    y = y * 1.000002 + 0.000002
++                Pre[idx] = y
++            for i in T.Parallel(block_size):
++                idx = bx2 * block_size + i
++                C[idx] = B[idx] * 2.0
++
++    return main
++
++
++def kernels_with_pdl_overlap_window(N, block_size=256, work_iters=8192, dtype=T.float32):
++    """Create a two-kernel PDL benchmark with real pre-sync overlap work."""
++
++    @T.prim_func
++    def main(
++        A: T.Tensor((N,), dtype),
++        B: T.Tensor((N,), dtype),
++        C: T.Tensor((N,), dtype),
++        Tail: T.Tensor((N,), dtype),
++        Pre: T.Tensor((N,), dtype),
++    ):
++        """Trigger the consumer early so its pre-sync work can overlap producer tail work."""
++
++        with T.Kernel(T.ceildiv(N, block_size), threads=block_size) as (bx,):
++            for i in T.Parallel(block_size):
++                idx = bx * block_size + i
++                B[idx] = A[idx] + 1.0
++            T.pdl_trigger()
++            for i in T.Parallel(block_size):
++                idx = bx * block_size + i
++                x = T.alloc_var(T.float32, init=A[idx])
++                for _ in T.serial(work_iters):
++                    x = x * 1.000001 + 0.000001
++                Tail[idx] = x
++
++        with T.Kernel(T.ceildiv(N, block_size), threads=block_size) as (bx2,):
++            for i in T.Parallel(block_size):
++                idx = bx2 * block_size + i
++                y = T.alloc_var(T.float32, init=A[idx])
++                for _ in T.serial(work_iters):
++                    y = y * 1.000002 + 0.000002
++                Pre[idx] = y
++            T.pdl_sync()
++            for i in T.Parallel(block_size):
++                idx = bx2 * block_size + i
++                C[idx] = B[idx] * 2.0
++
++    return main
++
++
++def _get_sm90_cuda_device():
++    """Return an SM90+ CUDA device for runtime PDL tests."""
++    torch = pytest.importorskip("torch")
++    if not torch.cuda.is_available():
++        pytest.skip("CuTeDSL PDL runtime test requires CUDA")
++    for device_id in range(torch.cuda.device_count()):
++        if torch.cuda.get_device_capability(device_id) >= (9, 0):
++            return torch.device("cuda", device_id)
++    pytest.skip("CuTeDSL PDL runtime test requires an SM90+ CUDA device")
++
++
++def _package_version(package_name: str) -> str:
++    """Return an installed package version or a readable placeholder."""
++    try:
++        return importlib.metadata.version(package_name)
++    except importlib.metadata.PackageNotFoundError:
++        return "not-installed"
++
++
++def _run_version_command(command: list[str], preferred_substring: str | None = None) -> str:
++    """Return the first non-empty version command line, or a readable failure."""
++    executable = shutil.which(command[0])
++    if executable is None:
++        return "not-found"
++    try:
++        result = subprocess.run(
++            [executable, *command[1:]],
++            check=False,
++            capture_output=True,
++            text=True,
++            timeout=10,
++        )
++    except (OSError, subprocess.SubprocessError) as err:
++        return f"error: {err}"
++    lines = [line.strip() for line in (result.stdout + result.stderr).splitlines() if line.strip()]
++    if preferred_substring is not None:
++        for line in lines:
++            if preferred_substring in line:
++                return line
++    return lines[-1] if lines else f"exit={result.returncode}"
++
++
++def _run_command_summary(command: list[str]) -> str:
++    """Return all non-empty command output lines joined for compact benchmark logs."""
++    executable = shutil.which(command[0])
++    if executable is None:
++        return "not-found"
++    try:
++        result = subprocess.run(
++            [executable, *command[1:]],
++            check=False,
++            capture_output=True,
++            text=True,
++            timeout=10,
++        )
++    except (OSError, subprocess.SubprocessError) as err:
++        return f"error: {err}"
++    lines = [line.strip() for line in (result.stdout + result.stderr).splitlines() if line.strip()]
++    return "; ".join(lines) if lines else f"exit={result.returncode}"
++
++
++def _print_pdl_benchmark_environment(device):
++    """Print exact local environment details for opt-in PDL benchmark runs."""
++    torch = pytest.importorskip("torch")
++    print("PDL microbenchmark environment:")
++    print(f"  python={sys.version.split()[0]}")
++    print(f"  platform={platform.platform()}")
++    print(f"  tilelang_package={_package_version('tilelang')}")
++    print(f"  tilelang_git={_run_version_command(['git', 'rev-parse', '--short', 'HEAD'])}")
++    print(f"  torch={torch.__version__}")
++    print(f"  torch_cuda={torch.version.cuda}")
++    print(f"  cuda_home={os.environ.get('CUDA_HOME') or os.environ.get('CUDA_PATH') or 'unset'}")
++    print(f"  nvcc={_run_version_command(['nvcc', '--version'], preferred_substring='release')}")
++    print(f"  nvidia_smi={_run_version_command(['nvidia-smi', '--version'], preferred_substring='NVIDIA-SMI version')}")
++    print(f"  nvidia_driver_cuda={_run_version_command(['nvidia-smi', '--version'], preferred_substring='CUDA Version')}")
++    print(f"  nvidia_gpus={_run_command_summary(['nvidia-smi', '--query-gpu=driver_version,name,compute_cap', '--format=csv,noheader'])}")
++    print(f"  nvidia_cutlass_dsl={_package_version('nvidia-cutlass-dsl')}")
++    print(f"  nvidia_cutlass_dsl_libs_base={_package_version('nvidia-cutlass-dsl-libs-base')}")
++    print(f"  cuda_python={_package_version('cuda-python')}")
++    print(f"  cuda_bindings={_package_version('cuda-bindings')}")
++    print(f"  benchmark_device={device.index}:{torch.cuda.get_device_name(device)}")
++    print(f"  benchmark_device_capability={torch.cuda.get_device_capability(device)}")
++    print(f"  TILELANG_DISABLE_CACHE={os.environ.get('TILELANG_DISABLE_CACHE', '0')}")
++
++
++def _benchmark_kernel_ms(kernel, args, tensors_to_clear, warmup, repeats):
++    """Measure a TileLang kernel with CUDA events and return per-run milliseconds."""
++    torch = pytest.importorskip("torch")
++    start = torch.cuda.Event(enable_timing=True)
++    end = torch.cuda.Event(enable_timing=True)
++    samples = []
++    for run_id in range(warmup + repeats):
++        for tensor in tensors_to_clear:
++            tensor.zero_()
++        torch.cuda.synchronize()
++        start.record()
++        kernel(*args)
++        end.record()
++        end.synchronize()
++        if run_id >= warmup:
++            samples.append(start.elapsed_time(end))
++    return samples
++
++
+ @tilelang.testing.requires_cuda
+ def test_pdl_trigger():
++    """Verify CUDA codegen emits the PDL trigger intrinsic."""
++
+     N = 64
+     program = kernels_with_pdl_trigger(N)
+ 
+@@ -46,6 +275,8 @@ def test_pdl_trigger():
+ 
+ @tilelang.testing.requires_cuda
+ def test_pdl_sync():
++    """Verify CUDA codegen emits the PDL sync intrinsic without restrict qualifiers."""
++
+     N = 64
+     program = kernels_with_pdl_sync(N)
+     pdl_kernel = tilelang.compile(program, target="cuda -arch=sm_90")
+@@ -54,5 +285,161 @@ def test_pdl_sync():
+     assert "__restrict__" not in code
+ 
+ 
++def _lower_cutedsl_for_pdl(program):
++    """Lower a PDL program through CuTeDSL and build its host wrapper."""
++
++    try:
++        from cutlass.cute import arch as cute_arch
++        from tilelang.jit.adapter.cutedsl.checks import check_cutedsl_available
++        from tilelang.jit.adapter.cutedsl.wrapper import TLCuTeDSLSourceWrapper
++        from tilelang.utils.target import determine_target
++
++        check_cutedsl_available()
++    except (ImportError, ModuleNotFoundError, RuntimeError) as err:
++        pytest.skip(f"CuTeDSL is not available: {err}")
++
++    if not (hasattr(cute_arch, "griddepcontrol_launch_dependents") and hasattr(cute_arch, "griddepcontrol_wait")):
++        pytest.skip("CuTeDSL PDL APIs are not available in this nvidia-cutlass-dsl build (introduced in 4.3.4)")
++
++    # PDL is an SM90/Hopper feature. Use an explicit arch so this codegen test
++    # does not depend on the default CUDA device, which may be sm_80 on mixed-GPU hosts.
++    target = determine_target("cutedsl -arch=sm_90")
++    with target:
++        artifact = tilelang.lower(program, target=target)
++    mod = tilelang.tvm.IRModule({program.attrs["global_symbol"]: program})
++    wrapper = TLCuTeDSLSourceWrapper(mod, artifact.kernel_source, target, artifact.device_mod, artifact.host_mod)
++    return artifact, wrapper
++
++
++def test_cutedsl_pdl_codegen_and_launcher_support():
++    """Verify CuTeDSL PDL lowering and host launcher generation."""
++
++    trigger_artifact, _ = _lower_cutedsl_for_pdl(kernels_with_pdl_trigger(64, block_size=64))
++    assert "tl.griddepcontrol_launch_dependents()" in trigger_artifact.kernel_source
++
++    sync_artifact, sync_wrapper = _lower_cutedsl_for_pdl(kernels_with_pdl_sync(64, block_size=64))
++    assert "tl.griddepcontrol_wait()" in sync_artifact.kernel_source
++    assert "use_pdl=True" in sync_wrapper.host_func
++    assert "--gpu-arch=sm_90" in sync_wrapper.host_func
++
++    launcher_cpp = sync_wrapper.get_launcher_cpp_code()
++    assert "CU_LAUNCH_ATTRIBUTE_PROGRAMMATIC_STREAM_SERIALIZATION" in launcher_cpp
++    assert "cuLaunchKernelEx" in launcher_cpp
++
++    import tilelang.contrib.cutedsl as tl
++
++    assert hasattr(tl, "griddepcontrol_launch_dependents")
++    assert hasattr(tl, "griddepcontrol_wait")
++
++
++@tilelang.testing.requires_cuda
++def test_cutedsl_pdl_runtime_pipeline():
++    """Run a CuTeDSL PDL pipeline and verify the produced tensors."""
++
++    torch = pytest.importorskip("torch")
++    device = _get_sm90_cuda_device()
++    N = 64
++
++    with torch.cuda.device(device):
++        _lower_cutedsl_for_pdl(kernels_with_pdl_pipeline(N, block_size=64))
++        kernel = tilelang.compile(
++            kernels_with_pdl_pipeline(N, block_size=64),
++            target="cutedsl -arch=sm_90",
++        )
++        a = torch.randn(N, dtype=torch.float32, device=device)
++        b = torch.empty_like(a)
++        c = torch.empty_like(a)
++        kernel(a, b, c)
++        torch.cuda.synchronize(device)
++
++    ref_b = a + 1.0
++    ref_c = ref_b * 2.0
++    tilelang.testing.torch_assert_close(b, ref_b, atol=1e-5, rtol=1e-5)
++    tilelang.testing.torch_assert_close(c, ref_c, atol=1e-5, rtol=1e-5)
++
++
++@tilelang.testing.requires_cuda
++@pytest.mark.perf
++def test_cutedsl_pdl_overlap_microbenchmark():
++    """Benchmark PDL overlap against a strict same-stream serial launch baseline.
++
++    This is intentionally opt-in via ``--run-perf``. It validates correctness
++    and prints timings, but does not assert a speedup threshold because kernel
++    overlap depends on occupancy, clocks, driver scheduling, and host load.
++    """
++
++    torch = pytest.importorskip("torch")
++    device = _get_sm90_cuda_device()
++    block_size = int(os.environ.get("TILELANG_PDL_BENCH_BLOCK_SIZE", "256"))
++    num_blocks = int(os.environ.get("TILELANG_PDL_BENCH_BLOCKS", "1"))
++    work_iters = int(os.environ.get("TILELANG_PDL_BENCH_WORK_ITERS", "8192"))
++    warmup = int(os.environ.get("TILELANG_PDL_BENCH_WARMUP", "20"))
++    repeats = int(os.environ.get("TILELANG_PDL_BENCH_REPEATS", "80"))
++    N = num_blocks * block_size
++
++    _print_pdl_benchmark_environment(device)
++    print("PDL microbenchmark config:")
++    print("  target=cutedsl -arch=sm_90")
++    print(f"  num_blocks={num_blocks}")
++    print(f"  block_size={block_size}")
++    print(f"  work_iters={work_iters}")
++    print(f"  warmup={warmup}")
++    print(f"  repeats={repeats}")
++
++    with torch.cuda.device(device):
++        serial_kernel = tilelang.compile(
++            kernels_without_pdl_overlap_window(N, block_size=block_size, work_iters=work_iters),
++            target="cutedsl -arch=sm_90",
++        )
++        pdl_kernel = tilelang.compile(
++            kernels_with_pdl_overlap_window(N, block_size=block_size, work_iters=work_iters),
++            target="cutedsl -arch=sm_90",
++        )
++        a = torch.randn(N, dtype=torch.float32, device=device)
++        serial_outputs = [torch.empty_like(a) for _ in range(4)]
++        pdl_outputs = [torch.empty_like(a) for _ in range(4)]
++
++        # First calls generate CuTeDSL cubins. Keep compilation out of the timing window.
++        serial_kernel(a, *serial_outputs)
++        pdl_kernel(a, *pdl_outputs)
++        torch.cuda.synchronize(device)
++
++        serial_samples = _benchmark_kernel_ms(
++            serial_kernel,
++            (a, *serial_outputs),
++            serial_outputs,
++            warmup=warmup,
++            repeats=repeats,
++        )
++        pdl_samples = _benchmark_kernel_ms(
++            pdl_kernel,
++            (a, *pdl_outputs),
++            pdl_outputs,
++            warmup=warmup,
++            repeats=repeats,
++        )
++
++    ref_b = a + 1.0
++    ref_c = ref_b * 2.0
++    tilelang.testing.torch_assert_close(serial_outputs[0], ref_b, atol=1e-5, rtol=1e-5)
++    tilelang.testing.torch_assert_close(serial_outputs[1], ref_c, atol=1e-5, rtol=1e-5)
++    tilelang.testing.torch_assert_close(pdl_outputs[0], ref_b, atol=1e-5, rtol=1e-5)
++    tilelang.testing.torch_assert_close(pdl_outputs[1], ref_c, atol=1e-5, rtol=1e-5)
++
++    serial_mean = statistics.mean(serial_samples)
++    pdl_mean = statistics.mean(pdl_samples)
++    serial_median = statistics.median(serial_samples)
++    pdl_median = statistics.median(pdl_samples)
++    print("PDL microbenchmark results:")
++    print(f"  serial_mean_ms={serial_mean:.6f}")
++    print(f"  serial_median_ms={serial_median:.6f}")
++    print(f"  serial_min_ms={min(serial_samples):.6f}")
++    print(f"  pdl_mean_ms={pdl_mean:.6f}")
++    print(f"  pdl_median_ms={pdl_median:.6f}")
++    print(f"  pdl_min_ms={min(pdl_samples):.6f}")
++    print(f"  speedup_mean={serial_mean / pdl_mean:.6f}")
++    print(f"  speedup_median={serial_median / pdl_median:.6f}")
++
++
+ if __name__ == "__main__":
+     tilelang.testing.main()
+diff --git a/tilelang/contrib/cutedsl/__init__.py b/tilelang/contrib/cutedsl/__init__.py
+index 565cfea3fc..44b9d3d9ee 100644
+--- a/tilelang/contrib/cutedsl/__init__.py
++++ b/tilelang/contrib/cutedsl/__init__.py
+@@ -1,3 +1,5 @@
++from contextlib import suppress
++
+ import cutlass  # noqa: F401
+ import cutlass.cute as cute  # noqa: F401
+ 
+@@ -5,6 +7,9 @@
+ from cutlass.cute.arch import sync_threads  # noqa: F401
+ from cutlass.cute.arch import alloc_smem, get_dyn_smem  # noqa: F401
+ from cutlass.cute.arch import warpgroup_reg_alloc, warpgroup_reg_dealloc  # noqa: F401
++
++with suppress(ImportError):
++    from cutlass.cute.arch import griddepcontrol_launch_dependents, griddepcontrol_wait  # noqa: F401
+ from cutlass.cute.nvgpu.warpgroup.helpers import wait_group as wgmma_wait_group  # noqa: F401
+ 
+ from cutlass.cute import make_tensor, make_rmem_tensor, recast_ptr, where  # noqa: F401
+diff --git a/tilelang/contrib/cutedsl/threadblock_swizzle.py b/tilelang/contrib/cutedsl/threadblock_swizzle.py
+index 1b7d3fe0f5..5176b1fec6 100644
+--- a/tilelang/contrib/cutedsl/threadblock_swizzle.py
++++ b/tilelang/contrib/cutedsl/threadblock_swizzle.py
+@@ -8,31 +8,45 @@
+ ]
+ 
+ import cutlass.cute as cute
+-from cutlass.cute.typing import Constexpr
++
++try:
++    from cutlass import Constexpr
++except ImportError:
++    from cutlass.cute.typing import Constexpr
+ from dataclasses import dataclass
+ 
+ 
+ @dataclass(frozen=True)
+ class dim3:
++    """Three-dimensional CUDA index tuple."""
++
+     x: int
+     y: int
+     z: int
+ 
+ 
+ def ThreadIdx() -> dim3:
++    """Return the current CUDA thread index."""
++
+     return dim3(*cute.arch.thread_idx())
+ 
+ 
+ def BlockIdx() -> dim3:
++    """Return the current CUDA block index."""
++
+     return dim3(*cute.arch.block_idx())
+ 
+ 
+ def GridDim() -> dim3:
++    """Return the CUDA grid dimensions."""
++
+     return dim3(*cute.arch.grid_dim())
+ 
+ 
+ @cute.jit
+ def rasterization2DRow(panel_width: Constexpr[int]) -> dim3:
++    """Map block indices to row-major swizzled rasterization coordinates."""
++
+     blockIdx = BlockIdx()
+     gridDim = GridDim()
+     block_idx = blockIdx.x + blockIdx.y * gridDim.x
+@@ -49,6 +63,8 @@ def rasterization2DRow(panel_width: Constexpr[int]) -> dim3:
+ 
+ @cute.jit
+ def rasterization2DColumn(panel_width: Constexpr[int]) -> dim3:
++    """Map block indices to column-major swizzled rasterization coordinates."""
++
+     blockIdx = BlockIdx()
+     gridDim = GridDim()
+     block_idx = blockIdx.x + blockIdx.y * gridDim.x
+diff --git a/tilelang/jit/adapter/cutedsl/wrapper.py b/tilelang/jit/adapter/cutedsl/wrapper.py
+index a0b4172e89..e1e1e50235 100644
+--- a/tilelang/jit/adapter/cutedsl/wrapper.py
++++ b/tilelang/jit/adapter/cutedsl/wrapper.py
+@@ -177,6 +177,43 @@
+   }}
+ """
+ 
++# Kernel launch template with CUDA Programmatic Dependent Launch enabled.
++CPP_PDL_KERNEL_LAUNCH_TEMPLATE = """\
++  // Launch kernel {kernel_idx}: {kernel_name} (PDL)
++  {{
++    // Get the kernel for current device
++    auto kernels_it = g_device_kernels.find(device_id);
++    if (kernels_it == g_device_kernels.end()) {{
++      std::cerr << "Kernels not initialized for device " << device_id << "\\n";
++      return CUDA_ERROR_NOT_INITIALIZED;
++    }}
++    const std::vector<CUfunction>& kernels = kernels_it->second;
++
++    void* args[] = {{{kernel_args}}};
++    CUlaunchAttribute attrs[1];
++    attrs[0].id = CU_LAUNCH_ATTRIBUTE_PROGRAMMATIC_STREAM_SERIALIZATION;
++    attrs[0].value.programmaticStreamSerializationAllowed = 1;
++
++    CUlaunchConfig config = {{}};
++    config.gridDimX = {grid_x};
++    config.gridDimY = {grid_y};
++    config.gridDimZ = {grid_z};
++    config.blockDimX = {block_x};
++    config.blockDimY = {block_y};
++    config.blockDimZ = {block_z};
++    config.sharedMemBytes = {smem_size};
++    config.hStream = stream;
++    config.attrs = attrs;
++    config.numAttrs = 1;
++
++    result = cuLaunchKernelEx(&config, kernels[{kernel_idx}], args, nullptr);
++    if (result != CUDA_SUCCESS) {{
++      std::cerr << "Failed to launch PDL kernel {kernel_name} on device " << device_id << ": " << result << "\\n";
++      return result;
++    }}
++  }}
++"""
++
+ # Cooperative kernel launch template (for sync_grid / cooperative groups)
+ # Uses cuLaunchCooperativeKernel which guarantees all thread blocks are resident
+ CPP_COOPERATIVE_KERNEL_LAUNCH_TEMPLATE = """\
+@@ -522,6 +559,7 @@
+       block=[{block_x}, {block_y}, {block_z}],
+       smem={smem_size},
+       stream=stream,
++      use_pdl={use_pdl},
+     )"""
+ 
+ # Fake tensor creation template
+@@ -549,7 +587,7 @@ def kernel_wrapper({wrapper_args}):
+     _kernel_wrapper = cute.compile(
+         kernel_wrapper,
+         {compile_args},
+-        options=f"--enable-tvm-ffi --keep-cubin --dump-dir={{_staging_dir.as_posix()}}",
++        options=f"--enable-tvm-ffi --keep-cubin --gpu-arch={target_arch} --dump-dir={{_staging_dir.as_posix()}}",
+     )
+ 
+     # CuTeDSL generates a long, mangled cubin filename that includes argument/type info,
+@@ -781,6 +819,11 @@ def _pythonic_expr(self, expr: tvm.tir.PrimExpr) -> str:
+         """Convert TVM expression to Python string."""
+         return pythonic_expr(expr, self._TYPE_MAP, floor_div_op="//")
+ 
++    def _target_arch(self) -> str:
++        """Return the CUDA SM architecture requested by the TileLang target."""
++        arch = self.target.attrs.get("arch") if self.target is not None else None
++        return str(arch) if arch is not None else "sm_80"
++
+     def _cxx_expr(self, expr: tvm.tir.PrimExpr) -> str:
+         """Convert TVM expression to C++ string for generated launcher code."""
+         return pythonic_expr(expr, self._CXX_TYPE_MAP)
+@@ -1071,10 +1114,16 @@ def _generate_kernel_launch(self, kernel_meta: dict, kernel_idx: int, all_desc_n
+         block = function_info["block_info"]
+         smem_size = function_info["dynamic_smem_buf"] or 0
+ 
+-        # Choose launch template based on cooperative groups requirement
++        # Choose launch template based on cooperative groups / PDL requirements
+         function_name = kernel_meta["function_name"]
+         use_cooperative = self.use_cooperative_groups.get(function_name, False)
+-        template = CPP_COOPERATIVE_KERNEL_LAUNCH_TEMPLATE if use_cooperative else CPP_KERNEL_LAUNCH_TEMPLATE
++        use_pdl = function_name in self.pdl_sync_map
++        if use_cooperative:
++            template = CPP_COOPERATIVE_KERNEL_LAUNCH_TEMPLATE
++        elif use_pdl:
++            template = CPP_PDL_KERNEL_LAUNCH_TEMPLATE
++        else:
++            template = CPP_KERNEL_LAUNCH_TEMPLATE
+ 
+         return template.format(
+             kernel_idx=kernel_idx,
+@@ -1209,6 +1258,7 @@ def _generate_cubin_gen_code(
+                 block_y=self._pythonic_expr(km["function_info"]["block_info"][1]),
+                 block_z=self._pythonic_expr(km["function_info"]["block_info"][2]),
+                 smem_size=km["function_info"]["dynamic_smem_buf"] or 0,
++                use_pdl=str(km["function_name"] in self.pdl_sync_map),
+             )
+             for km in kernel_metadata_list
+         )
+@@ -1246,6 +1296,7 @@ def _generate_cubin_gen_code(
+             fake_tensor_code=fake_tensor_code,
+             fake_tma_tensor_code=fake_tma_tensor_code,
+             compile_args=", ".join(fake_inner_args),
++            target_arch=self._target_arch(),
+             primary_name=kernel_metadata_list[0]["function_name"],
+         )
+ 

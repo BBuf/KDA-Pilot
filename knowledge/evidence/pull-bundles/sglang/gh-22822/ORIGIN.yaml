@@ -1,0 +1,190 @@
+schema_version: 1
+source_key: sgl-project/sglang#22822
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 22822
+title: '[Refactor] Refactor DeepEP dispatcher'
+url: https://github.com/sgl-project/sglang/pull/22822
+state: closed
+merged_at: '2026-05-18T01:36:43Z'
+base_ref_oid: 89e501c5a81f038ffa391fda42b53c7cd361b03f
+head_ref_oid: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+captured_at: '2026-05-20T14:55:15.111957+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention kernel
+- fp8
+- moe
+- moe kernel
+- nvfp4
+- speculative-decoding
+techniques:
+- fine-grained-quantization
+- kernel-fusion
+hardware_features:
+- fp4
+- fp8
+- nvfp4
+kernel_types:
+- attention
+- moe
+languages:
+- cuda-cpp
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: docs/advanced_features/server_arguments.md
+    local_path: source-snapshot/docs/advanced_features/server_arguments.md
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: docs/platforms/ascend/ascend_npu_best_practice.md
+    local_path: source-snapshot/docs/platforms/ascend/ascend_npu_best_practice.md
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: docs/platforms/ascend/ascend_npu_deepseek_example.md
+    local_path: source-snapshot/docs/platforms/ascend/ascend_npu_deepseek_example.md
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: docs/platforms/ascend/ascend_npu_environment_variables.md
+    local_path: source-snapshot/docs/platforms/ascend/ascend_npu_environment_variables.md
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: docs/platforms/ascend/ascend_npu_qwen3_examples.md
+    local_path: source-snapshot/docs/platforms/ascend/ascend_npu_qwen3_examples.md
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: docs/references/environment_variables.md
+    local_path: source-snapshot/docs/references/environment_variables.md
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/environ.py
+    local_path: source-snapshot/python/sglang/srt/environ.py
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/hardware_backend/npu/quantization/awq_kernels.py
+    local_path: source-snapshot/python/sglang/srt/hardware_backend/npu/quantization/awq_kernels.py
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/hardware_backend/npu/quantization/fused_moe_method_npu.py
+    local_path: source-snapshot/python/sglang/srt/hardware_backend/npu/quantization/fused_moe_method_npu.py
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/ep_moe/layer.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/ep_moe/layer.py
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/token_dispatcher/deepep.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/token_dispatcher/deepep.py
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/utils.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/utils.py
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/quantization/compressed_tensors/schemes/compressed_tensors_wNa16_moe.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/compressed_tensors/schemes/compressed_tensors_wNa16_moe.py
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/quantization/modelslim/schemes/modelslim_w4a4_int4_moe.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/modelslim/schemes/modelslim_w4a4_int4_moe.py
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/models/deepseek_nextn.py
+    local_path: source-snapshot/python/sglang/srt/models/deepseek_nextn.py
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/models/glm4_moe_nextn.py
+    local_path: source-snapshot/python/sglang/srt/models/glm4_moe_nextn.py
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/models/qwen3_5_mtp.py
+    local_path: source-snapshot/python/sglang/srt/models/qwen3_5_mtp.py
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/models/qwen3_next_mtp.py
+    local_path: source-snapshot/python/sglang/srt/models/qwen3_next_mtp.py
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/server_args.py
+    local_path: source-snapshot/python/sglang/srt/server_args.py
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: test/manual/layers/moe/test_moe_runners_4gpu.py
+    local_path: source-snapshot/test/manual/layers/moe/test_moe_runners_4gpu.py
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: test/manual/test_w4a8_deepseek_v3.py
+    local_path: source-snapshot/test/manual/test_w4a8_deepseek_v3.py
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: test/registered/4-gpu-models/test_deepseek_v3_cutedsl_4gpu.py
+    local_path: source-snapshot/test/registered/4-gpu-models/test_deepseek_v3_cutedsl_4gpu.py
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: docs_new/docs/advanced_features/server_arguments.mdx
+    local_path: source-snapshot/docs_new/docs/advanced_features/server_arguments.mdx
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_best_practice.mdx
+    local_path: source-snapshot/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_best_practice.mdx
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_deepseek_example.mdx
+    local_path: source-snapshot/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_deepseek_example.mdx
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_environment_variables.mdx
+    local_path: source-snapshot/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_environment_variables.mdx
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_glm5_examples.mdx
+    local_path: source-snapshot/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_glm5_examples.mdx
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_qwen3_5_examples.mdx
+    local_path: source-snapshot/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_qwen3_5_examples.mdx
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_qwen3_examples.mdx
+    local_path: source-snapshot/docs_new/docs/hardware-platforms/ascend-npus/ascend_npu_qwen3_examples.mdx
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true
+  - source_path: docs_new/docs/references/environment_variables.mdx
+    local_path: source-snapshot/docs_new/docs/references/environment_variables.mdx
+    ref: bc782255a53f0bd9fbd72d7f0c48ae21e5cb0b87
+    status: modified
+    fetched: true

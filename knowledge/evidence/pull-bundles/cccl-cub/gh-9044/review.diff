@@ -1,0 +1,90 @@
+diff --git a/libcudacxx/include/cuda/__memory_resource/shared_block_ptr.h b/libcudacxx/include/cuda/__memory_resource/shared_block_ptr.h
+index f1cc6126a32..642f6c976f6 100644
+--- a/libcudacxx/include/cuda/__memory_resource/shared_block_ptr.h
++++ b/libcudacxx/include/cuda/__memory_resource/shared_block_ptr.h
+@@ -27,6 +27,7 @@
+ #include <cuda/std/__type_traits/remove_cvref.h>
+ #include <cuda/std/__utility/exchange.h>
+ #include <cuda/std/__utility/forward.h>
++#include <cuda/std/__utility/in_place.h>
+ #include <cuda/std/__utility/move.h>
+ #include <cuda/std/__utility/swap.h>
+ #include <cuda/std/atomic>
+@@ -67,9 +68,17 @@ class __shared_block_ptr
+   //! @brief Constructs a null ``__shared_block_ptr`` with no control block.
+   _CCCL_HIDE_FROM_ABI __shared_block_ptr() = default;
+ 
++  //! @brief Constructs a new control block, forwarding arguments to the payload.
++  template <class... _Args>
++  _CCCL_HOST_API explicit __shared_block_ptr(::cuda::std::in_place_type_t<_Payload>, _Args&&... __args)
++      : __block_(new __block_t(::cuda::std::forward<_Args>(__args)...))
++  {}
++
+   //! @brief Constructs a new control block, forwarding arguments to the payload.
+   _CCCL_TEMPLATE(class _Arg, class... _Rest)
+-  _CCCL_REQUIRES((!::cuda::std::is_same_v<::cuda::std::remove_cvref_t<_Arg>, __shared_block_ptr>) )
++  _CCCL_REQUIRES(
++    (!::cuda::std::is_same_v<::cuda::std::remove_cvref_t<_Arg>, __shared_block_ptr>)
++    && (!::cuda::std::is_same_v<::cuda::std::remove_cvref_t<_Arg>, ::cuda::std::in_place_type_t<_Payload>>) )
+   _CCCL_HOST_API explicit __shared_block_ptr(_Arg&& __arg, _Rest&&... __rest)
+       : __block_(new __block_t(::cuda::std::forward<_Arg>(__arg), ::cuda::std::forward<_Rest>(__rest)...))
+   {}
+diff --git a/libcudacxx/include/cuda/__memory_resource/shared_resource.h b/libcudacxx/include/cuda/__memory_resource/shared_resource.h
+index 1205fe0035a..addadb171b2 100644
+--- a/libcudacxx/include/cuda/__memory_resource/shared_resource.h
++++ b/libcudacxx/include/cuda/__memory_resource/shared_resource.h
+@@ -62,7 +62,7 @@ struct shared_resource
+   //! @param __args The arguments to be passed to the \c _Resource constructor.
+   template <class... _Args>
+   explicit shared_resource(::cuda::std::in_place_type_t<_Resource>, _Args&&... __args)
+-      : __block_(::cuda::std::forward<_Args>(__args)...)
++      : __block_(::cuda::std::in_place_type<_Resource>, ::cuda::std::forward<_Args>(__args)...)
+   {}
+ 
+   //! @brief Copy-constructs a \c shared_resource object resulting in an copy that shares
+diff --git a/libcudacxx/test/libcudacxx/cuda/memory_resource/shared_resource.cu b/libcudacxx/test/libcudacxx/cuda/memory_resource/shared_resource.cu
+index f821714cf29..d861add59d6 100644
+--- a/libcudacxx/test/libcudacxx/cuda/memory_resource/shared_resource.cu
++++ b/libcudacxx/test/libcudacxx/cuda/memory_resource/shared_resource.cu
+@@ -17,6 +17,41 @@
+ 
+ #include "test_resource.cuh"
+ 
++struct default_constructible_resource
++{
++  default_constructible_resource()
++  {
++    ++constructed;
++  }
++
++  void* allocate_sync(size_t, size_t)
++  {
++    return this;
++  }
++
++  void deallocate_sync(void*, size_t, size_t) noexcept {}
++
++  friend bool operator==(default_constructible_resource const&, default_constructible_resource const&) noexcept
++  {
++    return true;
++  }
++
++  friend bool operator!=(default_constructible_resource const&, default_constructible_resource const&) noexcept
++  {
++    return false;
++  }
++
++  static inline int constructed = 0;
++};
++
++C2H_CCCLRT_TEST("make_shared_resource default constructs resource", "[container][resource]")
++{
++  default_constructible_resource::constructed = 0;
++  auto resource                               = cuda::mr::make_shared_resource<default_constructible_resource>();
++  CHECK(default_constructible_resource::constructed == 1);
++  CHECK(resource.allocate_sync(1, 1) != nullptr);
++}
++
+ TEMPLATE_TEST_CASE_METHOD(test_fixture, "shared_resource", "[container][resource]", big_resource, small_resource)
+ {
+   using TestResource = TestType;

@@ -1,0 +1,46 @@
+schema_version: 1
+source_key: sgl-project/sglang#25286
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25286
+title: '[Gemma4]: Fix FP8 Triton scale layout'
+url: https://github.com/sgl-project/sglang/pull/25286
+state: closed
+merged_at: '2026-05-19T21:00:24Z'
+base_ref_oid: 45a85efc3aee65c57a374bcd274a6d1243b461c0
+head_ref_oid: 142749bb02fab478175f158332f73a377e664831
+captured_at: '2026-05-20T14:51:51.360798+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cuda
+- cuda kernel
+- fp8
+- gemm
+- triton
+- triton kernel
+techniques:
+- fine-grained-quantization
+hardware_features:
+- fp8
+kernel_types:
+- gemm
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/layers/quantization/fp8_kernel.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/fp8_kernel.py
+    ref: 142749bb02fab478175f158332f73a377e664831
+    status: modified
+    fetched: true
+  - source_path: test/registered/quant/test_triton_scaled_mm.py
+    local_path: source-snapshot/test/registered/quant/test_triton_scaled_mm.py
+    ref: 142749bb02fab478175f158332f73a377e664831
+    status: modified
+    fetched: true

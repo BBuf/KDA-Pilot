@@ -48,7 +48,7 @@ def render_pr(repo_id: str, entry: dict) -> str:
         "hardware_features": entry.get("hardware_features") or [],
         "kernel_types": entry.get("kernel_types") or [],
         "languages": entry.get("languages") or [],
-        "captured_at": entry.get("captured_at", "2026-05-16"),
+        "captured_at": entry.get("captured_at", "2026-05-20"),
         "status": entry.get("status", "merged"),
         "merge_sha": entry.get("merge_sha", "unknown"),
         "inclusion_reason": entry.get("inclusion_reason", entry.get("decision", "include")),

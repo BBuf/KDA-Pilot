@@ -1,0 +1,481 @@
+diff --git a/flashinfer/autotuner.py b/flashinfer/autotuner.py
+index c2238cb325..6ee1f7bb5e 100644
+--- a/flashinfer/autotuner.py
++++ b/flashinfer/autotuner.py
+@@ -319,6 +319,13 @@ class TuningConfig:
+     constraint_specs: Tuple[ConstraintSpec, ...] = ()
+     use_cold_l2_cache: bool = False
+     use_cuda_graph: bool = False
++    # Optional callback invoked once per profile bucket, after dynamic
++    # tensors are synthesized but before the per-tactic profile loop.
++    # Receives the full list of tensors and returns a (possibly modified)
++    # list. Use this to inject a deterministic, realistic distribution
++    # for inputs whose default tensor_initializer would be random
++    # (e.g. token_selected_experts in MoE workloads).
++    inputs_pre_hook: Optional[Callable] = None
+ 
+ 
+ @dataclass(unsafe_hash=True)
+@@ -1028,6 +1035,7 @@ def _clamped_po2_mapper(x, _gen_fn=gen_fn):
+             constraint_specs=tuning_config.constraint_specs,
+             use_cold_l2_cache=tuning_config.use_cold_l2_cache,
+             use_cuda_graph=tuning_config.use_cuda_graph,
++            inputs_pre_hook=tuning_config.inputs_pre_hook,
+         )
+         self._override_config_cache.setdefault(tuning_config, {})[cache_key] = (
+             new_config
+@@ -1195,6 +1203,11 @@ def choose_one(
+                     if not is_cache_hit:
+                         # Synthesize inputs only on the profiling path.
+                         tensors = self._prepare_input_tensors(p, inputs)
++                        # Apply the optional inputs_pre_hook to inject a
++                        # deterministic / realistic distribution before
++                        # the per-tactic profile loop.
++                        if tuning_config.inputs_pre_hook is not None:
++                            tensors = list(tuning_config.inputs_pre_hook(tensors))
+                         if pbar is None:
+                             pbar = tqdm.tqdm(
+                                 total=len(profiles),
+diff --git a/flashinfer/fused_moe/cute_dsl/_inputs_helper.py b/flashinfer/fused_moe/cute_dsl/_inputs_helper.py
+new file mode 100644
+index 0000000000..600493acc2
+--- /dev/null
++++ b/flashinfer/fused_moe/cute_dsl/_inputs_helper.py
+@@ -0,0 +1,198 @@
++"""
++Copyright (c) 2025 by FlashInfer team.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++  http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++"""
++
++"""Inputs helper for CuteDSL MoE autotune profiling.
++
++Provides a deterministic, balanced approx-max-load distribution for
++``token_selected_experts`` during autotune profiling, using rejection
++sampling so each token's top_k slots are independently filled.
++
++Without this hook, fi's autotune profile uses random expert assignments
++(via ``torch.randint`` in the tensor_initializers), which:
++
++  1. Makes profile-time inputs non-deterministic across process invocations,
++     causing run-to-run tactic-pick variance at marginal cells.
++
++  2. Produces a uniform-random expert distribution that does not match
++     real workload distributions; per-tactic profile times don't reflect
++     production performance differences -- e.g. tile=256 2-CTA may
++     profile competitively under uniform-random load but underperform
++     at runtime.
++
++Reference: ports trt-llm's GroupedGemmInputsHelper.generate_num_tokens_per_expert
++and generate_token_selected_experts from
++tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py (lines 31-167) and the
++``inputs_pre_hook`` mechanism from CuteDslFusedMoENvfp4InputsHelper in
++tensorrt_llm/_torch/modules/fused_moe/fused_moe_cute_dsl.py.
++"""
++
++import math
++from typing import List
++
++import torch
++
++
++class CuteDslMoEInputsHelper:
++    """Generates a balanced approx-max-load distribution for autotune profiling.
++
++    Used as ``TuningConfig(inputs_pre_hook=helper.inputs_pre_hook, ...)`` in
++    the CuteDSL MoE autotune setup. The hook intercepts profile-time inputs
++    after the autotuner synthesizes them and replaces ``token_selected_experts``
++    with a deterministic balanced assignment.
++
++    Args:
++        num_experts: Total number of experts in the MoE layer.
++        top_k: Number of experts each token routes to.
++        num_local_experts: Number of experts processed by this rank
++            (= num_experts when expert parallelism is disabled).
++        local_expert_offset: Starting expert index for this rank
++            (= 0 when expert parallelism is disabled).
++        seed: Seed for reproducibility (default 515, matches trt-llm).
++    """
++
++    def __init__(
++        self,
++        num_experts: int,
++        top_k: int,
++        num_local_experts: int,
++        local_expert_offset: int = 0,
++        seed: int = 515,
++    ):
++        self.num_experts = num_experts
++        self.top_k = top_k
++        self.num_local_experts = num_local_experts
++        self.local_expert_offset = local_expert_offset
++        self.seed = seed
++
++    def generate_num_tokens_per_expert(
++        self, num_tokens: int, approx_max_load: bool = False
++    ) -> List[int]:
++        """Compute per-expert token counts under approx-max-load assumption.
++
++        Models worst-case load skew using the balls-into-bins concentration
++        bound (https://en.wikipedia.org/wiki/Balls_into_bins_problem); c=1.0
++        matches trt-llm's reference implementation.
++        """
++        ep_size = self.num_experts // self.num_local_experts
++        average_num_tokens_per_rank = num_tokens * self.top_k / ep_size
++
++        if approx_max_load:
++            c = 1.0
++            extra = c * math.sqrt(average_num_tokens_per_rank * math.log(ep_size))
++            num_tokens_on_curr_rank = math.ceil(average_num_tokens_per_rank + extra)
++        else:
++            num_tokens_on_curr_rank = math.ceil(average_num_tokens_per_rank)
++
++        num_tokens_on_curr_rank = min(num_tokens * self.top_k, num_tokens_on_curr_rank)
++
++        base, remainder = divmod(num_tokens_on_curr_rank, self.num_local_experts)
++        per_expert = [base + 1] * remainder + [base] * (
++            self.num_local_experts - remainder
++        )
++        assert len(per_expert) == self.num_local_experts
++        assert sum(per_expert) == num_tokens_on_curr_rank
++        return per_expert
++
++    def generate_token_selected_experts(
++        self,
++        num_tokens: int,
++        num_tokens_per_expert: List[int],
++        device: torch.device,
++        dtype: torch.dtype,
++    ) -> torch.Tensor:
++        """Balanced rejection sampling for the autotune profile.
++
++        For each local expert j, pick num_tokens_per_expert[j] tokens at
++        random (without replacement, using a per-expert random
++        permutation seeded by self.seed) and assign expert (j+offset)
++        to each picked token's next free top_k slot.
++
++        Mirrors trt-llm's GroupedGemmInputsHelper.generate_token_selected_experts.
++        """
++        token_selected_experts = -torch.ones(num_tokens, self.top_k, dtype=torch.int32)
++        num_selected_experts = torch.zeros(num_tokens, dtype=torch.int32)
++
++        # Seeded random permutations on CPU for cross-process reproducibility.
++        with torch.random.fork_rng(devices=[]):
++            torch.manual_seed(self.seed)
++            selection_orders = [
++                torch.randperm(num_tokens) for _ in range(self.num_local_experts)
++            ]
++
++        for j, num_tokens_j in enumerate(num_tokens_per_expert):
++            selection_order_j = selection_orders[j].tolist()
++            # Prioritize tokens that risk not hitting top_k before all
++            # experts are exhausted. (For typical MoE configs with
++            # num_local_experts < num_experts the prioritized list is
++            # empty; preserved for parity with trt's algorithm.)
++            #
++            # `j` is the local expert index. Using it (instead of the
++            # global `j + self.local_expert_offset`) makes `prioritized`
++            # always empty on any rank with `local_expert_offset > 0`,
++            # so the prioritization is effectively dead code on multi-rank
++            # EP. Faithful port of trt-llm's implementation; tracked
++            # upstream at https://github.com/NVIDIA/TensorRT-LLM/issues/14146.
++            limit = self.top_k - (self.num_experts - j)
++            prioritized = (
++                torch.nonzero(num_selected_experts <= limit).squeeze(-1).tolist()
++            )
++            if len(prioritized) > 0:
++                p_set = set(prioritized)
++                selection_order_j = prioritized + [
++                    i for i in selection_order_j if i not in p_set
++                ]
++            # When `num_tokens_per_expert[j] == 0`, the inner loop still
++            # enters and assigns one "ghost" token to expert `j` before
++            # the `num_tokens_j <= 0` break fires. Faithful port of trt-
++            # llm's behavior; tracked upstream at
++            # https://github.com/NVIDIA/TensorRT-LLM/issues/14146.
++            for i in selection_order_j:
++                if num_selected_experts[i] < self.top_k:
++                    slot = int(num_selected_experts[i])
++                    token_selected_experts[i, slot] = j + self.local_expert_offset
++                    num_selected_experts[i] += 1
++                    num_tokens_j -= 1
++                    if num_tokens_j <= 0:
++                        break
++
++        return token_selected_experts.to(device=device, dtype=dtype)
++
++    def inputs_pre_hook(self, inputs: List[torch.Tensor]) -> List[torch.Tensor]:
++        """Replace random ``token_selected_experts`` with rejection-sampled
++        balanced approx-max-load assignment. All other inputs pass through
++        unchanged.
++
++        Input layout matches ``CuteDslMoEWrapper.run`` argument order:
++
++            inputs[0]: x                       (passed through)
++            inputs[1]: x_sf                    (passed through)
++            inputs[2]: token_selected_experts  -> REPLACED
++            inputs[3..]: token_final_scales, weights, scales, alphas, output
++                                               (all passed through)
++        """
++        x, x_sf, token_selected_experts, *rest = inputs
++        num_tokens = token_selected_experts.size(0)
++
++        per_expert = self.generate_num_tokens_per_expert(
++            num_tokens, approx_max_load=True
++        )
++        new_tse = self.generate_token_selected_experts(
++            num_tokens=num_tokens,
++            num_tokens_per_expert=per_expert,
++            device=token_selected_experts.device,
++            dtype=token_selected_experts.dtype,
++        )
++        return [x, x_sf, new_tse, *rest]
+diff --git a/flashinfer/fused_moe/cute_dsl/tuner.py b/flashinfer/fused_moe/cute_dsl/tuner.py
+index 3cef5d839a..40baa3b2dd 100644
+--- a/flashinfer/fused_moe/cute_dsl/tuner.py
++++ b/flashinfer/fused_moe/cute_dsl/tuner.py
+@@ -45,6 +45,7 @@
+     get_hybrid_num_tokens_buckets,
+     map_to_hybrid_bucket_uncapped,
+ )
++from ._inputs_helper import CuteDslMoEInputsHelper
+ 
+ logger = logging.getLogger(__name__)
+ 
+@@ -280,6 +281,15 @@ def __init__(
+         self.output_dtype = output_dtype
+         self.enable_pdl = enable_pdl
+ 
++        # Helper that builds a deterministic balanced approx-max-load
++        # assignment for token_selected_experts during autotune profiling.
++        # See _inputs_helper.py for rationale -- the random tensor_initializer
++        # for input #2 produces non-deterministic and unrealistic per-expert
++        # load distributions, biasing autotune picks at marginal cells.
++        self._inputs_helper = CuteDslMoEInputsHelper(
++            num_experts, top_k, num_local_experts, local_expert_offset
++        )
++
+         # Instance-level so dummy expert IDs span all local experts
+         # (randint(0, num_experts)) for realistic profiling.
+         self.tuning_config = TuningConfig(
+@@ -294,25 +304,48 @@ def __init__(
+                     gen_tuning_buckets=get_hybrid_num_tokens_buckets,
+                     map_to_tuning_buckets=map_to_hybrid_bucket_uncapped,
+                     tensor_initializers=[
+-                        # 0: x — FP4 quantized input (uint8 packed)
++                        # 0: x — FP4 quantized input (uint8 packed). Seeded
++                        # for cross-process determinism of autotune picks
++                        # (matches trt-llm's seed=515 convention).
+                         lambda shapes, dtype, device: torch.randint(
+-                            0, 256, shapes, dtype=torch.uint8, device=device
++                            0,
++                            256,
++                            shapes,
++                            dtype=torch.uint8,
++                            device=device,
++                            generator=torch.Generator(device=device).manual_seed(515),
+                         ),
+-                        # 1: x_sf — FP8 scale factors (uint8)
++                        # 1: x_sf — FP8 scale factors (uint8). Seeded.
+                         lambda shapes, dtype, device: torch.randint(
+-                            1, 128, shapes, dtype=torch.uint8, device=device
++                            1,
++                            128,
++                            shapes,
++                            dtype=torch.uint8,
++                            device=device,
++                            generator=torch.Generator(device=device).manual_seed(515),
+                         ),
+-                        # 2: token_selected_experts — expert indices [0, num_experts)
++                        # 2: token_selected_experts — output is overwritten
++                        # by inputs_pre_hook (CuteDslMoEInputsHelper), but
++                        # seed the initializer too in case the hook is ever
++                        # disabled.
+                         lambda shapes, dtype, device: torch.randint(
+                             0,
+                             max(num_experts, 1),
+                             shapes,
+                             dtype=torch.int32,
+                             device=device,
++                            generator=torch.Generator(device=device).manual_seed(515),
+                         ),
+-                        # 3: token_final_scales — routing weights (softmax normalized)
++                        # 3: token_final_scales — softmax-normalized. Seeded.
+                         lambda shapes, dtype, device: torch.softmax(
+-                            torch.randn(shapes, device=device), dim=-1
++                            torch.randn(
++                                shapes,
++                                device=device,
++                                generator=torch.Generator(device=device).manual_seed(
++                                    515
++                                ),
++                            ),
++                            dim=-1,
+                         ).to(torch.float32),
+                         # 11: moe_output — output buffer
+                         lambda shapes, dtype, device: torch.empty(
+@@ -321,6 +354,11 @@ def __init__(
+                     ],
+                 ),
+             ),
++            inputs_pre_hook=self._inputs_helper.inputs_pre_hook,
++            # use_cold_l2_cache intentionally unset. A latent reference
++            # cycle in CuteDslMoEWrapper retains CUDA resources across
++            # tests; cold-L2 interacts with that retained state and
++            # produces NaN during autotune.
+         )
+ 
+     def __hash__(self):
+diff --git a/tests/moe/test_cute_dsl_fused_moe.py b/tests/moe/test_cute_dsl_fused_moe.py
+index cf2b4cfe0e..510f9c2150 100644
+--- a/tests/moe/test_cute_dsl_fused_moe.py
++++ b/tests/moe/test_cute_dsl_fused_moe.py
+@@ -417,6 +417,138 @@ def test_all_moe_tactics_pair_gemm1_and_gemm2_consistently(self):
+             )
+ 
+ 
++# =============================================================================
++# Test Class: CuteDslMoEInputsHelper.inputs_pre_hook layout contract
++# (no GPU required)
++# =============================================================================
++
++
++@cute_dsl_available
++class TestInputsHelperContract:
++    """Structural invariants for ``CuteDslMoEInputsHelper.inputs_pre_hook``.
++
++    Tests run without a GPU. They exercise the cross-file contract that
++    the hook's unpacking pattern (``x, x_sf, tse, *rest = inputs``) must
++    match the input list layout produced by ``CuteDslMoEWrapper.run`` so
++    that autotune profile inputs are not silently corrupted by a
++    refactor that reorders the wrapper's inputs list.
++    """
++
++    def _build_synthetic_inputs(self, num_tokens: int, num_local_experts: int):
++        """Mirror ``CuteDslMoEWrapper.run``'s inputs-list layout with
++        small-but-shape-faithful tensors so the test runs in <1s on CPU."""
++        n = num_tokens
++        # Small dimensions for fast CPU allocation; sizes only matter for
++        # shape checks, not numerical results.
++        hidden = 128
++        intermediate = 64
++        top_k = 8
++        sf_vec = 16
++        return [
++            torch.zeros(n, hidden // 2, dtype=torch.uint8),  # 0: x
++            torch.zeros(n, hidden // sf_vec, dtype=torch.uint8),  # 1: x_sf
++            torch.zeros(n, top_k, dtype=torch.int32),  # 2: token_selected_experts
++            torch.zeros(n, top_k, dtype=torch.float32),  # 3: token_final_scales
++            torch.zeros(
++                num_local_experts, 2 * intermediate, hidden // 2, dtype=torch.uint8
++            ),  # 4: w1_weight
++            torch.zeros(
++                num_local_experts, 2 * intermediate, hidden // sf_vec, dtype=torch.uint8
++            ),  # 5: w1_weight_sf
++            torch.zeros(num_local_experts, dtype=torch.float32),  # 6: w1_alpha
++            torch.zeros(num_local_experts, dtype=torch.float32),  # 7: fc2_input_scale
++            torch.zeros(
++                num_local_experts, hidden, intermediate // 2, dtype=torch.uint8
++            ),  # 8: w2_weight
++            torch.zeros(
++                num_local_experts, hidden, intermediate // sf_vec, dtype=torch.uint8
++            ),  # 9: w2_weight_sf
++            torch.zeros(num_local_experts, dtype=torch.float32),  # 10: w2_alpha
++            torch.zeros(n, hidden, dtype=torch.bfloat16),  # 11: moe_output
++        ]
++
++    def test_hook_replaces_input_2_and_passes_through_rest(self):
++        """``inputs_pre_hook`` must replace ``inputs[2]``
++        (token_selected_experts) and pass through every other input
++        unchanged. Pins the contract with ``CuteDslMoEWrapper.run`` —
++        if someone reorders the inputs list (e.g. moves x_sf or a
++        weight tensor) without updating the helper's unpacking, the
++        autotune profile silently corrupts a different tensor."""
++        from flashinfer.fused_moe.cute_dsl._inputs_helper import (
++            CuteDslMoEInputsHelper,
++        )
++
++        num_local_experts = 16
++        helper = CuteDslMoEInputsHelper(
++            num_experts=256,
++            top_k=8,
++            num_local_experts=num_local_experts,
++            local_expert_offset=0,
++        )
++
++        inputs = self._build_synthetic_inputs(
++            num_tokens=64, num_local_experts=num_local_experts
++        )
++        original_tse = inputs[2]
++
++        output = helper.inputs_pre_hook(inputs)
++
++        assert len(output) == 12, f"Expected 12 outputs, got {len(output)}"
++        # Index 2 must be replaced (different object identity), with
++        # the same shape and dtype.
++        assert output[2] is not original_tse, (
++            "inputs[2] (token_selected_experts) must be REPLACED by the hook, "
++            "not passed through. Hook implementation in _inputs_helper.py "
++            "must build a fresh tensor for input #2."
++        )
++        assert output[2].shape == original_tse.shape, (
++            f"Replaced tse has shape {output[2].shape}, expected {original_tse.shape}"
++        )
++        assert output[2].dtype == original_tse.dtype, (
++            f"Replaced tse has dtype {output[2].dtype}, expected {original_tse.dtype}"
++        )
++        # Every other input MUST pass through with object identity preserved.
++        # If this breaks, the hook is mutating something it shouldn't, OR the
++        # wrapper's inputs-list ordering has drifted from the hook's unpacking.
++        for i in (0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11):
++            assert output[i] is inputs[i], (
++                f"inputs[{i}] must pass through the hook unchanged (object identity). "
++                f"This typically indicates the inputs-list ordering in "
++                f"CuteDslMoEWrapper.run has drifted from the hook's unpacking pattern "
++                f"in CuteDslMoEInputsHelper.inputs_pre_hook."
++            )
++
++    def test_hook_is_deterministic_across_helper_instances(self):
++        """Two ``CuteDslMoEInputsHelper`` instances with the same seed
++        must produce tensor-equal replacement ``token_selected_experts``
++        for the same input. This is the core determinism property the
++        helper provides — cross-process autotune-pick variance is
++        eliminated only if seeded sampling is deterministic."""
++        from flashinfer.fused_moe.cute_dsl._inputs_helper import (
++            CuteDslMoEInputsHelper,
++        )
++
++        helper_a = CuteDslMoEInputsHelper(
++            num_experts=256, top_k=8, num_local_experts=16, local_expert_offset=0
++        )
++        helper_b = CuteDslMoEInputsHelper(
++            num_experts=256, top_k=8, num_local_experts=16, local_expert_offset=0
++        )
++
++        inputs_a = self._build_synthetic_inputs(num_tokens=64, num_local_experts=16)
++        inputs_b = self._build_synthetic_inputs(num_tokens=64, num_local_experts=16)
++
++        out_a = helper_a.inputs_pre_hook(inputs_a)
++        out_b = helper_b.inputs_pre_hook(inputs_b)
++
++        assert torch.equal(out_a[2], out_b[2]), (
++            "Two helpers with the same seed produced different "
++            "token_selected_experts tensors. The seeded "
++            "torch.random.fork_rng + manual_seed pattern in "
++            "generate_token_selected_experts is broken."
++        )
++
++
+ # =============================================================================
+ # Test Class: get_max_num_tiles / get_max_num_permuted_tokens (no GPU required)
+ # =============================================================================

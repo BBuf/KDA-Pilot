@@ -1,0 +1,134 @@
+diff --git a/tensorrt_llm/_torch/modules/fused_moe/fused_moe_triton.py b/tensorrt_llm/_torch/modules/fused_moe/fused_moe_triton.py
+index 5659b66e1b52..4c46490b619d 100755
+--- a/tensorrt_llm/_torch/modules/fused_moe/fused_moe_triton.py
++++ b/tensorrt_llm/_torch/modules/fused_moe/fused_moe_triton.py
+@@ -1139,11 +1139,23 @@ def _swizzle_and_replace(module, weight_name, scale_name, weight_data,
+                              scale_data):
+         new_weight, new_scale = swizzle_weight_and_scale(
+             weight_data, scale_data)
++        replacement_storage_ptrs = {
++            new_weight.data.untyped_storage().data_ptr(),
++            new_scale.data.untyped_storage().data_ptr(),
++        }
+         for name in (weight_name, scale_name):
+             old_param = module._parameters.pop(name, None)
+             assert old_param is not None, \
+                 f"Expected {name} to be a registered parameter before swizzling MXFP4 weights."
+-            old_param.data.storage().resize_(0)
++            old_storage = old_param.data.untyped_storage()
++            # H20 uses StridedLayout as an MXFP4 swizzle fallback. That
++            # conversion can alias the original scale storage, unlike the
++            # Hopper swizzled layout path, so only release storage that is no
++            # longer backing the replacement tensor.
++            old_storage_ptr = old_storage.data_ptr()
++            if (old_storage.nbytes() > 0
++                    and old_storage_ptr not in replacement_storage_ptrs):
++                old_storage.resize_(0)
+         torch.cuda.empty_cache()
+         setattr(module, weight_name, new_weight)
+         setattr(module, scale_name, new_scale)
+diff --git a/tests/integration/defs/accuracy/test_llm_api_pytorch.py b/tests/integration/defs/accuracy/test_llm_api_pytorch.py
+index 8765a1105e35..41c1cc17ffd3 100644
+--- a/tests/integration/defs/accuracy/test_llm_api_pytorch.py
++++ b/tests/integration/defs/accuracy/test_llm_api_pytorch.py
+@@ -26,8 +26,6 @@
+ 
+ from tensorrt_llm import LLM
+ from tensorrt_llm._torch.model_config import MoeLoadBalancerConfig
+-from tensorrt_llm._torch.modules.fused_moe.fused_moe_triton import \
+-    is_swizzling_supported
+ 
+ # isort: off
+ from tensorrt_llm.llmapi import (
+@@ -42,8 +40,9 @@
+ 
+ from ..conftest import (get_device_count, get_device_memory, llm_models_root,
+                         parametrize_with_ids, skip_no_hopper,
+-                        skip_post_blackwell, skip_pre_ada, skip_pre_blackwell,
+-                        skip_pre_hopper, skip_ray)
++                        skip_no_mxfp4_swizzle, skip_post_blackwell,
++                        skip_pre_ada, skip_pre_blackwell, skip_pre_hopper,
++                        skip_ray)
+ from .accuracy_core import (GSM8K, MMLU, CnnDailymail, GPQADiamond,
+                             JsonModeEval, LlmapiAccuracyTestHarness,
+                             LongBenchV1, LongBenchV2)
+@@ -5408,7 +5407,7 @@ class TestGPTOSS(LlmapiAccuracyTestHarness):
+     @pytest.mark.parametrize("moe_backend", [
+         "CUTLASS",
+         pytest.param("TRTLLM", marks=skip_pre_blackwell),
+-        pytest.param("TRITON", marks=skip_no_hopper)
++        pytest.param("TRITON", marks=[skip_no_hopper, skip_no_mxfp4_swizzle])
+     ],
+                              ids=["cutlass", "trtllm", "triton"])
+     @pytest.mark.parametrize("cuda_graph,overlap_scheduler", [
+@@ -5418,8 +5417,6 @@ class TestGPTOSS(LlmapiAccuracyTestHarness):
+                              ids=["v2_kv_cache", "v1_kv_cache"])
+     def test_w4_1gpu(self, kv_cache_dtype, moe_backend, cuda_graph,
+                      overlap_scheduler, mocker, v2_kv_cache):
+-        if (moe_backend == "TRITON" and not is_swizzling_supported()):
+-            pytest.skip("nvbugs/5446119")
+         mocker.patch.object(GSM8K, "MAX_OUTPUT_LEN", 8192)
+         mocker.patch.dict(GSM8K.EVALUATE_KWARGS,
+                           {"scores_filter": "exact_match,flexible-extract"})
+@@ -5448,14 +5445,13 @@ def test_w4_1gpu(self, kv_cache_dtype, moe_backend, cuda_graph,
+                           extra_evaluator_kwargs=self.extra_evaluator_kwargs)
+ 
+     @skip_no_hopper
++    @skip_no_mxfp4_swizzle
+     def test_w4_1gpu_piecewise_cuda_graph(self, mocker):
+         # Regression test for https://nvbugs/5880745. GPT-OSS with TRITON MoE
+         # backend + fullgraph torch.compile + piecewise CUDA graph requires
+         # layer_idx to propagate into MoE so MoE.forward dispatches through
+         # the torch.library.custom_op path instead of tracing the Triton
+         # kernel call (which Dynamo cannot lift).
+-        if not is_swizzling_supported():
+-            pytest.skip("nvbugs/5446119")
+         mocker.patch.object(GSM8K, "MAX_OUTPUT_LEN", 8192)
+         mocker.patch.dict(GSM8K.EVALUATE_KWARGS,
+                           {"scores_filter": "exact_match,flexible-extract"})
+@@ -5531,7 +5527,7 @@ def test_dflash(self, mocker):
+     @pytest.mark.parametrize("moe_backend", [
+         "CUTLASS",
+         pytest.param("TRTLLM", marks=skip_pre_blackwell),
+-        pytest.param("TRITON", marks=skip_no_hopper)
++        pytest.param("TRITON", marks=[skip_no_hopper, skip_no_mxfp4_swizzle])
+     ],
+                              ids=["cutlass", "trtllm", "triton"])
+     @pytest.mark.parametrize(
+@@ -5548,9 +5544,6 @@ def test_dflash(self, mocker):
+     def test_w4_4gpus(self, v2_kv_cache, kv_cache_reuse, kv_cache_dtype,
+                       moe_backend, tp_size, pp_size, ep_size, attention_dp,
+                       cuda_graph, overlap_scheduler, mocker):
+-        if (moe_backend == "TRITON" and not is_swizzling_supported()):
+-            pytest.skip("nvbugs/5446119")
+-
+         MAX_OUTPUT_LEN = 128179
+         MAX_INPUT_LEN = 32768
+ 
+diff --git a/tests/integration/defs/conftest.py b/tests/integration/defs/conftest.py
+index 9a32a750cd6c..ff92afdc149a 100644
+--- a/tests/integration/defs/conftest.py
++++ b/tests/integration/defs/conftest.py
+@@ -1970,6 +1970,10 @@ def check_device_contain(keyword_list):
+     get_sm_version() != 90,
+     reason="This test is only  supported in Hopper architecture")
+ 
++skip_no_mxfp4_swizzle = pytest.mark.skipif(
++    check_device_contain(["H20"]) and not check_device_contain(["H200"]),
++    reason="nvbugs/5446119: MXFP4 swizzle not supported on H20")
++
+ skip_no_sm120 = pytest.mark.skipif(get_sm_version() != 120,
+                                    reason="This test is for SM120")
+ 
+diff --git a/tests/integration/test_lists/waives.txt b/tests/integration/test_lists/waives.txt
+index 2ff3f33bba50..65a51b4c2dd4 100644
+--- a/tests/integration/test_lists/waives.txt
++++ b/tests/integration/test_lists/waives.txt
+@@ -305,7 +305,6 @@ full:GH200/examples/test_qwen2audio.py::test_llm_qwen2audio_single_gpu[qwen2_aud
+ full:GH200/unittest/trt/model_api/test_model_quantization.py SKIP (https://nvbugs/4979955)
+ full:H100/test_e2e.py::test_openai_chat_guided_decoding[openai/gpt-oss-120b] SKIP (https://nvbugs/6153284)
+ full:H100_PCIe/unittest/llmapi/test_llm_pytorch.py::test_llama_7b_multi_lora_evict_and_reload_lora_gpu_cache SKIP (https://nvbugs/5682551)
+-full:H20/accuracy/test_llm_api_pytorch.py::TestGPTOSS::test_dummy_load_format SKIP (https://nvbugs/6152892)
+ full:H20/accuracy/test_llm_api_pytorch.py::TestGPTOSS::test_w4_chunked_prefill[triton-auto] SKIP (https://nvbugs/6026676)
+ full:NVIDIA_B200/perf/test_perf.py::test_perf[deepseek_r1_fp8-bench-pytorch-float8-maxbs:1-input_output_len:1000,2000-reqs:10-ep:4-tp:8-gpus:8] SKIP (https://nvbugs/5150255)
+ full:NVIDIA_B200/perf/test_perf.py::test_perf[deepseek_r1_fp8-bench-pytorch-float8-maxbs:384-maxnt:1536-input_output_len:1000,2000-reqs:49152-con:3072-ep:8-tp:8-gpus:8] SKIP (https://nvbugs/5150255)

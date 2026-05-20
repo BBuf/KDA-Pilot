@@ -1,0 +1,144 @@
+diff --git a/tensorrt_llm/_torch/models/modeling_deepseekv4.py b/tensorrt_llm/_torch/models/modeling_deepseekv4.py
+index 74096c376e14..8a36fe078406 100644
+--- a/tensorrt_llm/_torch/models/modeling_deepseekv4.py
++++ b/tensorrt_llm/_torch/models/modeling_deepseekv4.py
+@@ -82,7 +82,13 @@
+ from ..modules.rms_norm import RMSNorm
+ from ..peft.lora.layer import LoraLayer
+ from ..speculative import SpecMetadata
+-from ..utils import AuxStreamType, EventType, Fp4QuantizedTensor, create_lm_head_tp_mapping
++from ..utils import (
++    AuxStreamType,
++    EventType,
++    Fp4QuantizedTensor,
++    create_lm_head_tp_mapping,
++    replace_parameter_and_save_metadata,
++)
+ from .modeling_speculative import SpecDecOneEngineForCausalLM
+ from .modeling_utils import DecoderModel, EagerFusionConfig, filter_weights, register_auto_model
+ 
+@@ -215,6 +221,56 @@ def _resolve_enable_fused_hc(config: PretrainedConfig) -> bool:
+     return bool(getattr(config, "enable_fused_hc", True))
+ 
+ 
++def _copy_deepseek_v4_fused_a_weight_scale(
++    module: Linear, fused_a: torch.Tensor, fused_a_scale: torch.Tensor
++) -> None:
++    if tuple(module.weight_scale.shape) == tuple(fused_a_scale.shape):
++        module.weight_scale.data.copy_(fused_a_scale)
++        return
++
++    if (
++        module.weight_scale.ndim == 2
++        and fused_a_scale.ndim == 2
++        and module.weight_scale.shape[0] >= fused_a_scale.shape[0]
++        and module.weight_scale.shape[1] == fused_a_scale.shape[1]
++    ):
++        module.weight_scale.data[0 : fused_a_scale.shape[0]].copy_(fused_a_scale)
++        return
++
++    expected_fp8_scale_shape = (
++        math.ceil(fused_a.shape[0] / 128),
++        math.ceil(fused_a.shape[1] / 128),
++    )
++    can_rebuild_fp8_scale = (
++        fused_a_scale.ndim == 2
++        and tuple(fused_a_scale.shape) == expected_fp8_scale_shape
++        and tuple(module.weight.shape) == tuple(fused_a.shape)
++    )
++    if not can_rebuild_fp8_scale:
++        raise RuntimeError(
++            "DeepSeek-V4 fused A projection weight_scale shape mismatch: "
++            f"module={tuple(module.weight_scale.shape)}, checkpoint={tuple(fused_a_scale.shape)}, "
++            f"weight={tuple(module.weight.shape)}, checkpoint_weight={tuple(fused_a.shape)}"
++        )
++
++    corrected_weight_scale = nn.Parameter(
++        torch.empty(
++            fused_a_scale.shape,
++            dtype=module.weight_scale.dtype,
++            device=module.weight_scale.device,
++        ),
++        requires_grad=False,
++    )
++    replace_parameter_and_save_metadata(
++        module,
++        "weight_scale",
++        corrected_weight_scale,
++        module.rebuild_tensor_metadata,
++    )
++
++    module.weight_scale.data.copy_(fused_a_scale)
++
++
+ def _remap_deepseek_v4_checkpoint_keys(
+     weights: Dict, num_hidden_layers: int, kv_lora_rank: int = 448
+ ) -> Dict:
+@@ -941,7 +997,7 @@ def load_flat_hc_weights(module, names: List[str]) -> bool:
+                             fused_a_scale = kv_a_proj_with_mqa_scale
+                         # For DeepseekV32: kv_a_proj_with_mqa is oversized
+                         # to include indexer k weights, which is filled in post_load_weights.
+-                        module.weight_scale.data[0 : fused_a_scale.shape[0]].copy_(fused_a_scale)
++                        _copy_deepseek_v4_fused_a_weight_scale(module, fused_a, fused_a_scale)
+                     else:
+                         fused_a = weights[f"{'.'.join(names[:-1])}.kv_a_proj_with_mqa.weight"][:]
+                         if not is_lite:
+@@ -958,9 +1014,7 @@ def load_flat_hc_weights(module, names: List[str]) -> bool:
+                                 ][:]
+                                 fused_a_scale = torch.cat([q_a_proj_scale, fused_a_scale], dim=0)
+ 
+-                            module.weight_scale.data[0 : fused_a_scale.shape[0]].copy_(
+-                                fused_a_scale
+-                            )
++                            _copy_deepseek_v4_fused_a_weight_scale(module, fused_a, fused_a_scale)
+                         # For DeepseekV32: kv_a_proj_with_mqa is oversized
+                         # to include indexer k weights, which is filled in post_load_weights.
+                         module.weight.data[0 : fused_a.shape[0]].copy_(fused_a)
+diff --git a/tests/unittest/_torch/modeling/test_modeling_deepseekv4.py b/tests/unittest/_torch/modeling/test_modeling_deepseekv4.py
+index a3dd472a80aa..21234a3adace 100644
+--- a/tests/unittest/_torch/modeling/test_modeling_deepseekv4.py
++++ b/tests/unittest/_torch/modeling/test_modeling_deepseekv4.py
+@@ -31,6 +31,7 @@
+     DeepseekV4ForCausalLM,
+     DeepseekV4Gate,
+     DeepseekV4MTP,
++    _copy_deepseek_v4_fused_a_weight_scale,
+     _deepseek_v4_pos_embd_params,
+     _remap_deepseek_v4_checkpoint_keys,
+     _resolve_enable_fused_hc,
+@@ -180,6 +181,35 @@ def test_deepseek_v4_weight_remap_for_fp8_routed_experts():
+     assert "model.layers.0.mlp.experts.0.w1.weight_scale" not in remapped
+ 
+ 
++def test_deepseek_v4_fused_a_weight_scale_rebuilds_fp8_shape():
++    module = torch.nn.Module()
++    module.weight = torch.nn.Parameter(torch.empty((2048, 7168), dtype=torch.float8_e4m3fn))
++    module.weight_scale = torch.nn.Parameter(torch.empty((16, 16), dtype=torch.float32))
++    module.rebuild_tensor_metadata = {}
++    fused_a = torch.empty((2048, 7168), dtype=torch.float8_e4m3fn)
++    fused_a_scale = torch.ones((16, 56), dtype=torch.float32)
++
++    _copy_deepseek_v4_fused_a_weight_scale(module, fused_a, fused_a_scale)
++
++    assert module.weight_scale.shape == fused_a_scale.shape
++    assert torch.equal(module.weight_scale, fused_a_scale)
++
++
++def test_deepseek_v4_fused_a_weight_scale_keeps_oversized_slice():
++    module = torch.nn.Module()
++    module.weight = torch.nn.Parameter(torch.empty((2176, 7168), dtype=torch.float8_e4m3fn))
++    module.weight_scale = torch.nn.Parameter(torch.zeros((17, 56), dtype=torch.float32))
++    module.rebuild_tensor_metadata = {}
++    fused_a = torch.empty((2048, 7168), dtype=torch.float8_e4m3fn)
++    fused_a_scale = torch.ones((16, 56), dtype=torch.float32)
++
++    _copy_deepseek_v4_fused_a_weight_scale(module, fused_a, fused_a_scale)
++
++    assert module.weight_scale.shape == (17, 56)
++    assert torch.equal(module.weight_scale[:16], fused_a_scale)
++    assert torch.equal(module.weight_scale[16], torch.zeros(56))
++
++
+ def test_deepseek_v4_kv_norm_keeps_full_head_dim():
+     weights = {
+         "layers.0.attn.kv_norm.weight": torch.arange(512, dtype=torch.float32),

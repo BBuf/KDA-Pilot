@@ -1,0 +1,13 @@
+diff --git a/python/sglang/srt/layers/attention/vision.py b/python/sglang/srt/layers/attention/vision.py
+index 6791d0c79078..2b67e5edb2f6 100644
+--- a/python/sglang/srt/layers/attention/vision.py
++++ b/python/sglang/srt/layers/attention/vision.py
+@@ -951,7 +951,7 @@ def _determine_attention_backend(self, passed_backend: Optional[str]) -> str:
+             major, minor = get_device_capability()
+             if major == 9:
+                 backend = "fa3"
+-            elif major == 10:
++            elif major == 10 and minor != 3:
+                 backend = "fa4"
+             else:
+                 backend = "triton_attn"

@@ -1,0 +1,95 @@
+diff --git a/src/transform/lower_tile_op.cc b/src/transform/lower_tile_op.cc
+index ea92ac66a3..7065803cec 100644
+--- a/src/transform/lower_tile_op.cc
++++ b/src/transform/lower_tile_op.cc
+@@ -198,6 +198,36 @@ class RemapBufferRewriter : public arith::IRMutatorWithAnalyzer {
+   Map<Buffer, Buffer> buffer_remap_;
+ };
+ 
++/*! \brief Rewrite the synthetic CPU fallback thread variable to a constant.
++ *
++ * CPU `c` kernels use a degenerate fallback thread variable while fragment and
++ * tile-op lowering still share thread-oriented helper code. After this pass has
++ * consumed that helper variable, it should not remain in lowered CPU TIR.
++ */
++class CPUFallbackThreadVarCanonicalizer : public StmtExprMutator {
++public:
++  static Stmt Rewrite(Stmt stmt, Var fallback_thread_var) {
++    CPUFallbackThreadVarCanonicalizer canonicalizer(
++        std::move(fallback_thread_var));
++    return canonicalizer(std::move(stmt));
++  }
++
++private:
++  explicit CPUFallbackThreadVarCanonicalizer(Var fallback_thread_var)
++      : fallback_thread_var_(std::move(fallback_thread_var)) {}
++
++  PrimExpr VisitExpr_(const VarNode *op) final {
++    if (fallback_thread_var_.defined() &&
++        (op == fallback_thread_var_.get() ||
++         op->name_hint == fallback_thread_var_->name_hint)) {
++      return make_zero(op->dtype);
++    }
++    return StmtExprMutator::VisitExpr_(op);
++  }
++
++  Var fallback_thread_var_;
++};
++
+ class LowerTileOpPass : arith::IRMutatorWithAnalyzer {
+ public:
+   static PrimFunc Substitute(PrimFunc f) {
+@@ -290,6 +320,14 @@ class LowerTileOpPass : arith::IRMutatorWithAnalyzer {
+           << "Failed to find root BlockRealize for barrier injection";
+     }
+ 
++    if (TargetIsCPU(substituter.target_)) {
++      // TODO(#2226): Remove the underlying CPU fallback-thread placeholder
++      // shared by LayoutInference/LowerTileOp. Until then, canonicalize the
++      // synthetic fallback after fragment/tile lowering has consumed it.
++      fptr->body = CPUFallbackThreadVarCanonicalizer::Rewrite(
++          std::move(fptr->body), substituter.thread_var_->var);
++    }
++
+     return f;
+   }
+ 
+diff --git a/testing/python/cpu/test_tilelang_cpu_while_repro.py b/testing/python/cpu/test_tilelang_cpu_while_repro.py
+new file mode 100644
+index 0000000000..ddfb47dcdb
+--- /dev/null
++++ b/testing/python/cpu/test_tilelang_cpu_while_repro.py
+@@ -0,0 +1,33 @@
++import tilelang
++import tilelang.language as T
++
++
++def test_cpu_kernel_source_generation_with_while() -> None:
++    """Regression test: CPU `T.While` kernels should compile without errors.
++
++    See: https://github.com/tile-ai/tilelang/issues/2202
++
++    Historically, a CPU kernel containing `T.While(...)` inside
++    `T.Kernel(..., is_cpu=True)` could leak the synthetic fallback thread
++    variable `v_thread` into host/device splitting. That in turn caused CPU
++    compilation to fail during packed-API generation or later C wrapper
++    generation.
++
++    This test follows the existing compile-only regression style used in the
++    repository: success is defined by `tilelang.compile(..., target="c")`
++    completing without raising an exception.
++    """
++
++    @T.prim_func
++    def main(flag: T.Buffer((1,), "int32"), out: T.Buffer((1,), "int32")):
++        with T.Kernel(1, is_cpu=True):
++            state = T.alloc_fragment((1,), "int32")
++            state[0] = 0
++
++            with T.While(state[0] == 0):
++                state[0] = flag[0]
++
++            out[0] = state[0]
++
++    compiled = tilelang.compile(main, target="c")
++    assert compiled is not None

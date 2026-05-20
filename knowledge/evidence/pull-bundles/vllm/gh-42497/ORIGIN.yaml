@@ -1,0 +1,45 @@
+schema_version: 1
+source_key: vllm-project/vllm#42497
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42497
+title: '[Perf] Wire silu_and_mul_per_block_quant into TritonFP8MoE (MiniMax-M2) '
+url: https://github.com/vllm-project/vllm/pull/42497
+state: closed
+merged_at: '2026-05-18T01:57:04Z'
+base_ref_oid: 39c67d714ef091df1533181bdc3df82dc9ac3e07
+head_ref_oid: e5b95115573865381771346b45b06a96ea91a6a2
+captured_at: '2026-05-20T15:10:00.175047+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- benchmark kernel
+- cuda
+- cuda kernel
+- fp8
+- gemm
+- moe
+- moe kernel
+- triton kernel
+techniques:
+- fine-grained-quantization
+- kernel-fusion
+hardware_features:
+- fp8
+kernel_types:
+- gemm
+- moe
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: vllm/model_executor/layers/fused_moe/experts/triton_moe.py
+    local_path: source-snapshot/vllm/model_executor/layers/fused_moe/experts/triton_moe.py
+    ref: e5b95115573865381771346b45b06a96ea91a6a2
+    status: modified
+    fetched: true

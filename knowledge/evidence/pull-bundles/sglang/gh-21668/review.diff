@@ -1,0 +1,955 @@
+diff --git a/docker/xpu.Dockerfile b/docker/xpu.Dockerfile
+index feec566bb8ff..2c9b765c3d50 100644
+--- a/docker/xpu.Dockerfile
++++ b/docker/xpu.Dockerfile
+@@ -54,6 +54,8 @@ RUN --mount=type=secret,id=github_token \
+     cd /home/sdp && \
+     . /home/sdp/miniforge3/bin/activate && \
+     conda activate py${PYTHON_VERSION} && \
++    conda install libsqlite=3.48.0 -y && \
++    pip install msgspec blake3 py-cpuinfo compressed_tensors gguf partial_json_parser einops tabulate --root-user-action=ignore && \
+     pip3 install torch==2.11.0+xpu torchao torchvision torchaudio==2.11.0+xpu --index-url https://download.pytorch.org/whl/xpu
+ 
+ RUN --mount=type=secret,id=github_token \
+@@ -66,8 +68,8 @@ RUN --mount=type=secret,id=github_token \
+     cp pyproject_xpu.toml pyproject.toml && \
+     pip install . --extra-index-url https://download.pytorch.org/whl/xpu && \
+     pip install --no-deps xgrammar==0.1.33 && \
+-    pip install msgspec blake3 py-cpuinfo compressed_tensors gguf partial_json_parser einops tabulate --root-user-action=ignore && \
+-    conda install libsqlite=3.48.0 -y && \
++    # index will change after torch 2.12 release
++    pip install triton-xpu --index-url https://download.pytorch.org/whl/test/xpu --force-reinstall && \
+     # Add environment setup commands to .bashrc again (in case it was overwritten)
+     echo ". /home/sdp/miniforge3/bin/activate; conda activate py${PYTHON_VERSION}; cd /home/sdp" >> /home/sdp/.bashrc
+ 
+diff --git a/docs_new/docs/hardware-platforms/xpu.mdx b/docs_new/docs/hardware-platforms/xpu.mdx
+index 0c9f0ac835df..8eae4fd67eae 100644
+--- a/docs_new/docs/hardware-platforms/xpu.mdx
++++ b/docs_new/docs/hardware-platforms/xpu.mdx
+@@ -67,6 +67,8 @@ cp pyproject_xpu.toml pyproject.toml
+ # Install SGLang dependent libs, and build SGLang main package
+ pip install --upgrade pip setuptools
+ pip install -v . --extra-index-url https://download.pytorch.org/whl/xpu
++# Using this version of triton-xpu to avoid a bug in the version shipped with torch 2.11.0+xpu
++pip install triton-xpu --index-url https://download.pytorch.org/whl/test/xpu --force-reinstall # index will change after torch 2.12 release
+ ```
+ 
+ ### Install Using Docker
+diff --git a/python/sglang/bench_one_batch.py b/python/sglang/bench_one_batch.py
+index fa854fdef4fb..ec379d53de2e 100644
+--- a/python/sglang/bench_one_batch.py
++++ b/python/sglang/bench_one_batch.py
+@@ -174,7 +174,9 @@ def stop_profile(
+     if save_trace:
+         if profiler is not None:
+             if trace_filename:
+-                _save_profile_trace_results(profiler, trace_filename)
++                _save_profile_trace_results(
++                    profiler, profile_activities, trace_filename
++                )
+                 stage_desc = f"for {stage}" if stage else ""
+                 rank_print(
+                     f"torch profiler chrome trace {stage_desc} saved to {trace_filename}"
+@@ -597,15 +599,17 @@ def _create_torch_profiler_filename(
+     return os.path.join(output_dir, filename)
+ 
+ 
+-def _save_profile_trace_results(profiler, filename):
++def _save_profile_trace_results(profiler, profile_activities, filename):
+     parent_dir = os.path.dirname(os.path.abspath(filename))
+     os.makedirs(parent_dir, exist_ok=True)
+     profiler.export_chrome_trace(filename)
+-    print(
+-        profiler.key_averages(group_by_input_shape=True).table(
+-            sort_by="self_cpu_time_total"
+-        )
+-    )
++    if "GPU" in profile_activities:
++        sort_by = "self_cuda_time_total"
++    elif "XPU" in profile_activities:
++        sort_by = "self_xpu_time_total"
++    else:
++        sort_by = "self_cpu_time_total"
++    print(profiler.key_averages(group_by_input_shape=True).table(sort_by=sort_by))
+ 
+ 
+ def correctness_test(
+diff --git a/python/sglang/srt/hardware_backend/xpu/__init__.py b/python/sglang/srt/hardware_backend/xpu/__init__.py
+new file mode 100644
+index 000000000000..6b82be8053b9
+--- /dev/null
++++ b/python/sglang/srt/hardware_backend/xpu/__init__.py
+@@ -0,0 +1 @@
++# XPU (Intel GPU) hardware backend
+diff --git a/python/sglang/srt/hardware_backend/xpu/kernels/fla/chunk_delta_h.py b/python/sglang/srt/hardware_backend/xpu/kernels/fla/chunk_delta_h.py
+new file mode 100644
+index 000000000000..f1d5bdabd960
+--- /dev/null
++++ b/python/sglang/srt/hardware_backend/xpu/kernels/fla/chunk_delta_h.py
+@@ -0,0 +1,240 @@
++from typing import Optional, Tuple
++
++import torch
++import triton
++import triton.language as tl
++
++from sglang.srt.layers.attention.fla.index import (
++    prepare_chunk_indices,
++    prepare_chunk_offsets,
++)
++from sglang.srt.layers.attention.fla.op import exp, make_tensor_descriptor, safe_exp
++from sglang.srt.layers.attention.fla.utils import (
++    autotune_cache_kwargs,
++)
++
++CHUNK_SIZE = 64
++
++
++# This kernel handles K blocks in a for loop to minimize register spills
++@triton.autotune(
++    configs=[triton.Config({"BV": 64}, num_warps=8, num_stages=2)],
++    key=["H", "K", "V", "BT", "USE_GK", "USE_INITIAL_STATE", "NT_BUCKET"],
++    **autotune_cache_kwargs,
++)
++@triton.jit(do_not_specialize=["T"])
++def chunk_gated_delta_rule_fwd_kernel_h_blockdim64_k_loop(
++    k,
++    v,
++    w,
++    v_new,
++    g,
++    gk,
++    h,
++    initial_state,
++    initial_state_indices,
++    cu_seqlens,
++    chunk_offsets,
++    T,
++    H: tl.constexpr,
++    Hg: tl.constexpr,
++    K: tl.constexpr,
++    V: tl.constexpr,
++    BT: tl.constexpr,
++    BV: tl.constexpr,
++    USE_G: tl.constexpr,
++    USE_GK: tl.constexpr,
++    USE_INITIAL_STATE: tl.constexpr,
++    INPLACE_UPDATE: tl.constexpr,
++    SAVE_NEW_VALUE: tl.constexpr,
++    IS_VARLEN: tl.constexpr,
++    NT_BUCKET: tl.constexpr,  # this arg is kept to align with the triton kernel for CUDA
++):
++    i_v, i_nh = tl.program_id(0), tl.program_id(1)
++    i_n, i_h = i_nh // H, i_nh % H
++    if IS_VARLEN:
++        bos, eos = tl.load(cu_seqlens + i_n).to(tl.int32), tl.load(
++            cu_seqlens + i_n + 1
++        ).to(tl.int32)
++        T = eos - bos
++        NT = tl.cdiv(T, BT)
++        boh = tl.load(chunk_offsets + i_n).to(tl.int32)
++    else:
++        bos, eos = i_n * T, i_n * T + T
++        NT = tl.cdiv(T, BT)
++        boh = i_n * NT
++
++    # calculate offset
++    h += ((boh * H + i_h) * V * K).to(tl.int64)
++    v += ((bos * H + i_h) * V).to(tl.int64)
++    k += ((bos * Hg + i_h // (H // Hg)) * K).to(tl.int64)
++    w += ((bos * H + i_h) * K).to(tl.int64)
++    if SAVE_NEW_VALUE:
++        v_new += ((bos * H + i_h) * V).to(tl.int64)
++    stride_v = H * V
++    stride_h = H * V * K
++    stride_k = Hg * K
++    stride_w = H * K
++
++    w_desc = make_tensor_descriptor(
++        base=w,
++        shape=(T, K),
++        strides=(stride_w, 1),
++        block_shape=(BT, 64),
++    )
++    v_desc = make_tensor_descriptor(
++        base=v,
++        shape=(T, V),
++        strides=(stride_v, 1),
++        block_shape=(BT, BV),
++    )
++    k_desc = make_tensor_descriptor(
++        base=k,
++        shape=(T, K),
++        strides=(stride_k, 1),
++        block_shape=(BT, 64),
++    )
++    if SAVE_NEW_VALUE:
++        v_new_desc = make_tensor_descriptor(
++            base=v_new,
++            shape=(T, V),
++            strides=(stride_v, 1),
++            block_shape=(BT, BV),
++        )
++
++    index = tl.load(initial_state_indices + i_n).to(tl.int32)
++    h0 = initial_state + index * stride_h
++    ht = initial_state + index * stride_h
++    if USE_INITIAL_STATE:
++        h0 = h0 + i_h * V * K
++    if INPLACE_UPDATE:
++        ht = ht + i_h * V * K
++
++    # Explicit K loop here to reduce register pressure
++    for k_start in range(0, K, 64):
++        # [BV, BK]
++        b_h1 = tl.zeros([BV, 64], dtype=tl.float32)
++
++        # load initial state
++        if USE_INITIAL_STATE:
++            p_h0_1 = tl.make_block_ptr(
++                h0, (V, K), (K, 1), (i_v * BV, k_start), (BV, 64), (1, 0)
++            )
++            b_h1 += tl.load(p_h0_1, boundary_check=(0, 1)).to(tl.float32)
++
++        # main recurrence
++        for i_t in range(NT):
++            p_h1 = tl.make_block_ptr(
++                h + i_t * stride_h,
++                (V, K),
++                (K, 1),
++                (i_v * BV, k_start),
++                (BV, 64),
++                (1, 0),
++            )
++            tl.store(p_h1, b_h1.to(p_h1.dtype.element_ty), boundary_check=(0, 1))
++
++            b_w = w_desc.load([i_t * BT, k_start])
++            b_v = tl.dot(b_w, tl.trans(b_h1).to(b_w.dtype))
++            b_v = v_desc.load([i_t * BT, i_v * BV]) - b_v
++
++            if SAVE_NEW_VALUE:
++                v_new_desc.store([i_t * BT, i_v * BV], b_v.to(v_new.dtype.element_ty))
++
++            last_idx = min((i_t + 1) * BT, T) - 1
++            if USE_G:
++                b_g_last = tl.load(g + bos * H + last_idx * H + i_h)
++                p_g = tl.make_block_ptr(
++                    g + bos * H + i_h, (T,), (H,), (i_t * BT,), (BT,), (0,)
++                )
++                b_g = tl.load(p_g, boundary_check=(0,))
++                b_v = b_v * safe_exp(b_g_last - b_g)[:, None]
++                b_g_last = exp(b_g_last)
++                b_h1 = b_h1 * b_g_last
++
++            if USE_GK:
++                o_k1 = tl.arange(0, 64) + k_start
++                b_gk_last1 = tl.load(
++                    gk + (bos + last_idx) * H * K + i_h * K + o_k1,
++                    mask=(o_k1 < K),
++                    other=0.0,
++                )
++                b_h1 *= exp(b_gk_last1)[None, :]
++            b_v = b_v.to(k.dtype.element_ty)
++
++            b_k = tl.trans(k_desc.load([i_t * BT, k_start]))
++            b_h1 += tl.trans(tl.dot(b_k, b_v))
++
++        # epilogue
++        if INPLACE_UPDATE:
++            p_ht = tl.make_block_ptr(
++                ht, (V, K), (K, 1), (i_v * BV, k_start), (BV, 64), (1, 0)
++            )
++            tl.store(p_ht, b_h1.to(p_ht.dtype.element_ty), boundary_check=(0, 1))
++
++
++def chunk_gated_delta_rule_fwd_h(
++    k: torch.Tensor,
++    w: torch.Tensor,
++    u: torch.Tensor,
++    g: Optional[torch.Tensor] = None,
++    gk: Optional[torch.Tensor] = None,
++    initial_state: Optional[torch.Tensor] = None,
++    initial_state_indices: Optional[torch.Tensor] = None,
++    save_new_value: bool = True,
++    cu_seqlens: Optional[torch.LongTensor] = None,
++    chunk_indices: Optional[torch.LongTensor] = None,
++) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
++    B, T, Hg, K, V = *k.shape, u.shape[-1]
++    H = u.shape[-2]
++    BT = CHUNK_SIZE
++
++    if chunk_indices is None and cu_seqlens is not None:
++        chunk_indices = prepare_chunk_indices(cu_seqlens, CHUNK_SIZE)
++    # N: the actual number of sequences in the batch with either equal or variable lengths
++    if cu_seqlens is None:
++        N, NT, chunk_offsets = B, triton.cdiv(T, BT), None
++    else:
++        N, NT, chunk_offsets = (
++            len(cu_seqlens) - 1,
++            len(chunk_indices),
++            prepare_chunk_offsets(cu_seqlens, BT),
++        )
++    assert K <= 256, "current kernel does not support head dimension larger than 256."
++
++    h = k.new_empty(B, NT, H, V, K)
++
++    v_new = torch.empty_like(u) if save_new_value else None
++
++    def grid(meta):
++        return (triton.cdiv(V, meta["BV"]), N * H)
++
++    kernel = chunk_gated_delta_rule_fwd_kernel_h_blockdim64_k_loop
++
++    kernel[grid](
++        k=k,
++        v=u,
++        w=w,
++        v_new=v_new,
++        g=g,
++        gk=gk,
++        h=h,
++        initial_state=initial_state,
++        initial_state_indices=initial_state_indices,
++        cu_seqlens=cu_seqlens,
++        chunk_offsets=chunk_offsets,
++        T=T,
++        H=H,
++        Hg=Hg,
++        K=K,
++        V=V,
++        BT=BT,
++        USE_G=g is not None,
++        USE_GK=gk is not None,
++        USE_INITIAL_STATE=initial_state is not None,
++        INPLACE_UPDATE=True,
++        SAVE_NEW_VALUE=v_new is not None,
++        IS_VARLEN=cu_seqlens is not None,
++        NT_BUCKET=(0 if NT <= 32 else (1 if NT <= 128 else 2)),
++    )
++    return h, v_new
+diff --git a/python/sglang/srt/hardware_backend/xpu/kernels/fla/chunk_fwd.py b/python/sglang/srt/hardware_backend/xpu/kernels/fla/chunk_fwd.py
+new file mode 100644
+index 000000000000..3e54712dd9d7
+--- /dev/null
++++ b/python/sglang/srt/hardware_backend/xpu/kernels/fla/chunk_fwd.py
+@@ -0,0 +1,315 @@
++import torch
++import triton
++import triton.language as tl
++
++from sglang.srt.layers.attention.fla.index import prepare_chunk_indices
++from sglang.srt.layers.attention.fla.op import safe_exp
++from sglang.srt.layers.attention.fla.utils import (
++    autotune_cache_kwargs,
++)
++from sglang.srt.layers.attention.fla.wy_fast import recompute_w_u_fwd
++
++_MERGE_DOT_PRECISION = tl.constexpr("ieee")
++
++
++@triton.heuristics(
++    {
++        "USE_G": lambda args: args["g"] is not None,
++        "IS_VARLEN": lambda args: args["cu_seqlens"] is not None,
++    }
++)
++@triton.autotune(
++    configs=[
++        triton.Config({"BK": BK}, num_warps=num_warps)
++        for BK in [16, 32, 64]
++        for num_warps in [2, 4, 8, 16, 32]
++    ],
++    key=["H", "Hg", "K", "BC", "BK", "USE_G", "IS_VARLEN"],
++    **autotune_cache_kwargs,
++)
++@triton.jit(do_not_specialize=["T"])
++def chunk_gated_delta_rule_fwd_kkt_solve_kernel_low_reg(
++    k,
++    g,
++    beta,
++    A,
++    cu_seqlens,
++    chunk_indices,
++    T,
++    H: tl.constexpr,
++    Hg: tl.constexpr,
++    K: tl.constexpr,
++    BT: tl.constexpr,
++    BC: tl.constexpr,
++    BK: tl.constexpr,
++    USE_G: tl.constexpr,
++    IS_VARLEN: tl.constexpr,
++):
++    """
++    Low-reg version: one [BC,BC] accumulator at a time to minimise register pressure.
++
++    Pass 1: loop over 4 diagonal blocks (tl.static_range unrolls to 4 K-loops).
++    Pass 2: nested loop over off-diagonal distance d=1,2,3 and column j.
++      d=1 (nearest): Ai_{ij} = -Ai_ii @ A_ij_raw @ Ai_jj
++      d>1 (farther):  Ai_{ij} = -(Ai_ii @ A_ij_raw
++                                  + sum_{m=j+1}^{i-1} Ai_im @ A_mj_raw) @ Ai_jj
++    Each K-loop holds exactly one [BC,BC] accumulator.  Raw blocks needed by
++    later correction terms are spilled to upper-triangular scratch slots in A
++    (see _KKT_SCRATCH_COL for the layout; boundary_check makes out-of-bounds
++    stores/loads safe so no runtime `if i_tcX < T` guards are needed).
++    """
++    i_t, i_bh = tl.program_id(0), tl.program_id(1)
++    i_b, i_h = i_bh // H, i_bh % H
++
++    if IS_VARLEN:
++        i_n, i_t = tl.load(chunk_indices + i_t * 2).to(tl.int32), tl.load(
++            chunk_indices + i_t * 2 + 1
++        ).to(tl.int32)
++        bos, eos = tl.load(cu_seqlens + i_n).to(tl.int32), tl.load(
++            cu_seqlens + i_n + 1
++        ).to(tl.int32)
++        T = eos - bos
++    else:
++        bos, eos = i_b * T, i_b * T + T
++
++    if i_t * BT >= T:
++        return
++
++    i_tc0 = i_t * BT
++    k += (bos * Hg + i_h // (H // Hg)) * K
++    A += (bos * H + i_h) * BT
++
++    o_i = tl.arange(0, BC)
++    m_d = o_i[:, None] > o_i[None, :]
++    m_I = o_i[:, None] == o_i[None, :]
++
++    ############################################################################
++    # Pass 1: diagonal blocks — one K-loop per sub-chunk (tl.static_range → 4)
++    ############################################################################
++    for i_b in tl.static_range(4):
++        i_tci = i_tc0 + i_b * BC
++        m_tci = (i_tci + o_i) < T
++        p_bi = tl.make_block_ptr(
++            beta + bos * H + i_h, (T,), (H,), (i_tci,), (BC,), (0,)
++        )
++        b_bi = tl.load(p_bi, boundary_check=(0,)).to(tl.float32)
++        if USE_G:
++            p_gi = tl.make_block_ptr(
++                g + bos * H + i_h, (T,), (H,), (i_tci,), (BC,), (0,)
++            )
++            b_gi = tl.load(p_gi, boundary_check=(0,)).to(tl.float32)
++        b_A = tl.zeros([BC, BC], dtype=tl.float32)
++        for i_k in range(tl.cdiv(K, BK)):
++            p_k = tl.make_block_ptr(
++                k, (T, K), (Hg * K, 1), (i_tci, i_k * BK), (BC, BK), (1, 0)
++            )
++            b_k = tl.load(p_k, boundary_check=(0, 1))
++            b_A += tl.dot(b_k, tl.trans(b_k))
++        if USE_G:
++            b_A *= safe_exp(b_gi[:, None] - b_gi[None, :])
++        b_A = (
++            tl.where(m_d & (m_tci[:, None] & m_tci[None, :]), b_A, 0.0) * b_bi[:, None]
++        )
++        # Forward substitution: solve (I + A_diag) x = I column by column.
++        # Extra iterations for out-of-bounds rows are no-ops (b_A rows are zero).
++        b_Ai = -b_A
++        for i in range(2, BC):
++            b_a = tl.sum(tl.where((o_i == i)[:, None], -b_A, 0.0), 0)
++            b_a = tl.where(o_i < i, b_a, 0.0)
++            b_a = b_a + tl.sum(b_a[:, None] * b_Ai, 0)
++            b_Ai = tl.where((o_i == i)[:, None], b_a, b_Ai)
++        b_Ai += m_I
++        p_Aii = tl.make_block_ptr(
++            A, (T, BT), (H * BT, 1), (i_tci, i_b * BC), (BC, BC), (1, 0)
++        )
++        tl.store(p_Aii, b_Ai.to(A.dtype.element_ty), boundary_check=(0, 1))
++
++    ############################################################################
++    # Pass 2: off-diagonal blocks — one K-loop per (i,j) pair.
++    # Outer loop: d = i-j (diagonal distance) from 1 to 3.
++    # Inner loop: j from 0 to 3-d  (so i = j+d).
++    # Processing order ensures Ai_im (m in j+1..i-1) is already in A when needed.
++    # Formula: Ai_ij = -(Ai_ii @ A_ij_raw
++    #                    + sum_{m=j+1}^{i-1} Ai_im @ A_mj_raw) @ Ai_jj
++    ############################################################################
++    for d in tl.static_range(1, 4):
++        for j in tl.static_range(0, 4 - d):
++            i = j + d  # compile-time ints from static_range
++            i_tci = i_tc0 + i * BC
++            i_tcj = i_tc0 + j * BC
++            p_bi = tl.make_block_ptr(
++                beta + bos * H + i_h, (T,), (H,), (i_tci,), (BC,), (0,)
++            )
++            b_bi = tl.load(p_bi, boundary_check=(0,)).to(tl.float32)
++            if USE_G:
++                p_gi = tl.make_block_ptr(
++                    g + bos * H + i_h, (T,), (H,), (i_tci,), (BC,), (0,)
++                )
++                p_gj = tl.make_block_ptr(
++                    g + bos * H + i_h, (T,), (H,), (i_tcj,), (BC,), (0,)
++                )
++                b_gi = tl.load(p_gi, boundary_check=(0,)).to(tl.float32)
++                b_gj = tl.load(p_gj, boundary_check=(0,)).to(tl.float32)
++            # K-loop: accumulate k_i @ k_j^T
++            b_A = tl.zeros([BC, BC], dtype=tl.float32)
++            for i_k in range(tl.cdiv(K, BK)):
++                p_ki = tl.make_block_ptr(
++                    k, (T, K), (Hg * K, 1), (i_tci, i_k * BK), (BC, BK), (1, 0)
++                )
++                p_kj = tl.make_block_ptr(
++                    k, (T, K), (Hg * K, 1), (i_tcj, i_k * BK), (BC, BK), (1, 0)
++                )
++                b_A += tl.dot(
++                    tl.load(p_ki, boundary_check=(0, 1)),
++                    tl.trans(tl.load(p_kj, boundary_check=(0, 1))),
++                )
++            if USE_G:
++                b_A *= safe_exp(b_gi[:, None] - b_gj[None, :])
++            b_A *= b_bi[:, None]
++            # Scratch this raw block if a later row in this column needs it as
++            # a correction term.  i < 3 means rows i+1..3 exist and will use it.
++            # Scratch column layout (compile-time ternary, evaluated at trace time):
++            #   (i=1,j=0)->col1  (i=2,j=1)->col2  (i=2,j=0)->col3
++            if i < 3:
++                sc = 1 if (i == 1 and j == 0) else (2 if (i == 2 and j == 1) else 3)
++                p_s = tl.make_block_ptr(
++                    A, (T, BT), (H * BT, 1), (i_tc0, sc * BC), (BC, BC), (1, 0)
++                )
++                tl.store(p_s, b_A.to(A.dtype.element_ty), boundary_check=(0, 1))
++            # Correction sum: sum_{m=j+1}^{i-1} Ai_im @ A_mj_raw
++            # Unrolled manually (d is a compile-time Python int from tl.static_range):
++            #   d=1: no corrections; d=2: m=j+1; d=3: m=j+1 then m=j+2
++            b_corr = tl.zeros([BC, BC], dtype=tl.float32)
++            if d >= 2:
++                m1 = j + 1
++                sc_m1j = (
++                    1 if (m1 == 1 and j == 0) else (2 if (m1 == 2 and j == 1) else 3)
++                )
++                p_s_m1j = tl.make_block_ptr(
++                    A, (T, BT), (H * BT, 1), (i_tc0, sc_m1j * BC), (BC, BC), (1, 0)
++                )
++                b_A_m1j = tl.load(p_s_m1j, boundary_check=(0, 1)).to(tl.float32)
++                p_Ai_im1 = tl.make_block_ptr(
++                    A, (T, BT), (H * BT, 1), (i_tci, m1 * BC), (BC, BC), (1, 0)
++                )
++                b_corr += tl.dot(
++                    tl.load(p_Ai_im1, boundary_check=(0, 1)).to(tl.float32),
++                    b_A_m1j,
++                    input_precision=_MERGE_DOT_PRECISION,
++                )
++            if d >= 3:
++                m2 = j + 2
++                sc_m2j = (
++                    1 if (m2 == 1 and j == 0) else (2 if (m2 == 2 and j == 1) else 3)
++                )
++                p_s_m2j = tl.make_block_ptr(
++                    A, (T, BT), (H * BT, 1), (i_tc0, sc_m2j * BC), (BC, BC), (1, 0)
++                )
++                b_A_m2j = tl.load(p_s_m2j, boundary_check=(0, 1)).to(tl.float32)
++                p_Ai_im2 = tl.make_block_ptr(
++                    A, (T, BT), (H * BT, 1), (i_tci, m2 * BC), (BC, BC), (1, 0)
++                )
++                b_corr += tl.dot(
++                    tl.load(p_Ai_im2, boundary_check=(0, 1)).to(tl.float32),
++                    b_A_m2j,
++                    input_precision=_MERGE_DOT_PRECISION,
++                )
++            # Compute and store Ai_ij
++            p_Ai_ii = tl.make_block_ptr(
++                A, (T, BT), (H * BT, 1), (i_tci, i * BC), (BC, BC), (1, 0)
++            )
++            p_Ai_jj = tl.make_block_ptr(
++                A, (T, BT), (H * BT, 1), (i_tcj, j * BC), (BC, BC), (1, 0)
++            )
++            b_Ai_ii = tl.load(p_Ai_ii, boundary_check=(0, 1)).to(tl.float32)
++            b_Ai_jj = tl.load(p_Ai_jj, boundary_check=(0, 1)).to(tl.float32)
++            b_Ai_ij = -tl.dot(
++                tl.dot(b_Ai_ii, b_A, input_precision=_MERGE_DOT_PRECISION) + b_corr,
++                b_Ai_jj,
++                input_precision=_MERGE_DOT_PRECISION,
++            )
++            p_Ai_ij = tl.make_block_ptr(
++                A, (T, BT), (H * BT, 1), (i_tci, j * BC), (BC, BC), (1, 0)
++            )
++            tl.store(p_Ai_ij, b_Ai_ij.to(A.dtype.element_ty), boundary_check=(0, 1))
++
++
++def chunk_gated_delta_rule_fwd_intra(
++    k: torch.Tensor,
++    v: torch.Tensor,
++    g: torch.Tensor | None = None,
++    beta: torch.Tensor | None = None,
++    cu_seqlens: torch.LongTensor | None = None,
++    chunk_size: int = 64,
++    chunk_indices: torch.LongTensor | None = None,
++) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
++    r"""
++    GDN intra-chunk forward: fused kkt + solve_tril + recompute_w_u.
++
++    Equivalent to:
++        A = chunk_scaled_dot_kkt_fwd(k, g, beta, ...)       # kernel 1
++        A = solve_tril(A, ...)                                # kernel 2
++        w, u = recompute_w_u_fwd(k, v, beta, A, g, ...)      # kernel 3
++
++    Fuses kernels 1+2 into a single kernel, reducing from 3 to 2 kernel launches
++    and eliminating the HBM round-trip for the intermediate A matrix.
++
++    Args:
++        k (torch.Tensor):
++            The key tensor of shape `[B, T, H, K]`.
++        v (torch.Tensor):
++            The value tensor of shape `[B, T, H, V]`.
++        g (torch.Tensor):
++            The cumulative sum of the gate tensor of shape `[B, T, H]`. Default: `None`.
++        beta (torch.Tensor):
++            The beta tensor of shape `[B, T, H]`.
++        cu_seqlens (torch.LongTensor):
++            The cumulative sequence lengths. Default: `None`.
++        chunk_size (int):
++            The chunk size. Default: 64.
++        chunk_indices (torch.LongTensor):
++            Precomputed chunk indices. Default: `None`.
++
++    Returns:
++        w (torch.Tensor): shape `[B, T, H, K]`
++        u (torch.Tensor): shape `[B, T, H, V]`
++        A (torch.Tensor): shape `[B, T, H, BT]`, the solved (I+A)^{-1} matrix
++    """
++    B, T, Hg, K = k.shape
++    H = beta.shape[-1]
++    BT = chunk_size
++    BC = 16
++
++    if chunk_indices is None and cu_seqlens is not None:
++        chunk_indices = prepare_chunk_indices(cu_seqlens, BT)
++    NT = triton.cdiv(T, BT) if cu_seqlens is None else len(chunk_indices)
++
++    # Step 1: fused kkt + solve_tril
++    A = torch.zeros(B, T, H, BT, device=k.device, dtype=k.dtype)
++    kernel = chunk_gated_delta_rule_fwd_kkt_solve_kernel_low_reg
++    kernel[(NT, B * H)](
++        k=k,
++        g=g,
++        beta=beta,
++        A=A,
++        cu_seqlens=cu_seqlens,
++        chunk_indices=chunk_indices,
++        T=T,
++        H=H,
++        Hg=Hg,
++        K=K,
++        BT=BT,
++        BC=BC,
++    )
++
++    # Step 2: recompute_w_u
++    w, u = recompute_w_u_fwd(
++        k=k,
++        v=v,
++        beta=beta,
++        A=A,
++        g_cumsum=g,
++        cu_seqlens=cu_seqlens,
++        chunk_indices=chunk_indices,
++    )
++    return w, u, A
+diff --git a/python/sglang/srt/hardware_backend/xpu/kernels/fla/fused_sigmoid_gating_recurrent.py b/python/sglang/srt/hardware_backend/xpu/kernels/fla/fused_sigmoid_gating_recurrent.py
+new file mode 100644
+index 000000000000..83a0fce3f70e
+--- /dev/null
++++ b/python/sglang/srt/hardware_backend/xpu/kernels/fla/fused_sigmoid_gating_recurrent.py
+@@ -0,0 +1,128 @@
++from typing import Optional
++
++import torch
++import triton
++
++from sglang.srt.layers.attention.fla.fused_sigmoid_gating_recurrent import (
++    fused_sigmoid_gating_delta_rule_update_kernel,
++)
++
++
++def fused_sigmoid_gating_delta_rule_update(
++    A_log: torch.Tensor,
++    a: torch.Tensor,
++    dt_bias: torch.Tensor,
++    softplus_beta: float,
++    softplus_threshold: float,
++    q: torch.Tensor,
++    k: torch.Tensor,
++    v: torch.Tensor,
++    b: torch.Tensor,
++    initial_state_source: torch.Tensor,
++    initial_state_indices: torch.Tensor,
++    scale: Optional[float] = None,
++    use_qk_l2norm_in_kernel: bool = False,
++    cu_seqlens: Optional[torch.Tensor] = None,
++    is_kda: bool = False,
++    # Optional parameters for target_verify support
++    disable_state_update: bool = False,
++    intermediate_states_buffer: Optional[torch.Tensor] = None,
++    intermediate_state_indices: Optional[torch.Tensor] = None,
++    cache_steps: Optional[int] = None,
++    retrieve_parent_token: Optional[torch.Tensor] = None,
++):
++    """
++    Fused triton implementation of sigmoid gating delta rule update.
++    This function uses a single fused kernel that combines both sigmoid gating computation
++    and the recurrent delta rule update for better performance.
++
++    Supports both decode and target_verify modes:
++    - decode: standard single-step update with state write-back
++    - target_verify: multi-step with intermediate state caching, optional tree attention,
++                     and optional state update disable
++    """
++    B, T, H, K, V = *k.shape, v.shape[-1]
++    stride_q = q.stride()[1]
++    stride_k = k.stride()[1]
++    stride_v = v.stride()[1]
++    stride_b = b.stride()[-2]
++    # Both paths (KDA/GDN) advance p_a once per token, so use the token-axis stride.
++    # For 2D a ([T, ...]) this is stride(0); for 3D a ([B, T, ...]) this is stride(1).
++    # Using stride()[-2] covers GDN [T, HV] and KDA layouts ([T, HV*K] / [B, T, HV*K]).
++    stride_a = a.stride()[-2]
++    HV = v.shape[2]
++    N = B if cu_seqlens is None else len(cu_seqlens) - 1
++    BK, BV = triton.next_power_of_2(K), min(
++        triton.next_power_of_2(V), 16
++    )  # use 16 here to reduce register pressure
++    NK, NV = triton.cdiv(K, BK), triton.cdiv(V, BV)
++    assert NK == 1, "NK > 1 is not supported yet"
++    num_stages = 3
++    num_warps = 1
++
++    if scale is None:
++        scale = k.shape[-1] ** -0.5
++    else:
++        assert scale > 0, "scale must be positive"
++
++    o = q.new_empty(NK, *v.shape)
++
++    # Prepare retrieve_parent_token strides
++    if retrieve_parent_token is not None:
++        stride_retrieve_parent_token_seq = retrieve_parent_token.stride(0)
++        stride_retrieve_parent_token_token = retrieve_parent_token.stride(1)
++    else:
++        stride_retrieve_parent_token_seq = 0
++        stride_retrieve_parent_token_token = 0
++
++    NP2_T = triton.next_power_of_2(T)
++
++    grid = (NK, NV, N * HV)
++
++    fused_sigmoid_gating_delta_rule_update_kernel[grid](
++        A_log=A_log,
++        a=a,
++        dt_bias=dt_bias,
++        softplus_beta=softplus_beta,
++        softplus_threshold=softplus_threshold,
++        q=q,
++        k=k,
++        v=v,
++        b=b,
++        o=o,
++        h0_source=initial_state_source,
++        h0_indices=initial_state_indices,
++        cu_seqlens=cu_seqlens,
++        intermediate_states_buffer=intermediate_states_buffer,
++        intermediate_state_indices=intermediate_state_indices,
++        cache_steps=0 if cache_steps is None else cache_steps,
++        retrieve_parent_token_ptr=retrieve_parent_token,
++        stride_retrieve_parent_token_seq=stride_retrieve_parent_token_seq,
++        stride_retrieve_parent_token_token=stride_retrieve_parent_token_token,
++        scale=scale,
++        T=T,
++        stride_a=stride_a,
++        stride_q=stride_q,
++        stride_k=stride_k,
++        stride_v=stride_v,
++        stride_b=stride_b,
++        NP2_T=NP2_T,
++        B=B,
++        H=H,
++        HV=HV,
++        K=K,
++        V=V,
++        BK=BK,
++        BV=BV,
++        USE_INITIAL_STATE=initial_state_source is not None,
++        USE_QK_L2NORM_IN_KERNEL=use_qk_l2norm_in_kernel,
++        IS_VARLEN=cu_seqlens is not None,
++        IS_KDA=is_kda,
++        DISABLE_STATE_UPDATE=disable_state_update,
++        CACHE_INTERMEDIATE_STATES=intermediate_states_buffer is not None,
++        HAS_EAGLE_TREE_CUSTOM_ATTN_MASK=retrieve_parent_token is not None,
++        num_warps=num_warps,
++        num_stages=num_stages,
++    )
++    o = o.squeeze(0)
++    return o
+diff --git a/python/sglang/srt/layers/attention/fla/chunk.py b/python/sglang/srt/layers/attention/fla/chunk.py
+index 23d8d58feca2..c243ba22fd60 100644
+--- a/python/sglang/srt/layers/attention/fla/chunk.py
++++ b/python/sglang/srt/layers/attention/fla/chunk.py
+@@ -19,8 +19,17 @@
+     SUPPRESS_LEVEL,
+     autocast_custom_fwd,
+     input_guard,
++    is_intel,
+ )
+ 
++if is_intel:
++    from sglang.srt.hardware_backend.xpu.kernels.fla.chunk_delta_h import (
++        chunk_gated_delta_rule_fwd_h,
++    )
++    from sglang.srt.hardware_backend.xpu.kernels.fla.chunk_fwd import (
++        chunk_gated_delta_rule_fwd_intra,
++    )
++
+ CHUNK_SIZE = 64
+ 
+ 
+diff --git a/python/sglang/srt/layers/attention/fla/kda.py b/python/sglang/srt/layers/attention/fla/kda.py
+index 066676bb14d4..579ae1a03976 100644
+--- a/python/sglang/srt/layers/attention/fla/kda.py
++++ b/python/sglang/srt/layers/attention/fla/kda.py
+@@ -26,8 +26,15 @@
+ from sglang.srt.layers.attention.fla.op import exp, log
+ from sglang.srt.layers.attention.fla.utils import (
+     check_shared_mem,
++    is_intel,
+ )
+ 
++if is_intel:
++    from sglang.srt.hardware_backend.xpu.kernels.fla.chunk_delta_h import (
++        chunk_gated_delta_rule_fwd_h,
++    )
++
++
+ BS_LIST = [32, 64] if check_shared_mem() else [16, 32]
+ 
+ 
+diff --git a/python/sglang/srt/layers/attention/fla/layernorm_gated.py b/python/sglang/srt/layers/attention/fla/layernorm_gated.py
+index b30cdacdb373..38c22603378a 100644
+--- a/python/sglang/srt/layers/attention/fla/layernorm_gated.py
++++ b/python/sglang/srt/layers/attention/fla/layernorm_gated.py
+@@ -172,6 +172,9 @@ def _layer_norm_fwd_1pass_kernel(
+ @lru_cache
+ def _get_sm_count(device: torch.device) -> int:
+     """Get and cache the SM count for a given device."""
++    if device.type == "xpu":
++        assert torch.xpu.is_available(), "XPU device is not available"
++        return torch.xpu.get_device_properties(device).gpu_subslice_count
+     props = torch.cuda.get_device_properties(device)
+     return props.multi_processor_count
+ 
+diff --git a/python/sglang/srt/layers/attention/linear/kernels/gdn_triton.py b/python/sglang/srt/layers/attention/linear/kernels/gdn_triton.py
+index 9b19b5251c09..0daf8f4e2571 100644
+--- a/python/sglang/srt/layers/attention/linear/kernels/gdn_triton.py
++++ b/python/sglang/srt/layers/attention/linear/kernels/gdn_triton.py
+@@ -3,7 +3,7 @@
+ from sglang.srt.layers.attention.linear.kernels.kernel_backend import (
+     LinearAttnKernelBase,
+ )
+-from sglang.srt.utils import is_cpu, is_npu
++from sglang.srt.utils import is_cpu, is_npu, is_xpu
+ 
+ if not is_cpu():
+     from sglang.srt.layers.attention.fla.chunk import chunk_gated_delta_rule
+@@ -29,6 +29,10 @@
+     fused_sigmoid_gating_delta_rule_update = (
+         torch.ops.sgl_kernel.fused_sigmoid_gating_delta_rule_update_cpu
+     )
++elif is_xpu():
++    from sglang.srt.hardware_backend.xpu.kernels.fla.fused_sigmoid_gating_recurrent import (
++        fused_sigmoid_gating_delta_rule_update,
++    )
+ 
+ 
+ class TritonGDNKernel(LinearAttnKernelBase):
+diff --git a/python/sglang/srt/layers/rotary_embedding/mrope.py b/python/sglang/srt/layers/rotary_embedding/mrope.py
+index 9c93ad1ffd21..ade5bd5a84c7 100644
+--- a/python/sglang/srt/layers/rotary_embedding/mrope.py
++++ b/python/sglang/srt/layers/rotary_embedding/mrope.py
+@@ -278,6 +278,18 @@ def forward_npu(
+         )
+         return query_out, key_out
+ 
++    def forward_xpu(
++        self,
++        positions: torch.Tensor,
++        query: torch.Tensor,
++        key: torch.Tensor,
++        fused_set_kv_buffer_arg=None,
++    ) -> Tuple[torch.Tensor, torch.Tensor]:
++        assert positions.ndim in (1, 2)
++        if positions.ndim == 2 and self.mrope_section:
++            return self.forward_triton(positions, query, key)
++        return self.forward_native(positions, query, key, fused_set_kv_buffer_arg)
++
+     @staticmethod
+     def get_rope_index(
+         spatial_merge_size,
+diff --git a/python/sglang/test/ci/ci_register.py b/python/sglang/test/ci/ci_register.py
+index f385f733e232..1935775d9b21 100644
+--- a/python/sglang/test/ci/ci_register.py
++++ b/python/sglang/test/ci/ci_register.py
+@@ -30,6 +30,7 @@ class HWBackend(Enum):
+     CUDA = auto()
+     AMD = auto()
+     NPU = auto()
++    XPU = auto()
+ 
+ 
+ @dataclass
+@@ -104,11 +105,22 @@ def register_npu_ci(
+     return None
+ 
+ 
++def register_xpu_ci(
++    est_time: float,
++    suite: str,
++    nightly: bool = False,
++    disabled: Optional[str] = None,
++):
++    """Marker for XPU CI registration (parsed via AST; runtime no-op)."""
++    return None
++
++
+ REGISTER_MAPPING = {
+     "register_cpu_ci": HWBackend.CPU,
+     "register_cuda_ci": HWBackend.CUDA,
+     "register_amd_ci": HWBackend.AMD,
+     "register_npu_ci": HWBackend.NPU,
++    "register_xpu_ci": HWBackend.XPU,
+ }
+ 
+ 
+diff --git a/test/registered/attention/test_chunk_gated_delta_rule.py b/test/registered/attention/test_chunk_gated_delta_rule.py
+index d3e852963a09..d496d679a71d 100644
+--- a/test/registered/attention/test_chunk_gated_delta_rule.py
++++ b/test/registered/attention/test_chunk_gated_delta_rule.py
+@@ -6,12 +6,17 @@
+ from sglang.srt.layers.attention.fla.fused_recurrent import (
+     fused_recurrent_gated_delta_rule,
+ )
+-from sglang.test.ci.ci_register import register_cuda_ci
++from sglang.srt.utils import get_device
++from sglang.test.ci.ci_register import register_cuda_ci, register_xpu_ci
+ 
+ register_cuda_ci(est_time=11, stage="base-b", runner_config="1-gpu-large")
++register_xpu_ci(est_time=30, suite="xpu")
+ 
+ 
+-@unittest.skipIf(not torch.cuda.is_available(), "Test requires CUDA")
++@unittest.skipIf(
++    not (torch.cuda.is_available() or torch.xpu.is_available()),
++    "Test requires CUDA or XPU",
++)
+ class TestChunkGatedDeltaRule(unittest.TestCase):
+     """Test chunk_gated_delta_rule against token-by-token fused_recurrent reference."""
+ 
+@@ -68,7 +73,7 @@ def _check_shape(
+         self, B, T_per_seq, H, K, V, pool_size, sequential_indices=False, seed=42
+     ):
+         """Run correctness check for one (B, T_per_seq, H, K, V, pool_size) config."""
+-        device = "cuda"
++        device = get_device()
+         dtype = torch.bfloat16
+         T = B * T_per_seq
+ 

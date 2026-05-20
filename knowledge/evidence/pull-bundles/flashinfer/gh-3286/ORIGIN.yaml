@@ -1,0 +1,55 @@
+schema_version: 1
+source_key: flashinfer-ai/flashinfer#3286
+repo: flashinfer-ai/flashinfer
+repo_id: flashinfer
+pr_number: 3286
+title: 'feat(cute_dsl/moe): deterministic balanced autotune profile inputs'
+url: https://github.com/flashinfer-ai/flashinfer/pull/3286
+state: closed
+merged_at: '2026-05-17T04:17:35Z'
+base_ref_oid: ef983122507d38d807d81b99e486ce5006cd4782
+head_ref_oid: 640e32e7a75a8f2f0c0d3b22edd2ad6eb1a0a0cc
+captured_at: '2026-05-20T14:43:15.442274+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cute
+- nvfp4
+- sampling
+techniques:
+- autotuning
+- kernel-fusion
+hardware_features:
+- fp4
+- nvfp4
+kernel_types:
+- moe
+- sampling
+languages:
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: flashinfer/autotuner.py
+    local_path: source-snapshot/flashinfer/autotuner.py
+    ref: 640e32e7a75a8f2f0c0d3b22edd2ad6eb1a0a0cc
+    status: modified
+    fetched: true
+  - source_path: flashinfer/fused_moe/cute_dsl/_inputs_helper.py
+    local_path: source-snapshot/flashinfer/fused_moe/cute_dsl/_inputs_helper.py
+    ref: 640e32e7a75a8f2f0c0d3b22edd2ad6eb1a0a0cc
+    status: added
+    fetched: true
+  - source_path: flashinfer/fused_moe/cute_dsl/tuner.py
+    local_path: source-snapshot/flashinfer/fused_moe/cute_dsl/tuner.py
+    ref: 640e32e7a75a8f2f0c0d3b22edd2ad6eb1a0a0cc
+    status: modified
+    fetched: true
+  - source_path: tests/moe/test_cute_dsl_fused_moe.py
+    local_path: source-snapshot/tests/moe/test_cute_dsl_fused_moe.py
+    ref: 640e32e7a75a8f2f0c0d3b22edd2ad6eb1a0a0cc
+    status: modified
+    fetched: true

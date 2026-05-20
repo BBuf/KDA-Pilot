@@ -1,0 +1,106 @@
+schema_version: 1
+source_key: sgl-project/sglang#23760
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 23760
+title: '[MoE] Unify DeepEPMoE+MoriEPMoE through AITER MoeRunner pre/post-permute'
+url: https://github.com/sgl-project/sglang/pull/23760
+state: closed
+merged_at: '2026-05-17T09:25:53Z'
+base_ref_oid: 7cb4669a049a20413452bda80e18e8df2b24a16f
+head_ref_oid: 107d298e895f3fe5b4d75a2163d761c483de9c06
+captured_at: '2026-05-20T14:54:02.152824+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- fp4
+- fp8
+- gemm
+- moe
+- moe kernel
+- mxfp4
+- triton
+- triton kernel
+techniques:
+- fine-grained-quantization
+hardware_features:
+- fp4
+- fp8
+- mxfp4
+kernel_types:
+- gemm
+- moe
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/batch_overlap/two_batch_overlap.py
+    local_path: source-snapshot/python/sglang/srt/batch_overlap/two_batch_overlap.py
+    ref: 107d298e895f3fe5b4d75a2163d761c483de9c06
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/ep_moe/layer.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/ep_moe/layer.py
+    ref: 107d298e895f3fe5b4d75a2163d761c483de9c06
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/moe_runner/aiter.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/moe_runner/aiter.py
+    ref: 107d298e895f3fe5b4d75a2163d761c483de9c06
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/moe_runner/runner.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/moe_runner/runner.py
+    ref: 107d298e895f3fe5b4d75a2163d761c483de9c06
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/token_dispatcher/deepep.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/token_dispatcher/deepep.py
+    ref: 107d298e895f3fe5b4d75a2163d761c483de9c06
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/token_dispatcher/moriep.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/token_dispatcher/moriep.py
+    ref: 107d298e895f3fe5b4d75a2163d761c483de9c06
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/utils.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/utils.py
+    ref: 107d298e895f3fe5b4d75a2163d761c483de9c06
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/quantization/compressed_tensors/schemes/compressed_tensors_w8a8_fp8_moe.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/compressed_tensors/schemes/compressed_tensors_w8a8_fp8_moe.py
+    ref: 107d298e895f3fe5b4d75a2163d761c483de9c06
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/quantization/fp8.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/fp8.py
+    ref: 107d298e895f3fe5b4d75a2163d761c483de9c06
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/quantization/mxfp4.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/mxfp4.py
+    ref: 107d298e895f3fe5b4d75a2163d761c483de9c06
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/quantization/quark/schemes/quark_w4a4_mxfp4_moe.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/quark/schemes/quark_w4a4_mxfp4_moe.py
+    ref: 107d298e895f3fe5b4d75a2163d761c483de9c06
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/quantization/quark_int4fp8_moe.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/quark_int4fp8_moe.py
+    ref: 107d298e895f3fe5b4d75a2163d761c483de9c06
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/quantization/unquant.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/unquant.py
+    ref: 107d298e895f3fe5b4d75a2163d761c483de9c06
+    status: modified
+    fetched: true

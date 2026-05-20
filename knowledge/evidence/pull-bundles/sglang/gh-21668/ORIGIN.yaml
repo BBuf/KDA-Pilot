@@ -1,0 +1,105 @@
+schema_version: 1
+source_key: sgl-project/sglang#21668
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 21668
+title: '[XPU] Enable qwen3.5 on XPU'
+url: https://github.com/sgl-project/sglang/pull/21668
+state: closed
+merged_at: '2026-05-18T06:59:20Z'
+base_ref_oid: 6ccc5b807d294d92fbcd8872d3e4c898c2058d8e
+head_ref_oid: 6fedff61647061a61cfa8a9e374bc27a48004be5
+captured_at: '2026-05-20T14:55:56.603515+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention kernel
+- cuda
+- cuda kernel
+- triton
+- triton kernel
+techniques:
+- kernel-fusion
+hardware_features: []
+kernel_types:
+- attention
+- norm
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/bench_one_batch.py
+    local_path: source-snapshot/python/sglang/bench_one_batch.py
+    ref: 6fedff61647061a61cfa8a9e374bc27a48004be5
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/hardware_backend/xpu/__init__.py
+    local_path: source-snapshot/python/sglang/srt/hardware_backend/xpu/__init__.py
+    ref: 6fedff61647061a61cfa8a9e374bc27a48004be5
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/hardware_backend/xpu/kernels/fla/chunk_delta_h.py
+    local_path: source-snapshot/python/sglang/srt/hardware_backend/xpu/kernels/fla/chunk_delta_h.py
+    ref: 6fedff61647061a61cfa8a9e374bc27a48004be5
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/hardware_backend/xpu/kernels/fla/chunk_fwd.py
+    local_path: source-snapshot/python/sglang/srt/hardware_backend/xpu/kernels/fla/chunk_fwd.py
+    ref: 6fedff61647061a61cfa8a9e374bc27a48004be5
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/hardware_backend/xpu/kernels/fla/fused_sigmoid_gating_recurrent.py
+    local_path: source-snapshot/python/sglang/srt/hardware_backend/xpu/kernels/fla/fused_sigmoid_gating_recurrent.py
+    ref: 6fedff61647061a61cfa8a9e374bc27a48004be5
+    status: added
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/fla/chunk.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/fla/chunk.py
+    ref: 6fedff61647061a61cfa8a9e374bc27a48004be5
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/fla/kda.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/fla/kda.py
+    ref: 6fedff61647061a61cfa8a9e374bc27a48004be5
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/fla/layernorm_gated.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/fla/layernorm_gated.py
+    ref: 6fedff61647061a61cfa8a9e374bc27a48004be5
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/attention/linear/kernels/gdn_triton.py
+    local_path: source-snapshot/python/sglang/srt/layers/attention/linear/kernels/gdn_triton.py
+    ref: 6fedff61647061a61cfa8a9e374bc27a48004be5
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/rotary_embedding/mrope.py
+    local_path: source-snapshot/python/sglang/srt/layers/rotary_embedding/mrope.py
+    ref: 6fedff61647061a61cfa8a9e374bc27a48004be5
+    status: modified
+    fetched: true
+  - source_path: python/sglang/test/ci/ci_register.py
+    local_path: source-snapshot/python/sglang/test/ci/ci_register.py
+    ref: 6fedff61647061a61cfa8a9e374bc27a48004be5
+    status: modified
+    fetched: true
+  - source_path: test/registered/attention/test_chunk_gated_delta_rule.py
+    local_path: source-snapshot/test/registered/attention/test_chunk_gated_delta_rule.py
+    ref: 6fedff61647061a61cfa8a9e374bc27a48004be5
+    status: modified
+    fetched: true
+  - source_path: docker/xpu.Dockerfile
+    local_path: source-snapshot/docker/xpu.Dockerfile
+    ref: 6fedff61647061a61cfa8a9e374bc27a48004be5
+    status: modified
+    fetched: true
+  - source_path: docs_new/docs/hardware-platforms/xpu.mdx
+    local_path: source-snapshot/docs_new/docs/hardware-platforms/xpu.mdx
+    ref: 6fedff61647061a61cfa8a9e374bc27a48004be5
+    status: modified
+    fetched: true

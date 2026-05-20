@@ -1,0 +1,37 @@
+schema_version: 1
+source_key: vllm-project/vllm#43119
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 43119
+title: '[CI failure] Temporarily disable using persistent cache for flashinfer autotune'
+url: https://github.com/vllm-project/vllm/pull/43119
+state: closed
+merged_at: '2026-05-19T18:44:32Z'
+base_ref_oid: d247a931cc25e7253feccbd6260d48216ff5c081
+head_ref_oid: 8ae68923fd2eb0091b2ab746a5b0d774cc8463c4
+captured_at: '2026-05-20T15:06:54.142462+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- benchmark kernel
+- gemm
+techniques:
+- autotuning
+- cache-policy
+- persistent-kernels
+hardware_features: []
+kernel_types:
+- gemm
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: vllm/model_executor/warmup/kernel_warmup.py
+    local_path: source-snapshot/vllm/model_executor/warmup/kernel_warmup.py
+    ref: 8ae68923fd2eb0091b2ab746a5b0d774cc8463c4
+    status: modified
+    fetched: true

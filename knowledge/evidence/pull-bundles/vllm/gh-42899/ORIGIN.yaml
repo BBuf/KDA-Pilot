@@ -1,0 +1,64 @@
+schema_version: 1
+source_key: vllm-project/vllm#42899
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42899
+title: add cutedsl dsv4 indexer fp8 kernel
+url: https://github.com/vllm-project/vllm/pull/42899
+state: closed
+merged_at: '2026-05-19T04:17:56Z'
+base_ref_oid: 966903eb93a053a908fbf8b931fcebfb28c4741a
+head_ref_oid: 433ae6b5351c66be9c2a7965a34d1810a5d7d65a
+captured_at: '2026-05-20T15:07:46.509896+00:00'
+architectures:
+- sm90
+architecture_families:
+- hopper
+tags:
+- attention kernel
+- benchmark kernel
+- cuda
+- cuda kernel
+- cute
+- cutlass
+- fp4
+- fp8
+- sm90
+- triton kernel
+techniques:
+- fine-grained-quantization
+- kernel-fusion
+hardware_features:
+- fp4
+- fp8
+- hopper
+kernel_types:
+- attention
+languages:
+- cuda-cpp
+- cute-dsl
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: tests/kernels/test_fused_indexer_q_rope_quant.py
+    local_path: source-snapshot/tests/kernels/test_fused_indexer_q_rope_quant.py
+    ref: 433ae6b5351c66be9c2a7965a34d1810a5d7d65a
+    status: modified
+    fetched: true
+  - source_path: vllm/v1/attention/ops/deepseek_v4_ops/cutedsl_utils.py
+    local_path: source-snapshot/vllm/v1/attention/ops/deepseek_v4_ops/cutedsl_utils.py
+    ref: 433ae6b5351c66be9c2a7965a34d1810a5d7d65a
+    status: modified
+    fetched: true
+  - source_path: vllm/v1/attention/ops/deepseek_v4_ops/fused_indexer_q.py
+    local_path: source-snapshot/vllm/v1/attention/ops/deepseek_v4_ops/fused_indexer_q.py
+    ref: 433ae6b5351c66be9c2a7965a34d1810a5d7d65a
+    status: modified
+    fetched: true
+  - source_path: vllm/v1/attention/ops/deepseek_v4_ops/fused_indexer_q_cutedsl.py
+    local_path: source-snapshot/vllm/v1/attention/ops/deepseek_v4_ops/fused_indexer_q_cutedsl.py
+    ref: 433ae6b5351c66be9c2a7965a34d1810a5d7d65a
+    status: modified
+    fetched: true

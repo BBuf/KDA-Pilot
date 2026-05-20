@@ -9,8 +9,8 @@ repos.**
 [![GitHub stars](https://img.shields.io/github/stars/BBuf/kernel-pilot?style=social)](https://github.com/BBuf/kernel-pilot/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/BBuf/kernel-pilot?style=social)](https://github.com/BBuf/kernel-pilot/forks)
 [![Last commit](https://img.shields.io/github/last-commit/BBuf/kernel-pilot?style=flat-square)](https://github.com/BBuf/kernel-pilot/commits/main)
-[![PR evidence](https://img.shields.io/badge/PR_evidence-3660-2ea44f?style=flat-square)](knowledge/evidence/pull-bundles/)
-[![Knowledge cutoff](https://img.shields.io/badge/cutoff-2026--05--16-8250df?style=flat-square)](knowledge/data/refresh-cutoff.yaml)
+[![PR evidence](https://img.shields.io/badge/PR_evidence-3827-2ea44f?style=flat-square)](knowledge/evidence/pull-bundles/)
+[![Knowledge cutoff](https://img.shields.io/badge/cutoff-2026--05--20-8250df?style=flat-square)](knowledge/data/refresh-cutoff.yaml)
 
 </div>
 
@@ -130,7 +130,7 @@ Current snapshot:
 
 | Corpus layer | Contents |
 | --- | --- |
-| PR evidence | 3,660 merged CUDA/Triton/CuTe/CUTLASS-related PR pages and bundles from 14 upstream repos (SGLang, vLLM, TensorRT-LLM, PyTorch, FlashAttention, FlashInfer, CUTLASS/CuTe, CCCL, Triton, DeepGEMM, ThunderKittens, TileLang, QuACK, DeepSeek TileKernels), Jan 2024 through May 16 2026. |
+| PR evidence | 3,827 merged CUDA/Triton/CuTe/CUTLASS-related PR pages and bundles from 14 upstream repos (SGLang, vLLM, TensorRT-LLM, PyTorch, FlashAttention, FlashInfer, CUTLASS/CuTe, CCCL, Triton, DeepGEMM, ThunderKittens, TileLang, QuACK, DeepSeek TileKernels), Jan 2024 through May 20 2026. |
 | External source map | `knowledge/index.json` points at the **complementary** code repositories not in the PR corpus (NVIDIA developer samples, Colfax research kernels, simveit micro-tutorials) for live clone/search workflows. |
 | Candidate ledgers | 14 include/defer ledgers for PR ingestion. Dropped PRs are not kept as per-PR rows. |
 

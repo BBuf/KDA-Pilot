@@ -1,0 +1,65 @@
+schema_version: 1
+source_key: NVIDIA/TensorRT-LLM#14069
+repo: NVIDIA/TensorRT-LLM
+repo_id: tensorrt-llm
+pr_number: 14069
+title: '[https://nvbugs/6152892][fix] Fix Triton MOE memory free when no swizzling
+  enabled'
+url: https://github.com/NVIDIA/TensorRT-LLM/pull/14069
+state: closed
+merged_at: '2026-05-17T19:20:51Z'
+base_ref_oid: 667bec046ef9965b7c132ba00ab85964f8775715
+head_ref_oid: 889c8587edcc0cbd8c5945d2f9382b4f2913be68
+captured_at: '2026-05-20T15:00:09.472810+00:00'
+architectures:
+- sm100
+- sm90
+architecture_families:
+- blackwell
+- hopper
+tags:
+- blackwell
+- cuda kernel
+- cutlass
+- hopper
+- moe
+- moe kernel
+- mxfp4
+- triton kernel
+techniques:
+- kernel-fusion
+hardware_features:
+- blackwell
+- fp4
+- hopper
+- mxfp4
+kernel_types:
+- moe
+languages:
+- cuda-cpp
+- cute-dsl
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: tensorrt_llm/_torch/modules/fused_moe/fused_moe_triton.py
+    local_path: source-snapshot/tensorrt_llm/_torch/modules/fused_moe/fused_moe_triton.py
+    ref: 889c8587edcc0cbd8c5945d2f9382b4f2913be68
+    status: modified
+    fetched: true
+  - source_path: tests/integration/defs/accuracy/test_llm_api_pytorch.py
+    local_path: source-snapshot/tests/integration/defs/accuracy/test_llm_api_pytorch.py
+    ref: 889c8587edcc0cbd8c5945d2f9382b4f2913be68
+    status: modified
+    fetched: true
+  - source_path: tests/integration/defs/conftest.py
+    local_path: source-snapshot/tests/integration/defs/conftest.py
+    ref: 889c8587edcc0cbd8c5945d2f9382b4f2913be68
+    status: modified
+    fetched: true
+  - source_path: tests/integration/test_lists/waives.txt
+    local_path: source-snapshot/tests/integration/test_lists/waives.txt
+    ref: 889c8587edcc0cbd8c5945d2f9382b4f2913be68
+    status: modified
+    fetched: true

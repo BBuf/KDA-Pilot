@@ -1,0 +1,69 @@
+schema_version: 1
+source_key: NVIDIA/TensorRT-LLM#13975
+repo: NVIDIA/TensorRT-LLM
+repo_id: tensorrt-llm
+pr_number: 13975
+title: '[None][perf] Add CUDA q_b norm for DeepSeek V4'
+url: https://github.com/NVIDIA/TensorRT-LLM/pull/13975
+state: closed
+merged_at: '2026-05-18T07:22:23Z'
+base_ref_oid: 7fbe349163a7444fc14a893b1161887d4d63f3ce
+head_ref_oid: 2145cdcb2c062e3627224f395e96aadcbbb4f594
+captured_at: '2026-05-20T15:00:21.027528+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cuda kernel
+techniques: []
+hardware_features: []
+kernel_types:
+- attention
+- norm
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.cu
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.cu
+    ref: 2145cdcb2c062e3627224f395e96aadcbbb4f594
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.h
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.h
+    ref: 2145cdcb2c062e3627224f395e96aadcbbb4f594
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/thop/CMakeLists.txt
+    local_path: source-snapshot/cpp/tensorrt_llm/thop/CMakeLists.txt
+    ref: 2145cdcb2c062e3627224f395e96aadcbbb4f594
+    status: modified
+    fetched: true
+  - source_path: cpp/tensorrt_llm/thop/deepseekV4QNormOp.cpp
+    local_path: source-snapshot/cpp/tensorrt_llm/thop/deepseekV4QNormOp.cpp
+    ref: 2145cdcb2c062e3627224f395e96aadcbbb4f594
+    status: added
+    fetched: true
+  - source_path: tensorrt_llm/_torch/custom_ops/cpp_custom_ops.py
+    local_path: source-snapshot/tensorrt_llm/_torch/custom_ops/cpp_custom_ops.py
+    ref: 2145cdcb2c062e3627224f395e96aadcbbb4f594
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/modules/attention.py
+    local_path: source-snapshot/tensorrt_llm/_torch/modules/attention.py
+    ref: 2145cdcb2c062e3627224f395e96aadcbbb4f594
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/_torch/custom_ops/test_deepseek_v4_q_norm.py
+    local_path: source-snapshot/tests/unittest/_torch/custom_ops/test_deepseek_v4_q_norm.py
+    ref: 2145cdcb2c062e3627224f395e96aadcbbb4f594
+    status: added
+    fetched: true
+  - source_path: tests/unittest/_torch/modeling/test_modeling_deepseekv4.py
+    local_path: source-snapshot/tests/unittest/_torch/modeling/test_modeling_deepseekv4.py
+    ref: 2145cdcb2c062e3627224f395e96aadcbbb4f594
+    status: modified
+    fetched: true

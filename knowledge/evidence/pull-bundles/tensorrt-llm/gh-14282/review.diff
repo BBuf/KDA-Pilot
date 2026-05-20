@@ -1,0 +1,99 @@
+diff --git a/tensorrt_llm/_torch/model_config.py b/tensorrt_llm/_torch/model_config.py
+index b96e40d513e3..cba1fd0996de 100644
+--- a/tensorrt_llm/_torch/model_config.py
++++ b/tensorrt_llm/_torch/model_config.py
+@@ -14,7 +14,8 @@
+ from tensorrt_llm._torch.pyexecutor.config_utils import (
+     get_qwen3_hybrid_num_attention_layers, is_nemotron_hybrid, is_qwen3_hybrid,
+     load_pretrained_config)
+-from tensorrt_llm._utils import get_sm_version, torch_dtype_to_binding
++from tensorrt_llm._utils import (get_sm_version, is_sm_100f,
++                                 torch_dtype_to_binding)
+ from tensorrt_llm.bindings import LayerType as LayerTypeCpp
+ from tensorrt_llm.functional import AllReduceStrategy
+ from tensorrt_llm.llmapi.llm_args import (DeepSeekSparseAttentionConfig,
+@@ -267,12 +268,16 @@ def is_generation_model(model_architectures: Optional[List[str]],
+         # once ModelType is used in pytorch flow.
+ 
+     @staticmethod
+-    def resolve_moe_backend(moe_backend: str, architecture: str) -> str:
++    def resolve_moe_backend(moe_backend: str,
++                            architecture: str,
++                            quant_config: Optional[QuantConfig] = None) -> str:
+         """Resolve AUTO moe_backend to a specific backend based on model architecture.
+ 
+         Args:
+             moe_backend: The configured moe_backend (may be "AUTO")
+             architecture: The model architecture name (e.g., "GptOssForCausalLM")
++            quant_config: Optional quantization config for resolving quantized
++                MoE checkpoints.
+ 
+         Returns:
+             Resolved backend name (never "AUTO")
+@@ -290,6 +295,12 @@ def resolve_moe_backend(moe_backend: str, architecture: str) -> str:
+             else:
+                 return "CUTLASS"  # Fallback to CUTLASS for other SM versions (e.g., SM120)
+ 
++        quant_algo = quant_config.quant_algo if quant_config is not None else None
++        is_fp8_block_scales = quant_algo in (QuantAlgo.FP8_BLOCK_SCALES,
++                                             "FP8_BLOCK_SCALES")
++        if is_fp8_block_scales and is_sm_100f():
++            return "TRTLLM"
++
+         return "CUTLASS"
+ 
+     @staticmethod
+@@ -663,26 +674,34 @@ def _recursive_update_config(config: transformers.PretrainedConfig,
+ 
+         quant_config = QuantConfig()
+         layer_quant_config = None
+-        moe_backend = kwargs.get('moe_backend', 'AUTO')
+-        # Resolve AUTO to specific backend based on model architecture
++        requested_moe_backend = kwargs.get('moe_backend', 'AUTO')
+         architecture = pretrained_config.architectures[
+             0] if pretrained_config.architectures else ""
+-        moe_backend = cls.resolve_moe_backend(moe_backend, architecture)
+-        kwargs['moe_backend'] = moe_backend
++        # Use an architecture-only backend hint for quant config parsing. Some
++        # quant formats choose the quant_algo from the backend name, so the final
++        # quant-aware AUTO resolution happens after quant_config is loaded.
++        moe_backend_hint = cls.resolve_moe_backend(requested_moe_backend,
++                                                   architecture)
+ 
+         # quantized ckpt in modelopt format
+         if quant_config_file := cached_file(checkpoint_dir,
+                                             'hf_quant_config.json'):
+             quant_config, layer_quant_config = cls.load_modelopt_quant_config(
+-                quant_config_file, checkpoint_dir, moe_backend)
++                quant_config_file, checkpoint_dir, moe_backend_hint)
+         # quantized ckpt in other formats
+         elif hasattr(pretrained_config, "quantization_config"):
+             hf_quant_config = pretrained_config.quantization_config
+             quant_config, layer_quant_config = cls.load_hf_quant_config(
+-                hf_quant_config, moe_backend)
++                hf_quant_config, moe_backend_hint)
+         elif quant_config_file := cached_file(checkpoint_dir, 'dtypes.json'):
+             quant_config, layer_quant_config = cls.load_quant_config_from_dtypes_json(
+-                quant_config_file, moe_backend)
++                quant_config_file, moe_backend_hint)
++
++        kwargs['moe_backend'] = cls.resolve_moe_backend(
++            requested_moe_backend,
++            architecture,
++            quant_config=quant_config,
++        )
+ 
+         model_config = cls(pretrained_config=pretrained_config,
+                            quant_config=quant_config,
+diff --git a/tests/integration/test_lists/waives.txt b/tests/integration/test_lists/waives.txt
+index 87394ba28c3f..b06b4c3f51e1 100644
+--- a/tests/integration/test_lists/waives.txt
++++ b/tests/integration/test_lists/waives.txt
+@@ -171,7 +171,6 @@ accuracy/test_llm_api_pytorch.py::TestQwen3_235B_A22B::test_fp8[latency] SKIP (h
+ accuracy/test_llm_api_pytorch.py::TestQwen3_235B_A22B::test_fp8[throughput_latency] SKIP (https://nvbugs/6177390)
+ accuracy/test_llm_api_pytorch.py::TestQwen3_30B_A3B::test_fp8[latency-torch_compile=True] SKIP (https://nvbugs/6094066)
+ accuracy/test_llm_api_pytorch.py::TestQwen3_30B_A3B::test_w4a16_mxfp4[latency-TRITON] SKIP (https://nvbugs/6162323)
+-accuracy/test_llm_api_pytorch.py::TestQwen3_30B_A3B::test_w4a8_mxfp4[mxfp8-latency-TRTLLM] SKIP (https://nvbugs/6095421)
+ accuracy/test_llm_api_pytorch.py::TestQwen3_5_35B_A3B::test_fp8[enable_block_reuse=False] SKIP (https://nvbugs/6004530)
+ accuracy/test_llm_api_pytorch.py::TestQwen3_5_35B_A3B::test_fp8[enable_block_reuse=True] SKIP (https://nvbugs/6004530)
+ accuracy/test_llm_api_pytorch.py::TestQwen3_5_4B::test_bf16 SKIP (https://nvbugs/6141803)

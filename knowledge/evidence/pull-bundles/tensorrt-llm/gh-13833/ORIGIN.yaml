@@ -1,0 +1,66 @@
+schema_version: 1
+source_key: NVIDIA/TensorRT-LLM#13833
+repo: NVIDIA/TensorRT-LLM
+repo_id: tensorrt-llm
+pr_number: 13833
+title: '[None][perf] FC2 DenseGEMM autotune: split-K, swap_ab, fine-grained tuning
+  buckets'
+url: https://github.com/NVIDIA/TensorRT-LLM/pull/13833
+state: closed
+merged_at: '2026-05-18T04:22:21Z'
+base_ref_oid: 3c4386b26c2749de026de6f75f78e23dd246636e
+head_ref_oid: 7ddc37ecd302423b13b73654c2d77f960ff90fa3
+captured_at: '2026-05-20T15:00:42.031156+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- benchmark kernel
+- blackwell
+- cuda kernel
+- cute
+- cutlass
+- gemm
+- moe
+- moe kernel
+- nvfp4
+- tma
+techniques:
+- async-copy
+- autotuning
+hardware_features:
+- blackwell
+- fp4
+- nvfp4
+- tma
+kernel_types:
+- gemm
+- moe
+languages:
+- cuda-cpp
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py
+    local_path: source-snapshot/tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py
+    ref: 7ddc37ecd302423b13b73654c2d77f960ff90fa3
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/cute_dsl_kernels/blackwell/moe_as_dense_gemm/fc2.py
+    local_path: source-snapshot/tensorrt_llm/_torch/cute_dsl_kernels/blackwell/moe_as_dense_gemm/fc2.py
+    ref: 7ddc37ecd302423b13b73654c2d77f960ff90fa3
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/cute_dsl_kernels/blackwell/utils.py
+    local_path: source-snapshot/tensorrt_llm/_torch/cute_dsl_kernels/blackwell/utils.py
+    ref: 7ddc37ecd302423b13b73654c2d77f960ff90fa3
+    status: modified
+    fetched: true
+  - source_path: tests/scripts/cute_dsl_kernels/moe_as_dense_gemm/run_moe_as_dense_gemm_fc2.py
+    local_path: source-snapshot/tests/scripts/cute_dsl_kernels/moe_as_dense_gemm/run_moe_as_dense_gemm_fc2.py
+    ref: 7ddc37ecd302423b13b73654c2d77f960ff90fa3
+    status: modified
+    fetched: true

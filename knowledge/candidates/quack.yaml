@@ -1,9 +1,9 @@
 repo: Dao-AILab/quack
-searched_at: '2026-05-16'
+searched_at: '2026-05-20'
 scan_start_date: '2024-01-01'
-cutoff_date: '2026-05-16'
-total_candidates: 49
-included: 0
+cutoff_date: '2026-05-20'
+total_candidates: 51
+included: 2
 excluded: 0
 deferred: 49
 prs:
@@ -1545,3 +1545,104 @@ prs:
   - quack/layernorm.py
   - tests/test_layernorm.py
   artifact_dir: evidence/pull-bundles/quack/gh-7
+- number: 139
+  pr: 139
+  title: Remove deprecation warning in 4.5
+  repo: Dao-AILab/quack
+  url: https://github.com/Dao-AILab/quack/pull/139
+  date: '2026-05-17'
+  merged_at: '2026-05-17T04:20:17Z'
+  author: drisspg
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: quack/gemm_sm100.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - cute
+  - cute-dsl
+  - cutlass
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - blackwell
+  kernel_types:
+  - gemm
+  languages:
+  - cute-dsl
+  changed_paths:
+  - quack/gemm_sm100.py
+  path_signals:
+  - quack/gemm_sm100.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - cute
+  - cutlass
+  - gemm
+  - sm100
+  additions: 2
+  deletions: 2
+  changed_file_count: 1
+  artifact_dir: evidence/pull-bundles/quack/gh-139
+- number: 138
+  pr: 138
+  title: '[RMSNorm] Support autotuning of RMSNorm{Fwd|Bwd} via config classes'
+  repo: Dao-AILab/quack
+  url: https://github.com/Dao-AILab/quack/pull/138
+  date: '2026-05-20'
+  merged_at: '2026-05-20T00:55:49Z'
+  author: thakkarV
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: quack/autotuner.py, quack/bench/bench_utils.py, quack/rmsnorm.py, quack/rmsnorm_config.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  - gemm
+  - hopper
+  - quack
+  - sm90
+  - triton kernel
+  architectures:
+  - sm100
+  - sm90
+  techniques:
+  - autotuning
+  hardware_features:
+  - blackwell
+  - hopper
+  kernel_types:
+  - gemm
+  - norm
+  languages:
+  - cuda-cpp
+  - triton
+  changed_paths:
+  - quack/autotuner.py
+  - quack/bench/bench_utils.py
+  - quack/rmsnorm.py
+  - quack/rmsnorm_config.py
+  - tests/test_rmsnorm.py
+  path_signals:
+  - quack/autotuner.py
+  - quack/bench/bench_utils.py
+  - quack/rmsnorm.py
+  - quack/rmsnorm_config.py
+  - tests/test_rmsnorm.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  - gemm
+  - hopper
+  - sm90
+  - triton kernel
+  additions: 848
+  deletions: 51
+  changed_file_count: 5
+  artifact_dir: evidence/pull-bundles/quack/gh-138

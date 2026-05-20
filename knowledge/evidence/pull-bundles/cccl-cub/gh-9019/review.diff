@@ -1,0 +1,137 @@
+diff --git a/cudax/include/cuda/experimental/__execution/visit.cuh b/cudax/include/cuda/experimental/__execution/visit.cuh
+index 52612b83ecc..96a34f94ce7 100644
+--- a/cudax/include/cuda/experimental/__execution/visit.cuh
++++ b/cudax/include/cuda/experimental/__execution/visit.cuh
+@@ -124,9 +124,6 @@ inline constexpr int structured_binding_size<_Sndr const&> = structured_binding_
+ // implementation.
+ #if defined(_CCCL_STRUCTURED_BINDING_CAN_INTRODUCE_A_PACK)
+ 
+-_CCCL_DIAG_PUSH
+-_CCCL_DIAG_SUPPRESS_CLANG("-Wc++2c-extensions")
+-
+ // C++26, structured binding can introduce a pack.
+ struct _CCCL_TYPE_VISIBILITY_DEFAULT visit_t
+ {
+@@ -141,8 +138,6 @@ struct _CCCL_TYPE_VISIBILITY_DEFAULT visit_t
+   }
+ };
+ 
+-_CCCL_DIAG_POP
+-
+ #else // ^^^ __cpp_structured_bindings >= 202411L / !__cpp_structured_bindings >= 202411L vvv
+ 
+ // When structured bindings cannot introduce a pack, we need to manually unroll for a
+diff --git a/libcudacxx/codegen/generate_prologue_epilogue.py b/libcudacxx/codegen/generate_prologue_epilogue.py
+index 080296a6c0f..256ca0bfb4b 100755
+--- a/libcudacxx/codegen/generate_prologue_epilogue.py
++++ b/libcudacxx/codegen/generate_prologue_epilogue.py
+@@ -153,24 +153,31 @@ def make_prologue(file):
+ // warning C4996: 'meow': was declared deprecated
+ _CCCL_DIAG_SUPPRESS_MSVC(4100 4127 4180 4197 4296 4324 4455 4503 4522 4668 4800 4996)
+ 
+-// disable warnings about using C++23 features in C++20 (needed for if consteval)
+-#if _CCCL_HAS_IF_CONSTEVAL_IN_CXX20()
+-#  if _CCCL_COMPILER(GCC, >=, 12)
++// Suppress compiler warnings about C++ extensions.
++
++#if _CCCL_COMPILER(GCC, >=, 12)
++_CCCL_DIAG_SUPPRESS_GCC("-Wc++20-extensions")
+ _CCCL_DIAG_SUPPRESS_GCC("-Wc++23-extensions")
+-#  endif // _CCCL_COMPILER(GCC, >=, 12)
+-#  if _CCCL_COMPILER(CLANG, >=, 17)
++#endif // _CCCL_COMPILER(GCC, >=, 12)
++#if _CCCL_COMPILER(GCC, >=, 14)
++_CCCL_DIAG_SUPPRESS_GCC("-Wc++26-extensions")
++#endif // _CCCL_COMPILER(GCC, >=, 14)
++
++_CCCL_DIAG_SUPPRESS_CLANG("-Wc++20-extensions")
++#if _CCCL_COMPILER(CLANG, >=, 17)
+ _CCCL_DIAG_SUPPRESS_CLANG("-Wc++23-extensions")
+-#  else // ^^^ _CCCL_COMPILER(CLANG, >=, 17) ^^^ / vvv _CCCL_COMPILER(CLANG, <, 17) vvv
++_CCCL_DIAG_SUPPRESS_CLANG("-Wc++26-extensions")
++#else // ^^^ _CCCL_COMPILER(CLANG, >=, 17) ^^^ / vvv _CCCL_COMPILER(CLANG, <, 17) vvv
+ _CCCL_DIAG_SUPPRESS_CLANG("-Wc++2b-extensions")
+-#  endif // ^^^ _CCCL_COMPILER(CLANG, <, 17) ^^^
+-_CCCL_DIAG_SUPPRESS_NVHPC(if_consteval_nonstandard)
++#endif // ^^^ _CCCL_COMPILER(CLANG, <, 17) ^^^
+ 
+-_CCCL_DIAG_SUPPRESS_NVCC(3215) // "if consteval" and "if not consteval" are not standard in this mode
+-#endif // _CCCL_HAS_IF_CONSTEVAL_IN_CXX20()
++// Suppress `if consteval`-related warnings.
+ 
++_CCCL_DIAG_SUPPRESS_NVHPC(if_consteval_nonstandard)
+ _CCCL_DIAG_SUPPRESS_NVHPC(is_constant_evaluated_in_nonconstexpr_context)
+ _CCCL_DIAG_SUPPRESS_NVHPC(if_consteval_in_nonconstexpr_function)
+ 
++_CCCL_DIAG_SUPPRESS_NVCC(3215) // "if consteval" and "if not consteval" are not standard in this mode
+ _CCCL_DIAG_SUPPRESS_NVCC(3206) // "if consteval" and "if not consteval" are meaningless in a non-constexpr function
+ _CCCL_DIAG_SUPPRESS_NVCC(3060) // call to __builtin_is_constant_evaluated appearing in a non-constexpr function always
+                                // produces "false"''',
+diff --git a/libcudacxx/include/cuda/std/__cccl/prologue.h b/libcudacxx/include/cuda/std/__cccl/prologue.h
+index a25b206974e..da21a9cc42b 100644
+--- a/libcudacxx/include/cuda/std/__cccl/prologue.h
++++ b/libcudacxx/include/cuda/std/__cccl/prologue.h
+@@ -316,24 +316,31 @@ _CCCL_NV_DIAG_PUSH()
+ // warning C4996: 'meow': was declared deprecated
+ _CCCL_DIAG_SUPPRESS_MSVC(4100 4127 4180 4197 4296 4324 4455 4503 4522 4668 4800 4996)
+ 
+-// disable warnings about using C++23 features in C++20 (needed for if consteval)
+-#if _CCCL_HAS_IF_CONSTEVAL_IN_CXX20()
+-#  if _CCCL_COMPILER(GCC, >=, 12)
++// Suppress compiler warnings about C++ extensions.
++
++#if _CCCL_COMPILER(GCC, >=, 12)
++_CCCL_DIAG_SUPPRESS_GCC("-Wc++20-extensions")
+ _CCCL_DIAG_SUPPRESS_GCC("-Wc++23-extensions")
+-#  endif // _CCCL_COMPILER(GCC, >=, 12)
+-#  if _CCCL_COMPILER(CLANG, >=, 17)
++#endif // _CCCL_COMPILER(GCC, >=, 12)
++#if _CCCL_COMPILER(GCC, >=, 14)
++_CCCL_DIAG_SUPPRESS_GCC("-Wc++26-extensions")
++#endif // _CCCL_COMPILER(GCC, >=, 14)
++
++_CCCL_DIAG_SUPPRESS_CLANG("-Wc++20-extensions")
++#if _CCCL_COMPILER(CLANG, >=, 17)
+ _CCCL_DIAG_SUPPRESS_CLANG("-Wc++23-extensions")
+-#  else // ^^^ _CCCL_COMPILER(CLANG, >=, 17) ^^^ / vvv _CCCL_COMPILER(CLANG, <, 17) vvv
++_CCCL_DIAG_SUPPRESS_CLANG("-Wc++26-extensions")
++#else // ^^^ _CCCL_COMPILER(CLANG, >=, 17) ^^^ / vvv _CCCL_COMPILER(CLANG, <, 17) vvv
+ _CCCL_DIAG_SUPPRESS_CLANG("-Wc++2b-extensions")
+-#  endif // ^^^ _CCCL_COMPILER(CLANG, <, 17) ^^^
+-_CCCL_DIAG_SUPPRESS_NVHPC(if_consteval_nonstandard)
++#endif // ^^^ _CCCL_COMPILER(CLANG, <, 17) ^^^
+ 
+-_CCCL_DIAG_SUPPRESS_NVCC(3215) // "if consteval" and "if not consteval" are not standard in this mode
+-#endif // _CCCL_HAS_IF_CONSTEVAL_IN_CXX20()
++// Suppress `if consteval`-related warnings.
+ 
++_CCCL_DIAG_SUPPRESS_NVHPC(if_consteval_nonstandard)
+ _CCCL_DIAG_SUPPRESS_NVHPC(is_constant_evaluated_in_nonconstexpr_context)
+ _CCCL_DIAG_SUPPRESS_NVHPC(if_consteval_in_nonconstexpr_function)
+ 
++_CCCL_DIAG_SUPPRESS_NVCC(3215) // "if consteval" and "if not consteval" are not standard in this mode
+ _CCCL_DIAG_SUPPRESS_NVCC(3206) // "if consteval" and "if not consteval" are meaningless in a non-constexpr function
+ _CCCL_DIAG_SUPPRESS_NVCC(3060) // call to __builtin_is_constant_evaluated appearing in a non-constexpr function always
+                                // produces "false"
+diff --git a/libcudacxx/include/cuda/std/__type_traits/type_list.h b/libcudacxx/include/cuda/std/__type_traits/type_list.h
+index b123b609878..175aefeadd4 100644
+--- a/libcudacxx/include/cuda/std/__type_traits/type_list.h
++++ b/libcudacxx/include/cuda/std/__type_traits/type_list.h
+@@ -486,17 +486,12 @@ struct _CCCL_TYPE_VISIBILITY_DEFAULT __type_try_catch
+ // Implementation for indexing into a list of types:
+ #  if _CCCL_HAS_PACK_INDEXING()
+ 
+-_CCCL_DIAG_PUSH
+-_CCCL_DIAG_SUPPRESS_CLANG("-Wc++26-extensions")
+-
+ template <size_t _Ip, class... _Ts>
+ using __type_index_c = _Ts...[_Ip];
+ 
+ template <class _Ip, class... _Ts>
+ using __type_index = _Ts...[_Ip::value];
+ 
+-_CCCL_DIAG_POP
+-
+ // Versions of nvcc prior to 12.0 have trouble with pack expansion into
+ // __type_pack_element in an alias template, so we use the fall-back
+ // implementation instead.

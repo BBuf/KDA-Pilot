@@ -1,0 +1,150 @@
+schema_version: 1
+source_key: tile-ai/tilelang#1908
+repo: tile-ai/tilelang
+repo_id: tilelang
+pr_number: 1908
+title: '[Feature] Add T.copy_cluster to support TMA multicast and SM-to-SM cluster
+  copy'
+url: https://github.com/tile-ai/tilelang/pull/1908
+state: closed
+merged_at: '2026-05-20T06:44:17Z'
+base_ref_oid: e9b7e21de9c729a4742fffdcf074a35cc286b192
+head_ref_oid: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+captured_at: '2026-05-20T15:06:33.873436+00:00'
+architectures:
+- sm100
+- sm90
+architecture_families:
+- blackwell
+- hopper
+tags:
+- benchmark kernel
+- cuda kernel
+- cutlass
+- fp4
+- fp8
+- gemm
+- hopper
+- mla
+- mxfp4
+- schedule
+- sm90
+techniques:
+- async-copy
+- pipeline-stages
+hardware_features:
+- fp4
+- fp8
+- hopper
+- mxfp4
+- tma
+kernel_types:
+- gemm
+- mla
+languages:
+- cuda-cpp
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: docs/programming_guides/cluster_tma.md
+    local_path: source-snapshot/docs/programming_guides/cluster_tma.md
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: added
+    fetched: true
+  - source_path: src/backend/cuda/codegen/codegen_cuda.cc
+    local_path: source-snapshot/src/backend/cuda/codegen/codegen_cuda.cc
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true
+  - source_path: src/backend/cuda/op/copy.cc
+    local_path: source-snapshot/src/backend/cuda/op/copy.cc
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true
+  - source_path: src/backend/cuda/op/copy_analysis.cc
+    local_path: source-snapshot/src/backend/cuda/op/copy_analysis.cc
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true
+  - source_path: src/op/builtin.cc
+    local_path: source-snapshot/src/op/builtin.cc
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true
+  - source_path: src/op/builtin.h
+    local_path: source-snapshot/src/op/builtin.h
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true
+  - source_path: src/op/copy.cc
+    local_path: source-snapshot/src/op/copy.cc
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true
+  - source_path: src/op/copy.h
+    local_path: source-snapshot/src/op/copy.h
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true
+  - source_path: src/op/operator.h
+    local_path: source-snapshot/src/op/operator.h
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true
+  - source_path: src/tl_templates/cuda/copy_sm90.h
+    local_path: source-snapshot/src/tl_templates/cuda/copy_sm90.h
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true
+  - source_path: src/transform/inject_fence_proxy.cc
+    local_path: source-snapshot/src/transform/inject_fence_proxy.cc
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true
+  - source_path: src/transform/lower_hopper_intrin.cc
+    local_path: source-snapshot/src/transform/lower_hopper_intrin.cc
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true
+  - source_path: src/transform/lower_tile_op.cc
+    local_path: source-snapshot/src/transform/lower_tile_op.cc
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true
+  - source_path: src/transform/multi_version_buffer_rewriter.cc
+    local_path: source-snapshot/src/transform/multi_version_buffer_rewriter.cc
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true
+  - source_path: src/transform/pipeline_planning.cc
+    local_path: source-snapshot/src/transform/pipeline_planning.cc
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true
+  - source_path: src/transform/thread_storage_sync.cc
+    local_path: source-snapshot/src/transform/thread_storage_sync.cc
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true
+  - source_path: testing/python/cuda/test_tma_dsmem.py
+    local_path: source-snapshot/testing/python/cuda/test_tma_dsmem.py
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: added
+    fetched: true
+  - source_path: testing/python/cuda/test_tma_multicast_demo.py
+    local_path: source-snapshot/testing/python/cuda/test_tma_multicast_demo.py
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: added
+    fetched: true
+  - source_path: tilelang/language/__init__.py
+    local_path: source-snapshot/tilelang/language/__init__.py
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true
+  - source_path: tilelang/language/copy_op.py
+    local_path: source-snapshot/tilelang/language/copy_op.py
+    ref: f86cbe26b6b9179ab19d93a60a2b6570f8bc1be1
+    status: modified
+    fetched: true

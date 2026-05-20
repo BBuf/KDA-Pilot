@@ -1,0 +1,68 @@
+diff --git a/python/pyproject.toml b/python/pyproject.toml
+index 7ec785be51d8..d5c2f3d6b703 100755
+--- a/python/pyproject.toml
++++ b/python/pyproject.toml
+@@ -27,7 +27,7 @@ dependencies = [
+   "datasets",
+   "einops",
+   "fastapi",
+-  "flashinfer_python==0.6.11.post1", # keep it aligned with jit-cache version in Dockerfile
++  "flashinfer_python[cu13]==0.6.11.post1", # keep it aligned with jit-cache version in Dockerfile
+   "flashinfer_cubin==0.6.11.post1",
+   "gguf",
+   "interegular",
+@@ -37,7 +37,7 @@ dependencies = [
+   "ninja",
+   "easydict",  # Required by remote model code (e.g. DeepSeek-OCR) loaded via trust_remote_code; validated by transformers 5.4+ check_imports
+   "numpy",
+-  "nvidia-cutlass-dsl==4.5.0",
++  "nvidia-cutlass-dsl[cu13]==4.5.0",
+   "nvidia-ml-py",
+   "openai-harmony==0.0.4",
+   "openai==2.6.1",
+diff --git a/scripts/ci/cuda/ci_install_dependency.sh b/scripts/ci/cuda/ci_install_dependency.sh
+index 398ba39931c4..0f2146d649e3 100755
+--- a/scripts/ci/cuda/ci_install_dependency.sh
++++ b/scripts/ci/cuda/ci_install_dependency.sh
+@@ -186,8 +186,8 @@ uninstall_stale_flashinfer() {
+     # Keep flashinfer packages if version matches to avoid re-downloading:
+     # - flashinfer-cubin: 150+ MB
+     # - flashinfer-jit-cache: 1.2+ GB
+-    FLASHINFER_PYTHON_REQUIRED=$(grep -Po -m1 '(?<=flashinfer_python==)[0-9A-Za-z\.\-]+' python/pyproject.toml || echo "")
+-    FLASHINFER_CUBIN_REQUIRED=$(grep -Po -m1 '(?<=flashinfer_cubin==)[0-9A-Za-z\.\-]+' python/pyproject.toml || echo "")
++    FLASHINFER_PYTHON_REQUIRED=$(grep -Po -m1 'flashinfer_python(\[[^]]+\])?==\K[0-9A-Za-z\.\-]+' python/pyproject.toml || echo "")
++    FLASHINFER_CUBIN_REQUIRED=$(grep -Po -m1 'flashinfer_cubin(\[[^]]+\])?==\K[0-9A-Za-z\.\-]+' python/pyproject.toml || echo "")
+     FLASHINFER_CUBIN_INSTALLED=$(pip show flashinfer-cubin 2>/dev/null | grep "^Version:" | awk '{print $2}' || echo "")
+     FLASHINFER_JIT_INSTALLED=$(pip show flashinfer-jit-cache 2>/dev/null | grep "^Version:" | awk '{print $2}' | sed 's/+.*//' || echo "")
+     FLASHINFER_JIT_CU_VERSION=$(pip show flashinfer-jit-cache 2>/dev/null | grep "^Version:" | awk '{print $2}' | sed -n 's/.*+//p' || echo "")
+@@ -335,6 +335,22 @@ download_flashinfer_cache() {
+     mark_step_done "${FUNCNAME[0]}"
+ }
+ 
++purge_cutlass_libs_base() {
++    # nvidia-cutlass-dsl[cu13] extras are additive on PyPI: requires_dist always
++    # pulls -libs-base AND -libs-cu13 when [cu13] is requested. Both wheels write
++    # to the same site-packages paths with different content, leaving the wrapper
++    # (cutlass.py, cu13 style) mismatched with the binding (_gpu_ops_gen.py, base
++    # style) -> GPUModuleOp signature TypeError. See vllm-project/vllm#40082.
++    # Uninstall -libs-base, then force-reinstall -libs-cu13 so its files win.
++    $PIP_UNINSTALL_CMD nvidia-cutlass-dsl-libs-base $PIP_UNINSTALL_SUFFIX || true
++    CUTLASS_DSL_VERSION=$(grep -Po -m1 'nvidia-cutlass-dsl(\[[^]]+\])?==\K[0-9A-Za-z\.\-]+' python/pyproject.toml || echo "")
++    if [ -n "$CUTLASS_DSL_VERSION" ]; then
++        $PIP_CMD install --force-reinstall --no-deps "nvidia-cutlass-dsl-libs-cu13==${CUTLASS_DSL_VERSION}" $PIP_INSTALL_SUFFIX
++    fi
++
++    mark_step_done "${FUNCNAME[0]}"
++}
++
+ stabilize_flashinfer_jit_paths() {
+     # In venv mode, FlashInfer JIT writes build.ninja with hardcoded -isystem
+     # paths. Per-job venvs get unique paths, but the JIT cache is shared on the
+@@ -488,6 +504,7 @@ main() {
+     install_sglang_kernel
+     install_sglang_router
+     download_flashinfer_cache
++    purge_cutlass_libs_base
+     stabilize_flashinfer_jit_paths
+     install_extra_deps
+     install_test_tools

@@ -1,0 +1,627 @@
+diff --git a/src/tl_templates/cuda/instruction/mma.h b/src/tl_templates/cuda/instruction/mma.h
+index c4a276f3a9..e5acfe0adf 100644
+--- a/src/tl_templates/cuda/instruction/mma.h
++++ b/src/tl_templates/cuda/instruction/mma.h
+@@ -1,9 +1,9 @@
+ #pragma once
+ 
+ #include "../common.h"
++#include <cute/arch/mma_sm75.hpp>
+ #include <cute/arch/mma_sm80.hpp>
+ #include <cute/arch/mma_sm89.hpp>
+-
+ #ifndef __CUDACC_RTC__
+ #include <type_traits>
+ #include <utility>
+@@ -54,6 +54,56 @@ TL_DEVICE void call_fma(typename MmaImplTraits<Impl>::DReg *d,
+                       std::make_index_sequence<MmaImplTraits<Impl>::kCRegs>{});
+ }
+ 
++struct SM75_8x8x32_S32S4S4S32_TN {
++  using DRegisters = uint32_t[2];
++  using ARegisters = uint32_t[1];
++  using BRegisters = uint32_t[1];
++  using CRegisters = uint32_t[2];
++
++  CUTE_HOST_DEVICE static void fma(uint32_t &d0, uint32_t &d1,
++                                   uint32_t const &a0, uint32_t const &b0,
++                                   uint32_t const &c0, uint32_t const &c1) {
++#if defined(CUTE_ARCH_MMA_SM75_ENABLED)
++    asm volatile("mma.sync.aligned.m8n8k32.row.col.s32.s4.s4.s32"
++                 "{%0, %1},"
++                 "{%2},"
++                 "{%3},"
++                 "{%4, %5};\n"
++                 : "=r"(d0), "=r"(d1)
++                 : "r"(a0), "r"(b0), "r"(c0), "r"(c1));
++#else
++    CUTE_INVALID_CONTROL_PATH(
++        "Attempting to use SM75_8x8x32_S32S4S4S32_TN without "
++        "CUTE_ARCH_MMA_SM75_ENABLED");
++#endif
++  }
++};
++
++struct SM75_8x8x32_S32U4U4S32_TN {
++  using DRegisters = uint32_t[2];
++  using ARegisters = uint32_t[1];
++  using BRegisters = uint32_t[1];
++  using CRegisters = uint32_t[2];
++
++  CUTE_HOST_DEVICE static void fma(uint32_t &d0, uint32_t &d1,
++                                   uint32_t const &a0, uint32_t const &b0,
++                                   uint32_t const &c0, uint32_t const &c1) {
++#if defined(CUTE_ARCH_MMA_SM75_ENABLED)
++    asm volatile("mma.sync.aligned.m8n8k32.row.col.s32.u4.u4.s32"
++                 "{%0, %1},"
++                 "{%2},"
++                 "{%3},"
++                 "{%4, %5};\n"
++                 : "=r"(d0), "=r"(d1)
++                 : "r"(a0), "r"(b0), "r"(c0), "r"(c1));
++#else
++    CUTE_INVALID_CONTROL_PATH(
++        "Attempting to use SM75_8x8x32_S32U4U4S32_TN without "
++        "CUTE_ARCH_MMA_SM75_ENABLED");
++#endif
++  }
++};
++
+ template <DataType AType, DataType BType, DataType CType, int M, int N, int K,
+           bool TransA, bool TransB, bool Saturate>
+ struct MmaDispatcher {
+@@ -94,6 +144,8 @@ TL_DEFINE_MMA_DISPATCHER(kFloat16, kFloat16, kFloat16, 16, 8, 16, false, true,
+                          false, cute::SM80_16x8x16_F16F16F16F16_TN)
+ TL_DEFINE_MMA_DISPATCHER(kFloat16, kFloat16, kFloat32, 16, 8, 16, false, true,
+                          false, cute::SM80_16x8x16_F32F16F16F32_TN)
++TL_DEFINE_MMA_DISPATCHER(kFloat16, kFloat16, kFloat32, 16, 8, 8, false, true,
++                         false, cute::SM75_16x8x8_F32F16F16F32_TN)
+ 
+ // BF16 inputs
+ TL_DEFINE_MMA_DISPATCHER(kBFloat16, kBFloat16, kFloat32, 16, 8, 16, false, true,
+@@ -105,7 +157,17 @@ TL_DEFINE_MMA_DISPATCHER(kInt8, kInt8, kInt32, 16, 8, 32, false, true, false,
+ TL_DEFINE_MMA_DISPATCHER(kUInt8, kUInt8, kInt32, 16, 8, 32, false, true, false,
+                          cute::SM80_16x8x32_S32U8U8S32_TN)
+ 
+-// INT4 inputs (k32, k64)
++// INT8 inputs (k16) for SM75
++TL_DEFINE_MMA_DISPATCHER(kInt8, kInt8, kInt32, 8, 8, 16, false, true, false,
++                         cute::SM75_8x8x16_S32S8S8S32_TN)
++
++// INT4 inputs (k32) for SM75
++TL_DEFINE_MMA_DISPATCHER(kInt4, kInt4, kInt32, 8, 8, 32, false, true, false,
++                         tl::detail::SM75_8x8x32_S32S4S4S32_TN)
++TL_DEFINE_MMA_DISPATCHER(kUInt4, kUInt4, kInt32, 8, 8, 32, false, true, false,
++                         tl::detail::SM75_8x8x32_S32U4U4S32_TN)
++
++// INT4 inputs (k32, k64) for SM80+
+ TL_DEFINE_MMA_DISPATCHER(kInt4, kInt4, kInt32, 16, 8, 32, false, true, false,
+                          cute::SM80_16x8x32_S32S4S4S32_TN)
+ TL_DEFINE_MMA_DISPATCHER(kInt4, kInt4, kInt32, 16, 8, 64, false, true, false,
+diff --git a/testing/python/cuda/test_cuda_mma_sm75_dispatch.py b/testing/python/cuda/test_cuda_mma_sm75_dispatch.py
+new file mode 100644
+index 0000000000..1114b8d179
+--- /dev/null
++++ b/testing/python/cuda/test_cuda_mma_sm75_dispatch.py
+@@ -0,0 +1,180 @@
++import pytest
++
++import tilelang.language as T
++from tilelang import tvm
++import tilelang.testing
++from tilelang.cuda.intrinsics.macro.mma_macro_generator import TensorCoreIntrinEmitter, TensorCoreIntrinEmitterWithLadderTransform
++from tilelang.cuda.intrinsics.macro.mma_sm75_macro_generator import TensorCoreIntrinEmitterSM75
++from tilelang.cuda.op.gemm.gemm_mma import GemmMMA
++from tilelang.cuda.op.gemm.gemm_mma_sm70 import GemmMMASm70
++from tilelang.cuda.op.gemm.gemm_mma_sm75 import GemmMMASm75
++from tilelang.tileop.gemm.registry import resolve_gemm_impl
++
++
++def test_sm75_uses_sm75_mma_gemm_impl():
++    Target = tvm.target.Target
++
++    assert resolve_gemm_impl("cuda.mma", Target("cuda -arch=sm_70")) is GemmMMASm70
++    assert resolve_gemm_impl("cuda.mma", Target("cuda -arch=sm_75")) is GemmMMASm75
++    assert resolve_gemm_impl("cuda.mma", Target("cuda -arch=sm_80")) is GemmMMA
++
++
++def test_sm75_fp16_emitter_uses_m16n8k8_shape():
++    emitter = TensorCoreIntrinEmitterSM75(
++        a_dtype=T.float16,
++        b_dtype=T.float16,
++        accum_dtype=T.float32,
++        a_transposed=False,
++        b_transposed=True,
++        block_row_warps=2,
++        block_col_warps=2,
++        warp_row_tiles=32,
++        warp_col_tiles=32,
++        chunk=32,
++    )
++
++    assert emitter.mma_prefix == "m16n8k8"
++    assert emitter.micro_size_x == 16
++    assert emitter.micro_size_y == 8
++    assert emitter.micro_size_k == 8
++    assert emitter.local_size_a == 4
++    assert emitter.local_size_b == 2
++    assert emitter.local_size_out == 4
++    assert emitter.warp_rows == 2
++    assert emitter.warp_cols == 4
++
++
++def test_sm75_int8_emitter_uses_m8n8k16_shape():
++    emitter = TensorCoreIntrinEmitterSM75(
++        a_dtype=T.int8,
++        b_dtype=T.int8,
++        accum_dtype=T.int32,
++        a_transposed=False,
++        b_transposed=True,
++        block_row_warps=2,
++        block_col_warps=2,
++        warp_row_tiles=32,
++        warp_col_tiles=32,
++        chunk=64,
++    )
++
++    assert emitter.mma_prefix == "m8n8k16"
++    assert emitter.micro_size_x == 8
++    assert emitter.micro_size_y == 8
++    assert emitter.micro_size_k == 16
++    assert emitter.local_size_a == 4
++    assert emitter.local_size_b == 4
++    assert emitter.local_size_out == 2
++    assert emitter.warp_rows == 4
++    assert emitter.warp_cols == 4
++    assert emitter.get_store_index_map() is not None
++
++
++def test_sm75_int4_emitter_uses_m8n8k32_shape():
++    emitter = TensorCoreIntrinEmitterSM75(
++        a_dtype=T.int4,
++        b_dtype=T.int4,
++        accum_dtype=T.int32,
++        a_transposed=False,
++        b_transposed=True,
++        block_row_warps=2,
++        block_col_warps=2,
++        warp_row_tiles=32,
++        warp_col_tiles=32,
++        chunk=64,
++    )
++
++    assert emitter.mma_prefix == "m8n8k32"
++    assert emitter.micro_size_x == 8
++    assert emitter.micro_size_y == 8
++    assert emitter.micro_size_k == 32
++    assert emitter.local_size_a == 8
++    assert emitter.local_size_b == 8
++    assert emitter.local_size_out == 2
++    assert emitter.warp_rows == 4
++    assert emitter.warp_cols == 4
++    assert emitter.get_store_index_map() is not None
++
++
++def test_sm75_m8n8_integer_emitter_uses_matching_store_lane_map():
++    emitter = TensorCoreIntrinEmitterSM75(
++        a_dtype=T.int8,
++        b_dtype=T.int8,
++        accum_dtype=T.int32,
++        a_transposed=False,
++        b_transposed=True,
++        block_row_warps=2,
++        block_col_warps=2,
++        warp_row_tiles=32,
++        warp_col_tiles=32,
++        chunk=64,
++    )
++
++    assert emitter.local_size_out == 2
++    assert emitter._use_fp64_store_index_map()
++
++
++def test_non_turing_int8_emitter_keeps_sm80_m16n8k32_shape():
++    emitter = TensorCoreIntrinEmitter(
++        a_dtype=T.int8,
++        b_dtype=T.int8,
++        accum_dtype=T.int32,
++        a_transposed=False,
++        b_transposed=True,
++        block_row_warps=2,
++        block_col_warps=2,
++        warp_row_tiles=32,
++        warp_col_tiles=32,
++        chunk=64,
++    )
++
++    assert emitter.mma_prefix == "m16n8k32"
++    assert emitter.micro_size_x == 16
++    assert emitter.micro_size_k == 32
++    assert emitter.micro_size_y == 16
++    assert emitter.local_size_a == 16
++    assert emitter.local_size_b == 16
++    assert emitter.local_size_out == 8
++
++
++def test_uint4_mma_emitter_is_not_advertised_until_fragment_layouts_support_it():
++    with pytest.raises(ValueError, match="Unsupported dtype: uint4"):
++        TensorCoreIntrinEmitterSM75(
++            a_dtype="uint4",
++            b_dtype="uint4",
++            accum_dtype=T.int32,
++            a_transposed=False,
++            b_transposed=True,
++            block_row_warps=2,
++            block_col_warps=2,
++            warp_row_tiles=32,
++            warp_col_tiles=32,
++            chunk=64,
++        )
++
++
++def test_ladder_transform_int8_micro_size_uses_actual_k_dim():
++    emitter = TensorCoreIntrinEmitterWithLadderTransform(
++        a_dtype=T.int8,
++        b_dtype=T.int8,
++        accum_dtype=T.int32,
++        a_transposed=False,
++        b_transposed=True,
++        block_row_warps=2,
++        block_col_warps=2,
++        warp_row_tiles=32,
++        warp_col_tiles=32,
++        chunk=64,
++    )
++
++    assert emitter.mma_prefix == "m16n8k32"
++    assert emitter.micro_size_x == 16
++    assert emitter.micro_size_y == 16
++    assert emitter.micro_size_k == 32
++    assert emitter.local_size_a == 16
++    assert emitter.local_size_b == 16
++    assert emitter.local_size_out == 8
++
++
++if __name__ == "__main__":
++    tilelang.testing.main()
+diff --git a/testing/python/kernel/test_tilelang_kernel_gemm_sm75.py b/testing/python/kernel/test_tilelang_kernel_gemm_sm75.py
+new file mode 100644
+index 0000000000..d168397c24
+--- /dev/null
++++ b/testing/python/kernel/test_tilelang_kernel_gemm_sm75.py
+@@ -0,0 +1,100 @@
++import torch
++
++import tilelang
++import tilelang.language as T
++import tilelang.testing
++
++
++def _make_gemm_kernel(M, N, K, block_M, block_N, block_K, in_dtype, out_dtype, accum_dtype):
++    @T.prim_func
++    def main(
++        A: T.Tensor((M, K), in_dtype),
++        B: T.Tensor((N, K), in_dtype),
++        C: T.Tensor((M, N), out_dtype),
++    ):
++        with T.Kernel(T.ceildiv(N, block_N), T.ceildiv(M, block_M), threads=128) as (bx, by):
++            A_shared = T.alloc_shared((block_M, block_K), in_dtype)
++            B_shared = T.alloc_shared((block_N, block_K), in_dtype)
++            C_local = T.alloc_fragment((block_M, block_N), accum_dtype)
++
++            T.clear(C_local)
++            for ko in T.serial(T.ceildiv(K, block_K)):
++                T.copy(A[by * block_M, ko * block_K], A_shared)
++                T.copy(B[bx * block_N, ko * block_K], B_shared)
++                T.gemm(A_shared, B_shared, C_local, transpose_B=True)
++            T.copy(C_local, C[by * block_M, bx * block_N])
++
++    return main
++
++
++def _assert_mma_sync_shape(source, a_type, c_type, m, n, k):
++    expected = f"tl::mma_sync<tl::DataType::{a_type}, tl::DataType::{a_type}, tl::DataType::{c_type}, {m}, {n}, {k}, false, true>"
++    assert expected in source
++    assert "mma_sync_sm70" not in source
++
++
++def _pack_int4(tensor: torch.Tensor) -> torch.Tensor:
++    tensor_i16 = tensor.to(torch.int16)
++    packed = (tensor_i16[..., ::2] & 0x0F) | ((tensor_i16[..., 1::2] & 0x0F) << 4)
++    return packed.to(torch.int8).contiguous()
++
++
++@tilelang.testing.requires_cuda
++@tilelang.testing.requires_cuda_compute_version_eq(7, 5)
++def test_sm75_f16_gemm_uses_m16n8k8_and_matches_torch():
++    M = N = K = 128
++    kernel = tilelang.compile(
++        _make_gemm_kernel(M, N, K, 64, 64, 32, T.float16, T.float32, T.float32),
++        target="cuda",
++        out_idx=[2],
++    )
++    _assert_mma_sync_shape(kernel.get_kernel_source(), "kFloat16", "kFloat32", 16, 8, 8)
++
++    a = torch.randn((M, K), device="cuda", dtype=torch.float16)
++    b = torch.randn((N, K), device="cuda", dtype=torch.float16)
++    c = kernel(a, b)
++    ref = a.float() @ b.float().T
++
++    tilelang.testing.torch_assert_close(c, ref, rtol=1e-2, atol=1e-2, max_mismatched_ratio=0.01)
++
++
++@tilelang.testing.requires_cuda
++@tilelang.testing.requires_cuda_compute_version_eq(7, 5)
++def test_sm75_int8_gemm_uses_m8n8k16_and_matches_torch():
++    M = N = K = 128
++    kernel = tilelang.compile(
++        _make_gemm_kernel(M, N, K, 64, 64, 64, T.int8, T.int32, T.int32),
++        target="cuda",
++        out_idx=[2],
++    )
++    _assert_mma_sync_shape(kernel.get_kernel_source(), "kInt8", "kInt32", 8, 8, 16)
++
++    a = torch.randint(-8, 8, (M, K), device="cuda", dtype=torch.int8)
++    b = torch.randint(-8, 8, (N, K), device="cuda", dtype=torch.int8)
++    c = kernel(a, b)
++    ref = (a.cpu().to(torch.int32) @ b.cpu().to(torch.int32).T).to(device="cuda")
++
++    tilelang.testing.torch_assert_close(c, ref, rtol=0, atol=0)
++
++
++@tilelang.testing.requires_cuda
++@tilelang.testing.requires_cuda_compute_version_eq(7, 5)
++def test_sm75_int4_gemm_uses_m8n8k32_and_matches_torch():
++    M = N = K = 128
++    kernel = tilelang.compile(
++        _make_gemm_kernel(M, N, K, 64, 64, 64, T.int4, T.int32, T.int32),
++        target="cuda",
++        out_idx=[2],
++    )
++    _assert_mma_sync_shape(kernel.get_kernel_source(), "kInt4", "kInt32", 8, 8, 32)
++
++    a = torch.randint(-8, 8, (M, K), device="cuda", dtype=torch.int8)
++    b = torch.randint(-8, 8, (N, K), device="cuda", dtype=torch.int8)
++    c = kernel(_pack_int4(a), _pack_int4(b))
++    ref = (a.cpu().to(torch.int32) @ b.cpu().to(torch.int32).T).to(device="cuda")
++
++    tilelang.testing.torch_assert_close(c, ref, rtol=0, atol=0)
++
++
++if __name__ == "__main__":
++    tilelang.testing.main()
+diff --git a/tilelang/cuda/intrinsics/macro/mma_macro_generator.py b/tilelang/cuda/intrinsics/macro/mma_macro_generator.py
+index 87da629991..580a33172b 100644
+--- a/tilelang/cuda/intrinsics/macro/mma_macro_generator.py
++++ b/tilelang/cuda/intrinsics/macro/mma_macro_generator.py
+@@ -10,6 +10,7 @@
+ from tvm.runtime import convert
+ from ..layout.utils import (
+     mma_store_index_map,
++    mma_store_index_map_fp64,
+     get_ldmatrix_offset,
+ )
+ from tilelang.utils import is_fragment, get_buffer_region_from_load
+@@ -94,11 +95,7 @@ def __init__(
+         self.warp_col_tiles = warp_col_tiles
+         self.chunk = chunk
+         self._initialize_k_dim(self.a_dtype)
+-        # For FP64, MMA shape is m8n8k4; adjust instance dims early
+-        if DataType(self.a_dtype).bits == 64:
+-            # Override default M/N dims for fp64 MMA
+-            self.M_DIM = 8
+-            # n_dim will be set to 8 in _initialize_micro_size via k_dim==4
++        self._initialize_m_dim(self.a_dtype)
+         self._initialize_micro_size(self.M_DIM, self.k_dim)
+         self._initialize_local_size(self.M_DIM, self.n_dim, self.k_dim, self.WARP_SIZE)
+         self._initialize_abbrev(self.a_dtype, self.b_dtype, accum_dtype)
+@@ -120,6 +117,13 @@ def _initialize_k_dim(self, a_dtype=T.float16):
+             a_dtype = DataType(a_dtype)
+         self.k_dim = min(256 // a_dtype.bits, self.chunk)
+ 
++    def _initialize_m_dim(self, a_dtype=T.float16):
++        if isinstance(a_dtype, str):
++            a_dtype = DataType(a_dtype)
++        if a_dtype.bits == 64:
++            # FP64 MMA uses m8n8k4; n_dim is set by _initialize_micro_size.
++            self.M_DIM = 8
++
+     def _initialize_local_size(self, m_dim=16, n_dim=16, k_dim=16, warp_size=32):
+         self.local_size_a = (m_dim * k_dim) // warp_size
+         self.local_size_b = (n_dim * k_dim) // warp_size
+@@ -164,9 +168,7 @@ def _initialize_mma_prefix(self, k_dim: int = 16):
+     def _initialize_micro_size(self, m_dim: int = 16, k_dim: int = 16):
+         warp_row_tiles = self.warp_row_tiles
+         warp_col_tiles = self.warp_col_tiles
+-        # For fp64 (k_dim==4), micro tile is 8x8, otherwise keep 16x{8|16}
+         if k_dim == 4:
+-            # fp64 path: m_dim must be 8, n_dim 8
+             assert m_dim == 8, f"For fp64 MMA, m_dim must be 8, got {m_dim}"
+             self.n_dim = 8
+             self.micro_size_y = 8
+@@ -205,11 +207,13 @@ def get_thread_binding(self):
+         else:
+             return self.thread_var
+ 
+-    def get_store_index_map(self, inverse: bool = False) -> IndexMap:
+-        from ..layout.utils import mma_store_index_map, mma_store_index_map_fp64
++    def _use_fp64_store_index_map(self) -> bool:
++        # m8n8 MMA atoms produce two C registers and share the FP64 lane map.
++        return DataType(self.accum_dtype).bits == 64 or self.local_size_out == 2
+ 
++    def get_store_index_map(self, inverse: bool = False) -> IndexMap:
+         warp_size, local_size_c = self.WARP_SIZE, self.local_size_out
+-        if DataType(self.accum_dtype).bits == 64:
++        if self._use_fp64_store_index_map():
+             index_map = IndexMap.from_func(mma_store_index_map_fp64, index_dtype=T.int32)
+         else:
+             index_map = IndexMap.from_func(mma_store_index_map, index_dtype=T.int32)
+@@ -606,6 +610,7 @@ def stmatrix(self, C_local_buf, C_buf, pid_m=None, pid_n=None):
+         assert C_buf_dims in {2, 4}, "C_buf should be 2D or 4D"
+ 
+         thread_binding = self.get_thread_binding()
++        store_index_map = mma_store_index_map_fp64 if self._use_fp64_store_index_map() else mma_store_index_map
+ 
+         # STS
+         # MMA Store must be in simulated instead of TVM Intrins
+@@ -618,7 +623,7 @@ def _warp_stmatrix_shared(C_local_buf, C_buf, thread_binding):
+                 for local_id_o in T.serial(local_size_out // 2):
+                     for local_id_i in T.vectorized(2):
+                         local_id = local_id_o * 2 + local_id_i
+-                        row, col = T.meta_var(mma_store_index_map(tx, local_id))
++                        row, col = T.meta_var(store_index_map(tx, local_id))
+                         if C_buf_dims == 2:
+                             C_buf[(warp_m * warp_rows + i) * M_DIM + row, (warp_n * warp_cols + j) * n_dim + col] = C_local_buf[
+                                 i * (warp_cols * local_size_out) + j * local_size_out + local_id
+@@ -635,7 +640,7 @@ def _warp_stmatrix_global(C_local_buf, C_buf, thread_binding):
+                 for local_id_o in T.serial(local_size_out // 2):
+                     for local_id_i in T.vectorized(2):
+                         local_id = local_id_o * 2 + local_id_i
+-                        row, col = T.meta_var(mma_store_index_map(tx, local_id))
++                        row, col = T.meta_var(store_index_map(tx, local_id))
+                         C_buf[
+                             (pid_m * BLOCK_M + warp_m * warp_rows + i) * M_DIM + row,
+                             (pid_n * BLOCK_N + warp_n * warp_cols + j) * n_dim + col,
+@@ -936,9 +941,9 @@ def _initialize_mma_prefix(self, k_dim=16):
+         else:
+             raise ValueError("Unsupported k_dim")
+ 
+-    def _initialize_micro_size(self, m_dim=16, n_dim=16, k_dim=16):
++    def _initialize_micro_size(self, m_dim=16, k_dim=16):
+         self.micro_size_x = m_dim
+-        self.micro_size_y = n_dim
++        self.micro_size_y = self.n_dim
+         self.micro_size_k = k_dim
+ 
+     def _initialize_transform_kind(self, transform_kind_a, transform_kind_b):
+diff --git a/tilelang/cuda/intrinsics/macro/mma_sm75_macro_generator.py b/tilelang/cuda/intrinsics/macro/mma_sm75_macro_generator.py
+new file mode 100644
+index 0000000000..ad1add60f8
+--- /dev/null
++++ b/tilelang/cuda/intrinsics/macro/mma_sm75_macro_generator.py
+@@ -0,0 +1,61 @@
++from __future__ import annotations
++
++import tilelang.language as T
++from tvm import DataType
++
++from .mma_macro_generator import TensorCoreIntrinEmitter
++
++
++class TensorCoreIntrinEmitterSM75(TensorCoreIntrinEmitter):
++    """SM75/Turing-specific MMA shape policy."""
++
++    def _initialize_k_dim(self, a_dtype=T.float16):
++        if isinstance(a_dtype, str):
++            a_dtype = DataType(a_dtype)
++        if a_dtype.bits == 4:
++            self.k_dim = min(32, self.chunk)
++        elif a_dtype.bits == 8:
++            self.k_dim = min(16, self.chunk)
++        elif a_dtype.bits == 16:
++            self.k_dim = min(8, self.chunk)
++        else:
++            self.k_dim = min(256 // a_dtype.bits, self.chunk)
++
++    def _initialize_m_dim(self, a_dtype=T.float16):
++        super()._initialize_m_dim(a_dtype)
++        if isinstance(a_dtype, str):
++            a_dtype = DataType(a_dtype)
++        if a_dtype.bits in (4, 8):
++            self.M_DIM = 8
++
++    def _initialize_mma_prefix(self, k_dim: int = 16):
++        if k_dim == 8:
++            self.mma_prefix = "m16n8k8"
++        elif k_dim == 16:
++            self.mma_prefix = "m8n8k16"
++        elif k_dim == 32:
++            self.mma_prefix = "m8n8k32"
++        else:
++            super()._initialize_mma_prefix(k_dim)
++
++    def _initialize_micro_size(self, m_dim: int = 16, k_dim: int = 16):
++        if k_dim == 4:
++            super()._initialize_micro_size(m_dim, k_dim)
++            return
++
++        warp_row_tiles = self.warp_row_tiles
++        warp_col_tiles = self.warp_col_tiles
++        use_m8n8 = k_dim in (16, 32)
++        use_n8 = use_m8n8 or k_dim == 8
++        if use_n8:
++            if use_m8n8:
++                assert m_dim == 8, f"For SM75 integer MMA, m_dim must be 8, got {m_dim}"
++            self.n_dim = 8
++            self.micro_size_y = 8
++            self.warp_rows = warp_row_tiles // m_dim
++            self.warp_cols = warp_col_tiles // 8
++            self.micro_size_x = m_dim
++            self.micro_size_k = k_dim
++            return
++
++        super()._initialize_micro_size(m_dim, k_dim)
+diff --git a/tilelang/cuda/op/gemm/__init__.py b/tilelang/cuda/op/gemm/__init__.py
+index 8cd0da4019..52aa4d44db 100644
+--- a/tilelang/cuda/op/gemm/__init__.py
++++ b/tilelang/cuda/op/gemm/__init__.py
+@@ -5,6 +5,7 @@
+ from tilelang.tileop.gemm.registry import register_gemm_impl
+ from .gemm_mma import GEMM_INST_MMA, GemmMMA
+ from .gemm_mma_sm70 import GemmMMASm70
++from .gemm_mma_sm75 import GemmMMASm75
+ from .gemm_tcgen05 import GEMM_INST_TCGEN05, GemmTCGEN5
+ from .gemm_wgmma import GEMM_INST_WGMMA, GemmWGMMA
+ from tilelang.utils.target import target_is_cuda, target_is_turing, target_is_volta
+@@ -15,7 +16,11 @@ def _match_mma(target) -> bool:
+ 
+ 
+ def _match_mma_sm70(target) -> bool:
+-    return target_is_volta(target) or target_is_turing(target)
++    return target_is_volta(target)
++
++
++def _match_mma_sm75(target) -> bool:
++    return target_is_turing(target)
+ 
+ 
+ def _match_wgmma(target) -> bool:
+@@ -28,5 +33,6 @@ def _match_tcgen05(target) -> bool:
+ 
+ register_gemm_impl("cuda.mma", GEMM_INST_MMA, _match_mma, GemmMMA)
+ register_gemm_impl("cuda.mma_sm70", GEMM_INST_MMA, _match_mma_sm70, GemmMMASm70)
++register_gemm_impl("cuda.mma_sm75", GEMM_INST_MMA, _match_mma_sm75, GemmMMASm75)
+ register_gemm_impl("cuda.wgmma", GEMM_INST_WGMMA, _match_wgmma, GemmWGMMA)
+ register_gemm_impl("cuda.tcgen05", GEMM_INST_TCGEN05, _match_tcgen05, GemmTCGEN5)
+diff --git a/tilelang/cuda/op/gemm/gemm_mma.py b/tilelang/cuda/op/gemm/gemm_mma.py
+index bd572c4075..7221183732 100644
+--- a/tilelang/cuda/op/gemm/gemm_mma.py
++++ b/tilelang/cuda/op/gemm/gemm_mma.py
+@@ -18,11 +18,13 @@
+ 
+ 
+ class GemmMMA(GemmBase):
++    intrin_emitter_cls = TensorCoreIntrinEmitter
++
+     def _make_mma_emitter(self, target: Target, thread_nums: int, thread_var: tir.Var | None = None):
+         m_warp, n_warp = self.policy.compute_warp_partition(self.M, self.N, thread_nums, target, GEMM_INST_MMA)
+         warp_row_tiles = int(self.M // m_warp)
+         warp_col_tiles = int(self.N // n_warp)
+-        emitter = TensorCoreIntrinEmitter(
++        emitter = self.intrin_emitter_cls(
+             a_dtype=self.in_dtype,
+             b_dtype=self.in_dtype,
+             accum_dtype=self.accum_dtype,
+diff --git a/tilelang/cuda/op/gemm/gemm_mma_sm75.py b/tilelang/cuda/op/gemm/gemm_mma_sm75.py
+new file mode 100644
+index 0000000000..f2f065ac12
+--- /dev/null
++++ b/tilelang/cuda/op/gemm/gemm_mma_sm75.py
+@@ -0,0 +1,7 @@
++from tilelang.cuda.intrinsics.macro.mma_sm75_macro_generator import TensorCoreIntrinEmitterSM75
++
++from .gemm_mma import GemmMMA
++
++
++class GemmMMASm75(GemmMMA):
++    intrin_emitter_cls = TensorCoreIntrinEmitterSM75

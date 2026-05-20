@@ -1,0 +1,44 @@
+schema_version: 1
+source_key: vllm-project/vllm#40131
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 40131
+title: '[Bugfix] moe lora align kernel grid'
+url: https://github.com/vllm-project/vllm/pull/40131
+state: closed
+merged_at: '2026-05-18T07:17:54Z'
+base_ref_oid: 966903eb93a053a908fbf8b931fcebfb28c4741a
+head_ref_oid: b69ba035ee1059a857d1bc6fe267c2b6e2a4cd5f
+captured_at: '2026-05-20T15:12:08.160305+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cuda kernel
+- fp8
+- moe
+- moe kernel
+- triton kernel
+techniques: []
+hardware_features:
+- fp8
+kernel_types:
+- moe
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: csrc/moe/moe_align_sum_kernels.cu
+    local_path: source-snapshot/csrc/moe/moe_align_sum_kernels.cu
+    ref: b69ba035ee1059a857d1bc6fe267c2b6e2a4cd5f
+    status: modified
+    fetched: true
+  - source_path: tests/lora/test_moe_lora_align_sum.py
+    local_path: source-snapshot/tests/lora/test_moe_lora_align_sum.py
+    ref: b69ba035ee1059a857d1bc6fe267c2b6e2a4cd5f
+    status: modified
+    fetched: true

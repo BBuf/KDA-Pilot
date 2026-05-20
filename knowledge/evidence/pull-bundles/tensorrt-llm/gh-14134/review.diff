@@ -1,0 +1,850 @@
+diff --git a/tensorrt_llm/_torch/attention_backend/flashinfer.py b/tensorrt_llm/_torch/attention_backend/flashinfer.py
+index 2f179d495b8d..f959e08203f2 100644
+--- a/tensorrt_llm/_torch/attention_backend/flashinfer.py
++++ b/tensorrt_llm/_torch/attention_backend/flashinfer.py
+@@ -942,6 +942,11 @@ def decode_forward(plan_params: PlanParams, out: torch.Tensor):
+ 
+             prefix_lens = metadata.cached_token_lens[:num_contexts].clone()
+ 
++            # attention_window_size is already in flashinfer/triton convention
++            # here (forward() subtracts 1 from the exclusive TRTLLM window).
++            window_left = (attention_window_size
++                           if attention_window_size is not None else -1)
++
+             triton_prefill_with_custom_mask(
+                 q=q[:num_ctx_tokens],
+                 k=k[:num_ctx_tokens],
+@@ -958,6 +963,7 @@ def decode_forward(plan_params: PlanParams, out: torch.Tensor):
+                 page_size=metadata.page_size,
+                 custom_mask=attention_mask_data,
+                 sm_scale=1 / (math.sqrt(self.head_dim) * self.q_scaling),
++                window_left=window_left,
+             )
+ 
+             if num_generations > 0:
+diff --git a/tensorrt_llm/_torch/attention_backend/triton_prefill.py b/tensorrt_llm/_torch/attention_backend/triton_prefill.py
+index 1d8844558807..d737efd3537c 100644
+--- a/tensorrt_llm/_torch/attention_backend/triton_prefill.py
++++ b/tensorrt_llm/_torch/attention_backend/triton_prefill.py
+@@ -150,6 +150,7 @@ def _fwd_kernel(
+     USE_CUSTOM_MASK: tl.constexpr,
+     IS_CAUSAL: tl.constexpr,
+     SKIP_PREFIX_CUSTOM_MASK: tl.constexpr,
++    WINDOW_LEFT: tl.constexpr,
+ ):
+     cur_seq = tl.program_id(0)
+     cur_head = tl.program_id(1)
+@@ -194,11 +195,28 @@ def _fwd_kernel(
+     e_max = tl.zeros([BLOCK_M], dtype=tl.float32) - float("inf")
+ 
+     # ---- Stage 1: attend to prefix KV (paged cache, HND layout) ----
+-    for start_n in range(0, cur_seq_len_prefix, BLOCK_N):
++    # Sliding-window: under v2 KV cache layout A' (linear page_table with
++    # BAD_PAGE_INDEX=-1 placeholders for evicted out-of-window blocks), clip
++    # the loop start so we never tl.load from a -1 page slot. The remaining
++    # tail tile is filtered by the per-row window_mask below.
++    if WINDOW_LEFT >= 0:
++        block_q_min = cur_seq_len_prefix + cur_block_m * BLOCK_M
++        prefix_loop_lo = block_q_min - WINDOW_LEFT
++        if prefix_loop_lo < 0:
++            prefix_loop_lo = 0
++        prefix_loop_lo = (prefix_loop_lo // BLOCK_N) * BLOCK_N
++    else:
++        prefix_loop_lo = 0
++
++    for start_n in range(prefix_loop_lo, cur_seq_len_prefix, BLOCK_N):
+         start_n = tl.multiple_of(start_n, BLOCK_N)
+         mask_n = (start_n + offs_n) < cur_seq_len_prefix
+ 
+         final_mask = mask_m[:, None] & mask_n[None, :]
++        if WINDOW_LEFT >= 0:
++            q_pos_s1 = cur_seq_len_prefix + cur_block_m * BLOCK_M + offs_m[:, None]
++            k_pos_s1 = start_n + offs_n[None, :]
++            final_mask &= (q_pos_s1 - k_pos_s1) <= WINDOW_LEFT
+         if USE_CUSTOM_MASK and not SKIP_PREFIX_CUSTOM_MASK:
+             custom_mask = tl.load(
+                 mask_ptr
+@@ -223,19 +241,33 @@ def _fwd_kernel(
+             page_ids = tl.load(
+                 page_table + cur_seq_page_start + page_local_idx,
+                 mask=mask_n,
+-                other=0,
++                other=-1,
+             )
++            # Under v2 KV cache layout A', evicted SWA slots carry
++            # BAD_PAGE_INDEX=-1. Per-row window_mask alone is too late: tl.load
++            # with mask=True still issues the memory access, so a -1 page_id
++            # would OOB into K_Buffer/V_Buffer (NaN propagation or illegal
++            # address fault). Filter at load and at qk merge.
++            valid_page = page_ids >= 0
++            safe_page_ids = tl.where(valid_page, page_ids, 0)
++            # Promote to int64 before multiplying by stride: with KV pools at
++            # production scale (e.g. shape [N, 2, 8, 32, 256] => stride 131072
++            # elements/page), page_id * stride overflows int32 once page_id
++            # exceeds ~16K and silently wraps to a negative offset, IMA-ing
++            # K_Buffer/V_Buffer.
++            safe_page_ids = safe_page_ids.to(tl.int64)
++            final_mask &= valid_page[None, :]
+ 
+             # Load K from paged buffer (transposed for dot product)
+             offs_buf_k = (
+-                page_ids[None, :] * stride_buf_kpage
++                safe_page_ids[None, :] * stride_buf_kpage
+                 + cur_kv_head * stride_buf_kh
+                 + token_in_page[None, :] * stride_buf_ktoken
+                 + offs_d[:, None] * stride_buf_kdim
+             )
+             k = tl.load(
+                 K_Buffer + offs_buf_k,
+-                mask=mask_n[None, :] & mask_d[:, None],
++                mask=mask_n[None, :] & mask_d[:, None] & valid_page[None, :],
+                 other=0.0,
+             )
+ 
+@@ -257,14 +289,14 @@ def _fwd_kernel(
+ 
+             # Load V from paged buffer
+             offs_buf_v = (
+-                page_ids[:, None] * stride_buf_vpage
++                safe_page_ids[:, None] * stride_buf_vpage
+                 + cur_kv_head * stride_buf_vh
+                 + token_in_page[:, None] * stride_buf_vtoken
+                 + offs_dv[None, :] * stride_buf_vdim
+             )
+             v = tl.load(
+                 V_Buffer + offs_buf_v,
+-                mask=mask_n[:, None] & mask_dv[None, :],
++                mask=mask_n[:, None] & mask_dv[None, :] & valid_page[:, None],
+                 other=0.0,
+             )
+             p = p.to(v.dtype)
+@@ -302,6 +334,11 @@ def _fwd_kernel(
+         else:
+             final_mask &= mask_m[:, None] & mask_n[None, :]
+ 
++        if WINDOW_LEFT >= 0:
++            q_pos_s2 = cur_block_m * BLOCK_M + offs_m[:, None]
++            k_pos_s2 = start_n + offs_n[None, :]
++            final_mask &= (q_pos_s2 - k_pos_s2) <= WINDOW_LEFT
++
+         SKIP_TILE = False
+         if USE_CUSTOM_MASK:
+             SKIP_TILE = tl.max(tl.max(final_mask.to(tl.int32), axis=1), axis=0) == 0
+@@ -382,6 +419,7 @@ def _extend_attention_fwd(
+     is_causal: bool = False,
+     logit_cap: float = 0.0,
+     skip_prefix_custom_mask: bool = False,
++    window_left: int = -1,
+ ):
+     """Launch the Triton extend attention kernel.
+ 
+@@ -404,6 +442,8 @@ def _extend_attention_fwd(
+         is_causal: Use causal masking for extend (stage 2)
+         logit_cap: Logit soft-capping (0.0 = disabled)
+         skip_prefix_custom_mask: Skip custom mask for prefix (stage 1)
++        window_left: Sliding window radius (inclusive), -1 to disable.
++            A query at position p attends to keys in [p - window_left, p].
+     """
+     Lq = q_extend.shape[-1]
+     Lv = v_extend.shape[-1]
+@@ -461,6 +501,7 @@ def _extend_attention_fwd(
+         USE_CUSTOM_MASK=custom_mask is not None,
+         IS_CAUSAL=is_causal,
+         SKIP_PREFIX_CUSTOM_MASK=skip_prefix_custom_mask,
++        WINDOW_LEFT=window_left,
+         num_warps=num_warps,
+         num_stages=1,
+     )
+@@ -482,6 +523,7 @@ def triton_prefill_with_custom_mask(
+     # Attention config
+     custom_mask: Optional[torch.Tensor],
+     sm_scale: float,
++    window_left: int = -1,
+ ) -> None:
+     """Triton prefill attention with optional custom mask and paged KV cache.
+ 
+@@ -510,6 +552,10 @@ def triton_prefill_with_custom_mask(
+                      Per-seq shape: [extend_len, prefix_len + extend_len].
+                      None for causal attention.
+         sm_scale: Softmax scale factor
++        window_left: Sliding window radius (inclusive), -1 to disable.
++            A query at position p attends to keys in [p - window_left, p].
++            Use (attention_window_size - 1) since TRTLLM window size is
++            exclusive while flashinfer/triton convention is inclusive.
+     """
+     device = q.device
+     num_contexts = qo_indptr.shape[0] - 1
+@@ -583,4 +629,5 @@ def triton_prefill_with_custom_mask(
+         is_causal=False,
+         logit_cap=0.0,
+         skip_prefix_custom_mask=False,
++        window_left=window_left,
+     )
+diff --git a/tensorrt_llm/_torch/models/modeling_gemma4.py b/tensorrt_llm/_torch/models/modeling_gemma4.py
+index 3129c58ac0ec..e5a1c1945476 100644
+--- a/tensorrt_llm/_torch/models/modeling_gemma4.py
++++ b/tensorrt_llm/_torch/models/modeling_gemma4.py
+@@ -980,23 +980,41 @@ def get_context_mask(
+         self,
+         mm_token_type_ids: torch.Tensor,
+         effective_sliding_window: Optional[int] = None,
++        prefix_len: int = 0,
+     ):
+-        """Build context mask with causal + bidirectional for MM tokens."""
++        """Build context mask with causal + bidirectional for MM tokens.
++
++        Returns a [extend_len, prefix_len + extend_len] mask where:
++        - The first `prefix_len` columns (cached/paged history) are True for
++          all rows. SWA window enforcement is delegated to the kernel's
++          window_left clip. Bidirectional MM across the prefix/extend
++          boundary is NOT supported here; callers must ensure chunk
++          boundaries do not split a multimodal block.
++        - The last `extend_len` columns follow the original causal +
++          (optional) sliding window + MM-bidirectional logic.
++        """
+         device = mm_token_type_ids.device
+-        sequence_length = len(mm_token_type_ids)
++        extend_len = len(mm_token_type_ids)
+ 
+-        if effective_sliding_window is None or effective_sliding_window >= sequence_length:
+-            causal_mask = torch.arange(sequence_length, device=device).unsqueeze(0) <= torch.arange(
+-                sequence_length, device=device
++        if effective_sliding_window is None or effective_sliding_window >= extend_len:
++            causal_mask = torch.arange(extend_len, device=device).unsqueeze(0) <= torch.arange(
++                extend_len, device=device
+             ).unsqueeze(1)
+         else:
+-            pos = torch.arange(sequence_length, device=device)
++            pos = torch.arange(extend_len, device=device)
+             causal_mask = (pos.unsqueeze(0) <= pos.unsqueeze(1)) & (
+                 pos.unsqueeze(0) > pos.unsqueeze(1) - effective_sliding_window
+             )
+ 
+         token_type_mask = self._get_token_type_mask(mm_token_type_ids)
+         causal_mask = causal_mask.masked_fill(token_type_mask, True)
++
++        if prefix_len > 0:
++            prefix_block = torch.ones(
++                extend_len, prefix_len, dtype=causal_mask.dtype, device=device
++            )
++            causal_mask = torch.cat([prefix_block, causal_mask], dim=1)
++
+         return causal_mask
+ 
+     def get_flashinfer_attention_mask(
+@@ -1014,13 +1032,14 @@ def get_flashinfer_attention_mask(
+ 
+         qo_indptr = attn_metadata.qo_indptr[: num_contexts + 1]
+         cached_token_lens = attn_metadata.cached_token_lens[:num_contexts]
+-        assert (cached_token_lens == 0).all()
+ 
+         context_mask_list = []
+         for i in range(num_contexts):
++            prefix_len = int(cached_token_lens[i].item())
+             mask_i = self.get_context_mask(
+                 mm_token_type_ids=mm_token_type_ids[qo_indptr[i] : qo_indptr[i + 1]],
+                 effective_sliding_window=effective_sliding_window,
++                prefix_len=prefix_len,
+             )
+             context_mask_list.append(mask_i.flatten())
+         return torch.cat(context_mask_list, dim=0).contiguous()
+diff --git a/tensorrt_llm/_torch/models/modeling_gemma4mm.py b/tensorrt_llm/_torch/models/modeling_gemma4mm.py
+index d7590d17883c..d952577075e1 100644
+--- a/tensorrt_llm/_torch/models/modeling_gemma4mm.py
++++ b/tensorrt_llm/_torch/models/modeling_gemma4mm.py
+@@ -48,7 +48,7 @@
+ from ..attention_backend import AttentionMetadata
+ from ..modules.linear import Linear
+ from .modeling_gemma4 import Gemma4ForCausalLM
+-from .modeling_multimodal_utils import fuse_input_embeds
++from .modeling_multimodal_utils import find_input_mm_embeds, fuse_input_embeds
+ from .modeling_utils import ModelConfig, filter_weights, register_auto_model
+ 
+ _MIN_TRANSFORMERS_FOR_GEMMA4 = "5.5.0"
+@@ -199,6 +199,13 @@ class Gemma4InputProcessor(BaseMultimodalInputProcessor, BaseMultimodalDummyInpu
+     processing using the image processor saved in the model directory.
+     """
+ 
++    # Default class-level fallback. Real value computed per-instance below
++    # from text_config.use_bidirectional_attention. Only 26B/31B set
++    # use_bidirectional_attention="vision" — their image blocks need intact
++    # bidirectional attention. E2B/E4B set None (fully causal) — audio (and
++    # image, when present) can be split across chunks safely.
++    mm_bidirectional_blocks = False
++
+     def __init__(
+         self,
+         model_path: str,
+@@ -219,6 +226,16 @@ def __init__(
+         self._model_path = model_path
+         self._dtype = getattr(config, "torch_dtype", torch.bfloat16)
+ 
++        # Per-instance bidir gate. text_config.use_bidirectional_attention is
++        # "vision" on 26B/31B, None on E2B/E4B. Read once here so the V2
++        # scheduler's chunk-alignment only engages on variants that actually
++        # need it — avoids livelock on E4B audio (causal, 451-token blocks
++        # would otherwise exceed max_num_tokens).
++        text_cfg = getattr(config, "text_config", config)
++        self.mm_bidirectional_blocks = (
++            getattr(text_cfg, "use_bidirectional_attention", None) == "vision"
++        )
++
+         self._processor = None
+         try:
+             from transformers import AutoProcessor
+@@ -273,6 +290,45 @@ def get_vocab_size(self) -> Optional[int]:
+             return int(vocab_size)
+         return super().get_vocab_size()
+ 
++    def get_mm_token_ids(self) -> Optional[torch.Tensor]:
++        # Gemma4 image/audio/video soft-token IDs (e.g. 258880/258881/258884)
++        # live INSIDE text_config.vocab_size (262144), so the base-class
++        # fallback `input_ids >= vocab_size` in `_compute_mm_masks` would mark
++        # zero MM positions, producing an all-zero embed_mask cumsum and
++        # making chunked-prefill drop every MM embedding row. HF's
++        # `Gemma4Processor` does not expose `mm_token_ids` either, so we
++        # build the list from the config here.
++        ids = []
++        for name in ("image_token_id", "audio_token_id", "video_token_id"):
++            tid = getattr(self._config, name, None)
++            if tid is not None:
++                ids.append(int(tid))
++        if not ids:
++            raise RuntimeError(
++                "Gemma4 config missing image_token_id/audio_token_id/video_token_id "
++                "at the top level. Falling back to the base-class "
++                "`input_ids >= vocab_size` heuristic would mark zero MM positions "
++                "(soft-token IDs live inside text_config.vocab_size), silently "
++                "dropping every MM embedding row in chunked prefill."
++            )
++        return torch.tensor(ids, dtype=torch.int32)
++
++    def get_num_tokens_per_audio(self, *, audio, **kwargs) -> int:
++        # Gemma4 audio token count is dynamic: HF Gemma4Processor inserts
++        # placeholders via _compute_audio_num_tokens(waveform, sampling_rate),
++        # which mirrors the audio encoder's mel-frame + 2x SSCP-conv stride
++        # math and caps at audio_seq_length (=750, the 30s window). HF's
++        # `_get_num_multimodal_tokens` evaluates the formula at
++        # `feature_extractor.sampling_rate` (16 kHz), so the predicted count
++        # must use the post-resample length. Run the same
++        # `_normalize_audio_inputs` step that the prompt-side `_preprocess`
++        # path applies (mono downmix + scipy.signal.resample_poly to 16 kHz)
++        # so the predictor and the actual placeholder count agree exactly.
++        target_sr = self.processor.feature_extractor.sampling_rate
++        normalized = _normalize_audio_inputs([audio], target_sr=target_sr)
++        n_samples = len(normalized[0])
++        return self.get_num_multimodal_tokens(audio_lengths=[n_samples])["num_audio_tokens"][0]
++
+     @property
+     def dtype(self) -> torch.dtype:
+         return self._dtype
+@@ -891,6 +947,13 @@ def forward(
+                 mm_mask = torch.isin(input_ids, mm_token_ids_for_mask)
+                 ple_input_ids = torch.where(mm_mask, torch.full_like(input_ids, pad_id), input_ids)
+ 
++        # Slice mm_embeds to the current chunk window for chunked prefill /
++        # KV reuse. Without this, the full request's mm_embeds is passed to
++        # fuse_input_embeds even when input_ids is a chunk slice, which trips
++        # the count-equality check in fuse_input_embeds. Mirrors the call in
++        # modeling_qwen2vl / modeling_phi4mm / modeling_mistral.
++        mm_embeds = find_input_mm_embeds(mm_embeds, multimodal_params)
++
+         input_ids, inputs_embeds = fuse_input_embeds(
+             embedding_layer=self.llm.model.embed_tokens,
+             input_ids=input_ids,
+diff --git a/tensorrt_llm/_torch/pyexecutor/scheduler/scheduler_v2.py b/tensorrt_llm/_torch/pyexecutor/scheduler/scheduler_v2.py
+index aa44e39e13cc..f2e5687d51ef 100644
+--- a/tensorrt_llm/_torch/pyexecutor/scheduler/scheduler_v2.py
++++ b/tensorrt_llm/_torch/pyexecutor/scheduler/scheduler_v2.py
+@@ -482,6 +482,16 @@ def _try_schedule_context_chunked(
+             # only called from eviction (_try_evict_for_gen).
+             return ScheduleAction.SKIP, 0, False
+ 
++        chunk_size = self._align_chunk_to_mm_block(
++            req, chunk_size, remaining_budget, context_remaining
++        )
++        # Alignment returns 0 when neither snap-up nor snap-down can preserve
++        # bidirectional MM attention this iteration — defer the request rather
++        # than schedule a chunk that would corrupt attention. Next iteration
++        # gets a fresh budget; under steady-state load this resolves quickly.
++        if chunk_size <= 0:
++            return ScheduleAction.SKIP, 0, False
++
+         req.context_chunk_size = chunk_size
+ 
+         # Draft tokens only matter for last chunk (budget + resize)
+@@ -499,6 +509,169 @@ def _try_schedule_context_chunked(
+ 
+         return ScheduleAction.SCHEDULED, chunk_tokens, chunking_flag
+ 
++    def _align_chunk_to_mm_block(
++        self,
++        req: LlmRequest,
++        chunk_size: int,
++        remaining_budget: Optional[int],
++        context_remaining: int,
++    ) -> int:
++        """Adjust *chunk_size* so a boundary never lands inside a multimodal
++        soft-token run that requires intact bidirectional attention.
++
++        Returns the adjusted chunk size, or ``0`` to signal that the caller
++        should SKIP this request this iteration (defer to next iteration with
++        a fresh budget).
++
++        Two-pronged strategy:
++          1. snap-UP: extend the chunk to swallow the rest of the block
++             (preferred — block lands wholly in this iteration).
++          2. snap-DOWN fallback: if budget / max_context_length / context_remaining
++             can't absorb snap-up, shrink the chunk to end *before* the block
++             starts; the block lands wholly in the next iteration.
++
++        Last-resort defer (return 0): if the block starts at the chunk's
++        left boundary (snap-down would zero the chunk anyway), defer the
++        request. We never let a bidirectional MM block straddle a chunk
++        boundary — it would silently break attention correctness.
++
++        Raises ``ValueError`` if the block itself exceeds max_context_length —
++        no chunk size can fit it, deferring would livelock; surface the
++        config error loudly rather than spin silently.
++
++        Gated on ``mm_bidirectional_blocks`` written by the input processor —
++        causal-MM models (Llava, Qwen-VL) skip this entirely.
++        """
++        # `getattr(..., None) or {}` is not enough: on a Mock req the attribute
++        # exists as a Mock (truthy) and `.get` returns another Mock (also
++        # truthy). Require an actual dict — that's also what the input
++        # processor writes in inputs/registry.py.
++        mm_data = getattr(req, "py_multimodal_data", None)
++        if not isinstance(mm_data, dict):
++            return chunk_size
++        if not mm_data.get("mm_bidirectional_blocks", False):
++            return chunk_size
++        cumsum = mm_data.get("multimodal_embed_mask_cumsum")
++        if cumsum is None:
++            return chunk_size
++
++        unit_size = self.chunk_unit_size
++        lo = req.context_current_position
++        end_abs = lo + chunk_size
++        prompt_len = lo + context_remaining
++        if end_abs >= prompt_len or end_abs <= 0:
++            return chunk_size
++
++        # Cumsum is INCLUSIVE [P] (length prompt_len) with
++        # cumsum[i] = sum(mask[0..i]). So mask[i] = cumsum[i]-cumsum[i-1] for
++        # i>=1, and mask[0] = cumsum[0]. Aligned with inputs/registry.py
++        # (``embed_mask.cumsum(0)``) and MultimodalRuntimeData.
++        #
++        # Three-cumsum boundary-in-block detection: positions end_abs-1 and
++        # end_abs are both MM iff mask[end_abs-1]==1 AND mask[end_abs]==1.
++        # Gemma4's HF processor wraps every soft-token run with non-MM
++        # specials (boi/eoi/boa/eoa, embed_mask=0), so two consecutive
++        # embed_mask=1 positions always belong to the same block.
++        cs_prev = int(cumsum[end_abs - 1].item())
++        cs_cur = int(cumsum[end_abs].item())
++        if (cs_cur - cs_prev) != 1:
++            return chunk_size  # mask[end_abs] != 1
++        if end_abs == 1:
++            if cs_prev != 1:
++                return chunk_size  # mask[0] != 1
++        else:
++            if (cs_prev - int(cumsum[end_abs - 2].item())) != 1:
++                return chunk_size  # mask[end_abs - 1] != 1
++
++        # --- compute block extent (forward + backward walks from end_abs) ---
++        # Forward walk: advance while position block_end_abs is MM
++        # (mask[block_end_abs] == cumsum[block_end_abs]-cumsum[block_end_abs-1]).
++        # Final block_end_abs is the first non-MM position (exclusive end),
++        # or prompt_len if the block extends through EOS.
++        # Backward walk uses ``> 0`` (not ``> lo``) so block_size below
++        # reflects the TRUE block size — important for the impossibility
++        # check, which must not be undercounted if a prior iteration somehow
++        # advanced into a block (would otherwise mask a real config error).
++        block_end_abs = end_abs
++        while block_end_abs < prompt_len:
++            if (int(cumsum[block_end_abs].item()) - int(cumsum[block_end_abs - 1].item())) != 1:
++                break
++            block_end_abs += 1
++
++        # Backward walk: decrement while position (block_start_abs - 1) is MM.
++        # Final block_start_abs is the first MM position (inclusive start),
++        # or 0 if the block extends to BOS.
++        block_start_abs = end_abs
++        while block_start_abs > 1:
++            if (
++                int(cumsum[block_start_abs - 1].item()) - int(cumsum[block_start_abs - 2].item())
++            ) != 1:
++                break
++            block_start_abs -= 1
++        # Position 0: mask[0] == cumsum[0]; no cumsum[-1] sentinel.
++        if block_start_abs == 1 and int(cumsum[0].item()) == 1:
++            block_start_abs = 0
++
++        # --- impossibility check ---
++        # If the block itself exceeds max_context_length, no chunk size can
++        # ever fit it. Deferring would livelock the request. Raise a clear
++        # config error rather than letting the scheduler thrash silently.
++        block_size = block_end_abs - block_start_abs
++        if self.max_context_length is not None and block_size > self.max_context_length:
++            raise ValueError(
++                f"req {req.py_request_id}: bidirectional multimodal block of "
++                f"{block_size} tokens exceeds max_context_length="
++                f"{self.max_context_length}. The block must fit in a single "
++                f"chunk to preserve bidirectional attention; deferring would "
++                f"livelock. Increase max_num_tokens to at least {block_size}."
++            )
++
++        # --- snap-up target ---
++        # Round up to unit_size so setPrepopulatedPromptLen's downstream
++        # floor() doesn't clip the extension back into the block.
++        if unit_size > 0 and block_end_abs < prompt_len:
++            up_block_end = ((block_end_abs + unit_size - 1) // unit_size) * unit_size
++        else:
++            up_block_end = block_end_abs
++        up_block_end = min(up_block_end, prompt_len)
++        up_chunk_size = up_block_end - lo
++
++        up_fits_budget = remaining_budget is None or up_chunk_size <= remaining_budget
++        up_fits_max_ctx = (
++            self.max_context_length is None or up_chunk_size <= self.max_context_length
++        )
++        up_fits_remaining = up_chunk_size <= context_remaining
++
++        if up_fits_budget and up_fits_max_ctx and up_fits_remaining and up_chunk_size > chunk_size:
++            return up_chunk_size
++
++        # --- snap-down fallback ---
++        # Round down to unit_size so the next chunk starts on a kv-block boundary.
++        if unit_size > 0:
++            down_block_start = (block_start_abs // unit_size) * unit_size
++        else:
++            down_block_start = block_start_abs
++
++        if down_block_start <= lo:
++            logger.warning(
++                "req %s: MM block at chunk left edge "
++                "(lo=%s, block=[%s, %s)); snap-up does not fit "
++                "(up_size=%s, budget=%s, max_ctx=%s, ctx_rem=%s) and "
++                "snap-down would zero the chunk. Deferring request to next "
++                "iteration to preserve bidirectional MM attention.",
++                req.py_request_id,
++                lo,
++                block_start_abs,
++                block_end_abs,
++                up_chunk_size,
++                remaining_budget,
++                self.max_context_length,
++                context_remaining,
++            )
++            return 0
++
++        return down_block_start - lo
++
+     def _try_schedule_generation(
+         self,
+         req: LlmRequest,
+diff --git a/tensorrt_llm/inputs/registry.py b/tensorrt_llm/inputs/registry.py
+index 5adc5ed8fc3f..025b00c5ee2a 100644
+--- a/tensorrt_llm/inputs/registry.py
++++ b/tensorrt_llm/inputs/registry.py
+@@ -3,8 +3,8 @@
+ import traceback
+ from abc import ABC, abstractmethod
+ from dataclasses import dataclass, field
+-from typing import (Any, Callable, Dict, List, Optional, Protocol, Tuple, Type,
+-                    TypeVar, Union)
++from typing import (Any, Callable, ClassVar, Dict, List, Optional, Protocol,
++                    Tuple, Type, TypeVar, Union)
+ 
+ import torch
+ from PIL import Image
+@@ -136,6 +136,14 @@ class BaseMultimodalInputProcessor(ABC):
+     processes the multimodal inputs.
+     """
+ 
++    # Whether multimodal soft-token runs need bidirectional attention spanning
++    # the full block. When True, the chunked-prefill scheduler must keep each
++    # MM block intact within a single iteration (snap-up or snap-down at chunk
++    # boundaries) so the second half does not attend to a frozen first half.
++    # Default False: most VLMs (Llava, Qwen-VL) use causal attention over MM
++    # tokens and tolerate splitting. Gemma4 sets True.
++    mm_bidirectional_blocks: ClassVar[bool] = False
++
+     def __init__(self,
+                  model_path,
+                  config,
+@@ -817,6 +825,21 @@ def maybe_compute_mm_embed_cumsum(
+     mm_data = extra_processed_inputs.get("multimodal_data")
+     if mm_data is None:
+         return
++
++    # Always backfill the bidirectional-MM gate first (cheap; instance attr
++    # falls through to class attr in Python). Must happen BEFORE the cumsum
++    # idempotency guard below, otherwise the path where
++    # `multimodal_hashing_process` already setdefault()ed the cumsum (without
++    # this flag) leaves scheduler_v2 reading mm_bidirectional_blocks=None and
++    # silently skipping align — which then trips
++    # get_flashinfer_attention_mask's `cached_token_lens == 0` assert on
++    # 26B/31B once an image block is split across chunks. Gemma4 sets this
++    # per-instance from text_config.use_bidirectional_attention.
++    mm_data.setdefault(
++        "mm_bidirectional_blocks",
++        bool(getattr(input_processor, "mm_bidirectional_blocks", False)),
++    )
++
+     if "multimodal_embed_mask_cumsum" in mm_data:
+         return
+ 
+diff --git a/tests/unittest/_torch/executor/test_kv_cache_v2_scheduler.py b/tests/unittest/_torch/executor/test_kv_cache_v2_scheduler.py
+index fe55a0fc44f1..5c366bfd1b6a 100644
+--- a/tests/unittest/_torch/executor/test_kv_cache_v2_scheduler.py
++++ b/tests/unittest/_torch/executor/test_kv_cache_v2_scheduler.py
+@@ -1859,3 +1859,248 @@ def prepare_with_partial_reuse(req):
+         assert ctx.context_chunk_size == 64
+         # 64 + 1 = 65 <= 80: gen fits
+         assert ids(out.generation_requests) == [1]
++
++
++# ===========================================================================
++# Bidirectional-MM chunk alignment (Gemma4-style)
++# ===========================================================================
++
++
++class TestMultimodalAwareChunkingV2:
++    """Tests for ``KVCacheV2Scheduler._align_chunk_to_mm_block`` — keeps
++    bidirectional MM blocks intact across chunk boundaries via snap-up,
++    snap-down, or last-resort straddle. Gated on the
++    ``mm_bidirectional_blocks`` marker propagated from the input processor."""
++
++    @staticmethod
++    def _build_cumsum(prompt_len, mm_runs):
++        """Build the int64 [P] embed-mask cumsum tensor (INCLUSIVE convention,
++        matching ``inputs/registry.py:embed_mask.cumsum(0)`` and
++        ``MultimodalRuntimeData``).
++
++        ``mm_runs`` is a list of half-open ``(start, end)`` ranges marking
++        embed_mask=1 positions.
++        """
++        import torch
++
++        mask = torch.zeros(prompt_len, dtype=torch.int64)
++        for start, end in mm_runs:
++            mask[start:end] = 1
++        return mask.cumsum(0, dtype=torch.int64)
++
++    def _make_mm_req(self, request_id, context_remaining, mm_runs, *, bidirectional=True):
++        req = make_ctx_request(
++            request_id,
++            context_remaining_length=context_remaining,
++            prompt_len=context_remaining,
++        )
++        req.py_multimodal_data = {
++            "multimodal_embed_mask_cumsum": self._build_cumsum(context_remaining, mm_runs),
++            "mm_bidirectional_blocks": bidirectional,
++        }
++        return req
++
++    def _make_sched(self, *, chunk_unit_size=4, max_num_tokens=128):
++        mgr = make_kv_cache_manager(tokens_per_block=chunk_unit_size)
++        return make_scheduler(
++            mgr,
++            max_num_tokens=max_num_tokens,
++            ctx_chunk_config=(None, chunk_unit_size),
++        )
++
++    # ---- snap-up ----
++
++    def test_snap_up_extends_chunk_to_block_end(self):
++        sched = self._make_sched(chunk_unit_size=4, max_num_tokens=64)
++        req = self._make_mm_req(0, context_remaining=32, mm_runs=[(8, 20)])
++        # Chunk ends at pos 12, mid-block. Block ends at 20 (unit-aligned).
++        out = sched._align_chunk_to_mm_block(
++            req, chunk_size=12, remaining_budget=64, context_remaining=32
++        )
++        assert out == 20
++
++    def test_snap_up_rounds_up_past_unaligned_block_end(self):
++        sched = self._make_sched(chunk_unit_size=8, max_num_tokens=128)
++        req = self._make_mm_req(0, context_remaining=64, mm_runs=[(8, 21)])
++        # Block ends at 21 → round up to 24.
++        out = sched._align_chunk_to_mm_block(
++            req, chunk_size=16, remaining_budget=128, context_remaining=64
++        )
++        assert out == 24
++
++    def test_snap_up_two_adjacent_blocks_only_swallows_first(self):
++        sched = self._make_sched(chunk_unit_size=4, max_num_tokens=128)
++        req = self._make_mm_req(0, context_remaining=64, mm_runs=[(8, 20), (24, 40)])
++        # Chunk ends at 12, mid-block-A. Snap-up should reach end of block A
++        # (20) only — text gap [20, 24) breaks the run.
++        out = sched._align_chunk_to_mm_block(
++            req, chunk_size=12, remaining_budget=128, context_remaining=64
++        )
++        assert out == 20
++
++    # ---- snap-down ----
++
++    def test_snap_down_when_budget_exceeded(self):
++        sched = self._make_sched(chunk_unit_size=4, max_num_tokens=128)
++        req = self._make_mm_req(0, context_remaining=64, mm_runs=[(16, 60)])
++        # Snap-up needs 60 (block end is unit-aligned), but budget is 33 →
++        # snap-down to block start = 16.
++        out = sched._align_chunk_to_mm_block(
++            req, chunk_size=32, remaining_budget=33, context_remaining=64
++        )
++        assert out == 16
++
++    def test_snap_down_floors_to_chunk_unit_size(self):
++        sched = self._make_sched(chunk_unit_size=4, max_num_tokens=128)
++        req = self._make_mm_req(0, context_remaining=64, mm_runs=[(17, 60)])
++        # Snap-up needs 60, budget is 33. Block start = 17 → floor to 16.
++        out = sched._align_chunk_to_mm_block(
++            req, chunk_size=32, remaining_budget=33, context_remaining=64
++        )
++        assert out == 16
++
++    def test_snap_down_when_max_context_length_exceeded(self):
++        # max_context_length is set from max_num_tokens by V2.
++        sched = self._make_sched(chunk_unit_size=4, max_num_tokens=20)
++        # block_size = 22 - 4 = 18 ≤ max_context_length=20 (no impossibility
++        # raise), but round_up(22, 4) = 24 > 20, so snap-up busts max ctx →
++        # snap-down to block_start=4.
++        req = self._make_mm_req(0, context_remaining=64, mm_runs=[(4, 22)])
++        out = sched._align_chunk_to_mm_block(
++            req, chunk_size=16, remaining_budget=200, context_remaining=64
++        )
++        assert out == 4
++
++    def test_up_block_end_clamps_to_prompt_end(self):
++        """Block runs to (prompt_len-1); round-up of block_end_abs must be
++        clamped to prompt_len so up_chunk_size doesn't exceed context_remaining.
++        """
++        sched = self._make_sched(chunk_unit_size=4, max_num_tokens=512)
++        # context_remaining=21, MM block at [8, 21). End_abs=12 is mid-block;
++        # block walks to 21 (=prompt_len). Without the min() clamp, round-up
++        # would push to 24 > prompt_len.
++        req = self._make_mm_req(0, context_remaining=21, mm_runs=[(8, 21)])
++        out = sched._align_chunk_to_mm_block(
++            req, chunk_size=12, remaining_budget=512, context_remaining=21
++        )
++        assert out == 21  # snap-up to prompt end (last chunk, no round-up)
++
++    # ---- impossibility (block > max_context_length) ----
++
++    def test_raises_when_block_exceeds_max_context_length(self):
++        """A bidirectional MM block bigger than max_context_length cannot
++        ever fit in a chunk; deferring would livelock. Raise a clear
++        ValueError so the user sees the misconfiguration immediately."""
++        # max_context_length = max_num_tokens = 16, but block is 60 tok.
++        sched = self._make_sched(chunk_unit_size=4, max_num_tokens=16)
++        req = self._make_mm_req(0, context_remaining=128, mm_runs=[(8, 68)])
++        with pytest.raises(ValueError, match=r"exceeds max_context_length=16"):
++            sched._align_chunk_to_mm_block(
++                req, chunk_size=12, remaining_budget=16, context_remaining=128
++            )
++
++    # ---- last-resort defer ----
++
++    def test_last_resort_defers_when_snap_down_would_starve(self):
++        """Block at chunk left edge + snap-up doesn't fit + snap-down would
++        zero → return 0 so caller SKIPs the request this iteration. Better
++        than straddling and corrupting bidirectional attention."""
++        sched = self._make_sched(chunk_unit_size=4, max_num_tokens=128)
++        # Block from 0 to 60 → block_start = 0 = lo → snap-down impossible.
++        req = self._make_mm_req(0, context_remaining=64, mm_runs=[(0, 60)])
++        # Snap-up needs 60 but budget=33 → snap-down → block_start=0 → defer.
++        out = sched._align_chunk_to_mm_block(
++            req, chunk_size=32, remaining_budget=33, context_remaining=64
++        )
++        assert out == 0
++
++    # ---- gates ----
++
++    def test_no_op_when_bidirectional_flag_false(self):
++        """Causal-MM models (most VLMs) — flag False suppresses alignment."""
++        sched = self._make_sched(chunk_unit_size=4, max_num_tokens=64)
++        req = self._make_mm_req(0, context_remaining=32, mm_runs=[(8, 20)], bidirectional=False)
++        out = sched._align_chunk_to_mm_block(
++            req, chunk_size=12, remaining_budget=64, context_remaining=32
++        )
++        assert out == 12
++
++    def test_no_op_when_no_multimodal_data(self):
++        sched = self._make_sched(chunk_unit_size=4, max_num_tokens=64)
++        req = make_ctx_request(0, context_remaining_length=32, prompt_len=32)
++        # py_multimodal_data unset
++        req.py_multimodal_data = None
++        out = sched._align_chunk_to_mm_block(
++            req, chunk_size=12, remaining_budget=64, context_remaining=32
++        )
++        assert out == 12
++
++    def test_no_op_when_cumsum_missing(self):
++        sched = self._make_sched(chunk_unit_size=4, max_num_tokens=64)
++        req = make_ctx_request(0, context_remaining_length=32, prompt_len=32)
++        req.py_multimodal_data = {"mm_bidirectional_blocks": True}
++        out = sched._align_chunk_to_mm_block(
++            req, chunk_size=12, remaining_budget=64, context_remaining=32
++        )
++        assert out == 12
++
++    def test_no_op_when_boundary_not_in_block(self):
++        sched = self._make_sched(chunk_unit_size=4, max_num_tokens=64)
++        req = self._make_mm_req(0, context_remaining=32, mm_runs=[(8, 20)])
++        # Chunk ends at 8: pos 7 is non-MM (specials), pos 8 is MM — boundary
++        # is at block start, not mid-block. Helper returns chunk untouched.
++        out = sched._align_chunk_to_mm_block(
++            req, chunk_size=8, remaining_budget=64, context_remaining=32
++        )
++        assert out == 8
++
++    def test_no_op_when_chunk_reaches_prompt_end(self):
++        sched = self._make_sched(chunk_unit_size=4, max_num_tokens=64)
++        req = self._make_mm_req(0, context_remaining=32, mm_runs=[(8, 20)])
++        out = sched._align_chunk_to_mm_block(
++            req, chunk_size=32, remaining_budget=64, context_remaining=32
++        )
++        assert out == 32
++
++    # ---- mid-prompt (partial reuse) ----
++
++    def test_aligns_relative_to_context_current_position(self):
++        """When block reuse moved context_current_position past 0, the helper
++        must reason in absolute prompt coordinates (cumsum is indexed there)."""
++        sched = self._make_sched(chunk_unit_size=4, max_num_tokens=128)
++        prompt_len = 96  # full prompt; first 32 already cached
++        req = make_ctx_request(0, context_remaining_length=64, prompt_len=prompt_len)
++        req.py_multimodal_data = {
++            "multimodal_embed_mask_cumsum": self._build_cumsum(prompt_len, [(40, 56)]),
++            "mm_bidirectional_blocks": True,
++        }
++        req.context_current_position = 32  # 32 tokens already cached
++        # Remaining starts at absolute pos 32. Chunk_size=16 → end_abs=48
++        # which lands mid-block [40,56). Snap-up to 56 (unit-aligned) →
++        # chunk_size = 56 - 32 = 24.
++        out = sched._align_chunk_to_mm_block(
++            req, chunk_size=16, remaining_budget=128, context_remaining=64
++        )
++        assert out == 24
++
++    # ---- end-to-end: defer propagates as SKIP through schedule_request ----
++
++    def test_defer_skips_request_in_schedule_request(self):
++        """When alignment returns 0 (last-resort defer), the caller must SKIP
++        the request — it must not appear in scheduled context_requests, and
++        resize_context must not be called for it."""
++        # block_size=18 ≤ max_context_length=20 (no impossibility raise),
++        # but unit_size=8 round-up pushes up_block_end to 24 > 20, so
++        # snap-up fails. Block at lo=0 → snap-down zeros → defer.
++        resize_calls = []
++
++        def track_resize(req, n):
++            resize_calls.append((req.request_id, n))
++            return True
++
++        mgr = make_kv_cache_manager(tokens_per_block=8, resize_context_fn=track_resize)
++        sched = make_scheduler(mgr, max_num_tokens=20, ctx_chunk_config=(None, 8))
++        req = self._make_mm_req(0, context_remaining=32, mm_runs=[(0, 18)])
++        out = sched.schedule_request([req], set())
++        assert ids(out.context_requests) == []
++        assert resize_calls == []  # SKIP path: no commit to KV cache

@@ -1,0 +1,77 @@
+diff --git a/python/sglang/srt/layers/moe/topk.py b/python/sglang/srt/layers/moe/topk.py
+index 64b671194aa7..847cbb487676 100644
+--- a/python/sglang/srt/layers/moe/topk.py
++++ b/python/sglang/srt/layers/moe/topk.py
+@@ -817,8 +817,6 @@ def biased_topk_impl(
+             topk_weights *= routed_scaling_factor
+ 
+     topk_weights, topk_ids = topk_weights.to(torch.float32), topk_ids.to(torch.int32)
+-    topk_ids = topk_ids_logical_to_physical(topk_ids, expert_location_dispatch_info)
+-    _mask_topk_ids_padded_region(topk_ids, num_token_non_padded)
+     return topk_weights, topk_ids
+ 
+ 
+@@ -850,8 +848,6 @@ def biased_topk_jit_kernel_impl(
+         apply_routed_scaling_factor_on_output=apply_routed_scaling_factor_on_output,
+     )
+     topk_weights, topk_ids = topk_weights.to(torch.float32), topk_ids.to(torch.int32)
+-    topk_ids = topk_ids_logical_to_physical(topk_ids, expert_location_dispatch_info)
+-    _mask_topk_ids_padded_region(topk_ids, num_token_non_padded)
+     return topk_weights, topk_ids
+ 
+ 
+diff --git a/test/registered/cpu/test_topk.py b/test/registered/cpu/test_topk.py
+index 2d6d2bbbeb0f..984590e3893c 100644
+--- a/test/registered/cpu/test_topk.py
++++ b/test/registered/cpu/test_topk.py
+@@ -2,9 +2,11 @@
+ 
+ import torch
+ 
++from sglang.srt.eplb.expert_location_dispatch import ExpertLocationDispatchInfo
+ from sglang.srt.layers.moe.topk import (
+     biased_grouped_topk_impl as native_biased_grouped_topk,
+ )
++from sglang.srt.layers.moe.topk import biased_topk_impl as native_biased_topk
+ from sglang.srt.layers.moe.topk import fused_topk_torch_native as native_fused_topk
+ from sglang.srt.layers.moe.topk import grouped_topk_gpu as native_grouped_topk
+ from sglang.srt.models.llama4 import Llama4MoE
+@@ -138,6 +140,38 @@ def test_biased_grouped_topk(self):
+                             )
+ 
+ 
++class TestBiasedTopK(CustomTestCase):
++    def test_biased_topk_returns_logical_ids_with_eplb_info(self):
++        hidden_states = torch.ones(1, 4)
++        gating_output = torch.tensor([[10.0, 9.0, 1.0, 0.0]])
++        correction_bias = torch.zeros(4)
++        dispatch_info = ExpertLocationDispatchInfo(
++            ep_dispatch_algorithm="static",
++            partial_logical_to_rank_dispatch_physical_map=torch.tensor(
++                [2, 3, 0, 1], dtype=torch.int64
++            ),
++            partial_logical_to_all_physical_map=torch.tensor(
++                [[2], [3], [0], [1]], dtype=torch.int64
++            ),
++            partial_logical_to_all_physical_map_num_valid=torch.ones(
++                4, dtype=torch.int64
++            ),
++            num_physical_experts=4,
++        )
++
++        _, topk_ids = native_biased_topk(
++            hidden_states=hidden_states,
++            gating_output=gating_output,
++            correction_bias=correction_bias,
++            topk=2,
++            renormalize=False,
++            scoring_func="sqrtsoftplus",
++            expert_location_dispatch_info=dispatch_info,
++        )
++
++        torch.testing.assert_close(topk_ids, torch.tensor([[0, 1]], dtype=torch.int32))
++
++
+ class TestTopK(CustomTestCase):
+     def _run_single_test(self, M, E, topk, renormalize, dtype):
+         torch.manual_seed(1998)

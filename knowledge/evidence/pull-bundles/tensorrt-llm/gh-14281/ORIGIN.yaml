@@ -1,0 +1,196 @@
+schema_version: 1
+source_key: NVIDIA/TensorRT-LLM#14281
+repo: NVIDIA/TensorRT-LLM
+repo_id: tensorrt-llm
+pr_number: 14281
+title: '[None][fix] Update the OSS headers in derived FLA ops and AD modeling code'
+url: https://github.com/NVIDIA/TensorRT-LLM/pull/14281
+state: closed
+merged_at: '2026-05-19T21:37:59Z'
+base_ref_oid: 55b6973eb4a616e047ac116a01fd2541aa543e7d
+head_ref_oid: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+captured_at: '2026-05-20T14:58:00.390537+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention kernel
+- moe
+- moe kernel
+- triton kernel
+techniques:
+- fine-grained-quantization
+- kernel-fusion
+hardware_features: []
+kernel_types:
+- attention
+- gemm
+- moe
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: examples/auto_deploy/llmc/_license_data.py
+    local_path: source-snapshot/examples/auto_deploy/llmc/_license_data.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/chunk.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/chunk.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/fused_recurrent.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/fused_recurrent.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/utils.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/utils.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/wy_fast.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/wy_fast.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_backend_delta.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_backend_delta.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_backend_gated_delta.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_backend_gated_delta.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_delta.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_delta.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_gated_delta.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_gated_delta.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/custom_ops/fused_moe/triton_moe.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/custom_ops/fused_moe/triton_moe.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/custom_ops/quantization/torch_quant.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/custom_ops/quantization/torch_quant.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_cohere.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_cohere.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_decilm.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_decilm.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_deepseek.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_deepseek.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_deepseek_ir.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_deepseek_ir.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_deepseek_v2.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_deepseek_v2.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_eagle.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_eagle.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_exaone.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_exaone.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma2.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma2.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma3n.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma3n.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma4.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma4.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_glm4_moe.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_glm4_moe.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_glm4_moe_lite.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_glm4_moe_lite.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_glm_moe_dsa.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_glm_moe_dsa.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gpt_oss.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gpt_oss.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_granite.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_granite.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_granite_moe_hybrid.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_granite_moe_hybrid.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_hunyuan_dense.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_hunyuan_dense.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_hunyuan_moe.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_hunyuan_moe.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_internlm3.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_internlm3.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_kimi_k2.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_kimi_k2.py
+    ref: 8bf53dd187f5969a91dc27e76463b336dd6ac498
+    status: modified
+    fetched: true

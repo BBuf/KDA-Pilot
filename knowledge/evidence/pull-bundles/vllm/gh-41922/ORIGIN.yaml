@@ -1,0 +1,112 @@
+schema_version: 1
+source_key: vllm-project/vllm#41922
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 41922
+title: '[CPU] Add MXFP4 W4A16 MoE support'
+url: https://github.com/vllm-project/vllm/pull/41922
+state: closed
+merged_at: '2026-05-18T10:04:45Z'
+base_ref_oid: 966903eb93a053a908fbf8b931fcebfb28c4741a
+head_ref_oid: a62bd757fa57e3d0b20d17496d19b4e57cc45332
+captured_at: '2026-05-20T15:11:27.249893+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- fp8
+- moe
+- moe kernel
+- mxfp4
+techniques:
+- fine-grained-quantization
+- kernel-fusion
+hardware_features:
+- fp4
+- fp8
+- mxfp4
+kernel_types:
+- gemm
+- moe
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: .buildkite/hardware_tests/cpu.yaml
+    local_path: source-snapshot/.buildkite/hardware_tests/cpu.yaml
+    ref: a62bd757fa57e3d0b20d17496d19b4e57cc45332
+    status: modified
+    fetched: true
+  - source_path: csrc/cpu/sgl-kernels/common.h
+    local_path: source-snapshot/csrc/cpu/sgl-kernels/common.h
+    ref: a62bd757fa57e3d0b20d17496d19b4e57cc45332
+    status: modified
+    fetched: true
+  - source_path: csrc/cpu/sgl-kernels/gemm.h
+    local_path: source-snapshot/csrc/cpu/sgl-kernels/gemm.h
+    ref: a62bd757fa57e3d0b20d17496d19b4e57cc45332
+    status: modified
+    fetched: true
+  - source_path: csrc/cpu/sgl-kernels/gemm_fp8.cpp
+    local_path: source-snapshot/csrc/cpu/sgl-kernels/gemm_fp8.cpp
+    ref: a62bd757fa57e3d0b20d17496d19b4e57cc45332
+    status: modified
+    fetched: true
+  - source_path: csrc/cpu/sgl-kernels/moe.cpp
+    local_path: source-snapshot/csrc/cpu/sgl-kernels/moe.cpp
+    ref: a62bd757fa57e3d0b20d17496d19b4e57cc45332
+    status: modified
+    fetched: true
+  - source_path: csrc/cpu/sgl-kernels/moe.h
+    local_path: source-snapshot/csrc/cpu/sgl-kernels/moe.h
+    ref: a62bd757fa57e3d0b20d17496d19b4e57cc45332
+    status: modified
+    fetched: true
+  - source_path: csrc/cpu/sgl-kernels/moe_fp8.cpp
+    local_path: source-snapshot/csrc/cpu/sgl-kernels/moe_fp8.cpp
+    ref: a62bd757fa57e3d0b20d17496d19b4e57cc45332
+    status: modified
+    fetched: true
+  - source_path: csrc/cpu/sgl-kernels/vec.h
+    local_path: source-snapshot/csrc/cpu/sgl-kernels/vec.h
+    ref: a62bd757fa57e3d0b20d17496d19b4e57cc45332
+    status: modified
+    fetched: true
+  - source_path: csrc/cpu/torch_bindings.cpp
+    local_path: source-snapshot/csrc/cpu/torch_bindings.cpp
+    ref: a62bd757fa57e3d0b20d17496d19b4e57cc45332
+    status: modified
+    fetched: true
+  - source_path: tests/kernels/moe/test_cpu_quant_fused_moe.py
+    local_path: source-snapshot/tests/kernels/moe/test_cpu_quant_fused_moe.py
+    ref: a62bd757fa57e3d0b20d17496d19b4e57cc45332
+    status: added
+    fetched: true
+  - source_path: tests/quantization/test_cpu_wna16.py
+    local_path: source-snapshot/tests/quantization/test_cpu_wna16.py
+    ref: a62bd757fa57e3d0b20d17496d19b4e57cc45332
+    status: modified
+    fetched: true
+  - source_path: vllm/_custom_ops.py
+    local_path: source-snapshot/vllm/_custom_ops.py
+    ref: a62bd757fa57e3d0b20d17496d19b4e57cc45332
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/fused_moe/cpu_fused_moe.py
+    local_path: source-snapshot/vllm/model_executor/layers/fused_moe/cpu_fused_moe.py
+    ref: a62bd757fa57e3d0b20d17496d19b4e57cc45332
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/fused_moe/experts/cpu_moe.py
+    local_path: source-snapshot/vllm/model_executor/layers/fused_moe/experts/cpu_moe.py
+    ref: a62bd757fa57e3d0b20d17496d19b4e57cc45332
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/fused_moe/oracle/mxfp4.py
+    local_path: source-snapshot/vllm/model_executor/layers/fused_moe/oracle/mxfp4.py
+    ref: a62bd757fa57e3d0b20d17496d19b4e57cc45332
+    status: modified
+    fetched: true

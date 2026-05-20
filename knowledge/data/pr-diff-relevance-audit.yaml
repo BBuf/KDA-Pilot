@@ -1,12 +1,12 @@
 schema_version: 1
 mode: apply
 policy: Keep only PR diffs with direct CUDA/Triton/CuTe/CUTLASS/TileLang kernel, kernel-runtime, benchmark, or profile changes.
-total: 4874
-keep: 3660
-reject: 1214
+total: 5120
+keep: 3827
+reject: 1293
 by_repo:
   cccl-cub:
-    keep: 228
+    keep: 239
     reject: 29
   cutlass:
     keep: 64
@@ -18,38 +18,38 @@ by_repo:
     keep: 146
     reject: 22
   flashinfer:
-    keep: 779
+    keep: 789
     reject: 106
   pytorch:
     keep: 75
     reject: 72
   quack:
-    keep: 49
+    keep: 51
     reject: 5
   sglang:
-    keep: 777
-    reject: 399
+    keep: 830
+    reject: 437
   tensorrt-llm:
-    keep: 180
-    reject: 126
+    keep: 214
+    reject: 148
   thunderkittens:
     keep: 13
   tilekernels:
     keep: 1
   tilelang:
-    keep: 195
-    reject: 32
+    keep: 214
+    reject: 33
   triton:
-    keep: 57
-    reject: 19
+    keep: 59
+    reject: 20
   vllm:
-    keep: 1069
-    reject: 398
+    keep: 1105
+    reject: 415
 reason_counts:
-  direct-kernel-or-dsl-diff: 3536
+  direct-kernel-or-dsl-diff: 3703
   kernel-path-with-performance-signals: 104
   docs-or-metadata-only: 331
-  no-cuda-triton-cute-kernel-optimization-diff: 681
+  no-cuda-triton-cute-kernel-optimization-diff: 760
   test-only-without-kernel-implementation: 200
   empty-or-unparseable-diff: 2
   kernel-benchmark-or-profile-diff: 20

@@ -1,0 +1,38 @@
+schema_version: 1
+source_key: NVIDIA/cccl#9036
+repo: NVIDIA/cccl
+repo_id: cccl-cub
+pr_number: 9036
+title: Complex tanh (and thus tan) accuracy refinement
+url: https://github.com/NVIDIA/cccl/pull/9036
+state: closed
+merged_at: '2026-05-18T23:16:44Z'
+base_ref_oid: ce673b8f9c1cc8071129a59ebe0d964fa55cedbb
+head_ref_oid: 25c2be5896d04412bc82f0e9df25ec708f92ed6a
+captured_at: '2026-05-20T14:47:18.294561+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- reduction
+techniques: []
+hardware_features: []
+kernel_types:
+- reduction
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h
+    local_path: source-snapshot/libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h
+    ref: 25c2be5896d04412bc82f0e9df25ec708f92ed6a
+    status: modified
+    fetched: true
+  - source_path: libcudacxx/test/libcudacxx/std/numerics/complex.number/complex.transcendentals/tanh.pass.cpp
+    local_path: source-snapshot/libcudacxx/test/libcudacxx/std/numerics/complex.number/complex.transcendentals/tanh.pass.cpp
+    ref: 25c2be5896d04412bc82f0e9df25ec708f92ed6a
+    status: modified
+    fetched: true

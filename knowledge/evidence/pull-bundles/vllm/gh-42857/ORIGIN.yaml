@@ -1,0 +1,58 @@
+schema_version: 1
+source_key: vllm-project/vllm#42857
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42857
+title: '[Perf] Re-enable flashinfer autotune by default and cleanup'
+url: https://github.com/vllm-project/vllm/pull/42857
+state: closed
+merged_at: '2026-05-18T16:12:28Z'
+base_ref_oid: 504a26ce2be2415118b73966480b4fc04d9b7bf8
+head_ref_oid: a02891b9bd9b74e1ccd5c119358fc6350e61f1ba
+captured_at: '2026-05-20T15:08:03.778254+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- moe
+techniques:
+- autotuning
+- kernel-fusion
+hardware_features:
+- fp4
+- mxfp4
+kernel_types:
+- moe
+languages:
+- cuda-cpp
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: vllm/config/vllm.py
+    local_path: source-snapshot/vllm/config/vllm.py
+    ref: a02891b9bd9b74e1ccd5c119358fc6350e61f1ba
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/fused_moe/experts/flashinfer_cutedsl_moe.py
+    local_path: source-snapshot/vllm/model_executor/layers/fused_moe/experts/flashinfer_cutedsl_moe.py
+    ref: a02891b9bd9b74e1ccd5c119358fc6350e61f1ba
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/fused_moe/experts/trtllm_mxfp4_moe.py
+    local_path: source-snapshot/vllm/model_executor/layers/fused_moe/experts/trtllm_mxfp4_moe.py
+    ref: a02891b9bd9b74e1ccd5c119358fc6350e61f1ba
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/warmup/kernel_warmup.py
+    local_path: source-snapshot/vllm/model_executor/warmup/kernel_warmup.py
+    ref: a02891b9bd9b74e1ccd5c119358fc6350e61f1ba
+    status: modified
+    fetched: true
+  - source_path: vllm/utils/flashinfer.py
+    local_path: source-snapshot/vllm/utils/flashinfer.py
+    ref: a02891b9bd9b74e1ccd5c119358fc6350e61f1ba
+    status: modified
+    fetched: true

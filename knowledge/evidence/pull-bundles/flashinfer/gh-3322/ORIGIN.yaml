@@ -1,0 +1,109 @@
+schema_version: 1
+source_key: flashinfer-ai/flashinfer#3322
+repo: flashinfer-ai/flashinfer
+repo_id: flashinfer
+pr_number: 3322
+title: '[feat] Add gemma RMS AR fusion'
+url: https://github.com/flashinfer-ai/flashinfer/pull/3322
+state: closed
+merged_at: '2026-05-19T16:13:19Z'
+base_ref_oid: ce43023803d7ad80f14b9c5333c32acef897bd14
+head_ref_oid: 55d3ba99f6515c0d3fc265f06173b726aab6e24d
+captured_at: '2026-05-20T14:42:44.075863+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- benchmark kernel
+- cuda kernel
+- cute
+- moe kernel
+techniques:
+- kernel-fusion
+hardware_features: []
+kernel_types:
+- gemm
+- moe
+languages:
+- cuda-cpp
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: benchmarks/bench_gemma_ar_fusion.py
+    local_path: source-snapshot/benchmarks/bench_gemma_ar_fusion.py
+    ref: 55d3ba99f6515c0d3fc265f06173b726aab6e24d
+    status: added
+    fetched: true
+  - source_path: csrc/trtllm_allreduce_fusion.cu
+    local_path: source-snapshot/csrc/trtllm_allreduce_fusion.cu
+    ref: 55d3ba99f6515c0d3fc265f06173b726aab6e24d
+    status: modified
+    fetched: true
+  - source_path: csrc/trtllm_mnnvl_allreduce.cu
+    local_path: source-snapshot/csrc/trtllm_mnnvl_allreduce.cu
+    ref: 55d3ba99f6515c0d3fc265f06173b726aab6e24d
+    status: modified
+    fetched: true
+  - source_path: csrc/trtllm_moe_allreduce_fusion.cu
+    local_path: source-snapshot/csrc/trtllm_moe_allreduce_fusion.cu
+    ref: 55d3ba99f6515c0d3fc265f06173b726aab6e24d
+    status: modified
+    fetched: true
+  - source_path: flashinfer/comm/allreduce.py
+    local_path: source-snapshot/flashinfer/comm/allreduce.py
+    ref: 55d3ba99f6515c0d3fc265f06173b726aab6e24d
+    status: modified
+    fetched: true
+  - source_path: flashinfer/comm/trtllm_ar.py
+    local_path: source-snapshot/flashinfer/comm/trtllm_ar.py
+    ref: 55d3ba99f6515c0d3fc265f06173b726aab6e24d
+    status: modified
+    fetched: true
+  - source_path: flashinfer/comm/trtllm_mnnvl_ar.py
+    local_path: source-snapshot/flashinfer/comm/trtllm_mnnvl_ar.py
+    ref: 55d3ba99f6515c0d3fc265f06173b726aab6e24d
+    status: modified
+    fetched: true
+  - source_path: flashinfer/trace/templates/comm.py
+    local_path: source-snapshot/flashinfer/trace/templates/comm.py
+    ref: 55d3ba99f6515c0d3fc265f06173b726aab6e24d
+    status: modified
+    fetched: true
+  - source_path: include/flashinfer/comm/trtllm_allreduce_fusion.cuh
+    local_path: source-snapshot/include/flashinfer/comm/trtllm_allreduce_fusion.cuh
+    ref: 55d3ba99f6515c0d3fc265f06173b726aab6e24d
+    status: modified
+    fetched: true
+  - source_path: include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh
+    local_path: source-snapshot/include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh
+    ref: 55d3ba99f6515c0d3fc265f06173b726aab6e24d
+    status: modified
+    fetched: true
+  - source_path: include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
+    local_path: source-snapshot/include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
+    ref: 55d3ba99f6515c0d3fc265f06173b726aab6e24d
+    status: modified
+    fetched: true
+  - source_path: tests/comm/test_allreduce_fusion_moe_unified_api.py
+    local_path: source-snapshot/tests/comm/test_allreduce_fusion_moe_unified_api.py
+    ref: 55d3ba99f6515c0d3fc265f06173b726aab6e24d
+    status: modified
+    fetched: true
+  - source_path: tests/comm/test_gemma_ar_fusion.py
+    local_path: source-snapshot/tests/comm/test_gemma_ar_fusion.py
+    ref: 55d3ba99f6515c0d3fc265f06173b726aab6e24d
+    status: added
+    fetched: true
+  - source_path: tests/comm/test_trtllm_allreduce_fusion.py
+    local_path: source-snapshot/tests/comm/test_trtllm_allreduce_fusion.py
+    ref: 55d3ba99f6515c0d3fc265f06173b726aab6e24d
+    status: modified
+    fetched: true
+  - source_path: docs/api/comm.rst
+    local_path: source-snapshot/docs/api/comm.rst
+    ref: 55d3ba99f6515c0d3fc265f06173b726aab6e24d
+    status: modified
+    fetched: true

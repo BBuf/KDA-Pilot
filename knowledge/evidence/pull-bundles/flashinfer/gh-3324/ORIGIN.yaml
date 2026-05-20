@@ -1,0 +1,145 @@
+schema_version: 1
+source_key: flashinfer-ai/flashinfer#3324
+repo: flashinfer-ai/flashinfer
+repo_id: flashinfer
+pr_number: 3324
+title: 'checkpointing_ssu kernel: fused replay + conditional state-write for Mamba2'
+url: https://github.com/flashinfer-ai/flashinfer/pull/3324
+state: closed
+merged_at: '2026-05-19T16:47:02Z'
+base_ref_oid: ef983122507d38d807d81b99e486ce5006cd4782
+head_ref_oid: 5f30faafe39709833e751c5663d1cbf36faab0d4
+captured_at: '2026-05-20T14:42:24.126196+00:00'
+architectures:
+- sm100
+- sm90
+architecture_families:
+- blackwell
+- hopper
+tags:
+- benchmark kernel
+- blackwell
+- cuda kernel
+- cute
+- fp8
+- gemm
+- hopper
+- moe kernel
+- nvfp4
+- sm100
+- speculative
+- triton kernel
+techniques:
+- kernel-fusion
+hardware_features:
+- blackwell
+- fp4
+- fp8
+- hopper
+- nvfp4
+kernel_types:
+- gemm
+- moe
+languages:
+- cuda-cpp
+- cute-dsl
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: benchmarks/bench_checkpointing_ssu.py
+    local_path: source-snapshot/benchmarks/bench_checkpointing_ssu.py
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: added
+    fetched: true
+  - source_path: benchmarks/bench_ssu_sweep_sol.py
+    local_path: source-snapshot/benchmarks/bench_ssu_sweep_sol.py
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: modified
+    fetched: true
+  - source_path: csrc/checkpointing_ssu.cu
+    local_path: source-snapshot/csrc/checkpointing_ssu.cu
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: added
+    fetched: true
+  - source_path: csrc/checkpointing_ssu_jit_binding.cu
+    local_path: source-snapshot/csrc/checkpointing_ssu_jit_binding.cu
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: added
+    fetched: true
+  - source_path: csrc/checkpointing_ssu_kernel_inst.cu
+    local_path: source-snapshot/csrc/checkpointing_ssu_kernel_inst.cu
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: added
+    fetched: true
+  - source_path: flashinfer/jit/mamba/checkpointing_ssu.py
+    local_path: source-snapshot/flashinfer/jit/mamba/checkpointing_ssu.py
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: added
+    fetched: true
+  - source_path: flashinfer/mamba/__init__.py
+    local_path: source-snapshot/flashinfer/mamba/__init__.py
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: modified
+    fetched: true
+  - source_path: flashinfer/mamba/checkpointing_ssu.py
+    local_path: source-snapshot/flashinfer/mamba/checkpointing_ssu.py
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: added
+    fetched: true
+  - source_path: include/flashinfer/mamba/checkpointing_ssu.cuh
+    local_path: source-snapshot/include/flashinfer/mamba/checkpointing_ssu.cuh
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: added
+    fetched: true
+  - source_path: include/flashinfer/mamba/conversion.cuh
+    local_path: source-snapshot/include/flashinfer/mamba/conversion.cuh
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: modified
+    fetched: true
+  - source_path: include/flashinfer/mamba/kernel_checkpointing_ssu.cuh
+    local_path: source-snapshot/include/flashinfer/mamba/kernel_checkpointing_ssu.cuh
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: added
+    fetched: true
+  - source_path: include/flashinfer/mamba/kernel_checkpointing_ssu_8bit.cuh
+    local_path: source-snapshot/include/flashinfer/mamba/kernel_checkpointing_ssu_8bit.cuh
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: added
+    fetched: true
+  - source_path: include/flashinfer/mamba/kernel_checkpointing_ssu_common.cuh
+    local_path: source-snapshot/include/flashinfer/mamba/kernel_checkpointing_ssu_common.cuh
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: added
+    fetched: true
+  - source_path: include/flashinfer/mamba/launch_checkpointing_ssu.cuh
+    local_path: source-snapshot/include/flashinfer/mamba/launch_checkpointing_ssu.cuh
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: added
+    fetched: true
+  - source_path: tests/mamba/test_checkpointing_ssu.py
+    local_path: source-snapshot/tests/mamba/test_checkpointing_ssu.py
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: added
+    fetched: true
+  - source_path: tests/mamba/test_philox_rounding.py
+    local_path: source-snapshot/tests/mamba/test_philox_rounding.py
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: modified
+    fetched: true
+  - source_path: tests/mamba/triton_reference/checkpointing_state_update.py
+    local_path: source-snapshot/tests/mamba/triton_reference/checkpointing_state_update.py
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: added
+    fetched: true
+  - source_path: .github/CODEOWNERS
+    local_path: source-snapshot/.github/CODEOWNERS
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: modified
+    fetched: true
+  - source_path: csrc/checkpointing_ssu_customize_config.jinja
+    local_path: source-snapshot/csrc/checkpointing_ssu_customize_config.jinja
+    ref: 5f30faafe39709833e751c5663d1cbf36faab0d4
+    status: added
+    fetched: true

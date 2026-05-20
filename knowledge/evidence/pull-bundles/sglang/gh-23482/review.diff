@@ -1,0 +1,1493 @@
+diff --git a/docs/diffusion/compatibility_matrix.md b/docs/diffusion/compatibility_matrix.md
+index 37b95acfa004..cd7f2d5b5fc6 100644
+--- a/docs/diffusion/compatibility_matrix.md
++++ b/docs/diffusion/compatibility_matrix.md
+@@ -16,29 +16,29 @@ default parameters when initializing and generating videos.
+ 
+ ### Video Generation Models
+ 
+-| Model Name                   | Hugging Face Model ID                             | Resolutions          | TeaCache | Sliding Tile Attn | Sage Attn | Video Sparse Attention (VSA) | Sparse Linear Attention (SLA) | Sage Sparse Linear Attention (SageSLA) | Sparse Video Gen 2 (SVG2) |
+-|:-----------------------------|:--------------------------------------------------|:---------------------|:--------:|:-----------------:|:---------:|:----------------------------:|:-----------------------------:|:--------------------------------------:|:-------------------------:|
+-| FastWan2.1 T2V 1.3B          | `FastVideo/FastWan2.1-T2V-1.3B-Diffusers`         | 480p                 |    ⭕     |         ⭕         |     ⭕     |              ✅               |               ❌               |                   ❌                    |             ❌             |
+-| FastWan2.2 TI2V 5B Full Attn | `FastVideo/FastWan2.2-TI2V-5B-FullAttn-Diffusers` | 720p                 |    ⭕     |         ⭕         |     ⭕     |              ✅               |               ❌               |                   ❌                    |             ❌             |
+-| Wan2.2 TI2V 5B               | `Wan-AI/Wan2.2-TI2V-5B-Diffusers`                 | 720p                 |    ⭕     |         ⭕         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ❌             |
+-| Wan2.2 T2V A14B              | `Wan-AI/Wan2.2-T2V-A14B-Diffusers`                | 480p<br>720p         |    ❌     |         ❌         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ❌             |
+-| Wan2.2 I2V A14B              | `Wan-AI/Wan2.2-I2V-A14B-Diffusers`                | 480p<br>720p         |    ❌     |         ❌         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ❌             |
+-| HunyuanVideo                 | `hunyuanvideo-community/HunyuanVideo`             | 720×1280<br>544×960  |    ❌     |         ✅         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ✅             |
+-| FastHunyuan                  | `FastVideo/FastHunyuan-diffusers`                 | 720×1280<br>544×960  |    ❌     |         ✅         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ✅             |
+-| Wan2.1 T2V 1.3B              | `Wan-AI/Wan2.1-T2V-1.3B-Diffusers`                | 480p                 |    ✅     |         ✅         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ✅             |
+-| Wan2.1 T2V 14B               | `Wan-AI/Wan2.1-T2V-14B-Diffusers`                 | 480p, 720p           |    ✅     |         ✅         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ✅             |
+-| Wan2.1 I2V 480P              | `Wan-AI/Wan2.1-I2V-14B-480P-Diffusers`            | 480p                 |    ✅     |         ✅         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ✅             |
+-| Wan2.1 I2V 720P              | `Wan-AI/Wan2.1-I2V-14B-720P-Diffusers`            | 720p                 |    ✅     |         ✅         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ✅             |
++| Model Name                   | Hugging Face Model ID                             | Resolutions          | TeaCache | Sliding Tile Attn | Sage Attn | Video Sparse Attention (VSA) | Sparse Linear Attention (SLA) | Sage Sparse Linear Attention (SageSLA) | Sparse Video Gen 2 (SVG2) | Laser Attn | Block Sparse Attn | Rain Fusion Attn |
++|:-----------------------------|:--------------------------------------------------|:---------------------|:--------:|:-----------------:|:---------:|:----------------------------:|:-----------------------------:|:--------------------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
++| FastWan2.1 T2V 1.3B          | `FastVideo/FastWan2.1-T2V-1.3B-Diffusers`         | 480p                 |    ⭕     |         ⭕         |     ⭕     |              ✅               |               ❌               |                   ❌                    |             ❌             |               ❌               |                   ❌                    |             ❌             |
++| FastWan2.2 TI2V 5B Full Attn | `FastVideo/FastWan2.2-TI2V-5B-FullAttn-Diffusers` | 720p                 |    ⭕     |         ⭕         |     ⭕     |              ✅               |               ❌               |                   ❌                    |             ❌             |               ❌               |                   ❌                    |             ❌             |
++| Wan2.2 TI2V 5B               | `Wan-AI/Wan2.2-TI2V-5B-Diffusers`                 | 720p                 |    ⭕     |         ⭕         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ❌             |               ✅               |                   ✅                    |             ✅             |
++| Wan2.2 T2V A14B              | `Wan-AI/Wan2.2-T2V-A14B-Diffusers`                | 480p<br>720p         |    ❌     |         ❌         |     ✅     |              ⭕               |               ✅               |                   ❌                    |             ✅             |
++| Wan2.2 I2V A14B              | `Wan-AI/Wan2.2-I2V-A14B-Diffusers`                | 480p<br>720p         |    ❌     |         ❌         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ❌             |               ✅               |                   ✅                    |             ✅             |
++| HunyuanVideo                 | `hunyuanvideo-community/HunyuanVideo`             | 720×1280<br>544×960  |    ❌     |         ✅         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ✅             |               ❌               |                   ❌                    |             ❌             |
++| FastHunyuan                  | `FastVideo/FastHunyuan-diffusers`                 | 720×1280<br>544×960  |    ❌     |         ✅         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ✅             |               ❌               |                   ❌                    |             ❌             |
++| Wan2.1 T2V 1.3B              | `Wan-AI/Wan2.1-T2V-1.3B-Diffusers`                | 480p                 |    ✅     |         ✅         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ✅             |               ✅               |                   ✅                    |             ✅             |
++| Wan2.1 T2V 14B               | `Wan-AI/Wan2.1-T2V-14B-Diffusers`                 | 480p, 720p           |    ✅     |         ✅         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ✅             |               ✅               |                   ✅                    |             ✅             |
++| Wan2.1 I2V 480P              | `Wan-AI/Wan2.1-I2V-14B-480P-Diffusers`            | 480p                 |    ✅     |         ✅         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ✅             |               ✅               |                   ✅                    |             ✅             |
++| Wan2.1 I2V 720P              | `Wan-AI/Wan2.1-I2V-14B-720P-Diffusers`            | 720p                 |    ✅     |         ✅         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ✅             |               ✅               |                   ✅                    |             ✅             |
+ | TurboWan2.1 T2V 1.3B         | `IPostYellow/TurboWan2.1-T2V-1.3B-Diffusers`      | 480p                 |    ✅     |         ❌         |     ❌     |              ❌               |               ✅               |                   ✅                    |             ⭕             |
+-| TurboWan2.1 T2V 14B          | `IPostYellow/TurboWan2.1-T2V-14B-Diffusers`       | 480p                 |    ✅     |         ❌         |     ❌     |              ❌               |               ✅               |                   ✅                    |             ⭕             |
++| TurboWan2.1 T2V 14B          | `IPostYellow/TurboWan2.1-T2V-14B-Diffusers`       | 480p                 |    ✅     |         ❌         |     ❌     |              ❌               |               ✅               |                   ✅                    |             ⭕             |               ❌               |                   ❌                    |             ❌             |
+ | TurboWan2.1 T2V 14B 720P     | `IPostYellow/TurboWan2.1-T2V-14B-720P-Diffusers`  | 720p                 |    ✅     |         ❌         |     ❌     |              ❌               |               ✅               |                   ✅                    |             ⭕             |
+ | TurboWan2.2 I2V A14B         | `IPostYellow/TurboWan2.2-I2V-A14B-Diffusers`      | 720p                 |    ✅     |         ❌         |     ❌     |              ❌               |               ✅               |                   ✅                    |             ⭕             |
+-| Wan2.1 Fun 1.3B InP          | `weizhou03/Wan2.1-Fun-1.3B-InP-Diffusers`          | 480p                 |    ✅     |         ✅         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ✅             |
+-| Helios Base                  | `BestWishYsh/Helios-Base`                          | 720p                 |    ❌     |         ❌         |     ❌     |              ❌               |               ❌               |                   ❌                    |             ❌             |
++| Wan2.1 Fun 1.3B InP          | `weizhou03/Wan2.1-Fun-1.3B-InP-Diffusers`          | 480p                 |    ✅     |         ✅         |     ✅     |              ⭕               |               ❌               |                   ❌                    |             ✅             |               ❌               |                   ❌                    |             ❌             |
++| Helios Base                  | `BestWishYsh/Helios-Base`                          | 720p                 |    ❌     |         ❌         |     ❌     |              ❌               |               ❌               |                   ❌                    |             ❌             |               ❌               |                   ❌                    |             ❌             |
+ | Helios Mid                   | `BestWishYsh/Helios-Mid`                           | 720p                 |    ❌     |         ❌         |     ❌     |              ❌               |               ❌               |                   ❌                    |             ❌             |
+-| Helios Distilled             | `BestWishYsh/Helios-Distilled`                     | 720p                 |    ❌     |         ❌         |     ❌     |              ❌               |               ❌               |                   ❌                    |             ❌             |
+-| LTX-2 (one/two-stage/TI2V)   | `Lightricks/LTX-2`                                | 768×512<br>1536×1024 |    ❌     |         ❌         |     ❌     |              ❌               |               ❌               |                   ❌                    |             ❌             |
+-| LTX-2.3 (one/two-stage/TI2V/HQ) | `Lightricks/LTX-2.3`                           | 768×512<br>1536×1024<br>1920×1088 (HQ default) |    ❌     |         ❌         |     ❌     |              ❌               |               ❌               |                   ❌                    |             ❌             |
++| Helios Distilled             | `BestWishYsh/Helios-Distilled`                     | 720p                 |    ❌     |         ❌         |     ❌     |              ❌               |               ❌               |                   ❌                    |             ❌             |               ❌               |                   ❌                    |             ❌             |
++| LTX-2 (one/two-stage/TI2V)   | `Lightricks/LTX-2`                                | 768×512<br>1536×1024 |    ❌     |         ❌         |     ❌     |              ❌               |               ❌               |                   ❌                    |             ❌             |               ❌               |                   ❌                    |             ❌             |
++| LTX-2.3 (one/two-stage/TI2V/HQ) | `Lightricks/LTX-2.3`                           | 768×512<br>1536×1024<br>1920×1088 (HQ default) |    ❌     |         ❌         |     ❌     |              ❌               |               ❌               |                   ❌                    |               ❌               |                   ❌                    |             ❌             |             ❌             |
+ 
+ **Note**:
+ 
+diff --git a/docs/diffusion/performance/attention_backends.md b/docs/diffusion/performance/attention_backends.md
+index 1927185350fa..9318c98a8fa7 100644
+--- a/docs/diffusion/performance/attention_backends.md
++++ b/docs/diffusion/performance/attention_backends.md
+@@ -36,6 +36,9 @@ For SGLang-native pipelines, the CLI accepts the lowercase names of `AttentionBa
+ | `sla_attn` | `SLA_ATTN` | Sparse Linear Attention. Requires `SpargeAttn`. Install with `pip install git+https://github.com/thu-ml/SpargeAttn.git --no-build-isolation`. |
+ | `sage_sla_attn` | `SAGE_SLA_ATTN` | SageAttention + Sparse Linear Attention. Requires `SpargeAttn` (same install as SLA). |
+ | `sparse_video_gen_2_attn` | `SPARSE_VIDEO_GEN_2_ATTN` | Requires `svg`. See installation instructions at https://github.com/svg-project/Sparse-VideoGen. |
++| `laser_attn` | `LASER_ATTN` | Requires `attentions` which can be installed with `sgl_kernel_npu`; available only for NPU. |
++| `block_sparse_attn` | `BLOCK_SPARSE_ATTN` | Requires `attentions` which can be installed with `sgl_kernel_npu`; available only for NPU. |
++| `rain_fusion_attn` | `RAIN_FUSION_ATTN` | Requires `attentions` which can be installed with `sgl_kernel_npu`; available only for NPU. |
+ 
+ ## Selection priority
+ 
+@@ -88,6 +91,12 @@ Some backends require additional configuration. You can pass these parameters vi
+ | `spatial_layer` | `int` | Number of spatial layers. | `1` |
+ | `st_layer` | `int` | Number of spatiotemporal layers. | `1` |
+ 
++**Block Sparse attention ( `block_sparse_attn` ) and  Rain Fusion attention ( `rain_fusion_attn` )**
++| Parameter | Type | Description | Default |
++| :--- | :--- | :--- | :--- |
++| `skip_first_steps` | `int` | Number of steps to use laser attention before switching to sparse attention. | `10` |
++| `sparsity` | `float` | The sparsity coefficient must be in the range (0, 1). | `0.2` |
++
+ ## Platform support matrix
+ 
+ | Backend | CUDA | ROCm | XPU | MUSA | MPS | NPU | Notes |
+@@ -104,6 +113,9 @@ Some backends require additional configuration. You can pass these parameters vi
+ | `aiter` | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | Requires `aiter`. |
+ | `aiter_sage` | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | Requires `aiter`. |
+ | `sparse_video_gen_2_attn` | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | CUDA-only. Requires `svg`. |
++| `laser_attn` | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | NPU-only. Requires `attentions` from `sgl_kernel_npu`. Uses SDPA if seqlen is less than 2048. |
++| `block_sparse_attn` | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | NPU-only. Requires `attentions` from `sgl_kernel_npu`.  Configure via `--attention-backend-config`. |
++| `rain_fusion_attn` | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | NPU-only. Requires `attentions` from `sgl_kernel_npu`. Configure via `--attention-backend-config`. |
+ 
+ ## Usage
+ 
+diff --git a/docs_new/docs/sglang-diffusion/attention_backends.mdx b/docs_new/docs/sglang-diffusion/attention_backends.mdx
+index 53db2133fbfd..116f85abd9d4 100644
+--- a/docs_new/docs/sglang-diffusion/attention_backends.mdx
++++ b/docs_new/docs/sglang-diffusion/attention_backends.mdx
+@@ -98,6 +98,21 @@ For SGLang-native pipelines, the CLI accepts the lowercase names of `AttentionBa
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)", whiteSpace: "nowrap"}}>`SPARSE_VIDEO_GEN_2_ATTN`</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>Requires <code>svg</code>. See installation instructions at https://github.com/svg-project/Sparse-VideoGen.</td>
+     </tr>
++<tr>
++      <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}><code>laser_attn</code></td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)", whiteSpace: "nowrap"}}><code>LASER_ATTN</code></td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>Requires <code>attentions</code> which can be installed with <code>sgl_kernel_npu</code>; available only for NPU.</td>
++    </tr>
++<tr>
++      <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}><code>block_sparse_attn</code></td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)", whiteSpace: "nowrap"}}><code>BLOCK_SPARSE_ATTN</code></td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>Requires <code>attentions</code> which can be installed with <code>sgl_kernel_npu</code>; available only for NPU.</td>
++    </tr>
++<tr>
++      <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}><code>rain_fusion_attn</code></td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)", whiteSpace: "nowrap"}}><code>RAIN_FUSION_ATTN</code></td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>Requires <code>attentions</code> which can be installed with <code>sgl_kernel_npu</code>; available only for NPU.</td>
++    </tr>
+ </tbody>
+ </table>
+ 
+@@ -290,6 +305,39 @@ Some backends require additional configuration. You can pass these parameters vi
+   </tbody>
+ </table>
+ 
++**Block Sparse Attention (`block_sparse_attn`)**
++
++<table style={{width: "100%", borderCollapse: "collapse", tableLayout: "fixed"}}>
++  <colgroup>
++    <col style={{width: "20%"}} />
++    <col style={{width: "16%"}} />
++    <col style={{width: "46%"}} />
++    <col style={{width: "18%"}} />
++  </colgroup>
++  <thead>
++    <tr style={{borderBottom: "2px solid #d55816"}}>
++      <th style={{textAlign: "left", padding: "10px 12px", fontWeight: 700, whiteSpace: "nowrap", backgroundColor: "rgba(255,255,255,0.02)"}}>Parameter</th>
++      <th style={{textAlign: "left", padding: "10px 12px", fontWeight: 700, whiteSpace: "nowrap", backgroundColor: "rgba(255,255,255,0.05)"}}>Type</th>
++      <th style={{textAlign: "left", padding: "10px 12px", fontWeight: 700, whiteSpace: "nowrap", backgroundColor: "rgba(255,255,255,0.02)"}}>Description</th>
++      <th style={{textAlign: "left", padding: "10px 12px", fontWeight: 700, whiteSpace: "nowrap", backgroundColor: "rgba(255,255,255,0.05)"}}>Default</th>
++    </tr>
++  </thead>
++  <tbody>
++    <tr>
++      <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>`skip_first_steps`</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>`int`</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>Number of steps to use laser attention before switching to sparse attention.</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>`10`</td>
++    </tr>
++    <tr>
++      <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>`sparsity`</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>`float`</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}> The sparsity coefficient must be in the range (0, 1).</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>`0.2`</td>
++    </tr>
++  </tbody>
++</table>
++
+ ## Platform support matrix
+ 
+ <table style={{width: "100%", borderCollapse: "collapse", tableLayout: "fixed"}}>
+@@ -434,6 +482,36 @@ Some backends require additional configuration. You can pass these parameters vi
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>CUDA-only. Requires <code>svg</code>.</td>
+     </tr>
++<tr>
++      <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}><code>laser_attn</code></td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>NPU-only. Requires <code>attentions</code> from <code>sgl_kernel_npu</code>. Uses SDPA if seqlen less than 2048.</td>
++    </tr>
++<tr>
++      <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}><code>block_sparse_attn</code></td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>NPU-only. Requires <code>attentions</code> from <code>sgl_kernel_npu</code>. Configuration via <code>--attention-backend-config</code>.</td>
++    </tr>
++<tr>
++      <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}><code>rain_fusion_attn</code></td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>NPU-only. Requires <code>attentions</code> from <code>sgl_kernel_npu</code> Configuration via <code>--attention-backend-config</code>.</td>
++    </tr>
+ </tbody>
+ </table>
+ 
+diff --git a/docs_new/docs/sglang-diffusion/compatibility_matrix.mdx b/docs_new/docs/sglang-diffusion/compatibility_matrix.mdx
+index 0c9e038b64fa..9f234bfa2cad 100644
+--- a/docs_new/docs/sglang-diffusion/compatibility_matrix.mdx
++++ b/docs_new/docs/sglang-diffusion/compatibility_matrix.mdx
+@@ -27,6 +27,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+ - `SLA` = Sparse Linear Attention
+ - `SageSLA` = Sage Sparse Linear Attention
+ - `SVG2` = Sparse Video Gen 2
++- `LA` = Laser Attention
++- `BSA` = Block Sparse Attention
++- `RF` = Rain Fusion Attention
+ 
+ <table style={{width: "100%", borderCollapse: "collapse", tableLayout: "fixed"}}>
+   <colgroup>
+@@ -40,6 +43,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+     <col style={{width: "5%"}} />
+     <col style={{width: "5%"}} />
+     <col style={{width: "5%"}} />
++    <col style={{width: "5%"}} />
++    <col style={{width: "5%"}} />
++    <col style={{width: "5%"}} />
+   </colgroup>
+   <thead>
+     <tr style={{borderBottom: "2px solid #d55816"}}>
+@@ -53,6 +59,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <th style={{textAlign: "center", padding: "10px 6px", fontWeight: 700, whiteSpace: "normal", backgroundColor: "rgba(255,255,255,0.05)"}}><abbr title="Sparse Linear Attention">SLA</abbr></th>
+       <th style={{textAlign: "center", padding: "10px 6px", fontWeight: 700, whiteSpace: "normal", backgroundColor: "rgba(255,255,255,0.02)"}}><abbr title="Sage Sparse Linear Attention">SageSLA</abbr></th>
+       <th style={{textAlign: "center", padding: "10px 6px", fontWeight: 700, whiteSpace: "normal", backgroundColor: "rgba(255,255,255,0.05)"}}><abbr title="Sparse Video Gen 2">SVG2</abbr></th>
++      <th style={{textAlign: "center", padding: "10px 6px", fontWeight: 700, whiteSpace: "normal", backgroundColor: "rgba(255,255,255,0.02)"}}><abbr title="Laser Attention">LA</abbr></th>
++      <th style={{textAlign: "center", padding: "10px 6px", fontWeight: 700, whiteSpace: "normal", backgroundColor: "rgba(255,255,255,0.02)"}}><abbr title="Block Sparse Attention">BSA</abbr></th>
++      <th style={{textAlign: "center", padding: "10px 6px", fontWeight: 700, whiteSpace: "normal", backgroundColor: "rgba(255,255,255,0.02)"}}><abbr title="Rain Fusion Attention">RF</abbr></th>
+     </tr>
+   </thead>
+   <tbody>
+@@ -67,6 +76,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+     </tr>
+     <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>FastWan2.2 TI2V 5B Full Attn</td>
+@@ -79,6 +91,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+     </tr>
+     <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>Wan2.2 TI2V 5B</td>
+@@ -91,6 +106,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
+     </tr>
+     <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>Wan2.2 T2V A14B</td>
+@@ -103,6 +121,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
+     </tr>
+     <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>Wan2.2 I2V A14B</td>
+@@ -115,6 +136,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
+     </tr>
+     <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>HunyuanVideo</td>
+@@ -127,6 +151,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+     </tr>
+     <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>FastHunyuan</td>
+@@ -139,6 +166,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+     </tr>
+     <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>Wan2.1 T2V 1.3B</td>
+@@ -151,6 +181,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
+     </tr>
+     <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>Wan2.1 T2V 14B</td>
+@@ -163,6 +196,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
+     </tr>
+     <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>Wan2.1 I2V 480P</td>
+@@ -175,6 +211,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
+     </tr>
+     <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>Wan2.1 I2V 720P</td>
+@@ -187,6 +226,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
+     </tr>
+     <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>TurboWan2.1 T2V 1.3B</td>
+@@ -199,6 +241,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>⭕</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+     </tr>
+     <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>TurboWan2.1 T2V 14B</td>
+@@ -211,6 +256,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>⭕</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+     </tr>
+     <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>TurboWan2.1 T2V 14B 720P</td>
+@@ -223,6 +271,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>⭕</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+     </tr>
+     <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>TurboWan2.2 I2V A14B</td>
+@@ -235,6 +286,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>✅</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>⭕</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+     </tr>
+ <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>Wan2.1 Fun 1.3B InP</td>
+@@ -247,6 +301,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>✅</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+     </tr>
+ <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>Helios Base</td>
+@@ -259,6 +316,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+     </tr>
+ <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>Helios Mid</td>
+@@ -271,6 +331,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+     </tr>
+ <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>Helios Distilled</td>
+@@ -283,6 +346,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+     </tr>
+ <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>LTX-2 (one/two-stage/TI2V)</td>
+@@ -295,6 +361,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+     </tr>
+ <tr>
+       <td style={{padding: "9px 12px", fontWeight: 500, backgroundColor: "rgba(255,255,255,0.02)"}}>LTX-2.3 (one/two-stage/TI2V/HQ)</td>
+@@ -307,6 +376,9 @@ Optimization columns are abbreviated to keep the matrix readable:
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+       <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.05)"}}>❌</td>
++      <td style={{padding: "9px 12px", backgroundColor: "rgba(255,255,255,0.02)"}}>❌</td>
+     </tr>
+ </tbody>
+ </table>
+diff --git a/python/sglang/multimodal_gen/configs/models/adapter/base.py b/python/sglang/multimodal_gen/configs/models/adapter/base.py
+index b0ac5efac9f9..4aeb8b43869f 100644
+--- a/python/sglang/multimodal_gen/configs/models/adapter/base.py
++++ b/python/sglang/multimodal_gen/configs/models/adapter/base.py
+@@ -27,6 +27,9 @@ class AdapterArchConfig(ArchConfig):
+             AttentionBackendEnum.VIDEO_SPARSE_ATTN,
+             AttentionBackendEnum.VMOBA_ATTN,
+             AttentionBackendEnum.SAGE_ATTN_3,
++            AttentionBackendEnum.LASER_ATTN,
++            AttentionBackendEnum.BLOCK_SPARSE_ATTN,
++            AttentionBackendEnum.RAIN_FUSION_ATTN,
+         }
+     )
+ 
+diff --git a/python/sglang/multimodal_gen/configs/models/dits/base.py b/python/sglang/multimodal_gen/configs/models/dits/base.py
+index 44dacbbfe886..5e77f0d7a161 100644
+--- a/python/sglang/multimodal_gen/configs/models/dits/base.py
++++ b/python/sglang/multimodal_gen/configs/models/dits/base.py
+@@ -35,6 +35,9 @@ class DiTArchConfig(ArchConfig):
+             AttentionBackendEnum.SPARSE_VIDEO_GEN_2_ATTN,
+             AttentionBackendEnum.VMOBA_ATTN,
+             AttentionBackendEnum.SAGE_ATTN_3,
++            AttentionBackendEnum.LASER_ATTN,
++            AttentionBackendEnum.BLOCK_SPARSE_ATTN,
++            AttentionBackendEnum.RAIN_FUSION_ATTN,
+         }
+     )
+ 
+diff --git a/python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py b/python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py
+new file mode 100644
+index 000000000000..75f56b73e9d8
+--- /dev/null
++++ b/python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py
+@@ -0,0 +1,279 @@
++from dataclasses import dataclass
++from typing import Any
++
++import attentions  # noqa: F401
++import torch
++
++from sglang.multimodal_gen.runtime.layers.attention.backends.attention_backend import (
++    AttentionBackend,
++    AttentionImpl,
++    AttentionMetadata,
++    AttentionMetadataBuilder,
++)
++from sglang.multimodal_gen.runtime.layers.attention.backends.laser_attn import (
++    LaserAttentionBackend,
++)
++from sglang.multimodal_gen.runtime.platforms import AttentionBackendEnum
++from sglang.multimodal_gen.runtime.utils.logging_utils import init_logger
++
++logger = init_logger(__name__)
++BSA_BLOCK_SIZE = 128
++
++
++class BlockSparseAttentionBackend(AttentionBackend):
++
++    accept_output_buffer: bool = True
++
++    @staticmethod
++    def get_supported_head_sizes() -> list[int]:
++        return [32, 64, 96, 128]
++
++    @staticmethod
++    def get_enum() -> AttentionBackendEnum:
++        return AttentionBackendEnum.BLOCK_SPARSE_ATTN
++
++    @staticmethod
++    def get_impl_cls() -> type["BlockSparseAttentionImpl"]:
++        return BlockSparseAttentionImpl
++
++    @staticmethod
++    def get_metadata_cls() -> type["BlockSparseAttentionMetadata"]:
++        return BlockSparseAttentionMetadata
++
++    @staticmethod
++    def get_builder_cls() -> type["BlockSparseAttentionMetadataBuilder"]:
++        return BlockSparseAttentionMetadataBuilder
++
++
++@dataclass
++class BlockSparseAttentionMetadata(AttentionMetadata):
++    current_timestep: int
++    skip_first_steps: int
++    sparsity: float
++    block_frame_stride: int
++
++
++class BlockSparseAttentionMetadataBuilder(AttentionMetadataBuilder):
++    def __init__(self) -> None:
++        pass
++
++    def prepare(self) -> None:
++        pass
++
++    def build(
++        self,
++        current_timestep: int,
++        skip_first_steps: int,
++        sparsity: float,
++        raw_latent_shape: list[int],
++        patch_size: tuple[int, int, int],
++        **kwargs: dict[str, Any],
++    ) -> BlockSparseAttentionMetadata:
++        """
++        Builds BlockSparseAttention metadata.
++
++        Args:
++            current_timestep: The current diffusion timestep.
++            skip_first_steps: Number of initial timesteps to skip before applying
++                sparsity. Must be non‑negative.
++            sparsity: Fraction of tokens to drop (block‑wise) in the block sparse
++                attention mechanism. Must be in the range [0.0, 1.0).
++            raw_latent_shape: Shape of the latent tensor before patching.
++            patch_size: Patch size as (T, height, width). Only the height
++                and width components are used to divide the latent dimensions.
++            **kwargs: Additional keyword arguments (ignored, but accepted for
++                compatibility with base class or calling conventions).
++
++        Returns:
++            BlockSparseAttentionMetadata
++        Note:
++            The `block_frame_stride` is needed to set the first blocks to be non‑sparse.
++        """
++        if not (skip_first_steps >= 0 and 0.0 <= sparsity < 1.0):
++            raise ValueError(
++                (
++                    "Invalid attention metadata values."
++                    f"Sparsity should be in [0, 1), skip_first_steps should be non-negative."
++                    f"Got sparsity={sparsity}, skip_first_steps={skip_first_steps}"
++                )
++            )
++
++        if sparsity == 0.0:
++            logger.warning(
++                (
++                    "Sparsity is set to 0.0, which means no tokens will be dropped."
++                    "For better performance use Laser Attention or increase sparsity."
++                )
++            )
++
++        if len(raw_latent_shape) >= 5:
++            latent_height, latent_width = raw_latent_shape[3:5]
++        else:
++            latent_height, latent_width = raw_latent_shape[-2:]
++
++        latent_height //= patch_size[1]
++        latent_width //= patch_size[2]
++
++        frame_stride = latent_height * latent_width
++        block_frame_stride = (frame_stride + BSA_BLOCK_SIZE - 1) // BSA_BLOCK_SIZE
++
++        return BlockSparseAttentionMetadata(
++            current_timestep=current_timestep,
++            skip_first_steps=skip_first_steps,
++            sparsity=sparsity,
++            block_frame_stride=block_frame_stride,
++        )
++
++
++class BlockSparseAttentionImpl(AttentionImpl):
++
++    def __init__(
++        self,
++        num_heads: int,
++        head_size: int,
++        causal: bool,
++        softmax_scale: float,
++        num_kv_heads: int | None = None,
++        prefix: str = "",
++        **extra_impl_args,
++    ) -> None:
++        self.causal = causal
++        self.softmax_scale = softmax_scale
++        self.num_heads = num_heads
++        self.num_kv_heads = num_kv_heads or num_heads
++        self.block_size = BSA_BLOCK_SIZE
++        self.stride = 8
++        self.default_tokens = 214748647
++
++        self.laser_attn_impl = LaserAttentionBackend.get_impl_cls()(
++            num_heads,
++            head_size,
++            causal,
++            softmax_scale,
++            num_kv_heads,
++            prefix,
++            **extra_impl_args,
++        )
++
++    def _get_estimate_mask(
++        self,
++        query: torch.Tensor,
++        key: torch.Tensor,
++        sparsity: float,
++    ) -> tuple[torch.Tensor, torch.Tensor]:
++        return torch.ops.attentions.sparse_block_estimate(
++            query=query,
++            key=key,
++            actual_seq_lengths=None,
++            actual_seq_lengths_kv=None,
++            input_layout="BNSD",
++            stride=self.stride,
++            sparse_size=self.block_size,
++            num_heads=query.shape[1],
++            num_key_value_heads=key.shape[1],
++            scale_value=self.softmax_scale / self.stride,
++            threshold=1.0,
++            causal=self.causal,
++            keep_sink=True,
++            keep_recent=True,
++            row_sparse=1.0 - sparsity,
++        )
++
++    def _block_sparse_attention(
++        self,
++        query: torch.Tensor,
++        key: torch.Tensor,
++        value: torch.Tensor,
++        smask: torch.Tensor,
++        sct: torch.Tensor,
++    ) -> torch.Tensor:
++        return torch.ops.attentions.block_sparse_attention(
++            query=query,
++            key=key,
++            value=value,
++            sparse_mask=smask,
++            sparse_count_table=sct,
++            input_layout="BNSD",
++            sparse_size=self.block_size,
++            num_heads=query.shape[1],
++            num_key_value_heads=key.shape[1],
++            scale_value=self.softmax_scale,
++            causal=self.causal,
++            inner_precise=1,
++            pre_tokens=self.default_tokens,
++            next_tokens=self.default_tokens,
++            actual_seq_lengths=None,
++            actual_seq_lengths_kv=None,
++        )
++
++    def _get_smask(
++        self,
++        query: torch.Tensor,
++        key: torch.Tensor,
++        block_frame_stride: int,
++        sparsity: float,
++    ) -> tuple[torch.Tensor, torch.Tensor]:
++        smask, sct = self._get_estimate_mask(
++            query,
++            key,
++            sparsity,
++        )
++
++        seq_len = smask.shape[2]
++
++        # Set the first blocks to be non-sparse to ensure the quality of the first few steps
++        smask[:, :, :block_frame_stride, :seq_len] = 1
++        smask[:, :, :seq_len, :block_frame_stride] = 1
++        smask = smask.to(torch.int8)
++        sct = smask.sum(dim=-1, dtype=torch.int32)
++        return smask, sct
++
++    def _adaptive_block_sparse_attention(
++        self,
++        query: torch.Tensor,
++        key: torch.Tensor,
++        value: torch.Tensor,
++        block_frame_stride: int,
++        sparsity: float,
++    ) -> torch.Tensor:
++        # TODO Currently implementation for BSND input layout has quality issues
++        # When the implementation is improved, transposes can be removed
++        q = query.permute(0, 2, 1, 3).contiguous()
++        k = key.permute(0, 2, 1, 3).contiguous()
++        v = value.permute(0, 2, 1, 3).contiguous()
++
++        smask, sct = self._get_smask(
++            q,
++            k,
++            block_frame_stride,
++            sparsity,
++        )
++        output = self._block_sparse_attention(q, k, v, smask, sct)
++        output = output.permute(0, 2, 1, 3).contiguous()
++
++        return output
++
++    def forward(
++        self,
++        query: torch.Tensor,
++        key: torch.Tensor,
++        value: torch.Tensor,
++        attn_metadata: AttentionMetadata,
++    ) -> torch.Tensor:
++        if attn_metadata.current_timestep < attn_metadata.skip_first_steps:
++            output = self.laser_attn_impl.forward(
++                query,
++                key,
++                value,
++                attn_metadata,
++            )
++        else:
++            output = self._adaptive_block_sparse_attention(
++                query,
++                key,
++                value,
++                attn_metadata.block_frame_stride,
++                attn_metadata.sparsity,
++            )
++
++        return output
+diff --git a/python/sglang/multimodal_gen/runtime/layers/attention/backends/laser_attn.py b/python/sglang/multimodal_gen/runtime/layers/attention/backends/laser_attn.py
+new file mode 100644
+index 000000000000..21fe863104bb
+--- /dev/null
++++ b/python/sglang/multimodal_gen/runtime/layers/attention/backends/laser_attn.py
+@@ -0,0 +1,191 @@
++import torch
++
++from sglang.multimodal_gen.runtime.layers.attention.backends.attention_backend import (
++    AttentionBackend,
++    AttentionImpl,
++    AttentionMetadata,
++)
++from sglang.multimodal_gen.runtime.layers.attention.backends.sdpa import SDPABackend
++from sglang.multimodal_gen.runtime.platforms import AttentionBackendEnum
++from sglang.multimodal_gen.runtime.utils.logging_utils import init_logger
++
++# Import to use torch.ops.attentions, install package with sgl_kernel_npu
++try:
++    import attentions  # noqa: F401
++except ImportError as e:
++    raise ImportError(
++        (
++            "The required 'attentions' package is not installed."
++            "The package can be installed with sgl_kernel_npu"
++        )
++    ) from e
++
++logger = init_logger(__name__)
++
++
++class LaserAttentionBackend(AttentionBackend):
++
++    accept_output_buffer: bool = True
++
++    @staticmethod
++    def get_supported_head_sizes() -> list[int]:
++        return [32, 64, 96, 128]
++
++    @staticmethod
++    def get_enum() -> AttentionBackendEnum:
++        return AttentionBackendEnum.LASER_ATTN
++
++    @staticmethod
++    def get_impl_cls() -> type["LaserAttentionImpl"]:
++        return LaserAttentionImpl
++
++
++class LaserAttentionImpl(AttentionImpl):
++
++    def __init__(
++        self,
++        num_heads: int,
++        head_size: int,
++        causal: bool,
++        softmax_scale: float,
++        num_kv_heads: int | None = None,
++        prefix: str = "",
++        **extra_impl_args,
++    ) -> None:
++        self.softmax_scale = softmax_scale
++
++        # After preprocess input layout should be BNSD.
++        self.seqlen_base = 256
++        self.seqlen_index = 2
++        self.dim_index = 3
++        self.dim_base = 128
++        self.max_token = 2**31 - 1
++        self.seq_len_pad_base = 256
++
++        # the laser attention operator has issues with small seq_len
++        self.min_seqlen = 2048
++        self.sdpa_impl = SDPABackend.get_impl_cls()(
++            num_heads,
++            head_size,
++            causal,
++            softmax_scale,
++            num_kv_heads,
++            prefix,
++            **extra_impl_args,
++        )
++
++    def _pad(self, input_tensor: torch.Tensor) -> torch.Tensor:
++        """
++        Pad the input tensor along the sequence length and head dimension.
++        to multiples of base values. self.seqlen_index and self.dim_index should be positive integers.
++        """
++
++        seq_len = input_tensor.size(self.seqlen_index)
++        head_dim = input_tensor.size(self.dim_index)
++
++        pad_seq = 0
++        if seq_len % self.seqlen_base != 0:
++            pad_seq = ((seq_len // self.seqlen_base) + 1) * self.seqlen_base - seq_len
++
++        pad_dim = 0
++        if head_dim % self.dim_base != 0:
++            pad_dim = ((head_dim // self.dim_base) + 1) * self.dim_base - head_dim
++
++        if pad_seq == 0 and pad_dim == 0:
++            return input_tensor
++
++        pad_list = [0] * (2 * input_tensor.ndim)
++
++        pad_list[len(pad_list) - 2 * self.seqlen_index - 1] = pad_seq
++        pad_list[len(pad_list) - 2 * self.dim_index - 1] = pad_dim
++
++        return torch.nn.functional.pad(input_tensor, pad_list)
++
++    def _la_preprocess_input(
++        self, query: torch.Tensor, key: torch.Tensor, value: torch.Tensor
++    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
++        # Currently BSND input layout is not supported
++        q = query.transpose(1, 2)
++        k = key.transpose(1, 2)
++        v = value.transpose(1, 2)
++
++        if q.dtype != torch.float16:
++            q = q.to(torch.float16)
++            k = k.to(torch.float16)
++            v = v.to(torch.float16)
++
++        q = self._pad(q)
++        k = self._pad(k)
++        v = self._pad(v)
++
++        return q, k, v
++
++    def _la_postprocess_output(
++        self,
++        attention_out: torch.Tensor,
++        dtype: torch.dtype,
++        qseqlen: int,
++        head_dim: int,
++    ) -> torch.Tensor:
++        if dtype != attention_out.dtype:
++            attention_out = attention_out.to(dtype)
++
++        attention_out = attention_out[:, :, :qseqlen, :head_dim]
++        attention_out = attention_out.transpose(1, 2).contiguous()
++        return attention_out
++
++    def _laser_attention(
++        self,
++        query: torch.Tensor,
++        key: torch.Tensor,
++        value: torch.Tensor,
++        head_num: int,
++        pre_tokens: int,
++    ) -> tuple[torch.Tensor, torch.Tensor]:
++        return torch.ops.attentions.la(
++            query=query,
++            key=key,
++            value=value,
++            atten_mask=None,
++            alibi_mask=None,
++            drop_mask=None,
++            scale_value=self.softmax_scale,
++            head_num=head_num,
++            input_layout="BNSD",
++            keep_prob=1.0,
++            pre_tokens=pre_tokens,
++            next_tokens=1,
++            is_highPrecision=True,
++        )
++
++    def forward(
++        self,
++        query: torch.Tensor,
++        key: torch.Tensor,
++        value: torch.Tensor,
++        attn_metadata: AttentionMetadata,
++    ) -> torch.Tensor:
++        q_seqlen, head_dim = query.shape[1], query.shape[3]
++        kv_seqlen = key.shape[1]
++
++        if q_seqlen < self.min_seqlen or kv_seqlen != q_seqlen:
++            output = self.sdpa_impl.forward(
++                query,
++                key,
++                value,
++                attn_metadata,
++            )
++        else:
++            pre_tokens = self.max_token
++            if kv_seqlen % self.seq_len_pad_base != 0:
++                pre_tokens = (
++                    kv_seqlen // self.seq_len_pad_base + 1
++                ) * self.seq_len_pad_base - kv_seqlen
++
++            q, k, v = self._la_preprocess_input(query, key, value)
++            _, la_output = self._laser_attention(q, k, v, q.shape[1], pre_tokens)
++            output = self._la_postprocess_output(
++                la_output, query.dtype, q_seqlen, head_dim
++            )
++
++        return output
+diff --git a/python/sglang/multimodal_gen/runtime/layers/attention/backends/rain_fusion_attn.py b/python/sglang/multimodal_gen/runtime/layers/attention/backends/rain_fusion_attn.py
+new file mode 100644
+index 000000000000..95ea1374bbbc
+--- /dev/null
++++ b/python/sglang/multimodal_gen/runtime/layers/attention/backends/rain_fusion_attn.py
+@@ -0,0 +1,414 @@
++import math
++from dataclasses import dataclass
++from typing import Any, List, Optional
++
++import attentions  # noqa: F401
++import torch
++from einops import rearrange
++
++from sglang.multimodal_gen.runtime.layers.attention.backends.attention_backend import (
++    AttentionBackend,
++    AttentionImpl,
++    AttentionMetadata,
++    AttentionMetadataBuilder,
++)
++from sglang.multimodal_gen.runtime.layers.attention.backends.laser_attn import (
++    LaserAttentionBackend,
++)
++from sglang.multimodal_gen.runtime.platforms import AttentionBackendEnum
++from sglang.multimodal_gen.runtime.utils.logging_utils import init_logger
++
++logger = init_logger(__name__)
++
++
++class RainFusionAttentionBackend(AttentionBackend):
++
++    accept_output_buffer: bool = True
++
++    @staticmethod
++    def get_supported_head_sizes() -> list[int]:
++        return [32, 64, 96, 128]
++
++    @staticmethod
++    def get_enum() -> AttentionBackendEnum:
++        return AttentionBackendEnum.RAIN_FUSION_ATTN
++
++    @staticmethod
++    def get_impl_cls() -> type["RainFusionAttentionImpl"]:
++        return RainFusionAttentionImpl
++
++    @staticmethod
++    def get_metadata_cls() -> type["RainFusionAttentionMetadata"]:
++        return RainFusionAttentionMetadata
++
++    @staticmethod
++    def get_builder_cls() -> type["RainFusionAttentionMetadataBuilder"]:
++        return RainFusionAttentionMetadataBuilder
++
++
++@dataclass
++class RainFusionAttentionMetadata(AttentionMetadata):
++    current_timestep: int
++    skip_first_steps: int
++    sparsity: float
++    latent_shape: list[int]
++
++
++class RainFusionAttentionMetadataBuilder(AttentionMetadataBuilder):
++    def __init__(self) -> None:
++        pass
++
++    def prepare(self) -> None:
++        pass
++
++    def build(
++        self,
++        current_timestep: int,
++        skip_first_steps: int,
++        sparsity: float,
++        raw_latent_shape: list[int],
++        patch_size: tuple[int, int, int],
++        **kwargs: dict[str, Any],
++    ) -> RainFusionAttentionMetadata:
++        if not (skip_first_steps >= 0 and 0.0 <= sparsity < 1.0):
++            raise ValueError(
++                (
++                    "Invalid attention metadata values."
++                    f"Sparsity should be in [0, 1), skip_first_steps should be non-negative."
++                    f"Got sparsity={sparsity}, skip_first_steps={skip_first_steps}"
++                )
++            )
++
++        if sparsity == 0.0:
++            logger.warning(
++                (
++                    "Sparsity is set to 0.0, which means no tokens will be dropped."
++                    "For better performance use Laser Attention or increase sparsity."
++                )
++            )
++
++        latent_shape = raw_latent_shape[-3:]
++        latent_shape = [latent_shape[i] // patch_size[i] for i in range(3)]
++
++        return RainFusionAttentionMetadata(
++            current_timestep=current_timestep,
++            skip_first_steps=skip_first_steps,
++            sparsity=sparsity,
++            latent_shape=latent_shape,
++        )
++
++
++class RainFusionAttentionImpl(AttentionImpl):
++
++    def __init__(
++        self,
++        num_heads: int,
++        head_size: int,
++        causal: bool,
++        softmax_scale: float,
++        num_kv_heads: int | None = None,
++        prefix: str = "",
++        **extra_impl_args,
++    ) -> None:
++        self.causal = causal
++        self.softmax_scale = softmax_scale
++        self.block_size = 128
++        self.inner_precise = 0
++
++        self.laser_attn_impl = LaserAttentionBackend.get_impl_cls()(
++            num_heads,
++            head_size,
++            causal,
++            softmax_scale,
++            num_kv_heads,
++            prefix,
++            **extra_impl_args,
++        )
++
++    def _avgpool(
++        self, input_tensor: torch.Tensor, pool_size: int = 128
++    ) -> torch.Tensor:
++        batch, seqlen, heads, dim = input_tensor.shape
++        x = input_tensor.permute(0, 2, 3, 1).reshape(batch * heads, dim, seqlen)
++
++        pooled = torch.nn.functional.avg_pool1d(
++            x, kernel_size=pool_size, stride=pool_size, ceil_mode=True
++        )
++        out = pooled.reshape(batch, heads, dim, -1).permute(0, 3, 1, 2).contiguous()
++
++        return out
++
++    def _get_mask_index(self, mask: torch.Tensor) -> torch.Tensor:
++        batch_size, num_heads, seq_len, _ = mask.shape
++
++        mask_reshaped = mask.reshape(-1, seq_len)
++        row_indices = torch.arange(
++            seq_len, device=mask.device, dtype=torch.float32
++        ).unsqueeze(0)
++
++        sorted_vals = torch.where(mask_reshaped, row_indices, seq_len)
++        sorted_vals, _ = torch.sort(sorted_vals, dim=-1)
++        valid_count = mask_reshaped.sum(dim=-1, keepdim=True)
++        keep_mask = row_indices < valid_count
++        result = torch.where(keep_mask, sorted_vals, -1)
++
++        pos_matrix = result.reshape(batch_size, num_heads, seq_len, seq_len).to(
++            torch.int64
++        )
++        return pos_matrix
++
++    def _get_blockwise_mask(
++        self,
++        qkv_pool: torch.Tensor,
++        sparsity: float,
++        scale: float,
++        pool_size: int,
++        latent_shape: tuple,
++    ) -> tuple[torch.Tensor, torch.Tensor]:
++        first_frame_len = latent_shape[1] * latent_shape[2]
++
++        query_pool, key_pool, value_pool = torch.chunk(qkv_pool, 3, dim=0)
++        attn_scores = (
++            query_pool.permute(0, 2, 1, 3) @ key_pool.permute(0, 2, 3, 1) * scale
++        )
++
++        keep_len = math.ceil(attn_scores.shape[-1] * (1 - sparsity))
++
++        topk_values, _ = torch.topk(attn_scores, k=keep_len, dim=-1)
++        mask = attn_scores >= topk_values[..., -1:]
++
++        firstframe_block_num = (first_frame_len + pool_size - 1) // pool_size
++        if firstframe_block_num > 0:
++            mask[:, :, :firstframe_block_num, :] = True
++            mask[:, :, :, :firstframe_block_num] = True
++
++        select_idx = self._get_mask_index(mask)
++        select_idx = select_idx[0].transpose(0, 1)
++        select_num_idx = mask[0].transpose(0, 1).sum(dim=-1)
++        return select_idx, select_num_idx
++
++    def _rearrange_with_remaining(
++        self, tensor: torch.Tensor, latent_shape: tuple[int, int, int]
++    ) -> torch.Tensor:
++        """
++        b (f hn hb wn wb) n d -> b (f hn wn hb wb) n d
++        or
++        b n (f hn hb wn wb) d -> b n (f hn wn hb wb) d
++        """
++        tq, hq, wq = latent_shape
++        first_frame_len, frame_num = hq * wq, tq
++
++        b, s, n, d = tensor.shape
++
++        if (hq % 8 != 0) or (wq % 8 != 0):
++            tensor_first = tensor[:, :first_frame_len, :, :]
++            tensor = tensor[:, first_frame_len:, :, :]
++            tensor_hwt = rearrange(
++                tensor, "b (f h w) n d -> b f h w n d", f=frame_num - 1, h=hq, w=wq
++            )
++            if hq % 8 != 0:
++                tensor_hwt, tensor_h_r = torch.split(tensor_hwt, hq - (hq % 8), dim=2)
++                tensor_h_r = tensor_h_r.reshape(b, frame_num - 1, -1, n, d)
++            if wq % 8 != 0:
++                tensor_hwt, tensor_w_r = torch.split(tensor_hwt, wq - (wq % 8), dim=3)
++                tensor_w_r = tensor_w_r.reshape(b, frame_num - 1, -1, n, d)
++            tensor_hwt = rearrange(
++                tensor_hwt,
++                "b f (hn hb) (wn wb) n d -> b f (hn wn hb wb) n d",
++                f=frame_num - 1,
++                hb=8,
++                wb=8,
++                hn=hq // 8,
++                wn=wq // 8,
++            )
++            if hq % 8 != 0:
++                tensor_hwt = torch.cat((tensor_hwt, tensor_h_r), dim=2)
++            if wq % 8 != 0:
++                tensor_hwt = torch.cat((tensor_hwt, tensor_w_r), dim=2)
++            tensor_hwt = tensor_hwt.reshape(b, -1, n, d)
++            tensor_hwt = torch.cat([tensor_first, tensor_hwt], dim=1)
++        else:
++            tensor_hwt = rearrange(
++                tensor,
++                "b (f hn hb wn wb) n d -> b (f hn wn hb wb) n d",
++                f=frame_num,
++                hb=8,
++                wb=8,
++                hn=hq // 8,
++                wn=wq // 8,
++            )
++
++        return tensor_hwt
++
++    def _inv_rearrange_with_remaining(
++        self, tensor: torch.Tensor, latent_shape: tuple[int, int, int]
++    ) -> torch.Tensor:
++        tq, hq, wq = latent_shape
++        first_frame_len, frame_num = hq * wq, tq
++
++        b, s, n, d = tensor.shape
++
++        if (hq % 8 != 0) or (wq % 8 != 0):
++            tensor_first = tensor[:, :first_frame_len, :, :]
++            tensor = tensor[:, first_frame_len:, :, :]
++            tensor_hwt = rearrange(
++                tensor, "b (f h w) n d -> b f h w n d", f=frame_num - 1, h=hq, w=wq
++            )
++            if hq % 8 != 0:
++                tensor_hwt, tensor_h_r = torch.split(tensor_hwt, hq - (hq % 8), dim=2)
++            if wq % 8 != 0:
++                tensor_hwt, tensor_w_r = torch.split(tensor_hwt, wq - (wq % 8), dim=3)
++            tensor_hwt = tensor_hwt.reshape(b, frame_num - 1, -1, n, d)
++            tensor_hwt = rearrange(
++                tensor_hwt,
++                "b f (hn wn hb wb) n d -> b f (hn hb) (wn wb) n d",
++                f=frame_num - 1,
++                hb=8,
++                wb=8,
++                hn=hq // 8,
++                wn=wq // 8,
++            )
++            if wq % 8 != 0:
++                tensor_hwt = torch.cat((tensor_hwt, tensor_w_r), dim=3)
++            if hq % 8 != 0:
++                tensor_hwt = torch.cat((tensor_hwt, tensor_h_r), dim=2)
++            tensor_hwt = tensor_hwt.reshape(b, -1, n, d)
++            tensor_hwt = torch.cat([tensor_first, tensor_hwt], dim=1)
++        else:
++            tensor_hwt = rearrange(
++                tensor,
++                "b (f hn wn hb wb) n h -> b (f hn hb wn wb) n h",
++                f=frame_num,
++                hb=8,
++                wb=8,
++                hn=hq // 8,
++                wn=wq // 8,
++            )
++
++        return tensor_hwt
++
++    def _do_tensor_rearrange_pooling(
++        self,
++        query: torch.Tensor,
++        key: torch.Tensor,
++        value: torch.Tensor,
++        pool_size: int,
++        latent_shape: tuple[int, int, int],
++    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
++        """
++        Tensor block rearrangement + pooling operation
++        """
++        tensor = torch.cat((query, key, value), dim=0)
++
++        tensor = self._rearrange_with_remaining(tensor, latent_shape)
++        tensor_pool = self._avgpool(tensor, pool_size)
++
++        query_, key_, value_ = torch.chunk(tensor, 3, dim=0)
++        return query_, key_, value_, tensor_pool
++
++    def _rain_fusion_attention(
++        self,
++        query: torch.Tensor,
++        key: torch.Tensor,
++        value: torch.Tensor,
++        select_idx: torch.Tensor,
++        select_num_idx: torch.Tensor,
++        blockshape: List[int],
++        scale: float = 1.0,
++        head_num: int = 1,
++        input_layout: str = "TND",
++        actual_seq_lengths=Optional[torch.Tensor],
++        actual_seq_lengths_kv=Optional[torch.Tensor],
++    ) -> tuple[torch.Tensor, torch.Tensor]:
++        return torch.ops.attentions.rainfusionattention(
++            query=query,
++            key=key,
++            value=value,
++            select_idx=select_idx,
++            select_num_idx=select_num_idx,
++            blockshape=blockshape,
++            attn_mask=None,
++            actual_seq_qlen=actual_seq_lengths,
++            actual_seq_kvlen=actual_seq_lengths_kv,
++            block_table=None,
++            q_input_layout=input_layout,
++            kv_input_layout=input_layout,
++            head_num=head_num,
++            mask_type=0,
++            scale=scale,
++            inner_precise=self.inner_precise,
++            block_size=0,
++        )
++
++    def _rain_fusion_sparse_attention(
++        self,
++        query: torch.Tensor,
++        key: torch.Tensor,
++        value: torch.Tensor,
++        latent_shape: tuple[int, int, int],
++        sparsity: float,
++    ):
++        q, k, v, qkv_pool = self._do_tensor_rearrange_pooling(
++            query, key, value, self.block_size, latent_shape
++        )
++
++        select_idx, select_num_idx = self._get_blockwise_mask(
++            qkv_pool,
++            sparsity,
++            self.softmax_scale,
++            self.block_size,
++            latent_shape,
++        )
++
++        batch_size, seqlen_q, head_num, head_dim = q.shape
++        seqlen_kv = k.shape[1]
++
++        layout = "TND"
++        q = q.reshape(-1, head_num, head_dim)
++        k = k.reshape(-1, head_num, head_dim)
++        v = v.reshape(-1, head_num, head_dim)
++
++        actual_seq_lengths = [seqlen_q] * batch_size
++        actual_seq_lengths_kv = [seqlen_kv] * batch_size
++
++        out, _ = self._rain_fusion_attention(
++            q,
++            k,
++            v,
++            scale=self.softmax_scale,
++            head_num=head_num,
++            input_layout=layout,
++            select_idx=select_idx,
++            select_num_idx=select_num_idx,
++            blockshape=[self.block_size, self.block_size],
++            actual_seq_lengths=actual_seq_lengths,
++            actual_seq_lengths_kv=actual_seq_lengths_kv,
++        )
++
++        out = out.reshape(batch_size, seqlen_q, head_num, head_dim)
++        out = self._inv_rearrange_with_remaining(out, latent_shape)
++        return out
++
++    def forward(
++        self,
++        query: torch.Tensor,
++        key: torch.Tensor,
++        value: torch.Tensor,
++        attn_metadata: AttentionMetadata,
++    ) -> torch.Tensor:
++        if attn_metadata.current_timestep < attn_metadata.skip_first_steps:
++            output = self.laser_attn_impl.forward(
++                query,
++                key,
++                value,
++                attn_metadata,
++            )
++        else:
++            output = self._rain_fusion_sparse_attention(
++                query,
++                key,
++                value,
++                attn_metadata.latent_shape,
++                attn_metadata.sparsity,
++            )
++        return output
+diff --git a/python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py b/python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py
+index b315494bac1e..1f598d0d9eee 100644
+--- a/python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py
++++ b/python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py
+@@ -1582,6 +1582,35 @@ def _build_attn_metadata(
+             attn_metadata = self.attn_metadata_builder.build(
+                 raw_latent_shape=batch.raw_latent_shape
+             )
++        elif self.attn_backend.get_enum() in [
++            AttentionBackendEnum.BLOCK_SPARSE_ATTN,
++            AttentionBackendEnum.RAIN_FUSION_ATTN,
++        ]:
++            sparse_config = server_args.attention_backend_config
++
++            current_timestep = i
++            skip_first_steps = sparse_config.get("skip_first_steps", 10)
++            sparsity = sparse_config.get("sparsity", 0.2)
++
++            raw_latent_shape = batch.raw_latent_shape
++            patch_size = server_args.pipeline_config.dit_config.patch_size
++
++            if isinstance(patch_size, int):
++                patch_size_t = getattr(
++                    server_args.pipeline_config.dit_config, "patch_size_t", None
++                )
++                if patch_size_t is not None:
++                    patch_size = (patch_size_t, patch_size, patch_size)
++                else:
++                    patch_size = (patch_size, patch_size, patch_size)
++
++            attn_metadata = self.attn_metadata_builder.build(
++                current_timestep=current_timestep,
++                skip_first_steps=skip_first_steps,
++                sparsity=sparsity,
++                raw_latent_shape=raw_latent_shape,
++                patch_size=patch_size,
++            )
+         else:
+             # attn_metadata can be None for SDPA attention backend
+             return None
+diff --git a/python/sglang/multimodal_gen/runtime/platforms/interface.py b/python/sglang/multimodal_gen/runtime/platforms/interface.py
+index fb8a9e7eb8b1..132c7910d5dd 100644
+--- a/python/sglang/multimodal_gen/runtime/platforms/interface.py
++++ b/python/sglang/multimodal_gen/runtime/platforms/interface.py
+@@ -38,6 +38,9 @@ class AttentionBackendEnum(enum.Enum):
+     AITER_SAGE = enum.auto()
+     SLA_ATTN = enum.auto()
+     SAGE_SLA_ATTN = enum.auto()
++    LASER_ATTN = enum.auto()
++    BLOCK_SPARSE_ATTN = enum.auto()
++    RAIN_FUSION_ATTN = enum.auto()
+     NO_ATTENTION = enum.auto()
+ 
+     def __str__(self):
+@@ -52,6 +55,9 @@ def is_sparse(self) -> bool:
+             AttentionBackendEnum.VMOBA_ATTN,
+             AttentionBackendEnum.SLA_ATTN,
+             AttentionBackendEnum.SAGE_SLA_ATTN,
++            AttentionBackendEnum.LASER_ATTN,
++            AttentionBackendEnum.BLOCK_SPARSE_ATTN,
++            AttentionBackendEnum.RAIN_FUSION_ATTN,
+         }
+ 
+ 
+diff --git a/python/sglang/multimodal_gen/runtime/platforms/npu.py b/python/sglang/multimodal_gen/runtime/platforms/npu.py
+index 3a3303b61d2f..710bfa6515a2 100644
+--- a/python/sglang/multimodal_gen/runtime/platforms/npu.py
++++ b/python/sglang/multimodal_gen/runtime/platforms/npu.py
+@@ -120,6 +120,57 @@ def get_attn_backend_cls_str(
+             logger.info("Using Ascend Flash Attention backend.")
+             return "sglang.multimodal_gen.runtime.layers.attention.backends.ascend_fa.AscendFABackend"
+ 
++        elif selected_backend == AttentionBackendEnum.LASER_ATTN:
++            try:
++                from sglang.multimodal_gen.runtime.layers.attention.backends.laser_attn import (  # noqa: F401
++                    LaserAttentionBackend,
++                )
++
++                logger.info("Using Laser Attention backend")
++
++                return "sglang.multimodal_gen.runtime.layers.attention.backends.laser_attn.LaserAttentionBackend"
++            except ImportError as e:
++                logger.error(f"Failed to import Laser Attention backend: {e}")
++                raise ImportError(
++                    "Laser Attention backend is not installed. "
++                    "It requires the `attentions` module which can be installed along with sgl_kernel_npu. "
++                    "Manual installation from source is required. See https://github.com/sgl-project/sgl-kernel-npu."
++                ) from e
++
++        elif selected_backend == AttentionBackendEnum.BLOCK_SPARSE_ATTN:
++            try:
++                from sglang.multimodal_gen.runtime.layers.attention.backends.block_sparse_attn import (  # noqa: F401
++                    BlockSparseAttentionBackend,
++                )
++
++                logger.info("Using Block Sparse Attention backend")
++
++                return "sglang.multimodal_gen.runtime.layers.attention.backends.block_sparse_attn.BlockSparseAttentionBackend"
++            except ImportError as e:
++                logger.error(f"Failed to import Block Sparse Attention backend: {e}")
++                raise ImportError(
++                    "Block Sparse Attention backend is not installed. "
++                    "It requires the `attentions` module which can be installed along with sgl_kernel_npu. "
++                    "Manual installation from source is required. See https://github.com/sgl-project/sgl-kernel-npu."
++                ) from e
++
++        elif selected_backend == AttentionBackendEnum.RAIN_FUSION_ATTN:
++            try:
++                from sglang.multimodal_gen.runtime.layers.attention.backends.rain_fusion_attn import (  # noqa: F401
++                    RainFusionAttentionBackend,
++                )
++
++                logger.info("Using Rain Fusion Attention backend")
++
++                return "sglang.multimodal_gen.runtime.layers.attention.backends.rain_fusion_attn.RainFusionAttentionBackend"
++            except ImportError as e:
++                logger.error(f"Failed to import Rain Fusion Attention backend: {e}")
++                raise ImportError(
++                    "Rain Fusion Attention backend is not installed. "
++                    "It requires the `attentions` module which can be installed along with sgl_kernel_npu. "
++                    "Manual installation from source is required. See https://github.com/sgl-project/sgl-kernel-npu."
++                ) from e
++
+         logger.info("Using Torch SDPA backend.")
+         return (
+             "sglang.multimodal_gen.runtime.layers.attention.backends.sdpa.SDPABackend"

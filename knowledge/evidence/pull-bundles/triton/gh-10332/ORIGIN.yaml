@@ -1,0 +1,45 @@
+schema_version: 1
+source_key: triton-lang/triton#10332
+repo: triton-lang/triton
+repo_id: triton
+pr_number: 10332
+title: '[AMD][BACKEND][GFX9] Optimize warp-uniform predicates for BufferLoadToLocal
+  and AsyncCopyGlobalToLocal'
+url: https://github.com/triton-lang/triton/pull/10332
+state: closed
+merged_at: '2026-05-19T15:01:13Z'
+base_ref_oid: 4768da5e8228dfbda8e0b7a61101f87d953341bd
+head_ref_oid: 5c7c526c87f8857aaef875a11f661f0256b081c6
+captured_at: '2026-05-20T15:06:40.359039+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- gemm
+techniques:
+- warp-specialization
+hardware_features: []
+kernel_types:
+- gemm
+languages:
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: test/Conversion/amd/async_ops_to_llvm.mlir
+    local_path: source-snapshot/test/Conversion/amd/async_ops_to_llvm.mlir
+    ref: 5c7c526c87f8857aaef875a11f661f0256b081c6
+    status: modified
+    fetched: true
+  - source_path: test/Conversion/amd/buffer_load_to_local_to_llvm.mlir
+    local_path: source-snapshot/test/Conversion/amd/buffer_load_to_local_to_llvm.mlir
+    ref: 5c7c526c87f8857aaef875a11f661f0256b081c6
+    status: modified
+    fetched: true
+  - source_path: third_party/amd/lib/TritonAMDGPUToLLVM/LoadStoreOpToLLVM.cpp
+    local_path: source-snapshot/third_party/amd/lib/TritonAMDGPUToLLVM/LoadStoreOpToLLVM.cpp
+    ref: 5c7c526c87f8857aaef875a11f661f0256b081c6
+    status: modified
+    fetched: true

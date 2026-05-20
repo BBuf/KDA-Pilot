@@ -1,0 +1,63 @@
+diff --git a/python/sglang/srt/layers/attention/flashmla_backend.py b/python/sglang/srt/layers/attention/flashmla_backend.py
+index 0693d072dfbd..1e63f9b5cd84 100644
+--- a/python/sglang/srt/layers/attention/flashmla_backend.py
++++ b/python/sglang/srt/layers/attention/flashmla_backend.py
+@@ -477,9 +477,10 @@ def forward_extend(
+         forward_batch: ForwardBatch,
+         save_kv_cache: bool = True,
+     ):
+-        if (
+-            forward_batch.forward_mode == ForwardMode.EXTEND
+-            or forward_batch.forward_mode == ForwardMode.DRAFT_EXTEND
++        if forward_batch.forward_mode in (
++            ForwardMode.EXTEND,
++            ForwardMode.DRAFT_EXTEND,
++            ForwardMode.DRAFT_EXTEND_V2,
+         ):
+             return super().forward_extend(q, k, v, layer, forward_batch, save_kv_cache)
+         else:
+diff --git a/python/sglang/srt/models/deepseek_v2.py b/python/sglang/srt/models/deepseek_v2.py
+index 5c834a59516c..f30eb411c981 100644
+--- a/python/sglang/srt/models/deepseek_v2.py
++++ b/python/sglang/srt/models/deepseek_v2.py
+@@ -1553,7 +1553,7 @@ def dispatch_attn_forward_method(
+             attention_backend = get_global_server_args().decode_attention_backend
+         elif (
+             forward_batch.forward_mode.is_target_verify()
+-            or forward_batch.forward_mode.is_draft_extend()
++            or forward_batch.forward_mode.is_draft_extend(include_v2=True)
+         ):
+             # Use the specified backend for speculative operations (both verify and draft extend)
+             if get_global_server_args().speculative_attention_mode == "decode":
+diff --git a/test/registered/mla/test_flashmla.py b/test/registered/mla/test_flashmla.py
+index 18c221c8df1d..d5961cdad02a 100644
+--- a/test/registered/mla/test_flashmla.py
++++ b/test/registered/mla/test_flashmla.py
+@@ -9,7 +9,6 @@
+ import requests
+ import torch
+ 
+-from sglang.srt.environ import envs
+ from sglang.srt.utils import kill_process_tree
+ from sglang.test.ci.ci_register import register_cuda_ci
+ from sglang.test.run_eval import run_eval
+@@ -54,13 +53,12 @@ def setUpClass(cls):
+                 ]
+             )
+         # Use longer timeout for DeepGEMM JIT compilation which can take 10-20 minutes
+-        with envs.SGLANG_ENABLE_SPEC_V2.override(False):
+-            cls.process = popen_launch_server(
+-                cls.model,
+-                cls.base_url,
+-                timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH * 2,
+-                other_args=other_args,
+-            )
++        cls.process = popen_launch_server(
++            cls.model,
++            cls.base_url,
++            timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH * 2,
++            other_args=other_args,
++        )
+ 
+     @classmethod
+     def tearDownClass(cls):

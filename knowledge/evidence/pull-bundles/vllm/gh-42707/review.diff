@@ -1,0 +1,642 @@
+diff --git a/csrc/cpu/sgl-kernels/conv.cpp b/csrc/cpu/sgl-kernels/conv.cpp
+index 10ed1f85fb77..15114732aac1 100644
+--- a/csrc/cpu/sgl-kernels/conv.cpp
++++ b/csrc/cpu/sgl-kernels/conv.cpp
+@@ -213,7 +213,7 @@ struct tinygemm_kernel<at::BFloat16, K, BLOCK_N, has_bias, has_silu> {
+       weight + nb_start * width,                                                             \
+       out + bs * seqlen * dim + mb_start * dim + nb_start,                                   \
+       has_bias ? bias + nb_start : nullptr,                                                  \
+-      has_conv_states ? conv_states + conv_state_index * (K - 1) * dim + nb_start : nullptr, \
++      has_conv_states ? conv_states + conv_state_index * conv_state_slot_stride + nb_start : nullptr, \
+       has_initial_states_value,                                                              \
+       mb_size,                                                                               \
+       dim,                                                                                   \
+@@ -233,7 +233,8 @@ void causal_conv1d_fwd_kernel_impl(
+     int64_t dim,
+     int64_t seqlen,
+     int64_t width,
+-    int64_t num_seq_blocks) {
++    int64_t num_seq_blocks,
++    int64_t conv_state_slot_stride) {
+   // handle 32 x 64 per block
+   constexpr int64_t BLOCK_M = block_size_m();
+   constexpr int64_t BLOCK_N = block_size_n() * 2;
+@@ -282,7 +283,7 @@ void causal_conv1d_fwd_kernel_impl(
+     at::parallel_for(0, batch, 0, [&](int64_t begin, int64_t end) {
+       for (int64_t bs = begin; bs < end; ++bs) {
+         update_conv_state(
+-            conv_states + bs * (width - 1) * dim, input + bs * seqlen * dim, width, dim, seqlen, has_initial_state[bs]);
++            conv_states + bs * conv_state_slot_stride, input + bs * seqlen * dim, width, dim, seqlen, has_initial_state[bs]);
+       }
+     });
+   }
+@@ -316,7 +317,8 @@ void causal_conv1d_fwd_varlen_kernel_impl(
+     int64_t batch,
+     int64_t dim,
+     int64_t width,
+-    int64_t num_seq_blocks) {
++    int64_t num_seq_blocks,
++    int64_t conv_state_slot_stride) {
+   // handle 32 x 64 per block
+   constexpr int64_t BLOCK_M = block_size_m();
+   constexpr int64_t BLOCK_N = block_size_n() * 2;
+@@ -366,7 +368,7 @@ void causal_conv1d_fwd_varlen_kernel_impl(
+         int32_t seqlen = query_start_loc[bs + 1] - query_start_loc[bs];
+         int32_t batch_offset = query_start_loc[bs];
+         update_conv_state(
+-            conv_states + conv_state_index * (width - 1) * dim,
++            conv_states + conv_state_index * conv_state_slot_stride,
+             input + batch_offset * dim,
+             width,
+             dim,
+@@ -389,7 +391,8 @@ void causal_conv1d_update_kernel_impl(
+     int64_t batch,
+     int64_t dim,
+     int64_t seqlen,
+-    int64_t width) {
++    int64_t width,
++    int64_t conv_state_slot_stride) {
+   // handle 32 x 64 per block
+   constexpr int64_t BLOCK_M = block_size_m();
+   constexpr int64_t BLOCK_N = block_size_n() * 2;
+@@ -430,7 +433,7 @@ void causal_conv1d_update_kernel_impl(
+     });
+   });
+ 
+-#define CONV_STATE_INDEXR(w) conv_states + conv_state_index*(width - 1) * dim + (w) * dim
++#define CONV_STATE_INDEXR(w) conv_states + conv_state_index*conv_state_slot_stride + (w) * dim
+ 
+   // update conv_states
+   at::parallel_for(0, batch, 0, [&](int64_t begin, int64_t end) {
+@@ -592,6 +595,9 @@ at::Tensor causal_conv1d_fwd_cpu(
+     }
+   }
+ 
++// IMPORTANT: To make the kernal compatible with vLLM KV cache layout 
++  int64_t conv_state_slot_stride = conv_states->stride(0);
++
+   // block size for sequence blocks, 32
+   constexpr int64_t BLOCK_M = block_size_m();
+ 
+@@ -618,7 +624,8 @@ at::Tensor causal_conv1d_fwd_cpu(
+           batch,
+           dim,
+           width,
+-          num_seq_blocks);
++          num_seq_blocks,
++          conv_state_slot_stride);
+     } else {
+       causal_conv1d_fwd_kernel_impl<scalar_t>(
+           out.data_ptr<scalar_t>(),
+@@ -633,7 +640,8 @@ at::Tensor causal_conv1d_fwd_cpu(
+           dim,
+           seqlen,
+           width,
+-          num_seq_blocks);
++          num_seq_blocks,
++          conv_state_slot_stride);
+     }
+   });
+   return out;
+@@ -690,6 +698,8 @@ at::Tensor causal_conv1d_update_cpu(
+     conv_states.copy_(conv_states_copy);
+   }
+ 
++  // IMPORTANT: To make the kernal compatible with vLLM KV cache layout 
++  int64_t conv_state_slot_stride = conv_states.stride(0);
+   at::Tensor out = at::empty_like(x);
+   AT_DISPATCH_REDUCED_FLOATING_TYPES(scalar_type, "causal_conv1d_update_kernel_impl", [&] {
+     causal_conv1d_update_kernel_impl<scalar_t>(
+@@ -703,7 +713,8 @@ at::Tensor causal_conv1d_update_cpu(
+         batch,
+         dim,
+         seqlen,
+-        width);
++        width,
++        conv_state_slot_stride);
+   });
+   return out;
+ }
+diff --git a/csrc/cpu/sgl-kernels/fla.cpp b/csrc/cpu/sgl-kernels/fla.cpp
+index b78e9863bf06..e939e1c52565 100644
+--- a/csrc/cpu/sgl-kernels/fla.cpp
++++ b/csrc/cpu/sgl-kernels/fla.cpp
+@@ -847,6 +847,7 @@ void fused_sigmoid_gating_delta_rule_update_kernel_impl(
+     int64_t v_strideB,
+     int64_t v_strideS,
+     int64_t v_strideH,
++    int64_t state_slot_stride,
+     bool use_qk_l2norm_in_kernel,
+     double softplus_threshold) {
+   using bVec = at::vec::Vectorized<scalar_t>;
+@@ -907,7 +908,7 @@ void fused_sigmoid_gating_delta_rule_update_kernel_impl(
+     data_index_init(begin, bi, batch_size, si, seq_len, ni, v_num_heads);
+     for (int64_t i = begin; i < end; ++i) {
+       int64_t cache_index = indices_ptr[bi];
+-      int64_t state_offset = (cache_index * v_num_heads + ni) * head_dim * v_head_dim;
++      int64_t state_offset = cache_index * state_slot_stride + ni * head_dim * v_head_dim;
+       float g_val = -std::exp(float(A_log_ptr[ni])) *
+                     softplus(float(a_ptr[bi * v_num_heads + ni]) + float(dt_bias_ptr[ni]), softplus_threshold);
+       float g_val_exp = std::exp(g_val);
+@@ -1321,6 +1322,8 @@ at::Tensor fused_sigmoid_gating_delta_rule_update_cpu(
+   int64_t v_strideB = v.stride(1);
+   int64_t v_strideS = v.stride(0);
+   int64_t v_strideH = v.stride(2);
++  // IMPORTANT: To make the kernal compatible with vLLM KV cache layout 
++  int64_t state_slot_stride = initial_state_source.stride(0);
+   at::Tensor core_attn_out = at::empty({batch_size, seq_len, v_num_heads, v_head_dim}, q.options());
+   at::Tensor qk_scale_buf = at::empty({2 * batch_size, seq_len, num_heads}, at::kFloat);
+ 
+@@ -1353,6 +1356,7 @@ at::Tensor fused_sigmoid_gating_delta_rule_update_cpu(
+             v_strideB,
+             v_strideS,
+             v_strideH,
++            state_slot_stride,
+             use_qk_l2norm_in_kernel,
+             softplus_threshold);
+       });
+diff --git a/csrc/cpu/torch_bindings.cpp b/csrc/cpu/torch_bindings.cpp
+index 9d3c354558e9..bd4559d6b11c 100644
+--- a/csrc/cpu/torch_bindings.cpp
++++ b/csrc/cpu/torch_bindings.cpp
+@@ -98,6 +98,45 @@ at::Tensor int4_scaled_mm_cpu(at::Tensor& x, at::Tensor& w, at::Tensor& w_zeros,
+                               at::Tensor& w_scales,
+                               std::optional<at::Tensor> bias);
+ 
++// Adapted from sglang: GDN
++std::tuple<at::Tensor, at::Tensor> chunk_gated_delta_rule_cpu(
++    const at::Tensor& query, const at::Tensor& key, const at::Tensor& value,
++    const at::Tensor& g, const at::Tensor& beta,
++    const at::Tensor& initial_state, bool output_final_state,
++    const at::Tensor& cu_seqlens, bool head_first, bool use_qk_l2norm_in_kernel,
++    double eps = 1e-5);
++
++at::Tensor fused_sigmoid_gating_delta_rule_update_cpu(
++    const at::Tensor& A_log, const at::Tensor& dt_bias, const at::Tensor& q,
++    const at::Tensor& k, const at::Tensor& v, const at::Tensor& a,
++    const at::Tensor& b, at::Tensor& initial_state_source,
++    const at::Tensor& initial_state_indices, const at::Tensor& cu_seqlens,
++    bool use_qk_l2norm_in_kernel, double softplus_beta = 1.0,
++    double softplus_threshold = 20.0);
++
++std::tuple<at::Tensor, at::Tensor> fused_gdn_gating_cpu(
++    const at::Tensor& A_log, const at::Tensor& a, const at::Tensor& b,
++    const at::Tensor& dt_bias);
++
++// Adapted from sglang: casual_conv1d kernels
++at::Tensor causal_conv1d_weight_pack(const at::Tensor& weight);
++
++at::Tensor causal_conv1d_fwd_cpu(
++    const at::Tensor& x, const at::Tensor& weight,
++    const std::optional<at::Tensor>& bias,
++    const std::optional<at::Tensor>& conv_states,
++    const std::optional<at::Tensor>& query_start_loc,
++    const std::optional<at::Tensor>& cache_indices,
++    const std::optional<at::Tensor>& has_initial_state, bool silu_activation,
++    int64_t pad_slot_id, bool is_vnni);
++
++at::Tensor causal_conv1d_update_cpu(
++    const at::Tensor& x, const at::Tensor& conv_states,
++    const at::Tensor& weight, const std::optional<at::Tensor>& bias,
++    bool silu_activation, const std::optional<at::Tensor>& cache_seqlens,
++    const std::optional<at::Tensor>& conv_state_indices, int64_t pad_slot_id,
++    bool is_vnni);
++
+ void activation_lut_bf16(torch::Tensor& out, torch::Tensor& input,
+                          const std::string& activation);
+ 
+@@ -397,6 +436,47 @@ TORCH_LIBRARY_EXPAND(TORCH_EXTENSION_NAME, ops) {
+       "scales2, SymInt[] block_size, Tensor? bias, ScalarType out_dtype, "
+       "bool is_vnni) -> Tensor");
+   ops.impl("fp8_scaled_mm_cpu", torch::kCPU, &fp8_scaled_mm_cpu);
++
++  // Adapted from sglang: GDN kernels
++  ops.def(
++      "chunk_gated_delta_rule_cpu(Tensor query, Tensor key, Tensor value, "
++      "Tensor g, Tensor beta, "
++      "Tensor initial_state, bool output_final_state, Tensor cu_seqlens, bool "
++      "head_first, "
++      "bool use_qk_l2norm_in_kernel, float eps=1e-5) -> (Tensor, Tensor)");
++  ops.impl("chunk_gated_delta_rule_cpu", torch::kCPU,
++           &chunk_gated_delta_rule_cpu);
++  ops.def(
++      "fused_sigmoid_gating_delta_rule_update_cpu(Tensor A_log, Tensor "
++      "dt_bias, Tensor q, Tensor k, Tensor v, Tensor "
++      "a, Tensor b, Tensor(a!) initial_state_source, Tensor "
++      "initial_state_indices, Tensor cu_seqlens, bool "
++      "use_qk_l2norm_in_kernel, float softplus_beta=1.0, float "
++      "softplus_threshold=20.0) -> Tensor");
++  ops.impl("fused_sigmoid_gating_delta_rule_update_cpu", torch::kCPU,
++           &fused_sigmoid_gating_delta_rule_update_cpu);
++  ops.def(
++      "fused_gdn_gating_cpu(Tensor A_log, Tensor a, Tensor b, Tensor dt_bias) "
++      "-> (Tensor, Tensor)");
++  ops.impl("fused_gdn_gating_cpu", torch::kCPU, &fused_gdn_gating_cpu);
++
++  // Adapted from sglang: casual_conv1d kernels
++  ops.def("causal_conv1d_weight_pack(Tensor weight) -> Tensor");
++  ops.impl("causal_conv1d_weight_pack", torch::kCPU,
++           &causal_conv1d_weight_pack);
++  ops.def(
++      "causal_conv1d_fwd_cpu(Tensor x, Tensor weight, Tensor? bias, Tensor? "
++      "conv_states, Tensor? query_start_loc,"
++      "Tensor? cache_indices, Tensor? has_initial_state, bool silu_activation, "
++      "int pad_slot_id, bool is_vnni) -> "
++      "Tensor");
++  ops.impl("causal_conv1d_fwd_cpu", torch::kCPU, &causal_conv1d_fwd_cpu);
++  ops.def(
++      "causal_conv1d_update_cpu(Tensor x, Tensor(a!) conv_states, Tensor "
++      "weight, Tensor? bias, bool silu_activation,"
++      "Tensor? cache_seqlens, Tensor? conv_state_indices, int pad_slot_id, "
++      "bool is_vnni) -> Tensor");
++  ops.impl("causal_conv1d_update_cpu", torch::kCPU, &causal_conv1d_update_cpu);
+ #endif
+ 
+   // CPU attention kernels
+diff --git a/vllm/_custom_ops.py b/vllm/_custom_ops.py
+index 969c044097d3..bda8fbf39205 100644
+--- a/vllm/_custom_ops.py
++++ b/vllm/_custom_ops.py
+@@ -3370,6 +3370,135 @@ def fp8_scaled_mm_cpu(
+     )
+ 
+ 
++def chunk_gated_delta_rule_cpu(
++    query: torch.Tensor,
++    key: torch.Tensor,
++    value: torch.Tensor,
++    g: torch.Tensor,
++    beta: torch.Tensor,
++    initial_state: torch.Tensor,
++    output_final_state: bool,
++    cu_seqlens: torch.Tensor,
++    head_first: bool,
++    use_qk_l2norm_in_kernel: bool,
++    eps: float = 1e-5,
++) -> tuple[torch.Tensor, torch.Tensor]:
++    return torch.ops._C.chunk_gated_delta_rule_cpu(
++        query,
++        key,
++        value,
++        g,
++        beta,
++        initial_state,
++        output_final_state,
++        cu_seqlens,
++        head_first,
++        use_qk_l2norm_in_kernel,
++        eps,
++    )
++
++
++def fused_sigmoid_gating_delta_rule_update_cpu(
++    A_log: torch.Tensor,
++    dt_bias: torch.Tensor,
++    q: torch.Tensor,
++    k: torch.Tensor,
++    v: torch.Tensor,
++    a: torch.Tensor,
++    b: torch.Tensor,
++    initial_state_source: torch.Tensor,
++    initial_state_indices: torch.Tensor,
++    cu_seqlens: torch.Tensor,
++    use_qk_l2norm_in_kernel: bool,
++    softplus_beta: float = 1.0,
++    softplus_threshold: float = 20.0,
++) -> torch.Tensor:
++    return torch.ops._C.fused_sigmoid_gating_delta_rule_update_cpu(
++        A_log,
++        dt_bias,
++        q,
++        k,
++        v,
++        a,
++        b,
++        initial_state_source,
++        initial_state_indices,
++        cu_seqlens,
++        use_qk_l2norm_in_kernel,
++        softplus_beta,
++        softplus_threshold,
++    )
++
++
++def fused_gdn_gating_cpu(
++    A_log: torch.Tensor,
++    a: torch.Tensor,
++    b: torch.Tensor,
++    dt_bias: torch.Tensor,
++) -> tuple[torch.Tensor, torch.Tensor]:
++    return torch.ops._C.fused_gdn_gating_cpu(
++        A_log,
++        a,
++        b,
++        dt_bias,
++    )
++
++
++def causal_conv1d_weight_pack(
++    weight: torch.Tensor,
++) -> torch.Tensor:
++    return torch.ops._C.causal_conv1d_weight_pack(
++        weight,
++    )
++
++
++def causal_conv1d_fwd_cpu(
++    x: torch.Tensor,
++    weight: torch.Tensor,
++    bias: torch.Tensor | None,
++    conv_states: torch.Tensor | None,
++    query_start_loc: torch.Tensor | None,
++    cache_indices: torch.Tensor | None,
++    has_initial_state: torch.Tensor | None,
++    silu_activation: bool,
++    is_vnni: bool,
++) -> torch.Tensor:
++    return torch.ops._C.causal_conv1d_fwd_cpu(
++        x,
++        weight,
++        bias,
++        conv_states,
++        query_start_loc,
++        cache_indices,
++        has_initial_state,
++        silu_activation,
++        -1,
++        is_vnni,
++    )
++
++
++def causal_conv1d_update_cpu(
++    x: torch.Tensor,
++    conv_states: torch.Tensor,
++    weight: torch.Tensor,
++    bias: torch.Tensor | None,
++    silu_activation: bool,
++    conv_state_indices: torch.Tensor | None,
++    is_vnni: bool,
++) -> torch.Tensor:
++    return torch.ops._C.causal_conv1d_update_cpu(
++        x,
++        conv_states,
++        weight,
++        bias,
++        silu_activation,
++        None,
++        conv_state_indices,
++        -1,
++        is_vnni,
++    )
++
++
+ class CPUDNNLGEMMHandler:
+     def __init__(self) -> None:
+         self.handler_tensor: torch.Tensor | None = None
+diff --git a/vllm/model_executor/layers/linear.py b/vllm/model_executor/layers/linear.py
+index 46e26fb60091..dbd5577ee03c 100644
+--- a/vllm/model_executor/layers/linear.py
++++ b/vllm/model_executor/layers/linear.py
+@@ -213,9 +213,6 @@ def create_weights(
+ 
+     def process_weights_after_loading(self, layer: torch.nn.Module) -> None:
+         if current_platform.is_cpu():
+-            if layer.weight.ndim != 2:
+-                # this is not a linear layer
+-                return
+             from vllm.model_executor.layers.utils import dispatch_cpu_unquantized_gemm
+ 
+             dispatch_cpu_unquantized_gemm(layer, remove_weight=True)
+diff --git a/vllm/model_executor/layers/mamba/ops/cpu/gdn_attention.py b/vllm/model_executor/layers/mamba/ops/cpu/gdn_attention.py
+index 8b4122cc487b..166bd43bbddf 100644
+--- a/vllm/model_executor/layers/mamba/ops/cpu/gdn_attention.py
++++ b/vllm/model_executor/layers/mamba/ops/cpu/gdn_attention.py
+@@ -5,6 +5,7 @@
+ 
+ import torch
+ 
++import vllm._custom_ops as ops
+ from vllm.forward_context import ForwardContext, get_forward_context
+ from vllm.model_executor.layers.mamba.mamba_utils import is_conv_state_dim_first
+ from vllm.model_executor.layers.mamba.ops.cpu.causal_conv1d import (
+@@ -55,6 +56,16 @@ def cpu_gdn_attention_core(
+         and attn_metadata_i.num_accepted_tokens is None
+     ), "speculative decode not supported in CPU GDN attention."
+ 
++    if torch.cpu._is_amx_tile_supported():
++        return cpu_gdn_attention_core_amx(
++            mixed_qkv,
++            b,
++            a,
++            core_attn_out,
++            attn_metadata_i,
++            layer,
++        )
++
+     state_indices_tensor = attn_metadata_i.non_spec_state_indices_tensor
+     query_start_loc = attn_metadata_i.non_spec_query_start_loc
+     assert state_indices_tensor is not None
+@@ -194,6 +205,135 @@ def cpu_gdn_attention_core_fake(
+     return
+ 
+ 
++def cpu_gdn_attention_core_amx(
++    mixed_qkv: torch.Tensor,
++    b: torch.Tensor,
++    a: torch.Tensor,
++    core_attn_out: torch.Tensor,
++    attn_metadata_i: GDNAttentionMetadata,
++    layer: torch.nn.Module,
++):
++    state_indices_tensor = attn_metadata_i.non_spec_state_indices_tensor
++    query_start_loc = attn_metadata_i.non_spec_query_start_loc
++    assert state_indices_tensor is not None
++    assert query_start_loc is not None
++
++    # [num_allocated_slots, kernel - 1, conv_dim]
++    conv_state = layer.kv_cache[0]
++    if is_conv_state_dim_first():
++        raise RuntimeError("AMX GDN attention requires `SD` conv_state layout.")
++    # reshape to [num_allocated_slots, conv_dim, kernel - 1]
++    conv_state_t = conv_state.transpose(1, 2)
++
++    # [num_allocated_slots, num_v_heads / tp_size, v_dim, k_dim]
++    ssm_state = layer.kv_cache[1]
++    # rehape to [num_allocated_slots, num_v_heads / tp_size, k_dim, v_dim]
++    num_allocated_slots, head_num, v_dim, k_dim = ssm_state.size()
++    ssm_state = ssm_state.view(
++        num_allocated_slots,
++        head_num,
++        k_dim,
++        v_dim,
++    )
++
++    mixed_qkv = mixed_qkv.contiguous()
++    a = a.contiguous()
++    b = b.contiguous()
++
++    num_decodes = attn_metadata_i.num_decodes
++    num_decode_tokens = attn_metadata_i.num_decode_tokens
++    num_prefills = attn_metadata_i.num_prefills
++    num_prefill_tokens = attn_metadata_i.num_prefill_tokens
++
++    if num_decodes > 0:
++        decode_mixed_qkv = mixed_qkv[:num_decode_tokens]
++        decode_b = b[:num_decode_tokens]
++        decode_a = a[:num_decode_tokens]
++        decode_state_indices = state_indices_tensor[:num_decodes]
++
++        decode_mixed_qkv = ops.causal_conv1d_update_cpu(
++            x=decode_mixed_qkv,
++            conv_states=conv_state_t,
++            weight=layer.conv1d.weight,
++            bias=layer.conv1d.bias,
++            silu_activation=layer.activation == "silu",
++            conv_state_indices=decode_state_indices,
++            is_vnni=True,
++        )
++
++        query, key, value = layer.rearrange_mixed_qkv(decode_mixed_qkv)
++        attn_out = ops.fused_sigmoid_gating_delta_rule_update_cpu(
++            A_log=layer.A_log,
++            dt_bias=layer.dt_bias,
++            q=query,
++            k=key,
++            v=value,
++            a=decode_a,
++            b=decode_b,
++            initial_state_source=ssm_state,
++            initial_state_indices=decode_state_indices,
++            cu_seqlens=query_start_loc[: num_decodes + 1],
++            use_qk_l2norm_in_kernel=True,
++        )
++        core_attn_out[:num_decode_tokens] = attn_out.squeeze(1)
++
++    if num_prefills > 0:
++        has_initial_state = attn_metadata_i.has_initial_state
++        assert has_initial_state is not None
++
++        prefill_token_start = num_decode_tokens
++        prefill_token_end = prefill_token_start + num_prefill_tokens
++        prefill_mixed_qkv = mixed_qkv[prefill_token_start:prefill_token_end]
++        prefill_b = b[prefill_token_start:prefill_token_end]
++        prefill_a = a[prefill_token_start:prefill_token_end]
++        prefill_state_indices = state_indices_tensor[
++            num_decodes : num_decodes + num_prefills
++        ]
++        prefill_query_start_loc = (
++            query_start_loc[num_decodes : num_decodes + num_prefills + 1]
++            - num_decode_tokens
++        )
++        prefill_has_initial_state = has_initial_state[
++            num_decodes : num_decodes + num_prefills
++        ]
++
++        prefill_mixed_qkv = ops.causal_conv1d_fwd_cpu(
++            x=prefill_mixed_qkv.transpose(0, 1),
++            weight=layer.conv1d.weight,
++            bias=layer.conv1d.bias,
++            conv_states=conv_state_t,
++            query_start_loc=prefill_query_start_loc,
++            cache_indices=prefill_state_indices,
++            has_initial_state=prefill_has_initial_state,
++            silu_activation=layer.activation == "silu",
++            is_vnni=True,
++        ).transpose(0, 1)
++
++        query, key, value = layer.rearrange_mixed_qkv(prefill_mixed_qkv)
++        g, beta = ops.fused_gdn_gating_cpu(
++            A_log=layer.A_log, a=prefill_a, b=prefill_b, dt_bias=layer.dt_bias
++        )
++
++        initial_state = ssm_state[prefill_state_indices]
++        initial_state[~prefill_has_initial_state, ...] = 0
++        attn_out, last_recurrent_state = ops.chunk_gated_delta_rule_cpu(
++            query=query,
++            key=key,
++            value=value,
++            g=g,
++            beta=beta,
++            initial_state=initial_state,
++            output_final_state=True,
++            cu_seqlens=prefill_query_start_loc,
++            head_first=False,
++            use_qk_l2norm_in_kernel=True,
++        )
++        ssm_state[prefill_state_indices] = last_recurrent_state.to(
++            ssm_state.dtype, copy=False
++        )
++        core_attn_out[prefill_token_start:prefill_token_end] = attn_out.squeeze(0)
++
++
+ def register_cpu_gdn_attention_ops() -> None:
+     global _CPU_GDN_ATTENTION_OPS_REGISTERED
+     if _CPU_GDN_ATTENTION_OPS_REGISTERED:
+diff --git a/vllm/model_executor/layers/utils.py b/vllm/model_executor/layers/utils.py
+index 63a79f668edf..8bab7055e424 100644
+--- a/vllm/model_executor/layers/utils.py
++++ b/vllm/model_executor/layers/utils.py
+@@ -233,6 +233,19 @@ def dispatch_cpu_unquantized_gemm(
+         layer.cpu_linear = torch.nn.functional.linear
+         return
+ 
++    if layer.weight.ndim != 2:
++        # this is not a linear layer
++        # For now it should be a causal_conv1d op
++        if torch.cpu._is_amx_tile_supported():
++            # prepack conv weight
++            layer.weight.data = ops.causal_conv1d_weight_pack(
++                layer.weight.view(
++                    layer.weight.size(0),
++                    layer.weight.size(2),
++                )
++            )
++        return
++
+     N, K = layer.weight.size()
+     dtype = layer.weight.dtype
+ 
+diff --git a/vllm/platforms/cpu.py b/vllm/platforms/cpu.py
+index 750b7f2f4b9a..ced97e033936 100644
+--- a/vllm/platforms/cpu.py
++++ b/vllm/platforms/cpu.py
+@@ -139,6 +139,7 @@ def check_and_update_config(cls, vllm_config: VllmConfig) -> None:
+         # supported as it is not possible to set the OMP environment correctly
+         if parallel_config.distributed_executor_backend == "uni":
+             parallel_config.distributed_executor_backend = "mp"
++
+         if parallel_config.worker_cls == "auto":
+             parallel_config.worker_cls = "vllm.v1.worker.cpu_worker.CPUWorker"
+         # Disable DBO
+@@ -146,6 +147,20 @@ def check_and_update_config(cls, vllm_config: VllmConfig) -> None:
+             logger.warning("Dual-Batch Overlap is not supported on CPU, disabled.")
+             parallel_config.enable_dbo = False
+ 
++        if torch.cpu._is_amx_tile_supported() and (
++            model_config is not None
++            and model_config.get_num_layers_by_block_type(
++                parallel_config, "linear_attention"
++            )
++            > 0
++        ):
++            cache_config.enable_prefix_caching = False
++            scheduler_config.enable_chunked_prefill = False
++            logger.warning(
++                "Disabled unsupported prefix caching and chunked prefill "
++                "for linear attention on AMX CPU platforms."
++            )
++
+         # Note: workaround for v1 gpu_model_runner
+         from vllm.config import CompilationMode
+ 
+@@ -211,6 +226,10 @@ def check_and_update_config(cls, vllm_config: VllmConfig) -> None:
+         # Avoid inductor generates num_thread() and breaks the thread binding
+         os.environ["TORCHINDUCTOR_CPP_DYNAMIC_THREADS"] = "1"
+ 
++        # For efficient conv state memory access
++        if torch.cpu._is_amx_tile_supported():
++            os.environ["VLLM_SSM_CONV_STATE_LAYOUT"] = "SD"
++
+         ld_preload_str = os.getenv("LD_PRELOAD", "")
+         cpu_architecture = Platform.get_cpu_architecture()
+ 

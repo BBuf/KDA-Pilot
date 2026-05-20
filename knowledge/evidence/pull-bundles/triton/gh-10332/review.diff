@@ -1,0 +1,281 @@
+diff --git a/test/Conversion/amd/async_ops_to_llvm.mlir b/test/Conversion/amd/async_ops_to_llvm.mlir
+index 6017a0f9edb7..2ec0826f6cff 100644
+--- a/test/Conversion/amd/async_ops_to_llvm.mlir
++++ b/test/Conversion/amd/async_ops_to_llvm.mlir
+@@ -333,3 +333,42 @@ module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.shar
+     tt.return
+   }
+ }
++
++// -----
++
++// Load 64 elements with 4 warps so we end up with redundant warps which should be masked out via LDS out-of-range address since we do not have masking
++#blocked = #ttg.blocked<{sizePerThread = [1], threadsPerWarp = [64], warpsPerCTA = [4], order = [0]}>
++#shared = #ttg.swizzled_shared<{vec = 1, perPhase = 1, maxPhase = 1, order = [0]}>
++#smem = #ttg.shared_memory
++module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, "ttg.threads-per-warp" = 64 : i32} {
++  // CHECK-LABEL: @async_copy_warp_uniform_thread_pred
++  tt.func @async_copy_warp_uniform_thread_pred(%ptr: !tt.ptr<f32>, %lds: !ttg.memdesc<64xf32, #shared, #smem, mutable>) {
++    %src = tt.splat %ptr : !tt.ptr<f32> -> tensor<64x!tt.ptr<f32>, #blocked>
++    // CHECK: %[[OOB_I32:.*]] = llvm.mlir.constant(2147483647 : i32) : i32
++    // CHECK: %[[OOB_PTR:.*]] = llvm.inttoptr %[[OOB_I32]] : i32 to !llvm.ptr<3>
++    // CHECK: %[[PRED_ADDR:.*]] = llvm.select {{.*}}, {{.*}}, %[[OOB_PTR]] : i1, !llvm.ptr<3>
++    // CHECK: rocdl.global.load.async.lds {{.*}}, %[[PRED_ADDR]], {{.*}}
++    %0 = ttg.async_copy_global_to_local %src, %lds : tensor<64x!tt.ptr<f32>, #blocked> -> <64xf32, #shared, #smem, mutable>
++    tt.return
++  }
++}
++
++// -----
++
++// Load 64 elements with 4 warps to get warp-uniform threadPred but we should still see the branch because of the explicit mask.
++#blocked = #ttg.blocked<{sizePerThread = [1], threadsPerWarp = [64], warpsPerCTA = [4], order = [0]}>
++#shared = #ttg.swizzled_shared<{vec = 1, perPhase = 1, maxPhase = 1, order = [0]}>
++#smem = #ttg.shared_memory
++module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, "ttg.threads-per-warp" = 64 : i32} {
++  // CHECK-LABEL: @async_copy_warp_uniform_thread_pred_with_per_lane_mask
++  tt.func @async_copy_warp_uniform_thread_pred_with_per_lane_mask(%ptr: !tt.ptr<f32>, %lds: !ttg.memdesc<64xf32, #shared, #smem, mutable>, %mask: tensor<64xi1, #blocked>) {
++    %src = tt.splat %ptr : !tt.ptr<f32> -> tensor<64x!tt.ptr<f32>, #blocked>
++    %other = arith.constant dense<0.000000e+00> : tensor<64xf32, #blocked>
++    // CHECK: %[[PRED:.*]] = llvm.and {{.*}} : i1
++    // CHECK: llvm.cond_br %[[PRED]], ^[[LOAD_BLOCK:bb[0-9]+]]
++    // CHECK-NEXT: ^[[LOAD_BLOCK]]:
++    // CHECK-NEXT: rocdl.global.load.async.lds
++    %0 = ttg.async_copy_global_to_local %src, %lds mask %mask other %other : tensor<64x!tt.ptr<f32>, #blocked> -> <64xf32, #shared, #smem, mutable>
++    tt.return
++  }
++}
+diff --git a/test/Conversion/amd/buffer_load_to_local_to_llvm.mlir b/test/Conversion/amd/buffer_load_to_local_to_llvm.mlir
+index f09e8f820a02..ebbd18c00bd4 100644
+--- a/test/Conversion/amd/buffer_load_to_local_to_llvm.mlir
++++ b/test/Conversion/amd/buffer_load_to_local_to_llvm.mlir
+@@ -186,12 +186,13 @@ module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 1 : i32, "ttg.thr
+   tt.func public @buffer_load_to_local_cache_mods(%arg0: !tt.ptr<f32> {tt.divisibility = 16 : i32, tt.pointer_range = 32 : i32},
+                                 %arg2: !ttg.memdesc<64xf32, #shared, #smem, mutable>) {
+     %0 = tt.make_range {end = 64 : i32, start = 0 : i32} : tensor<64xi32, #blocked>
+-    // The first constant 0 skips the LDS offset which is also 0
+-    // COMMON: %[[VOFFSET:.*]] = llvm.select
+-    // COMMON-NEXT: %[[IMM0:.*]] = llvm.mlir.constant(0 : i32) : i32
+-    // COMMON-NEXT: %[[aux_ca:.*]] = llvm.mlir.constant(0 : i32) : i32
+-    // COMMON-NEXT: %[[IMM1:.*]] = llvm.mlir.constant(0 : i32) : i32
+-    // COMMON-NEXT: rocdl.raw.ptr.buffer.load.async.lds {{.*}}, {{.*}}, {{.*}}, %[[VOFFSET]], %[[IMM1]], %[[IMM0]], %[[aux_ca]]
++    // The first constant 0 skips the LDS offset which is also 0.
++    // Match the i32 select used to compute voffset
++    // COMMON: %[[VOFFSET:.*]] = llvm.select {{.*}} : i1, i32
++    // COMMON: %[[IMM0:.*]] = llvm.mlir.constant(0 : i32) : i32
++    // COMMON: %[[aux_ca:.*]] = llvm.mlir.constant(0 : i32) : i32
++    // COMMON: %[[IMM1:.*]] = llvm.mlir.constant(0 : i32) : i32
++    // COMMON: rocdl.raw.ptr.buffer.load.async.lds {{.*}}, {{.*}}, {{.*}}, %[[VOFFSET]], %[[IMM1]], %[[IMM0]], %[[aux_ca]]
+     %1 = amdg.buffer_load_to_local %arg0[%0] cacheModifier = ca into %arg2: <f32>[tensor<64xi32, #blocked>] -> <64xf32, #shared, #smem, mutable>
+     // COMMON: llvm.getelementptr
+     // COMMON: %[[aux_cg:.*]] = llvm.mlir.constant(3 : i32) : i32
+@@ -344,3 +345,43 @@ module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, "ttg.thr
+     tt.return
+   }
+ }
++
++// -----
++
++// Load 64 elements with 4 warps so we end up with redundant warps which should be masked out via LDS out-of-range address
++#blocked = #ttg.blocked<{sizePerThread = [1], threadsPerWarp = [64], warpsPerCTA = [4], order = [0]}>
++#shared = #ttg.swizzled_shared<{vec = 1, perPhase = 1, maxPhase = 1, order = [0]}>
++#smem = #ttg.shared_memory
++module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, "ttg.threads-per-warp" = 64 : i32} {
++  // CHECK-LABEL: @buffer_load_warp_uniform_thread_pred
++  tt.func @buffer_load_warp_uniform_thread_pred(%ptr: !tt.ptr<f32>, %lds: !ttg.memdesc<64xf32, #shared, #smem, mutable>) {
++    %off = tt.make_range {end = 64 : i32, start = 0 : i32} : tensor<64xi32, #blocked>
++    // CHECK: %[[OOB_I32:.*]] = llvm.mlir.constant(2147483647 : i32) : i32
++    // CHECK: %[[OOB_PTR:.*]] = llvm.inttoptr %[[OOB_I32]] : i32 to !llvm.ptr<3>
++    // CHECK: %[[PRED_ADDR:.*]] = llvm.select {{.*}}, {{.*}}, %[[OOB_PTR]] : i1, !llvm.ptr<3>
++    // CHECK: rocdl.raw.ptr.buffer.load.async.lds {{.*}}, %[[PRED_ADDR]], {{.*}}
++    %0 = amdg.buffer_load_to_local %ptr[%off] into %lds : <f32>[tensor<64xi32, #blocked>] -> <64xf32, #shared, #smem, mutable>
++    tt.return
++  }
++}
++
++// -----
++
++// Load 64 elements with 4 warps to get warp-uniform threadPred but we should still see the branch because of the mask and other values.
++#blocked = #ttg.blocked<{sizePerThread = [1], threadsPerWarp = [64], warpsPerCTA = [4], order = [0]}>
++#shared = #ttg.swizzled_shared<{vec = 1, perPhase = 1, maxPhase = 1, order = [0]}>
++#smem = #ttg.shared_memory
++module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, "ttg.threads-per-warp" = 64 : i32} {
++  // CHECK-LABEL: @buffer_load_warp_uniform_thread_pred_with_per_lane_mask
++  tt.func @buffer_load_warp_uniform_thread_pred_with_per_lane_mask(%ptr: !tt.ptr<f32>, %lds: !ttg.memdesc<64xf32, #shared, #smem, mutable>, %mask: tensor<64xi1, #blocked>) {
++    %off = tt.make_range {end = 64 : i32, start = 0 : i32} : tensor<64xi32, #blocked>
++    %other = arith.constant dense<0.000000e+00> : tensor<64xf32, #blocked>
++    // Even with warp-uniform threadPred, hasOther must keep branch predication.
++    // CHECK: %[[PRED:.*]] = llvm.and {{.*}} : i1
++    // CHECK: llvm.cond_br %[[PRED]], ^[[LOAD_BLOCK:bb[0-9]+]]
++    // CHECK-NEXT: ^[[LOAD_BLOCK]]:
++    // CHECK: rocdl.raw.ptr.buffer.load.async.lds
++    %0 = amdg.buffer_load_to_local %ptr[%off] mask=%mask other=%other into %lds : <f32>[tensor<64xi32, #blocked>] tensor<64xf32, #blocked> -> <64xf32, #shared, #smem, mutable>
++    tt.return
++  }
++}
+diff --git a/third_party/amd/lib/TritonAMDGPUToLLVM/LoadStoreOpToLLVM.cpp b/third_party/amd/lib/TritonAMDGPUToLLVM/LoadStoreOpToLLVM.cpp
+index 6f7043692523..26754fb7a161 100644
+--- a/third_party/amd/lib/TritonAMDGPUToLLVM/LoadStoreOpToLLVM.cpp
++++ b/third_party/amd/lib/TritonAMDGPUToLLVM/LoadStoreOpToLLVM.cpp
+@@ -199,6 +199,19 @@ std::pair<Block *, Block *> emitBranch(RewriterBase &rewriter, Location loc,
+   return {body, after};
+ }
+ 
++bool isRedundantThreadPredWarpUniform(
++    const llvm::MapVector<StringAttr, int32_t> &masks, MLIRContext *ctx) {
++  return masks.lookup(StringAttr::get(ctx, "lane")) == 0 &&
++         masks.lookup(StringAttr::get(ctx, "reg")) == 0;
++}
++
++Value selectLdsAddressForPredicate(TritonLLVMOpBuilder &b, Value pred,
++                                   Value shmemAddr) {
++  Value outOfRangeAddress =
++      b.inttoptr(shmemAddr.getType(), b.i32_val(0x7FFFFFFF));
++  return b.select(pred, shmemAddr, outOfRangeAddress);
++}
++
+ // Contains some helper functions for both Load and Store conversions.
+ struct LoadStoreConversionBase {
+   explicit LoadStoreConversionBase(const AMD::TargetInfo &targetInfo,
+@@ -790,16 +803,17 @@ struct BufferLoadToLocalOpConversion
+     // based on the collected shared addresses and vector size
+     Value rsrcDesc = bufferEmitter.createResourceDescriptor(llPtr, llStride);
+ 
++    auto freeVarMasks = getFreeVariableMasks(ptrType);
+     Value threadPred = emitRedundantThreadPredicateNonNull(
+-        getFreeVariableMasks(ptrType), rewriter, loc, targetInfo);
+-
+-    auto [laneId, warpId] = getLaneAndWarpId(rewriter, loc);
+-    auto emitBufferLoadLds =
+-        [this, &op, &b, &bufferEmitter, &rsrcDesc, laneId = laneId, threadPred,
+-         offsetTy, otherTy, hasOther, requiresSrcPtrSwizzling](
+-            RewriterBase &rewriter, Location loc, ArrayRef<Value> loadVals,
+-            Value shmemAddr, int startIdx, VectorType vecTy,
+-            Value multicastMask) -> SmallVector<Value> {
++        freeVarMasks, rewriter, loc, targetInfo);
++    bool isThreadPredWarpUniform =
++        isRedundantThreadPredWarpUniform(freeVarMasks, rewriter.getContext());
++
++    auto laneId = getLaneId(rewriter, loc);
++    auto emitBufferLoadLds = [&](RewriterBase &rewriter, Location loc,
++                                 ArrayRef<Value> loadVals, Value shmemAddr,
++                                 int startIdx, VectorType vecTy,
++                                 Value multicastMask) -> SmallVector<Value> {
+       auto [offsetElem, maskElem, otherElems, swizzleLaneOffset] =
+           unzipAsyncCopyValues(rewriter, loc, startIdx, loadVals, offsetTy,
+                                otherTy, hasOther, vecTy.getNumElements());
+@@ -812,28 +826,42 @@ struct BufferLoadToLocalOpConversion
+         applySwizzling(rewriter, loc, offsetElem, maybeSwizzledMaskElem, laneId,
+                        swizzleLaneOffset);
+ 
+-      // If other=0.0 we remove other in canonicalizePointers and we can use out
+-      // of bounds to store 0 to LDS. So if we have other values we need to
+-      // predicate to not overwrite the other stores
+-      Value cond =
+-          hasOther ? b.and_(threadPred, maybeSwizzledMaskElem) : threadPred;
+-
+-      auto [loadBlock, afterLoadBlock] = emitBranch(rewriter, loc, cond);
+-
+-      auto bufferLoadToLds = bufferEmitter.emitLoadToLds(
+-          vecTy, vecBytesVal, rsrcDesc, offsetElem, shmemAddr,
+-          hasOther ? b.true_val() : maybeSwizzledMaskElem, op.getCache());
+-      if (targetInfo.requiresAliasInfoForAsyncOps())
+-        AMD::addAsyncCopyAliasScope(bufferLoadToLds);
++      // Buffer-load-to-local supports zero-fill for per-lane masks by adjusting
++      // the src offset to be OOB. Redundant-thread predication still needs a
++      // branch when there are other values, otherwise inactive threads
++      // zero-fill values loaded by active lanes from another warp.
++      // Optimization: for warp-uniform thread predicates and no other values we
++      // can avoid the branch by selecting an out-of-range *shared* address. The
++      // HW will drop the load before fetching the data from global memory so we
++      // will not overwrite values.
++      if (isThreadPredWarpUniform && !hasOther) {
++        Value predicatedAddress =
++            selectLdsAddressForPredicate(b, threadPred, shmemAddr);
++        auto bufferLoadToLds = bufferEmitter.emitLoadToLds(
++            vecTy, vecBytesVal, rsrcDesc, offsetElem, predicatedAddress,
++            maybeSwizzledMaskElem, op.getCache());
++        if (targetInfo.requiresAliasInfoForAsyncOps())
++          AMD::addAsyncCopyAliasScope(bufferLoadToLds);
++      } else {
++        Value pred =
++            hasOther ? b.and_(threadPred, maybeSwizzledMaskElem) : threadPred;
++        auto [loadBlock, afterLoadBlock] = emitBranch(rewriter, loc, pred);
++
++        auto bufferLoadToLds = bufferEmitter.emitLoadToLds(
++            vecTy, vecBytesVal, rsrcDesc, offsetElem, shmemAddr,
++            hasOther ? b.true_val() : maybeSwizzledMaskElem, op.getCache());
++        if (targetInfo.requiresAliasInfoForAsyncOps())
++          AMD::addAsyncCopyAliasScope(bufferLoadToLds);
++
++        if (hasOther) {
++          emitOtherStore(rewriter, loc, this->getTypeConverter(), vecTy,
++                         maskElem, otherElems, shmemAddr, laneId,
++                         requiresSrcPtrSwizzling, swizzleLaneOffset);
++        }
+ 
+-      if (hasOther) {
+-        emitOtherStore(rewriter, loc, this->getTypeConverter(), vecTy, maskElem,
+-                       otherElems, shmemAddr, laneId, requiresSrcPtrSwizzling,
+-                       swizzleLaneOffset);
++        rewriter.setInsertionPointToStart(afterLoadBlock);
+       }
+ 
+-      rewriter.setInsertionPointToStart(afterLoadBlock);
+-
+       return {};
+     };
+ 
+@@ -932,14 +960,15 @@ struct AsyncCopyGlobalToLocalOpConversion
+     freeVarMasks[rewriter.getStringAttr("block")] = 0;
+     Value threadPred = emitRedundantThreadPredicateNonNull(
+         freeVarMasks, rewriter, loc, targetInfo);
+-
+-    auto [laneId, warpId] = getLaneAndWarpId(rewriter, loc);
+-    auto emitGlobalLoadLds =
+-        [this, &op, &b, laneId = laneId, threadPred, srcPtrTy, otherTy,
+-         hasOther, requiresSrcPtrSwizzling](
+-            RewriterBase &rewriter, Location loc, ArrayRef<Value> loadValues,
+-            Value shmemAddr, int startIdx, VectorType vecTy,
+-            Value multicastMask) -> SmallVector<Value> {
++    bool hasMask = static_cast<bool>(op.getMask());
++    bool threadPredIsWarpUniform =
++        isRedundantThreadPredWarpUniform(freeVarMasks, rewriter.getContext());
++
++    auto laneId = getLaneId(rewriter, loc);
++    auto emitGlobalLoadLds = [&](RewriterBase &rewriter, Location loc,
++                                 ArrayRef<Value> loadValues, Value shmemAddr,
++                                 int startIdx, VectorType vecTy,
++                                 Value multicastMask) -> SmallVector<Value> {
+       auto [srcElem, maskElem, otherElems, swizzleLaneOffset] =
+           unzipAsyncCopyValues(rewriter, loc, startIdx, loadValues, srcPtrTy,
+                                otherTy, hasOther, vecTy.getNumElements());
+@@ -954,19 +983,20 @@ struct AsyncCopyGlobalToLocalOpConversion
+       // Predicate load based on threadPred && swizzledMask
+       auto cond = b.and_(threadPred, maybeSwizzledMaskElem);
+ 
+-      if (targetInfo.supportsDirectToLdsScatter()) {
+-        // On architectures supporting per lane LDS addresses we can mask by
+-        // setting the shared address to out of range. The HW will drop the load
+-        // before fetching the data from global memory.
+-        Value outOfRangeAddress =
+-            b.inttoptr(shmemAddr.getType(), b.i32_val(0x7FFFFFFF));
+-        Value predicatedAddress = b.select(cond, shmemAddr, outOfRangeAddress);
++      if (targetInfo.supportsDirectToLdsScatter() ||
++          (threadPredIsWarpUniform && !hasMask)) {
++        // For architectures supporting per lane LDS addresses or if the
++        // predicate is warp-uniform, mask loads by setting the *shared* address
++        // to out of range, the HW will drop the load before fetching the data
++        // from global memory.
++        Value predicatedAddress =
++            selectLdsAddressForPredicate(b, cond, shmemAddr);
+ 
+         emitAsyncLoad(rewriter, loc, targetInfo, vecBits, srcElem,
+                       predicatedAddress, op.getCache(), multicastMask);
+       } else {
+         // For architectures not supporting per lane LDS addresses we need to
+-        // emit a branch
++        // emit a branch.
+         auto [loadBlock, afterLoadBlock] = emitBranch(rewriter, loc, cond);
+ 
+         emitAsyncLoad(rewriter, loc, targetInfo, vecBits, srcElem, shmemAddr,

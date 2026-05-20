@@ -1,0 +1,4370 @@
+schema_version: 1
+generated_at: '2026-05-20'
+corpus_start_date: '2024-01-01'
+search_start_date: '2026-05-17'
+cutoff_date: '2026-05-20'
+pre_refresh_corpus_summary:
+  source_prs: 3660
+  by_repo:
+    cccl-cub: 228
+    cutlass: 64
+    deepgemm: 27
+    flash-attention: 146
+    flashinfer: 779
+    pytorch: 75
+    quack: 49
+    sglang: 777
+    tensorrt-llm: 180
+    thunderkittens: 13
+    tilekernels: 1
+    tilelang: 195
+    triton: 57
+    vllm: 1069
+  top_tags:
+    attention: 669
+    moe: 632
+    gemm: 583
+    fp8: 528
+    quantization: 524
+    kernel-fusion: 515
+    fp4: 395
+    mla: 343
+    benchmark_test: 255
+    gemm_quant: 204
+    nvfp4: 197
+    decode: 193
+    attention_kv: 167
+    arch_pipeline: 159
+    prefill: 139
+    compiler_runtime: 138
+    sm100: 133
+    sm90: 130
+    memory_primitives: 128
+    moe_routing: 125
+    hopper: 118
+    blackwell: 114
+    scheduler_autotune: 113
+    cuda kernel: 110
+    tma: 109
+    benchmark kernel: 99
+    cutlass: 90
+    flash-attention: 87
+    attention kernel: 76
+    triton kernel: 65
+  top_kernel_types:
+    attention: 948
+    moe: 793
+    gemm: 764
+    quantization: 525
+    mla: 388
+    decode: 238
+    runtime: 159
+    prefill: 141
+    compiler: 138
+    memory: 128
+    scheduler: 113
+    flash-attention: 87
+    norm: 63
+    scan: 43
+    reduction: 38
+    sort: 37
+    softmax: 28
+    grouped-gemm: 27
+    sampling: 9
+    fused-kernel: 5
+    gated-delta-net: 3
+    sparse-attention: 1
+  top_languages:
+    cuda-cpp: 1362
+    python: 1049
+    cute-dsl: 362
+    triton: 342
+    ptx: 24
+    tilelang: 3
+  top_architectures:
+    sm100: 3506
+    sm90: 398
+  top_hardware_features:
+    fp8: 603
+    fp4: 482
+    blackwell: 259
+    hopper: 242
+    nvfp4: 227
+    tma: 224
+    mxfp4: 67
+    tcgen05: 34
+    tmem: 30
+    pdl: 22
+    wgmma: 19
+    block-scale: 18
+    clc: 8
+    gdc: 2
+    mbarrier: 1
+    2sm-cooperative: 1
+post_refresh_corpus_summary:
+  source_prs: 3827
+  by_repo:
+    cccl-cub: 239
+    cutlass: 64
+    deepgemm: 27
+    flash-attention: 146
+    flashinfer: 789
+    pytorch: 75
+    quack: 51
+    sglang: 830
+    tensorrt-llm: 214
+    thunderkittens: 13
+    tilekernels: 1
+    tilelang: 214
+    triton: 59
+    vllm: 1105
+selection_policy:
+  include: merged PRs whose changed files match existing kernel_paths or CUDA/kernel source path signals
+  defer: merged PRs with CUDA/kernel text hits but only benchmark/test/runtime/CI/docs-adjacent or unavailable file signals
+  exclude: search hits without title or changed-file evidence matching the existing CUDA/kernel corpus
+new_candidate_judgments:
+- repo_slug: cccl-cub
+  repo: NVIDIA/cccl
+  pr: 8190
+  title: '[STF] Move unstable_unique from STF to generic cudax utility'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: cudax/include/cuda/experimental/__stf/stream/internal/event_types.cuh, cudax/include/cuda/experimental/__stf/utility/unstable_unique.cuh, cudax/include/cuda/experimental/__utility/unstable_unique.cuh,
+    cudax/test/CMakeLists.txt'
+  path_signals:
+  - cudax/include/cuda/experimental/__stf/stream/internal/event_types.cuh
+  - cudax/include/cuda/experimental/__stf/utility/unstable_unique.cuh
+  - cudax/include/cuda/experimental/__utility/unstable_unique.cuh
+  - cudax/test/CMakeLists.txt
+  - cudax/test/stf/CMakeLists.txt
+  - cudax/test/utility/unstable_unique.cu
+  borderline_path_signals:
+  - cudax/test/CMakeLists.txt
+  - cudax/test/stf/CMakeLists.txt
+  - cudax/test/utility/unstable_unique.cu
+  selection_text_signals: []
+  changed_file_count: 6
+- repo_slug: cccl-cub
+  repo: NVIDIA/cccl
+  pr: 8756
+  title: Use the new tuning API internally for `detail::reduce_by_key::dispatch`
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: cub/benchmarks/bench/reduce/by_key.cu, cub/benchmarks/bench/select/unique.cu, cub/cub/device/device_reduce.cuh, cub/test/catch2_test_device_reduce_env.cu'
+  path_signals:
+  - cub/benchmarks/bench/reduce/by_key.cu
+  - cub/benchmarks/bench/select/unique.cu
+  - cub/cub/device/device_reduce.cuh
+  - cub/test/catch2_test_device_reduce_env.cu
+  borderline_path_signals:
+  - cub/benchmarks/bench/reduce/by_key.cu
+  - cub/benchmarks/bench/select/unique.cu
+  selection_text_signals: []
+  changed_file_count: 4
+- repo_slug: cccl-cub
+  repo: NVIDIA/cccl
+  pr: 8880
+  title: Use the new tuning API internally for `detail::select::dispatch` and `DeviceSelect`
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: cub/benchmarks/bench/select/flagged.cu, cub/benchmarks/bench/select/if.cu, cub/benchmarks/bench/select/unique.cu, cub/cub/device/device_select.cuh'
+  path_signals:
+  - cub/benchmarks/bench/select/flagged.cu
+  - cub/benchmarks/bench/select/if.cu
+  - cub/benchmarks/bench/select/unique.cu
+  - cub/cub/device/device_select.cuh
+  - cub/test/catch2_test_device_select_env.cu
+  - thrust/thrust/system/cuda/detail/copy_if.h
+  - thrust/thrust/system/cuda/detail/remove.h
+  - thrust/thrust/system/cuda/detail/unique.h
+  borderline_path_signals:
+  - cub/benchmarks/bench/select/flagged.cu
+  - cub/benchmarks/bench/select/if.cu
+  - cub/benchmarks/bench/select/unique.cu
+  selection_text_signals: []
+  changed_file_count: 8
+- repo_slug: cccl-cub
+  repo: NVIDIA/cccl
+  pr: 8905
+  title: '[STF] Add per-handle exec_place stream resources'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: cudax/include/cuda/experimental/__places/exec/cuda_stream.cuh, cudax/include/cuda/experimental/__places/exec/green_context.cuh, cudax/include/cuda/experimental/__places/exec_place_resources.cuh,
+    cudax/include/cuda/experimental/__places/place_partition.cuh'
+  path_signals:
+  - cudax/include/cuda/experimental/__places/exec/cuda_stream.cuh
+  - cudax/include/cuda/experimental/__places/exec/green_context.cuh
+  - cudax/include/cuda/experimental/__places/exec_place_resources.cuh
+  - cudax/include/cuda/experimental/__places/place_partition.cuh
+  - cudax/include/cuda/experimental/__places/places.cuh
+  - cudax/include/cuda/experimental/__stf/graph/graph_task.cuh
+  - cudax/include/cuda/experimental/__stf/internal/async_resources_handle.cuh
+  - cudax/include/cuda/experimental/__stf/internal/backend_ctx.cuh
+  - cudax/include/cuda/experimental/__stf/internal/stf_places_extended_exports.cuh
+  - cudax/include/cuda/experimental/__stf/stream/interfaces/slice.cuh
+  - cudax/include/cuda/experimental/__stf/stream/internal/event_types.cuh
+  - cudax/include/cuda/experimental/__stf/stream/reduction.cuh
+  borderline_path_signals:
+  - cudax/test/places/stream_pool.cu
+  - cudax/test/stf/CMakeLists.txt
+  - cudax/test/stf/cpp/test_pick_stream.cu
+  - cudax/test/stf/cpp/test_pick_stream_green_context.cu
+  - docs/cudax/places.rst
+  selection_text_signals: []
+  changed_file_count: 22
+- repo_slug: cccl-cub
+  repo: NVIDIA/cccl
+  pr: 8925
+  title: Use the new tuning API internally for `detail::select|three_way_partition::dispatch` and `DevicePartition`
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: cub/benchmarks/bench/partition/flagged.cu, cub/benchmarks/bench/partition/if.cu, cub/benchmarks/bench/partition/three_way.cu, cub/cub/device/device_partition.cuh'
+  path_signals:
+  - cub/benchmarks/bench/partition/flagged.cu
+  - cub/benchmarks/bench/partition/if.cu
+  - cub/benchmarks/bench/partition/three_way.cu
+  - cub/cub/device/device_partition.cuh
+  - cub/test/catch2_test_device_partition_env.cu
+  - thrust/thrust/system/cuda/detail/partition.h
+  borderline_path_signals:
+  - cub/benchmarks/bench/partition/flagged.cu
+  - cub/benchmarks/bench/partition/if.cu
+  - cub/benchmarks/bench/partition/three_way.cu
+  selection_text_signals: []
+  changed_file_count: 6
+- repo_slug: cccl-cub
+  repo: NVIDIA/cccl
+  pr: 8927
+  title: Use the new tuning API internally for `detail::segmented_radix_sort::dispatch`
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: cub/benchmarks/bench/segmented_radix_sort/keys.cu, cub/cub/device/device_segmented_radix_sort.cuh, cub/cub/device/dispatch/dispatch_segmented_radix_sort.cuh, cub/test/catch2_test_device_segmented_radix_sort_env.cu'
+  path_signals:
+  - cub/benchmarks/bench/segmented_radix_sort/keys.cu
+  - cub/cub/device/device_segmented_radix_sort.cuh
+  - cub/cub/device/dispatch/dispatch_segmented_radix_sort.cuh
+  - cub/test/catch2_test_device_segmented_radix_sort_env.cu
+  borderline_path_signals:
+  - cub/benchmarks/bench/segmented_radix_sort/keys.cu
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  changed_file_count: 4
+- repo_slug: cccl-cub
+  repo: NVIDIA/cccl
+  pr: 9019
+  title: '[libcu++] Always suppress C++ extensions warnings in prologue'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: cudax/include/cuda/experimental/__execution/visit.cuh, libcudacxx/codegen/generate_prologue_epilogue.py, libcudacxx/include/cuda/std/__cccl/prologue.h, libcudacxx/include/cuda/std/__type_traits/type_list.h'
+  path_signals:
+  - cudax/include/cuda/experimental/__execution/visit.cuh
+  - libcudacxx/codegen/generate_prologue_epilogue.py
+  - libcudacxx/include/cuda/std/__cccl/prologue.h
+  - libcudacxx/include/cuda/std/__type_traits/type_list.h
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 4
+- repo_slug: cccl-cub
+  repo: NVIDIA/cccl
+  pr: 9036
+  title: Complex tanh (and thus tan) accuracy refinement
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h, libcudacxx/test/libcudacxx/std/numerics/complex.number/complex.transcendentals/tanh.pass.cpp'
+  path_signals:
+  - libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h
+  - libcudacxx/test/libcudacxx/std/numerics/complex.number/complex.transcendentals/tanh.pass.cpp
+  borderline_path_signals:
+  - libcudacxx/test/libcudacxx/std/numerics/complex.number/complex.transcendentals/tanh.pass.cpp
+  selection_text_signals: []
+  changed_file_count: 2
+- repo_slug: cccl-cub
+  repo: NVIDIA/cccl
+  pr: 9039
+  title: Fix segmented radix sort benchmark segment size type
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: cub/benchmarks/bench/segmented_radix_sort/keys.cu'
+  path_signals:
+  - cub/benchmarks/bench/segmented_radix_sort/keys.cu
+  borderline_path_signals:
+  - cub/benchmarks/bench/segmented_radix_sort/keys.cu
+  selection_text_signals: []
+  changed_file_count: 1
+- repo_slug: cccl-cub
+  repo: NVIDIA/cccl
+  pr: 9044
+  title: '[libcu++] Fix default make_shared_resource construction'
+  date: '2026-05-17'
+  decision: include
+  reason: 'file-path kernel signal: libcudacxx/include/cuda/__memory_resource/shared_block_ptr.h, libcudacxx/include/cuda/__memory_resource/shared_resource.h, libcudacxx/test/libcudacxx/cuda/memory_resource/shared_resource.cu'
+  path_signals:
+  - libcudacxx/include/cuda/__memory_resource/shared_block_ptr.h
+  - libcudacxx/include/cuda/__memory_resource/shared_resource.h
+  - libcudacxx/test/libcudacxx/cuda/memory_resource/shared_resource.cu
+  borderline_path_signals:
+  - libcudacxx/test/libcudacxx/cuda/memory_resource/shared_resource.cu
+  selection_text_signals: []
+  changed_file_count: 3
+- repo_slug: cccl-cub
+  repo: NVIDIA/cccl
+  pr: 9056
+  title: Vectorize contiguous iterators in `cub::BlockLoad`/`Store`
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: cub/cub/block/block_load.cuh, cub/cub/block/block_store.cuh'
+  path_signals:
+  - cub/cub/block/block_load.cuh
+  - cub/cub/block/block_store.cuh
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 2
+- repo_slug: flashinfer
+  repo: flashinfer-ai/flashinfer
+  pr: 3180
+  title: Fix/3170 dense blockscaled sm12x
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: flashinfer/gemm/kernels/dense_blockscaled_gemm_sm120_b12x.py'
+  path_signals:
+  - flashinfer/gemm/kernels/dense_blockscaled_gemm_sm120_b12x.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - cuda kernel
+  - cutlass
+  - flashinfer
+  - fp4
+  - fp8
+  - gemm
+  changed_file_count: 1
+- repo_slug: flashinfer
+  repo: flashinfer-ai/flashinfer
+  pr: 3183
+  title: 'test: enable bmm_mxfp8 cutlass backend coverage on SM12x'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tests/gemm/test_bmm_mxfp8.py'
+  path_signals:
+  - tests/gemm/test_bmm_mxfp8.py
+  borderline_path_signals:
+  - tests/gemm/test_bmm_mxfp8.py
+  selection_text_signals:
+  - cutlass
+  - fp8
+  - gemm
+  - sm100
+  changed_file_count: 1
+- repo_slug: flashinfer
+  repo: flashinfer-ai/flashinfer
+  pr: 3221
+  title: 'feat(trace): embed runnable init() in every TraceTemplate'
+  date: '2026-05-17'
+  decision: include
+  reason: 'file-path kernel signal: flashinfer/api_logging.py, flashinfer/trace/template.py, flashinfer/trace/templates/_init_helpers.py, flashinfer/trace/templates/activation.py'
+  path_signals:
+  - flashinfer/api_logging.py
+  - flashinfer/trace/template.py
+  - flashinfer/trace/templates/_init_helpers.py
+  - flashinfer/trace/templates/activation.py
+  - flashinfer/trace/templates/attention.py
+  - flashinfer/trace/templates/cascade.py
+  - flashinfer/trace/templates/comm.py
+  - flashinfer/trace/templates/gdn.py
+  - flashinfer/trace/templates/gemm.py
+  - flashinfer/trace/templates/mamba.py
+  - flashinfer/trace/templates/moe.py
+  - flashinfer/trace/templates/norm.py
+  borderline_path_signals:
+  - tests/trace/fi_trace_out/append_paged_kv_cache_kv8_d128.json
+  - tests/trace/fi_trace_out/concat_mla_k_h128_nope128_rope64_d192.json
+  - tests/trace/fi_trace_out/fp4_quantize_k4096.json
+  - tests/trace/fi_trace_out/fp4_quantize_k7168.json
+  - tests/trace/fi_trace_out/fused_add_rmsnorm_quant_h7168.json
+  - tests/trace/fi_trace_out/gdn_decode_qk4_v8_d128.json
+  - tests/trace/fi_trace_out/gemm_bf16_N256_K7168.json
+  - tests/trace/fi_trace_out/gemm_bf16_N4096_K4096.json
+  - tests/trace/fi_trace_out/gemm_fp4_N2048_K7168_block_size16.json
+  - tests/trace/fi_trace_out/gemm_fp8_N1536_K7168.json
+  - tests/trace/fi_trace_out/gemm_fp8_nt_groupwise_n1536_k7168.json
+  - tests/trace/fi_trace_out/gemm_mxfp8_N4096_K4096.json
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - cuda kernel
+  - cutlass
+  - flashinfer
+  - fp4
+  - fp8
+  - gemm
+  - moe kernel
+  - mxfp4
+  - nvfp4
+  - sm100
+  - sm90
+  changed_file_count: 182
+- repo_slug: flashinfer
+  repo: flashinfer-ai/flashinfer
+  pr: 3268
+  title: Ameyn/gdn bf16 dispatcher and 4d pool
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: flashinfer/gdn_decode.py, flashinfer/gdn_kernels/gdn_decode_bf16_state.py, tests/gdn/test_decode_pretranspose_bf16_padded_pool.py'
+  path_signals:
+  - flashinfer/gdn_decode.py
+  - flashinfer/gdn_kernels/gdn_decode_bf16_state.py
+  - tests/gdn/test_decode_pretranspose_bf16_padded_pool.py
+  borderline_path_signals:
+  - tests/gdn/test_decode_pretranspose_bf16_padded_pool.py
+  selection_text_signals:
+  - cuda kernel
+  - flashinfer
+  - sm90
+  changed_file_count: 3
+- repo_slug: flashinfer
+  repo: flashinfer-ai/flashinfer
+  pr: 3286
+  title: 'feat(cute_dsl/moe): deterministic balanced autotune profile inputs'
+  date: '2026-05-17'
+  decision: include
+  reason: 'file-path kernel signal: flashinfer/autotuner.py, flashinfer/fused_moe/cute_dsl/_inputs_helper.py, flashinfer/fused_moe/cute_dsl/tuner.py, tests/moe/test_cute_dsl_fused_moe.py'
+  path_signals:
+  - flashinfer/autotuner.py
+  - flashinfer/fused_moe/cute_dsl/_inputs_helper.py
+  - flashinfer/fused_moe/cute_dsl/tuner.py
+  - tests/moe/test_cute_dsl_fused_moe.py
+  borderline_path_signals:
+  - tests/moe/test_cute_dsl_fused_moe.py
+  selection_text_signals:
+  - cute
+  - flashinfer
+  - fp4
+  - nvfp4
+  changed_file_count: 4
+- repo_slug: flashinfer
+  repo: flashinfer-ai/flashinfer
+  pr: 3315
+  title: Ep api design - Build Infra dependencies
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: flashinfer/moe_ep/__init__.py, flashinfer/moe_ep/nccl_ep/__init__.py, flashinfer/moe_ep/nixl_ep/__init__.py'
+  path_signals:
+  - flashinfer/moe_ep/__init__.py
+  - flashinfer/moe_ep/nccl_ep/__init__.py
+  - flashinfer/moe_ep/nixl_ep/__init__.py
+  borderline_path_signals:
+  - docker/Dockerfile.flashinfer-nvep
+  selection_text_signals:
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  - flashinfer
+  - hopper
+  - moe kernel
+  changed_file_count: 13
+- repo_slug: flashinfer
+  repo: flashinfer-ai/flashinfer
+  pr: 3317
+  title: Update trtllm FMHA cubins
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: csrc/trtllm_fmha_kernel_launcher.cu, flashinfer/artifacts.py, include/flashinfer/trtllm/fmha/kernelParams.h'
+  path_signals:
+  - csrc/trtllm_fmha_kernel_launcher.cu
+  - flashinfer/artifacts.py
+  - include/flashinfer/trtllm/fmha/kernelParams.h
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - cute
+  - flashinfer
+  - fp4
+  - fp8
+  changed_file_count: 3
+- repo_slug: flashinfer
+  repo: flashinfer-ai/flashinfer
+  pr: 3322
+  title: '[feat] Add gemma RMS AR fusion'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: benchmarks/bench_gemma_ar_fusion.py, csrc/trtllm_allreduce_fusion.cu, csrc/trtllm_mnnvl_allreduce.cu, csrc/trtllm_moe_allreduce_fusion.cu'
+  path_signals:
+  - benchmarks/bench_gemma_ar_fusion.py
+  - csrc/trtllm_allreduce_fusion.cu
+  - csrc/trtllm_mnnvl_allreduce.cu
+  - csrc/trtllm_moe_allreduce_fusion.cu
+  - flashinfer/comm/allreduce.py
+  - flashinfer/comm/trtllm_ar.py
+  - flashinfer/comm/trtllm_mnnvl_ar.py
+  - flashinfer/trace/templates/comm.py
+  - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
+  - include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh
+  - include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
+  - tests/comm/test_allreduce_fusion_moe_unified_api.py
+  borderline_path_signals:
+  - benchmarks/bench_gemma_ar_fusion.py
+  - tests/comm/test_allreduce_fusion_moe_unified_api.py
+  - tests/comm/test_gemma_ar_fusion.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - cute
+  - flashinfer
+  - gemm
+  - moe kernel
+  changed_file_count: 15
+- repo_slug: flashinfer
+  repo: flashinfer-ai/flashinfer
+  pr: 3324
+  title: 'checkpointing_ssu kernel: fused replay + conditional state-write for Mamba2'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: benchmarks/bench_checkpointing_ssu.py, benchmarks/bench_ssu_sweep_sol.py, csrc/checkpointing_ssu.cu, csrc/checkpointing_ssu_customize_config.jinja'
+  path_signals:
+  - benchmarks/bench_checkpointing_ssu.py
+  - benchmarks/bench_ssu_sweep_sol.py
+  - csrc/checkpointing_ssu.cu
+  - csrc/checkpointing_ssu_customize_config.jinja
+  - csrc/checkpointing_ssu_jit_binding.cu
+  - csrc/checkpointing_ssu_kernel_inst.cu
+  - flashinfer/jit/mamba/checkpointing_ssu.py
+  - flashinfer/mamba/__init__.py
+  - flashinfer/mamba/checkpointing_ssu.py
+  - include/flashinfer/mamba/checkpointing_ssu.cuh
+  - include/flashinfer/mamba/conversion.cuh
+  - include/flashinfer/mamba/kernel_checkpointing_ssu.cuh
+  borderline_path_signals:
+  - benchmarks/bench_checkpointing_ssu.py
+  - benchmarks/bench_ssu_sweep_sol.py
+  - tests/mamba/triton_reference/checkpointing_state_update.py
+  selection_text_signals:
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  - cute
+  - flashinfer
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - moe kernel
+  - nvfp4
+  - sm100
+  - triton kernel
+  changed_file_count: 19
+- repo_slug: flashinfer
+  repo: flashinfer-ai/flashinfer
+  pr: 3328
+  title: 'feat(cute_dsl/moe): add `moe_output_memset_inplace` dense memset wrapper'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: csrc/moe_utils_binding.cu, flashinfer/fused_moe/cute_dsl/fused_moe.py, flashinfer/fused_moe/cute_dsl/moe_utils.py, flashinfer/jit/moe_utils.py'
+  path_signals:
+  - csrc/moe_utils_binding.cu
+  - flashinfer/fused_moe/cute_dsl/fused_moe.py
+  - flashinfer/fused_moe/cute_dsl/moe_utils.py
+  - flashinfer/jit/moe_utils.py
+  - tests/moe/test_cute_dsl_fused_moe.py
+  borderline_path_signals:
+  - tests/moe/test_cute_dsl_fused_moe.py
+  selection_text_signals:
+  - cuda kernel
+  - cute
+  - flashinfer
+  - fp4
+  - fp8
+  - gemm
+  - moe kernel
+  changed_file_count: 5
+- repo_slug: quack
+  repo: Dao-AILab/quack
+  pr: 138
+  title: '[RMSNorm] Support autotuning of RMSNorm{Fwd|Bwd} via config classes'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: quack/autotuner.py, quack/bench/bench_utils.py, quack/rmsnorm.py, quack/rmsnorm_config.py'
+  path_signals:
+  - quack/autotuner.py
+  - quack/bench/bench_utils.py
+  - quack/rmsnorm.py
+  - quack/rmsnorm_config.py
+  - tests/test_rmsnorm.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  - gemm
+  - hopper
+  - sm90
+  - triton kernel
+  changed_file_count: 5
+- repo_slug: quack
+  repo: Dao-AILab/quack
+  pr: 139
+  title: Remove deprecation warning in 4.5
+  date: '2026-05-17'
+  decision: include
+  reason: 'file-path kernel signal: quack/gemm_sm100.py'
+  path_signals:
+  - quack/gemm_sm100.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - cute
+  - cutlass
+  - gemm
+  - sm100
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 21668
+  title: '[XPU] Enable qwen3.5 on XPU'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/hardware_backend/xpu/kernels/fla/chunk_delta_h.py, python/sglang/srt/hardware_backend/xpu/kernels/fla/chunk_fwd.py, python/sglang/srt/hardware_backend/xpu/kernels/fla/fused_sigmoid_gating_recurrent.py,
+    python/sglang/srt/layers/attention/fla/chunk.py'
+  path_signals:
+  - python/sglang/srt/hardware_backend/xpu/kernels/fla/chunk_delta_h.py
+  - python/sglang/srt/hardware_backend/xpu/kernels/fla/chunk_fwd.py
+  - python/sglang/srt/hardware_backend/xpu/kernels/fla/fused_sigmoid_gating_recurrent.py
+  - python/sglang/srt/layers/attention/fla/chunk.py
+  - python/sglang/srt/layers/attention/fla/kda.py
+  - python/sglang/srt/layers/attention/fla/layernorm_gated.py
+  - python/sglang/srt/layers/attention/linear/kernels/gdn_triton.py
+  - test/registered/attention/test_chunk_gated_delta_rule.py
+  borderline_path_signals:
+  - test/registered/attention/test_chunk_gated_delta_rule.py
+  selection_text_signals:
+  - attention kernel
+  - cuda kernel
+  - triton kernel
+  changed_file_count: 14
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 22338
+  title: ':sparkles: [diffusion][npu][quant] Add MXFP4 quantization support for Wan2.2 Diffusion on Ascend NPU'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/multimodal_gen/runtime/layers/quantization/__init__.py, python/sglang/multimodal_gen/runtime/layers/quantization/modelslim.py, python/sglang/multimodal_gen/runtime/layers/quantization/modelslim_mxfp4_scheme.py,
+    python/sglang/multimodal_gen/runtime/layers/quantization/mxfp4_npu.py'
+  path_signals:
+  - python/sglang/multimodal_gen/runtime/layers/quantization/__init__.py
+  - python/sglang/multimodal_gen/runtime/layers/quantization/modelslim.py
+  - python/sglang/multimodal_gen/runtime/layers/quantization/modelslim_mxfp4_scheme.py
+  - python/sglang/multimodal_gen/runtime/layers/quantization/mxfp4_npu.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - fp8
+  - moe kernel
+  - mxfp4
+  changed_file_count: 7
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 22371
+  title: Fix image (random multimodal) dataset token statistics
+  date: '2026-05-17'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/benchmark/datasets/image.py'
+  path_signals:
+  - python/sglang/benchmark/datasets/image.py
+  borderline_path_signals:
+  - python/sglang/benchmark/datasets/image.py
+  selection_text_signals:
+  - fp8
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 22669
+  title: 'feat: Support flashinfer_cutedsl MoE runner with flashinfer alltoall backend'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/moe/moe_runner/flashinfer_cutedsl.py, python/sglang/srt/layers/moe/token_dispatcher/flashinfer.py, python/sglang/srt/layers/quantization/modelopt_quant.py,
+    python/sglang/srt/models/qwen2_moe.py'
+  path_signals:
+  - python/sglang/srt/layers/moe/moe_runner/flashinfer_cutedsl.py
+  - python/sglang/srt/layers/moe/token_dispatcher/flashinfer.py
+  - python/sglang/srt/layers/quantization/modelopt_quant.py
+  - python/sglang/srt/models/qwen2_moe.py
+  - test/registered/moe/test_flashinfer_a2a_cutedsl_v2.py
+  borderline_path_signals:
+  - test/registered/moe/test_flashinfer_a2a_cutedsl_v2.py
+  selection_text_signals:
+  - attention kernel
+  - cuda kernel
+  - cute
+  - cutlass
+  - flashinfer
+  - fp4
+  - gemm
+  - moe kernel
+  - nvfp4
+  - triton kernel
+  changed_file_count: 6
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 22822
+  title: '[Refactor] Refactor DeepEP dispatcher'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/hardware_backend/npu/quantization/awq_kernels.py, python/sglang/srt/hardware_backend/npu/quantization/fused_moe_method_npu.py, python/sglang/srt/layers/moe/ep_moe/layer.py,
+    python/sglang/srt/layers/moe/token_dispatcher/deepep.py'
+  path_signals:
+  - python/sglang/srt/hardware_backend/npu/quantization/awq_kernels.py
+  - python/sglang/srt/hardware_backend/npu/quantization/fused_moe_method_npu.py
+  - python/sglang/srt/layers/moe/ep_moe/layer.py
+  - python/sglang/srt/layers/moe/token_dispatcher/deepep.py
+  - python/sglang/srt/layers/moe/utils.py
+  - python/sglang/srt/layers/quantization/compressed_tensors/schemes/compressed_tensors_wNa16_moe.py
+  - python/sglang/srt/layers/quantization/modelslim/schemes/modelslim_w4a4_int4_moe.py
+  - python/sglang/srt/models/glm4_moe_nextn.py
+  - test/manual/layers/moe/test_moe_runners_4gpu.py
+  - test/registered/4-gpu-models/test_deepseek_v3_cutedsl_4gpu.py
+  borderline_path_signals:
+  - test/manual/layers/moe/test_moe_runners_4gpu.py
+  - test/registered/4-gpu-models/test_deepseek_v3_cutedsl_4gpu.py
+  selection_text_signals:
+  - attention kernel
+  - cute
+  - fp4
+  - fp8
+  - moe kernel
+  - nvfp4
+  changed_file_count: 30
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 22918
+  title: '[FlashInfer v0.6.11] [RL] Support FlashInfer per-token NVFP4 MoE'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/moe/moe_runner/flashinfer_trtllm.py, python/sglang/srt/layers/quantization/modelopt_quant.py, test/registered/backends/test_flashinfer_trtllm_gen_moe_backend.py'
+  path_signals:
+  - python/sglang/srt/layers/moe/moe_runner/flashinfer_trtllm.py
+  - python/sglang/srt/layers/quantization/modelopt_quant.py
+  - test/registered/backends/test_flashinfer_trtllm_gen_moe_backend.py
+  borderline_path_signals:
+  - test/registered/backends/test_flashinfer_trtllm_gen_moe_backend.py
+  selection_text_signals:
+  - blackwell
+  - cuda kernel
+  - cute
+  - cutlass
+  - flashinfer
+  - fp4
+  - gemm
+  - moe kernel
+  - nvfp4
+  changed_file_count: 6
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 23294
+  title: '[BugFix] UniPC device placement + FlowUniPC sigma_min crash fix'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 23331
+  title: '[BugFix] Resolve adaptive speculative decoding conflicts for Qwen3.5 (hybrid GDN)'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/attention/fla/fused_sigmoid_gating_recurrent.py, python/sglang/srt/layers/attention/hybrid_linear_attn_backend.py, python/sglang/srt/model_executor/model_runner_kv_cache_mixin.py'
+  path_signals:
+  - python/sglang/srt/layers/attention/fla/fused_sigmoid_gating_recurrent.py
+  - python/sglang/srt/layers/attention/hybrid_linear_attn_backend.py
+  - python/sglang/srt/model_executor/model_runner_kv_cache_mixin.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - cuda kernel
+  - triton kernel
+  changed_file_count: 9
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 23482
+  title: '[Diffusion][NPU]Add attention backends for diffusion models for Ascend NPU'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py, python/sglang/multimodal_gen/runtime/layers/attention/backends/laser_attn.py, python/sglang/multimodal_gen/runtime/layers/attention/backends/rain_fusion_attn.py'
+  path_signals:
+  - python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py
+  - python/sglang/multimodal_gen/runtime/layers/attention/backends/laser_attn.py
+  - python/sglang/multimodal_gen/runtime/layers/attention/backends/rain_fusion_attn.py
+  borderline_path_signals:
+  - docs/diffusion/performance/attention_backends.md
+  - docs_new/docs/sglang-diffusion/attention_backends.mdx
+  selection_text_signals:
+  - attention kernel
+  - performance
+  - triton kernel
+  changed_file_count: 12
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 23760
+  title: '[MoE] Unify DeepEPMoE+MoriEPMoE through AITER MoeRunner pre/post-permute'
+  date: '2026-05-17'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/moe/ep_moe/layer.py, python/sglang/srt/layers/moe/moe_runner/aiter.py, python/sglang/srt/layers/moe/moe_runner/runner.py, python/sglang/srt/layers/moe/token_dispatcher/deepep.py'
+  path_signals:
+  - python/sglang/srt/layers/moe/ep_moe/layer.py
+  - python/sglang/srt/layers/moe/moe_runner/aiter.py
+  - python/sglang/srt/layers/moe/moe_runner/runner.py
+  - python/sglang/srt/layers/moe/token_dispatcher/deepep.py
+  - python/sglang/srt/layers/moe/token_dispatcher/moriep.py
+  - python/sglang/srt/layers/moe/utils.py
+  - python/sglang/srt/layers/quantization/compressed_tensors/schemes/compressed_tensors_w8a8_fp8_moe.py
+  - python/sglang/srt/layers/quantization/fp8.py
+  - python/sglang/srt/layers/quantization/mxfp4.py
+  - python/sglang/srt/layers/quantization/quark/schemes/quark_w4a4_mxfp4_moe.py
+  - python/sglang/srt/layers/quantization/quark_int4fp8_moe.py
+  - python/sglang/srt/layers/quantization/unquant.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - fp8
+  - gemm
+  - moe kernel
+  - mxfp4
+  - triton kernel
+  changed_file_count: 13
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 23925
+  title: '[NPU]use triton split_qkvgate_gemma_rmsnorm_rope for Qwen3.5 and Qwen3_next'
+  date: '2026-05-20'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - gemm
+  - triton kernel
+  changed_file_count: 3
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 23961
+  title: '[feat] Init true on policy with qwen_dense'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/attention/vision.py, python/sglang/srt/layers/sampler.py, python/sglang/srt/model_executor/cuda_graph_runner.py, python/sglang/srt/models/qwen2_moe.py'
+  path_signals:
+  - python/sglang/srt/layers/attention/vision.py
+  - python/sglang/srt/layers/sampler.py
+  - python/sglang/srt/model_executor/cuda_graph_runner.py
+  - python/sglang/srt/models/qwen2_moe.py
+  - python/sglang/srt/models/qwen3_moe.py
+  - python/sglang/srt/models/sdar_moe.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - cuda kernel
+  - moe kernel
+  - triton kernel
+  changed_file_count: 35
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 24611
+  title: '[Codex] Opt Mistral Large performace '
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=128,N=1024,device_name=NVIDIA_H100_80GB_HBM3,dtype=fp8_w8a8.json, python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=128,N=1024,device_name=NVIDIA_H100_80GB_HBM3,dtype=fp8_w8a8_down.json'
+  path_signals:
+  - python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=128,N=1024,device_name=NVIDIA_H100_80GB_HBM3,dtype=fp8_w8a8.json
+  - python/sglang/srt/layers/moe/moe_runner/triton_utils/configs/triton_3_5_1/E=128,N=1024,device_name=NVIDIA_H100_80GB_HBM3,dtype=fp8_w8a8_down.json
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  changed_file_count: 3
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 24640
+  title: Support spec v2 for FlashMLA speculative decoding
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/attention/flashmla_backend.py, test/registered/mla/test_flashmla.py'
+  path_signals:
+  - python/sglang/srt/layers/attention/flashmla_backend.py
+  - test/registered/mla/test_flashmla.py
+  borderline_path_signals:
+  - test/registered/mla/test_flashmla.py
+  selection_text_signals:
+  - attention kernel
+  - cuda kernel
+  changed_file_count: 3
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 24710
+  title: '[codex] Optimize hidden-size 512 RMSNorm dispatch'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/jit_kernel/csrc/elementwise/rmsnorm.cuh, python/sglang/jit_kernel/norm.py, python/sglang/jit_kernel/tests/test_rmsnorm.py'
+  path_signals:
+  - python/sglang/jit_kernel/csrc/elementwise/rmsnorm.cuh
+  - python/sglang/jit_kernel/norm.py
+  - python/sglang/jit_kernel/tests/test_rmsnorm.py
+  borderline_path_signals:
+  - python/sglang/jit_kernel/tests/test_rmsnorm.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - optimize
+  changed_file_count: 3
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 24931
+  title: 'feat(mimo-v2): add EPD disaggregation support'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 7
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 24933
+  title: Amd/deepseek v4 rebase main 0509
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/jit_kernel/deepseek_v4.py, python/sglang/srt/layers/attention/attention_registry.py, python/sglang/srt/layers/attention/deepseek_v4_backend_hip_radix.py,
+    python/sglang/srt/layers/attention/dsv4/compress_hip.py'
+  path_signals:
+  - python/sglang/jit_kernel/deepseek_v4.py
+  - python/sglang/srt/layers/attention/attention_registry.py
+  - python/sglang/srt/layers/attention/deepseek_v4_backend_hip_radix.py
+  - python/sglang/srt/layers/attention/dsv4/compress_hip.py
+  - python/sglang/srt/layers/attention/dsv4/compressor.py
+  - python/sglang/srt/layers/attention/dsv4/indexer.py
+  - python/sglang/srt/layers/attention/hip_flash_mla.py
+  - python/sglang/srt/layers/attention/nsa/index_buf_accessor.py
+  - python/sglang/srt/layers/attention/nsa/tilelang_kernel.py
+  - python/sglang/srt/layers/moe/topk.py
+  - python/sglang/srt/layers/quantization/fp8.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - cuda kernel
+  - fp8
+  - moe kernel
+  - triton kernel
+  changed_file_count: 17
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 24934
+  title: DeepSeek V4 MTP Support CP
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: test/registered/dsv4/test_deepseek_v4_flash_fp4_b200.py'
+  path_signals:
+  - test/registered/dsv4/test_deepseek_v4_flash_fp4_b200.py
+  borderline_path_signals:
+  - test/registered/dsv4/test_deepseek_v4_flash_fp4_b200.py
+  selection_text_signals:
+  - cuda kernel
+  - fp4
+  - hopper
+  - moe kernel
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25006
+  title: Enable trtllm_mha as gemma4 default attn backend.
+  date: '2026-05-17'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - blackwell
+  - fp4
+  - gemm
+  - nvfp4
+  - sm100
+  - triton kernel
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25180
+  title: Fix AMX GQA extend attention
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: sgl-kernel/csrc/cpu/flash_attn.h'
+  path_signals:
+  - sgl-kernel/csrc/cpu/flash_attn.h
+  borderline_path_signals: []
+  selection_text_signals:
+  - gemm
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25208
+  title: '[AMD] ci: register 5 framework tests to run on AMD CI'
+  date: '2026-05-17'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cuda kernel
+  - cutlass
+  - fp4
+  - moe kernel
+  - mxfp4
+  - nvfp4
+  changed_file_count: 5
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25249
+  title: '[NPU]fix:NPUMLATokenToKVPool object has no attribute "kv_buffer"'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25251
+  title: '[AMD] amd/deepseek_v4 integration 28/N use aiter greedy_sample for all-greedy sampling on ROCm'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/sampler.py'
+  path_signals:
+  - python/sglang/srt/layers/sampler.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25256
+  title: '[MUSA][Diffusion] Improve  wan model inference speed using torch.compile'
+  date: '2026-05-17'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/jit_kernel/diffusion/triton/scale_shift.py'
+  path_signals:
+  - python/sglang/jit_kernel/diffusion/triton/scale_shift.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - cuda kernel
+  changed_file_count: 4
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25260
+  title: '[AMD][CI] Register Eagle constrained decoding test'
+  date: '2026-05-17'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25269
+  title: '[NPU][Docs] Add Kimi-K2.5-W4A8 instance doc on NPU'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25282
+  title: '[UnifiedTree] Support deepseek v4 host pool layout'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  - fp8
+  changed_file_count: 5
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25284
+  title: Support Gemma4 Pipeline Parallelism
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/models/gemma4_causal.py, python/sglang/srt/models/gemma4_mm.py'
+  path_signals:
+  - python/sglang/srt/models/gemma4_causal.py
+  - python/sglang/srt/models/gemma4_mm.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - gemm
+  changed_file_count: 5
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25285
+  title: Fix EPLB mapping for TopK paths
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/moe/topk.py'
+  path_signals:
+  - python/sglang/srt/layers/moe/topk.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - moe kernel
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25286
+  title: '[Gemma4]: Fix FP8 Triton scale layout'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/quantization/fp8_kernel.py, test/registered/quant/test_triton_scaled_mm.py'
+  path_signals:
+  - python/sglang/srt/layers/quantization/fp8_kernel.py
+  - test/registered/quant/test_triton_scaled_mm.py
+  borderline_path_signals:
+  - test/registered/quant/test_triton_scaled_mm.py
+  selection_text_signals:
+  - cuda kernel
+  - fp8
+  - gemm
+  - triton kernel
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25299
+  title: '[NSA] Avoid repeated NSA MQA logits memory queries'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/attention/nsa/nsa_indexer.py'
+  path_signals:
+  - python/sglang/srt/layers/attention/nsa/nsa_indexer.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25303
+  title: '[Spec]: Make Triton standalone spec test deterministic'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - triton kernel
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25336
+  title: '[Intel GPU] Enable DeepSeek V4 Inference on XPU'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/jit_kernel/deepseek_v4.py, python/sglang/jit_kernel/utils.py, python/sglang/srt/layers/attention/deepseek_v4_backend.py, python/sglang/srt/layers/attention/dsv4/indexer.py'
+  path_signals:
+  - python/sglang/jit_kernel/deepseek_v4.py
+  - python/sglang/jit_kernel/utils.py
+  - python/sglang/srt/layers/attention/deepseek_v4_backend.py
+  - python/sglang/srt/layers/attention/dsv4/indexer.py
+  - python/sglang/srt/layers/attention/dsv4/metadata.py
+  - python/sglang/srt/layers/attention/dsv4/triton_fp8_paged_mqa_logits.py
+  - python/sglang/srt/layers/attention/flash_mla_sm120_fallback.py
+  - python/sglang/srt/layers/attention/flash_mla_sm120_triton.py
+  - python/sglang/srt/layers/attention/nsa/nsa_indexer.py
+  - python/sglang/srt/layers/attention/nsa/sm120_mqa_fallback.py
+  - python/sglang/srt/layers/attention/nsa/sm120_mqa_triton.py
+  - python/sglang/srt/layers/attention/nsa_backend.py
+  borderline_path_signals:
+  - python/sglang/test/test_sm120_mqa_fallback.py
+  selection_text_signals:
+  - fp4
+  - fp8
+  - gemm
+  - mxfp4
+  - throughput
+  changed_file_count: 25
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25356
+  title: '[AMD] test(sgl-kernel): seed RNG on ROCm in test_moe_topk_sigmoid to fix tie-break flake'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: sgl-kernel/tests/test_moe_topk_sigmoid.py'
+  path_signals:
+  - sgl-kernel/tests/test_moe_topk_sigmoid.py
+  borderline_path_signals:
+  - sgl-kernel/tests/test_moe_topk_sigmoid.py
+  selection_text_signals:
+  - cuda kernel
+  - moe kernel
+  - triton kernel
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25359
+  title: '[Docs] MiMo-V2.5 cookbook: B200 benchmarks + multi-layer EAGLE acceptance profile + long-context reference'
+  date: '2026-05-20'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - hopper
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25375
+  title: amd/deepseek_v4 integration 26/N rmsnorm_quant fusion for wqb input
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25383
+  title: '[NPU] Fix TypeError in get_state_buf_infos when index_head_dim is None on MLA'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - moe kernel
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25390
+  title: '[AMD] Enable shared-experts fusion with new KIMI-K2.5-MXFP4 model.'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/quantization/quark/quark.py'
+  path_signals:
+  - python/sglang/srt/layers/quantization/quark/quark.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  - fp4
+  - gemm
+  - moe kernel
+  - mxfp4
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25396
+  title: 'fix: fix deepseek v4 CP  error'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25401
+  title: Add output_gate_type to Qwen3NextConfig and update models to utilize it
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  changed_file_count: 3
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25454
+  title: 'fix(eagle3): drop +1 offset on aux layer ids when first id != 1'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - nvfp4
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25465
+  title: 'verify_done: wait not synchronize'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cutlass
+  changed_file_count: 3
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25483
+  title: '[codex] Update Wan2.2 ModelOpt CI checkpoints'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/multimodal_gen/runtime/layers/quantization/modelopt_quant.py, python/sglang/multimodal_gen/tools/build_modelopt_nvfp4_transformer.py'
+  path_signals:
+  - python/sglang/multimodal_gen/runtime/layers/quantization/modelopt_quant.py
+  - python/sglang/multimodal_gen/tools/build_modelopt_nvfp4_transformer.py
+  borderline_path_signals:
+  - docs_new/docs/sglang-diffusion/quantization.mdx
+  selection_text_signals:
+  - attention kernel
+  - blackwell
+  - cuda kernel
+  - fp4
+  - fp8
+  - gemm
+  - nvfp4
+  changed_file_count: 9
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25489
+  title: Support draft extend cuda graph for tokenspeed_mla attention backend
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/attention/tokenspeed_mla_backend.py'
+  path_signals:
+  - python/sglang/srt/layers/attention/tokenspeed_mla_backend.py
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25499
+  title: Update logging for inplace setting in MoE layer
+  date: '2026-05-17'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/moe/fused_moe_triton/layer.py'
+  path_signals:
+  - python/sglang/srt/layers/moe/fused_moe_triton/layer.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - moe kernel
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25506
+  title: '[Doc] Fix several places for dpsk v4 cookbook'
+  date: '2026-05-17'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - fp4
+  - hopper
+  - moe kernel
+  - mxfp4
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25509
+  title: '[misc] Throw error when single batch overlap is enabled on Hopper '
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/moe/utils.py'
+  path_signals:
+  - python/sglang/srt/layers/moe/utils.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - hopper
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25522
+  title: Fix logging for inplace setting in the flashInfer-trtllm backend
+  date: '2026-05-17'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/moe/fused_moe_triton/layer.py'
+  path_signals:
+  - python/sglang/srt/layers/moe/fused_moe_triton/layer.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - flashinfer
+  - fp4
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25524
+  title: '[Bug Fix] Align glm4_moe_nextn NPU MTP loading with qwen3 MTP'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/models/glm4_moe_nextn.py'
+  path_signals:
+  - python/sglang/srt/models/glm4_moe_nextn.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25525
+  title: '[MoE Refactor] Migrate flashinfer_cutedsl + DeepEP to MoeRunner'
+  date: '2026-05-17'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/moe/ep_moe/layer.py, python/sglang/srt/layers/moe/moe_runner/flashinfer_cutedsl.py, python/sglang/srt/layers/moe/moe_runner/runner.py, python/sglang/srt/layers/quantization/modelopt_quant.py'
+  path_signals:
+  - python/sglang/srt/layers/moe/ep_moe/layer.py
+  - python/sglang/srt/layers/moe/moe_runner/flashinfer_cutedsl.py
+  - python/sglang/srt/layers/moe/moe_runner/runner.py
+  - python/sglang/srt/layers/quantization/modelopt_quant.py
+  - test/registered/moe/test_cutedsl_moe.py
+  borderline_path_signals:
+  - test/registered/moe/test_cutedsl_moe.py
+  selection_text_signals:
+  - attention kernel
+  - cuda kernel
+  - cute
+  - flashinfer
+  - fp4
+  - gemm
+  - moe kernel
+  - nvfp4
+  changed_file_count: 5
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25532
+  title: '[fp8] SM90 swap-AB scaled_mm dispatch (~1.16x kernel geomean, +5.8-18.5% end-to-end)'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: sgl-kernel/benchmark/bench_fp8_gemm_swap_ab.py, sgl-kernel/csrc/cutlass_extensions/epilogue/broadcast_load_epilogue_c3x.hpp, sgl-kernel/csrc/cutlass_extensions/epilogue/scaled_mm_epilogues_c3x.hpp,
+    sgl-kernel/csrc/cutlass_extensions/gemm/fp8_gemm_sm90_dispatch.cuh'
+  path_signals:
+  - sgl-kernel/benchmark/bench_fp8_gemm_swap_ab.py
+  - sgl-kernel/csrc/cutlass_extensions/epilogue/broadcast_load_epilogue_c3x.hpp
+  - sgl-kernel/csrc/cutlass_extensions/epilogue/scaled_mm_epilogues_c3x.hpp
+  - sgl-kernel/csrc/cutlass_extensions/gemm/fp8_gemm_sm90_dispatch.cuh
+  - sgl-kernel/csrc/gemm/fp8_gemm_kernel.cu
+  - sgl-kernel/tests/test_fp8_gemm.py
+  borderline_path_signals:
+  - sgl-kernel/benchmark/bench_fp8_gemm_swap_ab.py
+  - sgl-kernel/tests/test_fp8_gemm.py
+  selection_text_signals:
+  - benchmark kernel
+  - cutlass
+  - fp8
+  - gemm
+  - sm90
+  - triton kernel
+  changed_file_count: 6
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25540
+  title: Use DeepGEMM BF16 for unquantized DeepEP LL MoE
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/moe/ep_moe/layer.py, python/sglang/srt/layers/quantization/unquant.py'
+  path_signals:
+  - python/sglang/srt/layers/moe/ep_moe/layer.py
+  - python/sglang/srt/layers/quantization/unquant.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - deepgemm
+  - fp4
+  - fp8
+  - gemm
+  - nvfp4
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25547
+  title: Respect user override for Gemma4 attention backend
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - gemm
+  - sm100
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25554
+  title: amd/deepseek_v4 27/N [fix] Reduce Triton autotune configs for faster first-time server launch
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/attention/nsa/triton_decode/triton_mla_kernels_decode_common.py, python/sglang/srt/layers/attention/nsa/triton_decode/triton_mla_kernels_decode_dsv4.py,
+    python/sglang/srt/layers/attention/nsa/triton_decode/triton_mla_kernels_decode_fused.py, python/sglang/srt/layers/attention/nsa/triton_decode/triton_mla_kernels_decode_splitk.py'
+  path_signals:
+  - python/sglang/srt/layers/attention/nsa/triton_decode/triton_mla_kernels_decode_common.py
+  - python/sglang/srt/layers/attention/nsa/triton_decode/triton_mla_kernels_decode_dsv4.py
+  - python/sglang/srt/layers/attention/nsa/triton_decode/triton_mla_kernels_decode_fused.py
+  - python/sglang/srt/layers/attention/nsa/triton_decode/triton_mla_kernels_decode_splitk.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - cuda kernel
+  - fp8
+  - triton kernel
+  changed_file_count: 4
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25566
+  title: '[Spec] fold can_run_cuda_graph into EagleVerifyOutput; drop dead extend-after-decode check'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 9
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25569
+  title: Add DeepSeekV4 fused MoE Triton autotune support
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: benchmark/kernels/fused_moe_triton/common_utils.py, benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py'
+  path_signals:
+  - benchmark/kernels/fused_moe_triton/common_utils.py
+  - benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py
+  borderline_path_signals:
+  - benchmark/kernels/fused_moe_triton/common_utils.py
+  - benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py
+  selection_text_signals:
+  - benchmark kernel
+  - moe kernel
+  - triton kernel
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25570
+  title: Use triton_attn as default vision attention on B300 (SM103)
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/attention/vision.py'
+  path_signals:
+  - python/sglang/srt/layers/attention/vision.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - sm100
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25571
+  title: '[Benchmark] Add SGLANG_SIMULATE_UNIFORM_EXPERTS for balanced expert routing with dummy weights'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/moe/topk.py'
+  path_signals:
+  - python/sglang/srt/layers/moe/topk.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25585
+  title: '[Bugfix] Fix missing group arg in get dp buffer'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25588
+  title: 'perf(mimo-v2-epd): enable GPU image preprocess and parallel video decode'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/utils/video_decoder.py'
+  path_signals:
+  - python/sglang/srt/utils/video_decoder.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  changed_file_count: 3
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25592
+  title: '[Diffusion] [NPU] Fix HunyuanVideo crash on NPU'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25596
+  title: '[diffusion] fix LTX2 resident defaults and stage profiling'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 7
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25599
+  title: '[PD] Add conclude_state to fake KV backend'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25611
+  title: Introduce SchedulerDPAttnAdapter to own DP-attention state
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/disaggregation/decode.py'
+  path_signals:
+  - python/sglang/srt/disaggregation/decode.py
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 6
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25612
+  title: Move DP-attention adapter methods to SchedulerDPAttnAdapter
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/disaggregation/decode.py'
+  path_signals:
+  - python/sglang/srt/disaggregation/decode.py
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 8
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25621
+  title: Move pool-stats sampling to SchedulerPoolStatsObserver
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 4
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25685
+  title: '[SP] Fix runtime_max_tokens_per_rank for sequence parallelism'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/moe/token_dispatcher/flashinfer.py'
+  path_signals:
+  - python/sglang/srt/layers/moe/token_dispatcher/flashinfer.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - flashinfer
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25688
+  title: Add no_combine support to cutlass_moe_fp4
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/layers/moe/cutlass_moe.py, python/sglang/srt/layers/quantization/modelopt_quant.py'
+  path_signals:
+  - python/sglang/srt/layers/moe/cutlass_moe.py
+  - python/sglang/srt/layers/quantization/modelopt_quant.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - cutlass
+  - fp4
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25689
+  title: Add spec_verify_calls_total metric for speculative decoding
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25690
+  title: '[Fix] Try to fix error caused by latest cutedsl packages '
+  date: '2026-05-18'
+  decision: defer
+  reason: 'borderline benchmark/runtime/docs signal: scripts/ci/cuda/ci_install_dependency.sh'
+  path_signals: []
+  borderline_path_signals:
+  - scripts/ci/cuda/ci_install_dependency.sh
+  selection_text_signals:
+  - benchmark kernel
+  - cute
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25695
+  title: 'fix (jit kernel): elementwise activation C++ error'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/jit_kernel/csrc/elementwise/activation.cuh'
+  path_signals:
+  - python/sglang/jit_kernel/csrc/elementwise/activation.cuh
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25697
+  title: '[diffusion] Fix GLM-Image /v1/images/edits support'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/jit_kernel/diffusion/triton/scale_shift.py'
+  path_signals:
+  - python/sglang/jit_kernel/diffusion/triton/scale_shift.py
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 4
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25711
+  title: Expose can-run-cuda-graph as a regular property on the embedding result
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 4
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25717
+  title: Move the retract-decode ratio estimation onto the new-token-ratio tracker
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25721
+  title: Publish elastic-EP active ranks from a dedicated step
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25729
+  title: 'fix(dsv4): upgrade forward metadata on main stream for large PP size'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cuda kernel
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25733
+  title: '[Bug] Fix V4-Pro NaN on Blackwell by converting fp8_einsum input scale to ue8m0'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - cuda kernel
+  - fp4
+  - fp8
+  - gemm
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25735
+  title: '[NPU] [DOCS] Improved the usability of Ascend NPU documents'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  changed_file_count: 8
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25740
+  title: '[AMD] Bump amd/Kimi-K2.5-MXFP4 revision to align with shared-experts fusion'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: test/registered/amd/test_kimi_k25_mxfp4.py'
+  path_signals:
+  - test/registered/amd/test_kimi_k25_mxfp4.py
+  borderline_path_signals:
+  - test/registered/amd/test_kimi_k25_mxfp4.py
+  selection_text_signals:
+  - fp4
+  - mxfp4
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25748
+  title: 'loader: yield filtered MTP weights lazily to avoid OOM hang on multi-layer EAGLE'
+  date: '2026-05-20'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25756
+  title: '[Fix] Fix extra uninstall of cutlass packages'
+  date: '2026-05-19'
+  decision: defer
+  reason: 'borderline benchmark/runtime/docs signal: scripts/ci/cuda/ci_install_dependency.sh'
+  path_signals: []
+  borderline_path_signals:
+  - scripts/ci/cuda/ci_install_dependency.sh
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - cutlass
+  - gemm
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25764
+  title: '[Codex] Remove stale DeepSeek V4 JIT kernels'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/jit_kernel/csrc/deepseek_v4/rmsnorm.cuh, python/sglang/jit_kernel/csrc/deepseek_v4/silu_and_mul_masked_post_quant_tmp.cuh, python/sglang/jit_kernel/deepseek_v4.py'
+  path_signals:
+  - python/sglang/jit_kernel/csrc/deepseek_v4/rmsnorm.cuh
+  - python/sglang/jit_kernel/csrc/deepseek_v4/silu_and_mul_masked_post_quant_tmp.cuh
+  - python/sglang/jit_kernel/deepseek_v4.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - cuda kernel
+  changed_file_count: 3
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25778
+  title: '[NPU] [DOC] remove Qwen3-235B-A22B 2K+2K 100ms mixed mode benchmark'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25814
+  title: Update GLM-5 H200 FP8
+  date: '2026-05-20'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25821
+  title: '[Refactor] Rename NSA → DSA: user-facing aliases, file/class/import rename'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: .claude/skills/llm-torch-profiler-analysis/scripts/triage_kernel_helpers.py, python/sglang/jit_kernel/csrc/dsa/fused_store_index_cache.cuh, python/sglang/jit_kernel/csrc/elementwise/fused_metadata_copy.cuh,
+    python/sglang/jit_kernel/fused_metadata_copy.py'
+  path_signals:
+  - .claude/skills/llm-torch-profiler-analysis/scripts/triage_kernel_helpers.py
+  - python/sglang/jit_kernel/csrc/dsa/fused_store_index_cache.cuh
+  - python/sglang/jit_kernel/csrc/elementwise/fused_metadata_copy.cuh
+  - python/sglang/jit_kernel/fused_metadata_copy.py
+  - python/sglang/jit_kernel/fused_store_index_cache.py
+  - python/sglang/jit_kernel/tests/test_fused_metadata_copy.py
+  - python/sglang/jit_kernel/tests/test_fused_store_index_cache.py
+  - python/sglang/jit_kernel/tests/test_set_mla_kv_buffer.py
+  - python/sglang/srt/disaggregation/decode.py
+  - python/sglang/srt/disaggregation/decode_kvcache_offload_manager.py
+  - python/sglang/srt/hardware_backend/npu/attention/ascend_backend.py
+  - python/sglang/srt/hardware_backend/npu/modules/deepseek_v2_attention_mla_npu.py
+  borderline_path_signals:
+  - docs/advanced_features/attention_backend.md
+  - docs_new/docs/advanced_features/attention_backend.mdx
+  - python/sglang/jit_kernel/tests/test_fused_metadata_copy.py
+  - python/sglang/jit_kernel/tests/test_fused_store_index_cache.py
+  - python/sglang/jit_kernel/tests/test_set_mla_kv_buffer.py
+  - test/manual/dsv4/test_h200_fp8_flash.py
+  - test/manual/layers/attention/dsa/test_act_quant_triton.py
+  - test/manual/layers/attention/dsa/test_get_k_scale_triton_kernel.py
+  - test/manual/layers/attention/dsa/test_index_buf_accessor.py
+  - test/registered/dsv4/test_deepseek_v4_flash_fp4_b200.py
+  - test/registered/kernels/test_dsa_indexer.py
+  - test/registered/quant/test_deepseek_v32_fp4_mtp_4gpu.py
+  selection_text_signals:
+  - attention kernel
+  - cuda kernel
+  - fp4
+  - fp8
+  changed_file_count: 162
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25825
+  title: '[Refactor] Pass PP start_layer via model constructor instead of forward_batch.token_to_kv_pool'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/srt/models/glm4_moe.py, python/sglang/srt/models/qwen2_moe.py, python/sglang/srt/models/qwen3_moe.py'
+  path_signals:
+  - python/sglang/srt/models/glm4_moe.py
+  - python/sglang/srt/models/qwen2_moe.py
+  - python/sglang/srt/models/qwen3_moe.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  changed_file_count: 9
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25826
+  title: Update CI permissions and CODEOWNERS
+  date: '2026-05-20'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 2
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25831
+  title: '[Test] Stage-a sanity kits; consolidate core/ + models_e2e/ tests'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/test/kits/basic_decode_correctness_kit.py, test/registered/attention/test_deepseek_v3_deterministic.py, test/registered/attention/test_deterministic.py,
+    test/registered/attention/test_gemma4_swa_triton_oob_regression.py'
+  path_signals:
+  - python/sglang/test/kits/basic_decode_correctness_kit.py
+  - test/registered/attention/test_deepseek_v3_deterministic.py
+  - test/registered/attention/test_deterministic.py
+  - test/registered/attention/test_gemma4_swa_triton_oob_regression.py
+  - test/registered/attention/test_qwen3_next_deterministic.py
+  - test/registered/debug_utils/test_cuda_coredump.py
+  - test/registered/models_e2e/test_deepseek_v4_flash_fp4_b200.py
+  - test/registered/models_e2e/test_deepseek_v4_flash_fp4_h200.py
+  - test/registered/models_e2e/test_deepseek_v4_flash_fp4_megamoe_b200.py
+  - test/registered/models_e2e/test_deepseek_v4_flash_fp8_h200.py
+  - test/registered/models_e2e/test_gemma4_fp8_per_expert_loading.py
+  - test/registered/models_e2e/test_gpt_oss_sm120.py
+  borderline_path_signals:
+  - python/sglang/test/kits/basic_decode_correctness_kit.py
+  - test/registered/attention/test_deepseek_v3_deterministic.py
+  - test/registered/attention/test_deterministic.py
+  - test/registered/attention/test_gemma4_swa_triton_oob_regression.py
+  - test/registered/attention/test_qwen3_next_deterministic.py
+  - test/registered/debug_utils/test_cuda_coredump.py
+  - test/registered/models_e2e/test_deepseek_v4_flash_fp4_b200.py
+  - test/registered/models_e2e/test_deepseek_v4_flash_fp4_h200.py
+  - test/registered/models_e2e/test_deepseek_v4_flash_fp4_megamoe_b200.py
+  - test/registered/models_e2e/test_deepseek_v4_flash_fp8_h200.py
+  - test/registered/models_e2e/test_gemma4_fp8_per_expert_loading.py
+  - test/registered/models_e2e/test_gpt_oss_sm120.py
+  selection_text_signals:
+  - fp4
+  - fp8
+  - gemm
+  - regression
+  changed_file_count: 36
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25842
+  title: '[codex] Align diffusion skills with nightly Nvidia benchmarks'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-benchmark-profile/scripts/bench_diffusion_denoise.py'
+  path_signals:
+  - python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-benchmark-profile/scripts/bench_diffusion_denoise.py
+  borderline_path_signals:
+  - python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-benchmark-profile/SKILL.md
+  - python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-benchmark-profile/benchmark-and-profile.md
+  - python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-benchmark-profile/scripts/bench_diffusion_denoise.py
+  selection_text_signals:
+  - performance
+  changed_file_count: 4
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25854
+  title: 'ci(sgl-router): add PR test workflow (pre-positioned for feature PR)'
+  date: '2026-05-20'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 1
+- repo_slug: sglang
+  repo: sgl-project/sglang
+  pr: 25861
+  title: Update CODEOWNERS to replace 'nsa' with 'dsa'
+  date: '2026-05-20'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 11561
+  title: '[None][fix] Fix int4 awq for sm120/121'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: cpp/tensorrt_llm/kernels/cutlass_kernels/cutlass_heuristic.cpp, tensorrt_llm/_torch/custom_ops/torch_custom_ops.py, tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py,
+    tensorrt_llm/quantization/functional.py'
+  path_signals:
+  - cpp/tensorrt_llm/kernels/cutlass_kernels/cutlass_heuristic.cpp
+  - tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
+  - tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py
+  - tensorrt_llm/quantization/functional.py
+  - tests/unittest/_torch/thop/parallel/test_finegrained_mixed_dtype_gemm.py
+  borderline_path_signals:
+  - tests/unittest/_torch/thop/parallel/test_finegrained_mixed_dtype_gemm.py
+  selection_text_signals:
+  - blackwell
+  - cutlass
+  - fp4
+  - gemm
+  - hopper
+  - mxfp4
+  - nvfp4
+  - sm100
+  - triton kernel
+  changed_file_count: 8
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 12530
+  title: '[https://nvbugs/5879577][fix] Fix KeyError in DeepSeekV3Lite FP8 MTP weight loading'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/models/modeling_deepseekv3.py'
+  path_signals:
+  - tensorrt_llm/_torch/models/modeling_deepseekv3.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  changed_file_count: 2
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 12993
+  title: '[#13076][fix] Destroy torch distributed process groups on PyExecutor shutdown'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/executor/worker.py'
+  path_signals:
+  - tensorrt_llm/executor/worker.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - nvfp4
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 13349
+  title: '[https://nvbugs/6094108][fix] Fix Qwen3-30B-A3B NVFP4 tep4 CUTLASS MoE test OOM on B300'
+  date: '2026-05-20'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cutlass
+  - fp4
+  - nvfp4
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 13401
+  title: '[TRTLLM-11127][feat] add W4A8_MXFP4_FP8 MoE unit test support'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: tests/unittest/_torch/modules/moe/moe_test_utils.py, tests/unittest/_torch/modules/moe/quantize_utils.py, tests/unittest/_torch/modules/moe/test_moe_backend.py, tests/unittest/_torch/modules/moe/test_moe_module.py'
+  path_signals:
+  - tests/unittest/_torch/modules/moe/moe_test_utils.py
+  - tests/unittest/_torch/modules/moe/quantize_utils.py
+  - tests/unittest/_torch/modules/moe/test_moe_backend.py
+  - tests/unittest/_torch/modules/moe/test_moe_module.py
+  borderline_path_signals:
+  - tests/unittest/_torch/modules/moe/moe_test_utils.py
+  - tests/unittest/_torch/modules/moe/quantize_utils.py
+  - tests/unittest/_torch/modules/moe/test_moe_backend.py
+  - tests/unittest/_torch/modules/moe/test_moe_module.py
+  selection_text_signals:
+  - cutlass
+  - fp4
+  - fp8
+  - moe kernel
+  - mxfp4
+  changed_file_count: 4
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 13575
+  title: '[TRTLLM-12316][feat] Integrate FP4 indexer for DSv4'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/cache_manager.py, tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/deepseek_v4.py, tensorrt_llm/_torch/attention_backend/sparse/dsa.py,
+    tensorrt_llm/_torch/model_config.py'
+  path_signals:
+  - tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/cache_manager.py
+  - tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/deepseek_v4.py
+  - tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+  - tensorrt_llm/_torch/model_config.py
+  - tensorrt_llm/_torch/modules/attention.py
+  - tensorrt_llm/llmapi/llm_args.py
+  - tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_cache_manager.py
+  - tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_fp4_indexer.py
+  - tests/unittest/_torch/attention/sparse/dsa/test_dsa_fp4_indexer.py
+  - tests/unittest/_torch/attention/sparse/dsa/test_dsa_indexer.py
+  - tests/unittest/_torch/attention/sparse/test_cpp_custom_ops.py
+  - tests/unittest/_torch/attention/sparse/test_dsa_fp4_indexer.py
+  borderline_path_signals:
+  - tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_cache_manager.py
+  - tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_fp4_indexer.py
+  - tests/unittest/_torch/attention/sparse/dsa/test_dsa_fp4_indexer.py
+  - tests/unittest/_torch/attention/sparse/dsa/test_dsa_indexer.py
+  - tests/unittest/_torch/attention/sparse/test_cpp_custom_ops.py
+  - tests/unittest/_torch/attention/sparse/test_dsa_fp4_indexer.py
+  selection_text_signals:
+  - fp4
+  - fp8
+  changed_file_count: 13
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 13630
+  title: '[#13580][fix] AutoDeploy: Support Gemma3n/4 E2B variants'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/auto_deploy/compile/backends/torch_cudagraph.py, tensorrt_llm/_torch/auto_deploy/custom_ops/attention/triton_paged_attention.py, tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma3n.py,
+    tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma4.py'
+  path_signals:
+  - tensorrt_llm/_torch/auto_deploy/compile/backends/torch_cudagraph.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/attention/triton_paged_attention.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma3n.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma4.py
+  - tensorrt_llm/_torch/auto_deploy/shim/interface.py
+  - tensorrt_llm/_torch/auto_deploy/transform/library/compile_model.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_paged_attention.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_gemma3n_modeling.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_gemma4_modeling.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_mla_rope_utils.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_shared_kv_attention.py
+  borderline_path_signals:
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_paged_attention.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_gemma3n_modeling.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_gemma4_modeling.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_mla_rope_utils.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_shared_kv_attention.py
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - cuda kernel
+  - cudagraph
+  - gemm
+  - moe kernel
+  - triton kernel
+  changed_file_count: 26
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 13689
+  title: '[None][feat] Add bf16 trtllm moe through flashinfer.'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py, tensorrt_llm/_torch/modules/fused_moe/create_moe.py, tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py,
+    tensorrt_llm/_torch/modules/fused_moe/moe_op_backend.py'
+  path_signals:
+  - tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py
+  - tensorrt_llm/_torch/modules/fused_moe/create_moe.py
+  - tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py
+  - tensorrt_llm/_torch/modules/fused_moe/moe_op_backend.py
+  - tensorrt_llm/_torch/modules/fused_moe/moe_scheduler.py
+  - tensorrt_llm/_torch/modules/fused_moe/quantization.py
+  - tests/unittest/_torch/modules/moe/moe_test_utils.py
+  - tests/unittest/_torch/modules/moe/test_moe_module.py
+  borderline_path_signals:
+  - tests/unittest/_torch/modules/moe/moe_test_utils.py
+  - tests/unittest/_torch/modules/moe/test_moe_module.py
+  selection_text_signals:
+  - cutlass
+  - flashinfer
+  - fp4
+  - moe kernel
+  changed_file_count: 15
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 13833
+  title: '[None][perf] FC2 DenseGEMM autotune: split-K, swap_ab, fine-grained tuning buckets'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py, tensorrt_llm/_torch/cute_dsl_kernels/blackwell/moe_as_dense_gemm/fc2.py, tensorrt_llm/_torch/cute_dsl_kernels/blackwell/utils.py,
+    tests/scripts/cute_dsl_kernels/moe_as_dense_gemm/run_moe_as_dense_gemm_fc2.py'
+  path_signals:
+  - tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py
+  - tensorrt_llm/_torch/cute_dsl_kernels/blackwell/moe_as_dense_gemm/fc2.py
+  - tensorrt_llm/_torch/cute_dsl_kernels/blackwell/utils.py
+  - tests/scripts/cute_dsl_kernels/moe_as_dense_gemm/run_moe_as_dense_gemm_fc2.py
+  borderline_path_signals:
+  - tests/scripts/cute_dsl_kernels/moe_as_dense_gemm/run_moe_as_dense_gemm_fc2.py
+  selection_text_signals:
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  - cute
+  - cutlass
+  - fp4
+  - gemm
+  - moe kernel
+  - nvfp4
+  changed_file_count: 4
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 13895
+  title: '[https://nvbugs/6069543][fix] Lower accuracy threshold for H20 qwen3.5 test'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 2
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 13917
+  title: '[None][doc] Add guide for integrating custom kernels in PyTorch backend'
+  date: '2026-05-19'
+  decision: defer
+  reason: 'borderline benchmark/runtime/docs signal: docs/source/torch/adding_custom_kernels.md'
+  path_signals: []
+  borderline_path_signals:
+  - docs/source/torch/adding_custom_kernels.md
+  selection_text_signals:
+  - attention kernel
+  - blackwell
+  - cuda kernel
+  - cute
+  - cutlass
+  - gemm
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 13968
+  title: '[None][fix] Fix bugs related with nemotron-nas model'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: cpp/tensorrt_llm/batch_manager/kvCacheTransferManager.cpp, tensorrt_llm/_torch/models/checkpoints/__init__.py, tensorrt_llm/_torch/models/checkpoints/hf/nemotron_nas_weight_mapper.py'
+  path_signals:
+  - cpp/tensorrt_llm/batch_manager/kvCacheTransferManager.cpp
+  - tensorrt_llm/_torch/models/checkpoints/__init__.py
+  - tensorrt_llm/_torch/models/checkpoints/hf/nemotron_nas_weight_mapper.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - nvfp4
+  changed_file_count: 5
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 13975
+  title: '[None][perf] Add CUDA q_b norm for DeepSeek V4'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.cu, cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.h, cpp/tensorrt_llm/thop/CMakeLists.txt, cpp/tensorrt_llm/thop/deepseekV4QNormOp.cpp'
+  path_signals:
+  - cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.cu
+  - cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.h
+  - cpp/tensorrt_llm/thop/CMakeLists.txt
+  - cpp/tensorrt_llm/thop/deepseekV4QNormOp.cpp
+  - tensorrt_llm/_torch/custom_ops/cpp_custom_ops.py
+  - tensorrt_llm/_torch/modules/attention.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - cuda kernel
+  changed_file_count: 8
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14069
+  title: '[https://nvbugs/6152892][fix] Fix Triton MOE memory free when no swizzling enabled'
+  date: '2026-05-17'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/modules/fused_moe/fused_moe_triton.py'
+  path_signals:
+  - tensorrt_llm/_torch/modules/fused_moe/fused_moe_triton.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - cuda kernel
+  - cutlass
+  - fp4
+  - hopper
+  - moe kernel
+  - mxfp4
+  - triton kernel
+  changed_file_count: 4
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14120
+  title: '[None][feat] Enable 2 DSv4 perf optimizations by default'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/custom_ops/torch_custom_ops.py, tensorrt_llm/_torch/modules/attention.py'
+  path_signals:
+  - tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
+  - tensorrt_llm/_torch/modules/attention.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - cute
+  - fp8
+  - sm100
+  changed_file_count: 2
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14134
+  title: '[None][feat] Add chunked prefill support for Gemma4 (text + vision multimodal)'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/attention_backend/flashinfer.py, tensorrt_llm/_torch/attention_backend/triton_prefill.py, tensorrt_llm/_torch/models/modeling_gemma4.py, tensorrt_llm/_torch/models/modeling_gemma4mm.py'
+  path_signals:
+  - tensorrt_llm/_torch/attention_backend/flashinfer.py
+  - tensorrt_llm/_torch/attention_backend/triton_prefill.py
+  - tensorrt_llm/_torch/models/modeling_gemma4.py
+  - tensorrt_llm/_torch/models/modeling_gemma4mm.py
+  - tensorrt_llm/_torch/pyexecutor/scheduler/scheduler_v2.py
+  - tensorrt_llm/inputs/registry.py
+  - tests/unittest/_torch/executor/test_kv_cache_v2_scheduler.py
+  borderline_path_signals:
+  - tests/unittest/_torch/executor/test_kv_cache_v2_scheduler.py
+  selection_text_signals:
+  - attention kernel
+  - cuda kernel
+  - flashinfer
+  - gemm
+  - moe kernel
+  - triton kernel
+  changed_file_count: 7
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14144
+  title: '[#8542][feat] AutoDeploy: add DeepSeek-R1 FP8 perf test on 8x B200 post merge, remove super perf test from premerge'
+  date: '2026-05-18'
+  decision: defer
+  reason: 'borderline benchmark/runtime/docs signal: tests/scripts/perf-sanity/aggregated/deepseek_r1_fp8_ad_blackwell.yaml'
+  path_signals: []
+  borderline_path_signals:
+  - tests/scripts/perf-sanity/aggregated/deepseek_r1_fp8_ad_blackwell.yaml
+  selection_text_signals:
+  - blackwell
+  - fp8
+  changed_file_count: 3
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14149
+  title: '[None][fix] Handle DeepSeek-V4 fused A scale shape'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/models/modeling_deepseekv4.py'
+  path_signals:
+  - tensorrt_llm/_torch/models/modeling_deepseekv4.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - fp8
+  - nvfp4
+  changed_file_count: 2
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14165
+  title: '[TRTLLM-12462][fix] Fix FP8 block scaling GEMM autotuner cache growth'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/custom_ops/torch_custom_ops.py'
+  path_signals:
+  - tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  - gemm
+  - sm100
+  - sm90
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14168
+  title: '[https://nvbugs/6094100][fix] set UCX_TLS  for gb300 to enable disagg test'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 2
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14169
+  title: '[https://nvbugs/6163030][fix] Unwaive testcase'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14172
+  title: '[https://nvbugs/6025177][test] rcca tests using kimi k2.5 fp4'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tests/unittest/llmapi/apps/_test_openai_kv_cache_contamination.py'
+  path_signals:
+  - tests/unittest/llmapi/apps/_test_openai_kv_cache_contamination.py
+  borderline_path_signals:
+  - tests/unittest/llmapi/apps/_test_openai_kv_cache_contamination.py
+  selection_text_signals:
+  - fp4
+  changed_file_count: 4
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14179
+  title: '[https://nvbugs/6163147][fix] swap layer.mlp in place for Mixtral modelopt export'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/quantization/quantize_by_modelopt.py'
+  path_signals:
+  - tensorrt_llm/quantization/quantize_by_modelopt.py
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14185
+  title: '[https://nvbugs/6162128][tests] Skip nano v3 E2E tests entirely on G/B300'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - fp4
+  - nvfp4
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14193
+  title: '[None][fix] Add SPDX Apache-2.0 headers to auto_deploy test files'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tests/unittest/auto_deploy/_utils_test/torch_attention_reference.py, tests/unittest/auto_deploy/multigpu/custom_ops/test_moe_ep.py, tests/unittest/auto_deploy/multigpu/custom_ops/test_mxfp4_moe_ep.py,
+    tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_attention_op.py'
+  path_signals:
+  - tests/unittest/auto_deploy/_utils_test/torch_attention_reference.py
+  - tests/unittest/auto_deploy/multigpu/custom_ops/test_moe_ep.py
+  - tests/unittest/auto_deploy/multigpu/custom_ops/test_mxfp4_moe_ep.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_attention_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_flashinfer_attention_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_torch_attention_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_attention_with_kv_cache.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_cuda_causal_conv_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_flashinfer_mamba_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_triton_mamba_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_mla_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_trtllm_mla_op.py
+  borderline_path_signals:
+  - tests/unittest/auto_deploy/_utils_test/torch_attention_reference.py
+  - tests/unittest/auto_deploy/multigpu/custom_ops/test_moe_ep.py
+  - tests/unittest/auto_deploy/multigpu/custom_ops/test_mxfp4_moe_ep.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_attention_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_flashinfer_attention_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_torch_attention_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_attention_with_kv_cache.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_cuda_causal_conv_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_flashinfer_mamba_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_triton_mamba_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_mla_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_trtllm_mla_op.py
+  selection_text_signals:
+  - flashinfer
+  - fp4
+  - fp8
+  - gemm
+  - mxfp4
+  - nvfp4
+  changed_file_count: 97
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14195
+  title: '[None][doc] Update spec dec support matrices'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 2
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14213
+  title: '[None][fix] Avoid dp_size x ep_size double-count in MegaMoEDeepGemm SymmBuffer'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/modules/fused_moe/mega_moe/mega_moe_deepgemm.py'
+  path_signals:
+  - tensorrt_llm/_torch/modules/fused_moe/mega_moe/mega_moe_deepgemm.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - deepgemm
+  - gemm
+  - moe kernel
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14215
+  title: '[https://nvbugs/6184143][chore] AutoDeploy Waive DeciLM and GraniteMoEHybrid failures'
+  date: '2026-05-17'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14219
+  title: '[None][feat] DSv4: enable GVR Heuristic Top-K for compress_ratio=4'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: cpp/tensorrt_llm/kernels/heuristicTopKDecode.cu, cpp/tensorrt_llm/kernels/heuristicTopKDecode.h, cpp/tensorrt_llm/kernels/indexerTopK.cu, tensorrt_llm/_torch/attention_backend/sparse/dsa.py'
+  path_signals:
+  - cpp/tensorrt_llm/kernels/heuristicTopKDecode.cu
+  - cpp/tensorrt_llm/kernels/heuristicTopKDecode.h
+  - cpp/tensorrt_llm/kernels/indexerTopK.cu
+  - tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+  - tensorrt_llm/_torch/model_config.py
+  - tensorrt_llm/llmapi/llm_args.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  changed_file_count: 7
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14221
+  title: '[None][test] Waive 1 failed cases for main in QA CI'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14233
+  title: '[None][test] Waive 4 failed cases for main in QA test list'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14235
+  title: '[None][infra] Waive 13 failed cases for main in post-merge 2722'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cutlass
+  - fp4
+  - fp8
+  - mxfp4
+  - nvfp4
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14238
+  title: '[None][fix] Restore DSV4 routed-expert swiglu_limit on TRTLLM-Gen'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/models/modeling_deepseekv4.py'
+  path_signals:
+  - tensorrt_llm/_torch/models/modeling_deepseekv4.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - cutlass
+  - fp4
+  - moe kernel
+  - mxfp4
+  - nvfp4
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14243
+  title: '[https://nvbugs/6094208][fix] AutoDeploy: skip bf16 Nemotron-Nano-V3 accuracy test on <80GB GPUs'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - fp8
+  - nvfp4
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14244
+  title: '[None][refactor] clean up AttentionForwardArgs'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/attention_backend/interface.py, tensorrt_llm/_torch/attention_backend/sparse/dsa.py, tensorrt_llm/_torch/attention_backend/trtllm.py, tensorrt_llm/_torch/models/modeling_qwen.py'
+  path_signals:
+  - tensorrt_llm/_torch/attention_backend/interface.py
+  - tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+  - tensorrt_llm/_torch/attention_backend/trtllm.py
+  - tensorrt_llm/_torch/models/modeling_qwen.py
+  - tensorrt_llm/_torch/models/modeling_seedoss.py
+  - tensorrt_llm/_torch/modules/attention.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - nvfp4
+  changed_file_count: 6
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14247
+  title: '[None][chore] Update flashinfer-python from 0.6.10 to 0.6.11'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cutlass
+  - flashinfer
+  changed_file_count: 3
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14261
+  title: '[https://nvbugs/6185234][fix] DeepSeek-V3.2 tokenizer load on transformers 5.x'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/tokenizer/tokenizer.py'
+  path_signals:
+  - tensorrt_llm/tokenizer/tokenizer.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14276
+  title: '[None][fix] Handle unset attention_dp_relax in ADP routers'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/scheduling_params.py'
+  path_signals:
+  - tensorrt_llm/scheduling_params.py
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 2
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14281
+  title: '[None][fix] Update the OSS headers in derived FLA ops and AD modeling code'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/chunk.py, tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/fused_recurrent.py, tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/utils.py,
+    tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/wy_fast.py'
+  path_signals:
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/chunk.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/fused_recurrent.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/utils.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/wy_fast.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_backend_delta.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_backend_gated_delta.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_delta.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_gated_delta.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fused_moe/triton_moe.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/quantization/torch_quant.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_cohere.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_decilm.py
+  borderline_path_signals:
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_decilm.py
+  selection_text_signals:
+  - attention kernel
+  - gemm
+  - moe kernel
+  - triton kernel
+  changed_file_count: 52
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14282
+  title: '[https://nvbugs/6095421][fix] Update resolve_moe_backend'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/model_config.py'
+  path_signals:
+  - tensorrt_llm/_torch/model_config.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - fp8
+  changed_file_count: 2
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14283
+  title: '[None][test] Waive 5 failed cases for main in QA CI'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - fp8
+  - nvfp4
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14291
+  title: '[None][feat] Update the logic of FMHA JIT path'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCausalP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst, cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCausalP32VarSeqQ128Kv128StaticContext.cubin.tar.zst,
+    cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst, cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst'
+  path_signals:
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCausalP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCausalP32VarSeqQ128Kv128StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ32Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqSkipsSoftmaxQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ32Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqSkipsSoftmaxQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  borderline_path_signals: []
+  selection_text_signals:
+  - sm100
+  changed_file_count: 3000
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14293
+  title: '[https://nvbugs/6185234][fix] register deepseek_v32 / kimi_k2 with transformers AutoConfig'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/configs/__init__.py, tensorrt_llm/_torch/models/__init__.py'
+  path_signals:
+  - tensorrt_llm/_torch/configs/__init__.py
+  - tensorrt_llm/_torch/models/__init__.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  changed_file_count: 3
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14294
+  title: '[None][infra] Waive 2 failed cases for main in post-merge 2723'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - fp4
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14296
+  title: '[None][chore] Use CUDA 13 CUTLASS DSL package'
+  date: '2026-05-20'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cutlass
+  changed_file_count: 3
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14299
+  title: '[None][fix] Warn on experimental DeepSeek-V4 base checkpoints'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/model_config.py'
+  path_signals:
+  - tensorrt_llm/_torch/model_config.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - fp8
+  - mxfp4
+  - nvfp4
+  changed_file_count: 2
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14306
+  title: '[None][perf] Fuse sigmoid+mul+add shared-expert combine into one Trit…'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/models/modeling_qwen3_next.py, tensorrt_llm/_torch/modules/fused_shared_expert.py'
+  path_signals:
+  - tensorrt_llm/_torch/models/modeling_qwen3_next.py
+  - tensorrt_llm/_torch/modules/fused_shared_expert.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - cuda kernel
+  - fp4
+  - moe kernel
+  - nvfp4
+  - triton kernel
+  changed_file_count: 3
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14309
+  title: '[None][test] Waive 8 failed cases for main in QA CI'
+  date: '2026-05-20'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cutlass
+  - fp4
+  - fp8
+  - nvfp4
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14316
+  title: '[None][infra] Waive 1 failed cases for main in pre-merge 38844'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  - hopper
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14319
+  title: '[https://nvbugs/6189918][chore] Waive test_auto_dtype_with_helix[fifo-cudagraph:with_padding-pp1tp1cp4]'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cudagraph
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14321
+  title: '[None][fix] DSv4: drop duplicate indexer_k_dtype kwarg on V4 sparse attn'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/model_config.py'
+  path_signals:
+  - tensorrt_llm/_torch/model_config.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14324
+  title: '[None][infra] Waive 3 failed cases for main in pre-merge 38724'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14332
+  title: '[None][test] Waive 1 failed cases for main in QA CI'
+  date: '2026-05-20'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14344
+  title: '[None][chore] Update Claude Code agents and skills'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: .claude/skills/ad-layer-visualizer/scripts/extract_trace_kernels.py, .claude/skills/kernel-cute-writing/scripts/benchmark_kernel.py, .claude/skills/kernel-cute-writing/scripts/verify_kernel.py,
+    .claude/skills/kernel-tileir-optimization/scripts/classify_kernel.py'
+  path_signals:
+  - .claude/skills/ad-layer-visualizer/scripts/extract_trace_kernels.py
+  - .claude/skills/kernel-cute-writing/scripts/benchmark_kernel.py
+  - .claude/skills/kernel-cute-writing/scripts/verify_kernel.py
+  - .claude/skills/kernel-tileir-optimization/scripts/classify_kernel.py
+  - .claude/skills/kernel-tileir-optimization/scripts/tileir_check.py
+  - .claude/skills/kernel-triton-writing/scripts/benchmark_kernel.py
+  - .claude/skills/kernel-triton-writing/scripts/verify_kernel.py
+  - .claude/skills/perf-torch-cuda-graphs/scripts/verify_workload.py
+  borderline_path_signals:
+  - .claude/skills/kernel-cute-writing/scripts/benchmark_kernel.py
+  - .claude/skills/kernel-triton-writing/scripts/benchmark_kernel.py
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - cuda kernel
+  - cute
+  - moe kernel
+  - triton kernel
+  changed_file_count: 37
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14346
+  title: '[None][infra] Waive 1 failed cases for main in pre-merge 38925'
+  date: '2026-05-20'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  changed_file_count: 1
+- repo_slug: tensorrt-llm
+  repo: NVIDIA/TensorRT-LLM
+  pr: 14357
+  title: '[None][infra] Waive 2 failed cases for main in post-merge 2725'
+  date: '2026-05-20'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - fp4
+  - fp8
+  changed_file_count: 1
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 1908
+  title: '[Feature] Add T.copy_cluster to support TMA multicast and SM-to-SM cluster copy'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: src/backend/cuda/codegen/codegen_cuda.cc, src/backend/cuda/op/copy.cc, src/backend/cuda/op/copy_analysis.cc, src/tl_templates/cuda/copy_sm90.h'
+  path_signals:
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/op/copy.cc
+  - src/backend/cuda/op/copy_analysis.cc
+  - src/tl_templates/cuda/copy_sm90.h
+  - src/transform/lower_hopper_intrin.cc
+  - testing/python/cuda/test_tma_dsmem.py
+  - testing/python/cuda/test_tma_multicast_demo.py
+  - tilelang/language/__init__.py
+  - tilelang/language/copy_op.py
+  borderline_path_signals:
+  - docs/programming_guides/cluster_tma.md
+  - testing/python/cuda/test_tma_dsmem.py
+  - testing/python/cuda/test_tma_multicast_demo.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - cutlass
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - mxfp4
+  - sm90
+  changed_file_count: 20
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2048
+  title: '[Backend] Refactor gemm_sp'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: benchmark/matmul/benchmark_matmul_sp.py, benchmark/matmul/benchmark_matmul_sp_compress.py, examples/gemm_sp/example_custom_compress.py, examples/gemm_sp/example_gemm_sp.py'
+  path_signals:
+  - benchmark/matmul/benchmark_matmul_sp.py
+  - benchmark/matmul/benchmark_matmul_sp_compress.py
+  - examples/gemm_sp/example_custom_compress.py
+  - examples/gemm_sp/example_gemm_sp.py
+  - examples/gemm_sp/test_example_gemm_sp.py
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/codegen/codegen_cuda.h
+  - src/backend/cuda/op/gemm_sp.cc
+  - src/op/gemm.cc
+  - src/op/gemm_sp.cc
+  - src/op/gemm_sp.h
+  - src/op/gemm_sp_py.cc
+  borderline_path_signals:
+  - benchmark/matmul/benchmark_matmul_sp.py
+  - benchmark/matmul/benchmark_matmul_sp_compress.py
+  - examples/gemm_sp/test_example_gemm_sp.py
+  - testing/python/issue/test_tilelang_issue_tma_no_ws.py
+  - testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py
+  - testing/python/tilelibrary/test_tilelang_tilelibrary_gemm_sp.py
+  - testing/python/tilelibrary/test_tilelang_tilelibrary_gemm_sp_v2.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - cute
+  - cutlass
+  - fp8
+  - gemm
+  - hopper
+  - sm90
+  changed_file_count: 49
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2084
+  title: '[Enhance] Reject default scalar params and support `do_not_specialize` for autotune '
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: testing/python/autotune/test_tilelang_autotune_do_not_specialize.py, testing/python/autotune/test_tilelang_autotune_scalar_inputs.py, tilelang/autotuner/tuner.py'
+  path_signals:
+  - testing/python/autotune/test_tilelang_autotune_do_not_specialize.py
+  - testing/python/autotune/test_tilelang_autotune_scalar_inputs.py
+  - tilelang/autotuner/tuner.py
+  borderline_path_signals:
+  - testing/python/autotune/test_tilelang_autotune_do_not_specialize.py
+  - testing/python/autotune/test_tilelang_autotune_scalar_inputs.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - gemm
+  changed_file_count: 3
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2112
+  title: 'feat: auto-vectorize bf16/fp16 reduce with packed add2 intrinsics'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: benchmark/matmul/benchmark_matmul_sp_compress.py, src/backend/cuda/codegen/codegen_cuda.cc, src/backend/cuda/op/reduce.cc, src/tl_templates/cuda/common.h'
+  path_signals:
+  - benchmark/matmul/benchmark_matmul_sp_compress.py
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/op/reduce.cc
+  - src/tl_templates/cuda/common.h
+  - src/tl_templates/cuda/reduce.h
+  - testing/python/language/test_tilelang_language_reduce.py
+  - tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py
+  - tilelang/tileop/gemm_sp/gemm_sp_wgmma.py
+  - tilelang/utils/sparse.py
+  borderline_path_signals:
+  - benchmark/matmul/benchmark_matmul_sp_compress.py
+  - testing/python/language/test_tilelang_language_reduce.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - mxfp4
+  changed_file_count: 13
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2129
+  title: '[CUDA][TMA] Add TMA tile::gather4 / tile::scatter4 support'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: src/backend/cuda/codegen/codegen_cuda.cc, src/backend/cuda/op/copy.cc, src/backend/cuda/op/copy.h, src/backend/cuda/op/copy_analysis.cc'
+  path_signals:
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/op/copy.cc
+  - src/backend/cuda/op/copy.h
+  - src/backend/cuda/op/copy_analysis.cc
+  - src/layout/gemm_layouts.cc
+  - src/tl_templates/cuda/copy_sm100.h
+  - testing/python/language/test_tilelang_language_tma_gather_scatter.py
+  - tilelang/language/__init__.py
+  - tilelang/language/copy_op.py
+  borderline_path_signals:
+  - testing/python/language/test_tilelang_language_tma_gather_scatter.py
+  selection_text_signals:
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  - gemm
+  - hopper
+  - sm100
+  - sm90
+  - triton kernel
+  changed_file_count: 11
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2195
+  title: '[BugFix] Vendor HIP headers and build fat CUDA+ROCm linux wheels'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tilelang/autotuner/grouped_compile.py'
+  path_signals:
+  - tilelang/autotuner/grouped_compile.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - triton kernel
+  changed_file_count: 45
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2197
+  title: Allow variable barrier id in `T.sync_threads()`
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: src/backend/cuda/codegen/codegen_cuda.cc, src/backend/cuda/codegen/codegen_cutedsl.cc, src/tl_templates/cuda/common.h, testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py'
+  path_signals:
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/codegen/codegen_cutedsl.cc
+  - src/tl_templates/cuda/common.h
+  - testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py
+  - testing/python/language/test_tilelang_language_sync_threads.py
+  borderline_path_signals:
+  - testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py
+  - testing/python/language/test_tilelang_language_sync_threads.py
+  selection_text_signals:
+  - cuda kernel
+  - cute
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - mxfp4
+  changed_file_count: 5
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2198
+  title: '[CUDA] Add native SM75 MMA GEMM support for FP16, INT8 and INT4'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: src/tl_templates/cuda/instruction/mma.h, testing/python/cuda/test_cuda_mma_sm75_dispatch.py, testing/python/kernel/test_tilelang_kernel_gemm_sm75.py, tilelang/cuda/intrinsics/macro/mma_macro_generator.py'
+  path_signals:
+  - src/tl_templates/cuda/instruction/mma.h
+  - testing/python/cuda/test_cuda_mma_sm75_dispatch.py
+  - testing/python/kernel/test_tilelang_kernel_gemm_sm75.py
+  - tilelang/cuda/intrinsics/macro/mma_macro_generator.py
+  - tilelang/cuda/intrinsics/macro/mma_sm75_macro_generator.py
+  - tilelang/cuda/op/gemm/__init__.py
+  - tilelang/cuda/op/gemm/gemm_mma.py
+  - tilelang/cuda/op/gemm/gemm_mma_sm75.py
+  borderline_path_signals:
+  - testing/python/cuda/test_cuda_mma_sm75_dispatch.py
+  - testing/python/kernel/test_tilelang_kernel_gemm_sm75.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - cute
+  - cutlass
+  - gemm
+  - triton kernel
+  changed_file_count: 8
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2208
+  title: '[Fix][AMD] Fix Roller autotuner for RDNA3 WMMA targets'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: benchmark/matmul/benchmark_matmul.py, testing/python/target/test_tilelang_rocm_target.py, tilelang/carver/arch/rdna.py, tilelang/carver/matmul_analysis.py'
+  path_signals:
+  - benchmark/matmul/benchmark_matmul.py
+  - testing/python/target/test_tilelang_rocm_target.py
+  - tilelang/carver/arch/rdna.py
+  - tilelang/carver/matmul_analysis.py
+  - tilelang/carver/roller/policy/tensorcore.py
+  borderline_path_signals:
+  - benchmark/matmul/benchmark_matmul.py
+  - testing/python/target/test_tilelang_rocm_target.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - gemm
+  changed_file_count: 5
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2212
+  title: '[Compat] Bump __nv_fp8_e8m0 guard from CUDA 12.6 to 12.8'
+  date: '2026-05-17'
+  decision: include
+  reason: 'file-path kernel signal: src/tl_templates/cuda/cuda_fp8.h'
+  path_signals:
+  - src/tl_templates/cuda/cuda_fp8.h
+  borderline_path_signals: []
+  selection_text_signals:
+  - cuda kernel
+  - fp8
+  changed_file_count: 1
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2215
+  title: '[NFC] Align stale fallback comment with CUDA 12.8 guard'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: src/tl_templates/cuda/cuda_fp8.h'
+  path_signals:
+  - src/tl_templates/cuda/cuda_fp8.h
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  changed_file_count: 1
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2216
+  title: '[TIR][IR] Update to use tirx'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: examples/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py, examples/dequantize_gemm/example_dequant_gemm_bf16_mxfp4_hopper.py, examples/dequantize_gemm/example_dequant_gemm_fp4_hopper.py,
+    examples/dequantize_gemm/example_dequant_gemm_w4a8.py'
+  path_signals:
+  - examples/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py
+  - examples/dequantize_gemm/example_dequant_gemm_bf16_mxfp4_hopper.py
+  - examples/dequantize_gemm/example_dequant_gemm_fp4_hopper.py
+  - examples/dequantize_gemm/example_dequant_gemm_w4a8.py
+  - examples/eager_jit/eagerjit.en.ipynb
+  - examples/eager_jit/eagerjit.zh.ipynb
+  - examples/plot_layout/README.md
+  - examples/plot_layout/fragment_mfma_load_a.py
+  - examples/plot_layout/fragment_mma_load_a.py
+  - src/backend/cpu/op/gemm.cc
+  - src/backend/cuda/codegen/codegen_cuda.cc
+  - src/backend/cuda/codegen/codegen_cuda.h
+  borderline_path_signals:
+  - testing/python/cuda/test_cuda_f32x2_intrinsics.py
+  - testing/python/cuda/test_cuda_mma_sm75_dispatch.py
+  - testing/python/fastmath/test_mathops_fastmath.py
+  - testing/python/issue/test_tilelang_issue_sm120_tma_smem_alignment.py
+  - testing/python/jit/test_tilelang_jit_cutedsl.py
+  - testing/python/kernel/test_tilelang_kernel_bf16_gemm_mma.py
+  - testing/python/kernel/test_tilelang_kernel_fp8_gemm.py
+  - testing/python/kernel/test_tilelang_kernel_fp8_gemv_simt.py
+  - testing/python/language/test_tilelang_language_access_ptr.py
+  - testing/python/language/test_tilelang_language_frontend_v2.py
+  - testing/python/language/test_tilelang_language_pdl.py
+  - testing/python/language/test_tilelang_language_view.py
+  selection_text_signals:
+  - blackwell
+  - cuda kernel
+  - cute
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - mxfp4
+  changed_file_count: 357
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2218
+  title: '[Python] Drop Python 3.9 support'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tilelang/_typing.py, tilelang/autodd.py, tilelang/autotuner/grouped_compile.py, tilelang/autotuner/param.py'
+  path_signals:
+  - tilelang/_typing.py
+  - tilelang/autodd.py
+  - tilelang/autotuner/grouped_compile.py
+  - tilelang/autotuner/param.py
+  - tilelang/autotuner/tuner.py
+  - tilelang/cache/kernel_cache.py
+  - tilelang/carver/analysis.py
+  - tilelang/carver/common_schedules.py
+  - tilelang/cuda/intrinsics/macro/mma_macro_generator.py
+  - tilelang/cuda/intrinsics/macro/mma_sm70_macro_generator.py
+  - tilelang/cuda/intrinsics/macro/mma_sp_macro_generator.py
+  - tilelang/cuda/intrinsics/macro/wgmma_macro_generator.py
+  borderline_path_signals:
+  - tilelang/profiler/bench.py
+  - tilelang/testing/perf_regression.py
+  selection_text_signals:
+  - cuda kernel
+  - cute
+  - gemm
+  - regression
+  changed_file_count: 44
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2219
+  title: '[Perf] Enable fast math in sparse MLA example'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: examples/deepseek_v32/sparse_mla_fwd.py, examples/deepseek_v32/sparse_mla_fwd_pipelined.py'
+  path_signals:
+  - examples/deepseek_v32/sparse_mla_fwd.py
+  - examples/deepseek_v32/sparse_mla_fwd_pipelined.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  changed_file_count: 2
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2220
+  title: '[CuTeDSL] Add PDL codegen and launcher support'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: src/backend/cuda/codegen/codegen_cutedsl.cc, testing/python/language/test_tilelang_language_pdl.py, tilelang/contrib/cutedsl/__init__.py, tilelang/contrib/cutedsl/threadblock_swizzle.py'
+  path_signals:
+  - src/backend/cuda/codegen/codegen_cutedsl.cc
+  - testing/python/language/test_tilelang_language_pdl.py
+  - tilelang/contrib/cutedsl/__init__.py
+  - tilelang/contrib/cutedsl/threadblock_swizzle.py
+  - tilelang/jit/adapter/cutedsl/wrapper.py
+  borderline_path_signals:
+  - requirements-test-cuda.txt
+  - testing/python/language/test_tilelang_language_pdl.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - cute
+  - cutlass
+  - hopper
+  - sm90
+  changed_file_count: 6
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2224
+  title: '[Pipeline] Fix guarded TMA pipeline handling'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: benchmark/matmul/benchmark_matmul_sp_compress.py, testing/python/issue/test_tilelang_issue_tma_no_ws.py, tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py, tilelang/tileop/gemm_sp/gemm_sp_wgmma.py'
+  path_signals:
+  - benchmark/matmul/benchmark_matmul_sp_compress.py
+  - testing/python/issue/test_tilelang_issue_tma_no_ws.py
+  - tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py
+  - tilelang/tileop/gemm_sp/gemm_sp_wgmma.py
+  - tilelang/utils/sparse.py
+  borderline_path_signals:
+  - benchmark/matmul/benchmark_matmul_sp_compress.py
+  - testing/python/issue/test_tilelang_issue_tma_no_ws.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - mxfp4
+  changed_file_count: 9
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2225
+  title: ' [Enhancement]Support mixed-sign ramp indices in LegalizeNegativeIndex'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: testing/python/transform/test_tilelang_transform_legalize_negative_index.py'
+  path_signals:
+  - testing/python/transform/test_tilelang_transform_legalize_negative_index.py
+  borderline_path_signals:
+  - testing/python/transform/test_tilelang_transform_legalize_negative_index.py
+  selection_text_signals:
+  - cuda kernel
+  changed_file_count: 2
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2227
+  title: '[Transform] Fix CPU while fallback thread lowering'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: testing/python/cpu/test_tilelang_cpu_while_repro.py'
+  path_signals:
+  - testing/python/cpu/test_tilelang_cpu_while_repro.py
+  borderline_path_signals:
+  - testing/python/cpu/test_tilelang_cpu_while_repro.py
+  selection_text_signals:
+  - benchmark kernel
+  changed_file_count: 2
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2230
+  title: '[ROCm] Match CUDA path debug-info and temp-file plumbing'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: tilelang/contrib/hipcc.py'
+  path_signals:
+  - tilelang/contrib/hipcc.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - cuda kernel
+  changed_file_count: 1
+- repo_slug: tilelang
+  repo: tile-ai/tilelang
+  pr: 2231
+  title: '[Transform] Refactor TIR statement traversal helpers'
+  date: '2026-05-20'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - mxfp4
+  changed_file_count: 3
+- repo_slug: triton
+  repo: triton-lang/triton
+  pr: 10184
+  title: '[AMD] Handle padded layout in MemDescReinterpretOp verifier'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: lib/Dialect/TritonGPU/IR/Ops.cpp, test/TritonGPU/amd/amd-convert-lds-ops.mlir, test/TritonGPU/invalid.mlir'
+  path_signals:
+  - lib/Dialect/TritonGPU/IR/Ops.cpp
+  - test/TritonGPU/amd/amd-convert-lds-ops.mlir
+  - test/TritonGPU/invalid.mlir
+  borderline_path_signals:
+  - test/TritonGPU/amd/amd-convert-lds-ops.mlir
+  - test/TritonGPU/invalid.mlir
+  selection_text_signals: []
+  changed_file_count: 3
+- repo_slug: triton
+  repo: triton-lang/triton
+  pr: 10246
+  title: '[Proton] Allow out-of-tree backends to register Proton profilers, devices and runtimes.'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cuda kernel
+  - triton kernel
+  changed_file_count: 22
+- repo_slug: triton
+  repo: triton-lang/triton
+  pr: 10332
+  title: '[AMD][BACKEND][GFX9] Optimize warp-uniform predicates for BufferLoadToLocal and AsyncCopyGlobalToLocal'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: third_party/amd/lib/TritonAMDGPUToLLVM/LoadStoreOpToLLVM.cpp'
+  path_signals:
+  - third_party/amd/lib/TritonAMDGPUToLLVM/LoadStoreOpToLLVM.cpp
+  borderline_path_signals: []
+  selection_text_signals:
+  - gemm
+  - optimize
+  changed_file_count: 3
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 37844
+  title: '[XPU] add gptq(int4) support'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: vllm/model_executor/kernels/linear/mixed_precision/MPLinearKernel.py, vllm/model_executor/kernels/linear/mixed_precision/xpu.py, vllm/model_executor/layers/quantization/utils/marlin_utils.py'
+  path_signals:
+  - vllm/model_executor/kernels/linear/mixed_precision/MPLinearKernel.py
+  - vllm/model_executor/kernels/linear/mixed_precision/xpu.py
+  - vllm/model_executor/layers/quantization/utils/marlin_utils.py
+  borderline_path_signals:
+  - vllm/model_executor/kernels/linear/mixed_precision/MPLinearKernel.py
+  - vllm/model_executor/kernels/linear/mixed_precision/xpu.py
+  selection_text_signals: []
+  changed_file_count: 4
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 40131
+  title: '[Bugfix] moe lora align kernel grid'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: csrc/moe/moe_align_sum_kernels.cu, tests/lora/test_moe_lora_align_sum.py'
+  path_signals:
+  - csrc/moe/moe_align_sum_kernels.cu
+  - tests/lora/test_moe_lora_align_sum.py
+  borderline_path_signals:
+  - tests/lora/test_moe_lora_align_sum.py
+  selection_text_signals:
+  - cuda kernel
+  - fp8
+  - moe kernel
+  - triton kernel
+  changed_file_count: 2
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 40717
+  title: '[GDN] Enable FI Blackwell GDN prefill kernel'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: vllm/model_executor/layers/mamba/gdn_linear_attn.py, vllm/platforms/cuda.py'
+  path_signals:
+  - vllm/model_executor/layers/mamba/gdn_linear_attn.py
+  - vllm/platforms/cuda.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  - cute
+  - cutlass
+  - fp4
+  - hopper
+  - nvfp4
+  - sm100
+  - sm90
+  - triton kernel
+  changed_file_count: 2
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 41154
+  title: '[Model] Add Apertus Tool Parser'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - fp8
+  changed_file_count: 5
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 41233
+  title: '[Bugfix][Hybrid][NemotronH] Fix mamba_cache_mode=all + speculative decoding crash'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tests/v1/attention/test_mamba_update_block_table.py, vllm/model_executor/layers/mamba/mamba_mixer2.py, vllm/v1/attention/backends/mamba2_attn.py, vllm/v1/attention/backends/mamba_attn.py'
+  path_signals:
+  - tests/v1/attention/test_mamba_update_block_table.py
+  - vllm/model_executor/layers/mamba/mamba_mixer2.py
+  - vllm/v1/attention/backends/mamba2_attn.py
+  - vllm/v1/attention/backends/mamba_attn.py
+  - vllm/v1/attention/backends/utils.py
+  - vllm/v1/kv_cache_interface.py
+  borderline_path_signals:
+  - tests/v1/attention/test_mamba_update_block_table.py
+  selection_text_signals:
+  - attention kernel
+  - cuda kernel
+  - fp4
+  - nvfp4
+  changed_file_count: 10
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 41354
+  title: '[XPU] Use custom op collective behavior '
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 1
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 41436
+  title: '[ROCm][Quantization][3/N] Refactor quark_moe w4a4 w/ oracle'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tests/quantization/test_gfx950_moe.py, vllm/model_executor/layers/fused_moe/experts/rocm_aiter_moe.py, vllm/model_executor/layers/fused_moe/oracle/mxfp4.py, vllm/model_executor/layers/quantization/quark/quark_moe.py'
+  path_signals:
+  - tests/quantization/test_gfx950_moe.py
+  - vllm/model_executor/layers/fused_moe/experts/rocm_aiter_moe.py
+  - vllm/model_executor/layers/fused_moe/oracle/mxfp4.py
+  - vllm/model_executor/layers/quantization/quark/quark_moe.py
+  borderline_path_signals:
+  - tests/evals/gsm8k/configs/Qwen3.5-35B-A3B-MXFP4-AITER-TP2.yaml
+  - tests/evals/gsm8k/configs/Qwen3.5-35B-A3B-MXFP4-EMU-TP2.yaml
+  - tests/quantization/test_gfx950_moe.py
+  selection_text_signals:
+  - cuda kernel
+  - fp4
+  - moe kernel
+  - mxfp4
+  - triton kernel
+  changed_file_count: 8
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 41710
+  title: 'fix: remove unused norm for dpskv4'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: vllm/model_executor/layers/deepseek_v4_attention.py'
+  path_signals:
+  - vllm/model_executor/layers/deepseek_v4_attention.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  changed_file_count: 1
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 41922
+  title: '[CPU] Add MXFP4 W4A16 MoE support'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: csrc/cpu/sgl-kernels/common.h, csrc/cpu/sgl-kernels/gemm.h, csrc/cpu/sgl-kernels/gemm_fp8.cpp, csrc/cpu/sgl-kernels/moe.cpp'
+  path_signals:
+  - csrc/cpu/sgl-kernels/common.h
+  - csrc/cpu/sgl-kernels/gemm.h
+  - csrc/cpu/sgl-kernels/gemm_fp8.cpp
+  - csrc/cpu/sgl-kernels/moe.cpp
+  - csrc/cpu/sgl-kernels/moe.h
+  - csrc/cpu/sgl-kernels/moe_fp8.cpp
+  - csrc/cpu/sgl-kernels/vec.h
+  - csrc/cpu/torch_bindings.cpp
+  - tests/kernels/moe/test_cpu_fp8_fused_moe.py
+  - tests/kernels/moe/test_cpu_quant_fused_moe.py
+  - tests/quantization/test_cpu_wna16.py
+  - vllm/model_executor/layers/fused_moe/cpu_fused_moe.py
+  borderline_path_signals:
+  - tests/kernels/moe/test_cpu_fp8_fused_moe.py
+  - tests/kernels/moe/test_cpu_quant_fused_moe.py
+  - tests/quantization/test_cpu_wna16.py
+  selection_text_signals:
+  - fp4
+  - fp8
+  - gemm
+  - moe kernel
+  - mxfp4
+  changed_file_count: 16
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42080
+  title: '[feat] Add FP8 per-tensor Q scale support to Triton attention backend'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: tests/kernels/attention/test_triton_unified_attention.py, vllm/v1/attention/backends/triton_attn.py, vllm/v1/attention/ops/triton_unified_attention.py'
+  path_signals:
+  - tests/kernels/attention/test_triton_unified_attention.py
+  - vllm/v1/attention/backends/triton_attn.py
+  - vllm/v1/attention/ops/triton_unified_attention.py
+  borderline_path_signals:
+  - tests/kernels/attention/test_triton_unified_attention.py
+  selection_text_signals:
+  - attention kernel
+  - fp8
+  - triton kernel
+  changed_file_count: 3
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42111
+  title: '[CI] Add DSV4-Flash to gsm8k moe-refactor/config-b200.txt'
+  date: '2026-05-20'
+  decision: defer
+  reason: 'borderline benchmark/runtime/docs signal: requirements/test/cuda.txt, tests/evals/gsm8k/configs/moe-refactor/DeepSeek-V4-Flash-deepgemm-mega-moe.yaml, tests/evals/gsm8k/configs/moe-refactor/config-b200.txt'
+  path_signals: []
+  borderline_path_signals:
+  - requirements/test/cuda.txt
+  - tests/evals/gsm8k/configs/moe-refactor/DeepSeek-V4-Flash-deepgemm-mega-moe.yaml
+  - tests/evals/gsm8k/configs/moe-refactor/config-b200.txt
+  selection_text_signals:
+  - deepgemm
+  - fp4
+  - gemm
+  changed_file_count: 6
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42224
+  title: '[MM][CG] Enable encoder Cudagraph for Step3VL'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tests/models/multimodal/generation/test_vit_cudagraph.py, vllm/v1/worker/encoder_cudagraph.py'
+  path_signals:
+  - tests/models/multimodal/generation/test_vit_cudagraph.py
+  - vllm/v1/worker/encoder_cudagraph.py
+  borderline_path_signals:
+  - docs/design/cuda_graphs_multimodal.md
+  - tests/models/multimodal/generation/test_vit_cudagraph.py
+  selection_text_signals:
+  - cudagraph
+  changed_file_count: 8
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42242
+  title: '[LoRA] Support 2D and 3D MoE LoRA adapter  at the same time'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tests/lora/test_qwen36_moe_lora.py, tests/lora/test_qwen3moe_tp.py, vllm/lora/layers/fused_moe.py'
+  path_signals:
+  - tests/lora/test_qwen36_moe_lora.py
+  - tests/lora/test_qwen3moe_tp.py
+  - vllm/lora/layers/fused_moe.py
+  borderline_path_signals:
+  - tests/lora/test_qwen36_moe_lora.py
+  - tests/lora/test_qwen3moe_tp.py
+  selection_text_signals: []
+  changed_file_count: 16
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42289
+  title: '[Bugfix][KV Connector] Fix SimpleCPUOffloadScheduler TOCTOU between Phase A and Phase B'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - fp8
+  changed_file_count: 2
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42311
+  title: '[Model] [Perf] Use flatten for Qwen3.5''s GDN output projection'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: vllm/model_executor/layers/mamba/gdn_linear_attn.py'
+  path_signals:
+  - vllm/model_executor/layers/mamba/gdn_linear_attn.py
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 1
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42330
+  title: '[Frontend] Forward X-data-parallel-rank header on /inference/v1/generate'
+  date: '2026-05-20'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  changed_file_count: 1
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42430
+  title: '[Bugfix] mamba: run single-token extends as decodes'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tests/v1/attention/test_mamba_update_block_table.py, tests/v1/attention/utils.py, vllm/v1/attention/backends/mamba_attn.py'
+  path_signals:
+  - tests/v1/attention/test_mamba_update_block_table.py
+  - tests/v1/attention/utils.py
+  - vllm/v1/attention/backends/mamba_attn.py
+  borderline_path_signals:
+  - tests/v1/attention/test_mamba_update_block_table.py
+  - tests/v1/attention/utils.py
+  selection_text_signals: []
+  changed_file_count: 4
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42468
+  title: '[BugFix][CPU][Spec Decode] Fix Eagle implementation on CPU backend'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - triton kernel
+  changed_file_count: 3
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42483
+  title: Refactor AWQ Marlin MoE onto modular WNA16 oracle
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: tests/kernels/moe/test_moe.py, vllm/model_executor/layers/fused_moe/config.py, vllm/model_executor/layers/fused_moe/experts/marlin_moe.py, vllm/model_executor/layers/fused_moe/oracle/int_wna16.py'
+  path_signals:
+  - tests/kernels/moe/test_moe.py
+  - vllm/model_executor/layers/fused_moe/config.py
+  - vllm/model_executor/layers/fused_moe/experts/marlin_moe.py
+  - vllm/model_executor/layers/fused_moe/oracle/int_wna16.py
+  - vllm/model_executor/layers/quantization/auto_gptq.py
+  - vllm/model_executor/layers/quantization/awq_marlin.py
+  borderline_path_signals:
+  - tests/kernels/moe/test_moe.py
+  selection_text_signals:
+  - gemm
+  - moe kernel
+  changed_file_count: 6
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42497
+  title: '[Perf] Wire silu_and_mul_per_block_quant into TritonFP8MoE (MiniMax-M2) '
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: vllm/model_executor/layers/fused_moe/experts/triton_moe.py'
+  path_signals:
+  - vllm/model_executor/layers/fused_moe/experts/triton_moe.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - fp8
+  - gemm
+  - moe kernel
+  - triton kernel
+  changed_file_count: 1
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42527
+  title: '[Kernel] Pack topk id/weights triton kernel'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: vllm/model_executor/layers/fused_moe/experts/trtllm_mxfp4_moe.py, vllm/model_executor/layers/fused_moe/utils.py'
+  path_signals:
+  - vllm/model_executor/layers/fused_moe/experts/trtllm_mxfp4_moe.py
+  - vllm/model_executor/layers/fused_moe/utils.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - cuda kernel
+  - fp4
+  - hopper
+  - moe kernel
+  - mxfp4
+  - triton kernel
+  changed_file_count: 2
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42537
+  title: '[UX] Add a persistent cache for FlashInfer autotuning'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: tests/model_executor/test_flashinfer_autotune_cache.py, vllm/model_executor/warmup/kernel_warmup.py'
+  path_signals:
+  - tests/model_executor/test_flashinfer_autotune_cache.py
+  - vllm/model_executor/warmup/kernel_warmup.py
+  borderline_path_signals:
+  - tests/model_executor/test_flashinfer_autotune_cache.py
+  selection_text_signals:
+  - flashinfer
+  - fp4
+  - gemm
+  - moe kernel
+  - nvfp4
+  changed_file_count: 4
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42540
+  title: '[Misc] add humming to dependencies'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: vllm/model_executor/layers/quantization/humming.py'
+  path_signals:
+  - vllm/model_executor/layers/quantization/humming.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - cuda kernel
+  - fp4
+  - moe kernel
+  - mxfp4
+  - triton kernel
+  changed_file_count: 3
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42541
+  title: '[Bugfix] fix swiglu limit issue for humming backend + deepseek v4'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: vllm/model_executor/layers/fused_moe/experts/fused_humming_moe.py, vllm/model_executor/layers/fused_moe/oracle/mxfp4.py, vllm/model_executor/layers/quantization/utils/humming_utils.py'
+  path_signals:
+  - vllm/model_executor/layers/fused_moe/experts/fused_humming_moe.py
+  - vllm/model_executor/layers/fused_moe/oracle/mxfp4.py
+  - vllm/model_executor/layers/quantization/utils/humming_utils.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - moe kernel
+  - mxfp4
+  changed_file_count: 3
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42567
+  title: '[CI] Add NIXL EP import canary'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 2
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42663
+  title: '[6/n] Migrate activation kernels, gptq, gguf, non cutlass w8a8 to libtorch stable ABI (continued)'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: csrc/attention/dtype_fp8.cuh, csrc/cuda_vec_utils.cuh, csrc/cutlass_extensions/torch_utils.hpp, csrc/libtorch_stable/activation_kernels.cu'
+  path_signals:
+  - csrc/attention/dtype_fp8.cuh
+  - csrc/cuda_vec_utils.cuh
+  - csrc/cutlass_extensions/torch_utils.hpp
+  - csrc/libtorch_stable/activation_kernels.cu
+  - csrc/libtorch_stable/ops.h
+  - csrc/libtorch_stable/quantization/gguf/gguf_kernel.cu
+  - csrc/libtorch_stable/quantization/gguf/moe.cuh
+  - csrc/libtorch_stable/quantization/gguf/moe_vec.cuh
+  - csrc/libtorch_stable/quantization/gptq/compat.cuh
+  - csrc/libtorch_stable/quantization/gptq/matrix_view.cuh
+  - csrc/libtorch_stable/quantization/gptq/q_gemm.cu
+  - csrc/libtorch_stable/quantization/gptq/qdq_2.cuh
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - cute
+  - cutlass
+  - fp8
+  - gemm
+  changed_file_count: 28
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42671
+  title: 'fix: use keyword arguments for shard_id and expert_id in weight_loade…'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 0
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42707
+  title: '[CPU] Add fused GDN support for AMX CPU platform'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: csrc/cpu/sgl-kernels/conv.cpp, csrc/cpu/sgl-kernels/fla.cpp, csrc/cpu/torch_bindings.cpp, vllm/model_executor/layers/linear.py'
+  path_signals:
+  - csrc/cpu/sgl-kernels/conv.cpp
+  - csrc/cpu/sgl-kernels/fla.cpp
+  - csrc/cpu/torch_bindings.cpp
+  - vllm/model_executor/layers/linear.py
+  - vllm/model_executor/layers/mamba/ops/cpu/gdn_attention.py
+  - vllm/model_executor/layers/utils.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  changed_file_count: 8
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42716
+  title: Fix Weight loading for  Qwen3.5-MTP and Qwen3-VL using runai_streamer
+  date: '2026-05-17'
+  decision: include
+  reason: 'file-path kernel signal: vllm/model_executor/models/qwen3_vl_moe.py'
+  path_signals:
+  - vllm/model_executor/models/qwen3_vl_moe.py
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 2
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42740
+  title: '[CPU] Specify required KV cache layout for CPU attention backend'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: vllm/v1/attention/backends/cpu_attn.py'
+  path_signals:
+  - vllm/v1/attention/backends/cpu_attn.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  changed_file_count: 1
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42764
+  title: '[Model] Support post-norm architecture for EAGLE-3 supeculators'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - mxfp4
+  changed_file_count: 3
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42767
+  title: '[Refactor] Remove dead cuda kernels'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: csrc/attention/vertical_slash_index.cu, csrc/moe/torch_bindings.cpp, csrc/ops.h, csrc/torch_bindings.cpp'
+  path_signals:
+  - csrc/attention/vertical_slash_index.cu
+  - csrc/moe/torch_bindings.cpp
+  - csrc/ops.h
+  - csrc/torch_bindings.cpp
+  borderline_path_signals: []
+  selection_text_signals:
+  - cuda kernel
+  - gemm
+  - moe kernel
+  changed_file_count: 6
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42774
+  title: '[Perf] Padded nvfp4 quant kernel to remove additional copy, 2.4%~5.7% e2e performance improvement'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: csrc/libtorch_stable/quantization/fp4/nvfp4_quant_kernels.cu, tests/kernels/quantization/test_nvfp4_quant.py, vllm/model_executor/kernels/linear/nvfp4/cutlass.py, vllm/model_executor/kernels/linear/nvfp4/flashinfer.py'
+  path_signals:
+  - csrc/libtorch_stable/quantization/fp4/nvfp4_quant_kernels.cu
+  - tests/kernels/quantization/test_nvfp4_quant.py
+  - vllm/model_executor/kernels/linear/nvfp4/cutlass.py
+  - vllm/model_executor/kernels/linear/nvfp4/flashinfer.py
+  borderline_path_signals:
+  - tests/kernels/quantization/test_nvfp4_quant.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - cutlass
+  - flashinfer
+  - fp4
+  - nvfp4
+  - performance
+  - triton kernel
+  changed_file_count: 5
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42810
+  title: '[ROCm] [Bugfix] Fix DeepSeek V4 Functionality and Accuracy'
+  date: '2026-05-17'
+  decision: include
+  reason: 'file-path kernel signal: vllm/model_executor/layers/mhc.py, vllm/model_executor/layers/sparse_attn_indexer.py, vllm/v1/attention/ops/rocm_aiter_mla_sparse.py'
+  path_signals:
+  - vllm/model_executor/layers/mhc.py
+  - vllm/model_executor/layers/sparse_attn_indexer.py
+  - vllm/v1/attention/ops/rocm_aiter_mla_sparse.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - cuda kernel
+  - fp8
+  - moe kernel
+  - triton kernel
+  changed_file_count: 4
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42849
+  title: '[Perf] Add do_not_specialize in fused FP8 RoPE kernel'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: vllm/v1/attention/ops/deepseek_v4_ops/fused_inv_rope_fp8_quant.py'
+  path_signals:
+  - vllm/v1/attention/ops/deepseek_v4_ops/fused_inv_rope_fp8_quant.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  - fp8
+  - triton kernel
+  changed_file_count: 1
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42857
+  title: '[Perf] Re-enable flashinfer autotune by default and cleanup'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: vllm/model_executor/layers/fused_moe/experts/flashinfer_cutedsl_moe.py, vllm/model_executor/layers/fused_moe/experts/trtllm_mxfp4_moe.py, vllm/model_executor/warmup/kernel_warmup.py,
+    vllm/utils/flashinfer.py'
+  path_signals:
+  - vllm/model_executor/layers/fused_moe/experts/flashinfer_cutedsl_moe.py
+  - vllm/model_executor/layers/fused_moe/experts/trtllm_mxfp4_moe.py
+  - vllm/model_executor/warmup/kernel_warmup.py
+  - vllm/utils/flashinfer.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - cute
+  - flashinfer
+  - fp4
+  - mxfp4
+  changed_file_count: 5
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42869
+  title: '[BugFix] Kimi-K2.5: skip vision tower dtype conversion when using quantization'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 1
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42880
+  title: '[ROCm] Guard AITER GDN decode fast path by layout'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: vllm/model_executor/layers/mamba/gdn_linear_attn.py'
+  path_signals:
+  - vllm/model_executor/layers/mamba/gdn_linear_attn.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  - triton kernel
+  changed_file_count: 1
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42885
+  title: '[Perf][MLA] Enable FULL cudagraph capture for TRITON_MLA decode'
+  date: '2026-05-18'
+  decision: include
+  reason: 'file-path kernel signal: vllm/v1/attention/backends/mla/triton_mla.py'
+  path_signals:
+  - vllm/v1/attention/backends/mla/triton_mla.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - cudagraph
+  changed_file_count: 1
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42887
+  title: '[Bugfix] Fix top logprobs token placeholders in `/inference/v1/generate`'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 2
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42899
+  title: add cutedsl dsv4 indexer fp8 kernel
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: tests/kernels/test_fused_indexer_q_rope_quant.py, vllm/v1/attention/ops/deepseek_v4_ops/cutedsl_utils.py, vllm/v1/attention/ops/deepseek_v4_ops/fused_indexer_q.py, vllm/v1/attention/ops/deepseek_v4_ops/fused_indexer_q_cutedsl.py'
+  path_signals:
+  - tests/kernels/test_fused_indexer_q_rope_quant.py
+  - vllm/v1/attention/ops/deepseek_v4_ops/cutedsl_utils.py
+  - vllm/v1/attention/ops/deepseek_v4_ops/fused_indexer_q.py
+  - vllm/v1/attention/ops/deepseek_v4_ops/fused_indexer_q_cutedsl.py
+  borderline_path_signals:
+  - tests/kernels/test_fused_indexer_q_rope_quant.py
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - cuda kernel
+  - cute
+  - cutlass
+  - fp4
+  - fp8
+  - sm90
+  - triton kernel
+  changed_file_count: 4
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42926
+  title: '[Bugfix] Use platform-agnostic device in example_connector load'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 1
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42930
+  title: '[Bugfix] Fix DSV4 MTP after ROCm mHC integration'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - fp8
+  changed_file_count: 2
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42954
+  title: '[XPU][CI] Temporarily skip test_moe_lora_align_block_size_mixed_base_and_lora[1] in Intel GPU CI'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 1
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42976
+  title: '[Bugfix][MoE] FlashInfer one-sided: workspace union across heterogeneous layers'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - flashinfer
+  - moe kernel
+  changed_file_count: 2
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 42991
+  title: '[CI/Build] Bump nvidia-cutlass-dsl to 4.5.1'
+  date: '2026-05-18'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - cute
+  - cutlass
+  changed_file_count: 1
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 43004
+  title: '[Model Refactoring] Migrate DeepSeek V4 to vllm/models/ [1/N] '
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: tests/models/test_deepseek_v4_mega_moe.py, vllm/model_executor/layers/quantization/__init__.py, vllm/models/deepseek_v4/quant_config.py'
+  path_signals:
+  - tests/models/test_deepseek_v4_mega_moe.py
+  - vllm/model_executor/layers/quantization/__init__.py
+  - vllm/models/deepseek_v4/quant_config.py
+  borderline_path_signals:
+  - tests/models/test_deepseek_v4_mega_moe.py
+  selection_text_signals: []
+  changed_file_count: 12
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 43043
+  title: '[XPU] update xpu graph usage'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: vllm/v1/attention/backends/flash_attn.py'
+  path_signals:
+  - vllm/v1/attention/backends/flash_attn.py
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 4
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 43073
+  title: '[Model Refactoring] Move deepseek_v4_ops to models/deepseek_v4 [3/N]'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: tests/kernels/core/test_fused_q_kv_rmsnorm.py, tests/kernels/test_compressor_kv_cache.py, tests/kernels/test_fused_deepseek_v4_qnorm_rope_kv_insert.py, tests/kernels/test_fused_indexer_q_rope_quant.py'
+  path_signals:
+  - tests/kernels/core/test_fused_q_kv_rmsnorm.py
+  - tests/kernels/test_compressor_kv_cache.py
+  - tests/kernels/test_fused_deepseek_v4_qnorm_rope_kv_insert.py
+  - tests/kernels/test_fused_indexer_q_rope_quant.py
+  - tests/kernels/test_fused_inv_rope_fp8_quant.py
+  - vllm/models/deepseek_v4/attention.py
+  - vllm/models/deepseek_v4/common/ops/fused_compress_quant_cache.py
+  - vllm/models/deepseek_v4/common/ops/fused_inv_rope_fp8_quant.py
+  - vllm/models/deepseek_v4/nvidia/ops/cutedsl_utils.py
+  - vllm/models/deepseek_v4/nvidia/ops/dequant_gather_k_cutedsl.py
+  - vllm/models/deepseek_v4/nvidia/ops/fused_indexer_q_cutedsl.py
+  - vllm/v1/attention/backends/mla/rocm_aiter_mla_sparse_dsv4.py
+  borderline_path_signals:
+  - tests/kernels/core/test_fused_q_kv_rmsnorm.py
+  - tests/kernels/test_compressor_kv_cache.py
+  - tests/kernels/test_fused_deepseek_v4_qnorm_rope_kv_insert.py
+  - tests/kernels/test_fused_indexer_q_rope_quant.py
+  - tests/kernels/test_fused_inv_rope_fp8_quant.py
+  selection_text_signals:
+  - attention kernel
+  - cute
+  - cutlass
+  - fp8
+  changed_file_count: 20
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 43115
+  title: '[CPU][DOC] Fix installation commands for Arm CPUs'
+  date: '2026-05-19'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 1
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 43119
+  title: '[CI failure] Temporarily disable using persistent cache for flashinfer autotune'
+  date: '2026-05-19'
+  decision: include
+  reason: 'file-path kernel signal: vllm/model_executor/warmup/kernel_warmup.py'
+  path_signals:
+  - vllm/model_executor/warmup/kernel_warmup.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - benchmark kernel
+  - flashinfer
+  - gemm
+  changed_file_count: 1
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 43143
+  title: '[Cohere] Enable Cohere MoE'
+  date: '2026-05-20'
+  decision: exclude
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  changed_file_count: 2
+- repo_slug: vllm
+  repo: vllm-project/vllm
+  pr: 43160
+  title: '[MRV2][BugFix] Fix default-stream CG capture in P/W LoRA case'
+  date: '2026-05-20'
+  decision: include
+  reason: 'file-path kernel signal: vllm/v1/worker/gpu/cudagraph_utils.py'
+  path_signals:
+  - vllm/v1/worker/gpu/cudagraph_utils.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - cudagraph
+  changed_file_count: 1

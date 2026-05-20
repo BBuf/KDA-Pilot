@@ -1,0 +1,106 @@
+diff --git a/vllm/model_executor/layers/fused_moe/experts/fused_humming_moe.py b/vllm/model_executor/layers/fused_moe/experts/fused_humming_moe.py
+index 99a9f323c0f8..203c5782829c 100644
+--- a/vllm/model_executor/layers/fused_moe/experts/fused_humming_moe.py
++++ b/vllm/model_executor/layers/fused_moe/experts/fused_humming_moe.py
+@@ -33,7 +33,10 @@
+     TopKWeightAndReduceDelegate,
+     TopKWeightAndReduceNoOP,
+ )
+-from vllm.model_executor.layers.fused_moe.utils import _resize_cache
++from vllm.model_executor.layers.fused_moe.utils import (
++    _resize_cache,
++    swiglu_limit_func,
++)
+ from vllm.model_executor.layers.quantization.utils.quant_utils import QuantKey
+ from vllm.platforms import current_platform
+ from vllm.v1.worker.workspace import current_workspace_manager
+@@ -422,6 +425,18 @@ def is_supported_config(
+ 
+         return supported, None if supported else reason
+ 
++    def apply_activation(
++        self,
++        activation: MoEActivation,
++        output: torch.Tensor,
++        input: torch.Tensor,
++    ) -> None:
++        swiglu_limit = self.quant_config.gemm1_clamp_limit
++        if activation == MoEActivation.SILU and swiglu_limit is not None:
++            swiglu_limit_func(output=output, input=input, swiglu_limit=swiglu_limit)
++        else:
++            self.activation(activation=activation, input=input, output=output)
++
+ 
+ class HummingIndexedExperts(HummingExpertsBase):
+     def finalize_weight_and_reduce_impl(self) -> mk.TopKWeightAndReduce:
+@@ -514,7 +529,7 @@ def main_apply(
+             **moe_kwargs1,
+         )
+ 
+-        self.activation(
++        self.apply_activation(
+             activation=self.layer.activation,
+             input=buffers["gate_up_output"],
+             output=buffers["activation_output"],
+@@ -604,7 +619,7 @@ def main_apply(
+             sublayer_name="w13",
+         )
+ 
+-        self.activation(
++        self.apply_activation(
+             activation=self.layer.activation,
+             input=buffers["gate_up_output"],
+             output=buffers["activation_output"],
+@@ -691,7 +706,7 @@ def main_apply(
+             sublayer_name="w13",
+         )
+ 
+-        self.activation(
++        self.apply_activation(
+             activation=self.layer.activation,
+             input=buffers["gate_up_output"],
+             output=buffers["activation_output"],
+diff --git a/vllm/model_executor/layers/fused_moe/oracle/mxfp4.py b/vllm/model_executor/layers/fused_moe/oracle/mxfp4.py
+index 111a6f2b1646..74210b69ed50 100644
+--- a/vllm/model_executor/layers/fused_moe/oracle/mxfp4.py
++++ b/vllm/model_executor/layers/fused_moe/oracle/mxfp4.py
+@@ -1567,7 +1567,12 @@ def make_mxfp4_moe_quant_config(
+         )
+ 
+         assert isinstance(layer, FusedMoE)
+-        return get_humming_moe_quant_config(layer)
++        return get_humming_moe_quant_config(
++            layer,
++            gemm1_alpha=gemm1_alpha,
++            gemm1_beta=gemm1_beta,
++            gemm1_clamp_limit=swiglu_limit,
++        )
+     else:
+         return ocp_mx_moe_quant_config(
+             quant_dtype="mxfp4",
+diff --git a/vllm/model_executor/layers/quantization/utils/humming_utils.py b/vllm/model_executor/layers/quantization/utils/humming_utils.py
+index 2cfc0fc87305..63735708b6c6 100644
+--- a/vllm/model_executor/layers/quantization/utils/humming_utils.py
++++ b/vllm/model_executor/layers/quantization/utils/humming_utils.py
+@@ -164,7 +164,12 @@ def prepare_humming_moe_layer(layer: RoutedExperts, quant_config: dict):
+         layer.register_buffer("locks", locks)
+ 
+ 
+-def get_humming_moe_quant_config(layer: RoutedExperts):
++def get_humming_moe_quant_config(
++    layer: RoutedExperts,
++    gemm1_alpha: float | None = None,
++    gemm1_beta: float | None = None,
++    gemm1_clamp_limit: float | None = None,
++):
+     input_schema = layer.input_schemas["w13"]
+     weight_schema = layer.weight_schemas["w13"]
+ 
+@@ -211,4 +216,7 @@ def get_humming_moe_quant_config(layer: RoutedExperts):
+         _a2=a_quant_desc,
+         _w1=w1_quant_desc,
+         _w2=w2_quant_desc,
++        gemm1_alpha=gemm1_alpha,
++        gemm1_beta=gemm1_beta,
++        gemm1_clamp_limit=gemm1_clamp_limit,
+     )

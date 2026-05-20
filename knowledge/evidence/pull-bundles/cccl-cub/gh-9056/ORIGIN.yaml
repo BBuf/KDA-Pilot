@@ -1,0 +1,38 @@
+schema_version: 1
+source_key: NVIDIA/cccl#9056
+repo: NVIDIA/cccl
+repo_id: cccl-cub
+pr_number: 9056
+title: Vectorize contiguous iterators in `cub::BlockLoad`/`Store`
+url: https://github.com/NVIDIA/cccl/pull/9056
+state: closed
+merged_at: '2026-05-19T07:30:04Z'
+base_ref_oid: e09f3997b25e9bc93f36c2e5b88a8fecdd36cd06
+head_ref_oid: 6ebcc3e21e0a3c77d0622b9ca1faac362b234e16
+captured_at: '2026-05-20T14:47:02.812111+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- block
+techniques:
+- vectorized-loads
+hardware_features: []
+kernel_types: []
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: cub/cub/block/block_load.cuh
+    local_path: source-snapshot/cub/cub/block/block_load.cuh
+    ref: 6ebcc3e21e0a3c77d0622b9ca1faac362b234e16
+    status: modified
+    fetched: true
+  - source_path: cub/cub/block/block_store.cuh
+    local_path: source-snapshot/cub/cub/block/block_store.cuh
+    ref: 6ebcc3e21e0a3c77d0622b9ca1faac362b234e16
+    status: modified
+    fetched: true

@@ -1,0 +1,67 @@
+schema_version: 1
+source_key: tile-ai/tilelang#2220
+repo: tile-ai/tilelang
+repo_id: tilelang
+pr_number: 2220
+title: '[CuTeDSL] Add PDL codegen and launcher support'
+url: https://github.com/tile-ai/tilelang/pull/2220
+state: closed
+merged_at: '2026-05-19T09:15:55Z'
+base_ref_oid: 719d23dce5d69db0fdf76f617f98ddf0664d8001
+head_ref_oid: 82344d2497347750d478541e4cfdf8229c81003f
+captured_at: '2026-05-20T15:02:57.039262+00:00'
+architectures:
+- sm90
+architecture_families:
+- hopper
+tags:
+- benchmark kernel
+- cuda kernel
+- cute
+- cutlass
+- hopper
+- sm90
+- tile-dsl
+techniques:
+- swizzling
+hardware_features:
+- hopper
+- pdl
+kernel_types: []
+languages:
+- cuda-cpp
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: requirements-test-cuda.txt
+    local_path: source-snapshot/requirements-test-cuda.txt
+    ref: 82344d2497347750d478541e4cfdf8229c81003f
+    status: modified
+    fetched: true
+  - source_path: src/backend/cuda/codegen/codegen_cutedsl.cc
+    local_path: source-snapshot/src/backend/cuda/codegen/codegen_cutedsl.cc
+    ref: 82344d2497347750d478541e4cfdf8229c81003f
+    status: modified
+    fetched: true
+  - source_path: testing/python/language/test_tilelang_language_pdl.py
+    local_path: source-snapshot/testing/python/language/test_tilelang_language_pdl.py
+    ref: 82344d2497347750d478541e4cfdf8229c81003f
+    status: modified
+    fetched: true
+  - source_path: tilelang/contrib/cutedsl/__init__.py
+    local_path: source-snapshot/tilelang/contrib/cutedsl/__init__.py
+    ref: 82344d2497347750d478541e4cfdf8229c81003f
+    status: modified
+    fetched: true
+  - source_path: tilelang/contrib/cutedsl/threadblock_swizzle.py
+    local_path: source-snapshot/tilelang/contrib/cutedsl/threadblock_swizzle.py
+    ref: 82344d2497347750d478541e4cfdf8229c81003f
+    status: modified
+    fetched: true
+  - source_path: tilelang/jit/adapter/cutedsl/wrapper.py
+    local_path: source-snapshot/tilelang/jit/adapter/cutedsl/wrapper.py
+    ref: 82344d2497347750d478541e4cfdf8229c81003f
+    status: modified
+    fetched: true

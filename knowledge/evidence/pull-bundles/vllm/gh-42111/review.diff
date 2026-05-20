@@ -1,0 +1,72 @@
+diff --git a/requirements/common.txt b/requirements/common.txt
+index 492ae935731b..d37ef1f1fedc 100644
+--- a/requirements/common.txt
++++ b/requirements/common.txt
+@@ -9,6 +9,7 @@ blake3
+ py-cpuinfo
+ transformers >= 4.56.0, != 5.0.*, != 5.1.*, != 5.2.*, != 5.3.*, != 5.4.*, != 5.5.0
+ tokenizers >= 0.21.1  # Required for fast incremental detokenization.
++safetensors >= 0.6.2  # MXFP4/MXFP6 dtype support (F8_E8M0, F4) added in 0.6.0: https://github.com/huggingface/safetensors/pull/611
+ protobuf >= 5.29.6, !=6.30.*, !=6.31.*, !=6.32.*, !=6.33.0.*, !=6.33.1.*, !=6.33.2.*, !=6.33.3.*, !=6.33.4.* # Required by LlamaTokenizer, gRPC. CVE-2026-0994
+ fastapi[standard] >= 0.115.0 # Required by FastAPI's form models in the OpenAI API server's audio transcriptions endpoint.
+ aiohttp >= 3.13.3
+diff --git a/requirements/test/cuda.txt b/requirements/test/cuda.txt
+index 290e539c9be2..245a86f93beb 100644
+--- a/requirements/test/cuda.txt
++++ b/requirements/test/cuda.txt
+@@ -858,8 +858,9 @@ s3transfer==0.10.3
+     # via boto3
+ sacrebleu==2.4.3
+     # via lm-eval
+-safetensors==0.4.5
++safetensors==0.7.0
+     # via
++    #   -c requirements/common.txt
+     #   accelerate
+     #   open-clip-torch
+     #   peft
+diff --git a/requirements/test/rocm.txt b/requirements/test/rocm.txt
+index 4b801383d898..b15e00edf1dd 100644
+--- a/requirements/test/rocm.txt
++++ b/requirements/test/rocm.txt
+@@ -1048,6 +1048,8 @@ sacrebleu==2.6.0
+     # via lm-eval
+ safetensors==0.7.0
+     # via
++    #   -c requirements/common.txt
++    #   -r requirements/test/../common.txt
+     #   accelerate
+     #   open-clip-torch
+     #   peft
+diff --git a/requirements/test/xpu.txt b/requirements/test/xpu.txt
+index 80b0c148116d..5581d0a079c5 100644
+--- a/requirements/test/xpu.txt
++++ b/requirements/test/xpu.txt
+@@ -539,6 +539,7 @@ sacrebleu==2.6.0
+     # via lm-eval
+ safetensors==0.7.0
+     # via
++    #   -c requirements/common.txt
+     #   accelerate
+     #   timm
+     #   transformers
+diff --git a/tests/evals/gsm8k/configs/moe-refactor/DeepSeek-V4-Flash-deepgemm-mega-moe.yaml b/tests/evals/gsm8k/configs/moe-refactor/DeepSeek-V4-Flash-deepgemm-mega-moe.yaml
+new file mode 100644
+index 000000000000..742d9e40b8a0
+--- /dev/null
++++ b/tests/evals/gsm8k/configs/moe-refactor/DeepSeek-V4-Flash-deepgemm-mega-moe.yaml
+@@ -0,0 +1,5 @@
++model_name: "deepseek-ai/DeepSeek-V4-Flash"
++accuracy_threshold: 0.95
++num_questions: 1319
++num_fewshot: 5
++server_args: "--trust-remote-code --kv-cache-dtype fp8 --block-size 256 --enable-expert-parallel --tensor-parallel-size 2 --attention_config.use_fp4_indexer_cache=True --moe-backend deep_gemm_mega_moe --tokenizer-mode deepseek_v4 --tool-call-parser deepseek_v4 --enable-auto-tool-choice --reasoning-parser deepseek_v4 --speculative_config.method=mtp --speculative_config.num_speculative_tokens=2"
+diff --git a/tests/evals/gsm8k/configs/moe-refactor/config-b200.txt b/tests/evals/gsm8k/configs/moe-refactor/config-b200.txt
+index d8bb5aa28fc6..25106cd34f2f 100644
+--- a/tests/evals/gsm8k/configs/moe-refactor/config-b200.txt
++++ b/tests/evals/gsm8k/configs/moe-refactor/config-b200.txt
+@@ -16,3 +16,4 @@ Mixtral-8x7B-BF16-triton.yaml
+ Nemotron-Nano-30B-Fp8-ModelOpt-fi-trtllm.yaml
+ Nemotron-Nano-30B-NvFp4-ModelOpt-fi-cutlass.yaml
+ Nemotron-Nano-30B-NvFp4-ModelOpt-vllm-cutlass.yaml
++DeepSeek-V4-Flash-deepgemm-mega-moe.yaml

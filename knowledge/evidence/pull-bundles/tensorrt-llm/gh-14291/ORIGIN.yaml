@@ -1,0 +1,197 @@
+schema_version: 1
+source_key: NVIDIA/TensorRT-LLM#14291
+repo: NVIDIA/TensorRT-LLM
+repo_id: tensorrt-llm
+pr_number: 14291
+title: '[None][feat] Update the logic of FMHA JIT path'
+url: https://github.com/NVIDIA/TensorRT-LLM/pull/14291
+state: closed
+merged_at: '2026-05-20T11:55:50Z'
+base_ref_oid: 989671bea26f33a70da49ba131fbd9e3ab09633e
+head_ref_oid: dd462636aa7d31a166945967d532a368d36140c8
+captured_at: '2026-05-20T15:14:41.590916+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- fmha
+techniques:
+- async-copy
+- persistent-kernels
+hardware_features:
+- blackwell
+- tma
+kernel_types:
+- attention
+- softmax
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCausalP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCausalP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: modified
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCausalP32VarSeqQ128Kv128StaticContext.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCausalP32VarSeqQ128Kv128StaticContext.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: modified
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ32Kv128StaticSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ32Kv128StaticSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqSkipsSoftmaxQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqSkipsSoftmaxQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ32Kv128StaticSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ32Kv128StaticSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqSkipsSoftmaxQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqSkipsSoftmaxQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ128Kv128PersistentKeepsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ128Kv128PersistentKeepsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ16Kv128PersistentSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ16Kv128PersistentSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ32Kv128PersistentSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ32Kv128PersistentSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ32Kv128StaticSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ32Kv128StaticSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ8Kv128PersistentSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ8Kv128PersistentSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqSkipsSoftmaxQ128Kv128PersistentKeepsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqSkipsSoftmaxQ128Kv128PersistentKeepsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqSkipsSoftmaxQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqSkipsSoftmaxQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: added
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32MultiCtasKvCgaVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32MultiCtasKvCgaVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: modified
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32MultiCtasKvCgaVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32MultiCtasKvCgaVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: modified
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32MultiCtasKvVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32MultiCtasKvVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: modified
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: modified
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: modified
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ128Kv128StaticContext.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ128Kv128StaticContext.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: modified
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ16Kv128PersistentSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ16Kv128PersistentSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: modified
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: modified
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ8Kv128PersistentSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ8Kv128PersistentSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: modified
+    fetched: true
+  - source_path: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+    local_path: source-snapshot/cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+    ref: dd462636aa7d31a166945967d532a368d36140c8
+    status: modified
+    fetched: true
+  diff_fallback: github-files-api
+  diff_fallback_reason: 'gh: Sorry, the diff exceeded the maximum number of files
+    (300). Consider using ''List pull requests files'' API or locally cloning the
+    repository instead. (HTTP 406)'

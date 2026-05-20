@@ -1,0 +1,48 @@
+schema_version: 1
+source_key: vllm-project/vllm#43043
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 43043
+title: '[XPU] update xpu graph usage'
+url: https://github.com/vllm-project/vllm/pull/43043
+state: closed
+merged_at: '2026-05-19T15:09:08Z'
+base_ref_oid: fba010dd74e2f94e4f7223b164ec9097d1b8a6af
+head_ref_oid: 37e4a4e068ad77dd1c8d606675eab0fddd36e353
+captured_at: '2026-05-20T15:07:23.550632+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cuda
+techniques: []
+hardware_features: []
+kernel_types:
+- attention
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: vllm/distributed/device_communicators/xpu_communicator.py
+    local_path: source-snapshot/vllm/distributed/device_communicators/xpu_communicator.py
+    ref: 37e4a4e068ad77dd1c8d606675eab0fddd36e353
+    status: modified
+    fetched: true
+  - source_path: vllm/distributed/parallel_state.py
+    local_path: source-snapshot/vllm/distributed/parallel_state.py
+    ref: 37e4a4e068ad77dd1c8d606675eab0fddd36e353
+    status: modified
+    fetched: true
+  - source_path: vllm/platforms/xpu.py
+    local_path: source-snapshot/vllm/platforms/xpu.py
+    ref: 37e4a4e068ad77dd1c8d606675eab0fddd36e353
+    status: modified
+    fetched: true
+  - source_path: vllm/v1/attention/backends/flash_attn.py
+    local_path: source-snapshot/vllm/v1/attention/backends/flash_attn.py
+    ref: 37e4a4e068ad77dd1c8d606675eab0fddd36e353
+    status: modified
+    fetched: true

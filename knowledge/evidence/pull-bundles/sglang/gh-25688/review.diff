@@ -1,0 +1,33 @@
+diff --git a/python/sglang/srt/layers/moe/cutlass_moe.py b/python/sglang/srt/layers/moe/cutlass_moe.py
+index 3716fc6a688c..16dbc74c972c 100755
+--- a/python/sglang/srt/layers/moe/cutlass_moe.py
++++ b/python/sglang/srt/layers/moe/cutlass_moe.py
+@@ -359,6 +359,7 @@ def cutlass_moe_fp4(
+     topk_ids: torch.Tensor,
+     params: CutlassMoEParams,
+     apply_router_weight_on_input: bool = False,
++    no_combine: bool = False,
+ ):
+     """
+     MoE implementation for FP4 Inputs
+@@ -492,6 +493,8 @@ def cutlass_moe_fp4(
+     del int_fp4, int_blockscale
+     c2 = shuffle_rows(c2, c_map, (m_a * num_topk, params.hidden_size))
+     c2 = c2.view(m_a, num_topk, params.hidden_size)
++    if no_combine:
++        return c2.to(out_dtype)
+     if not apply_router_weight_on_input:
+         c2 = c2 * topk_weights.view(m_a, num_topk, 1).to(out_dtype)
+     return c2.sum(dim=1).to(out_dtype)
+diff --git a/python/sglang/srt/layers/quantization/modelopt_quant.py b/python/sglang/srt/layers/quantization/modelopt_quant.py
+index bab2e6f59d03..c0d9b300f822 100755
+--- a/python/sglang/srt/layers/quantization/modelopt_quant.py
++++ b/python/sglang/srt/layers/quantization/modelopt_quant.py
+@@ -2175,6 +2175,7 @@ def apply(
+             topk_ids=topk_ids,
+             params=layer.cutlass_moe_params,
+             apply_router_weight_on_input=moe_runner_config.apply_router_weight_on_input,
++            no_combine=moe_runner_config.no_combine,
+         ).to(x.dtype)
+         # Scale by routed_scaling_factor is fused into select_experts.
+         return StandardCombineInput(hidden_states=output)

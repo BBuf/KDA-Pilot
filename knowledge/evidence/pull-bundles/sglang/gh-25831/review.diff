@@ -1,0 +1,1670 @@
+diff --git a/python/sglang/test/kits/basic_api_contract_kit.py b/python/sglang/test/kits/basic_api_contract_kit.py
+new file mode 100644
+index 000000000000..7a5e0a7e90cf
+--- /dev/null
++++ b/python/sglang/test/kits/basic_api_contract_kit.py
+@@ -0,0 +1,87 @@
++"""Basic HTTP / SSE API contract sanity kit.
++
++Probes that catch the server failing at the protocol layer: endpoints
++missing, 5xx returned, response schema broken, or OpenAI-compatible
++routes drifting from the spec.
++
++Mix into any ``CustomTestCase`` subclass that exposes ``self.base_url``
++and ``self.process``. Override ``served_model_name`` if the OpenAI
++probes should pin a specific model id."""
++
++import requests
++
++_REQUEST_TIMEOUT = 60
++
++
++class BasicAPIContractMixin:
++    """Health endpoints + OpenAI /v1 surface probes."""
++
++    served_model_name: str = "default"
++
++    def test_health(self):
++        # Cheapest possible alive check; FastAPI route alone.
++        resp = requests.get(self.base_url + "/health", timeout=10)
++        self.assertEqual(resp.status_code, 200)
++
++    def test_health_generate(self):
++        # sglang's built-in minimal-forward sanity. 200 only if the
++        # scheduler can complete one prefill+decode end to end.
++        resp = requests.get(self.base_url + "/health_generate", timeout=60)
++        self.assertEqual(resp.status_code, 200)
++
++    def test_get_server_info(self):
++        resp = requests.get(self.base_url + "/get_server_info", timeout=10)
++        self.assertEqual(resp.status_code, 200)
++        info = resp.json()
++        # Must expose at least some scheduler/server-args bundle.
++        self.assertIsInstance(info, dict)
++        self.assertGreater(len(info), 0)
++
++    def test_get_model_info(self):
++        resp = requests.get(self.base_url + "/get_model_info", timeout=10)
++        self.assertEqual(resp.status_code, 200)
++        info = resp.json()
++        self.assertIn("model_path", info)
++        self.assertTrue(info["model_path"])
++
++    def test_openai_chat_completion(self):
++        resp = requests.post(
++            self.base_url + "/v1/chat/completions",
++            json={
++                "model": self.served_model_name,
++                "messages": [
++                    {"role": "user", "content": "Say hi in one word."},
++                ],
++                "temperature": 0.0,
++                "max_tokens": 16,
++            },
++            timeout=_REQUEST_TIMEOUT,
++        )
++        self.assertEqual(resp.status_code, 200, resp.text)
++        body = resp.json()
++        self.assertIn("choices", body)
++        self.assertGreater(len(body["choices"]), 0)
++        content = body["choices"][0]["message"]["content"]
++        self.assertIsInstance(content, str)
++        self.assertGreater(len(content), 0)
++        self.assertIn("usage", body)
++
++    def test_openai_completion(self):
++        resp = requests.post(
++            self.base_url + "/v1/completions",
++            json={
++                "model": self.served_model_name,
++                "prompt": "The capital of France is",
++                "temperature": 0.0,
++                "max_tokens": 16,
++            },
++            timeout=_REQUEST_TIMEOUT,
++        )
++        self.assertEqual(resp.status_code, 200, resp.text)
++        body = resp.json()
++        self.assertIn("choices", body)
++        self.assertGreater(len(body["choices"]), 0)
++        text = body["choices"][0]["text"]
++        self.assertIsInstance(text, str)
++        self.assertGreater(len(text), 0)
++        self.assertIn("usage", body)
+diff --git a/python/sglang/test/kits/basic_decode_correctness_kit.py b/python/sglang/test/kits/basic_decode_correctness_kit.py
+new file mode 100644
+index 000000000000..bada39017bfb
+--- /dev/null
++++ b/python/sglang/test/kits/basic_decode_correctness_kit.py
+@@ -0,0 +1,114 @@
++"""Basic decode correctness sanity kit.
++
++Probes that catch the model producing wrong output: weight load
++failure, sampling path bugs, KV / attention corruption, and cuda graph
++edge cases. Single-prompt smoke only -- dataset-driven accuracy gates
++belong to the consuming test class, not this kit.
++
++Mix into any ``CustomTestCase`` subclass that exposes ``self.base_url``
++and ``self.process``. Probes complete in well under a minute after
++warmup."""
++
++import requests
++
++_REQUEST_TIMEOUT = 120
++
++
++class BasicDecodeCorrectnessMixin:
++    """Cheap output-quality probes."""
++
++    sanity_max_new_tokens_short: int = 64
++    sanity_max_new_tokens_long: int = 128
++
++    def _decode_generate(self, prompt: str, max_new_tokens: int, stop=None) -> str:
++        sampling_params = {"temperature": 0.0, "max_new_tokens": max_new_tokens}
++        if stop is not None:
++            sampling_params["stop"] = stop
++        resp = requests.post(
++            self.base_url + "/generate",
++            json={"text": prompt, "sampling_params": sampling_params},
++            timeout=_REQUEST_TIMEOUT,
++        )
++        self.assertEqual(resp.status_code, 200)
++        return resp.json()["text"]
++
++    def test_capital_france(self):
++        out = self._decode_generate(
++            "Q: What is the capital of France?\nA:",
++            self.sanity_max_new_tokens_short,
++        )
++        self.assertIn("paris", out.lower())
++
++    def test_basic_math(self):
++        out = self._decode_generate(
++            "Q: What is 17 multiplied by 23? Reply with just the number.\nA:",
++            self.sanity_max_new_tokens_short,
++        )
++        self.assertIn("391", out)
++
++    def test_color_completion(self):
++        out = self._decode_generate(
++            "Q: The three primary colors are red, blue, and ___. "
++            "Fill in the blank.\nA:",
++            self.sanity_max_new_tokens_short,
++        )
++        self.assertIn("yellow", out.lower())
++
++    def test_ascii_ratio(self):
++        # Language-agnostic gibberish detector. Healthy English output is
++        # >90% printable ASCII; multilingual token salad / Unicode noise
++        # from broken weight load drops well below 50%.
++        out = self._decode_generate(
++            "Write a single sentence about a sunny day in the park.",
++            self.sanity_max_new_tokens_long,
++        )
++        printable = sum(1 for c in out if 32 <= ord(c) < 127 or c in "\n\t")
++        ratio = printable / max(len(out), 1)
++        self.assertGreater(
++            ratio,
++            0.85,
++            f"output looks like gibberish (printable ASCII ratio={ratio:.2f}): {out!r}",
++        )
++
++    def test_no_repetition_blowup(self):
++        # KV-cache / attn corruption often manifests as the model getting
++        # stuck looping the same n-gram.
++        out = self._decode_generate(
++            "Briefly explain what gravity is.",
++            self.sanity_max_new_tokens_long,
++        )
++        if len(out) >= 50:
++            windows = [out[i : i + 5] for i in range(len(out) - 5)]
++            most_common_count = max((windows.count(w) for w in set(windows)), default=0)
++            ratio = most_common_count / len(windows)
++            self.assertLess(
++                ratio,
++                0.25,
++                f"output appears to repeat heavily (top 5-gram ratio={ratio:.2f}): {out!r}",
++            )
++
++    def test_determinism_temp_zero(self):
++        # temp=0 must be byte-identical across runs. Stop on "\n" so we
++        # only compare the answer word; long continuations drift on
++        # near-tie tokens (EP MoE / EAGLE spec) and aren't the point.
++        prompt = "Q: What is the capital of France? Reply in one word.\nA:"
++        out1 = self._decode_generate(
++            prompt, self.sanity_max_new_tokens_short, stop=["\n"]
++        )
++        out2 = self._decode_generate(
++            prompt, self.sanity_max_new_tokens_short, stop=["\n"]
++        )
++        self.assertEqual(
++            out1.strip(),
++            out2.strip(),
++            f"temp=0 outputs diverged:\n  out1={out1!r}\n  out2={out2!r}",
++        )
++
++    def test_max_token_one(self):
++        # Degenerate spec step. cuda-graph capture path bugs that only
++        # fire on minimal-output requests.
++        out = self._decode_generate(
++            "Q: What is the capital of France? Just one word.\nA:",
++            max_new_tokens=1,
++        )
++        self.assertGreater(len(out), 0)
+diff --git a/python/sglang/test/kits/basic_scheduler_stress_kit.py b/python/sglang/test/kits/basic_scheduler_stress_kit.py
+new file mode 100644
+index 000000000000..d9dfbf2aca7a
+--- /dev/null
++++ b/python/sglang/test/kits/basic_scheduler_stress_kit.py
+@@ -0,0 +1,135 @@
++"""Basic scheduler / cache / streaming stress sanity kit.
++
++Probes that catch bugs which only fire under multi-request or large-
++prompt conditions: scheduler hangs, radix prefix-cache cross-
++contamination, chunked-prefill multi-chunk kernel crashes, and SSE
++streaming corruption.
++
++Mix into any ``CustomTestCase`` subclass that exposes ``self.base_url``
++and ``self.process``."""
++
++import json
++import threading
++
++import requests
++
++_REQUEST_TIMEOUT = 120
++
++# Shared prefix forces all concurrent requests through the same radix
++# match path; per-request suffix branches the tail so the model still
++# has to predict different tokens (otherwise outputs would be identical
++# and we'd be testing 1 request 8 times instead of 8 independent reqs).
++_CONCURRENT_PREFIX = "You are a helpful assistant. Answer with a single word.\n"
++_CONCURRENT_QA = [
++    ("Q: What is the capital of France?\nA:", "paris"),
++    ("Q: What is the capital of Germany?\nA:", "berlin"),
++    ("Q: What is the capital of Italy?\nA:", "rome"),
++    ("Q: What is the capital of Japan?\nA:", "tokyo"),
++    ("Q: What is the capital of Spain?\nA:", "madrid"),
++    ("Q: What is the capital of Egypt?\nA:", "cairo"),
++    ("Q: What is the capital of Russia?\nA:", "moscow"),
++    ("Q: What is the capital of Australia?\nA:", "canberra"),
++]
++
++
++class BasicSchedulerStressMixin:
++    """Streaming + concurrent + long-prompt path probes."""
++
++    sanity_max_new_tokens_short: int = 64
++
++    def _stress_generate(self, prompt: str, max_new_tokens: int) -> str:
++        resp = requests.post(
++            self.base_url + "/generate",
++            json={
++                "text": prompt,
++                "sampling_params": {
++                    "temperature": 0.0,
++                    "max_new_tokens": max_new_tokens,
++                },
++            },
++            timeout=_REQUEST_TIMEOUT,
++        )
++        self.assertEqual(resp.status_code, 200)
++        return resp.json()["text"]
++
++    def test_streaming_response(self):
++        # SSE streaming exercises a different return path than non-stream
++        # /generate. Catches token-by-token streaming corruption and SSE
++        # framing bugs without changing the model.
++        with requests.post(
++            self.base_url + "/generate",
++            json={
++                "text": "Q: What is the capital of France?\nA:",
++                "sampling_params": {
++                    "temperature": 0.0,
++                    "max_new_tokens": self.sanity_max_new_tokens_short,
++                },
++                "stream": True,
++            },
++            stream=True,
++            timeout=_REQUEST_TIMEOUT,
++        ) as resp:
++            self.assertEqual(resp.status_code, 200)
++            chunks_seen = 0
++            last_text = ""
++            for raw in resp.iter_lines(decode_unicode=True):
++                if not raw or not raw.startswith("data:"):
++                    continue
++                payload = raw[len("data:") :].strip()
++                if payload == "[DONE]":
++                    break
++                obj = json.loads(payload)
++                last_text = obj.get("text", last_text)
++                chunks_seen += 1
++            self.assertGreater(chunks_seen, 0)
++            self.assertIn("paris", last_text.lower())
++
++    def test_concurrent_requests(self):
++        # 8 parallel reqs share a system prefix but each has a distinct
++        # question suffix. Shared prefix exercises radix prefix caching
++        # across concurrent reqs; per-request suffix forces independent
++        # decode tails (different canonical answers). Catches concurrent
++        # scheduler hangs and prefix-cache cross-contamination.
++        results = [None] * len(_CONCURRENT_QA)
++
++        def worker(idx, suffix, expected):
++            try:
++                out = self._stress_generate(
++                    _CONCURRENT_PREFIX + suffix,
++                    self.sanity_max_new_tokens_short,
++                )
++                results[idx] = expected in out.lower()
++            except Exception:
++                results[idx] = False
++
++        threads = [
++            threading.Thread(target=worker, args=(i, suffix, expected))
++            for i, (suffix, expected) in enumerate(_CONCURRENT_QA)
++        ]
++        for t in threads:
++            t.start()
++        for t in threads:
++            t.join(timeout=_REQUEST_TIMEOUT)
++
++        passed = sum(1 for r in results if r)
++        # Tolerate one stochastic miss; gibberish would fail all 8.
++        self.assertGreaterEqual(
++            passed,
++            len(_CONCURRENT_QA) - 1,
++            f"concurrent answers correct: {passed}/{len(_CONCURRENT_QA)}; results={results}",
++        )
++
++    def test_long_prompt(self):
++        # ~8k-token filler drives the chunked-prefill path through
++        # multiple chunks. Catches DeepEP / large-prompt kernel crashes
++        # that only fire on multi-chunk prefill.
++        filler = "the quick brown fox jumps over the lazy dog. " * 800
++        out = self._stress_generate(
++            f"Read the following text and then answer.\n{filler}\n\n"
++            "Q: What is the capital of France?\nA:",
++            self.sanity_max_new_tokens_short,
++        )
++        # Long-prompt substring match is best-effort (model may get
++        # distracted); primary assertion is the 200 + non-empty inside
++        # _stress_generate.
++        self.assertGreater(len(out), 0)
+diff --git a/python/sglang/test/kits/server_sanity_kit.py b/python/sglang/test/kits/server_sanity_kit.py
+deleted file mode 100644
+index af9cf0167dd3..000000000000
+--- a/python/sglang/test/kits/server_sanity_kit.py
++++ /dev/null
+@@ -1,228 +0,0 @@
+-"""Black-box server sanity prompts: cheap checks that catch silent
+-correctness regressions (gibberish / repetition collapse / encoding),
+-streaming/concurrent path bugs, and endpoint health.
+-
+-Mix into any ``CustomTestCase`` subclass that exposes ``self.base_url``
+-and ``self.process``. Each test is independent and fast (≤ 5 s after
+-warmup); the whole kit completes in < 1 min."""
+-
+-import json
+-import threading
+-
+-import requests
+-
+-_REQUEST_TIMEOUT = 120
+-
+-# Shared prefix forces all concurrent requests through the same radix
+-# match path; per-request suffix branches the tail so the model still
+-# has to predict different tokens (otherwise outputs would be identical
+-# and we'd be testing 1 request 8 times instead of 8 independent reqs).
+-_CONCURRENT_PREFIX = "You are a helpful assistant. Answer with a single word.\n"
+-_CONCURRENT_QA = [
+-    ("Q: What is the capital of France?\nA:", "paris"),
+-    ("Q: What is the capital of Germany?\nA:", "berlin"),
+-    ("Q: What is the capital of Italy?\nA:", "rome"),
+-    ("Q: What is the capital of Japan?\nA:", "tokyo"),
+-    ("Q: What is the capital of Spain?\nA:", "madrid"),
+-    ("Q: What is the capital of Egypt?\nA:", "cairo"),
+-    ("Q: What is the capital of Russia?\nA:", "moscow"),
+-    ("Q: What is the capital of Australia?\nA:", "canberra"),
+-]
+-
+-
+-class ServerSanityMixin:
+-    """12 cheap black-box probes for silent-correctness / hang / endpoint
+-    regressions."""
+-
+-    sanity_max_new_tokens_short: int = 64
+-    sanity_max_new_tokens_long: int = 128
+-
+-    def _sanity_generate(self, prompt: str, max_new_tokens: int, stop=None) -> str:
+-        sampling_params = {
+-            "temperature": 0.0,
+-            "max_new_tokens": max_new_tokens,
+-        }
+-        if stop is not None:
+-            sampling_params["stop"] = stop
+-        resp = requests.post(
+-            self.base_url + "/generate",
+-            json={"text": prompt, "sampling_params": sampling_params},
+-            timeout=_REQUEST_TIMEOUT,
+-        )
+-        self.assertEqual(resp.status_code, 200)
+-        return resp.json()["text"]
+-
+-    def test_health(self):
+-        # Cheapest possible alive check; FastAPI route alone.
+-        resp = requests.get(self.base_url + "/health", timeout=10)
+-        self.assertEqual(resp.status_code, 200)
+-
+-    def test_health_generate(self):
+-        # sglang's built-in minimal-forward sanity. 200 only if the
+-        # scheduler can complete one prefill+decode end to end.
+-        resp = requests.get(self.base_url + "/health_generate", timeout=60)
+-        self.assertEqual(resp.status_code, 200)
+-
+-    def test_capital_france(self):
+-        out = self._sanity_generate(
+-            "Q: What is the capital of France?\nA:",
+-            self.sanity_max_new_tokens_short,
+-        )
+-        self.assertIn("paris", out.lower())
+-
+-    def test_basic_math(self):
+-        out = self._sanity_generate(
+-            "Q: What is 17 multiplied by 23? Reply with just the number.\nA:",
+-            self.sanity_max_new_tokens_short,
+-        )
+-        self.assertIn("391", out)
+-
+-    def test_color_completion(self):
+-        out = self._sanity_generate(
+-            "Q: The three primary colors are red, blue, and ___. "
+-            "Fill in the blank.\nA:",
+-            self.sanity_max_new_tokens_short,
+-        )
+-        self.assertIn("yellow", out.lower())
+-
+-    def test_ascii_ratio(self):
+-        # Language-agnostic gibberish detector. Healthy English output is
+-        # >90% printable ASCII; multilingual token salad / Unicode noise
+-        # from broken weight load drops well below 50%.
+-        out = self._sanity_generate(
+-            "Write a single sentence about a sunny day in the park.",
+-            self.sanity_max_new_tokens_long,
+-        )
+-        printable = sum(1 for c in out if 32 <= ord(c) < 127 or c in "\n\t")
+-        ratio = printable / max(len(out), 1)
+-        self.assertGreater(
+-            ratio,
+-            0.85,
+-            f"output looks like gibberish (printable ASCII ratio={ratio:.2f}): {out!r}",
+-        )
+-
+-    def test_no_repetition_blowup(self):
+-        # KV-cache / attn corruption often manifests as the model getting
+-        # stuck looping the same n-gram.
+-        out = self._sanity_generate(
+-            "Briefly explain what gravity is.",
+-            self.sanity_max_new_tokens_long,
+-        )
+-        if len(out) >= 50:
+-            windows = [out[i : i + 5] for i in range(len(out) - 5)]
+-            most_common_count = max((windows.count(w) for w in set(windows)), default=0)
+-            ratio = most_common_count / len(windows)
+-            self.assertLess(
+-                ratio,
+-                0.25,
+-                f"output appears to repeat heavily (top 5-gram ratio={ratio:.2f}): {out!r}",
+-            )
+-
+-    def test_max_token_one(self):
+-        # Degenerate spec step. cuda-graph capture path bugs that only
+-        # fire on minimal-output requests.
+-        out = self._sanity_generate(
+-            "Q: What is the capital of France? Just one word.\nA:",
+-            max_new_tokens=1,
+-        )
+-        self.assertGreater(len(out), 0)
+-
+-    def test_streaming_response(self):
+-        # SSE streaming exercises a different return path than non-stream
+-        # /generate. Catches token-by-token streaming corruption and SSE
+-        # framing bugs without changing the model.
+-        with requests.post(
+-            self.base_url + "/generate",
+-            json={
+-                "text": "Q: What is the capital of France?\nA:",
+-                "sampling_params": {
+-                    "temperature": 0.0,
+-                    "max_new_tokens": self.sanity_max_new_tokens_short,
+-                },
+-                "stream": True,
+-            },
+-            stream=True,
+-            timeout=_REQUEST_TIMEOUT,
+-        ) as resp:
+-            self.assertEqual(resp.status_code, 200)
+-            chunks_seen = 0
+-            last_text = ""
+-            for raw in resp.iter_lines(decode_unicode=True):
+-                if not raw or not raw.startswith("data:"):
+-                    continue
+-                payload = raw[len("data:") :].strip()
+-                if payload == "[DONE]":
+-                    break
+-                obj = json.loads(payload)
+-                last_text = obj.get("text", last_text)
+-                chunks_seen += 1
+-            self.assertGreater(chunks_seen, 0)
+-            self.assertIn("paris", last_text.lower())
+-
+-    def test_concurrent_requests(self):
+-        # 8 parallel reqs share a system prefix but each has a distinct
+-        # question suffix. Shared prefix exercises radix prefix caching
+-        # across concurrent reqs; per-request suffix forces independent
+-        # decode tails (different canonical answers). Catches concurrent
+-        # scheduler hangs and prefix-cache cross-contamination.
+-        results = [None] * len(_CONCURRENT_QA)
+-
+-        def worker(idx, suffix, expected):
+-            try:
+-                out = self._sanity_generate(
+-                    _CONCURRENT_PREFIX + suffix,
+-                    self.sanity_max_new_tokens_short,
+-                )
+-                results[idx] = expected in out.lower()
+-            except Exception:
+-                results[idx] = False
+-
+-        threads = [
+-            threading.Thread(target=worker, args=(i, suffix, expected))
+-            for i, (suffix, expected) in enumerate(_CONCURRENT_QA)
+-        ]
+-        for t in threads:
+-            t.start()
+-        for t in threads:
+-            t.join(timeout=_REQUEST_TIMEOUT)
+-
+-        passed = sum(1 for r in results if r)
+-        # Tolerate one stochastic miss; gibberish would fail all 8.
+-        self.assertGreaterEqual(
+-            passed,
+-            len(_CONCURRENT_QA) - 1,
+-            f"concurrent answers correct: {passed}/{len(_CONCURRENT_QA)}; results={results}",
+-        )
+-
+-    def test_long_prompt(self):
+-        # ~8k-token filler drives the chunked-prefill path through
+-        # multiple chunks. Catches DeepEP / large-prompt kernel crashes
+-        # that only fire on multi-chunk prefill.
+-        filler = "the quick brown fox jumps over the lazy dog. " * 800
+-        out = self._sanity_generate(
+-            f"Read the following text and then answer.\n{filler}\n\n"
+-            "Q: What is the capital of France?\nA:",
+-            self.sanity_max_new_tokens_short,
+-        )
+-        # Long-prompt substring match is best-effort (model may get
+-        # distracted); primary assertion is the 200 + non-empty inside
+-        # _sanity_generate.
+-        self.assertGreater(len(out), 0)
+-
+-    def test_determinism_temp_zero(self):
+-        # temp=0 must be byte-identical across runs. Stop on "\n" so we
+-        # only compare the answer word; long continuations drift on
+-        # near-tie tokens (EP MoE / EAGLE spec) and aren't the point.
+-        prompt = "Q: What is the capital of France? Reply in one word.\nA:"
+-        out1 = self._sanity_generate(
+-            prompt, self.sanity_max_new_tokens_short, stop=["\n"]
+-        )
+-        # Second call exercises cache-hit path.
+-        out2 = self._sanity_generate(
+-            prompt, self.sanity_max_new_tokens_short, stop=["\n"]
+-        )
+-        self.assertEqual(
+-            out1.strip(),
+-            out2.strip(),
+-            f"temp=0 outputs diverged:\n  out1={out1!r}\n  out2={out2!r}",
+-        )
+diff --git a/test/manual/dsv4/test_dsv4_flash_sanity_dp4.py b/test/manual/dsv4/test_dsv4_flash_sanity_dp4.py
+index c9641cde2b2f..9a4cad13417f 100644
+--- a/test/manual/dsv4/test_dsv4_flash_sanity_dp4.py
++++ b/test/manual/dsv4/test_dsv4_flash_sanity_dp4.py
+@@ -3,7 +3,7 @@
+ import unittest
+ 
+ from sglang.srt.utils import kill_process_tree
+-from sglang.test.kits.server_sanity_kit import ServerSanityMixin
++from sglang.test.kits.basic_decode_correctness_kit import BasicDecodeCorrectnessMixin
+ from sglang.test.test_utils import (
+     DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
+     DEFAULT_URL_FOR_TEST,
+@@ -46,7 +46,10 @@ def _launch(other_args, env_extra=None, timeout_mult=1):
+ ]
+ 
+ 
+-class TestDSV4FlashTP4DP4(ServerSanityMixin, CustomTestCase):
++class TestDSV4FlashTP4DP4(
++    BasicDecodeCorrectnessMixin,
++    CustomTestCase,
++):
+     """TP4 + DP4 + deepep + EAGLE MTP."""
+ 
+     @classmethod
+@@ -79,7 +82,10 @@ def tearDownClass(cls):
+         kill_process_tree(cls.process.pid)
+ 
+ 
+-class TestDSV4FlashTP4EP(ServerSanityMixin, CustomTestCase):
++class TestDSV4FlashTP4EP(
++    BasicDecodeCorrectnessMixin,
++    CustomTestCase,
++):
+     """TP attn + EP MoE (no DP attn) — exercises the DeepEP + TP-attn path."""
+ 
+     @classmethod
+@@ -112,7 +118,10 @@ def tearDownClass(cls):
+         kill_process_tree(cls.process.pid)
+ 
+ 
+-class TestDSV4FlashTP4DP4ChunkedPrefillLarge(ServerSanityMixin, CustomTestCase):
++class TestDSV4FlashTP4DP4ChunkedPrefillLarge(
++    BasicDecodeCorrectnessMixin,
++    CustomTestCase,
++):
+     """TP4 + DP4 with --chunked-prefill-size 16384 — large chunked prefill."""
+ 
+     @classmethod
+diff --git a/test/manual/dsv4/test_dsv4_flash_sanity_tp8.py b/test/manual/dsv4/test_dsv4_flash_sanity_tp8.py
+index 06930334a698..a4f16edb3a46 100644
+--- a/test/manual/dsv4/test_dsv4_flash_sanity_tp8.py
++++ b/test/manual/dsv4/test_dsv4_flash_sanity_tp8.py
+@@ -3,7 +3,7 @@
+ import unittest
+ 
+ from sglang.srt.utils import kill_process_tree
+-from sglang.test.kits.server_sanity_kit import ServerSanityMixin
++from sglang.test.kits.basic_decode_correctness_kit import BasicDecodeCorrectnessMixin
+ from sglang.test.test_utils import (
+     DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
+     DEFAULT_URL_FOR_TEST,
+@@ -19,7 +19,10 @@
+ }
+ 
+ 
+-class TestDSV4FlashTP8NoSpec(ServerSanityMixin, CustomTestCase):
++class TestDSV4FlashTP8NoSpec(
++    BasicDecodeCorrectnessMixin,
++    CustomTestCase,
++):
+     """TP8, no spec decoding."""
+ 
+     @classmethod
+diff --git a/test/manual/models/test_nvidia_nemotron_3_nano_archived.py b/test/manual/models/test_nvidia_nemotron_3_nano_archived.py
+index cc369abe7293..6d9ffe49c580 100644
+--- a/test/manual/models/test_nvidia_nemotron_3_nano_archived.py
++++ b/test/manual/models/test_nvidia_nemotron_3_nano_archived.py
+@@ -1,4 +1,4 @@
+-"""Archived test classes split out of test/registered/models/test_nvidia_nemotron_3_nano.py.
++"""Archived test classes split out of test/registered/models_e2e/test_nvidia_nemotron_3_nano.py.
+ 
+ Originally registered with `register_cuda_ci(...)`. Moved here as part of
+ the per-commit pruning effort to keep the code reachable manually.
+diff --git a/test/registered/core/test_deepseek_v3_deterministic.py b/test/registered/attention/test_deepseek_v3_deterministic.py
+similarity index 100%
+rename from test/registered/core/test_deepseek_v3_deterministic.py
+rename to test/registered/attention/test_deepseek_v3_deterministic.py
+diff --git a/test/registered/core/test_deterministic.py b/test/registered/attention/test_deterministic.py
+similarity index 100%
+rename from test/registered/core/test_deterministic.py
+rename to test/registered/attention/test_deterministic.py
+diff --git a/test/registered/core/test_gemma4_moe_deterministic.py b/test/registered/attention/test_gemma4_swa_triton_oob_regression.py
+similarity index 98%
+rename from test/registered/core/test_gemma4_moe_deterministic.py
+rename to test/registered/attention/test_gemma4_swa_triton_oob_regression.py
+index 972b79c38b6d..6245df7e5877 100644
+--- a/test/registered/core/test_gemma4_moe_deterministic.py
++++ b/test/registered/attention/test_gemma4_swa_triton_oob_regression.py
+@@ -38,7 +38,7 @@
+ MAX_TOKENS = 256
+ 
+ 
+-class TestGemma4MoeDeterministic(CustomTestCase):
++class TestGemma4SwaTritonOobRegression(CustomTestCase):
+     @classmethod
+     def setUpClass(cls):
+         cls.model = "google/gemma-4-26B-A4B-it"
+diff --git a/test/registered/core/test_qwen3_next_deterministic.py b/test/registered/attention/test_qwen3_next_deterministic.py
+similarity index 100%
+rename from test/registered/core/test_qwen3_next_deterministic.py
+rename to test/registered/attention/test_qwen3_next_deterministic.py
+diff --git a/test/registered/core/test_basic_sanity.py b/test/registered/core/test_basic_sanity.py
+new file mode 100644
+index 000000000000..a6d77cdd1bcf
+--- /dev/null
++++ b/test/registered/core/test_basic_sanity.py
+@@ -0,0 +1,74 @@
++"""Basic sanity: small-but-broad server smoke that downstream stages
++depend on. Three sanity kits, one shared server, covering protocol
++contract, decode correctness, and scheduler stress paths."""
++
++import unittest
++
++from sglang.srt.utils import kill_process_tree
++from sglang.test.ci.ci_register import register_amd_ci, register_cuda_ci
++from sglang.test.kits.basic_api_contract_kit import BasicAPIContractMixin
++from sglang.test.kits.basic_decode_correctness_kit import BasicDecodeCorrectnessMixin
++from sglang.test.kits.basic_scheduler_stress_kit import BasicSchedulerStressMixin
++from sglang.test.test_utils import (
++    DEFAULT_MODEL_NAME_FOR_TEST,
++    DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
++    DEFAULT_URL_FOR_TEST,
++    CustomTestCase,
++    popen_launch_server,
++)
++
++register_cuda_ci(est_time=120, stage="base-a", runner_config="1-gpu-small")
++register_amd_ci(est_time=120, suite="stage-a-test-1-gpu-small-amd")
++
++
++class TestBasicSanity(
++    BasicAPIContractMixin,
++    BasicDecodeCorrectnessMixin,
++    BasicSchedulerStressMixin,
++    CustomTestCase,
++):
++    served_model_name = DEFAULT_MODEL_NAME_FOR_TEST
++
++    @classmethod
++    def setUpClass(cls):
++        cls.base_url = DEFAULT_URL_FOR_TEST
++        cls.process = popen_launch_server(
++            DEFAULT_MODEL_NAME_FOR_TEST,
++            cls.base_url,
++            timeout=DEFAULT_TIMEOUT_FOR_SERVER_LAUNCH,
++            other_args=[
++                "--cuda-graph-max-bs",
++                "4",
++                "--mem-fraction-static",
++                "0.7",
++                "--enable-metrics",
++            ],
++        )
++
++    @classmethod
++    def tearDownClass(cls):
++        kill_process_tree(cls.process.pid)
++
++    def test_accuracy_floor(self):
++        # Stage-a-private accuracy guard: hellaswag via the frontend DSL
++        # bound to this server. Catches systematic regressions that pass
++        # every cheap probe in the mixed-in kits but tank multi-choice
++        # reasoning. Not part of any reusable mixin -- accuracy gating
++        # is the gate test's own responsibility.
++        import sglang as sgl
++        from sglang.test.test_programs import test_hellaswag_select
++
++        sgl.set_default_backend(sgl.RuntimeEndpoint(self.base_url))
++        try:
++            accuracy, _ = test_hellaswag_select()
++        finally:
++            sgl.set_default_backend(None)
++        self.assertGreater(
++            accuracy,
++            0.60,
++            f"hellaswag accuracy floor breached: {accuracy:.3f}",
++        )
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/test/registered/core/test_engine_child_pids.py b/test/registered/core/test_engine_child_pids.py
+index f4592c6db50c..16de9fe905a9 100644
+--- a/test/registered/core/test_engine_child_pids.py
++++ b/test/registered/core/test_engine_child_pids.py
+@@ -25,66 +25,55 @@
+ 
+ 
+ class TestEngineChildPids(CustomTestCase):
+-
+-    def test_get_all_child_pids_returns_live_pids(self):
+-        engine = sgl.Engine(
++    @classmethod
++    def setUpClass(cls):
++        cls.engine = sgl.Engine(
+             model_path=DEFAULT_SMALL_MODEL_NAME_FOR_TEST,
+             random_seed=42,
+         )
+-        try:
+-            pids = engine.get_all_child_pids()
+-
+-            self.assertIsInstance(pids, list)
+-            self.assertGreater(len(pids), 0, "Expected at least one child PID")
+-
+-            for pid in pids:
+-                self.assertIsInstance(pid, int)
+-                self.assertTrue(
+-                    psutil.pid_exists(pid),
+-                    f"PID {pid} does not correspond to a running process",
+-                )
+-
+-            current_proc = psutil.Process(os.getpid())
+-            child_pids = {c.pid for c in current_proc.children(recursive=True)}
+-            for pid in pids:
+-                self.assertIn(
+-                    pid,
+-                    child_pids,
+-                    f"PID {pid} is not a child of the current process",
+-                )
+-        finally:
+-            engine.shutdown()
++
++    @classmethod
++    def tearDownClass(cls):
++        cls.engine.shutdown()
++
++    def test_get_all_child_pids_returns_live_pids(self):
++        pids = self.engine.get_all_child_pids()
++
++        self.assertIsInstance(pids, list)
++        self.assertGreater(len(pids), 0, "Expected at least one child PID")
++
++        for pid in pids:
++            self.assertIsInstance(pid, int)
++            self.assertTrue(
++                psutil.pid_exists(pid),
++                f"PID {pid} does not correspond to a running process",
++            )
++
++        current_proc = psutil.Process(os.getpid())
++        child_pids = {c.pid for c in current_proc.children(recursive=True)}
++        for pid in pids:
++            self.assertIn(
++                pid,
++                child_pids,
++                f"PID {pid} is not a child of the current process",
++            )
+ 
+     def test_child_pids_include_scheduler_and_detokenizer(self):
+-        engine = sgl.Engine(
+-            model_path=DEFAULT_SMALL_MODEL_NAME_FOR_TEST,
+-            random_seed=42,
++        pids = self.engine.get_all_child_pids()
++        # dp_size=1 gives one scheduler + one detokenizer = at least 2 PIDs
++        self.assertGreaterEqual(
++            len(pids),
++            2,
++            "Expected at least 2 child PIDs (scheduler + detokenizer)",
+         )
+-        try:
+-            pids = engine.get_all_child_pids()
+-            # dp_size=1 gives one scheduler + one detokenizer = at least 2 PIDs
+-            self.assertGreaterEqual(
+-                len(pids),
+-                2,
+-                "Expected at least 2 child PIDs (scheduler + detokenizer)",
+-            )
+-        finally:
+-            engine.shutdown()
+ 
+     def test_child_pids_no_duplicates(self):
+-        engine = sgl.Engine(
+-            model_path=DEFAULT_SMALL_MODEL_NAME_FOR_TEST,
+-            random_seed=42,
++        pids = self.engine.get_all_child_pids()
++        self.assertEqual(
++            len(pids),
++            len(set(pids)),
++            f"Duplicate PIDs found: {pids}",
+         )
+-        try:
+-            pids = engine.get_all_child_pids()
+-            self.assertEqual(
+-                len(pids),
+-                len(set(pids)),
+-                f"Duplicate PIDs found: {pids}",
+-            )
+-        finally:
+-            engine.shutdown()
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/test/registered/core/test_hidden_states.py b/test/registered/core/test_hidden_states.py
+index de72a37ceca8..81dfc9f00e7f 100644
+--- a/test/registered/core/test_hidden_states.py
++++ b/test/registered/core/test_hidden_states.py
+@@ -19,29 +19,39 @@
+ 
+ 
+ class TestHiddenState(CustomTestCase):
+-    def test_return_hidden_states(self):
+-        prompts = ["Today is", "Today is a sunny day and I like"]
+-        model_path = DEFAULT_SMALL_MODEL_NAME_FOR_TEST
+-        tokenizer = AutoTokenizer.from_pretrained(model_path)
+-        input_ids = tokenizer(prompts).input_ids
+-
+-        sampling_params = {
+-            "temperature": 0,
+-            "max_new_tokens": 8,
+-        }
+-
+-        engine = sgl.Engine(
+-            model_path=model_path,
++    @classmethod
++    def setUpClass(cls):
++        cls.model_path = DEFAULT_SMALL_MODEL_NAME_FOR_TEST
++        cls.tokenizer = AutoTokenizer.from_pretrained(cls.model_path)
++        cls.prompts = ["Today is", "Today is a sunny day and I like"]
++        cls.input_ids = cls.tokenizer(cls.prompts).input_ids
++        cls.sampling_params = {"temperature": 0, "max_new_tokens": 8}
++        # mem_fraction_static=0.7 leaves headroom for the HF reference
++        # model that test_return_hidden_states loads on the same GPU.
++        cls.engine = sgl.Engine(
++            model_path=cls.model_path,
+             random_seed=42,
+             skip_tokenizer_init=True,
+             enable_return_hidden_states=True,
++            mem_fraction_static=0.7,
+         )
+-        outputs = engine.generate(
+-            input_ids=input_ids,
+-            sampling_params=sampling_params,
++
++    @classmethod
++    def tearDownClass(cls):
++        cls.engine.shutdown()
++
++    def setUp(self):
++        # Tests share one Engine; flush radix cache so each test sees a
++        # cold prefill (test_return_hidden_states asserts on the prefill
++        # hidden-state shape, which collapses to 0 on a full cache hit).
++        self.engine.flush_cache()
++
++    def test_return_hidden_states(self):
++        outputs = self.engine.generate(
++            input_ids=self.input_ids,
++            sampling_params=self.sampling_params,
+             return_hidden_states=True,
+         )
+-        engine.shutdown()
+ 
+         for output in outputs:
+             self.assertEqual(len(output["meta_info"]["hidden_states"]), 8)
+@@ -57,10 +67,10 @@ def test_return_hidden_states(self):
+         )
+ 
+         model = AutoModelForCausalLM.from_pretrained(
+-            model_path, torch_dtype=torch.bfloat16, device_map=get_device()
++            self.model_path, torch_dtype=torch.bfloat16, device_map=get_device()
+         )
+ 
+-        for input_id, output in zip(input_ids, outputs):
++        for input_id, output in zip(self.input_ids, outputs):
+             with torch.inference_mode():
+                 hf_out = model(
+                     torch.tensor(
+@@ -94,39 +104,22 @@ def test_return_hidden_states(self):
+             )
+ 
+     def test_repeatedly_changes_hidden_states(self):
+-        prompts = ["Today is", "Today is a sunny day and I like"]
+-        model_path = DEFAULT_SMALL_MODEL_NAME_FOR_TEST
+-        tokenizer = AutoTokenizer.from_pretrained(model_path)
+-        input_ids = tokenizer(prompts).input_ids
+-
+-        sampling_params = {
+-            "temperature": 0,
+-            "max_new_tokens": 8,
+-        }
+-
+-        engine = sgl.Engine(
+-            model_path=model_path,
+-            random_seed=42,
+-            skip_tokenizer_init=True,
+-            enable_return_hidden_states=True,
+-        )
+-        outputs_completion_first_round = engine.generate(
+-            input_ids=input_ids,
+-            sampling_params=sampling_params,
++        outputs_completion_first_round = self.engine.generate(
++            input_ids=self.input_ids,
++            sampling_params=self.sampling_params,
+             return_hidden_states=True,
+         )
+-        outputs_hidden_state = engine.generate(
+-            input_ids=input_ids,
+-            sampling_params=sampling_params,
++        outputs_hidden_state = self.engine.generate(
++            input_ids=self.input_ids,
++            sampling_params=self.sampling_params,
+             return_hidden_states=False,
+         )
+ 
+-        outputs_completion_last_round = engine.generate(
+-            input_ids=input_ids,
+-            sampling_params=sampling_params,
++        outputs_completion_last_round = self.engine.generate(
++            input_ids=self.input_ids,
++            sampling_params=self.sampling_params,
+             return_hidden_states=True,
+         )
+-        engine.shutdown()
+ 
+         for (
+             output_completion_first_round,
+diff --git a/test/registered/core/test_srt_endpoint.py b/test/registered/core/test_srt_endpoint.py
+index 749f50d0870e..64653004687e 100644
+--- a/test/registered/core/test_srt_endpoint.py
++++ b/test/registered/core/test_srt_endpoint.py
+@@ -95,18 +95,6 @@ def run_decode(
+         print(json.dumps(response_json, indent=2))
+         print("=" * 100)
+ 
+-    def test_simple_decode(self):
+-        self.run_decode()
+-
+-    def test_simple_decode_batch(self):
+-        self.run_decode(batch=True)
+-
+-    def test_parallel_sample(self):
+-        self.run_decode(n=3)
+-
+-    def test_parallel_sample_stream(self):
+-        self.run_decode(n=3, stream=True)
+-
+     def test_logprob(self):
+         self.run_decode(
+             return_logprob=True,
+diff --git a/test/registered/core/test_srt_engine.py b/test/registered/core/test_srt_engine.py
+index c849be7b0446..f5c6ecfc8eac 100644
+--- a/test/registered/core/test_srt_engine.py
++++ b/test/registered/core/test_srt_engine.py
+@@ -6,7 +6,6 @@
+ import asyncio
+ import json
+ import unittest
+-from types import SimpleNamespace
+ 
+ import torch
+ 
+@@ -15,7 +14,6 @@
+ from sglang.srt.server_args import ServerArgs
+ from sglang.srt.utils.hf_transformers_utils import get_tokenizer
+ from sglang.test.ci.ci_register import register_amd_ci, register_cuda_ci
+-from sglang.test.few_shot_gsm8k_engine import run_eval
+ from sglang.test.test_utils import (
+     DEFAULT_SMALL_EMBEDDING_MODEL_NAME_FOR_TEST,
+     DEFAULT_SMALL_MODEL_NAME_FOR_TEST,
+@@ -89,68 +87,6 @@ def test_3_engine_token_ids_consistency(self):
+         print(out2)
+         self.assertEqual(out1, out2)
+ 
+-    def test_4_sync_async_stream_combination(self):
+-        prompt = "AI safety is"
+-        sampling_params = {"temperature": 0.8, "top_p": 0.95}
+-
+-        # Create an LLM.
+-        llm = sgl.Engine(
+-            model_path=DEFAULT_SMALL_MODEL_NAME_FOR_TEST,
+-        )
+-
+-        if True:
+-            # 1. sync + non streaming
+-            print("\n\n==== 1. sync + non streaming ====")
+-            output = llm.generate(prompt, sampling_params)
+-            print(output["text"])
+-
+-            # 2. sync + streaming
+-            print("\n\n==== 2. sync + streaming ====")
+-            output_generator = llm.generate(prompt, sampling_params, stream=True)
+-            offset = 0
+-            for output in output_generator:
+-                print(output["text"][offset:], end="", flush=True)
+-                offset = len(output["text"])
+-            print()
+-
+-        if True:
+-            loop = asyncio.get_event_loop()
+-            # 3. async + non_streaming
+-            print("\n\n==== 3. async + non streaming ====")
+-            output = loop.run_until_complete(
+-                llm.async_generate(prompt, sampling_params)
+-            )
+-            print(output["text"])
+-
+-            # 4. async + streaming
+-            async def async_streaming(engine):
+-                generator = await engine.async_generate(
+-                    prompt, sampling_params, stream=True
+-                )
+-
+-                offset = 0
+-                async for output in generator:
+-                    print(output["text"][offset:], end="", flush=True)
+-                    offset = len(output["text"])
+-                print()
+-
+-            print("\n\n==== 4. async + streaming ====")
+-            loop.run_until_complete(async_streaming(llm))
+-
+-        llm.shutdown()
+-
+-    def test_5_gsm8k(self):
+-
+-        args = SimpleNamespace(
+-            model_path=DEFAULT_SMALL_MODEL_NAME_FOR_TEST,
+-            local_data_path=None,
+-            num_shots=5,
+-            num_questions=1400,
+-        )
+-
+-        metrics = run_eval(args)
+-        self.assertGreater(metrics["accuracy"], 0.33)
+-
+     def test_6_engine_cpu_offload(self):
+         prompt = "Today is a sunny day and I like"
+         model_path = DEFAULT_SMALL_MODEL_NAME_FOR_TEST
+diff --git a/test/registered/debug_utils/test_cuda_coredump.py b/test/registered/debug_utils/test_cuda_coredump.py
+deleted file mode 100644
+index d397dbe2351b..000000000000
+--- a/test/registered/debug_utils/test_cuda_coredump.py
++++ /dev/null
+@@ -1,30 +0,0 @@
+-"""Intentionally trigger a CUDA illegal memory access
+-to verify the coredump collection pipeline works end-to-end.
+-
+-Manual use:  python3 test/registered/debug_utils/test_cuda_coredump.py
+-"""
+-
+-import unittest
+-
+-import torch
+-
+-from sglang.test.ci.ci_register import register_cuda_ci
+-
+-register_cuda_ci(
+-    est_time=10,
+-    stage="base-a",
+-    runner_config="1-gpu-small",
+-    disabled="Manual only: triggers intentional CUDA crash for coredump verification",
+-)
+-
+-
+-class TestCudaCoredump(unittest.TestCase):
+-    def test_trigger_illegal_memory_access(self):
+-        x = torch.zeros(10, device="cuda")
+-        y = torch.arange(10, device="cuda")
+-        x[y * y] = 1
+-        torch.cuda.synchronize()
+-
+-
+-if __name__ == "__main__":
+-    unittest.main()
+diff --git a/test/registered/language/test_srt_backend.py b/test/registered/language/test_srt_backend.py
+deleted file mode 100644
+index f39bef459f37..000000000000
+--- a/test/registered/language/test_srt_backend.py
++++ /dev/null
+@@ -1,94 +0,0 @@
+-import unittest
+-
+-import sglang as sgl
+-from sglang.test.ci.ci_register import register_amd_ci, register_cuda_ci
+-from sglang.test.test_programs import (
+-    test_decode_int,
+-    test_decode_json_regex,
+-    test_dtype_gen,
+-    test_expert_answer,
+-    test_few_shot_qa,
+-    test_gen_min_new_tokens,
+-    test_hellaswag_select,
+-    test_mt_bench,
+-    test_parallel_decoding,
+-    test_regex,
+-    test_select,
+-    test_stream,
+-    test_stream_logprobs,
+-    test_tool_use,
+-)
+-from sglang.test.test_utils import DEFAULT_MODEL_NAME_FOR_TEST, CustomTestCase
+-
+-register_cuda_ci(est_time=79, stage="base-a", runner_config="1-gpu-small")
+-register_amd_ci(est_time=120, suite="stage-a-test-1-gpu-small-amd")
+-
+-
+-class TestSRTBackend(CustomTestCase):
+-    backend = None
+-
+-    @classmethod
+-    def setUpClass(cls):
+-        cls.backend = sgl.Runtime(
+-            model_path=DEFAULT_MODEL_NAME_FOR_TEST,
+-            cuda_graph_max_bs=4,
+-            mem_fraction_static=0.7,
+-            incremental_streaming_output=True,
+-            log_level="info",
+-            enable_metrics=True,
+-        )
+-        sgl.set_default_backend(cls.backend)
+-
+-    @classmethod
+-    def tearDownClass(cls):
+-        cls.backend.shutdown()
+-
+-    def test_few_shot_qa(self):
+-        test_few_shot_qa()
+-
+-    def test_mt_bench(self):
+-        test_mt_bench()
+-
+-    def test_select(self):
+-        test_select(check_answer=False)
+-
+-    def test_decode_int(self):
+-        test_decode_int()
+-
+-    @unittest.skip("Skip this flaky test.")
+-    def test_decode_json_regex(self):
+-        test_decode_json_regex()
+-
+-    def test_expert_answer(self):
+-        test_expert_answer()
+-
+-    def test_tool_use(self):
+-        test_tool_use()
+-
+-    def test_parallel_decoding(self):
+-        test_parallel_decoding()
+-
+-    def test_stream(self):
+-        test_stream()
+-
+-    def test_stream_logprobs(self):
+-        test_stream_logprobs()
+-
+-    def test_regex(self):
+-        test_regex()
+-
+-    def test_dtype_gen(self):
+-        test_dtype_gen()
+-
+-    def test_hellaswag_select(self):
+-        # Run twice to capture more bugs
+-        for _ in range(2):
+-            accuracy, latency = test_hellaswag_select()
+-            self.assertGreater(accuracy, 0.60)
+-
+-    def test_gen_min_new_tokens(self):
+-        test_gen_min_new_tokens()
+-
+-
+-if __name__ == "__main__":
+-    unittest.main()
+diff --git a/test/registered/dsv4/test_deepseek_v4_flash_fp4_b200.py b/test/registered/models_e2e/test_deepseek_v4_flash_fp4_b200.py
+similarity index 82%
+rename from test/registered/dsv4/test_deepseek_v4_flash_fp4_b200.py
+rename to test/registered/models_e2e/test_deepseek_v4_flash_fp4_b200.py
+index 60d7bab43c8a..4fa3fc7b6729 100644
+--- a/test/registered/dsv4/test_deepseek_v4_flash_fp4_b200.py
++++ b/test/registered/models_e2e/test_deepseek_v4_flash_fp4_b200.py
+@@ -8,12 +8,11 @@
+ """
+ 
+ import unittest
+-from types import SimpleNamespace
+ 
+ from sglang.srt.utils import kill_process_tree
+ from sglang.test.ci.ci_register import register_cuda_ci
+-from sglang.test.kits.server_sanity_kit import ServerSanityMixin
+-from sglang.test.run_eval import run_eval
++from sglang.test.kits.basic_decode_correctness_kit import BasicDecodeCorrectnessMixin
++from sglang.test.kits.eval_accuracy_kit import GSM8KMixin
+ from sglang.test.test_utils import (
+     DEFAULT_URL_FOR_TEST,
+     CustomTestCase,
+@@ -32,24 +31,15 @@
+ }
+ 
+ 
+-def _gsm8k_check(test_case):
+-    args = SimpleNamespace(
+-        base_url=test_case.base_url,
+-        model=test_case.model,
+-        eval_name="gsm8k",
+-        api="completion",
+-        max_tokens=512,
+-        num_examples=200,
+-        num_threads=128,
+-    )
+-    metrics = run_eval(args)
+-    print(f"[{type(test_case).__name__}] GSM8K {metrics=}")
+-    test_case.assertGreater(metrics["score"], 0.93)
+-
+-
+-class TestDSV4FlashFP4B200(ServerSanityMixin, CustomTestCase):
++class TestDSV4FlashFP4B200(
++    BasicDecodeCorrectnessMixin,
++    GSM8KMixin,
++    CustomTestCase,
++):
+     """LowLatency recipe: TP=4, FP4 (mxfp4), EAGLE spec decoding."""
+ 
++    gsm8k_accuracy_thres = 0.93
++
+     @classmethod
+     def setUpClass(cls):
+         cls.model = try_cached_model(MODEL)
+@@ -83,13 +73,16 @@ def tearDownClass(cls):
+         if hasattr(cls, "process") and cls.process:
+             kill_process_tree(cls.process.pid)
+ 
+-    def test_gsm8k(self):
+-        _gsm8k_check(self)
+-
+ 
+-class TestDSV4FlashFP4B200Balanced(ServerSanityMixin, CustomTestCase):
++class TestDSV4FlashFP4B200Balanced(
++    BasicDecodeCorrectnessMixin,
++    GSM8KMixin,
++    CustomTestCase,
++):
+     """Balanced recipe: TP=4, DP=4, DeepEP, EAGLE (1-step spec)."""
+ 
++    gsm8k_accuracy_thres = 0.93
++
+     @classmethod
+     def setUpClass(cls):
+         cls.model = try_cached_model(MODEL)
+@@ -126,13 +119,16 @@ def tearDownClass(cls):
+         if hasattr(cls, "process") and cls.process:
+             kill_process_tree(cls.process.pid)
+ 
+-    def test_gsm8k(self):
+-        _gsm8k_check(self)
+-
+ 
+-class TestDSV4FlashFP4B200Balanced_CP(ServerSanityMixin, CustomTestCase):
++class TestDSV4FlashFP4B200Balanced_CP(
++    BasicDecodeCorrectnessMixin,
++    GSM8KMixin,
++    CustomTestCase,
++):
+     """Balanced recipe: TP=4, DP=4, DeepEP, EAGLE (1-step spec)."""
+ 
++    gsm8k_accuracy_thres = 0.93
++
+     @classmethod
+     def setUpClass(cls):
+         cls.model = try_cached_model(MODEL)
+@@ -172,9 +168,6 @@ def tearDownClass(cls):
+         if hasattr(cls, "process") and cls.process:
+             kill_process_tree(cls.process.pid)
+ 
+-    def test_gsm8k(self):
+-        _gsm8k_check(self)
+-
+ 
+ if __name__ == "__main__":
+     unittest.main()
+diff --git a/test/registered/dsv4/test_deepseek_v4_flash_fp4_h200.py b/test/registered/models_e2e/test_deepseek_v4_flash_fp4_h200.py
+similarity index 75%
+rename from test/registered/dsv4/test_deepseek_v4_flash_fp4_h200.py
+rename to test/registered/models_e2e/test_deepseek_v4_flash_fp4_h200.py
+index a7ec88931e07..674a48668766 100644
+--- a/test/registered/dsv4/test_deepseek_v4_flash_fp4_h200.py
++++ b/test/registered/models_e2e/test_deepseek_v4_flash_fp4_h200.py
+@@ -8,12 +8,11 @@
+ """
+ 
+ import unittest
+-from types import SimpleNamespace
+ 
+ from sglang.srt.utils import kill_process_tree
+ from sglang.test.ci.ci_register import register_cuda_ci
+-from sglang.test.kits.server_sanity_kit import ServerSanityMixin
+-from sglang.test.run_eval import run_eval
++from sglang.test.kits.basic_decode_correctness_kit import BasicDecodeCorrectnessMixin
++from sglang.test.kits.eval_accuracy_kit import GSM8KMixin
+ from sglang.test.test_utils import (
+     DEFAULT_URL_FOR_TEST,
+     CustomTestCase,
+@@ -41,9 +40,15 @@ def _flashinfer_has_sm90_cutlass_mxfp4() -> bool:
+ DEEPEP_CONFIG = '{"normal_dispatch":{"num_sms":96},"normal_combine":{"num_sms":96}}'
+ 
+ 
+-class TestDSV4FlashFP4H200(ServerSanityMixin, CustomTestCase):
++class TestDSV4FlashFP4H200(
++    BasicDecodeCorrectnessMixin,
++    GSM8KMixin,
++    CustomTestCase,
++):
+     """LowLatency recipe: TP=4, Marlin FP4, EAGLE spec decoding."""
+ 
++    gsm8k_accuracy_thres = 0.93
++
+     @classmethod
+     def setUpClass(cls):
+         cls.model = try_cached_model(MODEL)
+@@ -76,26 +81,16 @@ def tearDownClass(cls):
+         if hasattr(cls, "process") and cls.process:
+             kill_process_tree(cls.process.pid)
+ 
+-    def test_gsm8k(self):
+-        args = SimpleNamespace(
+-            base_url=self.base_url,
+-            model=self.model,
+-            eval_name="gsm8k",
+-            api="completion",
+-            max_tokens=512,
+-            num_examples=200,
+-            num_threads=128,
+-        )
+-        metrics = run_eval(args)
+-        print(f"[DSV4 Flash FP4 Marlin H200] GSM8K {metrics=}")
+-        self.assertGreater(metrics["score"], 0.93)
+-
+ 
+ @unittest.skipUnless(
+     _flashinfer_has_sm90_cutlass_mxfp4(),
+     "FlashInfer build lacks SM90 mixed-input MXFP4 helpers (PR #3084, >= 0.6.11)",
+ )
+-class TestDSV4FlashFP4H200FlashInferCutlass(ServerSanityMixin, CustomTestCase):
++class TestDSV4FlashFP4H200FlashInferCutlass(
++    BasicDecodeCorrectnessMixin,
++    GSM8KMixin,
++    CustomTestCase,
++):
+     """FlashInfer SM90 mixed-input cutlass MXFP4 backend (this PR): TP=4 + EAGLE.
+ 
+     Mirrors :class:`TestDSV4FlashFP4H200` but swaps `--moe-runner-backend marlin`
+@@ -103,6 +98,8 @@ class TestDSV4FlashFP4H200FlashInferCutlass(ServerSanityMixin, CustomTestCase):
+     #3084 end-to-end on a real DSv4-Flash checkpoint.
+     """
+ 
++    gsm8k_accuracy_thres = 0.93
++
+     @classmethod
+     def setUpClass(cls):
+         cls.model = try_cached_model(MODEL)
+@@ -133,20 +130,6 @@ def tearDownClass(cls):
+         if hasattr(cls, "process") and cls.process:
+             kill_process_tree(cls.process.pid)
+ 
+-    def test_gsm8k(self):
+-        args = SimpleNamespace(
+-            base_url=self.base_url,
+-            model=self.model,
+-            eval_name="gsm8k",
+-            api="completion",
+-            max_tokens=512,
+-            num_examples=200,
+-            num_threads=128,
+-        )
+-        metrics = run_eval(args)
+-        print(f"[DSV4 Flash FP4 FlashInfer Cutlass H200] GSM8K {metrics=}")
+-        self.assertGreater(metrics["score"], 0.93)
+-
+ 
+ if __name__ == "__main__":
+     unittest.main()
+diff --git a/test/registered/dsv4/test_deepseek_v4_flash_fp4_megamoe_b200.py b/test/registered/models_e2e/test_deepseek_v4_flash_fp4_megamoe_b200.py
+similarity index 79%
+rename from test/registered/dsv4/test_deepseek_v4_flash_fp4_megamoe_b200.py
+rename to test/registered/models_e2e/test_deepseek_v4_flash_fp4_megamoe_b200.py
+index baab29a2a483..e66a852a4f7a 100644
+--- a/test/registered/dsv4/test_deepseek_v4_flash_fp4_megamoe_b200.py
++++ b/test/registered/models_e2e/test_deepseek_v4_flash_fp4_megamoe_b200.py
+@@ -8,12 +8,11 @@
+ """
+ 
+ import unittest
+-from types import SimpleNamespace
+ 
+ from sglang.srt.utils import kill_process_tree
+ from sglang.test.ci.ci_register import register_cuda_ci
+-from sglang.test.kits.server_sanity_kit import ServerSanityMixin
+-from sglang.test.run_eval import run_eval
++from sglang.test.kits.basic_decode_correctness_kit import BasicDecodeCorrectnessMixin
++from sglang.test.kits.eval_accuracy_kit import GSM8KMixin
+ from sglang.test.test_utils import (
+     DEFAULT_URL_FOR_TEST,
+     CustomTestCase,
+@@ -39,24 +38,15 @@
+ }
+ 
+ 
+-def _gsm8k_check(test_case):
+-    args = SimpleNamespace(
+-        base_url=test_case.base_url,
+-        model=test_case.model,
+-        eval_name="gsm8k",
+-        api="completion",
+-        max_tokens=512,
+-        num_examples=200,
+-        num_threads=128,
+-    )
+-    metrics = run_eval(args)
+-    print(f"[{type(test_case).__name__}] GSM8K {metrics=}")
+-    test_case.assertGreater(metrics["score"], 0.93)
+-
+-
+-class TestDSV4FlashFP4B200W4A8MegaMoE(ServerSanityMixin, CustomTestCase):
++class TestDSV4FlashFP4B200W4A8MegaMoE(
++    BasicDecodeCorrectnessMixin,
++    GSM8KMixin,
++    CustomTestCase,
++):
+     """Balanced recipe: TP=4, DP=4, MegaMoE."""
+ 
++    gsm8k_accuracy_thres = 0.93
++
+     @classmethod
+     def setUpClass(cls):
+         cls.model = try_cached_model(MODEL)
+@@ -91,13 +81,16 @@ def tearDownClass(cls):
+         if hasattr(cls, "process") and cls.process:
+             kill_process_tree(cls.process.pid)
+ 
+-    def test_gsm8k(self):
+-        _gsm8k_check(self)
+ 
+-
+-class TestDSV4FlashFP4B200W4A4MegaMoE(ServerSanityMixin, CustomTestCase):
++class TestDSV4FlashFP4B200W4A4MegaMoE(
++    BasicDecodeCorrectnessMixin,
++    GSM8KMixin,
++    CustomTestCase,
++):
+     """Balanced recipe: TP=4, DP=4, MegaMoE."""
+ 
++    gsm8k_accuracy_thres = 0.93
++
+     @classmethod
+     def setUpClass(cls):
+         cls.model = try_cached_model(MODEL)
+@@ -132,9 +125,6 @@ def tearDownClass(cls):
+         if hasattr(cls, "process") and cls.process:
+             kill_process_tree(cls.process.pid)
+ 
+-    def test_gsm8k(self):
+-        _gsm8k_check(self)
+-
+ 
+ if __name__ == "__main__":
+     unittest.main()
+diff --git a/test/registered/dsv4/test_deepseek_v4_flash_fp8_h200.py b/test/registered/models_e2e/test_deepseek_v4_flash_fp8_h200.py
+similarity index 78%
+rename from test/registered/dsv4/test_deepseek_v4_flash_fp8_h200.py
+rename to test/registered/models_e2e/test_deepseek_v4_flash_fp8_h200.py
+index 3fc82e4c8c00..b2bca535f0b7 100644
+--- a/test/registered/dsv4/test_deepseek_v4_flash_fp8_h200.py
++++ b/test/registered/models_e2e/test_deepseek_v4_flash_fp8_h200.py
+@@ -9,12 +9,11 @@
+ """
+ 
+ import unittest
+-from types import SimpleNamespace
+ 
+ from sglang.srt.utils import kill_process_tree
+ from sglang.test.ci.ci_register import register_cuda_ci
+-from sglang.test.kits.server_sanity_kit import ServerSanityMixin
+-from sglang.test.run_eval import run_eval
++from sglang.test.kits.basic_decode_correctness_kit import BasicDecodeCorrectnessMixin
++from sglang.test.kits.eval_accuracy_kit import GSM8KMixin
+ from sglang.test.test_utils import (
+     DEFAULT_URL_FOR_TEST,
+     CustomTestCase,
+@@ -29,9 +28,15 @@
+ DEEPEP_CONFIG = '{"normal_dispatch":{"num_sms":96},"normal_combine":{"num_sms":96}}'
+ 
+ 
+-class TestDSV4FlashFP8H200(ServerSanityMixin, CustomTestCase):
++class TestDSV4FlashFP8H200(
++    BasicDecodeCorrectnessMixin,
++    GSM8KMixin,
++    CustomTestCase,
++):
+     """LowLatency recipe: TP=4, Marlin FP4, EAGLE spec decoding."""
+ 
++    gsm8k_accuracy_thres = 0.93
++
+     @classmethod
+     def setUpClass(cls):
+         cls.model = try_cached_model(MODEL_FP8)
+@@ -77,20 +82,6 @@ def tearDownClass(cls):
+         if hasattr(cls, "process") and cls.process:
+             kill_process_tree(cls.process.pid)
+ 
+-    def test_gsm8k(self):
+-        args = SimpleNamespace(
+-            base_url=self.base_url,
+-            model=self.model,
+-            eval_name="gsm8k",
+-            api="completion",
+-            max_tokens=512,
+-            num_examples=200,
+-            num_threads=128,
+-        )
+-        metrics = run_eval(args)
+-        print(f"[DSV4 Flash FP4 Marlin H200] GSM8K {metrics=}")
+-        self.assertGreater(metrics["score"], 0.93)
+-
+ 
+ if __name__ == "__main__":
+     unittest.main()
+diff --git a/test/registered/dsa_models_e2e/test_dsa_dsv32_dp_mtp.py b/test/registered/models_e2e/test_dsa_dsv32_dp_mtp.py
+similarity index 100%
+rename from test/registered/dsa_models_e2e/test_dsa_dsv32_dp_mtp.py
+rename to test/registered/models_e2e/test_dsa_dsv32_dp_mtp.py
+diff --git a/test/registered/dsa_models_e2e/test_dsa_dsv32_tp_mtp.py b/test/registered/models_e2e/test_dsa_dsv32_tp_mtp.py
+similarity index 100%
+rename from test/registered/dsa_models_e2e/test_dsa_dsv32_tp_mtp.py
+rename to test/registered/models_e2e/test_dsa_dsv32_tp_mtp.py
+diff --git a/test/registered/dsa_models_e2e/test_dsa_glm5_dp_mtp.py b/test/registered/models_e2e/test_dsa_glm5_dp_mtp.py
+similarity index 100%
+rename from test/registered/dsa_models_e2e/test_dsa_glm5_dp_mtp.py
+rename to test/registered/models_e2e/test_dsa_glm5_dp_mtp.py
+diff --git a/test/registered/dsa_models_e2e/test_dsa_glm5_tp_mtp.py b/test/registered/models_e2e/test_dsa_glm5_tp_mtp.py
+similarity index 100%
+rename from test/registered/dsa_models_e2e/test_dsa_glm5_tp_mtp.py
+rename to test/registered/models_e2e/test_dsa_glm5_tp_mtp.py
+diff --git a/test/registered/models/test_dummy_grok_models.py b/test/registered/models_e2e/test_dummy_grok_models.py
+similarity index 100%
+rename from test/registered/models/test_dummy_grok_models.py
+rename to test/registered/models_e2e/test_dummy_grok_models.py
+diff --git a/test/registered/models/test_gemma4_fp8_per_expert_loading.py b/test/registered/models_e2e/test_gemma4_fp8_per_expert_loading.py
+similarity index 100%
+rename from test/registered/models/test_gemma4_fp8_per_expert_loading.py
+rename to test/registered/models_e2e/test_gemma4_fp8_per_expert_loading.py
+diff --git a/test/registered/core/test_gpt_oss_sm120.py b/test/registered/models_e2e/test_gpt_oss_sm120.py
+similarity index 100%
+rename from test/registered/core/test_gpt_oss_sm120.py
+rename to test/registered/models_e2e/test_gpt_oss_sm120.py
+diff --git a/test/registered/models/test_kimi_linear_models.py b/test/registered/models_e2e/test_kimi_linear_models.py
+similarity index 100%
+rename from test/registered/models/test_kimi_linear_models.py
+rename to test/registered/models_e2e/test_kimi_linear_models.py
+diff --git a/test/registered/models/test_ministral3_models.py b/test/registered/models_e2e/test_ministral3_models.py
+similarity index 100%
+rename from test/registered/models/test_ministral3_models.py
+rename to test/registered/models_e2e/test_ministral3_models.py
+diff --git a/test/registered/models/test_ministral4_models.py b/test/registered/models_e2e/test_ministral4_models.py
+similarity index 100%
+rename from test/registered/models/test_ministral4_models.py
+rename to test/registered/models_e2e/test_ministral4_models.py
+diff --git a/test/registered/models/test_nvidia_nemotron_3_nano.py b/test/registered/models_e2e/test_nvidia_nemotron_3_nano.py
+similarity index 100%
+rename from test/registered/models/test_nvidia_nemotron_3_nano.py
+rename to test/registered/models_e2e/test_nvidia_nemotron_3_nano.py
+diff --git a/test/registered/models/test_qwen3_next_models_fp4.py b/test/registered/models_e2e/test_qwen3_next_models_fp4.py
+similarity index 100%
+rename from test/registered/models/test_qwen3_next_models_fp4.py
+rename to test/registered/models_e2e/test_qwen3_next_models_fp4.py
+diff --git a/test/registered/core/test_cpp_radix_cache.py b/test/registered/radix_cache/test_cpp_radix_cache.py
+similarity index 100%
+rename from test/registered/core/test_cpp_radix_cache.py
+rename to test/registered/radix_cache/test_cpp_radix_cache.py
+diff --git a/test/registered/core/test_mm_process_config.py b/test/registered/unit/managers/test_mm_process_config.py
+similarity index 100%
+rename from test/registered/core/test_mm_process_config.py
+rename to test/registered/unit/managers/test_mm_process_config.py

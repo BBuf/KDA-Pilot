@@ -1,5 +1,5 @@
 repo: flashinfer-ai/flashinfer
-searched_at: '2026-05-16'
+searched_at: '2026-05-20'
 keywords_used:
 - blackwell
 - sm100
@@ -14,8 +14,8 @@ keywords_used:
 - fmha
 - sdpa
 - tcgen05
-total_candidates: 779
-included: 612
+total_candidates: 789
+included: 622
 excluded: 0
 deferred: 167
 prs:
@@ -30,6 +30,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-714
   changed_paths:
   - include/flashinfer/attention/prefill.cuh
+  pr: 714
 - number: 718
   title: 'bugfix: FusedAddRMSNorm kernels might require more than 48KB shared memory when d is large.'
   date: '2025-01-06'
@@ -42,6 +43,7 @@ prs:
   changed_paths:
   - include/flashinfer/norm.cuh
   - tests/test_norm.py
+  pr: 718
 - number: 719
   title: 'bugfix: Choose sm90 kernels only for Hopper GPUs.'
   date: '2025-01-06'
@@ -53,6 +55,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-719
   changed_paths:
   - flashinfer/utils.py
+  pr: 719
 - number: 728
   title: Align KV chunk size binary search with actual KV chunk splitting.
   date: '2025-01-09'
@@ -64,6 +67,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-728
   changed_paths:
   - include/flashinfer/attention/scheduler.cuh
+  pr: 728
 - number: 748
   title: '[Refactor] Unify JIT/Customization/AOT mode'
   date: '2025-01-23'
@@ -189,6 +193,7 @@ prs:
   - tests/test_shared_prefix_kernels.py
   - tests/test_sliding_window.py
   - tests/test_tensor_cores_decode.py
+  pr: 748
 - number: 752
   title: 'bugfix: various AOT issues'
   date: '2025-01-25'
@@ -212,6 +217,7 @@ prs:
   - csrc/single_prefill_sm90_config.inc
   - flashinfer/jit/attention.py
   - setup.py
+  pr: 752
 - number: 753
   title: '[bugfix] Fix cpp tests/benchmarks'
   date: '2025-01-26'
@@ -224,6 +230,7 @@ prs:
   changed_paths:
   - aot_build_utils/generate_batch_paged_decode_inst.py
   - src/flashinfer_ops.cuh
+  pr: 753
 - number: 754
   title: Change `apply_rope_with_cos_sin_cache` to accept `cos_sin_cache`
   date: '2025-01-27'
@@ -243,6 +250,7 @@ prs:
   - include/flashinfer/utils.cuh
   - tests/rope_reference.py
   - tests/test_rope.py
+  pr: 754
 - number: 755
   title: fix pin memory device
   date: '2025-01-27'
@@ -255,6 +263,7 @@ prs:
   changed_paths:
   - flashinfer/decode.py
   - flashinfer/prefill.py
+  pr: 755
 - number: 757
   title: 'hotfix: bugfix to #756'
   date: '2025-01-27'
@@ -266,6 +275,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-757
   changed_paths:
   - flashinfer/jit/__init__.py
+  pr: 757
 - number: 759
   title: 'fix: match statement not supported in Python 3.8'
   date: '2025-01-28'
@@ -278,6 +288,7 @@ prs:
   changed_paths:
   - csrc/flashinfer_gemm_sm90_ops.cu
   - flashinfer/gemm.py
+  pr: 759
 - number: 762
   title: 'bugfix: use actual sm count for num_sm90_ctas'
   date: '2025-01-29'
@@ -289,6 +300,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-762
   changed_paths:
   - include/flashinfer/attention/scheduler.cuh
+  pr: 762
 - number: 764
   title: 'refactor: change to TORCH_LIBRARY'
   date: '2025-02-13'
@@ -352,6 +364,7 @@ prs:
   - include/flashinfer/gemm/group_gemm_sm90.cuh
   - setup.py
   - tests/test_jit_example.py
+  pr: 764
 - number: 765
   title: 'feat: support deepseek prefill attention shape'
   date: '2025-02-01'
@@ -428,6 +441,7 @@ prs:
   - tests/test_block_sparse.py
   - tests/test_deepseek_prefill.py
   - tests/test_jit_example.py
+  pr: 765
 - number: 774
   title: 'bugfix: Ensure Loop Termination by Enforcing IEEE-754 Compliance in Sampling Kernels'
   date: '2025-02-01'
@@ -439,6 +453,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-774
   changed_paths:
   - include/flashinfer/sampling.cuh
+  pr: 774
 - number: 776
   title: 'perf: refactor fa2 prefill template'
   date: '2025-02-04'
@@ -458,6 +473,7 @@ prs:
   - include/flashinfer/mma.cuh
   - include/flashinfer/utils.cuh
   - tests/test_jit_example.py
+  pr: 776
 - number: 778
   title: 'feat: Separate QK/VO head dim dispatch for sm90 AOT'
   date: '2025-02-04'
@@ -476,6 +492,7 @@ prs:
   - csrc/pytorch_extension_utils.h
   - csrc/single_prefill_sm90_config.inc
   - setup.py
+  pr: 778
 - number: 785
   title: 'bugfix: drop CTA_TILE_Q=32'
   date: '2025-02-04'
@@ -491,6 +508,7 @@ prs:
   - csrc/batch_prefill_paged_kernel_inst.jinja
   - csrc/batch_prefill_ragged_kernel_inst.jinja
   - include/flashinfer/utils.cuh
+  pr: 785
 - number: 787
   title: 'bugfix: MLA decode should multiply sm_scale by math::log2e'
   date: '2025-02-05'
@@ -503,6 +521,7 @@ prs:
   changed_paths:
   - flashinfer/jit/attention.py
   - include/flashinfer/attention/decode.cuh
+  pr: 787
 - number: 793
   title: fix rope logic in mla decoding
   date: '2025-02-07'
@@ -515,6 +534,7 @@ prs:
   changed_paths:
   - include/flashinfer/attention/decode.cuh
   - tests/test_mla_decode_kernel.py
+  pr: 793
 - number: 795
   title: Fix arguments of `plan` for split QK/VO head dims
   date: '2025-02-07'
@@ -527,6 +547,7 @@ prs:
   changed_paths:
   - flashinfer/sparse.py
   - tests/test_non_contiguous_prefill.py
+  pr: 795
 - number: 798
   title: Fix the type annotation of q_dtype and kv_dtype on ragged prefill
   date: '2025-02-08'
@@ -538,6 +559,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-798
   changed_paths:
   - flashinfer/prefill.py
+  pr: 798
 - number: 799
   title: 'feat: support f32 attention output in FA2 template'
   date: '2025-02-08'
@@ -550,6 +572,7 @@ prs:
   changed_paths:
   - include/flashinfer/attention/default_prefill_params.cuh
   - include/flashinfer/attention/prefill.cuh
+  pr: 799
 - number: 801
   title: 'feat: apply sm_scale at logits instead of q in FA2 template'
   date: '2025-02-09'
@@ -575,6 +598,7 @@ prs:
   - include/flashinfer/attention/variant_helper.cuh
   - include/flashinfer/attention/variants.cuh
   - tests/test_jit_example.py
+  pr: 801
 - number: 804
   title: 'perf: memory efficient deepseek mla fused page-attention kernel'
   date: '2025-02-12'
@@ -602,6 +626,7 @@ prs:
   - include/flashinfer/attention/variant_helper.cuh
   - tests/test_deepseek_mla.py
   - tests/test_deepseek_prefill.py
+  pr: 804
 - number: 808
   title: 'fix: Pass backend in BatchPrefillWith*KVCacheWrapper.plan()'
   date: '2025-02-16'
@@ -613,6 +638,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-808
   changed_paths:
   - flashinfer/prefill.py
+  pr: 808
 - number: 810
   title: 'bugfix: mla page-attention kernel for different page sizes'
   date: '2025-02-12'
@@ -624,6 +650,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-810
   changed_paths:
   - include/flashinfer/attention/mla_fa2.cuh
+  pr: 810
 - number: 812
   title: 'feat: unlocking MLA for A100'
   date: '2025-02-12'
@@ -635,6 +662,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-812
   changed_paths:
   - include/flashinfer/attention/mla_fa2.cuh
+  pr: 812
 - number: 814
   title: 'feat: unlock MLA attention for sm89 (L40/L40s/4090)'
   date: '2025-02-12'
@@ -646,6 +674,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-814
   changed_paths:
   - include/flashinfer/attention/mla_fa2.cuh
+  pr: 814
 - number: 821
   title: 'bugfix: bugfix on sm89 MLA'
   date: '2025-02-13'
@@ -657,6 +686,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-821
   changed_paths:
   - include/flashinfer/attention/mla_fa2.cuh
+  pr: 821
 - number: 827
   title: 'bugfix: fix the signature of `CutlassSegmentGEMMSM90`'
   date: '2025-02-13'
@@ -668,6 +698,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-827
   changed_paths:
   - csrc/flashinfer_gemm_sm90_ops.cu
+  pr: 827
 - number: 828
   title: 'bugfix: Another bugfix for torch.library'
   date: '2025-02-13'
@@ -679,6 +710,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-828
   changed_paths:
   - flashinfer/jit/__init__.py
+  pr: 828
 - number: 844
   title: 'perf: MLA decode kernel implemented by CuTe targeted to SM80'
   date: '2025-02-14'
@@ -696,6 +728,7 @@ prs:
   - include/flashinfer/attention/decode_mla_cute_sm80.cuh
   - include/flashinfer/attention/scheduler.cuh
   - tests/test_mla_decode_kernel.py
+  pr: 844
 - number: 847
   title: 'bugfix: Fix inline RoPE in decode kernels'
   date: '2025-02-16'
@@ -707,6 +740,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-847
   changed_paths:
   - include/flashinfer/attention/decode.cuh
+  pr: 847
 - number: 858
   title: Add POD-Attention to FlashInfer
   date: '2025-03-13'
@@ -735,6 +769,7 @@ prs:
   - include/flashinfer/attention/prefill.cuh
   - setup.py
   - tests/test_pod_kernels.py
+  pr: 858
 - number: 863
   title: 'perf: dynamic split-k for MLA'
   date: '2025-02-17'
@@ -751,6 +786,7 @@ prs:
   - include/flashinfer/attention/mla_fa2.cuh
   - include/flashinfer/attention/mla_params.cuh
   - include/flashinfer/attention/scheduler.cuh
+  pr: 863
 - number: 868
   title: 'bugfix: fix the behavior of MLA kernel when kv-length is 0'
   date: '2025-02-17'
@@ -763,6 +799,7 @@ prs:
   changed_paths:
   - include/flashinfer/attention/scheduler.cuh
   - tests/test_deepseek_mla.py
+  pr: 868
 - number: 869
   title: Naive Support for Hopper FP8 Prefill Kernel with Per-Head Quantization
   date: '2025-02-27'
@@ -790,6 +827,7 @@ prs:
   - src/fp8-dev/flashinfer_ops.cu
   - src/fp8-dev/test_single_prefill_fa3_sm90.cu
   - src/fp8-dev/utils.h
+  pr: 869
 - number: 880
   title: JIT compilation support for TVM
   date: '2025-02-19'
@@ -824,6 +862,7 @@ prs:
   - tvm_binding/batch_prefill_sm90_customize_config.jinja
   - tvm_binding/batch_prefill_sm90_jit_tvm_binding.cu
   - tvm_binding/tvm_binding_utils.h
+  pr: 880
 - number: 887
   title: 'perf: FlashAttention-3 style MLA PageAttention'
   date: '2025-02-23'
@@ -847,6 +886,7 @@ prs:
   - include/flashinfer/attention/mla.cuh
   - include/flashinfer/attention/mla_hopper.cuh
   - tests/test_deepseek_mla.py
+  pr: 887
 - number: 888
   title: feat - support mla kvcache store
   date: '2025-03-13'
@@ -867,6 +907,7 @@ prs:
   - include/flashinfer/page.cuh
   - scripts/task_jit_run_tests_part2.sh
   - tests/test_mla_page.py
+  pr: 888
 - number: 898
   title: 'perf: fix MLA split-k performance bug'
   date: '2025-02-26'
@@ -883,6 +924,7 @@ prs:
   - include/flashinfer/attention/mla_hopper.cuh
   - include/flashinfer/attention/mla_params.cuh
   - include/flashinfer/attention/scheduler.cuh
+  pr: 898
 - number: 901
   title: 'perf: tweak the pipeline design of mla kernel'
   date: '2025-02-27'
@@ -894,6 +936,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-901
   changed_paths:
   - include/flashinfer/attention/mla_hopper.cuh
+  pr: 901
 - number: 904
   title: 'bugfix: Fix no return type error'
   date: '2025-02-28'
@@ -905,6 +948,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-904
   changed_paths:
   - include/flashinfer/attention/mla_hopper.cuh
+  pr: 904
 - number: 913
   title: 'feat: flashinfer intra-kernel profiler'
   date: '2025-03-06'
@@ -931,6 +975,7 @@ prs:
   - profiler/mla.py
   - tests/test_deepseek_mla.py
   - tvm_binding/batch_mla_config.jinja
+  pr: 913
 - number: 930
   title: 'feat: experimenta support of PDL'
   date: '2025-03-11'
@@ -952,6 +997,7 @@ prs:
   - include/flashinfer/norm.cuh
   - tests/test_activation.py
   - tests/test_norm.py
+  pr: 930
 - number: 942
   title: fix - fix bug when not relevant seq has nan data
   date: '2025-03-15'
@@ -964,6 +1010,7 @@ prs:
   changed_paths:
   - include/flashinfer/attention/mla.cuh
   - tests/test_deepseek_mla.py
+  pr: 942
 - number: 945
   title: 'bugfix: fix potential issues of FA3 template loading nans for PageAttention'
   date: '2025-03-14'
@@ -975,6 +1022,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-945
   changed_paths:
   - include/flashinfer/attention/mla_hopper.cuh
+  pr: 945
 - number: 951
   title: 'bugfix: bugfix to #949'
   date: '2025-03-17'
@@ -991,6 +1039,7 @@ prs:
   - scripts/task_jit_run_tests_part4.sh
   - tests/conftest.py
   - tests/test_deepseek_mla.py
+  pr: 951
 - number: 952
   title: 'perf: Use 2WG pipeline design for MLA implementation on Hopper'
   date: '2025-03-29'
@@ -1003,6 +1052,7 @@ prs:
   changed_paths:
   - benchmarks/bench_deepseek_mla.py
   - include/flashinfer/attention/mla_hopper.cuh
+  pr: 952
 - number: 958
   title: '[TVM] Added tvm binding for sampling kernel'
   date: '2025-03-24'
@@ -1018,6 +1068,7 @@ prs:
   - flashinfer/jit/attention/tvm.py
   - tvm_binding/sampling.cu
   - tvm_binding/sampling_jit_tvm_binding.cu
+  pr: 958
 - number: 961
   title: Fix compilation on cuda 12.2
   date: '2025-03-19'
@@ -1029,6 +1080,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-961
   changed_paths:
   - include/flashinfer/vec_dtypes.cuh
+  pr: 961
 - number: 968
   title: 'perf: reduce torch.library dispatch overhead'
   date: '2025-03-22'
@@ -1051,6 +1103,7 @@ prs:
   - flashinfer/quantization.py
   - flashinfer/rope.py
   - flashinfer/sampling.py
+  pr: 968
 - number: 969
   title: 'perf: Fix python API overhead when CUDAGraph is not enabled'
   date: '2025-03-24'
@@ -1120,6 +1173,7 @@ prs:
   - flashinfer/utils.py
   - scripts/task_jit_run_tests_part4.sh
   - tests/test_group_gemm.py
+  pr: 969
 - number: 970
   title: 'benchmark: add sampling.renorm benchmarks'
   date: '2025-03-25'
@@ -1131,6 +1185,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-970
   changed_paths:
   - benchmarks/bench_renorm.py
+  pr: 970
 - number: 974
   title: 'perf: dual pivot top-p/top-k renorm'
   date: '2025-03-27'
@@ -1142,6 +1197,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-974
   changed_paths:
   - include/flashinfer/sampling.cuh
+  pr: 974
 - number: 982
   title: SM-constraint-GEMM by triton persistent kernel
   date: '2025-04-01'
@@ -1157,6 +1213,7 @@ prs:
   - flashinfer/triton/kernels/sm_constraint_gemm.py
   - flashinfer/triton/sm_constraint_gemm.py
   - tests/test_sm_constraint_gemm.py
+  pr: 982
 - number: 983
   title: Triton `rms_norm` kernels
   date: '2025-03-29'
@@ -1169,6 +1226,7 @@ prs:
   changed_paths:
   - flashinfer/triton/kernels/norm.py
   - flashinfer/triton/norm.py
+  pr: 983
 - number: 991
   title: 'perf: prefetch page indices for mla kernel'
   date: '2025-03-31'
@@ -1181,6 +1239,7 @@ prs:
   changed_paths:
   - include/flashinfer/attention/mla.cuh
   - include/flashinfer/attention/mla_hopper.cuh
+  pr: 991
 - number: 994
   title: 'feat: SM-constraint Communication Kernels'
   date: '2025-04-18'
@@ -1199,6 +1258,7 @@ prs:
   - include/flashinfer/distributed/custom_all_reduce.cuh
   - setup.py
   - tests/test_custom_allreduce.py
+  pr: 994
 - number: 997
   title: '3rdparty: upgrade cutlass to 3.9'
   date: '2025-04-03'
@@ -1212,6 +1272,7 @@ prs:
   - 3rdparty/cutlass
   - include/flashinfer/attention/hopper/block_sparse_gather.cuh
   - include/flashinfer/attention/mla_hopper.cuh
+  pr: 997
 - number: 998
   title: 'perf: add `-DNDEBUG` compilation flag'
   date: '2025-04-04'
@@ -1224,6 +1285,7 @@ prs:
   changed_paths:
   - flashinfer/jit/core.py
   - setup.py
+  pr: 998
 - number: 1007
   title: 'feat: update decode attention APIs'
   date: '2025-04-15'
@@ -1241,6 +1303,7 @@ prs:
   - flashinfer/prefill.py
   - include/flashinfer/attention/decode.cuh
   - tests/test_tensor_cores_decode.py
+  pr: 1007
 - number: 1008
   title: 'bugfix: Fix illegal memory access due to custom mask ptr'
   date: '2025-04-07'
@@ -1252,6 +1315,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1008
   changed_paths:
   - include/flashinfer/attention/variants.cuh
+  pr: 1008
 - number: 1013
   title: 'bugfix: import wrapper of mla decode'
   date: '2025-04-15'
@@ -1263,6 +1327,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1013
   changed_paths:
   - flashinfer/__init__.py
+  pr: 1013
 - number: 1014
   title: 'misc: fix instrument code for mla profiler'
   date: '2025-04-10'
@@ -1274,6 +1339,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1014
   changed_paths:
   - include/flashinfer/attention/mla_hopper.cuh
+  pr: 1014
 - number: 1015
   title: add multi-item scoring
   date: '2025-04-30'
@@ -1317,6 +1383,7 @@ prs:
   - tests/test_batch_prefill_kernels.py
   - tests/test_hopper.py
   - tests/test_jit_example.py
+  pr: 1015
 - number: 1025
   title: 'feat: ragged tensor padding kernel for blackwell kernel alignment'
   date: '2025-04-20'
@@ -1331,6 +1398,7 @@ prs:
   - flashinfer/triton/__init__.py
   - flashinfer/triton/format_conversion.py
   - tests/test_format_conversion.py
+  pr: 1025
 - number: 1028
   title: 'bugfix: fix custom mask not be reseted after convert custom mask into causal or non-causal'
   date: '2025-04-21'
@@ -1342,6 +1410,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1028
   changed_paths:
   - flashinfer/prefill.py
+  pr: 1028
 - number: 1029
   title: 'fix: add zero init for KV tiled copy'
   date: '2025-04-22'
@@ -1353,6 +1422,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1029
   changed_paths:
   - include/flashinfer/attention/hopper/sparse_mainloop.cuh
+  pr: 1029
 - number: 1033
   title: 'feat: add functional per-head FP8 quantization for FA3'
   date: '2025-04-29'
@@ -1386,6 +1456,7 @@ prs:
   - src/fp8-dev/test_single_prefill_fa3_sm90.cu
   - src/fp8-dev/utils.h
   - tests/test_hopper_fp8_attention.py
+  pr: 1033
 - number: 1035
   title: 'feat: Softmax free sampling'
   date: '2025-04-28'
@@ -1405,6 +1476,7 @@ prs:
   - include/flashinfer/sampling.cuh
   - tests/conftest.py
   - tests/test_sampling.py
+  pr: 1035
 - number: 1039
   title: '[nvidia] initial support for blackwell kernels'
   date: '2025-05-13'
@@ -1447,6 +1519,7 @@ prs:
   - include/flashinfer/attention/blackwell/kernel/sm100_mla_tile_scheduler.hpp
   - tests/test_blackwell_fmha.py
   - tests/test_format_conversion.py
+  pr: 1039
 - number: 1050
   title: 'fix: top_k_mask_logits hangs on -inf inputs'
   date: '2025-05-10'
@@ -1459,6 +1532,7 @@ prs:
   changed_paths:
   - include/flashinfer/sampling.cuh
   - tests/test_sampling.py
+  pr: 1050
 - number: 1051
   title: '[nvidia] Add Blackwell FMHA decode kernel from TRT-LLM'
   date: '2025-05-27'
@@ -1492,6 +1566,7 @@ prs:
   - include/flashinfer/trtllm/fmha/kernelParams.h
   - setup.py
   - tests/test_trtllm_gen_decode.py
+  pr: 1051
 - number: 1052
   title: 'Benchmark: POD vs batched prefill'
   date: '2025-05-11'
@@ -1503,6 +1578,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1052
   changed_paths:
   - benchmarks/bench_mixed_attention.py
+  pr: 1052
 - number: 1054
   title: 'Fix KV chunking for POD. '
   date: '2025-05-13'
@@ -1514,6 +1590,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1054
   changed_paths:
   - include/flashinfer/attention/pod.cuh
+  pr: 1054
 - number: 1055
   title: 'bugfix: temporally disable split-kv in blackwell mla'
   date: '2025-05-13'
@@ -1525,6 +1602,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1055
   changed_paths:
   - include/flashinfer/attention/cutlass_mla.cuh
+  pr: 1055
 - number: 1056
   title: 'bugfix: remove device allocation'
   date: '2025-05-14'
@@ -1544,6 +1622,7 @@ prs:
   - include/flashinfer/attention/blackwell/fmha_cutlass_sm100.cuh
   - include/flashinfer/gemm/gemm_groupwise_sm100.cuh
   - include/flashinfer/gemm/group_gemm_groupwise_sm100.cuh
+  pr: 1056
 - number: 1059
   title: Parameterize prefix mask call (needed by POD-Attention)
   date: '2025-05-14'
@@ -1556,6 +1635,7 @@ prs:
   changed_paths:
   - benchmarks/bench_mixed_attention.py
   - include/flashinfer/attention/prefill.cuh
+  pr: 1059
 - number: 1060
   title: 'bugfix: move `cum_m` calculation inside kernels'
   date: '2025-05-15'
@@ -1570,6 +1650,7 @@ prs:
   - csrc/group_gemm_sm100_pybind.cu
   - flashinfer/gemm.py
   - include/flashinfer/gemm/group_gemm_groupwise_sm100.cuh
+  pr: 1060
 - number: 1071
   title: 'bugfix: adding lse output to blackwell fmha kernels'
   date: '2025-05-20'
@@ -1585,6 +1666,7 @@ prs:
   - include/flashinfer/attention/blackwell/fmha_cutlass_sm100.cuh
   - include/flashinfer/attention/blackwell/kernel/sm100_fmha_fwd_kernel_tma_warpspecialized.hpp
   - tests/test_blackwell_fmha.py
+  pr: 1071
 - number: 1072
   title: 'bugfix: follow user-specified sm_scale for blackwell cutlass fmha'
   date: '2025-05-20'
@@ -1599,6 +1681,7 @@ prs:
   - include/flashinfer/attention/blackwell/collective/sm100_fmha_fwd_mainloop_tma_warpspecialized.hpp
   - include/flashinfer/attention/blackwell/fmha_cutlass_sm100.cuh
   - tests/test_blackwell_fmha.py
+  pr: 1072
 - number: 1086
   title: 'perf: accelerate blackwell grouped gemm'
   date: '2025-05-23'
@@ -1616,6 +1699,7 @@ prs:
   - flashinfer/gemm.py
   - include/flashinfer/gemm/group_gemm_groupwise_sm100.cuh
   - tests/test_groupwise_scaled_gemm_fp8.py
+  pr: 1086
 - number: 1087
   title: 'bugfix: fix fp8 attention kernels aot compilation issue'
   date: '2025-05-23'
@@ -1629,6 +1713,7 @@ prs:
   - csrc/batch_prefill_fp8_sm90.cu
   - flashinfer/aot.py
   - include/flashinfer/attention/hopper/quantization/prefill_sm90.cuh
+  pr: 1087
 - number: 1089
   title: 'comm: refactor and initialize `flashinfer.comm` module'
   date: '2025-05-24'
@@ -1652,6 +1737,7 @@ prs:
   - src/test_attn_all_reduce.cu
   - src/test_sum_all_reduce.cu
   - tests/test_custom_allreduce.py
+  pr: 1089
 - number: 1096
   title: 'feat: add trtllm all-reduce (non-MoE)'
   date: '2025-06-02'
@@ -1677,6 +1763,7 @@ prs:
   - include/flashinfer/vec_dtypes.cuh
   - pyproject.toml
   - tests/test_trtllm_allreduce.py
+  pr: 1096
 - number: 1106
   title: 'bugfix: host-precomuted plan function for blackwell fmha'
   date: '2025-06-03'
@@ -1703,6 +1790,7 @@ prs:
   - include/flashinfer/attention/blackwell/kernel/sm100_fmha_fwd_kernel_tma_warpspecialized.hpp
   - include/flashinfer/attention/blackwell/plan.cuh
   - tests/test_blackwell_fmha.py
+  pr: 1106
 - number: 1108
   title: 'feat: add trtllm moe_allreduce_fusion'
   date: '2025-06-17'
@@ -1719,6 +1807,7 @@ prs:
   - include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
   - include/flashinfer/vec_dtypes.cuh
   - tests/test_trtllm_moe_allreduce_fusion.py
+  pr: 1108
 - number: 1113
   title: Add CUTLASS fused moe kernels from TensorRT-LLM.
   date: '2025-06-04'
@@ -1849,6 +1938,7 @@ prs:
   - csrc/nv_internal/tensorrt_llm/thop/fp4Quantize.h
   - csrc/nv_internal/tensorrt_llm/thop/thUtils.h
   - csrc/pytorch_extension_utils.h
+  pr: 1113
 - number: 1114
   title: 'bugfix: Fix test and output shape of fp4 quantize'
   date: '2025-06-06'
@@ -1869,6 +1959,7 @@ prs:
   - flashinfer/fp4_quantization.py
   - flashinfer/jit/core.py
   - tests/test_trtllm_cutlass_fused_moe.py
+  pr: 1114
 - number: 1116
   title: 'hotfix: fix the blackwell fmha stream'
   date: '2025-06-06'
@@ -1883,6 +1974,7 @@ prs:
   - include/flashinfer/attention/blackwell/fmha_cutlass_sm100.cuh
   - tests/conftest.py
   - tests/test_blackwell_fmha.py
+  pr: 1116
 - number: 1117
   title: '[Feature] Support PDL for batch Prefill and Decode'
   date: '2025-06-10'
@@ -1942,6 +2034,7 @@ prs:
   - tvm_binding/batch_prefill_jit_tvm_binding.cu
   - tvm_binding/batch_prefill_sm90.cu
   - tvm_binding/batch_prefill_sm90_jit_tvm_binding.cu
+  pr: 1117
 - number: 1129
   title: Fix pointer dtype bug in rope
   date: '2025-06-08'
@@ -1956,6 +2049,7 @@ prs:
   - csrc/rope.cu
   - flashinfer/rope.py
   - tests/test_rope.py
+  pr: 1129
 - number: 1131
   title: 'feat: add trtllm all-reduce fusion'
   date: '2025-06-19'
@@ -1972,6 +2066,7 @@ prs:
   - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
   - tests/test_trtllm_allreduce_fusion.py
   - tests/test_trtllm_moe_allreduce_fusion.py
+  pr: 1131
 - number: 1134
   title: MNNVL MoE All-to-All Support
   date: '2025-06-24'
@@ -2001,6 +2096,7 @@ prs:
   - tests/test_mnnvl_memory.py
   - tests/test_trtllm_alltoall.py
   - tests/test_vllm_custom_allreduce.py
+  pr: 1134
 - number: 1136
   title: 'fix: negative zero by type trait --> binary value'
   date: '2025-06-11'
@@ -2013,6 +2109,7 @@ prs:
   changed_paths:
   - include/flashinfer/comm/trtllm_allreduce.cuh
   - tests/test_trtllm_allreduce.py
+  pr: 1136
 - number: 1137
   title: '[feat] add unified batch attention w/ correctness tests.'
   date: '2025-06-12'
@@ -2041,6 +2138,7 @@ prs:
   - include/flashinfer/permuted_smem.cuh
   - include/flashinfer/utils.cuh
   - tests/test_batch_attention.py
+  pr: 1137
 - number: 1140
   title: Fix FA2 and FA3 multi-item scoring and cuda illegal memory access error
   date: '2025-06-13'
@@ -2055,6 +2153,7 @@ prs:
   - include/flashinfer/attention/hopper/prefill_sm90.cuh
   - include/flashinfer/attention/hopper/sparse_mainloop.cuh
   - include/flashinfer/attention/prefill.cuh
+  pr: 1140
 - number: 1148
   title: '[fix] fix precision errors when applying causal mask on Qwen-2.5 series models'
   date: '2025-06-16'
@@ -2072,6 +2171,7 @@ prs:
   - include/flashinfer/attention/scheduler.cuh
   - tests/test_batch_attention.py
   - tests/test_single_prefill.py
+  pr: 1148
 - number: 1153
   title: 'feat: Fused temperature online softmax kernel'
   date: '2025-06-24'
@@ -2090,6 +2190,7 @@ prs:
   - flashinfer/sampling.py
   - include/flashinfer/sampling.cuh
   - tests/test_sampling.py
+  pr: 1153
 - number: 1158
   title: Add more logging to TRTLLM-GEN debug trace (NFC)
   date: '2025-06-19'
@@ -2102,6 +2203,7 @@ prs:
   changed_paths:
   - include/flashinfer/trtllm/common.h
   - include/flashinfer/trtllm/fmha/fmhaKernels.cuh
+  pr: 1158
 - number: 1159
   title: 'feat: add finalize_moe_allreduce from trtllm'
   date: '2025-06-22'
@@ -2117,6 +2219,7 @@ prs:
   - include/flashinfer/comm/trtllm_allreduce.cuh
   - include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
   - tests/test_trtllm_moe_allreduce_fusion_finalize.py
+  pr: 1159
 - number: 1160
   title: 'feat: nvshmem python bindings'
   date: '2025-06-24'
@@ -2134,6 +2237,7 @@ prs:
   - flashinfer/jit/env.py
   - setup.py
   - tests/test_nvshmem.py
+  pr: 1160
 - number: 1161
   title: 'feat: update non-fused moe'
   date: '2025-06-19'
@@ -2149,6 +2253,7 @@ prs:
   - include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
   - tests/test_trtllm_allreduce_fusion.py
   - tests/test_trtllm_moe_allreduce_fusion.py
+  pr: 1161
 - number: 1162
   title: 'refactor: communication module'
   date: '2025-06-20'
@@ -2162,6 +2267,7 @@ prs:
   - flashinfer/aot.py
   - flashinfer/comm.py
   - tests/test_vllm_custom_allreduce.py
+  pr: 1162
 - number: 1164
   title: 'feat: enable and update all-reduce fused quantization'
   date: '2025-07-02'
@@ -2174,6 +2280,7 @@ prs:
   changed_paths:
   - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
   - include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
+  pr: 1164
 - number: 1168
   title: Fix missing symbols in trtllm_utils.so
   date: '2025-06-24'
@@ -2188,6 +2295,7 @@ prs:
   - flashinfer/autotuner.py
   - flashinfer/tllm_utils.py
   - flashinfer/utils.py
+  pr: 1168
 - number: 1170
   title: 'feat: logits processor fustion rule for temperature softmax'
   date: '2025-06-25'
@@ -2202,6 +2310,7 @@ prs:
   - flashinfer/logits_processor/operators.py
   - flashinfer/logits_processor/processors.py
   - tests/test_logits_processor.py
+  pr: 1170
 - number: 1176
   title: Expose fp4 blockscale swizzling kernel
   date: '2025-06-25'
@@ -2217,6 +2326,7 @@ prs:
   - flashinfer/__init__.py
   - flashinfer/fp4_quantization.py
   - tests/test_fp4_quantize.py
+  pr: 1176
 - number: 1177
   title: '[feat] support block sparse attention w/ variable block sizes and head-wise sparse patterns'
   date: '2025-06-27'
@@ -2232,6 +2342,7 @@ prs:
   - flashinfer/sparse.py
   - setup.py
   - tests/test_block_sparse.py
+  pr: 1177
 - number: 1178
   title: 'bugfix: softmax NaN results caused by large -inf masks'
   date: '2025-06-26'
@@ -2244,6 +2355,7 @@ prs:
   changed_paths:
   - include/flashinfer/sampling.cuh
   - tests/test_sampling.py
+  pr: 1178
 - number: 1179
   title: Add mypy to pre-commit
   date: '2025-08-07'
@@ -2288,6 +2400,7 @@ prs:
   - tests/test_block_sparse.py
   - tests/test_quantization.py
   - tests/test_trtllm_mnnvl_allreduce.py
+  pr: 1179
 - number: 1187
   title: Feature/cudnn dynamic cubin
   date: '2025-07-01'
@@ -2315,6 +2428,7 @@ prs:
   - tests/test_cudnn_decode.py
   - tests/test_cudnn_prefill.py
   - tests/test_cudnn_prefill_deepseek.py
+  pr: 1187
 - number: 1189
   title: update trtllm-gen decode attention kernel launcher
   date: '2025-07-07'
@@ -2332,6 +2446,7 @@ prs:
   - include/flashinfer/trtllm/fmha/gen_kernel_launcher.cuh
   - include/flashinfer/trtllm/fmha/kernelParams.h
   - tests/test_trtllm_gen_decode.py
+  pr: 1189
 - number: 1190
   title: 'feat: support green ctx creation by a list of SM counts'
   date: '2025-06-30'
@@ -2346,6 +2461,7 @@ prs:
   - flashinfer/green_ctx.py
   - flashinfer/utils.py
   - tests/test_green_ctx.py
+  pr: 1190
 - number: 1198
   title: 'bugfix: fix blackwell fmha hanging issue for empty kv_len'
   date: '2025-07-06'
@@ -2360,6 +2476,7 @@ prs:
   - include/flashinfer/attention/blackwell/collective/sm100_fmha_fwd_mainloop_tma_warpspecialized.hpp
   - include/flashinfer/attention/blackwell/kernel/sm100_fmha_fwd_kernel_tma_warpspecialized.hpp
   - tests/test_blackwell_fmha.py
+  pr: 1198
 - number: 1200
   title: '[feat] optimize persistent batch attention perf.'
   date: '2025-06-30'
@@ -2382,6 +2499,7 @@ prs:
   - include/flashinfer/profiler.cuh
   - profiler/batch_attention.py
   - tests/test_batch_attention.py
+  pr: 1200
 - number: 1206
   title: '[fix] fix BatchAttention CTA_TILE_KV mask issue'
   date: '2025-07-01'
@@ -2395,6 +2513,7 @@ prs:
   - flashinfer/attention.py
   - include/flashinfer/attention/scheduler.cuh
   - tests/test_batch_attention.py
+  pr: 1206
 - number: 1208
   title: Fix the issue with auxillary kernel launch and grid dim calculation
   date: '2025-07-03'
@@ -2407,6 +2526,7 @@ prs:
   changed_paths:
   - csrc/cudnn_sdpa_kernel_launcher.cu
   - flashinfer/cudnn/prefill.py
+  pr: 1208
 - number: 1209
   title: Add DeepGEMM kernels
   date: '2025-07-14'
@@ -2422,6 +2542,7 @@ prs:
   - flashinfer/gemm.py
   - flashinfer/utils.py
   - tests/test_groupwise_scaled_gemm_fp8.py
+  pr: 1209
 - number: 1212
   title: 'feat: trtllm-gen fp8 moe kernels'
   date: '2025-07-10'
@@ -2462,6 +2583,7 @@ prs:
   - include/flashinfer/trtllm/fused_moe/RoutingKernel.h
   - include/flashinfer/trtllm/fused_moe/runner.h
   - tests/test_trtllm_gen_fused_moe.py
+  pr: 1212
 - number: 1213
   title: '[comm] TRT-LLM''s Multi-Node NVLink All-Reduce Kernel'
   date: '2025-07-11'
@@ -2478,6 +2600,7 @@ prs:
   - flashinfer/comm/trtllm_mnnvl_ar.py
   - include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh
   - tests/test_trtllm_mnnvl_allreduce.py
+  pr: 1213
 - number: 1214
   title: Feature/sm100 low latency nvfp4 kernels
   date: '2025-07-16'
@@ -2513,6 +2636,7 @@ prs:
   - tests/test_trtllm_cutlass_fused_moe.py
   - tests/test_trtllm_gen_fused_moe.py
   - tests/test_trtllm_gen_fused_moe_fp4.py
+  pr: 1214
 - number: 1217
   title: '[TVM] Remove `enable_pdl` from TVM binding interface'
   date: '2025-07-05'
@@ -2529,6 +2653,7 @@ prs:
   - tvm_binding/batch_prefill_jit_tvm_binding.cu
   - tvm_binding/batch_prefill_sm90.cu
   - tvm_binding/batch_prefill_sm90_jit_tvm_binding.cu
+  pr: 1217
 - number: 1221
   title: Enable cudnn decode and add tests for the cudnn decode kernel
   date: '2025-07-08'
@@ -2542,6 +2667,7 @@ prs:
   - csrc/cudnn_sdpa_kernel_launcher.cu
   - flashinfer/cudnn/decode.py
   - tests/test_cudnn_decode.py
+  pr: 1221
 - number: 1222
   title: 'feat: add trtllm-gen mla cubin'
   date: '2025-07-14'
@@ -2563,6 +2689,7 @@ prs:
   - include/flashinfer/trtllm/fmha/fmhaRunnerParams.h
   - include/flashinfer/trtllm/fmha/kernelParams.h
   - tests/test_trtllm_gen_decode.py
+  pr: 1222
 - number: 1227
   title: Fix missing hash in the cudnn cubin path
   date: '2025-07-07'
@@ -2574,6 +2701,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1227
   changed_paths:
   - csrc/cudnn_sdpa_kernel_launcher.cu
+  pr: 1227
 - number: 1230
   title: 'feat: Add non-causal cudnn prefill kernels'
   date: '2025-07-08'
@@ -2588,6 +2716,7 @@ prs:
   - flashinfer/cudnn/prefill.py
   - tests/test_cudnn_prefill.py
   - tests/test_cudnn_prefill_deepseek.py
+  pr: 1230
 - number: 1234
   title: 'bugfix: support uint8_t for vec_t class template'
   date: '2025-07-08'
@@ -2599,6 +2728,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1234
   changed_paths:
   - include/flashinfer/vec_dtypes.cuh
+  pr: 1234
 - number: 1239
   title: add trtllm-gen context attention
   date: '2025-07-17'
@@ -2616,6 +2746,7 @@ prs:
   - flashinfer/prefill.py
   - tests/test_trtllm_gen_context.py
   - tests/test_trtllm_gen_decode.py
+  pr: 1239
 - number: 1240
   title: Patch fp8 cubin availability
   date: '2025-07-11'
@@ -2629,6 +2760,7 @@ prs:
   - csrc/trtllm_fused_moe_dev_kernel.cu
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/BatchedGemmInterface.h
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/KernelMetaInfo.h
+  pr: 1240
 - number: 1241
   title: 'feat: Support MXFP8 x MXFP4 CUTLASS grouped GEMM'
   date: '2025-07-13'
@@ -2651,6 +2783,7 @@ prs:
   - include/flashinfer/gemm/group_gemm_fp8_groupwise_sm100.cuh
   - include/flashinfer/gemm/group_gemm_mxfp4_groupwise_sm100.cuh
   - tests/test_groupwise_scaled_gemm_mxfp4.py
+  pr: 1241
 - number: 1242
   title: Add trtllm-gen attention mha kernel with FP8 Q/K/V and FP8 output
   date: '2025-07-16'
@@ -2669,6 +2802,7 @@ prs:
   - include/flashinfer/trtllm/fmha/fmhaRunnerParams.h
   - include/flashinfer/trtllm/fmha/kernelParams.h
   - tests/test_trtllm_gen_decode.py
+  pr: 1242
 - number: 1245
   title: Mnnvl memory with custom communicator
   date: '2025-08-27'
@@ -2682,6 +2816,7 @@ prs:
   - flashinfer/comm/mnnvl.py
   - flashinfer/comm/trtllm_alltoall.py
   - tests/test_mnnvl_custom_comm.py
+  pr: 1245
 - number: 1249
   title: Remove sm100+ requirment for trtllm allreduce kernels
   date: '2025-07-14'
@@ -2695,6 +2830,7 @@ prs:
   - flashinfer/comm/trtllm_ar.py
   - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
   - include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
+  pr: 1249
 - number: 1251
   title: Reduce the JIT compilation time of gen_gemm_sm100_module
   date: '2025-07-15'
@@ -2722,6 +2858,7 @@ prs:
   - flashinfer/jit/utils.py
   - include/flashinfer/gemm/group_gemm_fp8_groupwise_sm100.cuh
   - include/flashinfer/gemm/group_gemm_mxfp4_groupwise_sm100.cuh
+  pr: 1251
 - number: 1254
   title: 'fix: correctly pass k_scale and v_scale to run() in forward_return_lse (#1023)'
   date: '2025-07-15'
@@ -2734,6 +2871,7 @@ prs:
   changed_paths:
   - flashinfer/prefill.py
   - tests/test_batch_prefill.py
+  pr: 1254
 - number: 1255
   title: TRT-LLM's Multi-Node NVLink AR + fused RMSNorm kernel
   date: '2025-07-15'
@@ -2749,6 +2887,7 @@ prs:
   - flashinfer/comm/trtllm_mnnvl_ar.py
   - include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh
   - tests/test_trtllm_mnnvl_allreduce.py
+  pr: 1255
 - number: 1258
   title: 'feat: enable trtllm-gen mla MTP'
   date: '2025-07-16'
@@ -2765,6 +2904,7 @@ prs:
   - include/flashinfer/trtllm/fmha/fmhaRunnerParams.h
   - include/flashinfer/trtllm/fmha/kernelParams.h
   - tests/test_trtllm_gen_decode.py
+  pr: 1258
 - number: 1264
   title: init add gemm fp8 using cudnn backend
   date: '2025-07-16'
@@ -2778,6 +2918,7 @@ prs:
   - flashinfer/gemm.py
   - setup.py
   - tests/test_bmm_fp8.py
+  pr: 1264
 - number: 1265
   title: Made AR output optional + esthetic changes
   date: '2025-07-16'
@@ -2792,6 +2933,7 @@ prs:
   - flashinfer/comm/trtllm_mnnvl_ar.py
   - include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh
   - tests/test_trtllm_mnnvl_allreduce.py
+  pr: 1265
 - number: 1266
   title: 'feat: add masked deepgemm support and benchmarking'
   date: '2025-07-17'
@@ -2810,6 +2952,7 @@ prs:
   - flashinfer/testing/utils.py
   - flashinfer/utils.py
   - tests/test_groupwise_scaled_gemm_fp8.py
+  pr: 1266
 - number: 1267
   title: 'Bug fix: fix duplicate launch in POD'
   date: '2025-07-27'
@@ -2821,6 +2964,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1267
   changed_paths:
   - include/flashinfer/attention/pod.cuh
+  pr: 1267
 - number: 1272
   title: Add shuffle matrix flag
   date: '2025-07-18'
@@ -2841,6 +2985,7 @@ prs:
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/KernelMetaInfo.h
   - include/flashinfer/trtllm/fused_moe/runner.h
   - tests/test_trtllm_gen_fused_moe.py
+  pr: 1272
 - number: 1275
   title: Add missing import in comm/__init__,py
   date: '2025-07-17'
@@ -2852,6 +2997,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1275
   changed_paths:
   - flashinfer/comm/__init__.py
+  pr: 1275
 - number: 1278
   title: 'hotfix: fix deepgemm artifactory hash'
   date: '2025-07-17'
@@ -2863,6 +3009,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1278
   changed_paths:
   - flashinfer/deep_gemm.py
+  pr: 1278
 - number: 1280
   title: 'fix: update trtllm-gen fmha benchmark'
   date: '2025-07-18'
@@ -2874,6 +3021,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1280
   changed_paths:
   - benchmarks/bench_trtllm_fmha.py
+  pr: 1280
 - number: 1281
   title: Unify groupwise fp8 GEMM test
   date: '2025-07-18'
@@ -2886,6 +3034,7 @@ prs:
   changed_paths:
   - flashinfer/testing/utils.py
   - tests/test_groupwise_scaled_gemm_fp8.py
+  pr: 1281
 - number: 1283
   title: Add native cudnn_decode for improved cudnn decode performance
   date: '2025-07-31'
@@ -2899,6 +3048,7 @@ prs:
   - flashinfer/cudnn/decode.py
   - setup.py
   - tests/test_cudnn_decode.py
+  pr: 1283
 - number: 1284
   title: Convert scale_factor from scalar to Tensor in trt_allreduce_fusion
   date: '2025-07-18'
@@ -2913,6 +3063,7 @@ prs:
   - flashinfer/comm/trtllm_ar.py
   - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
   - tests/test_trtllm_allreduce_fusion.py
+  pr: 1284
 - number: 1286
   title: fix multiCtasKvScratchPtr misalignment issue (new one)
   date: '2025-07-18'
@@ -2924,6 +3075,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1286
   changed_paths:
   - csrc/trtllm_fmha_kernel_launcher.cu
+  pr: 1286
 - number: 1287
   title: 'Bug fix: guard fp8 e8m0 and e2m1 compile '
   date: '2025-07-21'
@@ -2939,6 +3091,7 @@ prs:
   - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
   - include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
   - include/flashinfer/cutlass_utils.cuh
+  pr: 1287
 - number: 1288
   title: add mm_fp4 use cudnn backend
   date: '2025-07-21'
@@ -2953,6 +3106,7 @@ prs:
   - flashinfer/fp4_quantization.py
   - flashinfer/gemm.py
   - tests/test_mm_fp4.py
+  pr: 1288
 - number: 1289
   title: 'refactor: refactor trtllm-gen attention kernel integration code'
   date: '2025-07-22'
@@ -2979,6 +3133,7 @@ prs:
   - include/flashinfer/trtllm/fmha/kernelParams.h
   - tests/test_trtllm_gen_context.py
   - tests/test_trtllm_gen_decode.py
+  pr: 1289
 - number: 1290
   title: '[fix] fix integer overflow in FA2 customized_mask & add buffer overflow warning.'
   date: '2025-07-24'
@@ -2994,6 +3149,7 @@ prs:
   - include/flashinfer/attention/variants.cuh
   - include/flashinfer/quantization.cuh
   - tests/test_block_sparse.py
+  pr: 1290
 - number: 1291
   title: Remove FAST_BUILD FLAG for MOE
   date: '2025-07-22'
@@ -3007,6 +3163,7 @@ prs:
   - csrc/nv_internal/tensorrt_llm/cutlass_extensions/include/cutlass_extensions/gemm_configs.h
   - flashinfer/aot.py
   - flashinfer/fused_moe.py
+  pr: 1291
 - number: 1292
   title: 'refactor: Improved metainfo for trtllm-gen fmha'
   date: '2025-07-21'
@@ -3023,6 +3180,7 @@ prs:
   - include/flashinfer/cubin_loader.h
   - include/flashinfer/trtllm/fmha/cubin/kernelMetaInfo.h
   - include/flashinfer/trtllm/fmha/fmhaKernels.cuh
+  pr: 1292
 - number: 1294
   title: Update cutlass fp4 moe kernels
   date: '2025-07-23'
@@ -3099,6 +3257,7 @@ prs:
   - flashinfer/utils.py
   - tests/test_fp4_quantize.py
   - tests/test_trtllm_cutlass_fused_moe.py
+  pr: 1294
 - number: 1296
   title: add cutlass backend for mm_fp4
   date: '2025-08-02'
@@ -3119,6 +3278,7 @@ prs:
   - include/flashinfer/gemm/fp4_gemm_cutlass_template.h
   - include/flashinfer/gemm/fp4_gemm_template_sm100.h
   - tests/test_mm_fp4.py
+  pr: 1296
 - number: 1297
   title: 'feat: Add weight layout option for trtllm-gen fused moe'
   date: '2025-07-26'
@@ -3138,6 +3298,7 @@ prs:
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/KernelMetaInfo.h
   - include/flashinfer/trtllm/fused_moe/runner.h
   - tests/test_trtllm_gen_fused_moe.py
+  pr: 1297
 - number: 1298
   title: 'perfix: use lightweight API to query device property'
   date: '2025-07-22'
@@ -3149,6 +3310,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1298
   changed_paths:
   - csrc/trtllm_fused_moe_kernel_launcher.cu
+  pr: 1298
 - number: 1302
   title: 'minor: some fix and cleanup for trtllm-gen mha'
   date: '2025-07-23'
@@ -3161,6 +3323,7 @@ prs:
   changed_paths:
   - flashinfer/decode.py
   - include/flashinfer/trtllm/fmha/fmhaRunnerParams.h
+  pr: 1302
 - number: 1303
   title: 'bugfix: ensure graph is captured and executed on the same stream to avoid rep…'
   date: '2025-07-23'
@@ -3172,6 +3335,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1303
   changed_paths:
   - flashinfer/gemm.py
+  pr: 1303
 - number: 1305
   title: '[Feature] SM level profiler '
   date: '2025-07-23'
@@ -3185,6 +3349,7 @@ prs:
   - flashinfer/profiler/__init__.py
   - include/flashinfer/profiler.cuh
   - pyproject.toml
+  pr: 1305
 - number: 1306
   title: Heuristics + testing unification + CUDA Graphs
   date: '2025-07-23'
@@ -3199,6 +3364,7 @@ prs:
   - flashinfer/utils.py
   - tests/test_trtllm_gen_fused_moe.py
   - tests/test_trtllm_gen_fused_moe_fp4.py
+  pr: 1306
 - number: 1307
   title: Fix the bug of the kernel-selection heuristic in trtllm-gen
   date: '2025-07-23'
@@ -3210,6 +3376,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1307
   changed_paths:
   - include/flashinfer/trtllm/fmha/fmhaKernels.cuh
+  pr: 1307
 - number: 1309
   title: Refactor Fused Moe Module
   date: '2025-07-31'
@@ -3245,6 +3412,7 @@ prs:
   - tests/conftest.py
   - tests/test_deepseek_mla.py
   - tests/test_fp4_quantize.py
+  pr: 1309
 - number: 1310
   title: Support loading autotuned results from json for cutlass fp4 moe backends
   date: '2025-07-29'
@@ -3261,6 +3429,7 @@ prs:
   - flashinfer/fused_moe.py
   - flashinfer/tuning_configs/v0_2_8_trtllm_fused_moe_NVIDIA_B200.py
   - pyproject.toml
+  pr: 1310
 - number: 1316
   title: 'minor: add trtllm_gen_mla benchmark'
   date: '2025-07-30'
@@ -3272,6 +3441,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1316
   changed_paths:
   - benchmarks/bench_trtllm_gen_mla.py
+  pr: 1316
 - number: 1317
   title: Allow cudnn prefill kernels to be called natively
   date: '2025-08-01'
@@ -3285,6 +3455,7 @@ prs:
   - flashinfer/cudnn/prefill.py
   - tests/test_cudnn_prefill.py
   - tests/test_cudnn_prefill_deepseek.py
+  pr: 1317
 - number: 1318
   title: 'feat: support output nvfp4 in trtllm-gen function call.'
   date: '2025-07-29'
@@ -3304,6 +3475,7 @@ prs:
   - tests/test_fp4_quantize.py
   - tests/test_trtllm_gen_decode.py
   - tests/utils_fp4.py
+  pr: 1318
 - number: 1319
   title: Make Fp8 MoE routing_bias optional
   date: '2025-07-25'
@@ -3317,6 +3489,7 @@ prs:
   - csrc/trtllm_fused_moe_kernel_launcher.cu
   - flashinfer/fused_moe.py
   - tests/test_trtllm_gen_fused_moe.py
+  pr: 1319
 - number: 1320
   title: Add blockwise-scaled FP8 GEMM via TRTLLM-Gen.
   date: '2025-07-28'
@@ -3342,6 +3515,7 @@ prs:
   - include/flashinfer/trtllm/gemm/trtllmGen_gemm_export/trtllm/gen/MmaDecl.h
   - include/flashinfer/trtllm/gemm/trtllmGen_gemm_export/trtllm/gen/SfLayoutDecl.h
   - tests/test_groupwise_scaled_gemm_fp8.py
+  pr: 1320
 - number: 1321
   title: Optimizations for TRTLLM MNNVL Allreduce
   date: '2025-07-25'
@@ -3357,6 +3531,7 @@ prs:
   - flashinfer/comm/trtllm_mnnvl_ar.py
   - include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh
   - tests/test_trtllm_mnnvl_allreduce.py
+  pr: 1321
 - number: 1322
   title: 'feat: Add k_scale and v_scale to persistent attention '
   date: '2025-09-08'
@@ -3373,6 +3548,7 @@ prs:
   - flashinfer/attention.py
   - include/flashinfer/attention/persistent.cuh
   - tests/test_batch_attention.py
+  pr: 1322
 - number: 1323
   title: Addition of flashinfer_benchmark.py for benchmarking routines
   date: '2025-07-25'
@@ -3395,6 +3571,7 @@ prs:
   - benchmarks/test_flashinfer_benchmark.py
   - flashinfer/testing/utils.py
   - pyproject.toml
+  pr: 1323
 - number: 1324
   title: 'feat: Support logits_soft_cap for Persistent attn; fix kv split limit'
   date: '2025-07-30'
@@ -3415,6 +3592,7 @@ prs:
   - include/flashinfer/attention/prefill.cuh
   - include/flashinfer/attention/scheduler.cuh
   - tests/test_batch_attention.py
+  pr: 1324
 - number: 1328
   title: 'refactor: Improved metainfo for trtllm-gen kernels'
   date: '2025-08-13'
@@ -3432,6 +3610,7 @@ prs:
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/BatchedGemmInterface.h
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/KernelMetaInfo.h
   - include/flashinfer/trtllm/gemm/trtllmGen_gemm_export/GemmInterface.h
+  pr: 1328
 - number: 1331
   title: 'feat: masked layout fp4 gemm using cute-dsl'
   date: '2025-08-13'
@@ -3449,6 +3628,7 @@ prs:
   - tests/test_cute_dsl_blockscaled_gemm.py
   - tests/test_fp4_tensor_torch_cute.py
   - tests/test_groupwise_scaled_gemm_mxfp4.py
+  pr: 1331
 - number: 1333
   title: add torch float4_e2m1fn_x2 check for cudnn fp4 backend
   date: '2025-07-25'
@@ -3460,6 +3640,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1333
   changed_paths:
   - flashinfer/gemm.py
+  pr: 1333
 - number: 1334
   title: '[Fix] remove torch 2.8 requirement for FP4 GEMM'
   date: '2025-07-26'
@@ -3471,6 +3652,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1334
   changed_paths:
   - flashinfer/gemm.py
+  pr: 1334
 - number: 1337
   title: Refactor scripts in benchmarks to use flasinfer.testing.bench_gpu_time
   date: '2025-07-29'
@@ -3507,6 +3689,7 @@ prs:
   - benchmarks/routines/attention.py
   - benchmarks/routines/gemm.py
   - flashinfer/testing/utils.py
+  pr: 1337
 - number: 1339
   title: 'feat: Fused rope fp8 quantize kernel for MLA'
   date: '2025-08-09'
@@ -3523,6 +3706,7 @@ prs:
   - include/flashinfer/pos_enc.cuh
   - include/flashinfer/vec_dtypes.cuh
   - tests/test_rope.py
+  pr: 1339
 - number: 1344
   title: Fix bench deepgemm setting
   date: '2025-07-29'
@@ -3534,6 +3718,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1344
   changed_paths:
   - benchmarks/bench_deepgemm_blackwell.py
+  pr: 1344
 - number: 1346
   title: Add trtllm-gen prefill test. Fix related wrapper issue.
   date: '2025-07-30'
@@ -3547,6 +3732,7 @@ prs:
   - flashinfer/prefill.py
   - tests/test_trtllm_gen_context.py
   - tests/test_trtllm_gen_decode.py
+  pr: 1346
 - number: 1348
   title: 'fix: fix trtllm-gen mla error on new interface'
   date: '2025-07-29'
@@ -3560,6 +3746,7 @@ prs:
   - csrc/trtllm_fmha_kernel_launcher.cu
   - flashinfer/decode.py
   - tests/test_trtllm_gen_decode.py
+  pr: 1348
 - number: 1349
   title: '[Bugfix] Change max_size for LRU'
   date: '2025-07-29'
@@ -3571,6 +3758,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1349
   changed_paths:
   - flashinfer/gemm.py
+  pr: 1349
 - number: 1350
   title: Support passing kv_data_type to MultiLevelCascadeAttentionWrapper.plan()
   date: '2025-07-30'
@@ -3582,6 +3770,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1350
   changed_paths:
   - flashinfer/cascade.py
+  pr: 1350
 - number: 1354
   title: 'cleanup: retire aot-build-utils'
   date: '2025-07-30'
@@ -3606,6 +3795,7 @@ prs:
   - aot_build_utils/generate_single_prefill_sm90_inst.py
   - aot_build_utils/generate_sm90.py
   - aot_build_utils/literal_map.py
+  pr: 1354
 - number: 1355
   title: 'feature: add fp4 mm using trtllm backend'
   date: '2025-08-01'
@@ -3632,6 +3822,7 @@ prs:
   - include/flashinfer/trtllm/gemm/trtllmGen_gemm_export/GemmInterface.h
   - include/flashinfer/trtllm/gemm/trtllmGen_gemm_export/KernelMetaInfo.h
   - tests/test_mm_fp4.py
+  pr: 1355
 - number: 1356
   title: 'gen_trtllm_comm_module: fix device capability detection'
   date: '2025-07-31'
@@ -3643,6 +3834,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1356
   changed_paths:
   - flashinfer/comm/trtllm_ar.py
+  pr: 1356
 - number: 1358
   title: '[fix] remove (view) transpose to keep consistent with majorness MN requirement.'
   date: '2025-08-03'
@@ -3655,6 +3847,7 @@ prs:
   changed_paths:
   - flashinfer/gemm.py
   - tests/test_groupwise_scaled_gemm_fp8.py
+  pr: 1358
 - number: 1360
   title: support trtllm-gen prefill fp4 output
   date: '2025-08-01'
@@ -3671,6 +3864,7 @@ prs:
   - include/flashinfer/trtllm/fmha/fmhaKernels.cuh
   - tests/test_trtllm_gen_context.py
   - tests/test_trtllm_gen_decode.py
+  pr: 1360
 - number: 1361
   title: Update autotune results for the nvfp4 cutlass moe backends for v0.2.9
   date: '2025-08-07'
@@ -3682,6 +3876,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1361
   changed_paths:
   - flashinfer/tuning_configs/v0_2_9_trtllm_fused_moe_NVIDIA_B200.py
+  pr: 1361
 - number: 1363
   title: Support scale factor start index for fp4 mha prefill/decode
   date: '2025-08-03'
@@ -3699,6 +3894,7 @@ prs:
   - tests/test_trtllm_gen_context.py
   - tests/test_trtllm_gen_decode.py
   - tests/utils_fp4.py
+  pr: 1363
 - number: 1365
   title: 'feat: auto deduce use_oneshot from token_num in all-reduce'
   date: '2025-08-02'
@@ -3711,6 +3907,7 @@ prs:
   changed_paths:
   - flashinfer/comm/trtllm_ar.py
   - tests/test_trtllm_allreduce_fusion.py
+  pr: 1365
 - number: 1369
   title: Artifact downloading and single sourced artifact path
   date: '2025-08-03'
@@ -3731,6 +3928,7 @@ prs:
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/BatchedGemmInterface.h
   - include/flashinfer/trtllm/fmha/fmhaKernels.cuh
   - include/flashinfer/trtllm/gemm/trtllmGen_gemm_export/GemmInterface.h
+  pr: 1369
 - number: 1371
   title: 'bugfix: fixed cutlass fused moe usage of FP4QuantizationSFLayout::SWIZZLED'
   date: '2025-08-03'
@@ -3742,6 +3940,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1371
   changed_paths:
   - csrc/fused_moe/cutlass_backend/cutlass_fused_moe_kernels.cuh
+  pr: 1371
 - number: 1374
   title: Update documentation index
   date: '2025-08-04'
@@ -3771,6 +3970,7 @@ prs:
   - flashinfer/gemm.py
   - flashinfer/prefill.py
   - flashinfer/testing/__init__.py
+  pr: 1374
 - number: 1375
   title: Unify and modularize decode and prefill test.
   date: '2025-08-13'
@@ -3787,6 +3987,7 @@ prs:
   - tests/test_trtllm_gen_context.py
   - tests/test_trtllm_gen_decode.py
   - tests/test_trtllm_gen_mla.py
+  pr: 1375
 - number: 1376
   title: 'bugfix: Add guard for fp4/fp8 related include headers'
   date: '2025-08-04'
@@ -3798,6 +3999,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1376
   changed_paths:
   - include/flashinfer/cutlass_utils.cuh
+  pr: 1376
 - number: 1377
   title: 'bugfix: do cudnn related error check only when cudnn backend is enabled.'
   date: '2025-08-04'
@@ -3809,6 +4011,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1377
   changed_paths:
   - flashinfer/gemm.py
+  pr: 1377
 - number: 1378
   title: 'refactor: download trtllm gemm metadata from server'
   date: '2025-08-04'
@@ -3822,6 +4025,7 @@ prs:
   - flashinfer/artifacts.py
   - flashinfer/gemm.py
   - include/flashinfer/trtllm/gemm/trtllmGen_gemm_export/KernelMetaInfo.h
+  pr: 1378
 - number: 1384
   title: Allow BatchPrefillPagedWrapper to call cudnn API
   date: '2025-08-11'
@@ -3835,6 +4039,7 @@ prs:
   - benchmarks/routines/attention.py
   - flashinfer/prefill.py
   - tests/test_cudnn_prefill.py
+  pr: 1384
 - number: 1389
   title: 'GPT-OSS Support: Add Blackwell MoE mxfp4 implementation from TRTLLM and Attention Sink'
   date: '2025-08-05'
@@ -3892,6 +4097,7 @@ prs:
   - tests/test_fp8_quantize.py
   - tests/test_jit_example.py
   - tests/test_trtllm_gen_fused_moe.py
+  pr: 1389
 - number: 1390
   title: Adding FP8 benchmark on attention and matmul testing
   date: '2025-08-07'
@@ -3911,6 +4117,7 @@ prs:
   - benchmarks/samples/sample_testlist.txt
   - benchmarks/samples/sample_testlist_output.csv
   - benchmarks/samples/sample_testlist_output.txt
+  pr: 1390
 - number: 1392
   title: Fix flag order
   date: '2025-08-05'
@@ -3922,6 +4129,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1392
   changed_paths:
   - flashinfer/jit/cpp_ext.py
+  pr: 1392
 - number: 1393
   title: Add flags to trim down AoT builds
   date: '2025-08-06'
@@ -3933,6 +4141,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1393
   changed_paths:
   - flashinfer/aot.py
+  pr: 1393
 - number: 1396
   title: 'gpt-oss: Add MXFP8 x MXFP4 CUTLASS MOE for SM100 and BF16 x MXFP4 CUTLASS for SM90 + SwigluBias Activation'
   date: '2025-08-19'
@@ -4022,6 +4231,7 @@ prs:
   - tests/test_trtllm_cutlass_fused_moe.py
   - tests/test_trtllm_gen_fused_moe.py
   - tests/test_trtllm_moe_allreduce_fusion.py
+  pr: 1396
 - number: 1397
   title: 'feature: add cutlass as bmm_fp8 backend.'
   date: '2025-08-10'
@@ -4039,6 +4249,7 @@ prs:
   - include/flashinfer/gemm/fp8_gemm_cutlass_template.h
   - include/flashinfer/gemm/fp8_gemm_template_sm100.h
   - tests/test_bmm_fp8.py
+  pr: 1397
 - number: 1398
   title: Fix trtllm moe launcher local_num_experts
   date: '2025-08-07'
@@ -4050,6 +4261,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1398
   changed_paths:
   - csrc/trtllm_fused_moe_kernel_launcher.cu
+  pr: 1398
 - number: 1402
   title: fix shared memory alignment conflict in sampling.cuh
   date: '2025-08-07'
@@ -4061,6 +4273,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1402
   changed_paths:
   - include/flashinfer/sampling.cuh
+  pr: 1402
 - number: 1405
   title: 'feature: enable cublas for fp4 gemm when cudnn == 9.11.1 or >= 9.13'
   date: '2025-08-07'
@@ -4072,6 +4285,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1405
   changed_paths:
   - flashinfer/gemm.py
+  pr: 1405
 - number: 1410
   title: '[bugfix] Fix compilation failure when compiling csrc/trtllm_moe_allreduce_fusion.cu'
   date: '2025-08-07'
@@ -4083,6 +4297,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1410
   changed_paths:
   - csrc/trtllm_moe_allreduce_fusion.cu
+  pr: 1410
 - number: 1412
   title: Faster weight processing (moe nvfp4)
   date: '2025-08-09'
@@ -4095,6 +4310,7 @@ prs:
   changed_paths:
   - flashinfer/fused_moe/core.py
   - tests/test_trtllm_gen_fused_moe.py
+  pr: 1412
 - number: 1413
   title: Fix crash when pos_encoding_mode is passed as int
   date: '2025-08-08'
@@ -4106,6 +4322,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1413
   changed_paths:
   - flashinfer/prefill.py
+  pr: 1413
 - number: 1415
   title: 'benchmark: trtllm-gen mha with sink, add benchmark args'
   date: '2025-08-10'
@@ -4119,6 +4336,7 @@ prs:
   - benchmarks/bench_attention_sink_triton_sgl_context.py
   - benchmarks/bench_attention_sink_triton_sgl_decode.py
   - benchmarks/bench_trtllm_fmha.py
+  pr: 1415
 - number: 1416
   title: Fix missing v_scale for prefill wrapper.
   date: '2025-08-10'
@@ -4133,6 +4351,7 @@ prs:
   - flashinfer/prefill.py
   - tests/test_trtllm_gen_context.py
   - tests/test_trtllm_gen_decode.py
+  pr: 1416
 - number: 1421
   title: Remote const qualifier to avoid compilation error
   date: '2025-08-08'
@@ -4144,6 +4363,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1421
   changed_paths:
   - include/flashinfer/comm/vllm_custom_all_reduce.cuh
+  pr: 1421
 - number: 1424
   title: Fix FusedMoeRunner does not exist error
   date: '2025-08-08'
@@ -4155,6 +4375,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1424
   changed_paths:
   - flashinfer/fused_moe/core.py
+  pr: 1424
 - number: 1427
   title: 'refactor: Sink attention AoT'
   date: '2025-08-21'
@@ -4170,6 +4391,7 @@ prs:
   - flashinfer/jit/attention/pytorch.py
   - flashinfer/jit/attention/variants.py
   - tests/test_attention_sink.py
+  pr: 1427
 - number: 1428
   title: Fix redundant kernels in moe
   date: '2025-08-08'
@@ -4181,6 +4403,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1428
   changed_paths:
   - flashinfer/fused_moe/core.py
+  pr: 1428
 - number: 1435
   title: 'bugfix: fix perf issue by using fp8 graph that can use cublaslt'
   date: '2025-08-09'
@@ -4192,6 +4415,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1435
   changed_paths:
   - flashinfer/gemm.py
+  pr: 1435
 - number: 1438
   title: Putting back cudnn_batch_prefill_with_kv_cache that was deleted by ruff
   date: '2025-08-09'
@@ -4203,6 +4427,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1438
   changed_paths:
   - flashinfer/prefill.py
+  pr: 1438
 - number: 1441
   title: Decouple cutlass config version from flashinfer version
   date: '2025-08-09'
@@ -4216,6 +4441,7 @@ prs:
   - flashinfer/autotuner.py
   - flashinfer/tuning_configs/v0_1_trtllm_fused_moe_NVIDIA_B200.py
   - flashinfer/tuning_configs/v0_2_8_trtllm_fused_moe_NVIDIA_B200.py
+  pr: 1441
 - number: 1444
   title: 'fix: remote redundant zero_init from trtllm-gen attn'
   date: '2025-08-10'
@@ -4228,6 +4454,7 @@ prs:
   changed_paths:
   - csrc/trtllm_fmha_kernel_launcher.cu
   - tests/test_trtllm_gen_decode.py
+  pr: 1444
 - number: 1445
   title: Add alignment in MxFP8Quantization
   date: '2025-08-10'
@@ -4245,6 +4472,7 @@ prs:
   - csrc/nv_internal/tensorrt_llm/thop/fp8Quantize.h
   - flashinfer/fp8_quantization.py
   - tests/test_fp8_quantize.py
+  pr: 1445
 - number: 1446
   title: Remove getEnvEnablePDL in favor of enable_pdl parameter
   date: '2025-08-13'
@@ -4280,6 +4508,7 @@ prs:
   - include/flashinfer/trtllm/fmha/fmhaKernels.cuh
   - include/flashinfer/trtllm/fmha/fmhaRunnerParams.h
   - include/flashinfer/trtllm/fused_moe/runner.h
+  pr: 1446
 - number: 1453
   title: 'feat: enable trtllm-gen attn speculative decoding verify by decode'
   date: '2025-08-31'
@@ -4294,6 +4523,7 @@ prs:
   - tests/conftest.py
   - tests/test_trtllm_gen_attention.py
   - tests/test_trtllm_gen_mla.py
+  pr: 1453
 - number: 1460
   title: Fix TRTLLM NVFP4-out attention kernel scale factor dim issue
   date: '2025-08-14'
@@ -4309,6 +4539,7 @@ prs:
   - flashinfer/utils.py
   - tests/test_trtllm_gen_attention.py
   - tests/utils_fp4.py
+  pr: 1460
 - number: 1463
   title: 'fix: remove redundant zero_init reverted by #1459'
   date: '2025-08-13'
@@ -4325,6 +4556,7 @@ prs:
   - include/flashinfer/semaphore_utils.cuh
   - tests/test_trtllm_gen_context.py
   - tests/test_trtllm_gen_decode.py
+  pr: 1463
 - number: 1469
   title: 'bugfix: Verify num_experts greater or equal to local_experts + offset'
   date: '2025-08-12'
@@ -4336,6 +4568,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1469
   changed_paths:
   - csrc/trtllm_fused_moe_kernel_launcher.cu
+  pr: 1469
 - number: 1471
   title: Fix "more than one operator "/" matches these operands"
   date: '2025-08-12'
@@ -4347,6 +4580,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1471
   changed_paths:
   - include/flashinfer/attention/mla_hopper.cuh
+  pr: 1471
 - number: 1472
   title: 'feat: Enable multiple fused-moe backends'
   date: '2025-08-12'
@@ -4358,6 +4592,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1472
   changed_paths:
   - flashinfer/fused_moe/core.py
+  pr: 1472
 - number: 1473
   title: 'perf: add 1x4x1 cluster shape for fp8 bmm M<16 cases'
   date: '2025-08-12'
@@ -4370,6 +4605,7 @@ prs:
   changed_paths:
   - csrc/fp8_gemm_cutlass.jinja
   - include/flashinfer/gemm/fp8_gemm_cutlass_template.h
+  pr: 1473
 - number: 1475
   title: 'tuner: Trtllm-gen Fp4 MoE Autotunner'
   date: '2025-08-19'
@@ -4388,6 +4624,7 @@ prs:
   - flashinfer/gemm.py
   - include/flashinfer/trtllm/fused_moe/RoutingKernelTopK.cuh
   - tests/test_trtllm_gen_fused_moe.py
+  pr: 1475
 - number: 1476
   title: 'fix: minor fix after #1384'
   date: '2025-08-13'
@@ -4399,6 +4636,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1476
   changed_paths:
   - flashinfer/prefill.py
+  pr: 1476
 - number: 1479
   title: 'refactor: unify autotuner for bmm_fp8'
   date: '2025-08-15'
@@ -4411,6 +4649,7 @@ prs:
   changed_paths:
   - flashinfer/gemm.py
   - tests/test_bmm_fp8.py
+  pr: 1479
 - number: 1480
   title: fix missing enable_pdl argument in trtllm-gen fp4 moe
   date: '2025-08-14'
@@ -4423,6 +4662,7 @@ prs:
   changed_paths:
   - flashinfer/fused_moe/core.py
   - tests/test_trtllm_gen_fused_moe.py
+  pr: 1480
 - number: 1481
   title: Add python API for masked grouped gemm
   date: '2025-08-14'
@@ -4439,6 +4679,7 @@ prs:
   - pyproject.toml
   - tests/test_cute_dsl_blockscaled_gemm.py
   - tests/test_fp4_tensor_torch_cute.py
+  pr: 1481
 - number: 1483
   title: 'perf: add fast path to TopPRenormProbKernel for top_p >= 1.0, significantly boosting SGLang workloads'
   date: '2025-08-14'
@@ -4452,6 +4693,7 @@ prs:
   - benchmarks/bench_renorm.py
   - include/flashinfer/sampling.cuh
   - tests/test_sampling.py
+  pr: 1483
 - number: 1484
   title: 'feat: add pdl for trtllm-gen attn'
   date: '2025-08-14'
@@ -4467,6 +4709,7 @@ prs:
   - flashinfer/prefill.py
   - tests/test_trtllm_gen_attention.py
   - tests/test_trtllm_gen_mla.py
+  pr: 1484
 - number: 1488
   title: 'fix: update cutedsl masked moe gemm'
   date: '2025-08-14'
@@ -4479,6 +4722,7 @@ prs:
   changed_paths:
   - flashinfer/cute_dsl/blockscaled_gemm.py
   - tests/test_cute_dsl_blockscaled_gemm.py
+  pr: 1488
 - number: 1490
   title: 'feat: Support fp8 qkv, fp16/bf16 out MHA for trtllm-gen.'
   date: '2025-08-15'
@@ -4498,6 +4742,7 @@ prs:
   - flashinfer/utils.py
   - include/flashinfer/trtllm/fmha/fmhaKernels.cuh
   - tests/test_trtllm_gen_attention.py
+  pr: 1490
 - number: 1491
   title: 'Perf: support scale_a/scale_b instead of combined scale in cutlass bmm_fp8'
   date: '2025-08-17'
@@ -4513,6 +4758,7 @@ prs:
   - include/flashinfer/gemm/fp8_gemm_cutlass.h
   - include/flashinfer/gemm/fp8_gemm_cutlass_template.h
   - include/flashinfer/gemm/fp8_gemm_template_sm100.h
+  pr: 1491
 - number: 1497
   title: 'benchmark: add moe to benchmark'
   date: '2025-08-18'
@@ -4527,6 +4773,7 @@ prs:
   - benchmarks/flashinfer_benchmark.py
   - benchmarks/routines/flashinfer_benchmark_utils.py
   - benchmarks/routines/moe.py
+  pr: 1497
 - number: 1498
   title: 'feat: scaling at fp4 gemm epilogue'
   date: '2025-08-17'
@@ -4539,6 +4786,7 @@ prs:
   changed_paths:
   - flashinfer/cute_dsl/blockscaled_gemm.py
   - tests/test_cute_dsl_blockscaled_gemm.py
+  pr: 1498
 - number: 1500
   title: 'fix: Replace cub Max/Min with cuda::maximum/minimum for cuda 13 compatibility'
   date: '2025-08-16'
@@ -4550,6 +4798,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1500
   changed_paths:
   - include/flashinfer/sampling.cuh
+  pr: 1500
 - number: 1502
   title: Add benchmark for cutedsl gemm
   date: '2025-08-18'
@@ -4562,6 +4811,7 @@ prs:
   changed_paths:
   - benchmarks/bench_cute_dsl_blockscaled_gemm.py
   - flashinfer/testing/utils.py
+  pr: 1502
 - number: 1503
   title: 'feat: integrate xqa attention backend'
   date: '2025-08-29'
@@ -4592,6 +4842,7 @@ prs:
   - flashinfer/__init__.py
   - flashinfer/xqa.py
   - tests/test_xqa.py
+  pr: 1503
 - number: 1507
   title: update allreduce to match trtllm
   date: '2025-08-18'
@@ -4603,6 +4854,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1507
   changed_paths:
   - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
+  pr: 1507
 - number: 1508
   title: Support cuda<12.8 built for trtllm_allreduce_fusion.
   date: '2025-08-18'
@@ -4615,6 +4867,7 @@ prs:
   changed_paths:
   - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
   - include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
+  pr: 1508
 - number: 1509
   title: 'bugfix: Fix stream handling in cutedsl gemm'
   date: '2025-08-18'
@@ -4626,6 +4879,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1509
   changed_paths:
   - flashinfer/cute_dsl/blockscaled_gemm.py
+  pr: 1509
 - number: 1512
   title: flashinfer_benchmark QoL Improvements and Attention FP8 Support
   date: '2025-08-21'
@@ -4645,6 +4899,7 @@ prs:
   - benchmarks/samples/sample_testlist.txt
   - benchmarks/samples/sample_testlist_output.csv
   - benchmarks/samples/sample_testlist_output.txt
+  pr: 1512
 - number: 1518
   title: 'backend: Refactor trtllm-gen fmha metainfo loading'
   date: '2025-08-22'
@@ -4666,6 +4921,7 @@ prs:
   - include/flashinfer/trtllm/fmha/fmhaKernels.cuh
   - include/flashinfer/trtllm/fmha/kernelParams.h
   - tests/test_trtllm_gen_attention.py
+  pr: 1518
 - number: 1521
   title: refactor fp4 masked gemm cute-dsl implementation and add manual cache
   date: '2025-08-20'
@@ -4679,6 +4935,7 @@ prs:
   - flashinfer/cute_dsl/blockscaled_gemm.py
   - flashinfer/cute_dsl/utils.py
   - tests/test_cute_dsl_blockscaled_gemm.py
+  pr: 1521
 - number: 1523
   title: Fix linking errors with CUDA 13
   date: '2025-08-20'
@@ -4690,6 +4947,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1523
   changed_paths:
   - flashinfer/jit/cpp_ext.py
+  pr: 1523
 - number: 1525
   title: Add GeGLU support to trtllm-gen NVFP4 Fused MoE Kernel
   date: '2025-08-21'
@@ -4723,6 +4981,7 @@ prs:
   - include/flashinfer/trtllm/fused_moe/RoutingKernel.h
   - include/flashinfer/trtllm/fused_moe/runner.h
   - tests/test_trtllm_gen_fused_moe.py
+  pr: 1525
 - number: 1526
   title: add cuda version check for jit
   date: '2025-08-21'
@@ -4734,6 +4993,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1526
   changed_paths:
   - flashinfer/jit/cpp_ext.py
+  pr: 1526
 - number: 1529
   title: 'feat: pass sm_count as param for fp4_masked_gemm'
   date: '2025-08-22'
@@ -4748,6 +5008,7 @@ prs:
   - flashinfer/cute_dsl/blockscaled_gemm.py
   - flashinfer/cute_dsl/utils.py
   - tests/test_cute_dsl_blockscaled_gemm.py
+  pr: 1529
 - number: 1530
   title: 'bugfix: Fix compile error for undefined swizzle enum.'
   date: '2025-08-21'
@@ -4764,6 +5025,7 @@ prs:
   - csrc/trtllm_moe_allreduce_fusion.cu
   - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
   - include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
+  pr: 1530
 - number: 1533
   title: 'bugfix: Fix Persistent kernel precision for masked output '
   date: '2025-08-24'
@@ -4780,6 +5042,7 @@ prs:
   - include/flashinfer/attention/prefill.cuh
   - include/flashinfer/attention/scheduler.cuh
   - tests/test_batch_attention.py
+  pr: 1533
 - number: 1534
   title: Remove cuda-python from dependency and check at runtime
   date: '2025-08-28'
@@ -4795,6 +5058,7 @@ prs:
   - flashinfer/deep_gemm.py
   - flashinfer/green_ctx.py
   - setup.py
+  pr: 1534
 - number: 1535
   title: Add sm check for sm100 only cutlass/trtllm kernel
   date: '2025-08-21'
@@ -4806,6 +5070,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1535
   changed_paths:
   - flashinfer/gemm.py
+  pr: 1535
 - number: 1536
   title: 'benchmark: Add autotunner to moe benchmark'
   date: '2025-08-26'
@@ -4818,6 +5083,7 @@ prs:
   changed_paths:
   - benchmarks/README.md
   - benchmarks/routines/moe.py
+  pr: 1536
 - number: 1537
   title: 'feat: Integrate TRTLLM varlen kernel for deepseek R1 prefill '
   date: '2025-08-22'
@@ -4840,6 +5106,7 @@ prs:
   - include/flashinfer/trtllm/fmha/lse.cuh
   - include/flashinfer/utils.cuh
   - tests/test_trtllm_gen_attention.py
+  pr: 1537
 - number: 1539
   title: 'bugfix: fix autotuner failure with low precision data types'
   date: '2025-08-21'
@@ -4851,6 +5118,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1539
   changed_paths:
   - flashinfer/autotuner.py
+  pr: 1539
 - number: 1540
   title: 'feat: Add fp8-qkv, fp16/bf16 output MHA'
   date: '2025-08-25'
@@ -4868,6 +5136,7 @@ prs:
   - flashinfer/sparse.py
   - flashinfer/utils.py
   - tests/test_trtllm_gen_attention.py
+  pr: 1540
 - number: 1545
   title: fix trtllm_allreduce_fusion twoshot register problem.
   date: '2025-08-22'
@@ -4879,6 +5148,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1545
   changed_paths:
   - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
+  pr: 1545
 - number: 1547
   title: 'perf: replace cudaGetDeviceProperties with cudaDeviceGetAttribute'
   date: '2025-08-22'
@@ -4892,6 +5162,7 @@ prs:
   - csrc/cudnn_sdpa_kernel_launcher.cu
   - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
   - include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
+  pr: 1547
 - number: 1548
   title: 'perf: Enable SplitK and fix autotuner for trtllm fp4 fused moe'
   date: '2025-09-05'
@@ -4907,6 +5178,7 @@ prs:
   - flashinfer/fused_moe/core.py
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/GemmOptions.h
   - tests/test_trtllm_gen_fused_moe.py
+  pr: 1548
 - number: 1550
   title: Add mnnvl_moe_alltoallv_prepare_without_allgather
   date: '2025-08-27'
@@ -4922,6 +5194,7 @@ prs:
   - flashinfer/comm/trtllm_alltoall.py
   - include/flashinfer/comm/trtllm_alltoall_prepare.cuh
   - tests/test_trtllm_alltoall.py
+  pr: 1550
 - number: 1559
   title: 'bugfix: fix persistent attention kernel correctness on blackwell'
   date: '2025-08-24'
@@ -4936,6 +5209,7 @@ prs:
   - scripts/task_jit_run_tests_part4.sh
   - tests/jit_utils.py
   - tests/test_batch_attention.py
+  pr: 1559
 - number: 1562
   title: 'Bugfix: some typos in Persistent kernel '
   date: '2025-08-24'
@@ -4948,6 +5222,7 @@ prs:
   changed_paths:
   - include/flashinfer/attention/persistent.cuh
   - include/flashinfer/attention/scheduler.cuh
+  pr: 1562
 - number: 1565
   title: 'fix: separate out fp4 lib into sm90 and sm100 versions, add oob checking in fused moe'
   date: '2025-08-24'
@@ -4962,6 +5237,7 @@ prs:
   - flashinfer/aot.py
   - flashinfer/fp4_quantization.py
   - tests/test_fp4_quantize.py
+  pr: 1565
 - number: 1567
   title: 'Backend: downgrade trtllm-gen kernel to cuda-12'
   date: '2025-08-25'
@@ -4983,6 +5259,7 @@ prs:
   - include/flashinfer/trtllm/fmha/fmhaKernels.cuh
   - include/flashinfer/trtllm/fmha/kernelParams.h
   - tests/test_trtllm_gen_attention.py
+  pr: 1567
 - number: 1571
   title: 'bugfix: fix cuda version guard macros'
   date: '2025-08-26'
@@ -4996,6 +5273,7 @@ prs:
   - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
   - include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
   - include/flashinfer/cutlass_utils.cuh
+  pr: 1571
 - number: 1573
   title: update trtllm-gen fp4 autotuner and routing
   date: '2025-08-27'
@@ -5009,6 +5287,7 @@ prs:
   - csrc/trtllm_fused_moe_routing_llama4.cu
   - csrc/trtllm_fused_moe_routing_renormalize.cu
   - flashinfer/fused_moe/core.py
+  pr: 1573
 - number: 1577
   title: 'bugfix: update trtllm-gen gemm kernel names'
   date: '2025-08-26'
@@ -5020,6 +5299,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1577
   changed_paths:
   - csrc/trtllm_gemm_runner.cu
+  pr: 1577
 - number: 1578
   title: 'feat: Support for inferring out_dtype from out.dtype for TRTLLM attention kernel'
   date: '2025-08-26'
@@ -5032,6 +5312,7 @@ prs:
   changed_paths:
   - flashinfer/decode.py
   - flashinfer/prefill.py
+  pr: 1578
 - number: 1581
   title: 'refactor: Expose calculate_tile_tokens_dim function'
   date: '2025-08-27'
@@ -5044,6 +5325,7 @@ prs:
   changed_paths:
   - flashinfer/utils.py
   - tests/test_trtllm_gen_fused_moe.py
+  pr: 1581
 - number: 1582
   title: 'bugfix: Fix arg passing to TORCH_CHECK and TORCH_WARN macros'
   date: '2025-08-27'
@@ -5060,6 +5342,7 @@ prs:
   - csrc/trtllm_fused_moe_routing_llama4.cu
   - csrc/trtllm_fused_moe_routing_renormalize.cu
   - csrc/trtllm_fused_moe_runner.cu
+  pr: 1582
 - number: 1584
   title: 'fix: semaphoress must be at the fixed range in workspace buffer on trtllm_gen attention'
   date: '2025-08-26'
@@ -5071,6 +5354,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1584
   changed_paths:
   - csrc/trtllm_fmha_kernel_launcher.cu
+  pr: 1584
 - number: 1588
   title: 'refactor: use allocator class for workspace buffer allocation'
   date: '2025-08-27'
@@ -5087,6 +5371,7 @@ prs:
   - flashinfer/sparse.py
   - tests/test_trtllm_gen_attention.py
   - tests/test_trtllm_gen_mla.py
+  pr: 1588
 - number: 1590
   title: 'fix: Improve TRTLLM attention kernel out_dtype unit test'
   date: '2025-08-27'
@@ -5100,6 +5385,7 @@ prs:
   - flashinfer/decode.py
   - flashinfer/prefill.py
   - tests/test_trtllm_gen_attention.py
+  pr: 1590
 - number: 1596
   title: 'bugfix: fix fused-temperature softmax IMA issue'
   date: '2025-08-28'
@@ -5111,6 +5397,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1596
   changed_paths:
   - include/flashinfer/sampling.cuh
+  pr: 1596
 - number: 1597
   title: 'bugfix: fix the register overflow issue for topk renorm kernels on blackwell'
   date: '2025-08-28'
@@ -5122,6 +5409,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1597
   changed_paths:
   - include/flashinfer/sampling.cuh
+  pr: 1597
 - number: 1598
   title: 'bugfix: Fix RuntimeError("FlashInfer requires sm75+")'
   date: '2025-08-28'
@@ -5133,6 +5421,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1598
   changed_paths:
   - flashinfer/jit/core.py
+  pr: 1598
 - number: 1599
   title: 'bugfix: fix unittest test_fp8_quantize'
   date: '2025-08-28'
@@ -5144,6 +5433,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1599
   changed_paths:
   - flashinfer/utils.py
+  pr: 1599
 - number: 1601
   title: 'feat: Enable MnnvlMemory (for alltoallv) on B200'
   date: '2025-08-28'
@@ -5155,6 +5445,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1601
   changed_paths:
   - flashinfer/comm/mnnvl.py
+  pr: 1601
 - number: 1608
   title: 'feat: initial support for SM103, SM110, SM120, SM121'
   date: '2025-09-02'
@@ -5224,6 +5515,7 @@ prs:
   - tests/test_groupwise_scaled_gemm_mxfp4.py
   - tests/test_mm_fp4.py
   - tests/test_trtllm_cutlass_fused_moe.py
+  pr: 1608
 - number: 1609
   title: 'feat: cutlass fp4 gemm bringup for SM120 & SM121'
   date: '2025-09-03'
@@ -5243,6 +5535,7 @@ prs:
   - include/flashinfer/gemm/fp4_gemm_cutlass_template_sm120.h
   - include/flashinfer/gemm/fp4_gemm_template_sm100.h
   - include/flashinfer/gemm/fp4_gemm_template_sm120.h
+  pr: 1609
 - number: 1610
   title: 'feat: cutlass fp8 gemm bringup for SM120 & SM121'
   date: '2025-09-04'
@@ -5264,6 +5557,7 @@ prs:
   - include/flashinfer/gemm/gemm_groupwise_sm120.cuh
   - include/flashinfer/gemm/group_gemm_fp8_groupwise_sm120.cuh
   - tests/test_groupwise_scaled_gemm_fp8.py
+  pr: 1610
 - number: 1611
   title: 'bugfix: fix fp4 quantization with 8x4 scale factor layout'
   date: '2025-08-30'
@@ -5275,6 +5569,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1611
   changed_paths:
   - csrc/nv_internal/tensorrt_llm/kernels/quantization.cuh
+  pr: 1611
 - number: 1614
   title: 'bugfix: fix merge_attention_state in BatchAttention w/ gqa-group-size in Qwen family'
   date: '2025-09-02'
@@ -5288,6 +5583,7 @@ prs:
   - include/flashinfer/attention/persistent.cuh
   - include/flashinfer/attention/scheduler.cuh
   - tests/test_batch_attention.py
+  pr: 1614
 - number: 1615
   title: 'perf: Fix the tactic sorting in TrtllmGenBatchedGemmRunner::getValidConfigIndices'
   date: '2025-09-02'
@@ -5300,6 +5596,7 @@ prs:
   changed_paths:
   - csrc/trtllm_batched_gemm_runner.cu
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/BatchedGemmInterface.h
+  pr: 1615
 - number: 1622
   title: 'bugfix: collect all modules to aot'
   date: '2025-09-04'
@@ -5323,6 +5620,7 @@ prs:
   - flashinfer/tllm_utils.py
   - flashinfer/utils.py
   - scripts/task_test_aot_build_import.sh
+  pr: 1622
 - number: 1625
   title: 'bugfix: fix flashinfer_benchmark.py IMA when running a test list'
   date: '2025-09-03'
@@ -5336,6 +5634,7 @@ prs:
   - benchmarks/routines/attention.py
   - benchmarks/routines/flashinfer_benchmark_utils.py
   - benchmarks/routines/gemm.py
+  pr: 1625
 - number: 1628
   title: patch mm segfault & patch cubin avail.
   date: '2025-09-03'
@@ -5349,6 +5648,7 @@ prs:
   - csrc/trtllm_gemm_runner.cu
   - flashinfer/artifacts.py
   - tests/test_mm_fp4.py
+  pr: 1628
 - number: 1631
   title: 'bugfix: trtllm-gen fmha sm101 and sm100 compatibility'
   date: '2025-09-03'
@@ -5360,6 +5660,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1631
   changed_paths:
   - include/flashinfer/trtllm/fmha/fmhaKernels.cuh
+  pr: 1631
 - number: 1633
   title: 'feat: add support of fp4_batched_quantize'
   date: '2025-09-06'
@@ -5375,6 +5676,7 @@ prs:
   - flashinfer/__init__.py
   - flashinfer/fp4_quantization.py
   - tests/test_fp4_quantize.py
+  pr: 1633
 - number: 1635
   title: 'fix: pass workspace for trtllm-gen attention'
   date: '2025-09-04'
@@ -5387,6 +5689,7 @@ prs:
   changed_paths:
   - flashinfer/decode.py
   - flashinfer/prefill.py
+  pr: 1635
 - number: 1640
   title: 'bugfix: Fix FLOPS calculation for bench_trtllm_gen_mla.py'
   date: '2025-09-05'
@@ -5398,6 +5701,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1640
   changed_paths:
   - benchmarks/bench_trtllm_gen_mla.py
+  pr: 1640
 - number: 1641
   title: 'refactor: using tvm-ffi for multi-platform bindings'
   date: '2025-09-27'
@@ -5528,6 +5832,7 @@ prs:
   - flashinfer/fp8_quantization.py
   - flashinfer/fused_moe/core.py
   - flashinfer/gemm.py
+  pr: 1641
 - number: 1644
   title: Added mx_fp4 support using the cudnn backend
   date: '2025-09-09'
@@ -5540,6 +5845,7 @@ prs:
   changed_paths:
   - flashinfer/gemm.py
   - tests/test_mm_fp4.py
+  pr: 1644
 - number: 1652
   title: 'fix: add _check_tensor_params to check correct sampling parameters and dtype validation in decode.py'
   date: '2025-09-26'
@@ -5553,6 +5859,7 @@ prs:
   - flashinfer/decode.py
   - flashinfer/sampling.py
   - tests/test_sampling.py
+  pr: 1652
 - number: 1656
   title: Add benchmark for MLARopeQuantize
   date: '2025-09-09'
@@ -5564,6 +5871,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1656
   changed_paths:
   - benchmarks/bench_mla_rope_quantize_fp8.py
+  pr: 1656
 - number: 1659
   title: Tiny allow compiling with line info and release moe
   date: '2025-09-09'
@@ -5575,6 +5883,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1659
   changed_paths:
   - flashinfer/jit/core.py
+  pr: 1659
 - number: 1661
   title: 'perf&bugfix: skip kv-tile computation out of sliding window in FA2; fix __syncthreads in mergestate'
   date: '2025-09-11'
@@ -5604,6 +5913,7 @@ prs:
   - tvm_binding/batch_prefill_jit_tvm_binding.cu
   - tvm_binding/batch_prefill_sm90.cu
   - tvm_binding/batch_prefill_sm90_jit_tvm_binding.cu
+  pr: 1661
 - number: 1662
   title: 'benchmark: add cupti support to benchmark'
   date: '2025-09-11'
@@ -5622,6 +5932,7 @@ prs:
   - docs/api/testing.rst
   - flashinfer/testing/__init__.py
   - flashinfer/testing/utils.py
+  pr: 1662
 - number: 1664
   title: 'feat: Support s_qo < s_kv for prefill in flashinfer_benchmark.py and benchmark minor updates'
   date: '2025-09-10'
@@ -5634,6 +5945,7 @@ prs:
   changed_paths:
   - benchmarks/routines/attention.py
   - benchmarks/routines/gemm.py
+  pr: 1664
 - number: 1666
   title: '[Hotfix] `test_fp4_quantize.py` failure on sm103'
   date: '2025-09-11'
@@ -5645,6 +5957,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1666
   changed_paths:
   - flashinfer/fp4_quantization.py
+  pr: 1666
 - number: 1667
   title: Refactor Blackwell unit test scripts
   date: '2025-09-16'
@@ -5661,6 +5974,7 @@ prs:
   - scripts/run_test_blackwell_moe_kernels.sh
   - scripts/run_test_blackwell_utils_kernels.sh
   - scripts/task_test_blackwell_kernels.sh
+  pr: 1667
 - number: 1668
   title: TGV GEMM as a BF16 backend alternative to cuBLAS
   date: '2025-09-14'
@@ -5681,6 +5995,7 @@ prs:
   - include/flashinfer/gemm/tgv_gemm_configs.h
   - include/flashinfer/gemm/tgv_gemm_template.h
   - tests/test_tgv_gemm.py
+  pr: 1668
 - number: 1670
   title: 'feat: Add `variant.OutputTransform()` to decode kernels'
   date: '2025-09-14'
@@ -5693,6 +6008,7 @@ prs:
   changed_paths:
   - include/flashinfer/attention/decode.cuh
   - tests/test_jit_example.py
+  pr: 1670
 - number: 1675
   title: 'feat: Batch-size invariant FA2 Prefill & Decode'
   date: '2025-09-15'
@@ -5713,6 +6029,7 @@ prs:
   - tests/test_batch_invariant_fa2.py
   - tvm_binding/batch_prefill.cu
   - tvm_binding/batch_prefill_jit_tvm_binding.cu
+  pr: 1675
 - number: 1677
   title: Support output signals for overlapping for cutedsl gemm
   date: '2025-09-15'
@@ -5725,6 +6042,7 @@ prs:
   changed_paths:
   - flashinfer/cute_dsl/blockscaled_gemm.py
   - tests/test_cute_dsl_blockscaled_gemm.py
+  pr: 1677
 - number: 1679
   title: '[misc] add a wrapper class for attention sink jit args'
   date: '2025-09-15'
@@ -5738,6 +6056,7 @@ prs:
   - flashinfer/__init__.py
   - flashinfer/attention.py
   - tests/test_attention_sink.py
+  pr: 1679
 - number: 1680
   title: '[TVM] Default `fixed_split_size` value in TVM binding'
   date: '2025-09-15'
@@ -5750,6 +6069,7 @@ prs:
   changed_paths:
   - tvm_binding/batch_prefill.cu
   - tvm_binding/batch_prefill_jit_tvm_binding.cu
+  pr: 1680
 - number: 1681
   title: 'perf: improve performance of cutlass fmha'
   date: '2025-09-16'
@@ -5762,6 +6082,7 @@ prs:
   changed_paths:
   - include/flashinfer/attention/blackwell/collective/fmha_fusion.hpp
   - include/flashinfer/attention/blackwell/collective/sm100_fmha_fwd_mainloop_tma_warpspecialized.hpp
+  pr: 1681
 - number: 1682
   title: Update TGV GEMM default kernel and TGV code cleanup.
   date: '2025-09-15'
@@ -5775,6 +6096,7 @@ prs:
   - csrc/tgv_gemm.cu
   - flashinfer/gemm.py
   - include/flashinfer/gemm/tgv_gemm.cuh
+  pr: 1682
 - number: 1685
   title: 'perf: Port the separate reduce kernel mode from trtllm.'
   date: '2025-09-19'
@@ -5794,6 +6116,7 @@ prs:
   - include/flashinfer/trtllm/fmha/fmhaRunnerParams.h
   - include/flashinfer/trtllm/fmha/kernelUtils.h
   - tests/test_attention_sink_blackwell.py
+  pr: 1685
 - number: 1688
   title: 'gemm: Enabled alpha with the mx_fp4 format'
   date: '2025-09-17'
@@ -5806,6 +6129,7 @@ prs:
   changed_paths:
   - flashinfer/gemm.py
   - tests/test_mm_fp4.py
+  pr: 1688
 - number: 1694
   title: Update deepgemm backend for 103a
   date: '2025-09-17'
@@ -5819,6 +6143,7 @@ prs:
   - flashinfer/artifacts.py
   - flashinfer/deep_gemm.py
   - tests/test_groupwise_scaled_gemm_fp8.py
+  pr: 1694
 - number: 1695
   title: '[cute_dsl] add gemm + all reduce (two_shot) '
   date: '2025-09-18'
@@ -5831,6 +6156,7 @@ prs:
   changed_paths:
   - flashinfer/cute_dsl/gemm_allreduce_two_shot.py
   - tests/test_cute_dsl_gemm_allreduce_two_shot.py
+  pr: 1695
 - number: 1696
   title: 'Support Kimi-K2 for TRT: templatize number of experts'
   date: '2025-09-17'
@@ -5848,6 +6174,7 @@ prs:
   - include/flashinfer/trtllm/fused_moe/DevKernel.h
   - include/flashinfer/trtllm/fused_moe/RoutingKernel.h
   - include/flashinfer/trtllm/fused_moe/RoutingKernelTopK.cuh
+  pr: 1696
 - number: 1699
   title: Remove incorrect method call "isdigit" on number type
   date: '2025-09-17'
@@ -5859,6 +6186,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1699
   changed_paths:
   - flashinfer/compilation_context.py
+  pr: 1699
 - number: 1706
   title: 'feat: Benchmark mm_fp4 mxfp4 support and gemm autotune support.  Restore mm_fp4 API behavior'
   date: '2025-09-17'
@@ -5872,6 +6200,7 @@ prs:
   - benchmarks/routines/flashinfer_benchmark_utils.py
   - benchmarks/routines/gemm.py
   - flashinfer/gemm.py
+  pr: 1706
 - number: 1710
   title: 'test: skip the unsupported test cases for sm120/121'
   date: '2025-09-18'
@@ -5893,6 +6222,7 @@ prs:
   - tests/test_trtllm_gen_fused_moe.py
   - tests/test_trtllm_gen_mla.py
   - tests/test_xqa.py
+  pr: 1710
 - number: 1715
   title: 'test: skip unsupported (non-SM90) test cases for xqa'
   date: '2025-09-18'
@@ -5905,6 +6235,7 @@ prs:
   changed_paths:
   - flashinfer/xqa.py
   - tests/test_xqa.py
+  pr: 1715
 - number: 1716
   title: 'perf: Add tuning config for cutlass moe for a hardware'
   date: '2025-09-18'
@@ -5916,6 +6247,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1716
   changed_paths:
   - flashinfer/tuning_configs/v0_1_trtllm_fused_moe_NVIDIA_GB200.py
+  pr: 1716
 - number: 1719
   title: disable optimization and add more debug information during verbose mode
   date: '2025-09-19'
@@ -5927,6 +6259,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1719
   changed_paths:
   - flashinfer/jit/core.py
+  pr: 1719
 - number: 1723
   title: Fix DeepSeek quality for TRTLLM fused MoE routing
   date: '2025-09-19'
@@ -5938,6 +6271,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1723
   changed_paths:
   - csrc/trtllm_fused_moe_routing_deepseek.cu
+  pr: 1723
 - number: 1724
   title: 'bugfix: partially fix tests/test_trtllm_gen_fused_moe.py unit test failure'
   date: '2025-09-24'
@@ -5953,6 +6287,7 @@ prs:
   - csrc/trtllm_fused_moe_routing_renormalize.cu
   - include/flashinfer/trtllm/fused_moe/DevKernel.h
   - include/flashinfer/trtllm/fused_moe/RoutingKernel.h
+  pr: 1724
 - number: 1725
   title: 'TVM: support TVM binding for GroupedGemm'
   date: '2025-09-20'
@@ -5970,6 +6305,7 @@ prs:
   - pyproject.toml
   - tvm_binding/grouped_gemm_fp8.cu
   - tvm_binding/grouped_gemm_fp8_jit_tvm_binding.cu
+  pr: 1725
 - number: 1727
   title: 'fix: put sampling kernel launch into macro'
   date: '2025-09-19'
@@ -5981,6 +6317,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1727
   changed_paths:
   - include/flashinfer/sampling.cuh
+  pr: 1727
 - number: 1729
   title: 'bugfix: Fix flashinfer download-cubin'
   date: '2025-09-19'
@@ -5993,6 +6330,7 @@ prs:
   changed_paths:
   - flashinfer/artifacts.py
   - flashinfer/jit/cubin_loader.py
+  pr: 1729
 - number: 1731
   title: Fix missing namespace qualifier
   date: '2025-09-19'
@@ -6005,6 +6343,7 @@ prs:
   changed_paths:
   - 3rdparty/cutlass
   - include/flashinfer/trtllm/fmha/fmhaKernels.cuh
+  pr: 1731
 - number: 1745
   title: 'feat: port fast_decode_plan from sgl'
   date: '2025-09-22'
@@ -6019,6 +6358,7 @@ prs:
   - flashinfer/decode.py
   - tests/test_batch_decode_kernels.py
   - tests/test_tensor_cores_decode.py
+  pr: 1745
 - number: 1757
   title: 'fix: should pass global_override_indptr_cpu in fast_decode_plan param list'
   date: '2025-09-24'
@@ -6032,6 +6372,7 @@ prs:
   - flashinfer/decode.py
   - tests/test_batch_decode_kernels.py
   - tests/test_tensor_cores_decode.py
+  pr: 1757
 - number: 1758
   title: Fix sink attention accuracy regression, add sink test and cleanup.
   date: '2025-09-25'
@@ -6045,6 +6386,7 @@ prs:
   - flashinfer/artifacts.py
   - tests/test_attention_sink_blackwell.py
   - tests/test_trtllm_gen_attention.py
+  pr: 1758
 - number: 1764
   title: 'fix: fix cannot import name ''cuda'' from ''cuda'' in CUDA13'
   date: '2025-09-24'
@@ -6060,6 +6402,7 @@ prs:
   - flashinfer/cute_dsl/gemm_allreduce_two_shot.py
   - flashinfer/utils.py
   - tests/test_cute_dsl_gemm_allreduce_two_shot.py
+  pr: 1764
 - number: 1766
   title: Added xfail for mx_fp4 matmul on SM120
   date: '2025-09-25'
@@ -6073,6 +6416,7 @@ prs:
   - flashinfer/gemm.py
   - flashinfer/utils.py
   - tests/test_mm_fp4.py
+  pr: 1766
 - number: 1767
   title: 'tests: skip non SM100/103 for grouped deepgemm'
   date: '2025-09-25'
@@ -6085,6 +6429,7 @@ prs:
   changed_paths:
   - flashinfer/gemm.py
   - tests/test_groupwise_scaled_gemm_fp8.py
+  pr: 1767
 - number: 1769
   title: 'feat: add xqa fp8 mha and fp8 kv cache'
   date: '2025-10-27'
@@ -6114,6 +6459,7 @@ prs:
   - flashinfer/jit/xqa.py
   - flashinfer/xqa.py
   - tests/attention/test_xqa.py
+  pr: 1769
 - number: 1771
   title: 'Waive / disable test_mla_decode_kernel.py::test_mla_decode_kernel for not sm80 '
   date: '2025-09-25'
@@ -6127,6 +6473,7 @@ prs:
   - flashinfer/decode.py
   - tests/conftest.py
   - tests/test_mla_decode_kernel.py
+  pr: 1771
 - number: 1774
   title: Masked batch nvfp4 quantization
   date: '2025-10-01'
@@ -6147,6 +6494,7 @@ prs:
   - flashinfer/activation.py
   - flashinfer/fp4_quantization.py
   - tests/utils/test_fp4_quantize.py
+  pr: 1774
 - number: 1778
   title: 'refactor: Test reorganization phase 2'
   date: '2025-09-29'
@@ -6258,6 +6606,7 @@ prs:
   - tests/utils/test_quantization.py
   - tests/utils/test_sampling.py
   - tests/utils/test_triton_cascade.py
+  pr: 1778
 - number: 1782
   title: 'hotfix: make aot wheel work without nvcc'
   date: '2025-09-27'
@@ -6269,6 +6618,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1782
   changed_paths:
   - flashinfer/jit/cpp_ext.py
+  pr: 1782
 - number: 1795
   title: 'refactor: cleanup codebase after tvm-ffi refactor'
   date: '2025-09-29'
@@ -6367,6 +6717,7 @@ prs:
   - tvm_binding/sampling.cu
   - tvm_binding/sampling_jit_tvm_binding.cu
   - tvm_binding/tvm_binding_utils.h
+  pr: 1795
 - number: 1798
   title: 'bugfix: remove the append "a" logic if user specifies cuda arch explicitly'
   date: '2025-10-01'
@@ -6379,6 +6730,7 @@ prs:
   changed_paths:
   - flashinfer/compilation_context.py
   - scripts/task_test_aot_build_import.sh
+  pr: 1798
 - number: 1800
   title: 'fix: compilation failure in fp4Op.cpp'
   date: '2025-09-29'
@@ -6390,6 +6742,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1800
   changed_paths:
   - csrc/nv_internal/tensorrt_llm/thop/fp4Op.cpp
+  pr: 1800
 - number: 1801
   title: Enable support for CFLAGS as well as LDFLAGS when building
   date: '2025-09-30'
@@ -6401,6 +6754,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1801
   changed_paths:
   - flashinfer/jit/cpp_ext.py
+  pr: 1801
 - number: 1802
   title: 'fix: missing header include in decode kernel jit binding'
   date: '2025-09-29'
@@ -6412,6 +6766,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1802
   changed_paths:
   - csrc/batch_decode.cu
+  pr: 1802
 - number: 1809
   title: Support checks PoC
   date: '2025-10-14'
@@ -6426,6 +6781,7 @@ prs:
   - flashinfer/utils.py
   - tests/gemm/test_mm_fp4.py
   - tests/utils/test_decorators.py
+  pr: 1809
 - number: 1810
   title: 'tests: Update support for tgv_gemm to SM100 only and add to ut'
   date: '2025-10-01'
@@ -6442,6 +6798,7 @@ prs:
   - flashinfer/jit/core.py
   - flashinfer/utils.py
   - tests/GEMM/test_tgv_gemm.py
+  pr: 1810
 - number: 1812
   title: 'tests: upgrade cutlass, fix import and skip non-SM100 cutedsl two shot allreduce'
   date: '2025-10-01'
@@ -6455,6 +6812,7 @@ prs:
   - flashinfer/cute_dsl/gemm_allreduce_two_shot.py
   - setup.py
   - tests/unlisted/test_cute_dsl_gemm_allreduce_two_shot.py
+  pr: 1812
 - number: 1817
   title: 'fix: fp4 moe on sm120'
   date: '2025-09-30'
@@ -6468,6 +6826,7 @@ prs:
   - flashinfer/aot.py
   - flashinfer/fused_moe/__init__.py
   - flashinfer/fused_moe/core.py
+  pr: 1817
 - number: 1819
   title: feat:enable fp8 blockscale moe for fused cultass for sm90
   date: '2025-10-12'
@@ -6500,6 +6859,7 @@ prs:
   - flashinfer/fused_moe/core.py
   - flashinfer/jit/fused_moe.py
   - tests/moe/test_trtllm_cutlass_fused_moe.py
+  pr: 1819
 - number: 1821
   title: Remove `-isystem /usr/include`
   date: '2025-10-01'
@@ -6511,6 +6871,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1821
   changed_paths:
   - flashinfer/jit/cpp_ext.py
+  pr: 1821
 - number: 1824
   title: '[Perf] Cache device property functions to avoid recomputation'
   date: '2025-10-01'
@@ -6522,6 +6883,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1824
   changed_paths:
   - flashinfer/utils.py
+  pr: 1824
 - number: 1825
   title: 'jit: add `-lcuda` to default ldflags'
   date: '2025-10-03'
@@ -6536,6 +6898,7 @@ prs:
   - flashinfer/gemm.py
   - flashinfer/jit/attention/modules.py
   - flashinfer/jit/cpp_ext.py
+  pr: 1825
 - number: 1826
   title: 'Bugfix: Fix data hazard in persistent reduce'
   date: '2025-10-01'
@@ -6547,6 +6910,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1826
   changed_paths:
   - include/flashinfer/attention/persistent.cuh
+  pr: 1826
 - number: 1829
   title: 'feat: trtrllm-gen global scaled FP8 GEMMs'
   date: '2025-10-11'
@@ -6582,6 +6946,7 @@ prs:
   - tests/gemm/test_mm_fp8.py
   - tests/moe/test_trtllm_gen_fused_moe.py
   - tests/utils_fp8.py
+  pr: 1829
 - number: 1831
   title: Update the routing for TRTLLMGEN to support kimi k2 and qwen
   date: '2025-10-22'
@@ -6603,6 +6968,7 @@ prs:
   - include/flashinfer/trtllm/fused_moe/RoutingKernel.h
   - include/flashinfer/trtllm/fused_moe/RoutingKernelTopK.cuh
   - tests/moe/test_trtllm_gen_fused_moe.py
+  pr: 1831
 - number: 1835
   title: '[Quantization] Add per-expert global scaling factor for fp4 batched quantize'
   date: '2025-10-01'
@@ -6615,6 +6981,7 @@ prs:
   changed_paths:
   - csrc/nv_internal/tensorrt_llm/kernels/quantization.cuh
   - tests/utils/test_fp4_quantize.py
+  pr: 1835
 - number: 1836
   title: 'jit: add `get_object_paths` to JitSpec'
   date: '2025-10-02'
@@ -6627,6 +6994,7 @@ prs:
   changed_paths:
   - csrc/batch_decode.cu
   - flashinfer/jit/core.py
+  pr: 1836
 - number: 1843
   title: 'feat: add warp-level persistent qk norm'
   date: '2025-10-03'
@@ -6641,6 +7009,7 @@ prs:
   - flashinfer/norm.py
   - include/flashinfer/norm.cuh
   - tests/utils/test_norm.py
+  pr: 1843
 - number: 1850
   title: Add head_dim=64 for blackwell cutlass fmha implementation
   date: '2025-10-03'
@@ -6656,6 +7025,7 @@ prs:
   - include/flashinfer/attention/blackwell/collective/sm100_fmha_fwd_mainloop_tma_warpspecialized.hpp
   - include/flashinfer/attention/blackwell/collective/sm100_fmha_gen_mainloop_warpspecialized.hpp
   - tests/attention/test_blackwell_fmha.py
+  pr: 1850
 - number: 1862
   title: raise error for group_gemm_fp8_nt_groupwise then num_groups > 1 on sm120/121
   date: '2025-10-04'
@@ -6679,6 +7049,7 @@ prs:
   - tests/gemm/test_mm_fp4.py
   - tests/gemm/test_sm_constraint_gemm.py
   - tests/gemm/test_tgv_gemm.py
+  pr: 1862
 - number: 1865
   title: 'Bugfix: fix o_strides in persistent kernel '
   date: '2025-10-05'
@@ -6691,6 +7062,7 @@ prs:
   changed_paths:
   - include/flashinfer/attention/persistent.cuh
   - tests/attention/test_batch_attention.py
+  pr: 1865
 - number: 1876
   title: Fix bias dtype
   date: '2025-10-20'
@@ -6707,6 +7079,7 @@ prs:
   - include/flashinfer/trtllm/fused_moe/DevKernel.h
   - include/flashinfer/trtllm/fused_moe/RoutingKernel.h
   - include/flashinfer/trtllm/fused_moe/runner.h
+  pr: 1876
 - number: 1878
   title: 'Tune kernel compilation parameters for https://github.com/flashinfer-ai/flashinfer/pull/1850 '
   date: '2025-10-07'
@@ -6720,6 +7093,7 @@ prs:
   - csrc/fmha_cutlass_sm100.cu
   - include/flashinfer/attention/blackwell/collective/sm100_fmha_fwd_mainloop_tma_warpspecialized.hpp
   - tests/attention/test_blackwell_fmha.py
+  pr: 1878
 - number: 1882
   title: 'feat: Add FP4 TRTLLM-Gen throughput MOE batched gemms'
   date: '2025-10-11'
@@ -6745,6 +7119,7 @@ prs:
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/trtllm/gen/CommonUtils.h
   - include/flashinfer/trtllm/fused_moe/runner.h
   - tests/moe/test_trtllm_gen_fused_moe.py
+  pr: 1882
 - number: 1883
   title: 'misc: fix some B200 GEMM bench'
   date: '2025-10-08'
@@ -6757,6 +7132,7 @@ prs:
   changed_paths:
   - benchmarks/bench_groupwise_gemm_fp8_blackwell.py
   - benchmarks/bench_tgv_gemm.py
+  pr: 1883
 - number: 1894
   title: fix vllm graph register and add test
   date: '2025-10-14'
@@ -6769,6 +7145,7 @@ prs:
   changed_paths:
   - include/flashinfer/comm/vllm_custom_all_reduce.cuh
   - tests/comm/test_vllm_custom_allreduce.py
+  pr: 1894
 - number: 1905
   title: 'bugfix: fix cli error when cuda toolkit is not installed'
   date: '2025-10-11'
@@ -6780,6 +7157,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1905
   changed_paths:
   - flashinfer/__main__.py
+  pr: 1905
 - number: 1912
   title: 'fix: Fix trtllm-gen prefill IMA when batch_size==1'
   date: '2025-10-21'
@@ -6795,6 +7173,7 @@ prs:
   - flashinfer/artifacts.py
   - include/flashinfer/trtllm/fmha/kernelParams.h
   - tests/attention/test_trtllm_gen_attention.py
+  pr: 1912
 - number: 1924
   title: 'MLA RoPE + quantization fused kernel: shape generalization for MHA / GQA'
   date: '2025-10-18'
@@ -6812,6 +7191,7 @@ prs:
   - flashinfer/rope.py
   - include/flashinfer/pos_enc.cuh
   - tests/attention/test_rope.py
+  pr: 1924
 - number: 1926
   title: Add layernorm op for inputs of mixed dtype
   date: '2025-10-15'
@@ -6832,6 +7212,7 @@ prs:
   - include/flashinfer/trtllm/common/cudaUtils.h
   - include/flashinfer/trtllm/common/reduceKernelUtils.cuh
   - tests/utils/test_norm.py
+  pr: 1926
 - number: 1927
   title: silu_and_mul nvfp4 quanization fusion rework
   date: '2025-10-23'
@@ -6853,6 +7234,7 @@ prs:
   - flashinfer/activation.py
   - flashinfer/fp4_quantization.py
   - tests/utils/test_fp4_quantize.py
+  pr: 1927
 - number: 1930
   title: fix get max_q_len in page prefill plan
   date: '2025-10-18'
@@ -6864,6 +7246,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1930
   changed_paths:
   - flashinfer/prefill.py
+  pr: 1930
 - number: 1942
   title: 'Add realistic bench for persistent kernel '
   date: '2025-10-18'
@@ -6875,6 +7258,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1942
   changed_paths:
   - benchmarks/bench_batch_attention.py
+  pr: 1942
 - number: 1948
   title: 'Fix #1641: Use `/usr/local/cuda` as default `CUDA_HOME` if possible, like `torch.utils.cpp_extension.CUDA_HOME`'
   date: '2025-10-20'
@@ -6886,6 +7270,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1948
   changed_paths:
   - flashinfer/jit/cpp_ext.py
+  pr: 1948
 - number: 1951
   title: 'bugfix: fix failed unittest `test_green_ctx` and `test_jit_example` on spark (sm_121)'
   date: '2025-11-05'
@@ -6899,6 +7284,7 @@ prs:
   - flashinfer/green_ctx.py
   - tests/utils/test_green_ctx.py
   - tests/utils/test_jit_example.py
+  pr: 1951
 - number: 1954
   title: 'Feature: Support Relu2 activation in fused MoE'
   date: '2025-10-21'
@@ -6915,6 +7301,7 @@ prs:
   - csrc/nv_internal/tensorrt_llm/kernels/cutlass_kernels/include/common.h
   - csrc/nv_internal/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_gemm_template_dispatch.h
   - flashinfer/fused_moe/core.py
+  pr: 1954
 - number: 1955
   title: Update trtllm-gen fused moe routing kernel and add more kernels
   date: '2025-11-06'
@@ -6952,6 +7339,7 @@ prs:
   - include/flashinfer/trtllm/fused_moe/RoutingKernel.cuh
   - include/flashinfer/trtllm/fused_moe/RoutingKernel.h
   - tests/moe/test_trtllm_gen_fused_moe.py
+  pr: 1955
 - number: 1959
   title: 'fix: Add cutlass as an mm_fp4 backend in compute capability 12.0 in benchmark code'
   date: '2025-10-21'
@@ -6963,6 +7351,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1959
   changed_paths:
   - benchmarks/routines/flashinfer_benchmark_utils.py
+  pr: 1959
 - number: 1961
   title: 'Fix: Verify scales are not None for Cutlass FP8 FusedMoE'
   date: '2025-10-27'
@@ -6974,6 +7363,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1961
   changed_paths:
   - csrc/fused_moe/cutlass_backend/flashinfer_cutlass_fused_moe_sm100_binding.cu
+  pr: 1961
 - number: 1963
   title: 'fix: ensure SM120/121 SFA/SFB contiguity'
   date: '2025-10-31'
@@ -6985,6 +7375,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1963
   changed_paths:
   - flashinfer/gemm.py
+  pr: 1963
 - number: 1969
   title: 'feat: enable deepgemm jit for fp8 block-scale on SM90'
   date: '2025-10-26'
@@ -6997,6 +7388,7 @@ prs:
   changed_paths:
   - csrc/nv_internal/tensorrt_llm/deep_gemm/compiler.cuh
   - csrc/nv_internal/tensorrt_llm/deep_gemm/runtime.cuh
+  pr: 1969
 - number: 1972
   title: Added heuristic for trtllm_allreduce_fusion
   date: '2025-10-24'
@@ -7008,6 +7400,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1972
   changed_paths:
   - flashinfer/comm/trtllm_ar.py
+  pr: 1972
 - number: 1973
   title: 'Feature: Add support for L40 FusedMoE in cutlass path'
   date: '2025-10-29'
@@ -7025,6 +7418,7 @@ prs:
   - flashinfer/fused_moe/core.py
   - flashinfer/jit/core.py
   - flashinfer/jit/fused_moe.py
+  pr: 1973
 - number: 1976
   title: 'fix: Make attention microbenchmark correctly use page table'
   date: '2025-10-24'
@@ -7036,6 +7430,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1976
   changed_paths:
   - benchmarks/routines/attention.py
+  pr: 1976
 - number: 1979
   title: 'feat: Add backend=''auto'' to mm_fp4 and enable autotune for backend=''cudnn'''
   date: '2025-11-21'
@@ -7052,6 +7447,7 @@ prs:
   - flashinfer/utils.py
   - tests/gemm/test_mm_fp4.py
   - tests/utils/test_decorators.py
+  pr: 1979
 - number: 1980
   title: 'feat: autotune tile_tokens_dim in trtllm-gen MOE'
   date: '2025-10-29'
@@ -7068,6 +7464,7 @@ prs:
   - flashinfer/jit/core.py
   - tests/conftest.py
   - tests/moe/test_trtllm_gen_fused_moe.py
+  pr: 1980
 - number: 1982
   title: 'fix: correct PDL parameter handling in RopeQuantize kernel'
   date: '2025-10-26'
@@ -7084,6 +7481,7 @@ prs:
   - flashinfer/rope.py
   - include/flashinfer/pos_enc.cuh
   - tests/attention/test_rope.py
+  pr: 1982
 - number: 1991
   title: Added workspace check and reflected this in test
   date: '2025-10-28'
@@ -7096,6 +7494,7 @@ prs:
   changed_paths:
   - flashinfer/comm/trtllm_ar.py
   - tests/comm/test_trtllm_allreduce_fusion.py
+  pr: 1991
 - number: 1994
   title: minor fix for xqa
   date: '2025-10-28'
@@ -7111,6 +7510,7 @@ prs:
   - csrc/xqa/mla_sm120.cu
   - flashinfer/xqa.py
   - tests/attention/test_xqa.py
+  pr: 1994
 - number: 1995
   title: 'Bugfix: Change get() -> GetDLTensorPtr() in cutlass FusedMoE validations'
   date: '2025-10-28'
@@ -7122,6 +7522,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1995
   changed_paths:
   - csrc/fused_moe/cutlass_backend/flashinfer_cutlass_fused_moe_sm100_binding.cu
+  pr: 1995
 - number: 2001
   title: 'feat: add xqa backend and completes NHD/HND coverage for trtllm-gen/xqa backend'
   date: '2025-11-02'
@@ -7151,6 +7552,7 @@ prs:
   - tests/attention/test_trtllm_gen_attention.py
   - tests/attention/test_xqa.py
   - tests/attention/test_xqa_batch_decode.py
+  pr: 2001
 - number: 2002
   title: Fix trtllm-gen attention illegal memory access
   date: '2025-10-29'
@@ -7162,6 +7564,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2002
   changed_paths:
   - flashinfer/decode.py
+  pr: 2002
 - number: 2011
   title: 'Feature: Support non-gated activation in cutlass fused MoE nvfp4'
   date: '2025-10-31'
@@ -7174,6 +7577,7 @@ prs:
   changed_paths:
   - csrc/fused_moe/cutlass_backend/flashinfer_cutlass_fused_moe_sm100_binding.cu
   - tests/moe/test_trtllm_cutlass_fused_moe.py
+  pr: 2011
 - number: 2012
   title: 'fix: Enable SM121 for mm_fp4'
   date: '2025-10-30'
@@ -7186,6 +7590,7 @@ prs:
   changed_paths:
   - benchmarks/routines/flashinfer_benchmark_utils.py
   - flashinfer/gemm.py
+  pr: 2012
 - number: 2013
   title: More realistic bench for POD Attn
   date: '2025-10-31'
@@ -7197,6 +7602,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2013
   changed_paths:
   - benchmarks/bench_mixed_attention.py
+  pr: 2013
 - number: 2014
   title: '[feat] Refactor trtllmgen MOE and add Bf16 trtllmgen moe'
   date: '2025-11-08'
@@ -7214,6 +7620,7 @@ prs:
   - flashinfer/fused_moe/__init__.py
   - flashinfer/fused_moe/core.py
   - tests/moe/test_trtllm_gen_fused_moe.py
+  pr: 2014
 - number: 2015
   title: Support cc common check decorator for empty backends
   date: '2025-11-05'
@@ -7226,6 +7633,7 @@ prs:
   changed_paths:
   - flashinfer/utils.py
   - tests/utils/test_decorators.py
+  pr: 2015
 - number: 2018
   title: 'test: Enable xfailed trtllm decode long seqlen tests and update microbenchmark'
   date: '2025-11-02'
@@ -7238,6 +7646,7 @@ prs:
   changed_paths:
   - benchmarks/routines/attention.py
   - tests/attention/test_trtllm_gen_attention.py
+  pr: 2018
 - number: 2019
   title: '[DSV3] Optimized Router Gemm'
   date: '2025-11-07'
@@ -7265,6 +7674,7 @@ prs:
   - tests/gemm/test_mm_fp4.py
   - tests/gemm/test_tgv_gemm.py
   - tests/model_optimizations/test_dsv3_router_gemm.py
+  pr: 2019
 - number: 2020
   title: 'update trtllm cutlass moe '
   date: '2025-11-07'
@@ -7319,6 +7729,7 @@ prs:
   - flashinfer/fused_moe/core.py
   - flashinfer/jit/gemm/cutlass/generate_kernels.py
   - tests/moe/test_trtllm_cutlass_fused_moe.py
+  pr: 2020
 - number: 2025
   title: 'perf: Speed up fp4 quantization for small batch with swizzling for cutlass MoE'
   date: '2025-11-05'
@@ -7331,6 +7742,7 @@ prs:
   changed_paths:
   - csrc/nv_internal/cpp/kernels/quantization.cu
   - csrc/nv_internal/tensorrt_llm/kernels/quantization.cuh
+  pr: 2025
 - number: 2026
   title: Updated decorator to support unspecified default
   date: '2025-11-03'
@@ -7344,6 +7756,7 @@ prs:
   - flashinfer/gemm.py
   - flashinfer/utils.py
   - tests/utils/test_decorators.py
+  pr: 2026
 - number: 2028
   title: '[NVIDIA] Thor & Spark Support'
   date: '2025-11-13'
@@ -7361,6 +7774,7 @@ prs:
   - csrc/xqa/utils.cuh
   - docs/installation.rst
   - scripts/task_test_jit_cache_package_build_import.sh
+  pr: 2028
 - number: 2029
   title: 'feat: suitable_auto_backends to prune auto backends, bmm_fp8 refactor, heuristic_func intake'
   date: '2025-11-07'
@@ -7374,6 +7788,7 @@ prs:
   - flashinfer/gemm.py
   - flashinfer/utils.py
   - tests/utils/test_decorators.py
+  pr: 2029
 - number: 2030
   title: Enable renormalize(naive) routing for fp8 per-tensor
   date: '2025-11-11'
@@ -7388,6 +7803,7 @@ prs:
   - csrc/trtllm_fused_moe_runner.cu
   - include/flashinfer/trtllm/fused_moe/runner.h
   - tests/moe/test_trtllm_gen_fused_moe.py
+  pr: 2030
 - number: 2033
   title: use scalar for kv_scale in xqa
   date: '2025-11-05'
@@ -7407,6 +7823,7 @@ prs:
   - flashinfer/decode.py
   - flashinfer/xqa.py
   - tests/attention/test_xqa.py
+  pr: 2033
 - number: 2035
   title: Added an initial implementation of Q and KV Cache in fp8 and to use t…
   date: '2025-12-16'
@@ -7423,6 +7840,7 @@ prs:
   - flashinfer/cudnn/prefill.py
   - flashinfer/prefill.py
   - tests/attention/test_cudnn_prefill.py
+  pr: 2035
 - number: 2037
   title: 'feat: Add flashinfer.rope.rope_quantize_fp8_append_paged_kv_cache (fused RoPE + Q + KV cache, supports MLA/GQA/MHA) '
   date: '2025-11-18'
@@ -7535,6 +7953,7 @@ prs:
   - include/flashinfer/attention/blackwell/fmha_cutlass_sm100.cuh
   - include/flashinfer/attention/blackwell/kernel/sm100_fmha_fwd_kernel_tma_warpspecialized.hpp
   - tests/attention/test_blackwell_fmha.py
+  pr: 2047
 - number: 2048
   title: Fix dtype of output scales from mnnvl_moe_alltoallv_prepare_without_allgather
   date: '2025-11-06'
@@ -7547,6 +7966,7 @@ prs:
   changed_paths:
   - csrc/trtllm_alltoall.cu
   - flashinfer/comm/trtllm_alltoall.py
+  pr: 2048
 - number: 2049
   title: '[BUG] Fix trtllm-gen fp4 moe renormalize routing'
   date: '2025-11-06'
@@ -7559,6 +7979,7 @@ prs:
   changed_paths:
   - csrc/trtllm_fused_moe_routing_renormalize.cu
   - tests/moe/test_trtllm_gen_routed_fused_moe.py
+  pr: 2049
 - number: 2051
   title: Add support for topkPacked input in block-level renormalize
   date: '2025-11-06'
@@ -7570,6 +7991,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2051
   changed_paths:
   - csrc/trtllm_fused_moe_routing_renormalize.cu
+  pr: 2051
 - number: 2053
   title: 'feat: add xqa mla backend'
   date: '2025-11-10'
@@ -7620,6 +8042,7 @@ prs:
   - benchmarks/README.md
   - benchmarks/routines/attention.py
   - benchmarks/routines/flashinfer_benchmark_utils.py
+  pr: 2055
 - number: 2056
   title: Add custom communicator for trtllm_mnnvl_ar
   date: '2025-11-22'
@@ -7634,6 +8057,7 @@ prs:
   - flashinfer/comm/trtllm_mnnvl_ar.py
   - tests/comm/test_trtllm_mnnvl_allreduce.py
   - tests/comm/test_trtllm_mnnvl_allreduce_custom_comm.py
+  pr: 2056
 - number: 2058
   title: 'perf: Optimize helper max/minmax function in sampling.cuh'
   date: '2025-11-07'
@@ -7681,6 +8105,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2061
   changed_paths:
   - csrc/nv_internal/tensorrt_llm/kernels/cutlass_kernels/cutlass_heuristic.cpp
+  pr: 2061
 - number: 2062
   title: 'Fix: several bugs/issues with trtllm-gen attention kernels. '
   date: '2025-11-09'
@@ -7694,6 +8119,7 @@ prs:
   - flashinfer/artifacts.py
   - include/flashinfer/trtllm/fmha/fmhaKernels.cuh
   - include/flashinfer/trtllm/fmha/kernelParams.h
+  pr: 2062
 - number: 2063
   title: 'perf: TRT-LLM MoE Block-FP8 activation optimization'
   date: '2025-11-08'
@@ -7707,6 +8133,7 @@ prs:
   - benchmarks/bench_trtllm_gen_fused_moe_autotuner.py
   - csrc/trtllm_fused_moe_dev_kernel.cu
   - include/flashinfer/trtllm/fused_moe/DevKernel.h
+  pr: 2063
 - number: 2064
   title: 'refactor: remove MetaInfoHash class'
   date: '2025-11-09'
@@ -7719,6 +8146,7 @@ prs:
   changed_paths:
   - flashinfer/artifacts.py
   - flashinfer/deep_gemm.py
+  pr: 2064
 - number: 2070
   title: 'feat: BF16 GEMM using CUTLASS backend for SM100'
   date: '2026-01-10'
@@ -7742,6 +8170,7 @@ prs:
   - include/flashinfer/gemm/bf16_gemm_template_sm100.h
   - tests/gemm/test_bmm_bf16.py
   - tests/gemm/test_mm_bf16.py
+  pr: 2070
 - number: 2074
   title: MNNVL All Reduce for large number of tokens
   date: '2025-11-14'
@@ -7754,6 +8183,7 @@ prs:
   changed_paths:
   - flashinfer/comm/trtllm_mnnvl_ar.py
   - tests/comm/test_trtllm_mnnvl_allreduce.py
+  pr: 2074
 - number: 2079
   title: '[Feature] Support batch prefill for POD Attention'
   date: '2025-11-14'
@@ -7782,6 +8212,7 @@ prs:
   - flashinfer/sparse.py
   - include/flashinfer/attention/batch_pod.cuh
   - include/flashinfer/attention/scheduler.cuh
+  pr: 2079
 - number: 2081
   title: enable xqa fp8 output
   date: '2025-11-12'
@@ -7804,6 +8235,7 @@ prs:
   - tests/attention/test_trtllm_gen_attention.py
   - tests/attention/test_xqa.py
   - tests/attention/test_xqa_batch_decode.py
+  pr: 2081
 - number: 2082
   title: Patch sm103 for 3xfp4 moe generation
   date: '2025-11-14'
@@ -7818,6 +8250,7 @@ prs:
   - flashinfer/fused_moe/__init__.py
   - flashinfer/fused_moe/core.py
   - flashinfer/jit/fused_moe.py
+  pr: 2082
 - number: 2084
   title: '[API change] Allow using torch.Tensor for scales for trtllm-gen attention'
   date: '2025-11-18'
@@ -7835,6 +8268,7 @@ prs:
   - include/flashinfer/trtllm/fmha/kernelParams.h
   - tests/attention/test_trtllm_gen_attention.py
   - tests/attention/test_trtllm_gen_mla.py
+  pr: 2084
 - number: 2086
   title: '[API change] deprecate tile_token_dim in trtllm_moe'
   date: '2025-11-14'
@@ -7855,6 +8289,7 @@ prs:
   - flashinfer/fused_moe/core.py
   - tests/moe/test_trtllm_gen_fused_moe.py
   - tests/moe/test_trtllm_gen_routed_fused_moe.py
+  pr: 2086
 - number: 2090
   title: 'refactor: pass hopper deepgemm include directory through python'
   date: '2025-12-01'
@@ -7872,6 +8307,7 @@ prs:
   - csrc/nv_internal/tensorrt_llm/deep_gemm/runtime.cuh
   - flashinfer/fused_moe/core.py
   - flashinfer/jit/fused_moe.py
+  pr: 2090
 - number: 2092
   title: 'perf: TRT-LLM Gen finalize kernel optimization'
   date: '2025-11-14'
@@ -7884,6 +8320,7 @@ prs:
   changed_paths:
   - csrc/trtllm_fused_moe_dev_kernel.cu
   - include/flashinfer/trtllm/fused_moe/DevKernel.h
+  pr: 2092
 - number: 2095
   title: 'perf: enable pdl for cutlass fp4 gemm'
   date: '2025-11-16'
@@ -7896,6 +8333,7 @@ prs:
   changed_paths:
   - include/flashinfer/gemm/fp4_gemm_template_sm100.h
   - include/flashinfer/gemm/fp4_gemm_template_sm120.h
+  pr: 2095
 - number: 2099
   title: '[DSV3] Optimized routing kernels dsv3'
   date: '2025-11-19'
@@ -7966,6 +8404,7 @@ prs:
   - tests/comm/test_mnnvl_memory.py
   - tests/comm/test_mnnvl_moe_alltoall.py
   - tests/comm/test_trtllm_moe_alltoall.py
+  pr: 2102
 - number: 2105
   title: enable xqa speculative decoding
   date: '2025-11-22'
@@ -7984,6 +8423,7 @@ prs:
   - flashinfer/xqa.py
   - tests/attention/test_trtllm_gen_attention.py
   - tests/attention/test_xqa_batch_decode.py
+  pr: 2105
 - number: 2109
   title: 'feat: support more head dim in RoPE kernel'
   date: '2025-12-12'
@@ -7996,6 +8436,7 @@ prs:
   changed_paths:
   - include/flashinfer/pos_enc.cuh
   - tests/attention/test_rope.py
+  pr: 2109
 - number: 2110
   title: add tensor scale input for xqa
   date: '2025-11-20'
@@ -8016,6 +8457,7 @@ prs:
   - flashinfer/xqa.py
   - tests/attention/test_xqa_batch_decode.py
   - tests/attention/test_xqa_mla_batch_decode.py
+  pr: 2110
 - number: 2111
   title: 'refactor: update fa3 codebase and fix hopper unittest [part 1]'
   date: '2025-12-06'
@@ -8057,6 +8499,7 @@ prs:
   - tests/attention/test_hopper.py
   - tests/attention/test_hopper_fp8_attention.py
   - tests/utils/test_block_sparse_indices_to_vector_sparse_offsets.py
+  pr: 2111
 - number: 2114
   title: 'feature: make the LSE returned by MLA support base 2 or e  #2113'
   date: '2025-11-20'
@@ -8075,6 +8518,7 @@ prs:
   - include/flashinfer/attention/mla.cuh
   - include/flashinfer/attention/mla_hopper.cuh
   - include/flashinfer/attention/mla_params.cuh
+  pr: 2114
 - number: 2116
   title: update autotuner input tensor random range
   date: '2025-11-22'
@@ -8086,6 +8530,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2116
   changed_paths:
   - flashinfer/autotuner.py
+  pr: 2116
 - number: 2117
   title: update xqa license
   date: '2025-11-20'
@@ -8114,6 +8559,7 @@ prs:
   - csrc/xqa/tma.h
   - csrc/xqa/utils.cuh
   - csrc/xqa/utils.h
+  pr: 2117
 - number: 2118
   title: Refactor trtllm_mnnvl_allreduce
   date: '2025-12-12'
@@ -8130,6 +8576,7 @@ prs:
   - include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh
   - include/flashinfer/utils.cuh
   - tests/comm/test_trtllm_mnnvl_allreduce.py
+  pr: 2118
 - number: 2119
   title: 'perf: bunch of features and optimizations for top-k (sampling + sparse attention)'
   date: '2025-12-12'
@@ -8206,6 +8653,7 @@ prs:
   - flashinfer/decode.py
   - flashinfer/mla.py
   - tests/attention/test_trtllm_gen_attention.py
+  pr: 2125
 - number: 2126
   title: fix flaky xqa test
   date: '2025-11-25'
@@ -8221,6 +8669,7 @@ prs:
   - csrc/xqa/mla_sm120.cu
   - tests/attention/test_xqa.py
   - tests/comm/test_trtllm_mnnvl_allreduce_custom_comm.py
+  pr: 2126
 - number: 2127
   title: 'fix: add a check for int32 indices in sampling.py'
   date: '2025-11-22'
@@ -8233,6 +8682,7 @@ prs:
   changed_paths:
   - flashinfer/sampling.py
   - tests/utils/test_sampling.py
+  pr: 2127
 - number: 2128
   title: 'fix: DeepSeek activation uninitialized data'
   date: '2025-11-22'
@@ -8244,6 +8694,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2128
   changed_paths:
   - csrc/trtllm_fused_moe_dev_kernel.cu
+  pr: 2128
 - number: 2129
   title: 'fix: Fix bench_mm_fp8.py'
   date: '2025-11-21'
@@ -8255,6 +8706,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2129
   changed_paths:
   - benchmarks/bench_mm_fp8.py
+  pr: 2129
 - number: 2130
   title: A unified API for the MNNVL and single-node/multi-GPU AllReduce kernels.
   date: '2025-12-17'
@@ -8275,6 +8727,7 @@ prs:
   - tests/comm/test_trtllm_allreduce_fusion.py
   - tests/comm/test_trtllm_mnnvl_allreduce.py
   - tests/test_helpers/comm.py
+  pr: 2130
 - number: 2131
   title: make DeepGEMM swapAB available for linear gemm SM90
   date: '2025-12-17'
@@ -8292,6 +8745,7 @@ prs:
   - flashinfer/jit/gemm/__init__.py
   - flashinfer/jit/gemm/fp8_blockscale.py
   - tests/gemm/test_fp8_blockscale_gemm.py
+  pr: 2131
 - number: 2132
   title: 'feat: add seed offset args to sampler to allow cuda graph support'
   date: '2025-11-26'
@@ -8304,6 +8758,7 @@ prs:
   changed_paths:
   - flashinfer/sampling.py
   - tests/utils/test_sampling.py
+  pr: 2132
 - number: 2134
   title: 'fix(trtllm): reset negative strideBatch to 0 for ragged KV layout to …'
   date: '2025-11-25'
@@ -8317,6 +8772,7 @@ prs:
   - include/flashinfer/trtllm/fmha/kernelParams.h
   - tests/attention/test_trtllm_ragged_kv_stride.py
   - tests/comm/test_trtllm_mnnvl_allreduce_custom_comm.py
+  pr: 2134
 - number: 2137
   title: 'fix: some bugs of headDim 256 trtllm-gen fmha kernels. '
   date: '2025-11-25'
@@ -8330,6 +8786,7 @@ prs:
   - flashinfer/artifacts.py
   - tests/attention/test_trtllm_gen_attention.py
   - tests/comm/test_trtllm_mnnvl_allreduce_custom_comm.py
+  pr: 2137
 - number: 2138
   title: 'feat: add trtllm-gen per-tensor sparseMla kernels.'
   date: '2025-11-25'
@@ -8386,6 +8843,7 @@ prs:
   changed_paths:
   - flashinfer/autotuner.py
   - flashinfer/gemm/gemm_base.py
+  pr: 2140
 - number: 2142
   title: 'feat: TRTLLM FMHAv2 backend for ctx attention'
   date: '2025-11-28'
@@ -8473,6 +8931,7 @@ prs:
   - flashinfer/jit/attention/modules.py
   - flashinfer/prefill.py
   - tests/attention/test_fmha_v2_prefill_deepseek.py
+  pr: 2142
 - number: 2148
   title: Enable Hopper FA3 FP8 attention in decode.py
   date: '2026-01-06'
@@ -8526,6 +8985,7 @@ prs:
   - flashinfer/cute_dsl/blockscaled_gemm.py
   - requirements.txt
   - tests/gemm/test_cute_dsl_blockscaled_gemm.py
+  pr: 2149
 - number: 2154
   title: 'bugfix: add driver support to CUPTI benchmark function, issue #2145'
   date: '2025-12-02'
@@ -8537,6 +8997,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2154
   changed_paths:
   - flashinfer/testing/utils.py
+  pr: 2154
 - number: 2157
   title: fix xqa mha_sm90.cu
   date: '2025-12-04'
@@ -8550,6 +9011,7 @@ prs:
   - csrc/xqa/xqa_wrapper.cu
   - flashinfer/jit/xqa.py
   - flashinfer/xqa.py
+  pr: 2157
 - number: 2159
   title: 'feat: MxInt4 x Bf16 TRT-LLM Gen MoE support'
   date: '2025-12-05'
@@ -8581,6 +9043,7 @@ prs:
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/trtllm/gen/DtypeDecl.h
   - tests/moe/test_trtllm_gen_fused_moe.py
   - tests/moe/utils.py
+  pr: 2159
 - number: 2160
   title: 'feat: C++ side tensor validation'
   date: '2025-12-03'
@@ -8604,6 +9067,7 @@ prs:
   - flashinfer/mla.py
   - flashinfer/sampling.py
   - tests/utils/test_sampling.py
+  pr: 2160
 - number: 2163
   title: 'refactor: Move mla code from decode.py to mla.py and add to documentation'
   date: '2025-12-05'
@@ -8618,6 +9082,7 @@ prs:
   - docs/api/attention.rst
   - flashinfer/decode.py
   - flashinfer/mla.py
+  pr: 2163
 - number: 2165
   title: Add data type check for deepseek fp4 moe
   date: '2025-12-06'
@@ -8629,6 +9094,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2165
   changed_paths:
   - csrc/trtllm_fused_moe_kernel_launcher.cu
+  pr: 2165
 - number: 2171
   title: Fix gemm allreduce two shot
   date: '2025-12-05'
@@ -8641,6 +9107,7 @@ prs:
   changed_paths:
   - flashinfer/cute_dsl/gemm_allreduce_two_shot.py
   - tests/gemm/test_cute_dsl_gemm_allreduce_two_shot.py
+  pr: 2171
 - number: 2175
   title: 'fix: compile flags for trtllm fmha_v2 '
   date: '2025-12-05'
@@ -8656,6 +9123,7 @@ prs:
   - flashinfer/jit/attention/modules.py
   - flashinfer/prefill.py
   - tests/attention/test_fmha_v2_prefill_deepseek.py
+  pr: 2175
 - number: 2178
   title: Fix/dsl smem query
   date: '2025-12-05'
@@ -8670,6 +9138,7 @@ prs:
   - flashinfer/cute_dsl/gemm_allreduce_two_shot.py
   - requirements.txt
   - tests/gemm/test_cute_dsl_gemm_allreduce_two_shot.py
+  pr: 2178
 - number: 2180
   title: 'benchmark: Make use_cupti the default in microbenchmarks.'
   date: '2025-12-06'
@@ -8681,6 +9150,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2180
   changed_paths:
   - benchmarks/flashinfer_benchmark.py
+  pr: 2180
 - number: 2181
   title: Rename noauxtc to fused_topk_deepseek
   date: '2025-12-06'
@@ -8695,6 +9165,7 @@ prs:
   - flashinfer/fused_moe/__init__.py
   - flashinfer/fused_moe/fused_routing_dsv3.py
   - tests/model_optimizations/test_dsv3_fused_routing.py
+  pr: 2181
 - number: 2190
   title: Fix for moe on sm110
   date: '2025-12-12'
@@ -8707,6 +9178,7 @@ prs:
   changed_paths:
   - csrc/nv_internal/tensorrt_llm/kernels/cutlass_kernels/cutlass_heuristic.cpp
   - csrc/nv_internal/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_gemm_template_dispatch.h
+  pr: 2190
 - number: 2193
   title: 'feat: unit-test and api change, w4a8 grouped-gemm fused MoE for SM90'
   date: '2025-12-11'
@@ -8720,6 +9192,7 @@ prs:
   - csrc/fused_moe/cutlass_backend/flashinfer_cutlass_fused_moe_binding.cu
   - flashinfer/fused_moe/core.py
   - tests/moe/test_trtllm_cutlass_fused_moe.py
+  pr: 2193
 - number: 2194
   title: Permute page table in benchmarking
   date: '2025-12-11'
@@ -8731,6 +9204,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2194
   changed_paths:
   - benchmarks/routines/attention.py
+  pr: 2194
 - number: 2211
   title: Move the run function definition out of BatchedGemmInterface
   date: '2025-12-17'
@@ -8742,6 +9216,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2211
   changed_paths:
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/BatchedGemmInterface.h
+  pr: 2211
 - number: 2213
   title: 'feat: Cold L2 Cache Benchmarking with Rotating Buffers'
   date: '2025-12-17'
@@ -8756,6 +9231,7 @@ prs:
   - benchmarks/routines/gemm.py
   - benchmarks/routines/moe.py
   - flashinfer/testing/utils.py
+  pr: 2213
 - number: 2214
   title: 'misc: support checks for gemm'
   date: '2025-12-17'
@@ -8768,6 +9244,7 @@ prs:
   changed_paths:
   - flashinfer/deep_gemm.py
   - flashinfer/gemm/gemm_base.py
+  pr: 2214
 - number: 2215
   title: 'feat: further optimize top-k and add fused top-k page construction kernels for DSA'
   date: '2025-12-19'
@@ -8829,6 +9306,7 @@ prs:
   changed_paths:
   - csrc/trtllm_fused_moe_kernel_launcher.cu
   - flashinfer/fused_moe/core.py
+  pr: 2217
 - number: 2223
   title: 'feat: add memcpy and memset to CUPTI timing method'
   date: '2025-12-16'
@@ -8840,6 +9318,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2223
   changed_paths:
   - flashinfer/testing/utils.py
+  pr: 2223
 - number: 2228
   title: 'fix: Eliminate the usage of CUDA ARCH macro in host function.'
   date: '2025-12-17'
@@ -8852,6 +9331,7 @@ prs:
   changed_paths:
   - include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh
   - tests/comm/test_trtllm_mnnvl_allreduce.py
+  pr: 2228
 - number: 2233
   title: 'feat: Fused RMSNorm + FP4 Quantization Kernels in CuTe-DSL'
   date: '2025-12-20'
@@ -8922,6 +9402,7 @@ prs:
   - csrc/trtllm_fused_moe_kernel_launcher.cu
   - flashinfer/fused_moe/core.py
   - tests/moe/test_trtllm_gen_fused_moe.py
+  pr: 2234
 - number: 2235
   title: 'refactor: pull trtllm-gen batch-gemm/gemm headers from artifactory; update tma descriptor shape init'
   date: '2026-03-02'
@@ -8959,6 +9440,7 @@ prs:
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/trtllm/gen/MmaDecl.h
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/trtllm/gen/SfLayoutDecl.h
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/trtllm/gen/SparsityDecl.h
+  pr: 2235
 - number: 2237
   title: '[feat] Integrate SGLang concat_mla_k kernel into flashinfer'
   date: '2025-12-18'
@@ -9024,6 +9506,7 @@ prs:
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/trtllm/gen/MmaDecl.h
   - tests/moe/test_trtllm_gen_fused_moe.py
   - tests/moe/utils.py
+  pr: 2238
 - number: 2239
   title: Allreduce auto backend improvements
   date: '2025-12-20'
@@ -9043,6 +9526,7 @@ prs:
   - tests/comm/test_trtllm_allreduce_fusion.py
   - tests/comm/test_trtllm_mnnvl_allreduce.py
   - tests/test_helpers/comm.py
+  pr: 2239
 - number: 2241
   title: Fp8 attention are now part of cuDNN 9.17.1
   date: '2025-12-23'
@@ -9056,6 +9540,7 @@ prs:
   - benchmarks/routines/attention.py
   - flashinfer/cudnn/prefill.py
   - tests/attention/test_cudnn_prefill.py
+  pr: 2241
 - number: 2242
   title: 'fix: Fix compilation with GCC 11'
   date: '2025-12-19'
@@ -9067,6 +9552,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2242
   changed_paths:
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/BatchedGemmInterface.h
+  pr: 2242
 - number: 2243
   title: 'feat: RMSNorm/Fused RMSNorm + FP8 Quantization kernels'
   date: '2025-12-19'
@@ -9082,6 +9568,7 @@ prs:
   - flashinfer/norm.py
   - include/flashinfer/norm.cuh
   - tests/utils/test_norm.py
+  pr: 2243
 - number: 2244
   title: Remove cudaStreamSynchronize from gemm_groupwise_sm120.cuh for CUDA graph compatibility
   date: '2025-12-20'
@@ -9093,6 +9580,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2244
   changed_paths:
   - include/flashinfer/gemm/gemm_groupwise_sm120.cuh
+  pr: 2244
 - number: 2247
   title: 'feat: Support numLocalTokens=0 for moe All-to-all'
   date: '2025-12-23'
@@ -9105,6 +9593,7 @@ prs:
   changed_paths:
   - csrc/nv_internal/tensorrt_llm/kernels/communicationKernels/moeAlltoAllKernels.cu
   - csrc/trtllm_moe_alltoall.cu
+  pr: 2247
 - number: 2254
   title: 'feat: support non-contiguous query for trtllm-gen attention backend'
   date: '2025-12-22'
@@ -9201,6 +9690,7 @@ prs:
   - flashinfer/gemm/__init__.py
   - flashinfer/gemm/gemm_base.py
   - tests/gemm/test_bmm_mxfp8.py
+  pr: 2256
 - number: 2260
   title: 'fix: Add global scale support and optional output allocation for RMSNorm+FP4Quant fusion kernels'
   date: '2026-01-01'
@@ -9260,6 +9750,7 @@ prs:
   changed_paths:
   - flashinfer/gemm/gemm_base.py
   - tests/gemm/test_bmm_fp8.py
+  pr: 2261
 - number: 2264
   title: '[Minor] Reduce num blocks of qknorm in small batch size'
   date: '2025-12-24'
@@ -9271,6 +9762,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2264
   changed_paths:
   - include/flashinfer/norm.cuh
+  pr: 2264
 - number: 2265
   title: '[TRTLLM-Gen Fmha] add optimized trtllm-gen decode kernels for high throughput + speculative decoding'
   date: '2026-01-07'
@@ -9287,6 +9779,7 @@ prs:
   - include/flashinfer/trtllm/fmha/fmhaRunnerParams.h
   - include/flashinfer/trtllm/fmha/kernelParams.h
   - tests/attention/test_trtllm_gen_attention.py
+  pr: 2265
 - number: 2268
   title: '[performance]optimize for nvfp4'
   date: '2025-12-27'
@@ -9298,6 +9791,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2268
   changed_paths:
   - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
+  pr: 2268
 - number: 2276
   title: 'feat: add GDN Attention'
   date: '2026-01-03'
@@ -9388,6 +9882,7 @@ prs:
   changed_paths:
   - benchmarks/bench_tgv_gemm.py
   - flashinfer/testing/utils.py
+  pr: 2277
 - number: 2279
   title: '[WIP] Refactor: simplify torch -> cute-dsl boilerplate and enable tvm-ffi for cute-dsl kernels'
   date: '2026-01-06'
@@ -9400,6 +9895,7 @@ prs:
   changed_paths:
   - flashinfer/cute_dsl/add_rmsnorm_fp4quant.py
   - flashinfer/cute_dsl/rmsnorm_fp4quant.py
+  pr: 2279
 - number: 2281
   title: 'feat: IdType indices in sampling kernels'
   date: '2026-01-03'
@@ -9414,6 +9910,7 @@ prs:
   - csrc/tvm_ffi_utils.h
   - flashinfer/sampling.py
   - tests/utils/test_sampling.py
+  pr: 2281
 - number: 2295
   title: 'bugfix: use torch cached default generators'
   date: '2026-01-07'
@@ -9426,6 +9923,7 @@ prs:
   changed_paths:
   - flashinfer/sampling.py
   - flashinfer/utils.py
+  pr: 2295
 - number: 2301
   title: Selective State Update kernel (mamba)
   date: '2026-01-13'
@@ -9490,6 +9988,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2302
   changed_paths:
   - benchmarks/routines/attention.py
+  pr: 2302
 - number: 2303
   title: '[Perf][Feature] Add SM103-specific schedulers for NVFP4 CUTLASS kernels'
   date: '2026-02-03'
@@ -9509,6 +10008,7 @@ prs:
   - include/flashinfer/gemm/cutlass_gemm_configs.h
   - include/flashinfer/gemm/fp4_gemm_cutlass_template_sm103.h
   - include/flashinfer/gemm/fp4_gemm_template_sm103.h
+  pr: 2303
 - number: 2304
   title: 'feat: Support Fused MoE non gated Relu2 NVFP4 & FP8 and support Nemotron'
   date: '2026-01-30'
@@ -9537,6 +10037,7 @@ prs:
   - tests/moe/test_trtllm_gen_fused_moe.py
   - tests/moe/test_trtllm_gen_routed_fused_moe.py
   - tests/moe/utils.py
+  pr: 2304
 - number: 2308
   title: 'Fix: FilteredTopKUnifiedKernel read value out of length'
   date: '2026-01-09'
@@ -9549,6 +10050,7 @@ prs:
   changed_paths:
   - include/flashinfer/topk.cuh
   - tests/utils/test_topk.py
+  pr: 2308
 - number: 2311
   title: 'refactor: decorate all operators with @flashinfer_api'
   date: '2026-01-09'
@@ -9566,6 +10068,7 @@ prs:
   - flashinfer/gemm/routergemm_dsv3.py
   - flashinfer/topk.py
   - flashinfer/trtllm_low_latency_gemm.py
+  pr: 2311
 - number: 2313
   title: tiny support glm routing
   date: '2026-01-14'
@@ -9578,6 +10081,7 @@ prs:
   changed_paths:
   - csrc/trtllm_fused_moe_routing_deepseek.cu
   - tests/moe/test_trtllm_gen_fused_moe.py
+  pr: 2313
 - number: 2323
   title: '[ML3] Optimized Router Gemm'
   date: '2026-01-13'
@@ -9595,6 +10099,7 @@ prs:
   - flashinfer/gemm/routergemm_dsv3.py
   - include/flashinfer/gemm/dsv3_router_gemm.cuh
   - tests/model_optimizations/test_dsv3_router_gemm.py
+  pr: 2323
 - number: 2325
   title: 'bugfix: fix multi-cta top-k implementation when k value is different for different row'
   date: '2026-01-13'
@@ -9650,6 +10155,7 @@ prs:
   - csrc/gemm_groupwise_sm100_kernel_inst.jinja
   - include/flashinfer/gemm/gemm_groupwise_sm100.cuh
   - tests/gemm/test_groupwise_scaled_gemm_fp8.py
+  pr: 2327
 - number: 2328
   title: 'fix: guard batchWarpReduceSum with ENABLE_FP8 to fix compilation without FP8'
   date: '2026-01-13'
@@ -9663,6 +10169,7 @@ prs:
   - csrc/nv_internal/tensorrt_llm/common/reduceKernelUtils.cuh
   - include/flashinfer/trtllm/common/reduceKernelUtils.cuh
   - tests/utils/test_norm.py
+  pr: 2328
 - number: 2330
   title: 'feat: expose swizzled_input_sf parameter for CUTLASS fused MOE'
   date: '2026-03-30'
@@ -9676,6 +10183,7 @@ prs:
   - csrc/fused_moe/cutlass_backend/flashinfer_cutlass_fused_moe_binding.cu
   - flashinfer/fused_moe/core.py
   - tests/moe/test_trtllm_cutlass_fused_moe.py
+  pr: 2330
 - number: 2343
   title: Optimize quantization function in large problem size
   date: '2026-01-23'
@@ -9736,6 +10244,7 @@ prs:
   changed_paths:
   - flashinfer/sampling.py
   - tests/utils/test_sampling.py
+  pr: 2344
 - number: 2352
   title: Added the cudnn backend Ragged KV Cache wrapper
   date: '2026-01-18'
@@ -9752,6 +10261,7 @@ prs:
   - flashinfer/prefill.py
   - tests/attention/test_cudnn_prefill.py
   - tests/attention/test_cudnn_prefill_deepseek.py
+  pr: 2352
 - number: 2362
   title: 'benchmarks: Add norm and quantization routines to microbenchmark harness.'
   date: '2026-01-16'
@@ -9768,6 +10278,7 @@ prs:
   - benchmarks/routines/norm.py
   - benchmarks/routines/quantization.py
   - benchmarks/samples/sample_testlist.txt
+  pr: 2362
 - number: 2366
   title: Enable fp16/bf16/f32 support for selective_state_update (mamba)
   date: '2026-01-19'
@@ -9781,6 +10292,7 @@ prs:
   - csrc/selective_state_update.cu
   - include/flashinfer/mamba/selective_state_update.cuh
   - tests/mamba/test_selective_state_update.py
+  pr: 2366
 - number: 2370
   title: 'feat: [Qwen3-Next] Add Cute DSL GDN decode kernel and  tests'
   date: '2026-01-22'
@@ -9842,6 +10354,7 @@ prs:
   - flashinfer/gemm/gemm_base.py
   - tests/gemm/test_bmm_bf16.py
   - tests/gemm/test_mm_bf16.py
+  pr: 2376
 - number: 2378
   title: 'bugfix: hotfix of PR 2366 (mamba kernel)'
   date: '2026-01-20'
@@ -9854,6 +10367,7 @@ prs:
   changed_paths:
   - include/flashinfer/mamba/selective_state_update.cuh
   - include/flashinfer/utils.cuh
+  pr: 2378
 - number: 2380
   title: 'fix: ensure each CTA processes full numHeadsQPerKv for trtllm decode kernel'
   date: '2026-01-21'
@@ -9865,6 +10379,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2380
   changed_paths:
   - include/flashinfer/trtllm/fmha/fmhaKernels.cuh
+  pr: 2380
 - number: 2385
   title: 'fix: In-place Residual Update for add_rmsnorm_fp4quant'
   date: '2026-01-22'
@@ -10087,6 +10602,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2404
   changed_paths:
   - flashinfer/gemm/gemm_base.py
+  pr: 2404
 - number: 2405
   title: 'perf: improve gdn decode cute-dsl kernels'
   date: '2026-02-03'
@@ -10187,6 +10703,7 @@ prs:
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/TmaDescriptor.h
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/trtllm/gen/DtypeDecl.h
   - include/flashinfer/trtllm/batched_gemm/trtllmGen_bmm_export/trtllm/gen/SparsityDecl.h
+  pr: 2416
 - number: 2421
   title: 'refactor: simplify fp4 rmsnorm'
   date: '2026-01-27'
@@ -10200,6 +10717,7 @@ prs:
   - flashinfer/cute_dsl/add_rmsnorm_fp4quant.py
   - flashinfer/cute_dsl/fp4_common.py
   - flashinfer/cute_dsl/rmsnorm_fp4quant.py
+  pr: 2421
 - number: 2422
   title: 'refactor: reduce hopper''s gdn prefill compilation time and fix docstring.'
   date: '2026-02-04'
@@ -10239,6 +10757,7 @@ prs:
   - include/flashinfer/flat/type_traits.hpp
   - include/flashinfer/flat/unused.hpp
   - tests/gdn/test_prefill_delta_rule.py
+  pr: 2422
 - number: 2428
   title: 'refactor: refactoring cuda code to cute-dsl (part 1)'
   date: '2026-03-12'
@@ -10264,6 +10783,7 @@ prs:
   - flashinfer/norm/utils.py
   - include/flashinfer/norm.cuh
   - tests/utils/test_norm.py
+  pr: 2428
 - number: 2432
   title: 'fix: Sampling: CUDA Graph fix'
   date: '2026-02-13'
@@ -10278,6 +10798,7 @@ prs:
   - csrc/sampling.cu
   - flashinfer/sampling.py
   - include/flashinfer/sampling.cuh
+  pr: 2432
 - number: 2439
   title: Add sm90 guard to fence ptx
   date: '2026-02-03'
@@ -10328,6 +10849,7 @@ prs:
   changed_paths:
   - csrc/nv_internal/tensorrt_llm/kernels/quantization_utils.cuh
   - tests/utils/test_fp8_quantize.py
+  pr: 2441
 - number: 2442
   title: Fix autotuner oom
   date: '2026-02-03'
@@ -10339,6 +10861,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2442
   changed_paths:
   - flashinfer/autotuner.py
+  pr: 2442
 - number: 2443
   title: Add cute-dsl backends to mxfp[8,4]_quantization for future refactor
   date: '2026-03-18'
@@ -10367,6 +10890,7 @@ prs:
   - flashinfer/quantization/quantization_cute_dsl_utils.py
   - tests/utils/test_fp4_quantize.py
   - tests/utils/test_fp8_quantize.py
+  pr: 2443
 - number: 2444
   title: 'MTP for mamba '
   date: '2026-02-03'
@@ -10390,6 +10914,7 @@ prs:
   - tests/mamba/test_selective_state_update_mtp.py
   - tests/mamba/test_selective_state_update_stp.py
   - tests/mamba/test_utils.py
+  pr: 2444
 - number: 2445
   title: 'bugfix: fix stub generation directory in fused_moe module'
   date: '2026-02-02'
@@ -10404,6 +10929,7 @@ prs:
   - CLAUDE.md
   - flashinfer/jit/core.py
   - flashinfer/jit/fused_moe.py
+  pr: 2445
 - number: 2446
   title: 'feat: Add TRTLLM fmha_v2 library for SM90 attention with Skip-Softmax '
   date: '2026-03-09'
@@ -10504,6 +11030,7 @@ prs:
   - flashinfer/sampling.py
   - include/flashinfer/sampling.cuh
   - tests/utils/test_sampling.py
+  pr: 2456
 - number: 2460
   title: 'perf: add fp4 GEMM tile configs and streamK scheduler for SM120'
   date: '2026-02-06'
@@ -10518,6 +11045,7 @@ prs:
   - include/flashinfer/gemm/cutlass_gemm_configs.h
   - include/flashinfer/gemm/fp4_gemm_cutlass_template_sm120.h
   - include/flashinfer/gemm/fp4_gemm_template_sm120.h
+  pr: 2460
 - number: 2462
   title: 'feat: Support Fused MoE non gated Relu2 NVFP4 & FP8 and support Nemotron, fixed'
   date: '2026-02-04'
@@ -10546,6 +11074,7 @@ prs:
   - tests/moe/test_trtllm_gen_fused_moe.py
   - tests/moe/test_trtllm_gen_routed_fused_moe.py
   - tests/moe/utils.py
+  pr: 2462
 - number: 2464
   title: 'feat: Add MXFP8 GEMM mm_mxfp8 (cutlass)'
   date: '2026-02-12'
@@ -10569,6 +11098,7 @@ prs:
   - include/flashinfer/gemm/mxfp8_gemm_cutlass_template.h
   - include/flashinfer/gemm/mxfp8_gemm_template_sm100.h
   - tests/gemm/test_mm_mxfp8.py
+  pr: 2464
 - number: 2476
   title: 'fix: blockscale moe routine supports non-DS routing'
   date: '2026-02-03'
@@ -10580,6 +11110,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2476
   changed_paths:
   - benchmarks/routines/moe.py
+  pr: 2476
 - number: 2477
   title: 'feat: Add TRTLLM-Gen Skip-Softmax kernels for prefill and decode'
   date: '2026-02-11'
@@ -10639,6 +11170,7 @@ prs:
   changed_paths:
   - benchmarks/bench_trtllm_gen_mla.py
   - benchmarks/routines/attention.py
+  pr: 2479
 - number: 2484
   title: 'benchmarks: Expand microbenchmark harness to include sampling and RoPe APIs'
   date: '2026-02-05'
@@ -10657,6 +11189,7 @@ prs:
   - benchmarks/samples/sample_testlist.txt
   - benchmarks/samples/sample_testlist_output.csv
   - benchmarks/samples/sample_testlist_output.txt
+  pr: 2484
 - number: 2489
   title: '[bugfix]Correct chunk_end calculation in multi-CTA collaboration when max_len > length'
   date: '2026-02-20'
@@ -10669,6 +11202,7 @@ prs:
   changed_paths:
   - include/flashinfer/topk.cuh
   - tests/utils/test_topk.py
+  pr: 2489
 - number: 2495
   title: 'fix: add support check for gemm config for cutlass moe'
   date: '2026-02-05'
@@ -10680,6 +11214,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2495
   changed_paths:
   - csrc/nv_internal/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_gemm_template_dispatch.h
+  pr: 2495
 - number: 2498
   title: Ameyn/gdn decode cutedsl kernel
   date: '2026-02-17'
@@ -10745,6 +11280,7 @@ prs:
   - flashinfer/gemm/kernels/__init__.py
   - flashinfer/gemm/kernels/grouped_gemm_masked_blackwell.py
   - tests/gemm/test_cute_dsl_blockscaled_gemm.py
+  pr: 2503
 - number: 2505
   title: 'Feat: Trtllm-gen MxFP8 MoE integration'
   date: '2026-02-17'
@@ -10765,6 +11301,7 @@ prs:
   - tests/moe/test_dpsk_fused_moe_fp8.py
   - tests/moe/test_trtllm_gen_fused_moe.py
   - tests/moe/utils.py
+  pr: 2505
 - number: 2508
   title: 'bugfix: fix the enum/int type mismatch mentioned in #2507'
   date: '2026-02-14'
@@ -10777,6 +11314,7 @@ prs:
   changed_paths:
   - flashinfer/fused_moe/core.py
   - tests/moe/test_trtllm_gen_fused_moe.py
+  pr: 2508
 - number: 2509
   title: 'perf: cache cudaGetDeviceProperties in gdn_prefill to avoid per-call overhead'
   date: '2026-02-09'
@@ -10825,6 +11363,7 @@ prs:
   - benchmarks/routines/flashinfer_benchmark_utils.py
   - benchmarks/routines/mamba.py
   - benchmarks/samples/sample_testlist.txt
+  pr: 2512
 - number: 2520
   title: Support NVFP4 KV cache decode on SM120
   date: '2026-03-09'
@@ -10892,6 +11431,7 @@ prs:
   - flashinfer/gdn_decode.py
   - flashinfer/gdn_kernels/gdn_decode_pretranspose.py
   - tests/gdn/test_decode_delta_rule.py
+  pr: 2521
 - number: 2525
   title: 'feat: BF16 GEMM benchmarking support'
   date: '2026-02-19'
@@ -10909,6 +11449,7 @@ prs:
   - flashinfer/gemm/gemm_base.py
   - tests/gemm/test_bmm_bf16.py
   - tests/gemm/test_mm_bf16.py
+  pr: 2525
 - number: 2530
   title: pick fa2 for BatchDecodeWithPagedKVCacheWrapper auto backend
   date: '2026-02-17'
@@ -10923,6 +11464,7 @@ prs:
   - benchmarks/routines/attention.py
   - benchmarks/routines/flashinfer_benchmark_utils.py
   - flashinfer/decode.py
+  pr: 2530
 - number: 2533
   title: 'fix: include fp8_blockscale_gemm_90 in AOT jit-cache'
   date: '2026-02-13'
@@ -10934,6 +11476,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2533
   changed_paths:
   - flashinfer/aot.py
+  pr: 2533
 - number: 2534
   title: 'fix: support fp32 logits for fp8_per_tensor and fp8_block'
   date: '2026-03-30'
@@ -10995,6 +11538,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2535
   changed_paths:
   - csrc/nv_internal/tensorrt_llm/kernels/communicationKernels/moeAlltoAllKernels.cu
+  pr: 2535
 - number: 2536
   title: fallback to fa2 (instead of fa3) for unsupported configuration (bf16 Q, Fp8 KV)
   date: '2026-02-12'
@@ -11050,6 +11594,7 @@ prs:
   changed_paths:
   - flashinfer/gemm/gemm_base.py
   - tests/gemm/test_bmm_fp8.py
+  pr: 2538
 - number: 2540
   title: 'feat: cute dsl mmfp4 for blackwell'
   date: '2026-02-21'
@@ -11111,6 +11656,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2543
   changed_paths:
   - flashinfer/triton/__init__.py
+  pr: 2543
 - number: 2547
   title: 'feat: Enable TRTLLM-Gen Skip-Softmax attention for MLA'
   date: '2026-02-19'
@@ -11166,6 +11712,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2549
   changed_paths:
   - flashinfer/aot.py
+  pr: 2549
 - number: 2554
   title: 'feat: Add autotuner config caching, thread safety, and documentation'
   date: '2026-03-14'
@@ -11183,6 +11730,7 @@ prs:
   - docs/index.rst
   - flashinfer/autotuner.py
   - tests/autotuner/test_autotuner_configs.py
+  pr: 2554
 - number: 2559
   title: 'fix: allow fmha_v2_prefill_deepseek on SM121 (DGX Spark)'
   date: '2026-02-19'
@@ -11195,6 +11743,7 @@ prs:
   changed_paths:
   - flashinfer/prefill.py
   - tests/attention/test_fmha_v2_prefill_deepseek.py
+  pr: 2559
 - number: 2560
   title: 'fix: guard CUTLASS FMHA against SM12x and fix fmha_v2 SM121a check'
   date: '2026-03-13'
@@ -11207,6 +11756,7 @@ prs:
   changed_paths:
   - flashinfer/jit/attention/modules.py
   - flashinfer/prefill.py
+  pr: 2560
 - number: 2564
   title: 'fix: W4A8 autotune crash in cutlass_fused_moe profiler workspace'
   date: '2026-02-18'
@@ -11271,6 +11821,7 @@ prs:
   changed_paths:
   - flashinfer/cute_dsl/__init__.py
   - flashinfer/cute_dsl/add_rmsnorm_fp4quant.py
+  pr: 2573
 - number: 2574
   title: 'feat: add is_sm12x_supported() helper for SM12x family detection'
   date: '2026-02-25'
@@ -11285,6 +11836,7 @@ prs:
   - flashinfer/prefill.py
   - flashinfer/utils.py
   - tests/attention/test_fmha_v2_prefill_deepseek.py
+  pr: 2574
 - number: 2581
   title: Implement `cutlass_fused_moe` mxfp8
   date: '2026-03-07'
@@ -11405,6 +11957,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2588
   changed_paths:
   - flashinfer/gdn_decode.py
+  pr: 2588
 - number: 2591
   title: 'Mamba SSU: better automatic kernel selection + algorithm selection optionally exposed to the user.'
   date: '2026-02-22'
@@ -11474,6 +12027,7 @@ prs:
   - flashinfer/fused_moe/__init__.py
   - flashinfer/fused_moe/core.py
   - tests/moe/test_trtllm_gen_routed_fused_moe.py
+  pr: 2594
 - number: 2602
   title: 'fix: get tensors by const ref to not rely on deleted move constructor for `TensorView`'
   date: '2026-02-22'
@@ -11485,6 +12039,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2602
   changed_paths:
   - csrc/fused_moe/cutlass_backend/flashinfer_cutlass_fused_moe_binding.cu
+  pr: 2602
 - number: 2605
   title: '[bugfix] Fix FilteredTopK overflow correctness'
   date: '2026-02-25'
@@ -11497,6 +12052,7 @@ prs:
   changed_paths:
   - include/flashinfer/topk.cuh
   - tests/utils/test_topk.py
+  pr: 2605
 - number: 2607
   title: support qk_nope_head_dim for 192 check for GLM-5
   date: '2026-02-26'
@@ -11509,6 +12065,7 @@ prs:
   changed_paths:
   - flashinfer/mla.py
   - tests/attention/test_trtllm_gen_mla.py
+  pr: 2607
 - number: 2610
   title: Ameyn/gdn bf16 tolerance parallel reduction
   date: '2026-02-23'
@@ -11521,6 +12078,7 @@ prs:
   changed_paths:
   - flashinfer/gdn_kernels/gdn_decode_bf16_state.py
   - tests/gdn/test_decode_delta_rule.py
+  pr: 2610
 - number: 2617
   title: 'fix: Add tests for the AutoTuner and fix bug in _find_nearest_profile'
   date: '2026-03-03'
@@ -11535,6 +12093,7 @@ prs:
   - tests/autotuner/__init__.py
   - tests/autotuner/test_autotuner_bmm_fp8.py
   - tests/autotuner/test_autotuner_core.py
+  pr: 2617
 - number: 2618
   title: 'perf(gdn): optimize MTP kernel with ILP rows and SMEM v caching'
   date: '2026-03-07'
@@ -11552,6 +12111,7 @@ prs:
   - flashinfer/gdn_kernels/gdn_decode_nontranspose.py
   - flashinfer/gdn_kernels/gdn_decode_pretranspose.py
   - tests/gdn/test_decode_delta_rule.py
+  pr: 2618
 - number: 2619
   title: 'feat: add pool+indices support to gated_delta_rule_decode_pretranspose (bf16 path) '
   date: '2026-03-04'
@@ -11565,6 +12125,7 @@ prs:
   - flashinfer/gdn_decode.py
   - flashinfer/gdn_kernels/gdn_decode_bf16_state.py
   - tests/gdn/test_decode_delta_rule.py
+  pr: 2619
 - number: 2628
   title: 'benchmark: Enable speculative decode microbenchmarking for paged decode'
   date: '2026-02-25'
@@ -11577,6 +12138,7 @@ prs:
   changed_paths:
   - benchmarks/README.md
   - benchmarks/routines/attention.py
+  pr: 2628
 - number: 2629
   title: 'fix: cute dsl nvfp4 moe routing index error'
   date: '2026-02-25'
@@ -11595,6 +12157,7 @@ prs:
   - include/flashinfer/trtllm/fused_moe/RoutingKernel.cuh
   - include/flashinfer/trtllm/fused_moe/RoutingKernel.h
   - tests/moe/test_cute_dsl_fused_moe.py
+  pr: 2629
 - number: 2631
   title: 'fix: add SM121 support to SM120 version guards'
   date: '2026-02-25'
@@ -11625,6 +12188,7 @@ prs:
   - tests/attention/test_xqa_batch_decode.py
   - tests/attention/test_xqa_mla_batch_decode.py
   - tests/moe/test_trtllm_cutlass_fused_moe.py
+  pr: 2631
 - number: 2635
   title: 'benchmark: Add MXFP4/MXFP8 quantization mode support to FP4 MoE benchmark'
   date: '2026-02-25'
@@ -11638,6 +12202,7 @@ prs:
   - benchmarks/routines/flashinfer_benchmark_utils.py
   - benchmarks/routines/moe.py
   - benchmarks/routines/moe_utils.py
+  pr: 2635
 - number: 2642
   title: '[fp8_blockwise]Fix int32 overflow in TRTLLM fused MoE activation kernel'
   date: '2026-03-05'
@@ -11649,6 +12214,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2642
   changed_paths:
   - csrc/trtllm_fused_moe_dev_kernel.cu
+  pr: 2642
 - number: 2644
   title: 'feat: FP32 dtype output for BF16 matmuls (CUTLASS & cuDNN)'
   date: '2026-03-18'
@@ -11665,6 +12231,7 @@ prs:
   - flashinfer/jit/gemm/core.py
   - tests/gemm/test_bmm_bf16.py
   - tests/gemm/test_mm_bf16.py
+  pr: 2644
 - number: 2645
   title: int16 Block-Scaled State and Stochastic Rounding for SSU (mamba)
   date: '2026-03-04'
@@ -11752,6 +12319,7 @@ prs:
   - flashinfer/utils.py
   - scripts/test_utils.sh
   - tests/utils/test_fp4_quantize.py
+  pr: 2650
 - number: 2653
   title: '[feat] trtllm-gen mxfp8 gemm'
   date: '2026-03-21'
@@ -11794,6 +12362,7 @@ prs:
   - include/flashinfer/trtllm/gemm/trtllmGen_gemm_export/trtllm/gen/SparsityDecl.h
   - tests/attention/test_xqa_batch_decode.py
   - tests/gemm/test_mm_mxfp8.py
+  pr: 2653
 - number: 2654
   title: 'fix: Add fused MOE and GEMM AOT modules for SM121'
   date: '2026-03-02'
@@ -11947,6 +12516,7 @@ prs:
   - flashinfer/comm/trtllm_ar.py
   - flashinfer/comm/trtllm_mnnvl_ar.py
   - tests/comm/test_trtllm_allreduce_fusion.py
+  pr: 2662
 - number: 2663
   title: 'feat: Autotuner support CUDA graph and cold L2 cache'
   date: '2026-03-03'
@@ -11960,6 +12530,7 @@ prs:
   - flashinfer/autotuner.py
   - flashinfer/fused_moe/core.py
   - tests/autotuner/test_autotuner_core.py
+  pr: 2663
 - number: 2666
   title: 'benchmarks: Add FP8 input / BF16 output in ragged prefill benchmark'
   date: '2026-03-03'
@@ -11972,6 +12543,7 @@ prs:
   changed_paths:
   - benchmarks/README.md
   - benchmarks/routines/attention.py
+  pr: 2666
 - number: 2667
   title: 'perf: Update trtllm-gen batched GEMM kernels - faster, more NVFP4 tile dims, MXFP8 with relu2 act'
   date: '2026-03-03'
@@ -11984,6 +12556,7 @@ prs:
   changed_paths:
   - csrc/trtllm_batched_gemm_runner.cu
   - flashinfer/artifacts.py
+  pr: 2667
 - number: 2670
   title: 'fix: reduce smem allocation for tinygemm2 kernel in SM120'
   date: '2026-03-04'
@@ -11995,6 +12568,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2670
   changed_paths:
   - csrc/tinygemm2.cu
+  pr: 2670
 - number: 2674
   title: Ensure -gencode flags are in deterministic order (for ccache)
   date: '2026-03-04'
@@ -12006,6 +12580,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2674
   changed_paths:
   - flashinfer/compilation_context.py
+  pr: 2674
 - number: 2677
   title: 'feat: add support for more MLA head dimensions'
   date: '2026-03-05'
@@ -12023,6 +12598,7 @@ prs:
   - flashinfer/prefill.py
   - tests/attention/test_trtllm_gen_attention.py
   - tests/attention/test_trtllm_gen_mla.py
+  pr: 2677
 - number: 2678
   title: '[chore] bench_moe_deepseek.py allows adjusting expert distribution'
   date: '2026-03-05'
@@ -12034,6 +12610,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2678
   changed_paths:
   - benchmarks/bench_moe_deepseek.py
+  pr: 2678
 - number: 2679
   title: 'feat(gdn): add BF16 state kernel with MTP support beyond T>4 with intermediate caching.'
   date: '2026-04-02'
@@ -12088,6 +12665,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2688
   changed_paths:
   - flashinfer/gemm/gemm_base.py
+  pr: 2688
 - number: 2696
   title: '[benchmark] Add All Reduce benchmark'
   date: '2026-03-10'
@@ -12102,6 +12680,7 @@ prs:
   - benchmarks/flashinfer_benchmark.py
   - benchmarks/routines/allreduce_comm.py
   - benchmarks/routines/flashinfer_benchmark_utils.py
+  pr: 2696
 - number: 2697
   title: Undo fix to AutoTuner find_nearest_profile
   date: '2026-03-06'
@@ -12114,6 +12693,7 @@ prs:
   changed_paths:
   - flashinfer/autotuner.py
   - tests/autotuner/test_autotuner_core.py
+  pr: 2697
 - number: 2699
   title: 'HOTFIX: Skip mamba Stochastic Rounding tests on sm_120'
   date: '2026-03-05'
@@ -12128,6 +12708,7 @@ prs:
   - tests/mamba/test_philox_rounding.py
   - tests/mamba/test_selective_state_update_mtp.py
   - tests/mamba/test_selective_state_update_stp.py
+  pr: 2699
 - number: 2700
   title: Add varlen and speculative decoding support to selective state update
   date: '2026-03-21'
@@ -12151,6 +12732,7 @@ prs:
   - include/flashinfer/mamba/selective_state_update.cuh
   - tests/mamba/test_selective_state_update_varlen.py
   - tests/mamba/triton_reference/selective_state_update_varlen.py
+  pr: 2700
 - number: 2702
   title: Add NVFP4 KV cache quantization support for SM100
   date: '2026-03-19'
@@ -12227,6 +12809,7 @@ prs:
   - tests/moe/test_trtllm_gen_fused_moe.py
   - tests/moe/test_trtllm_gen_routed_fused_moe.py
   - tests/moe/utils.py
+  pr: 2707
 - number: 2709
   title: Mamba2 SSD Combined Forward Pass (Blackwell CuTe DSL Kernel)
   date: '2026-03-23'
@@ -12474,6 +13057,7 @@ prs:
   - flashinfer/gdn_decode.py
   - flashinfer/gdn_kernels/gdn_decode_pretranspose.py
   - tests/gdn/test_decode_pretranspose_noncontiguous_pool.py
+  pr: 2727
 - number: 2730
   title: Deprecation for gated_delta_rule_mtp's intermediate_states_buffer=True
   date: '2026-03-20'
@@ -12485,6 +13069,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2730
   changed_paths:
   - flashinfer/gdn_decode.py
+  pr: 2730
 - number: 2738
   title: Support for MXFP4 and NVFP4 group GEMMs on GeForce and Spark
   date: '2026-03-28'
@@ -12556,6 +13141,7 @@ prs:
   changed_paths:
   - flashinfer/fused_moe/core.py
   - tests/moe/test_trtllm_gen_routed_fused_moe.py
+  pr: 2739
 - number: 2740
   title: 'misc: Update gemm/batched gemm cubins from trtllm-gen, gemm header refactor'
   date: '2026-04-07'
@@ -12585,6 +13171,7 @@ prs:
   - include/flashinfer/trtllm/gemm/trtllmGen_gemm_export/trtllm/gen/SfLayoutDecl.h
   - include/flashinfer/trtllm/gemm/trtllmGen_gemm_export/trtllm/gen/SparsityDecl.h
   - tests/moe/test_trtllm_gen_fused_moe.py
+  pr: 2740
 - number: 2743
   title: Add cute dsl mla decode op
   date: '2026-03-26'
@@ -12685,6 +13272,7 @@ prs:
   - include/flashinfer/trtllm/fused_moe/RoutingKernel.h
   - include/flashinfer/trtllm/fused_moe/RoutingKernelTopK.cuh
   - tests/moe/test_trtllm_gen_fused_moe.py
+  pr: 2744
 - number: 2750
   title: '[Spark unit test debugging] Fix for tests/attention/test_trtllm_gen_mla.py'
   date: '2026-03-17'
@@ -12697,6 +13285,7 @@ prs:
   changed_paths:
   - flashinfer/xqa.py
   - tests/attention/test_trtllm_gen_mla.py
+  pr: 2750
 - number: 2751
   title: '[Spark unit test debugging] Fix for tests/gemm/test_groupwise_scaled_gemm_fp8.py'
   date: '2026-03-17'
@@ -12708,6 +13297,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2751
   changed_paths:
   - flashinfer/utils.py
+  pr: 2751
 - number: 2752
   title: '[feat] Add air top-p algorithm'
   date: '2026-03-16'
@@ -12765,6 +13355,7 @@ prs:
   - flashinfer/autotuner.py
   - flashinfer/fused_moe/core.py
   - tests/autotuner/test_autotuner_core.py
+  pr: 2756
 - number: 2757
   title: 'feat: Add FP4 KV cache quant/dequant kernels '
   date: '2026-03-18'
@@ -12841,6 +13432,7 @@ prs:
   - include/flashinfer/trtllm/fmha/kernelParams.h
   - tests/attention/test_trtllm_gen_attention.py
   - tests/attention/test_trtllm_gen_mla.py
+  pr: 2770
 - number: 2772
   title: 'Fix compilation error: add missing <optional> header'
   date: '2026-04-13'
@@ -12853,6 +13445,7 @@ prs:
   changed_paths:
   - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
   - include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
+  pr: 2772
 - number: 2777
   title: 'perf: Performance tune cute dsl RMSNorm variants'
   date: '2026-03-17'
@@ -12971,6 +13564,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2783
   changed_paths:
   - flashinfer/__init__.py
+  pr: 2783
 - number: 2790
   title: Implement override shape support for cuDNN GEMM operations
   date: '2026-03-19'
@@ -12984,6 +13578,7 @@ prs:
   - flashinfer/gemm/__init__.py
   - flashinfer/gemm/gemm_base.py
   - tests/gemm/test_cudnn_override_shape.py
+  pr: 2790
 - number: 2792
   title: 'feat: Support padding tokens with seqlen=0 for rope+quant+kv cache update fusion kernel'
   date: '2026-04-09'
@@ -13047,6 +13642,7 @@ prs:
   - csrc/nv_internal/tensorrt_llm/kernels/cutlass_kernels/fpA_intB_gemm/launchers/fpA_intB_launcher_sm90.inl
   - csrc/nv_internal/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/launchers/moe_gemm_tma_ws_mixed_input_launcher.inl
   - csrc/nv_internal/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_gemm_template_dispatch.h
+  pr: 2798
 - number: 2801
   title: '[fix] bugfix 1419: Add batch size shape validation in decode and prefill run() APIs'
   date: '2026-03-23'
@@ -13059,6 +13655,7 @@ prs:
   changed_paths:
   - flashinfer/decode.py
   - flashinfer/prefill.py
+  pr: 2801
 - number: 2802
   title: '[fix] Bugfix 1367: fix VariableBlockSparseAttention buffer overflow by dynamically resizing kv_lens_buffer'
   date: '2026-03-19'
@@ -13072,6 +13669,7 @@ prs:
   - flashinfer/decode.py
   - flashinfer/prefill.py
   - flashinfer/sparse.py
+  pr: 2802
 - number: 2803
   title: Refactor the routing part
   date: '2026-04-05'
@@ -13118,6 +13716,7 @@ prs:
   - include/flashinfer/trtllm/fused_moe/runner.h
   - tests/moe/test_trtllm_gen_fused_moe.py
   - tests/moe/utils.py
+  pr: 2803
 - number: 2805
   title: '[CuTe DSL] Add modular FMHA prefill and MLA decode attention kernels'
   date: '2026-04-14'
@@ -13228,6 +13827,7 @@ prs:
   changed_paths:
   - flashinfer/gdn_kernels/gdn_decode_bf16_state.py
   - tests/gdn/test_decode_delta_rule.py
+  pr: 2810
 - number: 2811
   title: CuteDSL MoE fix redundant output buffer zeroing
   date: '2026-03-19'
@@ -13240,6 +13840,7 @@ prs:
   changed_paths:
   - flashinfer/fused_moe/cute_dsl/blockscaled_contiguous_grouped_gemm_finalize_fusion.py
   - flashinfer/fused_moe/cute_dsl/fused_moe.py
+  pr: 2811
 - number: 2821
   title: 'fix: Autotuner _find_nearest_profile non-power-of-2 num_tokens, create launchers for all supported tileN in trtllm fused MoE'
   date: '2026-03-20'
@@ -13305,6 +13906,7 @@ prs:
   - flashinfer/gemm/kernels/dense_blockscaled_gemm_sm100.py
   - requirements.txt
   - scripts/setup_test_env.sh
+  pr: 2833
 - number: 2836
   title: '[Fmha] Sparse MLA decode kernel selection heuristics'
   date: '2026-03-20'
@@ -13419,6 +14021,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2839
   changed_paths:
   - flashinfer/compilation_context.py
+  pr: 2839
 - number: 2842
   title: 'perf: Optimize GDN MTP decode kernel (v15) — eliminate ilp=1 fallback…'
   date: '2026-04-02'
@@ -13432,6 +14035,7 @@ prs:
   - flashinfer/gdn_decode.py
   - flashinfer/gdn_kernels/__init__.py
   - flashinfer/gdn_kernels/gdn_decode_mtp.py
+  pr: 2842
 - number: 2844
   title: read real strides for kv and block scale
   date: '2026-04-01'
@@ -13447,6 +14051,7 @@ prs:
   - flashinfer/prefill.py
   - include/flashinfer/trtllm/fmha/fmhaRunnerParams.h
   - include/flashinfer/trtllm/fmha/kernelParams.h
+  pr: 2844
 - number: 2853
   title: 'fix: int32 overflow in `trtllm_fp4_block_scale_moe` causing "Unsupported hidden state scale shape" for EP32+ configs'
   date: '2026-03-24'
@@ -13458,6 +14063,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2853
   changed_paths:
   - csrc/trtllm_fused_moe_kernel_launcher.cu
+  pr: 2853
 - number: 2855
   title: '[fix] bugfix 1044: Auto-inject well-known JIT additional tensor buffers in prefill and decode run() APIs'
   date: '2026-04-10'
@@ -13472,6 +14078,7 @@ prs:
   - flashinfer/prefill.py
   - flashinfer/utils.py
   - tests/utils/test_jit_example.py
+  pr: 2855
 - number: 2857
   title: '[fix] bugfix 541: Make single_prefill/decode compatible with torch.compile CUDA graphs'
   date: '2026-04-10'
@@ -13487,6 +14094,7 @@ prs:
   - flashinfer/utils.py
   - tests/attention/test_batch_decode_kernels.py
   - tests/attention/test_batch_prefill_kernels.py
+  pr: 2857
 - number: 2863
   title: Yanqinz/gemm cudnn autotune fix
   date: '2026-03-26'
@@ -13499,6 +14107,7 @@ prs:
   changed_paths:
   - flashinfer/autotuner.py
   - flashinfer/gemm/gemm_base.py
+  pr: 2863
 - number: 2864
   title: Add support for Relu2 in BF16 fused MoE
   date: '2026-04-13'
@@ -13611,6 +14220,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2872
   changed_paths:
   - flashinfer/aot.py
+  pr: 2872
 - number: 2876
   title: '[fix] bugfix 2856: Fix pre-allocated out shape check in trtllm_batch_decode_with_kv_cache_mla for q_len_per_req > 1'
   date: '2026-03-31'
@@ -13623,6 +14233,7 @@ prs:
   changed_paths:
   - flashinfer/mla/_core.py
   - tests/attention/test_trtllm_gen_mla.py
+  pr: 2876
 - number: 2882
   title: Fix silent bug with FP8 per tensor non-gated MoE
   date: '2026-04-14'
@@ -13634,6 +14245,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2882
   changed_paths:
   - csrc/trtllm_fused_moe_kernel_launcher.cu
+  pr: 2882
 - number: 2894
   title: 'fix: expose trigger_completion_at_end through unified API'
   date: '2026-03-31'
@@ -13645,6 +14257,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2894
   changed_paths:
   - flashinfer/comm/allreduce.py
+  pr: 2894
 - number: 2898
   title: 'fix: snap weight_scale_vec_size to handle block_scale_interleave padding for SM120'
   date: '2026-04-05'
@@ -13879,6 +14492,7 @@ prs:
   - include/flashinfer/flat/prefill/prefill_kernel.hpp
   - include/flashinfer/flat/prefill/prefill_kernel_delta_rule_sm90.cuh
   - tests/gdn/test_prefill_delta_rule.py
+  pr: 2908
 - number: 2910
   title: Yanqinz/dynamic shape unified api
   date: '2026-04-01'
@@ -13892,6 +14506,7 @@ prs:
   - flashinfer/gemm/__init__.py
   - flashinfer/gemm/gemm_base.py
   - tests/gemm/test_cudnn_override_shape.py
+  pr: 2910
 - number: 2913
   title: '[NVIDIA] fix(jit): enable GDC for CUTLASS fused MoE PDL — prevent random crashes on SM12x'
   date: '2026-04-01'
@@ -13974,6 +14589,7 @@ prs:
   changed_paths:
   - flashinfer/fused_moe/core.py
   - tests/autotuner/test_trtllm_fused_moe_autotuner_integration.py
+  pr: 2916
 - number: 2926
   title: 'feat: add Relu2 (squared ReLU) activation support in CUTLASS MoE backend'
   date: '2026-04-01'
@@ -14133,6 +14749,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2935
   changed_paths:
   - flashinfer/utils.py
+  pr: 2935
 - number: 2940
   title: CuTe DSL FP4 GEMM Heuristic
   date: '2026-04-15'
@@ -14195,6 +14812,7 @@ prs:
   - flashinfer/autotuner.py
   - flashinfer/fused_moe/core.py
   - tests/autotuner/test_trtllm_fused_moe_autotuner_integration.py
+  pr: 2942
 - number: 2945
   title: 'fix: use float instead of double in sampling binary search to avoid FP64 bottleneck on SM103'
   date: '2026-04-04'
@@ -14244,6 +14862,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2948
   changed_paths:
   - flashinfer/gemm/gemm_base.py
+  pr: 2948
 - number: 2954
   title: Only swizzle on v block scale; rename kv_block_scales to kv_cache_sf
   date: '2026-04-08'
@@ -14260,6 +14879,7 @@ prs:
   - flashinfer/prefill.py
   - flashinfer/quantization/fp4_quantization.py
   - tests/attention/test_trtllm_gen_attention.py
+  pr: 2954
 - number: 2956
   title: '[Fmha] revert blackwell ultra optimization that causes deadlocks.'
   date: '2026-04-03'
@@ -14272,6 +14892,7 @@ prs:
   changed_paths:
   - flashinfer/artifacts.py
   - include/flashinfer/trtllm/fmha/kernelParams.h
+  pr: 2956
 - number: 2960
   title: Update NVSHMEM interface to use NVSHMEM4Py instead of custom bindings
   date: '2026-04-06'
@@ -14294,6 +14915,7 @@ prs:
   - scripts/task_run_unit_tests.sh
   - scripts/task_test_single_node_comm_kernels.sh
   - tests/comm/test_nvshmem.py
+  pr: 2960
 - number: 2965
   title: Add flashinfer.fused_rmsnorm_silu() with native kernel backend
   date: '2026-04-08'
@@ -14415,6 +15037,7 @@ prs:
   changed_paths:
   - flashinfer/jit/cubin_loader.py
   - tests/utils/test_gen_module_symlink_race_condition.py
+  pr: 2979
 - number: 2982
   title: 'feat(comm): add MOE Finalize/Reduction patterns to unified allreduce_fusion API'
   date: '2026-04-13'
@@ -14429,6 +15052,7 @@ prs:
   - flashinfer/comm/allreduce.py
   - flashinfer/comm/trtllm_ar.py
   - tests/comm/test_allreduce_fusion_moe_unified_api.py
+  pr: 2982
 - number: 2984
   title: 'fix: restore SM120 CUTLASS MoE tile candidate removed by #2927 (test_trtllm_cutlass_fused_moe.py)'
   date: '2026-04-07'
@@ -14540,6 +15164,7 @@ prs:
   changed_paths:
   - flashinfer/gemm/routergemm.py
   - tests/model_optimizations/test_dsv3_router_gemm.py
+  pr: 2991
 - number: 2993
   title: Second part of refactoring the routing part
   date: '2026-04-13'
@@ -14563,6 +15188,7 @@ prs:
   - include/flashinfer/trtllm/fused_moe/runner.h
   - tests/autotuner/test_trtllm_fused_moe_autotuner_integration.py
   - tests/moe/test_trtllm_gen_fused_moe.py
+  pr: 2993
 - number: 2994
   title: '  Fix MXFP4/MXFP8 failures in SM120 FAST_BUILD and expand all_tiles[]                                                  '
   date: '2026-04-13'
@@ -14575,6 +15201,7 @@ prs:
   changed_paths:
   - csrc/nv_internal/tensorrt_llm/kernels/cutlass_kernels/cutlass_heuristic.cpp
   - flashinfer/compilation_context.py
+  pr: 2994
 - number: 2996
   title: 'fix: tinygemm2 hang issue due to barrier sync'
   date: '2026-04-07'
@@ -14588,6 +15215,7 @@ prs:
   - csrc/tinygemm2.cu
   - flashinfer/gemm/routergemm.py
   - tests/model_optimizations/test_tinygemm2.py
+  pr: 2996
 - number: 3001
   title: '[feat] Add blackwell GDN prefill kernel'
   date: '2026-04-13'
@@ -14608,6 +15236,7 @@ prs:
   - flashinfer/gdn_prefill.py
   - pyproject.toml
   - tests/gdn/test_prefill_delta_rule.py
+  pr: 3001
 - number: 3002
   title: 'bench: Enable microbenchmarking on SM121'
   date: '2026-04-07'
@@ -14619,6 +15248,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-3002
   changed_paths:
   - benchmarks/routines/flashinfer_benchmark_utils.py
+  pr: 3002
 - number: 3007
   title: 'fix: use sym_int64 for strides in rmsnorm CuTe DSL kernels to prevent int32 overflow'
   date: '2026-04-08'
@@ -14632,6 +15262,7 @@ prs:
   - flashinfer/norm/kernels/fused_add_rmsnorm.py
   - flashinfer/norm/kernels/rmsnorm.py
   - tests/utils/test_norm.py
+  pr: 3007
 - number: 3008
   title: 'feat: add PDL support to rmsnorm_fp4quant and add_rmsnorm_fp4quant CuTe DSL kernels'
   date: '2026-04-08'
@@ -14755,6 +15386,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-3019
   changed_paths:
   - flashinfer/gdn_decode.py
+  pr: 3019
 - number: 3021
   title: 'fix: extend moe alltoall top-k specializations'
   date: '2026-04-13'
@@ -14852,6 +15484,7 @@ prs:
   changed_paths:
   - flashinfer/fused_moe/cute_dsl/fused_moe.py
   - flashinfer/fused_moe/cute_dsl/tuner.py
+  pr: 3025
 - number: 3026
   title: 'perf: Port TRT-LLM SM120/SM121 FP4 CUTLASS GEMM optimizations. Add PDL'
   date: '2026-04-10'
@@ -14975,6 +15608,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-3040
   changed_paths:
   - flashinfer/comm/allreduce.py
+  pr: 3040
 - number: 3051
   title: 'feat: Add backend="b12x" for mm_fp4 on SM120'
   date: '2026-04-14'
@@ -15046,6 +15680,7 @@ prs:
   changed_paths:
   - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
   - include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
+  pr: 3056
 - number: 3058
   title: Support lse in trtllm paged attn kernels
   date: '2026-04-15'
@@ -15170,6 +15805,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1838
   changed_paths:
   - flashinfer/deep_gemm.py
+  pr: 1838
 - number: 1953
   title: 'unittest: fix deepgemm sha256'
   date: '2025-10-22'
@@ -15181,6 +15817,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-1953
   changed_paths:
   - flashinfer/artifacts.py
+  pr: 1953
 - number: 2414
   title: Update cudnn prefill to use correct sequence strides
   date: '2026-01-26'
@@ -15192,6 +15829,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2414
   changed_paths:
   - flashinfer/cudnn/prefill.py
+  pr: 2414
 - number: 2630
   title: Add parallel attention
   date: '2026-04-20'
@@ -15253,6 +15891,7 @@ prs:
   - flashinfer/fused_moe/cute_dsl/blackwell/blockscaled_contiguous_gather_grouped_gemm_swiglu_fusion.py
   - flashinfer/fused_moe/cute_dsl/blackwell/blockscaled_contiguous_grouped_gemm_finalize_fusion.py
   - flashinfer/fused_moe/cute_dsl/blackwell/custom_pipeline.py
+  pr: 2735
 - number: 2762
   title: 'fix: fix OOB issue for vLLM'
   date: '2026-04-24'
@@ -15264,6 +15903,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2762
   changed_paths:
   - csrc/fused_moe/cutlass_backend/cutlass_fused_moe_kernels.cuh
+  pr: 2762
 - number: 2807
   title: Build mnnvl_moe_alltoall with logger and stringUtils
   date: '2026-04-24'
@@ -15275,6 +15915,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-2807
   changed_paths:
   - flashinfer/jit/comm.py
+  pr: 2807
 - number: 2903
   title: 'fix: avoid re-downloading BMM export headers when flashinfer-cubin is installed'
   date: '2026-04-03'
@@ -15293,6 +15934,7 @@ prs:
   - flashinfer/jit/gemm/core.py
   - flashinfer/jit/moe_utils.py
   - tests/utils/test_load_cubin_compile_race_condition.py
+  pr: 2903
 - number: 2931
   title: 'feat: add get flashinfer-trace interface .fi_trace'
   date: '2026-04-25'
@@ -15423,6 +16065,7 @@ prs:
   - tests/trace/fi_trace_out/rope_pos_ids_h32_kv8_d128.json
   - tests/trace/fi_trace_out/rope_pos_ids_inplace_h32_kv8_d128.json
   - tests/trace/fi_trace_out/sampling_from_logits_v32000.json
+  pr: 2931
 - number: 2951
   title: 'feat: Add DCP All-to-All kernel for context-parallel attention reduction'
   date: '2026-04-23'
@@ -15665,6 +16308,7 @@ prs:
   changed_paths:
   - flashinfer/prefill.py
   - tests/attention/test_fmha_v2_prefill.py
+  pr: 3050
 - number: 3080
   title: 'feat: Add b12x_fused_moe / B12xMoEWrapper SM120 APIs with micro kernel and ReLU2'
   date: '2026-04-20'
@@ -15757,6 +16401,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-3082
   changed_paths:
   - csrc/fused_moe/cutlass_backend/flashinfer_cutlass_fused_moe_binding.cu
+  pr: 3082
 - number: 3084
   title: 'perf: optimize MXFP4xBF16 & INT4xFP8 CUTLASS MoE backend for SM90'
   date: '2026-04-23'
@@ -15840,6 +16485,7 @@ prs:
   changed_paths:
   - flashinfer/artifacts.py
   - include/flashinfer/trtllm/fmha/fmhaKernels.cuh
+  pr: 3089
 - number: 3091
   title: Vendor CCCL v3.3.2 from GitHub instead of relying on CTK-bundled copy
   date: '2026-04-22'
@@ -15862,6 +16508,7 @@ prs:
   - include/flashinfer/trtllm/fmha/lse.cuh
   - pyproject.toml
   - scripts/modal_runner.py
+  pr: 3091
 - number: 3092
   title: Add examples of calling FlashInfer from JAX via jax-tvm-ffi
   date: '2026-04-24'
@@ -15879,6 +16526,7 @@ prs:
   - docs/tutorials/jax_tvm_ffi/README.rst
   - docs/tutorials/jax_tvm_ffi/flashinfer_jax_tvm_ffi.py
   - docs/tutorials/jax_tvm_ffi/gemma3_flashinfer_jax.py
+  pr: 3092
 - number: 3094
   title: 'Route the missing parameter for `trtllm_fp8_per_tensor_scale_moe_op`  '
   date: '2026-04-18'
@@ -15891,6 +16539,7 @@ prs:
   changed_paths:
   - .github/workflows/release.yml
   - flashinfer/fused_moe/core.py
+  pr: 3094
 - number: 3113
   title: 'Fix: Extend b12x FP4 GEMM support to SM121 (GB10/DGX Spark)'
   date: '2026-04-20'
@@ -16019,6 +16668,7 @@ prs:
   - flashinfer/gemm/gemm_base.py
   - flashinfer/gemm/kernels/dense_blockscaled_gemm_sm120_b12x.py
   - tests/moe/test_b12x_fused_moe.py
+  pr: 3128
 - number: 3132
   title: '[CuTe DSL] Fix FP8 MLA persistent perf regression and ProxyKind cu13 wheel breakage'
   date: '2026-04-22'
@@ -16135,6 +16785,7 @@ prs:
   changed_paths:
   - flashinfer/gdn_kernels/blackwell/gated_delta_net_chunked.py
   - tests/gdn/test_prefill_delta_rule.py
+  pr: 3156
 - number: 3158
   title: 'CICD bug fix: ensure data/ symlinks exist before jit-cache AOT compilation'
   date: '2026-04-24'
@@ -16146,6 +16797,7 @@ prs:
   artifact_dir: evidence/pull-bundles/flashinfer/gh-3158
   changed_paths:
   - flashinfer-jit-cache/build_backend.py
+  pr: 3158
 - number: 2914
   pr: 2914
   title: 'feat: Add cuBLASLt backend for `mm_bf16` and enable multi-tactic autotuning for FP8/MXFP8 runners'
@@ -17797,5 +18449,752 @@ prs:
   score: 41
   ncu_hint: Use the PR's benchmark/profile command as the first replay target.
   artifact_dir: evidence/pull-bundles/flashinfer/gh-3151
+- number: 3328
+  pr: 3328
+  title: 'feat(cute_dsl/moe): add `moe_output_memset_inplace` dense memset wrapper'
+  repo: flashinfer-ai/flashinfer
+  url: https://github.com/flashinfer-ai/flashinfer/pull/3328
+  date: '2026-05-18'
+  merged_at: '2026-05-18T21:17:39Z'
+  author: leejnau
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: csrc/moe_utils_binding.cu, flashinfer/fused_moe/cute_dsl/fused_moe.py, flashinfer/fused_moe/cute_dsl/moe_utils.py, flashinfer/jit/moe_utils.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - cuda kernel
+  - cute
+  - fp4
+  - fp8
+  - gemm
+  - moe kernel
+  architectures:
+  - sm100
+  techniques:
+  - kernel-fusion
+  hardware_features:
+  - fp4
+  - fp8
+  kernel_types:
+  - gemm
+  - moe
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - csrc/moe_utils_binding.cu
+  - flashinfer/fused_moe/cute_dsl/fused_moe.py
+  - flashinfer/fused_moe/cute_dsl/moe_utils.py
+  - flashinfer/jit/moe_utils.py
+  - tests/moe/test_cute_dsl_fused_moe.py
+  path_signals:
+  - csrc/moe_utils_binding.cu
+  - flashinfer/fused_moe/cute_dsl/fused_moe.py
+  - flashinfer/fused_moe/cute_dsl/moe_utils.py
+  - flashinfer/jit/moe_utils.py
+  - tests/moe/test_cute_dsl_fused_moe.py
+  borderline_path_signals:
+  - tests/moe/test_cute_dsl_fused_moe.py
+  selection_text_signals:
+  - cuda kernel
+  - cute
+  - flashinfer
+  - fp4
+  - fp8
+  - gemm
+  - moe kernel
+  additions: 314
+  deletions: 9
+  changed_file_count: 5
+  artifact_dir: evidence/pull-bundles/flashinfer/gh-3328
+- number: 3324
+  pr: 3324
+  title: 'checkpointing_ssu kernel: fused replay + conditional state-write for Mamba2'
+  repo: flashinfer-ai/flashinfer
+  url: https://github.com/flashinfer-ai/flashinfer/pull/3324
+  date: '2026-05-19'
+  merged_at: '2026-05-19T16:47:02Z'
+  author: ishovkun
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: benchmarks/bench_checkpointing_ssu.py, benchmarks/bench_ssu_sweep_sol.py, csrc/checkpointing_ssu.cu, csrc/checkpointing_ssu_customize_config.jinja'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  - cute
+  - fp8
+  - gemm
+  - hopper
+  - moe kernel
+  - nvfp4
+  - sm100
+  - speculative
+  - triton kernel
+  architectures:
+  - sm100
+  - sm90
+  techniques:
+  - kernel-fusion
+  hardware_features:
+  - blackwell
+  - fp4
+  - fp8
+  - hopper
+  - nvfp4
+  kernel_types:
+  - gemm
+  - moe
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  - triton
+  changed_paths:
+  - .github/CODEOWNERS
+  - benchmarks/bench_checkpointing_ssu.py
+  - benchmarks/bench_ssu_sweep_sol.py
+  - csrc/checkpointing_ssu.cu
+  - csrc/checkpointing_ssu_customize_config.jinja
+  - csrc/checkpointing_ssu_jit_binding.cu
+  - csrc/checkpointing_ssu_kernel_inst.cu
+  - flashinfer/jit/mamba/checkpointing_ssu.py
+  - flashinfer/mamba/__init__.py
+  - flashinfer/mamba/checkpointing_ssu.py
+  - include/flashinfer/mamba/checkpointing_ssu.cuh
+  - include/flashinfer/mamba/conversion.cuh
+  - include/flashinfer/mamba/kernel_checkpointing_ssu.cuh
+  - include/flashinfer/mamba/kernel_checkpointing_ssu_8bit.cuh
+  - include/flashinfer/mamba/kernel_checkpointing_ssu_common.cuh
+  - include/flashinfer/mamba/launch_checkpointing_ssu.cuh
+  - tests/mamba/test_checkpointing_ssu.py
+  - tests/mamba/test_philox_rounding.py
+  - tests/mamba/triton_reference/checkpointing_state_update.py
+  path_signals:
+  - benchmarks/bench_checkpointing_ssu.py
+  - benchmarks/bench_ssu_sweep_sol.py
+  - csrc/checkpointing_ssu.cu
+  - csrc/checkpointing_ssu_customize_config.jinja
+  - csrc/checkpointing_ssu_jit_binding.cu
+  - csrc/checkpointing_ssu_kernel_inst.cu
+  - flashinfer/jit/mamba/checkpointing_ssu.py
+  - flashinfer/mamba/__init__.py
+  - flashinfer/mamba/checkpointing_ssu.py
+  - include/flashinfer/mamba/checkpointing_ssu.cuh
+  - include/flashinfer/mamba/conversion.cuh
+  - include/flashinfer/mamba/kernel_checkpointing_ssu.cuh
+  borderline_path_signals:
+  - benchmarks/bench_checkpointing_ssu.py
+  - benchmarks/bench_ssu_sweep_sol.py
+  - tests/mamba/triton_reference/checkpointing_state_update.py
+  selection_text_signals:
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  - cute
+  - flashinfer
+  - fp4
+  - fp8
+  - gemm
+  - hopper
+  - moe kernel
+  - nvfp4
+  - sm100
+  - triton kernel
+  additions: 14368
+  deletions: 36
+  changed_file_count: 19
+  artifact_dir: evidence/pull-bundles/flashinfer/gh-3324
+- number: 3322
+  pr: 3322
+  title: '[feat] Add gemma RMS AR fusion'
+  repo: flashinfer-ai/flashinfer
+  url: https://github.com/flashinfer-ai/flashinfer/pull/3322
+  date: '2026-05-19'
+  merged_at: '2026-05-19T16:13:19Z'
+  author: jiahanc
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: benchmarks/bench_gemma_ar_fusion.py, csrc/trtllm_allreduce_fusion.cu, csrc/trtllm_mnnvl_allreduce.cu, csrc/trtllm_moe_allreduce_fusion.cu'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  - cuda kernel
+  - cute
+  - moe kernel
+  architectures:
+  - sm100
+  techniques:
+  - kernel-fusion
+  hardware_features: []
+  kernel_types:
+  - gemm
+  - moe
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - benchmarks/bench_gemma_ar_fusion.py
+  - csrc/trtllm_allreduce_fusion.cu
+  - csrc/trtllm_mnnvl_allreduce.cu
+  - csrc/trtllm_moe_allreduce_fusion.cu
+  - docs/api/comm.rst
+  - flashinfer/comm/allreduce.py
+  - flashinfer/comm/trtllm_ar.py
+  - flashinfer/comm/trtllm_mnnvl_ar.py
+  - flashinfer/trace/templates/comm.py
+  - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
+  - include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh
+  - include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
+  - tests/comm/test_allreduce_fusion_moe_unified_api.py
+  - tests/comm/test_gemma_ar_fusion.py
+  - tests/comm/test_trtllm_allreduce_fusion.py
+  path_signals:
+  - benchmarks/bench_gemma_ar_fusion.py
+  - csrc/trtllm_allreduce_fusion.cu
+  - csrc/trtllm_mnnvl_allreduce.cu
+  - csrc/trtllm_moe_allreduce_fusion.cu
+  - flashinfer/comm/allreduce.py
+  - flashinfer/comm/trtllm_ar.py
+  - flashinfer/comm/trtllm_mnnvl_ar.py
+  - flashinfer/trace/templates/comm.py
+  - include/flashinfer/comm/trtllm_allreduce_fusion.cuh
+  - include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh
+  - include/flashinfer/comm/trtllm_moe_allreduce_fusion.cuh
+  - tests/comm/test_allreduce_fusion_moe_unified_api.py
+  borderline_path_signals:
+  - benchmarks/bench_gemma_ar_fusion.py
+  - tests/comm/test_allreduce_fusion_moe_unified_api.py
+  - tests/comm/test_gemma_ar_fusion.py
+  selection_text_signals:
+  - benchmark kernel
+  - cuda kernel
+  - cute
+  - flashinfer
+  - gemm
+  - moe kernel
+  additions: 563
+  deletions: 46
+  changed_file_count: 15
+  artifact_dir: evidence/pull-bundles/flashinfer/gh-3322
+- number: 3317
+  pr: 3317
+  title: Update trtllm FMHA cubins
+  repo: flashinfer-ai/flashinfer
+  url: https://github.com/flashinfer-ai/flashinfer/pull/3317
+  date: '2026-05-19'
+  merged_at: '2026-05-19T21:54:09Z'
+  author: djmmoss
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: csrc/trtllm_fmha_kernel_launcher.cu, flashinfer/artifacts.py, include/flashinfer/trtllm/fmha/kernelParams.h'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - attention
+  - attention kernel
+  - cute
+  - fmha
+  - fp4
+  - fp8
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp4
+  - fp8
+  kernel_types:
+  - attention
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - csrc/trtllm_fmha_kernel_launcher.cu
+  - flashinfer/artifacts.py
+  - include/flashinfer/trtllm/fmha/kernelParams.h
+  path_signals:
+  - csrc/trtllm_fmha_kernel_launcher.cu
+  - flashinfer/artifacts.py
+  - include/flashinfer/trtllm/fmha/kernelParams.h
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - cute
+  - flashinfer
+  - fp4
+  - fp8
+  additions: 32
+  deletions: 16
+  changed_file_count: 3
+  artifact_dir: evidence/pull-bundles/flashinfer/gh-3317
+- number: 3315
+  pr: 3315
+  title: Ep api design - Build Infra dependencies
+  repo: flashinfer-ai/flashinfer
+  url: https://github.com/flashinfer-ai/flashinfer/pull/3315
+  date: '2026-05-18'
+  merged_at: '2026-05-18T23:47:29Z'
+  author: Anerudhan
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: flashinfer/moe_ep/__init__.py, flashinfer/moe_ep/nccl_ep/__init__.py, flashinfer/moe_ep/nixl_ep/__init__.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  - hopper
+  - moe kernel
+  architectures:
+  - sm100
+  - sm90
+  techniques: []
+  hardware_features:
+  - blackwell
+  - hopper
+  kernel_types:
+  - moe
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - .dockerignore
+  - .gitignore
+  - .gitmodules
+  - 3rdparty/nccl
+  - 3rdparty/nixl
+  - 3rdparty_patches/nixl/0001-meson-add-blackwell-arches.patch
+  - 3rdparty_patches/nixl/0002-ep-only-build.patch
+  - build_backend.py
+  - docker/Dockerfile.flashinfer-nvep
+  - flashinfer/moe_ep/__init__.py
+  - flashinfer/moe_ep/nccl_ep/__init__.py
+  - flashinfer/moe_ep/nixl_ep/__init__.py
+  - pyproject.toml
+  path_signals:
+  - flashinfer/moe_ep/__init__.py
+  - flashinfer/moe_ep/nccl_ep/__init__.py
+  - flashinfer/moe_ep/nixl_ep/__init__.py
+  borderline_path_signals:
+  - docker/Dockerfile.flashinfer-nvep
+  selection_text_signals:
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  - flashinfer
+  - hopper
+  - moe kernel
+  additions: 1561
+  deletions: 0
+  changed_file_count: 13
+  artifact_dir: evidence/pull-bundles/flashinfer/gh-3315
+- number: 3286
+  pr: 3286
+  title: 'feat(cute_dsl/moe): deterministic balanced autotune profile inputs'
+  repo: flashinfer-ai/flashinfer
+  url: https://github.com/flashinfer-ai/flashinfer/pull/3286
+  date: '2026-05-17'
+  merged_at: '2026-05-17T04:17:35Z'
+  author: leejnau
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: flashinfer/autotuner.py, flashinfer/fused_moe/cute_dsl/_inputs_helper.py, flashinfer/fused_moe/cute_dsl/tuner.py, tests/moe/test_cute_dsl_fused_moe.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - cute
+  - nvfp4
+  - sampling
+  architectures:
+  - sm100
+  techniques:
+  - autotuning
+  - kernel-fusion
+  hardware_features:
+  - fp4
+  - nvfp4
+  kernel_types:
+  - moe
+  - sampling
+  languages:
+  - cute-dsl
+  changed_paths:
+  - flashinfer/autotuner.py
+  - flashinfer/fused_moe/cute_dsl/_inputs_helper.py
+  - flashinfer/fused_moe/cute_dsl/tuner.py
+  - tests/moe/test_cute_dsl_fused_moe.py
+  path_signals:
+  - flashinfer/autotuner.py
+  - flashinfer/fused_moe/cute_dsl/_inputs_helper.py
+  - flashinfer/fused_moe/cute_dsl/tuner.py
+  - tests/moe/test_cute_dsl_fused_moe.py
+  borderline_path_signals:
+  - tests/moe/test_cute_dsl_fused_moe.py
+  selection_text_signals:
+  - cute
+  - flashinfer
+  - fp4
+  - nvfp4
+  additions: 388
+  deletions: 7
+  changed_file_count: 4
+  artifact_dir: evidence/pull-bundles/flashinfer/gh-3286
+- number: 3268
+  pr: 3268
+  title: Ameyn/gdn bf16 dispatcher and 4d pool
+  repo: flashinfer-ai/flashinfer
+  url: https://github.com/flashinfer-ai/flashinfer/pull/3268
+  date: '2026-05-19'
+  merged_at: '2026-05-19T21:33:55Z'
+  author: ameynaik-hub
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: flashinfer/gdn_decode.py, flashinfer/gdn_kernels/gdn_decode_bf16_state.py, tests/gdn/test_decode_pretranspose_bf16_padded_pool.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - cuda kernel
+  - sm90
+  architectures:
+  - sm90
+  techniques: []
+  hardware_features:
+  - hopper
+  kernel_types:
+  - decode
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - flashinfer/gdn_decode.py
+  - flashinfer/gdn_kernels/gdn_decode_bf16_state.py
+  - tests/gdn/test_decode_pretranspose_bf16_padded_pool.py
+  path_signals:
+  - flashinfer/gdn_decode.py
+  - flashinfer/gdn_kernels/gdn_decode_bf16_state.py
+  - tests/gdn/test_decode_pretranspose_bf16_padded_pool.py
+  borderline_path_signals:
+  - tests/gdn/test_decode_pretranspose_bf16_padded_pool.py
+  selection_text_signals:
+  - cuda kernel
+  - flashinfer
+  - sm90
+  additions: 263
+  deletions: 85
+  changed_file_count: 3
+  artifact_dir: evidence/pull-bundles/flashinfer/gh-3268
+- number: 3221
+  pr: 3221
+  title: 'feat(trace): embed runnable init() in every TraceTemplate'
+  repo: flashinfer-ai/flashinfer
+  url: https://github.com/flashinfer-ai/flashinfer/pull/3221
+  date: '2026-05-17'
+  merged_at: '2026-05-17T04:14:20Z'
+  author: yyihuang
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: flashinfer/api_logging.py, flashinfer/trace/template.py, flashinfer/trace/templates/_init_helpers.py, flashinfer/trace/templates/activation.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - attention
+  - attention kernel
+  - benchmark kernel
+  - cuda kernel
+  - fp4
+  - fp8
+  - gemm
+  - kv-cache
+  - moe kernel
+  - mxfp4
+  - nvfp4
+  - page-table
+  - sampling
+  - sm90
+  - speculative
+  architectures:
+  - sm100
+  - sm90
+  techniques:
+  - async-copy
+  - cache-policy
+  - fine-grained-quantization
+  - kernel-fusion
+  hardware_features:
+  - blackwell
+  - fp4
+  - fp8
+  - hopper
+  - mxfp4
+  - nvfp4
+  - tma
+  kernel_types:
+  - attention
+  - decode
+  - gemm
+  - mla
+  - moe
+  - norm
+  - sampling
+  - softmax
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - .github/workflows/pr-test.yml
+  - flashinfer/api_logging.py
+  - flashinfer/trace/template.py
+  - flashinfer/trace/templates/_init_helpers.py
+  - flashinfer/trace/templates/activation.py
+  - flashinfer/trace/templates/attention.py
+  - flashinfer/trace/templates/cascade.py
+  - flashinfer/trace/templates/comm.py
+  - flashinfer/trace/templates/gdn.py
+  - flashinfer/trace/templates/gemm.py
+  - flashinfer/trace/templates/mamba.py
+  - flashinfer/trace/templates/moe.py
+  - flashinfer/trace/templates/norm.py
+  - flashinfer/trace/templates/page.py
+  - flashinfer/trace/templates/quantize.py
+  - flashinfer/trace/templates/rope.py
+  - flashinfer/trace/templates/sampling.py
+  - tests/trace/__init__.py
+  - tests/trace/example.py
+  - tests/trace/fi_trace_out/append_paged_kv_cache_kv8_d128.json
+  - tests/trace/fi_trace_out/chain_speculative_sampling_v32000.json
+  - tests/trace/fi_trace_out/concat_mla_k_h128_nope128_rope64_d192.json
+  - tests/trace/fi_trace_out/fp4_quantize_k4096.json
+  - tests/trace/fi_trace_out/fp4_quantize_k7168.json
+  - tests/trace/fi_trace_out/fused_add_rmsnorm_h5120.json
+  - tests/trace/fi_trace_out/fused_add_rmsnorm_quant_h7168.json
+  - tests/trace/fi_trace_out/gdn_decode_qk4_v8_d128.json
+  - tests/trace/fi_trace_out/gdn_mtp_qk4_v8_d128.json
+  - tests/trace/fi_trace_out/gdn_prefill_qk4_v8_d128.json
+  - tests/trace/fi_trace_out/gelu_and_mul_h16384.json
+  - tests/trace/fi_trace_out/gelu_tanh_and_mul_h16384.json
+  - tests/trace/fi_trace_out/gemm_bf16_N256_K7168.json
+  - tests/trace/fi_trace_out/gemm_bf16_N4096_K4096.json
+  - tests/trace/fi_trace_out/gemm_fp4_N2048_K7168_block_size16.json
+  - tests/trace/fi_trace_out/gemm_fp8_N1536_K7168.json
+  - tests/trace/fi_trace_out/gemm_fp8_nt_groupwise_n1536_k7168.json
+  - tests/trace/fi_trace_out/gemm_mxfp8_N4096_K4096.json
+  - tests/trace/fi_trace_out/gemma_fused_add_rmsnorm_h4608.json
+  - tests/trace/fi_trace_out/gemma_rmsnorm_h4608.json
+  - tests/trace/fi_trace_out/gqa_paged_decode_h32_kv8_d128_ps16.json
+  - tests/trace/fi_trace_out/gqa_paged_decode_h32_kv8_d128_ps64.json
+  - tests/trace/fi_trace_out/gqa_paged_prefill_h32_kv8_d128_ps16.json
+  - tests/trace/fi_trace_out/gqa_ragged_h32_kv8_d128.json
+  - tests/trace/fi_trace_out/layernorm_h768.json
+  - tests/trace/fi_trace_out/llama31_rope_h32_kv8_d128.json
+  - tests/trace/fi_trace_out/llama31_rope_inplace_h32_kv8_d128.json
+  - tests/trace/fi_trace_out/llama31_rope_pos_ids_h32_kv8_d128.json
+  - tests/trace/fi_trace_out/llama31_rope_pos_ids_inplace_h32_kv8_d128.json
+  - tests/trace/fi_trace_out/merge_state_h32_d128.json
+  - tests/trace/fi_trace_out/merge_state_in_place_h32_d128.json
+  - tests/trace/fi_trace_out/merge_states_h32_d128.json
+  - tests/trace/fi_trace_out/min_p_sampling_v32000.json
+  - tests/trace/fi_trace_out/mla_paged_decode_h16_ckv512_kpe64_ps1.json
+  - tests/trace/fi_trace_out/mla_paged_decode_h16_ckv512_kpe64_ps64.json
+  - tests/trace/fi_trace_out/mla_rope_quantize_fp8_h128_kv64_rope64.json
+  - tests/trace/fi_trace_out/mla_rope_quantize_fp8_h128_rope64.json
+  - tests/trace/fi_trace_out/moe_fp4_block_scale_default_routing_topk8_e32_h7168_i2048.json
+  - tests/trace/fi_trace_out/moe_fp4_block_scale_ds_routing_topk8_e32_h7168_i2048_ng8_kg4.json
+  - tests/trace/fi_trace_out/moe_fp4_block_scale_llama4_routing_topk1_e32_h7168_i2048.json
+  - tests/trace/fi_trace_out/moe_fp4_block_scale_renormalize_naive_routing_topk8_e32_h7168_i2048.json
+  - tests/trace/fi_trace_out/moe_fp4_block_scale_renormalize_routing_topk8_e32_h7168_i2048.json
+  - tests/trace/fi_trace_out/moe_fp4_block_scale_topk_routing_topk8_e32_h7168_i2048.json
+  - tests/trace/fi_trace_out/moe_fp8_block_scale_default_routing_topk8_e32_h7168_i2048.json
+  - tests/trace/fi_trace_out/moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048.json
+  - tests/trace/fi_trace_out/moe_fp8_block_scale_llama4_routing_topk1_e32_h7168_i2048.json
+  - tests/trace/fi_trace_out/moe_fp8_block_scale_renormalize_naive_routing_topk8_e32_h7168_i2048.json
+  - tests/trace/fi_trace_out/moe_fp8_block_scale_renormalize_routing_topk8_e32_h7168_i2048.json
+  - tests/trace/fi_trace_out/moe_fp8_block_scale_topk_routing_topk8_e32_h7168_i2048.json
+  - tests/trace/fi_trace_out/mxfp4_quantize_k4096.json
+  - tests/trace/fi_trace_out/mxfp8_quantize_k4096.json
+  - tests/trace/fi_trace_out/nvfp4_quantize_k4096.json
+  - tests/trace/fi_trace_out/rmsnorm_h4096.json
+  - tests/trace/fi_trace_out/rmsnorm_h7168.json
+  - tests/trace/fi_trace_out/rmsnorm_quant_h7168.json
+  - tests/trace/fi_trace_out/rope_cos_sin_cache_d128.json
+  - tests/trace/fi_trace_out/rope_cos_sin_cache_inplace_d128.json
+  - tests/trace/fi_trace_out/rope_h32_kv8_d128.json
+  - tests/trace/fi_trace_out/rope_inplace_h32_kv8_d128.json
+  - tests/trace/fi_trace_out/rope_pos_ids_h32_kv8_d128.json
+  - tests/trace/fi_trace_out/rope_pos_ids_inplace_h32_kv8_d128.json
+  - tests/trace/fi_trace_out/rope_quantize_fp8_append_paged_kv_cache_h8_kv2_rope64.json
+  - tests/trace/fi_trace_out/rope_quantize_fp8_append_paged_kv_cache_h8_kv2_rope64_ps16.json
+  - tests/trace/fi_trace_out/rope_quantize_fp8_h128_kv64_rope64.json
+  - tests/trace/fi_trace_out/rope_quantize_fp8_h8_kv2_rope64.json
+  - tests/trace/fi_trace_out/sampling_from_logits_v32000.json
+  - tests/trace/fi_trace_out/sampling_from_probs_v32000.json
+  - tests/trace/fi_trace_out/segment_gemm_run_k128_n64.json
+  - tests/trace/fi_trace_out/silu_and_mul_h16384.json
+  - tests/trace/fi_trace_out/single_decode_h32_kv8_d128.json
+  - tests/trace/fi_trace_out/single_prefill_h32_kv8_d128.json
+  - tests/trace/fi_trace_out/softmax_v32000.json
+  - tests/trace/fi_trace_out/top_k_mask_logits_v32000.json
+  - tests/trace/fi_trace_out/top_k_renorm_probs_v128256.json
+  - tests/trace/fi_trace_out/top_k_renorm_probs_v151936.json
+  - tests/trace/fi_trace_out/top_k_renorm_probs_v32000.json
+  - tests/trace/fi_trace_out/top_k_sampling_v128256.json
+  - tests/trace/fi_trace_out/top_k_top_p_sampling_from_logits_v32000.json
+  - tests/trace/fi_trace_out/top_k_top_p_sampling_v128256.json
+  - tests/trace/fi_trace_out/top_k_top_p_sampling_v151936.json
+  - tests/trace/fi_trace_out/top_p_renorm_probs_v32000.json
+  - tests/trace/fi_trace_out/top_p_sampling_v128256.json
+  - tests/trace/fi_trace_out/top_p_sampling_v151936.json
+  - tests/trace/fi_trace_out/top_p_sampling_v32000.json
+  - tests/trace/fi_trace_out/trtllm_batch_decode_mla_h128_d_qk576_ckv512_kpe64_nope512_ps64.json
+  - tests/trace/fi_trace_out/xqa_batch_decode_h8_kv16_d128_ps2.json
+  - tests/trace/fi_trace_out/xqa_batch_decode_mla_h128_d_qk576_ckv512_kpe64_nope512_ps64.json
+  - tests/trace/fi_trace_out/xqa_h1_kv16_d8_ps2.json
+  - tests/trace/fi_trace_out/xqa_mla_h1_ckv128_kpe1_ps64.json
+  - tests/trace/reference_correctness_standards.md
+  - tests/trace/reference_utils.py
+  - tests/trace/test_append_paged_kv_cache_reference_correctness.py
+  - tests/trace/test_append_paged_mla_kv_cache_reference_correctness.py
+  - tests/trace/test_apply_llama31_rope_inplace_reference_correctness.py
+  - tests/trace/test_apply_llama31_rope_pos_ids_inplace_reference_correctness.py
+  - tests/trace/test_apply_llama31_rope_pos_ids_reference_correctness.py
+  - tests/trace/test_apply_llama31_rope_reference_correctness.py
+  - tests/trace/test_apply_rope_inplace_reference_correctness.py
+  - tests/trace/test_apply_rope_pos_ids_inplace_reference_correctness.py
+  - tests/trace/test_apply_rope_pos_ids_reference_correctness.py
+  - tests/trace/test_apply_rope_reference_correctness.py
+  path_signals:
+  - flashinfer/api_logging.py
+  - flashinfer/trace/template.py
+  - flashinfer/trace/templates/_init_helpers.py
+  - flashinfer/trace/templates/activation.py
+  - flashinfer/trace/templates/attention.py
+  - flashinfer/trace/templates/cascade.py
+  - flashinfer/trace/templates/comm.py
+  - flashinfer/trace/templates/gdn.py
+  - flashinfer/trace/templates/gemm.py
+  - flashinfer/trace/templates/mamba.py
+  - flashinfer/trace/templates/moe.py
+  - flashinfer/trace/templates/norm.py
+  borderline_path_signals:
+  - tests/trace/fi_trace_out/append_paged_kv_cache_kv8_d128.json
+  - tests/trace/fi_trace_out/concat_mla_k_h128_nope128_rope64_d192.json
+  - tests/trace/fi_trace_out/fp4_quantize_k4096.json
+  - tests/trace/fi_trace_out/fp4_quantize_k7168.json
+  - tests/trace/fi_trace_out/fused_add_rmsnorm_quant_h7168.json
+  - tests/trace/fi_trace_out/gdn_decode_qk4_v8_d128.json
+  - tests/trace/fi_trace_out/gemm_bf16_N256_K7168.json
+  - tests/trace/fi_trace_out/gemm_bf16_N4096_K4096.json
+  - tests/trace/fi_trace_out/gemm_fp4_N2048_K7168_block_size16.json
+  - tests/trace/fi_trace_out/gemm_fp8_N1536_K7168.json
+  - tests/trace/fi_trace_out/gemm_fp8_nt_groupwise_n1536_k7168.json
+  - tests/trace/fi_trace_out/gemm_mxfp8_N4096_K4096.json
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - cuda kernel
+  - cutlass
+  - flashinfer
+  - fp4
+  - fp8
+  - gemm
+  - moe kernel
+  - mxfp4
+  - nvfp4
+  - sm100
+  - sm90
+  additions: 8493
+  deletions: 2380
+  changed_file_count: 182
+  artifact_dir: evidence/pull-bundles/flashinfer/gh-3221
+- number: 3183
+  pr: 3183
+  title: 'test: enable bmm_mxfp8 cutlass backend coverage on SM12x'
+  repo: flashinfer-ai/flashinfer
+  url: https://github.com/flashinfer-ai/flashinfer/pull/3183
+  date: '2026-05-18'
+  merged_at: '2026-05-18T21:21:56Z'
+  author: leonardHONG
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tests/gemm/test_bmm_mxfp8.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - cutlass
+  - fp8
+  - gemm
+  - sm100
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - blackwell
+  - fp8
+  kernel_types:
+  - gemm
+  languages:
+  - cute-dsl
+  changed_paths:
+  - tests/gemm/test_bmm_mxfp8.py
+  path_signals:
+  - tests/gemm/test_bmm_mxfp8.py
+  borderline_path_signals:
+  - tests/gemm/test_bmm_mxfp8.py
+  selection_text_signals:
+  - cutlass
+  - fp8
+  - gemm
+  - sm100
+  additions: 7
+  deletions: 7
+  changed_file_count: 1
+  artifact_dir: evidence/pull-bundles/flashinfer/gh-3183
+- number: 3180
+  pr: 3180
+  title: Fix/3170 dense blockscaled sm12x
+  repo: flashinfer-ai/flashinfer
+  url: https://github.com/flashinfer-ai/flashinfer/pull/3180
+  date: '2026-05-18'
+  merged_at: '2026-05-18T21:21:05Z'
+  author: leonardHONG
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: flashinfer/gemm/kernels/dense_blockscaled_gemm_sm120_b12x.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - cuda kernel
+  - cutlass
+  - fp4
+  - fp8
+  - gemm
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp4
+  - fp8
+  kernel_types:
+  - gemm
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - flashinfer/gemm/kernels/dense_blockscaled_gemm_sm120_b12x.py
+  path_signals:
+  - flashinfer/gemm/kernels/dense_blockscaled_gemm_sm120_b12x.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - cuda kernel
+  - cutlass
+  - flashinfer
+  - fp4
+  - fp8
+  - gemm
+  additions: 2
+  deletions: 2
+  changed_file_count: 1
+  artifact_dir: evidence/pull-bundles/flashinfer/gh-3180
 scan_start_date: '2024-01-01'
-cutoff_date: '2026-05-16'
+cutoff_date: '2026-05-20'

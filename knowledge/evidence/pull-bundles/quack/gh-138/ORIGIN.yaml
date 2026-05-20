@@ -1,0 +1,67 @@
+schema_version: 1
+source_key: Dao-AILab/quack#138
+repo: Dao-AILab/quack
+repo_id: quack
+pr_number: 138
+title: '[RMSNorm] Support autotuning of RMSNorm{Fwd|Bwd} via config classes'
+url: https://github.com/Dao-AILab/quack/pull/138
+state: closed
+merged_at: '2026-05-20T00:55:49Z'
+base_ref_oid: f0fa065bc74529013621b7227faa2a47bd876591
+head_ref_oid: b8a65a9cb4853dbb8a94b75c036810a06cfeada3
+captured_at: '2026-05-20T14:44:22.892588+00:00'
+architectures:
+- sm100
+- sm90
+architecture_families:
+- blackwell
+- hopper
+tags:
+- benchmark kernel
+- blackwell
+- cuda kernel
+- gemm
+- hopper
+- quack
+- sm90
+- triton kernel
+techniques:
+- autotuning
+hardware_features:
+- blackwell
+- hopper
+kernel_types:
+- gemm
+- norm
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: quack/autotuner.py
+    local_path: source-snapshot/quack/autotuner.py
+    ref: b8a65a9cb4853dbb8a94b75c036810a06cfeada3
+    status: modified
+    fetched: true
+  - source_path: quack/bench/bench_utils.py
+    local_path: source-snapshot/quack/bench/bench_utils.py
+    ref: b8a65a9cb4853dbb8a94b75c036810a06cfeada3
+    status: modified
+    fetched: true
+  - source_path: quack/rmsnorm.py
+    local_path: source-snapshot/quack/rmsnorm.py
+    ref: b8a65a9cb4853dbb8a94b75c036810a06cfeada3
+    status: modified
+    fetched: true
+  - source_path: quack/rmsnorm_config.py
+    local_path: source-snapshot/quack/rmsnorm_config.py
+    ref: b8a65a9cb4853dbb8a94b75c036810a06cfeada3
+    status: modified
+    fetched: true
+  - source_path: tests/test_rmsnorm.py
+    local_path: source-snapshot/tests/test_rmsnorm.py
+    ref: b8a65a9cb4853dbb8a94b75c036810a06cfeada3
+    status: modified
+    fetched: true

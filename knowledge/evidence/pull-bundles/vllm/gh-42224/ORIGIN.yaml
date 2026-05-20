@@ -1,0 +1,67 @@
+schema_version: 1
+source_key: vllm-project/vllm#42224
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42224
+title: '[MM][CG] Enable encoder Cudagraph for Step3VL'
+url: https://github.com/vllm-project/vllm/pull/42224
+state: closed
+merged_at: '2026-05-18T03:19:14Z'
+base_ref_oid: 0fa888465e5a30b797bdf2cdcd0f57fc77541cef
+head_ref_oid: 1f75afb2637606b08a2657c4f264072f0b512ba8
+captured_at: '2026-05-20T15:10:53.157752+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cuda
+techniques: []
+hardware_features: []
+kernel_types: []
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: docs/design/cuda_graphs_multimodal.md
+    local_path: source-snapshot/docs/design/cuda_graphs_multimodal.md
+    ref: 1f75afb2637606b08a2657c4f264072f0b512ba8
+    status: modified
+    fetched: true
+  - source_path: examples/generate/multimodal/vision_language_offline.py
+    local_path: source-snapshot/examples/generate/multimodal/vision_language_offline.py
+    ref: 1f75afb2637606b08a2657c4f264072f0b512ba8
+    status: modified
+    fetched: true
+  - source_path: tests/models/multimodal/generation/test_vit_cudagraph.py
+    local_path: source-snapshot/tests/models/multimodal/generation/test_vit_cudagraph.py
+    ref: 1f75afb2637606b08a2657c4f264072f0b512ba8
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/models/interfaces.py
+    local_path: source-snapshot/vllm/model_executor/models/interfaces.py
+    ref: 1f75afb2637606b08a2657c4f264072f0b512ba8
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/models/step3_vl.py
+    local_path: source-snapshot/vllm/model_executor/models/step3_vl.py
+    ref: 1f75afb2637606b08a2657c4f264072f0b512ba8
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/models/step_vl.py
+    local_path: source-snapshot/vllm/model_executor/models/step_vl.py
+    ref: 1f75afb2637606b08a2657c4f264072f0b512ba8
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/models/utils.py
+    local_path: source-snapshot/vllm/model_executor/models/utils.py
+    ref: 1f75afb2637606b08a2657c4f264072f0b512ba8
+    status: modified
+    fetched: true
+  - source_path: vllm/v1/worker/encoder_cudagraph.py
+    local_path: source-snapshot/vllm/v1/worker/encoder_cudagraph.py
+    ref: 1f75afb2637606b08a2657c4f264072f0b512ba8
+    status: modified
+    fetched: true

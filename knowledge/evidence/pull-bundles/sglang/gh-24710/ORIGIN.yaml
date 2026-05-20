@@ -1,0 +1,45 @@
+schema_version: 1
+source_key: sgl-project/sglang#24710
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 24710
+title: '[codex] Optimize hidden-size 512 RMSNorm dispatch'
+url: https://github.com/sgl-project/sglang/pull/24710
+state: closed
+merged_at: '2026-05-19T01:26:11Z'
+base_ref_oid: 3f7e538b2ffabb6ed7cfa39d9c97095e50b23e40
+head_ref_oid: a596f629aebec62ed4fdae29d5236a9e7d6e85bc
+captured_at: '2026-05-20T14:52:55.625847+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- benchmark kernel
+- cuda
+- cuda kernel
+techniques: []
+hardware_features: []
+kernel_types:
+- norm
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/jit_kernel/csrc/elementwise/rmsnorm.cuh
+    local_path: source-snapshot/python/sglang/jit_kernel/csrc/elementwise/rmsnorm.cuh
+    ref: a596f629aebec62ed4fdae29d5236a9e7d6e85bc
+    status: modified
+    fetched: true
+  - source_path: python/sglang/jit_kernel/norm.py
+    local_path: source-snapshot/python/sglang/jit_kernel/norm.py
+    ref: a596f629aebec62ed4fdae29d5236a9e7d6e85bc
+    status: modified
+    fetched: true
+  - source_path: python/sglang/jit_kernel/tests/test_rmsnorm.py
+    local_path: source-snapshot/python/sglang/jit_kernel/tests/test_rmsnorm.py
+    ref: a596f629aebec62ed4fdae29d5236a9e7d6e85bc
+    status: modified
+    fetched: true

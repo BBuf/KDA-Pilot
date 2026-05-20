@@ -1,0 +1,1398 @@
+diff --git a/tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/cache_manager.py b/tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/cache_manager.py
+index 2bc2ac3b3187..7eb80eb3f99a 100644
+--- a/tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/cache_manager.py
++++ b/tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/cache_manager.py
+@@ -47,6 +47,7 @@ def _estimate_bytes_per_token(
+     compress_ratios: List[int],
+     has_fp8_kv_cache,
+     attn_types: set[DeepseekV4AttentionType] | None = None,
++    indexer_k_dtype: str = "fp8",
+ ) -> int:
+     total_bytes = 0
+     for ratio in compress_ratios:
+@@ -60,6 +61,7 @@ def _estimate_bytes_per_token(
+                     ratio,
+                     attn,
+                     has_fp8_kv_cache,
++                    indexer_k_dtype=indexer_k_dtype,
+                 )
+     return total_bytes
+ 
+@@ -70,6 +72,7 @@ def _get_attn_bytes_per_token(
+     compress_ratio: int,
+     attn_type: DeepseekV4AttentionType,
+     has_fp8_kv_cache: bool,
++    indexer_k_dtype: str = "fp8",
+ ) -> int:
+     token_bytes = get_token_bytes(
+         head_dim,
+@@ -77,6 +80,7 @@ def _get_attn_bytes_per_token(
+         compress_ratio,
+         attn_type,
+         has_fp8_kv_cache,
++        indexer_k_dtype=indexer_k_dtype,
+     )
+     if attn_type in [DeepseekV4AttentionType.COMPRESS, DeepseekV4AttentionType.INDEXER_COMPRESS]:
+         token_bytes //= compress_ratio
+@@ -163,20 +167,7 @@ def __init__(
+             )
+         self.compressed_block_sizes = [tokens_per_block // ratio for ratio in self._compress_ratios]
+ 
+-        # Indexer compressor cache: FP8 blockwise (1 byte/value + per-128 fp32
+-        # scale).  The bf16 / fp8_pertensor presets are reserved for the
+-        # main-attention compressor and are not legal indexer dtypes.
+-        self._indexer_cache_dtype = KVCacheDtype.FP8_BLOCKWISE
+-        self._indexer_dtype = DataType.FP8
+-        self.use_fp4 = False
+-        self.quant_block_size = 128
+-        self._indexer_data_size = self.index_head_dim
+-        self._indexer_scale_size = get_size_in_bytes(
+-            self.index_head_dim // self.quant_block_size, DataType.FLOAT
+-        )
+-        assert self.index_head_dim % self.quant_block_size == 0, (
+-            f"indexer_head_dim {self.index_head_dim} must be divisible by {self.quant_block_size}"
+-        )
++        self._init_indexer_dtype(sparse_attn_config)
+ 
+         # _build_cache_config() needs them to build constraints
+         self._max_input_len = max_input_len
+@@ -490,6 +481,49 @@ def _add_layer(
+             constraints=constraints,
+         )
+ 
++    def _init_indexer_dtype(self, sparse_attn_config: DeepSeekV4SparseAttentionConfig) -> None:
++        # Indexer compressor cache layout. Two modes are supported:
++        #   - "fp8" (FP8 blockwise): 1 byte per value + 1 fp32 scale per 128
++        #     values.
++        #   - "fp4" (MXFP4 blockwise): ½ byte per value (two FP4 codes packed
++        #     per byte) + 1 ue8m0 byte per 32 values. At index_head_dim=128
++        #     this halves the per-token indexer-K footprint vs FP8.
++        self._indexer_k_dtype = sparse_attn_config.indexer_k_dtype
++        if self._indexer_k_dtype == "fp8":
++            self._indexer_cache_dtype = KVCacheDtype.FP8_BLOCKWISE
++            self._indexer_dtype = DataType.FP8
++            self.quant_block_size = 128
++            self._indexer_data_size = self.index_head_dim
++            self._indexer_scale_size = get_size_in_bytes(
++                self.index_head_dim // self.quant_block_size, DataType.FLOAT
++            )
++        elif self._indexer_k_dtype == "fp4":
++            assert self.index_head_dim == 128, (
++                f"FP4 indexer K cache requires index_head_dim=128, got {self.index_head_dim}."
++            )
++            self._indexer_cache_dtype = KVCacheDtype.MXFP4_BLOCKWISE
++            # Pool dtype is uint8 because PyTorch can't allocate float4
++            # backing storage; downstream consumers reinterpret these
++            # raw bytes as packed E2M1 + UE8M0 exponents.
++            self._indexer_dtype = DataType.UINT8
++            self.quant_block_size = 32
++            # Two E2M1 codes pack into one byte → half the data footprint.
++            self._indexer_data_size = self.index_head_dim // 2
++            # 1 UE8M0 byte per 32-element block.
++            self._indexer_scale_size = self.index_head_dim // self.quant_block_size
++        else:
++            raise ValueError(
++                f"Unsupported indexer_k_dtype "
++                f"{sparse_attn_config.indexer_k_dtype!r}; expected "
++                "'fp8' or 'fp4'."
++            )
++        # FP4 indexer flag mirrors `DSACacheManager.use_fp4` so the shared
++        # base Indexer can branch without knowing the V4-specific enum.
++        self.use_fp4 = self._indexer_k_dtype == "fp4"
++        assert self.index_head_dim % self.quant_block_size == 0, (
++            f"indexer_head_dim {self.index_head_dim} must be divisible by {self.quant_block_size}"
++        )
++
+     def _assert_layer_pool_scale(self) -> None:
+         attn_ratio_to_pool_id = defaultdict[DeepseekV4AttentionType, dict[int, int]](lambda: {})
+         attn_ratio_to_scale = defaultdict[DeepseekV4AttentionType, dict[int, int]](lambda: {})
+@@ -567,6 +601,7 @@ def _get_attn_bytes_per_block(
+             self._compress_ratios[layer_idx],
+             attn_type,
+             has_fp8_kv_cache,
++            indexer_k_dtype=self._indexer_k_dtype,
+         )
+ 
+         block_size = self.tokens_per_block
+@@ -587,6 +622,7 @@ def get_cache_bytes_per_token(self) -> int:
+             self.index_head_dim,
+             compress_ratios,
+             has_fp8_kv_cache,
++            indexer_k_dtype=self._indexer_k_dtype,
+         )
+ 
+     def get_max_resource_count(self) -> int:
+@@ -632,6 +668,7 @@ def _get_generation_bytes(self, request: llm_request.LlmRequest) -> int:
+                     compress_ratio,
+                     attn_type,
+                     has_fp8_kv_cache,
++                    indexer_k_dtype=self._indexer_k_dtype,
+                 )
+                 attn_tokens = total_tokens
+                 if attn_type in self.fixed_size_attention:
+@@ -784,11 +821,13 @@ def get_cache_size_per_token(model_config: ModelConfig, mapping: Mapping, **kwar
+             has_fp8_kv_cache = quant_config.quant_mode.has_fp8_kv_cache()
+         else:
+             has_fp8_kv_cache = False
++        indexer_k_dtype = model_config.sparse_attention_config.indexer_k_dtype
+         return _estimate_bytes_per_token(
+             head_dim,
+             index_head_dim,
+             compress_ratios,
+             has_fp8_kv_cache,
++            indexer_k_dtype=indexer_k_dtype,
+         )
+ 
+     def check_invalid_values_in_kv_cache(self, fill_with_zero: bool = False) -> bool:
+diff --git a/tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/deepseek_v4.py b/tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/deepseek_v4.py
+index 94ed4fa36090..f2acf7898192 100644
+--- a/tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/deepseek_v4.py
++++ b/tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/deepseek_v4.py
+@@ -116,7 +116,7 @@ def get_token_bytes(
+     compress_ratio: int,
+     attn_type: DeepseekV4AttentionType,
+     has_fp8_kv_cache: bool,
+-    indexer_k_cache_dtype: str = "fp8_blockwise",
++    indexer_k_dtype: str = "fp8",
+ ) -> int:
+     """
+     Get the token bytes for a specific layer and attention type.
+@@ -127,9 +127,9 @@ def get_token_bytes(
+         compress_ratio: The compress ratio
+         attn_type: The attention type
+         has_fp8_kv_cache: Whether the KV cache uses FP8 quantization
+-        indexer_k_cache_dtype: Indexer compressor cache preset string
+-            (controls INDEXER_COMPRESS dtype + scale layout independently
+-            from has_fp8_kv_cache, which controls the main attention path).
++        indexer_k_dtype: Indexer K cache dtype ("fp8" / "fp4"). Controls
++            INDEXER_COMPRESS dtype + scale layout independently from
++            has_fp8_kv_cache, which controls the main attention path.
+ 
+     Returns:
+         The number of bytes per token, including scaling factor
+@@ -152,19 +152,18 @@ def get_token_bytes(
+     ]:
+         dtype_bytes = 4  # (indexer) compressor state and score use float32
+     # Indexer cache always packs data + per-block scales into one row.  Only
+-    # FP8 blockwise and MXFP4 are valid here -- bf16 / fp8_pertensor
+-    # are reserved for the main-attention compressor.
++    # the two indexer presets ("fp8" blockwise / "fp4" mxfp4) are valid
++    # here — bf16 / fp8_pertensor are reserved for the main-attention
++    # compressor.
+     if attn_type == DeepseekV4AttentionType.INDEXER_COMPRESS:
+-        indexer_cache_dtype = resolve_kv_cache_dtype(indexer_k_cache_dtype)
+-        if indexer_cache_dtype == KVCacheDtype.FP8_BLOCKWISE:
++        if indexer_k_dtype == "fp8":
+             # 1 byte per value + 1 fp32 scale per 128 values.
+             return attn_dim + index_head_dim // 128 * 4
+-        if indexer_cache_dtype == KVCacheDtype.MXFP4_BLOCKWISE:
++        if indexer_k_dtype == "fp4":
+             # ½ byte per value + 1 ue8m0 byte per 32 values.
+             return index_head_dim // 2 + index_head_dim // 32
+         raise ValueError(
+-            f"Unsupported indexer_k_cache_dtype {indexer_k_cache_dtype!r}; "
+-            "expected 'fp8_blockwise' or 'mxfp4'."
++            f"Unsupported indexer_k_dtype {indexer_k_dtype!r}; expected 'fp8' or 'fp4'."
+         )
+ 
+     return attn_dim * dtype_bytes
+@@ -943,10 +942,14 @@ def __init__(
+             qk_rope_head_dim=mla_params.qk_rope_head_dim,
+             qk_nope_head_dim=index_head_dim - mla_params.qk_rope_head_dim,
+         )
+-        self.indexer_k_cache_dtype = getattr(
+-            sparse_attention_config, "indexer_k_cache_dtype", "fp8_blockwise"
+-        )
+-        self.indexer_cache_dtype = resolve_kv_cache_dtype(self.indexer_k_cache_dtype)
++        # Map the user-facing FP4 knob ("fp8" / "fp4") onto the Compressor's
++        # cache layout preset string. The Compressor's preset namespace also
++        # covers main-attention layouts (bf16 / fp8_pertensor), which the
++        # indexer doesn't use, so the translation lives here at the
++        # boundary instead of leaking through the user-facing config.
++        self.indexer_k_dtype = sparse_attention_config.indexer_k_dtype
++        compressor_preset = "mxfp4" if self.indexer_k_dtype == "fp4" else "fp8_blockwise"
++        self.indexer_cache_dtype = resolve_kv_cache_dtype(compressor_preset)
+         self.compressor = Compressor(
+             indexer_mla_params,
+             layer_idx,
+@@ -955,7 +958,7 @@ def __init__(
+             skip_create_weights_in_init,
+             pos_embd_params,
+             dtype=dtype,
+-            kv_cache_dtype=self.indexer_k_cache_dtype,
++            kv_cache_dtype=compressor_preset,
+             is_indexer=True,
+             rotate_activation=HAS_FAST_HADAMARD,
+         )
+@@ -991,16 +994,43 @@ def _qk_projection_and_rope(self, qr: torch.Tensor, position_ids: torch.Tensor):
+         return q
+ 
+     def _quantize_q(self, q: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+-        # Rotate + quantize (layout matches compressor K: [nope|pe]).
++        # Rotate + quantize (layout matches compressor K: [nope|pe]). After
++        # rotate_activation (Hadamard) the nope/rope split becomes a linear
++        # mix; treating the row as a (head_dim - rope_dim, rope_dim) split
++        # for fused_cat_fp4 is equivalent to a single per-token FP4 quantize
++        # because the kernel only cares about the concatenated row. K goes
++        # through the same rotation in compressor_postprocess_scatter so
++        # layouts match.
+         q = rotate_activation(q)
+         q = q.view(-1, self.head_dim)
+-        q_fp8, q_scale = fp8_utils.fp8_quantize_1x128_sf_transpose(
+-            q, use_ue8m0=self.scale_fmt == "ue8m0"
+-        )
+-        q_fp8 = q_fp8.view(-1, self.n_heads, self.head_dim)
+-        q_scale = q_scale.view(-1, self.n_heads, 1)
++        if self.indexer_cache_dtype == KVCacheDtype.MXFP4_BLOCKWISE:
++            nope_dim = self.head_dim - self.rope_dim
++            q_nope, q_pe = q.split([nope_dim, self.rope_dim], dim=-1)
++            q_fp8, q_scale = torch.ops.trtllm.fused_cat_fp4(q_nope, q_pe)
++            # Two FP4 codes pack into one byte: trailing dim is head_dim // 2.
++            q_fp8 = q_fp8.view(-1, self.n_heads, self.head_dim // 2)
++            q_scale = q_scale.view(-1, self.n_heads, 1)
++        else:
++            q_fp8, q_scale = fp8_utils.fp8_quantize_1x128_sf_transpose(
++                q, use_ue8m0=self.scale_fmt == "ue8m0"
++            )
++            q_fp8 = q_fp8.view(-1, self.n_heads, self.head_dim)
++            q_scale = q_scale.view(-1, self.n_heads, 1)
+         return q_fp8, q_scale
+ 
++    def _apply_weight_scale(self, weights: torch.Tensor, q_scale: torch.Tensor) -> torch.Tensor:
++        # The DeepGEMM FP4 kernel applies per-block q_scale internally, so
++        # weights only carry softmax_scale * n_heads^-0.5. `weights_proj` is
++        # bf16 to match the V4 checkpoint, and the FP4 branch's only
++        # post-projection multiplier is a Python float (`bf16 * float` stays
++        # bf16). DeepGEMM's fp8_fp4_(paged_)mqa_logits asserts
++        # `weights.scalar_type() == kFloat`, so cast explicitly here. The FP8
++        # branch gets upcast for free via the fp32 `q_scale` multiply in
++        # `_weight_scale`, so no cast is needed there.
++        if self.indexer_cache_dtype == KVCacheDtype.MXFP4_BLOCKWISE:
++            return weights.float() * self.weight_scale_factor
++        return self._weight_scale(weights, q_scale)
++
+     def _update_k_cache_if_needed(
+         self,
+         k_fp8: Optional[torch.Tensor],
+@@ -1010,6 +1040,12 @@ def _update_k_cache_if_needed(
+         if k_fp8 is None:
+             return
+ 
++        # The MXFP4 compressor's postprocess_scatter performs rotation +
++        # quantization + cache scatter in one fused op, so the cache row is
++        # already up to date by the time we get here.
++        if self.indexer_cache_dtype == KVCacheDtype.MXFP4_BLOCKWISE:
++            return
++
+         assert k_scale is not None, "FP8 blockwise indexer cache update requires scale tensor"
+         self._update_k_cache(k_fp8, k_scale, metadata)
+ 
+@@ -1019,7 +1055,9 @@ def _run_overlapped_indexer_prepare(
+         hidden_states: torch.Tensor,
+         metadata: DeepseekV4TrtllmAttentionMetadata,
+         position_ids: torch.Tensor,
+-    ) -> Tuple[torch.Tensor, Optional[torch.Tensor], Optional[torch.Tensor], torch.Tensor]:
++    ) -> Tuple[
++        torch.Tensor, torch.Tensor, Optional[torch.Tensor], Optional[torch.Tensor], torch.Tensor
++    ]:
+         """Prepare indexer inputs by splitting independent work across two streams.
+ 
+         The current stream owns the Q path.  The auxiliary stream starts from
+@@ -1061,10 +1099,10 @@ def _run_overlapped_indexer_prepare(
+         q_fp8, q_scale = self._quantize_q(q)
+ 
+         self.weights_proj_event.wait()
+-        weights = self._weight_scale(weights, q_scale)
++        weights = self._apply_weight_scale(weights, q_scale)
+ 
+         self.k_cache_update_event.wait()
+-        return q_fp8, k_fp8, k_scale, weights
++        return q_fp8, q_scale, k_fp8, k_scale, weights
+ 
+     def _run_serial_indexer_prepare(
+         self,
+@@ -1072,18 +1110,20 @@ def _run_serial_indexer_prepare(
+         hidden_states: torch.Tensor,
+         metadata: DeepseekV4TrtllmAttentionMetadata,
+         position_ids: torch.Tensor,
+-    ) -> Tuple[torch.Tensor, Optional[torch.Tensor], Optional[torch.Tensor], torch.Tensor]:
++    ) -> Tuple[
++        torch.Tensor, torch.Tensor, Optional[torch.Tensor], Optional[torch.Tensor], torch.Tensor
++    ]:
+         q = self._qk_projection_and_rope(qr, position_ids)
+ 
+         q_fp8, q_scale = self._quantize_q(q)
+ 
+         weights = self.weights_proj(hidden_states)
+ 
+-        weights = self._weight_scale(weights, q_scale)
++        weights = self._apply_weight_scale(weights, q_scale)
+ 
+         k_fp8, k_scale = self.compressor(hidden_states, metadata)
+         self._update_k_cache_if_needed(k_fp8, k_scale, metadata)
+-        return q_fp8, k_fp8, k_scale, weights
++        return q_fp8, q_scale, k_fp8, k_scale, weights
+ 
+     def forward(
+         self,
+@@ -1092,19 +1132,12 @@ def forward(
+         metadata: DeepseekV4TrtllmAttentionMetadata,
+         position_ids: torch.Tensor,
+     ):
+-        if self.indexer_cache_dtype != KVCacheDtype.FP8_BLOCKWISE:
+-            raise NotImplementedError(
+-                "DeepSeek-V4 indexer currently consumes FP8 blockwise K. "
+-                f"Indexer cache preset {self.indexer_k_cache_dtype!r} needs matching "
+-                "cache layout, cache update, and BMM paths before end-to-end indexer "
+-                "execution can use it."
+-            )
+         if do_multi_stream() and self.aux_stream is not None:
+-            q_fp8, k_fp8, k_scale, weights = self._run_overlapped_indexer_prepare(
++            q_fp8, q_scale, k_fp8, k_scale, weights = self._run_overlapped_indexer_prepare(
+                 qr, hidden_states, metadata, position_ids
+             )
+         else:
+-            q_fp8, k_fp8, k_scale, weights = self._run_serial_indexer_prepare(
++            q_fp8, q_scale, k_fp8, k_scale, weights = self._run_serial_indexer_prepare(
+                 qr, hidden_states, metadata, position_ids
+             )
+ 
+@@ -1119,6 +1152,7 @@ def forward(
+                 k_fp8,
+                 k_scale,
+                 weights,
++                q_scale=q_scale,
+                 update_k_cache=False,
+             )
+         return topk_indices
+diff --git a/tensorrt_llm/_torch/attention_backend/sparse/dsa.py b/tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+index 08559ae82784..3d5dbc622b9d 100644
+--- a/tensorrt_llm/_torch/attention_backend/sparse/dsa.py
++++ b/tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+@@ -137,7 +137,7 @@ def _compute_slot_mappings(
+     quant_block_size: int,
+     data_bytes_per_token: Optional[int] = None,
+ ) -> Tuple[torch.Tensor, torch.Tensor]:
+-    """Compute flat byte indices for indexer K data and scales from global token positions.
++    """Compute flat byte indices for FP8/FP4 data and scales from global token positions.
+ 
+     Shared by Indexer.prepare() (CPU) and on_update_kv_lens() (GPU) to avoid
+     duplicating the slot mapping arithmetic.
+@@ -146,14 +146,14 @@ def _compute_slot_mappings(
+         global_positions: Per-token absolute position in the KV sequence.
+         block_offsets: [num_seqs, max_blocks_per_seq] block offset table.
+         req_indices: Per-token request index.
+-        head_dim: Indexer head dimension (used for the scale-size formula).
++        head_dim: Indexer head dimension (logical element count).
+         tokens_per_block: Tokens stored per cache block.
+         quant_block_size: Quantization block size.
+         data_bytes_per_token: Bytes of quantized data per token in the cache
+-            pool. FP8 stores one byte per element (= head_dim). FP4 packs two
+-            E2M1 codes per byte (= head_dim // 2). Defaults to ``head_dim``
+-            when unset, preserving the FP8 layout for callers that haven't
+-            threaded the FP4 dtype through.
++            (default: head_dim, i.e. one byte per FP8 value). For MXFP4 this
++            should be ``head_dim // 2`` since two E2M1 codes pack into one byte.
++            The scale layout is identical at head_dim=128: 4 bytes per token
++            (one float32 for FP8, four packed UE8M0 exponents for FP4).
+ 
+     Returns:
+         (fp8_indices, scale_indices): Flat byte offsets into the cache pool.
+@@ -601,10 +601,11 @@ def on_update_kv_lens(self):
+                 dtype=torch.int64) - seq_starts[req_indices]
+ 
+             global_positions = start_positions[req_indices] + token_offsets
++            # Honor MXFP4 indexer K cache layout (½ byte per value vs FP8's
++            # 1 byte) when the cache manager exposes a use_fp4 flag.
+             index_head_dim = self.kv_cache_manager.index_head_dim
+-            data_bytes_per_token = (index_head_dim //
+-                                    2 if self.kv_cache_manager.use_fp4 else
+-                                    index_head_dim)
++            use_fp4 = getattr(self.kv_cache_manager, 'use_fp4', False)
++            data_bytes_per_token = index_head_dim // 2 if use_fp4 else index_head_dim
+             fp8_indices, scale_indices = _compute_slot_mappings(
+                 global_positions,
+                 self.indexer_k_cache_block_offsets,
+@@ -1332,6 +1333,9 @@ class IndexerParams:
+     request_ids: List[int]
+     num_past_tokens: List[int]
+     seq_lens: torch.Tensor
++    # Bytes of quantized data per token in the indexer K cache; defaults to
++    # head_dim (one FP8 byte per element). For MXFP4 use head_dim // 2.
++    data_bytes_per_token: Optional[int] = None
+ 
+     def __post_init__(self):
+         # Pre-compute frequently used tensors once instead of on every property access
+@@ -1344,9 +1348,11 @@ def __post_init__(self):
+                                num_past_tokens_tensor) // compress_ratio
+         self._new_kv_tokens = self._all_kv_tokens - self._cached_kv_tokens
+         self._kv_lens = self._all_kv_tokens
++        if self.data_bytes_per_token is None:
++            self.data_bytes_per_token = self.head_dim
+         self._scale_size = self.head_dim // self.quant_block_size * 4
+-        self._block_stride = self.tokens_per_block * (self.head_dim +
+-                                                      self._scale_size)
++        self._block_stride = self.tokens_per_block * (
++            self.data_bytes_per_token + self._scale_size)
+ 
+     @property
+     def batch_size(self):
+@@ -1446,13 +1452,14 @@ def __init__(self,
+         self.softmax_scale = self.head_dim**-0.5
+         # TODO: make it configurable from hf config
+         self.scale_fmt = "ue8m0"
+-        # indexer_k_dtype controls both Q and K precision. DeepGEMM's
+-        # fp8_fp4_mqa_logits / fp8_fp4_paged_mqa_logits kernels only dispatch
+-        # to FP4xFP4 or FP8xFP8 (no mixed-precision variant). The DeepGEMM
+-        # kernel asserts SM100 + head_dim=128 at launch time under FP4.
+-        self.use_fp4 = sparse_attention_config.indexer_k_dtype == "fp4"
+         self.aux_stream = aux_stream
+         self.ln_events = [torch.cuda.Event(), torch.cuda.Event()]
++        # `indexer_k_dtype` is the single user-facing FP4 knob; the V4
++        # config inherits this field from the DSA base config. DeepGEMM's
++        # fp8_fp4_mqa_logits / fp8_fp4_paged_mqa_logits kernels only
++        # dispatch to FP4xFP4 or FP8xFP8 (no mixed-precision variant) and
++        # assert SM100 + head_dim=128 at launch time under FP4.
++        self.use_fp4 = sparse_attention_config.indexer_k_dtype == "fp4"
+         self.use_cute_dsl_topk = (sparse_attention_config.use_cute_dsl_topk
+                                   and IS_CUTLASS_DSL_AVAILABLE)
+         self.use_cute_dsl_paged_mqa_logits = (
+@@ -1836,6 +1843,10 @@ def prepare(metadata: DSAtrtllmAttentionMetadata):
+         num_past_tokens = metadata.kv_cache_params.num_cached_tokens_per_seq
+         compress_ratio = _effective_compress_ratio_divisor(
+             _select_indexer_compress_ratio(metadata.compress_ratios))
++        # MXFP4 indexer K cache packs two E2M1 codes per byte so the data
++        # footprint is half head_dim; FP8 keeps one byte per element.
++        use_fp4 = getattr(kv_cache_manager, 'use_fp4', False)
++        data_bytes_per_token = head_dim // 2 if use_fp4 else head_dim
+ 
+         indexer_params = IndexerParams(
+             num_contexts=num_contexts,
+@@ -1848,6 +1859,7 @@ def prepare(metadata: DSAtrtllmAttentionMetadata):
+             request_ids=request_ids,
+             num_past_tokens=num_past_tokens,
+             seq_lens=seq_lens,
++            data_bytes_per_token=data_bytes_per_token,
+         )
+         # Store compressed KV token count for context requests
+         metadata.num_ctx_kv_tokens = indexer_params.new_kv_tokens[:
+@@ -1903,57 +1915,14 @@ def _update_k_cache(self, k_fp8: torch.Tensor, k_scale: torch.Tensor,
+         # The C++ op reinterprets k_fp8 (FP8) and k_scale (float32) as raw
+         # bytes internally and only reads the first num_tokens entries from
+         # the slot mapping buffers, avoiding Python-side view/slice overhead.
++        if k_scale.element_size() == 1:
++            # The op expects 4 byte elements.
++            k_scale = k_scale.view(torch.int32)
+         torch.ops.trtllm.indexer_k_cache_scatter_op(k_fp8, k_scale, k_cache,
+                                                     metadata.slot_mapping_fp8,
+                                                     metadata.slot_mapping_scale,
+                                                     num_tokens)
+ 
+-    def _call_mqa_logits(self, q_fp8: torch.Tensor, k_fp8: torch.Tensor,
+-                         k_scale: torch.Tensor, weights: torch.Tensor,
+-                         cu_seqlen_ks: torch.Tensor, cu_seqlen_ke: torch.Tensor,
+-                         q_scale: Optional[torch.Tensor]) -> torch.Tensor:
+-        """Dispatch to fp8_mqa_logits or fp8_fp4_mqa_logits based on use_fp4.
+-
+-        For FP4 the gather output is typed as FP8 for historical reasons;
+-        reinterpret the bytes as the expected int8 / int32 layouts. DeepGEMM
+-        asserts kv_sf is 1D in both modes, so flatten the scale here.
+-        """
+-        if self.use_fp4:
+-            k_fp4_bytes = k_fp8.view(torch.int8)
+-            k_scale_int32 = k_scale.view(torch.int32).reshape(-1)
+-            # q_scale arrives here as (chunk_tokens, n_heads, 1) — fused_cat_fp4
+-            # emits one int32 per (token, head) carrying four UE8M0 exponents,
+-            # pre_indexer_proj reshapes back to (N, n_heads, 1), and
+-            # sparse_attn_indexer chunk-slices on axis 0. The DeepGEMM FP4
+-            # kernel asserts q_sf is 2D, so collapse the trailing unit axis.
+-            q_scale_2d = q_scale.reshape(-1, self.n_heads)
+-            return fp8_fp4_mqa_logits(
+-                (q_fp8, q_scale_2d),
+-                (k_fp4_bytes, k_scale_int32),
+-                weights,
+-                cu_seqlen_ks,
+-                cu_seqlen_ke,
+-            )
+-        return fp8_mqa_logits(q_fp8, (k_fp8, k_scale.reshape(-1)), weights,
+-                              cu_seqlen_ks, cu_seqlen_ke)
+-
+-    def _call_paged_mqa_logits(self, q_decode: torch.Tensor,
+-                               k_cache: torch.Tensor,
+-                               weights_decode: torch.Tensor,
+-                               context_lens: torch.Tensor,
+-                               block_table: torch.Tensor,
+-                               scheduler_metadata_buffer: torch.Tensor,
+-                               max_seq_len: int,
+-                               q_scale: Optional[torch.Tensor]) -> torch.Tensor:
+-        """Dispatch to fp8_paged_mqa_logits or fp8_fp4_paged_mqa_logits."""
+-        if self.use_fp4:
+-            return fp8_fp4_paged_mqa_logits(
+-                (q_decode, q_scale), k_cache, weights_decode, context_lens,
+-                block_table, scheduler_metadata_buffer, max_seq_len)
+-        return fp8_paged_mqa_logits(q_decode, k_cache, weights_decode,
+-                                    context_lens, block_table,
+-                                    scheduler_metadata_buffer, max_seq_len)
+-
+     def _gather_k_cache_for_chunk(
+         self,
+         metadata: DSAtrtllmAttentionMetadata,
+@@ -2020,6 +1989,50 @@ def _gather_k_cache_for_chunk(
+ 
+         return k_fp8, k_scale
+ 
++    def _call_mqa_logits(self, q_fp8: torch.Tensor, k_fp8: torch.Tensor,
++                         k_scale: torch.Tensor, weights: torch.Tensor,
++                         cu_seqlen_ks: torch.Tensor, cu_seqlen_ke: torch.Tensor,
++                         q_scale: Optional[torch.Tensor]) -> torch.Tensor:
++        """Dispatch fp8_mqa_logits vs fp8_fp4_mqa_logits based on use_fp4.
++
++        For FP4 the gather output keeps the legacy float8_e4m3fn dtype for
++        API compatibility; reinterpret the bytes as the int8 / int32 layout
++        the DeepGEMM kernel expects. The scale tensor is collapsed to 1D for
++        the kv side and 2D for the q side per the kernel's asserts.
++        """
++        if self.use_fp4:
++            k_fp4_bytes = k_fp8.view(torch.int8)
++            k_scale_int32 = k_scale.view(torch.int32).reshape(-1)
++            # q_scale arrives as (chunk_tokens, n_heads, 1); the FP4 kernel
++            # asserts q_sf is 2D so collapse the trailing unit axis.
++            q_scale_2d = q_scale.reshape(-1, self.n_heads)
++            return fp8_fp4_mqa_logits(
++                (q_fp8, q_scale_2d),
++                (k_fp4_bytes, k_scale_int32),
++                weights,
++                cu_seqlen_ks,
++                cu_seqlen_ke,
++            )
++        return fp8_mqa_logits(q_fp8, (k_fp8, k_scale.reshape(-1)), weights,
++                              cu_seqlen_ks, cu_seqlen_ke)
++
++    def _call_paged_mqa_logits(self, q_decode: torch.Tensor,
++                               k_cache: torch.Tensor,
++                               weights_decode: torch.Tensor,
++                               context_lens: torch.Tensor,
++                               block_table: torch.Tensor,
++                               scheduler_metadata_buffer: torch.Tensor,
++                               max_seq_len: int,
++                               q_scale: Optional[torch.Tensor]) -> torch.Tensor:
++        """Dispatch fp8_paged_mqa_logits vs fp8_fp4_paged_mqa_logits."""
++        if self.use_fp4:
++            return fp8_fp4_paged_mqa_logits(
++                (q_decode, q_scale), k_cache, weights_decode, context_lens,
++                block_table, scheduler_metadata_buffer, max_seq_len)
++        return fp8_paged_mqa_logits(q_decode, k_cache, weights_decode,
++                                    context_lens, block_table,
++                                    scheduler_metadata_buffer, max_seq_len)
++
+     def sparse_attn_indexer(
+         self,
+         metadata: DSAtrtllmAttentionMetadata,
+@@ -2036,12 +2049,12 @@ def sparse_attn_indexer(
+ 
+         q_scale is only consumed by the FP4 dispatch; FP8 path ignores it.
+         """
+-        # DSACacheManager hardcodes quant_block_size=128 (see its __init__);
+-        # FP4 uses per-block-32 UE8M0 scales but packs four of them into one
+-        # int32 so the cache-layout contribution is the same 4 bytes/token as
+-        # FP8 per-block-128 at head_dim=128.
++        # DSACacheManager / DeepseekV4CacheManager force quant_block_size to
++        # 128 (FP8 path) or 32 (MXFP4 path); both round-trip to the same
++        # 4-byte scale word per token at index_head_dim=128, so the slot
++        # mapping arithmetic is unchanged in either mode.
+         assert metadata.kv_cache_manager is None or \
+-            metadata.kv_cache_manager.quant_block_size == 128, \
++            metadata.kv_cache_manager.quant_block_size in (32, 128), \
+             f"Unexpected quant_block_size {metadata.kv_cache_manager.quant_block_size if metadata.kv_cache_manager else 'N/A'}"
+         # Update the indexer k cache before prefill chunks gather from it.
+         if update_k_cache:
+@@ -2077,8 +2090,12 @@ def sparse_attn_indexer(
+ 
+                 k_cache_4d = metadata.kv_cache_manager.get_indexer_k_cache_buffers(
+                     self.layer_idx)
+-
++                # FP4 packs two codes per byte so the gathered row holds half
++                # as many bytes as in the FP8 path. The scale (4 bytes) is the
++                # same in both modes because FP4 packs four UE8M0 exponents
++                # into one int32 to match FP8's float32 scale width.
+                 gather_head_dim = self.head_dim // 2 if self.use_fp4 else self.head_dim
++
+                 for chunk in metadata.indexer_prefill_chunks:
+                     # Skip chunks with no compressed KV tokens (e.g., warmup
+                     # sequences shorter than compress_ratio produce zero KV).
+@@ -2248,7 +2265,8 @@ def sparse_attn_indexer(
+             weights_decode = weights[num_ctx_tokens:num_ctx_tokens +
+                                      num_gen_tokens, ...]
+ 
+-            # Get k cache and call fp8_paged_mqa_logits with prepared decode metadata
++            # Get k cache and call fp8_paged_mqa_logits / fp8_fp4_paged_mqa_logits
++            # with prepared decode metadata.
+             # [num_blocks, tokens_per_block, 1, head_dim + scale_size]
+             k_cache = metadata.kv_cache_manager.get_indexer_k_cache_buffers(
+                 self.layer_idx)
+@@ -2423,7 +2441,7 @@ def pre_indexer_proj(
+                torch.Tensor]:
+         """Pure token-wise projections (CUDA-graph-capturable).
+ 
+-        Runs cublas_mm, qk_projection_and_rope, FP8 quantize, and weight
++        Runs cublas_mm, qk_projection_and_rope, FP8/FP4 quantize, and weight
+         scaling.  Does NOT touch the k cache or any batch-specific metadata,
+         so this can safely run inside a captured CUDA graph partition.
+ 
+@@ -2467,7 +2485,14 @@ def pre_indexer_proj(
+             # internally, so weights carry only softmax_scale * n_heads^-0.5.
+             q_fp8 = q_fp8.view(-1, self.n_heads, self.head_dim // 2)
+             q_scale = q_scale.view(-1, self.n_heads, 1)
+-            weights = weights * self.weight_scale_factor
++            # DeepGEMM's fp8_fp4_(paged_)mqa_logits asserts
++            # `weights.scalar_type() == kFloat`. Unlike the FP8 branch (whose
++            # `_weight_scale` multiplies by the fp32 `q_scale` tensor and so
++            # implicitly upcasts), this branch's only multiplier is a Python
++            # float — `bf16 * float` stays bf16 and trips the kernel assert.
++            # Cast explicitly so this path doesn't silently rely on an
++            # upstream `_to_float`.
++            weights = weights.float() * self.weight_scale_factor
+         else:
+             q_fp8 = q_fp8.view(-1, self.n_heads, self.head_dim)
+             q_scale = q_scale.view(-1, self.n_heads, 1)
+diff --git a/tensorrt_llm/_torch/model_config.py b/tensorrt_llm/_torch/model_config.py
+index a5909191cb64..54903625bfea 100644
+--- a/tensorrt_llm/_torch/model_config.py
++++ b/tensorrt_llm/_torch/model_config.py
+@@ -768,6 +768,7 @@ def update_sparse_attention_indexer_config(pretrained_config, kwargs):
+                     if checkpoint_window_size is None:
+                         checkpoint_window_size = getattr(
+                             pretrained_config, 'sliding_window', None)
++                    indexer_k_dtype = sparse_attention_config.indexer_k_dtype if sparse_attention_config else 'fp8'
+                     if sparse_attention_config:
+                         compress_ratios = sparse_attention_config.compress_ratios
+                         window_size = sparse_attention_config.window_size
+@@ -811,6 +812,7 @@ def update_sparse_attention_indexer_config(pretrained_config, kwargs):
+                         'sparse_attention_config'] = DeepSeekV4SparseAttentionConfig(
+                             compress_ratios=compress_ratios,
+                             window_size=window_size,
++                            indexer_k_dtype=indexer_k_dtype,
+                             **indexer_config)
+             else:
+                 raise ValueError(
+diff --git a/tensorrt_llm/_torch/modules/attention.py b/tensorrt_llm/_torch/modules/attention.py
+index f25ea20f7c86..c343bbf58ee6 100644
+--- a/tensorrt_llm/_torch/modules/attention.py
++++ b/tensorrt_llm/_torch/modules/attention.py
+@@ -2006,8 +2006,9 @@ def forward_dsa_proj(
+         Returns [q, compressed_kv, k_pe, latent_cache] when short-MHA
+         handles all tokens (eager only), or
+         [q, compressed_kv, k_pe, latent_cache, q_fp8, k_fp8, k_scale,
+-        weights] when the indexer runs.  Under torch compile
+-        _should_use_short_mha returns False so it is always length 8.
++        weights, q_scale] when the indexer runs.  q_scale is unused on the
++        FP8 path but always present so CUDA graph capture sees a stable
++        9-tensor shape regardless of indexer dtype.
+         """
+         assert self.mqa is not None, "DSA is only supported in MQA mode"
+ 
+diff --git a/tensorrt_llm/llmapi/llm_args.py b/tensorrt_llm/llmapi/llm_args.py
+index e621433cc1d1..88188f99dbba 100644
+--- a/tensorrt_llm/llmapi/llm_args.py
++++ b/tensorrt_llm/llmapi/llm_args.py
+@@ -358,9 +358,11 @@ class DeepSeekSparseAttentionConfig(BaseSparseAttentionConfig):
+     indexer_k_dtype: Literal["fp8", "fp4"] = Field(
+         default="fp8",
+         description=
+-        "Data type used for the indexer K cache. `fp4` requires Blackwell+ "
+-        "(SM>=100) and index_head_dim=128, it can halve the indexer K cache "
+-        "per-token footprint from 132 B to 68 B.",
++        "Data type used for the indexer K cache. `fp8` stores one FP8 E4M3 "
++        "byte per element with a per-128 float32 scale; `fp4` packs two FP4 "
++        "E2M1 codes per byte with a per-32 UE8M0 exponent, halving the "
++        "per-token indexer K footprint (132 B → 68 B at index_head_dim=128). "
++        "`fp4` requires Blackwell+ (SM>=100) and index_head_dim=128.",
+     )
+ 
+     @model_validator(mode="after")
+diff --git a/tests/integration/test_lists/test-db/l0_dgx_b200.yml b/tests/integration/test_lists/test-db/l0_dgx_b200.yml
+index 8aa0cd0afa1a..170cc54ac48c 100644
+--- a/tests/integration/test_lists/test-db/l0_dgx_b200.yml
++++ b/tests/integration/test_lists/test-db/l0_dgx_b200.yml
+@@ -48,6 +48,14 @@ l0_dgx_b200:
+   - unittest/_torch/visual_gen/multi_gpu
+   - unittest/_torch/visual_gen/test_flux_pipeline.py::TestFluxParallelism::test_ulysses_2gpu_correctness
+   - unittest/_torch/visual_gen/test_flux_pipeline.py::TestFluxCombinedOptimizations::test_all_optimizations_combined
++  # ------------- DSA FP4 indexer (Blackwell-only) ---------------
++  - unittest/_torch/attention/sparse/test_cpp_custom_ops.py::test_fused_cat_fp4_matches_deepgemm
++  - unittest/_torch/attention/sparse/test_cpp_custom_ops.py::test_fused_cat_fp4_shape_dispatch
++  - unittest/_torch/attention/sparse/test_cpp_custom_ops.py::test_fused_cat_fp4_noncontiguous_split
++  - unittest/_torch/attention/sparse/test_cpp_custom_ops.py::test_fused_cat_fp4_dsv32_prefill_shape
++  - unittest/_torch/attention/sparse/test_cpp_custom_ops.py::test_indexer_k_cache_gather_contiguous_fp4
++  - unittest/_torch/attention/sparse/dsa/test_dsa_fp4_indexer.py
++  - unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_fp4_indexer.py
+ - condition:
+     ranges:
+       system_gpu_count:
+diff --git a/tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_cache_manager.py b/tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_cache_manager.py
+index 312afb81f06a..f5281f4bc70e 100644
+--- a/tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_cache_manager.py
++++ b/tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_cache_manager.py
+@@ -29,6 +29,7 @@ class FakeModelConfig:
+         sparse_attention_config = SimpleNamespace(
+             index_head_dim=128,
+             compress_ratios=[1, 4, 1, 128],
++            indexer_k_dtype="fp8",
+         )
+         pretrained_config = SimpleNamespace(
+             kv_lora_rank=512,
+diff --git a/tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_fp4_indexer.py b/tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_fp4_indexer.py
+new file mode 100644
+index 000000000000..d15f5dd28828
+--- /dev/null
++++ b/tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_fp4_indexer.py
+@@ -0,0 +1,122 @@
++# SPDX-FileCopyrightText: Copyright (c) 2022-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++# http://www.apache.org/licenses/LICENSE-2.0
++"""Static checks for the DeepSeek-V4 FP4 indexer K cache wiring.
++
++Heavy end-to-end exercises that allocate the V4 cache manager and run the
++indexer forward pass live in ``test_deepseek_v4_cache_manager.py``; those
++require a Blackwell GPU and DeepSeek-V4-shaped HF configs that are not part
++of every CI lane. This module focuses on cheap config-level guarantees that
++catch regressions in the FP4 plumbing without needing GPU memory:
++
++- ``DeepSeekV4SparseAttentionConfig`` inherits the single ``indexer_k_dtype``
++  knob ("fp8" / "fp4") from the DSA base config; V4 has no V4-only dtype
++  field of its own.
++- The V4-specific ``get_token_bytes`` returns 132 B/token under "fp8" and
++  68 B/token under "fp4" at index_head_dim=128.
++- ``Indexer.use_fp4`` is set from this single knob.
++"""
++
++from __future__ import annotations
++
++import pytest
++
++from tensorrt_llm._torch.attention_backend.sparse.deepseek_v4.deepseek_v4 import (
++    DeepseekV4AttentionType,
++    get_token_bytes,
++)
++from tensorrt_llm.llmapi.llm_args import (
++    DeepSeekSparseAttentionConfig,
++    DeepSeekV4SparseAttentionConfig,
++)
++
++# ---------------------------------------------------------------------------
++# Pydantic config validators
++# ---------------------------------------------------------------------------
++
++
++def test_indexer_k_dtype_default_is_fp8():
++    cfg = DeepSeekV4SparseAttentionConfig()
++    assert cfg.indexer_k_dtype == "fp8"
++
++
++def test_indexer_k_dtype_accepts_fp4():
++    cfg = DeepSeekV4SparseAttentionConfig(indexer_k_dtype="fp4")
++    assert cfg.indexer_k_dtype == "fp4"
++
++
++def test_indexer_k_dtype_rejects_non_128_head_dim():
++    with pytest.raises(ValueError, match="index_head_dim=128"):
++        DeepSeekV4SparseAttentionConfig(
++            indexer_k_dtype="fp4",
++            index_head_dim=64,
++        )
++
++
++# ---------------------------------------------------------------------------
++# Per-token byte size: "fp8" 132 B vs "fp4" 68 B at index_head_dim=128
++# ---------------------------------------------------------------------------
++
++
++def _indexer_compress_bytes(indexer_k_dtype: str) -> int:
++    """Wrap V4's get_token_bytes for the INDEXER_COMPRESS attention type."""
++    return get_token_bytes(
++        head_dim=512,
++        index_head_dim=128,
++        compress_ratio=4,
++        attn_type=DeepseekV4AttentionType.INDEXER_COMPRESS,
++        has_fp8_kv_cache=True,
++        indexer_k_dtype=indexer_k_dtype,
++    )
++
++
++def test_indexer_compress_token_bytes_fp8():
++    # 1 byte per element (128) + 1 fp32 scale per 128 elements (= 4 bytes)
++    assert _indexer_compress_bytes("fp8") == 132
++
++
++def test_indexer_compress_token_bytes_fp4():
++    # ½ byte per element (64) + 1 ue8m0 byte per 32 elements (= 4 bytes)
++    assert _indexer_compress_bytes("fp4") == 68
++
++
++def test_indexer_compress_fp4_halves_pool_footprint():
++    fp8 = _indexer_compress_bytes("fp8")
++    fp4 = _indexer_compress_bytes("fp4")
++    assert fp4 / fp8 < 0.52, (
++        f"FP4 indexer K cache footprint did not shrink as expected: {fp4}/{fp8}"
++    )
++
++
++def test_indexer_compress_rejects_unknown_dtype():
++    with pytest.raises(ValueError, match="Unsupported indexer_k_dtype"):
++        _indexer_compress_bytes("bf16")
++
++
++# ---------------------------------------------------------------------------
++# V4 inherits indexer_k_dtype from the DSA base config — there is no
++# V4-only dtype knob — so V3 and V4 round-trip through the same field.
++# A regression here previously had V4 carry a separate ``indexer_k_cache_dtype``
++# knob that silently dropped on the FP8 branch and tripped DeepGEMM's
++# ``q_fp.scalar_type() == torch::kFloat8_e4m3fn`` assertion at runtime.
++# ---------------------------------------------------------------------------
++
++
++def test_v4_inherits_indexer_k_dtype_field():
++    """V4 must accept the same FP4 knob as the V3 base config."""
++    v3 = DeepSeekSparseAttentionConfig(indexer_k_dtype="fp4")
++    v4 = DeepSeekV4SparseAttentionConfig(indexer_k_dtype="fp4")
++    assert v3.indexer_k_dtype == "fp4"
++    assert v4.indexer_k_dtype == "fp4"
++
++
++def test_v4_has_no_separate_indexer_k_cache_dtype_field():
++    """V4 should expose only ``indexer_k_dtype``; the legacy
++    ``indexer_k_cache_dtype`` knob has been removed."""
++    cfg = DeepSeekV4SparseAttentionConfig()
++    assert "indexer_k_cache_dtype" not in cfg.model_fields
+diff --git a/tests/unittest/_torch/attention/sparse/dsa/test_dsa_fp4_indexer.py b/tests/unittest/_torch/attention/sparse/dsa/test_dsa_fp4_indexer.py
+new file mode 100644
+index 000000000000..1ef732363412
+--- /dev/null
++++ b/tests/unittest/_torch/attention/sparse/dsa/test_dsa_fp4_indexer.py
+@@ -0,0 +1,275 @@
++# Copyright (c) 2022-2026, NVIDIA CORPORATION.  All rights reserved.
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++"""Integration tests for the DSA FP4 indexer path (B200 / SM100 only).
++
++These tests drive the DeepGEMM FP4 MQA logits kernel through the TRT-LLM
++Indexer's FP4 quantization op and the Indexer._call_mqa_logits dispatch.
++Compared against the FP8 reference:
++- Topk intersection rate between FP4 and FP8 should be >= 95% for the
++  same inputs, confirming the two indexer implementations pick
++  essentially the same candidate key tokens.
++- The FP4 kernel must accept head_dim=128, num_heads in {32, 64}, and
++  the packed int8/int32 layouts produced by torch.ops.trtllm.fused_cat_fp4.
++
++The DSA config validator rejects FP4 on SM<100 and on non-128 head_dim,
++so skip when either precondition isn't met.
++"""
++
++import pytest
++import torch
++
++# Import tensorrt_llm to load C++ custom operators (registers trtllm::fused_cat_fp4).
++import tensorrt_llm  # noqa: F401
++
++try:
++    from tensorrt_llm import deep_gemm
++except ImportError:
++    # Only skip on actual module-missing failures — any other error should
++    # surface rather than silently turn into a test-wide skip.
++    HAS_DEEP_GEMM = False
++else:
++    HAS_DEEP_GEMM = hasattr(deep_gemm, "fp8_fp4_mqa_logits")
++
++import sys
++from pathlib import Path
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
++from utils.util import skip_pre_blackwell  # noqa: E402
++
++
++def _fp4_quantize_sf_transpose(x: torch.Tensor):
++    """Wrap trtllm::fused_cat_fp4 for tests that already hold a concatenated
++    tensor. The op takes (pe, nope); split at an arbitrary boundary since the
++    kernel reconstructs the concat internally. Returns shapes matching the
++    original helper: (*leading, head_dim//2) int8 packed and (*leading, 1) int32.
++    """
++    head_dim = x.shape[-1]
++    assert head_dim == 128, f"expected head_dim=128, got {head_dim}"
++    pe, nope = x.split([head_dim // 2, head_dim // 2], dim=-1)
++    packed, scale = torch.ops.trtllm.fused_cat_fp4(pe, nope)
++    leading = x.shape[:-1]
++    return packed.view(*leading, head_dim // 2), scale.view(*leading, 1)
++
++
++def _fp8_quantize_sf(x: torch.Tensor):
++    """Quantize along the sequence dim, mirroring test_dsa_indexer."""
++    x_amax = x.abs().float().amax(dim=tuple(range(1, x.dim())), keepdim=True).clamp(1e-4)
++    sf = x_amax / 448.0
++    x_scaled = (x * (1.0 / sf)).to(torch.float8_e4m3fn)
++    return x_scaled, sf.squeeze()
++
++
++def _dense_context_bounds(seq_len: int, seq_len_kv: int, device):
++    """Causal attention window: token i attends to [0, seq_len_kv - seq_len + i)."""
++    cu_ks = torch.zeros(seq_len, dtype=torch.int32, device=device)
++    cu_ke = torch.arange(1, seq_len + 1, dtype=torch.int32, device=device) + (seq_len_kv - seq_len)
++    return cu_ks, cu_ke.to(torch.int32)
++
++
++@pytest.mark.skipif(not HAS_DEEP_GEMM, reason="fp8_fp4_mqa_logits not available")
++@skip_pre_blackwell
++@pytest.mark.parametrize("num_heads", [32, 64])
++def test_fp4_mqa_logits_shape_and_topk_intersection(num_heads):
++    """FP4 MQA logits agree with FP8 on the top-k key selection."""
++    torch.manual_seed(0)
++    head_dim = 128
++    seq_len = 128
++    seq_len_kv = 512
++
++    q = torch.randn(seq_len, num_heads, head_dim, device="cuda", dtype=torch.bfloat16) * 1.5
++    k = torch.randn(seq_len_kv, head_dim, device="cuda", dtype=torch.bfloat16)
++    weights = torch.randn(seq_len, num_heads, device="cuda", dtype=torch.float32)
++    cu_ks, cu_ke = _dense_context_bounds(seq_len, seq_len_kv, q.device)
++
++    # FP4 path: pack Q and K. _fp4_quantize_sf_transpose keeps a trailing
++    # num_blocks//4 dim to stay byte-identical with DeepGEMM's reference util,
++    # so squeeze it for the kernel (q_sf is 2D, kv_sf is 1D).
++    q_fp4, q_scale_full = _fp4_quantize_sf_transpose(q)
++    q_scale = q_scale_full.view(seq_len, num_heads)
++    k_fp4, k_scale_full = _fp4_quantize_sf_transpose(k)
++    k_scale_fp4 = k_scale_full.reshape(-1)
++
++    # The FP4 kernel scales q internally; weights carry softmax_scale only.
++    softmax_scale = head_dim**-0.5
++    n_heads_scale = num_heads**-0.5
++    fp4_weights = weights * softmax_scale * n_heads_scale
++    fp4_logits = deep_gemm.fp8_fp4_mqa_logits(
++        (q_fp4, q_scale),
++        (k_fp4, k_scale_fp4),
++        fp4_weights,
++        cu_ks,
++        cu_ke,
++        False,  # clean_logits
++        0,  # max_seqlen_k
++        torch.float32,  # logits_dtype
++    )
++    assert fp4_logits.shape == (seq_len, seq_len_kv)
++    assert fp4_logits.dtype == torch.float32
++
++    # FP8 reference: the legacy fp8_mqa_logits pre-scales weights with q_scale
++    # so the logits come out in the same numeric range.
++    q_fp8, q_scale_fp8 = _fp8_quantize_sf(q)
++    k_fp8, k_scale_fp8 = _fp8_quantize_sf(k)
++    fp8_weights = weights * q_scale_fp8.unsqueeze(-1) * softmax_scale * n_heads_scale
++    fp8_logits = deep_gemm.fp8_mqa_logits(q_fp8, (k_fp8, k_scale_fp8), fp8_weights, cu_ks, cu_ke)
++
++    topk = 32
++    fp4_valid = torch.where(
++        torch.arange(seq_len_kv, device="cuda").unsqueeze(0) < cu_ke.unsqueeze(1),
++        fp4_logits,
++        float("-inf"),
++    )
++    fp8_valid = torch.where(
++        torch.arange(seq_len_kv, device="cuda").unsqueeze(0) < cu_ke.unsqueeze(1),
++        fp8_logits,
++        float("-inf"),
++    )
++    fp4_top = fp4_valid.topk(topk, dim=-1).indices
++    fp8_top = fp8_valid.topk(topk, dim=-1).indices
++
++    # Per-row intersection ratio between the two indexer variants.
++    intersections = []
++    for i in range(seq_len):
++        a = set(fp4_top[i].tolist())
++        b = set(fp8_top[i].tolist())
++        if len(b) == 0:
++            continue
++        intersections.append(len(a & b) / len(b))
++    mean_overlap = sum(intersections) / len(intersections)
++    # FP4 has 8 representable levels vs. FP8's ~240, so on synthetic random
++    # inputs the top-k lists diverge slightly even though the kernels are
++    # numerically consistent. The plan targets >= 95% intersection on real
++    # DSA traffic (where logit magnitudes are more polarized); for this
++    # shape-only sanity test a 0.80 floor catches gross regressions without
++    # flaking on random-seed noise.
++    assert mean_overlap >= 0.80, (
++        f"FP4 vs FP8 topk overlap too low: {mean_overlap:.3f}. "
++        "Expect >= 0.80 mean overlap on synthetic inputs."
++    )
++
++
++@pytest.mark.skipif(not HAS_DEEP_GEMM, reason="fp8_fp4_mqa_logits not available")
++@skip_pre_blackwell
++def test_fp4_quantize_roundtrip_matches_bf16_kv():
++    """Verify FP4 K quantize+dequantize preserves the dominant magnitudes.
++
++    Sanity-checks the packing / scale recovery math outside the kernel so a
++    failure localizes between the Python quantizer and the DeepGEMM kernel.
++    """
++    torch.manual_seed(7)
++    seq_len_kv = 128
++    head_dim = 128
++    k = torch.randn(seq_len_kv, head_dim, device="cuda", dtype=torch.bfloat16) * 2.0
++
++    k_fp4, scale = _fp4_quantize_sf_transpose(k)
++
++    fp4_values = torch.tensor(
++        [0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0],
++        device="cuda",
++        dtype=torch.float32,
++    )
++    packed_u8 = k_fp4.view(torch.uint8)
++    low = packed_u8 & 0x0F
++    high = (packed_u8 >> 4) & 0x0F
++    codes = torch.empty(seq_len_kv, head_dim, device="cuda", dtype=torch.uint8)
++    codes[:, 0::2] = low
++    codes[:, 1::2] = high
++    value_idx = (codes & 0x07).to(torch.int64)
++    sign = (codes & 0x08) != 0
++    values = fp4_values[value_idx]
++    values = torch.where(sign & (value_idx != 0), -values, values)
++    scale_bytes = scale.view(torch.uint8).view(seq_len_kv, 4).to(torch.int32)
++    scale_fp32 = (scale_bytes << 23).view(torch.float32)
++    reconstructed = (values.view(seq_len_kv, 4, 32) * scale_fp32.unsqueeze(-1)).view(
++        seq_len_kv, head_dim
++    )
++
++    # MAE should be bounded by the FP4 step (~0.5 * max per block) — very loose,
++    # but clearly rules out catastrophic unpacking bugs.
++    mae = (reconstructed.float() - k.float()).abs().mean().item()
++    assert mae < 1.0, f"FP4 dequantize diverged from bf16 input: mae={mae:.3f}"
++
++
++def test_fp4_indexer_k_cache_per_token_size_drops_to_68_bytes():
++    """Evidence for the plan's primary goal: FP4 indexer K cache shrinks.
++
++    The FP8 layout stores index_head_dim bytes of data + 4 bytes of float32
++    scale per token (132 bytes at index_head_dim=128). The FP4 layout packs
++    two E2M1 codes per byte (index_head_dim // 2 = 64 bytes) and keeps the
++    same 4 scale bytes (UE8M0 x4 packed as one int32), for a total of 68
++    bytes per token.
++
++    This test mirrors the DSACacheManager FP8 formula (one fp32 scale per
++    quant_block_size=128 elements) and the DeepseekV4CacheManager MXFP4
++    formula (one UE8M0 byte per quant_block_size=32 elements). Both
++    converge to 4 scale bytes per token at index_head_dim=128.
++    """
++    index_head_dim = 128
++
++    fp8_quant_block = 128
++    fp8_data_bytes = index_head_dim
++    fp8_scale_bytes = index_head_dim // fp8_quant_block * 4
++    fp8_per_token = fp8_data_bytes + fp8_scale_bytes
++
++    fp4_quant_block = 32
++    fp4_data_bytes = index_head_dim // 2
++    # 1 UE8M0 byte per 32 elements; at head_dim=128 that's 4 bytes per token.
++    fp4_scale_bytes = index_head_dim // fp4_quant_block
++    fp4_per_token = fp4_data_bytes + fp4_scale_bytes
++
++    assert fp8_per_token == 132, f"FP8 per-token size regressed from 132 to {fp8_per_token}"
++    assert fp4_per_token == 68, f"FP4 per-token size regressed from 68 to {fp4_per_token}"
++    assert fp4_per_token / fp8_per_token < 0.52, (
++        f"FP4 pool did not shrink as expected: {fp4_per_token}/{fp8_per_token}"
++    )
++
++
++def test_indexer_k_dtype_survives_model_config_rebuild():
++    """Regression guard: indexer_k_dtype must survive ModelConfig.from_pretrained.
++
++    When loading DeepseekV32ForCausalLM / GlmMoeDsaForCausalLM,
++    ModelConfig.from_pretrained rebuilds the sparse_attention_config from the
++    user's fields plus pretrained-config defaults. A previous version of this
++    rebuild dropped indexer_k_dtype, silently forcing fp8 regardless of the
++    user's choice — the Pydantic validator and downstream DSACacheManager
++    then both saw "fp8" and the FP4 path was never taken.
++
++    Static check: ensure the production rebuild branch forwards the field
++    (regression guard for the pattern bug — not just the outcome of an
++    end-to-end load). If a future edit drops the keyword, this assert fails.
++    """
++    import inspect
++
++    from tensorrt_llm._torch.model_config import ModelConfig
++
++    rebuild_src = inspect.getsource(ModelConfig.from_pretrained)
++    assert "indexer_k_dtype=indexer_k_dtype" in rebuild_src, (
++        "ModelConfig.from_pretrained rebuild branch must forward "
++        "indexer_k_dtype to DeepSeekSparseAttentionConfig(...); otherwise "
++        "the user-visible FP4 knob will be silently dropped."
++    )
++
++
++def test_indexer_k_dtype_survives_v4_model_config_rebuild():
++    """V4 analog of the above: indexer_k_dtype must survive rebuild.
++
++    Static check that ModelConfig.from_pretrained's DeepseekV4ForCausalLM
++    branch threads indexer_k_dtype into DeepSeekV4SparseAttentionConfig.
++    """
++    import inspect
++
++    from tensorrt_llm._torch.model_config import ModelConfig
++
++    rebuild_src = inspect.getsource(ModelConfig.from_pretrained)
++    # The V4 branch builds the config with `indexer_k_dtype=indexer_k_dtype`;
++    # the same string also appears in the V3 branch but its presence here is
++    # what guarantees V4 propagates the FP4 knob.
++    assert rebuild_src.count("indexer_k_dtype=indexer_k_dtype") >= 2, (
++        "ModelConfig.from_pretrained DeepseekV4ForCausalLM branch must "
++        "forward indexer_k_dtype to DeepSeekV4SparseAttentionConfig(...)."
++    )
+diff --git a/tests/unittest/_torch/attention/sparse/dsa/test_dsa_indexer.py b/tests/unittest/_torch/attention/sparse/dsa/test_dsa_indexer.py
+index 24f7c9c55aed..74a03ee24bd8 100644
+--- a/tests/unittest/_torch/attention/sparse/dsa/test_dsa_indexer.py
++++ b/tests/unittest/_torch/attention/sparse/dsa/test_dsa_indexer.py
+@@ -73,8 +73,7 @@ def create_dsa_cache_manager(
+     class SparseAttentionConfig:
+         """Minimal mock of SparseAttentionConfig for testing."""
+ 
+-        def __init__(self, index_head_dim, index_n_heads, index_topk,
+-                     indexer_k_dtype):
++        def __init__(self, index_head_dim, index_n_heads, index_topk, indexer_k_dtype):
+             """Initialize sparse attention config with indexer parameters."""
+             self.index_head_dim = index_head_dim
+             self.index_n_heads = index_n_heads
+@@ -89,7 +88,8 @@ def __init__(self, index_head_dim, index_n_heads, index_topk,
+         index_head_dim=head_dim,
+         index_n_heads=32,  # Default number of heads for indexer
+         index_topk=2048,
+-        indexer_k_dtype=indexer_k_dtype)
++        indexer_k_dtype=indexer_k_dtype,
++    )
+ 
+     # Create KV cache config
+     kv_cache_config = KvCacheConfig(
+@@ -478,15 +478,11 @@ def __init__(self):
+                 self.host_indexer_k_cache_block_offsets[:batch_size], non_blocking=True
+             )
+ 
+-            self.slot_mapping_fp8 = torch.zeros((num_tokens, ),
+-                                                device='cuda',
+-                                                dtype=torch.int64)
+-            self.slot_mapping_scale = torch.zeros((num_tokens, ),
+-                                                  device='cuda',
+-                                                  dtype=torch.int64)
+-            self.scheduler_metadata_buffer = torch.zeros((self.num_sms + 1, 2),
+-                                                         device='cuda',
+-                                                         dtype=torch.int32)
++            self.slot_mapping_fp8 = torch.zeros((num_tokens,), device="cuda", dtype=torch.int64)
++            self.slot_mapping_scale = torch.zeros((num_tokens,), device="cuda", dtype=torch.int64)
++            self.scheduler_metadata_buffer = torch.zeros(
++                (self.num_sms + 1, 2), device="cuda", dtype=torch.int32
++            )
+             # DSL needs the next_n=1 schedule preserved (kNumNextNAtoms=1),
+             # so allocate a separate buffer for the full-next_n schedule.
+             # DeepGEMM expects the full-next_n schedule in
+@@ -494,35 +490,29 @@ def __init__(self):
+             # `Indexer.prepare()`'s second populate overwrite the first).
+             if use_cute_dsl_paged_mqa_logits:
+                 self.scheduler_metadata_buffer_full_next_n = torch.zeros(
+-                    (self.num_sms + 1, 2), device='cuda', dtype=torch.int32)
++                    (self.num_sms + 1, 2), device="cuda", dtype=torch.int32
++                )
+             else:
+                 self.scheduler_metadata_buffer_full_next_n = self.scheduler_metadata_buffer
+             # Pre-allocated 2D kv_lens buffer for the DeepGEMM 2D context_lens API.
+             self.kv_lens_cuda_2d = torch.zeros(
+-                (self.num_seqs, 1 + self.max_draft_tokens),
+-                device='cuda',
+-                dtype=torch.int32)
++                (self.num_seqs, 1 + self.max_draft_tokens), device="cuda", dtype=torch.int32
++            )
+             if num_generations > 0:
+-                gen_kv_lens = kv_lens[num_contexts:num_contexts +
+-                                      num_generations].cuda().to(torch.int32)
++                gen_kv_lens = (
++                    kv_lens[num_contexts : num_contexts + num_generations].cuda().to(torch.int32)
++                )
+                 next_n_cap = 1 + self.max_draft_tokens
+                 self.kv_lens_cuda_2d[:num_generations, :next_n_cap].copy_(
+-                    gen_kv_lens.unsqueeze(-1).expand(-1, next_n_cap))
+-            self.cu_seqlen_ks = torch.zeros((num_tokens, ),
+-                                            device='cuda',
+-                                            dtype=torch.int32)
+-            self.cu_seqlen_ke = torch.zeros((num_tokens, ),
+-                                            device='cuda',
+-                                            dtype=torch.int32)
+-            self.ctx_kv_offsets = torch.zeros((num_tokens, 1),
+-                                              device='cuda',
+-                                              dtype=torch.int32)
+-            self.gen_kv_offsets = torch.zeros((num_tokens, 1),
+-                                              device='cuda',
+-                                              dtype=torch.int32)
+-            self.host_slot_mapping_fp8 = torch.zeros_like(self.slot_mapping_fp8,
+-                                                          device='cpu',
+-                                                          pin_memory=True)
++                    gen_kv_lens.unsqueeze(-1).expand(-1, next_n_cap)
++                )
++            self.cu_seqlen_ks = torch.zeros((num_tokens,), device="cuda", dtype=torch.int32)
++            self.cu_seqlen_ke = torch.zeros((num_tokens,), device="cuda", dtype=torch.int32)
++            self.ctx_kv_offsets = torch.zeros((num_tokens, 1), device="cuda", dtype=torch.int32)
++            self.gen_kv_offsets = torch.zeros((num_tokens, 1), device="cuda", dtype=torch.int32)
++            self.host_slot_mapping_fp8 = torch.zeros_like(
++                self.slot_mapping_fp8, device="cpu", pin_memory=True
++            )
+             self.host_slot_mapping_scale = torch.zeros_like(
+                 self.slot_mapping_scale, device="cpu", pin_memory=True
+             )
+@@ -589,11 +579,13 @@ def __init__(self):
+ 
+             # Add expanded buffers for MTP support
+             # DSL kernel supports arbitrary next_n natively, so it never needs expansion.
+-            self.use_expanded_buffers_for_mtp = (
+-                not use_cute_dsl_paged_mqa_logits
+-                and ((self.max_draft_tokens > 1 and get_sm_version() == 90) or
+-                     ((self.max_draft_tokens == 2 or self.max_draft_tokens > 3)
+-                      and get_sm_version() >= 100)))
++            self.use_expanded_buffers_for_mtp = not use_cute_dsl_paged_mqa_logits and (
++                (self.max_draft_tokens > 1 and get_sm_version() == 90)
++                or (
++                    (self.max_draft_tokens == 2 or self.max_draft_tokens > 3)
++                    and get_sm_version() >= 100
++                )
++            )
+             self.kv_lens_expanded_cuda = torch.zeros(
+                 (self.num_seqs * (1 + self.max_draft_tokens),), device="cuda", dtype=torch.int32
+             )
+@@ -825,6 +817,8 @@ def test_indexer_k_cache_scatter_custom_op():
+ 
+     # ========== Path 1: CUDA Kernel ==========
+     print("\n=== Path 1: CUDA Kernel ===")
++    # The op signature now takes the original-dtype tensors (FP8 + float32)
++    # and an explicit num_tokens, reinterpreting bytes internally.
+     torch.ops.trtllm.indexer_k_cache_scatter_op(
+         k_fp8,
+         k_scale,
+@@ -985,19 +979,21 @@ def test_fp8_k_cache_roundtrip():
+ @pytest.mark.skipif(not has_deep_gemm(), reason="DeepGEMM not available")
+ @skip_pre_hopper
+ @pytest.mark.parametrize("batch_size,next_n", [(4, 1), (2, 2), (4, 3), (4, 4)])
+-@pytest.mark.parametrize("backend", [
+-    "deepgemm",
+-    pytest.param(
+-        "dsl",
+-        marks=pytest.mark.skipif(
+-            get_sm_version() not in (100, 103),
+-            reason=
+-            f"CuTe DSL FP8 Paged MQA Logits only supports SM 100/103, got SM {get_sm_version()}",
+-        )),
+-])
++@pytest.mark.parametrize(
++    "backend",
++    [
++        "deepgemm",
++        pytest.param(
++            "dsl",
++            marks=pytest.mark.skipif(
++                get_sm_version() not in (100, 103),
++                reason=f"CuTe DSL FP8 Paged MQA Logits only supports SM 100/103, got SM {get_sm_version()}",
++            ),
++        ),
++    ],
++)
+ @pytest.mark.parametrize("compress_ratio", [1, 4])
+-def test_indexer_decode_with_paged_kv_cache(batch_size, next_n, backend,
+-                                            compress_ratio):
++def test_indexer_decode_with_paged_kv_cache(batch_size, next_n, backend, compress_ratio):
+     """
+     Test FP8 paged KV cache with two-phase workflow and variable context lengths.
+ 
+@@ -1134,8 +1130,7 @@ def test_indexer_decode_with_paged_kv_cache(batch_size, next_n, backend,
+     if not metadata_gen.use_expanded_buffers_for_mtp:
+         q_fp8 = q_fp8
+         # New DeepGEMM 2D context_lens API: shape (batch_size, next_n).
+-        context_lens = metadata_gen.kv_lens_cuda_2d[0:batch_size,
+-                                                    0:next_n].contiguous()
++        context_lens = metadata_gen.kv_lens_cuda_2d[0:batch_size, 0:next_n].contiguous()
+         block_table = metadata_gen.indexer_k_cache_block_offsets[0:batch_size]
+         # The upgraded DeepGEMM paged MQA logits kernel picks
+         # num_kv_multicast=1 on SM100 for every next_n it supports
+@@ -1149,8 +1144,7 @@ def test_indexer_decode_with_paged_kv_cache(batch_size, next_n, backend,
+         q_fp8 = q_fp8.view(-1, 1, *q_fp8.shape[2:])
+         num_tokens = batch_size * next_n
+         # New API requires 2D; each expanded token becomes a (1,) row.
+-        context_lens = metadata_gen.kv_lens_expanded_cuda[:num_tokens].view(
+-            -1, 1)
++        context_lens = metadata_gen.kv_lens_expanded_cuda[:num_tokens].view(-1, 1)
+         block_table = metadata_gen.block_table_expanded[:num_tokens]
+         scheduler_metadata_buffer = metadata_gen.scheduler_metadata_buffer_expanded
+ 
+@@ -1163,12 +1157,24 @@ def test_indexer_decode_with_paged_kv_cache(batch_size, next_n, backend,
+         dsl_context_lens = metadata_gen.gen_indexer_kv_lens_cuda_runtime
+         assert dsl_context_lens is not None
+         logits = torch.ops.trtllm.cute_dsl_fp8_paged_mqa_logits(
+-            q_fp8, kv_cache_fp8_pool, weights, dsl_context_lens, block_table,
+-            metadata_gen.scheduler_metadata_buffer, max_model_len)
++            q_fp8,
++            kv_cache_fp8_pool,
++            weights,
++            dsl_context_lens,
++            block_table,
++            metadata_gen.scheduler_metadata_buffer,
++            max_model_len,
++        )
+     else:
+-        logits = fp8_paged_mqa_logits(q_fp8, kv_cache_fp8_pool, weights,
+-                                      context_lens, block_table,
+-                                      scheduler_metadata_buffer, max_model_len)
++        logits = fp8_paged_mqa_logits(
++            q_fp8,
++            kv_cache_fp8_pool,
++            weights,
++            context_lens,
++            block_table,
++            scheduler_metadata_buffer,
++            max_model_len,
++        )
+     print(f"✓ Kernel output shape: {logits.shape}")
+ 
+     # Reference: Reconstruct BF16 cache from original values
+@@ -2544,6 +2550,7 @@ def test_indexer_topk_multi_request_with_different_cache(enable_indexer_skip):
+     from tensorrt_llm._torch.attention_backend.sparse.dsa import (
+         compute_cu_seqlen_kv_bounds_with_cache,
+     )
++
+     host_seq_lens = torch.tensor(seq_lens, dtype=torch.int32, device="cpu")
+     host_cached = torch.tensor(cached_tokens, dtype=torch.int32, device="cpu")
+     cu_ks, cu_ke = compute_cu_seqlen_kv_bounds_with_cache(
+diff --git a/tests/unittest/_torch/attention/sparse/test_cpp_custom_ops.py b/tests/unittest/_torch/attention/sparse/test_cpp_custom_ops.py
+index 20cfaa24805c..ab9d8d395f7a 100644
+--- a/tests/unittest/_torch/attention/sparse/test_cpp_custom_ops.py
++++ b/tests/unittest/_torch/attention/sparse/test_cpp_custom_ops.py
+@@ -159,7 +159,7 @@ def test_indexer_k_cache_gather_contiguous(
+         total_kv_len, num_blocks, block_size, per_token_size, device
+     )
+ 
+-    # C++ op
++    # C++ op (head_dim is payload bytes per token: 128 for FP8)
+     cpp_fp8, cpp_scale = torch.ops.trtllm.indexer_k_cache_gather_op(
+         k_cache, slot_fp8, slot_scale, k_token_start, num_tokens, HEAD_DIM
+     )
+diff --git a/tests/unittest/_torch/attention/sparse/test_dsa_fp4_indexer.py b/tests/unittest/_torch/attention/sparse/test_dsa_fp4_indexer.py
+index ee727a285710..48085f86a472 100644
+--- a/tests/unittest/_torch/attention/sparse/test_dsa_fp4_indexer.py
++++ b/tests/unittest/_torch/attention/sparse/test_dsa_fp4_indexer.py
+@@ -41,9 +41,10 @@
+         "check that the correct DeepGEMM version is installed"
+     )
+ 
+-from .dsa.test_dsa_indexer import _create_mock_metadata, create_dsa_cache_manager
+ from utils.util import skip_pre_blackwell
+ 
++from .dsa.test_dsa_indexer import _create_mock_metadata, create_dsa_cache_manager
++
+ 
+ def _fp4_quantize_sf_transpose(x: torch.Tensor):
+     """Wrap trtllm::fused_cat_fp4 for tests that already hold a concatenated

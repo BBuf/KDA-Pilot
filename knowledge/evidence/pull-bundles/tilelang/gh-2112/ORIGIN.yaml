@@ -1,0 +1,110 @@
+schema_version: 1
+source_key: tile-ai/tilelang#2112
+repo: tile-ai/tilelang
+repo_id: tilelang
+pr_number: 2112
+title: 'feat: auto-vectorize bf16/fp16 reduce with packed add2 intrinsics'
+url: https://github.com/tile-ai/tilelang/pull/2112
+state: closed
+merged_at: '2026-05-19T07:03:44Z'
+base_ref_oid: f11954cb36efd157eaeadfc8da929989712ae68a
+head_ref_oid: 469e8c54acdad2c819261f21ddd3a66ef062e741
+captured_at: '2026-05-20T15:05:26.948711+00:00'
+architectures:
+- sm100
+- sm90
+architecture_families:
+- blackwell
+- hopper
+tags:
+- benchmark kernel
+- cuda kernel
+- fp4
+- fp8
+- gemm
+- hopper
+- mla
+- mxfp4
+techniques:
+- vectorized-loads
+hardware_features:
+- fp4
+- fp8
+- hopper
+- mxfp4
+- wgmma
+kernel_types:
+- gemm
+- mla
+languages:
+- cuda-cpp
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: benchmark/matmul/benchmark_matmul_sp_compress.py
+    local_path: source-snapshot/benchmark/matmul/benchmark_matmul_sp_compress.py
+    ref: 469e8c54acdad2c819261f21ddd3a66ef062e741
+    status: modified
+    fetched: true
+  - source_path: src/backend/common/op/reduce.h
+    local_path: source-snapshot/src/backend/common/op/reduce.h
+    ref: 469e8c54acdad2c819261f21ddd3a66ef062e741
+    status: modified
+    fetched: true
+  - source_path: src/backend/cuda/codegen/codegen_cuda.cc
+    local_path: source-snapshot/src/backend/cuda/codegen/codegen_cuda.cc
+    ref: 469e8c54acdad2c819261f21ddd3a66ef062e741
+    status: modified
+    fetched: true
+  - source_path: src/backend/cuda/op/reduce.cc
+    local_path: source-snapshot/src/backend/cuda/op/reduce.cc
+    ref: 469e8c54acdad2c819261f21ddd3a66ef062e741
+    status: modified
+    fetched: true
+  - source_path: src/backend/rocm/op/reduce.cc
+    local_path: source-snapshot/src/backend/rocm/op/reduce.cc
+    ref: 469e8c54acdad2c819261f21ddd3a66ef062e741
+    status: modified
+    fetched: true
+  - source_path: src/op/builtin.cc
+    local_path: source-snapshot/src/op/builtin.cc
+    ref: 469e8c54acdad2c819261f21ddd3a66ef062e741
+    status: modified
+    fetched: true
+  - source_path: src/op/builtin.h
+    local_path: source-snapshot/src/op/builtin.h
+    ref: 469e8c54acdad2c819261f21ddd3a66ef062e741
+    status: modified
+    fetched: true
+  - source_path: src/tl_templates/cuda/common.h
+    local_path: source-snapshot/src/tl_templates/cuda/common.h
+    ref: 469e8c54acdad2c819261f21ddd3a66ef062e741
+    status: modified
+    fetched: true
+  - source_path: src/tl_templates/cuda/reduce.h
+    local_path: source-snapshot/src/tl_templates/cuda/reduce.h
+    ref: 469e8c54acdad2c819261f21ddd3a66ef062e741
+    status: modified
+    fetched: true
+  - source_path: testing/python/language/test_tilelang_language_reduce.py
+    local_path: source-snapshot/testing/python/language/test_tilelang_language_reduce.py
+    ref: 469e8c54acdad2c819261f21ddd3a66ef062e741
+    status: modified
+    fetched: true
+  - source_path: tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py
+    local_path: source-snapshot/tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py
+    ref: 469e8c54acdad2c819261f21ddd3a66ef062e741
+    status: modified
+    fetched: true
+  - source_path: tilelang/tileop/gemm_sp/gemm_sp_wgmma.py
+    local_path: source-snapshot/tilelang/tileop/gemm_sp/gemm_sp_wgmma.py
+    ref: 469e8c54acdad2c819261f21ddd3a66ef062e741
+    status: modified
+    fetched: true
+  - source_path: tilelang/utils/sparse.py
+    local_path: source-snapshot/tilelang/utils/sparse.py
+    ref: 469e8c54acdad2c819261f21ddd3a66ef062e741
+    status: modified
+    fetched: true

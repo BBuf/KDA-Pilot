@@ -1,0 +1,202 @@
+schema_version: 1
+source_key: sgl-project/sglang#25821
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25821
+title: '[Refactor] Rename NSA → DSA: user-facing aliases, file/class/import rename'
+url: https://github.com/sgl-project/sglang/pull/25821
+state: closed
+merged_at: '2026-05-20T07:18:05Z'
+base_ref_oid: 425dffbde33954bcdd3a4c82dddbf1e4571ca66e
+head_ref_oid: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+captured_at: '2026-05-20T14:45:56.703403+00:00'
+architectures:
+- sm100
+- sm90
+architecture_families:
+- blackwell
+- hopper
+tags:
+- attention
+- attention kernel
+- cuda kernel
+techniques:
+- cache-policy
+- fine-grained-quantization
+- kernel-fusion
+- tile-scheduling
+hardware_features:
+- fp4
+- fp8
+kernel_types:
+- attention
+- decode
+- mla
+- moe
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: .claude/skills/llm-torch-profiler-analysis/references/fuse-overlap-catalog.md
+    local_path: source-snapshot/.claude/skills/llm-torch-profiler-analysis/references/fuse-overlap-catalog.md
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: .claude/skills/llm-torch-profiler-analysis/references/overlap-catalog.md
+    local_path: source-snapshot/.claude/skills/llm-torch-profiler-analysis/references/overlap-catalog.md
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: .claude/skills/llm-torch-profiler-analysis/scripts/triage_kernel_helpers.py
+    local_path: source-snapshot/.claude/skills/llm-torch-profiler-analysis/scripts/triage_kernel_helpers.py
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: .github/workflows/nightly-test-amd-rocm720.yml
+    local_path: source-snapshot/.github/workflows/nightly-test-amd-rocm720.yml
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: .github/workflows/nightly-test-amd.yml
+    local_path: source-snapshot/.github/workflows/nightly-test-amd.yml
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: docs/advanced_features/attention_backend.md
+    local_path: source-snapshot/docs/advanced_features/attention_backend.md
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: docs/advanced_features/hisparse_guide.md
+    local_path: source-snapshot/docs/advanced_features/hisparse_guide.md
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: docs/advanced_features/server_arguments.md
+    local_path: source-snapshot/docs/advanced_features/server_arguments.md
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: docs/basic_usage/deepseek_v32.md
+    local_path: source-snapshot/docs/basic_usage/deepseek_v32.md
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: docs/platforms/ascend/ascend_npu_best_practice.md
+    local_path: source-snapshot/docs/platforms/ascend/ascend_npu_best_practice.md
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: docs/platforms/ascend/ascend_npu_environment_variables.md
+    local_path: source-snapshot/docs/platforms/ascend/ascend_npu_environment_variables.md
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: docs/platforms/ascend/ascend_npu_support_features.md
+    local_path: source-snapshot/docs/platforms/ascend/ascend_npu_support_features.md
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: docs/platforms/plugin.md
+    local_path: source-snapshot/docs/platforms/plugin.md
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: docs/references/environment_variables.md
+    local_path: source-snapshot/docs/references/environment_variables.md
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: docs_new/docs/advanced_features/attention_backend.mdx
+    local_path: source-snapshot/docs_new/docs/advanced_features/attention_backend.mdx
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: python/sglang/jit_kernel/csrc/dsa/fused_store_index_cache.cuh
+    local_path: source-snapshot/python/sglang/jit_kernel/csrc/dsa/fused_store_index_cache.cuh
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: renamed
+    fetched: true
+  - source_path: python/sglang/jit_kernel/csrc/elementwise/fused_metadata_copy.cuh
+    local_path: source-snapshot/python/sglang/jit_kernel/csrc/elementwise/fused_metadata_copy.cuh
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: python/sglang/jit_kernel/fused_metadata_copy.py
+    local_path: source-snapshot/python/sglang/jit_kernel/fused_metadata_copy.py
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: python/sglang/jit_kernel/fused_store_index_cache.py
+    local_path: source-snapshot/python/sglang/jit_kernel/fused_store_index_cache.py
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: python/sglang/jit_kernel/tests/test_fused_metadata_copy.py
+    local_path: source-snapshot/python/sglang/jit_kernel/tests/test_fused_metadata_copy.py
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: python/sglang/jit_kernel/tests/test_fused_store_index_cache.py
+    local_path: source-snapshot/python/sglang/jit_kernel/tests/test_fused_store_index_cache.py
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: python/sglang/jit_kernel/tests/test_set_mla_kv_buffer.py
+    local_path: source-snapshot/python/sglang/jit_kernel/tests/test_set_mla_kv_buffer.py
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/arg_groups/deepseek_v4_hook.py
+    local_path: source-snapshot/python/sglang/srt/arg_groups/deepseek_v4_hook.py
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/arg_groups/hisparse_hook.py
+    local_path: source-snapshot/python/sglang/srt/arg_groups/hisparse_hook.py
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/configs/model_config.py
+    local_path: source-snapshot/python/sglang/srt/configs/model_config.py
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/disaggregation/base/conn.py
+    local_path: source-snapshot/python/sglang/srt/disaggregation/base/conn.py
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/disaggregation/decode.py
+    local_path: source-snapshot/python/sglang/srt/disaggregation/decode.py
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/disaggregation/decode_kvcache_offload_manager.py
+    local_path: source-snapshot/python/sglang/srt/disaggregation/decode_kvcache_offload_manager.py
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/disaggregation/mooncake/conn.py
+    local_path: source-snapshot/python/sglang/srt/disaggregation/mooncake/conn.py
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/disaggregation/mori/conn.py
+    local_path: source-snapshot/python/sglang/srt/disaggregation/mori/conn.py
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/disaggregation/nixl/conn.py
+    local_path: source-snapshot/python/sglang/srt/disaggregation/nixl/conn.py
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/disaggregation/prefill.py
+    local_path: source-snapshot/python/sglang/srt/disaggregation/prefill.py
+    ref: 6f59532f3bb7d8191b28bab25dacfd6a4e3c9d6c
+    status: modified
+    fetched: true

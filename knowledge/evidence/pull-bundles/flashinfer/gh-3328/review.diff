@@ -1,0 +1,397 @@
+diff --git a/csrc/moe_utils_binding.cu b/csrc/moe_utils_binding.cu
+index 469f26e982..34a7ade4e9 100644
+--- a/csrc/moe_utils_binding.cu
++++ b/csrc/moe_utils_binding.cu
+@@ -196,6 +196,52 @@ void moe_output_memset_bf16(int64_t input_ptr, int64_t tile_idx_to_mn_limit_ptr,
+ }
+ #endif
+ 
++// ============================ moeOutputMemsetInplace (dense Path A) bindings
++// ============================
++//
++// Dense-only port of TRT-LLM's `moe_output_memset_inplace` Path A
++// (cuteDslMoeUtilsOp.cpp:moe_output_memset_inplace at the
++// `!enable_alltoall || ep_size <= top_k` branch — just cudaMemsetAsync).
++//
++// This entry point exposes only Path A. Current callers of the
++// monolithic CuteDSL MoE API handle all-to-all outside this function,
++// so TRT-LLM's internal-alltoall Path B (the sparse `moeOutputMemset`
++// kernel) is not part of this API. The existing sparse moeOutputMemset
++// bindings above remain available if a future internal-alltoall
++// integration needs them.
++//
++// The signature accepts an explicit `cuda_stream_ptr` (PyTorch's current
++// CUDA stream). `get_current_stream()` here resolves through
++// `TVMFFIEnvGetStream`, which does NOT track PyTorch's
++// `torch.cuda.stream(...)` context — so without the explicit pointer
++// the memset would queue on TVM's env stream and would not overlap
++// aux-stream memset with surrounding GEMM work. Mirrors the
++// `moe_sort`/`flashinfer_moe_sort` pattern in this file (the binding
++// resolves to `cuda_stream_ptr != 0 ? <ptr> : get_current_stream()`).
++
++void moe_output_memset_inplace_fp16(int64_t input_ptr, int64_t num_tokens, int64_t hidden_size,
++                                    // Explicit PyTorch stream; 0 falls back to TVM FFI env.
++                                    int64_t cuda_stream_ptr) {
++  cudaStream_t stream =
++      cuda_stream_ptr != 0 ? reinterpret_cast<cudaStream_t>(cuda_stream_ptr) : get_current_stream();
++  cudaMemsetAsync(reinterpret_cast<void*>(input_ptr), 0x0,
++                  sizeof(half) * static_cast<size_t>(num_tokens) * static_cast<size_t>(hidden_size),
++                  stream);
++}
++
++#ifdef ENABLE_BF16
++void moe_output_memset_inplace_bf16(int64_t input_ptr, int64_t num_tokens, int64_t hidden_size,
++                                    // Explicit PyTorch stream; 0 falls back to TVM FFI env.
++                                    int64_t cuda_stream_ptr) {
++  cudaStream_t stream =
++      cuda_stream_ptr != 0 ? reinterpret_cast<cudaStream_t>(cuda_stream_ptr) : get_current_stream();
++  cudaMemsetAsync(
++      reinterpret_cast<void*>(input_ptr), 0x0,
++      sizeof(__nv_bfloat16) * static_cast<size_t>(num_tokens) * static_cast<size_t>(hidden_size),
++      stream);
++}
++#endif
++
+ // ============================ moeActivation bindings ============================
+ 
+ void moe_activation_fp16(int64_t input_ptr, int64_t output_ptr, int64_t tile_idx_to_mn_limit_ptr,
+@@ -253,6 +299,13 @@ TVM_FFI_DLL_EXPORT_TYPED_FUNC(flashinfer_moe_output_memset_fp16, moe_output_mems
+ TVM_FFI_DLL_EXPORT_TYPED_FUNC(flashinfer_moe_output_memset_bf16, moe_output_memset_bf16);
+ #endif
+ 
++TVM_FFI_DLL_EXPORT_TYPED_FUNC(flashinfer_moe_output_memset_inplace_fp16,
++                              moe_output_memset_inplace_fp16);
++#ifdef ENABLE_BF16
++TVM_FFI_DLL_EXPORT_TYPED_FUNC(flashinfer_moe_output_memset_inplace_bf16,
++                              moe_output_memset_inplace_bf16);
++#endif
++
+ TVM_FFI_DLL_EXPORT_TYPED_FUNC(flashinfer_moe_activation_fp16, moe_activation_fp16);
+ #ifdef ENABLE_BF16
+ TVM_FFI_DLL_EXPORT_TYPED_FUNC(flashinfer_moe_activation_bf16, moe_activation_bf16);
+diff --git a/flashinfer/fused_moe/cute_dsl/fused_moe.py b/flashinfer/fused_moe/cute_dsl/fused_moe.py
+index 8cd44b6045..74a36e38c3 100644
+--- a/flashinfer/fused_moe/cute_dsl/fused_moe.py
++++ b/flashinfer/fused_moe/cute_dsl/fused_moe.py
+@@ -63,6 +63,7 @@
+ from .moe_utils import (
+     allocate_moe_sort_buffers,
+     get_max_num_permuted_tokens,
++    moe_output_memset_inplace,
+     moe_sort,
+ )
+ from .blockscaled_contiguous_gather_grouped_gemm_swiglu_fusion import (
+@@ -263,20 +264,25 @@ def _moe_core_impl(
+     # Step 3: Zero the active output slice before GEMM2 finalize.
+     # Finalize uses atomic scatter-add into `moe_output`, so it must start
+     # from zero each call. We zero only the active slice, not the full
+-    # preallocated buffer. We do not use `moe_output_memset` here because
+-    # FlashInfer's port always invokes the sparse kernel, missing the
+-    # TRT-LLM dispatch that falls back to cudaMemsetAsync (dense zero)
+-    # when !enable_alltoall || ep_size <= top_k. A dense zero of the
+-    # active slice is correct for all configurations.
+-    # TODO: add the TRTLLM all-to-all and `moe_output_memset` behavior
++    # preallocated buffer.
++    #
++    # `moe_output_memset_inplace` mirrors TRT-LLM's `moe_output_memset_inplace`
++    # Path A (dense cudaMemsetAsync). TRT-LLM's Path B (sparse moeOutputMemset
++    # kernel for the internal-alltoall case) is not exposed here — current
++    # callers of this API handle all-to-all outside this function.
++    #
++    # The wrapper issues cudaMemsetAsync on the current PyTorch CUDA stream,
++    # so the `with torch.cuda.stream(aux_stream):` context below correctly
++    # places the memset on the aux stream for overlap with the main-stream
++    # GEMM1.
+     if use_async_memset:
+         with torch.cuda.stream(aux_stream):
+             main_event.wait()
+-            moe_output.zero_()
++            moe_output_memset_inplace(moe_output)
+             memset_event.record()
+         memset_event.wait()
+     else:
+-        moe_output.zero_()
++        moe_output_memset_inplace(moe_output)
+ 
+     # Step 4: GEMM2 + Finalize
+     blockscaled_contiguous_grouped_gemm_finalize_fusion_nvfp4(
+diff --git a/flashinfer/fused_moe/cute_dsl/moe_utils.py b/flashinfer/fused_moe/cute_dsl/moe_utils.py
+index c265ef4d5e..45e6058b01 100644
+--- a/flashinfer/fused_moe/cute_dsl/moe_utils.py
++++ b/flashinfer/fused_moe/cute_dsl/moe_utils.py
+@@ -329,6 +329,66 @@ def moe_output_memset(
+     )
+ 
+ 
++def moe_output_memset_inplace(output: torch.Tensor) -> None:
++    """
++    Zero the active MoE output slice via ``cudaMemsetAsync`` on the current
++    CUDA stream.
++
++    Dense-only port of TRT-LLM's
++    ``torch.ops.trtllm.moe_output_memset_inplace`` Path A
++    (``cuteDslMoeUtilsOp.cpp:moe_output_memset_inplace`` at the
++    ``!enable_alltoall || ep_size <= top_k`` branch). Functionally
++    equivalent to ``output.zero_()`` but with lower per-call launch overhead
++    (one ``cudaMemsetAsync`` vs PyTorch's ``FillFunctor`` kernel launch —
++    saves ~2-3 µs per call at the cells where memset cost is visible).
++
++    This entry point exposes only Path A. Current callers of the
++    monolithic CuteDSL MoE API handle all-to-all outside this function,
++    so TRT-LLM's internal-alltoall Path B (the sparse
++    ``moeOutputMemset`` kernel) is not part of this API. The existing
++    sparse ``moe_output_memset`` binding remains available if a future
++    internal-alltoall integration needs it.
++
++    The wrapper passes PyTorch's current CUDA stream pointer explicitly
++    to the C++ binding (via ``_get_cuda_stream_ptr()``). This is
++    required because the underlying ``get_current_stream()`` C++ helper
++    resolves through ``TVMFFIEnvGetStream``, which does NOT track
++    PyTorch's ``torch.cuda.stream(...)`` Python context — without the
++    explicit pointer the memset would queue on TVM's env stream and
++    would not overlap aux-stream memset with surrounding GEMM work.
++    Same pattern as ``moe_sort`` in this file.
++
++    Args:
++        output: Output tensor to zero. Shape: ``[num_tokens, hidden_size]``.
++                Supported dtypes: ``torch.float16``, ``torch.bfloat16``.
++    """
++    if output.dtype not in (torch.float16, torch.bfloat16):
++        raise ValueError(
++            "moe_output_memset_inplace only supports torch.float16 and "
++            f"torch.bfloat16, got {output.dtype}"
++        )
++    if output.dim() != 2:
++        raise ValueError(
++            "moe_output_memset_inplace expects a 2D tensor, "
++            f"got shape {tuple(output.shape)}"
++        )
++    if not output.is_contiguous():
++        raise ValueError(
++            "moe_output_memset_inplace requires a contiguous tensor; "
++            "cudaMemsetAsync zeros a dense byte range from data_ptr()"
++        )
++
++    module = _get_moe_utils_module()
++    dtype_suffix = _get_dtype_suffix(output.dtype)
++
++    num_tokens, hidden_size = output.shape
++
++    func_name = f"flashinfer_moe_output_memset_inplace_{dtype_suffix}"
++    func = module[func_name]
++
++    func(output.data_ptr(), num_tokens, hidden_size, _get_cuda_stream_ptr())
++
++
+ # ============================ moe_sort ============================
+ 
+ 
+diff --git a/flashinfer/jit/moe_utils.py b/flashinfer/jit/moe_utils.py
+index 553545110c..f1f891ef90 100644
+--- a/flashinfer/jit/moe_utils.py
++++ b/flashinfer/jit/moe_utils.py
+@@ -29,7 +29,12 @@ def gen_moe_utils_module() -> JitSpec:
+     This module contains:
+     - moePermute: Permute input activations for MoE routing
+     - moeUnpermute: Unpermute and scale outputs after expert computation
+-    - moeOutputMemset: Zero-initialize output buffers for scattered writes
++    - moeOutputMemset: Sparse zero of permuted output buffers for scattered
++      writes (TRT-LLM Path B; not used by current API entry points but
++      retained for future internal-alltoall integration)
++    - moeOutputMemsetInplace: Dense ``cudaMemsetAsync`` zero of the active
++      output slice before GEMM2 finalize. Mirrors TRT-LLM's
++      ``moe_output_memset_inplace`` Path A.
+     - moeActivation: Apply activation functions with optional FP4 quantization
+     - moeSort: Sort tokens by expert assignment (DeepSeekV3 routing)
+     """
+diff --git a/tests/moe/test_cute_dsl_fused_moe.py b/tests/moe/test_cute_dsl_fused_moe.py
+index cf2b4cfe0e..7c4eeb32b6 100644
+--- a/tests/moe/test_cute_dsl_fused_moe.py
++++ b/tests/moe/test_cute_dsl_fused_moe.py
+@@ -2122,5 +2122,186 @@ def call(tile_size: int) -> None:
+             )
+ 
+ 
++# ============================================================================
++# moe_output_memset_inplace (dense Path A) — unit tests
++# ============================================================================
++#
++# Tests for the dense cudaMemsetAsync wrapper that mirrors TRT-LLM's
++# `moe_output_memset_inplace` Path A. Used in `_moe_core_impl` before GEMM2
++# finalize to zero the active output slice for the atomic scatter-add.
++# See flashinfer/fused_moe/cute_dsl/moe_utils.py:moe_output_memset_inplace
++# for the function and the audit doc follow-up #11 for the scope decision.
++
++
++@cute_dsl_available
++@sm100_required
++class TestMoeOutputMemsetInplace:
++    """Correctness + stream-handling tests for the dense memset wrapper."""
++
++    @pytest.mark.parametrize("dtype", [torch.float16, torch.bfloat16])
++    @pytest.mark.parametrize(
++        "shape",
++        [
++            (1, 7168),  # decode N=1, DSv3 hidden
++            (64, 1024),  # generic small
++        ],
++    )
++    def test_zeros_buffer(self, dtype, shape):
++        """Buffer is fully zeroed regardless of starting contents."""
++        x = torch.randn(*shape, device="cuda", dtype=dtype)
++        assert not (x == 0).all(), (
++            "test setup invariant: a random tensor must not be all-zeros"
++        )
++
++        from flashinfer.fused_moe.cute_dsl.moe_utils import (
++            moe_output_memset_inplace,
++        )
++
++        moe_output_memset_inplace(x)
++        torch.cuda.synchronize()
++
++        assert (x == 0).all(), (
++            f"moe_output_memset_inplace did not zero the buffer "
++            f"(shape={shape}, dtype={dtype})"
++        )
++
++    def test_unsupported_dtype_raises(self):
++        """Reject dtypes we don't bind before native dispatch."""
++        from flashinfer.fused_moe.cute_dsl.moe_utils import (
++            moe_output_memset_inplace,
++        )
++
++        x = torch.randn(16, 32, device="cuda", dtype=torch.float32)
++        with pytest.raises(ValueError, match="only supports"):
++            moe_output_memset_inplace(x)
++
++    def test_cuda_graph_capture(self):
++        """
++        Verify the wrapper captures cleanly into a CUDA graph and replays.
++
++        CUDA-graph capture requires every queued op to land on the capture
++        stream. If the wrapper's memset ended up on a *different* stream
++        (e.g. TVM FFI's env stream when the Python current stream is the
++        capture stream), capture would either error or produce an
++        inconsistent graph whose replay doesn't zero the buffer. A clean
++        capture + correct replay is strong evidence that the explicit
++        stream pointer is being honored by the C++ binding.
++        """
++        from flashinfer.fused_moe.cute_dsl.moe_utils import (
++            moe_output_memset_inplace,
++        )
++
++        x = torch.randn(128, 2048, device="cuda", dtype=torch.bfloat16)
++
++        # Warm up on the capture stream so JIT compile doesn't race capture.
++        capture_stream = torch.cuda.Stream()
++        capture_stream.wait_stream(torch.cuda.current_stream())
++        with torch.cuda.stream(capture_stream):
++            moe_output_memset_inplace(x)
++        torch.cuda.current_stream().wait_stream(capture_stream)
++        torch.cuda.synchronize()
++
++        graph = torch.cuda.CUDAGraph()
++        x.fill_(7.0)
++        with torch.cuda.graph(graph, stream=capture_stream):
++            moe_output_memset_inplace(x)
++
++        # Replay: refill with non-zero so a successful replay is observable.
++        x.fill_(7.0)
++        torch.cuda.synchronize()
++        graph.replay()
++        torch.cuda.synchronize()
++        assert (x == 0).all(), (
++            "CUDA graph replay did not zero the buffer — wrapper's memset "
++            "is not being captured onto the capture stream"
++        )
++
++
++class TestMoeOutputMemsetInplaceContract:
++    """
++    Python-level contract test for ``moe_output_memset_inplace``.
++
++    Intentionally NOT decorated with ``@cute_dsl_available`` /
++    ``@sm100_required`` — this test does not touch the GPU at all
++    (CPU tensor, monkeypatched FFI dispatch, monkeypatched stream
++    getter), so it runs everywhere and catches the highest-priority
++    Python-side regressions deterministically.
++    """
++
++    def test_passes_current_torch_stream_ptr_to_binding(self, monkeypatch):
++        """
++        Verify the wrapper passes the FFI binding:
++          - the right ``data_ptr`` (positional 1)
++          - ``num_tokens`` and ``hidden_size`` (positional 2/3)
++          - the result of ``_get_cuda_stream_ptr()`` (positional 4)
++
++        Catches Python-side regressions:
++          - dropping the ``_get_cuda_stream_ptr()`` argument
++          - passing 0 (which would fall back to TVM FFI's env stream)
++          - changing the order of FFI arguments
++          - calling the wrong dtype-suffixed entry point
++
++        Monkeypatches both ``_get_moe_utils_module`` (to capture the
++        FFI call) and ``_get_cuda_stream_ptr`` (to return a known
++        sentinel), so the test is fully deterministic and CPU-only.
++        """
++        from flashinfer.fused_moe.cute_dsl import moe_utils
++
++        captured = {}
++
++        def fake_memset(ptr, num_tokens, hidden_size, stream_ptr):
++            captured["ptr"] = ptr
++            captured["num_tokens"] = num_tokens
++            captured["hidden_size"] = hidden_size
++            captured["stream_ptr"] = stream_ptr
++
++        SENTINEL_STREAM_PTR = 0x123456789ABCDEF0
++        monkeypatch.setattr(
++            moe_utils,
++            "_get_moe_utils_module",
++            lambda: {"flashinfer_moe_output_memset_inplace_bf16": fake_memset},
++        )
++        monkeypatch.setattr(
++            moe_utils, "_get_cuda_stream_ptr", lambda: SENTINEL_STREAM_PTR
++        )
++
++        x = torch.empty((2, 3), device="cpu", dtype=torch.bfloat16)
++        moe_utils.moe_output_memset_inplace(x)
++
++        assert captured["ptr"] == x.data_ptr(), (
++            "wrapper passed wrong data_ptr to FFI binding"
++        )
++        assert captured["num_tokens"] == 2, "wrapper passed wrong num_tokens"
++        assert captured["hidden_size"] == 3, "wrapper passed wrong hidden_size"
++        assert captured["stream_ptr"] == SENTINEL_STREAM_PTR, (
++            "wrapper did not pass `_get_cuda_stream_ptr()`'s return value "
++            "as the 4th FFI argument — the active PyTorch stream would be "
++            "lost on the C++ side. Likely cause: `_get_cuda_stream_ptr()` "
++            "was dropped, replaced with 0, or the FFI argument order "
++            "changed."
++        )
++
++    @pytest.mark.parametrize(
++        ("tensor", "match"),
++        [
++            (torch.empty((2, 3), dtype=torch.float32), "only supports"),
++            (torch.empty((2, 3, 4), dtype=torch.bfloat16), "2D tensor"),
++            (torch.empty((2, 3), dtype=torch.bfloat16).t(), "contiguous"),
++        ],
++    )
++    def test_rejects_invalid_inputs_before_native_dispatch(
++        self, monkeypatch, tensor, match
++    ):
++        """Validate dangerous inputs before resolving the native binding."""
++        from flashinfer.fused_moe.cute_dsl import moe_utils
++
++        def fail_module_load():
++            raise AssertionError("native binding should not be loaded")
++
++        monkeypatch.setattr(moe_utils, "_get_moe_utils_module", fail_module_load)
++        with pytest.raises(ValueError, match=match):
++            moe_utils.moe_output_memset_inplace(tensor)
++
++
+ if __name__ == "__main__":
+     pytest.main([__file__, "-v"])

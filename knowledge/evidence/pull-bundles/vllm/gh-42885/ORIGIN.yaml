@@ -1,0 +1,37 @@
+schema_version: 1
+source_key: vllm-project/vllm#42885
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42885
+title: '[Perf][MLA] Enable FULL cudagraph capture for TRITON_MLA decode'
+url: https://github.com/vllm-project/vllm/pull/42885
+state: closed
+merged_at: '2026-05-18T21:29:11Z'
+base_ref_oid: 1c8e9c0399f6a6a98f406dce5947a2ad318e195a
+head_ref_oid: 04d9ecae03c975272e26d7d667612a8734a843d0
+captured_at: '2026-05-20T15:07:50.537593+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention kernel
+- cuda
+techniques: []
+hardware_features: []
+kernel_types:
+- attention
+- decode
+- mla
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: vllm/v1/attention/backends/mla/triton_mla.py
+    local_path: source-snapshot/vllm/v1/attention/backends/mla/triton_mla.py
+    ref: 04d9ecae03c975272e26d7d667612a8734a843d0
+    status: modified
+    fetched: true

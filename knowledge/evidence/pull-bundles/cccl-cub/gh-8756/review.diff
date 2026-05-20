@@ -1,0 +1,229 @@
+diff --git a/cub/benchmarks/bench/reduce/by_key.cu b/cub/benchmarks/bench/reduce/by_key.cu
+index 224a5532980..3482227343a 100644
+--- a/cub/benchmarks/bench/reduce/by_key.cu
++++ b/cub/benchmarks/bench/reduce/by_key.cu
+@@ -33,58 +33,40 @@ struct bench_reduce_by_key_policy_selector
+ #endif // !TUNE_BASE
+ 
+ template <class KeyT, class ValueT, class OffsetT>
+-static void reduce(nvbench::state& state, nvbench::type_list<KeyT, ValueT, OffsetT>)
++static void reduce_by_key(nvbench::state& state, nvbench::type_list<KeyT, ValueT, OffsetT>)
+ {
+-  using equality_op_t  = ::cuda::std::equal_to<>;
+   using reduction_op_t = ::cuda::std::plus<>;
+-  using offset_t       = cub::detail::choose_offset_t<OffsetT>;
+ 
+   const auto elements                    = static_cast<std::size_t>(state.get_int64("Elements{io}"));
+   constexpr std::size_t min_segment_size = 1;
+   const std::size_t max_segment_size     = static_cast<std::size_t>(state.get_int64("MaxSegSize"));
+ 
+-  thrust::device_vector<offset_t> num_runs_out(1);
++  thrust::device_vector<OffsetT> num_runs_out(1);
+   thrust::device_vector<ValueT> in_vals(elements);
+   thrust::device_vector<ValueT> out_vals(elements);
+   thrust::device_vector<KeyT> out_keys(elements);
+   thrust::device_vector<KeyT> in_keys = generate.uniform.key_segments(elements, min_segment_size, max_segment_size);
+ 
+-  const KeyT* d_in_keys    = thrust::raw_pointer_cast(in_keys.data());
+-  KeyT* d_out_keys         = thrust::raw_pointer_cast(out_keys.data());
+-  const ValueT* d_in_vals  = thrust::raw_pointer_cast(in_vals.data());
+-  ValueT* d_out_vals       = thrust::raw_pointer_cast(out_vals.data());
+-  offset_t* d_num_runs_out = thrust::raw_pointer_cast(num_runs_out.data());
+-
+-  std::uint8_t* d_temp_storage{};
+-  std::size_t temp_storage_bytes{};
+-  const auto num_items = static_cast<offset_t>(elements);
+-
+-  auto dispatch_on_stream = [&](cudaStream_t stream) {
+-    return cub::detail::reduce_by_key::dispatch(
+-      d_temp_storage,
+-      temp_storage_bytes,
+-      d_in_keys,
+-      d_out_keys,
+-      d_in_vals,
+-      d_out_vals,
+-      d_num_runs_out,
+-      equality_op_t{},
+-      reduction_op_t{},
+-      num_items,
+-      stream
+-#if !TUNE_BASE
+-      ,
+-      bench_reduce_by_key_policy_selector{}
+-#endif
+-    );
+-  };
+-
+-  dispatch_on_stream(cudaStream_t{nullptr});
+-
+-  thrust::device_vector<std::uint8_t> temp_storage(temp_storage_bytes);
+-  d_temp_storage = thrust::raw_pointer_cast(temp_storage.data());
+-
+-  dispatch_on_stream(cudaStream_t{nullptr});
++  const KeyT* d_in_keys   = thrust::raw_pointer_cast(in_keys.data());
++  KeyT* d_out_keys        = thrust::raw_pointer_cast(out_keys.data());
++  const ValueT* d_in_vals = thrust::raw_pointer_cast(in_vals.data());
++  ValueT* d_out_vals      = thrust::raw_pointer_cast(out_vals.data());
++  OffsetT* d_num_runs_out = thrust::raw_pointer_cast(num_runs_out.data());
++
++  caching_allocator_t alloc;
++
++  // Run once to get the number of runs for reporting
++  _CCCL_TRY_CUDA_API(
++    cub::DeviceReduce::ReduceByKey,
++    "ReduceByKey failed",
++    d_in_keys,
++    d_out_keys,
++    d_in_vals,
++    d_out_vals,
++    d_num_runs_out,
++    reduction_op_t{},
++    static_cast<OffsetT>(elements),
++    alloc);
+   cudaDeviceSynchronize();
+   const OffsetT num_runs = num_runs_out[0];
+ 
+@@ -96,7 +78,25 @@ static void reduce(nvbench::state& state, nvbench::type_list<KeyT, ValueT, Offse
+   state.add_global_memory_writes<OffsetT>(1);
+ 
+   state.exec(nvbench::exec_tag::gpu | nvbench::exec_tag::no_batch, [&](nvbench::launch& launch) {
+-    dispatch_on_stream(launch.get_stream());
++    auto env = cub_bench_env(
++      alloc,
++      launch
++#if !TUNE_BASE
++      ,
++      cuda::execution::tune(bench_reduce_by_key_policy_selector{})
++#endif // !TUNE_BASE
++    );
++    _CCCL_TRY_CUDA_API(
++      cub::DeviceReduce::ReduceByKey,
++      "ReduceByKey failed",
++      d_in_keys,
++      d_out_keys,
++      d_in_vals,
++      d_out_vals,
++      d_num_runs_out,
++      reduction_op_t{},
++      static_cast<OffsetT>(elements),
++      env);
+   });
+ }
+ 
+@@ -123,7 +123,7 @@ using value_types = nvbench::type_list<TUNE_ValueT>;
+ using value_types = all_types;
+ #endif // TUNE_ValueT
+ 
+-NVBENCH_BENCH_TYPES(reduce, NVBENCH_TYPE_AXES(key_types, value_types, some_offset_types))
++NVBENCH_BENCH_TYPES(reduce_by_key, NVBENCH_TYPE_AXES(key_types, value_types, some_offset_types))
+   .set_name("base")
+   .set_type_axes_names({"KeyT{ct}", "ValueT{ct}", "OffsetT{ct}"})
+   .add_int64_power_of_two_axis("Elements{io}", nvbench::range(16, 28, 4))
+diff --git a/cub/benchmarks/bench/select/unique.cu b/cub/benchmarks/bench/select/unique.cu
+index 09ccf224a99..6adc5d0f979 100644
+--- a/cub/benchmarks/bench/select/unique.cu
++++ b/cub/benchmarks/bench/select/unique.cu
+@@ -53,7 +53,14 @@ static void unique(nvbench::state& state, nvbench::type_list<T, InPlace>)
+   offset_t* d_num_unique = thrust::raw_pointer_cast(num_unique_out.data());
+ 
+   // Get number of unique elements for metrics
+-  cub::DeviceSelect::Unique(d_in, d_out, d_num_unique, static_cast<offset_t>(elements), ::cuda::std::equal_to<>{});
++  _CCCL_TRY_CUDA_API(
++    cub::DeviceSelect::Unique,
++    "select_unique failed",
++    d_in,
++    d_out,
++    d_num_unique,
++    static_cast<offset_t>(elements),
++    ::cuda::std::equal_to<>{});
+   cudaDeviceSynchronize();
+   const offset_t num_unique = num_unique_out[0];
+ 
+diff --git a/cub/cub/device/device_reduce.cuh b/cub/cub/device/device_reduce.cuh
+index 7005a24c54a..910eca6d891 100644
+--- a/cub/cub/device/device_reduce.cuh
++++ b/cub/cub/device/device_reduce.cuh
+@@ -2234,14 +2234,12 @@ public:
+   {
+     _CCCL_NVTX_RANGE_SCOPE("cub::DeviceReduce::ReduceByKey");
+ 
+-    using OffsetT    = detail::choose_offset_t<NumItemsT>;
+-    using EqualityOp = ::cuda::std::equal_to<>;
+-
+-    using AccumT = ::cuda::std::
+-      __accumulator_t<ReductionOpT, detail::it_value_t<ValuesInputIteratorT>, detail::it_value_t<ValuesInputIteratorT>>;
+-    using KeyT = detail::non_void_value_t<UniqueOutputIteratorT, detail::it_value_t<KeysInputIteratorT>>;
+-    using default_policy_selector = detail::reduce_by_key::policy_selector_from_types<ReductionOpT, AccumT, KeyT>;
+-
++    using OffsetT                 = detail::choose_offset_t<NumItemsT>;
++    using EqualityOp              = ::cuda::std::equal_to<>;
++    using default_policy_selector = detail::reduce_by_key::policy_selector_from_types<
++      ReductionOpT,
++      ::cuda::std::__accumulator_t<ReductionOpT, detail::it_value_t<ValuesInputIteratorT>>,
++      detail::non_void_value_t<UniqueOutputIteratorT, detail::it_value_t<KeysInputIteratorT>>>;
+     return detail::dispatch_with_env_and_tuning<default_policy_selector>(
+       env, [&](auto policy_selector, void* storage, size_t& bytes, cudaStream_t stream) {
+         return detail::reduce_by_key::dispatch(
+diff --git a/cub/test/catch2_test_device_reduce_env.cu b/cub/test/catch2_test_device_reduce_env.cu
+index e2209de3f0e..0a5d5075649 100644
+--- a/cub/test/catch2_test_device_reduce_env.cu
++++ b/cub/test/catch2_test_device_reduce_env.cu
+@@ -343,6 +343,58 @@ C2H_TEST("Device ArgMax can be tuned", "[reduce][device]", block_sizes)
+ 
+ #endif // TEST_LAUNCH != 1
+ 
++template <int BlockThreads>
++struct reduce_by_key_tuning
++{
++  _CCCL_API constexpr auto operator()(cuda::compute_capability) const
++    -> cub::detail::reduce_by_key::reduce_by_key_policy
++  {
++    return {BlockThreads, 1, cub::BLOCK_LOAD_DIRECT, cub::LOAD_DEFAULT, cub::BLOCK_SCAN_WARP_SCANS, {}};
++  }
++};
++
++using reduce_by_key_block_sizes =
++  c2h::type_list<cuda::std::integral_constant<unsigned int, 64>, cuda::std::integral_constant<unsigned int, 128>>;
++
++#if TEST_LAUNCH != 1
++
++using block_size_extracting_minimum_t = block_size_extracting_op<cuda::minimum<int>>;
++
++C2H_TEST("Device ReduceByKey can be tuned", "[reduce][device]", reduce_by_key_block_sizes)
++{
++  constexpr unsigned int target_block_size = c2h::get<0, TestType>::value;
++  auto d_keys_in                           = c2h::device_vector<int>{0, 2, 2, 9, 5, 5, 5, 8};
++  auto d_values_in                         = c2h::device_vector<int>{0, 7, 1, 6, 2, 5, 3, 4};
++  auto d_unique_out                        = c2h::device_vector<int>(8);
++  auto d_aggregates_out                    = c2h::device_vector<int>(8);
++  auto d_num_runs_out                      = c2h::device_vector<int>(1);
++  auto d_block_size                        = c2h::device_vector<unsigned int>(1);
++
++  block_size_extracting_minimum_t reduction_op{thrust::raw_pointer_cast(d_block_size.data())};
++  auto env = cuda::execution::tune(reduce_by_key_tuning<target_block_size>{});
++
++  device_reduce_by_key(
++    d_keys_in.begin(),
++    d_unique_out.begin(),
++    d_values_in.begin(),
++    d_aggregates_out.begin(),
++    d_num_runs_out.begin(),
++    reduction_op,
++    static_cast<int>(d_keys_in.size()),
++    env);
++
++  REQUIRE(d_num_runs_out[0] == 5);
++  c2h::device_vector<int> expected_keys{0, 2, 9, 5, 8};
++  c2h::device_vector<int> expected_aggregates{0, 1, 6, 2, 4};
++  d_unique_out.resize(5);
++  d_aggregates_out.resize(5);
++  REQUIRE(d_unique_out == expected_keys);
++  REQUIRE(d_aggregates_out == expected_aggregates);
++  REQUIRE(d_block_size[0] == target_block_size);
++}
++
++#endif // TEST_LAUNCH != 1
++
+ using requirements =
+   c2h::type_list<cuda::execution::determinism::gpu_to_gpu_t,
+                  cuda::execution::determinism::run_to_run_t,

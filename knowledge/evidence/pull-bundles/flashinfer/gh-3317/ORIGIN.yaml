@@ -1,0 +1,51 @@
+schema_version: 1
+source_key: flashinfer-ai/flashinfer#3317
+repo: flashinfer-ai/flashinfer
+repo_id: flashinfer
+pr_number: 3317
+title: Update trtllm FMHA cubins
+url: https://github.com/flashinfer-ai/flashinfer/pull/3317
+state: closed
+merged_at: '2026-05-19T21:54:09Z'
+base_ref_oid: d625ed4d09b0a3d23d5d4fa3d08b94f2a8cbeeee
+head_ref_oid: a6b90879d8523828682b04583d6a142aed0a27c2
+captured_at: '2026-05-20T14:42:50.342646+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention
+- attention kernel
+- cute
+- fmha
+- fp4
+- fp8
+techniques: []
+hardware_features:
+- fp4
+- fp8
+kernel_types:
+- attention
+languages:
+- cuda-cpp
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: csrc/trtllm_fmha_kernel_launcher.cu
+    local_path: source-snapshot/csrc/trtllm_fmha_kernel_launcher.cu
+    ref: a6b90879d8523828682b04583d6a142aed0a27c2
+    status: modified
+    fetched: true
+  - source_path: flashinfer/artifacts.py
+    local_path: source-snapshot/flashinfer/artifacts.py
+    ref: a6b90879d8523828682b04583d6a142aed0a27c2
+    status: modified
+    fetched: true
+  - source_path: include/flashinfer/trtllm/fmha/kernelParams.h
+    local_path: source-snapshot/include/flashinfer/trtllm/fmha/kernelParams.h
+    ref: a6b90879d8523828682b04583d6a142aed0a27c2
+    status: modified
+    fetched: true

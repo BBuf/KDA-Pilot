@@ -33,6 +33,7 @@ Then inspect the evidence bundle named by `artifact_dir`:
 
 ```bash
 less evidence/pull-bundles/flash-attention/gh-1940/review.diff
+less evidence/pull-bundles/flash-attention/gh-1940/discussion.md
 find evidence/pull-bundles/flash-attention/gh-1940/source-snapshot -type f
 ```
 
@@ -53,6 +54,8 @@ Use web search, official docs, GitHub PR pages, and upstream source search.
 
 - `sources/prs/{repo}/PR-{N}.md` — one metadata page per tracked upstream PR
 - `evidence/pull-bundles/{repo}/gh-{N}/review.diff` — materialized PR diff
+- `evidence/pull-bundles/{repo}/gh-{N}/discussion.md` — review/comment digest
+  from the PR submission-to-merge discussion window
 - `evidence/pull-bundles/{repo}/gh-{N}/source-snapshot/` — changed upstream
   source files captured from the PR
 - `evidence/pull-bundles/{repo}/gh-{N}/upstream.json` — upstream PR metadata

@@ -1,0 +1,63 @@
+schema_version: 1
+source_key: flashinfer-ai/flashinfer#3328
+repo: flashinfer-ai/flashinfer
+repo_id: flashinfer
+pr_number: 3328
+title: 'feat(cute_dsl/moe): add `moe_output_memset_inplace` dense memset wrapper'
+url: https://github.com/flashinfer-ai/flashinfer/pull/3328
+state: closed
+merged_at: '2026-05-18T21:17:39Z'
+base_ref_oid: 89bfb6882edbf21c8dd4fee7fa719f6206e9de36
+head_ref_oid: 79cfacb34adbf8dfc8e882463438bc0381135d5e
+captured_at: '2026-05-20T14:41:58.585438+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cuda kernel
+- cute
+- fp4
+- fp8
+- gemm
+- moe kernel
+techniques:
+- kernel-fusion
+hardware_features:
+- fp4
+- fp8
+kernel_types:
+- gemm
+- moe
+languages:
+- cuda-cpp
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: csrc/moe_utils_binding.cu
+    local_path: source-snapshot/csrc/moe_utils_binding.cu
+    ref: 79cfacb34adbf8dfc8e882463438bc0381135d5e
+    status: modified
+    fetched: true
+  - source_path: flashinfer/fused_moe/cute_dsl/fused_moe.py
+    local_path: source-snapshot/flashinfer/fused_moe/cute_dsl/fused_moe.py
+    ref: 79cfacb34adbf8dfc8e882463438bc0381135d5e
+    status: modified
+    fetched: true
+  - source_path: flashinfer/fused_moe/cute_dsl/moe_utils.py
+    local_path: source-snapshot/flashinfer/fused_moe/cute_dsl/moe_utils.py
+    ref: 79cfacb34adbf8dfc8e882463438bc0381135d5e
+    status: modified
+    fetched: true
+  - source_path: flashinfer/jit/moe_utils.py
+    local_path: source-snapshot/flashinfer/jit/moe_utils.py
+    ref: 79cfacb34adbf8dfc8e882463438bc0381135d5e
+    status: modified
+    fetched: true
+  - source_path: tests/moe/test_cute_dsl_fused_moe.py
+    local_path: source-snapshot/tests/moe/test_cute_dsl_fused_moe.py
+    ref: 79cfacb34adbf8dfc8e882463438bc0381135d5e
+    status: modified
+    fetched: true

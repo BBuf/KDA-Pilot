@@ -1,0 +1,36 @@
+schema_version: 1
+source_key: vllm-project/vllm#42880
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42880
+title: '[ROCm] Guard AITER GDN decode fast path by layout'
+url: https://github.com/vllm-project/vllm/pull/42880
+state: closed
+merged_at: '2026-05-18T18:56:22Z'
+base_ref_oid: 1ac10f159a09897baada01b14b6a0dd6442aefd6
+head_ref_oid: aeb8e49d2a3918a5d58f0e0f8865419daeceac9f
+captured_at: '2026-05-20T15:07:55.383860+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- fp8
+- triton kernel
+techniques: []
+hardware_features:
+- fp8
+kernel_types:
+- decode
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: vllm/model_executor/layers/mamba/gdn_linear_attn.py
+    local_path: source-snapshot/vllm/model_executor/layers/mamba/gdn_linear_attn.py
+    ref: aeb8e49d2a3918a5d58f0e0f8865419daeceac9f
+    status: modified
+    fetched: true

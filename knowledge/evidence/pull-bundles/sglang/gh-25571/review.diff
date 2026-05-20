@@ -1,0 +1,35 @@
+diff --git a/python/sglang/srt/environ.py b/python/sglang/srt/environ.py
+index eb2292bd5e6e..0ca84067da93 100644
+--- a/python/sglang/srt/environ.py
++++ b/python/sglang/srt/environ.py
+@@ -205,6 +205,7 @@ class Envs:
+     SGLANG_DISABLE_TP_MEMORY_INBALANCE_CHECK = EnvBool(False)
+     SGLANG_SIMULATE_ACC_LEN = EnvFloat(-1)
+     SGLANG_SIMULATE_ACC_METHOD = EnvStr("match-expected")
++    SGLANG_SIMULATE_UNIFORM_EXPERTS = EnvBool(False)
+     SGLANG_TORCH_PROFILER_DIR = EnvStr("/tmp")
+     SGLANG_OTLP_EXPORTER_SCHEDULE_DELAY_MILLIS = EnvInt(500)
+     SGLANG_OTLP_EXPORTER_MAX_EXPORT_BATCH_SIZE = EnvInt(64)
+diff --git a/python/sglang/srt/layers/moe/topk.py b/python/sglang/srt/layers/moe/topk.py
+index 96031a9dc1c3..efff4c86a6b4 100644
+--- a/python/sglang/srt/layers/moe/topk.py
++++ b/python/sglang/srt/layers/moe/topk.py
+@@ -1467,6 +1467,18 @@ def select_experts(
+             renormalize=renormalize,
+         )
+ 
++    if envs.SGLANG_SIMULATE_UNIFORM_EXPERTS.get():
++        # Benchmark-only: override gating with uniform round-robin expert assignment
++        # to avoid expert imbalance from dummy/random weights. Do NOT use in production.
++        num_tokens, k = topk_ids.shape
++        num_experts = router_logits.shape[1]
++        offsets = torch.randint(0, num_experts, (num_tokens, 1), device=topk_ids.device)
++        steps = torch.arange(k, device=topk_ids.device).unsqueeze(0)
++        topk_ids = ((offsets + steps * (num_experts // k)) % num_experts).to(
++            topk_ids.dtype
++        )
++        topk_weights = torch.ones_like(topk_weights) / k
++
+     topk_ids, topk_weights = _post_process_topk_ids(
+         topk_ids=topk_ids,
+         topk_weights=topk_weights,

@@ -1,11 +1,11 @@
 repo: NVIDIA/TensorRT-LLM
-searched_at: '2026-05-16'
+searched_at: '2026-05-20'
 scan_start_date: '2024-01-01'
-cutoff_date: '2026-05-16'
-total_candidates: 180
-included: 120
-excluded: 0
-deferred: 60
+cutoff_date: '2026-05-20'
+total_candidates: 236
+included: 152
+excluded: 22
+deferred: 62
 prs:
 - number: 13340
   pr: 13340
@@ -9074,3 +9074,2753 @@ prs:
   - tests/unittest/auto_deploy/singlegpu/mlir/test_subgraph_discovery.py
   - tests/unittest/auto_deploy/singlegpu/smoke/test_ad_build_small_single.py
   artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-12427
+- number: 14357
+  pr: 14357
+  title: '[None][infra] Waive 2 failed cases for main in post-merge 2725'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14357
+  date: '2026-05-20'
+  merged_at: '2026-05-20T10:01:28Z'
+  author: ZhanruiSunCh
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - blackwell
+  - fp4
+  - fp8
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - blackwell
+  - fp4
+  - fp8
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tests/integration/test_lists/waives.txt
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - fp4
+  - fp8
+  additions: 2
+  deletions: 0
+  changed_file_count: 1
+- number: 14346
+  pr: 14346
+  title: '[None][infra] Waive 1 failed cases for main in pre-merge 38925'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14346
+  date: '2026-05-20'
+  merged_at: '2026-05-20T08:34:42Z'
+  author: ZhanruiSunCh
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - fp4
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp4
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tests/integration/test_lists/waives.txt
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  additions: 1
+  deletions: 0
+  changed_file_count: 1
+- number: 14344
+  pr: 14344
+  title: '[None][chore] Update Claude Code agents and skills'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14344
+  date: '2026-05-20'
+  merged_at: '2026-05-20T07:35:19Z'
+  author: kaiyux
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: .claude/skills/ad-layer-visualizer/scripts/extract_trace_kernels.py, .claude/skills/kernel-cute-writing/scripts/benchmark_kernel.py, .claude/skills/kernel-cute-writing/scripts/verify_kernel.py,
+    .claude/skills/kernel-tileir-optimization/scripts/classify_kernel.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - attention kernel
+  - benchmark kernel
+  - cuda kernel
+  - cute
+  - moe
+  - moe kernel
+  - triton kernel
+  architectures:
+  - sm100
+  techniques:
+  - kernel-fusion
+  - pipeline-stages
+  hardware_features: []
+  kernel_types:
+  - attention
+  - moe
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  - triton
+  changed_paths:
+  - .claude/agents/ad-onboard-reviewer.md
+  - .claude/agents/perf-test-sync.md
+  - .claude/skills/ad-accuracy-debug/SKILL.md
+  - .claude/skills/ad-add-fusion-transformation/SKILL.md
+  - .claude/skills/ad-graph-dump/SKILL.md
+  - .claude/skills/ad-layer-visualizer/SKILL.md
+  - .claude/skills/ad-layer-visualizer/scripts/extract_trace_kernels.py
+  - .claude/skills/ad-layer-visualizer/scripts/render_layer.py
+  - .claude/skills/ad-model-onboard/SKILL.md
+  - .claude/skills/ad-pipeline-failure-pr/SKILL.md
+  - .claude/skills/kernel-cute-writing/scripts/benchmark_kernel.py
+  - .claude/skills/kernel-cute-writing/scripts/verify_kernel.py
+  - .claude/skills/kernel-tileir-optimization/scripts/classify_kernel.py
+  - .claude/skills/kernel-tileir-optimization/scripts/tileir_check.py
+  - .claude/skills/kernel-triton-writing/scripts/benchmark_kernel.py
+  - .claude/skills/kernel-triton-writing/scripts/verify_kernel.py
+  - .claude/skills/perf-host-analysis/SKILL.md
+  - .claude/skills/perf-host-analysis/references/examples.md
+  - .claude/skills/perf-host-analysis/references/kernel-level-analysis.md
+  - .claude/skills/perf-host-analysis/references/nsys-schema.md
+  - .claude/skills/perf-host-analysis/scripts/analyze_host_overhead.py
+  - .claude/skills/perf-host-analysis/scripts/detect_host_overhead.py
+  - .claude/skills/perf-host-optimization/SKILL.md
+  - .claude/skills/perf-host-optimization/references/communication-patterns.md
+  - .claude/skills/perf-host-optimization/references/hotspot-classification.md
+  - .claude/skills/perf-host-optimization/references/optimization-patterns.md
+  - .claude/skills/perf-host-optimization/references/optimization-strategy.md
+  - .claude/skills/perf-host-optimization/references/patterns/compound-pitfalls.md
+  - .claude/skills/perf-host-optimization/references/patterns/gpu-graph.md
+  - .claude/skills/perf-host-optimization/references/patterns/loop-iteration.md
+  - .claude/skills/perf-host-optimization/references/patterns/python-overhead.md
+  - .claude/skills/perf-host-optimization/references/patterns/sync-alloc.md
+  - .claude/skills/perf-host-optimization/references/patterns/system.md
+  - .claude/skills/perf-torch-cuda-graphs/scripts/verify_workload.py
+  - .claude/skills/perf-torch-sync-free/scripts/verify_workload.py
+  - .claude/skills/trtllm-moe-develop/SKILL.md
+  - .claude/skills/trtllm-moe-develop/references/moe-canonical-code-examples.md
+  path_signals:
+  - .claude/skills/ad-layer-visualizer/scripts/extract_trace_kernels.py
+  - .claude/skills/kernel-cute-writing/scripts/benchmark_kernel.py
+  - .claude/skills/kernel-cute-writing/scripts/verify_kernel.py
+  - .claude/skills/kernel-tileir-optimization/scripts/classify_kernel.py
+  - .claude/skills/kernel-tileir-optimization/scripts/tileir_check.py
+  - .claude/skills/kernel-triton-writing/scripts/benchmark_kernel.py
+  - .claude/skills/kernel-triton-writing/scripts/verify_kernel.py
+  - .claude/skills/perf-torch-cuda-graphs/scripts/verify_workload.py
+  borderline_path_signals:
+  - .claude/skills/kernel-cute-writing/scripts/benchmark_kernel.py
+  - .claude/skills/kernel-triton-writing/scripts/benchmark_kernel.py
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - cuda kernel
+  - cute
+  - moe kernel
+  - triton kernel
+  additions: 5359
+  deletions: 1382
+  changed_file_count: 37
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14344
+- number: 14332
+  pr: 14332
+  title: '[None][test] Waive 1 failed cases for main in QA CI'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14332
+  date: '2026-05-20'
+  merged_at: '2026-05-20T07:17:23Z'
+  author: xinhe-nv
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - fp8
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp8
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tests/integration/test_lists/waives.txt
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  additions: 1
+  deletions: 0
+  changed_file_count: 1
+- number: 14324
+  pr: 14324
+  title: '[None][infra] Waive 3 failed cases for main in pre-merge 38724'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14324
+  date: '2026-05-19'
+  merged_at: '2026-05-19T21:37:06Z'
+  author: ZhanruiSunCh
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - moe
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types:
+  - moe
+  languages: []
+  changed_paths:
+  - tests/integration/test_lists/waives.txt
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  additions: 3
+  deletions: 0
+  changed_file_count: 1
+- number: 14321
+  pr: 14321
+  title: '[None][fix] DSv4: drop duplicate indexer_k_dtype kwarg on V4 sparse attn'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14321
+  date: '2026-05-20'
+  merged_at: '2026-05-20T01:09:59Z'
+  author: Tabrizian
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/model_config.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - fp8
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp8
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tensorrt_llm/_torch/model_config.py
+  path_signals:
+  - tensorrt_llm/_torch/model_config.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  additions: 0
+  deletions: 2
+  changed_file_count: 1
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14321
+- number: 14319
+  pr: 14319
+  title: '[https://nvbugs/6189918][chore] Waive test_auto_dtype_with_helix[fifo-cudagraph:with_padding-pp1tp1cp4]'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14319
+  date: '2026-05-19'
+  merged_at: '2026-05-19T18:02:49Z'
+  author: chienchunhung
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - llm-serving
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types: []
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - tests/integration/test_lists/waives.txt
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cudagraph
+  additions: 1
+  deletions: 0
+  changed_file_count: 1
+- number: 14316
+  pr: 14316
+  title: '[None][infra] Waive 1 failed cases for main in pre-merge 38844'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14316
+  date: '2026-05-19'
+  merged_at: '2026-05-19T16:17:24Z'
+  author: ZhanruiSunCh
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - fp8
+  - hopper
+  architectures:
+  - sm90
+  techniques: []
+  hardware_features:
+  - fp8
+  - hopper
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tests/integration/test_lists/waives.txt
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  - hopper
+  additions: 1
+  deletions: 0
+  changed_file_count: 1
+- number: 14309
+  pr: 14309
+  title: '[None][test] Waive 8 failed cases for main in QA CI'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14309
+  date: '2026-05-20'
+  merged_at: '2026-05-20T02:30:23Z'
+  author: xinhe-nv
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - cutlass
+  - fp4
+  - fp8
+  - moe
+  - nvfp4
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp4
+  - fp8
+  - nvfp4
+  kernel_types:
+  - moe
+  languages:
+  - cute-dsl
+  changed_paths:
+  - tests/integration/test_lists/waives.txt
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cutlass
+  - fp4
+  - fp8
+  - nvfp4
+  additions: 8
+  deletions: 0
+  changed_file_count: 1
+- number: 14306
+  pr: 14306
+  title: '[None][perf] Fuse sigmoid+mul+add shared-expert combine into one Trit…'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14306
+  date: '2026-05-20'
+  merged_at: '2026-05-20T08:14:32Z'
+  author: nv-guomingz
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/models/modeling_qwen3_next.py, tensorrt_llm/_torch/modules/fused_shared_expert.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - attention kernel
+  - benchmark kernel
+  - cuda kernel
+  - llm-serving
+  - moe
+  - moe kernel
+  - nvfp4
+  - triton kernel
+  architectures:
+  - sm100
+  techniques:
+  - kernel-fusion
+  hardware_features:
+  - fp4
+  - nvfp4
+  kernel_types:
+  - attention
+  - moe
+  languages:
+  - cuda-cpp
+  - triton
+  changed_paths:
+  - tensorrt_llm/_torch/models/modeling_qwen3_next.py
+  - tensorrt_llm/_torch/modules/fused_shared_expert.py
+  - tests/unittest/_torch/modules/test_fused_shared_expert.py
+  path_signals:
+  - tensorrt_llm/_torch/models/modeling_qwen3_next.py
+  - tensorrt_llm/_torch/modules/fused_shared_expert.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - cuda kernel
+  - fp4
+  - moe kernel
+  - nvfp4
+  - triton kernel
+  additions: 393
+  deletions: 18
+  changed_file_count: 3
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14306
+- number: 14299
+  pr: 14299
+  title: '[None][fix] Warn on experimental DeepSeek-V4 base checkpoints'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14299
+  date: '2026-05-20'
+  merged_at: '2026-05-20T08:51:22Z'
+  author: lfr-0531
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/model_config.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - fp8
+  - moe
+  - mxfp4
+  - nvfp4
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp4
+  - fp8
+  - mxfp4
+  - nvfp4
+  kernel_types:
+  - moe
+  languages: []
+  changed_paths:
+  - tensorrt_llm/_torch/model_config.py
+  - tests/unittest/_torch/test_model_config.py
+  path_signals:
+  - tensorrt_llm/_torch/model_config.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - fp8
+  - mxfp4
+  - nvfp4
+  additions: 54
+  deletions: 1
+  changed_file_count: 2
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14299
+- number: 14296
+  pr: 14296
+  title: '[None][chore] Use CUDA 13 CUTLASS DSL package'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14296
+  date: '2026-05-20'
+  merged_at: '2026-05-20T08:51:31Z'
+  author: lfr-0531
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - cutlass
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types:
+  - scan
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - requirements.txt
+  - security_scanning/poetry.lock
+  - security_scanning/pyproject.toml
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cutlass
+  additions: 51
+  deletions: 24
+  changed_file_count: 3
+- number: 14294
+  pr: 14294
+  title: '[None][infra] Waive 2 failed cases for main in post-merge 2723'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14294
+  date: '2026-05-19'
+  merged_at: '2026-05-19T06:35:13Z'
+  author: ZhanruiSunCh
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - blackwell
+  - fp4
+  - llm-serving
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - blackwell
+  - fp4
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tests/integration/test_lists/waives.txt
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - fp4
+  additions: 2
+  deletions: 0
+  changed_file_count: 1
+- number: 14293
+  pr: 14293
+  title: '[https://nvbugs/6185234][fix] register deepseek_v32 / kimi_k2 with transformers AutoConfig'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14293
+  date: '2026-05-19'
+  merged_at: '2026-05-19T21:29:13Z'
+  author: longlee0622
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/configs/__init__.py, tensorrt_llm/_torch/models/__init__.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - fp4
+  - llm-serving
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp4
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tensorrt_llm/_torch/configs/__init__.py
+  - tensorrt_llm/_torch/models/__init__.py
+  - tests/unittest/_torch/test_custom_config_registration.py
+  path_signals:
+  - tensorrt_llm/_torch/configs/__init__.py
+  - tensorrt_llm/_torch/models/__init__.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  additions: 81
+  deletions: 0
+  changed_file_count: 3
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14293
+- number: 14291
+  pr: 14291
+  title: '[None][feat] Update the logic of FMHA JIT path'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14291
+  date: '2026-05-20'
+  merged_at: '2026-05-20T11:55:50Z'
+  author: heyuhhh
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCausalP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst, cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCausalP32VarSeqQ128Kv128StaticContext.cubin.tar.zst,
+    cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst, cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - fmha
+  architectures:
+  - sm100
+  techniques:
+  - async-copy
+  - persistent-kernels
+  hardware_features:
+  - blackwell
+  - tma
+  kernel_types:
+  - attention
+  - softmax
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCausalP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCausalP32VarSeqQ128Kv128StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ32Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqSkipsSoftmaxQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ32Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqSkipsSoftmaxQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ128Kv128PersistentKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ16Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ32Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ32Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ8Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqSkipsSoftmaxQ128Kv128PersistentKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32VarSeqSkipsSoftmaxQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32MultiCtasKvCgaVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32MultiCtasKvCgaVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32MultiCtasKvVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ128Kv128StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ16Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ8Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvDenseP32VarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvSlidingOrChunkedCausalP32MultiCtasKvCgaVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvSlidingOrChunkedCausalP32MultiCtasKvCgaVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvSlidingOrChunkedCausalP32MultiCtasKvVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvSlidingOrChunkedCausalP32MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvSlidingOrChunkedCausalP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvSlidingOrChunkedCausalP32VarSeqQ128Kv128StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvSlidingOrChunkedCausalP32VarSeqQ16Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvSlidingOrChunkedCausalP32VarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvSlidingOrChunkedCausalP32VarSeqQ8Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvSlidingOrChunkedCausalP32VarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvCausalP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvCausalP32VarSeqQ128Kv128StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvDenseP32MultiCtasKvCgaVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvDenseP32MultiCtasKvCgaVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvDenseP32MultiCtasKvVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvDenseP32MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvDenseP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvDenseP32VarSeqQ128Kv128StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvDenseP32VarSeqQ16Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvDenseP32VarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvDenseP32VarSeqQ8Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvDenseP32VarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvSlidingOrChunkedCausalP32MultiCtasKvCgaVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvSlidingOrChunkedCausalP32MultiCtasKvCgaVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvSlidingOrChunkedCausalP32MultiCtasKvVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvSlidingOrChunkedCausalP32MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvSlidingOrChunkedCausalP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvSlidingOrChunkedCausalP32VarSeqQ128Kv128StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvSlidingOrChunkedCausalP32VarSeqQ16Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvSlidingOrChunkedCausalP32VarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvSlidingOrChunkedCausalP32VarSeqQ8Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H256PagedKvSlidingOrChunkedCausalP32VarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCausalP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCausalP32VarSeqQ128Kv128StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32MultiCtasKvCgaVarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32MultiCtasKvCgaVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32MultiCtasKvCgaVarSeqQ32Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32MultiCtasKvCgaVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32MultiCtasKvCgaVarSeqSkipsSoftmaxQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32MultiCtasKvVarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32MultiCtasKvVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32MultiCtasKvVarSeqQ32Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32MultiCtasKvVarSeqSkipsSoftmaxQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32VarSeqQ128Kv128PersistentKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32VarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32VarSeqQ16Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32VarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32VarSeqQ32Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32VarSeqQ32Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32VarSeqQ8Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32VarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32VarSeqSkipsSoftmaxQ128Kv128PersistentKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvCustomP32VarSeqSkipsSoftmaxQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvDenseP32MultiCtasKvCgaVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvDenseP32MultiCtasKvCgaVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvDenseP32MultiCtasKvVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvDenseP32MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvDenseP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvDenseP32VarSeqQ128Kv128StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvDenseP32VarSeqQ16Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvDenseP32VarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvDenseP32VarSeqQ8Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvDenseP32VarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvSlidingOrChunkedCausalP32MultiCtasKvCgaVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvSlidingOrChunkedCausalP32MultiCtasKvCgaVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvSlidingOrChunkedCausalP32MultiCtasKvVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvSlidingOrChunkedCausalP32MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvSlidingOrChunkedCausalP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvSlidingOrChunkedCausalP32VarSeqQ128Kv128StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvSlidingOrChunkedCausalP32VarSeqQ16Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvSlidingOrChunkedCausalP32VarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvSlidingOrChunkedCausalP32VarSeqQ8Kv128PersistentSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H64PagedKvSlidingOrChunkedCausalP32VarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QkInt8VE4m3OBfloat16H128PackedQkvDenseVarSeqQ128Kv128SageQ1SageK16SageV1PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QkInt8VE4m3OBfloat16H128PackedQkvDenseVarSeqQ128Kv128SageQ1SageK16SageV1StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QkInt8VE4m3OBfloat16H128PackedQkvDenseVarSeqQ128Kv128SageQ1SageK1SageV1PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QkInt8VE4m3OBfloat16H128PackedQkvDenseVarSeqQ128Kv128SageQ1SageK1SageV1StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QkInt8VE4m3OBfloat16H128PackedQkvDenseVarSeqQ128Kv128SageQ1SageK4SageV1PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QkInt8VE4m3OBfloat16H128PackedQkvDenseVarSeqQ128Kv128SageQ1SageK4SageV1StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QkInt8VE4m3OBfloat16H128PackedQkvDenseVarSeqSkipsSoftmaxQ128Kv128SageQ1SageK16SageV1PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QkInt8VE4m3OBfloat16H128PackedQkvDenseVarSeqSkipsSoftmaxQ128Kv128SageQ1SageK16SageV1StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QkInt8VE4m3OBfloat16H128PackedQkvDenseVarSeqSkipsSoftmaxQ128Kv128SageQ1SageK1SageV1PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QkInt8VE4m3OBfloat16H128PackedQkvDenseVarSeqSkipsSoftmaxQ128Kv128SageQ1SageK1SageV1StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QkInt8VE4m3OBfloat16H128PackedQkvDenseVarSeqSkipsSoftmaxQ128Kv128SageQ1SageK4SageV1PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QkInt8VE4m3OBfloat16H128PackedQkvDenseVarSeqSkipsSoftmaxQ128Kv128SageQ1SageK4SageV1StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QkInt8VE4m3OBfloat16H128SeparateQkvDenseVarSeqQ128Kv128SageQ1SageK16SageV1PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QkInt8VE4m3OBfloat16H128SeparateQkvDenseVarSeqQ128Kv128SageQ1SageK16SageV1StaticContext.cubin.tar.zst
+  path_signals:
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCausalP32VarSeqQ128Kv128PersistentContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCausalP32VarSeqQ128Kv128StaticContext.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ32Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvCgaVarSeqSkipsSoftmaxQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ16Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ32Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen.cubin.tar.zst
+  - cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/cubin/FmhaSm100aKernel_QE4m3KvE2m1OE4m3H128PagedKvCustomP32MultiCtasKvVarSeqSkipsSoftmaxQ128Kv128StaticKeepsAbForGen.cubin.tar.zst
+  borderline_path_signals: []
+  selection_text_signals:
+  - sm100
+  additions: 6070
+  deletions: 5716
+  changed_file_count: 3000
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14291
+- number: 14283
+  pr: 14283
+  title: '[None][test] Waive 5 failed cases for main in QA CI'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14283
+  date: '2026-05-19'
+  merged_at: '2026-05-19T13:06:22Z'
+  author: xinhe-nv
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - fp4
+  - fp8
+  - nvfp4
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp4
+  - fp8
+  - nvfp4
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tests/integration/test_lists/waives.txt
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - fp8
+  - nvfp4
+  additions: 5
+  deletions: 0
+  changed_file_count: 1
+- number: 14282
+  pr: 14282
+  title: '[https://nvbugs/6095421][fix] Update resolve_moe_backend'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14282
+  date: '2026-05-20'
+  merged_at: '2026-05-20T03:02:39Z'
+  author: heyuhhh
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/model_config.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - blackwell
+  - fp8
+  - moe
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - blackwell
+  - fp8
+  kernel_types:
+  - moe
+  languages: []
+  changed_paths:
+  - tensorrt_llm/_torch/model_config.py
+  - tests/integration/test_lists/waives.txt
+  path_signals:
+  - tensorrt_llm/_torch/model_config.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - fp8
+  additions: 28
+  deletions: 10
+  changed_file_count: 2
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14282
+- number: 14281
+  pr: 14281
+  title: '[None][fix] Update the OSS headers in derived FLA ops and AD modeling code'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14281
+  date: '2026-05-19'
+  merged_at: '2026-05-19T21:37:59Z'
+  author: bmarimuthu-nv
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/chunk.py, tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/fused_recurrent.py, tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/utils.py,
+    tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/wy_fast.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - attention kernel
+  - moe
+  - moe kernel
+  - triton kernel
+  architectures:
+  - sm100
+  techniques:
+  - fine-grained-quantization
+  - kernel-fusion
+  hardware_features: []
+  kernel_types:
+  - attention
+  - gemm
+  - moe
+  languages:
+  - cuda-cpp
+  - triton
+  changed_paths:
+  - examples/auto_deploy/llmc/_license_data.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/chunk.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/fused_recurrent.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/utils.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/wy_fast.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_backend_delta.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_backend_gated_delta.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_delta.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_gated_delta.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fused_moe/triton_moe.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/quantization/torch_quant.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_cohere.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_decilm.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_deepseek.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_deepseek_ir.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_deepseek_v2.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_eagle.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_exaone.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma2.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma3n.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma4.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_glm4_moe.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_glm4_moe_lite.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_glm_moe_dsa.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gpt_oss.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_granite.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_granite_moe_hybrid.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_hunyuan_dense.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_hunyuan_moe.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_internlm3.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_kimi_k2.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_llama3.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_llama3_ir.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_llama4.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_minimax_m2.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_mistral.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_mistral3.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_nemotron_flash.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_nemotron_h.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_nemotron_h_ir.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_olmo3.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_openelm.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_qwen3_5_moe.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_qwen3_5_moe_ir.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_qwen3_ir.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_qwen3_moe.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_qwen3_next.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_seed_oss.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_skywork_r1v2.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_smollm3.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_starcoder2.py
+  path_signals:
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/chunk.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/fused_recurrent.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/utils.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/delta_rule/wy_fast.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_backend_delta.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_backend_gated_delta.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_delta.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fla/fla_gated_delta.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/fused_moe/triton_moe.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/quantization/torch_quant.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_cohere.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_decilm.py
+  borderline_path_signals:
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_decilm.py
+  selection_text_signals:
+  - attention kernel
+  - gemm
+  - moe kernel
+  - triton kernel
+  additions: 239
+  deletions: 2
+  changed_file_count: 52
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14281
+- number: 14276
+  pr: 14276
+  title: '[None][fix] Handle unset attention_dp_relax in ADP routers'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14276
+  date: '2026-05-20'
+  merged_at: '2026-05-20T01:01:45Z'
+  author: peihu-nv
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/scheduling_params.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - llm-serving
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types:
+  - attention
+  languages: []
+  changed_paths:
+  - tensorrt_llm/scheduling_params.py
+  - tests/unittest/_torch/executor/test_adp_router.py
+  path_signals:
+  - tensorrt_llm/scheduling_params.py
+  borderline_path_signals: []
+  selection_text_signals: []
+  additions: 34
+  deletions: 2
+  changed_file_count: 2
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14276
+- number: 14261
+  pr: 14261
+  title: '[https://nvbugs/6185234][fix] DeepSeek-V3.2 tokenizer load on transformers 5.x'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14261
+  date: '2026-05-19'
+  merged_at: '2026-05-19T07:59:35Z'
+  author: Hudayday
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/tokenizer/tokenizer.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - fp4
+  - llm-serving
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp4
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tensorrt_llm/tokenizer/tokenizer.py
+  path_signals:
+  - tensorrt_llm/tokenizer/tokenizer.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  additions: 75
+  deletions: 2
+  changed_file_count: 1
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14261
+- number: 14247
+  pr: 14247
+  title: '[None][chore] Update flashinfer-python from 0.6.10 to 0.6.11'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14247
+  date: '2026-05-19'
+  merged_at: '2026-05-19T03:31:31Z'
+  author: lfr-0531
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - cutlass
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types:
+  - scan
+  languages:
+  - cute-dsl
+  changed_paths:
+  - ATTRIBUTIONS-Python.md
+  - requirements.txt
+  - security_scanning/pyproject.toml
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cutlass
+  - flashinfer
+  additions: 6
+  deletions: 6
+  changed_file_count: 3
+- number: 14244
+  pr: 14244
+  title: '[None][refactor] clean up AttentionForwardArgs'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14244
+  date: '2026-05-20'
+  merged_at: '2026-05-20T07:00:41Z'
+  author: yuxianq
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/attention_backend/interface.py, tensorrt_llm/_torch/attention_backend/sparse/dsa.py, tensorrt_llm/_torch/attention_backend/trtllm.py, tensorrt_llm/_torch/models/modeling_qwen.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - nvfp4
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp4
+  - nvfp4
+  kernel_types:
+  - attention
+  languages: []
+  changed_paths:
+  - tensorrt_llm/_torch/attention_backend/interface.py
+  - tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+  - tensorrt_llm/_torch/attention_backend/trtllm.py
+  - tensorrt_llm/_torch/models/modeling_qwen.py
+  - tensorrt_llm/_torch/models/modeling_seedoss.py
+  - tensorrt_llm/_torch/modules/attention.py
+  path_signals:
+  - tensorrt_llm/_torch/attention_backend/interface.py
+  - tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+  - tensorrt_llm/_torch/attention_backend/trtllm.py
+  - tensorrt_llm/_torch/models/modeling_qwen.py
+  - tensorrt_llm/_torch/models/modeling_seedoss.py
+  - tensorrt_llm/_torch/modules/attention.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - nvfp4
+  additions: 17
+  deletions: 27
+  changed_file_count: 6
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14244
+- number: 14243
+  pr: 14243
+  title: '[https://nvbugs/6094208][fix] AutoDeploy: skip bf16 Nemotron-Nano-V3 accuracy test on <80GB GPUs'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14243
+  date: '2026-05-18'
+  merged_at: '2026-05-18T11:11:17Z'
+  author: galagam
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - fp8
+  - nvfp4
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp4
+  - fp8
+  - nvfp4
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tests/integration/defs/accuracy/test_llm_api_autodeploy.py
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - fp8
+  - nvfp4
+  additions: 2
+  deletions: 1
+  changed_file_count: 1
+- number: 14238
+  pr: 14238
+  title: '[None][fix] Restore DSV4 routed-expert swiglu_limit on TRTLLM-Gen'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14238
+  date: '2026-05-19'
+  merged_at: '2026-05-19T02:57:30Z'
+  author: Barry-Delaney
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/models/modeling_deepseekv4.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - cutlass
+  - fp4
+  - moe
+  - moe kernel
+  - mxfp4
+  - nvfp4
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp4
+  - mxfp4
+  - nvfp4
+  kernel_types:
+  - moe
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - tensorrt_llm/_torch/models/modeling_deepseekv4.py
+  path_signals:
+  - tensorrt_llm/_torch/models/modeling_deepseekv4.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - cutlass
+  - fp4
+  - moe kernel
+  - mxfp4
+  - nvfp4
+  additions: 7
+  deletions: 12
+  changed_file_count: 1
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14238
+- number: 14235
+  pr: 14235
+  title: '[None][infra] Waive 13 failed cases for main in post-merge 2722'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14235
+  date: '2026-05-18'
+  merged_at: '2026-05-18T03:17:08Z'
+  author: ZhanruiSunCh
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - cutlass
+  - fp8
+  - moe
+  - mxfp4
+  - nvfp4
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp4
+  - fp8
+  - mxfp4
+  - nvfp4
+  kernel_types:
+  - moe
+  languages:
+  - cute-dsl
+  changed_paths:
+  - tests/integration/test_lists/waives.txt
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cutlass
+  - fp4
+  - fp8
+  - mxfp4
+  - nvfp4
+  additions: 13
+  deletions: 0
+  changed_file_count: 1
+- number: 14233
+  pr: 14233
+  title: '[None][test] Waive 4 failed cases for main in QA test list'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14233
+  date: '2026-05-19'
+  merged_at: '2026-05-19T02:59:25Z'
+  author: xinhe-nv
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - fp8
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp8
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tests/integration/test_lists/waives.txt
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  additions: 4
+  deletions: 0
+  changed_file_count: 1
+- number: 14221
+  pr: 14221
+  title: '[None][test] Waive 1 failed cases for main in QA CI'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14221
+  date: '2026-05-18'
+  merged_at: '2026-05-18T11:34:04Z'
+  author: xinhe-nv
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - llm-serving
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tests/integration/test_lists/waives.txt
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  additions: 1
+  deletions: 0
+  changed_file_count: 1
+- number: 14219
+  pr: 14219
+  title: '[None][feat] DSv4: enable GVR Heuristic Top-K for compress_ratio=4'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14219
+  date: '2026-05-19'
+  merged_at: '2026-05-19T05:29:46Z'
+  author: longcheng-nv
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: cpp/tensorrt_llm/kernels/heuristicTopKDecode.cu, cpp/tensorrt_llm/kernels/heuristicTopKDecode.h, cpp/tensorrt_llm/kernels/indexerTopK.cu, tensorrt_llm/_torch/attention_backend/sparse/dsa.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - attention kernel
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - blackwell
+  kernel_types:
+  - attention
+  - decode
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - cpp/tensorrt_llm/kernels/heuristicTopKDecode.cu
+  - cpp/tensorrt_llm/kernels/heuristicTopKDecode.h
+  - cpp/tensorrt_llm/kernels/indexerTopK.cu
+  - tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+  - tensorrt_llm/_torch/model_config.py
+  - tensorrt_llm/llmapi/llm_args.py
+  - tests/unittest/_torch/thop/parallel/test_indexer_topk.py
+  path_signals:
+  - cpp/tensorrt_llm/kernels/heuristicTopKDecode.cu
+  - cpp/tensorrt_llm/kernels/heuristicTopKDecode.h
+  - cpp/tensorrt_llm/kernels/indexerTopK.cu
+  - tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+  - tensorrt_llm/_torch/model_config.py
+  - tensorrt_llm/llmapi/llm_args.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  additions: 401
+  deletions: 41
+  changed_file_count: 7
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14219
+- number: 14215
+  pr: 14215
+  title: '[https://nvbugs/6184143][chore] AutoDeploy Waive DeciLM and GraniteMoEHybrid failures'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14215
+  date: '2026-05-17'
+  merged_at: '2026-05-17T14:09:56Z'
+  author: galagam
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - moe
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types:
+  - moe
+  languages: []
+  changed_paths:
+  - tests/integration/test_lists/waives.txt
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  additions: 7
+  deletions: 0
+  changed_file_count: 1
+- number: 14213
+  pr: 14213
+  title: '[None][fix] Avoid dp_size x ep_size double-count in MegaMoEDeepGemm SymmBuffer'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14213
+  date: '2026-05-19'
+  merged_at: '2026-05-19T03:04:38Z'
+  author: qiaoxj07
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/modules/fused_moe/mega_moe/mega_moe_deepgemm.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - attention kernel
+  - benchmark kernel
+  - moe
+  - moe kernel
+  architectures:
+  - sm100
+  techniques:
+  - kernel-fusion
+  hardware_features: []
+  kernel_types:
+  - attention
+  - gemm
+  - moe
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - tensorrt_llm/_torch/modules/fused_moe/mega_moe/mega_moe_deepgemm.py
+  path_signals:
+  - tensorrt_llm/_torch/modules/fused_moe/mega_moe/mega_moe_deepgemm.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - deepgemm
+  - gemm
+  - moe kernel
+  additions: 9
+  deletions: 0
+  changed_file_count: 1
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14213
+- number: 14195
+  pr: 14195
+  title: '[None][doc] Update spec dec support matrices'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14195
+  date: '2026-05-18'
+  merged_at: '2026-05-18T16:16:50Z'
+  author: mikeiovine
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - llm-serving
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - docs/source/features/feature-combination-matrix.md
+  - docs/source/models/supported-models.md
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  additions: 34
+  deletions: 36
+  changed_file_count: 2
+- number: 14193
+  pr: 14193
+  title: '[None][fix] Add SPDX Apache-2.0 headers to auto_deploy test files'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14193
+  date: '2026-05-18'
+  merged_at: '2026-05-18T08:16:00Z'
+  author: bmarimuthu-nv
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tests/unittest/auto_deploy/_utils_test/torch_attention_reference.py, tests/unittest/auto_deploy/multigpu/custom_ops/test_moe_ep.py, tests/unittest/auto_deploy/multigpu/custom_ops/test_mxfp4_moe_ep.py,
+    tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_attention_op.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - fp4
+  - fp8
+  - gemm
+  - llm-serving
+  - moe
+  - mxfp4
+  - nvfp4
+  architectures:
+  - sm100
+  techniques:
+  - cache-policy
+  - fine-grained-quantization
+  - kernel-fusion
+  hardware_features:
+  - fp4
+  - fp8
+  - mxfp4
+  - nvfp4
+  kernel_types:
+  - attention
+  - gemm
+  - mla
+  - moe
+  - norm
+  languages:
+  - cuda-cpp
+  - triton
+  changed_paths:
+  - tensorrt_llm/_torch/auto_deploy/config/default.yaml
+  - tensorrt_llm/_torch/auto_deploy/config/transformers.yaml
+  - tests/unittest/auto_deploy/_utils_test/_custom_op_utils.py
+  - tests/unittest/auto_deploy/_utils_test/_dist_test_utils.py
+  - tests/unittest/auto_deploy/_utils_test/_graph_test_helpers.py
+  - tests/unittest/auto_deploy/_utils_test/_model_test_utils.py
+  - tests/unittest/auto_deploy/_utils_test/_torch_test_utils.py
+  - tests/unittest/auto_deploy/_utils_test/torch_attention_reference.py
+  - tests/unittest/auto_deploy/multigpu/custom_ops/test_ad_dist_strategies.py
+  - tests/unittest/auto_deploy/multigpu/custom_ops/test_dist.py
+  - tests/unittest/auto_deploy/multigpu/custom_ops/test_moe_ep.py
+  - tests/unittest/auto_deploy/multigpu/custom_ops/test_mxfp4_moe_ep.py
+  - tests/unittest/auto_deploy/multigpu/custom_ops/test_sharded_rmsnorm.py
+  - tests/unittest/auto_deploy/multigpu/smoke/test_ad_build_small_multi.py
+  - tests/unittest/auto_deploy/multigpu/transformations/library/test_allreduce_residual_rmsnorm_fusion.py
+  - tests/unittest/auto_deploy/multigpu/transformations/library/test_bmm_sharding.py
+  - tests/unittest/auto_deploy/multigpu/transformations/library/test_dist_backend.py
+  - tests/unittest/auto_deploy/multigpu/transformations/library/test_ep_sharding.py
+  - tests/unittest/auto_deploy/multigpu/transformations/library/test_rmsnorm_sharding.py
+  - tests/unittest/auto_deploy/multigpu/transformations/library/test_tp_sharding.py
+  - tests/unittest/auto_deploy/singlegpu/compile/test_captured_graph.py
+  - tests/unittest/auto_deploy/singlegpu/compile/test_compiler.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_attention_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_flashinfer_attention_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_torch_attention_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_attention_with_kv_cache.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/fla/test_fla_cached_gated_delta_rule.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/fla/test_torch_cached_gated_delta_rule.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_cuda_causal_conv_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_flashinfer_mamba_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_torch_causal_conv_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_torch_mamba_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_triton_mamba_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_mla_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_trtllm_mla_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_torch_mla_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/moe/test_ad_moe_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/moe/test_triton_moe.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/moe/test_trtllm_moe.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/normalization/test_flashinfer_fused_add_rms_norm_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/normalization/test_mamba_rms_norm.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/normalization/test_triton_rms_norm.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/quantization/test_quant.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/rope/test_rope_op_variants.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/rope/test_triton_rope.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/test_gptq_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/test_multi_stream_attn.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/test_multi_stream_moe.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/test_resource_handlers.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/test_triton_causal_conv_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/test_update_kv_cache.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/utils/test_triton_utils.py
+  - tests/unittest/auto_deploy/singlegpu/mlir/__init__.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_deepseek_custom.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_glm4_moe_lite_modeling.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_hf.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_hybrid_patches.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_kimi_k2_modeling.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_modeling_nemotron_h.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_qwen3_5_moe.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_qwen3_next_gdn_patches.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_qwen3_next_patches.py
+  - tests/unittest/auto_deploy/singlegpu/shim/test_cached_sequence_interface.py
+  - tests/unittest/auto_deploy/singlegpu/shim/test_engine.py
+  - tests/unittest/auto_deploy/singlegpu/shim/test_llm_config.py
+  - tests/unittest/auto_deploy/singlegpu/smoke/test_ad_build_small_single.py
+  - tests/unittest/auto_deploy/singlegpu/smoke/test_ad_trtllm_bench.py
+  - tests/unittest/auto_deploy/singlegpu/smoke/test_ad_trtllm_serve.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_attention_matcher.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_attention_matcher_hf.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_bmm_moe_hooks.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_l2norm.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_relu2_quant_nvfp4.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_rmsnorm.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_swiglu.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_fuse_trtllm_attention_quant_fp8.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_fused_add_rms_norm.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_gated_delta_rule_cache.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_gemm_fusion.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_gemm_fusion_trtllm.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_kv_cache.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_moe_fusion.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_mrope_delta_cache.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_nvfp4_swiglu.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_quant_fusion.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_quant_moe.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_quantization.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_redundant_transposes.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_rope_transformation.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_torch_gated_delta_rule_cache.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_trtllm_gen_diag.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/test_bf16_gemm.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/test_export.py
+  - tests/unittest/auto_deploy/singlegpu/utils/test_config.py
+  - tests/unittest/auto_deploy/singlegpu/utils/test_create_derived_custom_op.py
+  - tests/unittest/auto_deploy/singlegpu/utils/test_quantization_utils.py
+  - tests/unittest/auto_deploy/standalone/__init__.py
+  path_signals:
+  - tests/unittest/auto_deploy/_utils_test/torch_attention_reference.py
+  - tests/unittest/auto_deploy/multigpu/custom_ops/test_moe_ep.py
+  - tests/unittest/auto_deploy/multigpu/custom_ops/test_mxfp4_moe_ep.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_attention_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_flashinfer_attention_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_torch_attention_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_attention_with_kv_cache.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_cuda_causal_conv_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_flashinfer_mamba_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_triton_mamba_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_mla_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_trtllm_mla_op.py
+  borderline_path_signals:
+  - tests/unittest/auto_deploy/_utils_test/torch_attention_reference.py
+  - tests/unittest/auto_deploy/multigpu/custom_ops/test_moe_ep.py
+  - tests/unittest/auto_deploy/multigpu/custom_ops/test_mxfp4_moe_ep.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_attention_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_flashinfer_attention_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_torch_attention_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_attention_with_kv_cache.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_cuda_causal_conv_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_flashinfer_mamba_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mamba/test_triton_mamba_cached_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_mla_op.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/mla/test_flashinfer_trtllm_mla_op.py
+  selection_text_signals:
+  - flashinfer
+  - fp4
+  - fp8
+  - gemm
+  - mxfp4
+  - nvfp4
+  additions: 1360
+  deletions: 0
+  changed_file_count: 97
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14193
+- number: 14185
+  pr: 14185
+  title: '[https://nvbugs/6162128][tests] Skip nano v3 E2E tests entirely on G/B300'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14185
+  date: '2026-05-19'
+  merged_at: '2026-05-19T08:20:29Z'
+  author: 2ez4bz
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - blackwell
+  - nvfp4
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - blackwell
+  - fp4
+  - nvfp4
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tests/integration/defs/accuracy/test_llm_api_pytorch_multimodal.py
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - fp4
+  - nvfp4
+  additions: 5
+  deletions: 8
+  changed_file_count: 1
+- number: 14179
+  pr: 14179
+  title: '[https://nvbugs/6163147][fix] swap layer.mlp in place for Mixtral modelopt export'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14179
+  date: '2026-05-18'
+  merged_at: '2026-05-18T01:15:19Z'
+  author: longlee0622
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/quantization/quantize_by_modelopt.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - moe
+  architectures:
+  - sm100
+  techniques:
+  - fine-grained-quantization
+  hardware_features: []
+  kernel_types:
+  - moe
+  languages: []
+  changed_paths:
+  - tensorrt_llm/quantization/quantize_by_modelopt.py
+  path_signals:
+  - tensorrt_llm/quantization/quantize_by_modelopt.py
+  borderline_path_signals: []
+  selection_text_signals: []
+  additions: 102
+  deletions: 50
+  changed_file_count: 1
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14179
+- number: 14172
+  pr: 14172
+  title: '[https://nvbugs/6025177][test] rcca tests using kimi k2.5 fp4'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14172
+  date: '2026-05-18'
+  merged_at: '2026-05-18T05:50:09Z'
+  author: xinhe-nv
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tests/unittest/llmapi/apps/_test_openai_kv_cache_contamination.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - fp4
+  architectures:
+  - sm100
+  techniques:
+  - cache-policy
+  hardware_features:
+  - fp4
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tests/integration/defs/test_e2e.py
+  - tests/integration/test_lists/qa/llm_function_core.txt
+  - tests/integration/test_lists/test-db/l0_dgx_b200.yml
+  - tests/unittest/llmapi/apps/_test_openai_kv_cache_contamination.py
+  path_signals:
+  - tests/unittest/llmapi/apps/_test_openai_kv_cache_contamination.py
+  borderline_path_signals:
+  - tests/unittest/llmapi/apps/_test_openai_kv_cache_contamination.py
+  selection_text_signals:
+  - fp4
+  additions: 551
+  deletions: 2
+  changed_file_count: 4
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14172
+- number: 14169
+  pr: 14169
+  title: '[https://nvbugs/6163030][fix] Unwaive testcase'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14169
+  date: '2026-05-18'
+  merged_at: '2026-05-18T02:31:18Z'
+  author: leslie-fang25
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - fp8
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp8
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tests/integration/test_lists/waives.txt
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  additions: 0
+  deletions: 1
+  changed_file_count: 1
+- number: 14168
+  pr: 14168
+  title: '[https://nvbugs/6094100][fix] set UCX_TLS  for gb300 to enable disagg test'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14168
+  date: '2026-05-18'
+  merged_at: '2026-05-18T01:20:11Z'
+  author: chuangz0
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - llm-serving
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tests/integration/defs/disaggregated/test_disaggregated.py
+  - tests/integration/test_lists/waives.txt
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  additions: 15
+  deletions: 8
+  changed_file_count: 2
+- number: 14165
+  pr: 14165
+  title: '[TRTLLM-12462][fix] Fix FP8 block scaling GEMM autotuner cache growth'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14165
+  date: '2026-05-18'
+  merged_at: '2026-05-18T20:14:37Z'
+  author: cascade812
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/custom_ops/torch_custom_ops.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - fp8
+  - gemm
+  - llm-serving
+  - sm100
+  - sm90
+  architectures:
+  - sm100
+  - sm90
+  techniques:
+  - autotuning
+  - cache-policy
+  hardware_features:
+  - blackwell
+  - fp8
+  - hopper
+  kernel_types:
+  - gemm
+  languages: []
+  changed_paths:
+  - tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
+  path_signals:
+  - tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  - gemm
+  - sm100
+  - sm90
+  additions: 20
+  deletions: 8
+  changed_file_count: 1
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14165
+- number: 14149
+  pr: 14149
+  title: '[None][fix] Handle DeepSeek-V4 fused A scale shape'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14149
+  date: '2026-05-18'
+  merged_at: '2026-05-18T09:22:31Z'
+  author: lfr-0531
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/models/modeling_deepseekv4.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - fp8
+  - moe
+  - nvfp4
+  architectures:
+  - sm100
+  techniques:
+  - kernel-fusion
+  hardware_features:
+  - fp4
+  - fp8
+  - nvfp4
+  kernel_types:
+  - moe
+  languages: []
+  changed_paths:
+  - tensorrt_llm/_torch/models/modeling_deepseekv4.py
+  - tests/unittest/_torch/modeling/test_modeling_deepseekv4.py
+  path_signals:
+  - tensorrt_llm/_torch/models/modeling_deepseekv4.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - fp8
+  - nvfp4
+  additions: 89
+  deletions: 5
+  changed_file_count: 2
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14149
+- number: 14144
+  pr: 14144
+  title: '[#8542][feat] AutoDeploy: add DeepSeek-R1 FP8 perf test on 8x B200 post merge, remove super perf test from premerge'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14144
+  date: '2026-05-18'
+  merged_at: '2026-05-18T09:05:35Z'
+  author: MrGeva
+  decision: defer
+  status: merged
+  reason: 'borderline benchmark/runtime/docs signal: tests/scripts/perf-sanity/aggregated/deepseek_r1_fp8_ad_blackwell.yaml'
+  inclusion_reason: Search-matched CUDA/kernel PR with benchmark, test, runtime, CI, or docs-adjacent paths; keep as contextual PR evidence.
+  seed_source: github-search
+  tags:
+  - blackwell
+  - fp8
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - blackwell
+  - fp8
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tests/integration/test_lists/test-db/l0_b200.yml
+  - tests/integration/test_lists/test-db/l0_dgx_b200.yml
+  - tests/scripts/perf-sanity/aggregated/deepseek_r1_fp8_ad_blackwell.yaml
+  path_signals: []
+  borderline_path_signals:
+  - tests/scripts/perf-sanity/aggregated/deepseek_r1_fp8_ad_blackwell.yaml
+  selection_text_signals:
+  - blackwell
+  - fp8
+  additions: 22
+  deletions: 2
+  changed_file_count: 3
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14144
+- number: 14134
+  pr: 14134
+  title: '[None][feat] Add chunked prefill support for Gemma4 (text + vision multimodal)'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14134
+  date: '2026-05-19'
+  merged_at: '2026-05-19T08:19:53Z'
+  author: Hudayday
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/attention_backend/flashinfer.py, tensorrt_llm/_torch/attention_backend/triton_prefill.py, tensorrt_llm/_torch/models/modeling_gemma4.py, tensorrt_llm/_torch/models/modeling_gemma4mm.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - attention kernel
+  - cuda kernel
+  - moe kernel
+  - triton kernel
+  architectures:
+  - sm100
+  techniques:
+  - cache-policy
+  - tile-scheduling
+  hardware_features: []
+  kernel_types:
+  - attention
+  - gemm
+  - moe
+  languages:
+  - cuda-cpp
+  - triton
+  changed_paths:
+  - tensorrt_llm/_torch/attention_backend/flashinfer.py
+  - tensorrt_llm/_torch/attention_backend/triton_prefill.py
+  - tensorrt_llm/_torch/models/modeling_gemma4.py
+  - tensorrt_llm/_torch/models/modeling_gemma4mm.py
+  - tensorrt_llm/_torch/pyexecutor/scheduler/scheduler_v2.py
+  - tensorrt_llm/inputs/registry.py
+  - tests/unittest/_torch/executor/test_kv_cache_v2_scheduler.py
+  path_signals:
+  - tensorrt_llm/_torch/attention_backend/flashinfer.py
+  - tensorrt_llm/_torch/attention_backend/triton_prefill.py
+  - tensorrt_llm/_torch/models/modeling_gemma4.py
+  - tensorrt_llm/_torch/models/modeling_gemma4mm.py
+  - tensorrt_llm/_torch/pyexecutor/scheduler/scheduler_v2.py
+  - tensorrt_llm/inputs/registry.py
+  - tests/unittest/_torch/executor/test_kv_cache_v2_scheduler.py
+  borderline_path_signals:
+  - tests/unittest/_torch/executor/test_kv_cache_v2_scheduler.py
+  selection_text_signals:
+  - attention kernel
+  - cuda kernel
+  - flashinfer
+  - gemm
+  - moe kernel
+  - triton kernel
+  additions: 592
+  deletions: 16
+  changed_file_count: 7
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14134
+- number: 14120
+  pr: 14120
+  title: '[None][feat] Enable 2 DSv4 perf optimizations by default'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14120
+  date: '2026-05-18'
+  merged_at: '2026-05-18T09:02:16Z'
+  author: lishicheng1996-nv
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/custom_ops/torch_custom_ops.py, tensorrt_llm/_torch/modules/attention.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - blackwell
+  - cute
+  - fp8
+  - sm100
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - blackwell
+  - fp8
+  kernel_types:
+  - attention
+  languages:
+  - cute-dsl
+  changed_paths:
+  - tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
+  - tensorrt_llm/_torch/modules/attention.py
+  path_signals:
+  - tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
+  - tensorrt_llm/_torch/modules/attention.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - cute
+  - fp8
+  - sm100
+  additions: 2
+  deletions: 2
+  changed_file_count: 2
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14120
+- number: 14069
+  pr: 14069
+  title: '[https://nvbugs/6152892][fix] Fix Triton MOE memory free when no swizzling enabled'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/14069
+  date: '2026-05-17'
+  merged_at: '2026-05-17T19:20:51Z'
+  author: dongfengy
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/modules/fused_moe/fused_moe_triton.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - blackwell
+  - cuda kernel
+  - cutlass
+  - hopper
+  - moe
+  - moe kernel
+  - mxfp4
+  - triton kernel
+  architectures:
+  - sm100
+  - sm90
+  techniques:
+  - kernel-fusion
+  hardware_features:
+  - blackwell
+  - fp4
+  - hopper
+  - mxfp4
+  kernel_types:
+  - moe
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  - triton
+  changed_paths:
+  - tensorrt_llm/_torch/modules/fused_moe/fused_moe_triton.py
+  - tests/integration/defs/accuracy/test_llm_api_pytorch.py
+  - tests/integration/defs/conftest.py
+  - tests/integration/test_lists/waives.txt
+  path_signals:
+  - tensorrt_llm/_torch/modules/fused_moe/fused_moe_triton.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - blackwell
+  - cuda kernel
+  - cutlass
+  - fp4
+  - hopper
+  - moe kernel
+  - mxfp4
+  - triton kernel
+  additions: 23
+  deletions: 15
+  changed_file_count: 4
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-14069
+- number: 13975
+  pr: 13975
+  title: '[None][perf] Add CUDA q_b norm for DeepSeek V4'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/13975
+  date: '2026-05-18'
+  merged_at: '2026-05-18T07:22:23Z'
+  author: mingyangHao
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.cu, cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.h, cpp/tensorrt_llm/thop/CMakeLists.txt, cpp/tensorrt_llm/thop/deepseekV4QNormOp.cpp'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - cuda kernel
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types:
+  - attention
+  - norm
+  languages:
+  - cuda-cpp
+  changed_paths:
+  - cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.cu
+  - cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.h
+  - cpp/tensorrt_llm/thop/CMakeLists.txt
+  - cpp/tensorrt_llm/thop/deepseekV4QNormOp.cpp
+  - tensorrt_llm/_torch/custom_ops/cpp_custom_ops.py
+  - tensorrt_llm/_torch/modules/attention.py
+  - tests/unittest/_torch/custom_ops/test_deepseek_v4_q_norm.py
+  - tests/unittest/_torch/modeling/test_modeling_deepseekv4.py
+  path_signals:
+  - cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.cu
+  - cpp/tensorrt_llm/kernels/deepseekV4QNormKernel.h
+  - cpp/tensorrt_llm/thop/CMakeLists.txt
+  - cpp/tensorrt_llm/thop/deepseekV4QNormOp.cpp
+  - tensorrt_llm/_torch/custom_ops/cpp_custom_ops.py
+  - tensorrt_llm/_torch/modules/attention.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - cuda kernel
+  additions: 294
+  deletions: 9
+  changed_file_count: 8
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-13975
+- number: 13968
+  pr: 13968
+  title: '[None][fix] Fix bugs related with nemotron-nas model'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/13968
+  date: '2026-05-18'
+  merged_at: '2026-05-18T06:13:17Z'
+  author: Wanli-Jiang
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: cpp/tensorrt_llm/batch_manager/kvCacheTransferManager.cpp, tensorrt_llm/_torch/models/checkpoints/__init__.py, tensorrt_llm/_torch/models/checkpoints/hf/nemotron_nas_weight_mapper.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - nvfp4
+  architectures:
+  - sm100
+  techniques:
+  - cache-policy
+  hardware_features:
+  - fp4
+  - nvfp4
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - cpp/tensorrt_llm/batch_manager/kvCacheTransferManager.cpp
+  - tensorrt_llm/_torch/models/checkpoints/__init__.py
+  - tensorrt_llm/_torch/models/checkpoints/hf/nemotron_nas_weight_mapper.py
+  - tests/integration/test_lists/waives.txt
+  - tests/unittest/llmapi/test_llm_pytorch.py
+  path_signals:
+  - cpp/tensorrt_llm/batch_manager/kvCacheTransferManager.cpp
+  - tensorrt_llm/_torch/models/checkpoints/__init__.py
+  - tensorrt_llm/_torch/models/checkpoints/hf/nemotron_nas_weight_mapper.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - nvfp4
+  additions: 69
+  deletions: 7
+  changed_file_count: 5
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-13968
+- number: 13917
+  pr: 13917
+  title: '[None][doc] Add guide for integrating custom kernels in PyTorch backend'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/13917
+  date: '2026-05-19'
+  merged_at: '2026-05-19T00:19:31Z'
+  author: chang-l
+  decision: defer
+  status: merged
+  reason: 'borderline benchmark/runtime/docs signal: docs/source/torch/adding_custom_kernels.md'
+  inclusion_reason: Search-matched CUDA/kernel PR with benchmark, test, runtime, CI, or docs-adjacent paths; keep as contextual PR evidence.
+  seed_source: github-search
+  tags:
+  - attention kernel
+  - blackwell
+  - cuda kernel
+  - cute
+  - cutlass
+  - gemm
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - blackwell
+  kernel_types:
+  - attention
+  - gemm
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - docs/source/torch/adding_custom_kernels.md
+  path_signals: []
+  borderline_path_signals:
+  - docs/source/torch/adding_custom_kernels.md
+  selection_text_signals:
+  - attention kernel
+  - blackwell
+  - cuda kernel
+  - cute
+  - cutlass
+  - gemm
+  additions: 324
+  deletions: 0
+  changed_file_count: 1
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-13917
+- number: 13895
+  pr: 13895
+  title: '[https://nvbugs/6069543][fix] Lower accuracy threshold for H20 qwen3.5 test'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/13895
+  date: '2026-05-19'
+  merged_at: '2026-05-19T14:43:15Z'
+  author: rosenrodt
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - moe
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features: []
+  kernel_types:
+  - moe
+  languages: []
+  changed_paths:
+  - tests/integration/defs/accuracy/references/gsm8k.yaml
+  - tests/integration/defs/accuracy/test_llm_api_pytorch.py
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals: []
+  additions: 11
+  deletions: 1
+  changed_file_count: 2
+- number: 13833
+  pr: 13833
+  title: '[None][perf] FC2 DenseGEMM autotune: split-K, swap_ab, fine-grained tuning buckets'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/13833
+  date: '2026-05-18'
+  merged_at: '2026-05-18T04:22:21Z'
+  author: JacobHu-NV
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py, tensorrt_llm/_torch/cute_dsl_kernels/blackwell/moe_as_dense_gemm/fc2.py, tensorrt_llm/_torch/cute_dsl_kernels/blackwell/utils.py,
+    tests/scripts/cute_dsl_kernels/moe_as_dense_gemm/run_moe_as_dense_gemm_fc2.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  - cute
+  - cutlass
+  - gemm
+  - moe
+  - moe kernel
+  - nvfp4
+  - tma
+  architectures:
+  - sm100
+  techniques:
+  - async-copy
+  - autotuning
+  hardware_features:
+  - blackwell
+  - fp4
+  - nvfp4
+  - tma
+  kernel_types:
+  - gemm
+  - moe
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py
+  - tensorrt_llm/_torch/cute_dsl_kernels/blackwell/moe_as_dense_gemm/fc2.py
+  - tensorrt_llm/_torch/cute_dsl_kernels/blackwell/utils.py
+  - tests/scripts/cute_dsl_kernels/moe_as_dense_gemm/run_moe_as_dense_gemm_fc2.py
+  path_signals:
+  - tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py
+  - tensorrt_llm/_torch/cute_dsl_kernels/blackwell/moe_as_dense_gemm/fc2.py
+  - tensorrt_llm/_torch/cute_dsl_kernels/blackwell/utils.py
+  - tests/scripts/cute_dsl_kernels/moe_as_dense_gemm/run_moe_as_dense_gemm_fc2.py
+  borderline_path_signals:
+  - tests/scripts/cute_dsl_kernels/moe_as_dense_gemm/run_moe_as_dense_gemm_fc2.py
+  selection_text_signals:
+  - benchmark kernel
+  - blackwell
+  - cuda kernel
+  - cute
+  - cutlass
+  - fp4
+  - gemm
+  - moe kernel
+  - nvfp4
+  additions: 689
+  deletions: 230
+  changed_file_count: 4
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-13833
+- number: 13689
+  pr: 13689
+  title: '[None][feat] Add bf16 trtllm moe through flashinfer.'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/13689
+  date: '2026-05-18'
+  merged_at: '2026-05-18T02:14:53Z'
+  author: nv-guomingz
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py, tensorrt_llm/_torch/modules/fused_moe/create_moe.py, tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py,
+    tensorrt_llm/_torch/modules/fused_moe/moe_op_backend.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - cutlass
+  - fp4
+  - moe
+  - moe kernel
+  architectures:
+  - sm100
+  techniques:
+  - fine-grained-quantization
+  - kernel-fusion
+  - tile-scheduling
+  hardware_features:
+  - fp4
+  kernel_types:
+  - moe
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py
+  - tensorrt_llm/_torch/modules/fused_moe/create_moe.py
+  - tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py
+  - tensorrt_llm/_torch/modules/fused_moe/moe_op_backend.py
+  - tensorrt_llm/_torch/modules/fused_moe/moe_scheduler.py
+  - tensorrt_llm/_torch/modules/fused_moe/quantization.py
+  - tests/integration/defs/.test_durations
+  - tests/integration/defs/accuracy/references/gsm8k.yaml
+  - tests/integration/defs/accuracy/test_llm_api_pytorch.py
+  - tests/integration/test_lists/qa/llm_function_core.txt
+  - tests/integration/test_lists/test-db/l0_b200.yml
+  - tests/integration/test_lists/test-db/l0_dgx_b200.yml
+  - tests/integration/test_lists/waives.txt
+  - tests/unittest/_torch/modules/moe/moe_test_utils.py
+  - tests/unittest/_torch/modules/moe/test_moe_module.py
+  path_signals:
+  - tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py
+  - tensorrt_llm/_torch/modules/fused_moe/create_moe.py
+  - tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py
+  - tensorrt_llm/_torch/modules/fused_moe/moe_op_backend.py
+  - tensorrt_llm/_torch/modules/fused_moe/moe_scheduler.py
+  - tensorrt_llm/_torch/modules/fused_moe/quantization.py
+  - tests/unittest/_torch/modules/moe/moe_test_utils.py
+  - tests/unittest/_torch/modules/moe/test_moe_module.py
+  borderline_path_signals:
+  - tests/unittest/_torch/modules/moe/moe_test_utils.py
+  - tests/unittest/_torch/modules/moe/test_moe_module.py
+  selection_text_signals:
+  - cutlass
+  - flashinfer
+  - fp4
+  - moe kernel
+  additions: 514
+  deletions: 58
+  changed_file_count: 15
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-13689
+- number: 13630
+  pr: 13630
+  title: '[#13580][fix] AutoDeploy: Support Gemma3n/4 E2B variants'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/13630
+  date: '2026-05-19'
+  merged_at: '2026-05-19T21:38:56Z'
+  author: bmarimuthu-nv
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/auto_deploy/compile/backends/torch_cudagraph.py, tensorrt_llm/_torch/auto_deploy/custom_ops/attention/triton_paged_attention.py, tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma3n.py,
+    tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma4.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - attention kernel
+  - benchmark kernel
+  - cuda kernel
+  - moe kernel
+  - triton kernel
+  architectures:
+  - sm90
+  techniques: []
+  hardware_features: []
+  kernel_types:
+  - attention
+  - gemm
+  - mla
+  - moe
+  languages:
+  - cuda-cpp
+  - triton
+  changed_paths:
+  - examples/auto_deploy/model_registry/configs/gemma3n_e2b_it.yaml
+  - examples/auto_deploy/model_registry/configs/gemma4_e2b.yaml
+  - examples/auto_deploy/model_registry/models.yaml
+  - tensorrt_llm/_torch/auto_deploy/compile/backends/torch_cudagraph.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/attention/triton_paged_attention.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma3n.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma4.py
+  - tensorrt_llm/_torch/auto_deploy/shim/interface.py
+  - tensorrt_llm/_torch/auto_deploy/transform/library/compile_model.py
+  - tests/integration/defs/accuracy/references/gsm8k.yaml
+  - tests/integration/defs/accuracy/references/mmlu.yaml
+  - tests/integration/defs/accuracy/test_llm_api_autodeploy.py
+  - tests/integration/test_lists/test-db/l0_h100.yml
+  - tests/test_common/llm_data.py
+  - tests/unittest/auto_deploy/singlegpu/compile/test_captured_graph.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_paged_attention.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_gemma3n_modeling.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_gemma4_modeling.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_minimax_m2_modeling.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_mistral3_modeling.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_mla_rope_utils.py
+  - tests/unittest/auto_deploy/singlegpu/test_graph_canonicalize.py
+  - tests/unittest/auto_deploy/singlegpu/test_hf_export_info.py
+  - tests/unittest/auto_deploy/singlegpu/test_mistral_small_4_tokenizer_bridge.py
+  - tests/unittest/auto_deploy/singlegpu/test_pattern_matcher.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_shared_kv_attention.py
+  path_signals:
+  - tensorrt_llm/_torch/auto_deploy/compile/backends/torch_cudagraph.py
+  - tensorrt_llm/_torch/auto_deploy/custom_ops/attention/triton_paged_attention.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma3n.py
+  - tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma4.py
+  - tensorrt_llm/_torch/auto_deploy/shim/interface.py
+  - tensorrt_llm/_torch/auto_deploy/transform/library/compile_model.py
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_paged_attention.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_gemma3n_modeling.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_gemma4_modeling.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_mla_rope_utils.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_shared_kv_attention.py
+  borderline_path_signals:
+  - tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_paged_attention.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_gemma3n_modeling.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_gemma4_modeling.py
+  - tests/unittest/auto_deploy/singlegpu/models/test_mla_rope_utils.py
+  - tests/unittest/auto_deploy/singlegpu/transformations/library/test_shared_kv_attention.py
+  selection_text_signals:
+  - attention kernel
+  - benchmark kernel
+  - cuda kernel
+  - cudagraph
+  - gemm
+  - moe kernel
+  - triton kernel
+  additions: 2031
+  deletions: 203
+  changed_file_count: 26
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-13630
+- number: 13575
+  pr: 13575
+  title: '[TRTLLM-12316][feat] Integrate FP4 indexer for DSv4'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/13575
+  date: '2026-05-18'
+  merged_at: '2026-05-18T02:18:47Z'
+  author: mikeiovine
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/cache_manager.py, tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/deepseek_v4.py, tensorrt_llm/_torch/attention_backend/sparse/dsa.py,
+    tensorrt_llm/_torch/model_config.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - fp4
+  - fp8
+  architectures:
+  - sm100
+  techniques:
+  - cache-policy
+  hardware_features:
+  - fp4
+  - fp8
+  kernel_types:
+  - attention
+  languages: []
+  changed_paths:
+  - tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/cache_manager.py
+  - tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/deepseek_v4.py
+  - tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+  - tensorrt_llm/_torch/model_config.py
+  - tensorrt_llm/_torch/modules/attention.py
+  - tensorrt_llm/llmapi/llm_args.py
+  - tests/integration/test_lists/test-db/l0_dgx_b200.yml
+  - tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_cache_manager.py
+  - tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_fp4_indexer.py
+  - tests/unittest/_torch/attention/sparse/dsa/test_dsa_fp4_indexer.py
+  - tests/unittest/_torch/attention/sparse/dsa/test_dsa_indexer.py
+  - tests/unittest/_torch/attention/sparse/test_cpp_custom_ops.py
+  - tests/unittest/_torch/attention/sparse/test_dsa_fp4_indexer.py
+  path_signals:
+  - tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/cache_manager.py
+  - tensorrt_llm/_torch/attention_backend/sparse/deepseek_v4/deepseek_v4.py
+  - tensorrt_llm/_torch/attention_backend/sparse/dsa.py
+  - tensorrt_llm/_torch/model_config.py
+  - tensorrt_llm/_torch/modules/attention.py
+  - tensorrt_llm/llmapi/llm_args.py
+  - tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_cache_manager.py
+  - tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_fp4_indexer.py
+  - tests/unittest/_torch/attention/sparse/dsa/test_dsa_fp4_indexer.py
+  - tests/unittest/_torch/attention/sparse/dsa/test_dsa_indexer.py
+  - tests/unittest/_torch/attention/sparse/test_cpp_custom_ops.py
+  - tests/unittest/_torch/attention/sparse/test_dsa_fp4_indexer.py
+  borderline_path_signals:
+  - tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_cache_manager.py
+  - tests/unittest/_torch/attention/sparse/deepseek_v4/test_deepseek_v4_fp4_indexer.py
+  - tests/unittest/_torch/attention/sparse/dsa/test_dsa_fp4_indexer.py
+  - tests/unittest/_torch/attention/sparse/dsa/test_dsa_indexer.py
+  - tests/unittest/_torch/attention/sparse/test_cpp_custom_ops.py
+  - tests/unittest/_torch/attention/sparse/test_dsa_fp4_indexer.py
+  selection_text_signals:
+  - fp4
+  - fp8
+  additions: 706
+  deletions: 189
+  changed_file_count: 13
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-13575
+- number: 13401
+  pr: 13401
+  title: '[TRTLLM-11127][feat] add W4A8_MXFP4_FP8 MoE unit test support'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/13401
+  date: '2026-05-19'
+  merged_at: '2026-05-19T13:19:29Z'
+  author: xxi-nv
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tests/unittest/_torch/modules/moe/moe_test_utils.py, tests/unittest/_torch/modules/moe/quantize_utils.py, tests/unittest/_torch/modules/moe/test_moe_backend.py, tests/unittest/_torch/modules/moe/test_moe_module.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - cutlass
+  - fp8
+  - moe
+  - moe kernel
+  - mxfp4
+  architectures:
+  - sm100
+  techniques:
+  - fine-grained-quantization
+  hardware_features:
+  - fp4
+  - fp8
+  - mxfp4
+  kernel_types:
+  - moe
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  changed_paths:
+  - tests/unittest/_torch/modules/moe/moe_test_utils.py
+  - tests/unittest/_torch/modules/moe/quantize_utils.py
+  - tests/unittest/_torch/modules/moe/test_moe_backend.py
+  - tests/unittest/_torch/modules/moe/test_moe_module.py
+  path_signals:
+  - tests/unittest/_torch/modules/moe/moe_test_utils.py
+  - tests/unittest/_torch/modules/moe/quantize_utils.py
+  - tests/unittest/_torch/modules/moe/test_moe_backend.py
+  - tests/unittest/_torch/modules/moe/test_moe_module.py
+  borderline_path_signals:
+  - tests/unittest/_torch/modules/moe/moe_test_utils.py
+  - tests/unittest/_torch/modules/moe/quantize_utils.py
+  - tests/unittest/_torch/modules/moe/test_moe_backend.py
+  - tests/unittest/_torch/modules/moe/test_moe_module.py
+  selection_text_signals:
+  - cutlass
+  - fp4
+  - fp8
+  - moe kernel
+  - mxfp4
+  additions: 410
+  deletions: 14
+  changed_file_count: 4
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-13401
+- number: 13349
+  pr: 13349
+  title: '[https://nvbugs/6094108][fix] Fix Qwen3-30B-A3B NVFP4 tep4 CUTLASS MoE test OOM on B300'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/13349
+  date: '2026-05-20'
+  merged_at: '2026-05-20T03:08:20Z'
+  author: tensorrt-cicd
+  decision: exclude
+  status: merged
+  reason: no changed-file or title signal matching the existing CUDA/kernel corpus
+  inclusion_reason: Excluded during refresh selection audit.
+  seed_source: github-search
+  tags:
+  - cutlass
+  - moe
+  - nvfp4
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp4
+  - nvfp4
+  kernel_types:
+  - moe
+  languages:
+  - cute-dsl
+  changed_paths:
+  - tests/integration/defs/accuracy/test_llm_api_pytorch.py
+  path_signals: []
+  borderline_path_signals: []
+  selection_text_signals:
+  - cutlass
+  - fp4
+  - nvfp4
+  additions: 3
+  deletions: 1
+  changed_file_count: 1
+- number: 12993
+  pr: 12993
+  title: '[#13076][fix] Destroy torch distributed process groups on PyExecutor shutdown'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/12993
+  date: '2026-05-18'
+  merged_at: '2026-05-18T23:05:08Z'
+  author: janbernloehr
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/executor/worker.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - nvfp4
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp4
+  - nvfp4
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tensorrt_llm/executor/worker.py
+  path_signals:
+  - tensorrt_llm/executor/worker.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp4
+  - nvfp4
+  additions: 9
+  deletions: 0
+  changed_file_count: 1
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-12993
+- number: 12530
+  pr: 12530
+  title: '[https://nvbugs/5879577][fix] Fix KeyError in DeepSeekV3Lite FP8 MTP weight loading'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/12530
+  date: '2026-05-18'
+  merged_at: '2026-05-18T01:49:54Z'
+  author: sunnyqgg
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: tensorrt_llm/_torch/models/modeling_deepseekv3.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - fp8
+  architectures:
+  - sm100
+  techniques: []
+  hardware_features:
+  - fp8
+  kernel_types: []
+  languages: []
+  changed_paths:
+  - tensorrt_llm/_torch/models/modeling_deepseekv3.py
+  - tests/integration/test_lists/waives.txt
+  path_signals:
+  - tensorrt_llm/_torch/models/modeling_deepseekv3.py
+  borderline_path_signals: []
+  selection_text_signals:
+  - fp8
+  additions: 27
+  deletions: 7
+  changed_file_count: 2
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-12530
+- number: 11561
+  pr: 11561
+  title: '[None][fix] Fix int4 awq for sm120/121'
+  repo: NVIDIA/TensorRT-LLM
+  url: https://github.com/NVIDIA/TensorRT-LLM/pull/11561
+  date: '2026-05-20'
+  merged_at: '2026-05-20T01:14:02Z'
+  author: pamelap-nvidia
+  decision: include
+  status: merged
+  reason: 'file-path kernel signal: cpp/tensorrt_llm/kernels/cutlass_kernels/cutlass_heuristic.cpp, tensorrt_llm/_torch/custom_ops/torch_custom_ops.py, tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py,
+    tensorrt_llm/quantization/functional.py'
+  inclusion_reason: Merged CUDA/kernel optimization PR with changed files matching existing corpus kernel paths or kernel source signals.
+  seed_source: github-search
+  tags:
+  - blackwell
+  - cutlass
+  - fp4
+  - gemm
+  - hopper
+  - mxfp4
+  - nvfp4
+  - sm100
+  - triton kernel
+  architectures:
+  - sm100
+  - sm90
+  techniques:
+  - fine-grained-quantization
+  - kernel-fusion
+  hardware_features:
+  - blackwell
+  - fp4
+  - hopper
+  - mxfp4
+  - nvfp4
+  kernel_types:
+  - gemm
+  - moe
+  languages:
+  - cuda-cpp
+  - cute-dsl
+  - triton
+  changed_paths:
+  - cpp/tensorrt_llm/kernels/cutlass_kernels/cutlass_heuristic.cpp
+  - tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
+  - tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py
+  - tensorrt_llm/quantization/functional.py
+  - tests/integration/test_lists/test-db/l0_rtx_pro_6000.yml
+  - tests/unittest/_torch/thop/parallel/test_finegrained_mixed_dtype_gemm.py
+  - tests/unittest/_torch/thop/parallel/test_w4a16_linear.py
+  - tests/unittest/_torch/thop/parallel/test_w4a8_linear.py
+  path_signals:
+  - cpp/tensorrt_llm/kernels/cutlass_kernels/cutlass_heuristic.cpp
+  - tensorrt_llm/_torch/custom_ops/torch_custom_ops.py
+  - tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py
+  - tensorrt_llm/quantization/functional.py
+  - tests/unittest/_torch/thop/parallel/test_finegrained_mixed_dtype_gemm.py
+  borderline_path_signals:
+  - tests/unittest/_torch/thop/parallel/test_finegrained_mixed_dtype_gemm.py
+  selection_text_signals:
+  - blackwell
+  - cutlass
+  - fp4
+  - gemm
+  - hopper
+  - mxfp4
+  - nvfp4
+  - sm100
+  - triton kernel
+  additions: 48
+  deletions: 22
+  changed_file_count: 8
+  artifact_dir: evidence/pull-bundles/tensorrt-llm/gh-11561

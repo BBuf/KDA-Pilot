@@ -1,0 +1,54 @@
+schema_version: 1
+source_key: NVIDIA/TensorRT-LLM#13968
+repo: NVIDIA/TensorRT-LLM
+repo_id: tensorrt-llm
+pr_number: 13968
+title: '[None][fix] Fix bugs related with nemotron-nas model'
+url: https://github.com/NVIDIA/TensorRT-LLM/pull/13968
+state: closed
+merged_at: '2026-05-18T06:13:17Z'
+base_ref_oid: aa52b40e801d8dcec8c4edd4d6353a792a50f1ef
+head_ref_oid: f00123d0dd5445116f8ccaa9fc233e9c98818565
+captured_at: '2026-05-20T15:00:29.746738+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- nvfp4
+techniques:
+- cache-policy
+hardware_features:
+- fp4
+- nvfp4
+kernel_types: []
+languages: []
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: cpp/tensorrt_llm/batch_manager/kvCacheTransferManager.cpp
+    local_path: source-snapshot/cpp/tensorrt_llm/batch_manager/kvCacheTransferManager.cpp
+    ref: f00123d0dd5445116f8ccaa9fc233e9c98818565
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/models/checkpoints/__init__.py
+    local_path: source-snapshot/tensorrt_llm/_torch/models/checkpoints/__init__.py
+    ref: f00123d0dd5445116f8ccaa9fc233e9c98818565
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/models/checkpoints/hf/nemotron_nas_weight_mapper.py
+    local_path: source-snapshot/tensorrt_llm/_torch/models/checkpoints/hf/nemotron_nas_weight_mapper.py
+    ref: f00123d0dd5445116f8ccaa9fc233e9c98818565
+    status: added
+    fetched: true
+  - source_path: tests/integration/test_lists/waives.txt
+    local_path: source-snapshot/tests/integration/test_lists/waives.txt
+    ref: f00123d0dd5445116f8ccaa9fc233e9c98818565
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/llmapi/test_llm_pytorch.py
+    local_path: source-snapshot/tests/unittest/llmapi/test_llm_pytorch.py
+    ref: f00123d0dd5445116f8ccaa9fc233e9c98818565
+    status: modified
+    fetched: true

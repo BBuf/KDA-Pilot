@@ -1,0 +1,58 @@
+schema_version: 1
+source_key: vllm-project/vllm#42537
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42537
+title: '[UX] Add a persistent cache for FlashInfer autotuning'
+url: https://github.com/vllm-project/vllm/pull/42537
+state: closed
+merged_at: '2026-05-19T03:25:38Z'
+base_ref_oid: 67f58ce23f469e118688a50687ef0fbb14a1c028
+head_ref_oid: d2585943531adc9a25677e5819c728eee1a6ce97
+captured_at: '2026-05-20T15:09:50.593492+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- fp4
+- gemm
+- moe
+- moe kernel
+- nvfp4
+techniques:
+- autotuning
+- cache-policy
+- persistent-kernels
+hardware_features:
+- fp4
+- nvfp4
+kernel_types:
+- gemm
+- moe
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: docs/usage/security.md
+    local_path: source-snapshot/docs/usage/security.md
+    ref: d2585943531adc9a25677e5819c728eee1a6ce97
+    status: modified
+    fetched: true
+  - source_path: tests/model_executor/test_flashinfer_autotune_cache.py
+    local_path: source-snapshot/tests/model_executor/test_flashinfer_autotune_cache.py
+    ref: d2585943531adc9a25677e5819c728eee1a6ce97
+    status: added
+    fetched: true
+  - source_path: vllm/envs.py
+    local_path: source-snapshot/vllm/envs.py
+    ref: d2585943531adc9a25677e5819c728eee1a6ce97
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/warmup/kernel_warmup.py
+    local_path: source-snapshot/vllm/model_executor/warmup/kernel_warmup.py
+    ref: d2585943531adc9a25677e5819c728eee1a6ce97
+    status: modified
+    fetched: true

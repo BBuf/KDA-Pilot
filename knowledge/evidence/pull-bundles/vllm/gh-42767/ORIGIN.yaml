@@ -1,0 +1,59 @@
+schema_version: 1
+source_key: vllm-project/vllm#42767
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42767
+title: '[Refactor] Remove dead cuda kernels'
+url: https://github.com/vllm-project/vllm/pull/42767
+state: closed
+merged_at: '2026-05-18T18:14:21Z'
+base_ref_oid: f5d3dc7115cf77472ba5e274f6becbbeddbf4bd5
+head_ref_oid: 7256f529e900f54dc0207429cbf18f2ce6ac5f20
+captured_at: '2026-05-20T15:08:33.241250+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cuda
+- cuda kernel
+- gemm
+- moe
+- moe kernel
+techniques: []
+hardware_features: []
+kernel_types:
+- attention
+- gemm
+- moe
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: CMakeLists.txt
+    local_path: source-snapshot/CMakeLists.txt
+    ref: 7256f529e900f54dc0207429cbf18f2ce6ac5f20
+    status: modified
+    fetched: true
+  - source_path: csrc/moe/torch_bindings.cpp
+    local_path: source-snapshot/csrc/moe/torch_bindings.cpp
+    ref: 7256f529e900f54dc0207429cbf18f2ce6ac5f20
+    status: modified
+    fetched: true
+  - source_path: csrc/ops.h
+    local_path: source-snapshot/csrc/ops.h
+    ref: 7256f529e900f54dc0207429cbf18f2ce6ac5f20
+    status: modified
+    fetched: true
+  - source_path: csrc/torch_bindings.cpp
+    local_path: source-snapshot/csrc/torch_bindings.cpp
+    ref: 7256f529e900f54dc0207429cbf18f2ce6ac5f20
+    status: modified
+    fetched: true
+  - source_path: vllm/_custom_ops.py
+    local_path: source-snapshot/vllm/_custom_ops.py
+    ref: 7256f529e900f54dc0207429cbf18f2ce6ac5f20
+    status: modified
+    fetched: true

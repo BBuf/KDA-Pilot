@@ -1,0 +1,193 @@
+schema_version: 1
+source_key: tile-ai/tilelang#2195
+repo: tile-ai/tilelang
+repo_id: tilelang
+pr_number: 2195
+title: '[BugFix] Vendor HIP headers and build fat CUDA+ROCm linux wheels'
+url: https://github.com/tile-ai/tilelang/pull/2195
+state: closed
+merged_at: '2026-05-18T06:01:39Z'
+base_ref_oid: bcb2da336a28cf641f88e7f1ae53a95c475b6202
+head_ref_oid: 139c51d2a143870d603f434010a1fddc0a36a3a5
+captured_at: '2026-05-20T15:04:54.659795+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- benchmark kernel
+- cuda kernel
+- triton kernel
+techniques:
+- autotuning
+- vectorized-loads
+- warp-specialization
+hardware_features: []
+kernel_types: []
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/amd_channel_descriptor.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/amd_channel_descriptor.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/amd_device_functions.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/amd_device_functions.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/amd_hip_atomic.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/amd_hip_atomic.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/amd_hip_common.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/amd_hip_common.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/amd_hip_gl_interop.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/amd_hip_gl_interop.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/amd_hip_runtime.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/amd_hip_runtime.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/amd_hip_runtime_pt_api.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/amd_hip_runtime_pt_api.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/amd_hip_unsafe_atomics.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/amd_hip_unsafe_atomics.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/amd_hip_vector_types.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/amd_hip_vector_types.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/amd_math_functions.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/amd_math_functions.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/amd_surface_functions.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/amd_surface_functions.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/amd_warp_functions.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/amd_warp_functions.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/amd_warp_sync_functions.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/amd_warp_sync_functions.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/device_library_decls.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/device_library_decls.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/hip_api_trace.hpp
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/hip_api_trace.hpp
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/hip_assert.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/hip_assert.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/hip_fp16_math_fwd.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/hip_fp16_math_fwd.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/hip_ldg.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/hip_ldg.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/hip_prof_str.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/hip_prof_str.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/hip_runtime_prof.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/hip_runtime_prof.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/host_defines.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/host_defines.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/math_fwd.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/math_fwd.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/ockl_image.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/ockl_image.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/texture_fetch_functions.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/texture_fetch_functions.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/amd_detail/texture_indirect_functions.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/amd_detail/texture_indirect_functions.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/channel_descriptor.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/channel_descriptor.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/driver_types.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/driver_types.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/hip_common.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/hip_common.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/hip_deprecated.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/hip_deprecated.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/hip_runtime.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/hip_runtime.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/hip_runtime_api.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/hip_runtime_api.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true
+  - source_path: 3rdparty/hip-headers/include/hip/hip_texture_types.h
+    local_path: source-snapshot/3rdparty/hip-headers/include/hip/hip_texture_types.h
+    ref: 139c51d2a143870d603f434010a1fddc0a36a3a5
+    status: added
+    fetched: true

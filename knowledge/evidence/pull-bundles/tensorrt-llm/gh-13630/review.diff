@@ -1,0 +1,3153 @@
+diff --git a/examples/auto_deploy/model_registry/configs/gemma3n_e2b_it.yaml b/examples/auto_deploy/model_registry/configs/gemma3n_e2b_it.yaml
+index 11b5a6262077..9496e3289253 100644
+--- a/examples/auto_deploy/model_registry/configs/gemma3n_e2b_it.yaml
++++ b/examples/auto_deploy/model_registry/configs/gemma3n_e2b_it.yaml
+@@ -3,7 +3,7 @@
+ 
+ runtime: trtllm
+ compile_backend: torch-cudagraph
+-model_factory: AutoModelForCausalLM
++model_factory: Gemma3nForConditionalGeneration
+ max_seq_len: 512
+ max_batch_size: 8
+ cuda_graph_config:
+diff --git a/examples/auto_deploy/model_registry/configs/gemma4_e2b.yaml b/examples/auto_deploy/model_registry/configs/gemma4_e2b.yaml
+new file mode 100644
+index 000000000000..b0fbfe194fdc
+--- /dev/null
++++ b/examples/auto_deploy/model_registry/configs/gemma4_e2b.yaml
+@@ -0,0 +1,30 @@
++# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-License-Identifier: Apache-2.0
++
++# Gemma 4 E2B-it — text-only AD export path.
++# Uses triton paged attention backend: supports head_dim=512 (global_head_dim),
++# paged KV cache, CUDA-graph-compatible, FlashDecoding for decode.
++model_factory: Gemma4ForConditionalGeneration
++# Use the instruction-tuned tokenizer/chat template for end-to-end prompting.
++tokenizer: google/gemma-4-E2B-it
++attn_backend: triton_paged
++compile_backend: torch-cudagraph
++cuda_graph_config:
++  batch_sizes: [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
++max_num_tokens: 8192
++max_batch_size: 512
++max_seq_len: 8192
++enable_chunked_prefill: true
++kv_cache_config:
++  enable_block_reuse: false
++  free_gpu_memory_fraction: 0.8
++transforms:
++  compile_model:
++    piecewise_enabled: true
++  mlir_elementwise_fusion:
++    # MLIR elementwise kernels currently corrupt piecewise CUDA graph replay for Gemma4 E2B.
++    enabled: false
++  gather_logits_before_lm_head:
++    enabled: true
++  fuse_gemms:
++    enabled: true
+diff --git a/examples/auto_deploy/model_registry/models.yaml b/examples/auto_deploy/model_registry/models.yaml
+index 8095a9761a96..8b903ccbe321 100644
+--- a/examples/auto_deploy/model_registry/models.yaml
++++ b/examples/auto_deploy/model_registry/models.yaml
+@@ -450,12 +450,15 @@ models:
+   yaml_extra: ['dashboard_default.yaml', 'world_size_2.yaml']
+ # --- Gemma 3n (Jun 2025) - on-device VLM ---
+ - name: google/gemma-3n-E2B-it
+-  config_id: multimodal
+-  yaml_extra: ['dashboard_default.yaml', 'world_size_1.yaml', 'multimodal.yaml']
++  config_id: gemma3n_e2b_it
++  yaml_extra: ['dashboard_default.yaml', 'world_size_1.yaml', 'gemma3n_e2b_it.yaml']
+ - name: google/gemma-3n-E4B-it
+   config_id: multimodal
+   yaml_extra: ['dashboard_default.yaml', 'world_size_2.yaml', 'multimodal.yaml']
+ # --- Gemma 4 (2026) - MoE with K=V attention ---
++- name: google/gemma-4-E2B-it
++  config_id: gemma4_e2b
++  yaml_extra: ['dashboard_default.yaml', 'world_size_1.yaml', 'gemma4_e2b.yaml']
+ - name: google/gemma-4-26B-A4B
+   config_id: gemma4_moe_base
+   yaml_extra: ['dashboard_default.yaml', 'world_size_1.yaml', 'gemma4_moe_base.yaml']
+diff --git a/tensorrt_llm/_torch/auto_deploy/compile/backends/torch_cudagraph.py b/tensorrt_llm/_torch/auto_deploy/compile/backends/torch_cudagraph.py
+index 17e56f02195b..c7696fb203d0 100644
+--- a/tensorrt_llm/_torch/auto_deploy/compile/backends/torch_cudagraph.py
++++ b/tensorrt_llm/_torch/auto_deploy/compile/backends/torch_cudagraph.py
+@@ -64,6 +64,25 @@ def _coalesce_output(
+     return out if out is not None else op_result
+ 
+ 
++def _is_resource_input(name: str, resource_input_names: Optional[Set[str]]) -> bool:
++    return resource_input_names is not None and name in resource_input_names
++
++
++def _order_kwargs_runtime_then_resources(
++    kwargs: Dict[str, Any],
++    resource_input_names: Optional[Set[str]],
++) -> Dict[str, Any]:
++    """Keep runtime kwargs first and explicit cache/resource kwargs last."""
++    if not resource_input_names:
++        return kwargs
++    return dict(
++        sorted(
++            kwargs.items(),
++            key=lambda item: _is_resource_input(item[0], resource_input_names),
++        )
++    )
++
++
+ def _inject_out_param(submod: GraphModule) -> None:
+     """Rewrite a dynamic submodule's FX graph to accept and forward an ``out`` kwarg.
+ 
+@@ -119,16 +138,18 @@ def __init__(
+         model: nn.Module,
+         num_batched_inputs: Optional[int] = None,  # number of batched, dynamic inputs...
+         dynamic_dims: Optional[List[int]] = None,
++        resource_input_names: Optional[Set[str]] = None,
+     ):
+         super().__init__()
+         self.model = model
+-        self.num_batched_inputs = num_batched_inputs if num_batched_inputs is not None else 1
+-        self.dynamic_dims = dynamic_dims or [0] * self.num_batched_inputs
+-        assert len(self.dynamic_dims) == self.num_batched_inputs
++        self.num_batched_inputs = num_batched_inputs
++        self.dynamic_dims = dynamic_dims
++        self.resource_input_names = (
++            set(resource_input_names) if resource_input_names is not None else None
++        )
+         self.cudagraphs: Dict[Tuple[int, ...], CUDAGraph] = {}
+-        self._input_buffers: List[torch.Tensor] = [
+-            torch.empty(0, 1) for _ in range(self.num_batched_inputs)
+-        ]
++        self._cudagraph_output_extents: Dict[Tuple[int, ...], Tuple[int, ...]] = {}
++        self._input_buffers: List[torch.Tensor] = []
+         self._out_buffer_flat: List[torch.Tensor] = None
+         self._output_dynamic_dim: int = 0
+         self._args_hash: Optional[Tuple[int, ...]] = None
+@@ -141,13 +162,27 @@ def __init__(
+     def _get_hash(self, flat_args: List[Any]) -> Tuple[int, ...]:
+         return tuple(hash(a) for a in flat_args)
+ 
++    def _normalize_args_kwargs(self, args: Tuple, kwargs: Dict[str, Any]) -> Tuple[Tuple, Dict]:
++        return args, _order_kwargs_runtime_then_resources(kwargs, self.resource_input_names)
++
++    def _resolve_num_batched_inputs(self, args: Tuple, kwargs: Dict[str, Any]) -> int:
++        if self.num_batched_inputs is not None:
++            return self.num_batched_inputs
++        num_batched_inputs = len(args) + sum(
++            not _is_resource_input(name, self.resource_input_names) for name in kwargs
++        )
++        if num_batched_inputs <= 0:
++            raise ValueError("Could not infer CUDA graph batched inputs from runtime inputs.")
++        self.num_batched_inputs = num_batched_inputs
++        return num_batched_inputs
++
+     def _capture_one_graph(
+         self,
+         args: Tuple,
+         kwargs: Dict,
+         refresh_args_static: Optional[Callable] = None,
+-    ) -> torch.cuda.CUDAGraph:
+-        """Capture and return one cuda graph."""
++    ) -> Tuple[torch.cuda.CUDAGraph, Tuple[int, ...]]:
++        """Capture and return one cuda graph and its output dynamic extents."""
+         # warm-up and invoke autotuner
+         with autotune():
+             for _ in range(3):
+@@ -163,16 +198,23 @@ def _capture_one_graph(
+         torch.cuda.synchronize()
+         graph = torch.cuda.CUDAGraph()
+         od = self._output_dynamic_dim
++        output_extents = []
+         with torch.cuda.graph(graph, pool=self._cuda_graph_mem_pool):
+             # compute output
+             out = self.model(*args, **kwargs)
+             # write out into output buffer up to out batch size
+             out_flat = tree_flatten_spec(out, self._out_spec)
+             for o_buffer, o in zip(self._out_buffer_flat, out_flat):
+-                o_buffer.narrow(od, 0, o.shape[od]).copy_(o)
++                output_extent = o.shape[od]
++                assert o_buffer.shape[od] >= output_extent, (
++                    "CUDA graph output extent exceeds backing buffer during capture: "
++                    f"output_extent={output_extent}, buffer_extent={o_buffer.shape[od]}"
++                )
++                o_buffer.narrow(od, 0, output_extent).copy_(o)
++                output_extents.append(output_extent)
+         torch.cuda.synchronize()
+         self._cuda_graph_mem_pool = self._cuda_graph_mem_pool or graph.pool()
+-        return graph
++        return graph, tuple(output_extents)
+ 
+     def capture_graph(self, get_args_kwargs: GetArgsKwargsForBatchSize, batch_sizes: List[int]):
+         """Capture and pre-fetch the graph for desired batch sizes."""
+@@ -187,22 +229,27 @@ def capture_graph(self, get_args_kwargs: GetArgsKwargsForBatchSize, batch_sizes:
+         # probed (smaller) state for the warmup/capture path.
+         probe_bs = max(1, batch_sizes[0] - 1)
+         args_probe, kwargs_probe = get_args_kwargs(probe_bs)
++        args_probe, kwargs_probe = self._normalize_args_kwargs(args_probe, kwargs_probe)
++        num_batched_inputs = self._resolve_num_batched_inputs(args_probe, kwargs_probe)
++        if self.dynamic_dims is not None:
++            assert len(self.dynamic_dims) == num_batched_inputs
+         flat_probe, _ = _args_kwargs_flatten(*args_probe, **kwargs_probe)
+         probe_shapes = [
+             tuple(t.shape) if isinstance(t, torch.Tensor) else None
+-            for t in flat_probe[: self.num_batched_inputs]
++            for t in flat_probe[:num_batched_inputs]
+         ]
+ 
+         # Re-fetch args/kwargs for the largest batch size and use those as the
+         # canonical inputs for warmup and capture.
+         args, kwargs = get_args_kwargs(batch_sizes[0])
++        args, kwargs = self._normalize_args_kwargs(args, kwargs)
+ 
+         # flatten args, kwargs for the first time and record in_spec
+         all_args_flat, self._in_spec = _args_kwargs_flatten(*args, **kwargs)
+ 
+         # extract the batched input tensors
+-        args_batched = all_args_flat[: self.num_batched_inputs]
+-        args_static = all_args_flat[self.num_batched_inputs :]
++        args_batched = all_args_flat[:num_batched_inputs]
++        args_static = all_args_flat[num_batched_inputs:]
+ 
+         # Auto-detect dynamic dims by comparing the max-batch shapes against
+         # the probed smaller-batch shapes.
+@@ -242,9 +289,10 @@ def capture_graph(self, get_args_kwargs: GetArgsKwargsForBatchSize, batch_sizes:
+ 
+             # get new args, kwargs for the current batch size
+             args, kwargs = get_args_kwargs(bs)
++            args, kwargs = self._normalize_args_kwargs(args, kwargs)
+             all_args_flat = _args_kwargs_flatten_spec(self._in_spec, *args, **kwargs)
+-            args_batched = all_args_flat[: self.num_batched_inputs]
+-            args_static = all_args_flat[self.num_batched_inputs :]
++            args_batched = all_args_flat[:num_batched_inputs]
++            args_static = all_args_flat[num_batched_inputs:]
+ 
+             # assert that static args match the stored hash
+             assert self._args_hash == self._get_hash(args_static), (
+@@ -277,14 +325,19 @@ def refresh_args_static(_bs: int = bs) -> None:
+ 
+             # capture graph for truncated inputs
+             combined_shape = sum((tuple(input.shape) for input in inputs_truncated), start=())
+-            self.cudagraphs[combined_shape] = self._capture_one_graph(
++            graph, output_extents = self._capture_one_graph(
+                 args=args,
+                 kwargs=kwargs,
+                 refresh_args_static=refresh_args_static,
+             )
++            self.cudagraphs[combined_shape] = graph
++            self._cudagraph_output_extents[combined_shape] = output_extents
+ 
+     def forward(self, *args, **kwargs) -> Any:
+         """Run the compiled graph."""
++        args, kwargs = self._normalize_args_kwargs(args, kwargs)
++        assert self.num_batched_inputs is not None, "Graphs must be captured before replay."
++
+         # flatten args, kwargs
+         all_args_flat = _args_kwargs_flatten_spec(self._in_spec, *args, **kwargs)
+ 
+@@ -303,6 +356,27 @@ def forward(self, *args, **kwargs) -> Any:
+         if combined_shape not in self.cudagraphs:
+             return self.model(*args, **kwargs)
+ 
++        output_extents = self._cudagraph_output_extents.get(combined_shape)
++        if output_extents is None:
++            raise RuntimeError(
++                "CUDA graph output extent metadata is missing for captured input shape "
++                f"{combined_shape}."
++            )
++
++        if len(output_extents) != len(self._out_buffer_flat):
++            raise RuntimeError(
++                "CUDA graph output extent metadata does not match captured outputs: "
++                f"num_extents={len(output_extents)}, num_outputs={len(self._out_buffer_flat)}, "
++                f"input_shape={combined_shape}."
++            )
++
++        od = self._output_dynamic_dim
++        if any(
++            o_b.shape[od] < output_extent
++            for o_b, output_extent in zip(self._out_buffer_flat, output_extents)
++        ):
++            return self.model(*args, **kwargs)
++
+         # copy inputs to input buffers along their respective dynamic dims
+         for i, input_tensor in enumerate(args_batched):
+             dim_i = self.dynamic_dims[i]
+@@ -313,9 +387,10 @@ def forward(self, *args, **kwargs) -> Any:
+         self.cudagraphs[combined_shape].replay()
+ 
+         # retrieve output from buffer, cut to batch size, and unflatten
+-        od = self._output_dynamic_dim
+-        bs = args_batched[0].shape[self.dynamic_dims[0]]
+-        out_flat = [o_b.narrow(od, 0, bs) for o_b in self._out_buffer_flat]
++        out_flat = [
++            o_b.narrow(od, 0, output_extent)
++            for o_b, output_extent in zip(self._out_buffer_flat, output_extents)
++        ]
+         return self._out_spec.unflatten(out_flat)
+ 
+ 
+@@ -960,6 +1035,7 @@ def _capture_inner_kwargs(
+     full_model: nn.Module,
+     inner_module: nn.Module,
+     top_level_kwargs: Dict[str, Any],
++    resource_input_names: Optional[Set[str]] = None,
+ ) -> Dict[str, Any]:
+     """Run full model once and intercept kwargs passed to the inner module."""
+     captured: Dict[str, Any] = {}
+@@ -973,7 +1049,7 @@ def hook(module, args, kwargs):
+         full_model(**top_level_kwargs)
+     finally:
+         handle.remove()
+-    return captured
++    return _order_kwargs_runtime_then_resources(captured, resource_input_names)
+ 
+ 
+ @CompileBackendRegistry.register("torch-cudagraph")
+@@ -993,12 +1069,13 @@ def __init__(
+         self,
+         *args_for_init,
+         cuda_graph_batch_sizes: Optional[List[int]] = None,
+-        num_batched_inputs: int = 1,
++        num_batched_inputs: Optional[int] = None,
+         get_args_kwargs_for_compile: GetArgsKwargsForBatchSize = None,
+         piecewise_enabled: bool = False,
+         piecewise_num_tokens: Optional[List[int]] = None,
+         piecewise_seq_info: Any = None,
+         piecewise_named_args_fn: Optional[Callable[[], Dict[str, Any]]] = None,
++        resource_input_names: Optional[Set[str]] = None,
+         full_model: Optional[nn.Module] = None,
+         **kwargs_for_init,
+     ):
+@@ -1010,6 +1087,9 @@ def __init__(
+         self.piecewise_num_tokens = piecewise_num_tokens or []
+         self.piecewise_seq_info = piecewise_seq_info
+         self.piecewise_named_args_fn = piecewise_named_args_fn
++        self.resource_input_names = (
++            set(resource_input_names) if resource_input_names is not None else None
++        )
+         self.full_model = full_model
+ 
+     def _get_inner_args_kwargs_fn(self, inner_gm: GraphModule) -> GetArgsKwargsForBatchSize:
+@@ -1022,7 +1102,12 @@ def _get_inner_args_kwargs_fn(self, inner_gm: GraphModule) -> GetArgsKwargsForBa
+ 
+         def get_inner_args(batch_size: int):
+             _, top_level_kwargs = self.get_args_kwargs_for_compile(batch_size)
+-            inner_kwargs = _capture_inner_kwargs(self.full_model, inner_gm, top_level_kwargs)
++            inner_kwargs = _capture_inner_kwargs(
++                self.full_model,
++                inner_gm,
++                top_level_kwargs,
++                self.resource_input_names,
++            )
+             return (), inner_kwargs
+ 
+         return get_inner_args
+@@ -1047,7 +1132,11 @@ def get_capture_args_with_warmup(batch_size: int):
+             with CudaGraphWarmUpPhase():
+                 return get_capture_args_fn(batch_size)
+ 
+-        monolithic = CapturedGraph(target_gm, num_batched_inputs=self.num_batched_inputs)
++        monolithic = CapturedGraph(
++            target_gm,
++            num_batched_inputs=self.num_batched_inputs,
++            resource_input_names=self.resource_input_names,
++        )
+         monolithic.capture_graph(get_capture_args_with_warmup, self.cuda_graph_batch_sizes)
+ 
+         piecewise = None
+@@ -1076,7 +1165,10 @@ def get_piecewise_args(num_tokens: int):
+                     top_level_kwargs = self.piecewise_named_args_fn()
+                     if self.full_model is not None:
+                         return (), _capture_inner_kwargs(
+-                            self.full_model, target_gm, top_level_kwargs
++                            self.full_model,
++                            target_gm,
++                            top_level_kwargs,
++                            self.resource_input_names,
+                         )
+                     return (), top_level_kwargs
+ 
+diff --git a/tensorrt_llm/_torch/auto_deploy/custom_ops/attention/triton_paged_attention.py b/tensorrt_llm/_torch/auto_deploy/custom_ops/attention/triton_paged_attention.py
+index f297b0ff6f96..2667f4e18ac5 100644
+--- a/tensorrt_llm/_torch/auto_deploy/custom_ops/attention/triton_paged_attention.py
++++ b/tensorrt_llm/_torch/auto_deploy/custom_ops/attention/triton_paged_attention.py
+@@ -353,7 +353,7 @@ def _flash_decode_stage1_kernel(
+             kv_cache_ptr + cache_base + cache_stride_kv,
+             mask=page_mask_2d,
+             other=0.0,
+-        ).to(q_all.dtype)  # [PAGE_SIZE, HEAD_DIM]; cast from fp8 if kv cache is fp8
++        ).to(k.dtype)  # [PAGE_SIZE, HEAD_DIM]; cast from fp8 if kv cache is fp8
+ 
+         # [HEAD_RATIO_PADDED, HEAD_DIM] @ [HEAD_DIM, PAGE_SIZE] -> [HEAD_RATIO_PADDED, PAGE_SIZE]
+         attn = tl.dot(q_all, tl.trans(k)) * SM_SCALE
+@@ -983,6 +983,8 @@ def _paged_context_masked_kernel(
+ def _fast_gather_sdpa_kernel(
+     kv_cache_ptr,
+     kv_indices_ptr,
++    kv_indptr_ptr,
++    seq_len_with_cache_ptr,
+     out_k_ptr,
+     out_v_ptr,
+     # Strides
+@@ -1013,7 +1015,14 @@ def _fast_gather_sdpa_kernel(
+     seq_id = page_global_idx // MAX_PAGES
+     local_page = page_global_idx % MAX_PAGES
+ 
+-    physical_page = tl.load(kv_indices_ptr + page_global_idx)
++    seq_page_start = tl.load(kv_indptr_ptr + seq_id)
++    seq_page_end = tl.load(kv_indptr_ptr + seq_id + 1)
++    seq_pages = seq_page_end - seq_page_start
++    page_is_valid = local_page < seq_pages
++
++    physical_page = tl.load(
++        kv_indices_ptr + seq_page_start + local_page, mask=page_is_valid, other=0
++    )
+ 
+     token_offsets = tl.arange(0, PAGE_SIZE)
+     head_offsets = tl.arange(0, HEAD_DIM)
+@@ -1022,11 +1031,19 @@ def _fast_gather_sdpa_kernel(
+     src_base = physical_page.to(tl.int64) * cache_stride_block + kv_head_id * cache_stride_head
+     src_offsets = token_offsets[:, None] * cache_stride_token + head_offsets[None, :]
+ 
+-    k_data = tl.load(kv_cache_ptr + src_base + src_offsets)
+-    v_data = tl.load(kv_cache_ptr + src_base + cache_stride_kv + src_offsets)
+-
+     # Destination: out_k/v[seq_id, kv_head_id, local_page*PAGE_SIZE + :, :]
+     local_token_start = local_page * PAGE_SIZE
++    seq_len = tl.load(seq_len_with_cache_ptr + seq_id)
++    valid_tokens = tl.minimum(PAGE_SIZE, seq_len - local_token_start)
++    valid_tokens = tl.maximum(0, valid_tokens)
++    token_is_valid = token_offsets < valid_tokens
++    load_mask = page_is_valid & token_is_valid[:, None]
++
++    k_data = tl.load(kv_cache_ptr + src_base + src_offsets, mask=load_mask, other=0.0)
++    v_data = tl.load(
++        kv_cache_ptr + src_base + cache_stride_kv + src_offsets, mask=load_mask, other=0.0
++    )
++
+     dst_base = (
+         seq_id * out_stride_seq
+         + kv_head_id * out_stride_head
+@@ -1060,6 +1077,8 @@ def triton_paged_context(
+     if num_seq == 0 or total_tokens == 0:
+         return output
+ 
++    q_lens = qo_indptr[1:] - qo_indptr[:-1]
++
+     # Compute max_q_len without GPU sync for single-sequence batches (most common
+     # in serving). For multi-sequence batches, we must use .item() because
+     # total_tokens // num_seq gives the average, not the max — variable-length
+@@ -1067,84 +1086,92 @@ def triton_paged_context(
+     if num_seq == 1:
+         max_q_len = total_tokens
+     else:
+-        q_lens = qo_indptr[1:] - qo_indptr[:-1]
+         max_q_len = int(q_lens.max().item())
+ 
+     # Adaptive dispatch: gather + cuDNN SDPA for seq>=512 (outperforms paged kernel),
+     # paged Triton kernel for shorter sequences where gather overhead dominates.
+-    # Compute max_pages from max_q_len without GPU sync
+-    # (assumes pure prefill where q_len == kv_len for each seq)
+     # Normalize sliding_window for kernel constexpr: None/non-positive → 0
+     sw = sliding_window if isinstance(sliding_window, int) and sliding_window > 0 else 0
+ 
+-    max_pages = (max_q_len + page_size - 1) // page_size
+-    total_expected_pages = num_seq * max_pages
+     # Force SDPA for large head_dim: the Triton paged kernel's tl.dot produces
+     # misaligned shared memory accesses on Blackwell when HEAD_DIM > 256.
+     large_head_dim = head_dim > 256
+-    # kv_indices may be a pre-allocated buffer larger than the actual page count;
+-    # fall back to the page table indptr which always reflects the true count.
+-    pages_uniform = kv_indices.shape[0] == total_expected_pages or (
+-        max_pages > 0 and int(kv_indptr[-1].item()) == total_expected_pages
+-    )
+     # SDPA reshape requires all sequences to have the same q_len (since q is
+     # packed as [total_tokens, ...] and we reshape to [num_seq, max_q_len, ...]).
+     # Check without GPU sync: sum(q_len_i) == num_seq * max_q_len iff all equal.
+     all_same_q_len = total_tokens == num_seq * max_q_len
+-    use_sdpa = (
++    use_sdpa_candidate = (
+         (max_q_len >= 512 or large_head_dim)
+         and (num_seq <= 64 or large_head_dim)
+-        and max_pages > 0
+-        and pages_uniform
+         and all_same_q_len
+         and sw == 0  # SDPA doesn't support sliding window natively
+     )
++    kv_lens = seq_len_with_cache[:num_seq]
++    cache_lens = kv_lens - q_lens
++
++    max_kv_len = int(kv_lens.max().item()) if use_sdpa_candidate else 0
++    max_pages = (max_kv_len + page_size - 1) // page_size
++    total_expected_pages = num_seq * max_pages
++    use_sdpa = use_sdpa_candidate and max_pages > 0
+ 
+     if use_sdpa:
+         # Fast Triton gather: scattered pages → separate K, V in SDPA layout
+         # Single alloc for both K and V, single kernel to fill
+-        max_kv_len = max_pages * page_size
++        padded_kv_len = max_pages * page_size
+         kv_buf = torch.empty(
+             2,
+             num_seq,
+             n_kv_heads,
+-            max_kv_len,
++            padded_kv_len,
+             head_dim,
+             dtype=kv_cache.dtype,
+             device=kv_cache.device,
+         )
+-        k_sdpa = kv_buf[0]
+-        v_sdpa = kv_buf[1]
++        k_buf = kv_buf[0]
++        v_buf = kv_buf[1]
+         _fast_gather_sdpa_kernel[(total_expected_pages, n_kv_heads)](
+             kv_cache,
+             kv_indices,
+-            k_sdpa,
+-            v_sdpa,
++            kv_indptr,
++            seq_len_with_cache,
++            k_buf,
++            v_buf,
+             kv_cache.stride(0),
+             kv_cache.stride(1),
+             kv_cache.stride(2),
+             kv_cache.stride(3),
+-            k_sdpa.stride(0),
+-            k_sdpa.stride(1),
+-            k_sdpa.stride(2),
++            k_buf.stride(0),
++            k_buf.stride(1),
++            k_buf.stride(2),
+             MAX_PAGES=max_pages,
+             N_KV_HEADS=n_kv_heads,
+             PAGE_SIZE=page_size,
+             HEAD_DIM=head_dim,
+         )
++        k_sdpa = k_buf[:, :, :max_kv_len, :]
++        v_sdpa = v_buf[:, :, :max_kv_len, :]
+ 
+         # Cast k/v to query dtype if kv cache uses a different dtype (e.g., fp8)
+         if kv_cache.dtype != q.dtype:
+             k_sdpa = k_sdpa.to(q.dtype)
+             v_sdpa = v_sdpa.to(q.dtype)
+ 
++        q_positions = torch.arange(max_q_len, device=q.device, dtype=cache_lens.dtype)
++        kv_positions = torch.arange(max_kv_len, device=q.device, dtype=kv_lens.dtype)
++        attn_mask = kv_positions.view(1, 1, 1, max_kv_len) < kv_lens.view(num_seq, 1, 1, 1)
++        causal_mask = kv_positions.view(1, 1, 1, max_kv_len) <= (
++            cache_lens.view(num_seq, 1, 1, 1) + q_positions.view(1, 1, max_q_len, 1)
++        )
++        attn_mask = attn_mask & causal_mask
++
+         # SDPA with GQA
+         o_sdpa = torch.nn.functional.scaled_dot_product_attention(
+             q.view(num_seq, max_q_len, n_heads, head_dim).transpose(1, 2),
+             k_sdpa,
+             v_sdpa,
+             scale=sm_scale,
+-            is_causal=True,
++            attn_mask=attn_mask,
++            is_causal=False,
+             enable_gqa=True,
+         )
+         output.view(num_seq, max_q_len, n_heads, head_dim).copy_(o_sdpa.permute(0, 2, 1, 3))
+@@ -1323,6 +1350,7 @@ def triton_paged_mha_with_cache(
+     scale: Optional[float] = None,
+     sliding_window: Optional[int] = None,
+     # OPTIONAL INPUTS
++    read_cache_only: bool = False,
+     custom_attn_mask: Optional[torch.Tensor] = None,
+     # OPTIONAL PRE-ALLOCATED OUTPUT
+     out: Optional[torch.Tensor] = None,
+@@ -1345,16 +1373,16 @@ def triton_paged_mha_with_cache(
+ 
+     sm_scale = _get_sm_scale(head_dim, scale)
+ 
+-    # Update KV cache with new tokens
+-    update_paged_kv_cache(
+-        k[:num_total_tokens],
+-        v[:num_total_tokens],
+-        triton_batch_indices[:num_total_tokens],
+-        triton_positions[:num_total_tokens],
+-        kv_cache,
+-        cache_loc,
+-        cu_num_pages[: num_seq + 1],
+-    )
++    if not read_cache_only:
++        update_paged_kv_cache(
++            k[:num_total_tokens],
++            v[:num_total_tokens],
++            triton_batch_indices[:num_total_tokens],
++            triton_positions[:num_total_tokens],
++            kv_cache,
++            cache_loc,
++            cu_num_pages[: num_seq + 1],
++        )
+ 
+     if out is not None:
+         y = out.view(-1, q.shape[1], head_dim)
+@@ -1366,28 +1394,28 @@ def triton_paged_mha_with_cache(
+         cu_seqlen = cu_seqlen_host[: num_prefill + 1].to(q.device, non_blocking=True)
+         seq_len_with_cache = seq_len_with_cache_host[:num_prefill].to(q.device, non_blocking=True)
+         has_custom_attn_mask = custom_attn_mask is not None and custom_attn_mask.numel() > 0
+-        if not has_custom_attn_mask:
+-            triton_paged_context(
++        if has_custom_attn_mask:
++            triton_paged_context_with_custom_mask(
+                 q[:num_prefill_tokens],
+                 kv_cache,
+                 cu_seqlen,
+                 cu_num_pages[: num_prefill + 1],
+                 cache_loc,
+-                last_page_len[:num_prefill],
+                 seq_len_with_cache,
++                custom_attn_mask[:num_prefill],
+                 sm_scale,
+                 sliding_window=sliding_window,
+                 out=y[:num_prefill_tokens],
+             )
+         else:
+-            triton_paged_context_with_custom_mask(
++            triton_paged_context(
+                 q[:num_prefill_tokens],
+                 kv_cache,
+                 cu_seqlen,
+                 cu_num_pages[: num_prefill + 1],
+                 cache_loc,
++                last_page_len[:num_prefill],
+                 seq_len_with_cache,
+-                custom_attn_mask[:num_prefill],
+                 sm_scale,
+                 sliding_window=sliding_window,
+                 out=y[:num_prefill_tokens],
+@@ -1437,6 +1465,7 @@ def triton_paged_mha_with_cache_fake(
+     kv_cache: torch.Tensor,
+     scale: Optional[float] = None,
+     sliding_window: Optional[int] = None,
++    read_cache_only: bool = False,
+     custom_attn_mask: Optional[torch.Tensor] = None,
+     out: Optional[torch.Tensor] = None,
+ ) -> torch.Tensor:
+@@ -1468,6 +1497,10 @@ def get_source_attention_op(cls) -> OpOverloadPacket:
+     def get_cached_attention_op(cls) -> MHACallable:
+         return torch.ops.auto_deploy.triton_paged_mha_with_cache.default
+ 
++    @classmethod
++    def supports_shared_kv(cls) -> bool:
++        return True
++
+     @classmethod
+     def get_standard_metadata_args(cls) -> List[str]:
+         return [
+@@ -1532,4 +1565,8 @@ def get_constants(cls, source_attn_node: Node) -> List[Constant]:
+ 
+         sliding_window = extract_op_args(source_attn_node, "sliding_window")[0]
+ 
+-        return [scale, sliding_window]
++        return [
++            scale,
++            sliding_window,
++            cls.get_shared_kv_source_layer_idx(source_attn_node) is not None,
++        ]
+diff --git a/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma3n.py b/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma3n.py
+index 2e55b76f76b2..897dafaacaa3 100644
+--- a/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma3n.py
++++ b/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma3n.py
+@@ -25,10 +25,11 @@
+ 
+ import math
+ from dataclasses import dataclass
+-from typing import Optional, Tuple
++from typing import Any, Optional, Tuple
+ 
+ import torch
+ from torch import nn
++from transformers import AutoTokenizer
+ from transformers.activations import ACT2FN
+ from transformers.generation import GenerationMixin
+ from transformers.modeling_utils import PreTrainedModel
+@@ -40,6 +41,7 @@
+ )
+ from transformers.utils import ModelOutput
+ 
++from ..factory import ModelFactoryRegistry
+ from ..hf import AutoModelForCausalLMFactory
+ 
+ 
+@@ -875,7 +877,21 @@ def forward(
+         return Gemma3nConditionalOutput(logits=logits)
+ 
+ 
++@ModelFactoryRegistry.register("Gemma3nForConditionalGeneration")
++class Gemma3nForConditionalGenerationFactory(AutoModelForCausalLMFactory):
++    """Factory that wires native HF tokenizer support for Gemma 3n."""
++
++    def init_tokenizer(self) -> Optional[Any]:
++        if self.tokenizer is None:
++            return None
++        return AutoTokenizer.from_pretrained(self.tokenizer)
++
++
++# ---------------------------------------------------------------------------
++# Registration
++# ---------------------------------------------------------------------------
++
+ AutoModelForCausalLMFactory.register_custom_model_cls("Gemma3nTextConfig", Gemma3nForCausalLM)
+-AutoModelForCausalLMFactory.register_custom_model_cls(
++Gemma3nForConditionalGenerationFactory.register_custom_model_cls(
+     "Gemma3nConfig", Gemma3nForConditionalGeneration
+ )
+diff --git a/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma4.py b/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma4.py
+index 456a5ddf99e4..02c72a2eb9ac 100644
+--- a/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma4.py
++++ b/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma4.py
+@@ -34,20 +34,21 @@
+ """
+ 
+ import json
++import operator
+ import re
++import types
+ from dataclasses import dataclass
+ from pathlib import Path
+-from typing import Any, Dict, List, Optional, Sequence, Tuple
++from typing import Any, Dict, List, Optional, Sequence, Tuple, cast
+ 
+ import numpy as np
+ import torch
+ import torch.nn.functional as F
+ from PIL import Image
+-from tokenizers import Tokenizer
+ from torch import nn
+ from torch.export import Dim
+ from torch.fx import GraphModule
+-from transformers import AutoConfig, PretrainedConfig, PreTrainedTokenizerFast
++from transformers import AutoConfig, AutoTokenizer, PretrainedConfig, PreTrainedTokenizerBase
+ from transformers.activations import ACT2FN
+ from transformers.generation import GenerationMixin
+ from transformers.modeling_rope_utils import ROPE_INIT_FUNCTIONS
+@@ -974,11 +975,16 @@ def _canonicalize_mm_span_tensors(
+ 
+ 
+ class Gemma4TextMLP(nn.Module):
+-    def __init__(self, config: Gemma4TextConfig):
++    def __init__(self, config: Gemma4TextConfig, layer_idx: int = 0):
+         super().__init__()
+-        self.gate_proj = nn.Linear(config.hidden_size, config.intermediate_size, bias=False)
+-        self.up_proj = nn.Linear(config.hidden_size, config.intermediate_size, bias=False)
+-        self.down_proj = nn.Linear(config.intermediate_size, config.hidden_size, bias=False)
++        intermediate_size = config.intermediate_size
++        if config.use_double_wide_mlp:
++            double_wide_start = config.num_hidden_layers - config.num_kv_shared_layers
++            if layer_idx >= double_wide_start:
++                intermediate_size = intermediate_size * 2
++        self.gate_proj = nn.Linear(config.hidden_size, intermediate_size, bias=False)
++        self.up_proj = nn.Linear(config.hidden_size, intermediate_size, bias=False)
++        self.down_proj = nn.Linear(intermediate_size, config.hidden_size, bias=False)
+         self.act_fn = ACT2FN[config.hidden_activation]
+ 
+     def forward(self, x: torch.Tensor) -> torch.Tensor:
+@@ -1080,6 +1086,15 @@ def __init__(self, config: Gemma4TextConfig, layer_idx: int):
+         self.config = config
+         self.is_sliding = config.layer_types[layer_idx] == "sliding_attention"
+         self.sliding_window = config.sliding_window if self.is_sliding else None
++        first_kv_shared_layer_idx = config.num_hidden_layers - config.num_kv_shared_layers
++        self.is_kv_shared_layer = layer_idx >= first_kv_shared_layer_idx > 0
++        prev_layers = config.layer_types[:first_kv_shared_layer_idx]
++        if self.is_kv_shared_layer:
++            self.kv_shared_layer_index = (
++                len(prev_layers) - 1 - prev_layers[::-1].index(config.layer_types[layer_idx])
++            )
++        else:
++            self.kv_shared_layer_index = None
+ 
+         # Full-attention layers may use different head dim and K=V
+         self.use_k_eq_v = config.attention_k_eq_v and not self.is_sliding
+@@ -1121,24 +1136,40 @@ def forward(
+         hidden_states: torch.Tensor,
+         position_embeddings: Tuple[torch.Tensor, torch.Tensor],
+         attention_mask: Optional[torch.Tensor] = None,
++        shared_kv_states: Optional[dict[int, tuple[torch.Tensor, torch.Tensor]]] = None,
+     ) -> torch.Tensor:
+         batch_size, seq_len, _ = hidden_states.shape
+         q = self.q_proj(hidden_states).view(batch_size, seq_len, self.num_heads, self.head_dim)
+-        k = self.k_proj(hidden_states).view(batch_size, seq_len, self.num_kv_heads, self.head_dim)
+ 
+-        if self.v_proj is not None:
+-            v = self.v_proj(hidden_states).view(
+-                batch_size, seq_len, self.num_kv_heads, self.head_dim
++        q = self.q_norm(q)
++        cos, sin = position_embeddings
++        q = torch.ops.auto_deploy.torch_rope_with_explicit_cos_sin(q, q, cos, sin, 2)[0]
++
++        if self.is_kv_shared_layer:
++            assert shared_kv_states is not None, (
++                "shared_kv_states must be provided for shared-KV layers"
+             )
++            assert self.kv_shared_layer_index is not None
++            k, v = shared_kv_states[self.kv_shared_layer_index]
++            k = k.to(device=q.device, dtype=q.dtype)
++            v = v.to(device=q.device, dtype=q.dtype)
+         else:
+-            v = k  # K=V: reuse key as value
++            k = self.k_proj(hidden_states).view(
++                batch_size, seq_len, self.num_kv_heads, self.head_dim
++            )
+ 
+-        q = self.q_norm(q)
+-        k = self.k_norm(k)
+-        v = self.v_norm(v)
++            if self.v_proj is not None:
++                v = self.v_proj(hidden_states).view(
++                    batch_size, seq_len, self.num_kv_heads, self.head_dim
++                )
++            else:
++                v = k  # K=V: reuse key as value
+ 
+-        cos, sin = position_embeddings
+-        q, k = torch.ops.auto_deploy.torch_rope_with_explicit_cos_sin(q, k, cos, sin, 2)
++            k = self.k_norm(k)
++            v = self.v_norm(v)
++            k = torch.ops.auto_deploy.torch_rope_with_explicit_cos_sin(q, k, cos, sin, 2)[1]
++            if shared_kv_states is not None:
++                shared_kv_states[self.layer_idx] = (k, v)
+ 
+         attn_output = torch.ops.auto_deploy.torch_attention(
+             q,
+@@ -1153,6 +1184,7 @@ def forward(
+             None,  # logit_cap
+             "bsnd",
+             self.layer_idx,
++            self.kv_shared_layer_index if self.is_kv_shared_layer else None,
+         )
+         return self.o_proj(attn_output.reshape(batch_size, seq_len, -1))
+ 
+@@ -1166,11 +1198,13 @@ class Gemma4TextDecoderLayer(nn.Module):
+     def __init__(self, config: Gemma4TextConfig, layer_idx: int):
+         super().__init__()
+         self.layer_idx = layer_idx
++        self.hidden_size = config.hidden_size
++        self.hidden_size_per_layer_input = getattr(config, "hidden_size_per_layer_input", 0)
+         self.num_experts = config.num_experts
+         self.expert_intermediate_size = config.expert_intermediate_size
+         self.attention_type = config.layer_types[layer_idx]
+         self.self_attn = Gemma4TextAttention(config, layer_idx)
+-        self.mlp = Gemma4TextMLP(config)
++        self.mlp = Gemma4TextMLP(config, layer_idx)
+         self.input_layernorm = Gemma4RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+         self.post_attention_layernorm = Gemma4RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+         self.pre_feedforward_layernorm = Gemma4RMSNorm(config.hidden_size, eps=config.rms_norm_eps)
+@@ -1192,6 +1226,25 @@ def __init__(self, config: Gemma4TextConfig, layer_idx: int):
+                 config.hidden_size, eps=config.rms_norm_eps
+             )
+ 
++        if self.hidden_size_per_layer_input > 0:
++            self.per_layer_input_gate = nn.Linear(
++                self.hidden_size,
++                self.hidden_size_per_layer_input,
++                bias=False,
++            )
++            self.per_layer_projection = nn.Linear(
++                self.hidden_size_per_layer_input,
++                self.hidden_size,
++                bias=False,
++            )
++            self.post_per_layer_input_norm = Gemma4RMSNorm(
++                config.hidden_size, eps=config.rms_norm_eps
++            )
++        else:
++            self.per_layer_input_gate = None
++            self.per_layer_projection = None
++            self.post_per_layer_input_norm = None
++
+     def _unfuse_moe_weights(self, state_dict, prefix, *_args, **_kwargs):
+         """Convert layer-level fused Gemma4 MoE checkpoint weights to per-expert weights."""
+         candidates = [
+@@ -1237,11 +1290,18 @@ def forward(
+         hidden_states: torch.Tensor,
+         position_embeddings: Tuple[torch.Tensor, torch.Tensor],
+         attention_mask: Optional[torch.Tensor] = None,
++        per_layer_input: Optional[torch.Tensor] = None,
++        shared_kv_states: Optional[dict[int, tuple[torch.Tensor, torch.Tensor]]] = None,
+     ) -> torch.Tensor:
+         # Self-attention
+         residual = hidden_states
+         hidden_states = self.input_layernorm(hidden_states)
+-        hidden_states = self.self_attn(hidden_states, position_embeddings, attention_mask)
++        hidden_states = self.self_attn(
++            hidden_states,
++            position_embeddings,
++            attention_mask=attention_mask,
++            shared_kv_states=shared_kv_states,
++        )
+         hidden_states = self.post_attention_layernorm(hidden_states)
+         hidden_states = residual + hidden_states
+ 
+@@ -1270,6 +1330,13 @@ def forward(
+         hidden_states = self.post_feedforward_layernorm(hidden_states)
+         hidden_states = residual + hidden_states
+ 
++        if per_layer_input is not None and self.per_layer_input_gate is not None:
++            gate = self.per_layer_input_gate(hidden_states)
++            gate = F.gelu(gate, approximate="tanh")
++            per_layer_contribution = self.per_layer_projection(gate * per_layer_input)
++            per_layer_contribution = self.post_per_layer_input_norm(per_layer_contribution)
++            hidden_states = hidden_states + per_layer_contribution
++
+         hidden_states = hidden_states * self.layer_scalar
+         return hidden_states
+ 
+@@ -1287,6 +1354,7 @@ class Gemma4TextOutput(ModelOutput):
+ @dataclass
+ class Gemma4CausalLMOutput(ModelOutput):
+     logits: Optional[torch.FloatTensor] = None
++    last_hidden_state: Optional[torch.FloatTensor] = None
+ 
+ 
+ @dataclass
+@@ -1315,13 +1383,50 @@ def _init_weights(self, module: nn.Module):
+ class Gemma4TextModel(Gemma4TextPreTrainedModel):
+     def __init__(self, config: Gemma4TextConfig):
+         super().__init__(config)
++        self.config = config
+         self.padding_idx = config.pad_token_id
++        self.hidden_size_per_layer_input = getattr(config, "hidden_size_per_layer_input", 0)
++        self.vocab_size_per_layer_input = getattr(
++            config, "vocab_size_per_layer_input", config.vocab_size
++        )
+         self.embed_tokens = Gemma4TextScaledWordEmbedding(
+             config.vocab_size,
+             config.hidden_size,
+             self.padding_idx,
+             embed_scale=config.hidden_size**0.5,
+         )
++        if self.hidden_size_per_layer_input > 0:
++            total_ple_dim = self.hidden_size_per_layer_input * config.num_hidden_layers
++            self.embed_tokens_per_layer = Gemma4TextScaledWordEmbedding(
++                self.vocab_size_per_layer_input,
++                total_ple_dim,
++                self.padding_idx,
++                embed_scale=self.hidden_size_per_layer_input**0.5,
++            )
++            self.per_layer_model_projection = nn.Linear(
++                config.hidden_size,
++                total_ple_dim,
++                bias=False,
++            )
++            self.per_layer_projection_norm = Gemma4RMSNorm(
++                self.hidden_size_per_layer_input, eps=config.rms_norm_eps
++            )
++            self.register_buffer(
++                "per_layer_input_scale",
++                torch.rsqrt(torch.tensor(2.0)),
++                persistent=False,
++            )
++            self.register_buffer(
++                "per_layer_projection_scale",
++                torch.tensor(config.hidden_size**-0.5),
++                persistent=False,
++            )
++        else:
++            self.embed_tokens_per_layer = None
++            self.per_layer_model_projection = None
++            self.per_layer_projection_norm = None
++            self.register_buffer("per_layer_input_scale", None, persistent=False)
++            self.register_buffer("per_layer_projection_scale", None, persistent=False)
+         self.layers = nn.ModuleList(
+             [Gemma4TextDecoderLayer(config, i) for i in range(config.num_hidden_layers)]
+         )
+@@ -1339,12 +1444,64 @@ def get_input_embeddings(self):
+     def set_input_embeddings(self, value):
+         self.embed_tokens = value
+ 
++    def get_per_layer_inputs(
++        self,
++        input_ids: torch.LongTensor,
++    ) -> Optional[torch.Tensor]:
++        if self.embed_tokens_per_layer is None:
++            return None
++
++        # The text serving path reaches this point with input_ids, so the token
++        # remapping stays in fixed-shape device tensor ops with no CPU sync.
++        per_layer_inputs_mask = torch.logical_and(
++            input_ids >= 0,
++            input_ids < self.vocab_size_per_layer_input,
++        )
++        per_layer_input_tokens = torch.where(
++            per_layer_inputs_mask,
++            input_ids,
++            torch.zeros_like(input_ids),
++        )
++        per_layer_embeds = self.embed_tokens_per_layer(per_layer_input_tokens)
++        return per_layer_embeds.reshape(
++            *input_ids.shape,
++            self.config.num_hidden_layers,
++            self.hidden_size_per_layer_input,
++        )
++
++    def project_per_layer_inputs(
++        self,
++        inputs_embeds: torch.Tensor,
++        per_layer_inputs: Optional[torch.Tensor],
++    ) -> Optional[torch.Tensor]:
++        if self.per_layer_model_projection is None or self.per_layer_projection_norm is None:
++            return None
++
++        per_layer_projection = self.per_layer_model_projection(inputs_embeds)
++        per_layer_projection = per_layer_projection * self.per_layer_projection_scale.to(
++            dtype=inputs_embeds.dtype, device=inputs_embeds.device
++        )
++        per_layer_projection = per_layer_projection.reshape(
++            *inputs_embeds.shape[:-1],
++            self.config.num_hidden_layers,
++            self.hidden_size_per_layer_input,
++        )
++        per_layer_projection = self.per_layer_projection_norm(per_layer_projection)
++
++        if per_layer_inputs is None:
++            return per_layer_projection
++
++        return (per_layer_projection + per_layer_inputs) * self.per_layer_input_scale.to(
++            dtype=inputs_embeds.dtype, device=inputs_embeds.device
++        )
++
+     def forward(
+         self,
+         input_ids: Optional[torch.LongTensor] = None,
+         position_ids: Optional[torch.LongTensor] = None,
+         inputs_embeds: Optional[torch.Tensor] = None,
+         attention_mask: Optional[torch.Tensor] = None,
++        per_layer_inputs: Optional[torch.Tensor] = None,
+         **kwargs,
+     ) -> Gemma4TextOutput:
+         del kwargs
+@@ -1354,18 +1511,42 @@ def forward(
+             raise ValueError("You must specify exactly one of input_ids or inputs_embeds")
+ 
+         if input_ids is not None:
++            # Text-only prompts enter through input_ids; materialize embeddings once
++            # so the rest of the model follows a single tensor path.
+             inputs_embeds = self.embed_tokens(input_ids)
+-
++        else:
++            inputs_embeds = cast(torch.Tensor, inputs_embeds)
++
++        if per_layer_inputs is None:
++            if input_ids is None:
++                if self.embed_tokens_per_layer is not None:
++                    raise ValueError(
++                        "per_layer_inputs must be provided when using inputs_embeds with Gemma4 "
++                        "per-layer inputs"
++                    )
++            else:
++                per_layer_inputs = self.get_per_layer_inputs(input_ids)
++        per_layer_inputs = self.project_per_layer_inputs(inputs_embeds, per_layer_inputs)
+         pos_emb_global = self.rotary_emb_global(inputs_embeds, position_ids)
+         pos_emb_local = self.rotary_emb_local(inputs_embeds, position_ids)
+ 
+         hidden_states = inputs_embeds
++        shared_kv_states: dict[int, tuple[torch.Tensor, torch.Tensor]] = {}
+         for decoder_layer in self.layers:
+             if decoder_layer.attention_type == "sliding_attention":
+                 pos_emb = pos_emb_local
+             else:
+                 pos_emb = pos_emb_global
+-            hidden_states = decoder_layer(hidden_states, pos_emb, attention_mask)
++            layer_per_input = None
++            if per_layer_inputs is not None:
++                layer_per_input = per_layer_inputs[:, :, decoder_layer.layer_idx, :]
++            hidden_states = decoder_layer(
++                hidden_states,
++                pos_emb,
++                attention_mask=attention_mask,
++                per_layer_input=layer_per_input,
++                shared_kv_states=shared_kv_states,
++            )
+ 
+         hidden_states = self.norm(hidden_states)
+         return Gemma4TextOutput(last_hidden_state=hidden_states)
+@@ -1384,12 +1565,48 @@ def __init__(self, config: Gemma4TextConfig, **kwargs):
+         del kwargs
+         super().__init__(config)
+         self.padding_idx = config.pad_token_id
++        self.hidden_size_per_layer_input = getattr(config, "hidden_size_per_layer_input", 0)
++        self.vocab_size_per_layer_input = getattr(
++            config, "vocab_size_per_layer_input", config.vocab_size
++        )
+         self.embed_tokens = Gemma4TextScaledWordEmbedding(
+             config.vocab_size,
+             config.hidden_size,
+             self.padding_idx,
+             embed_scale=config.hidden_size**0.5,
+         )
++        if self.hidden_size_per_layer_input > 0:
++            total_ple_dim = self.hidden_size_per_layer_input * config.num_hidden_layers
++            self.embed_tokens_per_layer = Gemma4TextScaledWordEmbedding(
++                self.vocab_size_per_layer_input,
++                total_ple_dim,
++                self.padding_idx,
++                embed_scale=self.hidden_size_per_layer_input**0.5,
++            )
++            self.per_layer_model_projection = nn.Linear(
++                config.hidden_size,
++                total_ple_dim,
++                bias=False,
++            )
++            self.per_layer_projection_norm = Gemma4RMSNorm(
++                self.hidden_size_per_layer_input, eps=config.rms_norm_eps
++            )
++            self.register_buffer(
++                "per_layer_input_scale",
++                torch.rsqrt(torch.tensor(2.0)),
++                persistent=False,
++            )
++            self.register_buffer(
++                "per_layer_projection_scale",
++                torch.tensor(config.hidden_size**-0.5),
++                persistent=False,
++            )
++        else:
++            self.embed_tokens_per_layer = None
++            self.per_layer_model_projection = None
++            self.per_layer_projection_norm = None
++            self.register_buffer("per_layer_input_scale", None, persistent=False)
++            self.register_buffer("per_layer_projection_scale", None, persistent=False)
+         self.layers = nn.ModuleList(
+             [Gemma4TextDecoderLayer(config, i) for i in range(config.num_hidden_layers)]
+         )
+@@ -1406,6 +1623,10 @@ def __init__(self, config: Gemma4TextConfig, **kwargs):
+         if getattr(config, "tie_word_embeddings", True):
+             self.lm_head.weight = self.embed_tokens.weight
+ 
++    @property
++    def model(self):
++        return self
++
+     @staticmethod
+     def _retie_lm_head_weight(module, incompatible_keys):
+         del incompatible_keys
+@@ -1420,6 +1641,55 @@ def get_input_embeddings(self):
+     def set_input_embeddings(self, value):
+         self.embed_tokens = value
+ 
++    def get_per_layer_inputs(
++        self,
++        input_ids: torch.LongTensor,
++    ) -> Optional[torch.Tensor]:
++        if self.embed_tokens_per_layer is None:
++            return None
++
++        per_layer_inputs_mask = torch.logical_and(
++            input_ids >= 0,
++            input_ids < self.vocab_size_per_layer_input,
++        )
++        per_layer_input_tokens = torch.where(
++            per_layer_inputs_mask,
++            input_ids,
++            torch.zeros_like(input_ids),
++        )
++        per_layer_embeds = self.embed_tokens_per_layer(per_layer_input_tokens)
++        return per_layer_embeds.reshape(
++            *input_ids.shape,
++            self.config.num_hidden_layers,
++            self.hidden_size_per_layer_input,
++        )
++
++    def project_per_layer_inputs(
++        self,
++        inputs_embeds: torch.Tensor,
++        per_layer_inputs: Optional[torch.Tensor],
++    ) -> Optional[torch.Tensor]:
++        if self.per_layer_model_projection is None or self.per_layer_projection_norm is None:
++            return None
++
++        per_layer_projection = self.per_layer_model_projection(inputs_embeds)
++        per_layer_projection = per_layer_projection * self.per_layer_projection_scale.to(
++            dtype=inputs_embeds.dtype, device=inputs_embeds.device
++        )
++        per_layer_projection = per_layer_projection.reshape(
++            *inputs_embeds.shape[:-1],
++            self.config.num_hidden_layers,
++            self.hidden_size_per_layer_input,
++        )
++        per_layer_projection = self.per_layer_projection_norm(per_layer_projection)
++
++        if per_layer_inputs is None:
++            return per_layer_projection
++
++        return (per_layer_projection + per_layer_inputs) * self.per_layer_input_scale.to(
++            dtype=inputs_embeds.dtype, device=inputs_embeds.device
++        )
++
+     def get_output_embeddings(self):
+         return self.lm_head
+ 
+@@ -1434,6 +1704,7 @@ def forward(
+         input_ids: Optional[torch.LongTensor] = None,
+         position_ids: Optional[torch.LongTensor] = None,
+         inputs_embeds: Optional[torch.Tensor] = None,
++        per_layer_inputs: Optional[torch.Tensor] = None,
+         mm_item_cu_seqlen: Optional[torch.Tensor] = None,
+         mm_token_positions: Optional[torch.Tensor] = None,
+         mm_token_lengths: Optional[torch.Tensor] = None,
+@@ -1450,8 +1721,17 @@ def forward(
+ 
+         if input_ids is not None:
+             inputs_embeds = self.embed_tokens(input_ids)
++            if per_layer_inputs is None:
++                per_layer_inputs = self.get_per_layer_inputs(input_ids)
++        elif per_layer_inputs is None and self.embed_tokens_per_layer is not None:
++            raise ValueError(
++                "per_layer_inputs must be provided when using inputs_embeds with Gemma4 "
++                "per-layer inputs"
++            )
+ 
+         assert inputs_embeds is not None
++        per_layer_inputs = self.project_per_layer_inputs(inputs_embeds, per_layer_inputs)
++        has_multimodal_spans = mm_token_positions is not None and mm_token_positions.numel() > 0
+         mm_tensors = _canonicalize_mm_span_tensors(
+             input_ids=input_ids,
+             inputs_embeds=inputs_embeds,
+@@ -1462,30 +1742,42 @@ def forward(
+             mm_special_offsets_cu_seqlen=mm_special_offsets_cu_seqlen,
+             mm_special_offsets=mm_special_offsets,
+         )
+-        mask_input_ids = input_ids
+-        if mask_input_ids is None:
+-            mask_input_ids = torch.zeros(
+-                inputs_embeds.shape[:2], dtype=torch.int64, device=inputs_embeds.device
++        attention_mask = None
++        if has_multimodal_spans:
++            mask_input_ids = input_ids
++            if mask_input_ids is None:
++                mask_input_ids = torch.zeros(
++                    inputs_embeds.shape[:2], dtype=torch.int64, device=inputs_embeds.device
++                )
++            attention_mask = torch.ops.auto_deploy.gemma4_multimodal_mask.default(
++                mask_input_ids,
++                mm_tensors["mm_token_positions"],
++                mm_tensors["mm_token_lengths"],
++                mm_tensors["mm_item_cu_seqlen"],
++                mm_tensors["mm_item_types"],
++                mm_tensors["mm_special_offsets_cu_seqlen"],
++                mm_tensors["mm_special_offsets"],
+             )
+-        attention_mask = torch.ops.auto_deploy.gemma4_multimodal_mask.default(
+-            mask_input_ids,
+-            mm_tensors["mm_token_positions"],
+-            mm_tensors["mm_token_lengths"],
+-            mm_tensors["mm_item_cu_seqlen"],
+-            mm_tensors["mm_item_types"],
+-            mm_tensors["mm_special_offsets_cu_seqlen"],
+-            mm_tensors["mm_special_offsets"],
+-        )
+         pos_emb_global = self.rotary_emb_global(inputs_embeds, position_ids)
+         pos_emb_local = self.rotary_emb_local(inputs_embeds, position_ids)
+ 
+         hidden_states = inputs_embeds
++        shared_kv_states: dict[int, tuple[torch.Tensor, torch.Tensor]] = {}
+         for decoder_layer in self.layers:
+             if decoder_layer.attention_type == "sliding_attention":
+                 pos_emb = pos_emb_local
+             else:
+                 pos_emb = pos_emb_global
+-            hidden_states = decoder_layer(hidden_states, pos_emb, attention_mask)
++            layer_per_input = None
++            if per_layer_inputs is not None:
++                layer_per_input = per_layer_inputs[:, :, decoder_layer.layer_idx, :]
++            hidden_states = decoder_layer(
++                hidden_states,
++                pos_emb,
++                attention_mask=attention_mask,
++                per_layer_input=layer_per_input,
++                shared_kv_states=shared_kv_states,
++            )
+ 
+         hidden_states = self.norm(hidden_states)
+         logits = self.lm_head(hidden_states)
+@@ -1493,7 +1785,7 @@ def forward(
+             logits = logits / self.config.final_logit_softcapping
+             logits = torch.tanh(logits)
+             logits = logits * self.config.final_logit_softcapping
+-        return Gemma4CausalLMOutput(logits=logits)
++        return Gemma4CausalLMOutput(logits=logits, last_hidden_state=hidden_states)
+ 
+ 
+ # ---------------------------------------------------------------------------
+@@ -1589,7 +1881,14 @@ def get_placeholder_mask(
+             return input_ids == self.config.image_token_id
+         if inputs_embeds is None:
+             raise ValueError("Either input_ids or inputs_embeds must be provided")
+-        image_embedding = self.get_input_embeddings()(
++        input_embeddings = self.get_input_embeddings()
++        if self.config.image_token_id >= input_embeddings.num_embeddings:
++            return torch.zeros(
++                inputs_embeds.shape[:-1],
++                dtype=torch.bool,
++                device=inputs_embeds.device,
++            )
++        image_embedding = input_embeddings(
+             torch.tensor(self.config.image_token_id, dtype=torch.long, device=inputs_embeds.device)
+         )
+         return (inputs_embeds == image_embedding).all(-1)
+@@ -1772,6 +2071,7 @@ def forward(
+         if (input_ids is None) == (inputs_embeds is None):
+             raise ValueError("You must specify exactly one of input_ids or inputs_embeds")
+ 
++        per_layer_inputs = None
+         if inputs_embeds is None:
+             image_mask = self.get_placeholder_mask(input_ids=input_ids)
+             llm_input_ids = input_ids.clone()
+@@ -1781,6 +2081,7 @@ def forward(
+                 llm_input_ids,
+             )
+             inputs_embeds = self.get_input_embeddings()(llm_input_ids)
++            per_layer_inputs = self.language_model.get_per_layer_inputs(llm_input_ids)
+         else:
+             image_mask = self.get_placeholder_mask(inputs_embeds=inputs_embeds)
+ 
+@@ -1870,6 +2171,8 @@ def forward(
+             language_model_kwargs["mm_special_offsets_cu_seqlen"] = mm_special_offsets_cu_seqlen
+         if mm_special_offsets is not None:
+             language_model_kwargs["mm_special_offsets"] = mm_special_offsets
++        if per_layer_inputs is not None:
++            language_model_kwargs["per_layer_inputs"] = per_layer_inputs
+ 
+         return Gemma4ForConditionalGeneration._call_language_model(
+             self.language_model,
+@@ -1994,19 +2297,7 @@ def forward(
+         return Gemma4ConditionalOutput(logits=outputs.logits)
+ 
+ 
+-# ---------------------------------------------------------------------------
+-# Wrapper tokenizer for Gemma 4
+-#
+-# The upstream HF checkpoint ships ``extra_special_tokens`` as a *list* in
+-# tokenizer_config.json, which is incompatible with transformers <5.3.
+-# This thin wrapper loads the tokenizer assets directly, bypassing the
+-# problematic codepath.
+-# ---------------------------------------------------------------------------
+-
+-_TOKENIZER_CONFIG_FILE = "tokenizer_config.json"
+ _PROCESSOR_CONFIG_FILE = "processor_config.json"
+-_CHAT_TEMPLATE_FILE = "chat_template.jinja"
+-_TOKENIZER_FILE = "tokenizer.json"
+ _SUPPORTED_GEMMA4_SOFT_TOKENS = (70, 140, 280, 560, 1120)
+ 
+ 
+@@ -2051,72 +2342,6 @@ def get_aspect_ratio_preserving_size(
+     return target_height, target_width
+ 
+ 
+-class ADGemma4Tokenizer(PreTrainedTokenizerFast):
+-    """Wrapper that loads the upstream Gemma 4 tokenizer on current transformers."""
+-
+-    vocab_files_names = {"tokenizer_file": _TOKENIZER_FILE}
+-    model_input_names = ["input_ids", "attention_mask"]
+-    slow_tokenizer_class = None
+-
+-    @classmethod
+-    def from_pretrained(
+-        cls,
+-        pretrained_model_name_or_path: str | Path,
+-        *inputs,
+-        **kwargs,
+-    ) -> "ADGemma4Tokenizer":
+-        del inputs
+-        for k in ("_from_auto", "_commit_hash", "trust_remote_code"):
+-            kwargs.pop(k, None)
+-
+-        config_path = cached_file(pretrained_model_name_or_path, _TOKENIZER_CONFIG_FILE, **kwargs)
+-        assert config_path is not None
+-        config = json.loads(Path(config_path).read_text())
+-
+-        tokenizer_file = cached_file(pretrained_model_name_or_path, _TOKENIZER_FILE, **kwargs)
+-        assert tokenizer_file is not None
+-
+-        # ``extra_special_tokens`` is a list in the upstream config; map it to
+-        # the standard ``additional_special_tokens`` field.
+-        extra = config.get("extra_special_tokens", [])
+-        if isinstance(extra, list):
+-            additional = extra
+-        else:
+-            additional = list(extra.keys()) if isinstance(extra, dict) else []
+-
+-        tokenizer = cls(
+-            tokenizer_object=Tokenizer.from_file(tokenizer_file),
+-            name_or_path=str(pretrained_model_name_or_path),
+-            bos_token=config.get("bos_token"),
+-            eos_token=config.get("eos_token"),
+-            unk_token=config.get("unk_token"),
+-            pad_token=config.get("pad_token"),
+-            additional_special_tokens=additional,
+-            clean_up_tokenization_spaces=config.get("clean_up_tokenization_spaces", False),
+-            model_max_length=config.get("model_max_length"),
+-            padding_side=config.get("padding_side", "left"),
+-            truncation_side=config.get("truncation_side", "left"),
+-        )
+-
+-        tokenizer.image_token = config.get("image_token", "<|image|>")
+-        tokenizer.boi_token = config.get("boi_token", "<|image>")
+-        tokenizer.eoi_token = config.get("eoi_token", "<image|>")
+-        tokenizer.image_token_id = tokenizer.convert_tokens_to_ids(tokenizer.image_token)
+-        tokenizer.boi_token_id = tokenizer.convert_tokens_to_ids(tokenizer.boi_token)
+-        tokenizer.eoi_token_id = tokenizer.convert_tokens_to_ids(tokenizer.eoi_token)
+-
+-        template_path = cached_file(
+-            pretrained_model_name_or_path,
+-            _CHAT_TEMPLATE_FILE,
+-            _raise_exceptions_for_missing_entries=False,
+-            **kwargs,
+-        )
+-        if template_path is not None:
+-            tokenizer.chat_template = Path(template_path).read_text()
+-
+-        return tokenizer
+-
+-
+ class ADGemma4ImageProcessor:
+     """Minimal Gemma4 image processor compatible with the local transformers version."""
+ 
+@@ -2347,7 +2572,7 @@ class ADGemma4Processor:
+     def __init__(
+         self,
+         *,
+-        tokenizer: ADGemma4Tokenizer,
++        tokenizer: PreTrainedTokenizerBase,
+         image_processor: ADGemma4ImageProcessor,
+         image_seq_length: int = 280,
+     ) -> None:
+@@ -2368,7 +2593,7 @@ def from_pretrained(
+         pretrained_model_name_or_path: str | Path,
+         **kwargs,
+     ) -> "ADGemma4Processor":
+-        tokenizer = ADGemma4Tokenizer.from_pretrained(pretrained_model_name_or_path, **kwargs)
++        tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path, **kwargs)
+         image_processor = ADGemma4ImageProcessor.from_pretrained(
+             pretrained_model_name_or_path, **kwargs
+         )
+@@ -2681,6 +2906,46 @@ def __call__(self, inputs, sampling_params):
+ class Gemma4TextExportInfo(TextModelExportInfo):
+     """Export info for Gemma4 text graphs with multimodal span tensor inputs."""
+ 
++    def post_process(self, sub_mod: nn.Module, sub_gm: GraphModule):
++        super().post_process(sub_mod, sub_gm)
++
++        embed_tokens_per_layer = getattr(sub_mod, "embed_tokens_per_layer", None)
++        if embed_tokens_per_layer is None:
++            return
++
++        sub_gm.config = sub_mod.config
++        sub_gm.hidden_size_per_layer_input = sub_mod.hidden_size_per_layer_input
++        sub_gm.vocab_size_per_layer_input = sub_mod.vocab_size_per_layer_input
++        sub_gm.get_per_layer_inputs = types.MethodType(
++            sub_mod.get_per_layer_inputs.__func__, sub_gm
++        )
++
++        for embed_name, subsubmod in sub_mod.named_modules():
++            if subsubmod is embed_tokens_per_layer:
++                break
++        else:
++            raise RuntimeError("Could not find Gemma4 per-layer embedding module.")
++
++        sub_gm.set_submodule(embed_name, embed_tokens_per_layer)
++        output_node = next(node for node in sub_gm.graph.nodes if node.op == "output")
++        with sub_gm.graph.inserting_before(output_node):
++            n_embed_tokens = sub_gm.graph.get_attr(f"{embed_name}.weight")
++            n_embed_rows = sub_gm.graph.call_function(
++                torch.ops.aten.sym_size.int,
++                args=(n_embed_tokens, 0),
++            )
++            has_nonnegative_rows = sub_gm.graph.call_function(
++                operator.ge,
++                args=(n_embed_rows, 0),
++            )
++            sub_gm.graph.call_function(
++                torch._assert,
++                args=(
++                    has_nonnegative_rows,
++                    "Avoid Gemma4 per-layer embedding getting deleted from graph.",
++                ),
++            )
++
+     def _init_dynamic_shape_lookup(self):
+         dynamic_shapes = super()._init_dynamic_shape_lookup()
+         dynamic_shapes["mm_item_cu_seqlen"] = {0: Dim.DYNAMIC}
+@@ -2689,6 +2954,7 @@ def _init_dynamic_shape_lookup(self):
+         dynamic_shapes["mm_token_lengths"] = {0: Dim.DYNAMIC}
+         dynamic_shapes["mm_special_offsets_cu_seqlen"] = {0: Dim.DYNAMIC}
+         dynamic_shapes["mm_special_offsets"] = {0: Dim.DYNAMIC}
++        dynamic_shapes["per_layer_inputs"] = {0: Dim.DYNAMIC, 1: Dim.DYNAMIC}
+         return dynamic_shapes
+ 
+ 
+@@ -2720,7 +2986,7 @@ def get_export_infos(self, model: nn.Module):
+     def init_tokenizer(self) -> Optional[Any]:
+         if self.tokenizer is None:
+             return None
+-        return ADGemma4Tokenizer.from_pretrained(self.tokenizer)
++        return AutoTokenizer.from_pretrained(self.tokenizer)
+ 
+     def init_processor(self) -> Optional[Any]:
+         """Return the local Gemma4 multimodal processor."""
+diff --git a/tensorrt_llm/_torch/auto_deploy/shim/interface.py b/tensorrt_llm/_torch/auto_deploy/shim/interface.py
+index a43456cae5c0..4bfc0cf00f68 100644
+--- a/tensorrt_llm/_torch/auto_deploy/shim/interface.py
++++ b/tensorrt_llm/_torch/auto_deploy/shim/interface.py
+@@ -156,6 +156,11 @@ def named_args(self) -> Dict[str, torch.Tensor]:
+         """Return all the named arguments owned by this interface."""
+         return {**self.info.named_args, **self._caches}
+ 
++    @property
++    def resource_names(self) -> Tuple[str, ...]:
++        """Return names of cache/resource arguments owned by this interface."""
++        return tuple(self._caches.keys() or self._resource_lookup.keys())
++
+     def get_arg(
+         self, name: str, truncate: Optional[bool] = None, unflatten: Optional[bool] = None
+     ) -> torch.Tensor:
+diff --git a/tensorrt_llm/_torch/auto_deploy/transform/library/compile_model.py b/tensorrt_llm/_torch/auto_deploy/transform/library/compile_model.py
+index 0be679a170c5..55a521d6a001 100644
+--- a/tensorrt_llm/_torch/auto_deploy/transform/library/compile_model.py
++++ b/tensorrt_llm/_torch/auto_deploy/transform/library/compile_model.py
+@@ -56,8 +56,13 @@ class CompileModelConfig(TransformConfig):
+     cuda_graph_batch_sizes: Optional[List[int]] = Field(
+         default=None, description="The batch sizes to use for CUDA graphs."
+     )
+-    num_batched_inputs: int = Field(
+-        default=2, description="The number of batched inputs to use for CUDA graphs."
++    num_batched_inputs: Optional[int] = Field(
++        default=None,
++        ge=1,
++        description=(
++            "The number of batched inputs to use for CUDA graphs. If unset, infer it "
++            "from runtime inputs by excluding explicit cache/resource inputs."
++        ),
+     )
+     backend: Literal["torch-simple", "torch-compile", "torch-cudagraph", "torch-opt"] = Field(
+         description="The backend to use for compiling the model."
+@@ -111,7 +116,10 @@ def _get_args_kwargs(bs: int) -> ArgsKwargs:
+             cm.info.set_capture_batch(batch_size=bs)
+             return (), cm.named_args
+ 
+-        extra_kwargs = {}
++        resource_input_names = list(cm.resource_names)
++        if spec_config is not None and "cache_seq_interface" not in resource_input_names:
++            resource_input_names.append("cache_seq_interface")
++        extra_kwargs = {"resource_input_names": tuple(resource_input_names)}
+         config_overrides = {}
+         if self.config.piecewise_enabled:
+             extra_kwargs["piecewise_seq_info"] = cm.info
+diff --git a/tests/integration/defs/accuracy/references/gsm8k.yaml b/tests/integration/defs/accuracy/references/gsm8k.yaml
+index ad38c829cd19..3769ce773a3e 100644
+--- a/tests/integration/defs/accuracy/references/gsm8k.yaml
++++ b/tests/integration/defs/accuracy/references/gsm8k.yaml
+@@ -279,6 +279,10 @@ google/gemma-3-27b-it:
+     accuracy: 90.66
+ google/gemma-4-26B-A4B-it:
+   - accuracy: 90.83
++google/gemma-3n-E2B-it:
++  - accuracy: 72.176
++google/gemma-4-E2B-it:
++  - accuracy: 85.709
+ mistralai/Ministral-8B-Instruct-2410:
+   - accuracy: 79.25
+   - quant_algo: FP8
+diff --git a/tests/integration/defs/accuracy/references/mmlu.yaml b/tests/integration/defs/accuracy/references/mmlu.yaml
+index 6df8325a28a8..78cbbcb0fbfe 100644
+--- a/tests/integration/defs/accuracy/references/mmlu.yaml
++++ b/tests/integration/defs/accuracy/references/mmlu.yaml
+@@ -156,6 +156,10 @@ google/gemma-3-27b-it:
+     accuracy: 76.80
+ google/gemma-4-26B-A4B-it:
+   - accuracy: 71.296
++google/gemma-3n-E2B-it:
++  - accuracy: 59.527
++google/gemma-4-E2B-it:
++  - accuracy: 56.823
+ Qwen/Qwen2-0.5B-Instruct:
+   - accuracy: 45.30
+   - quant_algo: FP8
+diff --git a/tests/integration/defs/accuracy/test_llm_api_autodeploy.py b/tests/integration/defs/accuracy/test_llm_api_autodeploy.py
+index ce19f0392715..b5b271b659d1 100644
+--- a/tests/integration/defs/accuracy/test_llm_api_autodeploy.py
++++ b/tests/integration/defs/accuracy/test_llm_api_autodeploy.py
+@@ -1161,6 +1161,119 @@ def test_bf16(self):
+             )
+ 
+ 
++class TestGemmaE2B(LlmapiAccuracyTestHarness):
++    """Accuracy coverage for Gemma E2B AutoDeploy configs.
++
++    Runs the models via AutoDeploy and verifies benchmark performance on MMLU and GSM8K.
++    """
++
++    GEMMA3N_MODEL_NAME = "google/gemma-3n-E2B-it"
++    GEMMA4_MODEL_NAME = "google/gemma-4-E2B-it"
++    GEMMA4_GSM8K_MAX_OUTPUT_LEN = 1024
++    GEMMA3N_MMLU_EVALUATOR_KWARGS = {
++        "apply_chat_template": False,
++    }
++    GEMMA4_MMLU_EVALUATOR_KWARGS = {
++        "apply_chat_template":
++        True,
++        "system_prompt":
++        ("You are taking a multiple-choice test. Answer with only the "
++         "single letter A, B, C, or D."),
++        "chat_template_kwargs": {
++            "enable_thinking": False,
++        },
++    }
++    GEMMA3N_GSM8K_EVALUATOR_KWARGS = {
++        "apply_chat_template":
++        True,
++        "system_prompt":
++        ("Solve each math problem. End your answer with exactly one final "
++         "line in this format: #### <number>"),
++    }
++    GEMMA4_GSM8K_EVALUATOR_KWARGS = {
++        "apply_chat_template":
++        True,
++        "system_prompt":
++        ("Solve each math problem. End your answer with exactly one final "
++         "line in this format: #### <number>"),
++        "chat_template_kwargs": {
++            "enable_thinking": False,
++        },
++    }
++
++    # Set the seq len from the largest task budget for test speed and memory usage.
++    MAX_SEQ_LEN = max(MMLU.MAX_INPUT_LEN + MMLU.MAX_OUTPUT_LEN,
++                      GSM8K.MAX_INPUT_LEN + GEMMA4_GSM8K_MAX_OUTPUT_LEN)
++    MAX_NUM_TOKENS = MAX_SEQ_LEN
++
++    def get_default_sampling_params(self):
++        # Unset temperature/top_p/top_k means greedy decoding, which keeps
++        # the accuracy checks deterministic.
++        return SamplingParams(end_id=None,
++                              pad_id=None,
++                              n=1,
++                              use_beam_search=False)
++
++    def get_gemma4_mmlu_sampling_params(self):
++        sampling_params = self.get_default_sampling_params()
++        # Gemma4 MMLU uses the chat template and a system prompt. Keep the
++        # truncation budget aligned with this test's max_seq_len so those
++        # instruction tokens are not cut by MMLU's default raw-prompt limit.
++        sampling_params.truncate_prompt_tokens = (self.MAX_SEQ_LEN -
++                                                  MMLU.MAX_OUTPUT_LEN)
++        return sampling_params
++
++    def get_default_kwargs(self, config_name, keep_tokenizer=False):
++        config = _load_ad_config(config_name)
++        world_size = config.pop("world_size", 1)
++        if not keep_tokenizer:
++            config.pop("tokenizer", None)
++        config["max_seq_len"] = self.MAX_SEQ_LEN
++        config["max_num_tokens"] = self.MAX_NUM_TOKENS
++        return config, world_size
++
++    def evaluate_tasks(self, llm, model_name, mmlu_sampling_params,
++                       mmlu_evaluator_kwargs, gsm8k_evaluator_kwargs) -> None:
++        task = MMLU(model_name)
++        task.evaluate(llm,
++                      sampling_params=mmlu_sampling_params,
++                      extra_evaluator_kwargs=mmlu_evaluator_kwargs)
++        task = GSM8K(model_name)
++        task.evaluate(llm, extra_evaluator_kwargs=gsm8k_evaluator_kwargs)
++
++    @pytest.mark.skip_less_device_memory(80000)
++    def test_gemma3n_e2b_it(self):
++        kwargs, world_size = self.get_default_kwargs("gemma3n_e2b_it.yaml")
++        sampling_params = self.get_default_sampling_params()
++        model_path = hf_id_to_local_model_dir(self.GEMMA3N_MODEL_NAME)
++        with AutoDeployLLM(
++                model=model_path,
++                tokenizer=model_path,
++                world_size=world_size,
++                yaml_extra=[str(_AD_CONFIGS_DIR / "gemma3n_e2b_it.yaml")],
++                **kwargs) as llm:
++            self.evaluate_tasks(llm, self.GEMMA3N_MODEL_NAME, sampling_params,
++                                self.GEMMA3N_MMLU_EVALUATOR_KWARGS,
++                                self.GEMMA3N_GSM8K_EVALUATOR_KWARGS)
++
++    @pytest.mark.skip_less_device_memory(80000)
++    def test_gemma4_e2b_it(self, monkeypatch):
++        monkeypatch.setattr(GSM8K, "MAX_OUTPUT_LEN",
++                            self.GEMMA4_GSM8K_MAX_OUTPUT_LEN)
++        kwargs, world_size = self.get_default_kwargs("gemma4_e2b.yaml",
++                                                     keep_tokenizer=True)
++        sampling_params = self.get_gemma4_mmlu_sampling_params()
++        model_path = hf_id_to_local_model_dir(self.GEMMA4_MODEL_NAME)
++        with AutoDeployLLM(
++                model=model_path,
++                world_size=world_size,
++                yaml_extra=[str(_AD_CONFIGS_DIR / "gemma4_e2b.yaml")],
++                **kwargs) as llm:
++            self.evaluate_tasks(llm, self.GEMMA4_MODEL_NAME, sampling_params,
++                                self.GEMMA4_MMLU_EVALUATOR_KWARGS,
++                                self.GEMMA4_GSM8K_EVALUATOR_KWARGS)
++
++
+ class TestModelRegistryAccuracy(LlmapiAccuracyTestHarness):
+     """Accuracy tests for models from the AutoDeploy model registry.
+ 
+diff --git a/tests/integration/test_lists/test-db/l0_h100.yml b/tests/integration/test_lists/test-db/l0_h100.yml
+index b5359af1ce72..e78205b04104 100644
+--- a/tests/integration/test_lists/test-db/l0_h100.yml
++++ b/tests/integration/test_lists/test-db/l0_h100.yml
+@@ -511,6 +511,8 @@ l0_h100:
+   - accuracy/test_llm_api_autodeploy.py::TestNemotronH::test_auto_dtype[trtllm-triton_ssm-True]
+   - accuracy/test_llm_api_autodeploy.py::TestGLM4Flash::test_auto_dtype[trtllm-False]
+   - accuracy/test_llm_api_autodeploy.py::TestGLM4Flash::test_auto_dtype[trtllm-True]
++  - accuracy/test_llm_api_autodeploy.py::TestGemmaE2B::test_gemma3n_e2b_it
++  - accuracy/test_llm_api_autodeploy.py::TestGemmaE2B::test_gemma4_e2b_it
+   - accuracy/test_llm_api_autodeploy.py::TestNemotronV2::test_auto_dtype[False]
+   - accuracy/test_llm_api_autodeploy.py::TestNemotronV2::test_auto_dtype[True]
+   - accuracy/test_llm_api_autodeploy.py::TestNemotronV2::test_fp8[True]
+diff --git a/tests/test_common/llm_data.py b/tests/test_common/llm_data.py
+index a6339814813c..e0e1197e66d2 100644
+--- a/tests/test_common/llm_data.py
++++ b/tests/test_common/llm_data.py
+@@ -1,4 +1,4 @@
+-# SPDX-FileCopyrightText: Copyright (c) 2022-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++# SPDX-FileCopyrightText: Copyright (c) 2022-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ # SPDX-License-Identifier: Apache-2.0
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+@@ -59,6 +59,8 @@
+     "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4": "NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4",
+     # AutoDeploy accuracy tests - overlapping with model registry
+     "google/gemma-3-1b-it": "gemma/gemma-3-1b-it",
++    "google/gemma-3n-E2B-it": "gemma/gemma-3n-E2B-it",
++    "google/gemma-4-E2B-it": "gemma/gemma-4-E2B-it",
+     "nvidia/Qwen3.5-397B-A17B-NVFP4": "Qwen3.5-397B-A17B-NVFP4",
+     "Qwen/QwQ-32B": "QwQ-32B",
+     "meta-llama/Llama-3.3-70B-Instruct": "llama-3.3-models/Llama-3.3-70B-Instruct",
+diff --git a/tests/unittest/auto_deploy/singlegpu/compile/test_captured_graph.py b/tests/unittest/auto_deploy/singlegpu/compile/test_captured_graph.py
+index e379f1a0f6fa..5bc58d9ca275 100644
+--- a/tests/unittest/auto_deploy/singlegpu/compile/test_captured_graph.py
++++ b/tests/unittest/auto_deploy/singlegpu/compile/test_captured_graph.py
+@@ -229,7 +229,7 @@ def forward(self, x, y):
+ 
+         def fake_capture_one_graph(self, args, kwargs, refresh_args_static=None):
+             captured_shapes.append(tuple(arg.shape for arg in args))
+-            return object()
++            return object(), (0,)
+ 
+         monkeypatch.setattr(CapturedGraph, "_capture_one_graph", fake_capture_one_graph)
+ 
+@@ -266,7 +266,7 @@ def forward(self, x, meta):
+         )
+ 
+         def fake_capture_one_graph(self, *args, **kwargs):
+-            return object()
++            return object(), (2,)
+ 
+         monkeypatch.setattr(CapturedGraph, "_capture_one_graph", fake_capture_one_graph)
+ 
+@@ -281,6 +281,265 @@ def get_args_kwargs(bs):
+ 
+         assert compiled_model.model.seen == [(2, 2)]
+ 
++    def test_auto_batched_inputs_keep_explicit_resources_static(self, monkeypatch):
++        class ModelWithInterleavedKwargs(nn.Module):
++            def forward(self, runtime_a, explicit_cache, runtime_b):
++                del explicit_cache
++                return runtime_a + runtime_b
++
++        compiled_model = CapturedGraph(
++            ModelWithInterleavedKwargs(),
++            resource_input_names={"explicit_cache"},
++        )
++        cache = torch.zeros(8, 2)
++        captured_kwarg_orders = []
++
++        def fake_capture_one_graph(self, args, kwargs, refresh_args_static=None):
++            del args, refresh_args_static
++            captured_kwarg_orders.append(tuple(kwargs))
++            return object(), (4,)
++
++        monkeypatch.setattr(CapturedGraph, "_capture_one_graph", fake_capture_one_graph)
++
++        def get_args_kwargs(bs):
++            return (), {
++                "runtime_a": torch.ones(bs, 2),
++                "explicit_cache": cache,
++                "runtime_b": torch.full((bs, 2), 2.0),
++            }
++
++        compiled_model.capture_graph(get_args_kwargs, [4])
++
++        assert compiled_model.num_batched_inputs == 2
++        assert compiled_model.dynamic_dims == [0, 0]
++        assert [tuple(buf.shape) for buf in compiled_model._input_buffers] == [(4, 2), (4, 2)]
++        assert captured_kwarg_orders == [("runtime_a", "runtime_b", "explicit_cache")]
++
++    def test_auto_batched_inputs_keep_cache_seq_interface_static(self, monkeypatch):
++        class Interface:
++            pass
++
++        class ModelWithCacheSeqInterface(nn.Module):
++            def forward(self, runtime_a, cache_seq_interface):
++                del cache_seq_interface
++                return runtime_a
++
++        compiled_model = CapturedGraph(
++            ModelWithCacheSeqInterface(),
++            resource_input_names={"cache_seq_interface"},
++        )
++        interface = Interface()
++        captured_kwarg_orders = []
++
++        def fake_capture_one_graph(self, args, kwargs, refresh_args_static=None):
++            del args, refresh_args_static
++            captured_kwarg_orders.append(tuple(kwargs))
++            return object(), (4,)
++
++        monkeypatch.setattr(CapturedGraph, "_capture_one_graph", fake_capture_one_graph)
++
++        def get_args_kwargs(bs):
++            return (), {
++                "runtime_a": torch.ones(bs, 2),
++                "cache_seq_interface": interface,
++            }
++
++        compiled_model.capture_graph(get_args_kwargs, [4])
++
++        assert compiled_model.num_batched_inputs == 1
++        assert compiled_model.dynamic_dims == [0]
++        assert [tuple(buf.shape) for buf in compiled_model._input_buffers] == [(4, 2)]
++        assert captured_kwarg_orders == [("runtime_a", "cache_seq_interface")]
++
++    def test_auto_batched_inputs_do_not_guess_legacy_cache_names(self, monkeypatch):
++        class ModelWithLegacyCacheName(nn.Module):
++            def forward(self, runtime_a, r0_cache, runtime_b):
++                return runtime_a + r0_cache[: runtime_a.shape[0]] + runtime_b
++
++        compiled_model = CapturedGraph(ModelWithLegacyCacheName())
++        cache = torch.zeros(8, 2)
++        captured_kwarg_orders = []
++
++        def fake_capture_one_graph(self, args, kwargs, refresh_args_static=None):
++            del args, refresh_args_static
++            captured_kwarg_orders.append(tuple(kwargs))
++            return object(), (4,)
++
++        monkeypatch.setattr(CapturedGraph, "_capture_one_graph", fake_capture_one_graph)
++
++        def get_args_kwargs(bs):
++            return (), {
++                "runtime_a": torch.ones(bs, 2),
++                "r0_cache": cache,
++                "runtime_b": torch.full((bs, 2), 2.0),
++            }
++
++        compiled_model.capture_graph(get_args_kwargs, [4])
++
++        assert compiled_model.num_batched_inputs == 3
++        assert compiled_model.dynamic_dims == [0, 0, 0]
++        assert [tuple(buf.shape) for buf in compiled_model._input_buffers] == [
++            (4, 2),
++            (8, 2),
++            (4, 2),
++        ]
++        assert captured_kwarg_orders == [("runtime_a", "r0_cache", "runtime_b")]
++
++    def test_capture_graph_records_smaller_output_extent_from_real_cuda_graph(self):
++        class ShrinkingOutputModel(nn.Module):
++            def __init__(self):
++                super().__init__()
++                self.forward_calls = 0
++
++            def forward(self, x):
++                self.forward_calls += 1
++                return x[:-1] + 1
++
++        model = ShrinkingOutputModel().eval().to("cuda")
++        compiled_model = CapturedGraph(model, num_batched_inputs=1)
++        bs = 5
++        hidden_size = 2
++        capture_input = torch.zeros(bs, hidden_size, device="cuda")
++
++        def get_args_kwargs(batch_size):
++            return (capture_input[:batch_size],), {}
++
++        with torch.inference_mode():
++            compiled_model.capture_graph(get_args_kwargs, [bs])
++
++            assert compiled_model._cudagraph_output_extents[(bs, hidden_size)] == (bs - 1,)
++            calls_after_capture = model.forward_calls
++
++            replay_input = torch.arange(
++                bs * hidden_size,
++                dtype=torch.float32,
++                device="cuda",
++            ).reshape(bs, hidden_size)
++            out = compiled_model(replay_input)
++
++            assert model.forward_calls == calls_after_capture
++            assert out.shape == (bs - 1, hidden_size)
++            torch.testing.assert_close(out, replay_input[:-1] + 1)
++
++    def test_forward_uses_captured_output_extent_when_input_extent_is_larger(self, monkeypatch):
++        class GatherLikeModel(nn.Module):
++            def __init__(self):
++                super().__init__()
++                self.forward_calls = 0
++
++            def forward(self, x):
++                self.forward_calls += 1
++                return x[:-1] + 1
++
++        class ReplayGraph:
++            def __init__(self, compiled_model, output_extent):
++                self.compiled_model = compiled_model
++                self.output_extent = output_extent
++                self.replay_calls = 0
++
++            def replay(self):
++                self.replay_calls += 1
++                input_buffer = self.compiled_model._input_buffers[0]
++                out_buffer = self.compiled_model._out_buffer_flat[0]
++                out_buffer.narrow(0, 0, self.output_extent).copy_(
++                    input_buffer.narrow(0, 0, self.output_extent) + 1
++                )
++
++        model = GatherLikeModel()
++        compiled_model = CapturedGraph(model, num_batched_inputs=1)
++        graphs = []
++
++        def fake_capture_one_graph(self, args, kwargs, refresh_args_static=None):
++            del kwargs, refresh_args_static
++            output_extent = args[0].shape[0] - 1
++            graph = ReplayGraph(self, output_extent)
++            graphs.append(graph)
++            return graph, (output_extent,)
++
++        monkeypatch.setattr(CapturedGraph, "_capture_one_graph", fake_capture_one_graph)
++
++        def get_args_kwargs(bs):
++            return (torch.ones(bs, 2),), {}
++
++        compiled_model.capture_graph(get_args_kwargs, [5])
++
++        calls_after_capture = model.forward_calls
++        out = compiled_model(torch.full((5, 2), 3.0))
++
++        assert model.forward_calls == calls_after_capture
++        assert graphs[0].replay_calls == 1
++        assert out.shape == (4, 2)
++        torch.testing.assert_close(out, torch.full((4, 2), 4.0))
++
++    def test_forward_falls_back_when_captured_output_extent_exceeds_buffer(self, monkeypatch):
++        class EchoModel(nn.Module):
++            def __init__(self):
++                super().__init__()
++                self.forward_calls = 0
++
++            def forward(self, x):
++                self.forward_calls += 1
++                return x + 1
++
++        class GraphShouldNotReplay:
++            def replay(self):
++                raise AssertionError("oversized runtime batch should fall back to eager")
++
++        model = EchoModel()
++        compiled_model = CapturedGraph(model, num_batched_inputs=1)
++
++        def fake_capture_one_graph(self, args, kwargs, refresh_args_static=None):
++            del self, args, kwargs, refresh_args_static
++            return GraphShouldNotReplay(), (4,)
++
++        monkeypatch.setattr(CapturedGraph, "_capture_one_graph", fake_capture_one_graph)
++
++        def get_args_kwargs(bs):
++            return (torch.ones(bs, 2),), {}
++
++        compiled_model.capture_graph(get_args_kwargs, [4])
++        compiled_model._input_buffers[0] = torch.empty(5, 2)
++        compiled_model.cudagraphs[(5, 2)] = GraphShouldNotReplay()
++        compiled_model._cudagraph_output_extents[(5, 2)] = (5,)
++
++        calls_after_capture = model.forward_calls
++        out = compiled_model(torch.ones(5, 2))
++
++        assert model.forward_calls == calls_after_capture + 1
++        torch.testing.assert_close(out, torch.full((5, 2), 2.0))
++
++    @pytest.mark.parametrize(
++        ("output_extents", "error_match"),
++        [
++            (None, "output extent metadata is missing"),
++            ((2, 2), "output extent metadata does not match captured outputs"),
++        ],
++    )
++    def test_forward_raises_for_inconsistent_output_extent_metadata(
++        self, monkeypatch, output_extents, error_match
++    ):
++        model = nn.Identity()
++        compiled_model = CapturedGraph(model, num_batched_inputs=1)
++
++        def fake_capture_one_graph(self, args, kwargs, refresh_args_static=None):
++            del self, args, kwargs, refresh_args_static
++            return object(), (2,)
++
++        monkeypatch.setattr(CapturedGraph, "_capture_one_graph", fake_capture_one_graph)
++
++        def get_args_kwargs(bs):
++            return (torch.ones(bs, 2),), {}
++
++        compiled_model.capture_graph(get_args_kwargs, [2])
++        graph_key = (2, 2)
++        if output_extents is None:
++            del compiled_model._cudagraph_output_extents[graph_key]
++        else:
++            compiled_model._cudagraph_output_extents[graph_key] = output_extents
++
++        with pytest.raises(RuntimeError, match=error_match):
++            compiled_model(torch.ones(2, 2))
++
+ 
+ # ============================================================================
+ # Helpers for piecewise / submod_has_cuda_ops tests
+@@ -742,6 +1001,8 @@ def _make_cm():
+         cm.info.max_batch_size = 8
+         cm.info.max_num_tokens = 64
+         cm.named_args = {}
++        cm.resource_names = ("explicit_cache",)
++        cm._spec_config = None
+         return cm
+ 
+     @pytest.mark.parametrize("backend", ["torch-cudagraph", "torch-opt"])
+@@ -814,6 +1075,78 @@ def compile(self):
+         assert info.skipped is False
+         assert compiled_models == [wrapper.child]
+ 
++    def test_compile_model_passes_resource_names_to_backend(self, monkeypatch):
++        wrapper = self._make_wrapper_with_graphmodule_child()
++        compiler_kwargs_seen = []
++
++        class FakeBackend:
++            def __init__(self, model, **compiler_kwargs):
++                del model
++                compiler_kwargs_seen.append(compiler_kwargs)
++
++            def compile(self):
++                return wrapper.child
++
++        monkeypatch.setattr(
++            "tensorrt_llm._torch.auto_deploy.transform.library.compile_model.CompileBackendRegistry.get",
++            lambda backend: FakeBackend,
++        )
++
++        transform = CompileModel.from_kwargs(
++            stage="compile",
++            backend="torch-cudagraph",
++            piecewise_enabled=True,
++        )
++        cm = self._make_cm()
++
++        transform._apply_to_full_model(
++            wrapper,
++            cm=cm,
++            factory=MagicMock(),
++            shared_config=MagicMock(),
++        )
++
++        assert compiler_kwargs_seen[0]["resource_input_names"] == ("explicit_cache",)
++        assert compiler_kwargs_seen[0]["num_batched_inputs"] is None
++
++    def test_compile_model_marks_cache_seq_interface_static_for_spec_decode(self, monkeypatch):
++        wrapper = self._make_wrapper_with_graphmodule_child()
++        compiler_kwargs_seen = []
++
++        class FakeBackend:
++            def __init__(self, model, **compiler_kwargs):
++                del model
++                compiler_kwargs_seen.append(compiler_kwargs)
++
++            def compile(self):
++                return wrapper.child
++
++        monkeypatch.setattr(
++            "tensorrt_llm._torch.auto_deploy.transform.library.compile_model.CompileBackendRegistry.get",
++            lambda backend: FakeBackend,
++        )
++
++        transform = CompileModel.from_kwargs(
++            stage="compile",
++            backend="torch-cudagraph",
++            piecewise_enabled=True,
++        )
++        cm = self._make_cm()
++        cm._spec_config = MagicMock()
++
++        transform._apply_to_full_model(
++            wrapper,
++            cm=cm,
++            factory=MagicMock(),
++            shared_config=MagicMock(),
++        )
++
++        assert compiler_kwargs_seen[0]["resource_input_names"] == (
++            "explicit_cache",
++            "cache_seq_interface",
++        )
++        assert compiler_kwargs_seen[0]["num_batched_inputs"] is None
++
+     @pytest.mark.parametrize(
+         "backend", ["torch-simple", "torch-compile", "torch-cudagraph", "torch-opt"]
+     )
+diff --git a/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_paged_attention.py b/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_paged_attention.py
+index 7f425614bc18..580c1ca8a004 100644
+--- a/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_paged_attention.py
++++ b/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_paged_attention.py
+@@ -753,6 +753,101 @@ def test_batch_info_12_element_format(self):
+         assert not torch.isnan(output).any(), "Output contains NaN"
+         assert not torch.isinf(output).any(), "Output contains Inf"
+ 
++    def test_context_prefill_honors_out_buffer(self):
++        """The generic context prefill path must write through out= exactly."""
++        from tensorrt_llm._torch.auto_deploy.custom_ops.attention.triton_paged_attention import (
++            triton_paged_mha_with_cache,
++        )
++
++        torch.manual_seed(0)
++        n_heads, n_kv_heads, head_dim, page_size = 4, 2, 32, 32
++        seq_len, padded_len = 8, 16
++        num_pages, num_blocks = 1, 4
++        dtype = torch.bfloat16
++        sliding_window = 4
++
++        q = torch.randn(1, padded_len, n_heads, head_dim, dtype=dtype, device="cuda")
++        k = torch.randn(1, padded_len, n_kv_heads, head_dim, dtype=dtype, device="cuda")
++        v = torch.randn(1, padded_len, n_kv_heads, head_dim, dtype=dtype, device="cuda")
++
++        batch_info_host = self._make_batch_info(
++            num_prefill=1, num_prefill_tokens=seq_len, num_decode=0
++        )
++        cu_seqlen_host = torch.tensor([0, seq_len], dtype=torch.int32)
++        cu_num_pages = torch.tensor([0, num_pages], dtype=torch.int32, device="cuda")
++        cu_num_pages_host = cu_num_pages.cpu()
++        cache_loc = torch.arange(num_pages, dtype=torch.int32, device="cuda")
++        last_page_len = torch.tensor([seq_len], dtype=torch.int32, device="cuda")
++        last_page_len_host = last_page_len.cpu()
++        seq_len_with_cache_host = torch.tensor([seq_len], dtype=torch.int32)
++        batch_indices = torch.zeros(seq_len, dtype=torch.int32, device="cuda")
++        positions = torch.arange(seq_len, dtype=torch.int32, device="cuda")
++
++        kv_cache = torch.zeros(
++            num_blocks, 2, n_kv_heads, page_size, head_dim, dtype=dtype, device="cuda"
++        )
++        expected_from_op = triton_paged_mha_with_cache(
++            q,
++            k,
++            v,
++            batch_info_host,
++            cu_seqlen_host,
++            cu_num_pages,
++            cu_num_pages_host,
++            cache_loc,
++            last_page_len,
++            last_page_len_host,
++            seq_len_with_cache_host,
++            batch_indices,
++            positions,
++            kv_cache,
++            scale=None,
++            sliding_window=sliding_window,
++        )
++
++        out = torch.full_like(q, float("nan"))
++        kv_cache_with_out = torch.zeros_like(kv_cache)
++        returned = triton_paged_mha_with_cache(
++            q,
++            k,
++            v,
++            batch_info_host,
++            cu_seqlen_host,
++            cu_num_pages,
++            cu_num_pages_host,
++            cache_loc,
++            last_page_len,
++            last_page_len_host,
++            seq_len_with_cache_host,
++            batch_indices,
++            positions,
++            kv_cache_with_out,
++            scale=None,
++            sliding_window=sliding_window,
++            out=out,
++        )
++
++        q_ref = q[:, :seq_len].transpose(1, 2)
++        k_ref = k[:, :seq_len].transpose(1, 2)
++        v_ref = v[:, :seq_len].transpose(1, 2)
++        k_ref = k_ref.repeat_interleave(n_heads // n_kv_heads, dim=1)
++        v_ref = v_ref.repeat_interleave(n_heads // n_kv_heads, dim=1)
++        scores = torch.matmul(q_ref, k_ref.transpose(-2, -1)) * (1.0 / math.sqrt(head_dim))
++        mask = torch.triu(
++            torch.ones(seq_len, seq_len, dtype=torch.bool, device="cuda"),
++            diagonal=1,
++        )
++        positions_1d = torch.arange(seq_len, device="cuda")
++        mask = mask | ((positions_1d.unsqueeze(1) - positions_1d.unsqueeze(0)) >= sliding_window)
++        scores.masked_fill_(mask.view(1, 1, seq_len, seq_len), float("-inf"))
++        weights = torch.softmax(scores, dim=-1, dtype=torch.float32).to(dtype)
++        expected = torch.matmul(weights, v_ref).transpose(1, 2)
++
++        assert returned.numel() == 0
++        torch.testing.assert_close(out[:, :seq_len], expected_from_op[:, :seq_len])
++        torch.testing.assert_close(out[:, :seq_len].float(), expected.float(), rtol=1e-2, atol=1e-2)
++        torch.testing.assert_close(out[:, seq_len:], torch.zeros_like(out[:, seq_len:]))
++
+     def test_batch_info_with_extend_requests(self):
+         """Test that extend requests are absorbed into prefill counts."""
+         from tensorrt_llm._torch.auto_deploy.custom_ops.attention_interface import BatchInfo
+@@ -1509,10 +1604,7 @@ def _run_context_and_reference(
+     def test_large_head_dim_forces_sdpa(
+         self, batch_size: int, n_heads: int, n_kv_heads: int, seq_len: int
+     ):
+-        """head_dim > 256 forces the SDPA path regardless of seq_len.
+-
+-        Regression test for Blackwell tl.dot misaligned shared memory accesses.
+-        """
++        """head_dim > 256 should force the SDPA path and match reference."""
+         head_dim = 512
+         seq_lens = [seq_len] * batch_size
+ 
+@@ -1584,6 +1676,190 @@ def tracking_sdpa(*args, **kwargs):
+         assert sdpa_called, "SDPA path was not taken for uniform 512-token sequences"
+         torch.testing.assert_close(output.float(), output_ref.float(), rtol=1e-2, atol=1e-2)
+ 
++    def test_large_head_dim_context_respects_cache_prefix_and_page_tail(self):
++        """Large-head-dim context must honor true KV length and cache prefix.
++
++        This protects the large-head-dim SDPA path for a cache-prefix context.
++        """
++        from tensorrt_llm._torch.auto_deploy.custom_ops.attention.triton_paged_attention import (
++            triton_paged_context,
++            update_paged_kv_cache,
++        )
++
++        device = "cuda"
++        dtype = torch.bfloat16
++        n_heads = 8
++        n_kv_heads = 1
++        head_dim = 512
++        page_size = 32
++        cache_len = 16
++        q_len = 10
++        kv_len = cache_len + q_len
++
++        q = torch.randn(q_len, n_heads, head_dim, dtype=dtype, device=device)
++        q = torch.nn.functional.normalize(q.float(), dim=-1).to(dtype)
++        k_full = torch.randn(kv_len, n_kv_heads, head_dim, dtype=dtype, device=device)
++        k_full = torch.nn.functional.normalize(k_full.float(), dim=-1).to(dtype)
++        v_full = torch.randn(kv_len, n_kv_heads, head_dim, dtype=dtype, device=device)
++
++        kv_cache = create_paged_kv_cache(
++            num_blocks=2,
++            page_size=page_size,
++            n_kv_heads=n_kv_heads,
++            head_dim=head_dim,
++            dtype=dtype,
++            device=device,
++        )
++        batch_indices = torch.zeros(kv_len, dtype=torch.int32, device=device)
++        positions = torch.arange(kv_len, dtype=torch.int32, device=device)
++        kv_indices = torch.tensor([0], dtype=torch.int32, device=device)
++        kv_indptr = torch.tensor([0, 1], dtype=torch.int32, device=device)
++        update_paged_kv_cache(
++            k_full, v_full, batch_indices, positions, kv_cache, kv_indices, kv_indptr
++        )
++
++        qo_indptr = torch.tensor([0, q_len], dtype=torch.int32, device=device)
++        kv_last_page_len = torch.tensor([kv_len], dtype=torch.int32, device=device)
++        seq_len_with_cache = torch.tensor([kv_len], dtype=torch.int32, device=device)
++
++        def run_with_tail(k_sentinel: float, v_sentinel: float) -> torch.Tensor:
++            kv_cache[0, 0, :, kv_len:page_size, :].fill_(k_sentinel)
++            kv_cache[0, 1, :, kv_len:page_size, :].fill_(v_sentinel)
++            return triton_paged_context(
++                q,
++                kv_cache,
++                qo_indptr,
++                kv_indptr,
++                kv_indices,
++                kv_last_page_len,
++                seq_len_with_cache,
++                sm_scale=1.0,
++            )
++
++        output_a = run_with_tail(7.0, 9.0)
++        output_b = run_with_tail(-64.0, -192.0)
++
++        q_ref = q.unsqueeze(0).transpose(1, 2)
++        k_ref = k_full.unsqueeze(0).transpose(1, 2).repeat_interleave(n_heads, dim=1)
++        v_ref = v_full.unsqueeze(0).transpose(1, 2).repeat_interleave(n_heads, dim=1)
++        q_positions = torch.arange(cache_len, kv_len, device=device)
++        kv_positions = torch.arange(kv_len, device=device)
++        attn_mask = kv_positions.unsqueeze(0) <= q_positions.unsqueeze(1)
++        output_ref = (
++            torch.nn.functional.scaled_dot_product_attention(
++                q_ref,
++                k_ref,
++                v_ref,
++                scale=1.0,
++                attn_mask=attn_mask.view(1, 1, q_len, kv_len),
++                is_causal=False,
++            )
++            .transpose(1, 2)
++            .reshape(q_len, n_heads, head_dim)
++        )
++
++        torch.testing.assert_close(output_a.float(), output_ref.float(), rtol=1e-2, atol=1e-2)
++        torch.testing.assert_close(output_b.float(), output_ref.float(), rtol=1e-2, atol=1e-2)
++        torch.testing.assert_close(output_a.float(), output_b.float(), rtol=0, atol=0)
++
++    def test_sdpa_dispatch_respects_cache_prefix_and_page_tail(self):
++        """SDPA dispatch must mask page-tail padding and use absolute query positions."""
++        from unittest.mock import patch
++
++        from tensorrt_llm._torch.auto_deploy.custom_ops.attention.triton_paged_attention import (
++            triton_paged_context,
++            update_paged_kv_cache,
++        )
++
++        device = "cuda"
++        dtype = torch.bfloat16
++        n_heads = 8
++        n_kv_heads = 1
++        head_dim = 512
++        page_size = 32
++        cache_len = 16
++        q_len = 512
++        kv_len = cache_len + q_len
++        num_pages = (kv_len + page_size - 1) // page_size
++        last_page_tail_start = kv_len - (num_pages - 1) * page_size
++
++        q = torch.randn(q_len, n_heads, head_dim, dtype=dtype, device=device)
++        q = torch.nn.functional.normalize(q.float(), dim=-1).to(dtype)
++        k_full = torch.randn(kv_len, n_kv_heads, head_dim, dtype=dtype, device=device)
++        k_full = torch.nn.functional.normalize(k_full.float(), dim=-1).to(dtype)
++        v_full = torch.randn(kv_len, n_kv_heads, head_dim, dtype=dtype, device=device)
++
++        kv_cache = create_paged_kv_cache(
++            num_blocks=num_pages + 1,
++            page_size=page_size,
++            n_kv_heads=n_kv_heads,
++            head_dim=head_dim,
++            dtype=dtype,
++            device=device,
++        )
++        batch_indices = torch.zeros(kv_len, dtype=torch.int32, device=device)
++        positions = torch.arange(kv_len, dtype=torch.int32, device=device)
++        kv_indices = torch.arange(num_pages, dtype=torch.int32, device=device)
++        kv_indptr = torch.tensor([0, num_pages], dtype=torch.int32, device=device)
++        update_paged_kv_cache(
++            k_full, v_full, batch_indices, positions, kv_cache, kv_indices, kv_indptr
++        )
++
++        qo_indptr = torch.tensor([0, q_len], dtype=torch.int32, device=device)
++        kv_last_page_len = torch.tensor([last_page_tail_start], dtype=torch.int32, device=device)
++        seq_len_with_cache = torch.tensor([kv_len], dtype=torch.int32, device=device)
++        sdpa_called = False
++        original_sdpa = torch.nn.functional.scaled_dot_product_attention
++
++        def tracking_sdpa(*args, **kwargs):
++            nonlocal sdpa_called
++            sdpa_called = True
++            return original_sdpa(*args, **kwargs)
++
++        def run_with_tail(k_sentinel: float, v_sentinel: float) -> torch.Tensor:
++            last_page = num_pages - 1
++            kv_cache[last_page, 0, :, last_page_tail_start:page_size, :].fill_(k_sentinel)
++            kv_cache[last_page, 1, :, last_page_tail_start:page_size, :].fill_(v_sentinel)
++            with patch.object(torch.nn.functional, "scaled_dot_product_attention", tracking_sdpa):
++                return triton_paged_context(
++                    q,
++                    kv_cache,
++                    qo_indptr,
++                    kv_indptr,
++                    kv_indices,
++                    kv_last_page_len,
++                    seq_len_with_cache,
++                    sm_scale=1.0,
++                )
++
++        output_a = run_with_tail(7.0, 9.0)
++        output_b = run_with_tail(-64.0, -192.0)
++
++        assert sdpa_called, "SDPA path was not taken for the long uniform prefill sequence"
++
++        q_ref = q.unsqueeze(0).transpose(1, 2)
++        k_ref = k_full.unsqueeze(0).transpose(1, 2).repeat_interleave(n_heads, dim=1)
++        v_ref = v_full.unsqueeze(0).transpose(1, 2).repeat_interleave(n_heads, dim=1)
++        q_positions = torch.arange(cache_len, kv_len, device=device)
++        kv_positions = torch.arange(kv_len, device=device)
++        attn_mask = kv_positions.unsqueeze(0) <= q_positions.unsqueeze(1)
++        output_ref = (
++            torch.nn.functional.scaled_dot_product_attention(
++                q_ref,
++                k_ref,
++                v_ref,
++                scale=1.0,
++                attn_mask=attn_mask.view(1, 1, q_len, kv_len),
++                is_causal=False,
++            )
++            .transpose(1, 2)
++            .reshape(q_len, n_heads, head_dim)
++        )
++
++        torch.testing.assert_close(output_a.float(), output_ref.float(), rtol=1e-2, atol=1e-2)
++        torch.testing.assert_close(output_b.float(), output_ref.float(), rtol=1e-2, atol=1e-2)
++        torch.testing.assert_close(output_a.float(), output_b.float(), rtol=0, atol=0)
++
+     def test_oversized_kv_indices_buffer(self):
+         """kv_indices buffer larger than actual page count should still work.
+ 
+diff --git a/tests/unittest/_torch/auto_deploy/unit/singlegpu/models/test_gemma3n_modeling.py b/tests/unittest/auto_deploy/singlegpu/models/test_gemma3n_modeling.py
+similarity index 99%
+rename from tests/unittest/_torch/auto_deploy/unit/singlegpu/models/test_gemma3n_modeling.py
+rename to tests/unittest/auto_deploy/singlegpu/models/test_gemma3n_modeling.py
+index 847c84dcf686..32ef71aa5af5 100644
+--- a/tests/unittest/_torch/auto_deploy/unit/singlegpu/models/test_gemma3n_modeling.py
++++ b/tests/unittest/auto_deploy/singlegpu/models/test_gemma3n_modeling.py
+@@ -280,11 +280,12 @@ def test_gemma3n_decoder_layer_equivalence():
+     hf_out = hf_layer(
+         hidden_states,
+         position_embeddings_global,
+-        position_embeddings_local,
+         per_layer_input,
+         attention_mask=None,
+         position_ids=position_ids,
+-    )[0]
++    )
++    if isinstance(hf_out, tuple):
++        hf_out = hf_out[0]
+     assert_rmse_close(custom_out, hf_out, rmse_ratio_tol=0.05, msg="Decoder layer: ")
+ 
+ 
+diff --git a/tests/unittest/_torch/auto_deploy/unit/singlegpu/models/test_gemma4_modeling.py b/tests/unittest/auto_deploy/singlegpu/models/test_gemma4_modeling.py
+similarity index 83%
+rename from tests/unittest/_torch/auto_deploy/unit/singlegpu/models/test_gemma4_modeling.py
+rename to tests/unittest/auto_deploy/singlegpu/models/test_gemma4_modeling.py
+index bf0f5eb4ea65..1543d689688a 100644
+--- a/tests/unittest/_torch/auto_deploy/unit/singlegpu/models/test_gemma4_modeling.py
++++ b/tests/unittest/auto_deploy/singlegpu/models/test_gemma4_modeling.py
+@@ -18,6 +18,9 @@
+ from transformers.activations import ACT2FN
+ 
+ import tensorrt_llm._torch.auto_deploy.custom_ops  # noqa: F401
++from tensorrt_llm._torch.auto_deploy.custom_ops.attention.torch_backend_attention import (
++    TorchBackendAttention,
++)
+ from tensorrt_llm._torch.auto_deploy.export import torch_export_to_gm
+ from tensorrt_llm._torch.auto_deploy.models.custom.modeling_gemma4 import (
+     ADGemma4ImageProcessor,
+@@ -169,6 +172,117 @@ def _small_dense_text_config() -> Gemma4TextConfig:
+     return config
+ 
+ 
++def _shared_kv_text_config() -> Gemma4TextConfig:
++    config = Gemma4TextConfig(
++        vocab_size=256,
++        hidden_size=64,
++        intermediate_size=32,
++        num_hidden_layers=6,
++        num_attention_heads=4,
++        num_key_value_heads=2,
++        num_global_key_value_heads=1,
++        head_dim=16,
++        global_head_dim=32,
++        hidden_activation="gelu_pytorch_tanh",
++        max_position_embeddings=64,
++        rms_norm_eps=1e-6,
++        attention_bias=False,
++        attention_dropout=0.0,
++        attention_k_eq_v=True,
++        sliding_window=16,
++        layer_types=[
++            "sliding_attention",
++            "full_attention",
++            "sliding_attention",
++            "full_attention",
++            "sliding_attention",
++            "full_attention",
++        ],
++        enable_moe_block=False,
++        num_experts=None,
++        top_k_experts=None,
++        expert_intermediate_size=None,
++        final_logit_softcapping=30.0,
++        hidden_size_per_layer_input=0,
++        num_kv_shared_layers=2,
++        use_double_wide_mlp=False,
++        use_bidirectional_attention="vision",
++        rope_parameters={
++            "full_attention": {
++                "rope_type": "proportional",
++                "rope_theta": 1000000.0,
++                "partial_rotary_factor": 0.25,
++            },
++            "sliding_attention": {
++                "rope_type": "default",
++                "rope_theta": 10000.0,
++            },
++        },
++        pad_token_id=0,
++        eos_token_id=1,
++        bos_token_id=2,
++        tie_word_embeddings=True,
++    )
++    config._attn_implementation = "eager"
++    return config
++
++
++def _small_e2b_text_config() -> Gemma4TextConfig:
++    config = Gemma4TextConfig(
++        vocab_size=256,
++        hidden_size=64,
++        intermediate_size=32,
++        num_hidden_layers=6,
++        num_attention_heads=4,
++        num_key_value_heads=1,
++        num_global_key_value_heads=None,
++        head_dim=16,
++        global_head_dim=32,
++        hidden_activation="gelu_pytorch_tanh",
++        max_position_embeddings=64,
++        rms_norm_eps=1e-6,
++        attention_bias=False,
++        attention_dropout=0.0,
++        attention_k_eq_v=False,
++        sliding_window=16,
++        layer_types=[
++            "sliding_attention",
++            "sliding_attention",
++            "sliding_attention",
++            "full_attention",
++            "sliding_attention",
++            "full_attention",
++        ],
++        enable_moe_block=False,
++        num_experts=None,
++        top_k_experts=None,
++        expert_intermediate_size=None,
++        final_logit_softcapping=30.0,
++        hidden_size_per_layer_input=8,
++        num_kv_shared_layers=2,
++        use_double_wide_mlp=True,
++        use_bidirectional_attention=None,
++        vocab_size_per_layer_input=256,
++        rope_parameters={
++            "full_attention": {
++                "rope_type": "proportional",
++                "rope_theta": 1000000.0,
++                "partial_rotary_factor": 0.25,
++            },
++            "sliding_attention": {
++                "rope_type": "default",
++                "rope_theta": 10000.0,
++            },
++        },
++        pad_token_id=0,
++        eos_token_id=1,
++        bos_token_id=2,
++        tie_word_embeddings=True,
++    )
++    config._attn_implementation = "eager"
++    return config
++
++
+ def _position_ids(batch_size: int, seq_len: int, device: str) -> torch.Tensor:
+     return torch.arange(seq_len, device=device).unsqueeze(0).expand(batch_size, -1)
+ 
+@@ -705,6 +819,87 @@ def test_conditional_generation_wrapper():
+     assert torch.isfinite(out.logits).all()
+ 
+ 
++def test_shared_kv_layer_metadata_matches_config():
++    model = Gemma4ForCausalLM(_shared_kv_text_config())
++    layer_expectations = [
++        (False, None),
++        (False, None),
++        (False, None),
++        (False, None),
++        (True, 2),
++        (True, 3),
++    ]
++
++    for layer, (is_shared, source_idx) in zip(model.model.layers, layer_expectations, strict=True):
++        assert layer.self_attn.is_kv_shared_layer is is_shared
++        assert layer.self_attn.kv_shared_layer_index == source_idx
++
++
++def test_export_uses_shared_kv_attention_for_shared_layers():
++    config = _shared_kv_text_config()
++    model = Gemma4ForCausalLM(config).eval()
++    input_ids = torch.randint(0, config.vocab_size, (1, 4))
++    position_ids = _position_ids(1, 4, "cpu")
++
++    gm = torch_export_to_gm(
++        model,
++        args=tuple(),
++        kwargs={"input_ids": input_ids, "position_ids": position_ids},
++    )
++
++    attn_nodes = [node for node in gm.graph.nodes if node.op == "call_function"]
++    attn_nodes = [
++        node for node in attn_nodes if node.target == torch.ops.auto_deploy.torch_attention.default
++    ]
++    regular_nodes = [
++        node
++        for node in attn_nodes
++        if TorchBackendAttention.get_shared_kv_source_layer_idx(node) is None
++    ]
++    shared_nodes = [
++        node
++        for node in attn_nodes
++        if TorchBackendAttention.get_shared_kv_source_layer_idx(node) is not None
++    ]
++
++    assert len(attn_nodes) == config.num_hidden_layers
++    assert len(regular_nodes) == config.num_hidden_layers - config.num_kv_shared_layers
++    assert len(shared_nodes) == config.num_kv_shared_layers
++    assert [TorchBackendAttention.get_layer_idx(regular) for regular in regular_nodes] == [
++        0,
++        1,
++        2,
++        3,
++    ]
++    assert [TorchBackendAttention.get_layer_idx(shared) for shared in shared_nodes] == [4, 5]
++    assert [
++        TorchBackendAttention.get_shared_kv_source_layer_idx(shared) for shared in shared_nodes
++    ] == [2, 3]
++
++
++def test_shared_kv_eager_layers_ignore_local_kv_weights():
++    device, dtype = _device_and_dtype()
++    config = _shared_kv_text_config()
++    model = Gemma4ForCausalLM(config).to(device=device, dtype=dtype).eval()
++
++    input_ids = torch.randint(0, config.vocab_size, (1, 6), device=device)
++    position_ids = _position_ids(1, 6, device)
++
++    with torch.no_grad():
++        baseline = model(input_ids=input_ids, position_ids=position_ids).logits
++
++        shared_layer = model.model.layers[4].self_attn
++        assert shared_layer.is_kv_shared_layer
++        shared_layer.k_proj.weight.zero_()
++        if shared_layer.v_proj is not None:
++            shared_layer.v_proj.weight.zero_()
++        shared_layer.k_norm.weight.zero_()
++
++        perturbed = model(input_ids=input_ids, position_ids=position_ids).logits
++
++    torch.testing.assert_close(perturbed, baseline, rtol=1e-4, atol=1e-4)
++
++
+ # ---------------------------------------------------------------------------
+ # Tests — Export
+ # ---------------------------------------------------------------------------
+@@ -1656,3 +1851,181 @@ def test_gemma4_text_export_uses_semantic_multimodal_mask():
+     if attention_mask_arg is None and len(attention_nodes[0].args) > 3:
+         attention_mask_arg = attention_nodes[0].args[3]
+     assert attention_mask_arg is semantic_nodes[0]
++
++
++def test_e2b_like_full_attention_uses_distinct_v_proj():
++    config = _small_e2b_text_config()
++    full_layer_idx = 3
++    attn = Gemma4TextAttention(config, full_layer_idx)
++
++    assert not attn.is_sliding
++    assert not attn.use_k_eq_v
++    assert attn.v_proj is not None
++    assert attn.head_dim == config.global_head_dim
++    assert attn.num_kv_heads == config.num_key_value_heads
++
++
++def test_e2b_like_double_wide_mlp_applies_to_shared_kv_tail():
++    config = _small_e2b_text_config()
++    regular_mlp = Gemma4TextMLP(config, layer_idx=3)
++    doubled_mlp = Gemma4TextMLP(config, layer_idx=4)
++
++    assert regular_mlp.gate_proj.weight.shape == (config.intermediate_size, config.hidden_size)
++    assert regular_mlp.up_proj.weight.shape == (config.intermediate_size, config.hidden_size)
++    assert regular_mlp.down_proj.weight.shape == (config.hidden_size, config.intermediate_size)
++    assert doubled_mlp.gate_proj.weight.shape == (config.intermediate_size * 2, config.hidden_size)
++    assert doubled_mlp.up_proj.weight.shape == (config.intermediate_size * 2, config.hidden_size)
++    assert doubled_mlp.down_proj.weight.shape == (config.hidden_size, config.intermediate_size * 2)
++
++
++def test_e2b_like_inputs_embeds_require_explicit_per_layer_inputs():
++    device, dtype = _device_and_dtype()
++    config = _small_e2b_text_config()
++    model = Gemma4ForCausalLM(config).to(device=device, dtype=dtype).eval()
++
++    input_ids = torch.randint(0, config.vocab_size, (2, 6), device=device)
++    position_ids = _position_ids(2, 6, device)
++    inputs_embeds = model.model.embed_tokens(input_ids)
++
++    with pytest.raises(ValueError, match="per_layer_inputs must be provided"):
++        model(inputs_embeds=inputs_embeds, position_ids=position_ids)
++
++
++def test_e2b_like_explicit_per_layer_inputs_match_implicit_path():
++    device, dtype = _device_and_dtype()
++    config = _small_e2b_text_config()
++    model = Gemma4ForCausalLM(config).to(device=device, dtype=dtype).eval()
++
++    input_ids = torch.randint(0, config.vocab_size, (2, 6), device=device)
++    position_ids = _position_ids(2, 6, device)
++    inputs_embeds = model.model.embed_tokens(input_ids)
++    per_layer_inputs = model.model.get_per_layer_inputs(input_ids)
++
++    assert per_layer_inputs is not None
++
++    with torch.no_grad():
++        implicit_outputs = model.model(input_ids=input_ids, position_ids=position_ids)
++        explicit_outputs = model.model(
++            inputs_embeds=inputs_embeds,
++            position_ids=position_ids,
++            per_layer_inputs=per_layer_inputs,
++        )
++        implicit_logits = model(input_ids=input_ids, position_ids=position_ids).logits
++        explicit_logits = model(
++            inputs_embeds=inputs_embeds,
++            position_ids=position_ids,
++            per_layer_inputs=per_layer_inputs,
++        ).logits
++
++    torch.testing.assert_close(
++        explicit_outputs.last_hidden_state,
++        implicit_outputs.last_hidden_state,
++        rtol=1e-4,
++        atol=1e-4,
++    )
++    torch.testing.assert_close(explicit_logits, implicit_logits, rtol=1e-4, atol=1e-4)
++
++
++@torch.no_grad()
++def test_e2b_like_input_ids_per_layer_path_is_cuda_graph_capturable():
++    if not torch.cuda.is_available():
++        pytest.skip("CUDA is required for CUDA graph capture coverage")
++
++    device = "cuda"
++    dtype = torch.bfloat16
++    config = _small_e2b_text_config()
++    model = Gemma4ForCausalLM(config).to(device=device, dtype=dtype).eval()
++
++    input_ids = torch.randint(0, config.vocab_size, (1, 4), device=device)
++    position_ids = _position_ids(1, 4, device)
++
++    eager_logits = model(input_ids=input_ids, position_ids=position_ids).logits.clone()
++
++    warmup_stream = torch.cuda.Stream()
++    warmup_stream.wait_stream(torch.cuda.current_stream())
++    with torch.cuda.stream(warmup_stream):
++        for _ in range(3):
++            model(input_ids=input_ids, position_ids=position_ids)
++    warmup_stream.synchronize()
++
++    graph = torch.cuda.CUDAGraph()
++    with torch.cuda.graph(graph):
++        graph_logits = model(input_ids=input_ids, position_ids=position_ids).logits
++
++    graph.replay()
++    torch.cuda.synchronize()
++
++    assert torch.isfinite(graph_logits).all()
++    torch.testing.assert_close(graph_logits, eager_logits, rtol=1e-4, atol=1e-4)
++
++
++def test_e2b_like_conditional_wrapper_forwards_explicit_per_layer_inputs():
++    device, dtype = _device_and_dtype()
++    config = Gemma4Config(
++        text_config=_small_e2b_text_config(),
++        vision_config=Gemma4VisionConfig(hidden_size=32),
++    )
++    model = Gemma4ForConditionalGeneration(config).to(device=device, dtype=dtype).eval()
++
++    input_ids = torch.randint(0, config.text_config.vocab_size, (2, 6), device=device)
++    position_ids = _position_ids(2, 6, device)
++    inputs_embeds = model.model.language_model.embed_tokens(input_ids)
++    per_layer_inputs = model.model.language_model.get_per_layer_inputs(input_ids)
++
++    assert per_layer_inputs is not None
++
++    with torch.no_grad():
++        implicit_logits = model(input_ids=input_ids, position_ids=position_ids).logits
++        explicit_logits = model(
++            inputs_embeds=inputs_embeds,
++            position_ids=position_ids,
++            per_layer_inputs=per_layer_inputs,
++        ).logits
++
++    torch.testing.assert_close(explicit_logits, implicit_logits, rtol=1e-4, atol=1e-4)
++
++
++def test_e2b_like_hf_per_layer_state_dict_keys_are_present_and_loadable():
++    config = Gemma4Config(
++        text_config=_small_e2b_text_config(),
++        vision_config=Gemma4VisionConfig(hidden_size=32),
++    )
++    model = Gemma4ForConditionalGeneration(config).eval()
++    expected_per_layer_keys = {
++        "model.language_model.embed_tokens_per_layer.weight",
++        "model.language_model.per_layer_model_projection.weight",
++        "model.language_model.per_layer_projection_norm.weight",
++    }
++    expected_per_layer_keys.update(
++        {
++            f"model.language_model.layers.{layer_idx}.per_layer_input_gate.weight"
++            for layer_idx in range(config.text_config.num_hidden_layers)
++        }
++    )
++    expected_per_layer_keys.update(
++        {
++            f"model.language_model.layers.{layer_idx}.per_layer_projection.weight"
++            for layer_idx in range(config.text_config.num_hidden_layers)
++        }
++    )
++    expected_per_layer_keys.update(
++        {
++            f"model.language_model.layers.{layer_idx}.post_per_layer_input_norm.weight"
++            for layer_idx in range(config.text_config.num_hidden_layers)
++        }
++    )
++
++    actual_per_layer_keys = {key for key in model.state_dict() if "per_layer" in key}
++    per_layer_state = {
++        key: value.clone()
++        for key, value in model.state_dict().items()
++        if key in expected_per_layer_keys
++    }
++
++    missing, unexpected = model.load_state_dict(per_layer_state, strict=False)
++
++    assert actual_per_layer_keys == expected_per_layer_keys
++    assert not unexpected
++    assert set(per_layer_state) == expected_per_layer_keys
++    assert not (expected_per_layer_keys & set(missing))
++    assert "model.language_model.lm_head.weight" in missing
+diff --git a/tests/unittest/_torch/auto_deploy/unit/singlegpu/models/test_minimax_m2_modeling.py b/tests/unittest/auto_deploy/singlegpu/models/test_minimax_m2_modeling.py
+similarity index 100%
+rename from tests/unittest/_torch/auto_deploy/unit/singlegpu/models/test_minimax_m2_modeling.py
+rename to tests/unittest/auto_deploy/singlegpu/models/test_minimax_m2_modeling.py
+diff --git a/tests/unittest/_torch/auto_deploy/unit/singlegpu/models/test_mistral3_modeling.py b/tests/unittest/auto_deploy/singlegpu/models/test_mistral3_modeling.py
+similarity index 100%
+rename from tests/unittest/_torch/auto_deploy/unit/singlegpu/models/test_mistral3_modeling.py
+rename to tests/unittest/auto_deploy/singlegpu/models/test_mistral3_modeling.py
+diff --git a/tests/unittest/_torch/auto_deploy/unit/singlegpu/models/test_mla_rope_utils.py b/tests/unittest/auto_deploy/singlegpu/models/test_mla_rope_utils.py
+similarity index 100%
+rename from tests/unittest/_torch/auto_deploy/unit/singlegpu/models/test_mla_rope_utils.py
+rename to tests/unittest/auto_deploy/singlegpu/models/test_mla_rope_utils.py
+diff --git a/tests/unittest/_torch/auto_deploy/unit/singlegpu/test_graph_canonicalize.py b/tests/unittest/auto_deploy/singlegpu/test_graph_canonicalize.py
+similarity index 100%
+rename from tests/unittest/_torch/auto_deploy/unit/singlegpu/test_graph_canonicalize.py
+rename to tests/unittest/auto_deploy/singlegpu/test_graph_canonicalize.py
+diff --git a/tests/unittest/_torch/auto_deploy/unit/singlegpu/test_hf_export_info.py b/tests/unittest/auto_deploy/singlegpu/test_hf_export_info.py
+similarity index 100%
+rename from tests/unittest/_torch/auto_deploy/unit/singlegpu/test_hf_export_info.py
+rename to tests/unittest/auto_deploy/singlegpu/test_hf_export_info.py
+diff --git a/tests/unittest/_torch/auto_deploy/unit/singlegpu/test_mistral_small_4_tokenizer_bridge.py b/tests/unittest/auto_deploy/singlegpu/test_mistral_small_4_tokenizer_bridge.py
+similarity index 100%
+rename from tests/unittest/_torch/auto_deploy/unit/singlegpu/test_mistral_small_4_tokenizer_bridge.py
+rename to tests/unittest/auto_deploy/singlegpu/test_mistral_small_4_tokenizer_bridge.py
+diff --git a/tests/unittest/_torch/auto_deploy/unit/singlegpu/test_pattern_matcher.py b/tests/unittest/auto_deploy/singlegpu/test_pattern_matcher.py
+similarity index 100%
+rename from tests/unittest/_torch/auto_deploy/unit/singlegpu/test_pattern_matcher.py
+rename to tests/unittest/auto_deploy/singlegpu/test_pattern_matcher.py
+diff --git a/tests/unittest/_torch/auto_deploy/unit/singlegpu/transformations/library/test_shared_kv_attention.py b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_shared_kv_attention.py
+similarity index 70%
+rename from tests/unittest/_torch/auto_deploy/unit/singlegpu/transformations/library/test_shared_kv_attention.py
+rename to tests/unittest/auto_deploy/singlegpu/transformations/library/test_shared_kv_attention.py
+index 4a65cc2de809..c13270d34fb0 100644
+--- a/tests/unittest/_torch/auto_deploy/unit/singlegpu/transformations/library/test_shared_kv_attention.py
++++ b/tests/unittest/auto_deploy/singlegpu/transformations/library/test_shared_kv_attention.py
+@@ -12,6 +12,9 @@
+ from tensorrt_llm._torch.auto_deploy.custom_ops.attention.torch_backend_attention import (
+     TorchBackendAttention,
+ )
++from tensorrt_llm._torch.auto_deploy.custom_ops.attention.triton_paged_attention import (
++    TritonPagedAttention,
++)
+ from tensorrt_llm._torch.auto_deploy.custom_ops.attention_interface import BatchInfo
+ from tensorrt_llm._torch.auto_deploy.export import torch_export_to_gm
+ from tensorrt_llm._torch.auto_deploy.shim.interface import CachedSequenceInterface
+@@ -349,6 +352,266 @@ def __init__(self, target):
+     )
+ 
+ 
++def test_triton_paged_backend_attention_metadata_for_shared_kv_node():
++    module = _TinySharedKVModule().eval()
++    gm = torch_export_to_gm(module, (torch.randn(1, 4, 8),))
++    source_nodes = [
++        node
++        for node in gm.graph.nodes
++        if node.op == "call_function"
++        and node.target == torch.ops.auto_deploy.torch_attention.default
++    ]
++    regular = next(
++        node
++        for node in source_nodes
++        if node.target == torch.ops.auto_deploy.torch_attention.default
++    )
++    shared = next(node for node in source_nodes if TritonPagedAttention.get_layer_idx(node) == 1)
++
++    assert TritonPagedAttention.get_layer_idx(regular) == 0
++    assert TritonPagedAttention.get_layer_idx(shared) == 1
++    assert TritonPagedAttention.get_shared_kv_source_layer_idx(regular) is None
++    assert TritonPagedAttention.get_shared_kv_source_layer_idx(shared) == 0
++    assert TritonPagedAttention.get_cached_attention_op() == (
++        torch.ops.auto_deploy.triton_paged_mha_with_cache.default
++    )
++
++
++def test_shared_kv_transform_aliases_source_cache_placeholders_for_triton_paged():
++    module = _TinySharedKVModule().eval()
++    gm = torch_export_to_gm(module, (torch.randn(1, 4, 8),))
++
++    cm = CachedSequenceInterface(
++        max_seq_len=16,
++        max_batch_size=2,
++        max_num_tokens=16,
++        device="cpu",
++    )
++    transform = _InsertCachedOperator(
++        InsertCachedAttentionConfig(stage=Stages.CACHE_INIT, backend="triton_paged")
++    )
++    gm, info = transform._apply(gm, cm, factory=None, shared_config=SharedConfig())
++
++    assert info.num_matches == 2
++
++    placeholder_names = [node.target for node in gm.graph.nodes if node.op == "placeholder"]
++    assert placeholder_names.count("r0_kv_cache") == 1
++    assert "r1_kv_cache" not in placeholder_names
++    assert set(cm._resource_lookup).issubset(set(placeholder_names))
++
++    cached_nodes = [node for node in gm.graph.nodes if node.op == "call_function"]
++    regular_node = next(
++        node
++        for node in cached_nodes
++        if node.target == torch.ops.auto_deploy.triton_paged_mha_with_cache.default
++        and node.args[-1] is False
++    )
++    shared_node = next(
++        node
++        for node in cached_nodes
++        if node.target == torch.ops.auto_deploy.triton_paged_mha_with_cache.default
++        and node.args[-1] is True
++    )
++
++    assert regular_node.args[13] is shared_node.args[13]
++    assert regular_node.target == torch.ops.auto_deploy.triton_paged_mha_with_cache.default
++    assert shared_node.target == torch.ops.auto_deploy.triton_paged_mha_with_cache.default
++    assert regular_node.args[-1] is False
++    assert shared_node.args[-1] is True
++
++
++@torch.no_grad()
++def test_triton_paged_shared_kv_cached_attention_reads_aliased_cache_without_writing():
++    if not torch.cuda.is_available():
++        pytest.skip("CUDA is required for triton_paged shared-KV runtime coverage")
++
++    device = torch.device("cuda")
++    head_dim = 16
++
++    q = torch.tensor([[[[1.0] * head_dim]]], dtype=torch.float16, device=device)
++    dummy_k = torch.full((1, 1, 1, head_dim), 7.0, dtype=torch.float16, device=device)
++    dummy_v = torch.full((1, 1, 1, head_dim), -3.0, dtype=torch.float16, device=device)
++
++    owner_k = torch.tensor(
++        [[[[1.0] * head_dim], [[0.0] * head_dim], [[0.5] * head_dim]]],
++        dtype=torch.float16,
++        device=device,
++    )
++    owner_v = torch.tensor(
++        [[[[10.0] * head_dim], [[20.0] * head_dim], [[30.0] * head_dim]]],
++        dtype=torch.float16,
++        device=device,
++    )
++
++    kv_cache = torch.zeros((1, 2, 1, 32, head_dim), dtype=torch.float16, device=device)
++    kv_cache[0, 0, 0, :3, :] = owner_k[0, :, 0, :]
++    kv_cache[0, 1, 0, :3, :] = owner_v[0, :, 0, :]
++    kv_cache_before = kv_cache.clone()
++    owner_write_cache = torch.zeros_like(kv_cache)
++    owner_write_cache[0, 0, 0, :2, :] = owner_k[0, :2, 0, :]
++    owner_write_cache[0, 1, 0, :2, :] = owner_v[0, :2, 0, :]
++
++    batch_info_host = BatchInfo()
++    batch_info_host.update([0, 0, 0, 0, 1, 1])
++    cu_seqlen_host = torch.tensor([0, 1], dtype=torch.int32)
++    cu_num_pages = torch.tensor([0, 1], dtype=torch.int32, device=device)
++    cu_num_pages_host = torch.tensor([0, 1], dtype=torch.int32)
++    cache_loc = torch.tensor([0], dtype=torch.int32, device=device)
++    last_page_len = torch.tensor([3], dtype=torch.int32, device=device)
++    last_page_len_host = torch.tensor([3], dtype=torch.int32)
++    seq_len_with_cache_host = torch.tensor([3], dtype=torch.int32)
++    position_ids = torch.tensor([[0]], dtype=torch.int32, device=device)
++
++    triton_batch_indices, triton_positions = torch.ops.auto_deploy.triton_paged_prepare_metadata(
++        position_ids,
++        batch_info_host.serialize(),
++        cu_seqlen_host.to(device),
++        seq_len_with_cache_host.to(device),
++    )
++
++    output = torch.ops.auto_deploy.triton_paged_mha_with_cache(
++        q,
++        dummy_k,
++        dummy_v,
++        batch_info_host.serialize(),
++        cu_seqlen_host,
++        cu_num_pages,
++        cu_num_pages_host,
++        cache_loc,
++        last_page_len,
++        last_page_len_host,
++        seq_len_with_cache_host,
++        triton_batch_indices,
++        triton_positions,
++        kv_cache,
++        1.0 / (head_dim**0.5),
++        None,
++        True,
++    )
++    expected = torch.ops.auto_deploy.triton_paged_mha_with_cache(
++        q,
++        owner_k[:, 2:3],
++        owner_v[:, 2:3],
++        batch_info_host.serialize(),
++        cu_seqlen_host,
++        cu_num_pages,
++        cu_num_pages_host,
++        cache_loc,
++        last_page_len,
++        last_page_len_host,
++        seq_len_with_cache_host,
++        triton_batch_indices,
++        triton_positions,
++        owner_write_cache,
++        1.0 / (head_dim**0.5),
++        None,
++        False,
++    )
++
++    torch.testing.assert_close(kv_cache, kv_cache_before, rtol=0.0, atol=0.0)
++    torch.testing.assert_close(owner_write_cache, kv_cache_before, rtol=0.0, atol=0.0)
++    torch.testing.assert_close(output, expected, rtol=0.0, atol=0.0)
++
++
++@torch.no_grad()
++def test_triton_paged_shared_kv_prefill_sdpa_reads_aliased_cache_without_writing():
++    if not torch.cuda.is_available():
++        pytest.skip("CUDA is required for triton_paged shared-KV SDPA runtime coverage")
++
++    from unittest.mock import patch
++
++    device = torch.device("cuda")
++    dtype = torch.float16
++    seq_len = 512
++    page_size = 32
++    num_pages = seq_len // page_size
++    n_heads = 4
++    n_kv_heads = 2
++    head_dim = 64
++
++    torch.manual_seed(0)
++    q = torch.randn(1, seq_len, n_heads, head_dim, dtype=dtype, device=device)
++    dummy_k = torch.full((1, seq_len, n_kv_heads, head_dim), 7.0, dtype=dtype, device=device)
++    dummy_v = torch.full((1, seq_len, n_kv_heads, head_dim), -3.0, dtype=dtype, device=device)
++    owner_k = torch.randn(1, seq_len, n_kv_heads, head_dim, dtype=dtype, device=device)
++    owner_v = torch.randn(1, seq_len, n_kv_heads, head_dim, dtype=dtype, device=device)
++
++    kv_cache = torch.zeros(
++        (num_pages, 2, n_kv_heads, page_size, head_dim), dtype=dtype, device=device
++    )
++    owner_k_pages = owner_k[0].view(num_pages, page_size, n_kv_heads, head_dim)
++    owner_v_pages = owner_v[0].view(num_pages, page_size, n_kv_heads, head_dim)
++    kv_cache[:, 0] = owner_k_pages.permute(0, 2, 1, 3)
++    kv_cache[:, 1] = owner_v_pages.permute(0, 2, 1, 3)
++    kv_cache_before = kv_cache.clone()
++    owner_write_cache = torch.zeros_like(kv_cache)
++
++    batch_info_host = BatchInfo()
++    batch_info_host.update([1, seq_len, 0, 0, 0, 0])
++    cu_seqlen_host = torch.tensor([0, seq_len], dtype=torch.int32)
++    cu_num_pages = torch.tensor([0, num_pages], dtype=torch.int32, device=device)
++    cu_num_pages_host = torch.tensor([0, num_pages], dtype=torch.int32)
++    cache_loc = torch.arange(num_pages, dtype=torch.int32, device=device)
++    last_page_len = torch.tensor([page_size], dtype=torch.int32, device=device)
++    last_page_len_host = torch.tensor([page_size], dtype=torch.int32)
++    seq_len_with_cache_host = torch.tensor([seq_len], dtype=torch.int32)
++    batch_indices = torch.zeros(seq_len, dtype=torch.int32, device=device)
++    positions = torch.arange(seq_len, dtype=torch.int32, device=device)
++
++    sdpa_calls = 0
++    original_sdpa = torch.nn.functional.scaled_dot_product_attention
++
++    def tracking_sdpa(*args, **kwargs):
++        nonlocal sdpa_calls
++        sdpa_calls += 1
++        return original_sdpa(*args, **kwargs)
++
++    with patch.object(torch.nn.functional, "scaled_dot_product_attention", tracking_sdpa):
++        output = torch.ops.auto_deploy.triton_paged_mha_with_cache(
++            q,
++            dummy_k,
++            dummy_v,
++            batch_info_host.serialize(),
++            cu_seqlen_host,
++            cu_num_pages,
++            cu_num_pages_host,
++            cache_loc,
++            last_page_len,
++            last_page_len_host,
++            seq_len_with_cache_host,
++            batch_indices,
++            positions,
++            kv_cache,
++            None,
++            None,
++            True,
++        )
++        expected = torch.ops.auto_deploy.triton_paged_mha_with_cache(
++            q,
++            owner_k,
++            owner_v,
++            batch_info_host.serialize(),
++            cu_seqlen_host,
++            cu_num_pages,
++            cu_num_pages_host,
++            cache_loc,
++            last_page_len,
++            last_page_len_host,
++            seq_len_with_cache_host,
++            batch_indices,
++            positions,
++            owner_write_cache,
++            None,
++            None,
++            False,
++        )
++
++    assert sdpa_calls == 2
++    torch.testing.assert_close(kv_cache, kv_cache_before, rtol=0.0, atol=0.0)
++    torch.testing.assert_close(owner_write_cache, kv_cache_before, rtol=0.0, atol=0.0)
++    torch.testing.assert_close(output.float(), expected.float(), rtol=1e-2, atol=1e-2)
++
++
+ @torch.no_grad()
+ def test_torch_shared_kv_cached_attention_supports_out_buffer():
+     q = torch.randn(1, 3, 2, 4)

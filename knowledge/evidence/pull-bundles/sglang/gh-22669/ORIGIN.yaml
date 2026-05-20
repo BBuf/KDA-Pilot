@@ -1,0 +1,74 @@
+schema_version: 1
+source_key: sgl-project/sglang#22669
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 22669
+title: 'feat: Support flashinfer_cutedsl MoE runner with flashinfer alltoall backend'
+url: https://github.com/sgl-project/sglang/pull/22669
+state: closed
+merged_at: '2026-05-20T07:36:27Z'
+base_ref_oid: e0273dcd316be010bbf461879f2ee5c4c7ab50f3
+head_ref_oid: b28dbda793eeb53c79a9cb2bdc50a5644030af53
+captured_at: '2026-05-20T14:55:25.361985+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention kernel
+- cuda kernel
+- cutlass
+- fp4
+- gemm
+- moe
+- moe kernel
+- nvfp4
+- triton
+- triton kernel
+techniques:
+- fine-grained-quantization
+hardware_features:
+- fp4
+- nvfp4
+kernel_types:
+- attention
+- gemm
+- moe
+languages:
+- cuda-cpp
+- cute-dsl
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/layers/moe/moe_runner/flashinfer_cutedsl.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/moe_runner/flashinfer_cutedsl.py
+    ref: b28dbda793eeb53c79a9cb2bdc50a5644030af53
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/moe/token_dispatcher/flashinfer.py
+    local_path: source-snapshot/python/sglang/srt/layers/moe/token_dispatcher/flashinfer.py
+    ref: b28dbda793eeb53c79a9cb2bdc50a5644030af53
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/layers/quantization/modelopt_quant.py
+    local_path: source-snapshot/python/sglang/srt/layers/quantization/modelopt_quant.py
+    ref: b28dbda793eeb53c79a9cb2bdc50a5644030af53
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/models/qwen2_moe.py
+    local_path: source-snapshot/python/sglang/srt/models/qwen2_moe.py
+    ref: b28dbda793eeb53c79a9cb2bdc50a5644030af53
+    status: modified
+    fetched: true
+  - source_path: python/sglang/srt/server_args.py
+    local_path: source-snapshot/python/sglang/srt/server_args.py
+    ref: b28dbda793eeb53c79a9cb2bdc50a5644030af53
+    status: modified
+    fetched: true
+  - source_path: test/registered/moe/test_flashinfer_a2a_cutedsl_v2.py
+    local_path: source-snapshot/test/registered/moe/test_flashinfer_a2a_cutedsl_v2.py
+    ref: b28dbda793eeb53c79a9cb2bdc50a5644030af53
+    status: added
+    fetched: true

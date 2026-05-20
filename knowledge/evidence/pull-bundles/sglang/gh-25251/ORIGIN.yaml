@@ -1,0 +1,40 @@
+schema_version: 1
+source_key: sgl-project/sglang#25251
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 25251
+title: '[AMD] amd/deepseek_v4 integration 28/N use aiter greedy_sample for all-greedy
+  sampling on ROCm'
+url: https://github.com/sgl-project/sglang/pull/25251
+state: closed
+merged_at: '2026-05-19T22:38:09Z'
+base_ref_oid: 721f045141169dffd9699e90bf50f29a997eb7fc
+head_ref_oid: 75d5785e7457ad6991bbee596ca09f1b579fa8de
+captured_at: '2026-05-20T14:52:18.244170+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- benchmark kernel
+- sampling
+techniques: []
+hardware_features: []
+kernel_types:
+- sampling
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: python/sglang/srt/layers/sampler.py
+    local_path: source-snapshot/python/sglang/srt/layers/sampler.py
+    ref: 75d5785e7457ad6991bbee596ca09f1b579fa8de
+    status: modified
+    fetched: true
+  - source_path: test/registered/ops/test_aiter_greedy_sample_amd.py
+    local_path: source-snapshot/test/registered/ops/test_aiter_greedy_sample_amd.py
+    ref: 75d5785e7457ad6991bbee596ca09f1b579fa8de
+    status: added
+    fetched: true

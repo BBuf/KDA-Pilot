@@ -1,0 +1,166 @@
+schema_version: 1
+source_key: NVIDIA/TensorRT-LLM#13630
+repo: NVIDIA/TensorRT-LLM
+repo_id: tensorrt-llm
+pr_number: 13630
+title: '[#13580][fix] AutoDeploy: Support Gemma3n/4 E2B variants'
+url: https://github.com/NVIDIA/TensorRT-LLM/pull/13630
+state: closed
+merged_at: '2026-05-19T21:38:56Z'
+base_ref_oid: 64260ba31645bb3bae79780f169b124ff38d051c
+head_ref_oid: 1bdba703142030d490e3b3545113cce71b3014ca
+captured_at: '2026-05-20T15:01:33.181817+00:00'
+architectures:
+- sm90
+architecture_families:
+- hopper
+tags:
+- attention kernel
+- benchmark kernel
+- cuda kernel
+- moe kernel
+- triton kernel
+techniques: []
+hardware_features: []
+kernel_types:
+- attention
+- gemm
+- mla
+- moe
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: examples/auto_deploy/model_registry/configs/gemma3n_e2b_it.yaml
+    local_path: source-snapshot/examples/auto_deploy/model_registry/configs/gemma3n_e2b_it.yaml
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: modified
+    fetched: true
+  - source_path: examples/auto_deploy/model_registry/configs/gemma4_e2b.yaml
+    local_path: source-snapshot/examples/auto_deploy/model_registry/configs/gemma4_e2b.yaml
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: added
+    fetched: true
+  - source_path: examples/auto_deploy/model_registry/models.yaml
+    local_path: source-snapshot/examples/auto_deploy/model_registry/models.yaml
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/compile/backends/torch_cudagraph.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/compile/backends/torch_cudagraph.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/custom_ops/attention/triton_paged_attention.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/custom_ops/attention/triton_paged_attention.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma3n.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma3n.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma4.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/models/custom/modeling_gemma4.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/shim/interface.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/shim/interface.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: modified
+    fetched: true
+  - source_path: tensorrt_llm/_torch/auto_deploy/transform/library/compile_model.py
+    local_path: source-snapshot/tensorrt_llm/_torch/auto_deploy/transform/library/compile_model.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: modified
+    fetched: true
+  - source_path: tests/integration/defs/accuracy/references/gsm8k.yaml
+    local_path: source-snapshot/tests/integration/defs/accuracy/references/gsm8k.yaml
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: modified
+    fetched: true
+  - source_path: tests/integration/defs/accuracy/references/mmlu.yaml
+    local_path: source-snapshot/tests/integration/defs/accuracy/references/mmlu.yaml
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: modified
+    fetched: true
+  - source_path: tests/integration/defs/accuracy/test_llm_api_autodeploy.py
+    local_path: source-snapshot/tests/integration/defs/accuracy/test_llm_api_autodeploy.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: modified
+    fetched: true
+  - source_path: tests/integration/test_lists/test-db/l0_h100.yml
+    local_path: source-snapshot/tests/integration/test_lists/test-db/l0_h100.yml
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: modified
+    fetched: true
+  - source_path: tests/test_common/llm_data.py
+    local_path: source-snapshot/tests/test_common/llm_data.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/auto_deploy/singlegpu/compile/test_captured_graph.py
+    local_path: source-snapshot/tests/unittest/auto_deploy/singlegpu/compile/test_captured_graph.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_paged_attention.py
+    local_path: source-snapshot/tests/unittest/auto_deploy/singlegpu/custom_ops/attention/test_triton_paged_attention.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: modified
+    fetched: true
+  - source_path: tests/unittest/auto_deploy/singlegpu/models/test_gemma3n_modeling.py
+    local_path: source-snapshot/tests/unittest/auto_deploy/singlegpu/models/test_gemma3n_modeling.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: renamed
+    fetched: true
+  - source_path: tests/unittest/auto_deploy/singlegpu/models/test_gemma4_modeling.py
+    local_path: source-snapshot/tests/unittest/auto_deploy/singlegpu/models/test_gemma4_modeling.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: renamed
+    fetched: true
+  - source_path: tests/unittest/auto_deploy/singlegpu/models/test_minimax_m2_modeling.py
+    local_path: source-snapshot/tests/unittest/auto_deploy/singlegpu/models/test_minimax_m2_modeling.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: renamed
+    fetched: true
+  - source_path: tests/unittest/auto_deploy/singlegpu/models/test_mistral3_modeling.py
+    local_path: source-snapshot/tests/unittest/auto_deploy/singlegpu/models/test_mistral3_modeling.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: renamed
+    fetched: true
+  - source_path: tests/unittest/auto_deploy/singlegpu/models/test_mla_rope_utils.py
+    local_path: source-snapshot/tests/unittest/auto_deploy/singlegpu/models/test_mla_rope_utils.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: renamed
+    fetched: true
+  - source_path: tests/unittest/auto_deploy/singlegpu/test_graph_canonicalize.py
+    local_path: source-snapshot/tests/unittest/auto_deploy/singlegpu/test_graph_canonicalize.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: renamed
+    fetched: true
+  - source_path: tests/unittest/auto_deploy/singlegpu/test_hf_export_info.py
+    local_path: source-snapshot/tests/unittest/auto_deploy/singlegpu/test_hf_export_info.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: renamed
+    fetched: true
+  - source_path: tests/unittest/auto_deploy/singlegpu/test_mistral_small_4_tokenizer_bridge.py
+    local_path: source-snapshot/tests/unittest/auto_deploy/singlegpu/test_mistral_small_4_tokenizer_bridge.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: renamed
+    fetched: true
+  - source_path: tests/unittest/auto_deploy/singlegpu/test_pattern_matcher.py
+    local_path: source-snapshot/tests/unittest/auto_deploy/singlegpu/test_pattern_matcher.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: renamed
+    fetched: true
+  - source_path: tests/unittest/auto_deploy/singlegpu/transformations/library/test_shared_kv_attention.py
+    local_path: source-snapshot/tests/unittest/auto_deploy/singlegpu/transformations/library/test_shared_kv_attention.py
+    ref: 1bdba703142030d490e3b3545113cce71b3014ca
+    status: renamed
+    fetched: true

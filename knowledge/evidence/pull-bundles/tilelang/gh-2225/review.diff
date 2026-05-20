@@ -1,0 +1,193 @@
+diff --git a/src/transform/legalize_negative_index.cc b/src/transform/legalize_negative_index.cc
+index f0df555ef5..3614cf2057 100644
+--- a/src/transform/legalize_negative_index.cc
++++ b/src/transform/legalize_negative_index.cc
+@@ -163,6 +163,39 @@ class NegativeIndexRewriter : public arith::IRMutatorWithAnalyzer {
+                         const LoadStore2StateMap &states)
+       : arith::IRMutatorWithAnalyzer(analyzer), states_(states) {}
+ 
++  PrimExpr TryRewriteMixedRamp(const PrimExpr &index,
++                               const PrimExpr &buffer_extent) {
++    PrimExpr value = analyzer_->Simplify(index);
++    const auto *ramp = value.as<RampNode>();
++    if (ramp == nullptr)
++      return PrimExpr();
++
++    int lanes = *as_const_int(ramp->lanes);
++    ffi::Array<PrimExpr> values;
++    ffi::Array<PrimExpr> shuffle_indices;
++    DataType dtype =
++        analyzer_->Simplify(buffer_extent + ramp->base).dtype().element_of();
++    for (int lane_id = 0; lane_id < lanes; ++lane_id) {
++      PrimExpr lane = analyzer_->Simplify(
++          ramp->base + ramp->stride * IntImm(ramp->stride.dtype(), lane_id));
++      if (analyzer_->CanProve(lane < 0))
++        lane = analyzer_->Simplify(buffer_extent + lane);
++      else if (!analyzer_->CanProve(lane >= 0))
++        return PrimExpr();
++      values.push_back(lane.dtype() == dtype ? lane : Cast(dtype, lane));
++      shuffle_indices.push_back(IntImm(DataType::Int(32), lane_id));
++    }
++    return analyzer_->Simplify(Shuffle(values, shuffle_indices, value->span));
++  }
++
++  BufferRegion UpdateRegion(BufferRegion region) {
++    for (const Range &range : region->region) {
++      if (analyzer_->CanProve(analyzer_->Simplify(range->min) < 0))
++        return BufferRegion::FullRegion(region->buffer);
++    }
++    return region;
++  }
++
+   ffi::Array<PrimExpr> UpdateIdx(const ffi::Array<PrimExpr> &indices,
+                                  const ffi::Array<PrimExpr> &buffer_shape,
+                                  const std::vector<IndexSignState> &state_vec) {
+@@ -171,9 +204,13 @@ class NegativeIndexRewriter : public arith::IRMutatorWithAnalyzer {
+         << indices << ")";
+     ffi::Array<PrimExpr> new_indices = indices;
+     for (size_t i = 0; i < indices.size(); ++i) {
+-      if (state_vec[i] != IndexSignState::kNegative)
+-        continue;
+-      new_indices.Set(i, analyzer_->Simplify(buffer_shape[i] + indices[i]));
++      if (state_vec[i] == IndexSignState::kNegative) {
++        new_indices.Set(i, analyzer_->Simplify(buffer_shape[i] + indices[i]));
++      } else if (state_vec[i] == IndexSignState::kUnknown) {
++        PrimExpr rewritten = TryRewriteMixedRamp(indices[i], buffer_shape[i]);
++        if (rewritten.defined())
++          new_indices.Set(i, rewritten);
++      }
+     }
+     return new_indices;
+   }
+@@ -202,6 +239,16 @@ class NegativeIndexRewriter : public arith::IRMutatorWithAnalyzer {
+     return BufferStore(store->buffer, store->value, indices, store->predicate);
+   }
+ 
++  Stmt VisitStmt_(const BlockNode *op) final {
++    Block block = Downcast<Block>(arith::IRMutatorWithAnalyzer::VisitStmt_(op));
++    BlockNode *n = block.CopyOnWrite();
++    n->reads.MutateByApply(
++        [this](BufferRegion region) { return UpdateRegion(region); });
++    n->writes.MutateByApply(
++        [this](BufferRegion region) { return UpdateRegion(region); });
++    return block;
++  }
++
+ private:
+   const LoadStore2StateMap &states_;
+ };
+diff --git a/testing/python/transform/test_tilelang_transform_legalize_negative_index.py b/testing/python/transform/test_tilelang_transform_legalize_negative_index.py
+index 26c151141f..6001a3994b 100644
+--- a/testing/python/transform/test_tilelang_transform_legalize_negative_index.py
++++ b/testing/python/transform/test_tilelang_transform_legalize_negative_index.py
+@@ -186,6 +186,82 @@ def after(A: T.Tensor((1024,), T.float32)):
+     _check(before, after)
+ 
+ 
++def test_buffer_load_vector_index_mixed_sign_ramp():
++    """
++    Test vectorized ramp indices that mix Python-negative and non-negative
++    lanes.
++    """
++
++    @T.prim_func
++    def before(A: T.Tensor((1024,), T.float32)):
++        vec = T.Ramp(-2, 1, 4)  # indices: [-2, -1, 0, 1]
++        value = A[vec]
++        B = T.alloc_buffer((4,), T.float32)
++        B[T.Ramp(0, 1, 4)] = value
++
++    @T.prim_func
++    def after(A: T.Tensor((1024,), T.float32)):
++        vec = T.Ramp(-2, 1, 4)  # noqa: F841
++        value = A[T.Shuffle([1022, 1023, 0, 1], [0, 1, 2, 3])]
++        B = T.alloc_buffer((4,), T.float32)
++        B[T.Ramp(0, 1, 4)] = value
++
++    _check(before, after)
++
++
++def test_buffer_load_vector_index_mixed_sign_ramp_preserves_int64_extent():
++    """
++    Test mixed-sign ramp legalization preserves the buffer extent dtype.
++    """
++
++    @T.prim_func
++    def before(A: T.Tensor((T.int64(3000000000),), T.float32)):
++        vec = T.Ramp(T.int32(-2), T.int32(1), 4)
++        value = A[vec]
++        B = T.alloc_buffer((4,), T.float32)
++        B[T.Ramp(0, 1, 4)] = value
++
++    @T.prim_func
++    def after(A: T.Tensor((T.int64(3000000000),), T.float32)):
++        vec = T.Ramp(T.int32(-2), T.int32(1), 4)  # noqa: F841
++        value = A[
++            T.Shuffle(
++                [
++                    T.int64(2999999998),
++                    T.int64(2999999999),
++                    T.int64(0),
++                    T.int64(1),
++                ],
++                [0, 1, 2, 3],
++            )
++        ]
++        B = T.alloc_buffer((4,), T.float32)
++        B[T.Ramp(0, 1, 4)] = value
++
++    _check(before, after)
++
++
++def test_buffer_load_vector_index_mixed_sign_ramp_in_kernel():
++    """
++    Test a sliding-window KV-cache style vector load that crosses a ring-buffer
++    boundary inside a kernel body.
++    """
++
++    @T.prim_func
++    def before(A: T.Tensor((1024,), T.float32), B: T.Tensor((4,), T.float32)):
++        with T.Kernel(1, threads=1) as _:
++            vec = T.Ramp(-2, 1, 4)  # indices: [-2, -1, 0, 1]
++            B[T.Ramp(0, 1, 4)] = A[vec]
++
++    @T.prim_func
++    def after(A: T.Tensor((1024,), T.float32), B: T.Tensor((4,), T.float32)):
++        with T.Kernel(1, threads=1) as _:
++            vec = T.Ramp(-2, 1, 4)  # noqa: F841
++            B[T.Ramp(0, 1, 4)] = A[T.Shuffle([1022, 1023, 0, 1], [0, 1, 2, 3])]
++
++    _check(before, after)
++
++
+ def test_buffer_load_nested_buffer_loads():
+     """
+     Test legalization with nested buffer load expressions.
+@@ -316,6 +392,27 @@ def after(A: T.Tensor((1024,), T.float32)):
+     _check(before, after)
+ 
+ 
++def test_buffer_store_vector_index_mixed_sign_ramp():
++    """
++    Test vectorized store ramp indices that mix Python-negative and
++    non-negative lanes.
++    """
++
++    @T.prim_func
++    def before(A: T.Tensor((1024,), T.float32)):
++        vec = T.Ramp(-2, 1, 4)  # indices: [-2, -1, 0, 1]
++        values = T.Ramp(0.0, 1.0, 4)
++        A[vec] = values
++
++    @T.prim_func
++    def after(A: T.Tensor((1024,), T.float32)):
++        vec = T.Ramp(-2, 1, 4)  # noqa: F841
++        values = T.Ramp(0.0, 1.0, 4)
++        A[T.Shuffle([1022, 1023, 0, 1], [0, 1, 2, 3])] = values
++
++    _check(before, after)
++
++
+ def test_buffer_store_nested_in_condition():
+     """
+     Test negative index buffer store within conditional statements.

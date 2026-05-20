@@ -1,0 +1,202 @@
+schema_version: 1
+source_key: tile-ai/tilelang#2048
+repo: tile-ai/tilelang
+repo_id: tilelang
+pr_number: 2048
+title: '[Backend] Refactor gemm_sp'
+url: https://github.com/tile-ai/tilelang/pull/2048
+state: closed
+merged_at: '2026-05-19T05:33:41Z'
+base_ref_oid: beef5cf4711a6d1eab97a3674aa0590c6a7dcb50
+head_ref_oid: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+captured_at: '2026-05-20T15:06:08.563831+00:00'
+architectures:
+- sm90
+architecture_families:
+- hopper
+tags:
+- benchmark kernel
+- cuda kernel
+- cute
+- cutlass
+- fp8
+- gemm
+- hopper
+- matmul
+- sm90
+techniques:
+- async-copy
+hardware_features:
+- fp8
+- hopper
+- tma
+- wgmma
+kernel_types:
+- gemm
+languages:
+- cuda-cpp
+- cute-dsl
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: benchmark/matmul/benchmark_matmul_sp.py
+    local_path: source-snapshot/benchmark/matmul/benchmark_matmul_sp.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: benchmark/matmul/benchmark_matmul_sp_compress.py
+    local_path: source-snapshot/benchmark/matmul/benchmark_matmul_sp_compress.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: added
+    fetched: true
+  - source_path: docs/deeplearning_operators/matmul_sparse.md
+    local_path: source-snapshot/docs/deeplearning_operators/matmul_sparse.md
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: examples/gemm_sp/example_gemm_sp.py
+    local_path: source-snapshot/examples/gemm_sp/example_gemm_sp.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: examples/gemm_sp/test_example_gemm_sp.py
+    local_path: source-snapshot/examples/gemm_sp/test_example_gemm_sp.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: src/backend/cuda/codegen/codegen_cuda.cc
+    local_path: source-snapshot/src/backend/cuda/codegen/codegen_cuda.cc
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: src/backend/cuda/codegen/codegen_cuda.h
+    local_path: source-snapshot/src/backend/cuda/codegen/codegen_cuda.h
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: src/backend/cuda/op/gemm_sp.cc
+    local_path: source-snapshot/src/backend/cuda/op/gemm_sp.cc
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: src/op/builtin.cc
+    local_path: source-snapshot/src/op/builtin.cc
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: src/op/builtin.h
+    local_path: source-snapshot/src/op/builtin.h
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: src/op/gemm.cc
+    local_path: source-snapshot/src/op/gemm.cc
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: src/op/gemm_sp.cc
+    local_path: source-snapshot/src/op/gemm_sp.cc
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: src/op/gemm_sp.h
+    local_path: source-snapshot/src/op/gemm_sp.h
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: src/tl_templates/cuda/instruction/cute_extension/mma_sm80_sparse.hpp
+    local_path: source-snapshot/src/tl_templates/cuda/instruction/cute_extension/mma_sm80_sparse.hpp
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: added
+    fetched: true
+  - source_path: src/tl_templates/cuda/instruction/cute_extension/mma_sm89_sparse.hpp
+    local_path: source-snapshot/src/tl_templates/cuda/instruction/cute_extension/mma_sm89_sparse.hpp
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: added
+    fetched: true
+  - source_path: src/tl_templates/cuda/instruction/mma_sp.h
+    local_path: source-snapshot/src/tl_templates/cuda/instruction/mma_sp.h
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: added
+    fetched: true
+  - source_path: src/tl_templates/cuda/instruction/wgmma_sp.h
+    local_path: source-snapshot/src/tl_templates/cuda/instruction/wgmma_sp.h
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: added
+    fetched: true
+  - source_path: src/transform/lower_opaque_block.cc
+    local_path: source-snapshot/src/transform/lower_opaque_block.cc
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: testing/python/issue/test_tilelang_issue_tma_no_ws.py
+    local_path: source-snapshot/testing/python/issue/test_tilelang_issue_tma_no_ws.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py
+    local_path: source-snapshot/testing/python/issue/test_tilelang_issue_ws_simt_copy_full_producer_extent.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: testing/python/tilelibrary/test_tilelang_tilelibrary_gemm_sp.py
+    local_path: source-snapshot/testing/python/tilelibrary/test_tilelang_tilelibrary_gemm_sp.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: testing/python/utils/test_compress_utils.py
+    local_path: source-snapshot/testing/python/utils/test_compress_utils.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: tilelang/cuda/intrinsics/layout/mma_sp_layout.py
+    local_path: source-snapshot/tilelang/cuda/intrinsics/layout/mma_sp_layout.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: tilelang/cuda/intrinsics/macro/mma_sp_macro_generator.py
+    local_path: source-snapshot/tilelang/cuda/intrinsics/macro/mma_sp_macro_generator.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: tilelang/cuda/intrinsics/macro/wgmma_sp_macro_generator.py
+    local_path: source-snapshot/tilelang/cuda/intrinsics/macro/wgmma_sp_macro_generator.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: added
+    fetched: true
+  - source_path: tilelang/cuda/op/gemm_sp/__init__.py
+    local_path: source-snapshot/tilelang/cuda/op/gemm_sp/__init__.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: tilelang/cuda/op/gemm_sp/gemm_sp_mma.py
+    local_path: source-snapshot/tilelang/cuda/op/gemm_sp/gemm_sp_mma.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py
+    local_path: source-snapshot/tilelang/cuda/op/gemm_sp/gemm_sp_wgmma.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: added
+    fetched: true
+  - source_path: tilelang/ir.py
+    local_path: source-snapshot/tilelang/ir.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: tilelang/language/__init__.py
+    local_path: source-snapshot/tilelang/language/__init__.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: tilelang/language/ast/ir.py
+    local_path: source-snapshot/tilelang/language/ast/ir.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: modified
+    fetched: true
+  - source_path: tilelang/language/experimental/gemm_sp_op.py
+    local_path: source-snapshot/tilelang/language/experimental/gemm_sp_op.py
+    ref: 7eecf89fc56dca2afb9eecacb8b4bcfc01058902
+    status: added
+    fetched: true

@@ -1,0 +1,93 @@
+schema_version: 1
+source_key: sgl-project/sglang#23482
+repo: sgl-project/sglang
+repo_id: sglang
+pr_number: 23482
+title: '[Diffusion][NPU]Add attention backends for diffusion models for Ascend NPU'
+url: https://github.com/sgl-project/sglang/pull/23482
+state: closed
+merged_at: '2026-05-19T09:46:55Z'
+base_ref_oid: be64d875ad8d17ab3671724c247adaae54884807
+head_ref_oid: ece9af4a78103a270f75a6404873f968f2c273a7
+captured_at: '2026-05-20T14:54:17.772467+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention
+- attention kernel
+- triton kernel
+techniques:
+- kernel-fusion
+- pipeline-stages
+hardware_features: []
+kernel_types:
+- attention
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: docs/diffusion/compatibility_matrix.md
+    local_path: source-snapshot/docs/diffusion/compatibility_matrix.md
+    ref: ece9af4a78103a270f75a6404873f968f2c273a7
+    status: modified
+    fetched: true
+  - source_path: docs/diffusion/performance/attention_backends.md
+    local_path: source-snapshot/docs/diffusion/performance/attention_backends.md
+    ref: ece9af4a78103a270f75a6404873f968f2c273a7
+    status: modified
+    fetched: true
+  - source_path: docs_new/docs/sglang-diffusion/attention_backends.mdx
+    local_path: source-snapshot/docs_new/docs/sglang-diffusion/attention_backends.mdx
+    ref: ece9af4a78103a270f75a6404873f968f2c273a7
+    status: modified
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/configs/models/adapter/base.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/configs/models/adapter/base.py
+    ref: ece9af4a78103a270f75a6404873f968f2c273a7
+    status: modified
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/configs/models/dits/base.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/configs/models/dits/base.py
+    ref: ece9af4a78103a270f75a6404873f968f2c273a7
+    status: modified
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py
+    ref: ece9af4a78103a270f75a6404873f968f2c273a7
+    status: added
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/runtime/layers/attention/backends/laser_attn.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/layers/attention/backends/laser_attn.py
+    ref: ece9af4a78103a270f75a6404873f968f2c273a7
+    status: added
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/runtime/layers/attention/backends/rain_fusion_attn.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/layers/attention/backends/rain_fusion_attn.py
+    ref: ece9af4a78103a270f75a6404873f968f2c273a7
+    status: added
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py
+    ref: ece9af4a78103a270f75a6404873f968f2c273a7
+    status: modified
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/runtime/platforms/interface.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/platforms/interface.py
+    ref: ece9af4a78103a270f75a6404873f968f2c273a7
+    status: modified
+    fetched: true
+  - source_path: python/sglang/multimodal_gen/runtime/platforms/npu.py
+    local_path: source-snapshot/python/sglang/multimodal_gen/runtime/platforms/npu.py
+    ref: ece9af4a78103a270f75a6404873f968f2c273a7
+    status: modified
+    fetched: true
+  - source_path: docs_new/docs/sglang-diffusion/compatibility_matrix.mdx
+    local_path: source-snapshot/docs_new/docs/sglang-diffusion/compatibility_matrix.mdx
+    ref: ece9af4a78103a270f75a6404873f968f2c273a7
+    status: modified
+    fetched: true

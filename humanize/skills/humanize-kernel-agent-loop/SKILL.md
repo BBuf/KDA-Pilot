@@ -203,7 +203,7 @@ matching attempt row, lineage entry, or profile digest.
 Three peer routes are available. They cover non-overlapping evidence:
 
 - **Route A — Local PR diffs.** Materialized merged-PR pages and bundles for
-  ~3.6k curated upstream PRs from the major kernel frameworks (SGLang, vLLM,
+  ~3.8k curated upstream PRs from the major kernel frameworks (SGLang, vLLM,
   TensorRT-LLM, PyTorch, FlashAttention, FlashInfer, CUTLASS/CuTe, CCCL,
   Triton, DeepGEMM, ThunderKittens, TileLang, QuACK, DeepSeek TileKernels).
 - **Route B — External source map.** `index.json` lists complementary

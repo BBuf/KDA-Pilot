@@ -1,0 +1,49 @@
+diff --git a/tests/integration/test_lists/test-db/l0_b200.yml b/tests/integration/test_lists/test-db/l0_b200.yml
+index 503e3c9889f5..2bbe3d4c0885 100644
+--- a/tests/integration/test_lists/test-db/l0_b200.yml
++++ b/tests/integration/test_lists/test-db/l0_b200.yml
+@@ -340,8 +340,6 @@ l0_b200:
+   - unittest/auto_deploy/singlegpu/transformations/library/test_quant_moe.py
+   - unittest/auto_deploy/singlegpu/transformations/library/test_quantization.py
+   - unittest/auto_deploy/singlegpu/transformations/library/test_trtllm_gen_diag.py
+-  # ------------- AutoDeploy Perf Sanity ---------------
+-  - perf/test_perf_sanity.py::test_e2e[aggr_upload-super_ad_blackwell-super_ad_ws1_1k1k] TIMEOUT (120)
+ 
+ - condition:
+     ranges:
+diff --git a/tests/integration/test_lists/test-db/l0_dgx_b200.yml b/tests/integration/test_lists/test-db/l0_dgx_b200.yml
+index d07cb9d8f54d..c7fcc29b25d5 100644
+--- a/tests/integration/test_lists/test-db/l0_dgx_b200.yml
++++ b/tests/integration/test_lists/test-db/l0_dgx_b200.yml
+@@ -393,3 +393,5 @@ l0_dgx_b200:
+   - accuracy/test_llm_api_autodeploy.py::TestModelRegistryAccuracy::test_autodeploy_from_registry[deepseek-ai_DeepSeek-R1-0528-True]
+   - accuracy/test_llm_api_autodeploy.py::TestQwen3_5_397B_MoE::test_nvfp4[8]
+   - accuracy/test_llm_api_autodeploy.py::TestNemotronUltraV3::test_accuracy[nvfp4-8]
++  # ------------- AutoDeploy Perf Sanity ---------------
++  - perf/test_perf_sanity.py::test_e2e[aggr_upload-deepseek_r1_fp8_ad_blackwell-r1_fp8_ad_ws8_1k1k] TIMEOUT (120)
+diff --git a/tests/scripts/perf-sanity/aggregated/deepseek_r1_fp8_ad_blackwell.yaml b/tests/scripts/perf-sanity/aggregated/deepseek_r1_fp8_ad_blackwell.yaml
+new file mode 100644
+index 000000000000..7d510d513646
+--- /dev/null
++++ b/tests/scripts/perf-sanity/aggregated/deepseek_r1_fp8_ad_blackwell.yaml
+@@ -0,0 +1,20 @@
++metadata:
++  model_name: deepseek_r1_0528_fp8
++  supported_gpus:
++  - B200
++hardware:
++  gpus_per_node: 8
++server_configs:
++  # 1k1k config - AutoDeploy backend, 8 GPUs (DeepSeek-R1 0528 FP8 on DGX B200)
++  - name: "r1_fp8_ad_ws8_1k1k"
++    model_name: "deepseek_r1_0528_fp8"
++    backend: "_autodeploy"
++    extra_llm_api_config_path: "examples/auto_deploy/model_registry/configs/deepseek-r1.yaml"
++    world_size: 8
++    client_configs:
++      - name: "con64_iter10_1k1k"
++        concurrency: 64
++        iterations: 10
++        isl: 1024
++        osl: 1024
++        backend: "openai"

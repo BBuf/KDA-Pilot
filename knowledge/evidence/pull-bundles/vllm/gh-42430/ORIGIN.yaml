@@ -1,0 +1,49 @@
+schema_version: 1
+source_key: vllm-project/vllm#42430
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42430
+title: '[Bugfix] mamba: run single-token extends as decodes'
+url: https://github.com/vllm-project/vllm/pull/42430
+state: closed
+merged_at: '2026-05-18T15:26:00Z'
+base_ref_oid: 737bfa3a43ce386bd1894792f3302d9f3f9d73fa
+head_ref_oid: 7e6eadcf30fe8405db6eea184cd8444743316e7f
+captured_at: '2026-05-20T15:10:17.572396+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- cuda
+techniques: []
+hardware_features: []
+kernel_types:
+- attention
+- decode
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: tests/v1/attention/test_mamba_update_block_table.py
+    local_path: source-snapshot/tests/v1/attention/test_mamba_update_block_table.py
+    ref: 7e6eadcf30fe8405db6eea184cd8444743316e7f
+    status: modified
+    fetched: true
+  - source_path: tests/v1/attention/utils.py
+    local_path: source-snapshot/tests/v1/attention/utils.py
+    ref: 7e6eadcf30fe8405db6eea184cd8444743316e7f
+    status: modified
+    fetched: true
+  - source_path: tests/v1/kv_connector/unit/test_nixl_connector_hma.py
+    local_path: source-snapshot/tests/v1/kv_connector/unit/test_nixl_connector_hma.py
+    ref: 7e6eadcf30fe8405db6eea184cd8444743316e7f
+    status: modified
+    fetched: true
+  - source_path: vllm/v1/attention/backends/mamba_attn.py
+    local_path: source-snapshot/vllm/v1/attention/backends/mamba_attn.py
+    ref: 7e6eadcf30fe8405db6eea184cd8444743316e7f
+    status: modified
+    fetched: true

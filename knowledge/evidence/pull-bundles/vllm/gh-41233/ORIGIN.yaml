@@ -1,0 +1,85 @@
+schema_version: 1
+source_key: vllm-project/vllm#41233
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 41233
+title: '[Bugfix][Hybrid][NemotronH] Fix mamba_cache_mode=all + speculative decoding
+  crash'
+url: https://github.com/vllm-project/vllm/pull/41233
+state: closed
+merged_at: '2026-05-18T11:54:00Z'
+base_ref_oid: c38bed4248e97e5ed981569777d035d31ace5368
+head_ref_oid: 680ee00b27a21de460ab5e0dc7f381ae36c61f23
+captured_at: '2026-05-20T15:11:57.633506+00:00'
+architectures:
+- sm100
+architecture_families:
+- blackwell
+tags:
+- attention kernel
+- cuda
+- cuda kernel
+- nvfp4
+techniques:
+- cache-policy
+hardware_features:
+- fp4
+- nvfp4
+kernel_types:
+- attention
+languages:
+- cuda-cpp
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: tests/v1/attention/test_mamba_update_block_table.py
+    local_path: source-snapshot/tests/v1/attention/test_mamba_update_block_table.py
+    ref: 680ee00b27a21de460ab5e0dc7f381ae36c61f23
+    status: modified
+    fetched: true
+  - source_path: tests/v1/e2e/general/test_mamba_prefix_cache.py
+    local_path: source-snapshot/tests/v1/e2e/general/test_mamba_prefix_cache.py
+    ref: 680ee00b27a21de460ab5e0dc7f381ae36c61f23
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/mamba/mamba_mixer2.py
+    local_path: source-snapshot/vllm/model_executor/layers/mamba/mamba_mixer2.py
+    ref: 680ee00b27a21de460ab5e0dc7f381ae36c61f23
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/models/config.py
+    local_path: source-snapshot/vllm/model_executor/models/config.py
+    ref: 680ee00b27a21de460ab5e0dc7f381ae36c61f23
+    status: modified
+    fetched: true
+  - source_path: vllm/v1/attention/backends/mamba2_attn.py
+    local_path: source-snapshot/vllm/v1/attention/backends/mamba2_attn.py
+    ref: 680ee00b27a21de460ab5e0dc7f381ae36c61f23
+    status: modified
+    fetched: true
+  - source_path: vllm/v1/attention/backends/mamba_attn.py
+    local_path: source-snapshot/vllm/v1/attention/backends/mamba_attn.py
+    ref: 680ee00b27a21de460ab5e0dc7f381ae36c61f23
+    status: modified
+    fetched: true
+  - source_path: vllm/v1/attention/backends/utils.py
+    local_path: source-snapshot/vllm/v1/attention/backends/utils.py
+    ref: 680ee00b27a21de460ab5e0dc7f381ae36c61f23
+    status: modified
+    fetched: true
+  - source_path: vllm/v1/kv_cache_interface.py
+    local_path: source-snapshot/vllm/v1/kv_cache_interface.py
+    ref: 680ee00b27a21de460ab5e0dc7f381ae36c61f23
+    status: modified
+    fetched: true
+  - source_path: vllm/v1/worker/gpu_model_runner.py
+    local_path: source-snapshot/vllm/v1/worker/gpu_model_runner.py
+    ref: 680ee00b27a21de460ab5e0dc7f381ae36c61f23
+    status: modified
+    fetched: true
+  - source_path: vllm/v1/worker/mamba_utils.py
+    local_path: source-snapshot/vllm/v1/worker/mamba_utils.py
+    ref: 680ee00b27a21de460ab5e0dc7f381ae36c61f23
+    status: modified
+    fetched: true

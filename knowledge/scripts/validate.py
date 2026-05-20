@@ -15,6 +15,7 @@ PULL_BUNDLE_ROOT = Path("evidence") / "pull-bundles"
 DIFF_NAME = "review.diff"
 UPSTREAM_NAME = "upstream.json"
 ORIGIN_NAME = "ORIGIN.yaml"
+DISCUSSION_NAME = "discussion.md"
 SNAPSHOT_DIR = "source-snapshot"
 
 
@@ -78,7 +79,7 @@ def main() -> int:
         else:
             bundle = source_pr_bundle(root, repo, number, source.parent.name)
         missing = []
-        for required in (DIFF_NAME, UPSTREAM_NAME, ORIGIN_NAME):
+        for required in (DIFF_NAME, UPSTREAM_NAME, ORIGIN_NAME, DISCUSSION_NAME):
             if not (bundle / required).is_file():
                 missing.append(required)
         if not (bundle / SNAPSHOT_DIR).is_dir():
@@ -100,6 +101,8 @@ def main() -> int:
         if entries is None:
             entries = data.get("prs", [])
         for entry in entries or []:
+            if str(entry.get("decision", "")).lower() == "exclude":
+                continue
             candidate_prs += 1
             number = entry.get("pr", entry.get("number"))
             label = f"{entry.get('repo', ledger.stem)}#{number}"
@@ -107,7 +110,7 @@ def main() -> int:
             if not artifact_dir:
                 continue
             bundle = root / artifact_dir
-            for required in (DIFF_NAME, ORIGIN_NAME):
+            for required in (DIFF_NAME, ORIGIN_NAME, DISCUSSION_NAME):
                 if not (bundle / required).is_file():
                     errors.append(f"{artifact_dir}: {label} missing {required}")
             if not (bundle / SNAPSHOT_DIR).is_dir():

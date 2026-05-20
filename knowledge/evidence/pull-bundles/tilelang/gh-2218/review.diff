@@ -1,0 +1,777 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 57b29f50db..6b892fc69e 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -44,11 +44,11 @@ jobs:
+           fetch-depth: 0
+           submodules: recursive
+ 
+-      - name: Setup Python 3.9
++      - name: Setup Python 3.10
+         id: setup-pylowest
+         uses: actions/setup-python@v6
+         with:
+-          python-version: "3.9"
++          python-version: "3.10"
+           update-environment: true
+           cache: pip
+           cache-dependency-path: |
+@@ -56,7 +56,7 @@ jobs:
+             requirements*.txt
+             .pre-commit-config.yaml
+ 
+-      - name: Check AST with Python 3.9
++      - name: Check AST with Python 3.10
+         run: |
+           "${{ steps.setup-pylowest.outputs.python-path }}" -m compileall -q -f tilelang
+ 
+diff --git a/.github/workflows/dist.yml b/.github/workflows/dist.yml
+index 559302622a..3070b6b02a 100644
+--- a/.github/workflows/dist.yml
++++ b/.github/workflows/dist.yml
+@@ -18,8 +18,7 @@ on:
+       - CMakeLists.txt
+       - version_provider.py
+       - .github/workflows/dist.yml
+-      # temporarily add to dist check
+-      # until we have type checking in ci / move to python 3.10
++      # Type aliases can affect package import/build behavior.
+       - tilelang/_typing.py
+   release:
+     types:
+@@ -115,12 +114,11 @@ jobs:
+     strategy:
+       matrix:
+         target:
+-          # Build wheels for different Python ABIs.
+-          # Windows CUDA 13.0 uses cp310 because PyTorch cu130 does not publish cp39 wheels.
+-          - { runner: ubuntu-latest, toolkit: "CUDA-12.8", test_backends: "cu118 cu130", python_version: "3.9" }
+-          - { runner: ubuntu-24.04-arm, toolkit: "CUDA-12.8", test_backends: "cu126 cu130", python_version: "3.9" }
++          # Build wheels for the minimum supported Python ABI.
++          - { runner: ubuntu-latest, toolkit: "CUDA-12.8", test_backends: "cu118 cu130", python_version: "3.10" }
++          - { runner: ubuntu-24.04-arm, toolkit: "CUDA-12.8", test_backends: "cu126 cu130", python_version: "3.10" }
+           - { runner: windows-latest, toolkit: "CUDA-13.0", test_backends: "cu130", python_version: "3.10" }
+-          - { runner: macos-latest, toolkit: "Metal", python_version: "3.9" }
++          - { runner: macos-latest, toolkit: "Metal", python_version: "3.10" }
+           # - "3.14t"  # let user to build from source for now
+           # TODO: Add cp315-abi3.abi3t after PEP 803
+       fail-fast: false
+diff --git a/docs/get_started/Installation.md b/docs/get_started/Installation.md
+index 67055471b5..16a6a7f392 100644
+--- a/docs/get_started/Installation.md
++++ b/docs/get_started/Installation.md
+@@ -5,7 +5,7 @@
+ **Prerequisites for installation via wheel or PyPI:**
+ 
+ - **glibc**: 2.28 (Ubuntu 20.04 or later)
+-- **Python Version**: >= 3.9
++- **Python Version**: >= 3.10
+ - **CUDA Version**: >= 10.0 (host installation), or pip-provided CUDA toolchain (>= 13.0)
+ 
+ The easiest way to install tilelang is directly from PyPI using pip. To install the latest version, run the following command in your terminal:
+@@ -37,7 +37,7 @@ python -c "import tilelang; print(tilelang.__version__)"
+ **Prerequisites for building from source:**
+ 
+ - **Operating System**: Linux or Windows
+-- **Python Version**: >= 3.9
++- **Python Version**: >= 3.10
+ - **CUDA Version**: >= 10.0 (host installation), or pip-provided CUDA toolchain (>= 13.0)
+ 
+ If you prefer Docker, please skip to the [Install Using Docker](#install-using-docker) section. The commands below use Ubuntu/Debian as the Linux example; Windows-specific notes are called out where they differ.
+diff --git a/maint/scripts/docker_local_distribute.sh b/maint/scripts/docker_local_distribute.sh
+index 2263066dc4..98fa9e1a50 100755
+--- a/maint/scripts/docker_local_distribute.sh
++++ b/maint/scripts/docker_local_distribute.sh
+@@ -2,4 +2,4 @@
+ set -euxo pipefail
+ 
+ # Build for local architecture
+-CIBW_BUILD='cp39-*' cibuildwheel . 2>&1 | tee cibuildwheel.log
++CIBW_BUILD='cp310-*' cibuildwheel . 2>&1 | tee cibuildwheel.log
+diff --git a/maint/scripts/docker_pypi_distribute.sh b/maint/scripts/docker_pypi_distribute.sh
+index f8d746de17..4ba2f759f8 100755
+--- a/maint/scripts/docker_pypi_distribute.sh
++++ b/maint/scripts/docker_pypi_distribute.sh
+@@ -16,4 +16,4 @@ if docker buildx version >/dev/null 2>&1; then
+   export CIBW_ARCHS='x86_64 aarch64'
+ fi
+ 
+-NO_VERSION_LABEL=ON CIBW_BUILD='cp39-*' cibuildwheel . 2>&1 | tee cibuildwheel.log
++NO_VERSION_LABEL=ON CIBW_BUILD='cp310-*' cibuildwheel . 2>&1 | tee cibuildwheel.log
+diff --git a/pyproject.toml b/pyproject.toml
+index 1daaae99e3..eeb0e664d3 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -2,7 +2,7 @@
+ name = "tilelang"
+ description = "A tile level programming language to generate high performance code."
+ readme = "README.md"
+-requires-python = ">=3.9"
++requires-python = ">=3.10"
+ authors = [{ name = "TileLang Contributors" }, { name = "Tile-AI" }]
+ maintainers = [{ name = "Lei Wang", email = "leiwang1999@outlook.com" }]
+ license = "MIT"
+@@ -15,7 +15,6 @@ classifiers = [
+     "Operating System :: MacOS",
+     "Programming Language :: C++",
+     "Programming Language :: Python :: 3",
+-    "Programming Language :: Python :: 3.9",
+     "Programming Language :: Python :: 3.10",
+     "Programming Language :: Python :: 3.11",
+     "Programming Language :: Python :: 3.12",
+@@ -185,7 +184,7 @@ skip = [
+ ]
+ 
+ [tool.ruff]
+-target-version = "py39"
++target-version = "py310"
+ line-length = 140
+ output-format = "full"
+ 
+diff --git a/tilelang/_typing.py b/tilelang/_typing.py
+index 9c8aa47f60..2fe3f1d246 100644
+--- a/tilelang/_typing.py
++++ b/tilelang/_typing.py
+@@ -1,15 +1,9 @@
+ """Type annotations for TileLang."""
+ 
+ # NOTE(chaofan): We should name it "_typing.py" to avoid module shadowing with standard library "typing"
+-# NOTE: In python 3.9, `from __future__ import annotations` does not for value expression, e.g. to define type alias
++# NOTE: `from __future__ import annotations` does not affect value expressions used for type aliases.
+ 
+-# Python 3.9 compatibility
+-try:
+-    from typing import TypeAlias
+-except ImportError:  # Python < 3.10
+-    from typing_extensions import TypeAlias
+-
+-from typing import Union
++from typing import TypeAlias
+ 
+ from tvm import ir
+ from tvm import tir
+@@ -18,22 +12,21 @@
+ from tilelang.dtypes import dtype
+ 
+ # Barrier can only be a Buffer, a BufferLoad
+-BarrierType: TypeAlias = Union[tir.Buffer, BufferLoad]
++BarrierType: TypeAlias = tir.Buffer | BufferLoad
+ 
+ # BufferLikeType can be a Buffer, a BufferLoad, a BufferRegion
+-BufferLikeType: TypeAlias = Union[tir.Buffer, BufferLoad, BufferRegion]
++BufferLikeType: TypeAlias = tir.Buffer | BufferLoad | BufferRegion
+ 
+-# This is for Python 3.9 compatibility.
+-# In Python 3.9, we can only use isinstance(a, (TypeA, TypeB, ...)) instead of isinstance(a, TypeA | TypeB | ...))
++# Runtime checks use tuple form for compatibility with isinstance().
+ BufferLikeTypeTuple = (tir.Buffer, BufferLoad, BufferRegion)
+ 
+ # Difference between "AnyDType" and "DType":
+ # - AnyDType is a union of all possible types that can represent a data type, including torch.dtype
+ # - DType is a more specific type alias that represents a data type in the context of TileLang, and must be
+ #   adapted to string.
+-DType: TypeAlias = Union[dtype, ir.Type, str, type]
+-ShapeType: TypeAlias = Union[list[Union[tir.PrimExpr, int]], tuple[Union[tir.PrimExpr, int], ...]]
++DType: TypeAlias = dtype | ir.Type | str | type
++ShapeType: TypeAlias = list[tir.PrimExpr | int] | tuple[tir.PrimExpr | int, ...]
+ 
+ # PrimExpr with adaptation to Python basic data types
+ # IntImm, FloatImm, Bool: IntImm, Integer: IntImm
+-PyPrimExpr: TypeAlias = Union[tir.PrimExpr, int, float, bool]
++PyPrimExpr: TypeAlias = tir.PrimExpr | int | float | bool
+diff --git a/tilelang/autodd.py b/tilelang/autodd.py
+index 7122282beb..5d745dbc42 100644
+--- a/tilelang/autodd.py
++++ b/tilelang/autodd.py
+@@ -6,7 +6,9 @@
+ from dataclasses import dataclass
+ from pathlib import Path
+ import shutil
+-from typing import Callable, Literal, NamedTuple, override
++from typing import Literal, NamedTuple
++from collections.abc import Callable
++from typing_extensions import override
+ from collections.abc import Sequence
+ from collections.abc import Iterable
+ import contextlib
+diff --git a/tilelang/autotuner/grouped_compile.py b/tilelang/autotuner/grouped_compile.py
+index bb9cbd6f1d..0b61f16681 100644
+--- a/tilelang/autotuner/grouped_compile.py
++++ b/tilelang/autotuner/grouped_compile.py
+@@ -6,7 +6,8 @@
+ 
+ from __future__ import annotations
+ 
+-from typing import Any, Callable, Optional
++from typing import Any
++from collections.abc import Callable
+ 
+ from tilelang import tvm
+ from tvm.tir import PrimFunc
+@@ -18,7 +19,7 @@
+ from tilelang.jit.kernel import JITKernel
+ from tilelang.transform import PassConfigKey
+ 
+-CompileUnitResult = tuple[int, dict[str, Any], Optional[JITKernel], Optional[Exception]]
++CompileUnitResult = tuple[int, dict[str, Any], JITKernel | None, Exception | None]
+ 
+ 
+ def compile_grouped_unit_tvm_ffi(
+diff --git a/tilelang/autotuner/param.py b/tilelang/autotuner/param.py
+index ad741b4f9b..be5e364606 100644
+--- a/tilelang/autotuner/param.py
++++ b/tilelang/autotuner/param.py
+@@ -6,7 +6,8 @@
+ from tilelang import tvm as tvm
+ from tvm.tir import PrimFunc
+ from tvm.target import Target
+-from typing import Callable, Literal, Any
++from typing import Literal, Any
++from collections.abc import Callable
+ from dataclasses import dataclass
+ from pathlib import Path
+ import errno
+diff --git a/tilelang/autotuner/tuner.py b/tilelang/autotuner/tuner.py
+index a79bbd3a23..fcd0890688 100644
+--- a/tilelang/autotuner/tuner.py
++++ b/tilelang/autotuner/tuner.py
+@@ -16,13 +16,8 @@
+ from tvm.target import Target
+ import inspect
+ from functools import partial
+-from typing import Callable, Generic, Literal, Any, TypeVar
+-
+-# Python 3.9 compatibility for ParamSpec
+-try:
+-    from typing import ParamSpec
+-except ImportError:  # Python < 3.10
+-    from typing_extensions import ParamSpec
++from typing import Generic, Literal, Any, ParamSpec, TypeVar
++from collections.abc import Callable
+ from tqdm.auto import tqdm
+ import logging
+ import concurrent.futures
+diff --git a/tilelang/cache/kernel_cache.py b/tilelang/cache/kernel_cache.py
+index 1fd9e68b27..c9f2836ecf 100644
+--- a/tilelang/cache/kernel_cache.py
++++ b/tilelang/cache/kernel_cache.py
+@@ -12,7 +12,8 @@
+ import uuid
+ import sys
+ from hashlib import sha256
+-from typing import Callable, Literal
++from typing import Literal
++from collections.abc import Callable
+ 
+ import cloudpickle
+ from tvm.target import Target
+diff --git a/tilelang/carver/analysis.py b/tilelang/carver/analysis.py
+index 6ca9168185..8bc6aa5c10 100644
+--- a/tilelang/carver/analysis.py
++++ b/tilelang/carver/analysis.py
+@@ -1,7 +1,7 @@
+ """Analysis on TIR blocks, loops and functions."""
+ 
+ from __future__ import annotations
+-from typing_extensions import Literal
++from typing import Literal
+ 
+ from tvm import ir, tir, DataType
+ from tvm.ffi import get_global_func
+diff --git a/tilelang/carver/common_schedules.py b/tilelang/carver/common_schedules.py
+index 4904b770dd..54a99c3b2e 100644
+--- a/tilelang/carver/common_schedules.py
++++ b/tilelang/carver/common_schedules.py
+@@ -20,7 +20,7 @@
+ # The code below is mostly copied from apache/tvm common_schedules.py in dlight.
+ """Common schedule strategies for TIR."""
+ 
+-from typing import Callable
++from collections.abc import Callable
+ 
+ from tvm import tir
+ from .utils import retrieve_func_from_module
+diff --git a/tilelang/cuda/intrinsics/macro/mma_macro_generator.py b/tilelang/cuda/intrinsics/macro/mma_macro_generator.py
+index 87da629991..909f4bc51d 100644
+--- a/tilelang/cuda/intrinsics/macro/mma_macro_generator.py
++++ b/tilelang/cuda/intrinsics/macro/mma_macro_generator.py
+@@ -1,6 +1,7 @@
+ from __future__ import annotations
+ import tilelang.language as T
+-from typing import Literal, Callable
++from typing import Literal
++from collections.abc import Callable
+ from tilelang.common import TransformKind
+ from tvm import DataType
+ from tvm import tir
+diff --git a/tilelang/cuda/intrinsics/macro/mma_sm70_macro_generator.py b/tilelang/cuda/intrinsics/macro/mma_sm70_macro_generator.py
+index 5964767a75..a42e18993c 100644
+--- a/tilelang/cuda/intrinsics/macro/mma_sm70_macro_generator.py
++++ b/tilelang/cuda/intrinsics/macro/mma_sm70_macro_generator.py
+@@ -1,6 +1,7 @@
+ from __future__ import annotations
+ import tilelang.language as T
+-from typing import Literal, Callable
++from typing import Literal
++from collections.abc import Callable
+ from tvm import DataType
+ from tvm import tir
+ from tvm.ir import Range
+diff --git a/tilelang/cuda/intrinsics/macro/mma_sp_macro_generator.py b/tilelang/cuda/intrinsics/macro/mma_sp_macro_generator.py
+index 826a0f58ec..7f4e28918e 100644
+--- a/tilelang/cuda/intrinsics/macro/mma_sp_macro_generator.py
++++ b/tilelang/cuda/intrinsics/macro/mma_sp_macro_generator.py
+@@ -1,7 +1,8 @@
+ from __future__ import annotations
+ 
+ import tilelang.language as T
+-from typing import Literal, Callable
++from typing import Literal
++from collections.abc import Callable
+ from tvm import DataType, tir
+ from tvm.tir import PrimExpr, IndexMap, Buffer, Var, BufferRegion, BufferLoad
+ from tvm.ir import Range
+diff --git a/tilelang/cuda/intrinsics/macro/wgmma_macro_generator.py b/tilelang/cuda/intrinsics/macro/wgmma_macro_generator.py
+index 86af177d91..b7768c72fa 100644
+--- a/tilelang/cuda/intrinsics/macro/wgmma_macro_generator.py
++++ b/tilelang/cuda/intrinsics/macro/wgmma_macro_generator.py
+@@ -2,7 +2,7 @@
+ import tilelang.language as T
+ from dataclasses import dataclass
+ from enum import IntEnum
+-from typing import Callable
++from collections.abc import Callable
+ from .mma_macro_generator import TensorCoreIntrinEmitter as MMAIntrinEmitter
+ from tvm import DataType
+ from tvm.tir import PrimExpr, Buffer, Var, IndexMap, BufferRegion
+diff --git a/tilelang/cuda/op/gemm/gemm_tcgen05.py b/tilelang/cuda/op/gemm/gemm_tcgen05.py
+index a6107083df..efd2729ef2 100644
+--- a/tilelang/cuda/op/gemm/gemm_tcgen05.py
++++ b/tilelang/cuda/op/gemm/gemm_tcgen05.py
+@@ -18,7 +18,7 @@
+ from tvm.target import Target
+ from tvm.ir import Range
+ from tvm.arith import Analyzer
+-from typing import Callable
++from collections.abc import Callable
+ 
+ 
+ _FLOAT8_DTYPES = {
+diff --git a/tilelang/cuda/op/gemm/gemm_wgmma.py b/tilelang/cuda/op/gemm/gemm_wgmma.py
+index 5eabb1b797..0516dd86bd 100644
+--- a/tilelang/cuda/op/gemm/gemm_wgmma.py
++++ b/tilelang/cuda/op/gemm/gemm_wgmma.py
+@@ -18,7 +18,7 @@
+ from tvm import tir
+ from tilelang import language as T
+ from tilelang.transform.simplify import _Simplify
+-from typing import Callable
++from collections.abc import Callable
+ 
+ 
+ GEMM_INST_WGMMA = "cuda.wgmma"
+diff --git a/tilelang/engine/callback.py b/tilelang/engine/callback.py
+index cc211498f3..b45c12f822 100644
+--- a/tilelang/engine/callback.py
++++ b/tilelang/engine/callback.py
+@@ -1,5 +1,5 @@
+ from __future__ import annotations
+-from typing import Callable
++from collections.abc import Callable
+ import tvm_ffi
+ from tvm.target import Target
+ 
+diff --git a/tilelang/engine/lower.py b/tilelang/engine/lower.py
+index 96cb8e841a..e4545e5be5 100644
+--- a/tilelang/engine/lower.py
++++ b/tilelang/engine/lower.py
+@@ -3,7 +3,7 @@
+ from __future__ import annotations
+ 
+ import re
+-from typing import Callable
++from collections.abc import Callable
+ import tilelang.transform
+ from tilelang import tvm as tvm
+ from tvm import tir
+diff --git a/tilelang/jit/__init__.py b/tilelang/jit/__init__.py
+index f7beac7cb7..e5a7f10950 100644
+--- a/tilelang/jit/__init__.py
++++ b/tilelang/jit/__init__.py
+@@ -10,19 +10,15 @@
+ import inspect
+ from typing import (
+     Any,
+-    Callable,
+     Generic,
+     TypeVar,
+     overload,
+     Literal,
++    ParamSpec,
+ )
++from collections.abc import Callable
+ from collections.abc import Iterable
+ 
+-# Python 3.9 compatibility for ParamSpec
+-try:
+-    from typing import ParamSpec
+-except ImportError:  # Python < 3.10
+-    from typing_extensions import ParamSpec
+ from tilelang import tvm as tvm
+ from tilelang.language.eager import PrimFunc, prim_func, JITFunc
+ from tvm.target import Target
+diff --git a/tilelang/jit/adapter/base.py b/tilelang/jit/adapter/base.py
+index 3669f9e35c..afe55d7ec8 100644
+--- a/tilelang/jit/adapter/base.py
++++ b/tilelang/jit/adapter/base.py
+@@ -3,7 +3,8 @@
+ from __future__ import annotations
+ 
+ from abc import ABC, abstractmethod
+-from typing import Any, Callable
++from typing import Any
++from collections.abc import Callable
+ from tilelang.engine.param import KernelParam
+ import torch
+ 
+diff --git a/tilelang/jit/adapter/cutedsl/adapter.py b/tilelang/jit/adapter/cutedsl/adapter.py
+index 7dd7917a27..23f51f9ffb 100644
+--- a/tilelang/jit/adapter/cutedsl/adapter.py
++++ b/tilelang/jit/adapter/cutedsl/adapter.py
+@@ -1,7 +1,8 @@
+ from __future__ import annotations
+ import logging
+ import weakref
+-from typing import Any, Callable
++from typing import Any
++from collections.abc import Callable
+ 
+ import torch
+ from tvm import tir
+diff --git a/tilelang/jit/adapter/cython/adapter.py b/tilelang/jit/adapter/cython/adapter.py
+index 62bb0a6c33..ff82bf4d34 100644
+--- a/tilelang/jit/adapter/cython/adapter.py
++++ b/tilelang/jit/adapter/cython/adapter.py
+@@ -5,7 +5,8 @@
+ import logging
+ import torch
+ 
+-from typing import Callable, Any
++from typing import Any
++from collections.abc import Callable
+ from tilelang import tvm as tvm
+ from tvm.target import Target
+ from tilelang.engine.param import KernelParam
+diff --git a/tilelang/jit/adapter/nvrtc/adapter.py b/tilelang/jit/adapter/nvrtc/adapter.py
+index d7626393b1..73d7be50b9 100644
+--- a/tilelang/jit/adapter/nvrtc/adapter.py
++++ b/tilelang/jit/adapter/nvrtc/adapter.py
+@@ -1,6 +1,7 @@
+ from __future__ import annotations
+ import logging
+-from typing import Any, Callable
++from typing import Any
++from collections.abc import Callable
+ 
+ import torch
+ from tvm import tir
+diff --git a/tilelang/jit/adapter/torch/metal.py b/tilelang/jit/adapter/torch/metal.py
+index 4690cf59bd..1514d761c3 100644
+--- a/tilelang/jit/adapter/torch/metal.py
++++ b/tilelang/jit/adapter/torch/metal.py
+@@ -1,6 +1,6 @@
+ from __future__ import annotations
+ from functools import wraps
+-from typing import Callable
++from collections.abc import Callable
+ 
+ import torch
+ from tvm import tir
+diff --git a/tilelang/jit/adapter/tvm_ffi.py b/tilelang/jit/adapter/tvm_ffi.py
+index 55a5e7ffbd..3939f78e81 100644
+--- a/tilelang/jit/adapter/tvm_ffi.py
++++ b/tilelang/jit/adapter/tvm_ffi.py
+@@ -8,7 +8,8 @@
+ 
+ from __future__ import annotations
+ 
+-from typing import Callable, Any
++from typing import Any
++from collections.abc import Callable
+ import sys
+ 
+ import torch
+diff --git a/tilelang/jit/adapter/utils.py b/tilelang/jit/adapter/utils.py
+index 5c730b3790..d7106f50f0 100644
+--- a/tilelang/jit/adapter/utils.py
++++ b/tilelang/jit/adapter/utils.py
+@@ -1,7 +1,8 @@
+ from __future__ import annotations
+ 
+ import re
+-from typing import Literal, Callable, Any
++from typing import Literal, Any
++from collections.abc import Callable
+ from tilelang import tvm as tvm
+ from tvm import IRModule, tir
+ from tvm.target import Target
+diff --git a/tilelang/jit/kernel.py b/tilelang/jit/kernel.py
+index b63884e307..3ae56c537b 100644
+--- a/tilelang/jit/kernel.py
++++ b/tilelang/jit/kernel.py
+@@ -1,11 +1,6 @@
+ from __future__ import annotations
+-from typing import Any, Callable, Generic, Literal, TypeVar
+-
+-# Python 3.9 compatibility for ParamSpec
+-try:
+-    from typing import ParamSpec
+-except ImportError:  # Python < 3.10
+-    from typing_extensions import ParamSpec
++from typing import Any, Generic, Literal, ParamSpec, TypeVar
++from collections.abc import Callable
+ 
+ from tilelang.jit.adapter.utils import is_cutedsl_target, is_metal_target, is_cuda_target
+ from tvm.target import Target
+diff --git a/tilelang/language/annotations.py b/tilelang/language/annotations.py
+index 7cd3f8c51c..700ee39e60 100644
+--- a/tilelang/language/annotations.py
++++ b/tilelang/language/annotations.py
+@@ -1,6 +1,6 @@
+ """Annotation helpers exposed on the TileLang language surface."""
+ 
+-from typing import Callable
++from collections.abc import Callable
+ 
+ from tilelang.layout import Fragment, Layout
+ from tilelang.utils.language import is_fragment
+diff --git a/tilelang/language/dtypes.py b/tilelang/language/dtypes.py
+index 3a3b89c638..7e47d7f8e6 100644
+--- a/tilelang/language/dtypes.py
++++ b/tilelang/language/dtypes.py
+@@ -1,7 +1,7 @@
+ from tilelang import tvm
+ from tvm import ir
+ import torch
+-from typing import Generic, TypeVar, Union, TYPE_CHECKING
++from typing import Generic, TypeVar, TYPE_CHECKING
+ from tvm import tir
+ import tvm.script.ir_builder.tir._ffi_api as tb_ffi
+ import numpy as np
+@@ -20,13 +20,13 @@ def as_torch(self) -> torch.dtype: ...
+ else:
+     dtype = tvm.DataType
+ 
+-# Python 3.9 compatibility: avoid PEP 604 unions at runtime
+-AnyDType = Union[ir.Type, str, type, torch.dtype, dtype]
++# Keep a typing alias separate from the tuple used by runtime checks.
++AnyDType = ir.Type | str | type | torch.dtype | dtype
+ 
+ 
+ def _is_any_dtype(obj: object) -> bool:
+     """Check if obj is a dtype-like value. Use instead of isinstance(obj, AnyDType)
+-    because Union types cannot be used with isinstance in Python 3.9."""
++    to keep the runtime check explicit."""
+     return isinstance(obj, (ir.Type, str, type, torch.dtype, dtype))
+ 
+ 
+diff --git a/tilelang/language/eager/ast.py b/tilelang/language/eager/ast.py
+index f3a39eef6a..aec96b8fda 100644
+--- a/tilelang/language/eager/ast.py
++++ b/tilelang/language/eager/ast.py
+@@ -2,16 +2,11 @@
+ import ast
+ from dataclasses import dataclass, field
+ from pathlib import Path
+-from typing import Callable, Generic, Any, Literal, TypeVar
++from typing import Generic, Any, Literal, ParamSpec, TypeVar
++from collections.abc import Callable
+ from contextlib import AbstractContextManager
+ from collections.abc import Iterable
+ 
+-
+-# Python 3.9 compatibility for ParamSpec
+-try:
+-    from typing import ParamSpec
+-except ImportError:  # Python < 3.10
+-    from typing_extensions import ParamSpec
+ import inspect
+ 
+ # from .utils import get_ast, get_compiled_object
+diff --git a/tilelang/language/eager/builder.py b/tilelang/language/eager/builder.py
+index 74c315149b..a448c4815f 100644
+--- a/tilelang/language/eager/builder.py
++++ b/tilelang/language/eager/builder.py
+@@ -2,7 +2,6 @@
+ from contextlib import contextmanager, AbstractContextManager
+ from dataclasses import dataclass
+ import inspect
+-import sys
+ 
+ from tilelang.language.kernel import KernelLaunchFrame
+ from tvm_ffi.container import Map
+@@ -18,15 +17,12 @@
+ from tvm.script.ir_builder import tir, IRBuilder
+ 
+ from tvm.tir.expr import BufferLoad, CallEffectKind, EqualOp, FloatImm, IntImm, NotEqualOp, PrimExpr, StringImm, Var
+-from typing import TYPE_CHECKING, Callable, Any, Generic, TypeVar, ForwardRef, Union, Literal, get_origin
++from typing import TYPE_CHECKING, Any, Generic, TypeVar, ForwardRef, Literal, get_origin, ParamSpec
++from collections.abc import Callable
++from typing_extensions import Self
+ from collections.abc import Hashable
+ from collections.abc import Sequence
+ 
+-# Python 3.9 compatibility for ParamSpec and Self
+-try:
+-    from typing import ParamSpec, Self
+-except ImportError:  # Python < 3.11 for Self, < 3.10 for ParamSpec
+-    from typing_extensions import ParamSpec, Self
+ from .. import dtypes as dt
+ from . import utils
+ from tilelang.jit.exceptions import JITNoBuilderError, EagerJITBuildError
+@@ -137,10 +133,9 @@ def load(self):
+ class UnrollForWithStep(SerialForWithStep): ...
+ 
+ 
+-# Python 3.9 compatibility: avoid PEP 604 unions at runtime
+-# Use tuple for isinstance checks and typing.Union for annotations/aliases
++# Runtime frame checks use tuple form; AnyFrame is kept as an annotation alias.
+ ContinueOrBreak = (ContinueFrame, BreakFrame)
+-AnyFrame = Union[tir.frame.IRBuilderFrame, Frame]
++AnyFrame = tir.frame.IRBuilderFrame | Frame
+ 
+ TIR_CONTROL_FRAME = (
+     tir.frame.WhileFrame,
+@@ -881,10 +876,7 @@ def get_type_hints(func):
+                     continue
+                 except Exception:
+                     pass
+-            if sys.version_info >= (3, 10):
+-                value = ForwardRef(value, module=func.__module__)
+-            else:
+-                value = ForwardRef(value, is_argument=True)
++            value = ForwardRef(value, module=func.__module__)
+             hints[name] = _eval_type(value, globalns=globalns, localns=localns)
+         else:
+             hints[name] = value
+diff --git a/tilelang/language/eager/utils.py b/tilelang/language/eager/utils.py
+index 207bd92ad3..9611cc40d8 100644
+--- a/tilelang/language/eager/utils.py
++++ b/tilelang/language/eager/utils.py
+@@ -1,7 +1,8 @@
+ from __future__ import annotations
+ import ast
+ import inspect
+-from typing import Any, Callable, Literal
++from typing import Any, Literal
++from collections.abc import Callable
+ from tilelang import env
+ from hashlib import sha256
+ from tvm import tir
+diff --git a/tilelang/language/tir/entry.py b/tilelang/language/tir/entry.py
+index 8d65786e44..623b140a29 100644
+--- a/tilelang/language/tir/entry.py
++++ b/tilelang/language/tir/entry.py
+@@ -1,6 +1,6 @@
+ from __future__ import annotations
+ import inspect
+-from typing import Callable
++from collections.abc import Callable
+ 
+ import tvm.script.parser.tir.entry as _tir_entry
+ from tvm.tir.function import PrimFunc
+diff --git a/tilelang/profiler/__init__.py b/tilelang/profiler/__init__.py
+index 1ff75c7d52..01f14370e6 100644
+--- a/tilelang/profiler/__init__.py
++++ b/tilelang/profiler/__init__.py
+@@ -1,7 +1,8 @@
+ """The profiler and convert to torch utils"""
+ 
+ from __future__ import annotations
+-from typing import Callable, Any, Literal
++from typing import Any, Literal
++from collections.abc import Callable
+ from functools import partial
+ import torch
+ from dataclasses import dataclass
+diff --git a/tilelang/profiler/bench.py b/tilelang/profiler/bench.py
+index 5ef832134d..191b906b1b 100644
+--- a/tilelang/profiler/bench.py
++++ b/tilelang/profiler/bench.py
+@@ -4,7 +4,8 @@
+ 
+ import os
+ import sys
+-from typing import Callable, Literal
++from typing import Literal
++from collections.abc import Callable
+ 
+ import torch
+ 
+diff --git a/tilelang/rocm/intrinsics/mfma_macro_generator.py b/tilelang/rocm/intrinsics/mfma_macro_generator.py
+index 71c76051d8..6064106e42 100644
+--- a/tilelang/rocm/intrinsics/mfma_macro_generator.py
++++ b/tilelang/rocm/intrinsics/mfma_macro_generator.py
+@@ -8,7 +8,8 @@
+ from tvm.tir import PrimExpr, IndexMap, Buffer, Var, BufferRegion, BufferLoad
+ from tvm.runtime import convert
+ from .utils import mfma_store_index_map
+-from typing import Literal, Callable
++from typing import Literal
++from collections.abc import Callable
+ import warnings
+ 
+ from tilelang.utils.target import target_is_gfx950, determine_target
+diff --git a/tilelang/testing/perf_regression.py b/tilelang/testing/perf_regression.py
+index d1518fb2de..bed82e10e8 100644
+--- a/tilelang/testing/perf_regression.py
++++ b/tilelang/testing/perf_regression.py
+@@ -6,7 +6,8 @@
+ import os
+ import time
+ from dataclasses import dataclass
+-from typing import Any, Callable
++from typing import Any
++from collections.abc import Callable
+ from collections.abc import Sequence
+ import warnings
+ 
+diff --git a/tilelang/tileop/gemm/registry.py b/tilelang/tileop/gemm/registry.py
+index af281eaeab..bfed3fefc5 100644
+--- a/tilelang/tileop/gemm/registry.py
++++ b/tilelang/tileop/gemm/registry.py
+@@ -1,7 +1,7 @@
+ from __future__ import annotations
+ 
+ from dataclasses import dataclass
+-from typing import Callable
++from collections.abc import Callable
+ 
+ from tvm.target import Target
+ 
+diff --git a/tilelang/tileop/gemm_sp/registry.py b/tilelang/tileop/gemm_sp/registry.py
+index 81fd107c8f..99804bddbe 100644
+--- a/tilelang/tileop/gemm_sp/registry.py
++++ b/tilelang/tileop/gemm_sp/registry.py
+@@ -1,7 +1,7 @@
+ from __future__ import annotations
+ 
+ from dataclasses import dataclass
+-from typing import Callable
++from collections.abc import Callable
+ 
+ from tvm.target import Target
+ 
+diff --git a/tilelang/transform/simplify.py b/tilelang/transform/simplify.py
+index c5e577d036..051a43c8ba 100644
+--- a/tilelang/transform/simplify.py
++++ b/tilelang/transform/simplify.py
+@@ -2,7 +2,7 @@
+ from tilelang import tvm as tvm
+ from tvm import IRModule
+ from tvm.tir import PrimFunc
+-from typing import Callable
++from collections.abc import Callable
+ from . import _ffi_api
+ 
+ 

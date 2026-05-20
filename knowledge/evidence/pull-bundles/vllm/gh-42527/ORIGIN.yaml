@@ -1,0 +1,52 @@
+schema_version: 1
+source_key: vllm-project/vllm#42527
+repo: vllm-project/vllm
+repo_id: vllm
+pr_number: 42527
+title: '[Kernel] Pack topk id/weights triton kernel'
+url: https://github.com/vllm-project/vllm/pull/42527
+state: closed
+merged_at: '2026-05-18T10:04:32Z'
+base_ref_oid: c1f7854342d1e80f7f2406524d242b8ee5476d6d
+head_ref_oid: ba9cade35f8cca77cf7d052c70d15fd30e91b007
+captured_at: '2026-05-20T15:09:55.743735+00:00'
+architectures:
+- sm100
+- sm90
+architecture_families:
+- blackwell
+- hopper
+tags:
+- blackwell
+- cuda
+- cuda kernel
+- hopper
+- moe
+- moe kernel
+- triton kernel
+techniques:
+- kernel-fusion
+hardware_features:
+- blackwell
+- fp4
+- hopper
+- mxfp4
+kernel_types:
+- moe
+languages:
+- cuda-cpp
+- triton
+bundle:
+  diff: review.diff
+  upstream: upstream.json
+  source_snapshot:
+  - source_path: vllm/model_executor/layers/fused_moe/experts/trtllm_mxfp4_moe.py
+    local_path: source-snapshot/vllm/model_executor/layers/fused_moe/experts/trtllm_mxfp4_moe.py
+    ref: ba9cade35f8cca77cf7d052c70d15fd30e91b007
+    status: modified
+    fetched: true
+  - source_path: vllm/model_executor/layers/fused_moe/utils.py
+    local_path: source-snapshot/vllm/model_executor/layers/fused_moe/utils.py
+    ref: ba9cade35f8cca77cf7d052c70d15fd30e91b007
+    status: modified
+    fetched: true
