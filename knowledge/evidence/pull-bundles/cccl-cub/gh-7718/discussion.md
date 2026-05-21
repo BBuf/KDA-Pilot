@@ -1,75 +1,41 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/cccl#7718](https://github.com/NVIDIA/cccl/pull/7718)
-- Source page: `sources/prs/cccl-cub/PR-7718.md`
-- Evidence bundle: `evidence/pull-bundles/cccl-cub/gh-7718`
-- Generated at: `2026-05-20T15:20:18.037044+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-02-19T02:20:07Z`
-- Merged: `2026-03-10T00:43:36Z`
-
-## Discussion Counts
-
-- Issue comments: 11
-- Review submissions: 21 (approved=2, commented=19)
-- Inline review comments: 49
-- Review threads observed: 42
-- Resolved/outdated thread markers: resolved=41, outdated=38
-- Human participants with discussion text: NaderAlAwar, bernhardmgruber, miscco, oleksandr-pavlyk, srinivasyadav18
-- Automation comments/reviews omitted from high-signal summary: 8
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-02-19T15:35:51Z` `COMMENTED` by `NaderAlAwar` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3826335184)
-- `2026-02-24T23:16:47Z` `COMMENTED` by `bernhardmgruber` - I think this PR is massively complicated by the fact that the segmented reduction dispatch was already refactored ... (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3850947202)
-- `2026-02-25T22:58:31Z` `COMMENTED` by `NaderAlAwar` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3857280265)
-- `2026-03-02T22:07:24Z` `COMMENTED` by `oleksandr-pavlyk` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3878938291)
-- `2026-03-02T22:11:28Z` `COMMENTED` by `oleksandr-pavlyk` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3878955214)
-- `2026-03-02T22:28:13Z` `COMMENTED` by `oleksandr-pavlyk` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3879040026)
-- `2026-03-02T22:35:27Z` `COMMENTED` by `oleksandr-pavlyk` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3879085646)
-- `2026-03-03T10:57:38Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3881154505)
-- `2026-03-03T14:40:36Z` `COMMENTED` by `oleksandr-pavlyk` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3883041179)
-- `2026-03-03T15:12:40Z` `COMMENTED` by `oleksandr-pavlyk` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3883245278)
-- `2026-03-03T16:48:50Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3883830988)
-- `2026-03-03T23:45:10Z` `COMMENTED` by `srinivasyadav18` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3885800041)
-- `2026-03-03T23:46:47Z` `COMMENTED` by `srinivasyadav18` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3885805728)
-- `2026-03-03T23:48:42Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3885816601)
-- `2026-03-05T17:19:28Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3894856137)
-- `2026-03-06T06:38:55Z` `COMMENTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3901697130)
-- `2026-03-06T16:15:47Z` `COMMENTED` by `srinivasyadav18` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3904658884)
-- `2026-03-06T18:31:27Z` `COMMENTED` by `bernhardmgruber` - Implementation looks ok to me. (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3905280677)
-- `2026-03-09T16:49:03Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3916790434)
-- `2026-03-09T16:52:05Z` `APPROVED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3916811837)
-- `2026-03-09T17:17:40Z` `APPROVED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3916996687)
-
-## Inline Comment Hotspots
-
-- `cub/test/catch2_test_device_segmented_reduce_max_seg_size.cu`: 11 inline comment(s)
-- `cub/benchmarks/bench/segmented_reduce/variable_base.cuh`: 10 inline comment(s)
-- `cub/cub/device/dispatch/tuning/tuning_segmented_reduce.cuh`: 9 inline comment(s)
-- `cub/cub/device/dispatch/dispatch_segmented_reduce.cuh`: 7 inline comment(s)
-- `cub/cub/device/dispatch/kernels/kernel_segmented_reduce.cuh`: 6 inline comment(s)
-- `cub/benchmarks/bench/segmented_reduce/variable_argmax.cu`: 3 inline comment(s)
-- `cub/cub/device/dispatch/tuning/tuning_reduce.cuh`: 1 inline comment(s)
-- `c/parallel/src/segmented_reduce.cu`: 1 inline comment(s)
-- `cub/benchmarks/bench/segmented_reduce/base.cuh`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-05T18:17:48Z` `issue` by `bernhardmgruber`; signals: benchmark, hang, kernel, memory, perf, performance, regression, shared memory; excerpt: "I had a quick call with @srinivasyadav18 and here are some notes: This PR adds code paths to support small and medium segments using ..." (https://github.com/NVIDIA/cccl/pull/7718#issuecomment-4006828013)
-- `2026-03-03T09:12:37Z` `inline` by `bernhardmgruber` `cub/cub/device/dispatch/tuning/tuning_segmented_reduce.cuh`:224; signals: b200, benchmark, h100, h200, hang, sm120; excerpt: "Critical: Since this completely changes the tuning for segmented reduction for all architectures. We will need to rebenchmark on all relevant GPUs, which should ..." (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2877039053)
-- `2026-03-03T10:51:27Z` `inline` by `bernhardmgruber` `cub/cub/device/dispatch/dispatch_segmented_reduce.cuh`:207; signals: compile, hang, kernel; excerpt: "Important: This change and a few others in DispatchSegmentedReduce are technically API breaks, since a user passing a custom kernel source will now fail ..." (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2877555146)
-- `2026-03-04T22:54:51Z` `issue` by `srinivasyadav18`; signals: perf, performance, regression; excerpt: "Performance Report: small, medium, large segments reduction code path using default max segment size 0 NVIDIA RTX A6000 (SM 86) argmax T{ct}=F64 OffsetT=I32 - ..." (https://github.com/NVIDIA/cccl/pull/7718#issuecomment-4000818341)
-- `2026-02-25T22:12:34Z` `inline` by `NaderAlAwar` `c/parallel/src/segmented_reduce.cu`:258; signals: compile, kernel; excerpt: "Important: you need to add "-default-device" to be able to compile the new lambda you added to the kernel, see transform.cu for example" (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2855773393)
-- `2026-03-02T22:35:27Z` `inline` by `oleksandr-pavlyk` `cub/cub/device/dispatch/kernels/kernel_segmented_reduce.cuh`:115; signals: block, kernel; excerpt: "Nit: I believe int(...) is unnecessary here, since block threads member of segmented reduce policy struct already is of type int." (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2875020023)
-- `2026-03-03T08:59:10Z` `inline` by `bernhardmgruber` `cub/cub/device/dispatch/tuning/tuning_segmented_reduce.cuh`:26; signals: compile, warp; excerpt: "Suggestion: I find the comment inaccurate, since agent warp reduce policy is mostly used during constant evaluation and thus compile-time. The only relevant information ..." (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2876979052)
-- `2026-03-03T15:12:41Z` `inline` by `oleksandr-pavlyk` `cub/test/catch2_test_device_segmented_reduce_max_seg_size.cu`:132; signals: memory, vector; excerpt: "I think we are supposed to use c2h::device vector in tests as it handles out-of-memory situations better." (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2878850364)
-- `2026-03-02T22:07:24Z` `inline` by `oleksandr-pavlyk` `cub/benchmarks/bench/segmented_reduce/variable_base.cuh`:9; signals: benchmark, cuda; excerpt: "We should use cuda::counting iterator and cuda::transform iterator. Is there a reason not to?" (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2874905480)
-- `2026-03-06T06:36:00Z` `inline` by `miscco` `cub/cub/device/dispatch/kernels/kernel_segmented_reduce.cuh`:217; signals: cuda, kernel; excerpt: "We have cuda::in range, so this could be" (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2894106433)
-- `2026-02-19T15:34:37Z` `inline` by `NaderAlAwar` `cub/benchmarks/bench/segmented_reduce/variable_base.cuh`:17; signals: benchmark; excerpt: "Important: in bench/reduce/base.cuh, we use the new policy selector approach. We should follow that approach here as well." (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2828564800)
-- `2026-02-19T15:35:40Z` `inline` by `NaderAlAwar` `cub/benchmarks/bench/segmented_reduce/variable_base.cuh`:166; signals: benchmark; excerpt: "Important: same as above, we should use the new dispatch() instead of Dispatch() (see reduce/base.cuh)" (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2828570169)
+- 2026-02-19 `NaderAlAwar` on `cub/cub/device/dispatch/tuning/tuning_reduce.cuh`:128: Suggestion: if possible, let us move FixedSizeSegmentedReducePolicy to tuning segmented reduce.cuh. I feel like it would make more sense for it to live there. You could also move fixed size segmented reduce in this PR as well (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2828275909)
+- 2026-02-19 `NaderAlAwar` on `cub/cub/device/dispatch/kernels/kernel_segmented_reduce.cuh`:121: Suggestion: feels like this comment is still applicable, maybe keep it? (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2828371091)
+- 2026-02-19 `NaderAlAwar` on `cub/cub/device/dispatch/dispatch_segmented_reduce.cuh`:78: Suggestion: unless I'm missing something, it seems like it would be better to use MaxPolicy instead of Policy500, even though they are type aliases today. In the future when we add more tunings, MaxPolicy would be updated accordingly. (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2828431206)
+- 2026-02-19 `NaderAlAwar` on `cub/cub/device/dispatch/dispatch_segmented_reduce.cuh`:399: Suggestion: add this to the docstring above with @param (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2828441185)
+- 2026-02-19 `NaderAlAwar` on `cub/test/catch2_test_device_segmented_reduce_max_seg_size.cu`:43: Important: please add 0 as well (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2828534465)
+- 2026-02-19 `NaderAlAwar` on `cub/test/catch2_test_device_segmented_reduce_max_seg_size.cu`:17: Important: do lid 0:1:2 unless there is some limitation that prevents this (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2828541446)
+- 2026-02-19 `NaderAlAwar` on `cub/benchmarks/bench/segmented_reduce/variable_base.cuh`:17: Important: in bench/reduce/base.cuh, we use the new policy selector approach. We should follow that approach here as well. (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2828564800)
+- 2026-02-19 `NaderAlAwar` on `cub/benchmarks/bench/segmented_reduce/variable_base.cuh`:166: Important: same as above, we should use the new dispatch() instead of Dispatch() (see reduce/base.cuh) (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2828570169)
+- 2026-02-24 `bernhardmgruber` on `cub/benchmarks/bench/segmented_reduce/variable_argmax.cu`:2: Critical: Please use the correct license header. See Applies to all new files. (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2849938978)
+- 2026-02-24 `bernhardmgruber` on `cub/benchmarks/bench/segmented_reduce/variable_argmax.cu`:8: Critical: Please apply the build time optimization as documented here: Applies to variable sum.cu as well. (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2849941667)
+- 2026-02-24 `bernhardmgruber` on `cub/cub/device/dispatch/tuning/tuning_segmented_reduce.cuh`:247: Critical: This is breaking the tuning API design, since it decouples the policy selector from types from its corresponding policy selector. The former must always be implemented as the latter. (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2849982269)
+- 2026-02-24 `bernhardmgruber` commented: I think this PR is massively complicated by the fact that the segmented reduction dispatch was already refactored to the new tuning API, and the fixed size segmented dispatch was not. I strongly suggest to refactor the fixed size dispatch first ( ... (https://github.com/NVIDIA/cccl/pull/7718#pullrequestreview-3850947202)
+- 2026-02-25 `NaderAlAwar` on `c/parallel/src/segmented_reduce.cu`:258: Important: you need to add "-default-device" to be able to compile the new lambda you added to the kernel, see transform.cu for example (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2855773393)
+- 2026-02-25 `NaderAlAwar` on `cub/benchmarks/bench/segmented_reduce/base.cuh`:104: Nit: it seems that this alias was useful, I would reintroduce it (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2855832518)
+- 2026-02-25 `NaderAlAwar` on `cub/cub/device/dispatch/tuning/tuning_segmented_reduce.cuh`:247: This should also fix the policy mismatch error you are seeing in the c parallel and python tests (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2855924783)
+- 2026-03-02 `oleksandr-pavlyk` on `cub/benchmarks/bench/segmented_reduce/variable_base.cuh`:9: We should use cuda::counting iterator and cuda::transform iterator. Is there a reason not to? (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2874905480)
+- 2026-03-02 `oleksandr-pavlyk` on `cub/benchmarks/bench/segmented_reduce/variable_base.cuh`:34: The axis name is "Guarant ee MaxSize" should it be "Guarant eed MaxSize" to be consistent with the variable name? (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2874920269)
+- 2026-03-02 `oleksandr-pavlyk` on `cub/cub/device/dispatch/kernels/kernel_segmented_reduce.cuh`:97: @param[in] num segments already exists, after d end offsets and before reduction op. I think this addition should be removed. (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2874987374)
+- 2026-03-02 `oleksandr-pavlyk` on `cub/cub/device/dispatch/kernels/kernel_segmented_reduce.cuh`:115: Nit: I believe int(...) is unnecessary here, since block threads member of segmented reduce policy struct already is of type int. (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2875020023)
+- 2026-03-03 `bernhardmgruber` on `cub/cub/device/dispatch/tuning/tuning_segmented_reduce.cuh`:26: Suggestion: I find the comment inaccurate, since agent warp reduce policy is mostly used during constant evaluation and thus compile-time. The only relevant information that is not already part of the type name is: (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2876979052)
+- 2026-03-03 `bernhardmgruber` on `cub/cub/device/dispatch/tuning/tuning_segmented_reduce.cuh`:139: Since this is not used by the policy selector below, can we put policy hub and policy hub FixedSizeSegmentedReducePolicyWrapper below policy selector`? (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2876989316)
+- 2026-03-03 `bernhardmgruber` on `cub/cub/device/dispatch/tuning/tuning_segmented_reduce.cuh`:224: Critical: Since this completely changes the tuning for segmented reduction for all architectures. We will need to rebenchmark on all relevant GPUs, which should be at least A100, H100 or H200, B200. Ideally we should also include A6000 (sm86), some sm89 GPU, ... (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2877039053)
+- 2026-03-03 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_segmented_reduce.cuh`:512: Strong suggestion: Please put the new parameter before the stream. (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2877058016)
+- 2026-03-03 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_segmented_reduce.cuh`:207: Important: This change and a few others in DispatchSegmentedReduce are technically API breaks, since a user passing a custom kernel source will now fail to compile. I do understand though that KernelSource and KernelLauncherFactory were recently added so we could assume they ... (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2877555146)
+- 2026-03-03 `bernhardmgruber` on `cub/test/catch2_test_device_segmented_reduce_max_seg_size.cu`:92: Suggestion: destructure seg size range right here instead of using std::get later. (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2877573598)
+- 2026-03-03 `bernhardmgruber` on `cub/test/catch2_test_device_segmented_reduce_max_seg_size.cu`:125: Important: I think you need some synchronization between dispatch and REQUIRE, since CUB APIs are async. (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2877580871)
+- 2026-03-03 `oleksandr-pavlyk` on `cub/cub/device/dispatch/tuning/tuning_segmented_reduce.cuh`:224: Nit: to improve readability, I would assign literal constant 1 and 32 to constexpr int variable with descriptive names, e.g., (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2878666743)
+- 2026-03-03 `oleksandr-pavlyk` on `cub/test/catch2_test_device_segmented_reduce_max_seg_size.cu`:132: I think we are supposed to use c2h::device vector in tests as it handles out-of-memory situations better. (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2878850364)
+- 2026-03-03 `srinivasyadav18` on `cub/test/catch2_test_device_segmented_reduce_max_seg_size.cu`:67: the values small segment size, medium segment size, large segment size retrieved through structured bindings cannot be used in a lambda (used in c2h helpers) with C++17. So, this might not work. (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2881055850)
+- 2026-03-03 `srinivasyadav18` on `cub/cub/device/dispatch/dispatch_segmented_reduce.cuh`:207: Yes, that's perfect solution. The only use case now I have that needs max segment size is with c-parallel segmented reduce , and that uses segmented reduce::dispatch() function, instead of the DispatchSegmentedReduce functor. (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2881059761)
+- 2026-03-03 `bernhardmgruber` on `cub/test/catch2_test_device_segmented_reduce_max_seg_size.cu`:67: Ah yes, that requires C++20. Leave the code then. (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2881064324)
+- 2026-03-04 `srinivasyadav18`: Performance Report: small, medium, large segments reduction code path using default max segment size 0 NVIDIA RTX A6000 (SM 86) argmax T{ct}=F64 OffsetT=I32 - no regressions - mostly noise sum T{ct}=F64 OffsetT=I32 - no regressions - mostly noise sum T{ct}=I32 OffsetT=I32 - ... (https://github.com/NVIDIA/cccl/pull/7718#issuecomment-4000818341)
+- 2026-03-05 `bernhardmgruber` on `cub/benchmarks/bench/segmented_reduce/variable_base.cuh`:53: Will do what you want. (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2888545642)
+- 2026-03-05 `bernhardmgruber`: I had a quick call with @srinivasyadav18 and here are some notes: This PR adds code paths to support small and medium segments using different algorithms If max segment size == 0 then the current implementation will always take the large segments ... (https://github.com/NVIDIA/cccl/pull/7718#issuecomment-4006828013)
+- 2026-03-06 `miscco` on `cub/cub/device/dispatch/kernels/kernel_segmented_reduce.cuh`:217: We have cuda::in range, so this could be (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2894106433)
+- 2026-03-06 `miscco` on `cub/cub/device/dispatch/dispatch_segmented_reduce.cuh`:538: This could also use ::cuda::in range (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2894114927)
+- 2026-03-06 `srinivasyadav18` on `cub/cub/device/dispatch/tuning/tuning_segmented_reduce.cuh`:224: Posted benchmarks on A6000 [below]( (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2896633462)
+- 2026-03-06 `bernhardmgruber` on `cub/benchmarks/bench/segmented_reduce/variable_argmax.cu`:16: Suggestion: those are the same as in variable sum, so you can move this code to variable base.cuh (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2897205698)
+- 2026-03-06 `bernhardmgruber` on `cub/benchmarks/bench/segmented_reduce/variable_base.cuh`:98: Important: it makes no sense to override the offset type to override offset t but use a different type for policy selector from types. Then the tuning does not match the workload. I this should just be: Applies below as well. (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2897222129)
+- 2026-03-06 `bernhardmgruber` on `cub/cub/device/dispatch/kernels/kernel_segmented_reduce.cuh`:136: Unused values could be omitted: (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2897229710)
+- 2026-03-09 `bernhardmgruber` on `cub/test/catch2_test_device_segmented_reduce_max_seg_size.cu`:17: @srinivasyadav18 can you please add a comment here, why we just stay with lid 0 here? (https://github.com/NVIDIA/cccl/pull/7718#discussion_r2906667164)

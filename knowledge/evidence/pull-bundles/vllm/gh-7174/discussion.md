@@ -1,82 +1,66 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#7174](https://github.com/vllm-project/vllm/pull/7174)
-- Source page: `sources/prs/vllm/PR-7174.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-7174`
-- Generated at: `2026-05-20T15:41:05.064114+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2024-08-05T23:44:20Z`
-- Merged: `2024-08-20T13:09:33Z`
-
-## Discussion Counts
-
-- Issue comments: 15
-- Review submissions: 57 (approved=1, commented=56)
-- Inline review comments: 88
-- Review threads observed: 44
-- Resolved/outdated thread markers: resolved=38, outdated=27
-- Human participants with discussion text: LucasWilkinson, ProExpertProg, bnellnm, congcongchen123, mgoin, tlrmchlsmth
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 16
-
-## Review Decisions
-
-- `2024-08-08T00:25:17Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2226407753)
-- `2024-08-08T02:25:42Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2226736997)
-- `2024-08-08T02:30:36Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2226741280)
-- `2024-08-08T02:36:46Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2226749378)
-- `2024-08-08T19:59:47Z` `COMMENTED` by `ProExpertProg` - Really impressive work! Haven't had a chance to fully go through the mainloop file but everything else looks ... (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2228488666)
-- `2024-08-09T03:44:29Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2229225383)
-- `2024-08-09T03:46:09Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2229226372)
-- `2024-08-09T03:50:54Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2229231734)
-- `2024-08-09T03:51:24Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2229233009)
-- `2024-08-09T03:52:17Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2229234983)
-- `2024-08-09T03:54:00Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2229237781)
-- `2024-08-09T03:58:56Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2229245235)
-- `2024-08-09T03:59:39Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2229246323)
-- `2024-08-09T04:00:12Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2229247132)
-- `2024-08-09T04:09:06Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2229260383)
-- `2024-08-09T04:10:10Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2229262086)
-- `2024-08-09T04:17:46Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2229281579)
-- `2024-08-09T04:24:59Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2229286481)
-- `2024-08-09T13:44:14Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2230244201)
-- `2024-08-09T13:47:38Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2230251512)
-- `2024-08-09T13:51:35Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2230260084)
-- `2024-08-09T14:21:59Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2230287631)
-- `2024-08-12T04:16:18Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2232021811)
-- `2024-08-12T04:17:19Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2232022312)
-- ... 32 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `csrc/cutlass_extensions/vllm_numeric_conversion.cuh`: 11 inline comment(s)
-- `csrc/quantization/machete/machete_mainloop.cuh`: 8 inline comment(s)
-- `csrc/quantization/machete/generate.py`: 7 inline comment(s)
-- `csrc/quantization/machete/machete_mm_kernel.cuh`: 7 inline comment(s)
-- `csrc/cutlass_extensions/cute_utils.cuh`: 5 inline comment(s)
-- `csrc/cutlass_extensions/torch_utils.hpp`: 5 inline comment(s)
-- `csrc/quantization/machete/machete_mm_launcher.cuh`: 5 inline comment(s)
-- `tests/kernels/test_machete_gemm.py`: 5 inline comment(s)
-- `benchmarks/kernels/weight_shapes.py`: 4 inline comment(s)
-- `CMakeLists.txt`: 4 inline comment(s)
-- `csrc/cutlass_extensions/vllm_custom_types.cuh`: 4 inline comment(s)
-- `csrc/quantization/machete/machete_pytorch.cu`: 4 inline comment(s)
-
-## High-Signal Discussion
-
-- `2024-08-19T17:23:05Z` `inline` by `tlrmchlsmth` `csrc/quantization/machete/machete_mainloop.cuh`; signals: block, cutlass, sm90, tma, warp; excerpt: "I have one favor to ask on this file. Could you go through and add comments highlighting which parts are novel to machete, and ..." (https://github.com/vllm-project/vllm/pull/7174#discussion_r1722117856)
-- `2024-08-08T02:36:46Z` `inline` by `LucasWilkinson` `benchmarks/kernels/weight_shapes.py`:1; signals: benchmark, cutlass, kernel; excerpt: "ya it is, its just so the imports resolve, I tried moving weight shapes.py up a level and using: in both benchmarks/cutlass benchmarks/w8a8 benchmarks.py ..." (https://github.com/vllm-project/vllm/pull/7174#discussion_r1708461857)
-- `2024-08-09T14:21:27Z` `inline` by `tlrmchlsmth` `csrc/quantization/machete/machete_mm_kernel.cuh`:171; signals: compile, cute, kernel; excerpt: "There's a particular limitation of make cute stride and its usage here that I think we should try to avoid. Setting strides based on ..." (https://github.com/vllm-project/vllm/pull/7174#discussion_r1711561718)
-- `2024-08-12T04:17:19Z` `inline` by `LucasWilkinson` `csrc/quantization/machete/machete_mm_kernel.cuh`:171; signals: cute, kernel, layout; excerpt: "cool made a make cute layout util that handles this and updated the launcher to use that. good call :+1:" (https://github.com/vllm-project/vllm/pull/7174#discussion_r1713154730)
-- `2024-08-14T21:34:56Z` `inline` by `tlrmchlsmth` `csrc/cutlass_extensions/vllm_numeric_conversion.cuh`:2; signals: block, cutlass, hang; excerpt: "How close to the upstream numeric conversion.h is this file? I grepped around with varying success with the names in this file so it ..." (https://github.com/vllm-project/vllm/pull/7174#discussion_r1717578961)
-- `2024-08-14T21:48:17Z` `inline` by `tlrmchlsmth` `tests/kernels/test_machete_gemm.py`; signals: cuda, gemm, kernel; excerpt: "A couple of other things would be good to test in here: Running on CUDA devices other than GPU 0 CUDA graph support Running ..." (https://github.com/vllm-project/vllm/pull/7174#discussion_r1717588923)
-- `2024-08-08T00:10:07Z` `inline` by `mgoin` `benchmarks/kernels/weight_shapes.py`:1; signals: benchmark, cutlass, kernel; excerpt: "This seems duplicated from [vllm/benchmarks/cutlass benchmarks/weight shapes.py](" (https://github.com/vllm-project/vllm/pull/7174#discussion_r1708174741)
-- `2024-08-09T14:01:40Z` `inline` by `tlrmchlsmth` `benchmarks/kernels/benchmark_machete.py`; signals: benchmark, cuda, kernel; excerpt: "We should consider updating our kernel benchmarks to run with CUDA graphs in the future" (https://github.com/vllm-project/vllm/pull/7174#discussion_r1711529242)
-- `2024-08-19T20:58:17Z` `inline` by `bnellnm` `csrc/cutlass_extensions/cute_utils.cuh`:32; signals: cute, cutlass, race; excerpt: "nit: can you add curly braces around the single statement if bodies? (ditto elsewhere)" (https://github.com/vllm-project/vllm/pull/7174#discussion_r1722341765)
-- `2024-08-08T02:30:36Z` `inline` by `LucasWilkinson` `csrc/cutlass_extensions/vllm_numeric_conversion.cuh`:36; signals: compile, cutlass; excerpt: "just that ScalarConverter is required but NumericConverter doesn't actually work, its just there so it compiles, ill make the comment more clear" (https://github.com/vllm-project/vllm/pull/7174#discussion_r1708454526)
-- `2024-08-09T14:30:37Z` `inline` by `tlrmchlsmth` `csrc/quantization/machete/machete_mm_kernel.cuh`:168; signals: compile, kernel; excerpt: "Does this PR compile without warnings? I've been trying to get and keep the build clean and I think this will give us an ..." (https://github.com/vllm-project/vllm/pull/7174#discussion_r1711576392)
-- `2024-08-14T21:46:19Z` `inline` by `tlrmchlsmth` `tests/kernels/test_machete_gemm.py`:33; signals: gemm, kernel; excerpt: "could you add a couple of nastier sizes here? (see also my question about adding TORCH CHECKs for divisibility constraints)" (https://github.com/vllm-project/vllm/pull/7174#discussion_r1717587445)
+- 2024-08-08 `mgoin` on `csrc/cutlass_extensions/vllm_numeric_conversion.cuh`:16: nit: I think it'd be more clear as // For Array to Array . The order and the <= was weird at a glance (https://github.com/vllm-project/vllm/pull/7174#discussion_r1708165733)
+- 2024-08-08 `mgoin` on `csrc/cutlass_extensions/vllm_numeric_conversion.cuh`:36: What do you mean by this comment? (https://github.com/vllm-project/vllm/pull/7174#discussion_r1708166579)
+- 2024-08-08 `mgoin` on `csrc/cutlass_extensions/vllm_numeric_conversion.cuh`:1: Could you put a link to the file? (https://github.com/vllm-project/vllm/pull/7174#discussion_r1708168680)
+- 2024-08-08 `mgoin` on `benchmarks/kernels/weight_shapes.py`:1: This seems duplicated from [vllm/benchmarks/cutlass benchmarks/weight shapes.py]( (https://github.com/vllm-project/vllm/pull/7174#discussion_r1708174741)
+- 2024-08-08 `mgoin` on `csrc/quantization/machete/machete_mainloop.cuh`:3: Ditto on directly linking to source permalink if possible (https://github.com/vllm-project/vllm/pull/7174#discussion_r1708185641)
+- 2024-08-08 `LucasWilkinson` on `csrc/cutlass_extensions/vllm_numeric_conversion.cuh`:16: ya I agree, but thats how its written for the vast majority of the ones in: so was favoring consistency here, I still think thats the highest priority (https://github.com/vllm-project/vllm/pull/7174#discussion_r1708448882)
+- 2024-08-08 `LucasWilkinson` on `csrc/cutlass_extensions/vllm_numeric_conversion.cuh`:36: just that ScalarConverter is required but NumericConverter doesn't actually work, its just there so it compiles, ill make the comment more clear (https://github.com/vllm-project/vllm/pull/7174#discussion_r1708454526)
+- 2024-08-08 `LucasWilkinson` on `benchmarks/kernels/weight_shapes.py`:1: ya it is, its just so the imports resolve, I tried moving weight shapes.py up a level and using: in both benchmarks/cutlass benchmarks/w8a8 benchmarks.py and benchmarks/kernels/benchmark machete.py but this didn't work. Open to suggestions! (https://github.com/vllm-project/vllm/pull/7174#discussion_r1708461857)
+- 2024-08-08 `ProExpertProg` on `CMakeLists.txt`:245: Why read the file here just to put it into a variable that is never used? (https://github.com/vllm-project/vllm/pull/7174#discussion_r1709984777)
+- 2024-08-08 `ProExpertProg` on `benchmarks/kernels/weight_shapes.py`:1: Did you try import vllm.benchmarks.weight shapes? Not sure it would work, just an idea (https://github.com/vllm-project/vllm/pull/7174#discussion_r1709989399)
+- 2024-08-08 `ProExpertProg` on `csrc/cutlass_extensions/cute_utils.cuh`:6: Comment about what make cute stride does? (https://github.com/vllm-project/vllm/pull/7174#discussion_r1709994225)
+- 2024-08-08 `ProExpertProg` on `csrc/cutlass_extensions/torch_utils.hpp`:37: Could this be simplified to: (https://github.com/vllm-project/vllm/pull/7174#discussion_r1709999982)
+- 2024-08-08 `ProExpertProg` on `csrc/cutlass_extensions/vllm_custom_types.cuh`:10: What does this do? It does not look like the extra Bias parameter is used anywhere (https://github.com/vllm-project/vllm/pull/7174#discussion_r1710012285)
+- 2024-08-08 `ProExpertProg` on `csrc/quantization/machete/generate.py`:256: Nit: is there a benefit to using e.g. 4096 as opposed to Int ? (https://github.com/vllm-project/vllm/pull/7174#discussion_r1710026982)
+- 2024-08-08 `ProExpertProg` on `csrc/quantization/machete/generate.py`:379: It feels like this is the main part of this script that will be tweaked in the future, and the rest is alll infrastructure. Would it make sense to put this at the beginning of the file? (https://github.com/vllm-project/vllm/pull/7174#discussion_r1710030581)
+- 2024-08-08 `ProExpertProg` on `csrc/quantization/machete/machete_pytorch.cu`:14: This function is going to instantiate fn for all 4 types (kU4, kU8, kU4B8, and kU8B128). But I thought only kU4 and kS4 were supported? In general perhaps a useful utility would be something like This way, perhaps the utility does not ... (https://github.com/vllm-project/vllm/pull/7174#discussion_r1710061835)
+- 2024-08-08 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/quant_utils.py`:130: "the scales are applied after the scales are applied" - what does this mean? (https://github.com/vllm-project/vllm/pull/7174#discussion_r1710066727)
+- 2024-08-08 `ProExpertProg` on `csrc/quantization/machete/machete_mm_launcher.cuh`:83: Perhaps this could be MMDispatcher or GemmDispatcher? (https://github.com/vllm-project/vllm/pull/7174#discussion_r1710069513)
+- 2024-08-08 `ProExpertProg` on `csrc/quantization/machete/machete_mm_launcher.cuh`:23: Also, what do you think about a slightly different paradigm where instead of passing the type of the specialization, you passed a type that contained the arguments for it and then passed that to a using KernelTraits = KernelSpecializationTraits ;, as then ... (https://github.com/vllm-project/vllm/pull/7174#discussion_r1710151673)
+- 2024-08-08 `ProExpertProg` commented: Really impressive work! Haven't had a chance to fully go through the mainloop file but everything else looks great. Left a few comments/questions but I really like the overall structure and abstractions chosen (https://github.com/vllm-project/vllm/pull/7174#pullrequestreview-2228488666)
+- 2024-08-09 `LucasWilkinson` on `CMakeLists.txt`:245: good catch, this was used before to display the result but now machete generation result used. Removing. (https://github.com/vllm-project/vllm/pull/7174#discussion_r1710658636)
+- 2024-08-09 `LucasWilkinson` on `benchmarks/kernels/weight_shapes.py`:1: the benchmarks directory is under: vllm/benchmarks not: vllm/vllm/benchmarks unfortunately (https://github.com/vllm-project/vllm/pull/7174#discussion_r1710660107)
+- 2024-08-09 `LucasWilkinson` on `csrc/cutlass_extensions/torch_utils.hpp`:37: ya good call, done. (https://github.com/vllm-project/vllm/pull/7174#discussion_r1710667143)
+- 2024-08-09 `LucasWilkinson` on `csrc/quantization/machete/generate.py`:256: no just reads better in the generated code (https://github.com/vllm-project/vllm/pull/7174#discussion_r1710669056)
+- 2024-08-09 `LucasWilkinson` on `csrc/quantization/machete/generate.py`:379: Im hesitant to move it out of generate() since I eventually want the script to also support jitting schedules i.e. add something like a jit(scheudles, ...), but I could be convinced otherwise. (https://github.com/vllm-project/vllm/pull/7174#discussion_r1710671605)
+- 2024-08-09 `LucasWilkinson` on `csrc/quantization/machete/machete_mm_launcher.cuh`:23: Im not sure I understand what you are suggesting here (https://github.com/vllm-project/vllm/pull/7174#discussion_r1710679269)
+- 2024-08-09 `LucasWilkinson` on `csrc/quantization/machete/machete_pytorch.cu`:14: But I thought only kU4 and kS4 were supported? we generate kernels for kU4, kU8, kU4B8, and kU8B128 in generate.py Im generally not a fan of creating utilities until they would used in multiple spots, Im happy to create a utility once ... (https://github.com/vllm-project/vllm/pull/7174#discussion_r1710691918)
+- 2024-08-09 `LucasWilkinson` on `csrc/quantization/machete/machete_pytorch.cu`:14: only kU4 and kS4 were supported? oh I see what you are saying! supported types is out of sync, fix edit: actually its not used anymore, let me get rid of it (https://github.com/vllm-project/vllm/pull/7174#discussion_r1710709613)
+- 2024-08-09 `LucasWilkinson` on `csrc/cutlass_extensions/vllm_custom_types.cuh`:10: These types are primarily tags so we can dispatch to the correct conversion routine that has the biased fused in (found in vllm numeric conversion.cuh), so the only important part is that Bias is part of the type signature (https://github.com/vllm-project/vllm/pull/7174#discussion_r1710715214)
+- 2024-08-09 `ProExpertProg` on `csrc/cutlass_extensions/vllm_custom_types.cuh`:10: I see, that makes sense. Perhaps still add a using bias = Bias so it's accessible to any future users? Unless you don't think that can be helpful. (https://github.com/vllm-project/vllm/pull/7174#discussion_r1711503007)
+- 2024-08-09 `ProExpertProg` on `csrc/quantization/machete/machete_pytorch.cu`:14: Okay that's very reasonable re:utility, cool (https://github.com/vllm-project/vllm/pull/7174#discussion_r1711511063)
+- 2024-08-09 `tlrmchlsmth` on `benchmarks/kernels/benchmark_machete.py`: We should consider updating our kernel benchmarks to run with CUDA graphs in the future (https://github.com/vllm-project/vllm/pull/7174#discussion_r1711529242)
+- 2024-08-09 `tlrmchlsmth` on `csrc/quantization/machete/machete_mm_kernel.cuh`:171: There's a particular limitation of make cute stride and its usage here that I think we should try to avoid. Setting strides based on the shapes of the tensors prevents us from passing subtensors into kernels. The machete kernels would fail a ... (https://github.com/vllm-project/vllm/pull/7174#discussion_r1711561718)
+- 2024-08-09 `tlrmchlsmth` on `csrc/quantization/machete/machete_mm_kernel.cuh`:168: Does this PR compile without warnings? I've been trying to get and keep the build clean and I think this will give us an unused variable warning (https://github.com/vllm-project/vllm/pull/7174#discussion_r1711576392)
+- 2024-08-12 `LucasWilkinson` on `csrc/cutlass_extensions/vllm_custom_types.cuh`:10: it just unused currently, im just generally avoid adding unused stuff (since it untested). But someone could easily add that if they need it 👍 (https://github.com/vllm-project/vllm/pull/7174#discussion_r1713154394)
+- 2024-08-12 `LucasWilkinson` on `csrc/quantization/machete/machete_mm_kernel.cuh`:171: cool made a make cute layout util that handles this and updated the launcher to use that. good call :+1: (https://github.com/vllm-project/vllm/pull/7174#discussion_r1713154730)
+- 2024-08-12 `LucasWilkinson` on `benchmarks/kernels/benchmark_machete.py`: Ya that would be cool, future PR though (https://github.com/vllm-project/vllm/pull/7174#discussion_r1713848328)
+- 2024-08-14 `tlrmchlsmth` on `csrc/cutlass_extensions/vllm_numeric_conversion.cuh`:60: probably best for any TODO tags to use your github username (https://github.com/vllm-project/vllm/pull/7174#discussion_r1717571332)
+- 2024-08-14 `tlrmchlsmth` on `csrc/cutlass_extensions/vllm_numeric_conversion.cuh`:77: nit: fix up spacing and punctuation (https://github.com/vllm-project/vllm/pull/7174#discussion_r1717572443)
+- 2024-08-14 `tlrmchlsmth` on `csrc/cutlass_extensions/vllm_numeric_conversion.cuh`:2: How close to the upstream numeric conversion.h is this file? I grepped around with varying success with the names in this file so it was a little hard to know. If this is very close to cutlass/numeric conversion.h, then when we should ... (https://github.com/vllm-project/vllm/pull/7174#discussion_r1717578961)
+- 2024-08-14 `tlrmchlsmth` on `csrc/math_utils.h`: should this be named math utils.hpp? (https://github.com/vllm-project/vllm/pull/7174#discussion_r1717580237)
+- 2024-08-14 `tlrmchlsmth` on `csrc/quantization/machete/machete_prepacked_layout.cuh`:8: nit: fixup comment "The cutlass include order matters" (https://github.com/vllm-project/vllm/pull/7174#discussion_r1717584804)
+- 2024-08-14 `tlrmchlsmth` on `csrc/quantization/machete/machete_mm_kernel.cuh`:182: Are there divisibility constraints on the shapes or strides that we should be asserting here? (https://github.com/vllm-project/vllm/pull/7174#discussion_r1717586753)
+- 2024-08-14 `tlrmchlsmth` on `tests/kernels/test_machete_gemm.py`:33: could you add a couple of nastier sizes here? (see also my question about adding TORCH CHECKs for divisibility constraints) (https://github.com/vllm-project/vllm/pull/7174#discussion_r1717587445)
+- 2024-08-14 `tlrmchlsmth` on `tests/kernels/test_machete_gemm.py`: A couple of other things would be good to test in here: Running on CUDA devices other than GPU 0 CUDA graph support Running with sub-sets (https://github.com/vllm-project/vllm/pull/7174#discussion_r1717588923)
+- 2024-08-15 `LucasWilkinson` on `csrc/cutlass_extensions/vllm_numeric_conversion.cuh`:2: so this was bad copy and pasting, this file is purely an extension of numeric conversion.h, added a block comment (https://github.com/vllm-project/vllm/pull/7174#discussion_r1717827922)
+- 2024-08-15 `LucasWilkinson` on `tests/kernels/test_machete_gemm.py`:33: hmmm what would you consider nastier where N is still multiple of 128 and K is a still multiple of 64? I updated: (257, 4224, 4096), to (257, 4224, 4160), to make it a bit nastier (https://github.com/vllm-project/vllm/pull/7174#discussion_r1717885637)
+- 2024-08-15 `LucasWilkinson` on `csrc/math_utils.h`: ah actually this is vestigial, removed (https://github.com/vllm-project/vllm/pull/7174#discussion_r1717886932)
+- 2024-08-15 `LucasWilkinson` on `csrc/quantization/machete/machete_mm_kernel.cuh`:182: No divisibility constraints on A, D or C, only on B. The B divisibility constraints are handled in machete prepack B (since you have to prepack B before calling gemm), those were: in csrc/quantization/machete/machete prepack kernel.cuh but I added some more user ... (https://github.com/vllm-project/vllm/pull/7174#discussion_r1717889814)
+- 2024-08-15 `LucasWilkinson` on `csrc/quantization/machete/machete_mm_kernel.cuh`:168: is this on the latest? not sure why the comment says last week but was posted 7 hours ago (https://github.com/vllm-project/vllm/pull/7174#discussion_r1717906114)
+- 2024-08-15 `tlrmchlsmth` on `csrc/quantization/machete/machete_mm_kernel.cuh`:168: I must have written the comment but forgotten hit submit. I don't see the variable in the current revision and I didn't see any warnings when I looked through the logs, so this should be good. (https://github.com/vllm-project/vllm/pull/7174#discussion_r1718426055)
+- 2024-08-15 `tlrmchlsmth` on `tests/kernels/test_machete_gemm.py`:33: I wasn't sure what the divisibility constraints were (see my other comment :smile: ) but this helps, thanks (https://github.com/vllm-project/vllm/pull/7174#discussion_r1718427318)
+- 2024-08-16 `mgoin` on `.gitignore`:91: are there file extensions you could specify here? it seems like it may only be ".cu" that is needed (https://github.com/vllm-project/vllm/pull/7174#discussion_r1720315741)
+- 2024-08-19 `tlrmchlsmth` on `csrc/quantization/machete/machete_mainloop.cuh`:118: Could you add a comment explaining what's going on with this conditional? I.e. why do we use a different layout just for one case? (https://github.com/vllm-project/vllm/pull/7174#discussion_r1722075034)
+- 2024-08-19 `tlrmchlsmth` on `csrc/quantization/machete/machete_mainloop.cuh`: I have one favor to ask on this file. Could you go through and add comments highlighting which parts are novel to machete, and which parts are copied from the upstream file sm90 mma tma gmma rs warpspecialized mixed input.hpp? Also, for ... (https://github.com/vllm-project/vllm/pull/7174#discussion_r1722117856)
+- 2024-08-19 `bnellnm` on `csrc/cutlass_extensions/cute_utils.cuh`:32: nit: can you add curly braces around the single statement if bodies? (ditto elsewhere) (https://github.com/vllm-project/vllm/pull/7174#discussion_r1722341765)
+- 2024-08-19 `bnellnm` on `csrc/cutlass_extensions/torch_utils.hpp`:32: nit: cute::is tuple? ditto for other uses of STL-like templates. (https://github.com/vllm-project/vllm/pull/7174#discussion_r1722345797)
+- 2024-08-19 `bnellnm` on `csrc/torch_bindings.cpp`:139: this impl should be redundant when using def w/a function pointer. (https://github.com/vllm-project/vllm/pull/7174#discussion_r1722349527)
+- 2024-08-19 `bnellnm` on `csrc/torch_bindings.cpp`:149: Use string schemas for these functions. Otherwise the device specific impls (and any meta functions) are ignored. (it would also be nice to define some meta-functions for these but i would not hold up the PR for them). (https://github.com/vllm-project/vllm/pull/7174#discussion_r1722350480)
+- 2024-08-19 `bnellnm` on `csrc/quantization/machete/generate.py`:9: does this need to be added to requirements-build.txt? (https://github.com/vllm-project/vllm/pull/7174#discussion_r1722351387)
+- 2024-08-19 `bnellnm` on `CMakeLists.txt`:234: Does this regenerate all the files every time you build? (https://github.com/vllm-project/vllm/pull/7174#discussion_r1722361476)
+- 2024-08-19 `bnellnm`: Should there be a comment/README somewhere that briefly describes what steps are needed if a new type/shape combination needs to be added? (https://github.com/vllm-project/vllm/pull/7174#issuecomment-2297498836)
+- 2024-08-19 `bnellnm` on `csrc/ops.h`:91: nit: const ref Tensor args? (ditto for prepack B) (https://github.com/vllm-project/vllm/pull/7174#discussion_r1722387068)
+- 2024-08-19 `LucasWilkinson` on `CMakeLists.txt`:234: ya it does, really hasnt be an issue since ccache handles it, but I can look at something fancier than this if this is a concern (https://github.com/vllm-project/vllm/pull/7174#discussion_r1722516241)
+- 2024-08-20 `LucasWilkinson` on `csrc/quantization/machete/machete_mainloop.cuh`: I attempted to verbatim copy / comment as many sections as I could here: made sense to do it for a few of the utilities, unfortunately a lot of the layout stuff (i.e. templating/using statements) is actually quite different due to custom ... (https://github.com/vllm-project/vllm/pull/7174#discussion_r1722623860)
+- 2024-08-20 `LucasWilkinson`: Should there be a comment/README somewhere that briefly describes what steps are needed if a new type/shape combination needs to be added? Added an initial readme, will likely be able to improve it as work on the w4a8 support in machete since ... (https://github.com/vllm-project/vllm/pull/7174#issuecomment-2297901059)

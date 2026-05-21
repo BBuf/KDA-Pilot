@@ -1,76 +1,24 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#30156](https://github.com/vllm-project/vllm/pull/30156)
-- Source page: `sources/prs/vllm/PR-30156.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-30156`
-- Generated at: `2026-05-20T15:38:55.548419+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-12-05T21:22:48Z`
-- Merged: `2026-04-14T09:20:03Z`
-
-## Discussion Counts
-
-- Issue comments: 25
-- Review submissions: 26 (approved=1, commented=25)
-- Inline review comments: 31
-- Review threads observed: 18
-- Resolved/outdated thread markers: resolved=18, outdated=12
-- Human participants with discussion text: DarkLight1337, chatgpt-codex-connector, chaunceyjiang, cursor, jdebache, mergify
-- Automation comments/reviews omitted from high-signal summary: 5
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-12-05T21:24:55Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces TxtSlicesDataset for benchmarking, which samples data from a text file. It also ... (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-3546490823)
-- `2025-12-05T21:27:51Z` `COMMENTED` by `chatgpt-codex-connector` - 💡 Codex Review Here are some automated review suggestions for this pull request. ℹ️ About Codex in GitHub ... (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-3546497147)
-- `2026-01-27T13:06:56Z` `COMMENTED` by `cursor` - Cursor Bugbot has reviewed your changes and found 4 potential issues. Bugbot Autofix is OFF. To automatically fix ... (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-3711090395)
-- `2026-04-14T03:36:00Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103201957)
-- `2026-04-14T03:37:36Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103206366)
-- `2026-04-14T03:38:42Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103209080)
-- `2026-04-14T03:39:36Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103211265)
-- `2026-04-14T03:40:46Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103213776)
-- `2026-04-14T03:41:09Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103214588)
-- `2026-04-14T05:21:27Z` `COMMENTED` by `jdebache` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103506953)
-- `2026-04-14T05:22:02Z` `COMMENTED` by `jdebache` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103508584)
-- `2026-04-14T05:25:26Z` `COMMENTED` by `jdebache` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103518819)
-- `2026-04-14T06:55:13Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103875988)
-- `2026-04-14T06:55:54Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103879973)
-- `2026-04-14T06:56:05Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103881001)
-- `2026-04-14T07:08:11Z` `COMMENTED` by `jdebache` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103963351)
-- `2026-04-14T07:08:19Z` `COMMENTED` by `jdebache` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103964286)
-- `2026-04-14T07:08:26Z` `COMMENTED` by `jdebache` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103965108)
-- `2026-04-14T07:08:34Z` `COMMENTED` by `jdebache` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103965925)
-- `2026-04-14T07:08:54Z` `COMMENTED` by `jdebache` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103968375)
-- `2026-04-14T07:09:01Z` `COMMENTED` by `jdebache` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103969446)
-- `2026-04-14T07:10:43Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103982736)
-- `2026-04-14T07:11:56Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4103991758)
-- `2026-04-14T07:16:25Z` `COMMENTED` by `jdebache` (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-4104024021)
-- ... 2 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/benchmarks/datasets.py`: 13 inline comment(s)
-- `vllm/benchmarks/datasets/datasets.py`: 8 inline comment(s)
-- `tests/benchmarks/test_txt_slices_dataset.py`: 3 inline comment(s)
-- `vllm/benchmarks/datasets/utils.py`: 3 inline comment(s)
-- `tests/benchmarks/test_sampling_params.py`: 2 inline comment(s)
-- `vllm/benchmarks/throughput.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-04-14T05:25:26Z` `inline` by `jdebache` `vllm/benchmarks/datasets/datasets.py`:2344; signals: benchmark, correctness, hang; excerpt: "It is true that it is not strictly necessary. However, this will give more information to the type checker for this function, which will ..." (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077289596)
-- `2026-04-14T07:11:56Z` `inline` by `DarkLight1337` `vllm/benchmarks/throughput.py`:360; signals: benchmark, hang, throughput; excerpt: "Can revert these changes" (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077706827)
-- `2026-01-27T13:06:56Z` `review` `COMMENTED` by `cursor`; signals: hang; excerpt: "Cursor Bugbot has reviewed your changes and found 4 potential issues. Bugbot Autofix is OFF. To automatically fix reported issues with Cloud Agents, enable ..." (https://github.com/vllm-project/vllm/pull/30156#pullrequestreview-3711090395)
-- `2026-04-14T03:39:36Z` `inline` by `DarkLight1337` `vllm/benchmarks/datasets.py`:64; signals: benchmark, hang; excerpt: "Is there a need to change this class?" (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077005420)
-- `2026-04-14T03:41:09Z` `inline` by `DarkLight1337` `vllm/benchmarks/datasets/datasets.py`:2344; signals: benchmark, hang; excerpt: "Unnecessary change" (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077008967)
-- `2026-04-14T07:16:25Z` `inline` by `jdebache` `vllm/benchmarks/throughput.py`:360; signals: benchmark, throughput; excerpt: "Oh, forgot this file, sorry. Will do." (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077730652)
-- `2026-01-27T13:52:47Z` `issue` by `mergify`; signals: failing, hang; excerpt: "Hi @hypdeb, the pre-commit checks have failed. Please run: Then, commit the changes and push to your branch. For future commits, pre-commit will run ..." (https://github.com/vllm-project/vllm/pull/30156#issuecomment-3805338367)
-- `2026-01-28T13:30:43Z` `issue` by `mergify`; signals: failing, hang; excerpt: "Hi @hypdeb, the pre-commit checks have failed. Please run: Then, commit the changes and push to your branch. For future commits, pre-commit will run ..." (https://github.com/vllm-project/vllm/pull/30156#issuecomment-3811324375)
-- `2026-01-28T14:30:21Z` `issue` by `mergify`; signals: failing, hang; excerpt: "Hi @hypdeb, the pre-commit checks have failed. Please run: Then, commit the changes and push to your branch. For future commits, pre-commit will run ..." (https://github.com/vllm-project/vllm/pull/30156#issuecomment-3811641115)
-- `2025-12-05T21:27:51Z` `inline` by `chatgpt-codex-connector` `vllm/benchmarks/datasets.py`:1776; signals: benchmark; excerpt: "![P1 Badge]( Define txt-slices CLI args used in get samples The txt-slices branch of get samples reads args.txt slices input len and args.txt slices ..." (https://github.com/vllm-project/vllm/pull/30156#discussion_r2594032137)
-- `2026-01-27T13:06:57Z` `inline` by `cursor` `vllm/benchmarks/datasets/datasets.py`:2346; signals: benchmark; excerpt: "SpecBench.sample fails to pass arguments to parent class High Severity The SpecBench.sample method declares explicit parameters (tokenizer, num requests, output len, etc.) but only ..." (https://github.com/vllm-project/vllm/pull/30156#discussion_r2731925548)
-- `2026-01-27T13:06:57Z` `inline` by `cursor` `vllm/benchmarks/datasets/datasets.py`:746; signals: benchmark; excerpt: "Unused output len parameter in reranking sample method Low Severity The output len parameter was added to RandomDatasetForReranking.sample but is never used. The method ..." (https://github.com/vllm-project/vllm/pull/30156#discussion_r2731925551)
+- 2026-01-27 `jdebache`: Hey, I'm trying to run the doc generation locally to figure out what is wrong. How long is it supposed to take? I still can't reproduce locally, but from the error logs, it looks like it's trying to mock vllm over and ... (https://github.com/vllm-project/vllm/pull/30156#issuecomment-3805414214)
+- 2026-01-29 `jdebache`: Hey @hmellor, would you mind having a look? We found this dataset generation useful while benchmarking with features that are data dependent such as EP and speculative decoding. (https://github.com/vllm-project/vllm/pull/30156#issuecomment-3816075177)
+- 2026-01-29 `jdebache`: Note that I wanted to make additional fixes to the typing in datasets.py, however, it caused a cascade of issues, in particular in the documentation generator. Keeping those would have made the changes too large. (https://github.com/vllm-project/vllm/pull/30156#issuecomment-3816081568)
+- 2026-04-07 `chaunceyjiang`: benchmark /cc @DarkLight1337 PTAL. (https://github.com/vllm-project/vllm/pull/30156#issuecomment-4197619574)
+- 2026-04-13 `jdebache`: Thanks for the review @DarkLight1337. The main benefit is that you don't need to create the dataset in jsonl separately for each combination of ISL/OSL and number of prompts. While custom dataset is for the use case where you care about the ... (https://github.com/vllm-project/vllm/pull/30156#issuecomment-4236044790)
+- 2026-04-13 `jdebache`: While I have you here, could I also bring your attention to PR 39281? It removes some deep dependencies for the datasets module, which have a tendency to break documentation generation. (https://github.com/vllm-project/vllm/pull/30156#issuecomment-4236053747)
+- 2026-04-13 `DarkLight1337`: The main benefit is that you don't need to create the dataset in jsonl separately for each combination of ISL/OSL and number of prompts. While custom dataset is for the use case where you care about the content of your prompts specifically. ... (https://github.com/vllm-project/vllm/pull/30156#issuecomment-4236358456)
+- 2026-04-13 `jdebache`: I think that wouldn't be a problem. However, I would advise against it. I find that it's not great for discoverability. It adds a new concept of "a script that generates a dataset that I can than pass to vllm bench serve, ... (https://github.com/vllm-project/vllm/pull/30156#issuecomment-4236552842)
+- 2026-04-13 `DarkLight1337`: I feel that the current changes are too intrusive for a single dataset type that's relatively niche. I could accept this PR if you make the TxtSlicesDataset a wrapper over the JSONL dataset without having to change sample. (https://github.com/vllm-project/vllm/pull/30156#issuecomment-4236598978)
+- 2026-04-13 `jdebache`: Okay, I will write a separate script to generate JSONL. Do you mind if I still do the two following changes: - Support separate range ratios for ISL and OSL, which is useful for all random datasets - Pull out get sampling ... (https://github.com/vllm-project/vllm/pull/30156#issuecomment-4237136858)
+- 2026-04-14 `DarkLight1337` on `tests/benchmarks/test_sampling_params.py`:149: Merge these two tests together (https://github.com/vllm-project/vllm/pull/30156#discussion_r3076995803)
+- 2026-04-14 `DarkLight1337` on `tests/benchmarks/test_txt_slices_dataset.py`:31: Use tmp path fixture so we don't need try-finally to ensure cleanup (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077000354)
+- 2026-04-14 `DarkLight1337` on `vllm/benchmarks/datasets/utils.py`:1: Let's create a new directory vllm/benchmarks/datasets and put all the related files inside. (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077003344)
+- 2026-04-14 `DarkLight1337` on `vllm/benchmarks/datasets.py`:64: Is there a need to change this class? (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077005420)
+- 2026-04-14 `DarkLight1337` on `vllm/benchmarks/datasets.py`:1668: I think it would be simpler to make --random-range-ratio accept a JSON dictionary (which is parsed in Python) so we don't need to add two extra arguments (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077008081)
+- 2026-04-14 `jdebache` on `vllm/benchmarks/datasets.py`:64: It is never mutated and there is no a-priori reason it should be mutable, which is why I chose to make it frozen. The advantages of choosing immutable types by default are, among others: - predictability and easier reasoning about the code ... (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077278076)
+- 2026-04-14 `jdebache` on `vllm/benchmarks/datasets.py`:1668: Just to clarify: it should accept both a single value and a dictionary correct? Otherwise, it would break backwards compatibility. (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077279869)
+- 2026-04-14 `jdebache` on `vllm/benchmarks/datasets/datasets.py`:2344: It is true that it is not strictly necessary. However, this will give more information to the type checker for this function, which will allow to: - catch more potential bugs in future changes - shifting verification of correctness left and reducing ... (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077289596)
+- 2026-04-14 `jdebache`: Thanks again for the review. I have responded to some of the comments and would appreciate your feedback on those. In the meantime, I will address the other comments and update the changes. (https://github.com/vllm-project/vllm/pull/30156#issuecomment-4241480318)
+- 2026-04-14 `DarkLight1337` on `vllm/benchmarks/datasets.py`:64: I think that's outside the scope of this PR (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077623161)
+- 2026-04-14 `DarkLight1337` on `vllm/benchmarks/datasets/datasets.py`:2344: Again, outside the scope of this PR (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077624030)
+- 2026-04-14 `DarkLight1337` on `vllm/benchmarks/throughput.py`:360: Can revert these changes (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077706827)
+- 2026-04-14 `jdebache` on `vllm/benchmarks/throughput.py`:360: Oh, forgot this file, sorry. Will do. (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077730652)
+- 2026-04-14 `DarkLight1337` on `vllm/benchmarks/datasets/datasets.py`:113: We should still default to None (https://github.com/vllm-project/vllm/pull/30156#discussion_r3077756641)

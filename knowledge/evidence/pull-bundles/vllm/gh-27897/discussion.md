@@ -1,77 +1,39 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#27897](https://github.com/vllm-project/vllm/pull/27897)
-- Source page: `sources/prs/vllm/PR-27897.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-27897`
-- Generated at: `2026-05-20T15:38:23.807311+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-10-31T21:21:38Z`
-- Merged: `2025-11-12T21:13:03Z`
-
-## Discussion Counts
-
-- Issue comments: 3
-- Review submissions: 37 (approved=1, commented=36)
-- Inline review comments: 44
-- Review threads observed: 15
-- Resolved/outdated thread markers: resolved=11, outdated=5
-- Human participants with discussion text: bnellnm, chatgpt-codex-connector, kylesayrs, mergify, mgoin, pavanimajety, varun-sundar-rabindranath, yewentao256
-- Automation comments/reviews omitted from high-signal summary: 2
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-10-31T21:23:31Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces performance optimizations for DeepGEMM on B200 hardware by correctly handling weight and ... (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3406226074)
-- `2025-10-31T21:25:30Z` `COMMENTED` by `chatgpt-codex-connector` - 💡 Codex Review Here are some automated review suggestions for this pull request. ℹ️ About Codex in GitHub ... (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3406235427)
-- `2025-10-31T22:55:05Z` `COMMENTED` by `varun-sundar-rabindranath` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3406450456)
-- `2025-10-31T22:57:09Z` `COMMENTED` by `varun-sundar-rabindranath` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3406457281)
-- `2025-11-01T07:17:46Z` `COMMENTED` by `mgoin` - LGTM nice find. I just have the concern about applying the right ue8m0 format for both Hopper and ... (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3406923835)
-- `2025-11-03T15:24:10Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3411549211)
-- `2025-11-03T15:48:01Z` `COMMENTED` by `varun-sundar-rabindranath` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3411671748)
-- `2025-11-03T17:06:09Z` `COMMENTED` by `yewentao256` - Nice find and great performance improvement! Thanks for the work! A few thoughts (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3412006160)
-- `2025-11-03T17:22:34Z` `COMMENTED` by `varun-sundar-rabindranath` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3412131771)
-- `2025-11-03T17:36:51Z` `COMMENTED` by `varun-sundar-rabindranath` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3412185622)
-- `2025-11-03T17:36:59Z` `COMMENTED` by `varun-sundar-rabindranath` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3412186009)
-- `2025-11-03T17:58:33Z` `COMMENTED` by `varun-sundar-rabindranath` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3412258933)
-- `2025-11-03T17:58:51Z` `COMMENTED` by `varun-sundar-rabindranath` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3412259806)
-- `2025-11-03T18:08:14Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3412285971)
-- `2025-11-03T18:20:49Z` `COMMENTED` by `varun-sundar-rabindranath` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3412331701)
-- `2025-11-03T18:23:29Z` `COMMENTED` by `varun-sundar-rabindranath` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3412343696)
-- `2025-11-03T18:49:33Z` `COMMENTED` by `varun-sundar-rabindranath` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3412444842)
-- `2025-11-03T18:57:21Z` `COMMENTED` by `varun-sundar-rabindranath` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3412470463)
-- `2025-11-03T20:07:27Z` `COMMENTED` by `varun-sundar-rabindranath` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3412725639)
-- `2025-11-03T20:40:40Z` `COMMENTED` by `varun-sundar-rabindranath` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3412844912)
-- `2025-11-04T19:49:26Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3418407984)
-- `2025-11-04T21:18:05Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3418666518)
-- `2025-11-05T14:34:53Z` `COMMENTED` by `varun-sundar-rabindranath` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3422459048)
-- `2025-11-06T14:07:50Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3428366432)
-- ... 13 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/layers/quantization/fp8.py`: 16 inline comment(s)
-- `vllm/utils/deep_gemm.py`: 7 inline comment(s)
-- `vllm/model_executor/layers/quantization/utils/fp8_utils.py`: 5 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/layer.py`: 4 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/batched_deep_gemm_moe.py`: 4 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/deepep_ll_prepare_finalize.py`: 4 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/modular_kernel.py`: 4 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-10-31T22:57:08Z` `inline` by `varun-sundar-rabindranath` `vllm/model_executor/layers/quantization/fp8.py`:846; signals: aligned, b200, deepgemm, fp8, gemm, h100, hang, hopper; excerpt: "cc @yewentao256 for the changes to this file. I have replaced hopper specific get col major tma aligned tensor with a generic (h100 and ..." (https://github.com/vllm-project/vllm/pull/27897#discussion_r2482869524)
-- `2025-11-03T17:22:34Z` `inline` by `varun-sundar-rabindranath` `vllm/model_executor/layers/quantization/fp8.py`:846; signals: aligned, blackwell, deepgemm, fp8, gemm, hopper, layout, perf; excerpt: "the main difference is get col major tma aligned tensor is Hopper specific and transform sf into required layout works for both Hopper and ..." (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487295310)
-- `2025-11-03T20:40:40Z` `inline` by `varun-sundar-rabindranath` `vllm/model_executor/layers/fused_moe/batched_deep_gemm_moe.py`:258; signals: benchmark, blackwell, block, deepgemm, fp8, gemm, hang, hopper; excerpt: "The comment doesn't match this line since "is" is == Updated the comment to == sm100, since deepgemm readme specifies sm100 explicitly. We can ..." (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487793458)
-- `2025-11-03T17:04:03Z` `inline` by `yewentao256` `vllm/model_executor/layers/quantization/fp8.py`:846; signals: aligned, fp8, hang, layout, perf, tma; excerpt: "So the main change is that we convert get col major tma aligned tensor to transform sf into required layout? What is the difference ..." (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487230108)
-- `2025-11-03T18:49:33Z` `inline` by `varun-sundar-rabindranath` `vllm/model_executor/layers/quantization/fp8.py`:993; signals: block, deepgemm, fp8, gemm, moe, perf; excerpt: "Here we perform weight requant and weight scale transformation based on is deep gemm e8m0 used() and self.block quant - However, this does not ..." (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487520906)
-- `2025-11-10T14:53:08Z` `inline` by `varun-sundar-rabindranath` `vllm/model_executor/layers/fused_moe/deepep_ll_prepare_finalize.py`:103; signals: deepgemm, gemm, latency, layout, moe, sm100; excerpt: "Yes. only the low latency dispatch exposes this option. and weight requant doesn't require this ? the transform sf into required layout function from ..." (https://github.com/vllm-project/vllm/pull/27897#discussion_r2510874704)
-- `2025-11-03T16:55:52Z` `inline` by `yewentao256` `vllm/model_executor/layers/fused_moe/batched_deep_gemm_moe.py`:258; signals: benchmark, gemm, hang, hopper, moe; excerpt: "+1, actually we are using e8m0 for hopper currently, this seems a breaking change for me. We should carefully test and benchmark before we ..." (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487205095)
-- `2025-11-03T18:08:10Z` `inline` by `pavanimajety` `vllm/utils/deep_gemm.py`:54; signals: flashinfer, fp8, gemm, latency, moe; excerpt: "For example to run Flashinfer MOE we now need to run: VLLM USE FLASHINFER MOE FP8=1 VLLM FLASHINFER MOE BACKEND=latency VLLM USE DEEP GEMM=0 ..." (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487414471)
-- `2025-10-31T21:25:30Z` `inline` by `chatgpt-codex-connector` `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:954; signals: block, fp8, hang, moe; excerpt: "without threading through the layer’s actual block quantization shape. requant weight ue8m0 inplace defaults to a (128, 128) block, so any FP8 MoE weights ..." (https://github.com/vllm-project/vllm/pull/27897#discussion_r2482717617)
-- `2025-11-03T18:57:21Z` `inline` by `varun-sundar-rabindranath` `vllm/utils/deep_gemm.py`:54; signals: deepgemm, fp8, gemm, moe; excerpt: "@pavanimajety sorry i missed your comment. May I know why is this removed? Is this because of MOE vs Gemm impl differences? I removed ..." (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487539201)
-- `2025-11-04T19:49:26Z` `inline` by `pavanimajety` `vllm/utils/deep_gemm.py`:54; signals: deepgemm, flashinfer, gemm, moe; excerpt: "Thanks for testing Varun, I added the check in because we see incorrect logs and unrequired tuning when flashinfer MoE is enabled but DeepGemm ..." (https://github.com/vllm-project/vllm/pull/27897#discussion_r2491866920)
-- `2025-11-04T21:18:05Z` `inline` by `bnellnm` `vllm/model_executor/layers/fused_moe/modular_kernel.py`:728; signals: deepgemm, gemm, kernel, moe; excerpt: "Can this method be overridden by subclasses? If so, then you could avoid adding ue8m0 related methods to all the modular kernels and make ..." (https://github.com/vllm-project/vllm/pull/27897#discussion_r2492073760)
+- 2025-10-31 `varun-sundar-rabindranath` on `vllm/model_executor/layers/fused_moe/layer.py`:270: @bnellnm I added, supports packed ue8m0 scales dispatch and setup packed ue8m0 scales dispatch to the FusedMoEPrepareAndFinalize base class and supports packed ue8m0 act scales to the FusedMoEPermuteExpertsUnpermute base class. The motivation is that, we need the prepare finalize implementation to dispatch ... (https://github.com/vllm-project/vllm/pull/27897#discussion_r2482865040)
+- 2025-10-31 `varun-sundar-rabindranath` on `vllm/model_executor/layers/quantization/fp8.py`:846: cc @yewentao256 for the changes to this file. I have replaced hopper specific get col major tma aligned tensor with a generic (h100 and b200)transform sf into required layout utility from deepgemm. PTAL! Thanks 🙌 (https://github.com/vllm-project/vllm/pull/27897#discussion_r2482869524)
+- 2025-11-01 `mgoin` on `vllm/model_executor/layers/fused_moe/batched_deep_gemm_moe.py`:258: The comment doesn't match this line since "is" is == Also isn't it the case though that we still want to use UE8M0 on hopper for cases like DeepSeek terminus? (https://github.com/vllm-project/vllm/pull/27897#discussion_r2483171076)
+- 2025-11-03 `bnellnm` on `vllm/model_executor/layers/fused_moe/layer.py`:270: I suppose you could have a more generic "setup" method that is always called and is a nop by default, e.g. I think it would also make sense to move this inside FusedMoEModularKernel. init so that it will be invoked no matter ... (https://github.com/vllm-project/vllm/pull/27897#discussion_r2486872117)
+- 2025-11-03 `varun-sundar-rabindranath` on `vllm/model_executor/layers/fused_moe/layer.py`:270: I like the idea of moving it into the FusedMoEModularKernel. init - I'll do that 👍 Thanks. (https://github.com/vllm-project/vllm/pull/27897#discussion_r2486966514)
+- 2025-11-03 `yewentao256` on `vllm/model_executor/layers/fused_moe/batched_deep_gemm_moe.py`:258: +1, actually we are using e8m0 for hopper currently, this seems a breaking change for me. We should carefully test and benchmark before we use this. (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487205095)
+- 2025-11-03 `yewentao256` on `vllm/model_executor/layers/quantization/fp8.py`:925: Will this function call requant weight ue8m0 inplace again inside? (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487224128)
+- 2025-11-03 `yewentao256` on `vllm/model_executor/layers/quantization/fp8.py`:846: So the main change is that we convert get col major tma aligned tensor to transform sf into required layout? What is the difference of these and why could we get perf? (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487230108)
+- 2025-11-03 `yewentao256` on `vllm/utils/deep_gemm.py`:54: I am not sure who adds this before, could you take a further look? (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487233597)
+- 2025-11-03 `yewentao256` on `vllm/model_executor/layers/quantization/fp8.py`:1037: If BatchedTritonOrDeepGemmExperts is not called elsewhere, could we delete the whole class? (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487235688)
+- 2025-11-03 `yewentao256` commented: Nice find and great performance improvement! Thanks for the work! A few thoughts (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3412006160)
+- 2025-11-03 `varun-sundar-rabindranath` on `vllm/model_executor/layers/quantization/fp8.py`:846: the main difference is get col major tma aligned tensor is Hopper specific and transform sf into required layout works for both Hopper and Blackwell. See The perf comes from the fact that on blackwell we were not transforming the weight scales ... (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487295310)
+- 2025-11-03 `pavanimajety` on `vllm/utils/deep_gemm.py`:54: May I know why is this removed? Is this because of MOE vs Gemm impl differences? DeepGemm seems to always be enabled even when other MOE backends are enabled. We need to have a better check to identify the moe backend. (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487411026)
+- 2025-11-03 `pavanimajety` on `vllm/utils/deep_gemm.py`:54: For example to run Flashinfer MOE we now need to run: VLLM USE FLASHINFER MOE FP8=1 VLLM FLASHINFER MOE BACKEND=latency VLLM USE DEEP GEMM=0 python .... (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487414471)
+- 2025-11-03 `varun-sundar-rabindranath` on `vllm/utils/deep_gemm.py`:54: Looks like adds it. @pavanimajety can you please take a look. Thanks. (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487445173)
+- 2025-11-03 `varun-sundar-rabindranath` on `vllm/model_executor/layers/quantization/fp8.py`:1037: it is still used in compressed tensors moe.py (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487454918)
+- 2025-11-03 `varun-sundar-rabindranath` on `vllm/model_executor/layers/quantization/fp8.py`:993: Here we perform weight requant and weight scale transformation based on is deep gemm e8m0 used() and self.block quant - However, this does not consider what Fp8MoeBackend is used. i.e. regardless of the backend, which could be, we perform weight requant and ... (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487520906)
+- 2025-11-03 `varun-sundar-rabindranath` on `vllm/utils/deep_gemm.py`:54: @pavanimajety sorry i missed your comment. May I know why is this removed? Is this because of MOE vs Gemm impl differences? I removed it in an effort to cleanup. I think this function should depend only deepgemm specific attributes / envs. ... (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487539201)
+- 2025-11-03 `varun-sundar-rabindranath` on `vllm/utils/deep_gemm.py`:54: I tried running, from 25895 and got, (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487709811)
+- 2025-11-03 `varun-sundar-rabindranath` on `vllm/model_executor/layers/fused_moe/batched_deep_gemm_moe.py`:258: The comment doesn't match this line since "is" is == Updated the comment to == sm100, since deepgemm readme specifies sm100 explicitly. We can upgrade as needed. Also isn't it the case though that we still want to use UE8M0 on hopper ... (https://github.com/vllm-project/vllm/pull/27897#discussion_r2487793458)
+- 2025-11-04 `pavanimajety` on `vllm/utils/deep_gemm.py`:54: Thanks for testing Varun, I added the check in because we see incorrect logs and unrequired tuning when flashinfer MoE is enabled but DeepGemm is assumed default anyway. (https://github.com/vllm-project/vllm/pull/27897#discussion_r2491866920)
+- 2025-11-04 `bnellnm` on `vllm/model_executor/layers/fused_moe/modular_kernel.py`:728: Can this method be overridden by subclasses? If so, then you could avoid adding ue8m0 related methods to all the modular kernels and make an implementation specific to DeepEPLL.../BatchedDeepGemmExperts (https://github.com/vllm-project/vllm/pull/27897#discussion_r2492073760)
+- 2025-11-05 `varun-sundar-rabindranath` on `vllm/model_executor/layers/fused_moe/modular_kernel.py`:728: I am not sure I understand. post init setup is in FusedMoEModularKernel class which doesn't have any subclasses. can you clarify. Thanks. (https://github.com/vllm-project/vllm/pull/27897#discussion_r2494796931)
+- 2025-11-06 `bnellnm` on `vllm/model_executor/layers/fused_moe/modular_kernel.py`:728: I guess I was thinking you could have a generic post init setup sort of method on prepare finalize so that we wouldn't need to put such specific methods/logic here, e.g. And post init setup will be a nop for everything except ... (https://github.com/vllm-project/vllm/pull/27897#discussion_r2499097323)
+- 2025-11-06 `yewentao256` on `vllm/model_executor/layers/quantization/fp8.py`:993: Make sense to me, where is the code you have for the guard? (https://github.com/vllm-project/vllm/pull/27897#discussion_r2500622055)
+- 2025-11-06 `yewentao256` on `vllm/model_executor/layers/fused_moe/deepep_ll_prepare_finalize.py`:103: So is this flag only be used in low latency dispatch, and weight requant doesn't require this ? (https://github.com/vllm-project/vllm/pull/27897#discussion_r2500630738)
+- 2025-11-06 `yewentao256` commented: The idea looks good to me, could you also update all of the deepgemm unit tests accordingly? (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3430267560)
+- 2025-11-10 `varun-sundar-rabindranath` on `vllm/model_executor/layers/quantization/fp8.py`:993: @yewentao256 The guard is in line 919 in this PR. note that allow deep gemm is true only if the backend selection chooses DEEPGEMM (https://github.com/vllm-project/vllm/pull/27897#discussion_r2510858754)
+- 2025-11-10 `varun-sundar-rabindranath` on `vllm/model_executor/layers/fused_moe/deepep_ll_prepare_finalize.py`:103: Yes. only the low latency dispatch exposes this option. and weight requant doesn't require this ? the transform sf into required layout function from deepgemm does this automatically when run on sm100. (https://github.com/vllm-project/vllm/pull/27897#discussion_r2510874704)
+- 2025-11-10 `varun-sundar-rabindranath` on `vllm/model_executor/layers/fused_moe/modular_kernel.py`:728: Yes. This is a good idea. I have made the change. Thanks 🙌 (https://github.com/vllm-project/vllm/pull/27897#discussion_r2511141150)
+- 2025-11-10 `bnellnm` on `vllm/model_executor/layers/quantization/fp8.py`:1048: Should we ditch using BatchedTritonExperts here? There was some talk about getting rid of them since DeepGEMM is now enabled by default. (https://github.com/vllm-project/vllm/pull/27897#discussion_r2511446921)
+- 2025-11-10 `varun-sundar-rabindranath` on `vllm/model_executor/layers/quantization/fp8.py`:1048: BatchedTritonExperts is the alternative when DeepGEMM is not installed. There was some talk about getting rid of them since DeepGEMM is now enabled by default. have we added deepgemm to the requirements.txts ? (https://github.com/vllm-project/vllm/pull/27897#discussion_r2511456541)
+- 2025-11-10 `bnellnm` on `vllm/model_executor/layers/quantization/fp8.py`:1048: No, it's in the docker though. I guess we can hold off on removing it. (https://github.com/vllm-project/vllm/pull/27897#discussion_r2511880113)
+- 2025-11-11 `yewentao256` commented: Please fix the conflicts and pre-commit issues so that we could land (https://github.com/vllm-project/vllm/pull/27897#pullrequestreview-3449742504)
+- 2025-11-12 `yewentao256` on `vllm/model_executor/layers/fused_moe/deepep_ll_prepare_finalize.py`:103: Could we rename to use ue8m0 dispatch? In this case we can avoid mixture with e8m0 with scales (https://github.com/vllm-project/vllm/pull/27897#discussion_r2518734852)
+- 2025-11-12 `mgoin` on `vllm/model_executor/layers/fused_moe/batched_deep_gemm_moe.py`:258: Okay so Blackwell just has the packing part specifically, understood (https://github.com/vllm-project/vllm/pull/27897#discussion_r2519429386)
+- 2025-11-12 `mgoin` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:1197: I think we want to preserve the attributes on the original parameter cc @kylesayrs (https://github.com/vllm-project/vllm/pull/27897#discussion_r2519783758)
+- 2025-11-12 `kylesayrs` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:1197: Yes, without the original attributes we won't be able to reload weights. More changes than this will be required to support reloading, so this is fine to land now and rebase later. (https://github.com/vllm-project/vllm/pull/27897#discussion_r2519795957)
+- 2025-11-12 `varun-sundar-rabindranath` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:1197: Should I just parameter.data.copy (new tensor) to avoid any unintended effects ? (https://github.com/vllm-project/vllm/pull/27897#discussion_r2519798860)

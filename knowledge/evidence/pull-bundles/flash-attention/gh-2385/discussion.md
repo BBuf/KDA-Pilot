@@ -1,51 +1,25 @@
-# PR Discussion Digest
-
-- Source PR: [Dao-AILab/flash-attention#2385](https://github.com/Dao-AILab/flash-attention/pull/2385)
-- Source page: `sources/prs/flash-attention/PR-2385.md`
-- Evidence bundle: `evidence/pull-bundles/flash-attention/gh-2385`
-- Generated at: `2026-05-20T15:16:56.080571+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-03-23T22:30:25Z`
-- Merged: `2026-04-02T21:08:46Z`
-
-## Discussion Counts
-
-- Issue comments: 31
-- Review submissions: 5 (approved=1, commented=4)
-- Inline review comments: 4
-- Review threads observed: 1
-- Resolved/outdated thread markers: resolved=1, outdated=1
-- Human participants with discussion text: 0xDELUXA, ScottTodd, astrelsky, m-gallus, micmelesse, tianwyan, tridao
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 1
-
-## Review Decisions
-
-- `2026-03-24T23:17:37Z` `COMMENTED` by `astrelsky` (https://github.com/Dao-AILab/flash-attention/pull/2385#pullrequestreview-4002985934)
-- `2026-03-24T23:21:58Z` `COMMENTED` by `ScottTodd` (https://github.com/Dao-AILab/flash-attention/pull/2385#pullrequestreview-4002997491)
-- `2026-03-24T23:47:40Z` `COMMENTED` by `micmelesse` (https://github.com/Dao-AILab/flash-attention/pull/2385#pullrequestreview-4003100968)
-- `2026-03-25T15:30:23Z` `COMMENTED` by `m-gallus` (https://github.com/Dao-AILab/flash-attention/pull/2385#pullrequestreview-4007643210)
-- `2026-04-02T16:09:17Z` `APPROVED` by `tridao` (https://github.com/Dao-AILab/flash-attention/pull/2385#pullrequestreview-4051693566)
-
-## Inline Comment Hotspots
-
-- `setup.py`: 4 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-26T12:39:41Z` `issue` by `0xDELUXA`; signals: attention, benchmark, latency, perf, performance, regression, speedup, throughput; excerpt: "I ran some benchmarks by checking out locally, building it, and comparing it against aiter FA (on Windows). Here are the results: Key Observations ..." (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4134381791)
-- `2026-03-26T13:00:36Z` `issue` by `tianwyan`; signals: attention, benchmark, latency, perf, performance, regression, speedup, throughput; excerpt: "I ran some benchmarks by checking out 2217 locally, building it, and comparing it against aiter FA. Here are the results: Key Observations Significant ..." (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4134557926)
-- `2026-03-25T12:52:53Z` `issue` by `0xDELUXA`; signals: attention, block, flash attention, hang; excerpt: "@astrelsky I removed the IS WINDOWS error in cpp extension.py. This is the command that I am used to get the message above. You ..." (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4126372117)
-- `2026-03-25T15:30:23Z` `inline` by `m-gallus` `setup.py`:621; signals: attention, hang, triton; excerpt: "We recently introduced TheRock's Windows builds to produce wheels named triton (instead of triton-windows) for cross-platform consistency. However, this creates a mismatch with the ..." (https://github.com/Dao-AILab/flash-attention/pull/2385#discussion_r2989068337)
-- `2026-03-24T23:53:22Z` `issue` by `micmelesse`; signals: attention, flash attention, triton; excerpt: "@astrelsky I removed the IS WINDOWS error in cpp extension.py. This is the command that I am used to get the message above. You ..." (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4122169017)
-- `2026-03-25T07:04:51Z` `issue` by `astrelsky`; signals: attention, flash attention, triton; excerpt: "@astrelsky I removed the IS WINDOWS error in cpp extension.py. This is the command that I am used to get the message above. You ..." (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4124266333)
-- `2026-04-02T15:26:15Z` `issue` by `0xDELUXA`; signals: attention, flash attention, hang; excerpt: "@tridao Would love to see this merged when you get a chance. Without this PR's changes, Windows ROCm users cannot build or use Flash ..." (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4178678036)
-- `2026-03-24T23:21:16Z` `issue` by `astrelsky`; signals: hang, triton; excerpt: "Unfortunately, unless I'm missing changes, I'm not seeing that at all. If I try to run pytest directly I get a ton of errors. ..." (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4122049012)
-- `2026-03-25T17:09:02Z` `issue` by `0xDELUXA`; signals: attention, triton; excerpt: "As a side note, for anyone who wants to experiment, from aiter.ops.triton.attention.mha import flash attn func also works on Windows if we place a ..." (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4128280896)
-- `2026-03-26T18:10:00Z` `issue` by `0xDELUXA`; signals: attention, flash attention; excerpt: "I would like to point out that Windows users must use the --no-deps flag when building Flash Attention from source. Failure to do so ..." (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4137148672)
-- `2026-03-26T22:40:50Z` `issue` by `0xDELUXA`; signals: hang, triton; excerpt: "@0xDELUXA Added the distributed.py fix. Thanks! I was quite determined to address this distributed support issue on Windows ROCm: - - - Even - ..." (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4138786289)
-- `2026-03-27T08:11:55Z` `issue` by `astrelsky`; signals: compile, triton; excerpt: "@0xDELUXA Added the distributed.py fix. For --no-deps, that's a triton vs triton-windows naming issue that needs to get resolved first. According to the conversation, ..." (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4140892151)
+- 2026-03-23 `micmelesse`: @astrelsky @0xDELUXA Can you test this pr? I added CI smoke test for windows and it is passing. See (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4114332665)
+- 2026-03-24 `0xDELUXA`: @astrelsky @0xDELUXA Can you test this pr? I added CI smoke test for windows and it is passing. See I think the CI only passes because it runs on a clean Windows runner with no ROCm installation, so ROCM HOME is None ... (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4116214960)
+- 2026-03-24 `micmelesse`: @astrelsky @0xDELUXA Can you try the new commit of this pr? I think the issue is fixed . I tried on an internal node and I see the build issues resolved. (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4121869059)
+- 2026-03-24 `astrelsky` on `setup.py`:621: This might need to be a runtime dependency check. It's going to get complicated by When it install triton-windows, it squashed the existing triton that pytorch requires and things got weird. Note that I don't think there are any publics builds for ... (https://github.com/Dao-AILab/flash-attention/pull/2385#discussion_r2984861024)
+- 2026-03-24 `astrelsky`: Unfortunately, unless I'm missing changes, I'm not seeing that at all. If I try to run pytest directly I get a ton of errors. If I try to just run tests\test flash attn triton amd.py I get this, I'm not sure how ... (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4122049012)
+- 2026-03-24 `micmelesse` on `setup.py`:621: I have minimized the diff. I am just bumping the aiter submodule commit. (https://github.com/Dao-AILab/flash-attention/pull/2385#discussion_r2984956430)
+- 2026-03-24 `micmelesse`: @astrelsky I removed the IS WINDOWS error in cpp extension.py. This is the command that I am used to get the message above. You might have to update it. ``` set WORK=C:\t git clone --depth 1 -b micmelesse/windows-rocm-support %WORK%\aiter pip install -e ... (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4122169017)
+- 2026-03-25 `astrelsky`: I gave it a shot before hopping in the shower this morning. Here are the exact steps I took for full reproducibility and the results. Then I did the following: Then as one more final test, I ran pytest to run everything ... (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4124672280)
+- 2026-03-25 `0xDELUXA`: @astrelsky I removed the IS WINDOWS error in cpp extension.py. This is the command that I am used to get the message above. You might have to update it. Ok, that looks about equivalent to what I did last night except the ... (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4126372117)
+- 2026-03-25 `m-gallus` on `setup.py`:621: We recently introduced TheRock's Windows builds to produce wheels named triton (instead of triton-windows) for cross-platform consistency. However, this creates a mismatch with the PyPI triton-windows package that flash-attention depends on. Thank you for spotting that @astrelsky. @ScottTodd For seamless integration, we ... (https://github.com/Dao-AILab/flash-attention/pull/2385#discussion_r2989068337)
+- 2026-03-25 `micmelesse`: Bumped the aiter submodule. On Windows, aiter now skips CK/HIP imports entirely and shows [aiter] Windows: CK and HIP ops are not available. Triton ops only. Tested on RX 9070 XT + Python 3.12 + TheRock + triton-windows. Assuming you have torch, ... (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4128061817)
+- 2026-03-25 `0xDELUXA`: As a side note, for anyone who wants to experiment, from aiter.ops.triton.attention.mha import flash attn func also works on Windows if we place a tuned JSON config file named gfxNNNN-MHA-DEFAULT.json (replace gfxNNNN with your architecture) in aiter/ops/triton/configs/. (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4128280896)
+- 2026-03-25 `astrelsky`: So I removed the exception handling so it would log the error, and it looks like aiter can't find the rocm installation, because it tries to use the Linux only rocminfo and falls back to ROCM HOME, which is not set and ... (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4128746536)
+- 2026-03-26 `0xDELUXA`: I ran some benchmarks by checking out locally, building it, and comparing it against aiter FA (on Windows). Here are the results: Key Observations - Significant Gains in Standard Attention (HK=32) : v2.8.4 (aiter) shows substantial performance improvements when the number of ... (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4134381791)
+- 2026-03-26 `tianwyan`: I ran some benchmarks by checking out 2217 locally, building it, and comparing it against aiter FA. Here are the results: Key Observations Significant Gains in Standard Attention (HK=32) : v2.8.4 (aiter) shows substantial performance improvements when the number of key/value heads ... (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4134557926)
+- 2026-03-26 `0xDELUXA`: Thanks very much for the comparison! Could you please share your benchmark scripts? Thanks! Of course! Here they are: [bench fa2 old.py]( [bench fa2 new.py]( (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4134660144)
+- 2026-03-26 `tianwyan`: Thanks very much for the comparison! Could you please share your benchmark scripts? Thanks! Of course! Here they are: [bench fa2 old.py]( [bench fa2 new.py]( I will do further research based on it, will share you the updates once anything helpful! (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4134895139)
+- 2026-03-26 `micmelesse`: @micmelesse seems to be working ok, all tests passed. @tridao Ready for review. Just a submodule bump that fixes the Windows build issues (ROCm/aiter 2433). Also added a CI test to catch similar build issues going forward. (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4136550086)
+- 2026-03-26 `0xDELUXA`: I would like to point out that Windows users must use the --no-deps flag when building Flash Attention from source. Failure to do so will trigger the following error: To build and install, use: / These errors also continue to persist: It ... (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4137148672)
+- 2026-03-26 `micmelesse`: @0xDELUXA Added the distributed.py fix. For --no-deps, that's a triton vs triton-windows naming issue that needs to get resolved first. (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4138769388)
+- 2026-03-26 `0xDELUXA`: @0xDELUXA Added the distributed.py fix. Thanks! I was quite determined to address this distributed support issue on Windows ROCm: - - - Even - - but it ended up being too much of a change, so I decided to close the PR. ... (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4138786289)
+- 2026-03-27 `astrelsky`: @0xDELUXA Added the distributed.py fix. For --no-deps, that's a triton vs triton-windows naming issue that needs to get resolved first. According to the conversation, they're going to leave it as triton-windows even when used as when building pytorch for torch.compile. There are ... (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4140892151)
+- 2026-03-27 `micmelesse`: I prefer to keep this PR minimal and just fix the Windows issues. A conditional triton-windows dep should be a separate PR. (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4144244210)
+- 2026-04-02 `0xDELUXA`: @tridao Would love to see this merged when you get a chance. Without this PR's changes, Windows ROCm users cannot build or use Flash Attention at all. Thanks! (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4178678036)
+- 2026-04-02 `micmelesse`: Thanks @tridao. I don't have merge permissions on this repo. Could you merge it or grant me access? It would be great for our work at AMD. (https://github.com/Dao-AILab/flash-attention/pull/2385#issuecomment-4179609991)

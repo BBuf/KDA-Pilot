@@ -1,80 +1,85 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/cccl#5677](https://github.com/NVIDIA/cccl/pull/5677)
-- Source page: `sources/prs/cccl-cub/PR-5677.md`
-- Evidence bundle: `evidence/pull-bundles/cccl-cub/gh-5677`
-- Generated at: `2026-05-20T15:19:51.019170+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-08-27T09:17:20Z`
-- Merged: `2025-09-24T20:07:26Z`
-
-## Discussion Counts
-
-- Issue comments: 47
-- Review submissions: 71 (approved=3, commented=68)
-- Inline review comments: 111
-- Review threads observed: 52
-- Resolved/outdated thread markers: resolved=51, outdated=43
-- Human participants with discussion text: ChristinaZ, NaderAlAwar, bernhardmgruber, elstehle, miscco
-- Automation comments/reviews omitted from high-signal summary: 18
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 1
-
-## Review Decisions
-
-- `2025-09-16T14:47:26Z` `APPROVED` by `NaderAlAwar` - Looks great! Left a few minor suggestions (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3230284388)
-- `2025-09-17T12:25:46Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3234188617)
-- `2025-09-17T12:52:52Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3234213817)
-- `2025-09-18T09:22:31Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3238405201)
-- `2025-09-18T09:22:39Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3238405749)
-- `2025-09-18T09:22:44Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3238406198)
-- `2025-09-18T09:23:21Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3238408752)
-- `2025-09-18T09:23:45Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3238410243)
-- `2025-09-18T09:23:52Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3238410678)
-- `2025-09-18T09:24:01Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3238411297)
-- `2025-09-18T09:24:07Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3238411677)
-- `2025-09-18T09:25:57Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3238419567)
-- `2025-09-18T09:26:04Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3238419963)
-- `2025-09-18T09:50:48Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3238511636)
-- `2025-09-18T10:49:59Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3238821485)
-- `2025-09-18T10:54:55Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3238849929)
-- `2025-09-18T10:55:58Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3238855718)
-- `2025-09-18T12:23:44Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3239333584)
-- `2025-09-18T12:24:07Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3239335572)
-- `2025-09-18T12:40:39Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3239429449)
-- `2025-09-18T12:40:46Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3239430079)
-- `2025-09-18T12:41:09Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3239432165)
-- `2025-09-21T07:19:07Z` `COMMENTED` by `ChristinaZ` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3249516383)
-- `2025-09-21T15:45:03Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3250069186)
-- ... 47 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `cub/cub/agent/agent_topk.cuh`: 34 inline comment(s)
-- `cub/cub/device/dispatch/dispatch_topk.cuh`: 31 inline comment(s)
-- `cub/benchmarks/bench/topk/keys.cu`: 19 inline comment(s)
-- `cub/examples/device/example_device_topk_keys.cu`: 7 inline comment(s)
-- `cub/cub/device/device_topk.cuh`: 6 inline comment(s)
-- `cub/benchmarks/bench/topk/pairs.cu`: 4 inline comment(s)
-- `cub/test/catch2_test_device_topk_api.cu`: 4 inline comment(s)
-- `cub/examples/device/example_device_topk_pairs.cu`: 2 inline comment(s)
-- `cub/test/catch2_test_device_topk_pairs.cu`: 2 inline comment(s)
-- `cub/test/catch2_test_device_topk_keys.cu`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-09-23T14:23:19Z` `inline` by `bernhardmgruber` `cub/cub/device/dispatch/dispatch_topk.cuh`:642; signals: block, kernel, occupancy; excerpt: "Critical: calculate blocks per sm queries the occupancy of the topk kernel but then launches the topk last filter kernel kernel. I think this ..." (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372510233)
-- `2025-09-23T15:52:44Z` `inline` by `elstehle` `cub/cub/device/device_topk.cuh`:49; signals: benchmark, perf, performance; excerpt: "I guess we try to avoid 64-bit atomics if we select a small number of items from a large buffer. Would it make sense ..." (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372781885)
-- `2025-09-23T15:30:14Z` `inline` by `elstehle` `cub/cub/agent/agent_topk.cuh`:564; signals: benchmark, perf, performance; excerpt: "I had added and benchmarked the unrolling and unrolls improved performance here." (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372722460)
-- `2025-09-23T15:31:12Z` `inline` by `elstehle` `cub/cub/agent/agent_topk.cuh`:359; signals: benchmark, perf, performance; excerpt: "I had added and benchmarked the unrolling and unrolls improved performance here." (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372725194)
-- `2025-09-21T15:43:02Z` `inline` by `elstehle` `cub/cub/device/device_topk.cuh`:57; signals: benchmark, cuda; excerpt: "We generally want to use fully qualified namespaces (e.g., ::cuda::std::bar, ::cuda::foo) in any library header file. We use just cuda::std etc. in examples, benchmarks, ..." (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2366283088)
-- `2025-09-23T11:17:35Z` `inline` by `bernhardmgruber` `cub/cub/device/device_topk.cuh`:49; signals: perf, performance; excerpt: "Question: I looked through the implementation and it seems using the same type for NumOutItemsT and NumItemsT would look reasonable. Is it needed for ..." (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2371961858)
-- `2025-09-23T14:47:24Z` `inline` by `bernhardmgruber` `cub/cub/agent/agent_topk.cuh`:535; signals: memory, tile; excerpt: "Critical: the use of volatile without a justification usually hints at a bug or a misunderstanding of the memory model. Why is it needed ..." (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372580923)
-- `2025-09-23T15:33:24Z` `inline` by `elstehle` `cub/cub/agent/agent_topk.cuh`:606; signals: benchmark, hang; excerpt: "That's on me. I had split this from a simple loop into a complex full unguarded loop plus a guarded remainder processing. Benchmarks showed ..." (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372732230)
-- `2025-09-23T20:33:22Z` `inline` by `elstehle` `cub/cub/agent/agent_topk.cuh`:535; signals: attention, memory; excerpt: "I agree. This similarly caught my attention. Will make sure to sync up with Gonzalo, once he has cycles and refactor the memory order-related ..." (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373385877)
-- `2025-09-16T14:27:01Z` `inline` by `NaderAlAwar` `cub/benchmarks/bench/topk/keys.cu`:53; signals: benchmark, cuda; excerpt: "NIT: should be cuda::std instead of ::cuda::std" (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2352703736)
-- `2025-09-23T20:18:27Z` `inline` by `elstehle` `cub/cub/agent/agent_topk.cuh`:359; signals: perf, performance; excerpt: "Agreed. I've added comments to document performance benefits where applicable." (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373356518)
-- `2025-09-24T12:02:04Z` `inline` by `bernhardmgruber` `cub/benchmarks/bench/topk/keys.cu`:117; signals: benchmark, hang; excerpt: "I don't see the change, maybe it was lost again somewhere?" (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2375552968)
+- 2025-09-16 `NaderAlAwar` on `cub/benchmarks/bench/topk/keys.cu`:53: NIT: should be cuda::std instead of ::cuda::std (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2352703736)
+- 2025-09-16 `NaderAlAwar` on `cub/cub/agent/agent_topk.cuh`:7: Suggestion: switch to RST style comments. This also applies to the rest of this file (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2352721138)
+- 2025-09-16 `NaderAlAwar` on `cub/cub/device/dispatch/dispatch_topk.cuh`:40: Question: is it possible to use a switch statement here? Might improve readability (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2352734184)
+- 2025-09-16 `NaderAlAwar` on `cub/test/catch2_test_device_topk_api.cu`:35: Question: since this is an API example, do we want to add thrust::no init? If yes then this suggestion also applies to the other tests as well. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2352755838)
+- 2025-09-17 `ChristinaZ` on `cub/benchmarks/bench/topk/keys.cu`:53: Thanks, let me revise it. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2355343837)
+- 2025-09-17 `bernhardmgruber` on `cub/benchmarks/bench/topk/keys.cu`:77: Suggestion: Similar suggestion for pairs.cu (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2355362027)
+- 2025-09-17 `bernhardmgruber` on `cub/benchmarks/bench/topk/keys.cu`:92: Q: Why do we need to generate random data for the output elements? Isn't this overwritten? Similar question for pairs.cu (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2355369817)
+- 2025-09-17 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:61: Strong suggestion: Please only add comments for information not already expressed in the code. The variable name is indicative enough here IMO and the comment is not needed. Applies to comments in general (and more instances in this PR). (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2355376134)
+- 2025-09-17 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:52: Critical: Please move AgentTopKPolicy into the cub::detail::topk namespace. We do not want to expose it to users. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2355378677)
+- 2025-09-17 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:213: Important: Please use snake case for all variables, including constants. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2355385131)
+- 2025-09-17 `bernhardmgruber` on `cub/examples/device/example_device_topk_keys.cu`:22: Suggestion: Please avoid C headers (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2355413412)
+- 2025-09-17 `bernhardmgruber` on `cub/examples/device/example_device_topk_keys.cu`:108: Important: Our examples should use best practices for C++ and thus avoid naked allocations. Please use a std::vector or a std::unique ptr. Or a thrust::host vector. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2355420292)
+- 2025-09-18 `ChristinaZ` on `cub/cub/device/dispatch/dispatch_topk.cuh`:40: Agree, let me use a switch statement here. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2358203655)
+- 2025-09-18 `ChristinaZ` on `cub/test/catch2_test_device_topk_api.cu`:35: Since we will set the buffer to zero within the function. And we set the input buffer with So I think we can use thrust::no init. Let me revise them. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2358210307)
+- 2025-09-18 `ChristinaZ` on `cub/benchmarks/bench/topk/keys.cu`:92: Oh, I think we don't need that. Let me revise it. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2358549943)
+- 2025-09-18 `ChristinaZ` on `cub/cub/agent/agent_topk.cuh`:61: Got it. Let me go through the comments. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2358555422)
+- 2025-09-18 `ChristinaZ` on `cub/cub/agent/agent_topk.cuh`:73: Thanks, let me check the variables in detail. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2358965702)
+- 2025-09-18 `ChristinaZ` on `cub/cub/agent/agent_topk.cuh`:213: Got it, let me check the variables. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2358967422)
+- 2025-09-18 `ChristinaZ` on `cub/examples/device/example_device_topk_keys.cu`:108: Got it. Let me revise them. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2359050746)
+- 2025-09-21 `elstehle` on `cub/cub/device/device_topk.cuh`:57: We generally want to use fully qualified namespaces (e.g., ::cuda::std::bar, ::cuda::foo) in any library header file. We use just cuda::std etc. in examples, benchmarks, tests, and documentation (see (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2366283088)
+- 2025-09-22 `ChristinaZ` on `cub/cub/device/device_topk.cuh`:57: Thank you for the explanation! I understand it now. Let me go through the coding guide. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2366618147)
+- 2025-09-22 `bernhardmgruber`: I will give this a more detailed review tomorrow and probable push changes myself if needed so we can merge this soon. (https://github.com/NVIDIA/cccl/pull/5677#issuecomment-3321408942)
+- 2025-09-23 `bernhardmgruber` on `cub/test/catch2_test_device_topk_api.cu`:94: Suggestion: I would rename all variables named indexes to values , to make it clear that those are the values of the retrieved key-value pairs, and not indices to the top k keys (which I confused, since I don't know the algorithm). (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2371932561)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/device/device_topk.cuh`:49: Question: I looked through the implementation and it seems using the same type for NumOutItemsT and NumItemsT would look reasonable. Is it needed for performance reasons? I guess we try to avoid 64-bit atomics if we select a small number of items ... (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2371961858)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/device/device_topk.cuh`:226: Question: is EnvT copyable? Should we ::cuda::std::move() here? (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372013426)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_topk.cuh`:59: This should probably be: Please verify that it does not change SASS, since I ran into issues with bit cast a while back. Applies again below for identify candidates op t. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372171652)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_topk.cuh`:107: Suggestion: Since kernels are never user-facing, the documentation only targets developers and we can reduce it to what's relevant for developers. It's also fairly repetitive with the device layer API documentation (and contains similar imprecisions like Pointer instead of Iterator). Consider reducing ... (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372189680)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_topk.cuh`:227: Important: Please only add comments where they add information that is not and cannot be expressed in code. This comment is superfluous. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372194877)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_topk.cuh`:495: Suggestion: calculate blocks per sm is not a "Dispatch entrypoints" so I think this comment is misplaced. Better, just remove it. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372438810)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_topk.cuh`:82: Suggestion: the pass data member is not needed later, so I dropped it (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372464702)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_topk.cuh`:469: Suggestion: strip comments since they don't add any new information (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372468015)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_topk.cuh`:480: Question: why is clamp needed and not: ? (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372472747)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_topk.cuh`:493: Suggestion: we could use a 4-element array when keys only, to save two iterations in AliasTemporaries and some more memory. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372479053)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_topk.cuh`:450: Critical: This functions returns error codes and valid values through the same return value, so error codes are not distinguished from correct values. Also, no error handling is performed whenver this function is called. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372495705)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_topk.cuh`:642: Critical: calculate blocks per sm queries the occupancy of the topk kernel but then launches the topk last filter kernel kernel. I think this is a bug. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372510233)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:359: Suggestion: Unrolling contributes significantly to long compile-times. Why can't the compiler determine the amount of unrolling itself here? (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372547177)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:376: Important: The parameter local histogram is unused. Either remove it or use it instead of temp storage.histogram in this function. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372550192)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:423: Suggestion: index is not used here. If this is correct, then please comment it out like: (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372554804)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:535: Critical: the use of volatile without a justification usually hints at a bug or a misunderstanding of the memory model. Why is it needed here? (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372580923)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:543: Important: OOB items need to be initialized, otherwise BlockScan will invoke its binary operation on uninitialized data, which can cause bugs for some data types and trip compute-sanitizer in others. I am aware that this does not cause any issues for most ... (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372592165)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:564: Question: is unrolling strictly needed here? (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372594730)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:606: The for and if bodies are identical. We should replace this by a function. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372609436)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:613: Important: Parameter histogram is unused. Please drop it. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372614063)
+- 2025-09-23 `elstehle` on `cub/cub/agent/agent_topk.cuh`:564: I had added and benchmarked the unrolling and unrolls improved performance here. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372722460)
+- 2025-09-23 `elstehle` on `cub/cub/agent/agent_topk.cuh`:606: That's on me. I had split this from a simple loop into a complex full unguarded loop plus a guarded remainder processing. Benchmarks showed no significant improvement here. I wanted to revert the changes but hadn't gotten to this yet. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372732230)
+- 2025-09-23 `elstehle` on `cub/cub/agent/agent_topk.cuh`:543: This is guaranteed to be a fundamental type, as it's of type OffsetT and code would fail to compile for certain other types anyways. As a fundamental type, thread data will be zero-initialized and shouldn't be an issue then, right? (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372742382)
+- 2025-09-23 `bernhardmgruber` on `cub/benchmarks/bench/topk/keys.cu`:11: Q: Should we also expose BitsPerPass and ScanAlgorithm? If not, we could add a TODO here, or create an issue, to remind us. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372777306)
+- 2025-09-23 `elstehle` on `cub/cub/device/device_topk.cuh`:49: I guess we try to avoid 64-bit atomics if we select a small number of items from a large buffer. Would it make sense to simplify this? We didn't get to the point of tuning and more exhaustive benchmarking this yet. Usually ... (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372781885)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:641: Suggestion: I kind if would use the same check as in other places: (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372811034)
+- 2025-09-23 `bernhardmgruber` on `cub/benchmarks/bench/topk/keys.cu`:77: Suggestion: Neither N nor K exist as benchmark parameters. They are called Elements{io} and SelectedElements, so this is confusing. Please fix the message. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372949837)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_topk.cuh`:642: Fixed this. Please confirm the new code is correct. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372957040)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:359: That's valueable knowledge! Could we add this as a comment please? Thx! (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372958802)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:543: Ah wait, you are always scanning integers. I guess that should be fine in practice. We may still be flagged by a sanitizer at some point. thread data is uninitialized unless we write: (mind the trailing {}) (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372964778)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:564: Great, please add a comment! (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372965425)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:606: I replaced it by a lambda to avoid the duplication. Feel free to merge the loop and if! (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372966661)
+- 2025-09-23 `bernhardmgruber` on `cub/examples/device/example_device_topk_keys.cu`:108: Question: Why is this example not using a thrust::device vector? I think it would look a lot simpler. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2372993334)
+- 2025-09-23 `bernhardmgruber` on `cub/test/catch2_test_device_topk_keys.cu`:103: Why not a partial sort? (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373020375)
+- 2025-09-23 `bernhardmgruber`: When running tests, I get a lot of: My RTX 5090 has 32GiB RAM. Should we be concerned that these unit tests cannot be run on such a GPU? We barely have any GPUs with larger memory in the CI. (https://github.com/NVIDIA/cccl/pull/5677#issuecomment-3324977706)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_topk.cuh`:495: Comment still applies but calculate blocks per sm is no more. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373057395)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/device/device_topk.cuh`:226: @miscco thinks we have to move them. I pushed a commit. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373065221)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_topk.cuh`:59: Can also be done later. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373065948)
+- 2025-09-23 `bernhardmgruber`: I am done reviewing and applying changes. There are a few nits and questions, but I don't see a blocker. Great work! (https://github.com/NVIDIA/cccl/pull/5677#issuecomment-3325017507)
+- 2025-09-23 `elstehle` on `cub/test/catch2_test_device_topk_api.cu`:94: Agreed. Been debating this with myself before. Changed it to values . (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373204519)
+- 2025-09-23 `elstehle` on `cub/cub/device/dispatch/dispatch_topk.cuh`:59: Took a note to consider this for follow-up work (or towards the end once everything else in this PR has been addressed). (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373207207)
+- 2025-09-23 `elstehle` on `cub/cub/device/dispatch/dispatch_topk.cuh`:495: I've removed all section comments altogether 👍 (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373209479)
+- 2025-09-23 `elstehle` on `cub/cub/device/dispatch/dispatch_topk.cuh`:107: Agreed. I think most of the documentation is redundant with Dispatch and Agent. The only parts I considered worth documenting were extract bin op and identify candidates op. However, these are instances of our own classes, for which we already have documentation. ... (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373239207)
+- 2025-09-23 `elstehle` on `cub/cub/device/dispatch/dispatch_topk.cuh`:493: Sounds good. Made allocation sizes and allocations array size depend on keys only. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373355135)
+- 2025-09-23 `elstehle` on `cub/cub/device/dispatch/dispatch_topk.cuh`:642: Good catch! Changes look good to me. Thanks! (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373356296)
+- 2025-09-23 `elstehle` on `cub/cub/agent/agent_topk.cuh`:359: Agreed. I've added comments to document performance benefits where applicable. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373356518)
+- 2025-09-23 `elstehle` on `cub/cub/agent/agent_topk.cuh`:376: Good catch, I've dropped the unused parameter. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373356998)
+- 2025-09-23 `elstehle` on `cub/cub/agent/agent_topk.cuh`:543: Exactly, it's definitely of integral type. Thanks for the hint, I've added the trailing {}. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373357566)
+- 2025-09-23 `elstehle` on `cub/cub/agent/agent_topk.cuh`:564: Added a comment 👍 (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373358103)
+- 2025-09-23 `elstehle` on `cub/benchmarks/bench/topk/keys.cu`:11: Yeah, more broadly, we want to revisit the parameters considered for tuning before actually tuning. I took a note to follow up on this. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373358821)
+- 2025-09-23 `elstehle` on `cub/benchmarks/bench/topk/keys.cu`:77: Applied the suggestion to both keys and pairs benchmarks. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373359586)
+- 2025-09-23 `elstehle` on `cub/benchmarks/bench/topk/keys.cu`:82: Sounds good. I've applied the suggestion to both keys and pairs benchmarks. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373359925)
+- 2025-09-23 `elstehle` on `cub/test/catch2_test_device_topk_keys.cu`:103: I had looked at test run times before and compared std::partial sort with full device-side sorts using thrust::sort, which allowed keeping things on device. Using thrust::sort improved overall test run times. However, in your specific case, I had mistakenly kept expected keys ... (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373360188)
+- 2025-09-23 `elstehle` on `cub/examples/device/example_device_topk_keys.cu`:108: Since we've later added the examples in the catch2 test device topk api.cu tests, I didn't continue to focus on the legacy-style example device topk keys.cu. I might revisit these later. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373366524)
+- 2025-09-23 `elstehle`: When running tests, I get a lot of: My RTX 5090 has 32GiB RAM. Should we be concerned that these unit tests cannot be run on such a GPU? We barely have any GPUs with larger memory in the CI. This is ... (https://github.com/NVIDIA/cccl/pull/5677#issuecomment-3325430377)
+- 2025-09-23 `elstehle` on `cub/cub/agent/agent_topk.cuh`:535: I agree. This similarly caught my attention. Will make sure to sync up with Gonzalo, once he has cycles and refactor the memory order-related parts in follow-up work. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2373385877)
+- 2025-09-24 `bernhardmgruber` on `cub/benchmarks/bench/topk/keys.cu`:117: I don't see the change, maybe it was lost again somewhere? (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2375552968)
+- 2025-09-24 `bernhardmgruber` on `cub/examples/device/example_device_topk_keys.cu`:108: All the examples could use some modernization to be honest :D (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2375566812)
+- 2025-09-24 `bernhardmgruber` on `cub/cub/agent/agent_topk.cuh`:537: @elstehle I saw you changed to: and back again. Was this on purpse or by accident? (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2375570592)
+- 2025-09-24 `bernhardmgruber` approved: Just one more question on OffsetT thread data[bins per thread]; and a nit in the benchmark. Otherwise, amazing work! LGTM (https://github.com/NVIDIA/cccl/pull/5677#pullrequestreview-3262585011)
+- 2025-09-24 `elstehle` on `cub/benchmarks/bench/topk/keys.cu`:117: Thanks for double-checking, Bernhard. I'll make sure to apply the change. (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2375573833)
+- 2025-09-24 `elstehle` on `cub/cub/agent/agent_topk.cuh`:537: Thanks for catching this! Not sure how this happened... ...maybe a late night Ctrl+Z once too often :see no evil: (https://github.com/NVIDIA/cccl/pull/5677#discussion_r2375712049)

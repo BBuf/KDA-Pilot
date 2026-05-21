@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fetch and summarize PR review/discussion history for evidence bundles."""
+"""Fetch useful PR review/discussion bullets for evidence bundles."""
 
 from __future__ import annotations
 
@@ -11,7 +11,6 @@ import sys
 import time
 from collections import Counter, defaultdict
 from dataclasses import dataclass
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -25,16 +24,23 @@ DISCUSSION_NAME = "discussion.md"
 PULL_BUNDLE_ROOT = Path("evidence") / "pull-bundles"
 
 AUTOMATION_LOGINS = {
+    "chatgpt-codex-connector",
+    "claude",
+    "claude[bot]",
+    "coderabbitai",
     "github-actions",
     "github-actions[bot]",
     "gemini-code-assist",
+    "mergify",
     "pre-commit-ci[bot]",
     "dependabot[bot]",
     "renovate[bot]",
     "codecov[bot]",
     "coderabbitai[bot]",
     "copilot-pull-request-reviewer[bot]",
+    "cursor",
     "vercel[bot]",
+    "vllmellm",
     "web-flow",
 }
 
@@ -115,8 +121,14 @@ LOW_SIGNAL_PATTERNS = (
     re.compile(r"^/[\w-]+(?:\s|$)"),
     re.compile(r"^thanks[!.]?$", re.I),
     re.compile(r"^thank you[!.]?$", re.I),
-    re.compile(r"^lgtm[!.]?$", re.I),
-    re.compile(r"^approved[!.]?$", re.I),
+    re.compile(r"^lgtm\b", re.I),
+    re.compile(r"^approved\b", re.I),
+    re.compile(r"^done[!.]?$", re.I),
+    re.compile(r"^fixed[!.]?$", re.I),
+    re.compile(r"^updated[!.]?$", re.I),
+    re.compile(r"^resolved[!.]?$", re.I),
+    re.compile(r"^\[?(?:like|heart|thumbs[ -]?up)\]?", re.I),
+    re.compile(r"reacted to your message", re.I),
 )
 
 
@@ -372,6 +384,54 @@ def low_signal(text: str) -> bool:
     return any(pattern.search(stripped) for pattern in LOW_SIGNAL_PATTERNS)
 
 
+REVIEW_ACTION_TERMS = {
+    "add",
+    "avoid",
+    "because",
+    "benchmark",
+    "break",
+    "bug",
+    "can",
+    "check",
+    "consider",
+    "correct",
+    "fail",
+    "fix",
+    "guard",
+    "issue",
+    "move",
+    "need",
+    "prefer",
+    "regression",
+    "remove",
+    "should",
+    "test",
+    "update",
+    "why",
+    "would",
+}
+
+
+def is_substantive_review_text(item: dict[str, Any], text: str, terms: list[str]) -> bool:
+    if low_signal(text):
+        return False
+    words = text.split()
+    if len(words) < 4:
+        return False
+    low = text.lower()
+    if terms:
+        return True
+    if item.get("kind") == "inline":
+        if len(words) >= 6:
+            return True
+        return any(term in low for term in REVIEW_ACTION_TERMS)
+    if item.get("kind") == "review" and item.get("state") in {"CHANGES_REQUESTED", "COMMENTED"}:
+        return len(words) >= 6
+    if len(words) >= 18 and any(term in low for term in REVIEW_ACTION_TERMS):
+        return True
+    return False
+
+
 def score_item(item: dict[str, Any]) -> int:
     text = clean_body(item.get("body"))
     terms = signal_terms(text + " " + str(item.get("path") or ""))
@@ -514,34 +574,14 @@ def rest_inline_comments(repo: str, pr: int) -> list[dict[str, Any]]:
     ]
 
 
-def bullets(items: list[str]) -> list[str]:
-    return [f"- {item}" for item in items]
-
-
-def render_digest(
-    root: Path,
+def render_discussion_bullets(
     target: PullTarget,
     pr_data: dict[str, Any],
     issue_comments: list[dict[str, Any]],
     reviews: list[dict[str, Any]],
     inline_comments: list[dict[str, Any]],
-    completeness: dict[str, Any],
-    thread_state: dict[str, int],
 ) -> str:
-    generated_at = datetime.now(timezone.utc).isoformat()
-    review_states = Counter(str(row.get("state") or "COMMENT").upper() for row in reviews)
-    humans = sorted(
-        {
-            str(row.get("author"))
-            for row in issue_comments + reviews + inline_comments
-            if row.get("author") and not is_automation(str(row.get("author")))
-        }
-    )
     all_rows = issue_comments + reviews + inline_comments
-    automation_count = sum(1 for row in all_rows if is_automation(str(row.get("author"))))
-    post_merge_count = sum(1 for row in all_rows if not in_review_window(row, target.merged_at or str(pr_data.get("mergedAt") or "")))
-    path_counts = Counter(str(row.get("path")) for row in inline_comments if row.get("path"))
-
     candidates: list[dict[str, Any]] = []
     merged_at = target.merged_at or str(pr_data.get("mergedAt") or "")
     for row in all_rows:
@@ -549,98 +589,42 @@ def render_digest(
             continue
         if is_automation(str(row.get("author") or "")):
             continue
-        row_score = score_item(row)
-        if row_score > 0:
-            item = dict(row)
-            item["score"] = row_score
-            candidates.append(item)
+        text = clean_body(row.get("body"))
+        terms = signal_terms(text + " " + str(row.get("path") or ""))
+        if not is_substantive_review_text(row, text, terms):
+            continue
+        item = dict(row)
+        item["text"] = text
+        item["terms"] = terms
+        item["score"] = score_item(row)
+        candidates.append(item)
+
     if not candidates:
-        fallback = [
-            row
-            for row in all_rows
-            if in_review_window(row, merged_at)
-            if row.get("body") and not is_automation(str(row.get("author"))) and not low_signal(clean_body(row.get("body")))
-        ]
-        for row in fallback[:3]:
-            item = dict(row)
-            item["score"] = 0
-            candidates.append(item)
-    candidates.sort(key=lambda item: (-int(item.get("score") or 0), str(item.get("created_at") or "")))
-    candidates = candidates[:12]
+        return ""
 
-    lines = [
-        "# PR Discussion Digest",
-        "",
-        f"- Source PR: [{target.repo}#{target.pr}]({target.url})",
-        f"- Source page: `{rel_to_root(root, target.source_page)}`",
-        f"- Evidence bundle: `{rel_to_root(root, target.bundle)}`",
-        f"- Generated at: `{generated_at}`",
-        "- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.",
-        f"- Completeness: issue comments `{completeness['issue_comments']}`, reviews `{completeness['reviews']}`, inline comments `{completeness['inline_comments']}`.",
-        "",
-        "## Timeline",
-        "",
-        f"- Opened: `{target.created_at or pr_data.get('createdAt') or 'unknown'}`",
-        f"- Merged: `{target.merged_at or pr_data.get('mergedAt') or 'unknown'}`",
-        "",
-        "## Discussion Counts",
-        "",
-    ]
-    lines.extend(
-        bullets(
-            [
-                f"Issue comments: {len(issue_comments)}",
-                f"Review submissions: {len(reviews)} ({', '.join(f'{k.lower()}={v}' for k, v in sorted(review_states.items())) or 'no states'})",
-                f"Inline review comments: {len(inline_comments)}",
-                f"Review threads observed: {completeness.get('review_threads_observed', 0)}",
-                f"Resolved/outdated thread markers: resolved={thread_state.get('resolved', 0)}, outdated={thread_state.get('outdated', 0)}",
-                f"Human participants with discussion text: {', '.join(humans[:20]) if humans else 'none observed'}",
-                f"Automation comments/reviews omitted from high-signal summary: {automation_count}",
-                f"Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: {post_merge_count}",
-            ]
-        )
-    )
-    lines.extend(["", "## Review Decisions", ""])
-    review_rows = [
-        row
-        for row in sorted(reviews, key=lambda item: str(item.get("created_at") or ""))
-        if row.get("state") and in_review_window(row, merged_at)
-    ]
-    if review_rows:
-        for row in review_rows[:24]:
-            body = excerpt(row.get("body"), 18)
-            suffix = f" - {body}" if body else ""
-            lines.append(
-                f"- `{row.get('created_at') or 'unknown'}` `{row.get('state')}` by `{row.get('author')}`{suffix} ({row.get('url') or target.url})"
-            )
-        if len(review_rows) > 24:
-            lines.append(f"- ... {len(review_rows) - 24} additional review decision entries omitted from this digest.")
-    else:
-        lines.append("- No review submissions were returned by GitHub.")
-
-    lines.extend(["", "## Inline Comment Hotspots", ""])
-    if path_counts:
-        for path, count in path_counts.most_common(12):
-            lines.append(f"- `{path}`: {count} inline comment(s)")
-    else:
-        lines.append("- No inline review comments were returned by GitHub.")
-
-    lines.extend(["", "## High-Signal Discussion", ""])
-    if candidates:
-        for item in candidates:
-            text = excerpt(item.get("body"))
-            if not text:
-                continue
-            terms = signal_terms(clean_body(item.get("body")) + " " + str(item.get("path") or ""))
-            term_text = ", ".join(terms) if terms else "general review"
-            path = f" `{item.get('path')}`" if item.get("path") else ""
-            line = f":{item.get('line')}" if item.get("line") else ""
-            state = f" `{item.get('state')}`" if item.get("state") else ""
-            lines.append(
-                f"- `{item.get('created_at') or 'unknown'}` `{item.get('kind')}`{state} by `{item.get('author')}`{path}{line}; signals: {term_text}; excerpt: \"{text}\" ({item.get('url') or target.url})"
-            )
-    else:
-        lines.append("- No high-signal human discussion was captured; the PR discussion was empty or consisted of low-signal/automation-only comments.")
+    candidates.sort(key=lambda item: str(item.get("created_at") or ""))
+    lines: list[str] = []
+    seen: set[tuple[str, str, str]] = set()
+    for item in candidates:
+        text = excerpt(item.get("body"), max_words=42)
+        if not text:
+            continue
+        key = (str(item.get("path") or ""), text)
+        if key in seen:
+            continue
+        seen.add(key)
+        author = str(item.get("author") or "unknown")
+        created_at = str(item.get("created_at") or "unknown")
+        date = created_at[:10] if created_at != "unknown" else created_at
+        path = str(item.get("path") or "")
+        line = str(item.get("line") or "")
+        location = f" on `{path}`" if path else ""
+        if path and line:
+            location += f":{line}"
+        state = str(item.get("state") or "")
+        state_text = f" {state.lower()}" if state else ""
+        url = str(item.get("url") or target.url)
+        lines.append(f"- {date} `{author}`{state_text}{location}: {text} ({url})")
     lines.append("")
     return "\n".join(lines)
 
@@ -671,11 +655,11 @@ def fetch_overflows(
     return issue_comments, reviews, inline_comments, completeness
 
 
-def write_one(root: Path, target: PullTarget, pr_data: dict[str, Any], args: argparse.Namespace) -> None:
+def write_one(root: Path, target: PullTarget, pr_data: dict[str, Any], args: argparse.Namespace) -> str:
     issue_comments, issue_complete, _issue_total = graph_issue_comments(pr_data)
     reviews, reviews_complete, _review_total = graph_reviews(pr_data)
     inline_comments, inline_complete, _inline_total, thread_state = graph_inline_comments(pr_data)
-    issue_comments, reviews, inline_comments, completeness = fetch_overflows(
+    issue_comments, reviews, inline_comments, _completeness = fetch_overflows(
         target,
         issue_comments,
         reviews,
@@ -684,21 +668,26 @@ def write_one(root: Path, target: PullTarget, pr_data: dict[str, Any], args: arg
         reviews_complete,
         inline_complete,
     )
-    completeness["review_threads_observed"] = int((pr_data.get("reviewThreads") or {}).get("totalCount") or 0)
-    text = render_digest(
-        root,
+    _ = thread_state
+    text = render_discussion_bullets(
         target,
         pr_data,
         issue_comments,
         reviews,
         inline_comments,
-        completeness,
-        thread_state,
     )
     if args.dry_run:
-        print(f"would write {rel_to_root(root, target.bundle / DISCUSSION_NAME)}")
-        return
-    (target.bundle / DISCUSSION_NAME).write_text(text, encoding="utf-8")
+        action = "write" if text else "delete"
+        print(f"would {action} {rel_to_root(root, target.bundle / DISCUSSION_NAME)}")
+        return "written" if text else "deleted"
+    path = target.bundle / DISCUSSION_NAME
+    if text:
+        path.write_text(text, encoding="utf-8")
+        return "written"
+    if path.exists():
+        path.unlink()
+        return "deleted"
+    return "skipped_empty"
 
 
 def grouped_batches(targets: list[PullTarget], batch_size: int):
@@ -733,7 +722,8 @@ def main() -> int:
     if args.limit:
         targets = targets[: args.limit]
 
-    written = failed = 0
+    stats = Counter()
+    failed = 0
     for repo, batch in grouped_batches(targets, args.batch_size):
         owner, name = repo_owner_name(repo)
         numbers = [target.pr for target in batch]
@@ -745,9 +735,9 @@ def main() -> int:
                 pr_data = repo_data.get(f"pr{target.pr}")
                 if not pr_data:
                     raise RuntimeError(f"missing GraphQL PR payload for {target.repo}#{target.pr}")
-                write_one(root, target, pr_data, args)
-                written += 1
-                print(f"discussion: {target.repo}#{target.pr}")
+                status = write_one(root, target, pr_data, args)
+                stats[status] += 1
+                print(f"discussion: {target.repo}#{target.pr} {status}")
             if rate:
                 remaining = rate.get("remaining")
                 if isinstance(remaining, int) and remaining < 250:
@@ -758,7 +748,17 @@ def main() -> int:
             failed += len(batch)
             print(f"failed batch {repo} {numbers}: {exc}", file=sys.stderr)
 
-    print(json.dumps({"written": written, "failed": failed, "skipped_existing": 0}, indent=2))
+    print(
+        json.dumps(
+            {
+                "written": stats["written"],
+                "deleted": stats["deleted"],
+                "skipped_empty": stats["skipped_empty"],
+                "failed": failed,
+            },
+            indent=2,
+        )
+    )
     return 1 if failed else 0
 
 

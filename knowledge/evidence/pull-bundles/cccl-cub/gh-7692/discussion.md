@@ -1,76 +1,85 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/cccl#7692](https://github.com/NVIDIA/cccl/pull/7692)
-- Source page: `sources/prs/cccl-cub/PR-7692.md`
-- Evidence bundle: `evidence/pull-bundles/cccl-cub/gh-7692`
-- Generated at: `2026-05-20T15:20:18.029784+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-02-17T02:20:42Z`
-- Merged: `2026-04-21T00:58:56Z`
-
-## Discussion Counts
-
-- Issue comments: 27
-- Review submissions: 54 (approved=2, changes_requested=2, commented=50)
-- Inline review comments: 101
-- Review threads observed: 60
-- Resolved/outdated thread markers: resolved=53, outdated=37
-- Human participants with discussion text: Jacobfaib, bernhardmgruber, elstehle, fbusato, miscco, oleksandr-pavlyk, pauleonix, wmaxey
-- Automation comments/reviews omitted from high-signal summary: 11
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 1
-
-## Review Decisions
-
-- `2026-04-16T09:37:13Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4119755187)
-- `2026-04-16T13:50:13Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4121387219)
-- `2026-04-16T14:25:40Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4121673740)
-- `2026-04-16T14:26:00Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4121676094)
-- `2026-04-16T14:26:12Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4121677499)
-- `2026-04-16T14:29:06Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4121699716)
-- `2026-04-16T14:47:01Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4121850295)
-- `2026-04-16T14:53:11Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4121898277)
-- `2026-04-17T01:19:24Z` `CHANGES_REQUESTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4125382309)
-- `2026-04-17T11:47:22Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4128469914)
-- `2026-04-17T11:49:32Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4128483576)
-- `2026-04-17T12:02:47Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4128561508)
-- `2026-04-17T12:10:25Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4128612035)
-- `2026-04-17T12:14:40Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4128642352)
-- `2026-04-17T12:50:59Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4128895085)
-- `2026-04-17T15:19:34Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4130003113)
-- `2026-04-17T17:50:08Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4130946375)
-- `2026-04-17T17:51:54Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4130958828)
-- `2026-04-17T17:52:49Z` `COMMENTED` by `wmaxey` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4130964205)
-- `2026-04-17T17:54:43Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4130974457)
-- `2026-04-17T19:52:24Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4131707970)
-- `2026-04-17T20:03:47Z` `CHANGES_REQUESTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4131712839)
-- `2026-04-17T20:42:19Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4131977750)
-- `2026-04-17T22:02:59Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4132402623)
-- ... 30 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`: 51 inline comment(s)
-- `cub/cub/warp/warp_reduce_batched.cuh`: 34 inline comment(s)
-- `cub/test/warp/catch2_test_warp_reduce_batched_api.cu`: 8 inline comment(s)
-- `cub/benchmarks/bench/reduce/warp_reduce_batched_sum.cu`: 4 inline comment(s)
-- `cub/benchmarks/bench/reduce/warp_reduce_batched_base.cuh`: 2 inline comment(s)
-- `cub/test/warp/catch2_test_warp_reduce_batched.cu`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-04-20T10:13:31Z` `inline` by `pauleonix` `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:50; signals: block, compile, kernel, perf, warp; excerpt: "For both warp- and block-primitives we tend to leave perf-tuning up to the user (up to some default choices as a starting point). Afaik ..." (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3109875737)
-- `2026-04-20T17:33:36Z` `inline` by `Jacobfaib` `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:56; signals: compile, cuda, hang, warp; excerpt: "requested it so heavily templated code does not have to do special handling. Right, for example suppose the user wants to use this algorithm ..." (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112533791)
-- `2026-04-16T09:27:58Z` `inline` by `bernhardmgruber` `cub/benchmarks/bench/reduce/warp_reduce_batched_sum.cu`:6; signals: benchmark, compile, warp; excerpt: "Important: if this benchmark is ever intended for tuning, please only compile for TUNE T during benchmarking: However, I don't see any tuning parameters ..." (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3092158292)
-- `2026-04-16T14:53:11Z` `inline` by `pauleonix` `cub/cub/warp/warp_reduce_batched.cuh`:104; signals: hang, perf, warp; excerpt: "The other warp primitives have a smem implementation that is used for non-power-of-two logical warps. We decided not to support that at all b/c ..." (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3094134578)
-- `2026-04-17T19:52:24Z` `inline` by `fbusato` `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:72; signals: perf, performance, warp; excerpt: "no performance advantages. It improves readability because the variables are close to where they are used." (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3102908041)
-- `2026-04-20T17:19:21Z` `inline` by `pauleonix` `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:56; signals: block, compile, warp; excerpt: "@Jacobfaib requested it so heavily templated code does not have to do special handling. In contrast to C-arrays, other static ranges can be empty. ..." (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112451995)
-- `2026-04-20T15:03:04Z` `inline` by `elstehle` `cub/test/warp/catch2_test_warp_reduce_batched_api.cu`:338; signals: block, kernel, warp; excerpt: "I assume this was supposed to test WarpReduceBatchedSumToBlockedApiKernel?" (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3111628170)
-- `2026-04-20T15:49:14Z` `inline` by `elstehle` `cub/test/warp/catch2_test_warp_reduce_batched_api.cu`:338; signals: block, kernel, warp; excerpt: "...should be sufficient to rename SumToStriped to WarpReduceBatchedSumToBlockedApiKernel." (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3111920577)
-- `2026-04-16T14:25:40Z` `inline` by `pauleonix` `cub/benchmarks/bench/reduce/warp_reduce_batched_sum.cu`:6; signals: benchmark, warp; excerpt: "Afaik we do not tune warp primitives/just expose tuning knobs to the user? Benchmarking got removed from this PR. Will follow up in new ..." (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3093934658)
-- `2026-04-16T14:26:00Z` `inline` by `pauleonix` `cub/benchmarks/bench/reduce/warp_reduce_batched_base.cuh`:21; signals: benchmark, warp; excerpt: "Seems like there should be no Doxygen at all in benchmarks... Benchmarking got removed from this PR. Will follow up in new PR." (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3093936881)
-- `2026-04-17T12:10:23Z` `inline` by `pauleonix` `cub/cub/warp/warp_reduce_batched.cuh`:264; signals: block, warp; excerpt: "I kept it in line with other CUB warp/block primitves that return more than one element per thread. On the other hand it causes ..." (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3100134573)
-- `2026-04-17T12:14:38Z` `inline` by `pauleonix` `cub/cub/warp/warp_reduce_batched.cuh`:264; signals: cuda, warp; excerpt: "One (minor?) reason to keep it this way is that it allows the user to use a statically-sized range of their choice. If we ..." (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3100164105)
+- 2026-04-14 `pauleonix`: Benchmarks still need to be adapted to also cover ToBlocked interfaces. (https://github.com/NVIDIA/cccl/pull/7692#issuecomment-4244712305)
+- 2026-04-16 `bernhardmgruber` on `cub/benchmarks/bench/reduce/warp_reduce_batched_sum.cu`:1: Is this up-to-date? (maybe the code was indeed authored last yet) (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3092141650)
+- 2026-04-16 `bernhardmgruber` on `cub/benchmarks/bench/reduce/warp_reduce_batched_sum.cu`:6: Important: if this benchmark is ever intended for tuning, please only compile for TUNE T during benchmarking: However, I don't see any tuning parameters yet. Is this intended or is it still missing from the PR? (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3092158292)
+- 2026-04-16 `bernhardmgruber` on `cub/benchmarks/bench/reduce/warp_reduce_batched_base.cuh`:21: Important: Please use //! style doxygen comments (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3092160862)
+- 2026-04-16 `bernhardmgruber` on `cub/cub/warp/warp_reduce_batched.cuh`:104: Q: Why do we even need WarpReduceBatchedWspro and can't just implement it here in this class? (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3092174253)
+- 2026-04-16 `bernhardmgruber` on `cub/cub/warp/warp_reduce_batched.cuh`:115: Important: Please use a consistent documentation comment style Applies to lots of places. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3092178442)
+- 2026-04-16 `bernhardmgruber` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:93: Suggestion: Such section comments do not help and rather hinder readability IMO. I would remove them. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3092186979)
+- 2026-04-16 `bernhardmgruber` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:105: Suggestion: This looks a lot like a tuning parameter that should be exposed (e.g. at the class' template parameter list) (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3092193745)
+- 2026-04-16 `bernhardmgruber` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:48: Important: Please follow the naming convention for internal entities: Applies all over this file. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3092198755)
+- 2026-04-16 `bernhardmgruber` on `cub/test/warp/catch2_test_warp_reduce_batched.cu`:312: Suggestion: Please put this at the top of the file (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3092211819)
+- 2026-04-16 `pauleonix`: @alliepiper @shwina @bernhardmgruber I got rid of the benchmark and infra changes in this PR so they can be put into another, less time-critical one. (https://github.com/NVIDIA/cccl/pull/7692#issuecomment-4260512620)
+- 2026-04-16 `pauleonix` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:105: You mean sth like just MaxBatchesRedux = 6? Or also a MinThreadsRedux = 32? I would opt for leaving exposition of this to a follow-up PR as it does not affect the interface and I foresee some bike-shedding about naming these. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3093671082)
+- 2026-04-16 `pauleonix` on `cub/benchmarks/bench/reduce/warp_reduce_batched_sum.cu`:6: Afaik we do not tune warp primitives/just expose tuning knobs to the user? Benchmarking got removed from this PR. Will follow up in new PR. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3093934658)
+- 2026-04-16 `pauleonix` on `cub/benchmarks/bench/reduce/warp_reduce_batched_base.cuh`:21: Seems like there should be no Doxygen at all in benchmarks... Benchmarking got removed from this PR. Will follow up in new PR. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3093936881)
+- 2026-04-16 `pauleonix` on `cub/benchmarks/bench/reduce/warp_reduce_batched_sum.cu`:1: Benchmarking got removed from this PR. Will follow up in new PR. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3093938269)
+- 2026-04-16 `pauleonix` on `cub/cub/warp/warp_reduce_batched.cuh`:104: It could be but it seemed nicer to me to split the API from the implementation this way. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3093958410)
+- 2026-04-16 `pauleonix` on `cub/cub/warp/warp_reduce_batched.cuh`:104: I was also considering having the REDUX-based implementation as a second specialization, but opted to just copying what WarpReduce is doing in its shuffle specialization. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3094091147)
+- 2026-04-16 `pauleonix` on `cub/cub/warp/warp_reduce_batched.cuh`:104: The other warp primitives have a smem implementation that is used for non-power-of-two logical warps. We decided not to support that at all b/c those old interfaces are pretty unintuitive (only a single logical warp per physical warp). We still decided to ... (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3094134578)
+- 2026-04-17 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:30: please use precise headers (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3097287535)
+- 2026-04-17 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:50: is there any constrain on T? (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3097291683)
+- 2026-04-17 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:73: we now use CCCL DEVICE API (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3097301023)
+- 2026-04-17 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:81: there are no constraints for the template types (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3097304617)
+- 2026-04-17 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:107: maybe something that can be evaluated later, but static for could be overkill compared to a simple pragma unroll (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3097313736)
+- 2026-04-17 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:72: these variables can also be moved to local variables in each function (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3097319314)
+- 2026-04-17 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:155: this is the right choise also to improve compile time (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3097324025)
+- 2026-04-17 `fbusato` on `cub/cub/warp/warp_reduce_batched.cuh`:40: question. Does the order of the operations differs depending on ReduceRedux or RecurseReductionTree path? we should clearly state that we have potential different values based on heuristics (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3097334513)
+- 2026-04-17 `fbusato` on `cub/cub/warp/warp_reduce_batched.cuh`:95: strongly suggested yes. The reason is that the user can have this class within a template code and non-trivial conditions on it. LogicalWarpThreads = 1 will handle all cases at negligible cost on our side (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3097341779)
+- 2026-04-17 `fbusato` on `cub/cub/warp/warp_reduce_batched.cuh`:183: ah, got it. Makes sense to keep the constrains at higher level here (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3097348336)
+- 2026-04-17 `fbusato` on `cub/cub/warp/warp_reduce_batched.cuh`:264: question. why outputs cannot be a return value? (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3097354057)
+- 2026-04-17 `fbusato` on `cub/cub/warp/warp_reduce_batched.cuh`:306: these are repetitive. suggestion: use a function or trait for the constraints (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3097355898)
+- 2026-04-17 `pauleonix` on `cub/cub/warp/warp_reduce_batched.cuh`:40: REDUX currently only applies to operations on integers that are associative and commutative. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3100003490)
+- 2026-04-17 `pauleonix` on `cub/cub/warp/warp_reduce_batched.cuh`:40: And even the newer FP32 min and max (not implemented yet) do not depend on ordering. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3100016432)
+- 2026-04-17 `pauleonix` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:72: What would be the advantage of that? (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3100089685)
+- 2026-04-17 `pauleonix` on `cub/cub/warp/warp_reduce_batched.cuh`:264: I kept it in line with other CUB warp/block primitves that return more than one element per thread. On the other hand it causes a potentially unintuitive difference between [Reduce Sum] (returning in the style of WarpReduce) and [Reduce Sum]To[Blocked Striped] which ... (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3100134573)
+- 2026-04-17 `pauleonix` on `cub/cub/warp/warp_reduce_batched.cuh`:264: One (minor?) reason to keep it this way is that it allows the user to use a statically-sized range of their choice. If we return cuda::std::array and the user needs to pass the results as a C-style array to another function, the ... (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3100164105)
+- 2026-04-17 `pauleonix` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:50: I added the missing has binary call operator constraint. Other than that the only constraints on T are ones checked at the shuffle level (default constructible and not a pointer). Do you think I should duplicate them at this higher level? (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3100390747)
+- 2026-04-17 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:50: no, better a higher level. I saw this file before the other one (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3102234865)
+- 2026-04-17 `fbusato` on `cub/cub/warp/warp_reduce_batched.cuh`:40: good point. This also remember me the work for WarpReduce that I have to recover one day (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3102245983)
+- 2026-04-17 `fbusato` on `cub/cub/warp/warp_reduce_batched.cuh`:264: makes sense. we will have interface discussion when we will redesign the algorithm with thread hierarchy (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3102260459)
+- 2026-04-17 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:72: no performance advantages. It improves readability because the variables are close to where they are used. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3102908041)
+- 2026-04-17 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:89: it is now not consistent with Batches <= 8 (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3102912941)
+- 2026-04-17 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:90: question. Does it mean that when we execute reduce on subwarp, WSPRO is always faster than the basic approach? (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3102917547)
+- 2026-04-17 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:106: use CCCL PRAGMA UNROLL FULL() (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3102919426)
+- 2026-04-17 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:99: not critical for this PR, but I would suggest to use unroll directive instead of static for (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3102924078)
+- 2026-04-17 `fbusato` on `cub/cub/warp/warp_reduce_batched.cuh`:88: inconsistent with [1, 32] (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3102939301)
+- 2026-04-17 `fbusato` on `cub/cub/warp/warp_reduce_batched.cuh`:366: probably for a later PR, but if the input is short, we keep performing the operation in int32, accumulating, then cast back (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3102961137)
+- 2026-04-17 `pauleonix` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:90: In my benchmarks, yes. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3103142418)
+- 2026-04-17 `pauleonix` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:99: For this particular one static for is needed as the index is the starting point of the static recursion. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3103532177)
+- 2026-04-17 `pauleonix` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:72: I made the names more descriptive than in other places that have these, so I think it should not be a problem. I would like to avoid repeating the code that is initializing them in each member function. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3103540868)
+- 2026-04-17 `pauleonix` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:99: But I replaced all other occurrences now. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3103700965)
+- 2026-04-18 `pauleonix` on `cub/cub/warp/warp_reduce_batched.cuh`:366: AFAIK the current behavior is consistent with WarpReduce. But sure, we could improve both in this regard in the future. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3104063403)
+- 2026-04-20 `miscco` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:50: Question: I assume this is something that we will want to be able to tune. Is this done in the higher level algorithms? (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3109183975)
+- 2026-04-20 `miscco` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:72: I believe that we should keep them here. @ahendriksen found that those variables can introduce a nontrivial amount of latency in a function (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3109190519)
+- 2026-04-20 `miscco` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:72: We also might want to reuse SpecialRegisters (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3109195530)
+- 2026-04-20 `miscco` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:88: Nitpick: This is the second place we are determining this next to warp reduce shfl. Please move that definition into thread operators.cuh Critical: This is potentially failing to recognize qualified operators, please use remove cvref t instead of raw ReductionOp (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3109214869)
+- 2026-04-20 `pauleonix` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:50: For both warp- and block-primitives we tend to leave perf-tuning up to the user (up to some default choices as a starting point). Afaik only device-primitives get the tuning treatment (where we try to find out good values for compile-time meta-parameters like ... (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3109875737)
+- 2026-04-20 `pauleonix` on `cub/cub/warp/warp_reduce_batched.cuh`:262: This actually does not work with a constructor like this. I transformed it into a function so neither (void) nor [[maybe unsused]] are needed anymore. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3110180701)
+- 2026-04-20 `elstehle` on `cub/test/warp/catch2_test_warp_reduce_batched_api.cu`:338: I assume this was supposed to test WarpReduceBatchedSumToBlockedApiKernel? (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3111628170)
+- 2026-04-20 `elstehle` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:176: suggestion: I think requiring commutative operators is something we'd want to point out in the documentation. We can drop that requirement, once we add a version that supports non-commutative operators. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3111702404)
+- 2026-04-20 `elstehle` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:56: question: Does a Batches==0 invocation make sense? I would be concerned about expressions like inputs[Batches - 1];. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3111808164)
+- 2026-04-20 `elstehle` on `cub/cub/warp/warp_reduce_batched.cuh`:92: nit: SM20 feels old 🤣 ...we could mention something slightly more recent, like SM80? (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3111846104)
+- 2026-04-20 `elstehle` approved: Looks good to me. Feel free to defer any feedback unrelated to tests, API contract (including its documentation), or correctness to follow-up work. @fbusato when you have some bandwidth, could you please help re-review? We have downstream users looking to start using ... (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4141121807)
+- 2026-04-20 `elstehle` on `cub/test/warp/catch2_test_warp_reduce_batched_api.cu`:338: ...should be sufficient to rename SumToStriped to WarpReduceBatchedSumToBlockedApiKernel. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3111920577)
+- 2026-04-20 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:56: I don't think Batches==0 should be allowed. Otherwise, it is hard to define a valid input/output (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112255544)
+- 2026-04-20 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:176: we can use cuda::is commutative v (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112260549)
+- 2026-04-20 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:72: the current code is fine. Anyway, recent compiler versions are able to remove duplicate instantiations of these variables. So it is only a style choice (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112285883)
+- 2026-04-20 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:30: is this header used? (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112367395)
+- 2026-04-20 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:115: I think we can remove this condition (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112392005)
+- 2026-04-20 `fbusato` on `cub/cub/warp/warp_reduce_batched.cuh`:102: same here, Batches 0 (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112426100)
+- 2026-04-20 `fbusato` on `cub/test/warp/catch2_test_warp_reduce_batched_api.cu`:338: btw, this test case is duplicated from line 283. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112441782)
+- 2026-04-20 `pauleonix` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:56: @Jacobfaib requested it so heavily templated code does not have to do special handling. In contrast to C-arrays, other static ranges can be empty. Naturally this is only supported for the more general To[Striped Blocked] interface since Reduce Sum need to return ... (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112451995)
+- 2026-04-20 `fbusato` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:118: should this variable be initialzied? it looks that the outputs can have undefined values (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112461488)
+- 2026-04-20 `pauleonix` on `cub/cub/warp/warp_reduce_batched.cuh`:92: I copied that from WarpReduce which is not that old 🤣 Agreed that it could be updated. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112462402)
+- 2026-04-20 `fbusato` on `cub/cub/warp/warp_reduce_batched.cuh`:97: should not be struct? (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112475071)
+- 2026-04-20 `fbusato` approved: correctness, interface, style look good. Just a couple of minor suggestions. (https://github.com/NVIDIA/cccl/pull/7692#pullrequestreview-4141963225)
+- 2026-04-20 `Jacobfaib` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:56: requested it so heavily templated code does not have to do special handling. Right, for example suppose the user wants to use this algorithm over an ever shrinking region. They might generate such a loop at compile-time using make index sequence() which ... (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112533791)
+- 2026-04-20 `pauleonix` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:30: Not directly anymore, since I put the REDUX check into thread operators.cuh. Good catch! (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112574696)
+- 2026-04-20 `pauleonix` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:118: I actually document it as having undefined value for positions that do not have a corresponding input batch, but I guess it should rather be initialized and documented as "invalid" instead. WSPRO does actually always write to all of the positions, but ... (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112646473)
+- 2026-04-20 `pauleonix` on `cub/cub/warp/warp_reduce_batched.cuh`:97: WarpReduce is a class as well. While it does not make a big difference in the language, I would prefer using struct for POD structs. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112673238)
+- 2026-04-20 `pauleonix` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:56: I think that would be more surprising. Generic code should use the generic interface. The simplified interface does not allow Batches LogicalWarpThreads and so I do not see a problem with it als not allowing Batches < 1. It handles all (Batches, ... (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3112721478)
+- 2026-04-20 `pauleonix` on `cub/cub/warp/specializations/warp_reduce_batched_wspro.cuh`:176: To me "reduction" implies that operators are commutative (related 774). See also . But I just realized the wikipedia article we link is about the general fold, not the parallel algorithm. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3113010878)
+- 2026-04-20 `oleksandr-pavlyk` on `cub/test/warp/catch2_test_warp_reduce_batched_api.cu`:19: Consider naming the literal values to lower cognitive load of reading the example. Use the compile-time constant in int thread data[num batches]; and in the later conditional: (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3113551416)
+- 2026-04-20 `oleksandr-pavlyk` on `cub/test/warp/catch2_test_warp_reduce_batched_api.cu`:268: Important: The comment describes the intent of picking last two elements, but results spans 3 elements in code. Please reconcile. (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3113573594)
+- 2026-04-20 `oleksandr-pavlyk` on `cub/test/warp/catch2_test_warp_reduce_batched_api.cu`:265: Assuming constexpr int num batches = 5, could be shortened to (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3113592526)
+- 2026-04-20 `oleksandr-pavlyk` on `cub/test/warp/catch2_test_warp_reduce_batched_api.cu`:312: Same concern here, results is the span of 3 elements, but comment suggests output should be two elements. Did you mean cuda::std::span results{cuda::std::begin(thread data) + 3, 2};? (https://github.com/NVIDIA/cccl/pull/7692#discussion_r3113618169)

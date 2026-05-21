@@ -1,70 +1,33 @@
-# PR Discussion Digest
-
-- Source PR: [sgl-project/sglang#6793](https://github.com/sgl-project/sglang/pull/6793)
-- Source page: `sources/prs/sglang/PR-6793.md`
-- Evidence bundle: `evidence/pull-bundles/sglang/gh-6793`
-- Generated at: `2026-05-20T15:30:49.020465+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-05-31T16:10:15Z`
-- Merged: `2025-06-25T09:00:22Z`
-
-## Discussion Counts
-
-- Issue comments: 23
-- Review submissions: 23 (approved=1, changes_requested=1, commented=21)
-- Inline review comments: 23
-- Review threads observed: 14
-- Resolved/outdated thread markers: resolved=14, outdated=9
-- Human participants with discussion text: ByronHsu, Hongbosherlock, ShangmingCai, ishandhanani, jokerwyt
-- Automation comments/reviews omitted from high-signal summary: 4
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 2
-
-## Review Decisions
-
-- `2025-05-31T16:10:37Z` `COMMENTED` by `gemini-code-assist` - Hello @Hongbosherlock, I'm Gemini Code Assist[^1]! I'm currently reviewing this pull request and will post my feedback shortly. ... (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2884282052)
-- `2025-05-31T16:11:58Z` `CHANGES_REQUESTED` by `gemini-code-assist` - Code Review This pull request introduces an important feature: support for different Tensor Parallel (TP) sizes between prefill ... (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2884287063)
-- `2025-06-02T08:02:30Z` `COMMENTED` by `ShangmingCai` (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2887225260)
-- `2025-06-02T08:02:58Z` `COMMENTED` by `ShangmingCai` (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2887226927)
-- `2025-06-02T08:04:45Z` `COMMENTED` by `ShangmingCai` (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2887231605)
-- `2025-06-02T08:15:43Z` `COMMENTED` by `ShangmingCai` - These newly added args are not straightforward in my opinion, How about we change it into the , ... (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2887263154)
-- `2025-06-02T08:40:41Z` `COMMENTED` by `ShangmingCai` - Since the data addrs are not contiguous anymore because we have to split every item either at the ... (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2887354245)
-- `2025-06-02T15:25:24Z` `COMMENTED` by `Hongbosherlock` (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2888936556)
-- `2025-06-02T15:27:45Z` `COMMENTED` by `Hongbosherlock` (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2888946902)
-- `2025-06-04T09:08:51Z` `COMMENTED` by `ShangmingCai` (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2895929370)
-- `2025-06-04T09:19:27Z` `COMMENTED` by `ShangmingCai` (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2895962013)
-- `2025-06-04T13:25:32Z` `COMMENTED` by `Hongbosherlock` (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2896734182)
-- `2025-06-04T13:29:43Z` `COMMENTED` by `Hongbosherlock` (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2896750489)
-- `2025-06-05T11:04:16Z` `COMMENTED` by `ShangmingCai` - The code is very clean and I have verified the accuracy with page size == 1. Great job! ... (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2897282582)
-- `2025-06-05T13:22:26Z` `COMMENTED` by `Hongbosherlock` (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2900320037)
-- `2025-06-05T13:22:30Z` `COMMENTED` by `Hongbosherlock` (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2900320286)
-- `2025-06-10T13:07:58Z` `COMMENTED` by `ShangmingCai` (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2913506458)
-- `2025-06-10T13:12:16Z` `APPROVED` by `ShangmingCai` - LGTM now, @ByronHsu PTAL. I will take some time to run accuracy and performance tests again this week. (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2913522814)
-- `2025-06-10T13:37:27Z` `COMMENTED` by `Hongbosherlock` (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2913626049)
-- `2025-06-11T11:11:50Z` `COMMENTED` by `ShangmingCai` (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2916705588)
-- `2025-06-12T03:31:23Z` `COMMENTED` by `ByronHsu` - Since most of the change is on mooncake side. I will defer to @ShangmingCai to review/approve (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2919399812)
-- `2025-06-12T03:54:40Z` `COMMENTED` by `ShangmingCai` (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2919456563)
-- `2025-06-12T04:07:38Z` `COMMENTED` by `Hongbosherlock` (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2919487626)
-
-## Inline Comment Hotspots
-
-- `python/sglang/srt/disaggregation/mooncake/conn.py`: 18 inline comment(s)
-- `python/sglang/srt/disaggregation/prefill.py`: 5 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-06-02T08:40:41Z` `review` `COMMENTED` by `ShangmingCai`; signals: cache, mla, perf, performance; excerpt: "Since the data addrs are not contiguous anymore because we have to split every item either at the src or the dst, I think ..." (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2887354245)
-- `2025-06-05T11:04:16Z` `review` `COMMENTED` by `ShangmingCai`; signals: accuracy, perf, performance, throughput; excerpt: "The code is very clean and I have verified the accuracy with page size == 1. Great job! However, there seems to be a ..." (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2897282582)
-- `2025-06-10T12:44:46Z` `issue` by `Hongbosherlock`; signals: accuracy, h100, hang, perf, performance; excerpt: "@ShangmingCai Sorry for the late reply, I've added support for page size 1 and have also verified both the accuracy and performance. for example: ..." (https://github.com/sgl-project/sglang/pull/6793#issuecomment-2959061587)
-- `2025-06-04T09:19:27Z` `inline` by `ShangmingCai` `python/sglang/srt/disaggregation/mooncake/conn.py`:841; signals: mla, perf, performance; excerpt: "We should probably use logger.warning once() here to notify users that the performance with different TP for non-MLA models is not yet guaranteed." (https://github.com/sgl-project/sglang/pull/6793#discussion_r2126116622)
-- `2025-06-02T16:42:40Z` `issue` by `Hongbosherlock`; signals: accuracy, cache, kv cache; excerpt: "prefill tp size:4 , decode tp size:2 Looking into accuracy issue when Decode TP < Prefill TP. Each decode rank needs to receive KV ..." (https://github.com/sgl-project/sglang/pull/6793#issuecomment-2931544692)
-- `2025-06-10T13:12:16Z` `review` `APPROVED` by `ShangmingCai`; signals: accuracy, perf, performance; excerpt: "LGTM now, @ByronHsu PTAL. I will take some time to run accuracy and performance tests again this week." (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2913522814)
-- `2025-06-18T03:45:25Z` `issue` by `ShangmingCai`; signals: perf, performance, throughput; excerpt: "@Hongbosherlock Hello, after I talk this PR with some maintainers, some people are worrying that the performance is too poor to be used in ..." (https://github.com/sgl-project/sglang/pull/6793#issuecomment-2982567665)
-- `2025-06-02T08:02:30Z` `inline` by `ShangmingCai` `python/sglang/srt/disaggregation/mooncake/conn.py`:305; signals: block, cache; excerpt: "Since we have to split the kvcache and calculate the offset either at the prefill side or the decode side, I don't see the ..." (https://github.com/sgl-project/sglang/pull/6793#discussion_r2120363844)
-- `2025-06-02T08:15:43Z` `review` `COMMENTED` by `ShangmingCai`; signals: hang; excerpt: "These newly added args are not straightforward in my opinion, How about we change it into the , and we use them to calculate ..." (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2887263154)
-- `2025-06-04T08:49:34Z` `issue` by `Hongbosherlock`; signals: accuracy, h100; excerpt: "Fixed the accuracy issue when Decode TP < Prefill TP in Updated Evaluation - prefill tp size:4 , decode tp size:2 - prefill tp ..." (https://github.com/sgl-project/sglang/pull/6793#issuecomment-2939175468)
-- `2025-06-12T03:31:23Z` `review` `COMMENTED` by `ByronHsu`; signals: hang; excerpt: "Since most of the change is on mooncake side. I will defer to @ShangmingCai to review/approve" (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2919399812)
-- `2025-06-12T04:42:52Z` `issue` by `ShangmingCai`; signals: hang, mla; excerpt: "@Hongbosherlock When prefill tp decode tp (with MLA), the current PR will hang. I think some code hasn't been included yet. The CI and ..." (https://github.com/sgl-project/sglang/pull/6793#issuecomment-2965090235)
+- 2025-05-31 `Hongbosherlock`: Examples: Without DP attention: - prefill tp size decode tp size - prefill tp size < decode tp size mini lb command: (https://github.com/sgl-project/sglang/pull/6793#issuecomment-2925394431)
+- 2025-06-01 `ShangmingCai`: Thank you for this PR! Will review it tomorrow and test to see if the bytes slice solution can pass the E2E tests. (https://github.com/sgl-project/sglang/pull/6793#issuecomment-2926377897)
+- 2025-06-01 `Hongbosherlock`: Evaluation - prefill tp size:4 , decode tp size:2 Looking into accuracy issue when Decode TP < Prefill TP. - prefill tp size:2 , decode tp size:4 (https://github.com/sgl-project/sglang/pull/6793#issuecomment-2927413148)
+- 2025-06-02 `ShangmingCai` on `python/sglang/srt/disaggregation/mooncake/conn.py`:305: Since we have to split the kvcache and calculate the offset either at the prefill side or the decode side, I don't see the point of grouping the contiguous indices into blocks and then splitting them again. (https://github.com/sgl-project/sglang/pull/6793#discussion_r2120363844)
+- 2025-06-02 `ShangmingCai` on `python/sglang/srt/disaggregation/mooncake/conn.py`:317: I think this line is probably gonna get an error: RuntimeError: Transfer thread failed because of 'KVArgs' object has no attribute 'kv head num', did you forget to add the other changes into this commit? (https://github.com/sgl-project/sglang/pull/6793#discussion_r2120367690)
+- 2025-06-02 `ShangmingCai` commented: These newly added args are not straightforward in my opinion, How about we change it into the , and we use them to calculate the offset, where dst tp slice index = self.kv mgr.kv args.engine rank % self.required dst info num in ... (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2887263154)
+- 2025-06-02 `ShangmingCai` commented: Since the data addrs are not contiguous anymore because we have to split every item either at the src or the dst, I think it will get a significant performance drop unless we are using a very large page size. Overall, this ... (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2887354245)
+- 2025-06-02 `Hongbosherlock`: prefill tp size:4 , decode tp size:2 Looking into accuracy issue when Decode TP < Prefill TP. Each decode rank needs to receive KV cache from multiple prefill ranks. The accuracy problem is likely caused by a decode rank mistakenly assuming that ... (https://github.com/sgl-project/sglang/pull/6793#issuecomment-2931544692)
+- 2025-06-04 `Hongbosherlock`: Fixed the accuracy issue when Decode TP < Prefill TP in Updated Evaluation - prefill tp size:4 , decode tp size:2 - prefill tp size:2 , decode tp size:4 - prefill tp size:2 , decode tp size:2 - prefill-node1 tp size:2 , ... (https://github.com/sgl-project/sglang/pull/6793#issuecomment-2939175468)
+- 2025-06-04 `ShangmingCai` on `python/sglang/srt/disaggregation/mooncake/conn.py`:200: This should not be an int value, a decode instance could be paired with many prefill nodes with different setups, so this value could change when the src prefill node is different. You can refer to the connection pool and bootstrap key ... (https://github.com/sgl-project/sglang/pull/6793#discussion_r2126095418)
+- 2025-06-04 `ShangmingCai` on `python/sglang/srt/disaggregation/mooncake/conn.py`:841: We should probably use logger.warning once() here to notify users that the performance with different TP for non-MLA models is not yet guaranteed. (https://github.com/sgl-project/sglang/pull/6793#discussion_r2126116622)
+- 2025-06-04 `Hongbosherlock` on `python/sglang/srt/disaggregation/mooncake/conn.py`:200: Thanks for your suggestion! I've improved this part. (https://github.com/sgl-project/sglang/pull/6793#discussion_r2126601240)
+- 2025-06-04 `Hongbosherlock` on `python/sglang/srt/disaggregation/mooncake/conn.py`:841: At the moment, splitting each item at either the source or the destination seems to be the most feasible approach. This could potentially be improved in future PRs, such as adopting an asynchronous transfer async method instead of the current transfer sync. (https://github.com/sgl-project/sglang/pull/6793#discussion_r2126611452)
+- 2025-06-05 `ShangmingCai` on `python/sglang/srt/disaggregation/mooncake/conn.py`:655: The second condition is not needed. For MLA backend, dummy rank will not sync the status back, and required prefill info num map should be 1 as well. (https://github.com/sgl-project/sglang/pull/6793#discussion_r2128408317)
+- 2025-06-05 `ShangmingCai` on `python/sglang/srt/disaggregation/mooncake/conn.py`:198: Can we make this self.required prefill info num map: Dict[str, int] = {}, I think we should not use bootstrap room as the key since this dict is gonna be larger and larger, and I don't see the pop logic. Requests that ... (https://github.com/sgl-project/sglang/pull/6793#discussion_r2128418837)
+- 2025-06-05 `ShangmingCai` on `python/sglang/srt/disaggregation/mooncake/conn.py`:355: I think this logic may not be compatible with page size larger than 1? (https://github.com/sgl-project/sglang/pull/6793#discussion_r2128434675)
+- 2025-06-05 `ShangmingCai` on `python/sglang/srt/disaggregation/mooncake/conn.py`:685: Should pop it in the clear() method, so that it will not cause trouble when a future request shares the same room with this request after a long period. (https://github.com/sgl-project/sglang/pull/6793#discussion_r2128543065)
+- 2025-06-05 `ShangmingCai` commented: The code is very clean and I have verified the accuracy with page size == 1. Great job! However, there seems to be a problem when --page-size is greater than 1. Page size is an important parameter for PD, can you fix ... (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2897282582)
+- 2025-06-05 `Hongbosherlock` on `python/sglang/srt/disaggregation/mooncake/conn.py`:198: I tried to use bootstrap key, it was a bit tricky. To keep it consistent with request status, I ended up using bootstrap room. You're right — adding a pop method is necessary. Thanks again! (https://github.com/sgl-project/sglang/pull/6793#discussion_r2128847537)
+- 2025-06-05 `Hongbosherlock` on `python/sglang/srt/disaggregation/mooncake/conn.py`:355: Page size 1 hasn't been tested. Will fix accuracy ASAP. (https://github.com/sgl-project/sglang/pull/6793#discussion_r2128847693)
+- 2025-06-10 `Hongbosherlock`: @ShangmingCai Sorry for the late reply, I've added support for page size 1 and have also verified both the accuracy and performance. for example: - prefill tp size:2 , decode tp size:4 - prefill tp size:4 , decode tp size:2 - prefill-node1 ... (https://github.com/sgl-project/sglang/pull/6793#issuecomment-2959061587)
+- 2025-06-10 `ShangmingCai` on `python/sglang/srt/disaggregation/prefill.py`:506: Since this is a newly added field, it should be added to all the backends, including base, fake, and nixl. (https://github.com/sgl-project/sglang/pull/6793#discussion_r2137860942)
+- 2025-06-11 `ShangmingCai`: There is an error report in the CI: Try fix this through hasattr or self.is mla backend. Also, do we really need kv indices len, maybe it is ok to write the whole last page. Although this might waste a little bandwidth ... (https://github.com/sgl-project/sglang/pull/6793#issuecomment-2961048529)
+- 2025-06-12 `ByronHsu` on `python/sglang/srt/disaggregation/prefill.py`:125: kvargs does not have these two fields? (https://github.com/sgl-project/sglang/pull/6793#discussion_r2141593066)
+- 2025-06-12 `ByronHsu` commented: Since most of the change is on mooncake side. I will defer to @ShangmingCai to review/approve (https://github.com/sgl-project/sglang/pull/6793#pullrequestreview-2919399812)
+- 2025-06-12 `ShangmingCai` on `python/sglang/srt/disaggregation/prefill.py`:125: I added is mla backend for the queue in 5922. And kv args.kv head num, this is a newly added field in KVArgs, which I think you should take another look. (https://github.com/sgl-project/sglang/pull/6793#discussion_r2141645397)
+- 2025-06-12 `Hongbosherlock` on `python/sglang/srt/disaggregation/prefill.py`:125: added kv head num and page size to class KVArgs in (https://github.com/sgl-project/sglang/pull/6793#discussion_r2141673046)
+- 2025-06-12 `ShangmingCai`: @Hongbosherlock When prefill tp decode tp (with MLA), the current PR will hang. I think some code hasn't been included yet. The CI and my local test both hang. I have fixed this for you. Let me run another round of local ... (https://github.com/sgl-project/sglang/pull/6793#issuecomment-2965090235)
+- 2025-06-17 `Hongbosherlock`: Hi @ShangmingCai , It looks like all CI checks have passed. Please let me know if there's anything else I should address — Looking forward to getting this merged! (https://github.com/sgl-project/sglang/pull/6793#issuecomment-2979156470)
+- 2025-06-18 `ShangmingCai`: @Hongbosherlock Hello, after I talk this PR with some maintainers, some people are worrying that the performance is too poor to be used in a real deployment scenario. I am trying this PR: which might help improve the small KV head piece ... (https://github.com/sgl-project/sglang/pull/6793#issuecomment-2982567665)
+- 2025-06-23 `ShangmingCai`: @Hongbosherlock, I have verified that the performance drop can be reduced by 7236. We are able to have it rise from 10% of the original to 70% of the original performance through batching small pieces inside mooncake, which is an acceptable degradation ... (https://github.com/sgl-project/sglang/pull/6793#issuecomment-2996188098)
+- 2025-06-24 `Hongbosherlock`: @ShangmingCai I have updated the code, and it's really a significant improvement. for example: - prefill tp size:4 , decode tp size:2 (https://github.com/sgl-project/sglang/pull/6793#issuecomment-3000876422)
+- 2025-06-24 `ShangmingCai`: @Hongbosherlock Yes, same results. But the batch transfer api requires the latest version and we are seeing some slice-failed reports. I need to address this bug first to release 0.3.4.post2 to make sure PD is runnable under all cases for sglang main. ... (https://github.com/sgl-project/sglang/pull/6793#issuecomment-3000977377)

@@ -1,78 +1,49 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/cccl#7565](https://github.com/NVIDIA/cccl/pull/7565)
-- Source page: `sources/prs/cccl-cub/PR-7565.md`
-- Evidence bundle: `evidence/pull-bundles/cccl-cub/gh-7565`
-- Generated at: `2026-05-20T15:20:12.492399+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-02-08T05:44:48Z`
-- Merged: `2026-03-24T06:23:30Z`
-
-## Discussion Counts
-
-- Issue comments: 34
-- Review submissions: 22 (approved=1, commented=21)
-- Inline review comments: 36
-- Review threads observed: 27
-- Resolved/outdated thread markers: resolved=25, outdated=20
-- Human participants with discussion text: alliepiper, bernhardmgruber, griwes
-- Automation comments/reviews omitted from high-signal summary: 16
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-02-09T11:05:18Z` `COMMENTED` by `bernhardmgruber` - This looks really good already! Great work! (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3772035686)
-- `2026-02-09T23:53:38Z` `COMMENTED` by `griwes` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3776022805)
-- `2026-02-09T23:55:51Z` `COMMENTED` by `griwes` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3776027863)
-- `2026-02-19T02:01:05Z` `COMMENTED` by `griwes` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3823097957)
-- `2026-02-20T16:20:16Z` `COMMENTED` by `alliepiper` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3832929997)
-- `2026-02-22T19:06:22Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3838479480)
-- `2026-02-22T19:18:06Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3838489910)
-- `2026-02-25T12:42:59Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3854024112)
-- `2026-02-25T15:49:23Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3854217868)
-- `2026-02-25T15:52:00Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3855162334)
-- `2026-02-25T15:52:50Z` `COMMENTED` by `bernhardmgruber` - I see a lot of changes to the setup of the shared memory resources, which worry me. I ... (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3855167045)
-- `2026-02-25T15:54:40Z` `COMMENTED` by `bernhardmgruber` - @griwes please try to refactor out anything that is not related to the new tuning API and ship ... (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3855177012)
-- `2026-02-25T16:30:11Z` `COMMENTED` by `griwes` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3855383497)
-- `2026-02-25T16:31:09Z` `COMMENTED` by `griwes` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3855388925)
-- `2026-02-25T16:35:44Z` `COMMENTED` by `griwes` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3855414624)
-- `2026-03-03T13:17:23Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3882202558)
-- `2026-03-03T13:22:42Z` `COMMENTED` by `bernhardmgruber` - I still have to re-review the dispatch logic and the changes around the kernel, especially the refactoring to ... (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3882561501)
-- `2026-03-04T22:53:41Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3889813652)
-- `2026-03-13T17:33:37Z` `COMMENTED` by `griwes` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3945825106)
-- `2026-03-23T14:24:21Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3992150423)
-- `2026-03-23T14:57:19Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3992397892)
-- `2026-03-23T19:18:58Z` `APPROVED` by `bernhardmgruber` - I have collected a few more pieces of refactorings, but I think those should go to a separate ... (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3994082355)
-
-## Inline Comment Hotspots
-
-- `cub/cub/device/dispatch/dispatch_scan.cuh`: 7 inline comment(s)
-- `cub/benchmarks/bench/scan/policy_selector.h`: 5 inline comment(s)
-- `cub/cub/device/dispatch/kernels/kernel_scan.cuh`: 5 inline comment(s)
-- `cub/cub/device/dispatch/kernels/kernel_scan_warpspeed.cuh`: 5 inline comment(s)
-- `cub/cub/device/dispatch/tuning/tuning_scan.cuh`: 4 inline comment(s)
-- `cub/cub/device/dispatch/kernels/scan_warpspeed_policy.cuh`: 4 inline comment(s)
-- `cub/cub/device/device_scan.cuh`: 2 inline comment(s)
-- `c/parallel/src/scan.cu`: 1 inline comment(s)
-- `cub/cub/device/dispatch/tuning/tuning_radix_sort.cuh`: 1 inline comment(s)
-- `ci/matrix.yaml`: 1 inline comment(s)
-- `cub/test/catch2_test_device_scan_env.cu`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-02-25T15:52:50Z` `review` `COMMENTED` by `bernhardmgruber`; signals: hang, kernel, memory, shared memory; excerpt: "I see a lot of changes to the setup of the shared memory resources, which worry me. I am almost certain those will introduce ..." (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3855167045)
-- `2026-03-03T13:22:42Z` `review` `COMMENTED` by `bernhardmgruber`; signals: benchmark, hang, kernel; excerpt: "I still have to re-review the dispatch logic and the changes around the kernel, especially the refactoring to compute whether we can fit a ..." (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3882561501)
-- `2026-02-25T16:28:09Z` `issue` by `griwes`; signals: hang, kernel, memory, shared memory; excerpt: "The setup of the resources is the same from the perspective of the kernel. The only thing that changes there is the ability to ..." (https://github.com/NVIDIA/cccl/pull/7565#issuecomment-3960472475)
-- `2026-03-04T14:40:11Z` `inline` by `bernhardmgruber` `cub/cub/device/dispatch/kernels/scan_warpspeed_policy.cuh`:22; signals: hang, kernel, warp; excerpt: "Remark: we should probably introduce an algorithm enum like in DeviceTransform before all the policies go public. No changes need for now." (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2884171991)
-- `2026-03-16T21:56:16Z` `issue` by `griwes`; signals: compile, hang, kernel; excerpt: "There is SASS changes. Here's a random assortment of kernels compared: I believe that there's a whole bunch of codegen artifacts here + some ..." (https://github.com/NVIDIA/cccl/pull/7565#issuecomment-4070856249)
-- `2026-02-19T02:00:55Z` `inline` by `griwes` `cub/cub/device/dispatch/kernels/scan_warpspeed_policy.cuh`; signals: kernel, warp; excerpt: "Note: I need this struct in both kernel scan warpspeed.cuh and tuning scan.cuh, and cross-including them seems... bad. But putting it here is also ..." (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2825293287)
-- `2026-02-22T19:17:41Z` `inline` by `bernhardmgruber` `cub/cub/device/dispatch/kernels/kernel_scan.cuh`:223; signals: kernel, warp; excerpt: "Suggestion: Since we just merged the warpspeed implementation, it's not on any release branch yet. We could entirely remove it from the legacy policy ..." (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2838396645)
-- `2026-02-25T14:11:58Z` `inline` by `bernhardmgruber` `cub/cub/device/dispatch/kernels/scan_warpspeed_policy.cuh`; signals: kernel, warp; excerpt: "Just leave it here. It's fine. We should do a larger reorganization of files with CCCL 4.0 and move a lot more into a ..." (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2853286765)
-- `2026-02-25T15:52:00Z` `inline` by `bernhardmgruber` `cub/cub/device/dispatch/kernels/kernel_scan_warpspeed.cuh`:899; signals: kernel, warp; excerpt: "Remark: This seems like a massive duplication of the logic allocResources does. I am extremely worried this will render the codebase brittle and unmaintainable. ..." (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2853868668)
-- `2026-02-25T16:30:10Z` `inline` by `griwes` `cub/cub/device/dispatch/kernels/kernel_scan_warpspeed.cuh`:899; signals: kernel, warp; excerpt: "This is, in fact, a reduction of the duplication. The only way to not have the parts that are duplicated duplicated is to entirely ..." (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2854075208)
-- `2026-02-25T16:31:08Z` `inline` by `griwes` `cub/cub/device/dispatch/kernels/kernel_scan_warpspeed.cuh`:899; signals: kernel, warp; excerpt: "The reason it is like this is that the current code is all written in terms of types and their statically known sizes. We ..." (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2854080335)
-- `2026-03-04T22:44:55Z` `inline` by `bernhardmgruber` `cub/cub/device/dispatch/dispatch_scan.cuh`:511; signals: compile, warp; excerpt: "Important: Please retain the compile-time check when possible. It helps a lot with development if we can turn on warpspeed unconditionally and just compile ..." (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2886534378)
+- 2026-02-09 `bernhardmgruber` on `c/parallel/src/scan.cu`:424: Suggestion: can we try to unify the two branches by using something like: I think the only difference is that we pass a null init, as NullType and otherwise wrapped in an indirect arg t (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2781433085)
+- 2026-02-09 `bernhardmgruber` on `cub/benchmarks/bench/scan/policy_selector.h`:12: Suggestion: Those %RANGE% definitions have no effect in my understanding, since CMakeLists.txt will only scan the benchmark source files for them. I would remove them here to not confuse anybody. (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2781453591)
+- 2026-02-09 `bernhardmgruber` on `cub/benchmarks/bench/scan/policy_selector.h`:2: Suggestion: Since this is a net new file with an arguable new content, I would just use the go-to license header for new files: (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2781457589)
+- 2026-02-09 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_scan.cuh`:569: Important: We have been sloppy in the past checking the return code of doit. We should do it better here: (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2781525217)
+- 2026-02-09 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_scan.cuh`:523: Important: Let's make it a habit to also log the selected policy: (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2781533169)
+- 2026-02-09 `bernhardmgruber` on `cub/cub/device/dispatch/tuning/tuning_scan.cuh`:876: Important remark: The detection whether the current workload, as indicated by the members of policy selector, corresponds to the benchmark we tuned for is not something we want to eventually expose in the user facing API. So we really want to remove ... (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2781987716)
+- 2026-02-09 `bernhardmgruber` on `cub/cub/device/dispatch/tuning/tuning_scan.cuh`:656: Suggestion: I would remove those two data members and classify the accumulator and operation base don accum type and operation t inside operator()(::cuda::arch id arch). The operation should be easy. The definition of a primitive accumulator type is a bit annoying because ... (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2782010354)
+- 2026-02-09 `bernhardmgruber` commented: This looks really good already! Great work! (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3772035686)
+- 2026-02-09 `griwes` on `cub/benchmarks/bench/scan/policy_selector.h`:12: This came from the comparison with radix sort, where you've also added these to the policy selector header :sweat smile: (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2785102568)
+- 2026-02-09 `griwes` on `cub/cub/device/dispatch/tuning/tuning_scan.cuh`:876: We'll need to figure out how to propagate this condition from c.parallel to CUB when we do that. I'll add a TODO here. (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2785107805)
+- 2026-02-10 `bernhardmgruber`: @griwes we just merged 6811, which also touches the scan tunings. This will probably create some more work for this PR. Issue 6821 also tracks making the new scan implementation available to CCCL.C. Do you think you can handle this as well? (https://github.com/NVIDIA/cccl/pull/7565#issuecomment-3880977112)
+- 2026-02-13 `bernhardmgruber`: @griwes I pulled out the delay constructor refactoring in 7668 so I can better stack my refactorings on top, in case this PR takes a bit longer (sorry again for the extra work with warpspeed!) (https://github.com/NVIDIA/cccl/pull/7565#issuecomment-3897142164)
+- 2026-02-18 `griwes`: Note, the warpspeed integration is still largely untested; I've added an rtxpro6000 test job to c.parallel and that will be the primary test right now. I'll lease a machine with a relevant GPU if that fails, or if there's anything that's clearly ... (https://github.com/NVIDIA/cccl/pull/7565#issuecomment-3923877244)
+- 2026-02-19 `griwes` on `cub/cub/device/dispatch/kernels/scan_warpspeed_policy.cuh`: Note: I need this struct in both kernel scan warpspeed.cuh and tuning scan.cuh, and cross-including them seems... bad. But putting it here is also icky, it ain't a kernel and it'd be the only file with non-conventional name in this folder. I ... (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2825293287)
+- 2026-02-20 `griwes`: Okay, there were two big issues I addressed in the previous commit, I think that what follows should just be problems of the nature of making compilers happy, save maybe for c.parallel (but I'm hoping the launch bounds fix fixes that also). ... (https://github.com/NVIDIA/cccl/pull/7565#issuecomment-3935290232)
+- 2026-02-20 `griwes`: One last thing seems to be fundamentally wrong, I'm 99% sure that the reason is that I'm classifying types differently between host and device in c.parallel (c.parallel seeing just STORAGE, but the kernel seeing a trivial type and going with the wrong ... (https://github.com/NVIDIA/cccl/pull/7565#issuecomment-3935730646)
+- 2026-02-20 `alliepiper` on `ci/matrix.yaml`:65: Add the same coverage to nightly + weekly, I try to keep those a superset of PR builds. (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2834001065)
+- 2026-02-22 `bernhardmgruber` on `cub/benchmarks/bench/scan/policy_selector.h`:12: Nice :D I'll drop them: 7736 (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2838386083)
+- 2026-02-22 `bernhardmgruber` on `cub/cub/device/dispatch/kernels/kernel_scan.cuh`:223: Suggestion: Since we just merged the warpspeed implementation, it's not on any release branch yet. We could entirely remove it from the legacy policy hub and only support it on the new policy selector. This may allow you to simplify some code, ... (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2838396645)
+- 2026-02-25 `bernhardmgruber` on `cub/benchmarks/bench/scan/policy_selector.h`:20: I added a global constant delay constructor policy like I did in 7667 to replace this. (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2852824773)
+- 2026-02-25 `bernhardmgruber` on `cub/cub/device/dispatch/kernels/kernel_scan.cuh`:115: Q: Why is the drop of [[nodiscard]] and CCCL DEVICE API needed? Can we just leave the signature? (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2853000198)
+- 2026-02-25 `bernhardmgruber` on `cub/cub/device/dispatch/kernels/kernel_scan_warpspeed.cuh`:1024: I think this is unused now. Can we remove it? (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2853282259)
+- 2026-02-25 `bernhardmgruber` on `cub/cub/device/dispatch/kernels/scan_warpspeed_policy.cuh`: Just leave it here. It's fine. We should do a larger reorganization of files with CCCL 4.0 and move a lot more into a detail directory. All the dispatch, kernels and tuning files for example. They should all be clearly internal. (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2853286765)
+- 2026-02-25 `bernhardmgruber` on `cub/cub/device/dispatch/kernels/scan_warpspeed_policy.cuh`:18: Important: Please add operator!= and operator<<. (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2853346470)
+- 2026-02-25 `bernhardmgruber` on `cub/cub/device/dispatch/kernels/kernel_scan_warpspeed.cuh`:899: Remark: This seems like a massive duplication of the logic allocResources does. I am extremely worried this will render the codebase brittle and unmaintainable. We should really try to come up with a way to not duplicate so much logic. (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2853868668)
+- 2026-02-25 `bernhardmgruber` commented: I see a lot of changes to the setup of the shared memory resources, which worry me. I am almost certain those will introduce changes to the SASS of warspeed kernels. (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3855167045)
+- 2026-02-25 `bernhardmgruber` commented: @griwes please try to refactor out anything that is not related to the new tuning API and ship it as another PR, so we can reduce the scope of this PR. (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3855177012)
+- 2026-02-25 `griwes`: The setup of the resources is the same from the perspective of the kernel. The only thing that changes there is the ability to use runtime-sized types with the same logic. If we drop that from this PR, I will need to ... (https://github.com/NVIDIA/cccl/pull/7565#issuecomment-3960472475)
+- 2026-02-25 `griwes` on `cub/cub/device/dispatch/kernels/kernel_scan_warpspeed.cuh`:899: This is, in fact, a reduction of the duplication. The only way to not have the parts that are duplicated duplicated is to entirely drop the use of typed resources and use the raw resources (so the path you're highlighting here) as ... (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2854075208)
+- 2026-02-25 `griwes` on `cub/cub/device/dispatch/kernels/kernel_scan_warpspeed.cuh`:899: The reason it is like this is that the current code is all written in terms of types and their statically known sizes. We do not have that in c.parallel code paths, we need to use runtime values. So it's either this ... (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2854080335)
+- 2026-02-25 `griwes` on `cub/cub/device/dispatch/kernels/kernel_scan.cuh`:115: We can. This went through a few revisions and I lost it in the process, I'll restore it. (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2854104964)
+- 2026-02-25 `griwes`: The bottom line is that everything here is related to the new tuning API. Cutting out the changes around the resource setup and calculations means cutting out c.parallel, and actually getting c.parallel to be able to use the new toys is a ... (https://github.com/NVIDIA/cccl/pull/7565#issuecomment-3960536179)
+- 2026-02-27 `griwes`: Last remaining real failure is SASS checks in non-scan c.parallel tests on sm120; I'll pull that out of this PR, together with the enablement of the config in CI, and post it separately. (https://github.com/NVIDIA/cccl/pull/7565#issuecomment-3974374925)
+- 2026-03-03 `bernhardmgruber` on `cub/cub/device/dispatch/tuning/tuning_scan.cuh`:654: Important: I added this function in a different PR already. Please use it: (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2877939998)
+- 2026-03-03 `bernhardmgruber` commented: I still have to re-review the dispatch logic and the changes around the kernel, especially the refactoring to compute whether we can fit a single stage into 48KiB SMEM. Otherwise this looks pretty good already! Ideally, we should not see any SASS ... (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3882561501)
+- 2026-03-04 `bernhardmgruber` on `cub/cub/device/dispatch/kernels/kernel_scan_warpspeed.cuh`:158: Suggestion: could use a structured binding (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2884137921)
+- 2026-03-04 `bernhardmgruber` on `cub/cub/device/dispatch/kernels/scan_warpspeed_policy.cuh`:22: Remark: we should probably introduce an algorithm enum like in DeviceTransform before all the policies go public. No changes need for now. (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2884171991)
+- 2026-03-04 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_scan.cuh`:466: Question: why is this change needed? We should check for the PTX ISA we require IMO. (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2884244041)
+- 2026-03-04 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_scan.cuh`:511: Important: Please retain the compile-time check when possible. It helps a lot with development if we can turn on warpspeed unconditionally and just compile to see if we find any test failures etc. smem for stages is constexpr, so I think we ... (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2886534378)
+- 2026-03-04 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_scan.cuh`:1031: Remark: I wonder if it would have been easier to duplicate the logic from DispatchScan into the dispatch function and strip all warpspeed logic from DispatchScan. The warpspeed scan is not on a release branch yet, so it's fine if it's not ... (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2886545044)
+- 2026-03-04 `bernhardmgruber` on `cub/test/catch2_test_device_scan_env.cu`:117: Suggestion: we can just rewrite scan tuning to be only a policy selector (only have operator()). (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2886556660)
+- 2026-03-04 `bernhardmgruber`: I finished another review and I only have minor comments except for the wish to retain the static assert that one stage fits into SMEM. I am now waiting for confirmation that we don't see SASS changes. (https://github.com/NVIDIA/cccl/pull/7565#issuecomment-4000821357)
+- 2026-03-13 `bernhardmgruber`: I have been thinking a bit about how the check whether a single stage fits into 48KiB SMEM, and I wondered whether we actually need this check in CCCL.C. The main purpose of the check is to ensure forward compatibility of compiled ... (https://github.com/NVIDIA/cccl/pull/7565#issuecomment-4055320953)
+- 2026-03-13 `bernhardmgruber`: I just realized we still need the runtime computation to know how much SMEM we must request :S (https://github.com/NVIDIA/cccl/pull/7565#issuecomment-4055538280)
+- 2026-03-16 `griwes`: There is SASS changes. Here's a random assortment of kernels compared: I believe that there's a whole bunch of codegen artifacts here + some loss/gain of uniform instructions (presumably because the changes made it both easier and harder for the compiler to ... (https://github.com/NVIDIA/cccl/pull/7565#issuecomment-4070856249)
+- 2026-03-23 `bernhardmgruber`: While investigating the SASS changes, I noticed that some symbols in the CUB benchmarks contained the use of policy selector from hub, which we should no longer see (its only use to support users directly accessing the dispatcher). I found out that ... (https://github.com/NVIDIA/cccl/pull/7565#issuecomment-4110876597)
+- 2026-03-23 `bernhardmgruber` on `cub/cub/device/dispatch/kernels/kernel_scan.cuh`:183: Critical: The drop of , 1 causes many SASS changes. Adding it back makes some Thrust tests pass again and removes all SASS changes in thrust.test.scan. (https://github.com/NVIDIA/cccl/pull/7565#discussion_r2975385231)
+- 2026-03-23 `bernhardmgruber`: There are now no SASS changes for cub.bench.scan.exclusive.sum.base on SM75;80;86;90;100;120 (https://github.com/NVIDIA/cccl/pull/7565#issuecomment-4111272271)
+- 2026-03-23 `bernhardmgruber` approved: I have collected a few more pieces of refactorings, but I think those should go to a separate PR after this one. I dislike some of the host code butchery that was required for CCCL.C, but in most cases I don't see ... (https://github.com/NVIDIA/cccl/pull/7565#pullrequestreview-3994082355)

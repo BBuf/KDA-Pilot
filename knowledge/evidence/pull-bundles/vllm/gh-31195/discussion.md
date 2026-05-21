@@ -1,65 +1,18 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#31195](https://github.com/vllm-project/vllm/pull/31195)
-- Source page: `sources/prs/vllm/PR-31195.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-31195`
-- Generated at: `2026-05-20T15:39:17.834410+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-12-23T01:18:16Z`
-- Merged: `2026-02-10T21:18:43Z`
-
-## Discussion Counts
-
-- Issue comments: 11
-- Review submissions: 18 (approved=2, commented=16)
-- Inline review comments: 22
-- Review threads observed: 11
-- Resolved/outdated thread markers: resolved=7, outdated=6
-- Human participants with discussion text: MatthewBonanni, ProExpertProg, cursor, mergify, mgoin, pavanimajety, robertgshaw2-redhat
-- Automation comments/reviews omitted from high-signal summary: 2
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-12-23T01:20:28Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3606227023)
-- `2025-12-23T01:20:31Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces fixes for the tile tokens dim parameter for compatibility with older Flashinfer ... (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3606227078)
-- `2025-12-23T01:21:24Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3606228092)
-- `2025-12-23T01:23:06Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3606229941)
-- `2025-12-23T01:23:58Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3606230946)
-- `2025-12-23T01:24:04Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3606231075)
-- `2025-12-23T01:24:21Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3606231353)
-- `2025-12-23T01:34:29Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3606245669)
-- `2025-12-30T23:09:11Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3619662238)
-- `2026-01-21T00:55:41Z` `COMMENTED` by `cursor` - Cursor Bugbot has reviewed your changes and found 3 potential issues. Bugbot Autofix is OFF. To automatically fix ... (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3684893618)
-- `2026-02-02T22:27:55Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3741832484)
-- `2026-02-02T22:35:28Z` `COMMENTED` by `MatthewBonanni` - Thanks for the contribution! (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3741919729)
-- `2026-02-03T08:29:26Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3743802334)
-- `2026-02-03T08:42:54Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3743874186)
-- `2026-02-03T08:50:43Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3743875883)
-- `2026-02-08T19:22:20Z` `APPROVED` by `mgoin` (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3770214637)
-- `2026-02-09T17:36:58Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3774484284)
-- `2026-02-10T21:18:29Z` `APPROVED` by `mgoin` (https://github.com/vllm-project/vllm/pull/31195#pullrequestreview-3781660252)
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/layers/attention/mla_attention.py`: 13 inline comment(s)
-- `vllm/v1/attention/backends/mla/common.py`: 9 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-02-02T22:17:39Z` `inline` by `MatthewBonanni` `vllm/model_executor/layers/attention/mla_attention.py`:2352; signals: attention, cache, dtype, fp8, kernel, kv cache, mla; excerpt: "Definitely out of scope for this PR, but we should really unify these into a single kernel that just decides whether or not to ..." (https://github.com/vllm-project/vllm/pull/31195#discussion_r2756285698)
-- `2026-01-21T00:55:41Z` `inline` by `cursor` `vllm/model_executor/layers/attention/mla_attention.py`:1700; signals: attention, cache, dtype, fp8, mla; excerpt: "Prefill metadata q data type never set, FP8 path unreachable Medium Severity The builder correctly computes self.q data type but never passes it to ..." (https://github.com/vllm-project/vllm/pull/31195#discussion_r2710578276)
-- `2026-02-03T08:29:26Z` `inline` by `pavanimajety` `vllm/model_executor/layers/attention/mla_attention.py`:2256; signals: attention, flashinfer, hang, kernel, mla; excerpt: "Ran some comparisons against 31171, seems like Flashinfer copy kernel is better choice throughout Removing this logic in the upcoming change." (https://github.com/vllm-project/vllm/pull/31195#discussion_r2757857849)
-- `2026-02-08T19:22:05Z` `inline` by `mgoin` `vllm/model_executor/layers/attention/mla_attention.py`:1302; signals: attention, cache, fp8, kv cache, mla; excerpt: "Is this plan to keep this as MLA only? It seems a bit strange to have this False by default in the config, have ..." (https://github.com/vllm-project/vllm/pull/31195#discussion_r2779713498)
-- `2026-01-13T17:24:13Z` `issue` by `pavanimajety`; signals: bf16, fp8, kernel, perf, performance; excerpt: "Fixed the language - I meant to say slower E2E due to casts around the kv projections. This is currently guarded because it shows ..." (https://github.com/vllm-project/vllm/pull/31195#issuecomment-3745529065)
-- `2026-01-21T00:55:41Z` `inline` by `cursor` `vllm/model_executor/layers/attention/mla_attention.py`:1504; signals: attention, dtype, flashinfer, mla; excerpt: "Missing output dtype attribute on prefill metadata High Severity The code accesses prefill.output dtype at multiple locations, but output dtype is not defined as ..." (https://github.com/vllm-project/vllm/pull/31195#discussion_r2710578273)
-- `2026-02-09T17:36:57Z` `inline` by `pavanimajety` `vllm/model_executor/layers/attention/mla_attention.py`:1302; signals: attention, bf16, kernel, mla; excerpt: "yes, the plan is to keep this for MLA only. GQA's prefill is quantized as long as trtllm kernels are available. For MLA, because ..." (https://github.com/vllm-project/vllm/pull/31195#discussion_r2783759480)
-- `2026-01-13T01:30:54Z` `issue` by `ProExpertProg`; signals: bf16, kernel, perf, performance; excerpt: "This is currently guarded because it shows slightly lower perf than BF16 Prefill although the kernel level performance is about 1.5x better due to ..." (https://github.com/vllm-project/vllm/pull/31195#issuecomment-3741363907)
-- `2025-12-23T01:23:06Z` `inline` by `pavanimajety` `vllm/v1/attention/backends/mla/common.py`:1574; signals: attention, kernel, mla; excerpt: "zeros is a necessity for the trtllm FMHA kernels - we do the same for chunked prefill path in the next method" (https://github.com/vllm-project/vllm/pull/31195#discussion_r2641660437)
-- `2025-12-23T01:34:29Z` `inline` by `pavanimajety` `vllm/v1/attention/backends/mla/common.py`:1574; signals: attention, kernel, mla; excerpt: "size of q is determined during the generate call based on the length of prefill, so preallocating and preintializing a buffer of zeros that ..." (https://github.com/vllm-project/vllm/pull/31195#discussion_r2641674248)
-- `2025-12-30T23:09:11Z` `inline` by `pavanimajety` `vllm/v1/attention/backends/mla/common.py`:1574; signals: attention, hang, mla; excerpt: "Passing in as a buffer still requires preallocated buffer.fill (0.0), so I am changing the new tokens initialization to torch.empty and keeping it unchanged ..." (https://github.com/vllm-project/vllm/pull/31195#discussion_r2654251046)
-- `2026-01-21T00:55:42Z` `inline` by `cursor` `vllm/model_executor/layers/attention/mla_attention.py`:2207; signals: attention, dtype, mla; excerpt: "Allocated out tensor never passed to attention function Medium Severity In run prefill new tokens trtllm ragged, an out tensor is allocated (lines 1581-1587) ..." (https://github.com/vllm-project/vllm/pull/31195#discussion_r2710578279)
+- 2025-12-23 `robertgshaw2-redhat` on `vllm/v1/attention/backends/mla/common.py`:1574: allocating zeros on the hotpath might not be a good idea. Can this be empty? We need to be careful about empty since it can lead to IMAs later (https://github.com/vllm-project/vllm/pull/31195#discussion_r2641658501)
+- 2025-12-23 `pavanimajety` on `vllm/v1/attention/backends/mla/common.py`:1574: zeros is a necessity for the trtllm FMHA kernels - we do the same for chunked prefill path in the next method (https://github.com/vllm-project/vllm/pull/31195#discussion_r2641660437)
+- 2025-12-23 `pavanimajety` on `vllm/v1/attention/backends/mla/common.py`:1574: Acutally it is not necessary for the causal path. Will follow your suggestion- thanks! (https://github.com/vllm-project/vllm/pull/31195#discussion_r2641661463)
+- 2025-12-23 `robertgshaw2-redhat` on `vllm/v1/attention/backends/mla/common.py`:1574: do you think we should pass in the buffer from the function caller? it looks like there can be buffers provided sometimes (https://github.com/vllm-project/vllm/pull/31195#discussion_r2641661688)
+- 2025-12-23 `pavanimajety` on `vllm/v1/attention/backends/mla/common.py`:1574: size of q is determined during the generate call based on the length of prefill, so preallocating and preintializing a buffer of zeros that are later passed into this kernel might need some more work. I'll take that feedback into consideration and ... (https://github.com/vllm-project/vllm/pull/31195#discussion_r2641674248)
+- 2025-12-30 `pavanimajety` on `vllm/v1/attention/backends/mla/common.py`:1574: Passing in as a buffer still requires preallocated buffer.fill (0.0), so I am changing the new tokens initialization to torch.empty and keeping it unchanged for chunked-prefill. (https://github.com/vllm-project/vllm/pull/31195#discussion_r2654251046)
+- 2026-01-13 `ProExpertProg`: This is currently guarded because it shows slightly lower perf than BF16 Prefill although the kernel level performance is about 1.5x better due to extra casts and quantizations. I'm not sure I understand what this means, is the perf lower or higher ... (https://github.com/vllm-project/vllm/pull/31195#issuecomment-3741363907)
+- 2026-01-13 `pavanimajety`: Fixed the language - I meant to say slower E2E due to casts around the kv projections. This is currently guarded because it shows slightly lower perf than BF16 Prefill due to extra casts and quantizations, although the pure FP8 Prefill kernel ... (https://github.com/vllm-project/vllm/pull/31195#issuecomment-3745529065)
+- 2026-02-02 `MatthewBonanni` on `vllm/model_executor/layers/attention/mla_attention.py`:2256: This is also done below in forward prefill - can we factor this out into a helper? (https://github.com/vllm-project/vllm/pull/31195#discussion_r2756245701)
+- 2026-02-02 `MatthewBonanni` on `vllm/model_executor/layers/attention/mla_attention.py`:2352: Definitely out of scope for this PR, but we should really unify these into a single kernel that just decides whether or not to dequant based on the destination dtype. Also, I think it would make sense to bundle cp gather and ... (https://github.com/vllm-project/vllm/pull/31195#discussion_r2756285698)
+- 2026-02-02 `MatthewBonanni` on `vllm/model_executor/layers/attention/mla_attention.py`:2113: nit: Could we define use fp8 prefill and use that here and in [2118]( (https://github.com/vllm-project/vllm/pull/31195#discussion_r2756296329)
+- 2026-02-02 `MatthewBonanni` on `vllm/model_executor/layers/attention/mla_attention.py`:2227: Is ret the same buffer as out? Is out being mutated and returned as ret? Seems like the same pattern as below in the context prefill, it's just a bit unclear (https://github.com/vllm-project/vllm/pull/31195#discussion_r2756306981)
+- 2026-02-03 `pavanimajety` on `vllm/model_executor/layers/attention/mla_attention.py`:2256: Ran some comparisons against 31171, seems like Flashinfer copy kernel is better choice throughout Removing this logic in the upcoming change. (https://github.com/vllm-project/vllm/pull/31195#discussion_r2757857849)
+- 2026-02-03 `pavanimajety` on `vllm/model_executor/layers/attention/mla_attention.py`:2352: Agree with this. Created to keep track (https://github.com/vllm-project/vllm/pull/31195#discussion_r2757915116)
+- 2026-02-03 `pavanimajety` on `vllm/model_executor/layers/attention/mla_attention.py`:2227: I need to create out buffer to specify the output dtype and we currently don't have lse as an output for trtllm ragged attention deepseek, I believe. So I need a different return variable that can be of type tuple. Please suggest ... (https://github.com/vllm-project/vllm/pull/31195#discussion_r2757947980)
+- 2026-02-04 `MatthewBonanni`: CI failure looks related: [2026-02-03T22:41:11Z] (EngineCore DP0 pid=4763) ERROR 02-03 22:41:11 [core.py:968] NotImplementedError: "per token group quant 8bit" not implemented for 'Float8 e4m3fn' (https://github.com/vllm-project/vllm/pull/31195#issuecomment-3848105654)
+- 2026-02-08 `mgoin` on `vllm/model_executor/layers/attention/mla_attention.py`:1302: Is this plan to keep this as MLA only? It seems a bit strange to have this False by default in the config, have that Falseness by enforced by MLA, but not for GQA methods which will quantize prefill if FP8 kv ... (https://github.com/vllm-project/vllm/pull/31195#discussion_r2779713498)
+- 2026-02-09 `pavanimajety` on `vllm/model_executor/layers/attention/mla_attention.py`:1302: yes, the plan is to keep this for MLA only. GQA's prefill is quantized as long as trtllm kernels are available. For MLA, because of projections being enforced in BF16, the casts are incurring extra cost - hence the guard. In my ... (https://github.com/vllm-project/vllm/pull/31195#discussion_r2783759480)

@@ -1,68 +1,21 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#39917](https://github.com/vllm-project/vllm/pull/39917)
-- Source page: `sources/prs/vllm/PR-39917.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-39917`
-- Generated at: `2026-05-20T15:40:46.660520+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-04-15T15:11:21Z`
-- Merged: `2026-05-07T18:24:57Z`
-
-## Discussion Counts
-
-- Issue comments: 23
-- Review submissions: 16 (approved=1, commented=15)
-- Inline review comments: 18
-- Review threads observed: 12
-- Resolved/outdated thread markers: resolved=10, outdated=6
-- Human participants with discussion text: Nekofish-L, TomerBN-Nvidia, aoshen02, hao-aaron, lequytra, mergify, ywang96
-- Automation comments/reviews omitted from high-signal summary: 5
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 3
-
-## Review Decisions
-
-- `2026-04-15T15:13:10Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request refactors the expert routing capture mechanism to use a GPU device cache and ... (https://github.com/vllm-project/vllm/pull/39917#pullrequestreview-4114723574)
-- `2026-04-16T11:33:40Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/vllm-project/vllm/pull/39917#pullrequestreview-4120527433)
-- `2026-04-16T11:33:57Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/vllm-project/vllm/pull/39917#pullrequestreview-4120528933)
-- `2026-04-16T11:34:21Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/vllm-project/vllm/pull/39917#pullrequestreview-4120531014)
-- `2026-04-16T11:34:39Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/vllm-project/vllm/pull/39917#pullrequestreview-4120532570)
-- `2026-04-28T12:05:11Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/vllm-project/vllm/pull/39917#pullrequestreview-4188553969)
-- `2026-04-28T12:08:10Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/vllm-project/vllm/pull/39917#pullrequestreview-4188572749)
-- `2026-04-28T12:09:32Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/vllm-project/vllm/pull/39917#pullrequestreview-4188580569)
-- `2026-04-28T12:14:21Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/vllm-project/vllm/pull/39917#pullrequestreview-4188609515)
-- `2026-04-28T12:35:14Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/vllm-project/vllm/pull/39917#pullrequestreview-4188776187)
-- `2026-04-28T12:42:36Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/vllm-project/vllm/pull/39917#pullrequestreview-4188828803)
-- `2026-05-01T23:17:47Z` `COMMENTED` by `lequytra` (https://github.com/vllm-project/vllm/pull/39917#pullrequestreview-4213776004)
-- `2026-05-03T06:41:10Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/vllm-project/vllm/pull/39917#pullrequestreview-4215979351)
-- `2026-05-06T15:04:59Z` `COMMENTED` by `aoshen02` (https://github.com/vllm-project/vllm/pull/39917#pullrequestreview-4229328505)
-- `2026-05-06T15:10:03Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/vllm-project/vllm/pull/39917#pullrequestreview-4237304200)
-- `2026-05-06T16:02:58Z` `APPROVED` by `ywang96` (https://github.com/vllm-project/vllm/pull/39917#pullrequestreview-4237710499)
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/layers/fused_moe/routed_experts_capturer.py`: 5 inline comment(s)
-- `vllm/v1/worker/gpu_model_runner.py`: 5 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/layer.py`: 2 inline comment(s)
-- `vllm/v1/core/sched/scheduler.py`: 2 inline comment(s)
-- `vllm/entrypoints/openai/completion/serving.py`: 2 inline comment(s)
-- `docs/training/routed_experts_replay.md`: 1 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/runner/moe_runner.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-04-28T12:06:23Z` `issue` by `TomerBN-Nvidia`; signals: alignment, attention, block, cache, hang, kv cache, layout, memory; excerpt: "Could you also briefly clarify how would you support the prefix cache, like what's the design? @aoshen524 Prefix-cache support for routed-experts replay ============================================== Goal: ..." (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4335045607)
-- `2026-04-28T12:09:32Z` `inline` by `TomerBN-Nvidia` `vllm/model_executor/layers/fused_moe/routed_experts_capturer.py`:74; signals: block, correctness, dtype, memory, moe, perf; excerpt: "int16 is the storage dtype of the per-rank GPU device buffer; it does not participate in any NCCL collective. Routing data leaves the worker ..." (https://github.com/vllm-project/vllm/pull/39917#discussion_r3153966684)
-- `2026-04-20T09:16:03Z` `issue` by `TomerBN-Nvidia`; signals: accuracy, correctness, perf, performance; excerpt: "Could you add an experiment that is about the accuracy(after trained for multi turn) compared with the baseline or the baseline + old R3 ..." (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4279328473)
-- `2026-04-20T13:13:50Z` `issue` by `mergify`; signals: failing, hang; excerpt: "Hi @TomerBN-Nvidia, the pre-commit checks have failed. Please run: Then, commit the changes and push to your branch. For future commits, pre-commit will run ..." (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4281050508)
-- `2026-04-27T07:20:16Z` `issue` by `TomerBN-Nvidia`; signals: bf16, memory; excerpt: "Could you share with me the experiment configuration of vllm? I want to run it. @aoshen524 It has been validated across many configurations and ..." (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4324994775)
-- `2026-05-06T13:25:47Z` `issue` by `TomerBN-Nvidia`; signals: cache, pipeline; excerpt: "@aoshen02 The "preempted requests will be re-prefilled from scratch" line undersells what's happening — any routing already accumulated in host cache for that req ..." (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4388494388)
-- `2026-05-07T06:56:53Z` `issue` by `TomerBN-Nvidia`; signals: block, moe; excerpt: "@hao-aaron thanks for catching this and posting the fallback. Pushed in 1d7860d0a — adopted your count moe layers helper covering Nemotron layers block type, ..." (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4394811866)
-- `2026-04-16T11:33:40Z` `inline` by `TomerBN-Nvidia` `vllm/model_executor/layers/fused_moe/layer.py`:219; signals: moe; excerpt: "Good catch on the global counter concern. In practice vLLM V1 runs one model per process, so the counter resets naturally. This matches the ..." (https://github.com/vllm-project/vllm/pull/39917#discussion_r3092862436)
-- `2026-04-16T11:33:57Z` `inline` by `TomerBN-Nvidia` `vllm/model_executor/layers/fused_moe/routed_experts_capturer.py`:818; signals: moe; excerpt: "Same as the layer.py comment -- assigning IDs during bind is a sound alternative. The current approach (IDs in constructor) is simpler and matches ..." (https://github.com/vllm-project/vllm/pull/39917#discussion_r3092864068)
-- `2026-04-16T11:34:21Z` `inline` by `TomerBN-Nvidia` `vllm/v1/core/sched/scheduler.py`:1393; signals: memory; excerpt: "This is a false positive. Routing data does not flow through the scheduler request object. The new data flow is: model runner - ModelRunnerOutput.routed ..." (https://github.com/vllm-project/vllm/pull/39917#discussion_r3092866162)
-- `2026-04-16T11:34:38Z` `inline` by `TomerBN-Nvidia` `vllm/v1/worker/gpu_model_runner.py`:3082; signals: cache; excerpt: "Valid catch! Fixed in 3a0665d -- added host cache.free request(req id) cleanup in update states() for both finished and preempted requests. This matches the ..." (https://github.com/vllm-project/vllm/pull/39917#discussion_r3092867857)
-- `2026-04-28T12:35:14Z` `inline` by `TomerBN-Nvidia` `vllm/model_executor/layers/fused_moe/routed_experts_capturer.py`:559; signals: moe; excerpt: "@aoshen524 Please let me know what do you think about this solution: If it is fine, I'll merge it to this branch." (https://github.com/vllm-project/vllm/pull/39917#discussion_r3154130294)
+- 2026-04-16 `TomerBN-Nvidia` on `vllm/model_executor/layers/fused_moe/layer.py`:219: Good catch on the global counter concern. In practice vLLM V1 runs one model per process, so the counter resets naturally. This matches the pattern in our production fork where it has been running at scale. Assigning IDs during bind routing capture ... (https://github.com/vllm-project/vllm/pull/39917#discussion_r3092862436)
+- 2026-04-16 `TomerBN-Nvidia` on `vllm/model_executor/layers/fused_moe/routed_experts_capturer.py`:818: Same as the layer.py comment -- assigning IDs during bind is a sound alternative. The current approach (IDs in constructor) is simpler and matches the production fork. Both are safe for single-model-per-process deployments which is the only supported mode in vLLM V1. (https://github.com/vllm-project/vllm/pull/39917#discussion_r3092864068)
+- 2026-04-16 `TomerBN-Nvidia` on `vllm/v1/core/sched/scheduler.py`:1393: This is a false positive. Routing data does not flow through the scheduler request object. The new data flow is: model runner - ModelRunnerOutput.routed experts dict - EngineCoreOutput.routed experts - output processor.split routed experts() - CompletionOutput.routed experts (gen) + RequestOutput.prompt routed experts ... (https://github.com/vllm-project/vllm/pull/39917#discussion_r3092866162)
+- 2026-04-16 `TomerBN-Nvidia` on `vllm/v1/worker/gpu_model_runner.py`:3082: Valid catch! Fixed in 3a0665d -- added host cache.free request(req id) cleanup in update states() for both finished and preempted requests. This matches the cleanup logic in our production fork. Thanks for catching this. (https://github.com/vllm-project/vllm/pull/39917#discussion_r3092867857)
+- 2026-04-20 `TomerBN-Nvidia`: Could you add an experiment that is about the accuracy(after trained for multi turn) compared with the baseline or the baseline + old R3 feature enabled? You can refer to 39568. @aoshen524 The previous R3 implementation wasn’t actually viable for this kind ... (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4279328473)
+- 2026-04-27 `TomerBN-Nvidia`: Could you share with me the experiment configuration of vllm? I want to run it. @aoshen524 It has been validated across many configurations and scenarios. This is one simple example: ``bash vllm serve --model nvidia/NVIDIA-Nemotron-3-Super-120B-BF16-BF16KV-012726 --tensor-parallel-size 4 --enable-expert-parallel --enable-return-routed-experts --trust-remote-code --max-model-len 8192 ... (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4324994775)
+- 2026-04-28 `TomerBN-Nvidia`: Could you also briefly clarify how would you support the prefix cache, like what's the design? @aoshen524 Prefix-cache support for routed-experts replay ============================================== Goal: enabling prefix caching does not change the routed-experts data returned for a request. Same invariant that already holds ... (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4335045607)
+- 2026-04-28 `TomerBN-Nvidia` on `vllm/model_executor/layers/fused_moe/routed_experts_capturer.py`:74: int16 is the storage dtype of the per-rank GPU device buffer; it does not participate in any NCCL collective. Routing data leaves the worker via ModelRunnerOutput.routed experts dict (host-side, IPC / Ray DAG), not through a collective on the device buffer. Only ... (https://github.com/vllm-project/vllm/pull/39917#discussion_r3153966684)
+- 2026-04-28 `TomerBN-Nvidia` on `vllm/model_executor/layers/fused_moe/routed_experts_capturer.py`:559: @aoshen524 Please let me know what do you think about this solution: If it is fine, I'll merge it to this branch. (https://github.com/vllm-project/vllm/pull/39917#discussion_r3154130294)
+- 2026-04-28 `TomerBN-Nvidia` on `vllm/model_executor/layers/fused_moe/routed_experts_capturer.py`:381: Let me know if this address the point: (https://github.com/vllm-project/vllm/pull/39917#discussion_r3154175408)
+- 2026-05-01 `lequytra` on `vllm/entrypoints/openai/completion/serving.py`:545: @TomerBN-Nvidia Can we return base64 encoded bytes instead of tolist() here? it will be really slow at long context length. I did some local benchmark, and returning per-token base64 encoded bytes will be 10x faster compared to the current approach (tolist + ... (https://github.com/vllm-project/vllm/pull/39917#discussion_r3175562373)
+- 2026-05-03 `TomerBN-Nvidia` on `vllm/entrypoints/openai/completion/serving.py`:545: It works well for us in a 1m context for a large 500B parameters model. If it is important, let's change it in a follow-up PR. (https://github.com/vllm-project/vllm/pull/39917#discussion_r3177737490)
+- 2026-05-03 `TomerBN-Nvidia`: @aoshen524 Please look at these changes: (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4365634508)
+- 2026-05-05 `aoshen02`: One thing about where the routing sync lands — extract routed experts for current batch calls finalize pending copy() which does an event.synchronize() right on the worker thread. So execute model can't actually return until the D2H is fully done. By the ... (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4380571710)
+- 2026-05-06 `aoshen02`: The "preempted requests will be re-prefilled from scratch" line under- sells what's happening — any routing already accumulated in host cache for that req gets dropped silently with no emit. For partial-rollout or async-RL setups where preemption is routine, the consumer just ... (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4388249210)
+- 2026-05-06 `TomerBN-Nvidia`: @aoshen02 Should disable async scheduling for now: if self.scheduler config.async scheduling: unsupported.append("async scheduling") Done in 6a2cfd7f7. Added to validate return routed experts alongside PP / PCP / DCP. With 18 reverted, the EOS / stop token predicate reads req state.output token ids[-1], ... (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4388491876)
+- 2026-05-06 `TomerBN-Nvidia`: @aoshen02 The "preempted requests will be re-prefilled from scratch" line undersells what's happening — any routing already accumulated in host cache for that req gets dropped silently with no emit. For partial-rollout or async-RL setups where preemption is routine, the consumer just ... (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4388494388)
+- 2026-05-06 `TomerBN-Nvidia`: @aoshen02 Should disable SP and naive DP. Already in — bind routing capture to model in vllm/model executor/layers/fused moe/routed experts capturer.py raises NotImplementedError for both at bind time: Both signals are only knowable post-init, so the check is at bind time rather ... (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4388495103)
+- 2026-05-06 `aoshen02` on `vllm/v1/worker/gpu_model_runner.py`:2170: remove the docstring please (https://github.com/vllm-project/vllm/pull/39917#discussion_r3195987527)
+- 2026-05-06 `hao-aaron`: Was trying this out and ran into an issue, the capturer constructor in routed experts capturer.py does: Getting this error: A small fallback fixes it locally for me: This was the command i used: (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4392955332)
+- 2026-05-07 `TomerBN-Nvidia`: @hao-aaron thanks for catching this and posting the fallback. Pushed in 1d7860d0a — adopted your count moe layers helper covering Nemotron layers block type, Qwen3MoE / DeepSeek-style decoder sparse step, and the mlp only layers default. Should unblock your Qwen/Qwen3-30B-A3B config. (https://github.com/vllm-project/vllm/pull/39917#issuecomment-4394811866)

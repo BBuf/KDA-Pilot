@@ -1,55 +1,19 @@
-# PR Discussion Digest
-
-- Source PR: [sgl-project/sglang#3148](https://github.com/sgl-project/sglang/pull/3148)
-- Source page: `sources/prs/sglang/PR-3148.md`
-- Evidence bundle: `evidence/pull-bundles/sglang/gh-3148`
-- Generated at: `2026-05-20T15:29:58.210037+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-01-26T10:55:41Z`
-- Merged: `2025-03-09T08:03:32Z`
-
-## Discussion Counts
-
-- Issue comments: 32
-- Review submissions: 6 (approved=1, commented=5)
-- Inline review comments: 6
-- Review threads observed: 4
-- Resolved/outdated thread markers: resolved=3, outdated=3
-- Human participants with discussion text: BBuf, HandH1998, hebiao064, merrymercy, xiaohanhuang, zhyncs
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-02-13T08:10:24Z` `COMMENTED` by `zhyncs` (https://github.com/sgl-project/sglang/pull/3148#pullrequestreview-2614167111)
-- `2025-02-20T23:31:18Z` `COMMENTED` by `hebiao064` (https://github.com/sgl-project/sglang/pull/3148#pullrequestreview-2631414126)
-- `2025-03-07T09:34:46Z` `COMMENTED` by `zhyncs` (https://github.com/sgl-project/sglang/pull/3148#pullrequestreview-2614167901)
-- `2025-03-07T09:36:10Z` `COMMENTED` by `HandH1998` (https://github.com/sgl-project/sglang/pull/3148#pullrequestreview-2666726732)
-- `2025-03-07T09:38:28Z` `COMMENTED` by `HandH1998` (https://github.com/sgl-project/sglang/pull/3148#pullrequestreview-2666732118)
-- `2025-03-09T08:03:13Z` `APPROVED` by `zhyncs` (https://github.com/sgl-project/sglang/pull/3148#pullrequestreview-2669342579)
-
-## Inline Comment Hotspots
-
-- `python/sglang/test/test_block_fp8.py`: 2 inline comment(s)
-- `python/pyproject.toml`: 2 inline comment(s)
-- `python/sglang/srt/utils.py`: 1 inline comment(s)
-- `python/sglang/srt/layers/quantization/fp8.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-02-12T07:07:00Z` `issue` by `HandH1998`; signals: benchmark, cuda, cutlass, fp8, kernel, perf, performance, triton; excerpt: "@merrymercy @zhyncs I have added support for falling back to the vLLM cutlass w8a8 fp8 kernel and have benchmarked dynamic quantization. The benchmark results ..." (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2652834146)
-- `2025-02-13T06:18:44Z` `issue` by `HandH1998`; signals: fp8, kernel, perf, performance, triton; excerpt: "@zhyncs The results using the new per token group quant fp8 kernel are showed in the Table row sgl kernel (updated). It is worse ..." (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2655638020)
-- `2025-02-13T08:00:36Z` `issue` by `BBuf`; signals: fp8, kernel, perf, performance, triton; excerpt: "@zhyncs The results using the new per token group quant fp8 kernel are showed in the Table row sgl kernel (updated). It is worse ..." (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2655795106)
-- `2025-03-05T00:39:47Z` `issue` by `hebiao064`; signals: benchmark, cuda, fp8, kernel, latency; excerpt: "@BBuf The vLLM's scaled fp8 quant supports both per-tensor and per-token quantization. In this PR, we use per-token quantization by default when activation is ..." (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2699359270)
-- `2025-03-07T09:38:28Z` `inline` by `HandH1998` `python/sglang/test/test_block_fp8.py`:67; signals: accuracy, block, fp8, hang; excerpt: "When I test it on another GPU, not all cases can pass under rtol=0.15, so I increase it ot 0.20. In fact, I doesn't ..." (https://github.com/sgl-project/sglang/pull/3148#discussion_r1984747847)
-- `2025-01-26T12:37:19Z` `issue` by `merrymercy`; signals: kernel, perf, performance, regression; excerpt: "1. Can we still provide a flag to fallback to vllm's implementation? Similar to the custom allreduce kernel We need this at the beginning ..." (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2614401528)
-- `2025-03-08T04:45:57Z` `issue` by `HandH1998`; signals: accuracy, cutlass, fp8, kernel; excerpt: "@HandH1998 Do you think we should support similar api like scaled fp8 quant The cutlass w8a8 fp8 kernel only support per-channel activation scales, so ..." (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2708016774)
-- `2025-02-13T08:10:47Z` `inline` by `zhyncs` `python/sglang/test/test_block_fp8.py`:67; signals: block, fp8; excerpt: "Why increase the rtol?" (https://github.com/sgl-project/sglang/pull/3148#discussion_r1954013494)
-- `2025-02-12T07:18:03Z` `issue` by `HandH1998`; signals: fp8, perf; excerpt: "I also added a quantization config w8a8 fp8 to support the inference of quantized model underactivation dynamic per-token quantization, weight static per-channel quantization following ..." (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2652851217)
-- `2025-02-13T08:05:23Z` `issue` by `HandH1998`; signals: kernel, triton; excerpt: "@BBuf Look forward to it! If you finish it, please let me know. I will replace the Triton kernel with yours." (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2655805919)
-- `2025-02-22T10:30:02Z` `issue` by `BBuf`; signals: kernel, triton; excerpt: "@BBuf Look forward to it! If you finish it, please let me know. I will replace the Triton kernel with yours." (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2676137687)
-- `2025-02-27T04:29:00Z` `issue` by `xiaohanhuang`; signals: kernel, triton; excerpt: "@BBuf Look forward to it! If you finish it, please let me know. I will replace the Triton kernel with yours. Nice work! Any ..." (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2686834753)
+- 2025-01-26 `zhyncs`: Let me bump a new sgl-kernel version to unblock this PR. (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2614324816)
+- 2025-01-26 `merrymercy`: 1. Can we still provide a flag to fallback to vllm's implementation? Similar to the custom allreduce kernel We need this at the beginning to quickly debug possible regression and AMD compatibility. 2. How is the performance on dynamic quantization? (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2614401528)
+- 2025-02-12 `HandH1998`: @merrymercy @zhyncs I have added support for falling back to the vLLM cutlass w8a8 fp8 kernel and have benchmarked dynamic quantization. The benchmark results of dynamic quantization are appended to the static quantization benchmark results, showing similar performance. However, as the batch ... (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2652834146)
+- 2025-02-12 `HandH1998`: I also added a quantization config w8a8 fp8 to support the inference of quantized model underactivation dynamic per-token quantization, weight static per-channel quantization following You can use --quantization w8a8 fp8 to load the quantized checkpoint then perform the inference directly without any ... (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2652851217)
+- 2025-02-13 `HandH1998`: @zhyncs The results using the new per token group quant fp8 kernel are showed in the Table row sgl kernel (updated). It is worse than the Triton kernel. After reviewing the code, I found that this kernel is specifically designed for per ... (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2655638020)
+- 2025-02-13 `HandH1998`: @BBuf Look forward to it! If you finish it, please let me know. I will replace the Triton kernel with yours. (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2655805919)
+- 2025-02-13 `zhyncs` on `python/sglang/test/test_block_fp8.py`:67: Why increase the rtol? (https://github.com/sgl-project/sglang/pull/3148#discussion_r1954013494)
+- 2025-02-20 `hebiao064` on `python/sglang/srt/layers/quantization/fp8.py`:283: nit: should we align the naming convention for PerTensorScaleParameter and ChannelQuantScaleParameter How about Per{Tensor Channel}QuantScaleParameter? (https://github.com/sgl-project/sglang/pull/3148#discussion_r1964498097)
+- 2025-02-27 `xiaohanhuang`: @BBuf Look forward to it! If you finish it, please let me know. I will replace the Triton kernel with yours. Nice work! Any estimate when will this happen? (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2686834753)
+- 2025-02-27 `HandH1998`: @BBuf The vLLM's scaled fp8 quant supports both per-tensor and per-token quantization. In this PR, we use per-token quantization by default when activation is dynamic quantization. The kernel in is really nice work, but it only supports per-tensor quantization for now, so ... (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2687094809)
+- 2025-02-27 `BBuf`: @BBuf The vLLM's scaled fp8 quant supports both per-tensor and per-token quantization. In this PR, we use per-token quantization by default when activation is dynamic quantization. The kernel in 3786 is really nice work, but it only supports per-tensor quantization for now, ... (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2687109067)
+- 2025-03-07 `HandH1998`: @zhyncs ![image]( This PR depends on the latest sgl-kernel, but the CI doesn't use the latest sgl-kernel. (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2705935022)
+- 2025-03-07 `zhyncs` on `python/pyproject.toml`:57: we don't need to update srt hip (https://github.com/sgl-project/sglang/pull/3148#discussion_r1984742253)
+- 2025-03-07 `HandH1998` on `python/sglang/test/test_block_fp8.py`:67: When I test it on another GPU, not all cases can pass under rtol=0.15, so I increase it ot 0.20. In fact, I doesn't change the code of per token quant fp8, it will not affect the accuracy. (https://github.com/sgl-project/sglang/pull/3148#discussion_r1984747847)
+- 2025-03-07 `HandH1998`: @zhyncs ![image]( The two falied CIs seems are related with DSv3. I tried to reproduce them locally. But I can't find lmsys/sglang-ci-dsv3-test model in huggingface. (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2706721157)
+- 2025-03-07 `zhyncs`: @HandH1998 You can give me the HF user name or use DeepSeek V3/R1 for testing. I have also updated this, so if you wish to upgrade, please update this as well. (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2707168743)
+- 2025-03-07 `hebiao064`: @HandH1998 Do you think we should support similar api like scaled fp8 quant (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2707201711)
+- 2025-03-08 `HandH1998`: @HandH1998 Do you think we should support similar api like scaled fp8 quant The cutlass w8a8 fp8 kernel only support per-channel activation scales, so I only apply per token quant. The scaled fp8 quant also also per tensor quant, but it is ... (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2708016774)
+- 2025-03-08 `HandH1998`: The CI failures are caused by 0.0.3.post7 sgl-kernel. Ref to @zhyncs (https://github.com/sgl-project/sglang/pull/3148#issuecomment-2708303426)

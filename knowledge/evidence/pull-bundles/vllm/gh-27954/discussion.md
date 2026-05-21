@@ -1,78 +1,35 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#27954](https://github.com/vllm-project/vllm/pull/27954)
-- Source page: `sources/prs/vllm/PR-27954.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-27954`
-- Generated at: `2026-05-20T15:38:23.820946+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-11-03T01:37:28Z`
-- Merged: `2025-11-12T01:43:06Z`
-
-## Discussion Counts
-
-- Issue comments: 15
-- Review submissions: 30 (approved=2, commented=28)
-- Inline review comments: 29
-- Review threads observed: 15
-- Resolved/outdated thread markers: resolved=7, outdated=8
-- Human participants with discussion text: bigPYJ1151, chatgpt-codex-connector, fadara01, jikunshang, louie-tsai, mergify
-- Automation comments/reviews omitted from high-signal summary: 3
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 1
-
-## Review Decisions
-
-- `2025-11-03T01:39:38Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces a significant refactoring of the CPU attention backend, replacing the previous implementation ... (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3409206707)
-- `2025-11-03T01:42:03Z` `COMMENTED` by `chatgpt-codex-connector` - 💡 Codex Review Here are some automated review suggestions for this pull request. ℹ️ About Codex in GitHub ... (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3409208157)
-- `2025-11-03T09:58:22Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3410245767)
-- `2025-11-04T06:41:34Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3414274576)
-- `2025-11-04T06:54:52Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3414312184)
-- `2025-11-04T07:04:17Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3414342771)
-- `2025-11-04T07:19:23Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3414379351)
-- `2025-11-04T07:30:23Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3414416775)
-- `2025-11-04T07:32:20Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3414424483)
-- `2025-11-04T07:44:18Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3414469067)
-- `2025-11-04T07:52:40Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3414491609)
-- `2025-11-04T08:42:22Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3414787013)
-- `2025-11-04T08:49:37Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3414825838)
-- `2025-11-04T13:50:00Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3416573789)
-- `2025-11-04T13:52:22Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3416585645)
-- `2025-11-04T13:53:24Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3416591566)
-- `2025-11-04T13:54:17Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3416596638)
-- `2025-11-04T13:55:05Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3416601496)
-- `2025-11-04T14:01:48Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3416640281)
-- `2025-11-04T14:03:13Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3416648248)
-- `2025-11-04T14:03:51Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3416651873)
-- `2025-11-04T14:07:32Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3416672138)
-- `2025-11-04T14:08:49Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3416678869)
-- `2025-11-04T14:09:50Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/27954#pullrequestreview-3416684021)
-- ... 6 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `tests/kernels/attention/test_cpu_attn.py`: 6 inline comment(s)
-- `vllm/v1/attention/backends/cpu_attn.py`: 5 inline comment(s)
-- `csrc/cpu/cpu_attn_impl.hpp`: 5 inline comment(s)
-- `csrc/cpu/scratchpad_manager.h`: 3 inline comment(s)
-- `tests/models/language/generation/test_common.py`: 3 inline comment(s)
-- `vllm/platforms/cpu.py`: 3 inline comment(s)
-- `csrc/cpu/cpu_attn.cpp`: 2 inline comment(s)
-- `csrc/cpu/cpu_attn_macros.h`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-11-05T14:19:50Z` `issue` by `bigPYJ1151`; signals: attention, cache, cute, dtype, hang, memory; excerpt: "@fadara01 Tried with 2M L2 and 96 threads to generate the same task schedule, executed tests several times but got no failure. Are these ..." (https://github.com/vllm-project/vllm/pull/27954#issuecomment-3491478239)
-- `2025-11-03T01:42:03Z` `inline` by `chatgpt-codex-connector` `vllm/v1/attention/backends/cpu_attn.py`:324; signals: attention, cache, kernel, kv cache; excerpt: ". However the forward path still unconditionally invokes ops.cpu attn reshape and cache(…, attn metadata.scheduler metadata) and ops.cpu attention with kv cache(…, scheduler metadata=attn ..." (https://github.com/vllm-project/vllm/pull/27954#discussion_r2485156669)
-- `2025-11-04T07:44:18Z` `inline` by `fadara01` `tests/models/language/generation/test_common.py`:100; signals: attention, cache, gemm, kv cache; excerpt: "Can we enable a test for google/gemma-2-2b-it and mark it as cpu model? This would be a great end-to-end smoke test for SWA and ..." (https://github.com/vllm-project/vllm/pull/27954#discussion_r2489028818)
-- `2025-11-04T14:03:13Z` `inline` by `bigPYJ1151` `tests/kernels/attention/test_cpu_attn.py`:79; signals: attention, bf16, dtype, kernel; excerpt: "This means we just test sink, alibi, softcap with bf16 as the logits processing is using fp32. For other cases all dtypes should be ..." (https://github.com/vllm-project/vllm/pull/27954#discussion_r2490649422)
-- `2025-11-05T02:10:46Z` `issue` by `bigPYJ1151`; signals: attention, cache, kernel, nan; excerpt: "I got one test failure with one element miss-match while running tests/kernels/attention/test cpu attn.py on Arm This is the configuration that fails: And this ..." (https://github.com/vllm-project/vllm/pull/27954#issuecomment-3488831884)
-- `2025-11-04T06:54:52Z` `inline` by `fadara01` `vllm/v1/attention/backends/cpu_attn.py`:251; signals: attention, cache, kv cache; excerpt: "When use sdpa prefill is true we use vanilla SDPA which does not support sinks. Can we dispatch to cpu attention with kv cache ..." (https://github.com/vllm-project/vllm/pull/27954#discussion_r2488921097)
-- `2025-11-04T14:01:48Z` `inline` by `bigPYJ1151` `tests/kernels/attention/test_cpu_attn.py`:324; signals: attention, kernel, perf; excerpt: "This test file is based on I think the abs tolerance looks more strict in is because the input is initialized with , will ..." (https://github.com/vllm-project/vllm/pull/27954#discussion_r2490644272)
-- `2025-11-04T14:45:48Z` `inline` by `fadara01` `tests/kernels/attention/test_cpu_attn.py`:324; signals: attention, flash attention, kernel; excerpt: "Acknowledged, I wasn't aware that's the tolerance used for testing flash attention." (https://github.com/vllm-project/vllm/pull/27954#discussion_r2490803105)
-- `2025-11-04T06:41:33Z` `inline` by `fadara01` `csrc/cpu/cpu_attn_impl.hpp`:1341; signals: compile, hang; excerpt: "This doesn't compile on Arm because all our vec op::FP32Vec16 constructors are explicit Changing it to: vec op::FP32Vec16 curr kv pos vec(initial arange vals ..." (https://github.com/vllm-project/vllm/pull/27954#discussion_r2488893813)
-- `2025-11-04T07:19:23Z` `inline` by `fadara01` `csrc/cpu/scratchpad_manager.h`:1; signals: attention, hang; excerpt: "Can we leave oneDNN changes out? This PR is already too big and I don't think these changes are relevant the new attention backend?" (https://github.com/vllm-project/vllm/pull/27954#discussion_r2488966907)
-- `2025-11-04T08:34:51Z` `issue` by `fadara01`; signals: benchmark, perf, regression; excerpt: "I can also confirm that there's no perf regressions on Arm after running this benchmark:" (https://github.com/vllm-project/vllm/pull/27954#issuecomment-3484578640)
-- `2025-11-04T07:30:23Z` `inline` by `fadara01` `tests/kernels/attention/test_cpu_attn.py`:324; signals: attention, kernel; excerpt: "the absolute tolerance looks too high. can we use: similar to what we do in" (https://github.com/vllm-project/vllm/pull/27954#discussion_r2488994028)
+- 2025-11-03 `bigPYJ1151` on `csrc/cpu/cpu_attn.cpp`:105: Encoder related will use SDPA for now (https://github.com/vllm-project/vllm/pull/27954#discussion_r2485915350)
+- 2025-11-03 `fadara01`: Amazing Work! Thanks for raising this :) ... I'll test and benchmark on Arm CPUs (https://github.com/vllm-project/vllm/pull/27954#issuecomment-3479757045)
+- 2025-11-03 `fadara01`: The changes this PR introduces are massive +3,932 −1,912 In the future, we should consider breaking massive PRs like this to multiple medium-sized PRs, such that they're "review-able". Not sure if that's possible here, given this is a complete re-write (https://github.com/vllm-project/vllm/pull/27954#issuecomment-3480047339)
+- 2025-11-04 `fadara01` on `csrc/cpu/cpu_attn_impl.hpp`:1341: This doesn't compile on Arm because all our vec op::FP32Vec16 constructors are explicit Changing it to: vec op::FP32Vec16 curr kv pos vec(initial arange vals vec) fixes the problem. (https://github.com/vllm-project/vllm/pull/27954#discussion_r2488893813)
+- 2025-11-04 `fadara01` on `vllm/v1/attention/backends/cpu_attn.py`:251: When use sdpa prefill is true we use vanilla SDPA which does not support sinks. Can we dispatch to cpu attention with kv cache when we have sinks even if use sdpa prefill is true? If that's not possible for whatever reason, ... (https://github.com/vllm-project/vllm/pull/27954#discussion_r2488921097)
+- 2025-11-04 `fadara01` on `csrc/cpu/cpu_attn_impl.hpp`:765: This looks very out of place here :) Can you move it to the AVX512 vectorized class in csrc/cpu/cpu attn vec.hpp? We'll follow up later with an RFC/PoC to use torch vectorizer in vllm. (https://github.com/vllm-project/vllm/pull/27954#discussion_r2488938642)
+- 2025-11-04 `fadara01` on `csrc/cpu/scratchpad_manager.h`:1: Can we leave oneDNN changes out? This PR is already too big and I don't think these changes are relevant the new attention backend? (https://github.com/vllm-project/vllm/pull/27954#discussion_r2488966907)
+- 2025-11-04 `fadara01` on `tests/kernels/attention/test_cpu_attn.py`:324: the absolute tolerance looks too high. can we use: similar to what we do in (https://github.com/vllm-project/vllm/pull/27954#discussion_r2488994028)
+- 2025-11-04 `fadara01` on `tests/kernels/attention/test_cpu_attn.py`:79: then why not just do QTYPES = [torch.bfloat16] (https://github.com/vllm-project/vllm/pull/27954#discussion_r2488998193)
+- 2025-11-04 `fadara01` on `tests/models/language/generation/test_common.py`:100: Can we enable a test for google/gemma-2-2b-it and mark it as cpu model? This would be a great end-to-end smoke test for SWA and Hybrid local-global attention models (with 2 kv cache groups) (https://github.com/vllm-project/vllm/pull/27954#discussion_r2489028818)
+- 2025-11-04 `fadara01` on `vllm/platforms/cpu.py`:191: I'm in favor of just erroring out in this case saying that block size needs to be divisible by 32 (instead of setting the block size to a value that the user didn't choose) (https://github.com/vllm-project/vllm/pull/27954#discussion_r2489047083)
+- 2025-11-04 `fadara01`: I ran some end to end tests on Arm Neoverse-V2 with google/gemma-2-2b-it (which alternates between full attention and SWA with window=4096). The tests include prompts (e.g. asking the model to explain code) with lengths and < window size (e.g. 4740, 6618, 6047, ... (https://github.com/vllm-project/vllm/pull/27954#issuecomment-3484550926)
+- 2025-11-04 `fadara01`: I can also confirm that there's no perf regressions on Arm after running this benchmark: (https://github.com/vllm-project/vllm/pull/27954#issuecomment-3484578640)
+- 2025-11-04 `fadara01` on `csrc/cpu/cpu_attn_impl.hpp`:91: could you please add a comment explaining this? what's the significance of the cu prefix here? (https://github.com/vllm-project/vllm/pull/27954#discussion_r2489276674)
+- 2025-11-04 `fadara01` on `csrc/cpu/cpu_attn_impl.hpp`:1867: let's try to keep this file free of architecture specific intrinsics and just use vllm's vectorizer abstractions. (https://github.com/vllm-project/vllm/pull/27954#discussion_r2489306035)
+- 2025-11-04 `bigPYJ1151` on `vllm/v1/attention/backends/cpu_attn.py`:251: Seems can't do this as we are unable to get sink config in builder. Just add a assertion for now. (https://github.com/vllm-project/vllm/pull/27954#discussion_r2490596759)
+- 2025-11-04 `fadara01` on `vllm/v1/attention/backends/cpu_attn.py`:251: Yeah, let's just fail for now, I'll address this in a follow up PR. (https://github.com/vllm-project/vllm/pull/27954#discussion_r2490605945)
+- 2025-11-04 `bigPYJ1151` on `csrc/cpu/scratchpad_manager.h`:1: Yes it is a bit unrelevant. But I think it is acceptable as just a few code😂 (https://github.com/vllm-project/vllm/pull/27954#discussion_r2490610432)
+- 2025-11-04 `fadara01` on `tests/models/language/generation/test_common.py`:63: is 9b an over kill here? should we use the 2b variant google/gemma-2-2b-it? (https://github.com/vllm-project/vllm/pull/27954#discussion_r2490613964)
+- 2025-11-04 `bigPYJ1151` on `tests/kernels/attention/test_cpu_attn.py`:324: This test file is based on I think the abs tolerance looks more strict in is because the input is initialized with , will be smaller compared with the inputs initialized with in . But I perfer to use as I found ... (https://github.com/vllm-project/vllm/pull/27954#discussion_r2490644272)
+- 2025-11-04 `bigPYJ1151` on `tests/kernels/attention/test_cpu_attn.py`:79: This means we just test sink, alibi, softcap with bf16 as the logits processing is using fp32. For other cases all dtypes should be tested. (https://github.com/vllm-project/vllm/pull/27954#discussion_r2490649422)
+- 2025-11-04 `bigPYJ1151` on `tests/models/language/generation/test_common.py`:100: Good idea, added a gemma-2 case. (https://github.com/vllm-project/vllm/pull/27954#discussion_r2490652098)
+- 2025-11-04 `bigPYJ1151` on `vllm/platforms/cpu.py`:191: Yes...But my concern is a lot of test cases use 16 by default and I don't want to add more if-else in different files so just round it here. (https://github.com/vllm-project/vllm/pull/27954#discussion_r2490665903)
+- 2025-11-04 `bigPYJ1151` on `csrc/cpu/cpu_attn_impl.hpp`:91: Oh it is a mistake, should be . The means cummulation, and the is a array contains prefix sum of . (https://github.com/vllm-project/vllm/pull/27954#discussion_r2490670678)
+- 2025-11-04 `fadara01` on `vllm/platforms/cpu.py`:191: Oh, that's a good point. I agree with you. (https://github.com/vllm-project/vllm/pull/27954#discussion_r2490674225)
+- 2025-11-04 `fadara01` on `tests/kernels/attention/test_cpu_attn.py`:324: Acknowledged, I wasn't aware that's the tolerance used for testing flash attention. (https://github.com/vllm-project/vllm/pull/27954#discussion_r2490803105)
+- 2025-11-04 `fadara01` on `tests/kernels/attention/test_cpu_attn.py`:79: Oh I missed the second line of the condition. I agree with you (https://github.com/vllm-project/vllm/pull/27954#discussion_r2490808096)
+- 2025-11-04 `fadara01`: I got one test failure with one element miss-match while running tests/kernels/attention/test cpu attn.py on Arm This is the configuration that fails: And this is the log: @bigPYJ1151 I'm happy to take a deeper look at this, unless you have hints on ... (https://github.com/vllm-project/vllm/pull/27954#issuecomment-3487716528)
+- 2025-11-05 `fadara01`: @bigPYJ1151 it seems that some failures are not deterministic. I ran again and got 2 failures, the abs diff in some cases is very high (1.4921875): And then again and got 3 failures: Here are my machine details (I was not capping ... (https://github.com/vllm-project/vllm/pull/27954#issuecomment-3490398906)
+- 2025-11-05 `fadara01`: Running the full test-suite single threaded (with taskset -c 0), we seem to deterministically get one failure: However, I could not reproduce this failure by just running a single test with the failing configuration (maybe due to different random inputs?): (https://github.com/vllm-project/vllm/pull/27954#issuecomment-3490623179)
+- 2025-11-05 `fadara01` on `csrc/cpu/cpu_attn_macros.h`:9: what's stopping us from having this in cpu types x86.hpp? the same implementation in pytorch lives in the vectorization abstractions under [pytorch/aten/src/ATen/cpu/vec/vec512/vec512 float.h]( (https://github.com/vllm-project/vllm/pull/27954#discussion_r2494153108)
+- 2025-11-05 `bigPYJ1151`: @fadara01 Tried with 2M L2 and 96 threads to generate the same task schedule, executed tests several times but got no failure. Are these randomly failed cases enabled with ? If so I think there may have some cache consistancy issue. For ... (https://github.com/vllm-project/vllm/pull/27954#issuecomment-3491478239)
+- 2025-11-05 `bigPYJ1151` on `csrc/cpu/cpu_attn_macros.h`:9: I want to reduce the constant vectors initialization. Looks like gcc can't move them out of loops. (https://github.com/vllm-project/vllm/pull/27954#discussion_r2494726795)
+- 2025-11-05 `fadara01`: But if the case is failed with only 1 thread, I think it should due to some numeric difference. I tried to make the ref attention fully use fp32 to reduce the difference from dtype cast. @bigPYJ1151 I think that was the ... (https://github.com/vllm-project/vllm/pull/27954#issuecomment-3494029451)
+- 2025-11-05 `fadara01`: I also tested this new attention backend on gpt-oss-20 (after applying 27024). The generated text is decent and aligns very closely with HF transformers generations. (https://github.com/vllm-project/vllm/pull/27954#issuecomment-3494121889)

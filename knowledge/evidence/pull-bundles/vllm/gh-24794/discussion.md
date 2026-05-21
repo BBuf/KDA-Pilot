@@ -1,82 +1,63 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#24794](https://github.com/vllm-project/vllm/pull/24794)
-- Source page: `sources/prs/vllm/PR-24794.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-24794`
-- Generated at: `2026-05-20T15:37:52.165255+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-09-13T05:58:31Z`
-- Merged: `2025-11-11T12:40:44Z`
-
-## Discussion Counts
-
-- Issue comments: 32
-- Review submissions: 51 (approved=4, commented=47)
-- Inline review comments: 76
-- Review threads observed: 39
-- Resolved/outdated thread markers: resolved=38, outdated=34
-- Human participants with discussion text: ILikeIneine, LucasWilkinson, MatthewBonanni, NickLucche, ProExpertProg, chatgpt-codex-connector, hmellor, mergify, mgoin, njhill, wangxiyuan
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 1
-
-## Review Decisions
-
-- `2025-09-13T06:19:57Z` `COMMENTED` by `njhill` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3219698011)
-- `2025-09-19T13:35:28Z` `COMMENTED` by `NickLucche` - Big one, any chance we can split it eg backend registry (+related tests) first? (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3244902722)
-- `2025-10-08T20:09:52Z` `COMMENTED` by `chatgpt-codex-connector` - 💡 Codex Review Here are some automated review suggestions for this pull request. ℹ️ About Codex in GitHub ... (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3316346464)
-- `2025-10-08T20:17:56Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3316373275)
-- `2025-10-08T22:14:25Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3316655725)
-- `2025-10-09T14:19:00Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3319240065)
-- `2025-10-09T19:14:53Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3320323162)
-- `2025-10-10T16:49:22Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3324762321)
-- `2025-10-15T01:38:44Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3338020120)
-- `2025-10-15T13:28:53Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3340420547)
-- `2025-10-15T13:40:54Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3340476411)
-- `2025-10-15T13:41:10Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3340477649)
-- `2025-10-15T13:41:38Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3340479804)
-- `2025-10-15T13:43:17Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3340487677)
-- `2025-10-15T13:45:21Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3340497669)
-- `2025-10-15T13:51:49Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3340527917)
-- `2025-10-15T14:23:21Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3340697473)
-- `2025-10-15T14:28:39Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3340727351)
-- `2025-10-15T21:43:47Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3341886374)
-- `2025-10-15T21:48:26Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3342471253)
-- `2025-10-15T21:49:07Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3342473185)
-- `2025-10-16T14:08:18Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3345078201)
-- `2025-10-22T23:00:54Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3367778478)
-- `2025-10-22T23:05:24Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3367783573)
-- ... 27 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/platforms/cuda.py`: 26 inline comment(s)
-- `vllm/attention/backends/abstract.py`: 9 inline comment(s)
-- `vllm/attention/selector.py`: 6 inline comment(s)
-- `vllm/v1/attention/backends/flashinfer.py`: 6 inline comment(s)
-- `vllm/v1/attention/backends/mla/flashattn_mla.py`: 4 inline comment(s)
-- `vllm/config/multimodal.py`: 4 inline comment(s)
-- `vllm/attention/backends/registry.py`: 3 inline comment(s)
-- `vllm/v1/attention/backends/mla/flashmla_sparse.py`: 2 inline comment(s)
-- `vllm/v1/spec_decode/eagle.py`: 2 inline comment(s)
-- `vllm/v1/attention/backends/flex_attention.py`: 2 inline comment(s)
-- `vllm/v1/attention/backends/triton_attn.py`: 2 inline comment(s)
-- `tests/kernels/attention/test_attention_selector.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-10-15T01:20:24Z` `inline` by `mgoin` `vllm/platforms/cuda.py`:355; signals: cache, cuda, flashinfer, kv cache, layout, mla, nan, sm100; excerpt: "@MatthewBonanni it looks like you use the set kv cache layout("HND") override for flashinfermla, but not for sm100 flashinfer" (https://github.com/vllm-project/vllm/pull/24794#discussion_r2430877545)
-- `2025-10-15T20:20:52Z` `inline` by `mgoin` `vllm/platforms/cuda.py`:69; signals: attention, cuda, cutlass, flashinfer, hang, mla, sm100, sm120; excerpt: "Oh I think we might want this special case to just be for device capability == DeviceCapability(10, 0). We only support for trtllm attention ..." (https://github.com/vllm-project/vllm/pull/24794#discussion_r2433830059)
-- `2025-10-08T20:09:52Z` `inline` by `chatgpt-codex-connector` `vllm/platforms/cuda.py`:311; signals: attention, block, cache, cuda, dtype, kv cache, mla; excerpt: ", the new get attn backend cls path calls backend class.validate configuration(head size, dtype, kv cache dtype, block size, use v1, use mla, has ..." (https://github.com/vllm-project/vllm/pull/24794#discussion_r2414914469)
-- `2025-10-22T22:59:58Z` `inline` by `mgoin` `vllm/platforms/cuda.py`:175; signals: blackwell, block, cache, cuda, flashinfer, mla; excerpt: "I don't understand the purpose of cache config.block size != 32 in this condition. It seems like it does not matter if we have ..." (https://github.com/vllm-project/vllm/pull/24794#discussion_r2453533980)
-- `2025-10-15T01:38:19Z` `inline` by `mgoin` `vllm/v1/attention/backends/triton_attn.py`:212; signals: attention, cache, fp8, kv cache, triton; excerpt: "I thought triton attn supported fp8 kv cache and attention?" (https://github.com/vllm-project/vllm/pull/24794#discussion_r2430898001)
-- `2025-11-04T17:37:50Z` `inline` by `MatthewBonanni` `vllm/v1/attention/backends/mla/flashmla_sparse.py`:80; signals: attention, cache, dtype, kv cache, mla; excerpt: "sg, yeah will figure out a better way to manage kv cache dtype throughout" (https://github.com/vllm-project/vllm/pull/24794#discussion_r2491490400)
-- `2025-10-15T01:21:24Z` `inline` by `mgoin` `vllm/platforms/cuda.py`:362; signals: attention, cuda, flashinfer, sm100; excerpt: "I think this needs to be expanded to regular flashinfer on sm100 as well. Maybe we could have the attention backend express this in ..." (https://github.com/vllm-project/vllm/pull/24794#discussion_r2430879902)
-- `2025-10-15T14:23:21Z` `inline` by `MatthewBonanni` `vllm/platforms/cuda.py`:436; signals: cache, cuda, dtype, kv cache; excerpt: "No, because the env variable may not necessarily be set at this point. Later on, if no suitable backend can be found to support ..." (https://github.com/vllm-project/vllm/pull/24794#discussion_r2432772562)
-- `2025-10-31T00:23:03Z` `inline` by `ProExpertProg` `vllm/attention/selector.py`:157; signals: attention, cache, kv cache, layout; excerpt: "Any reason we need to pass device capability in instead of querying it inside the get required kv cache layout method?" (https://github.com/vllm-project/vllm/pull/24794#discussion_r2479853517)
-- `2025-10-15T01:25:29Z` `inline` by `mgoin` `vllm/v1/attention/backends/flashinfer.py`:226; signals: attention, cache, flashinfer, kv cache; excerpt: "Future note: I don't love these raw strings, we really should make an enum for kv cache" (https://github.com/vllm-project/vllm/pull/24794#discussion_r2430885117)
-- `2025-10-15T13:41:38Z` `inline` by `MatthewBonanni` `vllm/v1/attention/backends/flashinfer.py`:226; signals: attention, cache, dtype, flashinfer; excerpt: "Just realized there's a CacheDType provided by cache.py, so I use that in 85d8719fd" (https://github.com/vllm-project/vllm/pull/24794#discussion_r2432618132)
-- `2025-10-08T22:08:09Z` `inline` by `mgoin` `vllm/platforms/cuda.py`:55; signals: cuda, flashinfer, sm100; excerpt: "FLASHINFER is only priority for SM100, so I'm not sure this gives the right impression or correct logic" (https://github.com/vllm-project/vllm/pull/24794#discussion_r2415134483)
+- 2025-09-19 `NickLucche` commented: Big one, any chance we can split it eg backend registry (+related tests) first? (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3244902722)
+- 2025-09-20 `ILikeIneine`: Hi, this pr seems provide a more general way for platform to load their attn backends. I just wonder could it be more general for plugin since I am maintaining the . Could we offer a way for plugin to add their ... (https://github.com/vllm-project/vllm/pull/24794#issuecomment-3314932999)
+- 2025-09-22 `MatthewBonanni`: @ILikeIneine sounds reasonable to me, thanks for your suggestion! Will implement. EDIT: Done, should be ready for a look (https://github.com/vllm-project/vllm/pull/24794#issuecomment-3319158552)
+- 2025-09-23 `ILikeIneine`: @MatthewBonanni Thanks for your work! It looks good to me ! 🙌 Sorry for the typo: In this way still got limitations, since we could only register existed backend enum, the enum was not unmodifiable at runtime. There's a pre-condition for oot ... (https://github.com/vllm-project/vllm/pull/24794#issuecomment-3322394235)
+- 2025-10-08 `mgoin` on `vllm/platforms/cuda.py`:165: Should we offer a better error message before we get to this point if VLLM ATTENTION BACKEND isn't found? (https://github.com/vllm-project/vllm/pull/24794#discussion_r2415131652)
+- 2025-10-08 `mgoin` on `vllm/platforms/cuda.py`:55: FLASHINFER is only priority for SM100, so I'm not sure this gives the right impression or correct logic (https://github.com/vllm-project/vllm/pull/24794#discussion_r2415134483)
+- 2025-10-09 `MatthewBonanni` on `vllm/platforms/cuda.py`:55: Good point, thanks. Do you think we should split the priority list by compute capability? Do we foresee other factors altering the priority list? I suppose we could effectively have a decision tree with a priority list at each leaf. I'm a ... (https://github.com/vllm-project/vllm/pull/24794#discussion_r2416973173)
+- 2025-10-09 `MatthewBonanni` on `vllm/platforms/cuda.py`:55: Ah actually, the logic should be correct because flashinfer has its minimum compute capability listed as 10.0, so it won't be an available backend on hopper anyway (https://github.com/vllm-project/vllm/pull/24794#discussion_r2417735057)
+- 2025-10-10 `MatthewBonanni` on `vllm/platforms/cuda.py`:165: That should be handled by the env with choices in envs.py, no? (https://github.com/vllm-project/vllm/pull/24794#discussion_r2421219300)
+- 2025-10-11 `LucasWilkinson` on `vllm/v1/attention/backends/mla/flashmla_sparse.py`:80: for a future PR; but feels a bit weird that auto we might want to re-think this (https://github.com/vllm-project/vllm/pull/24794#discussion_r2422913326)
+- 2025-10-11 `LucasWilkinson` on `vllm/v1/spec_decode/eagle.py`:159: is this right? I think the class str will include the class name but on main right now this check doesn't (https://github.com/vllm-project/vllm/pull/24794#discussion_r2422913936)
+- 2025-10-15 `mgoin` on `vllm/attention/backends/abstract.py`:12: nit: can these be turned into typing imports? (https://github.com/vllm-project/vllm/pull/24794#discussion_r2430856771)
+- 2025-10-15 `mgoin` on `vllm/attention/selector.py`:167: Note: one thing to consider (that we probably don't need to consider right now), is if we end up selecting multiple attention backends (for hybrid models) that have different block size constraints (https://github.com/vllm-project/vllm/pull/24794#discussion_r2430859456)
+- 2025-10-15 `mgoin` on `vllm/platforms/cuda.py`:355: @MatthewBonanni it looks like you use the set kv cache layout("HND") override for flashinfermla, but not for sm100 flashinfer (https://github.com/vllm-project/vllm/pull/24794#discussion_r2430877545)
+- 2025-10-15 `mgoin` on `vllm/platforms/cuda.py`:362: I think this needs to be expanded to regular flashinfer on sm100 as well. Maybe we could have the attention backend express this in the future (https://github.com/vllm-project/vllm/pull/24794#discussion_r2430879902)
+- 2025-10-15 `mgoin` on `vllm/platforms/cuda.py`:436: Shouldn't it be false by default? (https://github.com/vllm-project/vllm/pull/24794#discussion_r2430881176)
+- 2025-10-15 `mgoin` on `vllm/v1/attention/backends/flashinfer.py`:226: Future note: I don't love these raw strings, we really should make an enum for kv cache (https://github.com/vllm-project/vllm/pull/24794#discussion_r2430885117)
+- 2025-10-15 `mgoin` on `vllm/v1/attention/backends/flashinfer.py`:242: I'm not sure this is true, I think sm120 works with flashinfer. (https://github.com/vllm-project/vllm/pull/24794#discussion_r2430889275)
+- 2025-10-15 `mgoin` on `vllm/v1/attention/backends/flex_attention.py`:123: Why don't we make is mla==False in the base class? (https://github.com/vllm-project/vllm/pull/24794#discussion_r2430890280)
+- 2025-10-15 `mgoin` on `vllm/v1/attention/backends/triton_attn.py`:212: I thought triton attn supported fp8 kv cache and attention? (https://github.com/vllm-project/vllm/pull/24794#discussion_r2430898001)
+- 2025-10-15 `MatthewBonanni` on `vllm/platforms/cuda.py`:355: good catch, thanks! addressed in 81d1b7b28 (https://github.com/vllm-project/vllm/pull/24794#discussion_r2432615547)
+- 2025-10-15 `MatthewBonanni` on `vllm/platforms/cuda.py`:362: This has been implemented in 81d1b7b28 (https://github.com/vllm-project/vllm/pull/24794#discussion_r2432616419)
+- 2025-10-15 `MatthewBonanni` on `vllm/v1/attention/backends/flashinfer.py`:226: Just realized there's a CacheDType provided by cache.py, so I use that in 85d8719fd (https://github.com/vllm-project/vllm/pull/24794#discussion_r2432618132)
+- 2025-10-15 `MatthewBonanni` on `vllm/v1/attention/backends/flashinfer.py`:242: fixed in adaf53b2f, thanks! (https://github.com/vllm-project/vllm/pull/24794#discussion_r2432623974)
+- 2025-10-15 `MatthewBonanni` on `vllm/v1/attention/backends/triton_attn.py`:212: fixed in abb83750f, thanks! (https://github.com/vllm-project/vllm/pull/24794#discussion_r2432654422)
+- 2025-10-15 `MatthewBonanni` on `vllm/platforms/cuda.py`:436: No, because the env variable may not necessarily be set at this point. Later on, if no suitable backend can be found to support that dtype, then get attn backend cls will throw an error. Cuda as a platform in general supports ... (https://github.com/vllm-project/vllm/pull/24794#discussion_r2432772562)
+- 2025-10-15 `MatthewBonanni` on `vllm/attention/selector.py`:167: Good point - I added a quick TODO about this (https://github.com/vllm-project/vllm/pull/24794#discussion_r2432793246)
+- 2025-10-15 `mgoin` on `vllm/attention/backends/abstract.py`:155: I think supports sink should be False by default, since this is something you have to implement. I see many backends don't set this, so is this intentional? (https://github.com/vllm-project/vllm/pull/24794#discussion_r2433665477)
+- 2025-10-15 `mgoin` on `vllm/platforms/cuda.py`:69: Oh I think we might want this special case to just be for device capability == DeviceCapability(10, 0). We only support for trtllm attention for sm100 (which is why we want FLASHINFER by default) and CUTLASS MLA is only an option for ... (https://github.com/vllm-project/vllm/pull/24794#discussion_r2433830059)
+- 2025-10-15 `mgoin` on `vllm/v1/attention/backends/mla/flashattn_mla.py`:65: It doesn't seem right that flashattn mla can support any block size (https://github.com/vllm-project/vllm/pull/24794#discussion_r2434004296)
+- 2025-10-22 `mgoin`: It seems the blackwell lm eval failed for deepseek, still tracking down why or if flaky. However it does seem strange that I don't see CUTLASS MLA as an option for it to select in the logs (https://github.com/vllm-project/vllm/pull/24794#issuecomment-3434454506)
+- 2025-10-22 `mgoin` on `vllm/platforms/cuda.py`:175: I don't understand the purpose of cache config.block size != 32 in this condition. It seems like it does not matter if we have divisible by 64 as a constraint. I think this maybe causing the deepseek eval issue in blackwell ci ... (https://github.com/vllm-project/vllm/pull/24794#discussion_r2453533980)
+- 2025-10-22 `mgoin` on `vllm/platforms/cuda.py`:324: I think it would be useful to have a debug once log of the invalid reasons even if len(valid backends priorities) = 1 just so we can see why a certain backend was unselected (https://github.com/vllm-project/vllm/pull/24794#discussion_r2453538378)
+- 2025-10-23 `MatthewBonanni` on `vllm/platforms/cuda.py`:175: I think this means it supports block size 32 and all multiples of 64. I missed this, thanks! I updated the code to reflect this (instead of just [32, 64]) I don't think this is related to the ci failure though, I'll ... (https://github.com/vllm-project/vllm/pull/24794#discussion_r2455391657)
+- 2025-10-23 `MatthewBonanni`: @mgoin it looks like that test has issues on main ( but I did find and fix a bug which explains why CUTLASS MLA wasn't showing up as an option (https://github.com/vllm-project/vllm/pull/24794#issuecomment-3437688470)
+- 2025-10-30 `ProExpertProg` on `tests/kernels/attention/test_attention_selector.py`:123: Does this test run on Blackwell in CI? If not, could you add it to Blackwell Tests? (https://github.com/vllm-project/vllm/pull/24794#discussion_r2479821586)
+- 2025-10-30 `ProExpertProg` on `vllm/attention/backends/abstract.py`:151: By this logic, aren't 16 and MultipleOf(16) equivalent here? Shouldn't we do: (https://github.com/vllm-project/vllm/pull/24794#discussion_r2479828463)
+- 2025-10-30 `ProExpertProg` on `vllm/attention/backends/abstract.py`:188: Separate selector for MLA when? :D (https://github.com/vllm-project/vllm/pull/24794#discussion_r2479829601)
+- 2025-10-31 `ProExpertProg` on `vllm/attention/selector.py`:166: This is just like, global? lol (https://github.com/vllm-project/vllm/pull/24794#discussion_r2479832778)
+- 2025-10-31 `ProExpertProg` on `vllm/config/multimodal.py`:188: Seems like this is done in many places, could we make it a class method, maybe BackendEnum.from name() or BackendEnum.from str()? I know you just removed a helper but the error handling is repeated (https://github.com/vllm-project/vllm/pull/24794#discussion_r2479840009)
+- 2025-10-31 `ProExpertProg` on `vllm/platforms/cpu.py`:150: Can this be a method on the enum? (https://github.com/vllm-project/vllm/pull/24794#discussion_r2479840730)
+- 2025-10-31 `ProExpertProg` on `vllm/v1/attention/backends/mla/cutlass_mla.py`:68: I know that these backends are platform-specific, but AFAIU DeviceCapability isn't always fully linear. Can we just use a single supports device capability method? It's more flexible and less verbose: (https://github.com/vllm-project/vllm/pull/24794#discussion_r2479845738)
+- 2025-10-31 `ProExpertProg` on `vllm/v1/attention/backends/mla/flashattn_mla.py`:77: It also seems to me that all of these are not dynamic, could we just make them variables instead of functions? And specific backends can always override with a @classmethod @property if necessary (https://github.com/vllm-project/vllm/pull/24794#discussion_r2479848836)
+- 2025-10-31 `ProExpertProg` on `vllm/attention/selector.py`:157: Any reason we need to pass device capability in instead of querying it inside the get required kv cache layout method? (https://github.com/vllm-project/vllm/pull/24794#discussion_r2479853517)
+- 2025-10-31 `ProExpertProg` on `vllm/platforms/cuda.py`:45: When is device capability None? (https://github.com/vllm-project/vllm/pull/24794#discussion_r2479855901)
+- 2025-10-31 `ProExpertProg` commented: Thanks for the cleanup, mostly nits and structure comments (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3402105496)
+- 2025-10-31 `MatthewBonanni` on `vllm/attention/backends/abstract.py`:188: will follow up :) (https://github.com/vllm-project/vllm/pull/24794#discussion_r2481325941)
+- 2025-10-31 `ProExpertProg` on `vllm/attention/backends/registry.py`:147: class path will always be None here, no? Otherwise the lambda would have been returned? (https://github.com/vllm-project/vllm/pull/24794#discussion_r2482061994)
+- 2025-10-31 `ProExpertProg` on `vllm/v1/attention/backends/flashinfer.py`:168: Restore comment from below (https://github.com/vllm-project/vllm/pull/24794#discussion_r2482082655)
+- 2025-11-04 `LucasWilkinson` on `vllm/platforms/cuda.py`:55: nit: might be simpler if this is just a list in priority order? (https://github.com/vllm-project/vllm/pull/24794#discussion_r2491215459)
+- 2025-11-04 `LucasWilkinson` on `vllm/platforms/rocm.py`:270: why do we need this? this should always be true now (https://github.com/vllm-project/vllm/pull/24794#discussion_r2491229328)
+- 2025-11-04 `LucasWilkinson` commented: left a few comments; we should figure out who the owner of the plugin mechanism is and figure out how to notify downstream HW plugins since I think this will affect them pretty dramatically (https://github.com/vllm-project/vllm/pull/24794#pullrequestreview-3327268798)
+- 2025-11-04 `MatthewBonanni` on `vllm/v1/attention/backends/mla/flashmla_sparse.py`:80: sg, yeah will figure out a better way to manage kv cache dtype throughout (https://github.com/vllm-project/vllm/pull/24794#discussion_r2491490400)
+- 2025-11-04 `MatthewBonanni` on `vllm/platforms/cuda.py`:55: Good point, this was a holdover from an earlier version where the dict was necessary. Changed in [6515e4c]( (https://github.com/vllm-project/vllm/pull/24794#discussion_r2491548934)
+- 2025-11-04 `MatthewBonanni` on `vllm/platforms/rocm.py`:270: messed up when resolving a merge conflict, fixed in [0b841ff]( (https://github.com/vllm-project/vllm/pull/24794#discussion_r2491562010)
+- 2025-11-04 `MatthewBonanni` on `vllm/attention/backends/abstract.py`:143: It was for a while (when I was trying to also change check and update config in this PR) but I decided to handle that in a later PR, so that method is unused. Removed for now in [69bb887]( (https://github.com/vllm-project/vllm/pull/24794#discussion_r2491568710)
+- 2025-11-04 `MatthewBonanni`: @LucasWilkinson thanks for your review! I've already notified @ILikeIneine but I'm not sure if there's anyone else we should reach out to? (https://github.com/vllm-project/vllm/pull/24794#issuecomment-3487369776)
+- 2025-11-06 `ILikeIneine`: @MatthewBonanni Hi, would this refactor be able to merge into v0.11.1? (https://github.com/vllm-project/vllm/pull/24794#issuecomment-3495750571)
+- 2025-11-06 `MatthewBonanni`: @ILikeIneine we were planning on waiting until after v0.11.1, we don't want to risk further delaying the release and because it changes the platform interface, it might be better to be part of v0.12 (https://github.com/vllm-project/vllm/pull/24794#issuecomment-3497669767)
+- 2025-11-10 `LucasWilkinson`: @MatthewBonanni how hard would it be to keep backwards compatibility between Backend and AttentionBackendEnum for a version with a warning? (https://github.com/vllm-project/vllm/pull/24794#issuecomment-3513260605)
+- 2025-11-10 `LucasWilkinson`: With potential in the pipe what do we think about having a get mla attn backend cls instead of is mla? @Yikun ? (https://github.com/vllm-project/vllm/pull/24794#issuecomment-3513326063)
+- 2025-11-10 `MatthewBonanni`: @MatthewBonanni how hard would it be to keep backwards compatibility between Backend and AttentionBackendEnum for a version with a warning? @LucasWilkinson done in [d0f4698]( (https://github.com/vllm-project/vllm/pull/24794#issuecomment-3513398182)
+- 2025-11-10 `NickLucche`: Discussed offline thanks for the work @MatthewBonanni ! (https://github.com/vllm-project/vllm/pull/24794#issuecomment-3513425738)

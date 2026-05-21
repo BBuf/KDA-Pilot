@@ -1,78 +1,39 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/TensorRT-LLM#8886](https://github.com/NVIDIA/TensorRT-LLM/pull/8886)
-- Source page: `sources/prs/tensorrt-llm/PR-8886.md`
-- Evidence bundle: `evidence/pull-bundles/tensorrt-llm/gh-8886`
-- Generated at: `2026-05-20T15:19:19.682372+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-11-03T13:51:07Z`
-- Merged: `2025-11-12T20:30:28Z`
-
-## Discussion Counts
-
-- Issue comments: 64
-- Review submissions: 32 (approved=4, changes_requested=1, commented=27)
-- Inline review comments: 37
-- Review threads observed: 20
-- Resolved/outdated thread markers: resolved=20, outdated=8
-- Human participants with discussion text: bobboli, coderabbitai, dongxuy04, nekorobov, syuoni, tensorrt-cicd, xxi-nv, yuxianq
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-11-05T09:59:21Z` `COMMENTED` by `nekorobov` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3420694552)
-- `2025-11-06T08:09:29Z` `COMMENTED` by `dongxuy04` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3426799139)
-- `2025-11-06T11:15:42Z` `COMMENTED` by `dongxuy04` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3427646711)
-- `2025-11-06T11:25:19Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 2 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to ... (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3427684207)
-- `2025-11-07T01:40:56Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3431151197)
-- `2025-11-07T03:42:48Z` `COMMENTED` by `dongxuy04` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3431476194)
-- `2025-11-07T03:43:28Z` `COMMENTED` by `dongxuy04` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3431477075)
-- `2025-11-07T03:43:42Z` `COMMENTED` by `dongxuy04` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3431477416)
-- `2025-11-07T03:48:07Z` `COMMENTED` by `dongxuy04` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3431484151)
-- `2025-11-07T04:21:23Z` `CHANGES_REQUESTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3431229650)
-- `2025-11-07T06:24:21Z` `COMMENTED` by `dongxuy04` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3431650164)
-- `2025-11-07T07:33:00Z` `APPROVED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3432064503)
-- `2025-11-08T16:15:44Z` `APPROVED` by `bobboli` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3438465678)
-- `2025-11-10T03:33:40Z` `APPROVED` by `syuoni` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3440679823)
-- `2025-11-10T07:38:54Z` `COMMENTED` by `dongxuy04` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3441326902)
-- `2025-11-10T07:38:59Z` `COMMENTED` by `dongxuy04` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3441327261)
-- `2025-11-10T07:57:36Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3441406516)
-- `2025-11-10T07:59:10Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3441413162)
-- `2025-11-10T08:09:40Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3441451866)
-- `2025-11-10T08:09:55Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3441452555)
-- `2025-11-10T08:13:02Z` `COMMENTED` by `dongxuy04` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3441465567)
-- `2025-11-10T08:25:43Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3441523085)
-- `2025-11-10T08:27:01Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3441531997)
-- `2025-11-10T08:27:09Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3441533170)
-- ... 8 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `tensorrt_llm/_torch/modules/fused_moe/quantization.py`: 14 inline comment(s)
-- `tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py`: 8 inline comment(s)
-- `tensorrt_llm/_torch/modules/fused_moe/moe_load_balancer.py`: 5 inline comment(s)
-- `tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py`: 4 inline comment(s)
-- `cpp/tensorrt_llm/thop/mxFp4BlockScaleMoe.cpp`: 2 inline comment(s)
-- `tests/integration/test_lists/test-db/l0_rtx_pro_6000.yml`: 2 inline comment(s)
-- `tensorrt_llm/_torch/modules/fused_moe/create_moe.py`: 1 inline comment(s)
-- `tests/integration/test_lists/qa/llm_function_core.txt`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-11-06T11:25:19Z` `review` `COMMENTED` by `coderabbitai`; signals: accuracy, alignment, b200, blackwell, cache, cute, cutlass, dtype; excerpt: "Actionable comments posted: 2 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#pullrequestreview-3427684207)
-- `2025-11-05T09:07:55Z` `inline` by `nekorobov` `cpp/tensorrt_llm/thop/mxFp4BlockScaleMoe.cpp`:203; signals: block, fp4, fp8, moe, mxfp4, nvfp4, perf, tensorrt; excerpt: "Have you measured the perf impact of this? Also, do you need to do the same for other accuracies. I.e. DS FP8, FP8, NVFP4?" (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2493598431)
-- `2025-11-06T11:25:15Z` `issue` by `coderabbitai`; signals: accuracy, aligned, attention, b200, block, cache, correctness, cute; excerpt: "📝 Walkthrough Walkthrough Integrates load-balancer support across MoE backends with slot-based token routing, GPU/CPU stage synchronization, and expert statistics tracking. Refactors weight loading for ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#issuecomment-3496697184)
-- `2025-11-06T11:15:42Z` `inline` by `dongxuy04` `cpp/tensorrt_llm/thop/mxFp4BlockScaleMoe.cpp`:203; signals: autotune, block, fp4, moe, mxfp4, tensorrt; excerpt: "It is just a temp fix of AutoTuner to verify EPLB works for2 88 case works. I think maybe we need separate PR to ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2498561050)
-- `2025-11-07T04:58:42Z` `inline` by `dongxuy04` `tensorrt_llm/_torch/modules/fused_moe/quantization.py`:1999; signals: block, hang, memory, moe, perf, tensorrt; excerpt: "I think different quantization has different weights loading method, and may need different transformations. So my judgement for now is keep them inside each ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501687486)
-- `2025-11-08T16:15:27Z` `inline` by `bobboli` `tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py`:256; signals: cutlass, hang, moe, tensorrt, throughput; excerpt: "MnnvlThroughput doesn't support EPLB now. We can add this change either in this PR or in" (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2506999826)
-- `2025-11-07T03:42:48Z` `inline` by `dongxuy04` `tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py`:705; signals: cutlass, latency, moe, tensorrt; excerpt: "It is to avoid using multi-stream when using multi-chunk for MnnvlLatency, since MnnvlLatency need separate workspaces if we want to use multi-stream, but not ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501574039)
-- `2025-11-07T04:14:14Z` `inline` by `xxi-nv` `tensorrt_llm/_torch/modules/fused_moe/quantization.py`:1999; signals: block, dtype, moe, tensorrt; excerpt: "Do you need to unify the behaviour in the weights loading in the base class? The non blocking is always True for now. dst ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501622070)
-- `2025-11-07T04:15:13Z` `inline` by `xxi-nv` `tensorrt_llm/_torch/modules/fused_moe/quantization.py`:2001; signals: fp4, moe, mxfp4, tensorrt; excerpt: "It seems that the MXFP4 did not do the same logic here, could you help to explain why this is different?" (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501623070)
-- `2025-11-10T09:07:44Z` `inline` by `dongxuy04` `tensorrt_llm/_torch/modules/fused_moe/quantization.py`:1960; signals: block, hang, moe, tensorrt; excerpt: "Thanks a lot @yuxianq . I agree with you that it has no effect. But since many weights loading in quantization.py are using non ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2509430417)
-- `2025-11-07T03:43:28Z` `inline` by `dongxuy04` `tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py`:359; signals: moe, perf, performance, tensorrt; excerpt: "Yes, it should have better performance if we move before routing method.apply(), moved, thanks." (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501574764)
-- `2025-11-08T16:14:34Z` `inline` by `bobboli` `tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py`:185; signals: hang, moe, tensorrt, throughput; excerpt: "MnnvlThroughput doesn't support EPLB now. We can add this change either in this PR or in" (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2506999499)
+- 2025-11-03 `tensorrt-cicd`: [PR Github 23402]( [ run ] completed with state SUCCESS. Commit: f899b38 [/LLM/main/L0 MergeRequest PR pipeline 17626]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#issuecomment-3481846927)
+- 2025-11-04 `tensorrt-cicd`: [PR Github 23450]( [ run ] completed with state SUCCESS. Commit: abe56ca [/LLM/main/L0 MergeRequest PR pipeline 17659]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#issuecomment-3484240735)
+- 2025-11-05 `nekorobov` on `cpp/tensorrt_llm/thop/mxFp4BlockScaleMoe.cpp`:203: Have you measured the perf impact of this? Also, do you need to do the same for other accuracies. I.e. DS FP8, FP8, NVFP4? (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2493598431)
+- 2025-11-05 `nekorobov` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py`:340: Support for MNNVL for TRTLLM Gen was merged, iirc (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2493655284)
+- 2025-11-06 `dongxuy04` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py`:340: Thanks for helping point this out. Added MNNVL support of ELPB for TRTLLM-Gen backend. (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2497934325)
+- 2025-11-06 `dongxuy04` on `cpp/tensorrt_llm/thop/mxFp4BlockScaleMoe.cpp`:203: It is just a temp fix of AutoTuner to verify EPLB works for2 88 case works. I think maybe we need separate PR to fix AutoTuner issue which I think is not related to EPLB enablement, so removed this temp fix of ... (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2498561050)
+- 2025-11-07 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py`:705: Are you intend to avoid the multi-chunk when using ALLTOALL? If yes, maybe you need to extend the condition. (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501348030)
+- 2025-11-07 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py`:359: self. load balancer start wait gpu stage(is first call) could be called before the routing method.apply(). (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501352546)
+- 2025-11-07 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py`:809: Could you help to explain why not unify the workflow for EPLB, from WIDEEP and Cutlass, the load balancer start set cpu stage should be called before the combine. (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501357475)
+- 2025-11-07 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/quantization.py`:173: How about create a unify helper to judge the following condition which is called multi-times. hasattr( module, "layer load balancer" ) and module.layer load balancer and module.layer load balancer.need load shared weights( ) (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501399680)
+- 2025-11-07 `dongxuy04` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py`:705: It is to avoid using multi-stream when using multi-chunk for MnnvlLatency, since MnnvlLatency need separate workspaces if we want to use multi-stream, but not supported now. I think multi-chunk is OK. (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501574039)
+- 2025-11-07 `dongxuy04` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py`:359: Yes, it should have better performance if we move before routing method.apply(), moved, thanks. (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501574764)
+- 2025-11-07 `dongxuy04` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py`:809: Same as above, moved, thanks. (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501575050)
+- 2025-11-07 `dongxuy04` on `tensorrt_llm/_torch/modules/fused_moe/quantization.py`:173: Refactored need load shared weights as class method to reuse that. (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501580078)
+- 2025-11-07 `dongxuy04`: May I know the plan to support more quantization methods for the EPLB? @xxi-nv I've no idea about which quantization methods might also have higher priority, if you find some, important models, I think we can add that. I think adding support ... (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#issuecomment-3500579108)
+- 2025-11-07 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/quantization.py`:1999: Do you need to unify the behaviour in the weights loading in the base class? The non blocking is always True for now. dst w3 w1 weight.copy (w31 weight shard.view(dst w3 w1 weight.dtype), non blocking=True) (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501622070)
+- 2025-11-07 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/quantization.py`:2001: It seems that the MXFP4 did not do the same logic here, could you help to explain why this is different? (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501623070)
+- 2025-11-07 `dongxuy04` on `tensorrt_llm/_torch/modules/fused_moe/quantization.py`:1999: I think different quantization has different weights loading method, and may need different transformations. So my judgement for now is keep them inside each derived class. I think non blocking=True may have perf improvements during weights loading, so keeping that when loading ... (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501687486)
+- 2025-11-07 `dongxuy04` on `tensorrt_llm/_torch/modules/fused_moe/quantization.py`:2001: For some quantization methods that don't need GPU transformation or don't use partial or full dst xxx weight as GPU buffer during transformation, we don't need separate version of that. (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2501693924)
+- 2025-11-07 `tensorrt-cicd`: [PR Github 23723]( [ run ] completed with state SUCCESS. Commit: 65cccaa [/LLM/main/L0 MergeRequest PR pipeline 17854]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#issuecomment-3500867135)
+- 2025-11-07 `tensorrt-cicd`: [PR Github 23821]( [ run ] completed with state SUCCESS. Commit: 90a3b65 [/LLM/main/L0 MergeRequest PR pipeline 17932]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#issuecomment-3505403797)
+- 2025-11-08 `tensorrt-cicd`: [PR Github 23885]( [ run ] completed with state SUCCESS. Commit: 90a3b65 [/LLM/main/L0 MergeRequest PR pipeline 17981]( completed with status: 'SUCCESS' (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#issuecomment-3506020217)
+- 2025-11-08 `bobboli` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py`:185: MnnvlThroughput doesn't support EPLB now. We can add this change either in this PR or in (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2506999499)
+- 2025-11-08 `bobboli` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py`:256: MnnvlThroughput doesn't support EPLB now. We can add this change either in this PR or in (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2506999826)
+- 2025-11-10 `dongxuy04` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_trtllm_gen.py`:185: Thanks for figure this out, added EPLB support with mnnvlthroughput backend. (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2509108129)
+- 2025-11-10 `dongxuy04` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py`:256: Thanks for figure this out, added EPLB support with mnnvlthroughput backend. (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2509108382)
+- 2025-11-10 `yuxianq` on `tests/integration/test_lists/qa/llm_function_core.txt`: Why do we remove accuracy/test disaggregated serving.py::TestGPTOSS::test auto dtype[True] and accuracy/test disaggregated serving.py::TestGPTOSS::test auto dtype[False]? (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2509167835)
+- 2025-11-10 `yuxianq` on `tests/integration/test_lists/test-db/l0_rtx_pro_6000.yml`:96: Why do we comment out these tests? (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2509172721)
+- 2025-11-10 `yuxianq` on `tensorrt_llm/_torch/modules/fused_moe/moe_load_balancer.py`:246: madvise is a syscall, use \madvise\ instead. (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2509203000)
+- 2025-11-10 `dongxuy04` on `tests/integration/test_lists/test-db/l0_rtx_pro_6000.yml`:96: We need GDRCopy availability and mapped into container for RTX pro 6000 nodes before we can enable that. For now I think only GB200 nodes on dlcluster can enable that. So all the EPLB test cases on RTX 6000 pro are commented ... (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2509212342)
+- 2025-11-10 `yuxianq` on `tensorrt_llm/_torch/modules/fused_moe/quantization.py`:1962: Is it necessary to blocking copy dst w3 w1 weight from GPU to CPU here? (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2509252827)
+- 2025-11-10 `yuxianq` on `tensorrt_llm/_torch/modules/fused_moe/quantization.py`:1960: non blocking takes not effect when copying between two GPU tensors, we can remove it. (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2509259672)
+- 2025-11-10 `dongxuy04` on `tensorrt_llm/_torch/modules/fused_moe/quantization.py`:1962: Yes, CPU need copy done to share the weights with other ranks in the same nodes. (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2509428790)
+- 2025-11-10 `dongxuy04` on `tensorrt_llm/_torch/modules/fused_moe/quantization.py`:1960: Thanks a lot @yuxianq . I agree with you that it has no effect. But since many weights loading in quantization.py are using non blocking, after offline discussion, we decide to not change this in this PR. (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#discussion_r2509430417)
+- 2025-11-10 `tensorrt-cicd`: [PR Github 24004]( [ run ] completed with state SUCCESS. Commit: 25d5d50 [/LLM/main/L0 MergeRequest PR pipeline 18081]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#issuecomment-3513162779)
+- 2025-11-11 `tensorrt-cicd`: [PR Github 24061]( [ run ] completed with state SUCCESS. Commit: 25d5d50 [/LLM/main/L0 MergeRequest PR pipeline 18133]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#issuecomment-3514932691)
+- 2025-11-11 `tensorrt-cicd`: [PR Github 24110]( [ run ] completed with state SUCCESS. Commit: 25d5d50 [/LLM/main/L0 MergeRequest PR pipeline 18170]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#issuecomment-3515303997)
+- 2025-11-12 `tensorrt-cicd`: [PR Github 24173]( [ run ] completed with state SUCCESS. Commit: aaaf4bb [/LLM/main/L0 MergeRequest PR pipeline 18226]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#issuecomment-3519408520)
+- 2025-11-12 `tensorrt-cicd`: [PR Github 24273]( [ run ] completed with state SUCCESS. Commit: 8378276 [/LLM/main/L0 MergeRequest PR pipeline 18310]( completed with status: 'SUCCESS' Pipeline passed with automatic retried tests. Check the [rerun report]( for details. (https://github.com/NVIDIA/TensorRT-LLM/pull/8886#issuecomment-3523787621)

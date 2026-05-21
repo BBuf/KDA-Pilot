@@ -1,81 +1,41 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/TensorRT-LLM#13570](https://github.com/NVIDIA/TensorRT-LLM/pull/13570)
-- Source page: `sources/prs/tensorrt-llm/PR-13570.md`
-- Evidence bundle: `evidence/pull-bundles/tensorrt-llm/gh-13570`
-- Generated at: `2026-05-20T15:18:47.011459+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-04-28T17:50:09Z`
-- Merged: `2026-05-12T04:58:16Z`
-
-## Discussion Counts
-
-- Issue comments: 69
-- Review submissions: 25 (approved=3, commented=22)
-- Inline review comments: 39
-- Review threads observed: 18
-- Resolved/outdated thread markers: resolved=18, outdated=8
-- Human participants with discussion text: NVShreyas, PerkzZheng, chang-l, coderabbitai, tburt-nv, tensorrt-cicd, xrq-phys, yuxianq, zhenhuaw-me
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-04-28T18:05:39Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 10 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4191309221)
-- `2026-04-29T03:38:49Z` `COMMENTED` by `xrq-phys` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4193899879)
-- `2026-04-29T03:39:25Z` `COMMENTED` by `coderabbitai` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4193901089)
-- `2026-04-29T03:40:58Z` `COMMENTED` by `xrq-phys` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4193904830)
-- `2026-04-29T03:41:34Z` `COMMENTED` by `coderabbitai` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4193906508)
-- `2026-04-29T16:42:24Z` `COMMENTED` by `xrq-phys` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4198954884)
-- `2026-04-29T16:43:00Z` `COMMENTED` by `coderabbitai` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4198959509)
-- `2026-04-29T17:24:57Z` `COMMENTED` by `chang-l` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4199156090)
-- `2026-04-29T18:07:21Z` `COMMENTED` by `xrq-phys` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4199529464)
-- `2026-04-29T18:18:04Z` `COMMENTED` by `xrq-phys` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4199568642)
-- `2026-04-29T22:55:53Z` `COMMENTED` by `chang-l` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4201317249)
-- `2026-04-29T22:59:14Z` `COMMENTED` by `chang-l` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4201327794)
-- `2026-04-30T16:26:07Z` `COMMENTED` by `NVShreyas` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4206786978)
-- `2026-04-30T17:47:26Z` `COMMENTED` by `xrq-phys` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4207308226)
-- `2026-04-30T17:55:14Z` `COMMENTED` by `xrq-phys` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4207369219)
-- `2026-05-01T04:25:05Z` `COMMENTED` by `xrq-phys` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4209912580)
-- `2026-05-01T04:25:25Z` `COMMENTED` by `coderabbitai` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4209913360)
-- `2026-05-01T04:28:42Z` `COMMENTED` by `xrq-phys` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4209920076)
-- `2026-05-01T04:29:46Z` `COMMENTED` by `coderabbitai` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4209922145)
-- `2026-05-01T07:29:34Z` `COMMENTED` by `xrq-phys` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4210422390)
-- `2026-05-01T07:29:53Z` `COMMENTED` by `coderabbitai` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4210423462)
-- `2026-05-11T03:16:45Z` `APPROVED` by `zhenhuaw-me` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4260555137)
-- `2026-05-11T03:48:07Z` `APPROVED` by `yuxianq` - Attention part LGTM (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4260648383)
-- `2026-05-11T20:26:14Z` `APPROVED` by `chang-l` (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4267145019)
-- ... 1 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `tests/unittest/_torch/visual_gen/test_attention_perf.py`: 8 inline comment(s)
-- `tensorrt_llm/_torch/visual_gen/attention_backend/trtllm.py`: 6 inline comment(s)
-- `examples/visual_gen/README.md`: 5 inline comment(s)
-- `tensorrt_llm/_torch/visual_gen/config.py`: 5 inline comment(s)
-- `tensorrt_llm/_torch/visual_gen/attention_backend/utils.py`: 3 inline comment(s)
-- `tensorrt_llm/_torch/visual_gen/modules/attention.py`: 3 inline comment(s)
-- `examples/visual_gen/visual_gen_wan_i2v.py`: 2 inline comment(s)
-- `examples/visual_gen/visual_gen_wan_t2v.py`: 2 inline comment(s)
-- `tensorrt_llm/_torch/attention_backend/trtllm.py`: 2 inline comment(s)
-- `examples/visual_gen/visual_gen_flux.py`: 2 inline comment(s)
-- `tests/unittest/_torch/visual_gen/test_attention_integration.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-04-28T18:05:33Z` `issue` by `coderabbitai`; signals: attention, benchmark, block, hang, kernel, mla, perf, performance; excerpt: "📝 Walkthrough Walkthrough This pull request introduces SageAttention support to the visual generation pipeline. Changes include adding a new SageAttentionConfig schema, integrating it into ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4337912349)
-- `2026-04-29T18:13:09Z` `inline` by `xrq-phys` `tensorrt_llm/_torch/visual_gen/attention_backend/trtllm.py`:171; signals: attention, block, cache, kernel, kv cache, tensorrt; excerpt: "That's right. This looks like a verbose comment block dumped by CC 😆 I thinks we can simply rephrase it as: Handles: - Fused ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3163188585)
-- `2026-04-28T18:05:39Z` `review` `COMMENTED` by `coderabbitai`; signals: attention, hang, perf, pipeline, tensorrt; excerpt: "Actionable comments posted: 10 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#pullrequestreview-4191309221)
-- `2026-05-01T04:29:46Z` `inline` by `coderabbitai` `tests/unittest/_torch/visual_gen/test_attention_perf.py`:1050; signals: attention, benchmark, kernel, perf, performance; excerpt: "@xrq-phys, great idea — using Pearson correlation between per-iteration timing series is a lightweight, zero-dependency heuristic: if both calls ran the same underlying kernel ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3172079748)
-- `2026-04-28T18:05:36Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/visual_gen/attention_backend/trtllm.py`:270; signals: attention, benchmark, cute, tensorrt; excerpt: "⚠️ Potential issue 🟡 Minor 🧩 Analysis chain 🏁 Script executed: Repository: NVIDIA/TensorRT-LLM Length of output: 1181 --- 🏁 Script executed: Repository: NVIDIA/TensorRT-LLM Length ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3156245641)
-- `2026-04-28T18:05:37Z` `inline` by `coderabbitai` `tests/unittest/_torch/visual_gen/test_attention_perf.py`:919; signals: attention, cute, perf, tensorrt; excerpt: "⚠️ Potential issue 🟡 Minor 🧩 Analysis chain 🏁 Script executed: Repository: NVIDIA/TensorRT-LLM Length of output: 1293 --- 🏁 Script executed: Repository: NVIDIA/TensorRT-LLM Length ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3156245672)
-- `2026-04-28T18:05:37Z` `inline` by `coderabbitai` `tests/unittest/_torch/visual_gen/test_attention_perf.py`:1050; signals: attention, benchmark, cute, perf; excerpt: "⚠️ Potential issue 🟠 Major These tests don't currently prove that the SageAttention path actually executed. All of the new assertions are just “benchmark ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3156245676)
-- `2026-04-29T18:17:51Z` `inline` by `xrq-phys` `tensorrt_llm/_torch/visual_gen/config.py`:86; signals: bf16, fp8, kernel, tensorrt; excerpt: "Not really. Currently (0,0,1) has no kernel support. BF16QK+FP8PV is not available yet. I'm planning to work on it as the next step." (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3163215129)
-- `2026-05-01T04:28:42Z` `inline` by `xrq-phys` `tests/unittest/_torch/visual_gen/test_attention_perf.py`:1050; signals: attention, cute, hang, perf; excerpt: "@coderabbitai Un-resolving this. I just thought of one possible solution here: can we calculate covariance of trtllm vs sage time measurements? If covariance is ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3172077883)
-- `2026-04-28T18:05:37Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/visual_gen/modules/attention.py`:327; signals: attention, layout, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major seq len/seq len kv are wrong for HND layout after reshape. For HND ([B, H, S, D]), q.shape[1] is ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3156245668)
-- `2026-04-28T18:05:37Z` `inline` by `coderabbitai` `tests/unittest/_torch/visual_gen/test_attention_integration.py`:387; signals: attention, benchmark, oom; excerpt: "⚠️ Potential issue 🟠 Major SageAttention parametrization is too heavy for default unit-test execution. Lines [291]-[294] include very large sequence lengths, and this test ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3156245669)
-- `2026-05-01T04:25:25Z` `inline` by `coderabbitai` `tests/unittest/_torch/visual_gen/test_attention_perf.py`:1050; signals: attention, perf, performance; excerpt: "@xrq-phys, understood — relying on perf numbers as a manual signal is a reasonable short-term approach for a performance-only test suite. Would you like ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3172071824)
+- 2026-04-28 `tensorrt-cicd`: [PR Github 45971]( [ run ] completed with state FAILURE. Commit: 83d8984 [/LLM/main/L0 MergeRequest PR pipeline 36124]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4339495698)
+- 2026-04-29 `xrq-phys` on `tensorrt_llm/_torch/visual_gen/attention_backend/trtllm.py`:237: concat qkv() will raise the error that case. right? (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3158452357)
+- 2026-04-29 `xrq-phys` on `tensorrt_llm/_torch/visual_gen/attention_backend/utils.py`:119: Other backends may add support for sage + we want the user to know sage is set with wrong backends. (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3158456984)
+- 2026-04-29 `tensorrt-cicd`: [PR Github 46052]( [ run ] completed with state FAILURE. Commit: b7be394 [/LLM/main/L0 MergeRequest PR pipeline 36196]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4341528777)
+- 2026-04-29 `tensorrt-cicd`: [PR Github 46095]( [ run ] completed with state SUCCESS. Commit: b7be394 [/LLM/main/L0 MergeRequest PR pipeline 36238]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4343190250)
+- 2026-04-29 `xrq-phys` on `examples/visual_gen/README.md`:100: --enable sage attention is listed in common options. For FLUX t2i, it is supported but not recommended (no perf. gain since t2i has too short sequence) thus not listed. (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3162674573)
+- 2026-04-29 `chang-l` on `examples/visual_gen/README.md`:258: This PR supports enable sage attention for Flux and Wan models, right? (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3162831324)
+- 2026-04-29 `chang-l` on `examples/visual_gen/visual_gen_wan_i2v.py`:294: This is interesting – it seems I2V is more sensitive to attn accuracy. Is that right? (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3162841259)
+- 2026-04-29 `chang-l` on `examples/visual_gen/visual_gen_wan_t2v.py`:335: What sage preset stands for? Is sage cfg alone not enough? It seems every model has a recommended sage config. Can we relocate this as part of model's default setting, instead of scattered within examples (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3162861355)
+- 2026-04-29 `chang-l` on `tensorrt_llm/_torch/visual_gen/attention_backend/trtllm.py`:171: I thought Sage Attention only works with is fused qkv=False, right? Also, if we have sage attention config presented (not None), does that mean Sage Attention is enabled? If so, why is standard mode (FMHA) included in the Sage Attention config? (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3162878172)
+- 2026-04-29 `chang-l` on `tensorrt_llm/_torch/visual_gen/config.py`:86: To confirm, if we pass (0, 0, 1), it translates to BF16QK + FP8PV? (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3162885524)
+- 2026-04-29 `xrq-phys` on `examples/visual_gen/visual_gen_wan_i2v.py`:294: Tbh I haven't actually compared I2V against T2V. Overall, smaller models tend to post higher precision requirements. From my personal perspective, special handling should detect Wan2.1 1.3B instead of Wan2.1 I2V. Perhaps @o-stoner implemented this only for I2V from actual tests. I'll ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3163155173)
+- 2026-04-29 `xrq-phys` on `tensorrt_llm/_torch/visual_gen/attention_backend/trtllm.py`:171: That's right. This looks like a verbose comment block dumped by CC 😆 I thinks we can simply rephrase it as: Handles: - Fused QKV requirement for TRTLLM kernel (when sage params are not provided) - Metadata creation and preparation - No ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3163188585)
+- 2026-04-29 `xrq-phys` on `examples/visual_gen/visual_gen_wan_t2v.py`:335: These are preset names (Wan2.1-I2V or default). Looks like AI code style again. Sorry I wanted to first see whether all feature are functioning. Haven't carefully checked these lines. 🙇 (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3163209169)
+- 2026-04-29 `xrq-phys` on `tensorrt_llm/_torch/visual_gen/config.py`:86: Not really. Currently (0,0,1) has no kernel support. BF16QK+FP8PV is not available yet. I'm planning to work on it as the next step. (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3163215129)
+- 2026-04-29 `tensorrt-cicd`: [PR Github 46196]( [ run ] completed with state SUCCESS. Commit: 276a366 [/LLM/main/L0 MergeRequest PR pipeline 36310]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4348063932)
+- 2026-04-29 `chang-l` on `examples/visual_gen/README.md`:258: Can we update this to: Also, I think this table may not be fully accurate for some of the other options either... @zhenhuaw-me for viz (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3164694264)
+- 2026-04-30 `tensorrt-cicd`: [PR Github 46221]( [ run ] completed with state FAILURE. Commit: ed2a1b6 [/LLM/main/L0 MergeRequest PR pipeline 36333]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4348491224)
+- 2026-04-30 `NVShreyas` on `tensorrt_llm/_torch/attention_backend/trtllm.py`:560: I remember it failed somewhere here when I tried with cosmos3 cause of GQA, has that been resolved? (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3169369020)
+- 2026-04-30 `NVShreyas` on `tensorrt_llm/_torch/visual_gen/modules/attention.py`:334: could you check if ulysses parallel also has this (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3169378997)
+- 2026-04-30 `xrq-phys` on `tensorrt_llm/_torch/attention_backend/trtllm.py`:560: Should be fixed during upstream merging work. (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3169812267)
+- 2026-04-30 `xrq-phys` on `tensorrt_llm/_torch/visual_gen/modules/attention.py`:334: Thanks for bringing this up! Fixed. (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3169857174)
+- 2026-04-30 `tensorrt-cicd`: [PR Github 46422]( [ run ] completed with state FAILURE. Commit: 90509d3 [/LLM/main/L0 MergeRequest PR pipeline 36494]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4355097825)
+- 2026-05-01 `xrq-phys` on `tests/unittest/_torch/visual_gen/test_attention_perf.py`:1050: Hard to solve now. TBD in another PR. Currently we read perf numbers to manually determine if sage is active. (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3172071117)
+- 2026-05-01 `xrq-phys` on `tests/unittest/_torch/visual_gen/test_attention_perf.py`:1050: @coderabbitai Un-resolving this. I just thought of one possible solution here: can we calculate covariance of trtllm vs sage time measurements? If covariance is too high, we throw error suspecting same backend being executed. Please suggest change (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3172077883)
+- 2026-05-01 `xrq-phys` on `tests/unittest/_torch/visual_gen/test_attention_perf.py`:1050: Marking resolved. Changes will be applied after this CI run (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3172469573)
+- 2026-05-01 `tensorrt-cicd`: [PR Github 46474]( [ run ] completed with state SUCCESS. Commit: 1f031bc [/LLM/main/L0 MergeRequest PR pipeline 36538]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4358533238)
+- 2026-05-01 `tensorrt-cicd`: [PR Github 46488]( [ run ] completed with state SUCCESS. Commit: ca40211 [/LLM/main/L0 MergeRequest PR pipeline 36551]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4359315704)
+- 2026-05-01 `xrq-phys`: Pipeline depending on 13683 (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4360054773)
+- 2026-05-02 `tensorrt-cicd`: [PR Github 46544]( [ run ] completed with state SUCCESS. Commit: 5d1266e [/LLM/main/L0 MergeRequest PR pipeline 36602]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4363468579)
+- 2026-05-02 `tensorrt-cicd`: [PR Github 46551]( [ run ] completed with state SUCCESS. Commit: 5d1266e [/LLM/main/L0 MergeRequest PR pipeline 36608]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4364090387)
+- 2026-05-02 `tensorrt-cicd`: [PR Github 46558]( [ run ] completed with state SUCCESS. Commit: 5d1266e [/LLM/main/L0 MergeRequest PR pipeline 36613]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4364371519)
+- 2026-05-05 `tensorrt-cicd`: [PR Github 46787]( [ run ] completed with state SUCCESS. Commit: 3a8a6ab [/LLM/main/L0 MergeRequest PR pipeline 36809]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4383612844)
+- 2026-05-06 `tensorrt-cicd`: [PR Github 46949]( [ run ] completed with state SUCCESS. Commit: 3a8a6ab [/LLM/main/L0 MergeRequest PR pipeline 36948]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4387703359)
+- 2026-05-06 `tensorrt-cicd`: [PR Github 47017]( [ run ] completed with state SUCCESS. Commit: 561012d [/LLM/main/L0 MergeRequest PR pipeline 36991]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4390146857)
+- 2026-05-07 `tensorrt-cicd`: [PR Github 47088]( [ run ] completed with state SUCCESS. Commit: c102361 [/LLM/main/L0 MergeRequest PR pipeline 37059]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4394222922)
+- 2026-05-07 `tensorrt-cicd`: [PR Github 47119]( [ run ] completed with state SUCCESS. Commit: c102361 [/LLM/main/L0 MergeRequest PR pipeline 37086]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4394895084)
+- 2026-05-07 `tensorrt-cicd`: [PR Github 47195]( [ run ] completed with state SUCCESS. Commit: 3f92685 [/LLM/main/L0 MergeRequest PR pipeline 37153]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4398479803)
+- 2026-05-08 `tensorrt-cicd`: [PR Github 47259]( [ run ] completed with state SUCCESS. Commit: 3f92685 [/LLM/main/L0 MergeRequest PR pipeline 37204]( completed with status: 'SUCCESS' Pipeline passed with automatic retried tests. Check the [rerun report]( for details. [CI Report]( [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#issuecomment-4403939134)
+- 2026-05-11 `chang-l` on `examples/visual_gen/visual_gen_flux.py`:218: Non-blocking: can we also update the server YAML examples to show how users can enable Sage Attention, esp for Wan/Flux, where we do not have the same accuracy concerns as LTX2. For example: ```yaml attention: backend: TRTLLM quant config: quant algo: SAGE (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3221918824)
+- 2026-05-12 `xrq-phys` on `examples/visual_gen/visual_gen_flux.py`:218: i see. I think I can update them in another PR thanks! (https://github.com/NVIDIA/TensorRT-LLM/pull/13570#discussion_r3223594228)

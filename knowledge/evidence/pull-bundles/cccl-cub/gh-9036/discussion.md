@@ -1,66 +1,24 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/cccl#9036](https://github.com/NVIDIA/cccl/pull/9036)
-- Source page: `sources/prs/cccl-cub/PR-9036.md`
-- Evidence bundle: `evidence/pull-bundles/cccl-cub/gh-9036`
-- Generated at: `2026-05-20T15:21:07.482323+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-05-15T20:11:38Z`
-- Merged: `2026-05-18T23:16:44Z`
-
-## Discussion Counts
-
-- Issue comments: 8
-- Review submissions: 20 (approved=1, changes_requested=1, commented=18)
-- Inline review comments: 26
-- Review threads observed: 9
-- Resolved/outdated thread markers: resolved=8, outdated=4
-- Human participants with discussion text: coderabbitai, fbusato, miscco, oleksandr-pavlyk, s-oboyle
-- Automation comments/reviews omitted from high-signal summary: 5
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-05-15T20:15:02Z` `COMMENTED` by `coderabbitai` - 🧹 Nitpick comments (1) libcudacxx/include/cuda/std/ complex/hyperbolic functions.h (1) 334-334: ⚡ Quick win suggestion: Missing noexcept specifier on the ... (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4301110457)
-- `2026-05-15T21:04:14Z` `COMMENTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4301371493)
-- `2026-05-15T21:23:34Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4301489950)
-- `2026-05-15T21:23:54Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4301491577)
-- `2026-05-15T21:24:48Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4301494888)
-- `2026-05-15T21:47:39Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4301581777)
-- `2026-05-15T23:45:30Z` `CHANGES_REQUESTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4301996325)
-- `2026-05-18T11:46:46Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4309839340)
-- `2026-05-18T11:47:27Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4309843685)
-- `2026-05-18T12:16:04Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4310025661)
-- `2026-05-18T13:43:12Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4310681824)
-- `2026-05-18T13:43:52Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4310686615)
-- `2026-05-18T13:43:58Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4310687364)
-- `2026-05-18T13:47:56Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4310717342)
-- `2026-05-18T14:26:31Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4311027445)
-- `2026-05-18T18:20:02Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4312653577)
-- `2026-05-18T18:21:09Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4312662229)
-- `2026-05-18T18:21:24Z` `APPROVED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4312663883)
-- `2026-05-18T18:27:05Z` `COMMENTED` by `oleksandr-pavlyk` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4312699842)
-- `2026-05-18T23:13:14Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4314591415)
-
-## Inline Comment Hotspots
-
-- `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`: 26 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-05-15T20:15:02Z` `review` `COMMENTED` by `coderabbitai`; signals: cuda, hang; excerpt: "🧹 Nitpick comments (1) libcudacxx/include/cuda/std/ complex/hyperbolic functions.h (1) 334-334: ⚡ Quick win suggestion: Missing noexcept specifier on the main tanh template. The sinh and ..." (https://github.com/NVIDIA/cccl/pull/9036#pullrequestreview-4301110457)
-- `2026-05-18T18:20:02Z` `inline` by `fbusato` `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:336; signals: cuda, hang, tile; excerpt: "yes, the change is already in the main branch. 80% of libcu++ functionalities support Tile" (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3261096418)
-- `2026-05-15T20:14:59Z` `issue` by `coderabbitai`; signals: cuda, hang, nan; excerpt: "[ with a numerically-stable implementation that range-reduces large real parts, computes sin/cos of the imaginary part, evaluates via expm1+FMA with a composed denominator reciprocal, ..." (https://github.com/NVIDIA/cccl/pull/9036#issuecomment-4463205790)
-- `2026-05-18T18:27:05Z` `inline` by `oleksandr-pavlyk` `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:344; signals: cuda, nan; excerpt: "If imag x is NaN, the mapping to signed 0 depends on the value of sign-bit of NaN. This may be withing the spec, ..." (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3261133094)
-- `2026-05-15T23:35:24Z` `inline` by `fbusato` `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:336; signals: cuda, tile; excerpt: "very likely that we need to move it to CCCL HOST DEVICE API. CCCL API also means supporting Tile" (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3251511722)
-- `2026-05-18T13:47:56Z` `inline` by `s-oboyle` `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:336; signals: cuda, hang; excerpt: "I'd rather update all these functions at the same time, I don't think main has this change yet?" (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3259398287)
-- `2026-05-15T21:03:47Z` `inline` by `miscco` `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:392; signals: cuda; excerpt: "Question: Should those rather be else if or is clamp huge values bound larger than large interval bound" (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3250990463)
-- `2026-05-15T21:23:34Z` `inline` by `s-oboyle` `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:392; signals: cuda; excerpt: "It's a little hard to see in the templated code, but these all do (necessarily) cascade together (so very large values will hit all ..." (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3251081617)
-- `2026-05-15T23:39:52Z` `inline` by `fbusato` `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:357; signals: cuda; excerpt: "do we need static cast here? it should not be a problem at least for the first branch. The second one depends if this ..." (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3251522690)
-- `2026-05-18T11:46:45Z` `inline` by `s-oboyle` `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:344; signals: cuda; excerpt: "You are quite correct, something has gone awry translating my usual non-template code into this template code. It needs a little more baking it ..." (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3258616634)
-- `2026-05-18T11:47:27Z` `inline` by `s-oboyle` `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:357; signals: cuda; excerpt: "This is true, and happy to remove, it was more just for keeping in line with the other functions. But I do like removing ..." (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3258620792)
-- `2026-05-18T12:16:03Z` `inline` by `s-oboyle` `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:344; signals: cuda; excerpt: "Ah, so the copysign does matter, because we overwrite the answer at the end with this value sometimes: Without this we get a incorrectly ..." (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3258789162)
+- 2026-05-15 `miscco` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:340: I am wondering whether this should just be (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3250979411)
+- 2026-05-15 `miscco` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:371: Nitpick: I believe those could all be constexpr (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3250985782)
+- 2026-05-15 `miscco` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:392: Question: Should those rather be else if or is clamp huge values bound larger than large interval bound (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3250990463)
+- 2026-05-15 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:392: It's a little hard to see in the templated code, but these all do (necessarily) cascade together (so very large values will hit all three of those if's). Big values are painful :) (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3251081617)
+- 2026-05-15 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:340: Ah, poorly named value on my part, realx should be realx abs or somesuch. (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3251085920)
+- 2026-05-15 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:392: Another check for extra high values might also be needed actually.... (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3251170104)
+- 2026-05-15 `fbusato` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:336: very likely that we need to move it to CCCL HOST DEVICE API. CCCL API also means supporting Tile (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3251511722)
+- 2026-05-15 `fbusato` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:344: I'm not sure I understand this point. Where the sign of 0 is meaningful in the code? (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3251519379)
+- 2026-05-15 `fbusato` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:357: do we need static cast here? it should not be a problem at least for the first branch. The second one depends if this function supports extended floating-point types or not (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3251522690)
+- 2026-05-15 `fbusato` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:357: apply to several other points in the code (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3251528239)
+- 2026-05-15 `fbusato` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:408: do we need additional headers for ::cuda::std::expm1? (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3251533254)
+- 2026-05-15 `fbusato` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:411: also fma is not covered by headers (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3251534229)
+- 2026-05-15 `fbusato` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:434: applies to other cases (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3251536123)
+- 2026-05-18 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:344: You are quite correct, something has gone awry translating my usual non-template code into this template code. It needs a little more baking it seems. (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3258616634)
+- 2026-05-18 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:357: This is true, and happy to remove, it was more just for keeping in line with the other functions. But I do like removing them. (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3258620792)
+- 2026-05-18 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:344: Ah, so the copysign does matter, because we overwrite the answer at the end with this value sometimes: Without this we get a incorrectly signed 0 for some values eg: tan(inf, -0) returns (1, 0) instead of (1, -0). (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3258789162)
+- 2026-05-18 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:392: Worked this out with some constant tweaking, is better. (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3259366534)
+- 2026-05-18 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:408: It seems to be included from elsewhere, but I added it anyway (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3259370853)
+- 2026-05-18 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:336: I'd rather update all these functions at the same time, I don't think main has this change yet? (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3259398287)
+- 2026-05-18 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:434: Can we do this in one go across all maths functions instead? This is the last complex function that needed updating so we can do it straight after. (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3259665172)
+- 2026-05-18 `fbusato` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:336: yes, the change is already in the main branch. 80% of libcu++ functionalities support Tile (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3261096418)
+- 2026-05-18 `fbusato` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:434: definitely. No problem with that. Just raising the issue (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3261102496)
+- 2026-05-18 `oleksandr-pavlyk` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:344: If imag x is NaN, the mapping to signed 0 depends on the value of sign-bit of NaN. This may be withing the spec, but please check. Python Array API says that sign of zero imaginary part is not specified: (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3261133094)
+- 2026-05-18 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/hyperbolic_functions.h`:344: It seems to be the same as the C++ spec ([ which has been explicitly tested against. Good to know about the python ones though. (https://github.com/NVIDIA/cccl/pull/9036#discussion_r3262718151)

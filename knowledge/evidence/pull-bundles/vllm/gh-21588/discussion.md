@@ -1,75 +1,40 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#21588](https://github.com/vllm-project/vllm/pull/21588)
-- Source page: `sources/prs/vllm/PR-21588.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-21588`
-- Generated at: `2026-05-20T15:36:47.855818+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-07-25T05:55:22Z`
-- Merged: `2025-08-07T01:40:53Z`
-
-## Discussion Counts
-
-- Issue comments: 8
-- Review submissions: 38 (approved=3, changes_requested=1, commented=34)
-- Inline review comments: 48
-- Review threads observed: 22
-- Resolved/outdated thread markers: resolved=13, outdated=14
-- Human participants with discussion text: LucasWilkinson, heheda12345, luccafong, mergify, sarckk
-- Automation comments/reviews omitted from high-signal summary: 3
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-07-25T05:57:18Z` `COMMENTED` by `gemini-code-assist` - Code Review An excellent and comprehensive refactoring effort! The introduction of AttentionGroup and the dynamic wrapping for local ... (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3054192643)
-- `2025-07-25T17:19:07Z` `COMMENTED` by `sarckk` - thanks, this is looking great (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3056195248)
-- `2025-07-28T18:59:18Z` `COMMENTED` by `heheda12345` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3064237738)
-- `2025-07-29T05:34:00Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3065543210)
-- `2025-07-29T05:34:24Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3065544285)
-- `2025-07-29T05:34:36Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3065544882)
-- `2025-07-29T18:41:05Z` `COMMENTED` by `sarckk` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3068754279)
-- `2025-07-29T18:54:46Z` `COMMENTED` by `sarckk` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3068790471)
-- `2025-07-29T19:15:52Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3068859446)
-- `2025-07-29T21:35:35Z` `COMMENTED` by `sarckk` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3069284381)
-- `2025-07-30T03:38:01Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3069792473)
-- `2025-07-30T04:17:35Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3069834955)
-- `2025-07-30T18:50:03Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3072946478)
-- `2025-07-30T19:45:37Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3073098233)
-- `2025-07-30T20:22:05Z` `APPROVED` by `sarckk` - changes look good to me, thanks. (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3073113123)
-- `2025-07-30T20:51:04Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3073305141)
-- `2025-07-30T21:12:51Z` `COMMENTED` by `heheda12345` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3073355063)
-- `2025-07-30T21:19:50Z` `COMMENTED` by `sarckk` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3073370522)
-- `2025-07-30T21:26:54Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3073389284)
-- `2025-07-30T21:36:41Z` `COMMENTED` by `sarckk` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3073406347)
-- `2025-07-30T21:37:54Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3073408339)
-- `2025-07-30T21:52:07Z` `COMMENTED` by `heheda12345` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3073384662)
-- `2025-07-30T22:01:32Z` `COMMENTED` by `heheda12345` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3073447305)
-- `2025-07-30T22:03:02Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3073449684)
-- ... 14 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/v1/worker/gpu_model_runner.py`: 29 inline comment(s)
-- `vllm/v1/attention/backends/utils.py`: 11 inline comment(s)
-- `vllm/v1/worker/utils.py`: 4 inline comment(s)
-- `vllm/attention/layer.py`: 2 inline comment(s)
-- `vllm/attention/layers/chunked_local_attention.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-07-25T16:59:09Z` `inline` by `sarckk` `vllm/v1/worker/gpu_model_runner.py`:869; signals: cache, cute, hang, kv cache; excerpt: "We need further changes to support cross-layer KV sharing. Previous to this PR, we add the KV-reusing layers to .layer names of the KV ..." (https://github.com/vllm-project/vllm/pull/21588#discussion_r2231615874)
-- `2025-07-29T18:41:05Z` `inline` by `sarckk` `vllm/v1/worker/gpu_model_runner.py`:869; signals: attention, cache, gemm, kv cache; excerpt: "sorry, you can try it out with gemma3n: or run the unit test: But it looks like you've already handled this in your latest ..." (https://github.com/vllm-project/vllm/pull/21588#discussion_r2240662929)
-- `2025-08-01T21:52:07Z` `inline` by `sarckk` `vllm/v1/worker/gpu_model_runner.py`:2742; signals: attention, cache, failing, kv cache; excerpt: "Attention-free encoder-only models are currently failing in CI (e.g. pytest tests/entrypoints/llm/test encode.py::test v1 v2 api consistency single prompt tokens): 1) for these models, kv ..." (https://github.com/vllm-project/vllm/pull/21588#discussion_r2248925478)
-- `2025-07-29T18:54:46Z` `inline` by `sarckk` `vllm/v1/worker/utils.py`:244; signals: attention, cache, kv cache; excerpt: "To flesh this out a bit more, I'm not sure layers re-using KV cache should always be placed in a separate attention group. Let's ..." (https://github.com/vllm-project/vllm/pull/21588#discussion_r2240691617)
-- `2025-07-29T21:35:35Z` `inline` by `sarckk` `vllm/v1/worker/utils.py`:244; signals: attention, cache, kv cache; excerpt: "why dont L2 and L3 qualify? L2, L3, L6 and L7 all use cross-attention to reuse the shared KV caches (let's refer to them ..." (https://github.com/vllm-project/vllm/pull/21588#discussion_r2241066337)
-- `2025-07-31T05:10:07Z` `inline` by `LucasWilkinson` `vllm/v1/worker/gpu_model_runner.py`:359; signals: flashinfer, kernel, mla; excerpt: "It’s not so much that MTP is special; it’s more that MLA decode kernels generally only support uniform batches (FlashMLA and TRTLLM-MLA are examples), ..." (https://github.com/vllm-project/vllm/pull/21588#discussion_r2244364286)
-- `2025-07-28T18:59:18Z` `inline` by `heheda12345` `vllm/v1/worker/gpu_model_runner.py`:177; signals: attention, cache, kv cache; excerpt: "nit: you can use a list[list[AttentionGroup]] as kv cache group id is indexed from 0 to num groups." (https://github.com/vllm-project/vllm/pull/21588#discussion_r2237591729)
-- `2025-07-29T05:33:59Z` `inline` by `LucasWilkinson` `vllm/v1/worker/gpu_model_runner.py`:869; signals: cache, hang; excerpt: "can you describe the changes needed? and the best model/command to test them with? that would be super helpful (in not that spun-up on ..." (https://github.com/vllm-project/vllm/pull/21588#discussion_r2238578483)
-- `2025-07-30T21:12:51Z` `inline` by `heheda12345` `vllm/v1/worker/gpu_model_runner.py`:359; signals: attention, flash attention; excerpt: "I think 21557 can fix this problem. If not considering cpu backend, there are only two behaviors of reorder batch: not care about the ..." (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243867874)
-- `2025-07-31T02:30:07Z` `inline` by `sarckk` `vllm/v1/worker/gpu_model_runner.py`:2563; signals: attention, cache; excerpt: "Because the chunked local attention backends are dynamically created unlike in get attn backend(...) which is cached, these will all be different objects (i.e. ..." (https://github.com/vllm-project/vllm/pull/21588#discussion_r2244214240)
-- `2025-07-31T14:42:01Z` `inline` by `LucasWilkinson` `vllm/v1/worker/gpu_model_runner.py`:2563; signals: attention, block; excerpt: "oof good catch! updated it to use the name (and made sure the name is unique across block and attention chunk sizes; not any ..." (https://github.com/vllm-project/vllm/pull/21588#discussion_r2245602258)
-- `2025-08-01T21:25:02Z` `inline` by `sarckk` `vllm/v1/worker/gpu_model_runner.py`:2586; signals: cache, kv cache; excerpt: "kv cache spec referenced in the fn is missing" (https://github.com/vllm-project/vllm/pull/21588#discussion_r2248894018)
+- 2025-07-25 `sarckk` on `vllm/v1/worker/gpu_model_runner.py`:869: We need further changes to support cross-layer KV sharing. Previous to this PR, we add the KV-reusing layers to .layer names of the KV cache group of the target layer, which ensures that attn metadata is populated for these layers. With this ... (https://github.com/vllm-project/vllm/pull/21588#discussion_r2231615874)
+- 2025-07-25 `sarckk` on `vllm/v1/attention/backends/utils.py`:417: Maybe we can override init too? (https://github.com/vllm-project/vllm/pull/21588#discussion_r2231619010)
+- 2025-07-25 `sarckk` on `vllm/v1/attention/backends/utils.py`:418: I think we should also think about how different transformations on the common attn metadata can compose with each other. e.g. for yoco we need to modify the metadata prior to make local attention virtual batches. I guess we can stack these ... (https://github.com/vllm-project/vllm/pull/21588#discussion_r2231652383)
+- 2025-07-28 `heheda12345` on `vllm/v1/worker/gpu_model_runner.py`:177: nit: you can use a list[list[AttentionGroup]] as kv cache group id is indexed from 0 to num groups. (https://github.com/vllm-project/vllm/pull/21588#discussion_r2237591729)
+- 2025-07-29 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:869: can you describe the changes needed? and the best model/command to test them with? that would be super helpful (in not that spun-up on kv-cache sharing) (https://github.com/vllm-project/vllm/pull/21588#discussion_r2238578483)
+- 2025-07-29 `LucasWilkinson` on `vllm/v1/attention/backends/utils.py`:417: using a closure no-longer needed :+1: (https://github.com/vllm-project/vllm/pull/21588#discussion_r2238579146)
+- 2025-07-29 `sarckk` on `vllm/v1/worker/gpu_model_runner.py`:869: sorry, you can try it out with gemma3n: or run the unit test: But it looks like you've already handled this in your latest commits (assuming one attention group per KV cache group) (https://github.com/vllm-project/vllm/pull/21588#discussion_r2240662929)
+- 2025-07-29 `sarckk` on `vllm/v1/worker/utils.py`:244: To flesh this out a bit more, I'm not sure layers re-using KV cache should always be placed in a separate attention group. Let's say we have the following 8-layer config: Then without hybrid KV cache we should have attn groups looking ... (https://github.com/vllm-project/vllm/pull/21588#discussion_r2240691617)
+- 2025-07-29 `LucasWilkinson` on `vllm/v1/worker/utils.py`:244: sorry im not totally spun up on this FasterPrefill optimization; why dont L2 and L3 qualify? overall though this makes sense to me I think (https://github.com/vllm-project/vllm/pull/21588#discussion_r2240735729)
+- 2025-07-29 `sarckk` on `vllm/v1/worker/utils.py`:244: why dont L2 and L3 qualify? L2, L3, L6 and L7 all use cross-attention to reuse the shared KV caches (let's refer to them as cross-attention layers). L0, L1, L4, L5 are self-attention layers. For cross-attention layers, during decoding we only need ... (https://github.com/vllm-project/vllm/pull/21588#discussion_r2241066337)
+- 2025-07-30 `LucasWilkinson` on `vllm/v1/worker/utils.py`:244: ah makes sense; thanks for the detailed explanation! (https://github.com/vllm-project/vllm/pull/21588#discussion_r2241456487)
+- 2025-07-30 `luccafong` on `vllm/attention/layer.py`:84: what is the scenario for passing attn backend explicitly? (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243595727)
+- 2025-07-30 `LucasWilkinson` on `vllm/attention/layer.py`:84: for class ChunkedLocalAttention(Attention): where we wrap the attention backend in LocalAttention wrapper I think in the future we can modularize this better to make subclasses like ChunkedLocalAttention cleaner but Im a bit scared to refactor it too heavily before V0 is fully ... (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243704494)
+- 2025-07-30 `sarckk` on `vllm/attention/layers/chunked_local_attention.py`:58: I know we don't need this currently, but can we add kv sharing target layer name as an arg to be feature complete with base Attention layer? (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243715616)
+- 2025-07-30 `sarckk` on `vllm/v1/worker/gpu_model_runner.py`:359: Let's say group reordered batch=False for 1st group and group reordered batch=True for 2nd group (unexpected behaviour): - previously the assertion assert not batch reordered would fail - in current version, batch redordered would still be False for 2nd group so even ... (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243751620)
+- 2025-07-30 `sarckk` on `vllm/v1/worker/gpu_model_runner.py`:2541: lets add assertion assert len(self.attn groups) == 0 back as gemini suggested? (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243762509)
+- 2025-07-30 `sarckk` approved: changes look good to me, thanks. (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3073113123)
+- 2025-07-30 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:359: good catch; ya hard to say, the batch reordering with multiple attention backends is already kinda shaky, the existing behavior you mentioned is actually a problem: but the new behavior in this PR isn't much better (just because the first metadata didn't ... (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243831819)
+- 2025-07-30 `heheda12345` on `vllm/v1/worker/gpu_model_runner.py`:359: I think 21557 can fix this problem. If not considering cpu backend, there are only two behaviors of reorder batch: not care about the order (e.g., flash attention), reorder batch to split decodes and prefills with a specific threshold. That PR iterates ... (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243867874)
+- 2025-07-30 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:359: just from @sarckk 's comment; he correctly identified a subtle change in behavior in this PR, in current version, batch redordered would still be False for 2nd group so even if group reordered batch is True, no assertion error would be raised. ... (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243896917)
+- 2025-07-30 `heheda12345` on `vllm/v1/attention/backends/utils.py`:544: should we also add a build postprocess fn? I think needs it for adding some special attribute to YOCO layers. Also CC @sarckk And @sarckk remeber to update to a cleaner way after this pr is landed. (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243900002)
+- 2025-07-30 `sarckk` on `vllm/v1/worker/gpu_model_runner.py`:359: I think given 21557 will override it and checks for compatibility in decode threshold, making behaviour consistent with main is fine for now (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243909883)
+- 2025-07-30 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:359: made it match main (i.e. on the first metadata builder can reorder) anyways just to be safe (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243911352)
+- 2025-07-30 `heheda12345` on `vllm/v1/worker/gpu_model_runner.py`:359: @LucasWilkinson What about merging first? That PR looks fine to me. (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243942366)
+- 2025-07-30 `LucasWilkinson` on `vllm/v1/attention/backends/utils.py`:544: ya thats a good idea; lets land the build postprocess fn with YOCO clean-up, since its hard for me to test otherwise (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243944106)
+- 2025-07-30 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:359: ya we can; I might want to change how we handle the reordering in future for DeepSeek MTP which may change how that PR works I just wanted to make a comment about it on that PR once I thought through it ... (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243953165)
+- 2025-07-30 `sarckk` on `vllm/v1/attention/backends/utils.py`:544: build postprocess fn for YOCO would involve passing logits indices each iteration, so we cannot build it once at Attention layer init. Options I can think of: 1) Keep postprocess in gpu model runner (what we have currently) 2) Add build postprocess ... (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243967399)
+- 2025-07-30 `heheda12345` on `vllm/v1/worker/gpu_model_runner.py`:359: Why is MTP special? What will be the expect order of a batch when using both DeepSeek MLA + MTP? (https://github.com/vllm-project/vllm/pull/21588#discussion_r2243974438)
+- 2025-07-31 `sarckk` on `vllm/v1/attention/backends/utils.py`:446: Otherwise it would be ChunkedLocalAttentionChunkedLocalAttentionFlashAttentionMetadataBuilder (https://github.com/vllm-project/vllm/pull/21588#discussion_r2244191636)
+- 2025-07-31 `sarckk` on `vllm/v1/worker/gpu_model_runner.py`:2563: Because the chunked local attention backends are dynamically created unlike in get attn backend(...) which is cached, these will all be different objects (i.e. hash(...) will be different). In case of Llama4 scout, you will see that len(self.attn groups[0]) is 37 instead ... (https://github.com/vllm-project/vllm/pull/21588#discussion_r2244214240)
+- 2025-07-31 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:359: It’s not so much that MTP is special; it’s more that MLA decode kernels generally only support uniform batches (FlashMLA and TRTLLM-MLA are examples), so what qualifies as a “decode” may not simply be decode query len <= decode threshold when we ... (https://github.com/vllm-project/vllm/pull/21588#discussion_r2244364286)
+- 2025-07-31 `LucasWilkinson` on `vllm/v1/attention/backends/utils.py`:544: ok I think I understand; ya thats tough. Let me think about it for a bit (https://github.com/vllm-project/vllm/pull/21588#discussion_r2244383284)
+- 2025-07-31 `heheda12345` on `vllm/v1/worker/gpu_model_runner.py`:359: Got it. My high-level thought of merging reorder batch operations is to let each attention backend returns a key to express its strategy, and ask model runner to collect all these keys and find a strategy that fits all backends. If you ... (https://github.com/vllm-project/vllm/pull/21588#discussion_r2244590759)
+- 2025-07-31 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:2563: oof good catch! updated it to use the name (and made sure the name is unique across block and attention chunk sizes; not any model uses different attention chunk sizes currently) (https://github.com/vllm-project/vllm/pull/21588#discussion_r2245602258)
+- 2025-08-01 `sarckk` on `vllm/v1/worker/gpu_model_runner.py`:2586: kv cache spec referenced in the fn is missing (https://github.com/vllm-project/vllm/pull/21588#discussion_r2248894018)
+- 2025-08-01 `sarckk` on `vllm/v1/worker/gpu_model_runner.py`:2742: Attention-free encoder-only models are currently failing in CI (e.g. pytest tests/entrypoints/llm/test encode.py::test v1 v2 api consistency single prompt tokens): 1) for these models, kv cache config.kv cache groups is an empty list (as attention free), but here self.attn groups will not be ... (https://github.com/vllm-project/vllm/pull/21588#discussion_r2248925478)
+- 2025-08-01 `sarckk` changes_requested: thanks. needs a few follow ups to fix the failing CI tests (some are unrelated import error -- ModuleNotFoundError: No module named 'sentence transformers') (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3080602878)
+- 2025-08-02 `sarckk` on `vllm/v1/worker/gpu_model_runner.py`:2742: btw this is required for the failing tests in [buildkite/fastcheck/pr/entrypoints-test-llm]( (https://github.com/vllm-project/vllm/pull/21588#discussion_r2249045215)
+- 2025-08-05 `sarckk` approved: looks good, thanks! failing CI tests seem unrelated (import errors and a flaky test) (https://github.com/vllm-project/vllm/pull/21588#pullrequestreview-3089977089)
+- 2025-08-06 `LucasWilkinson`: looks good, thanks! failing CI tests seem unrelated (import errors and a flaky test) Ya I think its related to: (https://github.com/vllm-project/vllm/pull/21588#issuecomment-3157045788)

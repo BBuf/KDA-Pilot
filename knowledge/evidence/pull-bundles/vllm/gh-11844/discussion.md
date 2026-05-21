@@ -1,77 +1,54 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#11844](https://github.com/vllm-project/vllm/pull/11844)
-- Source page: `sources/prs/vllm/PR-11844.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-11844`
-- Generated at: `2026-05-20T15:33:38.620924+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-01-08T13:09:11Z`
-- Merged: `2025-05-13T02:52:48Z`
-
-## Discussion Counts
-
-- Issue comments: 48
-- Review submissions: 22 (approved=1, changes_requested=1, commented=20)
-- Inline review comments: 49
-- Review threads observed: 40
-- Resolved/outdated thread markers: resolved=23, outdated=34
-- Human participants with discussion text: ExtReMLapin, Ki6an, LucasWilkinson, Xuweijia-buaa, exceedzhang, freedomkk-qfeng, halexan, jacob-crux, liuyumoye, mergify, mgoin, mklasby, sighingnow, tlrmchlsmth, win10ogod, ywang96
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 26
-
-## Review Decisions
-
-- `2025-01-15T05:36:25Z` `COMMENTED` by `jacob-crux` (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2551592611)
-- `2025-01-20T21:02:33Z` `COMMENTED` by `tlrmchlsmth` - Spotted a few bits ofcommented out code that look like debug cruft or are otherwise mysterious. Could you ... (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2563132453)
-- `2025-01-20T21:05:53Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2563095321)
-- `2025-01-20T21:41:42Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2563142011)
-- `2025-01-20T22:45:11Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2562778700)
-- `2025-01-20T22:49:26Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2563213069)
-- `2025-01-22T10:20:40Z` `COMMENTED` by `sighingnow` (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2566786814)
-- `2025-01-23T16:01:47Z` `COMMENTED` by `sighingnow` (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2570305822)
-- `2025-01-23T16:10:39Z` `CHANGES_REQUESTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2570328909)
-- `2025-01-23T18:00:02Z` `COMMENTED` by `sighingnow` (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2570627447)
-- `2025-01-23T18:00:38Z` `COMMENTED` by `sighingnow` (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2570628644)
-- `2025-01-23T18:00:41Z` `COMMENTED` by `sighingnow` (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2570628787)
-- `2025-02-03T19:46:05Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2590817623)
-- `2025-02-05T21:39:25Z` `COMMENTED` by `tlrmchlsmth` - A few more review comments, mostly minor stuff. Looks pretty good, although I do suggest getting rid of ... (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2596677653)
-- `2025-02-18T17:37:34Z` `COMMENTED` by `mklasby` (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2624399775)
-- `2025-04-11T14:18:48Z` `COMMENTED` by `LucasWilkinson` - I think this is getting very close, thanks for rebasing it! My main concern right now is the ... (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2757077102)
-- `2025-04-12T19:11:55Z` `COMMENTED` by `tlrmchlsmth` - Thank you for rebasing on current main! The code looks pretty clean to me now. Before this lands, ... (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2762233662)
-- `2025-04-13T03:07:18Z` `COMMENTED` by `sighingnow` (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2762521923)
-- `2025-05-01T23:12:05Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2810912937)
-- `2025-05-01T23:15:55Z` `APPROVED` by `LucasWilkinson` - Apologies overall this looks good now! Thanks for all the updates, the only things left to see on ... (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2810916622)
-
-## Inline Comment Hotspots
-
-- `vllm/attention/backends/dual_chunk_flash_attn.py`: 13 inline comment(s)
-- `csrc/attention/vertical_slash_index.cu`: 10 inline comment(s)
-- `examples/offline_inference_qwen_1m.py`: 4 inline comment(s)
-- `vllm/attention/backends/flash_attn.py`: 3 inline comment(s)
-- `vllm/worker/model_runner.py`: 3 inline comment(s)
-- `vllm/attention/layer.py`: 3 inline comment(s)
-- `vllm/engine/arg_utils.py`: 2 inline comment(s)
-- `CMakeLists.txt`: 2 inline comment(s)
-- `examples/offline_inference/qwen_1m/1m.txt`: 2 inline comment(s)
-- `examples/offline_inference/qwen_1m.py`: 2 inline comment(s)
-- `vllm/attention/backends/xformers.py`: 1 inline comment(s)
-- `vllm/model_executor/layers/rotary_embedding.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-01-23T16:01:47Z` `inline` by `sighingnow` `vllm/engine/arg_utils.py`:988; signals: attention, block, cuda; excerpt: "The current implementation doesn't support cuda graph for two reasons: (1) cuda graph is designed for short sequence length (due to block tables padding), ..." (https://github.com/vllm-project/vllm/pull/11844#discussion_r1927232673)
-- `2025-02-05T18:48:47Z` `inline` by `tlrmchlsmth` `csrc/attention/vertical_slash_index.cu`; signals: attention, block, kernel; excerpt: "Could you add some comments describing what the functions in this file are doing? Comments describing what blocks of code within convert vertical slash ..." (https://github.com/vllm-project/vllm/pull/11844#discussion_r1943492013)
-- `2025-01-20T21:35:42Z` `inline` by `tlrmchlsmth` `vllm/engine/arg_utils.py`:988; signals: attention, block, cuda; excerpt: "Do you know what the blockers are for Cuda graphs + DualChunkFlashAttention?" (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922860854)
-- `2025-01-16T09:33:43Z` `issue` by `sighingnow`; signals: attention, cuda, cudagraph; excerpt: "I tested it because I thought it was fixed, but I still have the same problem as below. Are you saying that Cudagraph capture ..." (https://github.com/vllm-project/vllm/pull/11844#issuecomment-2595010555)
-- `2025-04-13T03:10:05Z` `issue` by `sighingnow`; signals: attention, cuda, hang; excerpt: "A couple of questions: What will happen with this PR when running Qwen2 on systems where the dual-chunk attention backend is not supported? (e.g. ..." (https://github.com/vllm-project/vllm/pull/11844#issuecomment-2799567569)
-- `2025-01-20T16:24:16Z` `inline` by `LucasWilkinson` `vllm/attention/backends/flash_attn.py`:553; signals: attention, perf; excerpt: "could we subclass FlashAttentionMetadataBuilder and FlashAttentionMetadata for the dual chunk attention so this copy isn't being performed for all flash-attn based backends?" (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922637350)
-- `2025-01-20T18:42:38Z` `inline` by `LucasWilkinson` `vllm/model_executor/layers/rotary_embedding.py`:1049; signals: cuda, h100; excerpt: "nit: I think these einsum's are still slow on cuda than (a b).sum(-1), not on the hot path though so not critical ran bench ..." (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922760095)
-- `2025-01-23T16:09:20Z` `inline` by `LucasWilkinson` `CMakeLists.txt`:554; signals: attention, kernel; excerpt: "with the landing of FA3 Support ( the vllm-flash-attn repo is going to be "reset", the lwilkinson/fa3-squashed will become the new main branch (via ..." (https://github.com/vllm-project/vllm/pull/11844#discussion_r1927246198)
-- `2025-02-05T18:43:50Z` `inline` by `tlrmchlsmth` `csrc/attention/vertical_slash_index.cu`:24; signals: attention, block; excerpt: "I think this function would be clearer and more explicit in its behavior if it returned the current block count instead of modifying its ..." (https://github.com/vllm-project/vllm/pull/11844#discussion_r1943485259)
-- `2025-02-05T19:02:28Z` `inline` by `tlrmchlsmth` `vllm/attention/backends/dual_chunk_flash_attn.py`:1211; signals: attention, dtype; excerpt: "why convert these to bfloat16? I don't think we should be doing this e.g. if the model's dtype is float16" (https://github.com/vllm-project/vllm/pull/11844#discussion_r1943518419)
-- `2025-04-12T19:11:55Z` `review` `COMMENTED` by `tlrmchlsmth`; signals: attention; excerpt: "Thank you for rebasing on current main! The code looks pretty clean to me now. Before this lands, I think we should make sure ..." (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2762233662)
-- `2025-01-09T09:58:48Z` `issue` by `jacob-crux`; signals: cuda, cudagraph; excerpt: "I see that you have enforce eager=True set, so it looks like there are still compatibility issues with cudagraph. Do you plan to fix ..." (https://github.com/vllm-project/vllm/pull/11844#issuecomment-2579646320)
+- 2025-01-09 `jacob-crux`: I see that you have enforce eager=True set, so it looks like there are still compatibility issues with cudagraph. Do you plan to fix this in the future? (https://github.com/vllm-project/vllm/pull/11844#issuecomment-2579646320)
+- 2025-01-14 `sighingnow`: I see that you have enforce eager=True set, so it looks like there are still compatibility issues with cudagraph. Do you plan to fix this in the future? All conflicts fixed, could you please take another look? thanks! (https://github.com/vllm-project/vllm/pull/11844#issuecomment-2588861170)
+- 2025-01-15 `jacob-crux` on `vllm/attention/backends/dual_chunk_flash_attn.py`:187: When I try the Needle in a haystack test with qwen-7b and llama-8b(Modified code to support llama), there is a bug that produces a negative number when it is over 13k 15k. I modified the code as below and confirmed that it ... (https://github.com/vllm-project/vllm/pull/11844#discussion_r1915965913)
+- 2025-01-15 `jacob-crux`: I see that you have enforce eager=True set, so it looks like there are still compatibility issues with cudagraph. Do you plan to fix this in the future? All conflicts fixed, could you please take another look? thanks! I tested it because ... (https://github.com/vllm-project/vllm/pull/11844#issuecomment-2591695199)
+- 2025-01-16 `sighingnow`: I tested it because I thought it was fixed, but I still have the same problem as below. Are you saying that Cudagraph capture is possible? (enforce eager=False) The dual chunk attention doesn't support cuda graph and I have added an assertion ... (https://github.com/vllm-project/vllm/pull/11844#issuecomment-2595010555)
+- 2025-01-19 `sighingnow`: Rebase against main. Hi @youkaichao @simon-mo @WoosukKwon Do you folks think if there are still things that need to be improved in this pull request? Thanks! (https://github.com/vllm-project/vllm/pull/11844#issuecomment-2600781688)
+- 2025-01-20 `LucasWilkinson` on `vllm/attention/backends/dual_chunk_flash_attn.py`:538: nit: can we use orig seq lens[i] here instead of orig seq lens[i:i + 1] I think it could alleviate some of [0] indexing too (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922633839)
+- 2025-01-20 `LucasWilkinson` on `vllm/attention/backends/flash_attn.py`:553: could we subclass FlashAttentionMetadataBuilder and FlashAttentionMetadata for the dual chunk attention so this copy isn't being performed for all flash-attn based backends? (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922637350)
+- 2025-01-20 `LucasWilkinson` on `vllm/attention/backends/dual_chunk_flash_attn.py`:658: unused in this function? (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922642448)
+- 2025-01-20 `LucasWilkinson` on `vllm/attention/backends/dual_chunk_flash_attn.py`:364: nit: orig seq len unused, maybe do for i in range(len(prefill meta.orig seq lens)): (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922644207)
+- 2025-01-20 `LucasWilkinson` on `vllm/attention/backends/xformers.py`:114: I think we should try to see if we can avoid adding orig seq lens and orig seq lens tensor to all backends (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922648995)
+- 2025-01-20 `LucasWilkinson` on `vllm/model_executor/layers/rotary_embedding.py`:1049: nit: I think these einsum's are still slow on cuda than (a b).sum(-1), not on the hot path though so not critical ran bench einsum.py from that issue on an H100 and got: (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922760095)
+- 2025-01-20 `mgoin` on `examples/offline_inference_qwen_1m.py`: Remember to update these paths for data and model Also this should be renamed examples/offline inference/qwen 1m.py (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922817354)
+- 2025-01-20 `tlrmchlsmth` on `csrc/attention/vertical_slash_index.cu`:57: remove debug cruft before landing? (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922841144)
+- 2025-01-20 `tlrmchlsmth` on `csrc/attention/vertical_slash_index.cu`:93: ditto - debug cruft (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922841984)
+- 2025-01-20 `tlrmchlsmth` commented: Spotted a few bits ofcommented out code that look like debug cruft or are otherwise mysterious. Could you clean those up and any other similar spots? (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2563132453)
+- 2025-01-20 `tlrmchlsmth` on `examples/offline_inference_qwen_1m.py`:8: This should be updated to a proper URL (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922847878)
+- 2025-01-20 `tlrmchlsmth` on `examples/offline_inference_qwen_1m.py`: I think this should be moved to examples/offline inference/qwen 1m.py (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922848233)
+- 2025-01-20 `tlrmchlsmth` on `vllm/attention/backends/flash_attn.py`:111: IMO this PR shouldn't need to touch the flash attn backend. Could you say a bit about why you added these? (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922859161)
+- 2025-01-20 `tlrmchlsmth` on `vllm/engine/arg_utils.py`:988: Do you know what the blockers are for Cuda graphs + DualChunkFlashAttention? (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922860854)
+- 2025-01-20 `LucasWilkinson` on `vllm/worker/model_runner.py`:494: I personally find the orig seq lens vs seq lens naming confusing. Given that this touches core code such as model runner.py I think we should be very thoughtful in our naming. in my opinion I would get rid of orig seq ... (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922883649)
+- 2025-01-20 `LucasWilkinson` on `vllm/attention/layer.py`:115: I feel like this messy, I think we should maybe do something like: the challenge here is prefix would not be captured by extra attn kwargs but is only (currently) used by DualChunkFlashAttentionImpl. I do think it would be less messy though ... (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922889740)
+- 2025-01-20 `LucasWilkinson` on `vllm/attention/layer.py`:158: I think we should try hard to see if there is cleaner way of passing these, maybe they can be bundled into a single q tensor that get reinterpreted as components via a combination of slicing and .view calls in the attn ... (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922892640)
+- 2025-01-20 `tlrmchlsmth` on `vllm/worker/model_runner.py`:494: I think this sounds like a great approach if the authors agree! Really appreciate the concrete suggestion (https://github.com/vllm-project/vllm/pull/11844#discussion_r1922894584)
+- 2025-01-22 `sighingnow` on `vllm/attention/backends/flash_attn.py`:111: I added the orig seq lens to the flash-attn backend metadata then dual-chunk-flash-attn can inherit most of the logic of metadata building from flash-attn to avoid code duplication. (https://github.com/vllm-project/vllm/pull/11844#discussion_r1925066753)
+- 2025-01-23 `sighingnow` on `vllm/engine/arg_utils.py`:988: The current implementation doesn't support cuda graph for two reasons: (1) cuda graph is designed for short sequence length (due to block tables padding), the default capture sequence length is 8192, and, (2) there are some CPU logic (about sequence length) inside ... (https://github.com/vllm-project/vllm/pull/11844#discussion_r1927232673)
+- 2025-01-23 `LucasWilkinson` on `CMakeLists.txt`:554: with the landing of FA3 Support ( the vllm-flash-attn repo is going to be "reset", the lwilkinson/fa3-squashed will become the new main branch (via renaming) I cherry picked the sparse attention kernels over to that branch so the commit used by current ... (https://github.com/vllm-project/vllm/pull/11844#discussion_r1927246198)
+- 2025-01-23 `sighingnow` on `vllm/worker/model_runner.py`:494: I would take a try to do such refactor, thanks for the suggestion. (https://github.com/vllm-project/vllm/pull/11844#discussion_r1927433162)
+- 2025-01-23 `sighingnow` on `vllm/attention/layer.py`:158: I would take a try to see if it can be simplified. (https://github.com/vllm-project/vllm/pull/11844#discussion_r1927433868)
+- 2025-01-23 `sighingnow`: Hi @LucasWilkinson most of the comments has been addressed, could you please take another look? Thanks! The lint error comes from the prompt text, do you have any suggestion about how could I skip/resolve it? (https://github.com/vllm-project/vllm/pull/11844#issuecomment-2610834658)
+- 2025-01-27 `ywang96`: @sighingnow Sorry for the delayed response! I've merged main into your branch so the pre-commit error should be cleared. I'll enable ready status for this PR so at least we can get the CI going before @tlrmchlsmth or @LucasWilkinson want to give ... (https://github.com/vllm-project/vllm/pull/11844#issuecomment-2614816922)
+- 2025-02-03 `tlrmchlsmth` on `examples/offline_inference/qwen_1m/1m.txt`: I think we should revisit whether it makes sense to have this 1m context example here. This file would be by far the largest in the vLLM git repo at 4MB, and I think it might be better for the example to ... (https://github.com/vllm-project/vllm/pull/11844#discussion_r1939914225)
+- 2025-02-03 `tlrmchlsmth` on `vllm/_custom_ops.py`:193: nit: some weird whitespace here - I wouldn't want us to spend too much effort fighting clang-format but maybe the comment can be moved to its own line (https://github.com/vllm-project/vllm/pull/11844#discussion_r1939919370)
+- 2025-02-03 `tlrmchlsmth` on `vllm/attention/backends/dual_chunk_flash_attn.py`:1065: QQ: is the if/else necessary since sparse attn enabled is passed into the function in both cases? (https://github.com/vllm-project/vllm/pull/11844#discussion_r1939928387)
+- 2025-02-03 `tlrmchlsmth` on `vllm/attention/backends/dual_chunk_flash_attn.py`: Please add SPDX headers to new files (see for reference) (https://github.com/vllm-project/vllm/pull/11844#discussion_r1939933614)
+- 2025-02-05 `tlrmchlsmth` on `csrc/attention/vertical_slash_index.cu`:24: I think this function would be clearer and more explicit in its behavior if it returned the current block count instead of modifying its input argument: (https://github.com/vllm-project/vllm/pull/11844#discussion_r1943485259)
+- 2025-02-05 `tlrmchlsmth` on `csrc/attention/vertical_slash_index.cu`: Could you add some comments describing what the functions in this file are doing? Comments describing what blocks of code within convert vertical slash indexes kernel would be helpful as well (https://github.com/vllm-project/vllm/pull/11844#discussion_r1943492013)
+- 2025-02-05 `tlrmchlsmth` on `vllm/attention/backends/dual_chunk_flash_attn.py`:839: nit: best to avoid hardcoding constants (Also could you elaborate on the "avoid sort" comment?) (https://github.com/vllm-project/vllm/pull/11844#discussion_r1943506120)
+- 2025-02-05 `tlrmchlsmth` on `vllm/attention/backends/dual_chunk_flash_attn.py`:1211: why convert these to bfloat16? I don't think we should be doing this e.g. if the model's dtype is float16 (https://github.com/vllm-project/vllm/pull/11844#discussion_r1943518419)
+- 2025-02-05 `tlrmchlsmth` commented: A few more review comments, mostly minor stuff. Looks pretty good, although I do suggest getting rid of the qwen 1m example (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2596677653)
+- 2025-02-18 `mklasby` on `vllm/attention/backends/dual_chunk_flash_attn.py`:688: Otherwise this will error since scaling factor contains more than 1 element here (https://github.com/vllm-project/vllm/pull/11844#discussion_r1960209923)
+- 2025-04-10 `LucasWilkinson` on `examples/offline_inference/qwen_1m/1m.txt`: I dont think we should have these files in the repo, it's too large and will slow down git clones for everyone. Ideally I think we should just give users a wget command to fetch this from a different hosted location. (https://github.com/vllm-project/vllm/pull/11844#discussion_r2037566234)
+- 2025-04-10 `LucasWilkinson` on `vllm/attention/backends/dual_chunk_flash_attn.py`: Id highly recommend adding a V1 backend, however this can be addressed in a seperate PR (https://github.com/vllm-project/vllm/pull/11844#discussion_r2037570501)
+- 2025-04-11 `LucasWilkinson` on `vllm/config.py`:931: nit: I dont love this but not really sure if theres a better place (any ideas @mgoin ?) (https://github.com/vllm-project/vllm/pull/11844#discussion_r2039650211)
+- 2025-04-11 `LucasWilkinson` commented: I think this is getting very close, thanks for rebasing it! My main concern right now is the large text files in the repo. Also there appear to still be unaddressed review comments from before, please ping us when this is ready ... (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2757077102)
+- 2025-04-12 `tlrmchlsmth` on `examples/offline_inference/qwen_1m.py`:20: Please add a timeout to this (https://github.com/vllm-project/vllm/pull/11844#discussion_r2040720832)
+- 2025-04-12 `tlrmchlsmth` commented: Thank you for rebasing on current main! The code looks pretty clean to me now. Before this lands, I think we should make sure there's a plan in place to get support for this in vLLM V1. vLLM has switched to V1 ... (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2762233662)
+- 2025-04-13 `sighingnow`: A couple of questions: What will happen with this PR when running Qwen2 on systems where the dual-chunk attention backend is not supported? (e.g. AMD GPUs, TPUs, etc) Does vLLM automatically fall back to V0 when using dual-chunk attention? We have launched ... (https://github.com/vllm-project/vllm/pull/11844#issuecomment-2799567569)
+- 2025-04-15 `sighingnow`: [vllm-project/flash-attention 60]( has landed can you please update this PR? Done, and rebased to main. (https://github.com/vllm-project/vllm/pull/11844#issuecomment-2807091560)
+- 2025-05-01 `LucasWilkinson` on `cmake/external_projects/vllm_flash_attn.cmake`: This can actually be left as 0a721daebe4fa7149f06ecf3d3eabeb6dcd0f1fa since that includes the PR you need (https://github.com/vllm-project/vllm/pull/11844#discussion_r2070914950)
+- 2025-05-01 `LucasWilkinson` approved: Apologies overall this looks good now! Thanks for all the updates, the only things left to see on my end would be: - [ ] Address: - [ ] Rebase - [ ] Address: - [ ] @mgoin address: (https://github.com/vllm-project/vllm/pull/11844#pullrequestreview-2810916622)
+- 2025-05-09 `sighingnow`: Hi @LucasWilkinson, thanks for the feedback. The first three comments has been addressed. [x] Address: [x] Rebase [x] Address: [ ] @mgoin address: (https://github.com/vllm-project/vllm/pull/11844#issuecomment-2865720066)
+- 2025-05-09 `LucasWilkinson`: @sighingnow Thanks for the update! looking into the CI failure it does not appear to be related (V1 code, this PR does not touch V1) but this is a bit out of my area of expertise, asking around (cc @russellb) (https://github.com/vllm-project/vllm/pull/11844#issuecomment-2867902472)
+- 2025-05-10 `sighingnow`: @sighingnow Thanks for the update! looking into the CI failure it does not appear to be related (V1 code, this PR does not touch V1) but this is a bit out of my area of expertise, asking around (cc @russellb) Rebased against ... (https://github.com/vllm-project/vllm/pull/11844#issuecomment-2868611899)

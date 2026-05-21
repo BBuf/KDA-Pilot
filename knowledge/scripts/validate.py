@@ -79,7 +79,7 @@ def main() -> int:
         else:
             bundle = source_pr_bundle(root, repo, number, source.parent.name)
         missing = []
-        for required in (DIFF_NAME, UPSTREAM_NAME, ORIGIN_NAME, DISCUSSION_NAME):
+        for required in (DIFF_NAME, UPSTREAM_NAME, ORIGIN_NAME):
             if not (bundle / required).is_file():
                 missing.append(required)
         if not (bundle / SNAPSHOT_DIR).is_dir():
@@ -110,11 +110,24 @@ def main() -> int:
             if not artifact_dir:
                 continue
             bundle = root / artifact_dir
-            for required in (DIFF_NAME, ORIGIN_NAME, DISCUSSION_NAME):
+            for required in (DIFF_NAME, ORIGIN_NAME):
                 if not (bundle / required).is_file():
                     errors.append(f"{artifact_dir}: {label} missing {required}")
             if not (bundle / SNAPSHOT_DIR).is_dir():
                 errors.append(f"{artifact_dir}: {label} missing {SNAPSHOT_DIR}/")
+
+    discussion_files = 0
+    for discussion in (root / PULL_BUNDLE_ROOT).glob(f"*/*/{DISCUSSION_NAME}"):
+        discussion_files += 1
+        text = discussion.read_text(encoding="utf-8")
+        lines = [line for line in text.splitlines() if line.strip()]
+        if not lines:
+            errors.append(f"{discussion.relative_to(root)}: empty discussion.md")
+            continue
+        for line in lines:
+            if not line.startswith("- "):
+                errors.append(f"{discussion.relative_to(root)}: discussion.md must be a plain bullet list")
+                break
 
     summary = {
         "pages": len(pages),
@@ -122,6 +135,7 @@ def main() -> int:
         "pull_bundles": len(list((root / PULL_BUNDLE_ROOT).glob("*/*"))),
         "source_prs": source_prs,
         "complete_source_pr_bundles": complete_source_pr_bundles,
+        "discussion_files": discussion_files,
         "candidate_prs": candidate_prs,
         "candidate_ledgers": len(ledgers),
         "index_repos": index_repos,

@@ -1,64 +1,22 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/cccl#8285](https://github.com/NVIDIA/cccl/pull/8285)
-- Source page: `sources/prs/cccl-cub/PR-8285.md`
-- Evidence bundle: `evidence/pull-bundles/cccl-cub/gh-8285`
-- Generated at: `2026-05-20T15:20:36.768943+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-04-02T23:09:01Z`
-- Merged: `2026-04-08T12:20:47Z`
-
-## Discussion Counts
-
-- Issue comments: 9
-- Review submissions: 15 (approved=1, commented=14)
-- Inline review comments: 21
-- Review threads observed: 9
-- Resolved/outdated thread markers: resolved=4, outdated=1
-- Human participants with discussion text: NaderAlAwar, bernhardmgruber, miscco
-- Automation comments/reviews omitted from high-signal summary: 5
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-04-02T23:13:59Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/8285#pullrequestreview-4053610167)
-- `2026-04-03T14:35:08Z` `APPROVED` by `NaderAlAwar` - Suggestion: the issue being closed mentions ArgMax as well in the title, but this PR only appears to ... (https://github.com/NVIDIA/cccl/pull/8285#pullrequestreview-4055973377)
-- `2026-04-07T08:57:31Z` `COMMENTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/8285#pullrequestreview-4066831461)
-- `2026-04-07T09:16:49Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/8285#pullrequestreview-4067005920)
-- `2026-04-07T09:17:27Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/8285#pullrequestreview-4067010193)
-- `2026-04-07T09:18:57Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/8285#pullrequestreview-4067017977)
-- `2026-04-07T09:20:08Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/8285#pullrequestreview-4067025128)
-- `2026-04-07T09:20:42Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/8285#pullrequestreview-4067028922)
-- `2026-04-07T09:46:37Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/8285#pullrequestreview-4067192687)
-- `2026-04-07T09:51:02Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/8285#pullrequestreview-4067216644)
-- `2026-04-07T09:52:50Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/8285#pullrequestreview-4067226238)
-- `2026-04-08T07:25:00Z` `COMMENTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/8285#pullrequestreview-4073413278)
-- `2026-04-08T07:26:09Z` `COMMENTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/8285#pullrequestreview-4073418631)
-- `2026-04-08T10:34:57Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/8285#pullrequestreview-4074486447)
-- `2026-04-08T11:24:38Z` `COMMENTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/8285#pullrequestreview-4074736665)
-
-## Inline Comment Hotspots
-
-- `cub/cub/device/device_reduce.cuh`: 8 inline comment(s)
-- `cub/cub/thread/thread_operators.cuh`: 6 inline comment(s)
-- `cub/cub/device/dispatch/dispatch_streaming_reduce.cuh`: 5 inline comment(s)
-- `cub/test/catch2_test_device_reduce.cu`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-04-02T23:14:00Z` `inline` by `bernhardmgruber` `cub/cub/device/device_reduce.cuh`:1072; signals: hang; excerpt: "Instead of InputIteratorT we should use non void value t , but that just "feels" wrong here. But this is what the implementation does. ..." (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3030769507)
-- `2026-04-07T08:45:18Z` `inline` by `miscco` `cub/cub/device/dispatch/dispatch_streaming_reduce.cuh`:167; signals: cuda; excerpt: "Question: If we already add new behavior, do we want to go with cuda::std::pair instead of KeyValuePair" (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3043853109)
-- `2026-04-07T09:46:37Z` `inline` by `bernhardmgruber` `cub/cub/device/device_reduce.cuh`:1072; signals: perf; excerpt: "The reduction implementation does not call compare op(d in[i], d in[j]), it calls something like: So it performs a conversion of the input value ..." (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3044179339)
-- `2026-04-07T09:51:02Z` `inline` by `bernhardmgruber` `cub/cub/device/device_reduce.cuh`:1104; signals: cuda; excerpt: "I don't think this matters here. The code previously (in struct ArgMin) just used b.value would force a conversion of the comparison result to ..." (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3044202006)
-- `2026-04-07T09:52:50Z` `inline` by `bernhardmgruber` `cub/cub/thread/thread_operators.cuh`:124; signals: hang; excerpt: "Hmm, I think if I move to a data member, aggregate init would no longer work with the deduction guide in C++17. This can ..." (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3044211037)
-- `2026-04-08T07:25:00Z` `inline` by `miscco` `cub/cub/device/dispatch/dispatch_streaming_reduce.cuh`:249; signals: hang; excerpt: "I would love for us to change the implementation so that in the legacy API without a comparison operator we do the return value ..." (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3049779272)
-- `2026-04-08T10:34:57Z` `inline` by `bernhardmgruber` `cub/test/catch2_test_device_reduce.cu`:129; signals: vector; excerpt: "Critical: capturing in items produces a string representation of the device-side input vector by memcpy-ing its items one by one, which causes the 1h+ ..." (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3050755612)
-- `2026-04-07T08:53:14Z` `inline` by `miscco` `cub/cub/device/device_reduce.cuh`:1104; signals: cuda; excerpt: "Critical: We should use the typed cuda::std::less to avoid integer promotions" (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3043892989)
-- `2026-04-07T08:51:57Z` `inline` by `miscco` `cub/cub/device/device_reduce.cuh`:1072; signals: general review; excerpt: "I do not follow why that constraint is wrong? We want to ensure that the input sequence is comparable with the passed operator. Why ..." (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3043886684)
-- `2026-04-07T09:20:42Z` `inline` by `bernhardmgruber` `cub/cub/thread/thread_operators.cuh`:148; signals: general review; excerpt: "Because non fun(less{}) is not the same as greater{}, it's greater equal{}. It should actually not matter, since we are returning the first element ..." (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3044035383)
-- `2026-04-07T08:49:40Z` `inline` by `miscco` `cub/cub/device/dispatch/dispatch_streaming_reduce.cuh`:249; signals: general review; excerpt: "I am really unhappy that we actually need an initial value" (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3043874999)
-- `2026-04-07T08:50:18Z` `inline` by `miscco` `cub/cub/device/device_reduce.cuh`:948; signals: general review; excerpt: "Can we use the more explicit int32 t?" (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3043878034)
+- 2026-04-02 `bernhardmgruber` on `cub/cub/device/device_reduce.cuh`:1072: Instead of InputIteratorT we should use non void value t , but that just "feels" wrong here. But this is what the implementation does. What do the reviewers think? I think the implementation should actually be changed to compare the input values, ... (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3030769507)
+- 2026-04-03 `NaderAlAwar` approved: Suggestion: the issue being closed mentions ArgMax as well in the title, but this PR only appears to add public custom-comparator overloads and test coverage for ArgMin. The internal refactor is more general, but DeviceReduce::ArgMax still seems to expose only the old ... (https://github.com/NVIDIA/cccl/pull/8285#pullrequestreview-4055973377)
+- 2026-04-04 `bernhardmgruber`: Suggestion: the issue being closed mentions ArgMax as well in the title, but this PR only appears to add public custom-comparator overloads and test coverage for ArgMin. So I temporarily added a new overload for ArgMax as well, but then I noticed ... (https://github.com/NVIDIA/cccl/pull/8285#issuecomment-4187706263)
+- 2026-04-06 `NaderAlAwar`: @bernhardmgruber those are good points, I hadn't considered that. Looking into this some more, since the standard library and Thrust already expose comparator overloads for both min element and max element, I think matching that symmetry here would be less surprising to ... (https://github.com/NVIDIA/cccl/pull/8285#issuecomment-4192677224)
+- 2026-04-07 `miscco` on `cub/cub/device/dispatch/dispatch_streaming_reduce.cuh`:167: Question: If we already add new behavior, do we want to go with cuda::std::pair instead of KeyValuePair (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3043853109)
+- 2026-04-07 `miscco` on `cub/cub/device/dispatch/dispatch_streaming_reduce.cuh`:249: I am really unhappy that we actually need an initial value (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3043874999)
+- 2026-04-07 `miscco` on `cub/cub/device/device_reduce.cuh`:948: Can we use the more explicit int32 t? (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3043878034)
+- 2026-04-07 `miscco` on `cub/cub/device/device_reduce.cuh`:1072: I do not follow why that constraint is wrong? We want to ensure that the input sequence is comparable with the passed operator. Why should we compare the ExtremumOutputIteratorT (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3043886684)
+- 2026-04-07 `miscco` on `cub/cub/device/device_reduce.cuh`:1104: Critical: We should use the typed cuda::std::less to avoid integer promotions (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3043892989)
+- 2026-04-07 `miscco` on `cub/cub/thread/thread_operators.cuh`:124: Important: Inheritance is almost always worse than making it a member. (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3043906831)
+- 2026-04-07 `miscco` on `cub/cub/thread/thread_operators.cuh`:148: Question: Why arent we just using not fn (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3043914664)
+- 2026-04-07 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_streaming_reduce.cuh`:167: I tried this and it became way too much work. We should do this later. (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3044015146)
+- 2026-04-07 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_streaming_reduce.cuh`:249: It's only needed for the case where the user passes num items == 0. (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3044018853)
+- 2026-04-07 `bernhardmgruber` on `cub/cub/device/device_reduce.cuh`:948: We could but I am retaining the original code here. I would not touch it. (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3044025915)
+- 2026-04-07 `bernhardmgruber` on `cub/cub/thread/thread_operators.cuh`:124: But with a member, we are not getting EBCO. But maybe that's not so important here. (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3044032075)
+- 2026-04-07 `bernhardmgruber` on `cub/cub/thread/thread_operators.cuh`:148: Because non fun(less{}) is not the same as greater{}, it's greater equal{}. It should actually not matter, since we are returning the first element that matches the predicate. But I felt swapping arguments is more true. (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3044035383)
+- 2026-04-07 `bernhardmgruber` on `cub/cub/device/device_reduce.cuh`:1072: The reduction implementation does not call compare op(d in[i], d in[j]), it calls something like: So it performs a conversion of the input value to the output iterator's value type before comparing. That can be a totally different type. I think this ... (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3044179339)
+- 2026-04-07 `bernhardmgruber` on `cub/cub/device/device_reduce.cuh`:1104: I don't think this matters here. The code previously (in struct ArgMin) just used b.value would force a conversion of the comparison result to bool, while ::cuda::std::less would later just rely on the contextual conversion to bool inside the if statement. No ... (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3044202006)
+- 2026-04-07 `bernhardmgruber` on `cub/cub/thread/thread_operators.cuh`:124: Hmm, I think if I move to a data member, aggregate init would no longer work with the deduction guide in C++17. This can be worked around of course. Do you insist on this change, or can I save myself 43s of ... (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3044211037)
+- 2026-04-08 `miscco` on `cub/cub/device/dispatch/dispatch_streaming_reduce.cuh`:249: I would love for us to change the implementation so that in the legacy API without a comparison operator we do the return value thing and for the new API we only return indices, which in that case can just be 0 (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3049779272)
+- 2026-04-08 `miscco` on `cub/cub/thread/thread_operators.cuh`:124: we can keep it as is (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3049784193)
+- 2026-04-08 `bernhardmgruber` on `cub/test/catch2_test_device_reduce.cu`:129: Critical: capturing in items produces a string representation of the device-side input vector by memcpy-ing its items one by one, which causes the 1h+ test execution :D (https://github.com/NVIDIA/cccl/pull/8285#discussion_r3050755612)

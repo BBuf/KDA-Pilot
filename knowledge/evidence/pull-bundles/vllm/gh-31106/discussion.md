@@ -1,51 +1,32 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#31106](https://github.com/vllm-project/vllm/pull/31106)
-- Source page: `sources/prs/vllm/PR-31106.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-31106`
-- Generated at: `2026-05-20T15:39:14.223908+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-12-22T02:22:59Z`
-- Merged: `2026-01-07T06:55:04Z`
-
-## Discussion Counts
-
-- Issue comments: 31
-- Review submissions: 5 (approved=2, commented=3)
-- Inline review comments: 7
-- Review threads observed: 6
-- Resolved/outdated thread markers: resolved=0, outdated=6
-- Human participants with discussion text: c0de128, rasmith, tjtanaa
-- Automation comments/reviews omitted from high-signal summary: 4
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-12-22T02:24:16Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces a helper function get fp8 min max to centralize the logic for ... (https://github.com/vllm-project/vllm/pull/31106#pullrequestreview-3602350105)
-- `2025-12-28T19:16:47Z` `COMMENTED` by `c0de128` (https://github.com/vllm-project/vllm/pull/31106#pullrequestreview-3614800672)
-- `2026-01-05T04:02:07Z` `APPROVED` by `tjtanaa` - LGTM. Need to make sure the AMD CI all passed first. I will add ready label after. (https://github.com/vllm-project/vllm/pull/31106#pullrequestreview-3625430470)
-- `2026-01-05T18:33:39Z` `COMMENTED` by `rasmith` (https://github.com/vllm-project/vllm/pull/31106#pullrequestreview-3627963968)
-- `2026-01-06T17:45:47Z` `APPROVED` by `rasmith` (https://github.com/vllm-project/vllm/pull/31106#pullrequestreview-3631858758)
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/layers/quantization/utils/quant_utils.py`: 7 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-12-23T22:10:48Z` `issue` by `c0de128`; signals: accuracy, attention, benchmark, fp8, regression; excerpt: "Hardware Validation on AMD Instinct MI300X Tested on AMD Developer Cloud with: - GPU : AMD Instinct MI300X (192GB HBM3) - ROCm : 7.0 ..." (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3688095566)
-- `2026-01-05T17:35:53Z` `issue` by `c0de128`; signals: blackwell, compile, fp8, hang, kernel; excerpt: "Hi @tjtanaa, AMD CI passed ( 2379) and all quantization tests are green (kernels-quantization-test-1, kernels-quantization-test-2). The only failure is blackwell-fusion-and-compile-tests with exit status 128 ..." (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3711418243)
-- `2025-12-23T22:17:12Z` `issue` by `c0de128`; signals: attention, cache, kv cache, oom; excerpt: "Follow-up: Larger Model Validation (Qwen2.5-3B) Ran additional test with a 3 billion parameter model: Metric Value -------- ------- Model Qwen/Qwen2.5-3B Parameters 3B Precision FP16 ..." (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3688110749)
-- `2025-12-23T02:40:35Z` `issue` by `c0de128`; signals: dtype, fp8, hang; excerpt: "Thank you for the review @tjtanaa. This PR consolidates the FP8 min/max helper function which is already tested through the existing quantization test suite. ..." (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3684842627)
-- `2025-12-23T18:15:42Z` `issue` by `c0de128`; signals: dtype, fp8, kernel; excerpt: "Hi @tjtanaa, thank you for the review. I've added unit tests (tests/kernels/quantization/test fp8 min max helper.py) that verify the get fp8 min max() helper ..." (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3687536838)
-- `2025-12-24T00:38:40Z` `issue` by `c0de128`; signals: accuracy, fp8, regression; excerpt: "Hardware Validation - AMD Instinct MI300X (gfx942) I now have access to an AMD Instinct MI300X via AMD Developer Cloud. I have run lm ..." (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3688291257)
-- `2025-12-25T22:51:19Z` `issue` by `c0de128`; signals: accuracy, dtype, fp8; excerpt: "Hardware Validation: FP8 on MI300X (gfx942) Tested on AMD Instinct MI300X with ROCm 7.0: Key Observation The test shows that PyTorch's finfo.max returns 240.0 ..." (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3691798562)
-- `2025-12-25T23:19:23Z` `issue` by `c0de128`; signals: dtype, fp8, tma; excerpt: "Merry Christmas! 🎄 Just a final follow-up: this PR is fully green on CI, has no conflicts, and addresses a core ROCm FP8 compatibility ..." (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3691812270)
-- `2025-12-26T20:19:11Z` `issue` by `c0de128`; signals: accuracy, dtype, fp8; excerpt: "Hardware Validation on MI300X Tested on AMD Instinct MI300X VF (gfx942): Confirms the fix is needed: PyTorch's finfo.max returns 240.0 for float8 e4m3fnuz, but ..." (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3693324514)
-- `2025-12-30T22:25:36Z` `issue` by `c0de128`; signals: accuracy, dtype, fp8; excerpt: "📊 FP8 Range Verification (MI300X) Verified the consolidated get fp8 min max() helper correctly identifies ROCm fnuz dtype range on AMD Instinct MI300X (gfx942). ..." (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3700686730)
-- `2026-01-06T13:58:39Z` `issue` by `c0de128`; signals: accuracy, dtype, fp8; excerpt: "Thanks @rasmith for the feedback! I've updated the comment to the format you suggested. Regarding your questions about the dtype parameter - the current ..." (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3714799731)
-- `2026-01-05T18:31:24Z` `inline` by `rasmith` `vllm/model_executor/layers/quantization/utils/quant_utils.py`:31; signals: dtype, fp8; excerpt: "To get the default fp8 dtype, you can use: current platform.fp8 dtype()" (https://github.com/vllm-project/vllm/pull/31106#discussion_r2662438565)
+- 2025-12-22 `c0de128`: The dtype check suggested by gemini-code-assist has been addressed in commit Fix dtype check in get fp8 min max helper (2025-12-22T03:06:01Z). The condition now correctly checks both current platform.is fp8 fnuz() AND dtype == torch.float8 e4m3fnuz. (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3682778807)
+- 2025-12-22 `c0de128`: @hongxiayang @jithunnair-amd This is ready for review and addresses critical FP8 min/max handling for ROCm on the new Strix Halo architecture. (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3684128872)
+- 2025-12-22 `tjtanaa`: Please run the unit tests and share the unit tests results in the PR description as validation proof. (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3684418982)
+- 2025-12-23 `c0de128`: Thank you for the review @tjtanaa. This PR consolidates the FP8 min/max helper function which is already tested through the existing quantization test suite. The change affects ROCm's fnuz dtype handling (torch.float8 e4m3fnuz). Since we don't have access to ROCm hardware locally, ... (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3684842627)
+- 2025-12-23 `c0de128`: Hi @tjtanaa, thank you for the review. I've added unit tests (tests/kernels/quantization/test fp8 min max helper.py) that verify the get fp8 min max() helper function logic for both fnuz and standard FP8 dtypes. Since I lack local AMD hardware, is there a ... (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3687536838)
+- 2025-12-23 `c0de128`: Hardware Validation on AMD Instinct MI300X Tested on AMD Developer Cloud with: - GPU : AMD Instinct MI300X (192GB HBM3) - ROCm : 7.0 - vLLM : 0.6.4 - PyTorch : 2.5.0+rocm Test Results Model : Qwen/Qwen2.5-0.5B (FP16) - Inference working correctly ... (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3688095566)
+- 2025-12-23 `c0de128`: Follow-up: Larger Model Validation (Qwen2.5-3B) Ran additional test with a 3 billion parameter model: Metric Value -------- ------- Model Qwen/Qwen2.5-3B Parameters 3B Precision FP16 VRAM Usage 5.79 GB KV Cache Available 162.98 GB Output Speed 109 tokens/sec Backend ROCmFlashAttention Output quality verified ... (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3688110749)
+- 2025-12-23 `c0de128`: Thanks for the review! This was addressed in commit dc1a8a0 - the condition now checks both the platform AND the dtype: Unit tests were also added in commit 3c3b136 to verify this behavior. (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3688116715)
+- 2025-12-24 `c0de128`: Hardware Validation - AMD Instinct MI300X (gfx942) I now have access to an AMD Instinct MI300X via AMD Developer Cloud. I have run lm eval accuracy tests and results confirm no numerical regressions. lm eval Results - Qwen2.5-3B-Instruct Task Metric Value Stderr ... (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3688291257)
+- 2025-12-24 `c0de128`: This PR implements the consolidation suggested in 30360 by adding a get fp8 min max() helper function in quant utils.py that centralizes the FP8 min/max value logic for ROCm fnuz dtype handling. (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3688389598)
+- 2025-12-24 `c0de128`: Hardware Validation Cross-Reference Hardware validation for FP8 numerical integrity was conducted on MI300X (gfx942) using Phi-2 and TinyLlama-1.1B. Results are posted in 31184 and confirm that the FP8 logic maintains baseline accuracy. Summary from MI300X testing: These results demonstrate that the consolidated ... (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3689951597)
+- 2025-12-25 `c0de128`: Hardware Validation: FP8 on MI300X (gfx942) Tested on AMD Instinct MI300X with ROCm 7.0: Key Observation The test shows that PyTorch's finfo.max returns 240.0 for float8 e4m3fnuz, but the actual safe max for fnuz dtype accuracy is 224.0 (as documented in this ... (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3691798562)
+- 2025-12-25 `c0de128`: Merry Christmas! 🎄 Just a final follow-up: this PR is fully green on CI, has no conflicts, and addresses a core ROCm FP8 compatibility issue (consolidating the 224.0 min/max logic for fnuz dtype). Ready for final review and merge whenever the team ... (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3691812270)
+- 2025-12-26 `c0de128`: Hardware Validation on MI300X Tested on AMD Instinct MI300X VF (gfx942): Confirms the fix is needed: PyTorch's finfo.max returns 240.0 for float8 e4m3fnuz, but the correct maximum representable value is 224.0. Using 240.0 causes accuracy issues with dynamic quantization on ROCm. The ... (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3693324514)
+- 2025-12-27 `c0de128`: @hongxiayang, this PR aligns our FP8 quantization with AMD silicon requirements. I've verified on MI300X that the fnuz max value of 224.0 is required for accuracy, whereas the current logic defaults to 240.0. Ready for review whenever you have a moment. (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3694041462)
+- 2025-12-28 `c0de128` on `vllm/model_executor/layers/quantization/utils/quant_utils.py`:27: Addressed in 523dd61 - the condition now includes dtype == torch.float8 e4m3fnuz check. (https://github.com/vllm-project/vllm/pull/31106#discussion_r2649879330)
+- 2025-12-28 `c0de128`: @gshtras @mgoin Ready for review - consolidates FP8 min/max value logic into a helper function. All CI passing, gemini feedback addressed. (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3694983001)
+- 2025-12-28 `c0de128`: Hardware Validation ✅ Tested on AMD Instinct MI300X (gfx942:sramecc+:xnack-): The dtype check (dtype == torch.float8 e4m3fnuz) ensures correct behavior for both fnuz and standard FP8 dtypes on MI300X. (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3695019665)
+- 2025-12-28 `c0de128`: Related AMD/ROCm FP8 PRs: - 31177 - Fix exception types in AITER MLA FP8 check - 31184 - Fix FP8 support detection on gfx11x architectures These PRs address FP8 quantization support and detection issues for ROCm platforms. (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3695055419)
+- 2025-12-30 `c0de128`: 📊 FP8 Range Verification (MI300X) Verified the consolidated get fp8 min max() helper correctly identifies ROCm fnuz dtype range on AMD Instinct MI300X (gfx942). Source FP8 Max Value :--- :--- torch.finfo(float8 e4m3fnuz).max 240.0 ❌ get fp8 min max() helper 224.0 ✅ Why ... (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3700686730)
+- 2026-01-03 `c0de128`: Hi @gshtras @hongxiayang, this PR addresses RFC 30360 by consolidating FP8 min/max logic. AMD CI is green. Could you review when you have a chance? Thank you! (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3707072416)
+- 2026-01-05 `tjtanaa`: @c0de128 Please fix this failing test due to this PR changes. (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3709291705)
+- 2026-01-05 `c0de128`: Hi @tjtanaa, thank you for approving this PR! All CI checks are passing (buildkite/amd-ci 2347). Ready to merge whenever you have a moment. Thanks! (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3710309893)
+- 2026-01-05 `c0de128`: Hi @tjtanaa, AMD CI passed ( 2379) and all quantization tests are green (kernels-quantization-test-1, kernels-quantization-test-2). The only failure is blackwell-fusion-and-compile-tests with exit status 128 - this is a git/infrastructure error, not related to this PR's FP8 changes. Ready for merge when you ... (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3711418243)
+- 2026-01-05 `rasmith` on `vllm/model_executor/layers/quantization/utils/quant_utils.py`:22: What is the point of having a dtype parameter here? (https://github.com/vllm-project/vllm/pull/31106#discussion_r2662414332)
+- 2026-01-05 `rasmith` on `vllm/model_executor/layers/quantization/utils/quant_utils.py`:36: So if dtype is torch.float32 then we're just returning torch.finfo(torch.float32).min and max? How is this useful? (https://github.com/vllm-project/vllm/pull/31106#discussion_r2662418340)
+- 2026-01-05 `rasmith` on `vllm/model_executor/layers/quantization/utils/quant_utils.py`:31: To get the default fp8 dtype, you can use: current platform.fp8 dtype() (https://github.com/vllm-project/vllm/pull/31106#discussion_r2662438565)
+- 2026-01-05 `rasmith`: @c0de128 Thanks for the PR! Can you take a look at some of the comments? We can get the fp8 dtype with current platform.fp8 dtype. There is also a comment I would like added which helps clarify why the -224.0, 224.0 values ... (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3711640395)
+- 2026-01-06 `c0de128`: Thanks @rasmith for the feedback! I've updated the comment to the format you suggested. Regarding your questions about the dtype parameter - the current implementation already uses current platform.fp8 dtype() and doesn't take a dtype parameter. The function is specifically for FP8 ... (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3714799731)
+- 2026-01-06 `c0de128`: Hi @tjtanaa, thank you for the approval\! I've addressed @rasmith's feedback (simplified the comment format). AMD CI is currently running (Build 2422). Once it passes, this should be ready for merge. Thanks\! (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3715348726)
+- 2026-01-06 `c0de128`: Hi @tjtanaa @rasmith, thank you both for the approvals! AMD CI passed (Build 2422) and all FP8/quantization tests are green. The multi-modal-processor-test-cpu failure is unrelated to this FP8 helper function change. Would you be able to merge? Thanks! (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3715756970)
+- 2026-01-07 `rasmith`: Hi @tjtanaa @rasmith, thank you both for the approvals! AMD CI passed (Build 2422) and all FP8/quantization tests are green. The multi-modal-processor-test-cpu failure is unrelated to this FP8 helper function change. Would you be able to merge? Thanks! Since @tjtanaa approved, you ... (https://github.com/vllm-project/vllm/pull/31106#issuecomment-3716942794)

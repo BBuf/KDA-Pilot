@@ -1,68 +1,49 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#13167](https://github.com/vllm-project/vllm/pull/13167)
-- Source page: `sources/prs/vllm/PR-13167.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-13167`
-- Generated at: `2026-05-20T15:33:58.479678+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete via REST overflow fallback`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-02-12T16:49:18Z`
-- Merged: `2025-02-27T10:08:35Z`
-
-## Discussion Counts
-
-- Issue comments: 106
-- Review submissions: 19 (approved=2, commented=17)
-- Inline review comments: 22
-- Review threads observed: 11
-- Resolved/outdated thread markers: resolved=6, outdated=10
-- Human participants with discussion text: ChuanhongLi, Isotr0py, SzymonOzog, ZinonDynn, boywuxu, chuangzhidan, cjackal, davidsyoung, fclearner, hahmad2008, huang-junhong, hyunwen, iehgit, irdbl, joshuakoh1, junuMoon, justinjja, kechengcode, leolmj, lv03
-- Automation comments/reviews omitted from high-signal summary: 2
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 58
-
-## Review Decisions
-
-- `2025-02-13T03:42:22Z` `COMMENTED` by `Isotr0py` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2613735936)
-- `2025-02-13T09:41:28Z` `COMMENTED` by `SzymonOzog` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2614425764)
-- `2025-02-13T09:50:09Z` `COMMENTED` by `SzymonOzog` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2614448772)
-- `2025-02-13T10:21:39Z` `COMMENTED` by `Isotr0py` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2614532886)
-- `2025-02-13T12:54:32Z` `COMMENTED` by `SzymonOzog` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2614896444)
-- `2025-02-18T05:33:58Z` `APPROVED` by `huang-junhong` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2622488346)
-- `2025-02-20T06:44:10Z` `COMMENTED` by `Isotr0py` - @SzymonOzog Sorry for the delay! R1 is too large for me to evaluate the model perplexity. 😓 Since ... (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2628818847)
-- `2025-02-20T06:54:04Z` `COMMENTED` by `Isotr0py` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2628862028)
-- `2025-02-21T14:43:16Z` `COMMENTED` by `SzymonOzog` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2633255330)
-- `2025-02-21T14:43:24Z` `COMMENTED` by `SzymonOzog` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2633255703)
-- `2025-02-24T16:13:04Z` `COMMENTED` by `Isotr0py` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2637681633)
-- `2025-02-25T13:57:10Z` `COMMENTED` by `Isotr0py` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2641158249)
-- `2025-02-25T14:30:45Z` `COMMENTED` by `SzymonOzog` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2641299304)
-- `2025-02-25T14:55:03Z` `COMMENTED` by `Isotr0py` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2641393898)
-- `2025-02-25T15:35:23Z` `APPROVED` by `Isotr0py` - The model evaluation results look reasonable to me. We can merge it once the cleanup for dtype check ... (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2641535389)
-- `2025-02-26T09:45:05Z` `COMMENTED` by `SzymonOzog` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2643820540)
-- `2025-02-26T09:45:20Z` `COMMENTED` by `SzymonOzog` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2643821182)
-- `2025-02-26T14:42:33Z` `COMMENTED` by `cjackal` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2644758874)
-- `2025-02-26T18:01:42Z` `COMMENTED` by `SzymonOzog` (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2645382200)
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/layers/quantization/gguf.py`: 9 inline comment(s)
-- `vllm/config.py`: 5 inline comment(s)
-- `vllm/model_executor/model_loader/loader.py`: 4 inline comment(s)
-- `vllm/engine/arg_utils.py`: 4 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-02-19T09:32:58Z` `issue` by `davidsyoung`; signals: benchmark, cute, perf, performance; excerpt: "@SzymonOzog thanks for your valuable suggestions. I install the vllm from deepseek-gguf branch from [your vllm repo]( And successfully execute DeepSeek-R1-UD-IQ1 S in 4 ..." (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2668051423)
-- `2025-02-19T13:10:28Z` `issue` by `junuMoon`; signals: cache, kv cache, memory, throughput; excerpt: "@zh-jp Did you test the speed compared with the llama.cpp? And how much memory does it need at least? INFO 02-19 22:08:59 metrics.py:455] Avg ..." (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2668612296)
-- `2025-02-24T15:02:05Z` `issue` by `SzymonOzog`; signals: compile, kernel, moe; excerpt: "@fclearner Hey Alan, if you're eager to try to get it to run fast you could try checking out the branch where I'm working ..." (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2678725578)
-- `2025-02-25T05:46:46Z` `issue` by `fclearner`; signals: compile, kernel, moe; excerpt: "@fclearner Hey Alan, if you're eager to try to get it to run fast you could try checking out the branch where I'm working ..." (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2680663962)
-- `2025-02-25T13:56:45Z` `inline` by `Isotr0py` `vllm/model_executor/layers/quantization/gguf.py`:209; signals: block, kernel; excerpt: "Any reason to add this strict assertion here? I think there should be no block size limitation here since we will do padding in ..." (https://github.com/vllm-project/vllm/pull/13167#discussion_r1969834991)
-- `2025-02-26T09:45:05Z` `inline` by `SzymonOzog` `vllm/model_executor/layers/quantization/gguf.py`:209; signals: block, kernel; excerpt: "Removed the assertion for now, can confirm that I get reasonable outputs for block size of 256, might have ran the code against my ..." (https://github.com/vllm-project/vllm/pull/13167#discussion_r1971266513)
-- `2025-02-20T06:44:10Z` `review` `COMMENTED` by `Isotr0py`; signals: accuracy; excerpt: "@SzymonOzog Sorry for the delay! R1 is too large for me to evaluate the model perplexity. 😓 Since deepseek-v2 and v3 using same architecture ..." (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2628818847)
-- `2025-02-14T02:51:43Z` `issue` by `chuangzhidan`; signals: cuda, race; excerpt: "met an error： (base) ubuntu@localhost:/media/data/scripts$ python start gguf.py INFO 02-14 10:44:20 init .py:190] Automatically detected platform cuda. Traceback (most recent call last): File "/media/data/xgp/scripts/start ..." (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2658147275)
-- `2025-02-18T16:27:26Z` `issue` by `SzymonOzog`; signals: dtype, hang; excerpt: "@zh-jp You also need to change your dtype in config from bfloat16 to float16. Also could you check out this PR and run it ..." (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2666221477)
-- `2025-02-19T16:30:10Z` `issue` by `SzymonOzog`; signals: compile, hang; excerpt: "@leolmj There were no changes to compiled files so you shoud be able to run with the wheel from the main branch VLLM USE ..." (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2669157115)
-- `2025-02-21T14:45:31Z` `issue` by `SzymonOzog`; signals: dtype, hang; excerpt: "@Isotr0py No worries, just incorporated the feedback and also added some asserts and removed the need to change dtype manually. I tried running lm ..." (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2674741558)
-- `2025-02-21T14:48:11Z` `issue` by `SzymonOzog`; signals: kernel, moe; excerpt: "Also FYI got a working version of fused moe kernel for gguf. I'll write necessary test and clean this up so expect an PR ..." (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2674747962)
+- 2025-02-13 `Isotr0py` on `vllm/model_executor/layers/quantization/gguf.py`:305: Seems that w13 and w2 are both single weight type parameters, perhaps we can fuse this iteration? (https://github.com/vllm-project/vllm/pull/13167#discussion_r1953731310)
+- 2025-02-13 `Isotr0py` on `vllm/model_executor/model_loader/loader.py`:1276: I think we can try to avoid this manual mapping for each weight in MoE, perhaps you can refer to how transformers handle GGUF MoE weights name mapping: (https://github.com/vllm-project/vllm/pull/13167#discussion_r1953748364)
+- 2025-02-13 `SzymonOzog` on `vllm/model_executor/model_loader/loader.py`:1276: Yeah the problem is that the weight loader expects the experts to be passed in one by one, trying to overcome it atm (https://github.com/vllm-project/vllm/pull/13167#discussion_r1954161903)
+- 2025-02-13 `SzymonOzog` on `vllm/model_executor/layers/quantization/gguf.py`:305: Not sure if I understand correctly. Currently this is a vec@mat operation with inp = 1 x hidden dim and mat = inter size x hidden size. You propose fusing it into inp = 1 x hidden size and mat = 8 ... (https://github.com/vllm-project/vllm/pull/13167#discussion_r1954176518)
+- 2025-02-13 `Isotr0py` on `vllm/model_executor/layers/quantization/gguf.py`:305: Oh, thanks for the explanation! I forgot we assumed the weight to be 2-D in gguf kernel. Let's leave it to be addressed in a following PR since this is a kernel issue. (https://github.com/vllm-project/vllm/pull/13167#discussion_r1954227549)
+- 2025-02-13 `SzymonOzog`: this one Just tested and it works for me in a freshly checked out repo, are you sure that you merged gguf weights into one file? Could you share the scripts you are testing with? (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2656399355)
+- 2025-02-13 `SzymonOzog` on `vllm/model_executor/model_loader/loader.py`:1276: Okay managed to add an option to load full expert weights at once to fused moe, still using experts.0 mapping because this is what deepseek v2::load weights expects, not sure it that's an issue (https://github.com/vllm-project/vllm/pull/13167#discussion_r1954444800)
+- 2025-02-14 `chuangzhidan`: met an error： (base) ubuntu@localhost:/media/data/scripts$ python start gguf.py INFO 02-14 10:44:20 init .py:190] Automatically detected platform cuda. Traceback (most recent call last): File "/media/data/xgp/scripts/start gguf.py", line 3, in llm = LLM( ^^^^ File "/home/ubuntu/.local/lib/python3.12/site-packages/vllm/utils.py", line 1051, in inner return fn( args, kwargs) ... (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2658147275)
+- 2025-02-14 `SzymonOzog`: @chuangzhidan Did you check out and install vllm from this PR? You seem to have a different version: (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2658229901)
+- 2025-02-15 `zlh1992`: @chuangzhidan Did you check out and install vllm from this PR? You seem to have a different version: Please show your detail environment? (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2660790902)
+- 2025-02-17 `chuangzhidan`: @chuangzhidan Did you check out and install vllm from this PR? You seem to have a different version: Please show your detail environment? u are right ,it has something to do with vllm version and this pr environment.thank u (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2662321754)
+- 2025-02-18 `z7d1`: I try to reproduce this PR and raise same error like @seven1122 . The checkpoints I used is [DeepSeek-R1-UD-IQ1 S]( I merged multi .gguf files to single by: File path /DeepSeek-R1-UD-IQ1 S includes : (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2664913384)
+- 2025-02-18 `SzymonOzog`: @leolmj @seven1122 @zh-jp I'm having trouble reproducing the issue, could you share: - your config.json - your vllm version + the commit hash that you checked out - the script that you are runnning (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2665114704)
+- 2025-02-18 `z7d1`: Hello @SzymonOzog . [config.json]( The version of vllm is 0.7.2, and I have replaced the files that were specified in this PR. Regarding the script, I used the demo you provided and only changed the parameter model that passed in the .gguf ... (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2665840812)
+- 2025-02-18 `SzymonOzog`: @zh-jp You also need to change your dtype in config from bfloat16 to float16. Also could you check out this PR and run it through it? There have been changes in vllm since 0.7.2 and I cannot promise backwards compatibility (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2666221477)
+- 2025-02-18 `davidsyoung`: I want to run this, but unfortunately I only have 14x3090 GPU's, so for tensor parallelism I need another 2 GPU's to get to 16. It would be great to see any kind of benchmarks on this compared to llama.cpp. Thank you! (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2666429245)
+- 2025-02-19 `z7d1`: @SzymonOzog thanks for your valuable suggestions. I build the vllm from deepseek-gguf branch from [your vllm repo]( And successfully execute DeepSeek-R1-UD-IQ1 S in 4 NVIDIA A800-SXM4-80GB (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2667986244)
+- 2025-02-19 `davidsyoung`: @SzymonOzog thanks for your valuable suggestions. I install the vllm from deepseek-gguf branch from [your vllm repo]( And successfully execute DeepSeek-R1-UD-IQ1 S in 4 NVIDIA A800-SXM4-80GB Do you have a benchmark of performance? (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2668051423)
+- 2025-02-19 `slr1997`: @zh-jp Did you test the speed compared with the llama.cpp? And how much memory does it need at least? (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2668076734)
+- 2025-02-19 `junuMoon`: @zh-jp Did you test the speed compared with the llama.cpp? And how much memory does it need at least? INFO 02-19 22:08:59 metrics.py:455] Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 6.7 tokens/s, Running: 1 reqs, Swapped: 0 reqs, Pending: 0 reqs, ... (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2668612296)
+- 2025-02-19 `leolmj`: @zh-jp @SzymonOzog how did install the vllm from deepseek-gguf branch. it seems there is no wheel files to install. you rebuild it all? can you share the whl file? (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2668925549)
+- 2025-02-19 `SzymonOzog`: @leolmj There were no changes to compiled files so you shoud be able to run with the wheel from the main branch VLLM USE PRECOMPILED=1 pip install --editable . (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2669157115)
+- 2025-02-20 `Isotr0py` on `vllm/model_executor/model_loader/loader.py`:1264: I think we can also support deepseek-v2 gguf model in this PR. This would allow us to evaluate deepseek gguf model with deepseek-v2-lite instead of R1/V3: (https://github.com/vllm-project/vllm/pull/13167#discussion_r1962926814)
+- 2025-02-20 `Isotr0py` on `vllm/engine/arg_utils.py`:279: Why do we need EngineArgs.hf config path as default here? (https://github.com/vllm-project/vllm/pull/13167#discussion_r1962927531)
+- 2025-02-20 `Isotr0py` on `vllm/config.py`:253: We can avoid redundant if statement here. (https://github.com/vllm-project/vllm/pull/13167#discussion_r1962930947)
+- 2025-02-20 `Isotr0py` commented: @SzymonOzog Sorry for the delay! R1 is too large for me to evaluate the model perplexity. 😓 Since deepseek-v2 and v3 using same architecture in llama.cpp, I think we should also add deepseek-v2 support in this PR. So that it would be ... (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2628818847)
+- 2025-02-20 `Isotr0py` on `vllm/engine/arg_utils.py`:264: Can you also update the gguf document (docs/source/features/quantization/gguf.md) about how to serve a gguf model that hasn't supported by upstream tranformers? (https://github.com/vllm-project/vllm/pull/13167#discussion_r1962954251)
+- 2025-02-20 `SzymonOzog`: @priscilla-pan The model seems to run fine, the script I posted had max tokens set to 2 I believe you might have not changed it (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2672311639)
+- 2025-02-21 `priscilla-pan`: @priscilla-pan The model seems to run fine, the script I posted had max tokens set to 2 I believe you might have not changed it You are right. Thank you! (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2673107567)
+- 2025-02-21 `priscilla-pan`: @priscilla-pan The model seems to run fine, the script I posted had max tokens set to 2 I believe you might have not changed it You are right. Thank you! By the way，although the model runs fine , the following error message ... (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2673685633)
+- 2025-02-21 `SzymonOzog` on `vllm/engine/arg_utils.py`:279: Whoops, this was supposed to be passed to hf-config-path, fixed (https://github.com/vllm-project/vllm/pull/13167#discussion_r1965595661)
+- 2025-02-21 `SzymonOzog`: @Isotr0py No worries, just incorporated the feedback and also added some asserts and removed the need to change dtype manually. I tried running lm eval but it seems like there are some issues with reasoning models evaluation, they don't tend to follow ... (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2674741558)
+- 2025-02-21 `SzymonOzog`: Also FYI got a working version of fused moe kernel for gguf. I'll write necessary test and clean this up so expect an PR soon. Improvement goes to 32 tok/s now for 4xA100 TP4 (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2674747962)
+- 2025-02-21 `SzymonOzog`: @Isotr0py Okay just tested and it looks like V2 doesn't work atm, it has a moe intermediate size of 1408 and current kernels require sizes to be padded to 512. It runs but the results are very flaky: compared to deepseek-R1-GGUF-Q2 K: ... (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2674927377)
+- 2025-02-22 `SzymonOzog`: @accupham As noted by the error GGUF requires a block size of 512, I updated my example code. Could you please try to run with TP=4? (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2676138794)
+- 2025-02-23 `justinjja`: I tried tensor parallel 4 and pipeline 2 and I get a NotImplementedError error, Is there no way to use more than 4 gpus? (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2676637721)
+- 2025-02-24 `fclearner`: Hi @SzymonOzog, Thank you for your efforts on this branch! I have tested it, and it works well. However, I noticed that the inference speed for DeepSeek-R1-UD-Q2 K XL is approximately 7 tokens/s when using your example code. Is there any recommended ... (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2678023600)
+- 2025-02-24 `SzymonOzog`: @justinjja Could you paste the full error message? I think pipeline parallel requires async engine so you could run it via vllm serve (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2678718780)
+- 2025-02-24 `SzymonOzog`: @fclearner Hey Alan, if you're eager to try to get it to run fast you could try checking out the branch where I'm working on a fast MoE kernel and compile it yourself. This is still work in progress and only vibe ... (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2678725578)
+- 2025-02-24 `Isotr0py` on `vllm/config.py`:314: I think we can just remove torch.bfloat16 (it's added by mistake) in gguf.py: So that we don't need extra dtype handling here (https://github.com/vllm-project/vllm/pull/13167#discussion_r1967967333)
+- 2025-02-25 `Isotr0py` on `vllm/model_executor/layers/quantization/gguf.py`:209: Any reason to add this strict assertion here? I think there should be no block size limitation here since we will do padding in the kernel. (https://github.com/vllm-project/vllm/pull/13167#discussion_r1969834991)
+- 2025-02-25 `SzymonOzog` on `vllm/model_executor/layers/quantization/gguf.py`:209: Oh yeah, the input is padded but the weights are not, so we can read weights out of memory (https://github.com/vllm-project/vllm/pull/13167#discussion_r1969901569)
+- 2025-02-25 `Isotr0py` on `vllm/model_executor/layers/quantization/gguf.py`:209: But I can still generate reasonable outputs on (https://github.com/vllm-project/vllm/pull/13167#discussion_r1969950712)
+- 2025-02-25 `Isotr0py` approved: The model evaluation results look reasonable to me. We can merge it once the cleanup for dtype check and assertion are done! Thanks for your great work and your patience as well! (https://github.com/vllm-project/vllm/pull/13167#pullrequestreview-2641535389)
+- 2025-02-26 `SzymonOzog` on `vllm/model_executor/layers/quantization/gguf.py`:209: Removed the assertion for now, can confirm that I get reasonable outputs for block size of 256, might have ran the code against my custom kernel when evaluating it by mistake. My bad (https://github.com/vllm-project/vllm/pull/13167#discussion_r1971266513)
+- 2025-02-26 `SzymonOzog`: @fclearner You would need to manually compile the vllm repo to run this kernel. pip install -e . (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2684598089)
+- 2025-02-26 `cjackal` on `vllm/model_executor/layers/quantization/gguf.py`:274: After 13795 got merged, FusedMoEMethod.apply got a new keyword argument activation, c.f. [this diff at vllm/model executor/layers/fused moe/layer.py]( which cause unexpected keyword argument error: We may adapt [what awq marlin does]( after rebase: (https://github.com/vllm-project/vllm/pull/13167#discussion_r1971718967)
+- 2025-02-26 `SzymonOzog` on `vllm/model_executor/layers/quantization/gguf.py`:274: Updated, thanks for catching and pointing to a solution! (https://github.com/vllm-project/vllm/pull/13167#discussion_r1972097248)
+- 2025-02-27 `ZinonDynn`: @zh-jp Have you ever encountered a code exception like this: transformers/modeling gguf pytorch utils.py", line 399, in load gguf checkpoint raise ValueError(f"GGUF model with architecture {architecture} is not supported yet.") ValueError: GGUF model with architecture deepseek2 is not supported yet. What version ... (https://github.com/vllm-project/vllm/pull/13167#issuecomment-2687266460)

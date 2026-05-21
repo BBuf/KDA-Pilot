@@ -1,79 +1,84 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#21716](https://github.com/vllm-project/vllm/pull/21716)
-- Source page: `sources/prs/vllm/PR-21716.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-21716`
-- Generated at: `2026-05-20T15:36:51.444849+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-07-28T05:19:42Z`
-- Merged: `2025-08-19T12:22:15Z`
-
-## Discussion Counts
-
-- Issue comments: 17
-- Review submissions: 71 (approved=4, changes_requested=4, commented=63)
-- Inline review comments: 106
-- Review threads observed: 45
-- Resolved/outdated thread markers: resolved=44, outdated=37
-- Human participants with discussion text: ProExpertProg, Sekri0, elvischenv, mergify, mgoin, npanpaliya, nvpohanh
-- Automation comments/reviews omitted from high-signal summary: 3
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 2
-
-## Review Decisions
-
-- `2025-07-28T05:21:17Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request adds support for the Flashinfer TRT-LLM FP8-query/output attention kernel. The changes span across ... (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3060430355)
-- `2025-07-28T14:16:57Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3063007821)
-- `2025-07-28T14:56:38Z` `COMMENTED` by `elvischenv` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3063207502)
-- `2025-08-07T07:21:06Z` `CHANGES_REQUESTED` by `nvpohanh` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3095610997)
-- `2025-08-07T07:30:55Z` `CHANGES_REQUESTED` by `nvpohanh` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3095779130)
-- `2025-08-07T08:23:17Z` `COMMENTED` by `nvpohanh` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3095985190)
-- `2025-08-07T09:48:43Z` `COMMENTED` by `nvpohanh` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096303917)
-- `2025-08-07T09:49:05Z` `COMMENTED` by `nvpohanh` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096305607)
-- `2025-08-07T10:08:24Z` `COMMENTED` by `elvischenv` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096375801)
-- `2025-08-07T10:08:48Z` `COMMENTED` by `elvischenv` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096377876)
-- `2025-08-07T10:09:49Z` `COMMENTED` by `elvischenv` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096383127)
-- `2025-08-07T10:11:22Z` `COMMENTED` by `elvischenv` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096390604)
-- `2025-08-07T10:11:56Z` `COMMENTED` by `elvischenv` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096393092)
-- `2025-08-07T10:12:12Z` `COMMENTED` by `elvischenv` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096394134)
-- `2025-08-07T10:12:47Z` `COMMENTED` by `elvischenv` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096397075)
-- `2025-08-07T10:13:22Z` `COMMENTED` by `elvischenv` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096399820)
-- `2025-08-07T10:14:03Z` `COMMENTED` by `elvischenv` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096402947)
-- `2025-08-07T10:15:31Z` `COMMENTED` by `elvischenv` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096410733)
-- `2025-08-07T10:16:41Z` `COMMENTED` by `elvischenv` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096417142)
-- `2025-08-07T10:17:16Z` `COMMENTED` by `elvischenv` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096420206)
-- `2025-08-07T10:17:49Z` `APPROVED` by `nvpohanh` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096423112)
-- `2025-08-07T10:18:17Z` `COMMENTED` by `elvischenv` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096425521)
-- `2025-08-07T10:18:30Z` `COMMENTED` by `elvischenv` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096426581)
-- `2025-08-07T10:18:40Z` `COMMENTED` by `elvischenv` (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3096427640)
-- ... 47 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/compilation/fusion_attn.py`: 37 inline comment(s)
-- `tests/compile/test_fusion_attn.py`: 31 inline comment(s)
-- `vllm/attention/layer.py`: 12 inline comment(s)
-- `vllm/v1/attention/backends/flashinfer.py`: 7 inline comment(s)
-- `vllm/utils/flashinfer.py`: 5 inline comment(s)
-- `vllm/attention/backends/flashinfer.py`: 5 inline comment(s)
-- `vllm/attention/backends/abstract.py`: 4 inline comment(s)
-- `benchmarks/kernels/benchmark_trtllm_prefill_attention.py`: 3 inline comment(s)
-- `benchmarks/kernels/benchmark_trtllm_decode_attention.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-08-15T03:30:17Z` `review` `CHANGES_REQUESTED` by `ProExpertProg`; signals: attention, bf16, cache, dtype, flashinfer, fp8, kernel; excerpt: "Overall looking much better! I still think we can further simplify the logic and reduce the complexity around deciding which exact attention kernel to ..." (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3122681409)
-- `2025-08-13T00:59:49Z` `inline` by `nvpohanh` `vllm/compilation/fusion_attn.py`:159; signals: attention, bf16, dtype, flashinfer, fp4, fp8, kernel; excerpt: "The issue is, currently FlashInfer's trtllm attn kernels have this restriction: - If the output is BF16, then the query must be also BF16 ..." (https://github.com/vllm-project/vllm/pull/21716#discussion_r2271836315)
-- `2025-08-15T08:02:33Z` `issue` by `nvpohanh`; signals: attention, bf16, cache, dtype, flashinfer, fp8, kernel; excerpt: "Overall looking much better! I still think we can further simplify the logic and reduce the complexity around deciding which exact attention kernel to ..." (https://github.com/vllm-project/vllm/pull/21716#issuecomment-3190890483)
-- `2025-08-18T14:34:22Z` `issue` by `elvischenv`; signals: cache, dtype, fp8, kernel, kv cache, perf, performance; excerpt: "Also, seems like --kv-cache-dtype = fp8 performs worse than auto, is this because it's getting dispatched to flash attn? I think this is expected ..." (https://github.com/vllm-project/vllm/pull/21716#issuecomment-3197195129)
-- `2025-08-15T17:55:45Z` `inline` by `ProExpertProg` `tests/compile/test_fusion_attn.py`:379; signals: attention, cache, compile, correctness, cuda, cudagraph; excerpt: "This unit test uses TestBackend and so no cudagraph collection and replay happens. That's fine because it's a unit test, but we should just ..." (https://github.com/vllm-project/vllm/pull/21716#discussion_r2279591594)
-- `2025-08-12T15:35:58Z` `review` `CHANGES_REQUESTED` by `ProExpertProg`; signals: compile, cuda, cudagraph, perf, performance; excerpt: "Thanks for this PR, really excited for the performance improvements! Adding a few high-level notes while we improve the overall approach. I think adding ..." (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3111390540)
-- `2025-08-18T16:29:15Z` `inline` by `elvischenv` `benchmarks/kernels/benchmark_trtllm_decode_attention.py`:179; signals: accuracy, attention, benchmark, flashinfer, kernel; excerpt: "Remove these comments since we already have tests/kernels/attention/test flashinfer trtllm attention.py to validate the accuracy. Previously I just use them to confirm the benchmarking ..." (https://github.com/vllm-project/vllm/pull/21716#discussion_r2282894936)
-- `2025-08-19T01:18:14Z` `inline` by `elvischenv` `benchmarks/kernels/benchmark_trtllm_prefill_attention.py`:252; signals: attention, benchmark, dtype, fp8, kernel; excerpt: "Yes, added a mix input quant type (None, FP8 DTYPE, None), for decode kernel. For prefill, that's not supported for now." (https://github.com/vllm-project/vllm/pull/21716#discussion_r2283805587)
-- `2025-07-28T14:56:37Z` `inline` by `elvischenv` `vllm/v1/attention/backends/flashinfer.py`:840; signals: attention, cuda, flashinfer, triton; excerpt: "This is the issue that bothers us a lot. output scale is a device tensor, while the trtllm API needs host scalar, that is ..." (https://github.com/vllm-project/vllm/pull/21716#discussion_r2236835124)
-- `2025-08-15T17:48:12Z` `inline` by `elvischenv` `tests/compile/test_fusion_attn.py`:379; signals: cache, compile, cuda, cudagraph; excerpt: "Also would be good to add an integration test that runs with cudagraphs on and compares fused and unfused to make sure we don't ..." (https://github.com/vllm-project/vllm/pull/21716#discussion_r2279579889)
-- `2025-08-15T03:47:17Z` `review` `COMMENTED` by `ProExpertProg`; signals: cache, fp8, perf; excerpt: "Also took a look at the test. And after comments are addressed, could we see: - perf on main - perf with kvcache auto ..." (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3122730847)
-- `2025-08-15T19:17:20Z` `inline` by `mgoin` `benchmarks/kernels/benchmark_trtllm_decode_attention.py`:179; signals: accuracy, attention, benchmark, kernel; excerpt: "I think we should leave in some notion of accuracy testing" (https://github.com/vllm-project/vllm/pull/21716#discussion_r2279722530)
+- 2025-07-28 `ProExpertProg` on `vllm/v1/attention/backends/flashinfer.py`:840: This can just use output scale instead of the prob scale float hack (https://github.com/vllm-project/vllm/pull/21716#discussion_r2236681096)
+- 2025-07-28 `elvischenv` on `vllm/v1/attention/backends/flashinfer.py`:840: This is the issue that bothers us a lot. output scale is a device tensor, while the trtllm API needs host scalar, that is different from the triton API. And we need full cuda graph to enable the attn fusion, so this ... (https://github.com/vllm-project/vllm/pull/21716#discussion_r2236835124)
+- 2025-08-07 `nvpohanh` on `vllm/attention/backends/abstract.py`:311: "input quant" is a little vague because we actually only quant the "query" input but not other inputs. Maybe some thing like insert query quant supported or quant query supported? (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259272195)
+- 2025-08-07 `nvpohanh` on `vllm/attention/layer.py`:134: Can we rename q scale float/ k scale float/ v scale float to q scale cpu/ k scale cpu/ v scale cpu? The key reason why we need these is because we need the scales to be on host (cpu) memory instead ... (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259282981)
+- 2025-08-07 `nvpohanh` on `vllm/attention/layer.py`:131: Update the comment to: (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259286129)
+- 2025-08-07 `nvpohanh` on `vllm/attention/layer.py`:204: same: o scale cpu Add a comment: (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259290760)
+- 2025-08-07 `nvpohanh` on `vllm/attention/layer.py`:300: same: renaming to cpu (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259295421)
+- 2025-08-07 `nvpohanh` on `vllm/compilation/fusion_attn.py`:143: """ Fusion for Attention+StaticQuant and replace it with StaticQuant+Attention. Only triggers when the attention implementation returns True for both fused output quant supported() and insert query quant supported(). If the pattern is found, the StaticQuant op will be removed from the graph, ... (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259327799)
+- 2025-08-07 `nvpohanh` on `vllm/compilation/fusion_attn.py`:254: Update the comment to: (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259336122)
+- 2025-08-07 `nvpohanh` on `vllm/compilation/fusion_attn.py`:387: load the fusion status into the Attention layer's fused quant attribute (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259356474)
+- 2025-08-07 `nvpohanh` on `vllm/compilation/fusion_attn.py`:391: I am worried about using layer name as the file name, because the layer name may contain invalid characters for file paths. Is it possible to put all the layers' result in the same file (say, os.path.join(cache dir, "QuantAttentionQuantPattern.json"), in the format ... (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259381608)
+- 2025-08-07 `nvpohanh` on `vllm/compilation/fusion_attn.py`:391: In extra check(), we can read the file, load the json into dict, add the new layer into the dict, and then write back the dict as json? (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259384367)
+- 2025-08-07 `nvpohanh` on `vllm/utils/flashinfer.py`:162: not related to this PR, but I think has nvidia artifactory() can be removed because FlashInfer now supports downloading all cubins at once. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259387185)
+- 2025-08-07 `nvpohanh` on `vllm/compilation/fusion_attn.py`:391: discussed offline. The author prefers the current approach. My only requirement is to escape the invalid characters using re.sub(r'[^\w .-]', ' ', layer name) (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259526699)
+- 2025-08-07 `nvpohanh` on `vllm/utils/flashinfer.py`:162: can do this in another PR (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259749095)
+- 2025-08-07 `nvpohanh` on `vllm/attention/layer.py`:134: Remaining will cause large changes. We can do that in another PR (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259750442)
+- 2025-08-07 `elvischenv` on `vllm/attention/backends/abstract.py`:311: Changed to use insert query quant supported. Thanks! (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259799238)
+- 2025-08-07 `elvischenv` on `vllm/attention/layer.py`:204: Using the convention float. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259808871)
+- 2025-08-07 `elvischenv` on `vllm/attention/layer.py`:300: using the conventional name float in this PR. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259813203)
+- 2025-08-07 `elvischenv` on `vllm/compilation/fusion_attn.py`:143: This is an extremely detailed comment. Nice! Thanks! (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259822154)
+- 2025-08-07 `elvischenv` on `vllm/compilation/fusion_attn.py`:254: Awesome! Updated and thanks! (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259826311)
+- 2025-08-07 `elvischenv` on `vllm/compilation/fusion_attn.py`:391: Discussed offline and switched to use the hash(layer name) as the cache entry. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2259840648)
+- 2025-08-12 `ProExpertProg` on `vllm/attention/backends/flashinfer.py`:1055: Could we attach an issue to this? (https://github.com/vllm-project/vllm/pull/21716#discussion_r2270261171)
+- 2025-08-12 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:218: I don't think this property is necessary; the unified attention op should be able to figure out if quant is necessary or not based on the dtype of query passed in, or q scale being set. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2270278319)
+- 2025-08-12 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:159: Could we make this pattern just do the attention- quant+attention de-fusion? That way it can happen even if output quant isn't supported. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2270294375)
+- 2025-08-12 `ProExpertProg` changes_requested: Thanks for this PR, really excited for the performance improvements! Adding a few high-level notes while we improve the overall approach. I think adding linear layers to the forward context is very intrusive and should be avoided if possible. As discussed in ... (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3111390540)
+- 2025-08-13 `nvpohanh` on `vllm/compilation/fusion_attn.py`:218: @ProExpertProg This is needed for FlashInferMetadataBuilder: When we are calling FlashInferMetadataBuilder's plan() function, we need to know what the query data type is. but we do not have access to the FX graph, so we cannot tell what the query data type ... (https://github.com/vllm-project/vllm/pull/21716#discussion_r2271827356)
+- 2025-08-13 `nvpohanh` on `vllm/compilation/fusion_attn.py`:159: The issue is, currently FlashInfer's trtllm attn kernels have this restriction: - If the output is BF16, then the query must be also BF16 (cannot be FP8) - If the output is FP8 or FP4, then the query must be FP8 (cannot ... (https://github.com/vllm-project/vllm/pull/21716#discussion_r2271836315)
+- 2025-08-13 `nvpohanh` on `vllm/attention/backends/flashinfer.py`:1055: What form do you want it to be? a vLLM GitHub issue ticket? Or a FlashInfer GitHub issue ticket? (internally we use JIRA to track tasks but I don't think they are visible to the public) (https://github.com/vllm-project/vllm/pull/21716#discussion_r2271840921)
+- 2025-08-14 `ProExpertProg` on `vllm/attention/backends/flashinfer.py`:1055: Either flashinfer or vLLM github issue sounds good (https://github.com/vllm-project/vllm/pull/21716#discussion_r2276889150)
+- 2025-08-15 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:61: Could we change the interface such that this function receives QuantKey, and rename QuantKey to QuantDescriptor and move it to the same place as GroupShape? (https://github.com/vllm-project/vllm/pull/21716#discussion_r2278121011)
+- 2025-08-15 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:68: Why change this? No need to reorder args, let's revert (removing reshape op is good) (https://github.com/vllm-project/vllm/pull/21716#discussion_r2278123516)
+- 2025-08-15 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:171: Let's do this in the pass manager before the FixFunctionalizationPass (so it only happens once). (https://github.com/vllm-project/vllm/pull/21716#discussion_r2278126283)
+- 2025-08-15 `ProExpertProg` changes_requested: Overall looking much better! I still think we can further simplify the logic and reduce the complexity around deciding which exact attention kernel to use. Fusion should ideally be orthogonal to kvcache dtype (not fully). FlashInfer's attn kernels only support BF16-Q FP8-KV ... (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3122681409)
+- 2025-08-15 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:173: Please use Fp8LinearOp object to make sure any reshapes from there don't affect fusion here. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2278156694)
+- 2025-08-15 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:197: I think there are some existing utilities for this, can you reuse/extend those? This is pretty useful to have in general for testing. Not sure where they are but added during one of @LucasWilkinson 's attention metadata refactor PRs. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2278158620)
+- 2025-08-15 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:275: This seems not needed? (https://github.com/vllm-project/vllm/pull/21716#discussion_r2278160836)
+- 2025-08-15 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:274: Can you parametrize backend (and construct metadata builder appropriately)? No need to add other backends, just make it easy to do it (https://github.com/vllm-project/vllm/pull/21716#discussion_r2278161943)
+- 2025-08-15 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:367: Like above, can we check that the support function returns what we expected? (https://github.com/vllm-project/vllm/pull/21716#discussion_r2278164933)
+- 2025-08-15 `ProExpertProg` commented: Also took a look at the test. And after comments are addressed, could we see: - perf on main - perf with kvcache auto - perf with kvcache FP8, no fusion - perf with kvcache FP8, with fusion This way we can ... (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3122730847)
+- 2025-08-15 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:379: Can we actually do another forward pass and check results just to make sure it works with kvcache populated? (https://github.com/vllm-project/vllm/pull/21716#discussion_r2278172094)
+- 2025-08-15 `ProExpertProg` commented: Also would be good to add an integration test that runs with cudagraphs on and compares fused and unfused to make sure we don't have a bug with our "special warmup" multiplication of scalars for bmm2 scale (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3122752618)
+- 2025-08-15 `elvischenv` on `vllm/compilation/fusion_attn.py`:61: I also want to talk about this more. We will need to let this fused output quant supported() to support NVFP4 quant op. My current design is is not that related to this PR. I also find there is another FusedRMSQuantKey following ... (https://github.com/vllm-project/vllm/pull/21716#discussion_r2278399617)
+- 2025-08-15 `nvpohanh` on `vllm/compilation/fusion_attn.py`:61: QuantKey already existed before this PR, so I would suggest that we do this refactoring in another PR. Thanks (https://github.com/vllm-project/vllm/pull/21716#discussion_r2278499084)
+- 2025-08-15 `elvischenv` on `vllm/compilation/fusion_attn.py`:171: We tried moving this to the front of FixFunctionalizationPass. If only the attn fusion enabled, it works well. However, if we run with multiple passes, we encountered some errors of the graph. I think there are some issues in other passes when ... (https://github.com/vllm-project/vllm/pull/21716#discussion_r2278794979)
+- 2025-08-15 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:61: Yep it's ok to do in follow-up PR. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2279564787)
+- 2025-08-15 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:171: Can you create an issue in the vLLM repo and add a TODO? I can take a look (https://github.com/vllm-project/vllm/pull/21716#discussion_r2279573170)
+- 2025-08-15 `elvischenv` on `tests/compile/test_fusion_attn.py`:197: Thanks. Found some useful functions from vllm/tests/v1/attention/utils.py. Used them in the latest commit. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2279578976)
+- 2025-08-15 `elvischenv` on `tests/compile/test_fusion_attn.py`:275: Yes, we don't need this. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2279579081)
+- 2025-08-15 `elvischenv` on `tests/compile/test_fusion_attn.py`:367: We don't have supported function for our case(ATTN+Quant - ATTN). I have already done the op count check in the following lines. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2279579234)
+- 2025-08-15 `elvischenv` on `tests/compile/test_fusion_attn.py`:379: Also would be good to add an integration test that runs with cudagraphs on and compares fused and unfused to make sure we don't have a bug with our "special warmup" multiplication of scalars for bmm2 scale Both fused and unfused tests ... (https://github.com/vllm-project/vllm/pull/21716#discussion_r2279579889)
+- 2025-08-15 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:367: I don't understand what you mean, why can't we check what fused output quant supported returns: ` (https://github.com/vllm-project/vllm/pull/21716#discussion_r2279587582)
+- 2025-08-15 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:379: This unit test uses TestBackend and so no cudagraph collection and replay happens. That's fine because it's a unit test, but we should just re-run the forward pass to double-check correctness after the 1st run. You don't have to populate the kvcache ... (https://github.com/vllm-project/vllm/pull/21716#discussion_r2279591594)
+- 2025-08-15 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:228: Can you make this respect the backend in the env variable? (https://github.com/vllm-project/vllm/pull/21716#discussion_r2279597876)
+- 2025-08-15 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:228: Also builder should be initialized in init so we can build multiple times for multiple passes (https://github.com/vllm-project/vllm/pull/21716#discussion_r2279598720)
+- 2025-08-15 `ProExpertProg` commented: A few more minor notes on the test (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3124676354)
+- 2025-08-15 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:274: Still missing parametrized metadata builder (https://github.com/vllm-project/vllm/pull/21716#discussion_r2279602284)
+- 2025-08-15 `ProExpertProg` on `vllm/v1/attention/backends/flashinfer.py`:717: Should we add an assert? (https://github.com/vllm-project/vllm/pull/21716#discussion_r2279609451)
+- 2025-08-15 `mgoin` on `benchmarks/kernels/benchmark_trtllm_decode_attention.py`:179: I think we should leave in some notion of accuracy testing (https://github.com/vllm-project/vllm/pull/21716#discussion_r2279722530)
+- 2025-08-16 `elvischenv` on `tests/compile/test_fusion_attn.py`:274: Added the parametrized builder according to the backend. Do the changes look good to you? Thanks. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2280449778)
+- 2025-08-16 `elvischenv` on `tests/compile/test_fusion_attn.py`:367: I see. Added this check in the latest commit. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2280449815)
+- 2025-08-16 `elvischenv` on `tests/compile/test_fusion_attn.py`:379: Oh, I see what you mean. Added another round of forward pass, as well as checking the status of o scale float defined in the attn layer attribute. Thanks! (https://github.com/vllm-project/vllm/pull/21716#discussion_r2280450058)
+- 2025-08-16 `elvischenv` on `vllm/compilation/fusion_attn.py`:159: Done, please check the two latest commits. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2280450093)
+- 2025-08-18 `elvischenv` on `vllm/compilation/fusion_attn.py`:171: Filed and added TODO in the code. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2281778058)
+- 2025-08-18 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:249: Can directly dereference here, make sure to update test function signature (https://github.com/vllm-project/vllm/pull/21716#discussion_r2282318440)
+- 2025-08-18 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:275: Why not just make the backend param Backend.FLASHINFER VLLM V1 and do: (https://github.com/vllm-project/vllm/pull/21716#discussion_r2282326620)
+- 2025-08-18 `ProExpertProg` on `vllm/utils/flashinfer.py`:201: I thought I was told bf16-fp8-bf16 is supported? (https://github.com/vllm-project/vllm/pull/21716#discussion_r2282342233)
+- 2025-08-18 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:271: Can we just make the quant key a test param (instead of quant dtype)? (https://github.com/vllm-project/vllm/pull/21716#discussion_r2282356966)
+- 2025-08-18 `ProExpertProg` approved: Looks good apart from a few minor nits and a question about supporting fp8 kvcache without output quant fusion. (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3128258324)
+- 2025-08-18 `ProExpertProg`: Also, seems like --kv-cache-dtype = fp8 performs worse than auto, is this because it's getting dispatched to flash attn? (https://github.com/vllm-project/vllm/pull/21716#issuecomment-3196832497)
+- 2025-08-18 `elvischenv` on `tests/compile/test_fusion_attn.py`:271: Still keeping the quant dtype because it will be used in the FP4-out test later. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2282562909)
+- 2025-08-18 `elvischenv` on `vllm/utils/flashinfer.py`:201: That's only for decode kernel. Prefill kernel currently is not supported. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2282567256)
+- 2025-08-18 `elvischenv` on `tests/compile/test_fusion_attn.py`:275: Yes, that makes sense. Please refer to the latest commit. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2282569229)
+- 2025-08-18 `elvischenv` on `tests/compile/test_fusion_attn.py`:249: Thanks. Fixed in the latest commit. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2282569976)
+- 2025-08-18 `elvischenv`: Also, seems like --kv-cache-dtype = fp8 performs worse than auto, is this because it's getting dispatched to flash attn? I think this is expected for now since FP8 kv cache will not use TRTLLM attn kernel with this heuristic set by previous ... (https://github.com/vllm-project/vllm/pull/21716#issuecomment-3197195129)
+- 2025-08-18 `mgoin` commented: It looks like the kv cache dtype="auto" is consistently slower in this PR compared to main, can you investigate this so we don't regress? (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3124896412)
+- 2025-08-18 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:271: quant key contains quant dtype though so it'll still work for fp4 (https://github.com/vllm-project/vllm/pull/21716#discussion_r2282663610)
+- 2025-08-18 `elvischenv`: It looks like the kv cache dtype="auto" is consistently slower in this PR compared to main, can you investigate this so we don't regress? Thanks for pointing out. I think the that is likely unstable. Redo the measurements 3 times for both ... (https://github.com/vllm-project/vllm/pull/21716#issuecomment-3197601734)
+- 2025-08-18 `elvischenv`: Seems nvidia/Llama-4-Scout-17B-16E-Instruct-FP8 is not accessible from CI. (https://github.com/vllm-project/vllm/pull/21716#issuecomment-3197609204)
+- 2025-08-18 `elvischenv` on `benchmarks/kernels/benchmark_trtllm_decode_attention.py`:179: Remove these comments since we already have tests/kernels/attention/test flashinfer trtllm attention.py to validate the accuracy. Previously I just use them to confirm the benchmarking test is also correct. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2282894936)
+- 2025-08-18 `elvischenv` on `tests/compile/test_fusion_attn.py`:271: I see. Fixed in the latest commit. Thanks. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2282896281)
+- 2025-08-18 `mgoin` on `benchmarks/kernels/benchmark_trtllm_prefill_attention.py`:252: Are there any other combinations supported, or is this all the kernel supports atm? (https://github.com/vllm-project/vllm/pull/21716#discussion_r2283380862)
+- 2025-08-18 `mgoin` approved: This PR is looking really good! I think this is essentially good to merge, so I've merged with main to see if we can get green (https://github.com/vllm-project/vllm/pull/21716#pullrequestreview-3129798402)
+- 2025-08-19 `elvischenv` on `benchmarks/kernels/benchmark_trtllm_prefill_attention.py`:252: Yes, added a mix input quant type (None, FP8 DTYPE, None), for decode kernel. For prefill, that's not supported for now. (https://github.com/vllm-project/vllm/pull/21716#discussion_r2283805587)

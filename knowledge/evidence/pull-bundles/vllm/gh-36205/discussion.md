@@ -1,75 +1,36 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#36205](https://github.com/vllm-project/vllm/pull/36205)
-- Source page: `sources/prs/vllm/PR-36205.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-36205`
-- Generated at: `2026-05-20T15:40:09.067518+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-03-06T03:44:07Z`
-- Merged: `2026-04-03T01:16:11Z`
-
-## Discussion Counts
-
-- Issue comments: 17
-- Review submissions: 21 (approved=3, commented=18)
-- Inline review comments: 34
-- Review threads observed: 23
-- Resolved/outdated thread markers: resolved=18, outdated=23
-- Human participants with discussion text: MatthewBonanni, ProExpertProg, carlyou, mergify
-- Automation comments/reviews omitted from high-signal summary: 3
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-03-06T03:49:44Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces fused output quantization for MLA attention, which is a valuable performance optimization. ... (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3901123644)
-- `2026-03-06T03:52:17Z` `COMMENTED` by `carlyou` (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3901119507)
-- `2026-03-06T20:58:26Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3906002015)
-- `2026-03-08T18:26:28Z` `COMMENTED` by `carlyou` - Added test results, PR is ready for final review. cc @ProExpertProg (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3911860966)
-- `2026-03-09T16:55:09Z` `COMMENTED` by `MatthewBonanni` - Thanks for the contribution! Just a few comments (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3916763784)
-- `2026-03-10T00:32:58Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3919006380)
-- `2026-03-10T17:55:29Z` `COMMENTED` by `carlyou` (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3924345179)
-- `2026-03-13T12:51:35Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3943829673)
-- `2026-03-13T13:02:53Z` `APPROVED` by `MatthewBonanni` - LGTM, I'll let @ProExpertProg have the final sign-off though (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3943883209)
-- `2026-03-14T03:09:20Z` `COMMENTED` by `ProExpertProg` - Looks good overall, just nits. A few more high-level asks: - Can you add the information to the ... (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3947905897)
-- `2026-03-14T20:27:42Z` `COMMENTED` by `carlyou` (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3949134054)
-- `2026-03-14T20:49:44Z` `COMMENTED` by `carlyou` (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3949269877)
-- `2026-03-14T22:06:56Z` `COMMENTED` by `carlyou` (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3949336111)
-- `2026-03-14T22:08:44Z` `COMMENTED` by `carlyou` (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3949337426)
-- `2026-03-14T23:00:47Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3949399291)
-- `2026-03-30T01:43:28Z` `COMMENTED` by `carlyou` (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-4027625924)
-- `2026-03-31T21:46:34Z` `COMMENTED` by `carlyou` (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-4040376483)
-- `2026-03-31T22:53:51Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-4040673710)
-- `2026-03-31T23:07:49Z` `APPROVED` by `ProExpertProg` - Just two nits, please fix pre-commit and change the fusion pass to the new attn fusion pass structure! (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-4040680638)
-- `2026-04-01T20:56:50Z` `APPROVED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-4047024291)
-- `2026-04-01T21:01:15Z` `COMMENTED` by `carlyou` (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-4047056292)
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/layers/attention/mla_attention.py`: 16 inline comment(s)
-- `vllm/compilation/passes/fusion/mla_attn_quant_fusion.py`: 4 inline comment(s)
-- `docs/design/fusions.md`: 4 inline comment(s)
-- `vllm/compilation/passes/fusion/attn_quant_fusion.py`: 2 inline comment(s)
-- `tests/compile/fusions_e2e/common.py`: 2 inline comment(s)
-- `vllm/compilation/passes/pass_manager.py`: 2 inline comment(s)
-- `tests/compile/fusions_e2e/models.py`: 2 inline comment(s)
-- `vllm/v1/attention/backend.py`: 1 inline comment(s)
-- `tests/evals/gsm8k/gsm8k_eval.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-14T03:09:20Z` `review` `COMMENTED` by `ProExpertProg`; signals: accuracy, attention, fp4, mla, perf, regression, speedup; excerpt: "Looks good overall, just nits. A few more high-level asks: - Can you add the information to the fusions.md document? Please explain that this ..." (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3947905897)
-- `2026-03-16T22:57:53Z` `issue` by `carlyou`; signals: accuracy, b200, benchmark, fp4, nvfp4, perf, regression, speedup; excerpt: "Can we check E2E accuracy and perf without and with fusion on this PR so we're not regressing either (not expecting speedup yet but ..." (https://github.com/vllm-project/vllm/pull/36205#issuecomment-4071175344)
-- `2026-03-14T02:45:13Z` `inline` by `ProExpertProg` `vllm/model_executor/layers/attention/mla_attention.py`:743; signals: attention, cuda, fp8, kernel, mla, perf; excerpt: "Let's use the QuantFP8 object here - create it in the constructor, so we're not losing perf by using the CUDA kernel (which is ..." (https://github.com/vllm-project/vllm/pull/36205#discussion_r2934542732)
-- `2026-03-18T03:57:22Z` `issue` by `carlyou`; signals: accuracy, b200, cuda, cudagraph, fp4, fp8; excerpt: "Yep the cudagraphs fallback is expected! And numbers look decent. Can you also check e2e accuracy for a model? And using a smaller D's ..." (https://github.com/vllm-project/vllm/pull/36205#issuecomment-4079455567)
-- `2026-03-08T18:24:19Z` `inline` by `carlyou` `vllm/model_executor/layers/attention/mla_attention.py`:2534; signals: attention, dtype, fp4, mla, nvfp4; excerpt: "fixing dtype for nvfp4" (https://github.com/vllm-project/vllm/pull/36205#discussion_r2902228806)
-- `2026-03-14T22:06:56Z` `inline` by `carlyou` `docs/design/fusions.md`:25; signals: attention, fp4, fp8, mla, nvfp4; excerpt: "todo: Attention output → FP8/NVFP4 quant - MLA Attention output → FP8/NVFP4 quant" (https://github.com/vllm-project/vllm/pull/36205#discussion_r2935891420)
-- `2026-03-17T07:20:53Z` `issue` by `ProExpertProg`; signals: accuracy, cuda, cudagraph, fp4, fp8; excerpt: "Yep the cudagraphs fallback is expected! And numbers look decent. Can you also check e2e accuracy for a model? And using a smaller D's ..." (https://github.com/vllm-project/vllm/pull/36205#issuecomment-4072899012)
-- `2026-03-10T17:55:29Z` `inline` by `carlyou` `vllm/model_executor/layers/attention/mla_attention.py`:557; signals: attention, mla, nan; excerpt: "That's how i interpreted, to avoid repeated allocation per layer/batch. It is now in init: @MatthewBonanni could you chime in?" (https://github.com/vllm-project/vllm/pull/36205#discussion_r2913491547)
-- `2026-03-14T02:54:23Z` `inline` by `ProExpertProg` `vllm/model_executor/layers/attention/mla_attention.py`:459; signals: attention, memory, mla; excerpt: "What's your thought process for avoiding allocating this in fwd pass? Wouldn't this increase memory usage as we're now holding this tensor for each ..." (https://github.com/vllm-project/vllm/pull/36205#discussion_r2934551079)
-- `2026-03-06T20:58:26Z` `inline` by `ProExpertProg` `vllm/model_executor/layers/attention/mla_attention.py`:695; signals: attention, mla; excerpt: "The gain will come from actually fusing the quant operations to the last op in the prefill/mha and decode/mqa paths. Those seem to be ..." (https://github.com/vllm-project/vllm/pull/36205#discussion_r2897840824)
-- `2026-03-14T02:38:21Z` `inline` by `ProExpertProg` `vllm/compilation/passes/fusion/mla_attn_quant_fusion.py`:173; signals: hang, mla; excerpt: "Why does this need to be full? If you're copying from the old pass, this was recently changed to empty" (https://github.com/vllm-project/vllm/pull/36205#discussion_r2934536546)
-- `2026-03-14T18:37:55Z` `inline` by `carlyou` `vllm/model_executor/layers/attention/mla_attention.py`:459; signals: attention, mla; excerpt: "I got this wrong... moved the buffer back to forward for now. What woud you suggest: 1. a shared buffer on the class, 2. ..." (https://github.com/vllm-project/vllm/pull/36205#discussion_r2935635607)
+- 2026-03-06 `carlyou` on `vllm/compilation/passes/fusion/attn_quant_fusion.py`:324: maybe put in a separate file mla attn quant fusion.py? (https://github.com/vllm-project/vllm/pull/36205#discussion_r2893658060)
+- 2026-03-06 `ProExpertProg` on `vllm/model_executor/layers/attention/mla_attention.py`:695: The gain will come from actually fusing the quant operations to the last op in the prefill/mha and decode/mqa paths. Those seem to be merge attn states and v up proj respectively. (https://github.com/vllm-project/vllm/pull/36205#discussion_r2897840824)
+- 2026-03-06 `ProExpertProg`: Yep, this looks right to me! The actual gains will come from fusing the quant into the kernels inside MLA. Also seems like someone else opened a similar PR in 36277, can you take a look? (https://github.com/vllm-project/vllm/pull/36205#issuecomment-4014128769)
+- 2026-03-08 `carlyou` on `vllm/model_executor/layers/attention/mla_attention.py`:2534: fixing dtype for nvfp4 (https://github.com/vllm-project/vllm/pull/36205#discussion_r2902228806)
+- 2026-03-08 `carlyou` commented: Added test results, PR is ready for final review. cc @ProExpertProg (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3911860966)
+- 2026-03-09 `MatthewBonanni` on `vllm/model_executor/layers/attention/mla_attention.py`:557: Can we preallocate this? Use max num batched tokens in place of output.shape[0] (https://github.com/vllm-project/vllm/pull/36205#discussion_r2906645180)
+- 2026-03-09 `MatthewBonanni` on `vllm/model_executor/layers/attention/mla_attention.py`:720: output is already 2D (T padded, N V) here, no? I think this is a no-op (https://github.com/vllm-project/vllm/pull/36205#discussion_r2906673561)
+- 2026-03-09 `MatthewBonanni` on `vllm/model_executor/layers/attention/mla_attention.py`:725: does this have to be imported locally? would prefer module-level (https://github.com/vllm-project/vllm/pull/36205#discussion_r2906700961)
+- 2026-03-09 `MatthewBonanni` commented: Thanks for the contribution! Just a few comments (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3916763784)
+- 2026-03-09 `carlyou`: @MatthewBonanni thanks for the comments! PR is updated and rebased, PTAL (https://github.com/vllm-project/vllm/pull/36205#issuecomment-4025924030)
+- 2026-03-10 `ProExpertProg` on `vllm/model_executor/layers/attention/mla_attention.py`:557: Do you mean saving this tensor as a workspace on the layer? Or what are you referring to here (https://github.com/vllm-project/vllm/pull/36205#discussion_r2908643050)
+- 2026-03-10 `carlyou` on `vllm/model_executor/layers/attention/mla_attention.py`:557: That's how i interpreted, to avoid repeated allocation per layer/batch. It is now in init: @MatthewBonanni could you chime in? (https://github.com/vllm-project/vllm/pull/36205#discussion_r2913491547)
+- 2026-03-13 `MatthewBonanni` on `vllm/model_executor/layers/attention/mla_attention.py`:557: Yes, that's what I meant 👍 (https://github.com/vllm-project/vllm/pull/36205#discussion_r2931016360)
+- 2026-03-13 `MatthewBonanni` on `vllm/v1/attention/backend.py`:825: Can we make this import module-level (https://github.com/vllm-project/vllm/pull/36205#discussion_r2931064331)
+- 2026-03-14 `ProExpertProg` on `vllm/compilation/passes/fusion/mla_attn_quant_fusion.py`:173: Why does this need to be full? If you're copying from the old pass, this was recently changed to empty (https://github.com/vllm-project/vllm/pull/36205#discussion_r2934536546)
+- 2026-03-14 `ProExpertProg` on `vllm/compilation/passes/fusion/mla_attn_quant_fusion.py`:270: Can be empty as well (https://github.com/vllm-project/vllm/pull/36205#discussion_r2934536759)
+- 2026-03-14 `ProExpertProg` on `vllm/model_executor/layers/attention/mla_attention.py`:743: Let's use the QuantFP8 object here - create it in the constructor, so we're not losing perf by using the CUDA kernel (which is slower). Note that this will be replaced by a vLLM IR op very soon - but still! (https://github.com/vllm-project/vllm/pull/36205#discussion_r2934542732)
+- 2026-03-14 `ProExpertProg` on `vllm/model_executor/layers/attention/mla_attention.py`:459: What's your thought process for avoiding allocating this in fwd pass? Wouldn't this increase memory usage as we're now holding this tensor for each layer? (https://github.com/vllm-project/vllm/pull/36205#discussion_r2934551079)
+- 2026-03-14 `ProExpertProg` commented: Looks good overall, just nits. A few more high-level asks: - Can you add the information to the fusions.md document? Please explain that this fusion is not expected to yield a speedup yet. - Also add to the fusion flag docstring that ... (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-3947905897)
+- 2026-03-14 `carlyou` on `vllm/model_executor/layers/attention/mla_attention.py`:459: I got this wrong... moved the buffer back to forward for now. What woud you suggest: 1. a shared buffer on the class, 2. or just allocate in forward? (https://github.com/vllm-project/vllm/pull/36205#discussion_r2935635607)
+- 2026-03-14 `carlyou` on `vllm/compilation/passes/fusion/mla_attn_quant_fusion.py`:173: 👍 thanks for catching it. (https://github.com/vllm-project/vllm/pull/36205#discussion_r2935664383)
+- 2026-03-14 `carlyou` on `tests/compile/fusions_e2e/common.py`:95: todo: mla attn quant fusion.py (https://github.com/vllm-project/vllm/pull/36205#discussion_r2935810656)
+- 2026-03-14 `carlyou` on `docs/design/fusions.md`:25: todo: Attention output → FP8/NVFP4 quant - MLA Attention output → FP8/NVFP4 quant (https://github.com/vllm-project/vllm/pull/36205#discussion_r2935891420)
+- 2026-03-14 `ProExpertProg` on `docs/design/fusions.md`:150: I think here's it's probably gonna make sense to specify the prefill backends that support this, because the question will be which functions support prefill+quant fusion (merge attn states and the bmm will be supported always with the general kernels IIUC) (https://github.com/vllm-project/vllm/pull/36205#discussion_r2935947817)
+- 2026-03-16 `carlyou`: Can we check E2E accuracy and perf without and with fusion on this PR so we're not regressing either (not expecting speedup yet but not expecting a regression) @ProExpertProg , updated eval and benchmark results in PR body, quick notes: - the ... (https://github.com/vllm-project/vllm/pull/36205#issuecomment-4071175344)
+- 2026-03-17 `ProExpertProg`: Yep the cudagraphs fallback is expected! And numbers look decent. Can you also check e2e accuracy for a model? And using a smaller D's with fp8 sounds good, although testing with DSv3.2-fp4 on tp=4 would be even better if you can! (https://github.com/vllm-project/vllm/pull/36205#issuecomment-4072899012)
+- 2026-03-18 `carlyou`: Yep the cudagraphs fallback is expected! And numbers look decent. Can you also check e2e accuracy for a model? And using a smaller D's with fp8 sounds good, although testing with DSv3.2-fp4 on tp=4 would be even better if you can! gsm8k ... (https://github.com/vllm-project/vllm/pull/36205#issuecomment-4079455567)
+- 2026-03-18 `carlyou`: @ProExpertProg results for DSv3.2 NVFP4 on 4x B200: gsm8k bench (https://github.com/vllm-project/vllm/pull/36205#issuecomment-4085098218)
+- 2026-03-30 `carlyou` on `docs/design/fusions.md`:26: todo: revert accidental chagne to RoPE row (https://github.com/vllm-project/vllm/pull/36205#discussion_r3007143561)
+- 2026-03-31 `carlyou` on `vllm/compilation/passes/pass_manager.py`:29: AttnQuantFusionPass was recently refactored. TODO: consider make a follow up PR and update MLAAttnFusionPass to match. (https://github.com/vllm-project/vllm/pull/36205#discussion_r3018591815)
+- 2026-03-31 `ProExpertProg` on `tests/evals/gsm8k/gsm8k_eval.py`:88: Can we move this into a separate PR? (https://github.com/vllm-project/vllm/pull/36205#discussion_r3018873463)
+- 2026-03-31 `ProExpertProg` on `tests/compile/fusions_e2e/common.py`:95: I think post-refactor, attn fusion uses the matches now instead of reading logs. Likely worth just refactoring the pass in this PR to the new structure (https://github.com/vllm-project/vllm/pull/36205#discussion_r3018883003)
+- 2026-03-31 `ProExpertProg` approved: Just two nits, please fix pre-commit and change the fusion pass to the new attn fusion pass structure! (https://github.com/vllm-project/vllm/pull/36205#pullrequestreview-4040680638)
+- 2026-04-01 `carlyou`: Just two nits, please fix pre-commit and change the fusion pass to the new attn fusion pass structure! @ProExpertProg refactored fusion pass and addressed the other comment. For pre-commit, could you help add a "ready" label per error: (https://github.com/vllm-project/vllm/pull/36205#issuecomment-4167096288)
+- 2026-04-01 `ProExpertProg` on `tests/compile/fusions_e2e/models.py`:155: Should this say "MLA attn + group quant ..."? (https://github.com/vllm-project/vllm/pull/36205#discussion_r3024610155)
+- 2026-04-01 `carlyou` on `tests/compile/fusions_e2e/models.py`:155: eagle eyes! updated 🫡 (https://github.com/vllm-project/vllm/pull/36205#discussion_r3024637188)

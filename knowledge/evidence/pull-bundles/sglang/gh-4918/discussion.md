@@ -1,76 +1,38 @@
-# PR Discussion Digest
-
-- Source PR: [sgl-project/sglang#4918](https://github.com/sgl-project/sglang/pull/4918)
-- Source page: `sources/prs/sglang/PR-4918.md`
-- Evidence bundle: `evidence/pull-bundles/sglang/gh-4918`
-- Generated at: `2026-05-20T15:30:17.419749+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-03-30T14:13:37Z`
-- Merged: `2025-04-04T08:59:29Z`
-
-## Discussion Counts
-
-- Issue comments: 14
-- Review submissions: 23 (changes_requested=1, commented=22)
-- Inline review comments: 49
-- Review threads observed: 33
-- Resolved/outdated thread markers: resolved=22, outdated=28
-- Human participants with discussion text: BBuf, DiegoD94, ch-wan, dongyibo, fzyzcjy, lambert0312, xihuai18, yiakwy-xpu-ml-framework-team, zhyncs
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 7
-
-## Review Decisions
-
-- `2025-03-31T00:57:47Z` `COMMENTED` by `fzyzcjy` - Just some nits (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2728076842)
-- `2025-03-31T04:08:33Z` `CHANGES_REQUESTED` by `ch-wan` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2728144622)
-- `2025-03-31T14:29:05Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2729511211)
-- `2025-04-01T01:26:55Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2730851313)
-- `2025-04-01T01:31:47Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2730860071)
-- `2025-04-01T01:35:30Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2730864028)
-- `2025-04-01T03:48:07Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2731029489)
-- `2025-04-01T03:49:18Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2731030456)
-- `2025-04-01T03:50:17Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2731031231)
-- `2025-04-01T03:51:12Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2731032024)
-- `2025-04-01T03:56:10Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2731035984)
-- `2025-04-01T03:56:49Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2731036522)
-- `2025-04-01T04:40:59Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2731093766)
-- `2025-04-01T04:41:06Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2731093882)
-- `2025-04-01T04:41:17Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2731094053)
-- `2025-04-02T04:15:46Z` `COMMENTED` by `fzyzcjy` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2734554358)
-- `2025-04-02T23:59:43Z` `COMMENTED` by `fzyzcjy` - forgot to submit (nit) reviews again... (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2736548809)
-- `2025-04-03T01:36:21Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2738079782)
-- `2025-04-03T07:11:34Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2738748530)
-- `2025-04-03T07:11:36Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2738748617)
-- `2025-04-03T19:00:41Z` `COMMENTED` by `zhyncs` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2740874122)
-- `2025-04-04T06:13:26Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2741874005)
-
-## Inline Comment Hotspots
-
-- `python/sglang/srt/models/deepseek_v2.py`: 15 inline comment(s)
-- `python/sglang/srt/layers/moe/topk.py`: 13 inline comment(s)
-- `benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py`: 7 inline comment(s)
-- `sgl-kernel/tests/test_moe_align.py`: 4 inline comment(s)
-- `python/sglang/srt/layers/moe/fused_moe_triton/fused_moe.py`: 3 inline comment(s)
-- `python/sglang/srt/server_args.py`: 3 inline comment(s)
-- `python/sglang/bench_serving.py`: 2 inline comment(s)
-- `python/sglang/srt/layers/quantization/compressed_tensors/compressed_tensors_moe.py`: 1 inline comment(s)
-- `python/sglang/srt/managers/schedule_batch.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-03-31T00:45:00Z` `inline` by `fzyzcjy` `benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py`:403; signals: benchmark, kernel, moe, triton; excerpt: "nit: wondering whether we should call it "share" or "shared", it seems the original code has the latter more" (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020303725)
-- `2025-03-31T02:57:19Z` `inline` by `ch-wan` `benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py`:406; signals: benchmark, kernel, moe, triton; excerpt: "DeepSeek-V2 has 2 shared experts. Should we multiple the number of replica with the number of shared experts?" (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020359992)
-- `2025-03-31T04:06:33Z` `inline` by `ch-wan` `benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py`:404; signals: benchmark, kernel, moe, triton; excerpt: "Does this variable indicates the number of replication for each shared experts? This name is confusing as it represents number of shared experts." (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020388824)
-- `2025-03-31T00:45:51Z` `inline` by `fzyzcjy` `benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py`:404; signals: benchmark, kernel, moe, triton; excerpt: "nit: maybe we can unify the logic as E = config.n routed experts + n shared fusion experts" (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020303985)
-- `2025-04-01T01:31:46Z` `inline` by `BBuf` `benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py`:404; signals: benchmark, kernel, moe, triton; excerpt: "ok" (https://github.com/sgl-project/sglang/pull/4918#discussion_r2021992037)
-- `2025-04-02T14:47:13Z` `inline` by `fzyzcjy` `benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py`:403; signals: benchmark, kernel, moe, triton; excerpt: "nit: shall we use args here, because we use serverargs as well on main code" (https://github.com/sgl-project/sglang/pull/4918#discussion_r2024988537)
-- `2025-04-03T07:11:36Z` `inline` by `BBuf` `benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py`:403; signals: benchmark, kernel, moe, triton; excerpt: "done" (https://github.com/sgl-project/sglang/pull/4918#discussion_r2026347236)
-- `2025-03-31T00:43:20Z` `inline` by `fzyzcjy` `python/sglang/srt/layers/moe/fused_moe_triton/fused_moe.py`:641; signals: moe, triton; excerpt: "nit: wondering whether we can avoid creating a new subdirectory, because it seems the computation speed is determined by E (num experts) and may ..." (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020303228)
-- `2025-03-31T00:50:25Z` `inline` by `fzyzcjy` `python/sglang/srt/layers/moe/topk.py`:133; signals: kernel, moe; excerpt: "nit: wondering whether a 1.0 will be optimized as a, or will pytorch actually call kernels to do a computation. If the latter, maybe ..." (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020305595)
-- `2025-03-31T00:56:42Z` `inline` by `fzyzcjy` `sgl-kernel/tests/test_moe_align.py`:147; signals: kernel, moe; excerpt: "nit: it seems the tuning output config says E=264, thus wondering whether we need to add 264 to this list as well for a ..." (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020307847)
-- `2025-03-31T00:57:07Z` `inline` by `fzyzcjy` `sgl-kernel/tests/test_moe_align.py`:146; signals: kernel, moe; excerpt: "nit: not run the code, but if I understand correctly, topk now is 1 larger, so maybe we can put that value here as ..." (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020307994)
-- `2025-04-01T01:26:55Z` `inline` by `BBuf` `python/sglang/srt/layers/moe/fused_moe_triton/fused_moe.py`:641; signals: moe, triton; excerpt: "Ok, I agree." (https://github.com/sgl-project/sglang/pull/4918#discussion_r2021986093)
+- 2025-03-31 `fzyzcjy` on `python/sglang/srt/layers/moe/fused_moe_triton/fused_moe.py`:641: nit: wondering whether we can avoid creating a new subdirectory, because it seems the computation speed is determined by E (num experts) and may not be different when num experts come from fusion or non-fusion (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020303228)
+- 2025-03-31 `fzyzcjy` on `benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py`:403: nit: wondering whether we should call it "share" or "shared", it seems the original code has the latter more (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020303725)
+- 2025-03-31 `fzyzcjy` on `benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py`:404: nit: maybe we can unify the logic as E = config.n routed experts + n shared fusion experts (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020303985)
+- 2025-03-31 `fzyzcjy` on `python/sglang/srt/layers/moe/topk.py`:129: nit: gets a bit confused about the numbers (but if it can run just ignore me, probably I just get it wrong). num experts := scores.shape[1] topk ids := topk(scores) === topk ids has value range from 0 to scores.shape[1] Here we ... (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020304829)
+- 2025-03-31 `fzyzcjy` on `python/sglang/srt/layers/moe/topk.py`:128: nit: wondering whether randint will be a little bit slower - shall we use something like round-robin (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020305178)
+- 2025-03-31 `fzyzcjy` on `python/sglang/srt/layers/moe/topk.py`:133: nit: curious what is 1.0/2.5, would be great to add a line of comment explaining it (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020305398)
+- 2025-03-31 `fzyzcjy` on `python/sglang/srt/layers/moe/topk.py`:133: nit: wondering whether a 1.0 will be optimized as a, or will pytorch actually call kernels to do a computation. If the latter, maybe we can remove 1.0 to speed up a tiny little bit (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020305595)
+- 2025-03-31 `fzyzcjy` on `python/sglang/srt/layers/moe/topk.py`:139: nit: another way to reduce a bit of code duplication may be (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020305802)
+- 2025-03-31 `fzyzcjy` on `python/sglang/srt/layers/moe/topk.py`:238: nit: maybe we can add SGLANG prefix to the env var (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020305949)
+- 2025-03-31 `fzyzcjy` on `python/sglang/srt/layers/moe/topk.py`:238: nit: it seems the env var is used several times, thus maybe we can extract it to a global variable (constant) (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020306075)
+- 2025-03-31 `fzyzcjy` on `python/sglang/srt/models/deepseek_v2.py`:1352: nit: maybe we can write dict(weights list) (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020306436)
+- 2025-03-31 `fzyzcjy` on `python/sglang/srt/models/deepseek_v2.py`:1359: nit: when base gpu id 0, this may not hold (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020306574)
+- 2025-03-31 `fzyzcjy` on `python/sglang/srt/models/deepseek_v2.py`:1358: nit: it seems we need to consider platforms other than CUDA, so I saw code using get device module etc (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020306861)
+- 2025-03-31 `fzyzcjy` on `python/sglang/srt/models/deepseek_v2.py`:1364: nit: maybe we need to consider moe layer freq (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020307096)
+- 2025-03-31 `fzyzcjy` on `python/sglang/srt/models/deepseek_v2.py`:1372: nit: is it possible that we remove the original shared experts weight after this, then we save a bit of memory by making that shared expert never load, and we can remove the logic of above, since now it is directly None (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020307664)
+- 2025-03-31 `fzyzcjy` on `sgl-kernel/tests/test_moe_align.py`:147: nit: it seems the tuning output config says E=264, thus wondering whether we need to add 264 to this list as well for a quick test (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020307847)
+- 2025-03-31 `fzyzcjy` on `sgl-kernel/tests/test_moe_align.py`:146: nit: not run the code, but if I understand correctly, topk now is 1 larger, so maybe we can put that value here as well (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020307994)
+- 2025-03-31 `ch-wan` on `python/sglang/srt/layers/moe/topk.py`:105: The naming is a little bit confusing. Is it identical with n share fusion experts in the previous files? Why do we need a different name? (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020353618)
+- 2025-03-31 `ch-wan` on `benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py`:406: DeepSeek-V2 has 2 shared experts. Should we multiple the number of replica with the number of shared experts? (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020359992)
+- 2025-03-31 `ch-wan` on `python/sglang/srt/layers/moe/topk.py`:133: I have a similar question. Should it be deviced by (1 + num shared experts)? We can also use out to optimize it. (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020360211)
+- 2025-03-31 `ch-wan` on `python/sglang/srt/layers/moe/topk.py`:238: os is not imported (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020363357)
+- 2025-03-31 `ch-wan` on `python/sglang/srt/models/deepseek_v2.py`:193: Why n share fusion experts is clipped? How to set the gating weight for the extra experts? (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020388610)
+- 2025-03-31 `ch-wan` on `benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py`:404: Does this variable indicates the number of replication for each shared experts? This name is confusing as it represents number of shared experts. (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020388824)
+- 2025-03-31 `ch-wan` on `python/sglang/srt/layers/moe/topk.py`:128: we can call torch.randint(.., out=topk ids[...]) to save data copy (https://github.com/sgl-project/sglang/pull/4918#discussion_r2020389055)
+- 2025-03-31 `BBuf`: @BBuf I have finished my review. My major concern is how it is compatible with deepseek-v2 where the model has 2 shared experts? Thank you. Currently, I am facing an issue with garbled output with the pr. I will address your feedback ... (https://github.com/sgl-project/sglang/pull/4918#issuecomment-2765468191)
+- 2025-03-31 `fzyzcjy`: Currently, I am facing an issue with garbled output with the pr. Wondering whether the "gets a bit confused about the numbers" comment above may be a little bit related (again I just used eyes to look at it so can be ... (https://github.com/sgl-project/sglang/pull/4918#issuecomment-2765506746)
+- 2025-03-31 `BBuf` on `python/sglang/srt/layers/moe/topk.py`:133: 2.5 is the routed scaling factor( I'll refine the code later. (https://github.com/sgl-project/sglang/pull/4918#discussion_r2021167186)
+- 2025-04-01 `BBuf` on `python/sglang/srt/layers/moe/topk.py`:105: Yeah, I'll handle it. (https://github.com/sgl-project/sglang/pull/4918#discussion_r2021994536)
+- 2025-04-01 `BBuf` on `python/sglang/srt/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:13: To avoid circular import. (https://github.com/sgl-project/sglang/pull/4918#discussion_r2022095598)
+- 2025-04-01 `BBuf` on `python/sglang/srt/managers/schedule_batch.py`:617: To avoid circular import when top.py import global server args dict. (https://github.com/sgl-project/sglang/pull/4918#discussion_r2022096151)
+- 2025-04-01 `BBuf` on `python/sglang/srt/models/deepseek_v2.py`:193: Since the shared experts copied here are all the same expert, only one additional topk is needed, that is, from top8 to top9. (https://github.com/sgl-project/sglang/pull/4918#discussion_r2022132356)
+- 2025-04-02 `fzyzcjy`: Btw I am having some slight modifications based on this branch in to add support for 4x8xH100 + EPMoE. also cc @zhyncs (https://github.com/sgl-project/sglang/pull/4918#issuecomment-2771149945)
+- 2025-04-02 `fzyzcjy` on `python/sglang/srt/models/deepseek_v2.py`:1396: nit: would be great to extract the logic of weight cloning into a function, then it is a bit easier to add support for nextn (https://github.com/sgl-project/sglang/pull/4918#discussion_r2024000855)
+- 2025-04-02 `fzyzcjy` on `benchmark/kernels/fused_moe_triton/tuning_fused_moe_triton.py`:403: nit: shall we use args here, because we use serverargs as well on main code (https://github.com/sgl-project/sglang/pull/4918#discussion_r2024988537)
+- 2025-04-02 `fzyzcjy` on `python/sglang/srt/server_args.py`:1114: nit: if tp size is good, what about we default it to None, and when it is none we use code to make it become tp size (https://github.com/sgl-project/sglang/pull/4918#discussion_r2024990418)
+- 2025-04-02 `fzyzcjy` on `python/sglang/srt/models/deepseek_v2.py`:1429: nit: well when I wrote this I just meant to be a hack (and commented "hack"), maybe we can improve the code a little bit, e.g. do not construct the weight name twice which may be error prone (https://github.com/sgl-project/sglang/pull/4918#discussion_r2024995603)
+- 2025-04-02 `fzyzcjy` commented: forgot to submit (nit) reviews again... (https://github.com/sgl-project/sglang/pull/4918#pullrequestreview-2736548809)
+- 2025-04-04 `BBuf` on `python/sglang/bench_serving.py`:1581: This parameter was added by me. Setting it to 1 ensures consistency with the initial warmup of 1 request. (https://github.com/sgl-project/sglang/pull/4918#discussion_r2028154021)

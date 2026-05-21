@@ -1,72 +1,25 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#12639](https://github.com/vllm-project/vllm/pull/12639)
-- Source page: `sources/prs/vllm/PR-12639.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-12639`
-- Generated at: `2026-05-20T15:33:49.417517+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-02-01T04:43:16Z`
-- Merged: `2025-02-21T23:30:12Z`
-
-## Discussion Counts
-
-- Issue comments: 10
-- Review submissions: 22 (approved=1, commented=21)
-- Inline review comments: 24
-- Review threads observed: 14
-- Resolved/outdated thread markers: resolved=8, outdated=9
-- Human participants with discussion text: LucasWilkinson, ZhongYingMatrix, mergify, oreo-wjx, tlrmchlsmth
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 5
-
-## Review Decisions
-
-- `2025-02-07T19:24:09Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2602635697)
-- `2025-02-07T19:25:01Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2602637929)
-- `2025-02-07T19:29:20Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2602651916)
-- `2025-02-07T19:45:16Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2602661768)
-- `2025-02-13T21:23:11Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2616251401)
-- `2025-02-13T23:17:53Z` `COMMENTED` by `tlrmchlsmth` - Just starting to take a look (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2616400435)
-- `2025-02-14T03:50:35Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2616698461)
-- `2025-02-14T20:07:28Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2618691162)
-- `2025-02-14T20:09:11Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2618709619)
-- `2025-02-14T21:58:50Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2618722346)
-- `2025-02-14T22:05:05Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2618890323)
-- `2025-02-14T22:05:56Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2618891177)
-- `2025-02-14T22:06:25Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2618891637)
-- `2025-02-14T22:38:58Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2618928345)
-- `2025-02-14T22:41:14Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2618935864)
-- `2025-02-14T22:50:14Z` `COMMENTED` by `tlrmchlsmth` - Overall looks really good, great work. Concerns are mainly on the memory/workspace/profile run issues which we all know ... (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2618948146)
-- `2025-02-15T01:16:48Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2619201476)
-- `2025-02-15T22:49:28Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2619506063)
-- `2025-02-18T00:00:35Z` `APPROVED` by `tlrmchlsmth` - 🎉 (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2622102290)
-- `2025-02-19T20:46:17Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2627944361)
-
-## Inline Comment Hotspots
-
-- `vllm/attention/backends/mla/utils.py`: 7 inline comment(s)
-- `vllm/attention/ops/triton_merge_attn_states.py`: 5 inline comment(s)
-- `vllm/engine/arg_utils.py`: 3 inline comment(s)
-- `csrc/cuda_utils.h`: 3 inline comment(s)
-- `vllm/attention/backends/mla/common.py`: 3 inline comment(s)
-- `csrc/cache_kernels.cu`: 2 inline comment(s)
-- `vllm/attention/backends/utils.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-02-07T19:24:09Z` `inline` by `tlrmchlsmth` `vllm/engine/arg_utils.py`:1149; signals: block, cache, kv cache, memory, mla; excerpt: "My understanding of gpu memory utilization is that all of vLLM's memory usage including weights, activations, kv cache, and any extra space needed for ..." (https://github.com/vllm-project/vllm/pull/12639#discussion_r1947068356)
-- `2025-02-14T21:56:21Z` `inline` by `tlrmchlsmth` `vllm/attention/backends/mla/utils.py`:429; signals: attention, cache, kv cache, mla; excerpt: "Here we are allocating workspace used for the decompressed KV cache. This is going to happen during the profile run -- @WoosukKwon do you ..." (https://github.com/vllm-project/vllm/pull/12639#discussion_r1956762390)
-- `2025-02-14T22:05:56Z` `inline` by `LucasWilkinson` `vllm/attention/ops/triton_merge_attn_states.py`:22; signals: attention, kernel, triton; excerpt: "this kernel was adapted from to support successive calls" (https://github.com/vllm-project/vllm/pull/12639#discussion_r1956769449)
-- `2025-02-14T22:50:14Z` `review` `COMMENTED` by `tlrmchlsmth`; signals: block, memory; excerpt: "Overall looks really good, great work. Concerns are mainly on the memory/workspace/profile run issues which we all know are really hard to get right: ..." (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2618948146)
-- `2025-02-14T21:49:17Z` `issue` by `tlrmchlsmth`; signals: attention, flash attention, mla; excerpt: "Removed the V1 tag because although it does move some code out of the v1 flash attention backend, I didn't want anyone to get ..." (https://github.com/vllm-project/vllm/pull/12639#issuecomment-2660334762)
-- `2025-02-07T19:29:20Z` `inline` by `LucasWilkinson` `vllm/engine/arg_utils.py`:1149; signals: cache, memory; excerpt: "Do you know why the profile run doesn't already account for this memory footprint? because it depends on the context len in cache for ..." (https://github.com/vllm-project/vllm/pull/12639#discussion_r1947076963)
-- `2025-02-13T22:59:14Z` `inline` by `tlrmchlsmth` `csrc/cuda_utils.h`:40; signals: cuda, kernel; excerpt: "I think we just move the function over to here, since it's currently used only in scaled mm c3x.cu and this fn will mostly ..." (https://github.com/vllm-project/vllm/pull/12639#discussion_r1955325801)
-- `2025-02-14T20:17:29Z` `inline` by `tlrmchlsmth` `csrc/cache_kernels.cu`:703; signals: cache, kernel; excerpt: "Future work: this is generally useful across all kernels and we should probably factor these checks out into a helper function. Something like this:" (https://github.com/vllm-project/vllm/pull/12639#discussion_r1956673731)
-- `2025-02-14T22:38:58Z` `inline` by `tlrmchlsmth` `vllm/attention/ops/triton_merge_attn_states.py`:22; signals: attention, triton; excerpt: "Good to know -- for others' context we were discussing if this needed to be used for the matrix-absorption MQA codepath which could involve ..." (https://github.com/vllm-project/vllm/pull/12639#discussion_r1956791913)
-- `2025-02-13T23:05:46Z` `inline` by `tlrmchlsmth` `vllm/attention/backends/mla/utils.py`:24; signals: attention, mla; excerpt: "I feel like this could get misread" (https://github.com/vllm-project/vllm/pull/12639#discussion_r1955330739)
-- `2025-02-13T23:15:23Z` `inline` by `tlrmchlsmth` `vllm/attention/backends/mla/utils.py`:310; signals: attention, mla; excerpt: "Paranoia: ? Should we be looking at scheduler config.max num batched tokens in this case?" (https://github.com/vllm-project/vllm/pull/12639#discussion_r1955337558)
-- `2025-02-14T03:50:34Z` `inline` by `LucasWilkinson` `vllm/attention/backends/mla/utils.py`:310; signals: attention, mla; excerpt: "good call" (https://github.com/vllm-project/vllm/pull/12639#discussion_r1955519243)
+- 2025-02-07 `tlrmchlsmth` on `vllm/engine/arg_utils.py`:1149: My understanding of gpu memory utilization is that all of vLLM's memory usage including weights, activations, kv cache, and any extra space needed for MLA should fit within this budget. A user is explicitly specifying a gpu memory utilization, they wouldn't want ... (https://github.com/vllm-project/vllm/pull/12639#discussion_r1947068356)
+- 2025-02-07 `tlrmchlsmth` on `vllm/attention/backends/utils.py`:20: Fixup duplicate logger = logging.getLogger( name ) (https://github.com/vllm-project/vllm/pull/12639#discussion_r1947069722)
+- 2025-02-07 `LucasWilkinson` on `vllm/engine/arg_utils.py`:1149: Do you know why the profile run doesn't already account for this memory footprint? because it depends on the context len in cache for each seq in the request and we dont profile with max context len requests im trying to cap ... (https://github.com/vllm-project/vllm/pull/12639#discussion_r1947076963)
+- 2025-02-07 `tlrmchlsmth` on `csrc/cuda_utils.h`:40: This is already in csrc/core/math.hpp without the HOST DEVICE INLINE. Does it make sense for it to be one function? (https://github.com/vllm-project/vllm/pull/12639#discussion_r1947082938)
+- 2025-02-13 `LucasWilkinson` on `csrc/cuda_utils.h`:40: probably, I was just hesitant since csrc/core was supposed to cross platform, I know the HOST DEVICE INLINE define handles other platforms, but just felt a bit cuda centric, thoughts? (https://github.com/vllm-project/vllm/pull/12639#discussion_r1955231540)
+- 2025-02-13 `tlrmchlsmth` on `csrc/cuda_utils.h`:40: I think we just move the function over to here, since it's currently used only in scaled mm c3x.cu and this fn will mostly be used in kernels anyway (https://github.com/vllm-project/vllm/pull/12639#discussion_r1955325801)
+- 2025-02-13 `tlrmchlsmth` on `vllm/attention/backends/mla/utils.py`:24: I feel like this could get misread (https://github.com/vllm-project/vllm/pull/12639#discussion_r1955330739)
+- 2025-02-13 `tlrmchlsmth` on `vllm/attention/backends/mla/utils.py`:310: Paranoia: ? Should we be looking at scheduler config.max num batched tokens in this case? (https://github.com/vllm-project/vllm/pull/12639#discussion_r1955337558)
+- 2025-02-13 `tlrmchlsmth` commented: Just starting to take a look (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2616400435)
+- 2025-02-14 `LucasWilkinson`: NOTE: @pathorn found a bug with FP8 in R1, will notify here when resolved Edit this has been resolved (https://github.com/vllm-project/vllm/pull/12639#issuecomment-2658396203)
+- 2025-02-14 `tlrmchlsmth` on `vllm/attention/ops/triton_merge_attn_states.py`:22: Is this a potentially too much padding? Should consider doing something like (https://github.com/vllm-project/vllm/pull/12639#discussion_r1956655932)
+- 2025-02-14 `tlrmchlsmth` on `vllm/attention/ops/triton_merge_attn_states.py`:11: Consider adding high level comments describing what this does (https://github.com/vllm-project/vllm/pull/12639#discussion_r1956666442)
+- 2025-02-14 `tlrmchlsmth` on `csrc/cache_kernels.cu`:703: Future work: this is generally useful across all kernels and we should probably factor these checks out into a helper function. Something like this: (https://github.com/vllm-project/vllm/pull/12639#discussion_r1956673731)
+- 2025-02-14 `tlrmchlsmth`: Removed the V1 tag because although it does move some code out of the v1 flash attention backend, I didn't want anyone to get the impression that this PR adds support for MLA (https://github.com/vllm-project/vllm/pull/12639#issuecomment-2660334762)
+- 2025-02-14 `tlrmchlsmth` on `vllm/attention/backends/mla/utils.py`:429: Here we are allocating workspace used for the decompressed KV cache. This is going to happen during the profile run -- @WoosukKwon do you see any issues with doing that here? To me it seems fine for lack of an official way ... (https://github.com/vllm-project/vllm/pull/12639#discussion_r1956762390)
+- 2025-02-14 `LucasWilkinson` on `vllm/attention/ops/triton_merge_attn_states.py`:22: I think it needs to be a power of 2 since tl.arange needs to be a power of 2 :/ (https://github.com/vllm-project/vllm/pull/12639#discussion_r1956768965)
+- 2025-02-14 `LucasWilkinson` on `vllm/attention/ops/triton_merge_attn_states.py`:22: this kernel was adapted from to support successive calls (https://github.com/vllm-project/vllm/pull/12639#discussion_r1956769449)
+- 2025-02-14 `LucasWilkinson` on `csrc/cache_kernels.cu`:703: agreed, that would be nice, ill work on a separated PR (https://github.com/vllm-project/vllm/pull/12639#discussion_r1956769723)
+- 2025-02-14 `tlrmchlsmth` on `vllm/attention/ops/triton_merge_attn_states.py`:22: Good to know -- for others' context we were discussing if this needed to be used for the matrix-absorption MQA codepath which could involve a lot of padding but this is OK for now (https://github.com/vllm-project/vllm/pull/12639#discussion_r1956791913)
+- 2025-02-14 `tlrmchlsmth` on `vllm/attention/backends/mla/utils.py`: Should we rename this "common.py"? This really does not feel like a "utils" file (https://github.com/vllm-project/vllm/pull/12639#discussion_r1956794801)
+- 2025-02-14 `tlrmchlsmth` commented: Overall looks really good, great work. Concerns are mainly on the memory/workspace/profile run issues which we all know are really hard to get right: I still have a question about where the best spot to allocate the workspace is, but I think ... (https://github.com/vllm-project/vllm/pull/12639#pullrequestreview-2618948146)
+- 2025-02-15 `LucasWilkinson`: @tlrmchlsmth I wonder if it would be better to detect if we are in the profile run and allocate temporary tensors of size equal to the upper limit on the workspace required, instead of what we are doing now. It sounds like ... (https://github.com/vllm-project/vllm/pull/12639#issuecomment-2660603850)
+- 2025-02-15 `LucasWilkinson`: NOTE: @pathorn found a bug when stress testing R1, will notify here when resolved Edit: should be resolved by (https://github.com/vllm-project/vllm/pull/12639#issuecomment-2660620971)
+- 2025-02-15 `tlrmchlsmth` on `vllm/attention/backends/mla/common.py`:1443: Looks great - definitely feel good about the profile run now (https://github.com/vllm-project/vllm/pull/12639#discussion_r1957204471)
+- 2025-02-19 `tlrmchlsmth` on `vllm/engine/arg_utils.py`:1172: ok yeah that makes sense for some of the red tests (https://github.com/vllm-project/vllm/pull/12639#discussion_r1962350481)

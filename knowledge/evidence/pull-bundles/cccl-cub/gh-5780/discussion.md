@@ -1,72 +1,83 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/cccl#5780](https://github.com/NVIDIA/cccl/pull/5780)
-- Source page: `sources/prs/cccl-cub/PR-5780.md`
-- Evidence bundle: `evidence/pull-bundles/cccl-cub/gh-5780`
-- Generated at: `2026-05-20T15:19:51.025517+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-09-05T01:26:57Z`
-- Merged: `2025-09-30T08:29:26Z`
-
-## Discussion Counts
-
-- Issue comments: 40
-- Review submissions: 64 (approved=1, commented=63)
-- Inline review comments: 92
-- Review threads observed: 41
-- Resolved/outdated thread markers: resolved=38, outdated=32
-- Human participants with discussion text: bernhardmgruber, miscco, pauleonix
-- Automation comments/reviews omitted from high-signal summary: 16
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 4
-
-## Review Decisions
-
-- `2025-09-05T06:52:13Z` `COMMENTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3188205412)
-- `2025-09-05T23:22:21Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3191038242)
-- `2025-09-05T23:38:32Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3191093505)
-- `2025-09-05T23:49:21Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3191120757)
-- `2025-09-08T10:11:10Z` `COMMENTED` by `bernhardmgruber` - Good work so far! Let's add some unit test to cover the API and show how it's used. (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3195850540)
-- `2025-09-08T15:28:05Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3197047505)
-- `2025-09-08T15:30:12Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3197058205)
-- `2025-09-08T16:24:59Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3197261143)
-- `2025-09-15T08:23:41Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3223408695)
-- `2025-09-15T14:43:59Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3225014882)
-- `2025-09-15T14:50:43Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3225049505)
-- `2025-09-15T14:52:35Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3225057566)
-- `2025-09-16T17:18:09Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3230973735)
-- `2025-09-16T17:35:12Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3231027866)
-- `2025-09-16T19:57:21Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3231504593)
-- `2025-09-16T22:38:12Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3231908971)
-- `2025-09-19T00:30:00Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3242404901)
-- `2025-09-19T09:35:42Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3243740184)
-- `2025-09-19T09:42:34Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3244047767)
-- `2025-09-19T09:51:15Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3244084900)
-- `2025-09-20T04:16:12Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3248262404)
-- `2025-09-20T04:34:27Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3248277667)
-- `2025-09-20T04:38:15Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3248279613)
-- `2025-09-20T04:39:49Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3248282474)
-- ... 38 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `cub/cub/block/block_load_to_shared.cuh`: 72 inline comment(s)
-- `cub/test/catch2_test_block_load_to_shared.cu`: 20 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-09-22T13:45:14Z` `inline` by `pauleonix` `cub/test/catch2_test_block_load_to_shared.cu`; signals: alignment, block, correctness, perf, performance; excerpt: "Ah yeah right, I was thinking of the higher alignment that you needed in transform, but that was only for performance, not for correctness." (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2368487850)
-- `2025-09-22T13:11:10Z` `inline` by `pauleonix` `cub/cub/block/block_load_to_shared.cuh`:211; signals: benchmark, block, hopper, tma; excerpt: "Do you have numbers that using LDGSTS is significantly better than UBLKCP on Hopper for relevant work loads? My understand is that UBLKCP is ..." (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2368325055)
-- `2025-09-29T16:28:00Z` `inline` by `pauleonix` `cub/cub/block/block_load_to_shared.cuh`:120; signals: block, perf, performance, warp; excerpt: "Yeah, it seems like this is problematic (previous implementation had this issue as well as I did not need 32 threads for peeling and ..." (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2388565697)
-- `2025-09-22T13:33:53Z` `inline` by `bernhardmgruber` `cub/test/catch2_test_block_load_to_shared.cu`; signals: aligned, block, memory, shared memory; excerpt: "Dynamic shared memory is 16B aligned by default, nothing fancy needed I guess." (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2368428927)
-- `2025-09-15T14:43:59Z` `inline` by `pauleonix` `cub/test/catch2_test_block_load_to_shared.cu`:28; signals: block, memory, shared memory; excerpt: "But we want to support using dynamic shared memory like you do in DeviceTransform. Do we really want to have different constructors for that?" (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2349247440)
-- `2025-09-16T17:18:09Z` `inline` by `pauleonix` `cub/test/catch2_test_block_load_to_shared.cu`:28; signals: block, memory, shared memory; excerpt: "Added it to avoid having to use the static member functions (with template) when using static shared memory." (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2353161841)
-- `2025-09-19T08:27:14Z` `inline` by `bernhardmgruber` `cub/cub/block/block_load_to_shared.cuh`:61; signals: alignment, block, hopper; excerpt: "We may know that Hopper may benefit from 128 byte alignment, but the effect is minor and not worth putting in user side documentation ..." (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362163692)
-- `2025-09-19T08:30:50Z` `inline` by `bernhardmgruber` `cub/cub/block/block_load_to_shared.cuh`:68; signals: block, ptx, tma; excerpt: "I am a bit torn. I think that in public documentation we should rather refer to instructions in PTX, because that's well documented. I ..." (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362172181)
-- `2025-09-19T08:53:09Z` `inline` by `bernhardmgruber` `cub/cub/block/block_load_to_shared.cuh`:162; signals: block, compile, ptx; excerpt: "We have at least PTX 8.0 since CTK 12.0. Also, if we didn't, then the block load algorithm would compile and not work." (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362223328)
-- `2025-09-19T09:30:22Z` `inline` by `bernhardmgruber` `cub/cub/block/block_load_to_shared.cuh`:312; signals: aligned, block, hang; excerpt: "Critical: the src pointer needs to be aligned up, otherwise it goes out of bounds Requires further changes below and a peeling loop for ..." (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362311598)
-- `2025-09-19T09:42:31Z` `inline` by `bernhardmgruber` `cub/test/catch2_test_block_load_to_shared.cu`; signals: block, memory, shared memory; excerpt: "Please also add a test where the block load is used using dynamic shared memory. This way we can validate the design as well." (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362339253)
-- `2025-09-20T06:08:07Z` `inline` by `pauleonix` `cub/test/catch2_test_block_load_to_shared.cu`:98; signals: block, cuda, kernel; excerpt: "Are you mixing up this PR with the one on DeviceMerge? Because we can't initialize a cuda::std::span with an iterator. I could get rid ..." (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2365344224)
+- 2025-09-05 `miscco` on `cub/cub/block/block_load_to_shared.cuh`:20: This is missing the license header (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2324255221)
+- 2025-09-05 `miscco` on `cub/cub/block/block_load_to_shared.cuh`:20: We are also missing our mandatory config include and the system header guard (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2324255868)
+- 2025-09-05 `miscco` on `cub/cub/block/block_load_to_shared.cuh`:227: I believe those should just be CCCL DEVICE API (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2324258805)
+- 2025-09-05 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:227: That's not what I see for other block-wide primitives, but if this is the new guideline, sure! Do I understand correctly that I should avoid CCCL FORCEINLINE? (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2326220813)
+- 2025-09-05 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:227: CCCL DEVICE API is missing from It would be great if any guidelines regarding usage of visibility macros and CCCL FORCEINLINE could be codified in (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2326260940)
+- 2025-09-05 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:227: Regarding visibility are you referring to the following? Defaulted constructors should be marked with CCCL HIDE FROM ABI Currently it is listed as a libcu++-specific guideline. Should it rather be a general guideline? And to me "defaulted" means a constructor with = ... (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2326278751)
+- 2025-09-08 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:34: Suggestion: I would advice to not support multidimensional block sizes for now. We can always add support for this later. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2329772468)
+- 2025-09-08 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:38: Imortant: please adhere to camel case: Applies everywhere. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2329773318)
+- 2025-09-08 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:109: Important: Please use //! style comments (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2329778781)
+- 2025-09-08 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:141: Important: there is a word missing after the last @c (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2329787006)
+- 2025-09-08 `bernhardmgruber` commented: Good work so far! Let's add some unit test to cover the API and show how it's used. (https://github.com/NVIDIA/cccl/pull/5780#pullrequestreview-3195850540)
+- 2025-09-08 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:34: Not sure why though? Supporting it in terms of implementation is trivial. Do you want to avoid me having to write tests for it? (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2330601736)
+- 2025-09-08 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:38: You mean snake case, not CamelCase. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2330609899)
+- 2025-09-08 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:38: Fixed both snake case for members and CamelCase for template parameters. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2330752513)
+- 2025-09-15 `bernhardmgruber` on `cub/test/catch2_test_block_load_to_shared.cu`:28: Suggestion: I think we could offer a type similar to ::TempStorage to simplify user-side code: (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2348212885)
+- 2025-09-15 `bernhardmgruber` on `cub/test/catch2_test_block_load_to_shared.cu`:58: Q: What's the reason this cannot be a bool? (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2348218139)
+- 2025-09-15 `bernhardmgruber` on `cub/test/catch2_test_block_load_to_shared.cu`:108: Important: Both tests have exactly the same body. We should unify them to avoid duplication. E.g., just concat even threads in block and odd threads in block. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2348224625)
+- 2025-09-15 `bernhardmgruber` on `cub/test/catch2_test_block_load_to_shared.cu`:179: Suggestion: That's a lot of unit tests compiled. Can we just select a few IPT instead? (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2348229105)
+- 2025-09-15 `pauleonix` on `cub/test/catch2_test_block_load_to_shared.cu`:28: But we want to support using dynamic shared memory like you do in DeviceTransform. Do we really want to have different constructors for that? (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2349247440)
+- 2025-09-15 `pauleonix` on `cub/test/catch2_test_block_load_to_shared.cu`:58: Leftover from fighting the compiler (resolved by replacing kernel overload with if constexpr). (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2349268401)
+- 2025-09-15 `pauleonix` on `cub/test/catch2_test_block_load_to_shared.cu`:108: Yeah, the test is not final yet. I "took inspiration" from the BlockLoad tests and had to fight the compiler a lot to get this to compile in the first place. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2349273682)
+- 2025-09-16 `pauleonix` on `cub/test/catch2_test_block_load_to_shared.cu`:28: Added it to avoid having to use the static member functions (with template) when using static shared memory. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2353161841)
+- 2025-09-16 `pauleonix` on `cub/test/catch2_test_block_load_to_shared.cu`:28: Undid this because it would not be but which is not that much better in my opinion. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2353197965)
+- 2025-09-16 `pauleonix` on `cub/test/catch2_test_block_load_to_shared.cu`:179: It actually isn't, it is just 1 and 11, not 1, 2, ..., 11. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2353520591)
+- 2025-09-16 `bernhardmgruber` on `cub/test/catch2_test_block_load_to_shared.cu`:179: Yeah, noticed this also today. All fine! (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2353802132)
+- 2025-09-19 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:293: This came up in 5926. While the const is correct, it is horrible for usability as T wont be inferred when the user is passing a modifiable span src span. Instead the user currently needs to call load2sh obj.template CopyAsync (dst span, ... (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2361430240)
+- 2025-09-19 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:59: I usually worded this as: in device transform. But you can choose as you like. Your wording is also fine. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362156512)
+- 2025-09-19 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:61: We may know that Hopper may benefit from 128 byte alignment, but the effect is minor and not worth putting in user side documentation IMO. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362163692)
+- 2025-09-19 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:68: I am a bit torn. I think that in public documentation we should rather refer to instructions in PTX, because that's well documented. I know we as engineers are looking a lot more often at SASS though. The word TMA now refers ... (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362172181)
+- 2025-09-19 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:74: I think this is a classic example of where the name bar does not convey enough information. If you can change the code to say what an additional comment is needed for to say, consider fixing the code. In this case, renaming ... (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362173523)
+- 2025-09-19 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:88: Comment has no additional meaning, please remove. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362176376)
+- 2025-09-19 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:98: Suggestion: We could guard this with the preprocessor macro CCCL ENABLE DEVICE ASSERTIONS. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362181000)
+- 2025-09-19 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:101: Question: should we write internal functions on public classes as snake case as well? (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362183039)
+- 2025-09-19 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:162: We have at least PTX 8.0 since CTK 12.0. Also, if we didn't, then the block load algorithm would compile and not work. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362223328)
+- 2025-09-19 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:179: Q: why do we need cvta generic to global? I don't need that in DeviceTransform and it works fine. Also, I don't need the Is this related? (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362265467)
+- 2025-09-19 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:185: The choice of uint4 depends on the value of minimum align. Let's express this. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362270001)
+- 2025-09-19 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:211: Remark: This makes we wonder again whether it would just be easier to not use a barrier with LDGSTS. Then no busy wait would be needed. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362276293)
+- 2025-09-19 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:312: Critical: the src pointer needs to be aligned up, otherwise it goes out of bounds Requires further changes below and a peeling loop for the buffer start. It seems the code assumes that you can touch bytes before the GMEM source address ... (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362311598)
+- 2025-09-19 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:202: Q: Where is the workaround? I only see three valid code paths. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362316208)
+- 2025-09-19 `bernhardmgruber` on `cub/test/catch2_test_block_load_to_shared.cu`:176: Suggestion: I would just skip the kernel if we don't have the resources: and avoid a fallback path in the kernel (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362331520)
+- 2025-09-19 `bernhardmgruber` on `cub/test/catch2_test_block_load_to_shared.cu`:98: The new facilities should work with any contiguous iterator, so please remove the raw poiner casts in the tests here (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362334585)
+- 2025-09-19 `bernhardmgruber` on `cub/test/catch2_test_block_load_to_shared.cu`: Please also add a test where the block load is used using dynamic shared memory. This way we can validate the design as well. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362339253)
+- 2025-09-19 `bernhardmgruber`: I am pretty happy with the current state of the design! There are a lot of small nits, and a bit more work on the tests. Otherwise, I think we can merge this soon! Great work! (https://github.com/NVIDIA/cccl/pull/5780#issuecomment-3311482788)
+- 2025-09-19 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:123: I can remove this syncthreads() and: passes without issues. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2362358269)
+- 2025-09-20 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:312: That reminds me: Do we want sth like the following? (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2365265766)
+- 2025-09-20 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:162: I think you mean replacing elif with else instead of putting the second version outside, since that would mean copying twice when the if is chosen. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2365277075)
+- 2025-09-20 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:179: I got this from (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2365278624)
+- 2025-09-20 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:185: It is probably best to define a little helper type. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2365279794)
+- 2025-09-20 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:123: On which architecture did you run it? (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2365334665)
+- 2025-09-20 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:211: So using cp.aync.commit group and cp.async.wait group followed by a syncthreads()? I also wonder if we want to allow forcing cp.async instead of cp.async.bulk on Hopper+ as a template parameter on the class? (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2365335912)
+- 2025-09-20 `pauleonix` on `cub/test/catch2_test_block_load_to_shared.cu`:98: Are you mixing up this PR with the one on DeviceMerge? Because we can't initialize a cuda::std::span with an iterator. I could get rid of the casts in the tests in favor of doing a single thrust::try unwrap contiguous iterator inside the ... (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2365344224)
+- 2025-09-20 `pauleonix` on `cub/test/catch2_test_block_load_to_shared.cu`: There should also be tests doing multiple copies in a single phase and using multiple phases. Maybe one that makes sure that mbarrier invalidation works by destructing and constructing + using another instance in the same memory. Using the internal static shared ... (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2365345062)
+- 2025-09-20 `pauleonix` on `cub/test/catch2_test_block_load_to_shared.cu`: Preferences for aligning the dynamic shared memory to 16B in this context? (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2365345602)
+- 2025-09-22 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:179: Please remove the extra complication and only readd it, if the issue is still present. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2368227895)
+- 2025-09-22 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:211: So using cp.aync.commit group and cp.async.wait group followed by a syncthreads()? Yes. Not for this PR. Let's get it in and evaluate the SM80 path first. I also wonder if we want to allow forcing cp.async instead of cp.async.bulk on Hopper+ as ... (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2368253243)
+- 2025-09-22 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:312: We can always add new template parameters even after we shipped the feature, so not for now. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2368257743)
+- 2025-09-22 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:211: Do you have numbers that using LDGSTS is significantly better than UBLKCP on Hopper for relevant work loads? My understand is that UBLKCP is always preferable for larger problem sizes of any element type (since the type does not matter). For sufficiently ... (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2368325055)
+- 2025-09-22 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:211: It is possible as well that UBLKCPY is only better for small workloads when used without the mbarrier. IIUC the initialization of it is at least part of the high latency of using UBLKCPY. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2368375191)
+- 2025-09-22 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:312: It seems the code assumes that you can touch bytes before the GMEM source address the user has passed in. I don't know whether we can rely on this. I was trying to poke you whether you have any information about that ... (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2368410806)
+- 2025-09-22 `bernhardmgruber` on `cub/test/catch2_test_block_load_to_shared.cu`:98: Are you mixing up this PR with the one on DeviceMerge? Because we can't initialize a cuda::std::span with an iterator. Oh. You are right! No change needed then. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2368426055)
+- 2025-09-22 `bernhardmgruber` on `cub/test/catch2_test_block_load_to_shared.cu`: Dynamic shared memory is 16B aligned by default, nothing fancy needed I guess. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2368428927)
+- 2025-09-22 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:211: For sufficiently large workloads yes. According to the decision tree in [S72683], LDGSTS can be better below 2KB and is most probably better below 1KB. I am aware of that statement, but I haven't seen any numbers. Also, we will likely not ... (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2368445752)
+- 2025-09-22 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:312: I don't think I have more information than you on that. I somehow had in the back of my head that it is fine and overlooked that you have special handling not only for the last 2 blocks but also for the ... (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2368446851)
+- 2025-09-22 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:211: I was more thinking about a user or at least someone who does not know the implementation well enough to easily do that. I'm not sure that some generic benchmark will be able to answer this question for all possible use-cases. But ... (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2368470760)
+- 2025-09-22 `pauleonix` on `cub/test/catch2_test_block_load_to_shared.cu`: Ah yeah right, I was thinking of the higher alignment that you needed in transform, but that was only for performance, not for correctness. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2368487850)
+- 2025-09-22 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:123: I could reproduce it now. Had the wrong arch configured. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2368790378)
+- 2025-09-22 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:293: @bernhardmgruber Do you have an opinion on this? (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2369231042)
+- 2025-09-22 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:123: It looks a lot like the compiler is getting confused from all the if(elected). The codegen is not great. The first branch that inits the barrier nicely sets up a uniform predicate and issues a dense sequence of uniform setup code. The ... (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2370226656)
+- 2025-09-23 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:211: Maybe we do have to change the Ampere implementation in this PR. The tests in 5926 on Ampere/Ada GPUs seem to be deadlocking or at least taking forever. I just canceled the CI run after taking more than 5 hours. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2372212966)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:222: Q: can this be: ? (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2372669559)
+- 2025-09-23 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:360: Important: we have PTX exposure for this API: Please use it instead of inline ASM. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2372758745)
+- 2025-09-24 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:360: This is the one where our exposure does not include the .shared modifier. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2373881832)
+- 2025-09-24 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:293: Overload for both cases instead. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2373885392)
+- 2025-09-24 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:211: Replaced with async-group based synchronization. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2373936514)
+- 2025-09-24 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:360: Replaced with async-group based synchronization which is not exposed yet. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2373937683)
+- 2025-09-24 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:356: Please make sure there are tests calling each overload of CopyAsync. (I haven't verified if we have those) (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2375790132)
+- 2025-09-24 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:272: Critical: you only init the barrier on sm90, but only destroy it on sm80. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2375812252)
+- 2025-09-24 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:356: Probably not yet, good point. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2375826483)
+- 2025-09-24 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:272: It was invalidated not only for SM 80, but also for everything newer, but yes, that was a bug. Fixed now. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2375831535)
+- 2025-09-24 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:222: Not entirely sure what the implications of this (actual type vs type alias) are. Maybe users seeing cub::Uninitialized in compiler errors vs just seeing TempStorage currently? (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2375846678)
+- 2025-09-29 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:120: Q: Doesn't this require block threads to be a multiple of 32? Otherwise there is a risk no thread is elected. (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2388299056)
+- 2025-09-29 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:120: Yeah, it seems like this is problematic (previous implementation had this issue as well as I did not need 32 threads for peeling and therefore a full warp was not guaranteed). An alternative (with the same performance afaik) would be to go ... (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2388565697)
+- 2025-09-29 `pauleonix` on `cub/cub/block/block_load_to_shared.cuh`:120: For now I opted for just adding a static assert making sure that the block size is a multiple of the warp size (and replacing 32 with cub::detail::warp threads). (https://github.com/NVIDIA/cccl/pull/5780#discussion_r2388633873)

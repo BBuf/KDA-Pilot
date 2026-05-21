@@ -1,82 +1,62 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#29941](https://github.com/vllm-project/vllm/pull/29941)
-- Source page: `sources/prs/vllm/PR-29941.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-29941`
-- Generated at: `2026-05-20T15:38:53.414262+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-12-03T06:34:22Z`
-- Merged: `2026-02-26T01:20:59Z`
-
-## Discussion Counts
-
-- Issue comments: 11
-- Review submissions: 47 (approved=2, commented=45)
-- Inline review comments: 63
-- Review threads observed: 30
-- Resolved/outdated thread markers: resolved=13, outdated=18
-- Human participants with discussion text: BoyuanFeng, Liccol, chatgpt-codex-connector, cursor, eellison, elvircrn, hmellor, mergify, mgoin, minosfuture, wzhao18, youkaichao, ywang96, zou3519
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-12-04T04:52:31Z` `COMMENTED` by `chatgpt-codex-connector` - 💡 Codex Review Here are some automated review suggestions for this pull request. ℹ️ About Codex in GitHub ... (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3538069011)
-- `2025-12-04T15:34:31Z` `COMMENTED` by `hmellor` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3540626312)
-- `2025-12-04T18:07:00Z` `COMMENTED` by `minosfuture` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3541385271)
-- `2025-12-05T08:23:25Z` `COMMENTED` by `ywang96` - IIUC this is mostly a RL feature, correct? Maybe @youkaichao can take a look? (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3543588000)
-- `2025-12-13T15:51:08Z` `COMMENTED` by `Liccol` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3574445360)
-- `2025-12-16T21:00:38Z` `COMMENTED` by `minosfuture` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3584926832)
-- `2025-12-16T23:46:39Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3585387910)
-- `2025-12-20T19:23:17Z` `COMMENTED` by `minosfuture` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3590645044)
-- `2025-12-20T19:23:43Z` `COMMENTED` by `minosfuture` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3601234999)
-- `2025-12-20T19:23:56Z` `COMMENTED` by `minosfuture` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3601235066)
-- `2025-12-25T12:58:03Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3612297089)
-- `2025-12-25T13:06:28Z` `COMMENTED` by `youkaichao` - mainly thinking about how to make it work for torch.compile + cudagraph. I think it's possible to have ... (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3612313292)
-- `2026-01-27T02:40:45Z` `COMMENTED` by `cursor` - Cursor Bugbot has reviewed your changes and found 3 potential issues. Bugbot Autofix is OFF. To automatically fix ... (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3708850162)
-- `2026-01-27T03:03:27Z` `COMMENTED` by `minosfuture` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3708889046)
-- `2026-02-20T15:02:32Z` `COMMENTED` by `hmellor` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3832524808)
-- `2026-02-20T16:06:09Z` `COMMENTED` by `wzhao18` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3832867931)
-- `2026-02-20T20:59:36Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3834186635)
-- `2026-02-20T21:08:21Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3834218169)
-- `2026-02-20T21:11:31Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3834230494)
-- `2026-02-20T21:28:27Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3834284598)
-- `2026-02-20T22:00:32Z` `COMMENTED` by `minosfuture` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3834398451)
-- `2026-02-20T22:10:14Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3834433278)
-- `2026-02-20T22:24:57Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3834469090)
-- `2026-02-23T09:01:16Z` `COMMENTED` by `minosfuture` (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3839837154)
-- ... 23 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/offloader/prefetch.py`: 11 inline comment(s)
-- `vllm/compilation/cuda_graph.py`: 9 inline comment(s)
-- `vllm/model_executor/models/deepseek_v2.py`: 8 inline comment(s)
-- `vllm/config/cache.py`: 6 inline comment(s)
-- `vllm/model_executor/offloader/uva.py`: 4 inline comment(s)
-- `vllm/model_executor/offloader/v2.py`: 4 inline comment(s)
-- `vllm/model_executor/offloader/v2_ops.py`: 4 inline comment(s)
-- `tests/basic_correctness/test_v2_offload.py`: 3 inline comment(s)
-- `vllm/model_executor/offloader/prefetch_ops.py`: 3 inline comment(s)
-- `vllm/config/offload.py`: 2 inline comment(s)
-- `tests/basic_correctness/test_prefetch_offload.py`: 2 inline comment(s)
-- `vllm/model_executor/offloader/base.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-01-27T02:42:05Z` `issue` by `minosfuture`; signals: compile, cuda, fp4, moe, nvfp4; excerpt: "@youkaichao @zou3519 I added torch compile and cuda graph support, using static GPU buffer, custom op with mutates args for order invariant, event-based sync ..." (https://github.com/vllm-project/vllm/pull/29941#issuecomment-3802760654)
-- `2025-12-18T03:59:19Z` `inline` by `minosfuture` `tests/basic_correctness/test_v2_offload.py`:18; signals: b200, correctness, flashinfer, fp8; excerpt: "serving "RedHatAI/DeepSeek-Coder-V2-Lite-Instruct-FP8" failed at flashinfer autotuning stage on GB200. 😿" (https://github.com/vllm-project/vllm/pull/29941#discussion_r2629452488)
-- `2026-01-27T02:40:45Z` `inline` by `cursor` `vllm/v1/worker/gpu_ubatch_wrapper.py`:247; signals: block, cuda, cudagraph, cute; excerpt: "Missing join after forward inside UBatch graph capture High Severity The capture ubatches method in UBatchWrapper has get offloader().sync prev onload() before the capture ..." (https://github.com/vllm-project/vllm/pull/29941#discussion_r2730010813)
-- `2026-02-24T17:26:07Z` `inline` by `mgoin` `tests/basic_correctness/test_prefetch_offload.py`:33; signals: blackwell, correctness, hopper, moe; excerpt: "We should also consider adding a nightly test for running a quantized MoE model e2e on Hopper or Blackwell" (https://github.com/vllm-project/vllm/pull/29941#discussion_r2848536563)
-- `2025-12-25T13:06:28Z` `review` `COMMENTED` by `youkaichao`; signals: compile, cuda, cudagraph; excerpt: "mainly thinking about how to make it work for torch.compile + cudagraph. I think it's possible to have a static buffer workspace (rough size ..." (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3612313292)
-- `2026-01-27T02:40:45Z` `inline` by `cursor` `vllm/v1/worker/gpu/spec_decode/eagle/cudagraph.py`:136; signals: cuda, cudagraph, perf; excerpt: "Missing sync prev onload before CUDA graph capture High Severity The capture graph method in EagleCudaGraphManager performs a warmup run (line 85) then immediately ..." (https://github.com/vllm-project/vllm/pull/29941#discussion_r2730010807)
-- `2026-02-20T22:10:14Z` `inline` by `zou3519` `vllm/model_executor/offloader/prefetch.py`:300; signals: attention, cuda, cudagraph; excerpt: "Does this feature offer any value for piecewise cudagraphs? for full cudagraphs (and without cudagraphs), there is overlap happening. (I'm not very familiar with ..." (https://github.com/vllm-project/vllm/pull/29941#discussion_r2835303738)
-- `2026-02-23T18:59:41Z` `inline` by `minosfuture` `vllm/model_executor/offloader/prefetch.py`:300; signals: cuda, latency, perf; excerpt: "that's correct. This support of CUDA graph is to reduce crash with default config (full and piecewise). It would not benefit the perf much ..." (https://github.com/vllm-project/vllm/pull/29941#discussion_r2842542575)
-- `2025-12-16T23:45:11Z` `inline` by `mgoin` `vllm/model_executor/offloader/v2.py`:188; signals: cache, cuda; excerpt: "Should we be calling torch.cuda.empty cache() occasionally here as well? Not sure if this is sufficient to free" (https://github.com/vllm-project/vllm/pull/29941#discussion_r2625110088)
-- `2026-02-20T16:06:09Z` `inline` by `wzhao18` `vllm/model_executor/models/deepseek_v2.py`:1294; signals: moe, perf; excerpt: "In the current offloading, we use cpu offload params CLI arg to support offloading MoE weights only. It is not perfect (as we need ..." (https://github.com/vllm-project/vllm/pull/29941#discussion_r2833944683)
-- `2026-02-20T21:08:21Z` `inline` by `zou3519` `vllm/model_executor/offloader/v2_ops.py`:80; signals: cuda, cudagraph; excerpt: "I'm trying to understand what is going on for cudagraphs. Are these operations cudagraph safe? Because they are CPU- GPU transfers I think the ..." (https://github.com/vllm-project/vllm/pull/29941#discussion_r2835105053)
-- `2026-02-20T21:11:31Z` `inline` by `zou3519` `vllm/model_executor/offloader/prefetch_ops.py`:62; signals: cuda, race; excerpt: "btw I tried to run this with CUDA VISIBLE DEVICES=6 TORCH TRACE=./trace/offload vllm serve meta-llama/Llama-3.2-1B-Instruct --offload-group-size 4 --offload-num-in-group 1 --offload-prefetch-step 2 --max-model-len 1024 --port ..." (https://github.com/vllm-project/vllm/pull/29941#discussion_r2835115078)
+- 2025-12-04 `hmellor` on `vllm/config/cache.py`:101: This is not configuration for the KV cache? (https://github.com/vllm-project/vllm/pull/29941#discussion_r2589557530)
+- 2025-12-04 `minosfuture` on `vllm/config/cache.py`:101: had the same thought, but followed --cpu-offload-gb here. Let me find a better place for them. (https://github.com/vllm-project/vllm/pull/29941#discussion_r2590077237)
+- 2025-12-05 `ywang96` commented: IIUC this is mostly a RL feature, correct? Maybe @youkaichao can take a look? (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3543588000)
+- 2025-12-05 `elvircrn`: Why is TPOT and ITL 0 in the benchmark result? EDIT: Ah I see you probably set num output tokens to 1. (https://github.com/vllm-project/vllm/pull/29941#issuecomment-3615906030)
+- 2025-12-08 `minosfuture`: IIUC this is mostly a RL feature, correct? Maybe @youkaichao can take a look? mostly for fitting model onto less GPUs at the moment. But could be useful for weight updating in RL. pinging @youkaichao for review since you did the first ... (https://github.com/vllm-project/vllm/pull/29941#issuecomment-3628831081)
+- 2025-12-13 `Liccol` on `vllm/model_executor/offloader/uva.py`:63: uva offloading seems to be always True? making the conditional checks redundant (https://github.com/vllm-project/vllm/pull/29941#discussion_r2616379815)
+- 2025-12-16 `minosfuture` on `vllm/model_executor/offloader/uva.py`:63: Good catch. Let me remove this. (https://github.com/vllm-project/vllm/pull/29941#discussion_r2624728301)
+- 2025-12-16 `mgoin` on `vllm/model_executor/models/deepseek_v2.py`:1284: Maybe we could generalize this, at least for the moe, by searching for an attr that isinstance of FusedMoE (https://github.com/vllm-project/vllm/pull/29941#discussion_r2625097829)
+- 2025-12-16 `mgoin` on `vllm/model_executor/models/deepseek_v2.py`:1296: Is there harm in offloading "too many" params? I feel like I'd prefer a general "w13" or "w2" match rather than specializing on specific quant methods (https://github.com/vllm-project/vllm/pull/29941#discussion_r2625101231)
+- 2025-12-16 `mgoin` on `vllm/config/cache.py`:98: I didn't see any validation that that offload num in group <= offload group size (https://github.com/vllm-project/vllm/pull/29941#discussion_r2625104883)
+- 2025-12-16 `mgoin` on `tests/basic_correctness/test_v2_offload.py`:18: Could use an fp8 model here to make it faster like RedHatAI/DeepSeek-Coder-V2-Lite-Instruct-FP8 (https://github.com/vllm-project/vllm/pull/29941#discussion_r2625107606)
+- 2025-12-16 `mgoin` on `vllm/model_executor/offloader/v2.py`:188: Should we be calling torch.cuda.empty cache() occasionally here as well? Not sure if this is sufficient to free (https://github.com/vllm-project/vllm/pull/29941#discussion_r2625110088)
+- 2025-12-16 `mgoin` on `vllm/model_executor/offloader/v2.py`:273: Will this fail on multi-gpu? I feel we should store the original device (https://github.com/vllm-project/vllm/pull/29941#discussion_r2625111367)
+- 2025-12-18 `minosfuture` on `tests/basic_correctness/test_v2_offload.py`:18: serving "RedHatAI/DeepSeek-Coder-V2-Lite-Instruct-FP8" failed at flashinfer autotuning stage on GB200. 😿 (https://github.com/vllm-project/vllm/pull/29941#discussion_r2629452488)
+- 2025-12-20 `minosfuture` on `vllm/config/cache.py`:101: moved to a new OffloadConfig (https://github.com/vllm-project/vllm/pull/29941#discussion_r2637251002)
+- 2025-12-20 `minosfuture` on `vllm/model_executor/models/deepseek_v2.py`:1296: To avoid overheads, onloading latency needs to be hidden by overlap with computation. This requires careful check on latencies of H2D ops and layer latency. We probably shouldn't blindly offload too many weights. I removed quantization scales that are not needed. (https://github.com/vllm-project/vllm/pull/29941#discussion_r2637269108)
+- 2025-12-20 `minosfuture` on `vllm/model_executor/offloader/v2.py`:188: From experiment, it is freed. It's actually also good if this is only returned to torch mem pool, so next alloc is fast. (https://github.com/vllm-project/vllm/pull/29941#discussion_r2637276635)
+- 2025-12-20 `minosfuture` on `vllm/model_executor/offloader/v2.py`:273: I thought we have only one GPU per worker process? (https://github.com/vllm-project/vllm/pull/29941#discussion_r2637286896)
+- 2025-12-25 `youkaichao` on `vllm/model_executor/models/deepseek_v2.py`:1294: do we need to do it for every model? this looks intrusive 🤔 (https://github.com/vllm-project/vllm/pull/29941#discussion_r2646989985)
+- 2025-12-25 `youkaichao` commented: mainly thinking about how to make it work for torch.compile + cudagraph. I think it's possible to have a static buffer workspace (rough size prefetch layers params offloaded per layer), and then after offloading: then we insert one pytorch custom op prefetch(layer ... (https://github.com/vllm-project/vllm/pull/29941#pullrequestreview-3612313292)
+- 2025-12-26 `youkaichao`: However, it might be dangerous that torch.compile might rearrange the op while it actually inplace mutates many weight tensors. traditional compilers have the concept of "volatile" that prevents the compiler doing certain optimizations. Not sure if torch.compile has similar tools. (https://github.com/vllm-project/vllm/pull/29941#issuecomment-3691931391)
+- 2026-01-21 `zou3519`: pytorch has a way to mark an operation as being "side effectful" and guaranteeing that all "side effectful" operations cannot be reordered with respect to each other. Do you think that's sufficient here? (https://github.com/vllm-project/vllm/pull/29941#issuecomment-3778865966)
+- 2026-01-27 `minosfuture`: @youkaichao @zou3519 I added torch compile and cuda graph support, using static GPU buffer, custom op with mutates args for order invariant, event-based sync for multi-stream CUDA graph capturing. Supporting CUDA graph requires careful handling of event sync to avoid cudaErrorStreamCaptureIsolation error ... (https://github.com/vllm-project/vllm/pull/29941#issuecomment-3802760654)
+- 2026-01-27 `minosfuture` on `vllm/model_executor/models/deepseek_v2.py`:1294: This is highly targeted optimization as it requires carefully overlapping weight onloading (memcpy) and computation. So it is impacted by model weight size, CPU< GPU bandwidth, computation latency (per batch size). So it should be configured at least model level. Or, maybe ... (https://github.com/vllm-project/vllm/pull/29941#discussion_r2730049263)
+- 2026-02-20 `hmellor` on `vllm/config/cache.py`: When deprecating parameters you must specify which version they will be removed (https://github.com/vllm-project/vllm/pull/29941#discussion_r2833654214)
+- 2026-02-20 `hmellor` on `vllm/config/offload.py`:12: config is a dataclass transform now (https://github.com/vllm-project/vllm/pull/29941#discussion_r2833655858)
+- 2026-02-20 `wzhao18` on `vllm/model_executor/models/deepseek_v2.py`:1294: In the current offloading, we use cpu offload params CLI arg to support offloading MoE weights only. It is not perfect (as we need to figure out parameter names which differ across models), but it stays non-intrusive and can apply to all ... (https://github.com/vllm-project/vllm/pull/29941#discussion_r2833944683)
+- 2026-02-20 `wzhao18`: Thanks for the great work! I have the following feedback on the PR: - I think it would be better to move the V2 offloading parameterization to CLI instead of inside model implementation, so that it can be used out-of-the-box for all ... (https://github.com/vllm-project/vllm/pull/29941#issuecomment-3935894134)
+- 2026-02-20 `zou3519` on `vllm/model_executor/offloader/v2_ops.py`:77: bad things will happen if you return the tensor directly like this, can you try a custom operator that returns nothing? It should still maintain the data dependence (since you marked the custom operator as mutating output tensor). ditto for wait prefetch (https://github.com/vllm-project/vllm/pull/29941#discussion_r2835078348)
+- 2026-02-20 `zou3519` on `vllm/model_executor/offloader/v2_ops.py`:80: I'm trying to understand what is going on for cudagraphs. Are these operations cudagraph safe? Because they are CPU- GPU transfers I think the answer is no, and that instead you'd need to exclude them from the cudagraph regions. Does that sound ... (https://github.com/vllm-project/vllm/pull/29941#discussion_r2835105053)
+- 2026-02-20 `zou3519` on `vllm/model_executor/offloader/prefetch_ops.py`:62: btw I tried to run this with CUDA VISIBLE DEVICES=6 TORCH TRACE=./trace/offload vllm serve meta-llama/Llama-3.2-1B-Instruct --offload-group-size 4 --offload-num-in-group 1 --offload-prefetch-step 2 --max-model-len 1024 --port 9023 and it crashed - is this feature only for the specific deepseek model? (https://github.com/vllm-project/vllm/pull/29941#discussion_r2835115078)
+- 2026-02-20 `zou3519` on `vllm/model_executor/offloader/v2_ops.py`:80: I think I see what's going on, I'm wrong about the CPU- GPU transfers. we can indeed cudagraph-capture the H2D as long as the addresses are static (https://github.com/vllm-project/vllm/pull/29941#discussion_r2835166432)
+- 2026-02-20 `minosfuture` on `vllm/model_executor/offloader/prefetch_ops.py`:62: only configured for deepseek for now, but it shouldn't crash for other models. It should be no-op if offloading args are not provided. Lemme check on this crash. (https://github.com/vllm-project/vllm/pull/29941#discussion_r2835271643)
+- 2026-02-20 `zou3519` on `vllm/model_executor/offloader/prefetch.py`:300: Does this feature offer any value for piecewise cudagraphs? for full cudagraphs (and without cudagraphs), there is overlap happening. (I'm not very familiar with how h2d and cudagraphs work, so sorry if this is a bad question). For example, let's say we ... (https://github.com/vllm-project/vllm/pull/29941#discussion_r2835303738)
+- 2026-02-20 `zou3519` on `vllm/compilation/cuda_graph.py`:272: @eellison and/or @BoyuanFeng, could you take a look at this too please? These look reasonable to me but I'm new to this (https://github.com/vllm-project/vllm/pull/29941#discussion_r2835340204)
+- 2026-02-23 `minosfuture`: Thanks for the great work! I have the following feedback on the PR: I think it would be better to move the V2 offloading parameterization to CLI instead of inside model implementation, so that it can be used out-of-the-box for all models ... (https://github.com/vllm-project/vllm/pull/29941#issuecomment-3943474791)
+- 2026-02-23 `minosfuture` on `tests/basic_correctness/test_v2_offload.py`:18: switched to llama as we support any model now. (https://github.com/vllm-project/vllm/pull/29941#discussion_r2839719791)
+- 2026-02-23 `minosfuture` on `vllm/model_executor/models/deepseek_v2.py`:1294: Updated as @wzhao18 suggested. Feeling much better about this now. cc @mgoin (https://github.com/vllm-project/vllm/pull/29941#discussion_r2839723505)
+- 2026-02-23 `minosfuture`: @mgoin Hi Michael, could you help review for another round? I hope I've addressed your earlier concerns by moving param config to cli so we can run this with any models now. cc @tlrmchlsmth (https://github.com/vllm-project/vllm/pull/29941#issuecomment-3943490006)
+- 2026-02-23 `minosfuture` on `vllm/model_executor/offloader/prefetch.py`:300: that's correct. This support of CUDA graph is to reduce crash with default config (full and piecewise). It would not benefit the perf much when CUDA graph is in use. Batch size of tokens should be small for cases when CUDA graph ... (https://github.com/vllm-project/vllm/pull/29941#discussion_r2842542575)
+- 2026-02-23 `minosfuture` on `vllm/model_executor/offloader/prefetch_ops.py`:62: fixed. also switched to this model for unit test as it's much faster. (https://github.com/vllm-project/vllm/pull/29941#discussion_r2842707849)
+- 2026-02-23 `BoyuanFeng` on `vllm/compilation/cuda_graph.py`:286: where is the copy stream branched from the current stream? CUDAGraph requires side stream copy stream to branch off and join back to cudagraph capture stream within the cudagraph capture region: (https://github.com/vllm-project/vllm/pull/29941#discussion_r2843144364)
+- 2026-02-23 `eellison` on `vllm/compilation/cuda_graph.py`:272: Just to validate: the same sync, occurs at runtime, prior to graph replay ? (https://github.com/vllm-project/vllm/pull/29941#discussion_r2843217455)
+- 2026-02-23 `minosfuture` on `vllm/compilation/cuda_graph.py`:286: hi Boyuan, it's in start onload to static, which records copy done event that this join after forward waits on before finishing capture. (https://github.com/vllm-project/vllm/pull/29941#discussion_r2843224419)
+- 2026-02-23 `BoyuanFeng` on `vllm/compilation/cuda_graph.py`:286: thanks. for future-proof, could we expose an api to call it in cuda graph.py for symmetry? (https://github.com/vllm-project/vllm/pull/29941#discussion_r2843247211)
+- 2026-02-23 `eellison` on `vllm/model_executor/offloader/prefetch.py`:387: For my own understanding, why not use streams inside of cudagraphs? there is a constraint that in cudagraphs, any stream forks back to the main stream during capture. but can we enforce that the fork/join loading of weights is always in the ... (https://github.com/vllm-project/vllm/pull/29941#discussion_r2843254257)
+- 2026-02-23 `eellison` on `vllm/compilation/cuda_graph.py`:321: note: this is runtime overhead on hot path. when offloader is not on, worth making this cheaper ? (https://github.com/vllm-project/vllm/pull/29941#discussion_r2843258493)
+- 2026-02-23 `eellison` on `vllm/model_executor/offloader/prefetch.py`:220: cc @zou3519 , will this result in an unnecessary clone at runtime? do we need an alternative api to declare dependencies ? e.g. effects / control deps etc ? (https://github.com/vllm-project/vllm/pull/29941#discussion_r2843262263)
+- 2026-02-24 `mgoin` on `tests/basic_correctness/test_prefetch_offload.py`:33: We should also consider adding a nightly test for running a quantized MoE model e2e on Hopper or Blackwell (https://github.com/vllm-project/vllm/pull/29941#discussion_r2848536563)
+- 2026-02-24 `mgoin` on `vllm/model_executor/offloader/base.py`:100: It seems like assert instance is not None will never be hit since the default value is NoopOffloader(). I actually think this is bad practice since if this is ever checked before set offloader() is reached they will silently get NoopOffloader instead ... (https://github.com/vllm-project/vllm/pull/29941#discussion_r2848879623)
+- 2026-02-24 `mgoin` on `vllm/model_executor/offloader/prefetch.py`:57: Don't make a tensor just to check size? How about torch.finfo(self.dtype).bits // 8 instead (https://github.com/vllm-project/vllm/pull/29941#discussion_r2848887812)
+- 2026-02-24 `mgoin` on `vllm/entrypoints/llm.py`:179: Looks like we are missing offload params here in the LLM interface (https://github.com/vllm-project/vllm/pull/29941#discussion_r2848905612)
+- 2026-02-24 `mgoin` on `vllm/model_executor/offloader/prefetch.py`:343: Shouldn't this be prefetch step + 1 for true double buffering? If prefetch step=1 and there's only 1 buffer slot, layer 0 reads from slot 0 and the prefetch for layer 1 writes to slot 1 (https://github.com/vllm-project/vllm/pull/29941#discussion_r2848969480)
+- 2026-02-24 `minosfuture` on `vllm/model_executor/offloader/prefetch.py`:387: it's using event to only wait for the weights it needs when prefetch step is larger than 1. (https://github.com/vllm-project/vllm/pull/29941#discussion_r2849050334)
+- 2026-02-24 `minosfuture` on `vllm/compilation/cuda_graph.py`:321: it's no op when offload is not configured. see BaseOffloader and NoopOffloader. (https://github.com/vllm-project/vllm/pull/29941#discussion_r2849184656)
+- 2026-02-24 `zou3519` on `vllm/model_executor/offloader/prefetch.py`:220: as long as reinplacing works correctly we should be good (https://github.com/vllm-project/vllm/pull/29941#discussion_r2849257366)
+- 2026-02-24 `minosfuture` on `vllm/model_executor/offloader/prefetch.py`:343: prefetch starts at the end of current layer, illustrated in the figure below to compare prefetch step==1 vs. prefetch step==2 (double buffering). (https://github.com/vllm-project/vllm/pull/29941#discussion_r2849717797)
+- 2026-02-24 `minosfuture` on `vllm/compilation/cuda_graph.py`:286: It's asymmetric with the current implementation: events are recorded at per-layer level, and then waited on by the later layers that need the weights. But unfortunately, CUDA graph require events to be joined before capture ends, and this is why we need ... (https://github.com/vllm-project/vllm/pull/29941#discussion_r2849960839)
+- 2026-02-24 `minosfuture` on `tests/basic_correctness/test_prefetch_offload.py`:33: added deepseek lite test on Hopper (https://github.com/vllm-project/vllm/pull/29941#discussion_r2849966307)
+- 2026-02-24 `minosfuture` on `vllm/model_executor/offloader/base.py`:100: Updated. This is one of those defensive code LLM generated that slipped away. Thanks for the catch. (https://github.com/vllm-project/vllm/pull/29941#discussion_r2849971025)
+- 2026-02-24 `minosfuture` on `vllm/compilation/cuda_graph.py`:272: Yes. I updated the comment in run fullgraph to clarify this a bit more. The sync prev onload before replay is only needed for when vllm transitions from non-cuda-graph execution to cuda-graph execution. 1. non-cg - non-cg: first layers of next forward ... (https://github.com/vllm-project/vllm/pull/29941#discussion_r2850065578)
+- 2026-02-24 `minosfuture` on `vllm/model_executor/offloader/prefetch.py`:220: confirmed from the trace that it didn't introduce memcpy (https://github.com/vllm-project/vllm/pull/29941#discussion_r2850115211)

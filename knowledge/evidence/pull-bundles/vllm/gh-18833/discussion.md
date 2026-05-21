@@ -1,68 +1,28 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#18833](https://github.com/vllm-project/vllm/pull/18833)
-- Source page: `sources/prs/vllm/PR-18833.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-18833`
-- Generated at: `2026-05-20T15:35:23.912039+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-05-28T10:57:33Z`
-- Merged: `2025-06-04T23:25:35Z`
-
-## Discussion Counts
-
-- Issue comments: 10
-- Review submissions: 23 (approved=2, commented=21)
-- Inline review comments: 36
-- Review threads observed: 20
-- Resolved/outdated thread markers: resolved=17, outdated=17
-- Human participants with discussion text: NickLucche, lhtin, mergify, njhill, tlrmchlsmth, xinyu-intel
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 11
-
-## Review Decisions
-
-- `2025-05-28T10:59:10Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2874558728)
-- `2025-05-29T16:14:06Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2878851342)
-- `2025-06-01T16:52:22Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2885832743)
-- `2025-06-01T17:04:36Z` `COMMENTED` by `tlrmchlsmth` - It looks like this PR only works with attn backends that can use the HND layout. (I.e. only ... (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2885834461)
-- `2025-06-02T08:16:54Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2887267240)
-- `2025-06-02T08:34:01Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2887328564)
-- `2025-06-02T08:50:42Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2887389985)
-- `2025-06-02T17:17:09Z` `COMMENTED` by `njhill` - Great work thanks @NickLucche (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2889195315)
-- `2025-06-03T08:58:12Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2891384548)
-- `2025-06-03T09:02:54Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2891401489)
-- `2025-06-04T14:30:55Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2897003569)
-- `2025-06-04T14:43:14Z` `APPROVED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2897054050)
-- `2025-06-04T17:10:40Z` `COMMENTED` by `njhill` - Awesome work thanks @NickLucche. Most of my comments are minor - I don't think any of my comments ... (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2897411154)
-- `2025-06-04T20:21:30Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2898002980)
-- `2025-06-04T20:24:47Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2898010246)
-- `2025-06-04T20:25:52Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2898012483)
-- `2025-06-04T20:30:40Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2898024431)
-- `2025-06-04T21:11:23Z` `APPROVED` by `njhill` - Thanks again @NickLucche! (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2898122629)
-- `2025-06-04T21:13:17Z` `COMMENTED` by `njhill` (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2898126416)
-
-## Inline Comment Hotspots
-
-- `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`: 28 inline comment(s)
-- `vllm/distributed/kv_transfer/kv_connector/utils.py`: 5 inline comment(s)
-- `vllm/v1/worker/gpu_model_runner.py`: 2 inline comment(s)
-- `vllm/v1/core/sched/scheduler.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-06-04T20:21:30Z` `inline` by `NickLucche` `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:365; signals: memory, perf, performance; excerpt: "This is a simplification I carried over from dynamo work. Basically it's just makes sense given the framing of the problem: D is memory ..." (https://github.com/vllm-project/vllm/pull/18833#discussion_r2127375752)
-- `2025-06-01T17:04:36Z` `review` `COMMENTED` by `tlrmchlsmth`; signals: flashinfer, layout; excerpt: "It looks like this PR only works with attn backends that can use the HND layout. (I.e. only FlashInfer and FlashAttn. This is OK ..." (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2885834461)
-- `2025-06-01T16:37:41Z` `issue` by `tlrmchlsmth`; signals: fp8, mla; excerpt: "Also tested on MLA with deepseek-vl2-small @NickLucche it looks like that's not an MLA model fortunately. We look for kv lora rank to see ..." (https://github.com/vllm-project/vllm/pull/18833#issuecomment-2927505217)
-- `2025-06-01T16:52:22Z` `inline` by `tlrmchlsmth` `vllm/distributed/kv_transfer/kv_connector/utils.py`:99; signals: cache; excerpt: "Will the @functools.lru cache will break things if someone creates two LLMEngines? (maybe only when using the UniProcExecutor?" (https://github.com/vllm-project/vllm/pull/18833#discussion_r2119331370)
-- `2025-06-02T08:16:54Z` `inline` by `NickLucche` `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:473; signals: hang; excerpt: "I needed each DP instance to send back their own port or I wouldn't be able to calculate the remote's destination port as it's ..." (https://github.com/vllm-project/vllm/pull/18833#discussion_r2120389491)
-- `2025-06-02T08:50:42Z` `inline` by `NickLucche` `vllm/distributed/kv_transfer/kv_connector/utils.py`:99; signals: layout; excerpt: "not sure, this should be a noop for all cases but PD with Nixl, and in that case every instance must have the same ..." (https://github.com/vllm-project/vllm/pull/18833#discussion_r2120474204)
-- `2025-06-04T14:30:55Z` `inline` by `tlrmchlsmth` `vllm/distributed/kv_transfer/kv_connector/utils.py`:99; signals: cache; excerpt: "Let's remove the @functools.lru cache. I'm strongly suspicious of some edge cases where this could break and there's no benefit to caching here" (https://github.com/vllm-project/vllm/pull/18833#discussion_r2126761164)
-- `2025-06-04T21:13:17Z` `inline` by `njhill` `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:675; signals: block; excerpt: "ok sure.. I was suggesting more because this is integer division rather than float division... here remote block size will actually be a float" (https://github.com/vllm-project/vllm/pull/18833#discussion_r2127452206)
-- `2025-06-02T16:40:01Z` `inline` by `njhill` `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:375; signals: hang; excerpt: "nit: curious of the reason for these changes, I think {} is more common/idiomatic?" (https://github.com/vllm-project/vllm/pull/18833#discussion_r2121666349)
-- `2025-06-02T17:06:02Z` `inline` by `njhill` `vllm/distributed/kv_transfer/kv_connector/utils.py`:99; signals: cache; excerpt: "I don't think this needs to be cached, it should only be called during initialization anyhow." (https://github.com/vllm-project/vllm/pull/18833#discussion_r2121721127)
-- `2025-06-04T17:10:40Z` `review` `COMMENTED` by `njhill`; signals: general review; excerpt: "Awesome work thanks @NickLucche. Most of my comments are minor - I don't think any of my comments necessarily need to hold up getting ..." (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2897411154)
-- `2025-06-02T08:58:19Z` `issue` by `NickLucche`; signals: mla; excerpt: "Thanks a lot for reviewing! it looks like that's not an MLA model fortunately. mm I think it is, and provided we start it ..." (https://github.com/vllm-project/vllm/pull/18833#issuecomment-2929536794)
+- 2025-05-29 `NickLucche` on `vllm/v1/worker/gpu_model_runner.py`:2031: this is the bit to refactor with (https://github.com/vllm-project/vllm/pull/18833#discussion_r2114292756)
+- 2025-05-30 `NickLucche`: Also tested on MLA with deepseek-vl2-small (https://github.com/vllm-project/vllm/pull/18833#issuecomment-2921959073)
+- 2025-06-01 `tlrmchlsmth`: Also tested on MLA with deepseek-vl2-small @NickLucche it looks like that's not an MLA model fortunately. We look for kv lora rank to see if the model uses MLA: And there is no kv lora rank in that model's config: Could you ... (https://github.com/vllm-project/vllm/pull/18833#issuecomment-2927505217)
+- 2025-06-01 `tlrmchlsmth` on `vllm/distributed/kv_transfer/kv_connector/utils.py`:99: Will the @functools.lru cache will break things if someone creates two LLMEngines? (maybe only when using the UniProcExecutor? (https://github.com/vllm-project/vllm/pull/18833#discussion_r2119331370)
+- 2025-06-01 `tlrmchlsmth` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:373: nit: we might want to do something like this for readability (https://github.com/vllm-project/vllm/pull/18833#discussion_r2119333326)
+- 2025-06-01 `tlrmchlsmth` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:473: What needs to be done to make this DP-compatible? (https://github.com/vllm-project/vllm/pull/18833#discussion_r2119333681)
+- 2025-06-01 `tlrmchlsmth` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:475: Could you add a divisibility assert somewhere if there isn't one already? (https://github.com/vllm-project/vllm/pull/18833#discussion_r2119333939)
+- 2025-06-01 `tlrmchlsmth` commented: It looks like this PR only works with attn backends that can use the HND layout. (I.e. only FlashInfer and FlashAttn. This is OK for this PR but please make sure we're raising an exception if the wrong attn backend is used. (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2885834461)
+- 2025-06-02 `NickLucche` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:473: I needed each DP instance to send back their own port or I wouldn't be able to calculate the remote's destination port as it's not rank i rank i anymore. Rob's PR fixes that I will commit some changes to get that ... (https://github.com/vllm-project/vllm/pull/18833#discussion_r2120389491)
+- 2025-06-02 `NickLucche` on `vllm/distributed/kv_transfer/kv_connector/utils.py`:99: not sure, this should be a noop for all cases but PD with Nixl, and in that case every instance must have the same kv shape and layout to transfer in any case. @njhill do you see how I could break things ... (https://github.com/vllm-project/vllm/pull/18833#discussion_r2120474204)
+- 2025-06-02 `NickLucche`: Thanks a lot for reviewing! it looks like that's not an MLA model fortunately. mm I think it is, and provided we start it wit hf overrides we seem to detect it just fine. Anyways for the sake of completeness I also ... (https://github.com/vllm-project/vllm/pull/18833#issuecomment-2929536794)
+- 2025-06-02 `njhill` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:375: nit: curious of the reason for these changes, I think {} is more common/idiomatic? (https://github.com/vllm-project/vllm/pull/18833#discussion_r2121666349)
+- 2025-06-02 `njhill` on `vllm/distributed/kv_transfer/kv_connector/utils.py`:99: I don't think this needs to be cached, it should only be called during initialization anyhow. (https://github.com/vllm-project/vllm/pull/18833#discussion_r2121721127)
+- 2025-06-03 `NickLucche` on `vllm/distributed/kv_transfer/kv_connector/utils.py`:99: I actually forgot to mention, I was anticipating a potential runtime use as in v0 I can still remove it as this is not the case in v1 right now, but we should consider it. (https://github.com/vllm-project/vllm/pull/18833#discussion_r2123188794)
+- 2025-06-03 `NickLucche` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:375: just old habits die hard, let me revert that (https://github.com/vllm-project/vllm/pull/18833#discussion_r2123199760)
+- 2025-06-04 `tlrmchlsmth` on `vllm/distributed/kv_transfer/kv_connector/utils.py`:99: Let's remove the @functools.lru cache. I'm strongly suspicious of some edge cases where this could break and there's no benefit to caching here (https://github.com/vllm-project/vllm/pull/18833#discussion_r2126761164)
+- 2025-06-04 `njhill` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:365: @NickLucche probably a stupid question but we only support D TP = P TP specifically D TP = N D TP right? We can't have larger P size than D size (https://github.com/vllm-project/vllm/pull/18833#discussion_r2127015580)
+- 2025-06-04 `njhill` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:386: nit: a simpler syntax can be used (https://github.com/vllm-project/vllm/pull/18833#discussion_r2127019665)
+- 2025-06-04 `njhill` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:35: nit: would not harm to add a comment something like like (handle, start time) (https://github.com/vllm-project/vllm/pull/18833#discussion_r2127031072)
+- 2025-06-04 `njhill` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:475: What does tp rate mean? Should it be tp ratio? (sorry if I'm being dumb) (https://github.com/vllm-project/vllm/pull/18833#discussion_r2127046608)
+- 2025-06-04 `njhill` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:619: I think latter and former are the wrong way around? :) (https://github.com/vllm-project/vllm/pull/18833#discussion_r2127055963)
+- 2025-06-04 `njhill` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:675: Should these be // rather than /? (https://github.com/vllm-project/vllm/pull/18833#discussion_r2127065084)
+- 2025-06-04 `njhill` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:692: Like above, put this in else? (https://github.com/vllm-project/vllm/pull/18833#discussion_r2127066292)
+- 2025-06-04 `njhill` commented: Awesome work thanks @NickLucche. Most of my comments are minor - I don't think any of my comments necessarily need to hold up getting this merged. (https://github.com/vllm-project/vllm/pull/18833#pullrequestreview-2897411154)
+- 2025-06-04 `NickLucche` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:365: This is a simplification I carried over from dynamo work. Basically it's just makes sense given the framing of the problem: D is memory bound so greater TP size will yield better performance. In theory one could support both, but the code ... (https://github.com/vllm-project/vllm/pull/18833#discussion_r2127375752)
+- 2025-06-04 `NickLucche` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:475: yeah bad typo on my part (https://github.com/vllm-project/vllm/pull/18833#discussion_r2127380576)
+- 2025-06-04 `NickLucche` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:675: I am asserting equality this should be an exact division. It's something like A=2ABC/2BC (https://github.com/vllm-project/vllm/pull/18833#discussion_r2127389479)
+- 2025-06-04 `njhill` on `vllm/distributed/kv_transfer/kv_connector/v1/nixl_connector.py`:675: ok sure.. I was suggesting more because this is integer division rather than float division... here remote block size will actually be a float (https://github.com/vllm-project/vllm/pull/18833#discussion_r2127452206)

@@ -1,54 +1,29 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#31282](https://github.com/vllm-project/vllm/pull/31282)
-- Source page: `sources/prs/vllm/PR-31282.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-31282`
-- Generated at: `2026-05-20T15:39:17.843807+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-12-24T13:45:16Z`
-- Merged: `2026-01-02T05:14:00Z`
-
-## Discussion Counts
-
-- Issue comments: 30
-- Review submissions: 8 (approved=2, commented=6)
-- Inline review comments: 5
-- Review threads observed: 2
-- Resolved/outdated thread markers: resolved=0, outdated=1
-- Human participants with discussion text: c0de128, chatgpt-codex-connector, ganyi1996ppo, tjtanaa, zq1997
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 2
-
-## Review Decisions
-
-- `2025-12-24T13:46:28Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request addresses a critical bug in the paged kv last page len calculation for ... (https://github.com/vllm-project/vllm/pull/31282#pullrequestreview-3611021866)
-- `2025-12-25T01:00:21Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/31282#pullrequestreview-3611704640)
-- `2025-12-25T01:04:47Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/31282#pullrequestreview-3611706654)
-- `2025-12-25T02:26:17Z` `COMMENTED` by `zq1997` (https://github.com/vllm-project/vllm/pull/31282#pullrequestreview-3611759126)
-- `2025-12-26T00:57:22Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/31282#pullrequestreview-3612593172)
-- `2025-12-26T00:58:30Z` `APPROVED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/31282#pullrequestreview-3612593673)
-- `2025-12-28T19:19:56Z` `COMMENTED` by `c0de128` (https://github.com/vllm-project/vllm/pull/31282#pullrequestreview-3614801500)
-- `2026-01-01T03:05:19Z` `APPROVED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/31282#pullrequestreview-3621585205)
-
-## Inline Comment Hotspots
-
-- `vllm/v1/attention/backends/mla/rocm_aiter_mla.py`: 5 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-12-24T16:37:00Z` `issue` by `c0de128`; signals: accuracy, aligned, attention, block, cache, hang, kernel, kv cache; excerpt: "@tjtanaa, following up on the request for accuracy validation for the AITER MLA backend changes. Technical Validation (lm eval) I have conducted comparative accuracy ..." (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3690218003)
-- `2025-12-24T16:09:23Z` `issue` by `c0de128`; signals: alignment, attention, block, flashinfer, hang, kernel, mla; excerpt: "MLA Decode Path Validation Analysis Environment Testing Tested on AMD Instinct MI300X (gfx942) with ROCm 6.2/7.0. AITER MLA Backend Requirements The AITER MLA backend ..." (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3690171103)
-- `2025-12-24T13:53:01Z` `issue` by `c0de128`; signals: alignment, attention, block, flashinfer, kernel, mla; excerpt: "Technical Validation - AITER MLA last page len Fix Bug Analysis The AITER MLA backend uses a kernel block size of 1 (each "page" ..." (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3689836873)
-- `2025-12-28T21:21:34Z` `issue` by `c0de128`; signals: block, kernel, mla, perf, performance, speedup; excerpt: "@tjtanaa This PR has technical approval from @ganyi1996ppo and demonstrates a 9.97x speedup on MLA decode performance. The fix corrects the last page len ..." (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3695058865)
-- `2025-12-24T14:26:36Z` `issue` by `c0de128`; signals: accuracy, benchmark, correctness, perf, performance; excerpt: "Hardware Validation: TinyLlama-1.1B Accuracy on MI300X (gfx942) Ran lm eval benchmarks on AMD Instinct MI300X (gfx942, ROCm 6.2, PyTorch 2.5.1+rocm6.2): This demonstrates functional correctness ..." (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3689913777)
-- `2026-01-02T04:13:38Z` `issue` by `c0de128`; signals: cache, cuda, kv cache, perf, performance; excerpt: "Hardware Verification (MI300X VF - January 2, 2026) Verified vLLM inference on AMD Instinct MI300X VF (gfx942): Performance: - Model loading: 1.55 seconds - ..." (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3704431137)
-- `2025-12-28T19:19:56Z` `inline` by `c0de128` `vllm/v1/attention/backends/mla/rocm_aiter_mla.py`:127; signals: attention, cuda, cudagraph, mla; excerpt: "Done! Implemented in 9099990 - now the persistent buffer is initialized once as ones in init and we just slice it (self.paged kv last ..." (https://github.com/vllm-project/vllm/pull/31282#discussion_r2649880745)
-- `2025-12-26T19:42:42Z` `issue` by `c0de128`; signals: latency, perf, performance, throughput; excerpt: "Performance Analysis The optimization eliminates per-decode-call overhead: Before (each build decode call): After (each build decode call): Savings per decode: - Eliminates torch.ones() allocation ..." (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3693285715)
-- `2025-12-26T20:11:58Z` `issue` by `c0de128`; signals: benchmark, latency, speedup, throughput; excerpt: "Hardware Benchmark Results Tested on AMD Instinct MI300X VF (gfx942): Summary: Eliminating the per-call torch.ones() allocation and copy () operation yields a 10x speedup ..." (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3693315509)
-- `2025-12-25T22:00:00Z` `issue` by `c0de128`; signals: block, hang, mla; excerpt: "Updated Validation: MLA-Specific Test Path @tjtanaa You're correct that TinyLlama doesn't use MLA. Here's the proper validation approach for this fix: Why This Fix ..." (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3691772092)
-- `2025-12-25T22:51:33Z` `issue` by `c0de128`; signals: fp8, hang, mla; excerpt: "Hardware Validation: MI300X (gfx942) with ROCm 7.0 Environment - GPU: AMD Instinct MI300X VF (gfx942:sramecc+:xnack-) - ROCm: 7.0.51831 - PyTorch: 2.9.0a0+gitb425573 (HIP build) - ..." (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3691798675)
-- `2025-12-26T19:24:33Z` `issue` by `c0de128`; signals: block, cuda, hang; excerpt: "Good point @ganyi1996ppo! Since the persistent buffer is now initialized with torch.ones() and never needs to change (every page has exactly 1 token with ..." (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3693268722)
+- 2025-12-24 `c0de128`: Technical Validation - AITER MLA last page len Fix Bug Analysis The AITER MLA backend uses a kernel block size of 1 (each "page" contains exactly 1 token): The buggy code calculated paged kv last page len as: For a sequence of ... (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3689836873)
+- 2025-12-24 `c0de128`: Hardware Validation: TinyLlama-1.1B Accuracy on MI300X (gfx942) Ran lm eval benchmarks on AMD Instinct MI300X (gfx942, ROCm 6.2, PyTorch 2.5.1+rocm6.2): This demonstrates functional correctness across the new code paths. The accuracy scores are consistent with TinyLlama-1.1B's expected performance on these benchmarks. (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3689913777)
+- 2025-12-24 `tjtanaa`: @c0de128 The test cases are not relevant to this PR changes. Please read through vLLM documentations to learn how to launch model to test it properly. (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3690149695)
+- 2025-12-24 `c0de128`: MLA Decode Path Validation Analysis Environment Testing Tested on AMD Instinct MI300X (gfx942) with ROCm 6.2/7.0. AITER MLA Backend Requirements The AITER MLA backend enforces block size=1: The Bug Analysis Before (Buggy): For a sequence of 127 tokens with block size=1: - ... (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3690171103)
+- 2025-12-24 `c0de128`: @tjtanaa, following up on the request for accuracy validation for the AITER MLA backend changes. Technical Validation (lm eval) I have conducted comparative accuracy testing on AMD Instinct MI300X (gfx942) with ROCm 6.2 to ensure this logic change maintains numerical integrity. Using ... (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3690218003)
+- 2025-12-25 `ganyi1996ppo` on `vllm/v1/attention/backends/mla/rocm_aiter_mla.py`:125: This line indeed looks incorrect to me. @zq1997 please double confirm it, is this a mistake? (https://github.com/vllm-project/vllm/pull/31282#discussion_r2646392916)
+- 2025-12-25 `ganyi1996ppo` on `vllm/v1/attention/backends/mla/rocm_aiter_mla.py`:127: Can you make the persistent buffer self.paged kv last page len initialized as 1 during startup? Then you only need to slice it during metadata preparation, which will be more effective than allocated new tensor and fill it. (https://github.com/vllm-project/vllm/pull/31282#discussion_r2646395083)
+- 2025-12-25 `zq1997` on `vllm/v1/attention/backends/mla/rocm_aiter_mla.py`:125: After confirmation, I am very sorry that this was indeed a mistake I made. (https://github.com/vllm-project/vllm/pull/31282#discussion_r2646448478)
+- 2025-12-25 `c0de128`: @ganyi1996ppo Thanks for the suggestion! I've updated the implementation: 1. Changed self.paged kv last page len initialization from torch.zeros() to torch.ones() 2. Removed the redundant .fill (1) call since the buffer is now pre-filled with 1s at startup This is more efficient ... (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3691639001)
+- 2025-12-25 `c0de128`: Updated Validation: MLA-Specific Test Path @tjtanaa You're correct that TinyLlama doesn't use MLA. Here's the proper validation approach for this fix: Why This Fix Matters The AITER MLA backend enforces block size=1 (each page = 1 token). The bug was setting paged ... (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3691772092)
+- 2025-12-25 `c0de128`: Hardware Validation: MI300X (gfx942) with ROCm 7.0 Environment - GPU: AMD Instinct MI300X VF (gfx942:sramecc+:xnack-) - ROCm: 7.0.51831 - PyTorch: 2.9.0a0+gitb425573 (HIP build) - vLLM: 0.10.1 MLA Backend Note The AITER MLA decode test requires vLLM with this PR's changes applied. The ... (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3691798675)
+- 2025-12-26 `ganyi1996ppo` on `vllm/v1/attention/backends/mla/rocm_aiter_mla.py`:127: I think this line can be removed as well, and use self.paged kv last page len's slice for eager, what do you think? @c0de128 (https://github.com/vllm-project/vllm/pull/31282#discussion_r2647352648)
+- 2025-12-26 `c0de128`: Good point @ganyi1996ppo! Since the persistent buffer is now initialized with torch.ones() and never needs to change (every page has exactly 1 token with block size=1), we can skip the allocation entirely and just use the slice directly. I'll update the PR ... (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3693268722)
+- 2025-12-26 `c0de128`: Done! Pushed the optimization: - Moved paged kv last page len initialization outside the cudagraph block so it's always available - Now just use self.paged kv last page len[:num reqs] slice directly in build decode - Removed the redundant copy operation in ... (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3693271485)
+- 2025-12-26 `c0de128`: Performance Analysis The optimization eliminates per-decode-call overhead: Before (each build decode call): After (each build decode call): Savings per decode: - Eliminates torch.ones() allocation ( 2-5μs on MI300X for small tensors) - Eliminates copy () D2D transfer ( 1-2μs) - Slice operation ... (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3693285715)
+- 2025-12-26 `c0de128`: Hardware Benchmark Results Tested on AMD Instinct MI300X VF (gfx942): Summary: Eliminating the per-call torch.ones() allocation and copy () operation yields a 10x speedup in the metadata preparation path. For high-throughput decode workloads (thousands of requests/second), this compounds to measurable latency improvements. (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3693315509)
+- 2025-12-26 `c0de128`: Final update: All CI checks have passed (Build 2165). Performance optimization is verified on MI300X with a 10x reduction in overhead . PR is 100% ready for merge. @ganyi1996ppo (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3693440289)
+- 2025-12-27 `c0de128`: @tjtanaa, pinging for a final maintainer look at this. The optimization you suggested has been implemented and approved by @ganyi1996ppo. My hardware tests on the MI300X confirm a 10x reduction in overhead (139ms to 14ms) for this logic. All CI checks are ... (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3694040768)
+- 2025-12-28 `c0de128`: @ganyi1996ppo Done! The optimization has been implemented in the latest commit. The buffer is now pre-initialized once with torch.ones() in init and we just slice it directly in both eager and cudagraph modes - no more torch.ones() allocation or copy () calls ... (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3694785661)
+- 2025-12-28 `c0de128` on `vllm/v1/attention/backends/mla/rocm_aiter_mla.py`:127: Done! Implemented in 9099990 - now the persistent buffer is initialized once as ones in init and we just slice it (self.paged kv last page len[:num reqs]) for both eager and cudagraph paths. No tensor allocation in the hot path. (https://github.com/vllm-project/vllm/pull/31282#discussion_r2649880745)
+- 2025-12-28 `c0de128`: @gshtras @hongxiayang Ready for review - fixes last page len calculation in AITER MLA decode (was using kv block size instead of kernel block size). Tested on MI300X, all CI passing. (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3695051775)
+- 2025-12-28 `c0de128`: Related AMD/ROCm MLA PRs: - 31119 - Fix tensor slice assignment in MLA - 31176 - Fix hardcoded device in MLA sparse attention - 31178 - Fix device parameter in AITER topK metadata These PRs collectively address device handling and calculation issues ... (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3695055143)
+- 2025-12-28 `c0de128`: @tjtanaa This PR has technical approval from @ganyi1996ppo and demonstrates a 9.97x speedup on MLA decode performance. The fix corrects the last page len calculation which was incorrectly using kv block size instead of the kernel block size (always 1 for AITER ... (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3695058865)
+- 2025-12-29 `c0de128`: @ganyi1996ppo Thank you for the approval and optimization suggestions! All CI checks are passing (Build 2165). Ready to merge when convenient. 🚀 (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3697683070)
+- 2025-12-30 `c0de128`: Hi @ganyi1996ppo, hardware-verified 10x speedup is stable and CI is green. Ready for merge. Thanks! (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3700684561)
+- 2025-12-31 `c0de128`: Hi @ganyi1996ppo, friendly follow-up - this PR has been approved and all CI checks are passing. The 10x speedup has been hardware-verified on MI300X. Ready to merge when convenient. Thanks! 🚀 (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3702664762)
+- 2026-01-01 `c0de128`: Hi @hongxiayang @ganyi1996ppo, I've rebased the approved PRs to latest main and all CI is green (including Buildkite AMD-CI): - 31282 - Fix last page len in AITER MLA (2 approvals) - freshly rebased - 31295 - Use dynamic WARP SIZE in ... (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3704120736)
+- 2026-01-02 `c0de128`: Hardware Verification (MI300X VF - January 2, 2026) Verified vLLM inference on AMD Instinct MI300X VF (gfx942): Performance: - Model loading: 1.55 seconds - KV Cache: 170.77 GiB available - CUDA graph capture: 5 seconds - Generation: 16 tokens/sec Test Environment: - ... (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3704431137)
+- 2026-01-02 `c0de128`: Gentle ping @ganyi1996ppo @tjtanaa - this PR has 2 approvals and AMD CI is passing. Could you please merge when you have a chance? The current Buildkite failure is on v1-test-attention-b200 (NVIDIA B200) which is unrelated to this AMD MLA fix. Thank ... (https://github.com/vllm-project/vllm/pull/31282#issuecomment-3704439334)

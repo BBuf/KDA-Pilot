@@ -1,64 +1,27 @@
-# PR Discussion Digest
-
-- Source PR: [sgl-project/sglang#11892](https://github.com/sgl-project/sglang/pull/11892)
-- Source page: `sources/prs/sglang/PR-11892.md`
-- Evidence bundle: `evidence/pull-bundles/sglang/gh-11892`
-- Generated at: `2026-05-20T15:27:29.911462+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-10-21T05:00:20Z`
-- Merged: `2025-11-06T03:33:27Z`
-
-## Discussion Counts
-
-- Issue comments: 14
-- Review submissions: 16 (approved=2, commented=14)
-- Inline review comments: 26
-- Review threads observed: 16
-- Resolved/outdated thread markers: resolved=16, outdated=14
-- Human participants with discussion text: Fridge003, YAMY1234, hlu1, thqq479
-- Automation comments/reviews omitted from high-signal summary: 3
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 4
-
-## Review Decisions
-
-- `2025-10-21T05:01:52Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces an adaptive attention mechanism for DeepSeek-V3.2 models, switching between Multi-Head Attention (MHA) ... (https://github.com/sgl-project/sglang/pull/11892#pullrequestreview-3358759332)
-- `2025-10-31T22:00:05Z` `COMMENTED` by `hlu1` (https://github.com/sgl-project/sglang/pull/11892#pullrequestreview-3406304834)
-- `2025-10-31T22:20:18Z` `COMMENTED` by `hlu1` (https://github.com/sgl-project/sglang/pull/11892#pullrequestreview-3406337066)
-- `2025-10-31T22:53:12Z` `COMMENTED` by `YAMY1234` (https://github.com/sgl-project/sglang/pull/11892#pullrequestreview-3406445308)
-- `2025-10-31T22:54:23Z` `COMMENTED` by `YAMY1234` (https://github.com/sgl-project/sglang/pull/11892#pullrequestreview-3406448763)
-- `2025-10-31T23:02:42Z` `COMMENTED` by `YAMY1234` (https://github.com/sgl-project/sglang/pull/11892#pullrequestreview-3406480525)
-- `2025-11-01T21:09:11Z` `COMMENTED` by `YAMY1234` (https://github.com/sgl-project/sglang/pull/11892#pullrequestreview-3407730176)
-- `2025-11-03T07:36:35Z` `COMMENTED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/11892#pullrequestreview-3409330462)
-- `2025-11-04T07:18:57Z` `COMMENTED` by `YAMY1234` (https://github.com/sgl-project/sglang/pull/11892#pullrequestreview-3414378065)
-- `2025-11-04T23:22:04Z` `COMMENTED` by `hlu1` (https://github.com/sgl-project/sglang/pull/11892#pullrequestreview-3418823084)
-- `2025-11-05T16:01:20Z` `COMMENTED` by `YAMY1234` (https://github.com/sgl-project/sglang/pull/11892#pullrequestreview-3423020931)
-- `2025-11-05T19:13:29Z` `COMMENTED` by `hlu1` (https://github.com/sgl-project/sglang/pull/11892#pullrequestreview-3423880838)
-- `2025-11-05T20:18:56Z` `COMMENTED` by `YAMY1234` (https://github.com/sgl-project/sglang/pull/11892#pullrequestreview-3424165201)
-- `2025-11-05T20:21:24Z` `COMMENTED` by `YAMY1234` (https://github.com/sgl-project/sglang/pull/11892#pullrequestreview-3424178720)
-- `2025-11-05T20:37:53Z` `APPROVED` by `hlu1` (https://github.com/sgl-project/sglang/pull/11892#pullrequestreview-3424264341)
-- `2025-11-06T03:10:35Z` `APPROVED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/11892#pullrequestreview-3425599666)
-
-## Inline Comment Hotspots
-
-- `python/sglang/srt/models/deepseek_v2.py`: 17 inline comment(s)
-- `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`: 8 inline comment(s)
-- `python/sglang/srt/layers/attention/nsa_backend.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-11-04T07:18:57Z` `inline` by `YAMY1234` `python/sglang/srt/models/deepseek_v2.py`:1516; signals: b200, h200, hang, mla, perf; excerpt: "Great suggestion! I’ve modified the code so that it now supports MLA’s Top-K skip. For better compatibility, it can also return the constructed indices ..." (https://github.com/sgl-project/sglang/pull/11892#discussion_r2488966029)
-- `2025-11-04T22:32:44Z` `inline` by `hlu1` `python/sglang/srt/models/deepseek_v2.py`:430; signals: benchmark, cache, mla; excerpt: "Let's think about what this case, sum seq lens larger than forward batch.get max chunk capacity, actually means. forward batch.get max chunk capacity is ..." (https://github.com/sgl-project/sglang/pull/11892#discussion_r2492219596)
-- `2025-11-05T16:01:19Z` `inline` by `YAMY1234` `python/sglang/srt/models/deepseek_v2.py`:430; signals: correctness, perf, performance; excerpt: "I previously tried producing scenarios where sum seq lens exceeds forward batch.get max chunk capacity to verify performance/correctness, but so far haven’t seen it ..." (https://github.com/sgl-project/sglang/pull/11892#discussion_r2495179535)
-- `2025-10-31T22:10:14Z` `inline` by `hlu1` `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:545; signals: attention, cuda; excerpt: "There are more stuff you can skip. You only need to keep ops that are relevant to k and you can skip all the ..." (https://github.com/sgl-project/sglang/pull/11892#discussion_r2482789894)
-- `2025-10-31T23:02:42Z` `inline` by `YAMY1234` `python/sglang/srt/models/deepseek_v2.py`:1554; signals: fp8, mla; excerpt: "Enabling SGLANG MHA USE WKC WVC slightly improves logits precision — in each forward batch, the max diff between MLA and MHA logits decreases ..." (https://github.com/sgl-project/sglang/pull/11892#discussion_r2482886700)
-- `2025-11-03T05:54:48Z` `inline` by `Fridge003` `python/sglang/srt/layers/attention/nsa_backend.py`:1224; signals: attention, cuda; excerpt: "Can we only use torch.cuda.get device capability()[0] as condition? Since other devices like SM103 might need fa4 in the future." (https://github.com/sgl-project/sglang/pull/11892#discussion_r2485375798)
-- `2025-11-04T23:06:47Z` `inline` by `hlu1` `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:264; signals: attention, kernel; excerpt: "I think it's way easier to construct an empty matrix the same size as the logits matrix [here]( and pass that to the topk ..." (https://github.com/sgl-project/sglang/pull/11892#discussion_r2492275182)
-- `2025-11-05T19:13:16Z` `inline` by `hlu1` `python/sglang/srt/models/deepseek_v2.py`:430; signals: mla, nan; excerpt: "If it's rarely hit, why don't we just fall back to MLA, instead of adding another code path which adds the maintenance overhead." (https://github.com/sgl-project/sglang/pull/11892#discussion_r2495796163)
-- `2025-11-05T20:18:56Z` `inline` by `YAMY1234` `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:458; signals: attention, b200; excerpt: "Yes, verified on B200 with GPQA thinking" (https://github.com/sgl-project/sglang/pull/11892#discussion_r2496002164)
-- `2025-11-03T04:42:51Z` `inline` by `Fridge003` `python/sglang/srt/models/deepseek_v2.py`:1516; signals: mla; excerpt: "Seems now we will skip index topk for any MHA forward. But how can we ensure we don't skip the index topk when max ..." (https://github.com/sgl-project/sglang/pull/11892#discussion_r2485296806)
-- `2025-11-03T07:35:21Z` `inline` by `Fridge003` `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:271; signals: attention; excerpt: "Do we really need to use two streams here? Seems current stream is doing nothing when alt stream is computing key" (https://github.com/sgl-project/sglang/pull/11892#discussion_r2485554239)
-- `2025-10-31T22:00:02Z` `inline` by `hlu1` `python/sglang/srt/models/deepseek_v2.py`:430; signals: perf; excerpt: "Why MHA CHUNKED KV? As we discussed offline, it should use MHA or MHA ONE SHOT for best perf." (https://github.com/sgl-project/sglang/pull/11892#discussion_r2482775962)
+- 2025-10-21 `Fridge003`: @YAMY1234 Can you post some accuracy results on GPQA ? (https://github.com/sgl-project/sglang/pull/11892#issuecomment-3429231352)
+- 2025-10-28 `YAMY1234`: @YAMY1234 Can you post some accuracy results on GPQA ? Thanks! Just added the GPQA result. (https://github.com/sgl-project/sglang/pull/11892#issuecomment-3457855175)
+- 2025-10-28 `YAMY1234`: Please test with MTP and make sure it's not broken. Ensured MHA is currently triggered without MTP. Will test with MTP later to confirm it runs correctly. (https://github.com/sgl-project/sglang/pull/11892#issuecomment-3457965938)
+- 2025-10-29 `hlu1`: Please update the benchmark data after adding back self.indexer. (https://github.com/sgl-project/sglang/pull/11892#issuecomment-3464758538)
+- 2025-10-31 `YAMY1234`: Please update the benchmark data after adding back self.indexer. Updated the results with adding back indexer but skipping topK! (https://github.com/sgl-project/sglang/pull/11892#issuecomment-3470770964)
+- 2025-10-31 `hlu1` on `python/sglang/srt/models/deepseek_v2.py`:430: Why MHA CHUNKED KV? As we discussed offline, it should use MHA or MHA ONE SHOT for best perf. (https://github.com/sgl-project/sglang/pull/11892#discussion_r2482775962)
+- 2025-10-31 `hlu1` on `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:545: There are more stuff you can skip. You only need to keep ops that are relevant to k and you can skip all the ops that relevant to q or weights (except when wk and weight proj are fused after the fuse ... (https://github.com/sgl-project/sglang/pull/11892#discussion_r2482789894)
+- 2025-10-31 `hlu1` on `python/sglang/srt/models/deepseek_v2.py`:1554: Is there a lot of numerical difference between the two code paths? If not, we should remove this one and keep the other one. (https://github.com/sgl-project/sglang/pull/11892#discussion_r2482809638)
+- 2025-10-31 `YAMY1234` on `python/sglang/srt/models/deepseek_v2.py`:430: When I was debugging before calling indexer, I initially tried AttnForwardMethod.MHA, but found it only works correctly only when there’s no prefix. If we want to use that we need to add additional logic needed for prefix processing, which is similar to ... (https://github.com/sgl-project/sglang/pull/11892#discussion_r2482861490)
+- 2025-10-31 `YAMY1234` on `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:545: Great suggestion! Will update in another patch. (https://github.com/sgl-project/sglang/pull/11892#discussion_r2482863916)
+- 2025-10-31 `YAMY1234` on `python/sglang/srt/models/deepseek_v2.py`:1554: Enabling SGLANG MHA USE WKC WVC slightly improves logits precision — in each forward batch, the max diff between MLA and MHA logits decreases from about 0.8 to 0.25. But since we’re not using FP8 for MHA, the difference is negligible in ... (https://github.com/sgl-project/sglang/pull/11892#discussion_r2482886700)
+- 2025-11-01 `YAMY1234` on `python/sglang/srt/models/deepseek_v2.py`:430: Tested MHA ONE SHOT can work and the GPQA result looks good. But since there is a sum seq lens restriction so I still kept MHA CHUNKED KV as fallback if sum seq lens is larger than forward batch.get max chunk capacity. (https://github.com/sgl-project/sglang/pull/11892#discussion_r2483918844)
+- 2025-11-03 `Fridge003` on `python/sglang/srt/models/deepseek_v2.py`:425: Rename it to is hopper (https://github.com/sgl-project/sglang/pull/11892#discussion_r2485260084)
+- 2025-11-03 `Fridge003` on `python/sglang/srt/models/deepseek_v2.py`:1179: Can we make the threshold an environment variable, and put it under (Also update the document for environ (https://github.com/sgl-project/sglang/pull/11892#discussion_r2485290864)
+- 2025-11-03 `Fridge003` on `python/sglang/srt/models/deepseek_v2.py`:1516: Seems now we will skip index topk for any MHA forward. But how can we ensure we don't skip the index topk when max len kv is more than index topk(2048) ? What I mean is, the logic of checking whether to ... (https://github.com/sgl-project/sglang/pull/11892#discussion_r2485296806)
+- 2025-11-03 `Fridge003` on `python/sglang/srt/layers/attention/nsa_backend.py`:1224: Can we only use torch.cuda.get device capability()[0] as condition? Since other devices like SM103 might need fa4 in the future. (https://github.com/sgl-project/sglang/pull/11892#discussion_r2485375798)
+- 2025-11-03 `Fridge003` on `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:466: The same, do we need two streams here (https://github.com/sgl-project/sglang/pull/11892#discussion_r2485541947)
+- 2025-11-03 `Fridge003` on `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:271: Do we really need to use two streams here? Seems current stream is doing nothing when alt stream is computing key (https://github.com/sgl-project/sglang/pull/11892#discussion_r2485554239)
+- 2025-11-04 `YAMY1234` on `python/sglang/srt/models/deepseek_v2.py`:1516: Great suggestion! I’ve modified the code so that it now supports MLA’s Top-K skip. For better compatibility, it can also return the constructed indices directly without performing extra computations, which saves some processing overhead. I verified this works on both H200(MHA) and ... (https://github.com/sgl-project/sglang/pull/11892#discussion_r2488966029)
+- 2025-11-04 `hlu1` on `python/sglang/srt/models/deepseek_v2.py`:418: I don't think we should introduce an env variable for this purpose. It's set to 2048 because self.nsa index topk is 2048. We should just use self.nsa index topk. If in another model, the self.nsa index topk value is set differently, this ... (https://github.com/sgl-project/sglang/pull/11892#discussion_r2492204056)
+- 2025-11-04 `hlu1` on `python/sglang/srt/models/deepseek_v2.py`:430: Let's think about what this case, sum seq lens larger than forward batch.get max chunk capacity, actually means. forward batch.get max chunk capacity is set to 128k. When sum seq lens is larger than 128k, that means we have significant kvcache reuse ... (https://github.com/sgl-project/sglang/pull/11892#discussion_r2492219596)
+- 2025-11-04 `hlu1` on `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:264: I think it's way easier to construct an empty matrix the same size as the logits matrix [here]( and pass that to the topk kernel so it can generate the indices for you. It calls one kernel instead of the multiples kernels ... (https://github.com/sgl-project/sglang/pull/11892#discussion_r2492275182)
+- 2025-11-05 `YAMY1234` on `python/sglang/srt/models/deepseek_v2.py`:430: I previously tried producing scenarios where sum seq lens exceeds forward batch.get max chunk capacity to verify performance/correctness, but so far haven’t seen it happen — even when testing different num-shot settings on GSM8K and full GPQA Thinking runs. It seems this ... (https://github.com/sgl-project/sglang/pull/11892#discussion_r2495179535)
+- 2025-11-05 `hlu1` on `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:458: Have you tested this code path? (https://github.com/sgl-project/sglang/pull/11892#discussion_r2495791211)
+- 2025-11-05 `hlu1` on `python/sglang/srt/models/deepseek_v2.py`:430: If it's rarely hit, why don't we just fall back to MLA, instead of adding another code path which adds the maintenance overhead. (https://github.com/sgl-project/sglang/pull/11892#discussion_r2495796163)
+- 2025-11-05 `YAMY1234` on `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:458: Yes, verified on B200 with GPQA thinking (https://github.com/sgl-project/sglang/pull/11892#discussion_r2496002164)
+- 2025-11-05 `YAMY1234` on `python/sglang/srt/models/deepseek_v2.py`:430: Make sense, removed the chunked kv logic completely to reduce maintenance overhead (https://github.com/sgl-project/sglang/pull/11892#discussion_r2496011910)

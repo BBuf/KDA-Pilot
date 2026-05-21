@@ -1,77 +1,48 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#24248](https://github.com/vllm-project/vllm/pull/24248)
-- Source page: `sources/prs/vllm/PR-24248.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-24248`
-- Generated at: `2026-05-20T15:37:47.141920+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-09-04T12:23:45Z`
-- Merged: `2025-11-10T23:33:11Z`
-
-## Discussion Counts
-
-- Issue comments: 13
-- Review submissions: 33 (approved=3, commented=30)
-- Inline review comments: 54
-- Review threads observed: 31
-- Resolved/outdated thread markers: resolved=22, outdated=26
-- Human participants with discussion text: ProExpertProg, bnellnm, chatgpt-codex-connector, hmellor, ilmarkov, mergify, nvpohanh, zou3519
-- Automation comments/reviews omitted from high-signal summary: 3
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 12
-
-## Review Decisions
-
-- `2025-09-04T12:27:26Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request is a significant enhancement to the all-reduce fusion capabilities, adding support for matching ... (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3184988857)
-- `2025-09-05T01:18:29Z` `COMMENTED` by `nvpohanh` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3187716766)
-- `2025-09-05T01:19:35Z` `COMMENTED` by `nvpohanh` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3187721769)
-- `2025-09-05T01:24:01Z` `COMMENTED` by `nvpohanh` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3187727432)
-- `2025-09-05T09:49:16Z` `COMMENTED` by `ilmarkov` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3188701390)
-- `2025-09-05T12:48:02Z` `COMMENTED` by `ilmarkov` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3189235327)
-- `2025-09-05T13:19:16Z` `COMMENTED` by `nvpohanh` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3189348121)
-- `2025-09-05T14:43:33Z` `COMMENTED` by `ilmarkov` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3189661778)
-- `2025-09-05T14:51:39Z` `COMMENTED` by `nvpohanh` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3189691544)
-- `2025-09-05T16:26:56Z` `COMMENTED` by `nvpohanh` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3190010708)
-- `2025-09-06T10:33:29Z` `COMMENTED` by `ilmarkov` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3192116277)
-- `2025-09-12T00:12:37Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3214064990)
-- `2025-10-16T20:23:10Z` `COMMENTED` by `chatgpt-codex-connector` - 💡 Codex Review Here are some automated review suggestions for this pull request. ℹ️ About Codex in GitHub ... (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3346879541)
-- `2025-10-17T16:41:40Z` `COMMENTED` by `ProExpertProg` - Can we also add a test for the default setting of the config param? (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3351011923)
-- `2025-10-17T17:53:14Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3351325148)
-- `2025-10-21T13:28:10Z` `COMMENTED` by `ilmarkov` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3360758289)
-- `2025-10-21T13:30:18Z` `COMMENTED` by `ilmarkov` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3360775154)
-- `2025-10-21T13:31:45Z` `COMMENTED` by `ilmarkov` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3360784929)
-- `2025-10-21T14:13:20Z` `COMMENTED` by `hmellor` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3361038897)
-- `2025-10-21T14:16:51Z` `COMMENTED` by `hmellor` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3361063159)
-- `2025-10-21T14:18:48Z` `COMMENTED` by `hmellor` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3361075468)
-- `2025-10-21T15:16:51Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3361347418)
-- `2025-10-30T21:43:40Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3401659591)
-- `2025-11-02T19:50:36Z` `COMMENTED` by `ilmarkov` (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3408944216)
-- ... 3 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/compilation/collective_fusion.py`: 17 inline comment(s)
-- `vllm/config/compilation.py`: 15 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/layer.py`: 11 inline comment(s)
-- `benchmarks/kernels/benchmark_fused_collective.py`: 8 inline comment(s)
-- `vllm/compilation/fusion.py`: 1 inline comment(s)
-- `tests/compile/test_fusion_all_reduce.py`: 1 inline comment(s)
-- `tests/compile/test_fusions_e2e.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-09-05T09:49:16Z` `inline` by `ilmarkov` `vllm/config/compilation.py`; signals: benchmark, blackwell, compile, dtype, flashinfer, perf, speedup; excerpt: "@nvpohanh Here are the results for TP=8 Blackwell with torch symm mem (VLLM ALLREDUCE USE SYMM MEM=1) enabled (see the set of results below). ..." (https://github.com/vllm-project/vllm/pull/24248#discussion_r2324628364)
-- `2025-11-05T20:35:27Z` `issue` by `ilmarkov`; signals: benchmark, compile, dtype, flashinfer, fp8, h100, speedup; excerpt: "H100 microbenchmark results Standard Allreduce is with VLLM ALLREDUCE USE SYMM MEM=1 ("Failed" for two shot algorithm is caused by condition input size < ..." (https://github.com/vllm-project/vllm/pull/24248#issuecomment-3493278173)
-- `2025-11-05T21:04:27Z` `issue` by `ilmarkov`; signals: b200, benchmark, compile, dtype, flashinfer, fp8, speedup; excerpt: "B200 microbenchmark results: Standard Allreduce is with VLLM ALLREDUCE USE SYMM MEM=1 ("Failed" for two shot algorithm is caused by condition input size < ..." (https://github.com/vllm-project/vllm/pull/24248#issuecomment-3493441371)
-- `2025-10-30T21:13:19Z` `inline` by `ProExpertProg` `benchmarks/kernels/benchmark_fused_collective.py`:281; signals: benchmark, fp4, fp8, kernel; excerpt: "I think it would be best to do a model class and parametrize it on residual & quant (none, fp8, fp4) as well as ..." (https://github.com/vllm-project/vllm/pull/24248#discussion_r2479541766)
-- `2025-10-30T21:22:44Z` `inline` by `ProExpertProg` `benchmarks/kernels/benchmark_fused_collective.py`:1163; signals: benchmark, fp4, fp8, kernel; excerpt: "Why not make this a comma-separated list with none, fp8, fp4 as options?" (https://github.com/vllm-project/vllm/pull/24248#discussion_r2479564442)
-- `2025-10-30T21:09:19Z` `inline` by `ProExpertProg` `benchmarks/kernels/benchmark_fused_collective.py`:281; signals: benchmark, fp8, kernel; excerpt: "Can we unify the below methods into a single class using set current vllm config and RMSNorm/QuantFP8 instances to reduce duplicated code?" (https://github.com/vllm-project/vllm/pull/24248#discussion_r2479528967)
-- `2025-10-30T21:15:14Z` `inline` by `ProExpertProg` `benchmarks/kernels/benchmark_fused_collective.py`:455; signals: benchmark, fp8, kernel; excerpt: "This is way overkill, you can just do: Also, we should mark the first dimension as dynamic to make sure we're properly simulating vllm ..." (https://github.com/vllm-project/vllm/pull/24248#discussion_r2479547034)
-- `2025-09-05T13:19:16Z` `inline` by `nvpohanh` `vllm/config/compilation.py`; signals: perf, performance; excerpt: "@ilmarkov Is VLLM ALLREDUCE USE SYMM MEM=1 something that normal vLLM users would set by default? If it's good for performance, why can't we ..." (https://github.com/vllm-project/vllm/pull/24248#discussion_r2325082539)
-- `2025-10-16T20:23:10Z` `inline` by `chatgpt-codex-connector` `vllm/compilation/fusion.py`:36; signals: dtype, race; excerpt: "to trace the FX patterns that should match bfloat16 graphs. Tracing the pattern in float16 means the captured graph contains dtype-specific ops (such as ..." (https://github.com/vllm-project/vllm/pull/24248#discussion_r2437372889)
-- `2025-10-30T21:18:58Z` `inline` by `ProExpertProg` `benchmarks/kernels/benchmark_fused_collective.py`:1; signals: benchmark, kernel; excerpt: "This file is really long and borderline unreadable, can we compact it a bit better with some more code reuse? Some suggestions below" (https://github.com/vllm-project/vllm/pull/24248#discussion_r2479556215)
-- `2025-11-07T03:54:03Z` `inline` by `ProExpertProg` `vllm/config/compilation.py`:151; signals: block, cuda; excerpt: "@ilmarkov if this is still an issue to unblock we can just move this computation into the collective fusion.py file. We can always move ..." (https://github.com/vllm-project/vllm/pull/24248#discussion_r2501594296)
-- `2025-09-05T14:43:33Z` `inline` by `ilmarkov` `vllm/config/compilation.py`; signals: blackwell, hopper; excerpt: "Yes, it can be enabled by default. There is a [PR]( for it. It works on Hopper and Blackwell." (https://github.com/vllm-project/vllm/pull/24248#discussion_r2325296703)
+- 2025-09-05 `nvpohanh` on `vllm/compilation/collective_fusion.py`: Just curious: why is the threshold still so low for TP8? I think AR+Norm should have pretty good perf up to some larger message sizes for TP8? (https://github.com/vllm-project/vllm/pull/24248#discussion_r2323884230)
+- 2025-09-05 `nvpohanh` on `vllm/compilation/collective_fusion.py`: I am wondering if this can be moved to a util file (like native op patterns.py or something like that) so that it can be reused by other fusions like RMSNorm+Q fusions. @ProExpertProg what do you think? (https://github.com/vllm-project/vllm/pull/24248#discussion_r2323888003)
+- 2025-09-05 `nvpohanh` on `vllm/config/compilation.py`: why is it 1MB for TP8? (https://github.com/vllm-project/vllm/pull/24248#discussion_r2323892926)
+- 2025-09-05 `ilmarkov` on `vllm/config/compilation.py`: @nvpohanh Here are the results for TP=8 Blackwell with torch symm mem (VLLM ALLREDUCE USE SYMM MEM=1) enabled (see the set of results below). I used the best performant alternative to fused allreduce. Probably, we can condition on it checking if symm ... (https://github.com/vllm-project/vllm/pull/24248#discussion_r2324628364)
+- 2025-09-05 `ilmarkov` on `vllm/compilation/collective_fusion.py`: We could. I think @ProExpertProg will add another approach to support this kind of matching in 24188 (https://github.com/vllm-project/vllm/pull/24248#discussion_r2325004719)
+- 2025-09-05 `nvpohanh` on `vllm/config/compilation.py`: @ilmarkov Is VLLM ALLREDUCE USE SYMM MEM=1 something that normal vLLM users would set by default? If it's good for performance, why can't we enable it by default? Does it require special environment or special builds? cc @ProExpertProg @nvjullin Could you check ... (https://github.com/vllm-project/vllm/pull/24248#discussion_r2325082539)
+- 2025-09-05 `ilmarkov` on `vllm/config/compilation.py`: Yes, it can be enabled by default. There is a [PR]( for it. It works on Hopper and Blackwell. (https://github.com/vllm-project/vllm/pull/24248#discussion_r2325296703)
+- 2025-09-05 `nvpohanh` on `vllm/config/compilation.py`: Got it! we will try both your PRs and run some experiments on our side. (https://github.com/vllm-project/vllm/pull/24248#discussion_r2325319473)
+- 2025-09-05 `nvpohanh` on `vllm/config/compilation.py`: @ilmarkov Just to clarify: the PyTorch SYMM MEM implementation does not support AR+Norm fusion, right? So only the AR part uses SYMM MEM while Norm part is based on native PyT? (https://github.com/vllm-project/vllm/pull/24248#discussion_r2325530019)
+- 2025-09-06 `ilmarkov` on `vllm/config/compilation.py`: Yes, symm mem is only for allreduce part, Norm and quantization parts are in native pytorch. (https://github.com/vllm-project/vllm/pull/24248#discussion_r2326851042)
+- 2025-09-12 `ProExpertProg` on `vllm/compilation/collective_fusion.py`:592: Just found the issue with this, turns out Inductor eliminates this cast because residual is casted right back to float32 so it never needs to be down-converted. (https://github.com/vllm-project/vllm/pull/24248#discussion_r2342621376)
+- 2025-10-09 `nvpohanh`: Hi @ilmarkov , is there any progress and ETA for this change? Thanks! (https://github.com/vllm-project/vllm/pull/24248#issuecomment-3383715561)
+- 2025-10-17 `ProExpertProg` on `vllm/compilation/collective_fusion.py`:564: I think we should just always use the fused op - it should be faster (https://github.com/vllm-project/vllm/pull/24248#discussion_r2440519843)
+- 2025-10-17 `ProExpertProg` on `vllm/config/compilation.py`:131: Let's set the default dict to FI ALLREDUCE FUSION MAX SIZE MB and then in post init we can do: cc @hmellor would this work? Or should we just generate this docstring from FI ALLREDUCE MAX INPUT SIZES? (https://github.com/vllm-project/vllm/pull/24248#discussion_r2440543315)
+- 2025-10-17 `ProExpertProg` on `vllm/config/compilation.py`:113: Okay I see below it's more complex than that. what about: And then below we can define: (https://github.com/vllm-project/vllm/pull/24248#discussion_r2440560700)
+- 2025-10-17 `ProExpertProg` on `vllm/config/compilation.py`:148: I thought the dict was already platform specific? (https://github.com/vllm-project/vllm/pull/24248#discussion_r2440566063)
+- 2025-10-17 `ProExpertProg` on `vllm/model_executor/layers/fused_moe/layer.py`:2353: Is there a reason we're changing moe forward shared to moe forward (https://github.com/vllm-project/vllm/pull/24248#discussion_r2440571147)
+- 2025-10-17 `ProExpertProg` on `vllm/model_executor/layers/fused_moe/layer.py`:2037: I guess why invert the logic, seems like the diff is harder to parse due to it (is this because it got inverted in main)? (https://github.com/vllm-project/vllm/pull/24248#discussion_r2440574285)
+- 2025-10-17 `ProExpertProg` on `vllm/model_executor/layers/fused_moe/layer.py`:2037: If yes could you restore it so it's easier to read? (https://github.com/vllm-project/vllm/pull/24248#discussion_r2440575104)
+- 2025-10-17 `ProExpertProg` on `vllm/model_executor/layers/fused_moe/layer.py`:2049: Where does this slice come from? (https://github.com/vllm-project/vllm/pull/24248#discussion_r2440581214)
+- 2025-10-17 `ProExpertProg` commented: Can we also add a test for the default setting of the config param? (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3351011923)
+- 2025-10-21 `ilmarkov` on `vllm/model_executor/layers/fused_moe/layer.py`:2037: We use the same orider of the logic as in the forward impl [custom op]( from which we move the reduction. (https://github.com/vllm-project/vllm/pull/24248#discussion_r2448296775)
+- 2025-10-21 `ilmarkov` on `vllm/model_executor/layers/fused_moe/layer.py`:2353: It's in the branch where self.shared experts is None (https://github.com/vllm-project/vllm/pull/24248#discussion_r2448309791)
+- 2025-10-21 `ilmarkov` on `vllm/model_executor/layers/fused_moe/layer.py`:2049: Apparently, moe forward can return larger tensor than expected. Probably, because of padding (https://github.com/vllm-project/vllm/pull/24248#discussion_r2448317359)
+- 2025-10-21 `hmellor` on `vllm/config/compilation.py`:131: As far as I know, docstrings cannot be generated like that (https://github.com/vllm-project/vllm/pull/24248#discussion_r2448509272)
+- 2025-10-21 `hmellor` on `vllm/model_executor/layers/fused_moe/layer.py`:2049: I think this is where the padding is added (https://github.com/vllm-project/vllm/pull/24248#discussion_r2448525152)
+- 2025-10-21 `hmellor` on `vllm/config/compilation.py`:151: Docs build is failing because this import now happens when running --help and vllm.compilation.collective fusion includes a bunch more heavy imports (https://github.com/vllm-project/vllm/pull/24248#discussion_r2448534192)
+- 2025-10-21 `bnellnm` on `vllm/model_executor/layers/fused_moe/layer.py`:2344: Maybe we should move the naive dispatch call out to this level also. Also, the original callsites for naive dispatch/combine are inside a sequence parallel context. I'm not sure if that is going to cause problems. (https://github.com/vllm-project/vllm/pull/24248#discussion_r2448732690)
+- 2025-10-30 `ProExpertProg` on `benchmarks/kernels/benchmark_fused_collective.py`:281: Can we unify the below methods into a single class using set current vllm config and RMSNorm/QuantFP8 instances to reduce duplicated code? (https://github.com/vllm-project/vllm/pull/24248#discussion_r2479528967)
+- 2025-10-30 `ProExpertProg` on `benchmarks/kernels/benchmark_fused_collective.py`:281: I think it would be best to do a model class and parametrize it on residual & quant (none, fp8, fp4) as well as whether each custom op is enabled (https://github.com/vllm-project/vllm/pull/24248#discussion_r2479541766)
+- 2025-10-30 `ProExpertProg` on `benchmarks/kernels/benchmark_fused_collective.py`:455: This is way overkill, you can just do: Also, we should mark the first dimension as dynamic to make sure we're properly simulating vllm codegen. The QuantFP8 benchmark should do this already if you need an example. (https://github.com/vllm-project/vllm/pull/24248#discussion_r2479547034)
+- 2025-10-30 `ProExpertProg` on `benchmarks/kernels/benchmark_fused_collective.py`:642: Can we loop over use oneshot here? (https://github.com/vllm-project/vllm/pull/24248#discussion_r2479554809)
+- 2025-10-30 `ProExpertProg` on `benchmarks/kernels/benchmark_fused_collective.py`:1: This file is really long and borderline unreadable, can we compact it a bit better with some more code reuse? Some suggestions below (https://github.com/vllm-project/vllm/pull/24248#discussion_r2479556215)
+- 2025-10-30 `ProExpertProg` on `benchmarks/kernels/benchmark_fused_collective.py`:1011: Why not use pandas and to markdown instead of rolling your own? (https://github.com/vllm-project/vllm/pull/24248#discussion_r2479559253)
+- 2025-10-30 `ProExpertProg` on `benchmarks/kernels/benchmark_fused_collective.py`:1069: Is this really seq len or is it num tokens? (https://github.com/vllm-project/vllm/pull/24248#discussion_r2479560668)
+- 2025-10-30 `ProExpertProg` on `benchmarks/kernels/benchmark_fused_collective.py`:1163: Why not make this a comma-separated list with none, fp8, fp4 as options? (https://github.com/vllm-project/vllm/pull/24248#discussion_r2479564442)
+- 2025-10-30 `ProExpertProg` on `vllm/compilation/collective_fusion.py`:509: Why not just compare num tokens here? Can always compute current tensor size below for the use oneshot use (https://github.com/vllm-project/vllm/pull/24248#discussion_r2479574126)
+- 2025-10-30 `ProExpertProg` on `vllm/model_executor/layers/fused_moe/layer.py`:2187: cc @bnellnm @varun-sundar-rabindranath have you been able to take a look at this? (https://github.com/vllm-project/vllm/pull/24248#discussion_r2479583725)
+- 2025-10-30 `ProExpertProg` on `vllm/config/compilation.py`:131: I am also realizing that FI ALLREDUCE FUSION MAX SIZE MB has different default for different compute capabilities - so we can't set it as the default for the config. (https://github.com/vllm-project/vllm/pull/24248#discussion_r2479602806)
+- 2025-11-02 `ilmarkov`: I am also realizing that FI ALLREDUCE FUSION MAX SIZE MB has different default for different compute capabilities - so we can't set it as the default for the config. @ProExpertProg We can use it to set as default for config. (https://github.com/vllm-project/vllm/pull/24248#issuecomment-3478225099)
+- 2025-11-02 `ilmarkov` on `vllm/model_executor/layers/fused_moe/layer.py`:2187: Bill had a look, his comments are already addressed (https://github.com/vllm-project/vllm/pull/24248#discussion_r2484975820)
+- 2025-11-05 `bnellnm` approved: The layer.py changes look good to me. (https://github.com/vllm-project/vllm/pull/24248#pullrequestreview-3422655090)
+- 2025-11-05 `ilmarkov`: H100 microbenchmark results Standard Allreduce is with VLLM ALLREDUCE USE SYMM MEM=1 ("Failed" for two shot algorithm is caused by condition input size < world size) World Size: 2 Hidden Dimension: 8192 Warmup Iterations: 5 Benchmark Trials: 20 Quantization Modes: fp8 --- ... (https://github.com/vllm-project/vllm/pull/24248#issuecomment-3493278173)
+- 2025-11-05 `ilmarkov`: B200 microbenchmark results: Standard Allreduce is with VLLM ALLREDUCE USE SYMM MEM=1 ("Failed" for two shot algorithm is caused by condition input size < world size) World Size: 2 Hidden Dimension: 8192 Warmup Iterations: 5 Benchmark Trials: 20 Quantization Modes: fp8 --- ... (https://github.com/vllm-project/vllm/pull/24248#issuecomment-3493441371)
+- 2025-11-07 `ProExpertProg` on `tests/compile/test_fusions_e2e.py`:76: You can just add it to MODELS (https://github.com/vllm-project/vllm/pull/24248#discussion_r2501578705)
+- 2025-11-07 `ProExpertProg` on `vllm/config/compilation.py`:151: @ilmarkov if this is still an issue to unblock we can just move this computation into the collective fusion.py file. We can always move it back here later. I am also concerned that the head process (which shouldn't initialize CUDA) might initialize ... (https://github.com/vllm-project/vllm/pull/24248#discussion_r2501594296)
+- 2025-11-07 `ProExpertProg` on `vllm/compilation/collective_fusion.py`:512: Can we do the lookup with ints instead of strings? (https://github.com/vllm-project/vllm/pull/24248#discussion_r2501597522)
+- 2025-11-10 `ilmarkov`: We need to move dispatch and combine back under custom op as they conflict with torch.compile. In this PR we need only move (main experts) allreduce outside of custom op. (https://github.com/vllm-project/vllm/pull/24248#issuecomment-3513445219)

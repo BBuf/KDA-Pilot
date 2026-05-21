@@ -1,78 +1,39 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#14245](https://github.com/vllm-project/vllm/pull/14245)
-- Source page: `sources/prs/vllm/PR-14245.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-14245`
-- Generated at: `2026-05-20T15:34:19.644408+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-03-05T00:12:21Z`
-- Merged: `2025-03-11T14:54:56Z`
-
-## Discussion Counts
-
-- Issue comments: 17
-- Review submissions: 28 (approved=4, changes_requested=1, commented=23)
-- Inline review comments: 42
-- Review threads observed: 20
-- Resolved/outdated thread markers: resolved=20, outdated=14
-- Human participants with discussion text: ProExpertProg, jeffdaily, mergify, mgoin, robertgshaw2-redhat, tlrmchlsmth
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 10
-
-## Review Decisions
-
-- `2025-03-06T20:51:22Z` `CHANGES_REQUESTED` by `ProExpertProg` - Nice PR! Thanks for removing TODOs and cleaning up a variety of nested if statements etc. I left ... (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665508135)
-- `2025-03-06T22:40:35Z` `COMMENTED` by `jeffdaily` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665792151)
-- `2025-03-06T22:50:37Z` `COMMENTED` by `jeffdaily` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665805079)
-- `2025-03-06T22:51:25Z` `COMMENTED` by `jeffdaily` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665806166)
-- `2025-03-06T22:58:44Z` `COMMENTED` by `jeffdaily` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665815208)
-- `2025-03-06T23:08:50Z` `COMMENTED` by `jeffdaily` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665827288)
-- `2025-03-06T23:28:13Z` `COMMENTED` by `jeffdaily` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665848546)
-- `2025-03-06T23:28:21Z` `COMMENTED` by `jeffdaily` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665848680)
-- `2025-03-06T23:31:58Z` `COMMENTED` by `jeffdaily` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665852502)
-- `2025-03-06T23:51:27Z` `COMMENTED` by `jeffdaily` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665874462)
-- `2025-03-06T23:52:09Z` `COMMENTED` by `jeffdaily` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665875596)
-- `2025-03-06T23:54:55Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665878155)
-- `2025-03-06T23:57:12Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665880384)
-- `2025-03-06T23:58:16Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665882426)
-- `2025-03-07T01:06:26Z` `COMMENTED` by `jeffdaily` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665956093)
-- `2025-03-07T01:07:30Z` `COMMENTED` by `jeffdaily` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665957077)
-- `2025-03-07T01:07:51Z` `COMMENTED` by `jeffdaily` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665957407)
-- `2025-03-07T01:29:44Z` `APPROVED` by `ProExpertProg` - Thanks for addressing the comments! It looks great now. Added couple more nits, and I think it would ... (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665963487)
-- `2025-03-07T01:59:54Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2666065687)
-- `2025-03-07T18:14:01Z` `COMMENTED` by `jeffdaily` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2667989929)
-- `2025-03-10T16:30:53Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2671585534)
-- `2025-03-10T17:09:05Z` `COMMENTED` by `jeffdaily` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2671685360)
-- `2025-03-10T17:55:24Z` `COMMENTED` by `jeffdaily` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2671792330)
-- `2025-03-10T21:44:38Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2672274697)
-- ... 3 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `csrc/quantization/fp8/common.cuh`: 14 inline comment(s)
-- `csrc/dispatch_utils.h`: 7 inline comment(s)
-- `vllm/platforms/interface.py`: 7 inline comment(s)
-- `benchmarks/kernels/benchmark_moe.py`: 3 inline comment(s)
-- `csrc/layernorm_quant_kernels.cu`: 3 inline comment(s)
-- `csrc/quantization/fused_kernels/quant_conversions.cuh`: 3 inline comment(s)
-- `vllm/model_executor/layers/quantization/utils/fp8_utils.py`: 3 inline comment(s)
-- `tests/kernels/test_triton_scaled_mm.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-03-06T20:09:10Z` `inline` by `ProExpertProg` `benchmarks/kernels/benchmark_moe.py`:21; signals: benchmark, dtype, fp8, kernel, moe; excerpt: "This appears in many places - could we just extract it into current platform.fp8 dtype()?" (https://github.com/vllm-project/vllm/pull/14245#discussion_r1983986474)
-- `2025-03-06T22:40:35Z` `inline` by `jeffdaily` `benchmarks/kernels/benchmark_moe.py`:21; signals: benchmark, fp8, kernel, moe; excerpt: "Great idea. But I will also keep is fp8 fnuz() because it is a useful shorthand before calling normalize e4m3fn to e4m3fnuz." (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984147391)
-- `2025-03-10T17:55:24Z` `inline` by `jeffdaily` `vllm/platforms/interface.py`:334; signals: cutlass, fp8, kernel, triton; excerpt: "Does the audit need to happen as part of this PR or can it be a follow-up PR? supports fp8 was added to replace ..." (https://github.com/vllm-project/vllm/pull/14245#discussion_r1987771729)
-- `2025-03-06T22:58:44Z` `inline` by `jeffdaily` `csrc/quantization/fp8/common.cuh`:23; signals: cache, cuda, fp8; excerpt: "I will add a comment, yes. Would it ease your mind to know that at::cuda::getCurrentDeviceProperties() is cached internally by pytorch? See for the implementation." (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984162587)
-- `2025-03-06T20:25:55Z` `inline` by `ProExpertProg` `tests/kernels/test_triton_scaled_mm.py`:39; signals: fp8, kernel, triton; excerpt: "Nice simplification! I think current platform.fp8 type would simplify this further" (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984004676)
-- `2025-03-06T23:54:55Z` `inline` by `ProExpertProg` `benchmarks/kernels/benchmark_moe.py`:21; signals: benchmark, kernel, moe; excerpt: "Yep, agreed 😃" (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984203271)
-- `2025-03-06T20:10:25Z` `inline` by `ProExpertProg` `csrc/dispatch_utils.h`:34; signals: cuda, fp8; excerpt: "We could add a define VLLM DISPATCH CASE FP8 TYPES here as well, with only one case on CUDA and 2 cases on ROCm" (https://github.com/vllm-project/vllm/pull/14245#discussion_r1983987815)
-- `2025-03-06T20:43:48Z` `inline` by `ProExpertProg` `csrc/quantization/fp8/common.cuh`:23; signals: cuda, fp8; excerpt: "Could you add a brief comment about this method? I'd mention it checks device properties and . It would also be good to check ..." (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984024312)
-- `2025-03-06T22:50:37Z` `inline` by `jeffdaily` `csrc/dispatch_utils.h`:34; signals: cuda, fp8; excerpt: "I could, but where/how do you see that being used? We already have VLLM DISPATCH CASE QUANT TYPES(...) where I added the two fp8 ..." (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984156076)
-- `2025-03-07T18:14:01Z` `inline` by `jeffdaily` `vllm/platforms/interface.py`:343; signals: dtype, fp8; excerpt: "Done. I also added links to the 2 different FP8 standards for additional clarification, and the other API fp8 dtype refers back to the ..." (https://github.com/vllm-project/vllm/pull/14245#discussion_r1985488736)
-- `2025-03-06T20:24:31Z` `inline` by `ProExpertProg` `csrc/quantization/fused_kernels/quant_conversions.cuh`:35; signals: hang, kernel; excerpt: "Same here, curious why you changed this to update by reference?" (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984003048)
-- `2025-03-06T23:57:12Z` `inline` by `ProExpertProg` `csrc/quantization/fp8/common.cuh`:23; signals: cuda, fp8; excerpt: "Yep, missed that this was a torch call and not a cuda/hip direct call." (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984204886)
+- 2025-03-06 `ProExpertProg` on `benchmarks/kernels/benchmark_moe.py`:21: This appears in many places - could we just extract it into current platform.fp8 dtype()? (https://github.com/vllm-project/vllm/pull/14245#discussion_r1983986474)
+- 2025-03-06 `ProExpertProg` on `csrc/dispatch_utils.h`:34: We could add a define VLLM DISPATCH CASE FP8 TYPES here as well, with only one case on CUDA and 2 cases on ROCm (https://github.com/vllm-project/vllm/pull/14245#discussion_r1983987815)
+- 2025-03-06 `ProExpertProg` on `csrc/layernorm_quant_kernels.cu`:179: use new dispatch macro here (https://github.com/vllm-project/vllm/pull/14245#discussion_r1983988820)
+- 2025-03-06 `ProExpertProg` on `csrc/layernorm_quant_kernels.cu`:260: Could clean up dispatching logic here (https://github.com/vllm-project/vllm/pull/14245#discussion_r1983989506)
+- 2025-03-06 `ProExpertProg` on `csrc/quantization/fp8/common.cuh`:29: I think this should be an empty struct, that's more idiomatic C++, and you can avoid the explicit public:. Also not all upper case, that implies a constant and not class (struct) name. (https://github.com/vllm-project/vllm/pull/14245#discussion_r1983990802)
+- 2025-03-06 `ProExpertProg` on `csrc/quantization/fp8/common.cuh`:51: Add a "value" helper here, like (https://github.com/vllm-project/vllm/pull/14245#discussion_r1983992797)
+- 2025-03-06 `ProExpertProg` on `csrc/quantization/fp8/common.cuh`:75: fp8 e4m3 adjusted max v (https://github.com/vllm-project/vllm/pull/14245#discussion_r1983993404)
+- 2025-03-06 `ProExpertProg` on `csrc/quantization/fp8/common.cuh`:92: Should this be extracted to a template-specialized utility functions for possible future reuse? (https://github.com/vllm-project/vllm/pull/14245#discussion_r1983994602)
+- 2025-03-06 `ProExpertProg` on `csrc/quantization/fp8/common.cuh`:65: Why the update by reference instead of returning the value? (https://github.com/vllm-project/vllm/pull/14245#discussion_r1983995483)
+- 2025-03-06 `ProExpertProg` on `csrc/quantization/fused_kernels/quant_conversions.cuh`:78: I think theses could just stay the same struct and just expand the condition: (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984002392)
+- 2025-03-06 `ProExpertProg` on `csrc/quantization/fused_kernels/quant_conversions.cuh`:35: Same here, curious why you changed this to update by reference? (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984003048)
+- 2025-03-06 `ProExpertProg` on `tests/kernels/test_triton_scaled_mm.py`:39: Nice simplification! I think current platform.fp8 type would simplify this further (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984004676)
+- 2025-03-06 `ProExpertProg` on `csrc/quantization/fp8/common.cuh`:23: Could you add a brief comment about this method? I'd mention it checks device properties and . It would also be good to check the property directly instead of querying all device properties, which is significantly slower (in my experience on CUDA, ... (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984024312)
+- 2025-03-06 `ProExpertProg` changes_requested: Nice PR! Thanks for removing TODOs and cleaning up a variety of nested if statements etc. I left a few comments for further improving the code quality - this is a pretty messy part of our codebase and we should really keep ... (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665508135)
+- 2025-03-06 `jeffdaily` on `benchmarks/kernels/benchmark_moe.py`:21: Great idea. But I will also keep is fp8 fnuz() because it is a useful shorthand before calling normalize e4m3fn to e4m3fnuz. (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984147391)
+- 2025-03-06 `jeffdaily` on `csrc/dispatch_utils.h`:34: I could, but where/how do you see that being used? We already have VLLM DISPATCH CASE QUANT TYPES(...) where I added the two fp8 cases on rocm while cuda still has just the one. Then in but we need to also conditionalize ... (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984156076)
+- 2025-03-06 `jeffdaily` on `csrc/dispatch_utils.h`:34: Can you nest the dispatch macros like that? (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984156770)
+- 2025-03-06 `jeffdaily` on `csrc/quantization/fp8/common.cuh`:23: I will add a comment, yes. Would it ease your mind to know that at::cuda::getCurrentDeviceProperties() is cached internally by pytorch? See for the implementation. (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984162587)
+- 2025-03-06 `jeffdaily` on `csrc/quantization/fp8/common.cuh`:65: I added fp8 type as a template param and I panicked that you can't have two functions that differ in just the return type in C++. (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984169969)
+- 2025-03-06 `jeffdaily` on `csrc/quantization/fp8/common.cuh`:65: Turns out this works just fine the way it was before and with fp8 type as a template param. Will revert. (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984186726)
+- 2025-03-06 `ProExpertProg` on `csrc/quantization/fp8/common.cuh`:23: Yep, missed that this was a torch call and not a cuda/hip direct call. (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984204886)
+- 2025-03-06 `ProExpertProg` on `csrc/dispatch_utils.h`:34: Yes, I imagined nesting the dispatching macros. I've seen it before but we can definitely keep it this way if nesting doesn't work. (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984206274)
+- 2025-03-07 `jeffdaily` on `csrc/dispatch_utils.h`:34: Nesting dispatch macros was the way to go. (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984255366)
+- 2025-03-07 `jeffdaily` on `csrc/layernorm_quant_kernels.cu`:260: The nested dispatch really helped clean this up. (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984255974)
+- 2025-03-07 `ProExpertProg` on `csrc/dispatch_utils.h`:45: Maybe a quick comment above this macro that mentions that the dispatched type is available as fp8 t and not scalar t? (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984261489)
+- 2025-03-07 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:149: Nit: could be dtype = current platform.fp8 dtype() if dtype is None else dtype if it fits in a line (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984266511)
+- 2025-03-07 `ProExpertProg` on `vllm/platforms/interface.py`:343: Maybe add a comment here about what platforms use this dtype? (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984269313)
+- 2025-03-07 `ProExpertProg` approved: Thanks for addressing the comments! It looks great now. Added couple more nits, and I think it would be nice to add a comment on the C++ side somewhere that explains there are two FP8 types on ROCm (not sure where the ... (https://github.com/vllm-project/vllm/pull/14245#pullrequestreview-2665963487)
+- 2025-03-07 `tlrmchlsmth` on `vllm/platforms/interface.py`:334: If we add this, we’ll need to audit other platforms — TPUs at least should support fp8 (cc @robertgshaw2-redhat @mgoin ) (https://github.com/vllm-project/vllm/pull/14245#discussion_r1984335236)
+- 2025-03-07 `jeffdaily` on `vllm/platforms/interface.py`:343: Done. I also added links to the 2 different FP8 standards for additional clarification, and the other API fp8 dtype refers back to the doc for is fp8 fnuz to avoid copy/paste. (https://github.com/vllm-project/vllm/pull/14245#discussion_r1985488736)
+- 2025-03-07 `jeffdaily`: @ProExpertProg Getting some cuda build failures: Looks like fp8 e4m3 adjusted max v is the problem, at least for nvcc. Any suggestions? (https://github.com/vllm-project/vllm/pull/14245#issuecomment-2707496097)
+- 2025-03-10 `ProExpertProg`: @jeffdaily it looks like you missed an import in vllm.model executor.layers.quantization.utils.fp8 utils: Could you get that fixed, and we can enable the full CI? (https://github.com/vllm-project/vllm/pull/14245#issuecomment-2710710927)
+- 2025-03-10 `jeffdaily`: @ProExpertProg fixed. I had aggressively removed that variable from vllm/model executor/layers/quantization/utils/fp8 utils.py because it wasn't used elsewhere in that file. I failed to grep through all the other files for anyone that might have imported it. (https://github.com/vllm-project/vllm/pull/14245#issuecomment-2711049245)
+- 2025-03-10 `ProExpertProg`: Yeah that was nice cleanup! @robertgshaw2-redhat @mgoin could you guys help with the fp8 support on other platforms? (https://github.com/vllm-project/vllm/pull/14245#issuecomment-2711086024)
+- 2025-03-10 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:24: I think it would actually be better to get rid of this and use current platform.fp8 dtype() directly (https://github.com/vllm-project/vllm/pull/14245#discussion_r1987644542)
+- 2025-03-10 `jeffdaily` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:24: Ok, done. Removed it again and updated corresponding code. (https://github.com/vllm-project/vllm/pull/14245#discussion_r1987705109)
+- 2025-03-10 `jeffdaily` on `vllm/platforms/interface.py`:334: Does the audit need to happen as part of this PR or can it be a follow-up PR? supports fp8 was added to replace current platform.has device capability(89) which was incorrect on ROCm. It was only used in tests: - tests/quantization/test fp8.py ... (https://github.com/vllm-project/vllm/pull/14245#discussion_r1987771729)
+- 2025-03-10 `mgoin` on `vllm/platforms/interface.py`:334: TPUs do not support fp8 yet. I think we only need to consider CUDA and ROCm at the moment (https://github.com/vllm-project/vllm/pull/14245#discussion_r1988070417)
+- 2025-03-11 `ProExpertProg` on `vllm/platforms/interface.py`:334: @jeffdaily would you mind creating a GitHub issue for the device capability audit you're describing? I agree it would be a great idea and agreed it is out of the scope of this PR. (https://github.com/vllm-project/vllm/pull/14245#discussion_r1988199082)

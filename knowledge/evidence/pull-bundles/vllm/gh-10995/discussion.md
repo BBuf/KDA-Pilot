@@ -1,82 +1,80 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#10995](https://github.com/vllm-project/vllm/pull/10995)
-- Source page: `sources/prs/vllm/PR-10995.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-10995`
-- Generated at: `2026-05-20T15:33:38.607716+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2024-12-08T20:42:38Z`
-- Merged: `2024-12-18T14:57:16Z`
-
-## Discussion Counts
-
-- Issue comments: 1
-- Review submissions: 67 (approved=2, commented=65)
-- Inline review comments: 109
-- Review threads observed: 64
-- Resolved/outdated thread markers: resolved=5, outdated=58
-- Human participants with discussion text: Faraz9877, LucasWilkinson, ProExpertProg, mgoin, tlrmchlsmth
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2024-12-09T00:17:13Z` `COMMENTED` by `tlrmchlsmth` - Looks like landed during the development of this PR and a bunch of stuff got messed up during ... (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2487342368)
-- `2024-12-11T04:19:32Z` `COMMENTED` by `Faraz9877` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2494264136)
-- `2024-12-11T04:19:41Z` `COMMENTED` by `Faraz9877` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2494264260)
-- `2024-12-11T04:20:01Z` `COMMENTED` by `Faraz9877` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2494264504)
-- `2024-12-11T04:21:15Z` `COMMENTED` by `Faraz9877` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2494265560)
-- `2024-12-11T04:21:25Z` `COMMENTED` by `Faraz9877` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2494265705)
-- `2024-12-11T04:22:21Z` `COMMENTED` by `Faraz9877` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2494266446)
-- `2024-12-11T04:23:15Z` `COMMENTED` by `Faraz9877` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2494267187)
-- `2024-12-11T04:25:20Z` `COMMENTED` by `Faraz9877` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2494269486)
-- `2024-12-11T04:26:21Z` `COMMENTED` by `Faraz9877` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2494270419)
-- `2024-12-11T14:20:49Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2495817783)
-- `2024-12-11T14:29:34Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2495849825)
-- `2024-12-11T14:31:32Z` `COMMENTED` by `tlrmchlsmth` - With this PR, the Python code requires B to be the activation matrix and A to be the ... (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2495855869)
-- `2024-12-11T15:43:18Z` `COMMENTED` by `Faraz9877` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2496077410)
-- `2024-12-11T21:39:04Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2497066060)
-- `2024-12-11T22:22:33Z` `COMMENTED` by `tlrmchlsmth` - Same overall comments as before -- there is a lot of duplicated code in this PR that shouldn't ... (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2497094369)
-- `2024-12-12T00:47:27Z` `COMMENTED` by `Faraz9877` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2497325657)
-- `2024-12-12T04:03:56Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2497558888)
-- `2024-12-12T04:05:41Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2497560252)
-- `2024-12-12T04:05:52Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2497560385)
-- `2024-12-12T04:07:50Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2497561910)
-- `2024-12-12T04:09:49Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2497563396)
-- `2024-12-12T04:13:29Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2497566796)
-- `2024-12-12T04:16:21Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2497569890)
-- ... 43 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `csrc/sparse/cutlass/sparse_compressor.cu`: 23 inline comment(s)
-- `vllm/_custom_ops.py`: 12 inline comment(s)
-- `csrc/sparse/cutlass/sparse_scaled_mm_c3x.cuh`: 12 inline comment(s)
-- `CMakeLists.txt`: 6 inline comment(s)
-- `csrc/cutlass_extensions/common.hpp`: 6 inline comment(s)
-- `csrc/torch_bindings.cpp`: 5 inline comment(s)
-- `tests/kernels/test_semi_structured.py`: 4 inline comment(s)
-- `csrc/quantization/cutlass_w8a8/scaled_mm_c2x.cu`: 3 inline comment(s)
-- `setup.py`: 2 inline comment(s)
-- `sane_cute_errors.py`: 2 inline comment(s)
-- `requirements-cpu.txt`: 2 inline comment(s)
-- `csrc/sparse/cutlass/util/device_memory.h`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2024-12-11T04:25:20Z` `inline` by `Faraz9877` `csrc/sparse/cutlass/sparse_compressor.cu`:134; signals: benchmark, cutlass, kernel, tile; excerpt: "This is the provided code by NVIDIA to compress a 2:4 tile and it's used for benchmarking the kernel. It works for all row-major ..." (https://github.com/vllm-project/vllm/pull/10995#discussion_r1879312673)
-- `2024-12-14T06:36:11Z` `inline` by `Faraz9877` `csrc/sparse/cutlass/sparse_compressor.cu`:43; signals: cutlass, epilogue, gemm, kernel; excerpt: "Done. The CUTLASS's CompressorUtility necessitates that a Gemm be defined with all operand types, schedules, etc with an epilogue, albeit the default. I had ..." (https://github.com/vllm-project/vllm/pull/10995#discussion_r1884853390)
-- `2024-12-09T00:00:09Z` `inline` by `tlrmchlsmth` `csrc/sparse/cutlass/util/device_memory.h`; signals: compile, cutlass, memory; excerpt: "It looks like several of these files were copied unmodified from the file in the CUTLASS repo (in tools/util/include/cutlass/util? If so, instead of copy-pasting ..." (https://github.com/vllm-project/vllm/pull/10995#discussion_r1875103668)
-- `2024-12-11T04:23:15Z` `inline` by `Faraz9877` `csrc/quantization/cutlass_w8a8/scaled_mm_c2x.cu`; signals: cutlass, epilogue, hang; excerpt: "The current changes are necessary to avoid the build problems since we moved to cutlass 3.6.0 and refactored the epilogue header files." (https://github.com/vllm-project/vllm/pull/10995#discussion_r1879311139)
-- `2024-12-11T21:54:27Z` `inline` by `tlrmchlsmth` `CMakeLists.txt`:411; signals: compile, cutlass, kernel; excerpt: "Please remove the cutlass extensions path here. Better to be explicit about where the included files are coming from. This also adds to the ..." (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881054736)
-- `2024-12-11T22:06:04Z` `inline` by `tlrmchlsmth` `csrc/quantization/cutlass_w8a8/scaled_mm_c2x.cuh`; signals: cutlass, epilogue, hang; excerpt: "Why is is csrc/cutlass extensions/epilogue/scaled mm epilogues c2x.hpp copied into this file? Could you please revert that change?" (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881067118)
-- `2024-12-11T22:18:18Z` `inline` by `tlrmchlsmth` `csrc/sparse/cutlass/sparse_scaled_mm_entry.cu`:26; signals: cuda, cutlass, fp8; excerpt: "We don't support cutlass scaled sparse mm supports fp8 on lovelace systems at all and it requires CUDA 12.2:" (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881082264)
-- `2024-12-12T05:08:13Z` `inline` by `LucasWilkinson` `tests/kernels/test_semi_structured.py`; signals: cuda, cutlass, kernel; excerpt: "maybe for a future PR but there should be more tests here, test more shapes, there should be and opcheck test (see test cutlass ..." (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881388833)
-- `2024-12-13T14:22:54Z` `inline` by `tlrmchlsmth` `csrc/sparse/cutlass/sparse_compressor.cu`:43; signals: cutlass, epilogue, kernel; excerpt: "These should be pared down further. For example: "cutlass extensions/epilogue/scaled mm epilogues c3x.hpp" already includes "cutlass extensions/epilogue/broadcast load epilogue c3x.hpp" and most of our ..." (https://github.com/vllm-project/vllm/pull/10995#discussion_r1884010655)
-- `2024-12-09T00:09:23Z` `inline` by `tlrmchlsmth` `benchmarks/cutlass_benchmarks/sparse_mm/stable_kernels.json`; signals: benchmark, cutlass, kernel; excerpt: "What is this used for?" (https://github.com/vllm-project/vllm/pull/10995#discussion_r1875107344)
-- `2024-12-11T04:22:20Z` `inline` by `Faraz9877` `benchmarks/cutlass_benchmarks/sparse_mm/stable_kernels.json`; signals: benchmark, cutlass, kernel; excerpt: "That's for benchmarking only the stable kernels. Not needed here. Removed it." (https://github.com/vllm-project/vllm/pull/10995#discussion_r1879310680)
-- `2024-12-11T14:20:49Z` `inline` by `tlrmchlsmth` `csrc/sparse/cutlass/sparse_compressor.cu`:134; signals: cutlass, gemm, kernel; excerpt: "Ok you're right, I checked the actual GEMM kernel and you are doing it the right way there." (https://github.com/vllm-project/vllm/pull/10995#discussion_r1880286883)
+- 2024-12-08 `tlrmchlsmth` on `sane_cute_errors.py`: I don't think we should add this script in the vllm top-level directory. Move under vllm/tools? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1875087776)
+- 2024-12-08 `tlrmchlsmth` on `requirements-cpu.txt`:7: I think something got messed up here. This file shouldn't be modified in this PR (https://github.com/vllm-project/vllm/pull/10995#discussion_r1875094310)
+- 2024-12-09 `tlrmchlsmth` on `csrc/sparse/cutlass/util/device_memory.h`: It looks like several of these files were copied unmodified from the file in the CUTLASS repo (in tools/util/include/cutlass/util? If so, instead of copy-pasting this file into the vLLM codebase, we should modify the CMakesLists.txt to add the cutlass utility files to ... (https://github.com/vllm-project/vllm/pull/10995#discussion_r1875103668)
+- 2024-12-09 `tlrmchlsmth` on `csrc/sparse/cutlass/util/broadcast_load_epilogue_c3x.hpp`: It looks like this PR undoes a lot of the refactors in In particular this file now appears 3 times in the codebase -- @Faraz9877 could you make sure this is the only one that's used? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1875106959)
+- 2024-12-09 `tlrmchlsmth` on `benchmarks/cutlass_benchmarks/sparse_mm/weight_shapes.py`: We should only have one single weight shapes.py (https://github.com/vllm-project/vllm/pull/10995#discussion_r1875107034)
+- 2024-12-09 `tlrmchlsmth` on `benchmarks/cutlass_benchmarks/sparse_mm/bench_v1.py`: Why is there a bench v1.py, a bench v2.py, and a mm benchmarks.py? I think we should only have one of them (https://github.com/vllm-project/vllm/pull/10995#discussion_r1875107139)
+- 2024-12-09 `tlrmchlsmth` on `benchmarks/cutlass_benchmarks/sparse_mm/stable_kernels.json`: What is this used for? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1875107344)
+- 2024-12-09 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/scaled_mm_c2x.cu`: Most likely all changes in this directory should be reverted (https://github.com/vllm-project/vllm/pull/10995#discussion_r1875107642)
+- 2024-12-09 `tlrmchlsmth` on `csrc/sparse/cutlass/sparse_compressor.cu`:134: The best practice is to instantiate CuTe strides directly using the strides from the torch::Tensor. That way the strides will be correct even when using transposed tensors or when dealing with slices. See how this is done in the dense w8a8 case: (https://github.com/vllm-project/vllm/pull/10995#discussion_r1875108561)
+- 2024-12-09 `tlrmchlsmth` on `csrc/sparse/cutlass/sparse_compressor.cu`:147: clean up commented code before landing (https://github.com/vllm-project/vllm/pull/10995#discussion_r1875108598)
+- 2024-12-09 `tlrmchlsmth` on `csrc/sparse/cutlass/sparse_compressor.cu`:166: ditto: remove uses of make cute packed stride where possible and clean up commented out code (https://github.com/vllm-project/vllm/pull/10995#discussion_r1875108839)
+- 2024-12-09 `tlrmchlsmth` commented: Looks like landed during the development of this PR and a bunch of stuff got messed up during a rebase. We should definitely clean this up before landing (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2487342368)
+- 2024-12-11 `Faraz9877` on `sane_cute_errors.py`: Don't need it for now. Removed (https://github.com/vllm-project/vllm/pull/10995#discussion_r1879309549)
+- 2024-12-11 `Faraz9877` on `benchmarks/cutlass_benchmarks/sparse_mm/stable_kernels.json`: That's for benchmarking only the stable kernels. Not needed here. Removed it. (https://github.com/vllm-project/vllm/pull/10995#discussion_r1879310680)
+- 2024-12-11 `Faraz9877` on `csrc/quantization/cutlass_w8a8/scaled_mm_c2x.cu`: The current changes are necessary to avoid the build problems since we moved to cutlass 3.6.0 and refactored the epilogue header files. (https://github.com/vllm-project/vllm/pull/10995#discussion_r1879311139)
+- 2024-12-11 `Faraz9877` on `csrc/sparse/cutlass/sparse_compressor.cu`:134: This is the provided code by NVIDIA to compress a 2:4 tile and it's used for benchmarking the kernel. It works for all row-major matrices as by convention the first operand of sparse matmul in CUTLASS has to be. This is why ... (https://github.com/vllm-project/vllm/pull/10995#discussion_r1879312673)
+- 2024-12-11 `Faraz9877` on `csrc/sparse/cutlass/sparse_compressor.cu`:166: This is also the original code provided by CUTLASS in the examples. (https://github.com/vllm-project/vllm/pull/10995#discussion_r1879313326)
+- 2024-12-11 `tlrmchlsmth` on `csrc/sparse/cutlass/sparse_compressor.cu`:134: Ok you're right, I checked the actual GEMM kernel and you are doing it the right way there. (https://github.com/vllm-project/vllm/pull/10995#discussion_r1880286883)
+- 2024-12-11 `tlrmchlsmth` on `tests/kernels/test_semi_structured.py`:116: Could you add a test like this? Looking at the code this should work and I want our kernels to be robust to working with subsets which can enable certain Inductor transforms in the future. We have a similar test for the ... (https://github.com/vllm-project/vllm/pull/10995#discussion_r1880308865)
+- 2024-12-11 `tlrmchlsmth` commented: With this PR, the Python code requires B to be the activation matrix and A to be the weights, which is different from the linear layers. We should flip this and handle implicit transpositions in the C++ code so as to not ... (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2495855869)
+- 2024-12-11 `Faraz9877` on `tests/kernels/test_semi_structured.py`:116: Yeah sure. I'll apply the change. (https://github.com/vllm-project/vllm/pull/10995#discussion_r1880441281)
+- 2024-12-11 `tlrmchlsmth` on `CMakeLists.txt`:411: Please remove the cutlass extensions path here. Better to be explicit about where the included files are coming from. This also adds to the include paths of every C++ file that gets compiled so in general it's good to minimize this list ... (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881054736)
+- 2024-12-11 `tlrmchlsmth` on `benchmarks/cutlass_benchmarks/w8a8_benchmarks.py`: Use the utils you've added in benchmarks/cutlass benchmarks/utils.py to this file as well (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881057005)
+- 2024-12-11 `tlrmchlsmth` on `benchmarks/kernels/weight_shapes.py`:74: I think this should be reverted (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881059112)
+- 2024-12-11 `tlrmchlsmth` on `csrc/cutlass_extensions/epilogue/scaled_mm_epilogues_c2x.hpp`:1: If we remove the INCLUDE DIRECTORIES change this can be reverted (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881060435)
+- 2024-12-11 `tlrmchlsmth` on `csrc/cutlass_extensions/epilogue/scaled_mm_epilogues_c3x.hpp`:39: Is this change required by the CUTLASS 3.6.0 upgrade? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881060772)
+- 2024-12-11 `tlrmchlsmth` on `csrc/ops.h`:158: Do we need this, or can it be removed? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881061579)
+- 2024-12-11 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/scaled_mm_c2x.cu`: please revert the changes to this file (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881066000)
+- 2024-12-11 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/scaled_mm_c2x.cuh`: Why is is csrc/cutlass extensions/epilogue/scaled mm epilogues c2x.hpp copied into this file? Could you please revert that change? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881067118)
+- 2024-12-11 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/scaled_mm_c3x.cu`: please revert the changes to this file (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881068927)
+- 2024-12-11 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/scaled_mm_c3x.cuh`: Please revert this and keep the CUTLASS c3x epilogues in csrc/cutlass extensions/epilogue/scaled mm epilogues c3x.hpp (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881070646)
+- 2024-12-11 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/scaled_mm_entry.cu`: The change in here is fine, but please revert it as it's unrelated to this PR (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881075291)
+- 2024-12-11 `tlrmchlsmth` on `csrc/sparse/cutlass/sparse_scaled_mm_entry.cu`:26: We don't support cutlass scaled sparse mm supports fp8 on lovelace systems at all and it requires CUDA 12.2: (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881082264)
+- 2024-12-11 `tlrmchlsmth` on `tests/kernels/test_cutlass.py`: I think we should stick to tests for dense cutlass kernels in this file. Please move the additions to tests/kernels/test semi structured.py? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881086210)
+- 2024-12-11 `tlrmchlsmth` on `vllm/_custom_ops.py`:547: Can this issue be resolved before landing? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881087372)
+- 2024-12-11 `tlrmchlsmth` commented: Same overall comments as before -- there is a lot of duplicated code in this PR that shouldn't be. In particular there should only be 2 copies of the CUTLASS epilogues (one for CUTLASS 2.x and one for CUTLASS 3.x) (https://github.com/vllm-project/vllm/pull/10995#pullrequestreview-2497094369)
+- 2024-12-12 `LucasWilkinson` on `csrc/sparse/cutlass/common.hpp`:1: nit: maybe move this to cutlass extensions to avoid someone writing duplicate code in the future (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881350410)
+- 2024-12-12 `LucasWilkinson` on `vllm/model_executor/layers/sparsity/__init__.py`: nit: remove empty file? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881351341)
+- 2024-12-12 `LucasWilkinson` on `vllm/model_executor/layers/sparsity/utils/__init__.py`: nit: remove empty file? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881351409)
+- 2024-12-12 `LucasWilkinson` on `vllm/_custom_ops.py`:537: nit: could be assert a.dtype in [torch.int8, torch.float8 e4m3fn, torch.bfloat16, torch.float16] (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881352390)
+- 2024-12-12 `LucasWilkinson` on `vllm/_custom_ops.py`:569: nit: I don't hate this, but it would be really nice if we could push these transposes into the C++ code (similar to Machete) (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881353322)
+- 2024-12-12 `LucasWilkinson` on `csrc/sparse/cutlass/sparse_scaled_mm_c3x.cuh`:287: how does this differ from ScaledEpilogueBiasAzpToken in csrc/cutlass extensions/epilogue/scaled mm epilogues c3x.hpp? ideally we share code here (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881355723)
+- 2024-12-12 `LucasWilkinson` on `csrc/sparse/cutlass/sparse_scaled_mm_c3x.cuh`:362: nit: maybe put sparse in the name here to de-dupe it from csrc/quantization/cutlass w8a8/scaled mm c3x.cu (in know its only in the file namespace but I feel like sparse here should just make grepping around the codebase easier) (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881357293)
+- 2024-12-12 `LucasWilkinson` on `csrc/sparse/cutlass/sparse_compressor.cu`:66: I think we could replace this chain of conditionals with template specialization, i.e. (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881384453)
+- 2024-12-12 `LucasWilkinson` on `csrc/sparse/cutlass/sparse_scaled_mm_entry.cu`:51: nit: what's this comment for? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881388464)
+- 2024-12-12 `LucasWilkinson` on `tests/kernels/test_semi_structured.py`: maybe for a future PR but there should be more tests here, test more shapes, there should be and opcheck test (see test cutlass support opcheck), a cuda graph test (see test cutlass cuda graph). Use vllm/tests/kernels/test cutlass.py as inspiration (with the ... (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881388833)
+- 2024-12-12 `Faraz9877` on `vllm/_custom_ops.py`:569: Using something like LayoutA Transpose = typename cutlass::layout::LayoutTranspose ::type; ? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1881504337)
+- 2024-12-12 `LucasWilkinson` on `vllm/_custom_ops.py`:569: replicating slack response here for record keeping: can be done like: you may also be interested in using: example usage: (https://github.com/vllm-project/vllm/pull/10995#discussion_r1882567505)
+- 2024-12-12 `tlrmchlsmth` on `benchmarks/benchmark_throughput.py`:365: This looks like debug cruft and should be reverted if so (https://github.com/vllm-project/vllm/pull/10995#discussion_r1882904383)
+- 2024-12-12 `tlrmchlsmth` on `csrc/cutlass_extensions/common.hpp`:20: could you put this in csrc/core/math.hpp? @SageMoore is adding similar utilities to that file in (https://github.com/vllm-project/vllm/pull/10995#discussion_r1882927638)
+- 2024-12-12 `tlrmchlsmth` on `csrc/cutlass_extensions/common.hpp`:33: We should throw an exception here, and it should behave generally the same way that CUTLASS CHECK does. (I do like the line number reporting though, so it would be nice if you could add it to both) (https://github.com/vllm-project/vllm/pull/10995#discussion_r1882929097)
+- 2024-12-12 `tlrmchlsmth` on `csrc/sparse/cutlass/sparse_compressor.cu`:43: Please clean up these includes. I see some duplicates. Could you try to minimize the number of includes? I.E. no duplicates, and nothing that's unnecessary? Also please turn clang-format off for the includes, as CUTLASS headers don't tolerate reordering. ``` // clang-format ... (https://github.com/vllm-project/vllm/pull/10995#discussion_r1882937369)
+- 2024-12-12 `tlrmchlsmth` on `csrc/sparse/cutlass/sparse_compressor.cu`:77: Could you expand on this comment? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1882938678)
+- 2024-12-12 `tlrmchlsmth` on `csrc/sparse/cutlass/sparse_compressor.cu`:57: is there any requirement for the divisibility of a.stride(0)? Do we test odd values of m? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1882942344)
+- 2024-12-12 `tlrmchlsmth` on `csrc/sparse/cutlass/sparse_scaled_mm_c3x.cu`:27: Could you try to clean this up? It looks like most of these includes could be removed since they're already in csrc/sparse/cutlass/sparse scaled mm c3x.cuh (https://github.com/vllm-project/vllm/pull/10995#discussion_r1882948758)
+- 2024-12-12 `tlrmchlsmth` on `csrc/sparse/cutlass/sparse_scaled_mm_c3x.cuh`:24: similar: try to clean this up (if possible), and disable clang-format for the includes. (https://github.com/vllm-project/vllm/pull/10995#discussion_r1882952505)
+- 2024-12-12 `tlrmchlsmth` on `csrc/sparse/cutlass/sparse_scaled_mm_c3x.cuh`:36: Since this comment is epilogue-specific and the epilogues are not defined in this file, I think this comment should be removed (https://github.com/vllm-project/vllm/pull/10995#discussion_r1882953321)
+- 2024-12-12 `tlrmchlsmth` on `vllm/_custom_ops.py`:557: Could you add high-level comments for what these are doing? In particular could you describe what e is? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1882961819)
+- 2024-12-12 `tlrmchlsmth` on `vllm/_custom_ops.py`:565: Can this assert be un-commented? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1882962998)
+- 2024-12-12 `tlrmchlsmth` on `vllm/_custom_ops.py`:548: could you add an assert that k % 2 == 0? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1882964534)
+- 2024-12-12 `tlrmchlsmth` on `csrc/sparse/cutlass/sparse_compressor.cu`:58: Since you're using cutlass::make cute packed stride, could you add the following asserts? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1882966864)
+- 2024-12-13 `Faraz9877` on `csrc/sparse/cutlass/sparse_compressor.cu`:77: It was just needed to instantiate a problem shape to use the compressor utility in CUTLASS. I replaced it with 1 in the problem shape directly. (https://github.com/vllm-project/vllm/pull/10995#discussion_r1883584046)
+- 2024-12-13 `Faraz9877` on `csrc/sparse/cutlass/sparse_compressor.cu`:57: No. Since we're doing column-major output in the kernels, there's no requirement. For row-major output, the batch size has to be a multiple of 8. (https://github.com/vllm-project/vllm/pull/10995#discussion_r1883630700)
+- 2024-12-13 `tlrmchlsmth` on `csrc/sparse/cutlass/sparse_compressor.cu`:57: I thought this was the weight matrix, so batch isn't relevant here (https://github.com/vllm-project/vllm/pull/10995#discussion_r1884000211)
+- 2024-12-13 `tlrmchlsmth` on `csrc/sparse/cutlass/sparse_compressor.cu`:77: Please put this in a comment in the code so that it is documented there (https://github.com/vllm-project/vllm/pull/10995#discussion_r1884008903)
+- 2024-12-13 `tlrmchlsmth` on `csrc/sparse/cutlass/sparse_compressor.cu`:43: These should be pared down further. For example: "cutlass extensions/epilogue/scaled mm epilogues c3x.hpp" already includes "cutlass extensions/epilogue/broadcast load epilogue c3x.hpp" and most of our CUTLASS kernels don't interact directly with the code in broadcast load epilogue c3x.hpp so they should only include ... (https://github.com/vllm-project/vllm/pull/10995#discussion_r1884010655)
+- 2024-12-13 `Faraz9877` on `csrc/sparse/cutlass/sparse_compressor.cu`:57: You're right, my bad for misunderstanding. The intermediate dimension of the matmul should be divisible by 4 to be able to follow the 2:4 sparsity. So a.stride(0) % 4 == 0 must hold. I added a check for this divisibility. (https://github.com/vllm-project/vllm/pull/10995#discussion_r1884594568)
+- 2024-12-14 `Faraz9877` on `csrc/sparse/cutlass/sparse_compressor.cu`:43: Done. The CUTLASS's CompressorUtility necessitates that a Gemm be defined with all operand types, schedules, etc with an epilogue, albeit the default. I had previously used my default gemm config with ScaledEpilogue for this Gemm but per this review, I replaced that ... (https://github.com/vllm-project/vllm/pull/10995#discussion_r1884853390)
+- 2024-12-16 `LucasWilkinson` on `csrc/torch_bindings.cpp`:321: nit: can you update argument naming to match, i.e. bt nzs and bt meta (https://github.com/vllm-project/vllm/pull/10995#discussion_r1887054642)
+- 2024-12-16 `LucasWilkinson` on `csrc/sparse/cutlass/sparse_scaled_mm_c3x.cuh`:126: nit: can you elaborate on this a bit, i.e. add something about the fact that we compute C^t = B^t @ A^t but we assume B is transposed before compressing hence the bt naming (https://github.com/vllm-project/vllm/pull/10995#discussion_r1887057762)
+- 2024-12-16 `LucasWilkinson` on `csrc/sparse/cutlass/sparse_scaled_mm_c3x.cuh`:143: nit: can you add a comment here explaining why At is the same stride as A for cutlass (https://github.com/vllm-project/vllm/pull/10995#discussion_r1887059085)
+- 2024-12-16 `LucasWilkinson` on `csrc/sparse/cutlass/sparse_scaled_mm_c3x.cuh`:143: nit: we should avoid c-style casts for consistency (use static cast here) (https://github.com/vllm-project/vllm/pull/10995#discussion_r1887060698)
+- 2024-12-16 `LucasWilkinson` on `csrc/torch_bindings.cpp`:327: nit: maybe update this to match the argument naming for cutlass scaled sparse mm i.e. Tensor! a nzs, Tensor! a meta (https://github.com/vllm-project/vllm/pull/10995#discussion_r1887063279)
+- 2024-12-16 `LucasWilkinson` on `csrc/sparse/cutlass/sparse_compressor.cu`:21: nit: maybe update this to match the argument naming for cutlass scaled sparse mm i.e. Tensor! a nzs, Tensor! a meta (https://github.com/vllm-project/vllm/pull/10995#discussion_r1887065790)
+- 2024-12-16 `mgoin` on `CMakeLists.txt`:231: Should this be uncommented as FALSE now? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1887610623)
+- 2024-12-16 `mgoin` on `benchmarks/cutlass_benchmarks/sparse_benchmarks.py`:106: future work: what about per-channel/per-token scales? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1887611997)
+- 2024-12-16 `ProExpertProg` on `csrc/cutlass_extensions/common.hpp`:12: Maybe extract status first (like below) so this macro can directly wrap expressions like function calls and not double-evaluate them? (https://github.com/vllm-project/vllm/pull/10995#discussion_r1887656563)
+- 2024-12-16 `mgoin` on `vllm/model_executor/layers/quantization/compressed_tensors/schemes/compressed_tensors_24.py`:35: Worth leaving a note that this is due to cutlass 3.x kernel restrictions since we do have fp16+int8 support here (https://github.com/vllm-project/vllm/pull/10995#discussion_r1887677147)
+- 2024-12-17 `Faraz9877` on `CMakeLists.txt`:231: Yeah sure. It's also the default I think but better be explicit as you said. (https://github.com/vllm-project/vllm/pull/10995#discussion_r1889275488)
+- 2024-12-17 `Faraz9877` on `benchmarks/cutlass_benchmarks/sparse_benchmarks.py`:106: Yeah. We can also use that for benchmarking. I put this here only because it's similar to the dense benchmarking script. (https://github.com/vllm-project/vllm/pull/10995#discussion_r1889280457)

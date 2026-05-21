@@ -1,64 +1,30 @@
-# PR Discussion Digest
-
-- Source PR: [sgl-project/sglang#4880](https://github.com/sgl-project/sglang/pull/4880)
-- Source page: `sources/prs/sglang/PR-4880.md`
-- Evidence bundle: `evidence/pull-bundles/sglang/gh-4880`
-- Generated at: `2026-05-20T15:30:15.217930+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-03-29T07:24:41Z`
-- Merged: `2025-04-10T06:23:24Z`
-
-## Discussion Counts
-
-- Issue comments: 75
-- Review submissions: 20 (approved=1, commented=19)
-- Inline review comments: 22
-- Review threads observed: 9
-- Resolved/outdated thread markers: resolved=0, outdated=7
-- Human participants with discussion text: ByronHsu, GaoYusong, Hongbosherlock, Huixxi, JensenFire, LJL36, RuixiangMa, ShangmingCai, XucSh, ZhengWG, Zhou-sx, liz-badada, orrorcol, stmatengss, whybeyoung, yansiyu550, yuan-luo
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 53
-
-## Review Decisions
-
-- `2025-03-30T07:32:01Z` `COMMENTED` by `ByronHsu` - Awesome work! Left few comments and questions 1. The current design is based on send/recv, which needs a ... (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2727815927)
-- `2025-03-31T01:18:26Z` `COMMENTED` by `XucSh` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2728096229)
-- `2025-03-31T07:38:17Z` `COMMENTED` by `Zhou-sx` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2728443999)
-- `2025-03-31T08:18:27Z` `COMMENTED` by `ShangmingCai` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2728530793)
-- `2025-03-31T08:49:17Z` `COMMENTED` by `Zhou-sx` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2728598927)
-- `2025-03-31T09:03:46Z` `COMMENTED` by `ShangmingCai` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2728631963)
-- `2025-04-01T07:05:42Z` `COMMENTED` by `Huixxi` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2731657782)
-- `2025-04-03T07:59:53Z` `COMMENTED` by `Zhou-sx` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2738868878)
-- `2025-04-04T06:12:16Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2741872385)
-- `2025-04-04T06:22:18Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2741886304)
-- `2025-04-04T06:26:13Z` `COMMENTED` by `ShangmingCai` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2741891972)
-- `2025-04-04T06:35:28Z` `COMMENTED` by `ShangmingCai` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2741907688)
-- `2025-04-05T09:02:27Z` `COMMENTED` by `GaoYusong` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2744832539)
-- `2025-04-05T12:45:06Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2744881958)
-- `2025-04-05T13:21:49Z` `COMMENTED` by `ShangmingCai` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2744897391)
-- `2025-04-05T16:44:39Z` `COMMENTED` by `stmatengss` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2744938460)
-- `2025-04-07T06:26:42Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2745640229)
-- `2025-04-10T06:20:53Z` `APPROVED` by `ByronHsu` (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2755463365)
-
-## Inline Comment Hotspots
-
-- `python/sglang/srt/disaggregation/conn.py`: 22 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-04-09T11:54:39Z` `issue` by `yansiyu550`; signals: dtype, memory, mla, race; excerpt: "MOONCAKE CONFIG PATH=./mooncake.json python -m sglang.launch server --model-path /workspace/data/DeepSeek-Coder-V2-Lite-Instruct --disaggregation-mode prefill --port 30000 --host 10.14.4.11 --trust-remote-code log： [2025-04-09 11:41:29 TP0] Only Deepseek V3/R1 can ..." (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2789445449)
-- `2025-04-09T13:14:14Z` `issue` by `stmatengss`; signals: dtype, memory, mla, race; excerpt: "MOONCAKE CONFIG PATH=./mooncake.json python -m sglang.launch server --model-path /workspace/data/DeepSeek-Coder-V2-Lite-Instruct --disaggregation-mode prefill --port 30000 --host 10.14.4.11 --trust-remote-code log： [2025-04-09 11:41:29 TP0] Only Deepseek V3/R1 can ..." (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2789664326)
-- `2025-04-09T15:50:34Z` `issue` by `stmatengss`; signals: latency, perf, performance, throughput; excerpt: "PD Disaggregation Performance We evaluated the current implementation on two A10 servers. By comparing the performance of a 1P1D configuration with that of two ..." (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2790180538)
-- `2025-04-10T06:20:20Z` `issue` by `ByronHsu`; signals: accuracy, deadlock, perf, performance; excerpt: "Thank you mooncake team for the fantastic work!! Let's merge the PR first and follow up with the following items: 1. Currently, the first ..." (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2791674099)
-- `2025-04-03T07:53:23Z` `issue` by `JensenFire`; signals: cache, kv cache, tma; excerpt: "Hi @stmatengss, it's amazing! One naive question here: Since you guys support the kv-cache saving in [send kv caches and hidden states]( and loading ..." (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2774786963)
-- `2025-04-01T07:05:42Z` `inline` by `Huixxi` `python/sglang/srt/disaggregation/conn.py`:84; signals: cache, kv cache; excerpt: "I met Transfer Return Error in this line. Can you give some advice? Hi, Could you please tell me how to run a sglang ..." (https://github.com/sgl-project/sglang/pull/4880#discussion_r2022270336)
-- `2025-04-03T07:59:53Z` `inline` by `Zhou-sx` `python/sglang/srt/disaggregation/conn.py`:84; signals: cache, kv cache; excerpt: "I met Transfer Return Error in this line. Can you give some advice? Hi, Could you please tell me how to run a sglang ..." (https://github.com/sgl-project/sglang/pull/4880#discussion_r2026422056)
-- `2025-04-05T13:21:48Z` `inline` by `ShangmingCai` `python/sglang/srt/disaggregation/conn.py`:367; signals: cache, race; excerpt: "@yuan-luo This is the first version which assumes p and d have the same TP size while implementing. Different TP support will be in ..." (https://github.com/sgl-project/sglang/pull/4880#discussion_r2029870935)
-- `2025-04-05T09:02:27Z` `inline` by `GaoYusong` `python/sglang/srt/disaggregation/conn.py`:104; signals: overflow; excerpt: "Got an OverflowError, which was resolved by casting prefill index to np.int64(prefill index) and decode index to np.int64(decode index). The same fix is also ..." (https://github.com/sgl-project/sglang/pull/4880#discussion_r2029817847)
-- `2025-04-05T12:45:06Z` `inline` by `yuan-luo` `python/sglang/srt/disaggregation/conn.py`:367; signals: layout; excerpt: "I think here has a problem, the self.kv mgr.kv args.engine rank is the decode's tp rank, instead of the prefill's. (Considering the special case: ..." (https://github.com/sgl-project/sglang/pull/4880#discussion_r2029860725)
-- `2025-03-30T06:50:29Z` `inline` by `ByronHsu` `python/sglang/srt/disaggregation/conn.py`:145; signals: oom; excerpt: "should this checks if bootstrap room is enqueued first?" (https://github.com/sgl-project/sglang/pull/4880#discussion_r2020080358)
-- `2025-03-30T07:32:01Z` `review` `COMMENTED` by `ByronHsu`; signals: general review; excerpt: "Awesome work! Left few comments and questions 1. The current design is based on send/recv, which needs a handshake step. IIUC, for read/write we ..." (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2727815927)
+- 2025-03-30 `ByronHsu` on `python/sglang/srt/disaggregation/conn.py`:209: Should this be at [ init kv manager]( I assume it only needs to run once globally (https://github.com/sgl-project/sglang/pull/4880#discussion_r2020078993)
+- 2025-03-30 `ByronHsu` on `python/sglang/srt/disaggregation/conn.py`:145: should this checks if bootstrap room is enqueued first? (https://github.com/sgl-project/sglang/pull/4880#discussion_r2020080358)
+- 2025-03-30 `ByronHsu` on `python/sglang/srt/disaggregation/conn.py`:95: is there any benefit to do in async given that we already run in a background thread? (https://github.com/sgl-project/sglang/pull/4880#discussion_r2020080464)
+- 2025-03-30 `ByronHsu` commented: Awesome work! Left few comments and questions 1. The current design is based on send/recv, which needs a handshake step. IIUC, for read/write we don't need a extra handshake step. Does that mean we have to modify the current event loop logic? ... (https://github.com/sgl-project/sglang/pull/4880#pullrequestreview-2727815927)
+- 2025-03-30 `ByronHsu`: My understanding is that this PR does not need the first "handshake" step in the diagram, but other parts are the same. Is that correct? (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2764430625)
+- 2025-03-31 `XucSh` on `python/sglang/srt/disaggregation/conn.py`:209: You're right. One P or D endpoint only needs one instance. We are considering moving it to KVManager. (https://github.com/sgl-project/sglang/pull/4880#discussion_r2020315229)
+- 2025-03-31 `Zhou-sx` on `python/sglang/srt/disaggregation/conn.py`:84: I met Transfer Return Error in this line. Can you give some advice? (https://github.com/sgl-project/sglang/pull/4880#discussion_r2020536788)
+- 2025-03-31 `ShangmingCai` on `python/sglang/srt/disaggregation/conn.py`:84: @Zhou-sx Does your machines support GDR? Also, this PR is not ready yet, we are working on it now. (https://github.com/sgl-project/sglang/pull/4880#discussion_r2020590733)
+- 2025-03-31 `Zhou-sx` on `python/sglang/srt/disaggregation/conn.py`:84: @Zhou-sx Does your machines support GDR? Also, this PR is not ready yet, we are working on it now. Thank you for your replay. So it can not support tcp yet？ (https://github.com/sgl-project/sglang/pull/4880#discussion_r2020634141)
+- 2025-03-31 `ShangmingCai` on `python/sglang/srt/disaggregation/conn.py`:84: @Zhou-sx Yes, please see the limitation described above: "If GDR is not supported, it should fall back to double buffering for data copies (we don't implement it now)". It will be in another PR in the future. (https://github.com/sgl-project/sglang/pull/4880#discussion_r2020654987)
+- 2025-04-01 `Huixxi` on `python/sglang/srt/disaggregation/conn.py`:84: I met Transfer Return Error in this line. Can you give some advice? Hi, Could you please tell me how to run a sglang model with mooncake kv cache transfer engine? Thanks. (https://github.com/sgl-project/sglang/pull/4880#discussion_r2022270336)
+- 2025-04-01 `stmatengss`: The link in Usage Know how to install mooncake transfer engine is the same as vllm. We will add new documents to the project and fix it ASAP. (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2768457405)
+- 2025-04-03 `JensenFire`: Hi @stmatengss, it's amazing! One naive question here: Since you guys support the kv-cache saving in [send kv caches and hidden states]( and loading in [recv kv caches and hidden states]( in vllm, would you like support the related feature in sglang? ... (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2774786963)
+- 2025-04-03 `Zhou-sx` on `python/sglang/srt/disaggregation/conn.py`:84: I met Transfer Return Error in this line. Can you give some advice? Hi, Could you please tell me how to run a sglang model with mooncake kv cache transfer engine? Thanks. Based on this PR or mooncake integration in vlllm, there ... (https://github.com/sgl-project/sglang/pull/4880#discussion_r2026422056)
+- 2025-04-03 `ShangmingCai`: @xinji1 We respect different engines' high-level disaggregated serving design, so we will find the best way to support each engine according to the interfaces it provides. For sglang, these interfaces are not needed currently, and the mooncake transfer engine is what we ... (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2775127366)
+- 2025-04-03 `ShangmingCai`: PR Run Instruction To run prefill instance and decode instance on the same node Prepare a mooncake.json file: Prefill: Decode: Proxy: Test: To run prefill instance and decode instance on different node Prepare a mooncake.json file for each node: Prefill: Decode: Proxy: ... (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2775457846)
+- 2025-04-04 `stmatengss`: How to install Mooncake Transfer Engine 1. Recommended Installation Method: Follow the official build instructions: 2. Download pre-release whl package ( and install from whl package (pip3 install mooncake transfer engine-0.3.0a0-cp310-cp310-manylinux2014 x86 64.whl). Please make sure the environment is Ubuntu 22.04 and ... (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2777423144)
+- 2025-04-04 `yuan-luo` on `python/sglang/srt/disaggregation/conn.py`:211: The mooncake session id is calculated on receiver's TransferEngine, does it make sure the id is global unique on the prefill side in XpYd scenario? After double check, the session id is generated in MooncakeTransferEngine wrapper, which is global unique. (https://github.com/sgl-project/sglang/pull/4880#discussion_r2028162069)
+- 2025-04-04 `ShangmingCai` on `python/sglang/srt/disaggregation/conn.py`:211: It is the unique ID for each transfer engine instance. We get it from zmq, so there is no need to calculate it at the peer. (https://github.com/sgl-project/sglang/pull/4880#discussion_r2028175521)
+- 2025-04-05 `GaoYusong` on `python/sglang/srt/disaggregation/conn.py`:104: Got an OverflowError, which was resolved by casting prefill index to np.int64(prefill index) and decode index to np.int64(decode index). The same fix is also needed at lines 114 and 117. (https://github.com/sgl-project/sglang/pull/4880#discussion_r2029817847)
+- 2025-04-05 `yuan-luo` on `python/sglang/srt/disaggregation/conn.py`:367: I think here has a problem, the self.kv mgr.kv args.engine rank is the decode's tp rank, instead of the prefill's. (Considering the special case: prefill's tp size and the decode's tp size are different) Meanwhile since the KVSENDER POLLING PORT is hardcoded, ... (https://github.com/sgl-project/sglang/pull/4880#discussion_r2029860725)
+- 2025-04-05 `yuan-luo`: <img alt="image" width="797" src=" My understanding is that this PR does not need the first "handshake" step in the diagram, but other parts are the same. Is that correct? @ByronHsu Per previous comment, the first "handshake" step might be inevitable. (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2780712343)
+- 2025-04-05 `ShangmingCai` on `python/sglang/srt/disaggregation/conn.py`:367: @yuan-luo This is the first version which assumes p and d have the same TP size while implementing. Different TP support will be in the next PR once we figure out how to gracefully handle handshake for all kinds of situations. After ... (https://github.com/sgl-project/sglang/pull/4880#discussion_r2029870935)
+- 2025-04-05 `stmatengss` on `python/sglang/srt/disaggregation/conn.py`:104: Got. Thanks for your suggestion. We will fix it. (https://github.com/sgl-project/sglang/pull/4880#discussion_r2029915164)
+- 2025-04-08 `whybeyoung`: When running SGLang in disaggregated mode, the /generate api is not available. However, [ wait and warmup]( still attempts to use it, which leads to timeouts and eventually cause SGLang to crash. so, shall we need disable it when using disagregation mode ... (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2785025290)
+- 2025-04-09 `yansiyu550`: MOONCAKE CONFIG PATH=./mooncake.json python -m sglang.launch server --model-path /workspace/data/DeepSeek-Coder-V2-Lite-Instruct --disaggregation-mode prefill --port 30000 --host 10.14.4.11 --trust-remote-code log： [2025-04-09 11:41:29 TP0] Only Deepseek V3/R1 can use shared experts fusion optimization. Shared experts fusion optimization is disabled. Loading safetensors checkpoint shards: 0% Completed 0/4 ... (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2789445449)
+- 2025-04-09 `LJL36`: If the MC LEGACY RPC PORT BINDING environment variable needs to be set to use the IP and port specified in the JSON configuration? From what I saw in the mooncake source code, it appears to be the case, but neither the ... (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2789446907)
+- 2025-04-09 `ShangmingCai`: This is not related with etcd and i use http-based metadata server. This is because TransferEngine uses the first IP in the list by default to start the service and establish a connection, here is the [code snippet]( but the first IP ... (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2790099514)
+- 2025-04-09 `stmatengss`: PD Disaggregation Performance We evaluated the current implementation on two A10 servers. By comparing the performance of a 1P1D configuration with that of two regular (non-disaggregated) instances, we observed that P/D disaggregation achieves approximately 30% lower ITL while maintaining comparable total throughput. ... (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2790180538)
+- 2025-04-10 `ByronHsu`: Thank you mooncake team for the fantastic work!! Let's merge the PR first and follow up with the following items: 1. Currently, the first state of request is WaitingForInput. However, this can trigger potential deadlock issue. Let's make the first state of ... (https://github.com/sgl-project/sglang/pull/4880#issuecomment-2791674099)

@@ -1,76 +1,46 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#14323](https://github.com/vllm-project/vllm/pull/14323)
-- Source page: `sources/prs/vllm/PR-14323.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-14323`
-- Generated at: `2026-05-20T15:34:23.985084+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-03-06T03:10:33Z`
-- Merged: `2025-04-16T02:31:30Z`
-
-## Discussion Counts
-
-- Issue comments: 22
-- Review submissions: 26 (approved=1, commented=25)
-- Inline review comments: 33
-- Review threads observed: 13
-- Resolved/outdated thread markers: resolved=8, outdated=11
-- Human participants with discussion text: Alnusjaponica, DarkLight1337, mergify, tlrmchlsmth
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 1
-
-## Review Decisions
-
-- `2025-03-19T15:09:26Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2698898437)
-- `2025-03-19T15:10:11Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2698901000)
-- `2025-03-19T15:10:51Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2698903154)
-- `2025-03-19T17:58:05Z` `COMMENTED` by `tlrmchlsmth` - Thanks for the contribution! I left some comments - Ideally we should directly use MambaMixer2 to avoid code ... (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2699496642)
-- `2025-03-20T03:38:05Z` `COMMENTED` by `Alnusjaponica` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2701092773)
-- `2025-03-20T03:40:32Z` `COMMENTED` by `Alnusjaponica` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2701094952)
-- `2025-03-21T05:46:04Z` `COMMENTED` by `Alnusjaponica` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2704794217)
-- `2025-03-21T06:02:45Z` `COMMENTED` by `Alnusjaponica` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2704818997)
-- `2025-03-21T06:06:36Z` `COMMENTED` by `Alnusjaponica` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2704829190)
-- `2025-03-24T01:59:55Z` `COMMENTED` by `Alnusjaponica` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2708946360)
-- `2025-03-24T02:24:28Z` `COMMENTED` by `Alnusjaponica` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2708974189)
-- `2025-03-24T02:25:08Z` `COMMENTED` by `Alnusjaponica` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2708974717)
-- `2025-03-24T02:27:16Z` `COMMENTED` by `Alnusjaponica` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2708976373)
-- `2025-03-24T18:12:37Z` `COMMENTED` by `tlrmchlsmth` - I'm not getting any output generated from following simple script (on an H100). Could you take a look? (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2711286347)
-- `2025-03-24T18:14:36Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2711314140)
-- `2025-03-25T05:41:13Z` `COMMENTED` by `Alnusjaponica` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2712440232)
-- `2025-03-25T05:57:57Z` `COMMENTED` by `Alnusjaponica` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2712466890)
-- `2025-03-25T06:15:07Z` `COMMENTED` by `Alnusjaponica` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2712496732)
-- `2025-03-27T07:55:13Z` `COMMENTED` by `Alnusjaponica` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2720184540)
-- `2025-03-31T13:57:32Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2729399303)
-- `2025-04-01T11:03:22Z` `COMMENTED` by `Alnusjaponica` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2732320530)
-- `2025-04-02T15:43:34Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2736765642)
-- `2025-04-07T11:00:38Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2746417467)
-- `2025-04-07T11:01:10Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2746418752)
-- ... 2 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/models/plamo2.py`: 19 inline comment(s)
-- `tests/models/decoder_only/language/test_hybrid.py`: 5 inline comment(s)
-- `docs/source/models/supported_models.md`: 4 inline comment(s)
-- `tests/models/registry.py`: 2 inline comment(s)
-- `vllm/model_executor/models/registry.py`: 2 inline comment(s)
-- `vllm/config.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-03-31T14:41:59Z` `issue` by `tlrmchlsmth`; signals: bf16, dtype, gemm, h100; excerpt: "I'm not getting any output generated from following simple script (on an H100). Could you take a look? Somehow float16 is used by default ..." (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2766462486)
-- `2025-03-21T06:06:35Z` `inline` by `Alnusjaponica` `vllm/model_executor/models/plamo2.py`:119; signals: hang, perf, performance; excerpt: "It is possible to replace the selective scan fn with the mamba chunk scan combined function, as in MambaMixer2, to improve performance. This is ..." (https://github.com/vllm-project/vllm/pull/14323#discussion_r2006908999)
-- `2025-03-24T02:24:28Z` `inline` by `Alnusjaponica` `tests/models/decoder_only/language/test_hybrid.py`:17; signals: block, kernel, pipeline; excerpt: "Let's instead add this step to .buildkite/test-pipeline.yaml under the Language Models Test (both) Thank you for the suggestion. I've moved pip install step to ..." (https://github.com/vllm-project/vllm/pull/14323#discussion_r2009371943)
-- `2025-04-01T11:01:15Z` `issue` by `Alnusjaponica`; signals: attention, dtype, hang; excerpt: "Thanks for your suggestions. It seems the weight's dtype is downcasted here: So, I am decided to edit vllm/vllm/config.py to use bfloat16 by default. ..." (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2768985807)
-- `2025-04-02T11:44:12Z` `issue` by `Alnusjaponica`; signals: block, compile, hang; excerpt: "Does this still happen even after recompiling? It resolved after I recompiled. Thanks a lot. We're going to fix PlamoConfig.model type in modeling plamo.py ..." (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2772301509)
-- `2025-04-02T15:47:11Z` `issue` by `tlrmchlsmth`; signals: hang, perf, performance; excerpt: "@Alnusjaponica thanks, let me know when those changes are in! I'll update this PR after those public model changes. Is there anything else that ..." (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2773012714)
-- `2025-03-19T17:43:36Z` `inline` by `tlrmchlsmth` `tests/models/decoder_only/language/test_hybrid.py`:17; signals: block, kernel; excerpt: "Do we need this for the test to work, or just for speed up? If we are installing the mamba kernels, can we delete ..." (https://github.com/vllm-project/vllm/pull/14323#discussion_r2003913335)
-- `2025-03-24T18:12:37Z` `review` `COMMENTED` by `tlrmchlsmth`; signals: h100; excerpt: "I'm not getting any output generated from following simple script (on an H100). Could you take a look?" (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2711286347)
-- `2025-03-25T05:46:32Z` `issue` by `Alnusjaponica`; signals: dtype, h100; excerpt: "I'm not getting any output generated from following simple script (on an H100). Could you take a look? Somehow float16 is used by default ..." (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2750155782)
-- `2025-03-31T14:46:45Z` `issue` by `DarkLight1337`; signals: bf16, dtype; excerpt: "@DarkLight1337 do you have any better ideas? (Also do you know why that snippet got removed in The proper way to do it would ..." (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2766476775)
-- `2025-03-31T16:17:17Z` `issue` by `tlrmchlsmth`; signals: bf16, dtype; excerpt: "@DarkLight1337 do you have any better ideas? (Also do you know why that snippet got removed in 14858?) The proper way to do it ..." (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2766735308)
-- `2025-04-01T20:56:19Z` `issue` by `tlrmchlsmth`; signals: attention, hang; excerpt: "I also noticed that this PR is affected by 15238 after I merge the latest changes from the main branch, so I need to ..." (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2770665617)
+- 2025-03-06 `Alnusjaponica`: This is my first time submitting a PR to this repository, and I just joined the Slack. I believe I do not have permission to unblock additional CIs, so I would appreciate it if you could add me to the Buildkite org. ... (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2702695884)
+- 2025-03-19 `DarkLight1337` on `tests/models/decoder_only/language/test_hybrid.py`:17: Let's instead add this step to .buildkite/test-pipeline.yaml under the Language Models Test (both) (https://github.com/vllm-project/vllm/pull/14323#discussion_r2003584719)
+- 2025-03-19 `DarkLight1337` on `tests/models/registry.py`:181: Need to add trust remote code=True here (https://github.com/vllm-project/vllm/pull/14323#discussion_r2003586236)
+- 2025-03-19 `DarkLight1337` on `vllm/model_executor/models/registry.py`:98: To promote your model, please also list it in the Supported Models page docs/source/models/supported models.md (https://github.com/vllm-project/vllm/pull/14323#discussion_r2003587499)
+- 2025-03-19 `DarkLight1337`: @tlrmchlsmth can you do a quick pass to check that the implementation of this model fits our architecture? No need to test for correctness since they are the model vendor (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2737014786)
+- 2025-03-19 `tlrmchlsmth` on `tests/models/decoder_only/language/test_hybrid.py`:17: Do we need this for the test to work, or just for speed up? If we are installing the mamba kernels, can we delete this block of code below? (https://github.com/vllm-project/vllm/pull/14323#discussion_r2003913335)
+- 2025-03-19 `tlrmchlsmth` on `vllm/model_executor/models/plamo2.py`:43: nit: looks unused so should be deleted (https://github.com/vllm-project/vllm/pull/14323#discussion_r2003914611)
+- 2025-03-19 `tlrmchlsmth` on `vllm/model_executor/models/plamo2.py`:49: How is this supposed to be used? I see a linear type in the PlamoConfig but it doesn't look like it's used for anything. Should it be removed from this PR? Ideally we should make PLaMo2 work with vLLM's QuantizationConfig (https://github.com/vllm-project/vllm/pull/14323#discussion_r2003923368)
+- 2025-03-19 `tlrmchlsmth` on `vllm/model_executor/models/plamo2.py`:161: These all used unused. In general it's best to not check in unused code (engineers should assume any unused, unexercised code is broken), so could you generally go through this file and clean up anything unused? (https://github.com/vllm-project/vllm/pull/14323#discussion_r2003929103)
+- 2025-03-19 `tlrmchlsmth` on `vllm/model_executor/models/plamo2.py`:119: Can this model definition use the implementation from vllm/model executor/layers/mamba/mamba mixer2.py instead? (https://github.com/vllm-project/vllm/pull/14323#discussion_r2003931781)
+- 2025-03-19 `tlrmchlsmth` on `vllm/model_executor/models/plamo2.py`:713: You can extend the function get num layers by block type in vllm/config.py to handle PLaMo2 for this (https://github.com/vllm-project/vllm/pull/14323#discussion_r2003935795)
+- 2025-03-19 `tlrmchlsmth` on `vllm/model_executor/models/plamo2.py`:713: ...maybe. Let me know if you run into any issues with that (https://github.com/vllm-project/vllm/pull/14323#discussion_r2003937191)
+- 2025-03-19 `tlrmchlsmth` on `vllm/model_executor/models/plamo2.py`:835: I think it would be better to keep the model's member variable names consistent with the transformers implementation instead of adding this renaming step during load weights (https://github.com/vllm-project/vllm/pull/14323#discussion_r2003938730)
+- 2025-03-19 `tlrmchlsmth` commented: Thanks for the contribution! I left some comments - Ideally we should directly use MambaMixer2 to avoid code duplication (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2699496642)
+- 2025-03-20 `Alnusjaponica`: Thank you for your review. I have corrected the parts that could be fixed immediately, and I will address the other comments within a few days. (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2739043480)
+- 2025-03-20 `Alnusjaponica` on `vllm/model_executor/models/registry.py`:98: Thanks for the suggestion. I updated the docs in (https://github.com/vllm-project/vllm/pull/14323#discussion_r2004759412)
+- 2025-03-21 `Alnusjaponica` on `vllm/model_executor/models/plamo2.py`:43: Thanks for your suggestion. I removed this line in (https://github.com/vllm-project/vllm/pull/14323#discussion_r2006887897)
+- 2025-03-21 `Alnusjaponica` on `vllm/model_executor/models/plamo2.py`:119: Thank you for your feedback. Our model's architecture has some small differences compared to MambaMixer2. For instance, we have an x proj following the causal conv1d layer, which is not present in MambaMixer2. Due to these architectural differences, it might not be ... (https://github.com/vllm-project/vllm/pull/14323#discussion_r2006902652)
+- 2025-03-21 `Alnusjaponica` on `vllm/model_executor/models/plamo2.py`:119: It is possible to replace the selective scan fn with the mamba chunk scan combined function, as in MambaMixer2, to improve performance. This is a change I am currently working on, and I will submit it in a follow-up PR with support ... (https://github.com/vllm-project/vllm/pull/14323#discussion_r2006908999)
+- 2025-03-24 `Alnusjaponica` on `vllm/model_executor/models/plamo2.py`:835: Thanks for your suggestion. I've reverted some parts to the original class structure to minimize renaming. (https://github.com/vllm-project/vllm/pull/14323#discussion_r2009354615)
+- 2025-03-24 `Alnusjaponica` on `tests/models/decoder_only/language/test_hybrid.py`:17: Let's instead add this step to .buildkite/test-pipeline.yaml under the Language Models Test (both) Thank you for the suggestion. I've moved pip install step to the config in Do we need this for the test to work, or just for speed up? If ... (https://github.com/vllm-project/vllm/pull/14323#discussion_r2009371943)
+- 2025-03-24 `Alnusjaponica` on `vllm/model_executor/models/plamo2.py`:49: Sorry for the confusion. This is the setting for training, and it remained when I copied it from the original config implementation. It is only used for type hinting, and I've minimized it (https://github.com/vllm-project/vllm/pull/14323#discussion_r2009373364)
+- 2025-03-24 `tlrmchlsmth` on `vllm/model_executor/models/plamo2.py`:713: I still think would be best to add a special case to this block for PLaMo2, rather than having the model modify the vllm config. (https://github.com/vllm-project/vllm/pull/14323#discussion_r2010688120)
+- 2025-03-24 `tlrmchlsmth` on `vllm/model_executor/models/plamo2.py`:119: If it's possible to use mamba mixer2.py with some small modifications, please do so in this PR as it is very helpful for reducing developer efforts for maintenance. BTW I don't see any x proj when I search this PR. Could you ... (https://github.com/vllm-project/vllm/pull/14323#discussion_r2010691911)
+- 2025-03-24 `tlrmchlsmth` commented: I'm not getting any output generated from following simple script (on an H100). Could you take a look? (https://github.com/vllm-project/vllm/pull/14323#pullrequestreview-2711286347)
+- 2025-03-24 `tlrmchlsmth` on `docs/source/models/supported_models.md`:502: In the architecture is PlamoForCausalLM instead of Plamo2ForCausalLM. Is this a mistake? (https://github.com/vllm-project/vllm/pull/14323#discussion_r2010704590)
+- 2025-03-25 `Alnusjaponica` on `vllm/model_executor/models/plamo2.py`:713: It seems possible to move this workaround [here]( such as follows: However, we still need to keep is mamba in plamo2.py as it is required on initialization. Does it sound fair enough? (https://github.com/vllm-project/vllm/pull/14323#discussion_r2011348189)
+- 2025-03-25 `Alnusjaponica`: I'm not getting any output generated from following simple script (on an H100). Could you take a look? Somehow float16 is used by default in vLLM, but our model does not support it. Could you specify dtype=bfloat16 or dtype=float32? We would appreciate ... (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2750155782)
+- 2025-03-25 `Alnusjaponica` on `docs/source/models/supported_models.md`:502: Actually, we have another PlamoForCausalLM with a the different architecture ( and I used Plamo2ForCausalLM in vLLM to avoid misunderstandings. If it is necessary to use the same class name, I can ask our pre-training team if it's possible to rename the ... (https://github.com/vllm-project/vllm/pull/14323#discussion_r2011365692)
+- 2025-03-25 `Alnusjaponica` on `vllm/model_executor/models/plamo2.py`:713: On the second thought, adding a property layers block type to the PlamoConfig does not destroy backward compatibility. I'll ask the pre-training team to modify the published model." (https://github.com/vllm-project/vllm/pull/14323#discussion_r2011383652)
+- 2025-03-27 `Alnusjaponica` on `vllm/model_executor/models/plamo2.py`:119: BTW I don't see any x proj when I search this PR. Could you point out what you're referring to? Sorry for confusion. I renamed the attribute to self.bcdt proj in commit after I commented after I commented. If it's possible to ... (https://github.com/vllm-project/vllm/pull/14323#discussion_r2015864294)
+- 2025-03-31 `tlrmchlsmth` on `docs/source/models/supported_models.md`:502: IMO this is a fairly minor thing but users will see a warning message like the following, which would be nice to fix: (https://github.com/vllm-project/vllm/pull/14323#discussion_r2021100024)
+- 2025-03-31 `DarkLight1337`: @DarkLight1337 do you have any better ideas? (Also do you know why that snippet got removed in The proper way to do it would be to update the config.json on HF side with a torch dtype field. After setting that field, the ... (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2766476775)
+- 2025-03-31 `tlrmchlsmth`: @DarkLight1337 do you have any better ideas? (Also do you know why that snippet got removed in 14858?) The proper way to do it would be to update the config.json on HF side with a torch dtype field. After setting that field, ... (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2766735308)
+- 2025-03-31 `DarkLight1337`: I think that using AutoModel.from pretrained without setting torch dtype should load the weights in the original dtype, you can try it. (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2766739724)
+- 2025-04-01 `Alnusjaponica`: Thanks for your suggestions. It seems the weight's dtype is downcasted here: So, I am decided to edit vllm/vllm/config.py to use bfloat16 by default. @Alnusjaponica do you know why fp16 doesn't work? Likely we are over or underflowing somewhere if this is ... (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2768985807)
+- 2025-04-01 `Alnusjaponica` on `docs/source/models/supported_models.md`:502: Thanks for your comment. We internally agreed to change the class name to Plamo2ForCausalLM, so I'll be updating it here after our public models are updated. (https://github.com/vllm-project/vllm/pull/14323#discussion_r2022636580)
+- 2025-04-01 `tlrmchlsmth`: I also noticed that this PR is affected by 15238 after I merge the latest changes from the main branch, so I need to specify VLLM ATTENTION BACKEND=XFORMERS. Does this still happen even after recompiling? We think you're right, and it seems ... (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2770665617)
+- 2025-04-02 `Alnusjaponica`: Does this still happen even after recompiling? It resolved after I recompiled. Thanks a lot. We're going to fix PlamoConfig.model type in modeling plamo.py to "plamo2". This change will resolve the warning raised from here: We're also going to implement PlamoConfig.layers block ... (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2772301509)
+- 2025-04-02 `tlrmchlsmth`: @Alnusjaponica thanks, let me know when those changes are in! I'll update this PR after those public model changes. Is there anything else that needs to be fixed in this PR? I don't see anything that needs to be fixed, but I ... (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2773012714)
+- 2025-04-07 `Alnusjaponica`: @DarkLight1337 Thanks for your review. I've updated the tests. @tlrmchlsmth Now that the public model is updated and I’ve also updated this PR according to the new changes, could you take another look? (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2782981822)
+- 2025-04-15 `Alnusjaponica`: Thanks for your approval! I found some tests fails after I merged the main branch, so I am trying to fix them. I would appreciated it if you could take another look once the test passes. (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2803853160)
+- 2025-04-15 `Alnusjaponica`: It seems unrelated part of the tests are still failing. I'll wait main branch to be fixed. (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2804166934)
+- 2025-04-15 `DarkLight1337`: Can you update models tests in to run your model separate from the rest of the models? There is a known memory leak issue for Llama 4 in those tests so perhaps that's also the case for your model. (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2804330205)
+- 2025-04-15 `Alnusjaponica`: Sure, it passed in my environment, so I thought it was not relevant either. Let me see if other tests pass with the latest main branch at first. (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2804966766)
+- 2025-04-16 `Alnusjaponica`: @DarkLight1337 Separating plamo2 passes the Basic Model Test, so might be the case for our models. Is there anything I can do to fix this? (https://github.com/vllm-project/vllm/pull/14323#issuecomment-2807994218)

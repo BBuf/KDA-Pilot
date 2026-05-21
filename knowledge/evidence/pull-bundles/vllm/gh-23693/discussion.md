@@ -1,82 +1,80 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#23693](https://github.com/vllm-project/vllm/pull/23693)
-- Source page: `sources/prs/vllm/PR-23693.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-23693`
-- Generated at: `2026-05-20T15:37:38.128528+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-08-26T23:00:57Z`
-- Merged: `2025-09-16T16:21:48Z`
-
-## Discussion Counts
-
-- Issue comments: 17
-- Review submissions: 58 (approved=1, commented=57)
-- Inline review comments: 86
-- Review threads observed: 52
-- Resolved/outdated thread markers: resolved=29, outdated=39
-- Human participants with discussion text: LucasWilkinson, NihalPotdar, ProExpertProg, SageMoore, fhl2000, gx16377, heheda12345, hmellor, huachenheli, lhtin, mergify, minosfuture, tlrmchlsmth, yewentao256
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 7
-
-## Review Decisions
-
-- `2025-09-03T00:10:27Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3178513471)
-- `2025-09-03T00:39:18Z` `COMMENTED` by `SageMoore` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3178571038)
-- `2025-09-03T20:11:58Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3182279297)
-- `2025-09-03T20:15:46Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3182293518)
-- `2025-09-04T13:55:43Z` `COMMENTED` by `SageMoore` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3185458903)
-- `2025-09-04T13:57:35Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3185468170)
-- `2025-09-04T14:43:15Z` `COMMENTED` by `yewentao256` - LGTM, just a few thoughts Could you also add the test of accuracy (lm-eval) and benchmark results? (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3185650341)
-- `2025-09-04T18:51:30Z` `COMMENTED` by `ProExpertProg` - Mostly questions, did not get to model runner or ubatching core yet (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3186640425)
-- `2025-09-04T19:10:00Z` `COMMENTED` by `SageMoore` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3186790014)
-- `2025-09-04T19:22:57Z` `COMMENTED` by `SageMoore` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3186839839)
-- `2025-09-04T19:24:19Z` `COMMENTED` by `SageMoore` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3186845438)
-- `2025-09-04T19:26:34Z` `COMMENTED` by `SageMoore` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3186853726)
-- `2025-09-04T19:30:37Z` `COMMENTED` by `SageMoore` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3186868666)
-- `2025-09-04T20:09:00Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3187035669)
-- `2025-09-04T20:10:01Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3187040065)
-- `2025-09-04T21:43:08Z` `COMMENTED` by `yewentao256` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3187343196)
-- `2025-09-04T21:44:25Z` `COMMENTED` by `yewentao256` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3187345460)
-- `2025-09-05T18:10:11Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3190354935)
-- `2025-09-05T18:32:51Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3190412697)
-- `2025-09-05T18:43:50Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3190439774)
-- `2025-09-05T20:42:13Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3190739609)
-- `2025-09-06T07:04:02Z` `COMMENTED` by `heheda12345` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3191637912)
-- `2025-09-07T03:22:34Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3194137163)
-- `2025-09-08T05:30:44Z` `COMMENTED` by `huachenheli` (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3195012286)
-- ... 33 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/v1/worker/gpu_model_runner.py`: 22 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/modular_kernel.py`: 11 inline comment(s)
-- `vllm/v1/worker/gpu_ubatch_wrapper.py`: 9 inline comment(s)
-- `vllm/forward_context.py`: 8 inline comment(s)
-- `vllm/engine/arg_utils.py`: 7 inline comment(s)
-- `vllm/compilation/ubatch_wrapper.py`: 5 inline comment(s)
-- `vllm/v1/worker/ubatching.py`: 5 inline comment(s)
-- `vllm/distributed/device_communicators/all2all.py`: 4 inline comment(s)
-- `vllm/config/__init__.py`: 4 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/deepep_ll_prepare_finalize.py`: 3 inline comment(s)
-- `vllm/v1/worker/ubatch_splitting.py`: 2 inline comment(s)
-- `vllm/v1/attention/backends/mla/common.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-09-07T03:22:34Z` `inline` by `LucasWilkinson` `vllm/engine/arg_utils.py`:319; signals: benchmark, gemm, memory, perf, throughput; excerpt: "The idea behind separate thresholds is that for mixed prefill-decode (or pure prefill) batches with DBO we would fall-back to eager from full-CG so ..." (https://github.com/vllm-project/vllm/pull/23693#discussion_r2328462172)
-- `2025-09-15T17:02:23Z` `inline` by `SageMoore` `vllm/model_executor/layers/fused_moe/modular_kernel.py`:533; signals: cuda, cudagraph, kernel, memory, moe; excerpt: "Just a general memory footprint reduction. Primarily targeting cudagraphs, though." (https://github.com/vllm-project/vllm/pull/23693#discussion_r2349611272)
-- `2025-09-16T13:19:34Z` `issue` by `tlrmchlsmth`; signals: compile, hang, kernel, moe; excerpt: "I thought the kernels-moe-test [failures]( were due to VLLM USE PRECOMPILED=1 not picking up the changes from but that was from 3 days ago ..." (https://github.com/vllm-project/vllm/pull/23693#issuecomment-3298743026)
-- `2025-09-05T18:10:10Z` `inline` by `ProExpertProg` `vllm/model_executor/layers/fused_moe/modular_kernel.py`:850; signals: hang, kernel, moe; excerpt: "Support for pplx and DeepEP HT will be added in follow on PRs. We have them working but this PR is already huge. Yeah ..." (https://github.com/vllm-project/vllm/pull/23693#discussion_r2325741352)
-- `2025-09-02T23:56:57Z` `inline` by `LucasWilkinson` `vllm/v1/attention/backends/mla/common.py`:594; signals: attention, hang, mla; excerpt: "un-related change" (https://github.com/vllm-project/vllm/pull/23693#discussion_r2317441382)
-- `2025-09-08T20:17:35Z` `inline` by `minosfuture` `vllm/model_executor/layers/fused_moe/modular_kernel.py`:876; signals: kernel, moe, register; excerpt: "would it be cleaner if we do and returns None from dbo register recv hook if dbo enabled()" (https://github.com/vllm-project/vllm/pull/23693#discussion_r2331275148)
-- `2025-09-04T14:43:15Z` `review` `COMMENTED` by `yewentao256`; signals: accuracy, benchmark; excerpt: "LGTM, just a few thoughts Could you also add the test of accuracy (lm-eval) and benchmark results?" (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3185650341)
-- `2025-09-03T20:11:58Z` `inline` by `LucasWilkinson` `vllm/compilation/ubatch_wrapper.py`; signals: cuda, cudagraph; excerpt: "im not sure if this compilation related; I think this probably belongs in v1/worker; we could call it v1/worker/gpu ubatch wrapper.py since it CUDAGraph ..." (https://github.com/vllm-project/vllm/pull/23693#discussion_r2320074014)
-- `2025-09-04T18:47:07Z` `inline` by `ProExpertProg` `vllm/model_executor/layers/fused_moe/modular_kernel.py`:850; signals: kernel, moe; excerpt: "Would this work with other prepare finalize impls? Wouldn't you have to update them? As well as the interface?" (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323152462)
-- `2025-09-04T18:48:30Z` `inline` by `ProExpertProg` `vllm/model_executor/layers/fused_moe/modular_kernel.py`:875; signals: kernel, moe; excerpt: "I understand the codeflow now by why do you not want to pass the hook to receiver? Maybe a comment would be helpful" (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323156476)
-- `2025-09-04T19:26:33Z` `inline` by `SageMoore` `vllm/model_executor/layers/fused_moe/modular_kernel.py`:850; signals: kernel, moe; excerpt: "Yes. Yes. Yes. 🙂 Support for pplx and DeepEP HT will be added in follow on PRs. We have them working but this PR ..." (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323264259)
-- `2025-09-04T19:30:36Z` `inline` by `SageMoore` `vllm/model_executor/layers/fused_moe/modular_kernel.py`:875; signals: kernel, moe; excerpt: "I'll add a comment. We don't pass the hook into the receiver because we don't want to run it twice. The other ubatch will ..." (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323274836)
+- 2025-09-02 `LucasWilkinson` on `vllm/model_executor/layers/fused_moe/pplx_prepare_finalize.py`:206: lets only land DeepEP LL with this PR for now (https://github.com/vllm-project/vllm/pull/23693#discussion_r2317441926)
+- 2025-09-02 `LucasWilkinson` on `vllm/model_executor/layers/fused_moe/deepep_ht_prepare_finalize.py`:102: lets only land DeepEP LL in this PR (https://github.com/vllm-project/vllm/pull/23693#discussion_r2317442847)
+- 2025-09-02 `LucasWilkinson` on `vllm/engine/arg_utils.py`:1306: we can remove enable async comms; this always on now for DBO + DeepEP LL (https://github.com/vllm-project/vllm/pull/23693#discussion_r2317443862)
+- 2025-09-03 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:2580: Is this needed since we currently only run DBO for decode anyways? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2317447558)
+- 2025-09-03 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:635: instead of pad out ubatch first stage can we just shift constructing the slices to here? I think we can just make get dp padding ubatch work directly off of total num scheduled tokens (https://github.com/vllm-project/vllm/pull/23693#discussion_r2317453735)
+- 2025-09-03 `SageMoore` on `vllm/v1/worker/gpu_model_runner.py`:635: This is a good suggestion! I'll give this a shot. It would be great to clean up this multi-stage padding nonsense. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2317483245)
+- 2025-09-03 `LucasWilkinson` on `vllm/compilation/ubatch_wrapper.py`: im not sure if this compilation related; I think this probably belongs in v1/worker; we could call it v1/worker/gpu ubatch wrapper.py since it CUDAGraph related (https://github.com/vllm-project/vllm/pull/23693#discussion_r2320074014)
+- 2025-09-03 `LucasWilkinson` on `vllm/v1/worker/ubatching.py`:63: we need to add a self.maybe run recv hook before self.cpu signal event.set() (https://github.com/vllm-project/vllm/pull/23693#discussion_r2320082771)
+- 2025-09-04 `SageMoore` on `vllm/compilation/ubatch_wrapper.py`: Yeah that's reasonable. I'll move all ubatching files to the v1/worker directory. It's in the compilation directory right now because that's where the cuda graph wrapper is. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2322268351)
+- 2025-09-04 `LucasWilkinson` on `vllm/compilation/ubatch_wrapper.py`: Ya I have mixed feelings about the cuda graph wrapper being there but it's more tied into compilation since it was pulled out of the piecewise interpreter (https://github.com/vllm-project/vllm/pull/23693#discussion_r2322275088)
+- 2025-09-04 `yewentao256` on `vllm/compilation/ubatch_wrapper.py`:30: Could we move UbatchMetadata to ubatch utils.py? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2322404307)
+- 2025-09-04 `yewentao256` on `vllm/distributed/device_communicators/all2all.py`:258: Why do we delete this? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2322413869)
+- 2025-09-04 `yewentao256` on `vllm/v1/worker/gpu_model_runner.py`:2502: Are these comments needed or just for debugging? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2322428167)
+- 2025-09-04 `ProExpertProg` on `vllm/model_executor/layers/fused_moe/layer.py`:943: Do we need this if ubacthing is not enabled? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323111813)
+- 2025-09-04 `ProExpertProg` on `vllm/forward_context.py`:90: Should this really live inside forward context? Seems like something for one of the ubatch files (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323129114)
+- 2025-09-04 `ProExpertProg` on `vllm/model_executor/layers/fused_moe/modular_kernel.py`:850: Would this work with other prepare finalize impls? Wouldn't you have to update them? As well as the interface? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323152462)
+- 2025-09-04 `ProExpertProg` on `vllm/model_executor/layers/fused_moe/modular_kernel.py`:875: I understand the codeflow now by why do you not want to pass the hook to receiver? Maybe a comment would be helpful (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323156476)
+- 2025-09-04 `ProExpertProg` on `vllm/v1/worker/gpu_model_runner.py`:717: Could you update the comment below? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323161657)
+- 2025-09-04 `ProExpertProg` commented: Mostly questions, did not get to model runner or ubatching core yet (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3186640425)
+- 2025-09-04 `SageMoore` on `vllm/compilation/ubatch_wrapper.py`:30: Let's leave it in ubatch wrapper.py it shouldn't be used outside of that file. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323218907)
+- 2025-09-04 `SageMoore` on `vllm/forward_context.py`:90: Yeah this is a bit strange. This function started off as an extension of num tokens across dp which is defined right above it. I decided to keep these two functions close because their behavior is tightly coupled. You cannot think of ... (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323254703)
+- 2025-09-04 `SageMoore` on `vllm/forward_context.py`:90: I'll also add a comment here explaining what I just posted. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323258314)
+- 2025-09-04 `SageMoore` on `vllm/model_executor/layers/fused_moe/modular_kernel.py`:850: Yes. Yes. Yes. 🙂 Support for pplx and DeepEP HT will be added in follow on PRs. We have them working but this PR is already huge. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323264259)
+- 2025-09-04 `SageMoore` on `vllm/model_executor/layers/fused_moe/modular_kernel.py`:875: I'll add a comment. We don't pass the hook into the receiver because we don't want to run it twice. The other ubatch will run it when it reaches dbo maybe run recv hook(). (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323274836)
+- 2025-09-04 `LucasWilkinson` on `vllm/v1/worker/ubatching.py`:150: we can remove context offset this is cruft (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323399889)
+- 2025-09-04 `LucasWilkinson` on `vllm/distributed/device_communicators/all2all.py`:258: it doesnt do anything for DeepEP LL; only for DeepEP HT (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323402892)
+- 2025-09-04 `yewentao256` on `vllm/model_executor/layers/fused_moe/modular_kernel.py`:850: I think we can do a basic check (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323614012)
+- 2025-09-04 `yewentao256` on `vllm/distributed/device_communicators/all2all.py`:258: Yes, I know that DeepEP LL doesn't require any SMs, but won't this affect other backend kernels in main? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2323615742)
+- 2025-09-05 `ProExpertProg` on `vllm/model_executor/layers/fused_moe/modular_kernel.py`:850: Support for pplx and DeepEP HT will be added in follow on PRs. We have them working but this PR is already huge. Yeah I didn't mean adding support, it's just that you're changing the interface. But if it works I trust ... (https://github.com/vllm-project/vllm/pull/23693#discussion_r2325741352)
+- 2025-09-05 `ProExpertProg` on `vllm/v1/worker/gpu_ubatch_wrapper.py`:256: cudagraph wrapper can already handle this dispatch, why not just run through runnable directly? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2325783468)
+- 2025-09-05 `LucasWilkinson` on `vllm/v1/worker/ubatching.py`:122: this should be != (https://github.com/vllm-project/vllm/pull/23693#discussion_r2325802622)
+- 2025-09-05 `LucasWilkinson` on `vllm/engine/arg_utils.py`:319: can we make this microbatching decode token threshold (I have a microbatching prefill token threshold coming) (https://github.com/vllm-project/vllm/pull/23693#discussion_r2326012701)
+- 2025-09-06 `heheda12345` on `vllm/engine/arg_utils.py`:319: I prefer microbatching token threshold. For P/D case, one threshold is enough. For chunked prefill, will we have different strategy for 100 prefill token +100 decode token vs 150 prefill token + 50 decode token? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2326580071)
+- 2025-09-06 `heheda12345` on `vllm/forward_context.py`:70: do you still need this? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2326582233)
+- 2025-09-06 `heheda12345` on `vllm/forward_context.py`:112: Can you add a comment for the second ubatch can't be empty and some brief reason (https://github.com/vllm-project/vllm/pull/23693#discussion_r2326583591)
+- 2025-09-06 `heheda12345` on `vllm/forward_context.py`:202: Can you update the above comment? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2326583839)
+- 2025-09-07 `LucasWilkinson` on `vllm/engine/arg_utils.py`:319: The idea behind separate thresholds is that for mixed prefill-decode (or pure prefill) batches with DBO we would fall-back to eager from full-CG so the threshold here would be higher (v.s. running piecewise no-DBO) I don't think we should assume microbatching will ... (https://github.com/vllm-project/vllm/pull/23693#discussion_r2328462172)
+- 2025-09-08 `huachenheli` on `vllm/v1/worker/gpu_ubatch_wrapper.py`:151: A n00b question: I only see cpu events being set/cleared in this context manager: so how are the gpu stream sync functions called? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2329173947)
+- 2025-09-08 `minosfuture` on `vllm/v1/worker/gpu_model_runner.py`:60: can use AttentionMetadata instead of coupling with flash attn? or continue using Any (https://github.com/vllm-project/vllm/pull/23693#discussion_r2331098048)
+- 2025-09-08 `minosfuture` on `vllm/v1/worker/gpu_model_runner.py`:287: seems not used anywhere, remove? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2331103225)
+- 2025-09-08 `minosfuture` on `vllm/v1/worker/gpu_model_runner.py`:617: total num scheduled tokens + num pad tokens should be the same as num tokens after padding? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2331107840)
+- 2025-09-08 `minosfuture` on `vllm/v1/worker/gpu_model_runner.py`:615: maybe use the exact reason that num pad tokens should be less than total num scheduled tokens otherwise the second ubatch is empty. And add why it is not ok for the second ubatch to be empty. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2331115633)
+- 2025-09-08 `tlrmchlsmth` on `vllm/distributed/device_communicators/all2all.py`:258: @yewentao256 this is in the DeepEPLLAll2AllManager class, so only used by the DeepEP LL A2A (https://github.com/vllm-project/vllm/pull/23693#discussion_r2331125520)
+- 2025-09-08 `minosfuture` on `vllm/model_executor/layers/fused_moe/deepep_ll_prepare_finalize.py`:240: maybe remove if statement here and inside dbo register recv hook, skip registration if it's None. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2331265069)
+- 2025-09-08 `minosfuture` on `vllm/model_executor/layers/fused_moe/modular_kernel.py`:876: would it be cleaner if we do and returns None from dbo register recv hook if dbo enabled() (https://github.com/vllm-project/vllm/pull/23693#discussion_r2331275148)
+- 2025-09-08 `minosfuture` on `vllm/v1/worker/gpu_model_runner.py`:1140: extract attn metadata prep into a function? prepare inputs is quite long now. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2331371480)
+- 2025-09-09 `heheda12345` on `vllm/engine/arg_utils.py`:319: "whether this batch is compute bound or memory bound" "whether comm time gemm time" I think both two questions regard prefill tokens and decode tokens as the same. Do we need to distinguish between prefill tokens and decode tokens to decide whether ... (https://github.com/vllm-project/vllm/pull/23693#discussion_r2331740590)
+- 2025-09-09 `heheda12345` on `vllm/model_executor/layers/fused_moe/modular_kernel.py`:508: is this comment still true now? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2332078208)
+- 2025-09-09 `heheda12345` on `vllm/v1/worker/gpu_model_runner.py`:1125: why do you need different builders for the two batches? I think one goal of @LucasWilkinson 's metadata refactor is to make build a pure function (https://github.com/vllm-project/vllm/pull/23693#discussion_r2332105677)
+- 2025-09-09 `heheda12345` on `vllm/v1/worker/gpu_model_runner.py`:1496: can you add a docstring for the meaning of the two return values? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2332137271)
+- 2025-09-09 `heheda12345` on `vllm/v1/worker/gpu_model_runner.py`:1525: can you add a docstring for the meaning of the 3 return values? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2332138003)
+- 2025-09-09 `heheda12345` on `vllm/v1/worker/gpu_model_runner.py`:2537: Do you need this check? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2332153400)
+- 2025-09-09 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:1125: unfortunately for full-CG some of the builders use persistent buffers for AOT schedules; by using multiple builders the builders themselves don't need to concern themselves with how many concurrent batches there are (https://github.com/vllm-project/vllm/pull/23693#discussion_r2334736265)
+- 2025-09-09 `SageMoore` on `vllm/forward_context.py`:112: Yeah I generally think this is too confusing. I added a is second ubatch empty function that we can use along with a comment. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2334946564)
+- 2025-09-09 `SageMoore` on `vllm/v1/worker/gpu_model_runner.py`:287: I'd prefer to leave the comm stream logic in this PR because it will be used immediately after this PR merges for DeepEP High Throughput support. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2334982063)
+- 2025-09-09 `SageMoore` on `vllm/v1/worker/gpu_model_runner.py`:1125: So there is still state that we need for cudagraphs inside of the builders. This is why I added one for each microbatch. Unfortunate but necessary for now. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2334983857)
+- 2025-09-09 `SageMoore` on `vllm/v1/worker/gpu_model_runner.py`:615: We talked about this a bit in the overview call. There's nothing really fundamentally wrong with running an empty second ubatch, but we will have to modify the code a bit more to support it. It's on my list of follow on ... (https://github.com/vllm-project/vllm/pull/23693#discussion_r2334996354)
+- 2025-09-09 `SageMoore` on `vllm/model_executor/layers/fused_moe/deepep_ll_prepare_finalize.py`:240: I agree that this logic was a bit convoluted. I've cleaned this up a bit. Let me know what you think. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2334997825)
+- 2025-09-09 `SageMoore` on `vllm/v1/worker/gpu_model_runner.py`:2537: Good catch. I've moved the check. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2335009388)
+- 2025-09-10 `minosfuture` on `vllm/v1/worker/gpu_ubatch_wrapper.py`:151: those are not used in this PR. This PR will merge support for DBO with deepep low latency, and some additional harnesses like dual stream management prepared to be used in a followup PR by deepep high throughput. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2335192225)
+- 2025-09-10 `SageMoore` on `vllm/v1/worker/gpu_model_runner.py`:617: I refactored things a bit in response to this question. I wasn't crazy about passing around num pad tokens so I refactored the code to derive num pad tokens from the num tokens after padding tensor. Its a bit easier to keep ... (https://github.com/vllm-project/vllm/pull/23693#discussion_r2338023079)
+- 2025-09-10 `SageMoore` on `vllm/v1/worker/gpu_ubatch_wrapper.py`:256: Let's do this as a follow on. It should work in theory, but we need to do some additional wrangling with the cuda graph dispatcher. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2338025339)
+- 2025-09-15 `hmellor` on `vllm/config/__init__.py`:2858: - Could this be done as a [Pydantic field validator]( in vllm/config/parallel.py? - Would it be better to cooerce VLLM ALL2ALL BACKEND to deepep low latency and warn rather than error here? Or does it require extra dependencies the user may not ... (https://github.com/vllm-project/vllm/pull/23693#discussion_r2348711210)
+- 2025-09-15 `SageMoore` on `vllm/config/__init__.py`:2858: 1. Yes. We can handle this in a follow on PR. 2. deepep low latency has to be independently installed by the user so I'm against logging+attempting to switch to it, though I'm open to that if we ever have it installed ... (https://github.com/vllm-project/vllm/pull/23693#discussion_r2349166970)
+- 2025-09-15 `tlrmchlsmth` on `vllm/config/__init__.py`:2858: Would it be better to cooerce VLLM ALL2ALL BACKEND to deepep low latency and warn rather than error here? Or does it require extra dependencies the user may not have unless they explicitly set this up? I don't think we should coerce ... (https://github.com/vllm-project/vllm/pull/23693#discussion_r2349329584)
+- 2025-09-15 `tlrmchlsmth` on `vllm/engine/arg_utils.py`:705: What is the future plan for this argument? Will we add a separate --dbo-prefill-token-threshold? Could there be one argument instead? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2349334013)
+- 2025-09-15 `tlrmchlsmth` on `vllm/model_executor/layers/fused_moe/deepep_ll_prepare_finalize.py`:132: Why remove this assert? I don't see it being moved anywhere and we should keep this check (should raise an exception instead of asserting) (https://github.com/vllm-project/vllm/pull/23693#discussion_r2349353388)
+- 2025-09-15 `tlrmchlsmth` on `vllm/model_executor/layers/fused_moe/modular_kernel.py`:533: Why do we need this? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2349360504)
+- 2025-09-15 `tlrmchlsmth` on `vllm/v1/worker/gpu_ubatch_wrapper.py`:48: why 3 instead of 2? Maybe add a comment that it's used by the main thread as well as the DBO threads (https://github.com/vllm-project/vllm/pull/23693#discussion_r2349406935)
+- 2025-09-15 `tlrmchlsmth` on `vllm/v1/worker/gpu_ubatch_wrapper.py`:58: looks unused? debug cruft? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2349407802)
+- 2025-09-15 `hmellor` on `vllm/config/__init__.py`:2858: Thanks both for weiging in. 1. Ok, this can be added in a follow up 2. Let's leave this as an error (https://github.com/vllm-project/vllm/pull/23693#discussion_r2349441355)
+- 2025-09-15 `tlrmchlsmth` on `vllm/v1/worker/gpu_ubatch_wrapper.py`:234: What is the mrope interaction? Could we add a comment explaining it here? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2349442008)
+- 2025-09-15 `tlrmchlsmth` on `vllm/v1/worker/ubatch_splitting.py`:78: Is this something that's expected to happen sometimes, and that's OK? If not, I think this should be a warning instead. And then could you add a bit more detail to the log, e.g. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2349459187)
+- 2025-09-15 `tlrmchlsmth` on `vllm/v1/worker/ubatching.py`:95: looks unused - remove it? (https://github.com/vllm-project/vllm/pull/23693#discussion_r2349467121)
+- 2025-09-15 `SageMoore` on `vllm/engine/arg_utils.py`:705: Yep we are planning to add a prefill version of this argument. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2349481690)
+- 2025-09-15 `tlrmchlsmth` commented: Left a few minor comments. Overall I think this is ready to land otherwise. Maybe a little rough around the edges with the model runner changes but will be great to have this landed on main, especially as we have a prefill ... (https://github.com/vllm-project/vllm/pull/23693#pullrequestreview-3225384986)
+- 2025-09-15 `SageMoore` on `vllm/v1/worker/ubatch_splitting.py`:78: It is expected to happen and isn't necessarily a bug when it does. I find the debug log to be really helpful when debugging misc padding issues. We can certainly take it out, though. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2349498750)
+- 2025-09-15 `SageMoore` on `vllm/v1/worker/gpu_ubatch_wrapper.py`:234: It's largely just that mrope adds an additional dimension to the positions tensor so we need to slice the lower dimension. I'll add a comment. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2349574441)
+- 2025-09-15 `SageMoore` on `vllm/model_executor/layers/fused_moe/modular_kernel.py`:533: Just a general memory footprint reduction. Primarily targeting cudagraphs, though. (https://github.com/vllm-project/vllm/pull/23693#discussion_r2349611272)
+- 2025-09-16 `tlrmchlsmth`: I thought the kernels-moe-test [failures]( were due to VLLM USE PRECOMPILED=1 not picking up the changes from but that was from 3 days ago Could it be a real problem? @elvircrn, @dougbtv Edit: Confirmed it's picking up old binaries. (https://github.com/vllm-project/vllm/pull/23693#issuecomment-3298743026)

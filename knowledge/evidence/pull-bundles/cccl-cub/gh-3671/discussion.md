@@ -1,75 +1,45 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/cccl#3671](https://github.com/NVIDIA/cccl/pull/3671)
-- Source page: `sources/prs/cccl-cub/PR-3671.md`
-- Evidence bundle: `evidence/pull-bundles/cccl-cub/gh-3671`
-- Generated at: `2026-05-20T15:19:37.483346+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-02-04T14:24:49Z`
-- Merged: `2025-02-20T11:13:38Z`
-
-## Discussion Counts
-
-- Issue comments: 23
-- Review submissions: 32 (approved=1, changes_requested=1, commented=30)
-- Inline review comments: 60
-- Review threads observed: 34
-- Resolved/outdated thread markers: resolved=31, outdated=32
-- Human participants with discussion text: bernhardmgruber, gonzalobg, jrhemstad, miscco
-- Automation comments/reviews omitted from high-signal summary: 4
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-02-04T15:54:45Z` `CHANGES_REQUESTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2593295895)
-- `2025-02-04T15:59:18Z` `COMMENTED` by `gonzalobg` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2593324407)
-- `2025-02-04T16:00:15Z` `COMMENTED` by `gonzalobg` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2593327293)
-- `2025-02-04T16:04:43Z` `COMMENTED` by `gonzalobg` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2593343572)
-- `2025-02-04T16:05:40Z` `COMMENTED` by `gonzalobg` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2593346121)
-- `2025-02-04T16:08:41Z` `COMMENTED` by `gonzalobg` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2593358715)
-- `2025-02-04T17:09:21Z` `COMMENTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2593524120)
-- `2025-02-04T17:33:44Z` `COMMENTED` by `gonzalobg` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2593578336)
-- `2025-02-04T17:34:23Z` `COMMENTED` by `gonzalobg` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2593579603)
-- `2025-02-06T20:47:32Z` `COMMENTED` by `gonzalobg` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2599890446)
-- `2025-02-06T22:58:28Z` `COMMENTED` by `gonzalobg` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2600214325)
-- `2025-02-17T17:57:22Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2621699695)
-- `2025-02-17T18:22:46Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2621731660)
-- `2025-02-18T14:14:58Z` `COMMENTED` by `gonzalobg` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2623717024)
-- `2025-02-18T14:26:58Z` `COMMENTED` by `gonzalobg` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2623763998)
-- `2025-02-18T16:55:07Z` `COMMENTED` by `gonzalobg` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2624279082)
-- `2025-02-18T22:10:30Z` `COMMENTED` by `jrhemstad` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2625159278)
-- `2025-02-19T08:26:15Z` `COMMENTED` by `gonzalobg` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2625999052)
-- `2025-02-19T09:15:36Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2626126676)
-- `2025-02-19T09:15:52Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2626127670)
-- `2025-02-19T10:45:26Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2626293261)
-- `2025-02-19T11:36:24Z` `COMMENTED` by `gonzalobg` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2626522728)
-- `2025-02-19T11:38:03Z` `COMMENTED` by `gonzalobg` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2626526432)
-- `2025-02-19T11:39:32Z` `COMMENTED` by `gonzalobg` (https://github.com/NVIDIA/cccl/pull/3671#pullrequestreview-2626530390)
-- ... 8 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `libcudacxx/include/cuda/try_cancel`: 26 inline comment(s)
-- `docs/libcudacxx/extended_api/work_stealing.rst`: 16 inline comment(s)
-- `libcudacxx/test/libcudacxx/cuda/for_each_canceled/for_each_canceled.pass.cpp`: 10 inline comment(s)
-- `libcudacxx/test/libcudacxx/cuda/try_cancel/try_cancel.pass.cpp`: 6 inline comment(s)
-- `libcudacxx/include/cuda/for_each_canceled`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-02-19T08:26:15Z` `inline` by `gonzalobg` `libcudacxx/include/cuda/try_cancel`:149; signals: block, cuda, hang; excerpt: "Ack, stabilizing API for now to not block on updating that agreement. If the agreement somehow changes before this is ready, we can re-unstabilize ..." (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961191425)
-- `2025-02-18T14:26:58Z` `inline` by `gonzalobg` `docs/libcudacxx/extended_api/work_stealing.rst`:43; signals: cuda, hang; excerpt: "I've slightly tweaked it and incorporated the suggestions. Leaving this open cause I have not incorporated the leading "or, .." change. The "otherwise" applies ..." (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1959859798)
-- `2025-02-19T10:36:00Z` `inline` by `bernhardmgruber` `docs/libcudacxx/extended_api/work_stealing.rst`:94; signals: block, cuda; excerpt: "I am a huge fan of const. Also, let's use slightly more descriptive names in examples: (I am not sure blocks per grid helps, ..." (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961405512)
-- `2025-02-19T10:42:01Z` `inline` by `bernhardmgruber` `libcudacxx/test/libcudacxx/cuda/for_each_canceled/for_each_canceled.pass.cpp`:50; signals: cuda, kernel; excerpt: "Consider a rename for clarification: Applies to the other kernels and the host-side test function as well." (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961436822)
-- `2025-02-04T15:53:35Z` `inline` by `miscco` `libcudacxx/include/cuda/try_cancel`:191; signals: cuda, ptx; excerpt: "This does not work for nvc++, I am wondering whether this should rather be in the PTX exposure" (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1941440934)
-- `2025-02-17T17:52:25Z` `inline` by `bernhardmgruber` `docs/libcudacxx/extended_api/work_stealing.rst`:65; signals: block, cuda; excerpt: "Consider adding a note that blockIdx should not be accessed here." (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1958633439)
-- `2025-02-17T17:53:07Z` `inline` by `bernhardmgruber` `docs/libcudacxx/extended_api/work_stealing.rst`:90; signals: cuda, memory; excerpt: "Please free the allocated memory." (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1958634485)
-- `2025-02-17T18:15:34Z` `inline` by `bernhardmgruber` `libcudacxx/include/cuda/try_cancel`:87; signals: block, cuda; excerpt: "Where is ThreadBlockRank defined? Do you mean ThreadBlockDim there?" (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1958653638)
-- `2025-02-19T10:29:36Z` `inline` by `bernhardmgruber` `docs/libcudacxx/extended_api/work_stealing.rst`:22; signals: block, cuda; excerpt: "Remark: Can we consistently spell it thread blocks or thread-blocks?" (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961394875)
-- `2025-02-19T10:38:22Z` `inline` by `bernhardmgruber` `libcudacxx/test/libcudacxx/cuda/for_each_canceled/for_each_canceled.pass.cpp`:11; signals: cuda, sm100; excerpt: "Given we have a fallback for before SM100, why can't we test on those architectures?" (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961411616)
-- `2025-02-19T10:41:28Z` `inline` by `bernhardmgruber` `libcudacxx/test/libcudacxx/cuda/for_each_canceled/for_each_canceled.pass.cpp`:77; signals: cuda, kernel; excerpt: "Please remove this unused parameter: Applies to the following two kernels as well." (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961433859)
-- `2025-02-19T14:24:35Z` `inline` by `gonzalobg` `libcudacxx/test/libcudacxx/cuda/for_each_canceled/for_each_canceled.pass.cpp`:114; signals: cuda, hang; excerpt: "This change dropped the if (c[i] != (1 + i)) @miscco ?" (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961778943)
+- 2025-02-04 `miscco` on `libcudacxx/include/cuda/try_cancel`:7: That license should be the simple libcu++ license (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1941433473)
+- 2025-02-04 `miscco` on `libcudacxx/include/cuda/try_cancel`:149: This should rather be put into cudax rather than libcu++ (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1941434055)
+- 2025-02-04 `miscco` on `libcudacxx/include/cuda/try_cancel`:168: This should most likely be cuda::std::terminate() (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1941435241)
+- 2025-02-04 `miscco` on `libcudacxx/include/cuda/try_cancel`:152: Important: We need to at least define it (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1941437668)
+- 2025-02-04 `miscco` on `libcudacxx/include/cuda/try_cancel`:187: We are still supporting C++17 so (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1941439215)
+- 2025-02-04 `miscco` on `libcudacxx/include/cuda/try_cancel`:191: This does not work for nvc++, I am wondering whether this should rather be in the PTX exposure (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1941440934)
+- 2025-02-04 `miscco` on `libcudacxx/include/cuda/try_cancel`:206: ditto should rather be CUDA VSTD::terminate() (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1941441556)
+- 2025-02-04 `miscco` on `libcudacxx/include/cuda/try_cancel`:324: I believe that is not annotated ptr ;) (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1941442907)
+- 2025-02-04 `gonzalobg` on `libcudacxx/include/cuda/try_cancel`:152: I wanted this to trigger an error if a CUDA C++ program uses it. Would defining it support that? I think otherwise I can define it, and then issue a static assert below. (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1941451447)
+- 2025-02-04 `gonzalobg` on `libcudacxx/include/cuda/try_cancel`:187: Since C++17 support could be added later as an extension, would guarding this API with cplusplus = c++20 suffice? (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1941453011)
+- 2025-02-04 `gonzalobg` on `libcudacxx/include/cuda/try_cancel`:168: I think this should most likely just be an assertion instead of calling the installed terminate handler. (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1941462525)
+- 2025-02-04 `gonzalobg` on `libcudacxx/include/cuda/try_cancel`:7: I used what the annotated ptr header was using. Is there a better file I can use as the base for this one? (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1941464023)
+- 2025-02-04 `gonzalobg` on `libcudacxx/include/cuda/try_cancel`:191: I can provide a fallback for CUDA ARCH < 1000. What's the right way to check for that? I did not find any docs for NV IF TARGET family of macros, so ended up using CUDA ARCH . (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1941470570)
+- 2025-02-04 `gonzalobg` on `libcudacxx/include/cuda/try_cancel`:187: Have added a C++20 guard for now, but leaving the thread open to provide a full C++17 backport when we are happy with the current API design. (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1941606070)
+- 2025-02-04 `gonzalobg` on `libcudacxx/include/cuda/try_cancel`:191: Updated and provided fallback for older SMs. Still not sure whether that's the right thing to do. Have left a TODO to resolve that before merging. (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1941606883)
+- 2025-02-06 `gonzalobg` on `libcudacxx/include/cuda/try_cancel`:149: cudax is not shipped with the CTK but experimental exposure of HW features should be available in the CTK early to allow programmers to use the HW early on without having to familiarize themselves with all the details. (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1945413708)
+- 2025-02-06 `gonzalobg` on `libcudacxx/include/cuda/try_cancel`:206: These are now static assert. (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1945589442)
+- 2025-02-17 `bernhardmgruber` on `docs/libcudacxx/extended_api/work_stealing.rst`:65: Consider adding a note that blockIdx should not be accessed here. (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1958633439)
+- 2025-02-17 `bernhardmgruber` on `docs/libcudacxx/extended_api/work_stealing.rst`:90: Please free the allocated memory. (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1958634485)
+- 2025-02-17 `bernhardmgruber` on `libcudacxx/test/libcudacxx/cuda/try_cancel/try_cancel.pass.cpp`:94: Please put includes at the top of the file. (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1958637214)
+- 2025-02-17 `bernhardmgruber` on `libcudacxx/test/libcudacxx/cuda/try_cancel/try_cancel.pass.cpp`:117: I think in a unit test we can just assert: Maybe we already have a shorthand macro for this. @miscco ? (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1958638533)
+- 2025-02-17 `bernhardmgruber` on `libcudacxx/include/cuda/try_cancel`:87: Where is ThreadBlockRank defined? Do you mean ThreadBlockDim there? (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1958653638)
+- 2025-02-17 `miscco` on `libcudacxx/test/libcudacxx/cuda/try_cancel/try_cancel.pass.cpp`:59: we should use the public API (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1958659030)
+- 2025-02-17 `bernhardmgruber`: We discussed the PR on VC today. @gonzalobg will push a few fixes, @miscco will polish, and I shall review. (https://github.com/NVIDIA/cccl/pull/3671#issuecomment-2663944567)
+- 2025-02-18 `gonzalobg` on `libcudacxx/test/libcudacxx/cuda/try_cancel/try_cancel.pass.cpp`:94: This helps test that the API is used exclusively with its include file. If we put these two at the top of the file it could be that the API can only be used if these two headers are also included when ... (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1959834415)
+- 2025-02-18 `gonzalobg` on `docs/libcudacxx/extended_api/work_stealing.rst`:43: I've slightly tweaked it and incorporated the suggestions. Leaving this open cause I have not incorporated the leading "or, .." change. The "otherwise" applies to "on success", so maybe a larger rephrasing is required. (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1959859798)
+- 2025-02-18 `gonzalobg` on `libcudacxx/include/cuda/try_cancel`:149: We discussed this and tbh I'm not sure what we decided. I think we decided to punt the problem to @jrhemstad 😄 (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1960141086)
+- 2025-02-18 `jrhemstad` on `libcudacxx/include/cuda/try_cancel`:149: The agreement right now is that we aren't shipping cuda::experimental:: features in the CTK (yet). (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1960662982)
+- 2025-02-19 `gonzalobg` on `libcudacxx/include/cuda/try_cancel`:149: Ack, stabilizing API for now to not block on updating that agreement. If the agreement somehow changes before this is ready, we can re-unstabilize it. (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961191425)
+- 2025-02-19 `bernhardmgruber` on `docs/libcudacxx/extended_api/work_stealing.rst`:43: New wording is better. LGTM! (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961270669)
+- 2025-02-19 `bernhardmgruber` on `docs/libcudacxx/extended_api/work_stealing.rst`:18: Suggestion: I would put this note after the API explanation. (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961370824)
+- 2025-02-19 `bernhardmgruber` on `docs/libcudacxx/extended_api/work_stealing.rst`:22: Remark: Can we consistently spell it thread blocks or thread-blocks? (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961394875)
+- 2025-02-19 `bernhardmgruber` on `docs/libcudacxx/extended_api/work_stealing.rst`:36: I am not fluent in standardese, but do we need the is true? (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961400416)
+- 2025-02-19 `bernhardmgruber` on `docs/libcudacxx/extended_api/work_stealing.rst`:66: Suggestion: I am not sure the assertion is the best way to transport that message. Maybe: (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961404472)
+- 2025-02-19 `bernhardmgruber` on `docs/libcudacxx/extended_api/work_stealing.rst`:94: I am a huge fan of const. Also, let's use slightly more descriptive names in examples: (I am not sure blocks per grid helps, since we only have one grid) (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961405512)
+- 2025-02-19 `bernhardmgruber` on `libcudacxx/test/libcudacxx/cuda/for_each_canceled/for_each_canceled.pass.cpp`:11: Given we have a fallback for before SM100, why can't we test on those architectures? (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961411616)
+- 2025-02-19 `bernhardmgruber` on `libcudacxx/test/libcudacxx/cuda/for_each_canceled/for_each_canceled.pass.cpp`:14: Please make it possible on C++17 as well. It shouldn't be hard. At least in a follow-up PR. (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961416401)
+- 2025-02-19 `bernhardmgruber` on `libcudacxx/test/libcudacxx/cuda/for_each_canceled/for_each_canceled.pass.cpp`:77: Please remove this unused parameter: Applies to the following two kernels as well. (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961433859)
+- 2025-02-19 `bernhardmgruber` on `libcudacxx/test/libcudacxx/cuda/for_each_canceled/for_each_canceled.pass.cpp`:50: Consider a rename for clarification: Applies to the other kernels and the host-side test function as well. (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961436822)
+- 2025-02-19 `bernhardmgruber` on `libcudacxx/test/libcudacxx/cuda/for_each_canceled/for_each_canceled.pass.cpp`:117: I think we can just assert in the tests: @miscco what do you prefer? (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961442421)
+- 2025-02-19 `gonzalobg` on `libcudacxx/test/libcudacxx/cuda/for_each_canceled/for_each_canceled.pass.cpp`:14: I think I just forgot to enable the tests here, thanks! (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961518964)
+- 2025-02-19 `gonzalobg` on `libcudacxx/test/libcudacxx/cuda/for_each_canceled/for_each_canceled.pass.cpp`:114: This change dropped the if (c[i] != (1 + i)) @miscco ? (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961778943)
+- 2025-02-19 `gonzalobg` on `libcudacxx/include/cuda/for_each_canceled`:7: @miscco this should be 2025 (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961783170)
+- 2025-02-19 `gonzalobg` on `libcudacxx/include/cuda/for_each_canceled`:7: This was fixed later, resolving. (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1961790135)
+- 2025-02-20 `gonzalobg` on `libcudacxx/test/libcudacxx/cuda/try_cancel/try_cancel.pass.cpp`:117: I think @miscco already fixed this. Resolving (re-open if I got that wrong). (https://github.com/NVIDIA/cccl/pull/3671#discussion_r1963211781)

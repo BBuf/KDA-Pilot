@@ -1,73 +1,62 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#35219](https://github.com/vllm-project/vllm/pull/35219)
-- Source page: `sources/prs/vllm/PR-35219.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-35219`
-- Generated at: `2026-05-20T15:39:59.968745+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-02-24T19:21:59Z`
-- Merged: `2026-03-10T10:32:20Z`
-
-## Discussion Counts
-
-- Issue comments: 42
-- Review submissions: 38 (approved=2, commented=36)
-- Inline review comments: 43
-- Review threads observed: 12
-- Resolved/outdated thread markers: resolved=9, outdated=11
-- Human participants with discussion text: LucasWilkinson, NickLucche, benchislett, heheda12345, mergify, pavanimajety, tdoublep, vadiklyutiy, voipmonitor, xinli-sw, ywang96
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-02-24T19:25:55Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces a bug fix for Mamba-based models, specifically addressing an issue where freed ... (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3850081822)
-- `2026-02-25T14:24:16Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3854599087)
-- `2026-02-25T14:49:03Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3854751496)
-- `2026-02-25T15:02:26Z` `COMMENTED` by `vadiklyutiy` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3854842601)
-- `2026-02-25T15:57:02Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3855190126)
-- `2026-02-25T15:58:25Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3855197941)
-- `2026-02-25T16:27:37Z` `COMMENTED` by `vadiklyutiy` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3855365505)
-- `2026-02-25T21:48:14Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3857126124)
-- `2026-02-25T21:56:08Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3857219956)
-- `2026-02-25T23:00:46Z` `COMMENTED` by `vadiklyutiy` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3857441954)
-- `2026-02-25T23:01:45Z` `COMMENTED` by `vadiklyutiy` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3857444619)
-- `2026-02-25T23:02:12Z` `COMMENTED` by `vadiklyutiy` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3857445830)
-- `2026-02-26T00:56:52Z` `COMMENTED` by `vadiklyutiy` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3857777864)
-- `2026-02-26T05:14:36Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3858511497)
-- `2026-02-26T08:19:34Z` `COMMENTED` by `heheda12345` - Thanks for your contribution! I think we can find the blocks that we need to clear from gpu ... (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3859236020)
-- `2026-02-26T08:23:30Z` `COMMENTED` by `heheda12345` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3859258704)
-- `2026-02-26T13:44:42Z` `COMMENTED` by `vadiklyutiy` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3861086598)
-- `2026-02-26T15:08:31Z` `COMMENTED` by `vadiklyutiy` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3861607190)
-- `2026-02-26T18:39:56Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3862901846)
-- `2026-02-27T06:52:43Z` `COMMENTED` by `heheda12345` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3865280177)
-- `2026-02-27T09:20:51Z` `COMMENTED` by `NickLucche` - just a note to address (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3865875125)
-- `2026-02-27T13:11:11Z` `COMMENTED` by `tdoublep` - I also find it unnecessary to always zero out the blocks. There is a really specific case where ... (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3866837712)
-- `2026-03-02T01:41:51Z` `COMMENTED` by `vadiklyutiy` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3873723530)
-- `2026-03-02T01:47:37Z` `COMMENTED` by `vadiklyutiy` (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3873730602)
-- ... 14 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/v1/worker/gpu_model_runner.py`: 35 inline comment(s)
-- `vllm/tool_parsers/hermes_tool_parser.py`: 6 inline comment(s)
-- `vllm/v1/worker/gpu_worker.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-02-26T15:24:48Z` `issue` by `vadiklyutiy`; signals: attention, block, cache, dtype, kernel, kv cache, nan, overflow; excerpt: "And IMO we only need this fix when different kv cache use different dtype. Better to only run this step for this case (and ..." (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3967332062)
-- `2026-03-05T01:06:49Z` `issue` by `vadiklyutiy`; signals: accuracy, attention, b200, benchmark, block, cache, correctness, dtype; excerpt: "Because a lot of changes was introduced since PR was open, I fully updated PR description as below Essential problem Fixes Workaround for Hybrid ..." (https://github.com/vllm-project/vllm/pull/35219#issuecomment-4001320179)
-- `2026-02-27T13:11:11Z` `review` `COMMENTED` by `tdoublep`; signals: attention, block, cache, dtype, kv cache, nan; excerpt: "I also find it unnecessary to always zero out the blocks. There is a really specific case where the NaNs can creep in which ..." (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3866837712)
-- `2026-03-07T07:29:38Z` `issue` by `voipmonitor`; signals: blackwell, cutlass, flashinfer, gemm, nan, race, sm120; excerpt: "Hello, I suspect that this can be related to the flashinfer race condition issue caused by enabled PDL on blackwell which needs cutlass 4.3.0 ..." (https://github.com/vllm-project/vllm/pull/35219#issuecomment-4015838459)
-- `2026-03-09T14:08:16Z` `issue` by `vadiklyutiy`; signals: b200, benchmark, cache, fp8, kernel, perf, triton; excerpt: "KV-Cache Zeroing: Triton Kernel vs index fill Benchmark Results Model & Hardware - Model : Qwen/Qwen3.5-35B-A3B-FP8 - GPU : 1x B200 (TP=1) Server Command ..." (https://github.com/vllm-project/vllm/pull/35219#issuecomment-4024053107)
-- `2026-02-27T13:02:57Z` `inline` by `tdoublep` `vllm/v1/worker/gpu_model_runner.py`:372; signals: attention, flash attention, kernel, layout, memory; excerpt: "iirc we don't actually reshape the flash attention KV tensor, but hack at the strides to make it have the layout in memory that ..." (https://github.com/vllm-project/vllm/pull/35219#discussion_r2864245531)
-- `2026-02-26T08:19:34Z` `review` `COMMENTED` by `heheda12345`; signals: block, cache, dtype, kv cache; excerpt: "Thanks for your contribution! I think we can find the blocks that we need to clear from gpu model runner. We can get NewRequestData.block ..." (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3859236020)
-- `2026-02-25T02:19:07Z` `issue` by `vadiklyutiy`; signals: attention, block, cache, dtype, nan; excerpt: "How does this interact with prefix caching? If we zero out blocks when their ref cnt hits zero, doesn't that mean they can't be ..." (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3956305407)
-- `2026-02-26T08:23:31Z` `inline` by `heheda12345` `vllm/v1/worker/gpu_model_runner.py`:372; signals: attention, block, flash attention, kernel; excerpt: "does this kernel consider flash attention? it's shape is (2, num blocks, hidden) in general and we do some hack to make it (num ..." (https://github.com/vllm-project/vllm/pull/35219#discussion_r2857629692)
-- `2026-03-06T20:48:37Z` `review` `COMMENTED` by `tdoublep`; signals: kernel, perf, performance; excerpt: "I think general approach looks much better now but I still have concerns about the complexity of the implementation and introducing a lot of ..." (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3905860967)
-- `2026-02-24T22:05:44Z` `issue` by `tdoublep`; signals: attention, block, cache, dtype; excerpt: "How does this interact with prefix caching? If we zero out blocks when their ref cnt hits zero, doesn't that mean they can't be ..." (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3954992102)
-- `2026-02-25T00:42:01Z` `issue` by `vadiklyutiy`; signals: attention, block, cache, dtype; excerpt: "How does this interact with prefix caching? If we zero out blocks when their ref cnt hits zero, doesn't that mean they can't be ..." (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3955643103)
+- 2026-02-24 `LucasWilkinson`: Could you please provide data on possible perf overhead? also with async scheduling I think it may be risky to zero on free, we may need to move this into the model runner to ensure it ends up in the correct order ... (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3954315579)
+- 2026-02-24 `vadiklyutiy`: we may need to move this into the model runner to ensure it ends up in the correct order in the GPU stream Actual zeroing happens in GPUModelRunner. update states. "On free" we just collect corresponding blocks. Or didn't get you comment? (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3954436122)
+- 2026-02-24 `vadiklyutiy`: Below is from slack discussion. But I think it's worth attention and sharing here Seems both FlashAttn and trt-llm attn use mul by 0 to mask not used values. To be sure that its correct we must guarantee that no NaN. In ... (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3954886076)
+- 2026-02-24 `tdoublep`: How does this interact with prefix caching? If we zero out blocks when their ref cnt hits zero, doesn't that mean they can't be re-used if something comes along later that gets a cache hit? Wouldn't it to be better to detect ... (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3954992102)
+- 2026-02-25 `benchislett` on `vllm/v1/worker/gpu_model_runner.py`:914: Would it be more efficient to build an index tensor and have one op to zero at all the block id slots? (https://github.com/vllm-project/vllm/pull/35219#discussion_r2853359218)
+- 2026-02-25 `benchislett` on `vllm/v1/worker/gpu_model_runner.py`:914: How many block ids would we normally see for a typical prefill/decode? Is it very few? (https://github.com/vllm-project/vllm/pull/35219#discussion_r2853501731)
+- 2026-02-25 `vadiklyutiy` on `vllm/v1/worker/gpu_model_runner.py`:914: This zeroing takes small amount of time. We do it once per forward step and only for new. @benchislett Can you say right away does it code works in sync or async part? (https://github.com/vllm-project/vllm/pull/35219#discussion_r2853582058)
+- 2026-02-25 `benchislett` on `vllm/v1/worker/gpu_model_runner.py`:914: I notice that this is not specific to SSM blocks, and it clears all new KV blocks. Will this have a detrimental effect on prefills for non-mamba deployments where block size=16? In this case if we get a prefill of 8k tokens, ... (https://github.com/vllm-project/vllm/pull/35219#discussion_r2853903310)
+- 2026-02-25 `pavanimajety` on `vllm/v1/worker/gpu_model_runner.py`:5840: why is page size computed here? Isn't it same across all layers' kv cache tensors? (https://github.com/vllm-project/vllm/pull/35219#discussion_r2855626033)
+- 2026-02-25 `pavanimajety` on `vllm/v1/worker/gpu_model_runner.py`:914: does it make sense to use torch.tensor for block ids and use a gpu operation to zero the indices in tensors? (https://github.com/vllm-project/vllm/pull/35219#discussion_r2855633278)
+- 2026-02-25 `pavanimajety` on `vllm/v1/worker/gpu_model_runner.py`:1039: q: Is this the right location to clear the cache blocks? Shouldn't it be wherever the actual place where you get the new blocks? i.e. call site of get new blocks since that's the location you increment new block ids to zero (https://github.com/vllm-project/vllm/pull/35219#discussion_r2855684565)
+- 2026-02-25 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:1039: I think this is correct place, we should zero in the model runner not scheduler process in-order to avoid issues with async-scheduling (https://github.com/vllm-project/vllm/pull/35219#discussion_r2855715554)
+- 2026-02-25 `vadiklyutiy`: I optimized zeroing code: B200, BS=500, Qwen/Qwen3-0.6B Prefill The forward step takes around 18ms (BS around 8K) Range Proj Avg Proj Med Proj Min Proj Max ------- ---------- ---------- ---------- ---------- : zero block ids (n=513, 919296 KiB) 206.134 μs 188.351 μs ... (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3962628428)
+- 2026-02-25 `vadiklyutiy` on `vllm/v1/worker/gpu_model_runner.py`:914: does it make sense to use torch.tensor for block ids and use a gpu operation to zero the indices in tensors? I implemented zeroing as a triton kernel (https://github.com/vllm-project/vllm/pull/35219#discussion_r2855935266)
+- 2026-02-25 `vadiklyutiy` on `vllm/v1/worker/gpu_model_runner.py`:914: Pls lets me know if there is a better way to do it (https://github.com/vllm-project/vllm/pull/35219#discussion_r2855936640)
+- 2026-02-26 `vadiklyutiy`: I made all changes that I wanted. Right now the overhead is really small. Please take a look (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3963205925)
+- 2026-02-26 `benchislett` on `vllm/v1/worker/gpu_model_runner.py`:964: Do any backends need page size=1? (https://github.com/vllm-project/vllm/pull/35219#discussion_r2856968311)
+- 2026-02-26 `heheda12345` commented: Thanks for your contribution! I think we can find the blocks that we need to clear from gpu model runner. We can get NewRequestData.block ids and CachedRequestData.new block ids which are the list of newly allocated blocks. Within these blocks, the num ... (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3859236020)
+- 2026-02-26 `heheda12345` on `vllm/v1/worker/gpu_model_runner.py`:372: does this kernel consider flash attention? it's shape is (2, num blocks, hidden) in general and we do some hack to make it (num blocks, 2, hidden) only when model contains linear attention (https://github.com/vllm-project/vllm/pull/35219#discussion_r2857629692)
+- 2026-02-26 `vadiklyutiy` on `vllm/v1/worker/gpu_model_runner.py`:964: This page size in bytes. I don't think any potential backend needs 1 (https://github.com/vllm-project/vllm/pull/35219#discussion_r2859128489)
+- 2026-02-26 `vadiklyutiy` on `vllm/v1/worker/gpu_model_runner.py`:372: Could you explain a bit what shape do you mean? (https://github.com/vllm-project/vllm/pull/35219#discussion_r2859574562)
+- 2026-02-26 `vadiklyutiy`: And IMO we only need this fix when different kv cache use different dtype. Better to only run this step for this case (and it should be easy to add new case later) I did it intentionally for full attention. Justification. 1. ... (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3967332062)
+- 2026-02-26 `benchislett` on `vllm/v1/worker/gpu_model_runner.py`:371: @vadiklyutiy why do we need a custom kernel for this op? Is there something [index fill ]( (https://github.com/vllm-project/vllm/pull/35219#discussion_r2860706243)
+- 2026-02-27 `heheda12345` on `vllm/v1/worker/gpu_model_runner.py`:372: The shape of tensors in the kv cache raw buffers (https://github.com/vllm-project/vllm/pull/35219#discussion_r2862840915)
+- 2026-02-27 `tdoublep`: just a note to address @tdoublep Could clarify where this info came from? This code (restricting the block size for hybrid models if fp32 mamba state is used) was specifically added to workaround the same problem that this PR is addressing (for ... (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3972826440)
+- 2026-02-27 `tdoublep` on `vllm/v1/worker/gpu_model_runner.py`:371: +1 - have we quantified the overhead of doing it "the easy way"? (https://github.com/vllm-project/vllm/pull/35219#discussion_r2864239764)
+- 2026-02-27 `tdoublep` on `vllm/v1/worker/gpu_model_runner.py`:372: iirc we don't actually reshape the flash attention KV tensor, but hack at the strides to make it have the layout in memory that we want. I'm also concerned if this kernel is tied to any specific attention backend (https://github.com/vllm-project/vllm/pull/35219#discussion_r2864245531)
+- 2026-02-27 `tdoublep` on `vllm/v1/worker/gpu_model_runner.py`:966: A comment to explain what this bit-level logic is doing might help (https://github.com/vllm-project/vllm/pull/35219#discussion_r2864257801)
+- 2026-02-27 `tdoublep` commented: I also find it unnecessary to always zero out the blocks. There is a really specific case where the NaNs can creep in which is: 1. Hybrid model using fp32 mamba state and KV cache dtype!=fp32 2. A block that was previously ... (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3866837712)
+- 2026-02-27 `tdoublep`: @vadiklyutiy Good question. We found empirically that these block sizes do not suffer from the issue (see . However, I don't have any guarantee that it could not still happen tbh. That is why I am generally supportive of a more explicit ... (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3972999486)
+- 2026-02-27 `benchislett`: I believe it comes down to an internal heuristic in FlashAttention, where for sizes 64. I don't fully recall but it's a kernel specific change intended to work around a specific behaviour (the same thing that breaks FlashInfer I think) (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3973744432)
+- 2026-02-27 `xinli-sw`: +1 to Ben, more details shared by Lucas: FA does not use TMAs for those block sizes because kBlockN is already greater than 64: [reference to heuristic]( otherwise it uses predicated cp.async which is safe (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3974543160)
+- 2026-02-27 `xinli-sw`: So in a sense there's no "guarantee" that it will work in the future. Ideally all kernels should not do this multiply by 0 trick but same can be argued that FW's kv-cache should not have NaNs in them. (even in the ... (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3974610025)
+- 2026-03-02 `vadiklyutiy` on `vllm/v1/worker/gpu_model_runner.py`:371: For Qwen3.5 we go this path In result we have 15 tensors and have to call 15 index fill . Overhead of launching is big. Triton kernel does it in one launch. (https://github.com/vllm-project/vllm/pull/35219#discussion_r2870161762)
+- 2026-03-02 `vadiklyutiy`: I am also concerned that the implementation seems over-optimized. Maybe it is justified but can we see the numbers from a simpler implementation of zero'ing the blocks? I did 2 optimizations. 1. Triton kernel. We allocate 15 tensors for Qwen3.5 and have ... (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3981590551)
+- 2026-03-03 `benchislett`: @vadiklyutiy I think we should limit this to FlashInfer and/or hybrid-only deployments, at least for the short-term where we want to de-risk existing FlashAttention-based workloads (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3992084025)
+- 2026-03-03 `vadiklyutiy`: @vadiklyutiy I think we should limit this to FlashInfer and/or hybrid-only deployments, at least for the short-term where we want to de-risk existing FlashAttention-based workloads I am debugging current fails now (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3992135269)
+- 2026-03-03 `benchislett`: Not just for bugs, but there are concerns over impacting performance for existing non-hybrid deployments. We should apply to hybrid models only for now, until we settle on a long-term fix (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3992161251)
+- 2026-03-03 `vadiklyutiy`: Not just for bugs, but there are concerns over impacting performance for existing non-hybrid deployments. We should apply to hybrid models only for now, until we settle on a long-term fix With Triton kernel zeroing takes just 100us. (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3992730614)
+- 2026-03-03 `benchislett`: Nonetheless, I think we do not have sufficient justification to apply this to all deployments right now. I think we should limit this feature to a targeted bugfix for a known issue and try to merge asap, and we can revisit the ... (https://github.com/vllm-project/vllm/pull/35219#issuecomment-3992878804)
+- 2026-03-05 `vadiklyutiy`: Because a lot of changes was introduced since PR was open, I fully updated PR description as below Essential problem Fixes Workaround for Hybrid models (e.g. Qwen3.5-397B-A17B) share a unified block pool between attention (fp8/fp16) and Mamba/SSM (fp32) layers. When a block ... (https://github.com/vllm-project/vllm/pull/35219#issuecomment-4001320179)
+- 2026-03-05 `ywang96` on `vllm/tool_parsers/hermes_tool_parser.py`:369: let's remove this change? (https://github.com/vllm-project/vllm/pull/35219#discussion_r2892832783)
+- 2026-03-05 `ywang96` approved: High-level idea makes sense to me but @heheda12345 or @tdoublep should also take a final pass on the comments that @vadiklyutiy has addressed (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3900212720)
+- 2026-03-06 `vadiklyutiy` on `vllm/tool_parsers/hermes_tool_parser.py`:369: pre-commit failed without it (https://github.com/vllm-project/vllm/pull/35219#discussion_r2893010446)
+- 2026-03-06 `ywang96` on `vllm/tool_parsers/hermes_tool_parser.py`:369: That's weird. I don't see this error on main - can you update this branch with main? (https://github.com/vllm-project/vllm/pull/35219#discussion_r2893025226)
+- 2026-03-06 `vadiklyutiy` on `vllm/tool_parsers/hermes_tool_parser.py`:369: Previously I saw such error due to new imports - some code starts be covered by mypy (https://github.com/vllm-project/vllm/pull/35219#discussion_r2893182460)
+- 2026-03-06 `benchislett` on `vllm/tool_parsers/hermes_tool_parser.py`:369: I had a similar issue on one of my PRs, it went away when I merged main. (https://github.com/vllm-project/vllm/pull/35219#discussion_r2897499237)
+- 2026-03-06 `tdoublep` on `vllm/v1/worker/gpu_model_runner.py`:377: Should this kernel live in the GPU model runner file. Could we move it to an op somewhere? This file is bloated enough already. (https://github.com/vllm-project/vllm/pull/35219#discussion_r2897719199)
+- 2026-03-06 `tdoublep` on `vllm/v1/worker/gpu_model_runner.py`:995: Couldn't we have the backends expose this info (e.g., which tensor dim is the block index) in a simpler or cleaner way? (https://github.com/vllm-project/vllm/pull/35219#discussion_r2897725146)
+- 2026-03-06 `tdoublep` on `vllm/v1/worker/gpu_model_runner.py`:1009: I think mgr bs is not used later? (https://github.com/vllm-project/vllm/pull/35219#discussion_r2897741988)
+- 2026-03-06 `tdoublep` on `vllm/v1/worker/gpu_model_runner.py`:966: Thanks for adding the comment. If this is taking the power of 2, could we use the utils function [here]( for better readibility? (https://github.com/vllm-project/vllm/pull/35219#discussion_r2897758698)
+- 2026-03-06 `tdoublep` on `vllm/v1/worker/gpu_model_runner.py`:371: Overhead of launching is big Can we quantify the impact of doing it the easy way on E2E performance? IMO it is needed to justify all this complexity. (https://github.com/vllm-project/vllm/pull/35219#discussion_r2897777502)
+- 2026-03-06 `tdoublep` on `vllm/v1/worker/gpu_worker.py`:492: We don't need to call this function if the model is not a hybrid right? (https://github.com/vllm-project/vllm/pull/35219#discussion_r2897788133)
+- 2026-03-06 `tdoublep` commented: I think general approach looks much better now but I still have concerns about the complexity of the implementation and introducing a lot of new hybrid-model specific code into the GPU model runner. Could we factor some of it out into a ... (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3905860967)
+- 2026-03-07 `voipmonitor`: Hello, I suspect that this can be related to the flashinfer race condition issue caused by enabled PDL on blackwell which needs cutlass 4.3.0 and using synchronisations which seems to be misisng due to missing comlile flags. I was hunting similar NaN ... (https://github.com/vllm-project/vllm/pull/35219#issuecomment-4015838459)
+- 2026-03-09 `vadiklyutiy`: I'd also still really like to see the E2E performance of doing it in a simpler way without the kernel and all the pre-computation stuff. the optimizations assumed that zeroing will apply to not hybrid model also. For hybrid model the overhead ... (https://github.com/vllm-project/vllm/pull/35219#issuecomment-4022786323)
+- 2026-03-09 `vadiklyutiy`: KV-Cache Zeroing: Triton Kernel vs index fill Benchmark Results Model & Hardware - Model : Qwen/Qwen3.5-35B-A3B-FP8 - GPU : 1x B200 (TP=1) Server Command Client Commands Decode-heavy Prefill-heavy Results All runs performed after a warmup iteration of each workload. Decode-Heavy (input=2, output=500, ... (https://github.com/vllm-project/vllm/pull/35219#issuecomment-4024053107)
+- 2026-03-09 `vadiklyutiy` on `vllm/v1/worker/gpu_model_runner.py`:995: Yes, it is possible to add this interface to backend. But I am not sure what is better. This is "calculate" vs "store" topic. For example, @heheda12345 above (about another topic) proposed the opposite direction. If you think adding interfaces to backends ... (https://github.com/vllm-project/vllm/pull/35219#discussion_r2906126363)
+- 2026-03-09 `vadiklyutiy` on `vllm/v1/worker/gpu_model_runner.py`:371: added perf result triton vs index fill in separate msg (https://github.com/vllm-project/vllm/pull/35219#discussion_r2908375072)
+- 2026-03-09 `vadiklyutiy` on `vllm/v1/worker/gpu_model_runner.py`:995: moved it to AttentionBackend (https://github.com/vllm-project/vllm/pull/35219#discussion_r2908517047)
+- 2026-03-10 `vadiklyutiy`: @tdoublep Thank you for your detailed review. I have addressed all of your points. Please take a look at the current version. (https://github.com/vllm-project/vllm/pull/35219#issuecomment-4028104636)
+- 2026-03-10 `tdoublep` approved: Thanks for running the benchmarks and working through my comments. I think the code is organized in a better way now. Regarding the benchmarks: the perf difference isn't that big, but I guess it's enough to warrant having the optimized version. (https://github.com/vllm-project/vllm/pull/35219#pullrequestreview-3920471042)

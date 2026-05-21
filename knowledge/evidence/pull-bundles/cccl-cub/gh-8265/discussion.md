@@ -1,82 +1,60 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/cccl#8265](https://github.com/NVIDIA/cccl/pull/8265)
-- Source page: `sources/prs/cccl-cub/PR-8265.md`
-- Evidence bundle: `evidence/pull-bundles/cccl-cub/gh-8265`
-- Generated at: `2026-05-20T15:20:36.758465+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-04-01T19:51:06Z`
-- Merged: `2026-05-06T18:17:08Z`
-
-## Discussion Counts
-
-- Issue comments: 25
-- Review submissions: 46 (approved=4, changes_requested=4, commented=38)
-- Inline review comments: 63
-- Review threads observed: 35
-- Resolved/outdated thread markers: resolved=30, outdated=25
-- Human participants with discussion text: Jacobfaib, bernhardmgruber, davebayer, fbusato, gonidelis, jrhemstad, miscco, pciolkosz
-- Automation comments/reviews omitted from high-signal summary: 18
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 2
-
-## Review Decisions
-
-- `2026-04-01T20:27:14Z` `CHANGES_REQUESTED` by `miscco` - I am not too excited about this. We need to be really careful here because the compiler may ... (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4046875397)
-- `2026-04-01T21:16:28Z` `CHANGES_REQUESTED` by `davebayer` - I am not a fan of this trait. We bend C++ rules to fix poorly designed nvfp types. ... (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4047121196)
-- `2026-04-01T21:24:02Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4047169086)
-- `2026-04-01T22:24:59Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4047413675)
-- `2026-04-06T17:29:10Z` `COMMENTED` by `gonidelis` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4063422155)
-- `2026-04-06T17:36:36Z` `COMMENTED` by `gonidelis` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4063462662)
-- `2026-04-06T17:40:52Z` `COMMENTED` by `gonidelis` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4063490584)
-- `2026-04-06T17:44:04Z` `COMMENTED` by `gonidelis` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4063509440)
-- `2026-04-06T17:47:43Z` `COMMENTED` by `gonidelis` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4063525138)
-- `2026-04-06T17:56:09Z` `COMMENTED` by `gonidelis` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4063569237)
-- `2026-04-06T23:46:07Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4065065164)
-- `2026-04-06T23:46:30Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4065065984)
-- `2026-04-06T23:48:06Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4065069720)
-- `2026-04-06T23:49:03Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4065071734)
-- `2026-04-08T07:02:31Z` `CHANGES_REQUESTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4073308640)
-- `2026-04-08T18:22:04Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4077289647)
-- `2026-04-08T18:29:50Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4077350892)
-- `2026-04-08T18:41:40Z` `COMMENTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4077437912)
-- `2026-04-08T18:52:35Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4077514592)
-- `2026-04-08T19:52:56Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4077851335)
-- `2026-04-08T19:55:17Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4077865788)
-- `2026-04-09T08:10:39Z` `CHANGES_REQUESTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4080672974)
-- `2026-04-09T15:53:34Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4083667426)
-- `2026-04-09T16:01:30Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4083712965)
-- ... 21 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`: 16 inline comment(s)
-- `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable_relaxed.rst`: 10 inline comment(s)
-- `libcudacxx/include/cuda/__type_traits/is_trivially_copyable.h`: 10 inline comment(s)
-- `libcudacxx/include/cuda/std/__type_traits/aggregate_members.h`: 7 inline comment(s)
-- `libcudacxx/include/cuda/std/__bit/bit_cast.h`: 5 inline comment(s)
-- `libcudacxx/test/libcudacxx/cuda/type_traits/is_trivially_copyable.aggr.pass.cpp`: 4 inline comment(s)
-- `c/parallel/src/transform.cu`: 3 inline comment(s)
-- `libcudacxx/include/cuda/__type_traits/is_trivially_copyable_relaxed.h`: 2 inline comment(s)
-- `libcudacxx/test/libcudacxx/cuda/type_traits/is_trivially_copyable.pass.cpp`: 2 inline comment(s)
-- `libcudacxx/test/libcudacxx/cuda/type_traits/is_trivially_copyable.basic_types.pass.cpp`: 2 inline comment(s)
-- `libcudacxx/test/libcudacxx/cuda/type_traits/is_trivially_copyable.mem.pass.cpp`: 1 inline comment(s)
-- `libcudacxx/test/libcudacxx/std/numerics/bit/bit.cast/bit_cast_test_helpers.h`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-04-06T23:49:03Z` `inline` by `fbusato` `libcudacxx/include/cuda/__type_traits/is_trivially_copyable.h`:43; signals: compile, cuda, vector; excerpt: "vector types (floating-point and integrals) are only defined in the CUDA toolkit headers, not at compile-level. So this line looks correct" (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3042212407)
-- `2026-05-01T16:21:33Z` `inline` by `fbusato` `libcudacxx/include/cuda/__type_traits/is_trivially_copyable.h`:100; signals: compile, cuda, tile; excerpt: "volatile is compile-specific and for this reason out-of-scope" (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3174042485)
-- `2026-04-06T17:56:06Z` `inline` by `gonidelis` `libcudacxx/include/cuda/__type_traits/is_trivially_copyable.h`:43; signals: cuda, vector; excerpt: "Why is vector type.h guarded by CCCL HAS CTK() in the first place? This question stems from the original question: why is there a ..." (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3040843469)
-- `2026-04-08T07:02:28Z` `inline` by `miscco` `libcudacxx/test/libcudacxx/cuda/type_traits/is_trivially_copyable.aggr.pass.cpp`:18; signals: compile, cuda; excerpt: "Critical: We must ensure that this type does not only satisfy the trait, but can also be used in e.g bit cast and memcpy ..." (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3049686730)
-- `2026-04-09T18:21:01Z` `inline` by `fbusato` `libcudacxx/include/cuda/std/__bit/bit_cast.h`:62; signals: compile, cuda; excerpt: "C++ specification does not impose this constrain is trivially default constructible v is too strict. cuda::std::complex fails for example. We only need to check ..." (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3059864172)
-- `2026-04-01T20:27:14Z` `review` `CHANGES_REQUESTED` by `miscco`; signals: compile; excerpt: "I am not too excited about this. We need to be really careful here because the compiler may also break in some of those ..." (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4046875397)
-- `2026-04-01T21:16:28Z` `review` `CHANGES_REQUESTED` by `davebayer`; signals: hang; excerpt: "I am not a fan of this trait. We bend C++ rules to fix poorly designed nvfp types. We would have to basically change ..." (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4047121196)
-- `2026-04-09T08:09:18Z` `inline` by `miscco` `libcudacxx/test/libcudacxx/cuda/type_traits/is_trivially_copyable.aggr.pass.cpp`:19; signals: cuda, perf; excerpt: "Important: This should test that we can perform a bit cast from this type to a similarly sized type" (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3056379548)
-- `2026-05-01T13:41:54Z` `inline` by `Jacobfaib` `libcudacxx/include/cuda/__type_traits/is_trivially_copyable.h`:100; signals: cuda, tile; excerpt: "No volatile?" (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3173389458)
-- `2026-04-30T20:23:42Z` `issue` by `fbusato`; signals: benchmark, cuda; excerpt: "- entirely refactored the implementation relying on aggregate all of v. - replaced cuda::std::is trivially copyable with cuda::is trivially copyable in all CCCL library ..." (https://github.com/NVIDIA/cccl/pull/8265#issuecomment-4355899488)
-- `2026-04-01T21:24:01Z` `inline` by `fbusato` `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable_relaxed.rst`:41; signals: cuda; excerpt: "not for the types that we care about. Said that, the user could provide an object that triggers UB. I can highlight this point ..." (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3024738726)
-- `2026-04-06T17:40:50Z` `inline` by `gonidelis` `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable_relaxed.rst`:39; signals: cuda; excerpt: "The type trait cannot determine if a structure (`struct or class`) contains extended floating-point types we could determine if type contains extended fp types ..." (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3040770105)
+- 2026-04-01 `miscco` changes_requested: I am not too excited about this. We need to be really careful here because the compiler may also break in some of those cases. I did some experiments in 3183 (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4046875397)
+- 2026-04-01 `bernhardmgruber`: I wanted to start a discussion for some time to add such a trait, but I would really keep this feature internally for now until it is sufficiently baked. I would really like this feature to make thrust::is trivially relocatable and THRUST ... (https://github.com/NVIDIA/cccl/pull/8265#issuecomment-4172828651)
+- 2026-04-01 `davebayer` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable_relaxed.rst`:40: This is inconsistent with cuda::is floating point, there we say they should specialize the v trait (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3024691797)
+- 2026-04-01 `davebayer` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable_relaxed.rst`:41: Isn't this just UB? (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3024694065)
+- 2026-04-01 `davebayer` changes_requested: I am not a fan of this trait. We bend C++ rules to fix poorly designed nvfp types. We would have to basically change every use of is trivially copyable and is trivially copy constructible to this trait to make it work ... (https://github.com/NVIDIA/cccl/pull/8265#pullrequestreview-4047121196)
+- 2026-04-01 `fbusato` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable_relaxed.rst`:41: not for the types that we care about. Said that, the user could provide an object that triggers UB. I can highlight this point in the documentation but we cannot do anything to explicitly prevent it. (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3024738726)
+- 2026-04-01 `fbusato`: We need to be really careful here because the compiler may also break in some of those cases. I did some experiments in Integrated and extended the tests that you point out. Everything works (https://github.com/NVIDIA/cccl/pull/8265#issuecomment-4173327986)
+- 2026-04-01 `jrhemstad`: we should rather insist of the nvfp types being fixed. This isn't going to happen and we shouldn't delude ourselves into thinking it ever will. (https://github.com/NVIDIA/cccl/pull/8265#issuecomment-4173468363)
+- 2026-04-06 `gonidelis` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable_relaxed.rst`:32: why do we exclude pairs that have padding since this passes? isn't it equivalent? (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3040747741)
+- 2026-04-06 `gonidelis` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable_relaxed.rst`:39: The type trait cannot determine if a structure (`struct or class`) contains extended floating-point types we could determine if type contains extended fp types with structured bindings credit to @gevtushenko (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3040770105)
+- 2026-04-06 `gonidelis` on `libcudacxx/include/cuda/__type_traits/is_trivially_copyable_relaxed.h`:39: What are the arguments for adding the relaxed suffix (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3040802212)
+- 2026-04-06 `gonidelis` on `libcudacxx/include/cuda/__type_traits/is_trivially_copyable.h`:43: Why is vector type.h guarded by CCCL HAS CTK() in the first place? This question stems from the original question: why is there a difference between is extended fp vector type v and is extended floating point v to begin with? (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3040843469)
+- 2026-04-06 `fbusato` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable_relaxed.rst`:32: padding description is wrong. Thanks! (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3042206353)
+- 2026-04-06 `fbusato` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable_relaxed.rst`:39: working on that :) (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3042207159)
+- 2026-04-06 `fbusato` on `libcudacxx/include/cuda/__type_traits/is_trivially_copyable_relaxed.h`:39: I'm totally fine in removing it. looks too verbose (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3042210459)
+- 2026-04-06 `fbusato` on `libcudacxx/include/cuda/__type_traits/is_trivially_copyable.h`:43: vector types (floating-point and integrals) are only defined in the CUDA toolkit headers, not at compile-level. So this line looks correct (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3042212407)
+- 2026-04-08 `miscco` on `libcudacxx/test/libcudacxx/cuda/type_traits/is_trivially_copyable.aggr.pass.cpp`:18: Critical: We must ensure that this type does not only satisfy the trait, but can also be used in e.g bit cast and memcpy without the compiler throwing up (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3049686730)
+- 2026-04-08 `bernhardmgruber` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`:54: Suggestion: I think this information is misleading, because a user opting into cuda::is trivially copyable v gives us permission to ignore any of these requirements. Also, the user does not need to uphold any of these requirements. I would just drop this ... (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3053324811)
+- 2026-04-08 `bernhardmgruber` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`:103: Q: Why not? I would expect them to be. (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3053330635)
+- 2026-04-08 `fbusato` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`:103: artifact from the previous version. thanks (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3053372437)
+- 2026-04-08 `miscco` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`:54: I would still strongly prefer this to not be a user-definable trait (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3053446461)
+- 2026-04-08 `fbusato` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`:54: makes sense. It is too low level to expose specialization to user. (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3053511130)
+- 2026-04-08 `fbusato` on `libcudacxx/test/libcudacxx/cuda/type_traits/is_trivially_copyable.aggr.pass.cpp`:18: my plan was to update bit cast in a second PR, but it also makes sense to add everything together. (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3053816491)
+- 2026-04-08 `fbusato` on `libcudacxx/include/cuda/std/__bit/bit_cast.h`:73: here the trick. We know that nv bfloat2 and half2 are not trivially copyable but, we also know, that these types are not available in constant expressions so we can dispatch depending on this property (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3053828823)
+- 2026-04-09 `miscco` on `libcudacxx/include/cuda/__type_traits/is_trivially_copyable.h`:3: Should be the libcu++ license (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3056334549)
+- 2026-04-09 `miscco` on `libcudacxx/include/cuda/__type_traits/is_trivially_copyable.h`:40: Critical: All those need to be inline constexpr (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3056343264)
+- 2026-04-09 `miscco` on `libcudacxx/include/cuda/std/__bit/bit_cast.h`:84: We can shorten this (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3056352022)
+- 2026-04-09 `miscco` on `libcudacxx/include/cuda/std/__type_traits/aggregate_members.h`:40: Critical: This is not defined in libcu++ but only in cudax currently. We need to move the builtin definition into libcu++ (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3056358208)
+- 2026-04-09 `miscco` on `libcudacxx/include/cuda/std/__type_traits/aggregate_members.h`: Please move this out of the PR. This is a nontrivial piece of code and the current implementation seems really costly. I want this in a separate PR so that we can properly review it (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3056374720)
+- 2026-04-09 `miscco` on `libcudacxx/test/libcudacxx/cuda/type_traits/is_trivially_copyable.aggr.pass.cpp`:19: Important: This should test that we can perform a bit cast from this type to a similarly sized type (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3056379548)
+- 2026-04-09 `miscco` on `libcudacxx/test/libcudacxx/cuda/type_traits/is_trivially_copyable.pass.cpp`:26: Missing tests for bitcast back and forth (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3056385602)
+- 2026-04-09 `fbusato` on `libcudacxx/test/libcudacxx/cuda/type_traits/is_trivially_copyable.pass.cpp`:26: I added many new tests to bit cast unit tests (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3059072683)
+- 2026-04-09 `fbusato` on `libcudacxx/include/cuda/__type_traits/is_trivially_copyable.h`:40: why? inline is redundant here. ODR allows multiple identical definitions of template variables across translation units. Is a specific limitation of nvcc? (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3059116879)
+- 2026-04-09 `fbusato` on `libcudacxx/test/libcudacxx/cuda/type_traits/is_trivially_copyable.aggr.pass.cpp`:19: I added many new tests to bit cast unit tests (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3059121582)
+- 2026-04-09 `fbusato` on `libcudacxx/include/cuda/std/__type_traits/aggregate_members.h`: Fine, I based the implementation on the code from stdexec. Eric already review it (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3059125970)
+- 2026-04-09 `miscco` on `libcudacxx/include/cuda/__type_traits/is_trivially_copyable.h`:40: We never want multiple definitions of the same variable template ever, thats why every variable template is an inline variable (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3059558265)
+- 2026-04-09 `miscco` on `libcudacxx/include/cuda/std/__type_traits/aggregate_members.h`: I am not against merging it, but I want it in a separate PR (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3059561687)
+- 2026-04-09 `fbusato` on `libcudacxx/include/cuda/std/__bit/bit_cast.h`:62: C++ specification does not impose this constrain is trivially default constructible v is too strict. cuda::std::complex fails for example. We only need to check if To temp; compiles. The best match is C++20 std::default initializable (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3059864172)
+- 2026-04-09 `fbusato` on `libcudacxx/include/cuda/std/__type_traits/aggregate_members.h`: created a new PR (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3060248380)
+- 2026-04-10 `miscco`: @fbusato I checked the standard and it turns out that C++23 made complex trivially copyable for standard floating point types, so we should only specialize for half and nv bfloat16 See (https://github.com/NVIDIA/cccl/pull/8265#issuecomment-4222522843)
+- 2026-04-30 `fbusato`: - entirely refactored the implementation relying on aggregate all of v. - replaced cuda::std::is trivially copyable with cuda::is trivially copyable in all CCCL library paths (but not in tests/benchmarks) (https://github.com/NVIDIA/cccl/pull/8265#issuecomment-4355899488)
+- 2026-04-30 `fbusato` on `libcudacxx/test/libcudacxx/cuda/type_traits/is_trivially_copyable.mem.pass.cpp`:1: I'm inclined to remove this file because it is very similar with bit cast.pass.cpp (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3170659248)
+- 2026-05-01 `Jacobfaib` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`:21: Should also mention whether it is legal for users to specialize the trait, and give an example of how to do that if so. Given the definition above it implies that users should specialize is trivially copyable v instead of is trivially ... (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3173316540)
+- 2026-05-01 `Jacobfaib` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`:23: If it is legal to specialize, should elaborate whether the user should specialize cuda::std::is trivially copyable or cuda::is trivially copyable (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3173319781)
+- 2026-05-01 `Jacobfaib` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`:38: Nit: since you mention initialization, you technically mean types that are aggregate initializeable , not true aggregate types. True aggregates have much stricter requirements. (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3173343230)
+- 2026-05-01 `Jacobfaib` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`:45: Important: Could you .. literalinclude:: this instead from the test file? That way it doesn't bit-rot. (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3173377981)
+- 2026-05-01 `Jacobfaib` on `libcudacxx/include/cuda/__type_traits/is_trivially_copyable.h`:47: Should this explicit specialization be expanded to all of the extended floating-point types as well? (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3173400728)
+- 2026-05-01 `Jacobfaib` on `libcudacxx/test/libcudacxx/cuda/type_traits/is_trivially_copyable.basic_types.pass.cpp`: Important: can you add tests that the trait works even when it is user-specialized? (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3173420913)
+- 2026-05-01 `Jacobfaib` on `libcudacxx/include/cuda/std/__bit/bit_cast.h`:73: Should this be ::cuda::is trivially copyable v? (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3173424279)
+- 2026-05-01 `fbusato` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`:21: specializing is trivially copyable v could be too far. The only reason we are proving it is to overcome CUDA data type limitations. I don't see a good motivation for user to specialize it (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3174030483)
+- 2026-05-01 `fbusato` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`:38: true, but I wanted to give users an idea on what an aggregate is. Maybe I can pointed out the cppref documentation (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3174037647)
+- 2026-05-01 `fbusato` on `libcudacxx/include/cuda/__type_traits/is_trivially_copyable.h`:100: volatile is compile-specific and for this reason out-of-scope (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3174042485)
+- 2026-05-01 `fbusato` on `libcudacxx/include/cuda/__type_traits/is_trivially_copyable.h`:47: no, only what is not handled by cuda::std::is trivially copyable (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3174045183)
+- 2026-05-01 `fbusato` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`:45: in general, we provide a godbolt link (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3174048159)
+- 2026-05-01 `fbusato` on `libcudacxx/include/cuda/std/__bit/bit_cast.h`:73: no, we can call CCCL BUILTIN BIT CAST only in this case (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3174670937)
+- 2026-05-01 `fbusato` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`:21: @miscco @davebayer let me know if you have a different opinion (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3175046047)
+- 2026-05-01 `Jacobfaib` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`:21: I don't see a good motivation for user to specialize it Even so, I still think the definition snippet should show the "usual" way these traits are defined, i.e. Even if that is not technically true, we don't want to give the ... (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3175127067)
+- 2026-05-01 `pciolkosz` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`:23: Note: This sentence and the previous one seem a bit redundant (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3175525283)
+- 2026-05-05 `miscco` on `libcudacxx/test/libcudacxx/std/numerics/bit/bit.cast/bit_cast_test_helpers.h`:32: Nitpick: I would prefer [[maybe unused]] (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3186725700)
+- 2026-05-05 `miscco` on `docs/libcudacxx/extended_api/type_traits/is_trivially_copyable.rst`:21: NO we should never advertise that we use a bool constant as the source of truth. IN contrary we must make clear that the inline variable is the source of truth (https://github.com/NVIDIA/cccl/pull/8265#discussion_r3186736106)

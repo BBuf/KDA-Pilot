@@ -1,82 +1,80 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#25954](https://github.com/vllm-project/vllm/pull/25954)
-- Source page: `sources/prs/vllm/PR-25954.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-25954`
-- Generated at: `2026-05-20T15:38:00.362407+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-09-30T13:39:51Z`
-- Merged: `2026-01-24T01:28:06Z`
-
-## Discussion Counts
-
-- Issue comments: 36
-- Review submissions: 83 (approved=6, changes_requested=1, commented=75, dismissed=1)
-- Inline review comments: 102
-- Review threads observed: 55
-- Resolved/outdated thread markers: resolved=32, outdated=51
-- Human participants with discussion text: ElizaWszola, LucasWilkinson, MatthewBonanni, NickLucche, ProExpertProg, chatgpt-codex-connector, cursor, elvischenv, mergify, mgoin, pavanimajety, tjtanaa, zou3519
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-10-02T20:20:53Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3285424785)
-- `2025-10-02T20:21:47Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3296265062)
-- `2025-10-06T17:05:00Z` `COMMENTED` by `chatgpt-codex-connector` - 💡 Codex Review Here are some automated review suggestions for this pull request. ℹ️ About Codex in GitHub ... (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3306064239)
-- `2025-10-07T13:50:31Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3310149419)
-- `2025-10-08T12:46:52Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3314655677)
-- `2025-10-08T13:09:28Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3314743624)
-- `2025-10-08T13:10:30Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3314749113)
-- `2025-10-08T13:26:21Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3314817748)
-- `2025-10-08T13:32:21Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3314843497)
-- `2025-10-09T12:51:16Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3318822120)
-- `2025-10-09T19:48:38Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3320417581)
-- `2025-10-09T20:05:30Z` `APPROVED` by `ProExpertProg` - Looks good to me! Let's see what CI says, also would be good to get a 👍 from ... (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3320424058)
-- `2025-10-09T20:42:52Z` `APPROVED` by `MatthewBonanni` - LGTM! (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3320571938)
-- `2025-10-09T23:37:18Z` `COMMENTED` by `pavanimajety` - Thanks for the PR, @ElizaWszola! A couple of questions/observations: 1. If the Attention and Cache Update is split ... (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3320940064)
-- `2025-10-10T13:42:12Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3323579556)
-- `2025-10-16T04:29:04Z` `CHANGES_REQUESTED` by `ProExpertProg` - I think we should hold off on merging this until after the release. Right now there's no immediate ... (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3343019708)
-- `2025-11-17T22:41:03Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3474816716)
-- `2025-11-21T03:47:06Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3491077555)
-- `2025-11-21T09:37:30Z` `COMMENTED` by `NickLucche` - Thanks for the work @ElizaWszola ! Left some comments related to kv cache loading-saving, let me know what ... (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3491812131)
-- `2025-11-21T14:00:36Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3492884985)
-- `2025-12-02T15:13:41Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3530670619)
-- `2025-12-02T15:25:48Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3530728948)
-- `2025-12-10T16:41:23Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3563502777)
-- `2026-01-07T23:21:00Z` `COMMENTED` by `ProExpertProg` - After discussion with @LucasWilkinson and @MatthewBonanni, we agreed we should separate slot mapping & block table from attention ... (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3636933168)
-- ... 59 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/attention/layer.py`: 39 inline comment(s)
-- `vllm/v1/worker/gpu_model_runner.py`: 29 inline comment(s)
-- `vllm/model_executor/layers/attention/mla_attention.py`: 5 inline comment(s)
-- `vllm/v1/attention/backends/flash_attn.py`: 4 inline comment(s)
-- `tests/v1/attention/utils.py`: 4 inline comment(s)
-- `vllm/v1/worker/gpu/model_runner.py`: 4 inline comment(s)
-- `vllm/model_executor/layers/attention/cross_attention.py`: 4 inline comment(s)
-- `vllm/v1/spec_decode/eagle.py`: 4 inline comment(s)
-- `vllm/model_executor/layers/mamba/linear_attn.py`: 3 inline comment(s)
-- `vllm/v1/attention/backends/mla/common.py`: 2 inline comment(s)
-- `vllm/v1/attention/backends/utils.py`: 2 inline comment(s)
-- `vllm/forward_context.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-10-08T12:46:52Z` `inline` by `ElizaWszola` `vllm/attention/layer.py`:652; signals: attention, cache, compile, cuda, cudagraph, kv cache, mla; excerpt: "This is for the case when there are multiple different backends and some support the split kv cache, while some do not. In this ..." (https://github.com/vllm-project/vllm/pull/25954#discussion_r2413743304)
-- `2025-10-09T23:37:18Z` `review` `COMMENTED` by `pavanimajety`; signals: attention, cache, fp4, kv cache, mla, oom; excerpt: "Thanks for the PR, @ElizaWszola! A couple of questions/observations: 1. If the Attention and Cache Update is split only when MLA is disabled, why ..." (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3320940064)
-- `2026-01-07T23:21:00Z` `review` `COMMENTED` by `ProExpertProg`; signals: attention, block, cache, nan; excerpt: "After discussion with @LucasWilkinson and @MatthewBonanni, we agreed we should separate slot mapping & block table from attention metadata. This makes sense because we're ..." (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3636933168)
-- `2026-01-13T17:35:12Z` `review` `COMMENTED` by `LucasWilkinson`; signals: attention, cache, compile, hang; excerpt: "I think there may have been a bit of miscommunication; what we were suggesting with was that we add slot mapping to ForwardContext, so ..." (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3656626905)
-- `2025-10-10T04:49:04Z` `issue` by `ElizaWszola`; signals: attention, block, cache, kv cache, mla; excerpt: "If the Attention and Cache Update is split only when MLA is disabled, why are we testing with DeepSeek-Coder-V2-Lite-Instruct? For DeepSeek doesn't it make ..." (https://github.com/vllm-project/vllm/pull/25954#issuecomment-3388281271)
-- `2025-10-08T13:10:30Z` `inline` by `ElizaWszola` `vllm/v1/worker/gpu_model_runner.py`:3915; signals: attention, cuda, cudagraph, mla; excerpt: "the "always force attention" solution broke when I was testing with MLA (it can only run build metadata for decode full CUDAGraph), and from ..." (https://github.com/vllm-project/vllm/pull/25954#discussion_r2413812163)
-- `2025-10-09T20:02:42Z` `inline` by `ProExpertProg` `vllm/v1/worker/gpu_model_runner.py`:3343; signals: attention, cuda, cudagraph, mla; excerpt: "Okay I think I understand now: if we always force attention, we are forcing MLA to build for cudagraph capture during the run for ..." (https://github.com/vllm-project/vllm/pull/25954#discussion_r2417831694)
-- `2025-11-17T22:41:03Z` `inline` by `ProExpertProg` `vllm/attention/layer.py`:868; signals: attention, cache, cute, kv cache; excerpt: "Do we need to remove these and execute them conditionally based on the forward includes kv cache property of the backend? cc @NickLucche" (https://github.com/vllm-project/vllm/pull/25954#discussion_r2535728152)
-- `2025-11-21T09:36:05Z` `inline` by `NickLucche` `vllm/attention/layer.py`:868; signals: attention, block, cache, kv cache; excerpt: "Actually the cache update should just "append" the newly computed values on D, ignoring the unloaded ones. We only need those once we compute ..." (https://github.com/vllm-project/vllm/pull/25954#discussion_r2549118521)
-- `2025-12-02T15:13:41Z` `inline` by `zou3519` `vllm/attention/layer.py`:964; signals: attention, cache, kv cache, register; excerpt: "Replied offline, copy-pasting reply: Unfortunately I think mutating output might be the best way to do this right now. The alternatives are: 1) write ..." (https://github.com/vllm-project/vllm/pull/25954#discussion_r2581627614)
-- `2025-12-10T16:41:23Z` `inline` by `ElizaWszola` `tests/v1/attention/utils.py`:130; signals: attention, cache, correctness, kv cache; excerpt: "I still need to add a test that checks correctness, but since forward includes kv cache will become specific to each backend, we would ..." (https://github.com/vllm-project/vllm/pull/25954#discussion_r2607416906)
-- `2026-01-13T08:23:08Z` `inline` by `cursor` `vllm/model_executor/layers/attention/mla_attention.py`:777; signals: attention, cuda, cudagraph, mla; excerpt: "Removed MLA decode-only assertion weakens cudagraph safety Medium Severity The assertion assert m.max query len <source media="(prefers-color-scheme: dark)" srcset=" media="(prefers-color-scheme: light)" srcset=" alt="Fix in ..." (https://github.com/vllm-project/vllm/pull/25954#discussion_r2685360976)
+- 2025-10-02 `ProExpertProg` on `vllm/attention/layer.py`:326: This can also directly call unified attention with output (https://github.com/vllm-project/vllm/pull/25954#discussion_r2399967795)
+- 2025-10-07 `ProExpertProg` on `vllm/attention/layer.py`:652: I think that there are times where there's only a single value of attention metadata so it's not actually per-layer. In those cases we still don't want it to be None, so I think we can simplify like this: (https://github.com/vllm-project/vllm/pull/25954#discussion_r2410657435)
+- 2025-10-07 `ProExpertProg` on `vllm/attention/layer.py`:700: Remove TODO (I think this is good) (https://github.com/vllm-project/vllm/pull/25954#discussion_r2410659204)
+- 2025-10-07 `ProExpertProg` on `vllm/v1/attention/backends/mla/common.py`:1705: Why is the first half not enough? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2410666849)
+- 2025-10-07 `ProExpertProg` on `vllm/v1/attention/backends/flash_attn.py`:50: Should we maybe rename this to forward includes kv cache? Still short but slightly more descriptive? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2410670374)
+- 2025-10-07 `ProExpertProg` on `vllm/v1/attention/backends/flash_attn.py`:614: I would continue the early exit pattern (https://github.com/vllm-project/vllm/pull/25954#discussion_r2410674818)
+- 2025-10-07 `ProExpertProg` on `vllm/v1/worker/gpu_model_runner.py`:11: I think let's just import enum and fully qualify the names in the code (https://github.com/vllm-project/vllm/pull/25954#discussion_r2410678013)
+- 2025-10-07 `ProExpertProg` on `vllm/v1/worker/gpu_model_runner.py`:212: Just auto is scary to me, I think enum.auto() is better (https://github.com/vllm-project/vllm/pull/25954#discussion_r2410679145)
+- 2025-10-07 `ProExpertProg` on `vllm/v1/worker/gpu_model_runner.py`:3907: Comment? Also can you merge the two paragraphs above into a coherent comment about when attention is enabled or not (https://github.com/vllm-project/vllm/pull/25954#discussion_r2410686128)
+- 2025-10-07 `ProExpertProg` on `vllm/v1/worker/gpu_model_runner.py`:3915: Can we just always run with attention, even if not necessary? It might reduce complexity (https://github.com/vllm-project/vllm/pull/25954#discussion_r2410713411)
+- 2025-10-08 `ElizaWszola` on `vllm/attention/layer.py`:652: This is for the case when there are multiple different backends and some support the split kv cache, while some do not. In this case, when we do piecewise compile cudagraphs, attention metadata is built only for the ones that do the ... (https://github.com/vllm-project/vllm/pull/25954#discussion_r2413743304)
+- 2025-10-08 `ProExpertProg` on `vllm/attention/layer.py`:652: I think that's handled by the get method which will return none for those layers (https://github.com/vllm-project/vllm/pull/25954#discussion_r2413808935)
+- 2025-10-08 `ElizaWszola` on `vllm/v1/worker/gpu_model_runner.py`:3915: the "always force attention" solution broke when I was testing with MLA (it can only run build metadata for decode full CUDAGraph), and from what I'm seeing in Mamba code, it can have similar issues (https://github.com/vllm-project/vllm/pull/25954#discussion_r2413812163)
+- 2025-10-08 `ElizaWszola` on `vllm/v1/attention/backends/mla/common.py`:1705: This was breaking due to some other error I had before which I fixed in the meantime. I'll clean it up. (https://github.com/vllm-project/vllm/pull/25954#discussion_r2413860270)
+- 2025-10-08 `ElizaWszola` on `vllm/v1/worker/gpu_model_runner.py`:3907: this was commented out for testing, I'll uncomment (https://github.com/vllm-project/vllm/pull/25954#discussion_r2413878857)
+- 2025-10-09 `ElizaWszola` on `vllm/v1/worker/gpu_model_runner.py`:3915: Commenting out an assert that checks this in MLA still leads to a correct result, but it feels very unsafe to do it like this... (https://github.com/vllm-project/vllm/pull/25954#discussion_r2416692972)
+- 2025-10-09 `ProExpertProg` on `vllm/v1/worker/gpu_model_runner.py`:3915: Can you add that as comments to the code? That'll at least soften the blow of added complexity (https://github.com/vllm-project/vllm/pull/25954#discussion_r2417802900)
+- 2025-10-09 `ProExpertProg` on `vllm/v1/worker/gpu_model_runner.py`:3343: Okay I think I understand now: if we always force attention, we are forcing MLA to build for cudagraph capture during the run for piecewise cudagraphs, which is not supported. We really need to cleanup the build for cudagraph capture method, which ... (https://github.com/vllm-project/vllm/pull/25954#discussion_r2417831694)
+- 2025-10-09 `ProExpertProg` approved: Looks good to me! Let's see what CI says, also would be good to get a 👍 from @LucasWilkinson (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3320424058)
+- 2025-10-09 `MatthewBonanni` on `vllm/attention/layer.py`:383: nit: can get rid of the noqa (https://github.com/vllm-project/vllm/pull/25954#discussion_r2417907235)
+- 2025-10-09 `pavanimajety`: @ElizaWszola Could you add some results/instructions with the full DeepSeek Model? I am running into OOM with this PR when I disable MLA. (https://github.com/vllm-project/vllm/pull/25954#issuecomment-3387731591)
+- 2025-10-09 `ProExpertProg`: @pavanimajety can you share more about the OOM? (https://github.com/vllm-project/vllm/pull/25954#issuecomment-3387790049)
+- 2025-10-09 `pavanimajety` commented: Thanks for the PR, @ElizaWszola! A couple of questions/observations: 1. If the Attention and Cache Update is split only when MLA is disabled, why are we testing with DeepSeek-Coder-V2-Lite-Instruct? For DeepSeek doesn't it make sense to separate Attention and KV Cache update ... (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3320940064)
+- 2025-10-09 `pavanimajety`: The issue is not related to the PR. It's likely because we use GQA for MLA paths (https://github.com/vllm-project/vllm/pull/25954#issuecomment-3387811907)
+- 2025-10-10 `pavanimajety`: (Also wanted to note that when I set the max model len=2048 + VLLM MLA DISABLE=1, I don't see the OOM) (https://github.com/vllm-project/vllm/pull/25954#issuecomment-3387819882)
+- 2025-10-10 `ElizaWszola`: If the Attention and Cache Update is split only when MLA is disabled, why are we testing with DeepSeek-Coder-V2-Lite-Instruct? For DeepSeek doesn't it make sense to separate Attention and KV Cache update in the MLA path? Is this intended to be a ... (https://github.com/vllm-project/vllm/pull/25954#issuecomment-3388281271)
+- 2025-10-16 `ProExpertProg` changes_requested: I think we should hold off on merging this until after the release. Right now there's no immediate benefit and there's definitely added risk. (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3343019708)
+- 2025-11-17 `ProExpertProg` on `vllm/attention/layer.py`:868: Do we need to remove these and execute them conditionally based on the forward includes kv cache property of the backend? cc @NickLucche (https://github.com/vllm-project/vllm/pull/25954#discussion_r2535728152)
+- 2025-11-21 `ProExpertProg` on `vllm/attention/layer.py`:964: @zou3519 is there a way for us to specify side-effects and dependency between unified kv cache update and unified attention with output? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2548441516)
+- 2025-11-21 `NickLucche` on `tests/v1/attention/utils.py`:130: qq: which unit tests can we run to ensure result is the same with and without forward includes kv cache being set? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2549041787)
+- 2025-11-21 `NickLucche` on `vllm/attention/layer.py`:868: Actually the cache update should just "append" the newly computed values on D, ignoring the unloaded ones. We only need those once we compute attn. Hence I believe we should skip maybe transfer kv layer during unified kv cache update and postpone ... (https://github.com/vllm-project/vllm/pull/25954#discussion_r2549118521)
+- 2025-11-21 `NickLucche` on `vllm/attention/layer.py`:931: I would remove this and postpone the load- save to the actual attn computation, as per comment below. (https://github.com/vllm-project/vllm/pull/25954#discussion_r2549120533)
+- 2025-11-21 `NickLucche` commented: Thanks for the work @ElizaWszola ! Left some comments related to kv cache loading-saving, let me know what you think. (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3491812131)
+- 2025-11-21 `ProExpertProg` on `vllm/attention/layer.py`:868: Ok nice that would also make the CG splitting logic easier as we always only have to exclude attention from piecewise CG. (https://github.com/vllm-project/vllm/pull/25954#discussion_r2549855485)
+- 2025-12-02 `zou3519` on `vllm/attention/layer.py`:964: Replied offline, copy-pasting reply: Unfortunately I think mutating output might be the best way to do this right now. The alternatives are: 1) write everything in a functional way. this means actually having a kvcache tensor and threading it through the operations ... (https://github.com/vllm-project/vllm/pull/25954#discussion_r2581627614)
+- 2025-12-02 `ProExpertProg` on `vllm/attention/layer.py`:964: Sounds good, let's keep this for now, once we move all custom ops to functional we can do option 2 (use a dummy tensor for the kv-cache dependency between update and attention) (https://github.com/vllm-project/vllm/pull/25954#discussion_r2581675348)
+- 2025-12-10 `ElizaWszola` on `tests/v1/attention/utils.py`:130: I still need to add a test that checks correctness, but since forward includes kv cache will become specific to each backend, we would probably have to compare results between backends that do/don't do the KV-cache update outside their forward functions. (https://github.com/vllm-project/vllm/pull/25954#discussion_r2607416906)
+- 2026-01-05 `ProExpertProg`: Failures look related, otherwise LGTM. We should also take a look at how this can be implemented in GPU model runner V2 cc @LucasWilkinson @WoosukKwon (https://github.com/vllm-project/vllm/pull/25954#issuecomment-3711855400)
+- 2026-01-07 `ProExpertProg` on `vllm/v1/worker/gpu_model_runner.py`:1642: We can pull this out of the attention metadata building function and just always do it. (https://github.com/vllm-project/vllm/pull/25954#discussion_r2670184841)
+- 2026-01-07 `ProExpertProg` on `vllm/v1/worker/gpu_model_runner.py`:4416: Here, we can always build slot mapping/block table but keep the condition for building attention metadata (https://github.com/vllm-project/vllm/pull/25954#discussion_r2670193768)
+- 2026-01-07 `ProExpertProg` on `vllm/v1/worker/gpu_model_runner.py`:3361: We should build slot mapping here and then we can create common attention metadata outside build attention metadata and pass it as an arg (https://github.com/vllm-project/vllm/pull/25954#discussion_r2670369912)
+- 2026-01-07 `ProExpertProg` commented: After discussion with @LucasWilkinson and @MatthewBonanni, we agreed we should separate slot mapping & block table from attention metadata. This makes sense because we're separating the concept of cache KV update from attention anyway. You can leave them inside CommonAttentionMetadata for now ... (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3636933168)
+- 2026-01-08 `ProExpertProg`: just slot mapping right? i see no reason to separate out block-table (the attention backends need that) Yeah, good catch, you're right; we should always build slot-mapping and block-table, and then possibly build attn metadata for backends, but block table should still ... (https://github.com/vllm-project/vllm/pull/25954#issuecomment-3724648038)
+- 2026-01-09 `elvischenv` on `vllm/attention/layer.py`:824: output is a dummy argument that is not used in the function implementation, and also not used by subsequent ops. It will be eliminated in post cleanup pass if using a full graph(cudagraph mode=FULL DECODE ONLY + splitting ops=[] + pass config.fuse ... (https://github.com/vllm-project/vllm/pull/25954#discussion_r2675139303)
+- 2026-01-10 `ProExpertProg` on `vllm/attention/layer.py`:824: This is a great catch! I discussed this with @zou3519 and we should make unified kv cache update fully functional (mutated args=[]) and return a dummy tensor, which we then pass to attention. That will signal both the side-effect of kv cache ... (https://github.com/vllm-project/vllm/pull/25954#discussion_r2678008342)
+- 2026-01-10 `ProExpertProg`: We should be able to remove the ForceAttention enum and restore the simpler logic with the boolean flag, as well as revert changes to other backends (https://github.com/vllm-project/vllm/pull/25954#issuecomment-3731136992)
+- 2026-01-13 `ElizaWszola` on `vllm/attention/layer.py`:824: @ProExpertProg thanks for figuring this out, can you have a look at whether the current solution is better? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2685295477)
+- 2026-01-13 `tjtanaa`: @ElizaWszola @ProExpertProg any updates on this? We are interested in integrating rope + reshape and cache implementation for FA. (https://github.com/vllm-project/vllm/pull/25954#issuecomment-3743893314)
+- 2026-01-13 `LucasWilkinson` commented: I think there may have been a bit of miscommunication; what we were suggesting with was that we add slot mapping to ForwardContext, so we would have then we can eventually remove slot mapping from attention metadata for backends that don't need ... (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3656626905)
+- 2026-01-13 `LucasWilkinson` commented: on second thought maybe it would be simpler to just make all dummy runs build attention metadata always? and if the kv-caches haven't been allocated yet allocate small dummy kv-caches to use? we may have to replace attn metadata is None checks ... (https://github.com/vllm-project/vllm/pull/25954#pullrequestreview-3657085687)
+- 2026-01-13 `ProExpertProg`: @LucasWilkinson I think let's start by adding slot mapping to the forward context, I think that's good separation of concerns. We can clean up attention metadata and force attention later but I worry this would further delay this PR (https://github.com/vllm-project/vllm/pull/25954#issuecomment-3745631635)
+- 2026-01-13 `ProExpertProg` on `vllm/model_executor/layers/mamba/linear_attn.py`:332: Can we revert this now that we no longer set attention metadata for cache only? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688163240)
+- 2026-01-13 `ProExpertProg` on `vllm/v1/worker/gpu_model_runner.py`:5013: This shouldn't be needed? The slot mapping should be enough? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688175863)
+- 2026-01-13 `ProExpertProg` on `vllm/v1/attention/backends/utils.py`:703: Can we revert this also? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688179432)
+- 2026-01-13 `MatthewBonanni` on `vllm/v1/attention/backends/utils.py`:703: Yes, done in [cf91a8c]( (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688365498)
+- 2026-01-14 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:3352: can you please add a comment explaining the has separate kv update? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688567123)
+- 2026-01-14 `LucasWilkinson` on `vllm/v1/worker/gpu/model_runner.py`:289: wouldn't we need a dummy slot mapping if skip attn is true? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688569781)
+- 2026-01-14 `ProExpertProg` on `vllm/attention/layer.py`:819: Does this mean we're doing kv cache update for all indices in the slot mapping? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688594863)
+- 2026-01-14 `ProExpertProg` on `vllm/v1/worker/gpu/model_runner.py`:290: Why can we leave this empty - I assume we always need to build this? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688596904)
+- 2026-01-14 `ProExpertProg` on `vllm/v1/worker/gpu_model_runner.py`:3315: It's a tiny bit confusing that slot mappings is by group here but by layer in the ForwardContext - can we rename? This is one option: (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688603039)
+- 2026-01-14 `LucasWilkinson` on `vllm/attention/layer.py`:882: this is kinda gross :( , is there no otherway to handle this? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688612141)
+- 2026-01-14 `MatthewBonanni` on `vllm/attention/layer.py`:819: Correct - layer slot mapping should only be None for layers that don't have a kv cache, e.g. non-DECODER types and KV sharing layers (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688727920)
+- 2026-01-14 `MatthewBonanni` on `vllm/attention/layer.py`:882: I did this based on I'm not sure if there's a better way. I might be able to get rid of this line though; not sure if the argument has to actually be touched in the function to prevent it from getting ... (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688753552)
+- 2026-01-14 `ProExpertProg` on `vllm/attention/layer.py`:819: It seems a bit ugly for the kv cache op to be aware of ubatch slices but oh well (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688759111)
+- 2026-01-14 `ProExpertProg` on `vllm/attention/layer.py`:882: @LucasWilkinson yeah we need to tell torch.compile that 1) kv cache update is not dead code and 2) that attention depends on it, all while keeping the op functional. We could call it kv cache dependency or kv cache dummy if you ... (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688762935)
+- 2026-01-14 `LucasWilkinson` on `vllm/attention/layer.py`:882: id call it kv cache dummy dependency, just to indicate its "garbage" and also a dependency (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688909574)
+- 2026-01-14 `LucasWilkinson` on `vllm/attention/layer.py`:821: sorry this is not correct for DBO; the list should be unwrapped like attn metadata here: (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688916191)
+- 2026-01-14 `LucasWilkinson` on `vllm/attention/layer.py`:821: (I can probably just fix this :+1:) (https://github.com/vllm-project/vllm/pull/25954#discussion_r2688919651)
+- 2026-01-14 `LucasWilkinson` on `vllm/forward_context.py`:243: nit: can we move this to after attn metadata: Any, since they are semi-related and make it non-optoinal? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2689033576)
+- 2026-01-14 `ElizaWszola` on `vllm/v1/worker/gpu_model_runner.py`:1781: do we still want to keep slot mappings inside metadata? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2689375280)
+- 2026-01-14 `ProExpertProg` on `vllm/v1/worker/gpu_model_runner.py`:1781: Yes for now, we can remove it later once other backends do the extraction as well. (https://github.com/vllm-project/vllm/pull/25954#discussion_r2690631276)
+- 2026-01-14 `ProExpertProg` on `vllm/v1/worker/gpu_model_runner.py`:1781: Do we have a GH issue yet for extraction? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2690632373)
+- 2026-01-14 `ElizaWszola` on `vllm/v1/worker/gpu_model_runner.py`:1781: Made one, feel free to edit if it's inaccurate (https://github.com/vllm-project/vllm/pull/25954#discussion_r2690663232)
+- 2026-01-14 `ProExpertProg` on `vllm/v1/worker/gpu_model_runner.py`:1781: Yeah if you can make a checklist for the backends that'd be great, and mention that we want to remove slot mapping from attention metadata once possible (https://github.com/vllm-project/vllm/pull/25954#discussion_r2690810110)
+- 2026-01-15 `ProExpertProg` on `vllm/model_executor/layers/attention/cross_attention.py`:121: @LucasWilkinson what did you mean here? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2696199733)
+- 2026-01-22 `LucasWilkinson` on `vllm/v1/spec_decode/eagle.py`:254: what is the point of self. cached slot mapping views? appears to just a mirror of self. slot mapping buffer (https://github.com/vllm-project/vllm/pull/25954#discussion_r2718869450)
+- 2026-01-22 `LucasWilkinson` on `vllm/v1/spec_decode/eagle.py`:1280: can you please add a comment here explaining this? (https://github.com/vllm-project/vllm/pull/25954#discussion_r2718869632)
+- 2026-01-22 `LucasWilkinson` on `tests/v1/attention/utils.py`:133: nit: try backend includes kv cache - try backend includes kv cache update (https://github.com/vllm-project/vllm/pull/25954#discussion_r2718873449)
+- 2026-01-22 `LucasWilkinson` on `vllm/v1/attention/backends/flash_attn.py`:82: nit: forward includes kv cache - forward includes kv cache update (https://github.com/vllm-project/vllm/pull/25954#discussion_r2718874197)
+- 2026-01-22 `MatthewBonanni` on `vllm/v1/spec_decode/eagle.py`:254: It was just a mirror -- I became convinced that identical views were necessary, not just identical memory buffers. You're right, that wasn't necessary. Thanks for catching this. The actual fix was use eagle buffer. Removed the cached views in [f831c3c]( (https://github.com/vllm-project/vllm/pull/25954#discussion_r2718896186)

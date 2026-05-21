@@ -1,82 +1,84 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#13972](https://github.com/vllm-project/vllm/pull/13972)
-- Source page: `sources/prs/vllm/PR-13972.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-13972`
-- Generated at: `2026-05-20T15:34:17.020597+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-02-27T15:52:58Z`
-- Merged: `2025-03-27T00:54:44Z`
-
-## Discussion Counts
-
-- Issue comments: 9
-- Review submissions: 50 (approved=1, changes_requested=1, commented=48)
-- Inline review comments: 86
-- Review threads observed: 58
-- Resolved/outdated thread markers: resolved=36, outdated=52
-- Human participants with discussion text: ElizaWszola, LucasWilkinson, ProExpertProg, dsikka, li2haipeng, mergify, pavanimajety, shixianc, tlrmchlsmth
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 5
-
-## Review Decisions
-
-- `2025-03-03T15:01:43Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2654325451)
-- `2025-03-03T15:04:00Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2654399523)
-- `2025-03-03T15:33:33Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2654489604)
-- `2025-03-03T15:36:27Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2654497271)
-- `2025-03-03T15:37:37Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2654500377)
-- `2025-03-03T15:43:18Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2654515703)
-- `2025-03-03T16:11:02Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2654593640)
-- `2025-03-03T16:17:19Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2654609841)
-- `2025-03-03T16:18:08Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2654611806)
-- `2025-03-03T16:27:22Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2654635363)
-- `2025-03-03T16:56:22Z` `CHANGES_REQUESTED` by `dsikka` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2654707551)
-- `2025-03-03T17:08:45Z` `COMMENTED` by `dsikka` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2654741828)
-- `2025-03-04T06:57:41Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2656181512)
-- `2025-03-04T07:01:28Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2656191803)
-- `2025-03-05T14:19:42Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2661271024)
-- `2025-03-05T14:32:45Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2661312069)
-- `2025-03-05T14:36:42Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2661323847)
-- `2025-03-05T15:10:31Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2661429345)
-- `2025-03-05T15:11:15Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2661431515)
-- `2025-03-07T06:25:06Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2666365270)
-- `2025-03-12T12:10:52Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2678230125)
-- `2025-03-12T18:06:01Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2679427056)
-- `2025-03-12T19:41:33Z` `COMMENTED` by `ProExpertProg` - Yeah I agree with Rob here, unless we really want to merge for 0.8.0, we should try to ... (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2679651018)
-- `2025-03-12T20:44:38Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2679818617)
-- ... 25 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`: 17 inline comment(s)
-- `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cuh`: 10 inline comment(s)
-- `csrc/quantization/cutlass_w8a8/scaled_mm_entry.cu`: 10 inline comment(s)
-- `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cu`: 7 inline comment(s)
-- `tests/kernels/test_cutlass.py`: 6 inline comment(s)
-- `csrc/cutlass_extensions/epilogue/scaled_mm_epilogues_c3x.hpp`: 5 inline comment(s)
-- `vllm/model_executor/layers/quantization/kernels/scaled_mm/grouped_cutlass.py`: 4 inline comment(s)
-- `csrc/torch_bindings.cpp`: 4 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/fused_moe.py`: 4 inline comment(s)
-- `vllm/model_executor/layers/quantization/kernels/scaled_mm/GroupedMMLinearKernel.py`: 3 inline comment(s)
-- `csrc/quantization/cutlass_w8a8/moe/grouped_mm_c3x.cu`: 3 inline comment(s)
-- `csrc/quantization/cutlass_w8a8/get_group_starts.cuh`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-03-03T14:40:17Z` `inline` by `tlrmchlsmth` `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:266; signals: compile, cuda, cutlass, fp8, kernel, moe; excerpt: "For this, I think we should export a function like cutlass fp8 supported, especially because this depends on the CUDA version used to compile ..." (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977632713)
-- `2025-03-13T14:28:58Z` `inline` by `tlrmchlsmth` `benchmarks/kernels/benchmark_grouped_gemm_cutlass.py`:324; signals: benchmark, cutlass, gemm, kernel, perf, performance; excerpt: "A --tp-sizes argument with the same behavior as in benchmarks/cutlass benchmarks/w8a8 benchmarks.py would be very nice to have, especially to compare and contrast performance ..." (https://github.com/vllm-project/vllm/pull/13972#discussion_r1993655697)
-- `2025-03-12T21:30:28Z` `inline` by `pavanimajety` `csrc/quantization/cutlass_w8a8/scaled_mm_entry.cu`:213; signals: compile, cuda, cutlass, kernel, sm90; excerpt: "get grouped mm data seems to be generic cuda kernels, any reason this has to be compiled only for SM90? These are helpful for ..." (https://github.com/vllm-project/vllm/pull/13972#discussion_r1992322816)
-- `2025-03-13T17:25:07Z` `inline` by `tlrmchlsmth` `tests/kernels/test_cutlass.py`:518; signals: cutlass, fp8, gemm, kernel, sm90; excerpt: "I think this actually needs to test for exactly sm90a. Can query check cutlass group gemm supported for this. But need to skip the ..." (https://github.com/vllm-project/vllm/pull/13972#discussion_r1994001724)
-- `2025-03-12T18:06:01Z` `inline` by `pavanimajety` `vllm/model_executor/layers/fused_moe/fused_moe.py`:1588; signals: block, cutlass, fp8, moe; excerpt: "A few nits: Could you please add a doc comment regarding the expectation of shapes and datatypes for weights, scales and hidden states? Eg: ..." (https://github.com/vllm-project/vllm/pull/13972#discussion_r1992038748)
-- `2025-03-26T18:02:26Z` `inline` by `tlrmchlsmth` `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cuh`:15; signals: blackwell, cutlass, h100, kernel; excerpt: "This needs to be: Otherwise it will break on Blackwell, as these H100 CUTLASS kernel are not forward-compatible" (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014750889)
-- `2025-03-26T18:30:25Z` `inline` by `tlrmchlsmth` `CMakeLists.txt`:349; signals: block, compile, cuda, kernel; excerpt: "These need to go in their own block that's compiled for CUDA 12.3 or later. For example see what we do for the 2:4 ..." (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014789885)
-- `2025-03-26T18:44:59Z` `inline` by `ElizaWszola` `tests/kernels/test_cutlass.py`:523; signals: cutlass, gemm, kernel, moe; excerpt: "We don't need bias in fused moe - I added this TODO when the gemm implementation was less MoE specific, so I think it's ..." (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014809618)
-- `2025-03-03T16:17:19Z` `inline` by `LucasWilkinson` `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:148; signals: cutlass, kernel, moe; excerpt: "actually ideally this would be in CutlassGroupMMLinearKernel sorry didn't see that implemented GroupMMLinearKernel before" (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977799681)
-- `2025-03-03T16:27:21Z` `inline` by `LucasWilkinson` `vllm/model_executor/layers/quantization/kernels/scaled_mm/GroupedMMLinearKernel.py`:18; signals: cutlass, kernel, moe; excerpt: "hmmm should this be FusedMOELayerImpl maybe? the only annoying part is the activation function, might have to add the activation to the "Config". Then ..." (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977815089)
-- `2025-03-12T12:10:51Z` `inline` by `ElizaWszola` `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:444; signals: kernel, moe, triton; excerpt: "Would it make sense to fall back to triton kernel inside this function when one of these conditions is not met? Or should it ..." (https://github.com/vllm-project/vllm/pull/13972#discussion_r1991357796)
-- `2025-03-13T17:23:16Z` `inline` by `tlrmchlsmth` `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cuh`:17; signals: cuda, cutlass, gemm; excerpt: "We will need a function like bool cutlass group gemm supported(int64 t cuda device capability) that checks the CUDA VERSION to report if cutlass ..." (https://github.com/vllm-project/vllm/pull/13972#discussion_r1993998466)
+- 2025-03-03 `tlrmchlsmth` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:266: For this, I think we should export a function like cutlass fp8 supported, especially because this depends on the CUDA version used to compile the kernels, which isn't available from here (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977632713)
+- 2025-03-03 `tlrmchlsmth` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:148: Just checking, each of these stride tensors is 512 bytes for the 64 experts case? I'd recommend leaving these per-layer for now to avoid the pain of managing the global state (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977641677)
+- 2025-03-03 `tlrmchlsmth` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:148: We should only create them when we’re using the cutlass moe kernels though (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977668678)
+- 2025-03-03 `tlrmchlsmth` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/grouped_cutlass.py`:19: Is this right? I thought it should be 90 (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977671001)
+- 2025-03-03 `tlrmchlsmth` on `csrc/torch_bindings.cpp`:334: What needs to happen for this TODO? (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977675451)
+- 2025-03-03 `tlrmchlsmth` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/grouped_cutlass.py`:26: Not supported on CPUs: (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977728520)
+- 2025-03-03 `tlrmchlsmth` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/GroupedMMLinearKernel.py`: Are these files GroupedMMLinearKernel.py and grouped cutlass.py being used anywhere? (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977733124)
+- 2025-03-03 `LucasWilkinson` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:148: Also I dont think these need to be full torch.nn.Parameters since we are not loading them, instead we can just do torch.full inside process weights after loading, so we can try to keep a loose separation between more weight-loading related stuff in ... (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977734972)
+- 2025-03-03 `LucasWilkinson` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:266: agreed, nit: we are getting alot of these X supported() functions, I may try refactoring this into a single is supported("X") entry with a some nice C++ utilities for registering X (where registration can be dispersed across files) (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977744020)
+- 2025-03-03 `LucasWilkinson` on `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cu`:140: nit: it looks like this kernel currently is used? can we drop "currently unused"? (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977790034)
+- 2025-03-03 `LucasWilkinson` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:148: actually ideally this would be in CutlassGroupMMLinearKernel sorry didn't see that implemented GroupMMLinearKernel before (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977799681)
+- 2025-03-03 `LucasWilkinson` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/GroupedMMLinearKernel.py`:18: hmmm should this be FusedMOELayerImpl maybe? the only annoying part is the activation function, might have to add the activation to the "Config". Then we can have a CutlassFusedMOELayer, TritionFusedMOELayer and MarlinFusedMOELayer, similar to (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977815089)
+- 2025-03-03 `dsikka` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:269: Instead of doing this if/else branching, are we planning to add a layer to select the appropriate kernel? That way we wouldn't have to create parameters that are not required. (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977858664)
+- 2025-03-03 `dsikka` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:155: Have we tried tp 1? (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977859047)
+- 2025-03-03 `dsikka` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:144: I dont think any of the extra stride params added will be sharded like the rest of the MoE params. Is that expected? (https://github.com/vllm-project/vllm/pull/13972#discussion_r1977878016)
+- 2025-03-04 `ElizaWszola` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:144: I meant that we could have a way in the future to share them between multiple layers since they will be identical for many layers (https://github.com/vllm-project/vllm/pull/13972#discussion_r1978737876)
+- 2025-03-04 `ElizaWszola` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:148: Just checking, each of these stride tensors is 512 bytes for the 64 experts case? I'd recommend leaving these per-layer for now to avoid the pain of managing the global state correct, it's 8 bytes num experts (https://github.com/vllm-project/vllm/pull/13972#discussion_r1978742538)
+- 2025-03-05 `ElizaWszola` on `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cu`:140: The constexpr that enables it should have been the other way around. Fixed now. (https://github.com/vllm-project/vllm/pull/13972#discussion_r1981498702)
+- 2025-03-05 `ElizaWszola` on `csrc/torch_bindings.cpp`:334: it's a leftover from when the function did not take problem sizes and strides as arguments. I cleaned it up (https://github.com/vllm-project/vllm/pull/13972#discussion_r1981523025)
+- 2025-03-05 `ElizaWszola` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/GroupedMMLinearKernel.py`: not at this point, I cleaned it up (https://github.com/vllm-project/vllm/pull/13972#discussion_r1981530020)
+- 2025-03-05 `ElizaWszola` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:155: yes, got correctness with tp=2 (https://github.com/vllm-project/vllm/pull/13972#discussion_r1981593167)
+- 2025-03-05 `ElizaWszola` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/grouped_cutlass.py`:15: I ended up not using it anywhere, so I removed it (https://github.com/vllm-project/vllm/pull/13972#discussion_r1981594485)
+- 2025-03-07 `ElizaWszola` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:444: Do we currently have to support any different values for these in fp8? (https://github.com/vllm-project/vllm/pull/13972#discussion_r1984520601)
+- 2025-03-12 `ElizaWszola` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:444: Would it make sense to fall back to triton kernel inside this function when one of these conditions is not met? Or should it be checked somewhere earlier in the runtime, when we decide on the method to use? (https://github.com/vllm-project/vllm/pull/13972#discussion_r1991357796)
+- 2025-03-12 `ElizaWszola`: @pavanimajety I need to do some plumbing to make sure that the CUTLASS kernels run only with arguments they currently support - shouldn't take long, then the PR will be mergeable as soon as it's greenlit (https://github.com/vllm-project/vllm/pull/13972#issuecomment-2718246915)
+- 2025-03-12 `pavanimajety` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:1588: A few nits: Could you please add a doc comment regarding the expectation of shapes and datatypes for weights, scales and hidden states? Eg: We could also have block scale flavor for cutlass based FP8 MoE, so it would be nice to ... (https://github.com/vllm-project/vllm/pull/13972#discussion_r1992038748)
+- 2025-03-12 `ProExpertProg` on `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cu`:240: Could this have a better name? (https://github.com/vllm-project/vllm/pull/13972#discussion_r1992163106)
+- 2025-03-12 `ProExpertProg` on `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cu`:297: Why is this a TODO (https://github.com/vllm-project/vllm/pull/13972#discussion_r1992163865)
+- 2025-03-12 `ProExpertProg` on `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cu`:303: Could these casts be an argument to data ptr instead of C-style casts? Like .template data ptr (https://github.com/vllm-project/vllm/pull/13972#discussion_r1992170521)
+- 2025-03-12 `ProExpertProg` on `csrc/quantization/cutlass_w8a8/scaled_mm_entry.cu`:200: "... less than 90"? (https://github.com/vllm-project/vllm/pull/13972#discussion_r1992173946)
+- 2025-03-12 `ProExpertProg` on `csrc/quantization/cutlass_w8a8/scaled_mm_entry.cu`:200: Here you just print the current capability (https://github.com/vllm-project/vllm/pull/13972#discussion_r1992174318)
+- 2025-03-12 `ProExpertProg` on `tests/kernels/test_cutlass.py`:518: use current platform.supports fp8 (https://github.com/vllm-project/vllm/pull/13972#discussion_r1992177674)
+- 2025-03-12 `ProExpertProg` commented: Yeah I agree with Rob here, unless we really want to merge for 0.8.0, we should try to use the Kernel abstraction like ScaledMM. Also added a couple of small code-quality improvement suggestions. I think in particular a lot of casts could ... (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2679651018)
+- 2025-03-12 `ProExpertProg` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:1462: Could this be made an issue? (https://github.com/vllm-project/vllm/pull/13972#discussion_r1992263380)
+- 2025-03-12 `ProExpertProg` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:415: I think all of these properties should be added to init instead of apply. Then we can decide which kernel we're using in init, not in . They're already in vllm/model executor/layers/fused moe/layer.py:FusedMoE. init in the layer code. (https://github.com/vllm-project/vllm/pull/13972#discussion_r1992306136)
+- 2025-03-12 `ProExpertProg` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:415: That is also required for the Kernel abstraction to be implemented (https://github.com/vllm-project/vllm/pull/13972#discussion_r1992308721)
+- 2025-03-12 `pavanimajety` on `csrc/quantization/cutlass_w8a8/scaled_mm_entry.cu`:213: get grouped mm data seems to be generic cuda kernels, any reason this has to be compiled only for SM90? These are helpful for all SM versions AFAI can tell. (https://github.com/vllm-project/vllm/pull/13972#discussion_r1992322816)
+- 2025-03-13 `tlrmchlsmth` on `benchmarks/kernels/benchmark_grouped_gemm_cutlass.py`:324: A --tp-sizes argument with the same behavior as in benchmarks/cutlass benchmarks/w8a8 benchmarks.py would be very nice to have, especially to compare and contrast performance of the kernel in the EP vs the TP case. (https://github.com/vllm-project/vllm/pull/13972#discussion_r1993655697)
+- 2025-03-13 `tlrmchlsmth` on `csrc/cutlass_extensions/epilogue/broadcast_load_epilogue_c3x.hpp`:425: Could you revert this change? It looks like this isn't used anywhere (https://github.com/vllm-project/vllm/pull/13972#discussion_r1993658714)
+- 2025-03-13 `tlrmchlsmth` on `csrc/cutlass_extensions/epilogue/scaled_mm_epilogues_c3x.hpp`:117: Instead of requiring the caller to pass in a do broadcast flag, can this function figure it out on its own (e.g. checking tensor.numel() != 1 or similar)? (https://github.com/vllm-project/vllm/pull/13972#discussion_r1993960689)
+- 2025-03-13 `tlrmchlsmth` on `csrc/cutlass_extensions/epilogue/scaled_mm_epilogues_c3x.hpp`:438: To account for the weird C++ thing, where the const keyword modifies the previous literal, with the exception when the const is provided first, in which case it modifies the next literal. I suggest the following, since this way the next-literal vs ... (https://github.com/vllm-project/vllm/pull/13972#discussion_r1993971428)
+- 2025-03-13 `tlrmchlsmth` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:1608: Add wrappers for get grouped mm data and cutlass grouped mm in vllm/ custom ops.py? (https://github.com/vllm-project/vllm/pull/13972#discussion_r1993981245)
+- 2025-03-13 `tlrmchlsmth` on `csrc/ops.h`:191: Please add a comment documenting this function somewhere (https://github.com/vllm-project/vllm/pull/13972#discussion_r1993982264)
+- 2025-03-13 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cu`:9: nit: delete one of these includes (https://github.com/vllm-project/vllm/pull/13972#discussion_r1993983198)
+- 2025-03-13 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cuh`:80: Should these 4s be AlignmentC instead? It looks like AlignmentC isn't used anywhere (https://github.com/vllm-project/vllm/pull/13972#discussion_r1993989325)
+- 2025-03-13 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cuh`:91: Similar: Should these 4s be AlignmentAB? It looks like AlignmentAB isn't used anywhere (https://github.com/vllm-project/vllm/pull/13972#discussion_r1993990023)
+- 2025-03-13 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cuh`:17: We will need a function like bool cutlass group gemm supported(int64 t cuda device capability) that checks the CUDA VERSION to report if cutlass group gemm is supported. (https://github.com/vllm-project/vllm/pull/13972#discussion_r1993998466)
+- 2025-03-13 `tlrmchlsmth` on `tests/kernels/test_cutlass.py`:518: I think this actually needs to test for exactly sm90a. Can query check cutlass group gemm supported for this. But need to skip the test on RoCM as well here, so current platform.supports fp8 won't be sufficient (https://github.com/vllm-project/vllm/pull/13972#discussion_r1994001724)
+- 2025-03-17 `ElizaWszola` on `csrc/cutlass_extensions/epilogue/scaled_mm_epilogues_c3x.hpp`:117: This function takes as argument not the scales tensors, but the pointers to the start of each expert's scales, so I need to pass these booleans in addition to these pointers. (https://github.com/vllm-project/vllm/pull/13972#discussion_r1998617449)
+- 2025-03-18 `ElizaWszola` on `tests/kernels/test_cutlass.py`:518: I added function cutlass group gemm supported, can you have a look? (https://github.com/vllm-project/vllm/pull/13972#discussion_r2000891956)
+- 2025-03-18 `ElizaWszola` on `csrc/quantization/cutlass_w8a8/scaled_mm_entry.cu`:213: I removed the requirement and moved the function to csrc/quantization/cutlass w8a8/moe data.cu. (https://github.com/vllm-project/vllm/pull/13972#discussion_r2000897207)
+- 2025-03-18 `ProExpertProg` on `csrc/cutlass_extensions/epilogue/scaled_mm_epilogues_c3x.hpp`:117: What if you passed the tensors instead of just the pointers? (https://github.com/vllm-project/vllm/pull/13972#discussion_r2002085393)
+- 2025-03-18 `ProExpertProg` on `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cuh`:30: Would it be more apt to make a offsets an array of pointers instead of an array of ints? Feels like that would reduce the amount of reinterpret casts and also be semantically clearer (https://github.com/vllm-project/vllm/pull/13972#discussion_r2002088611)
+- 2025-03-18 `ProExpertProg` on `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cuh`:163: Could you just pass the tensors here? (https://github.com/vllm-project/vllm/pull/13972#discussion_r2002089394)
+- 2025-03-18 `ProExpertProg` on `csrc/quantization/cutlass_w8a8/scaled_mm_entry.cu`:214: Should this be in an else? Also right now the error message implies the check is done at runtime but it's actually done at compile time? So even if version num =90, if this was compiled for sm90, it will reach this ... (https://github.com/vllm-project/vllm/pull/13972#discussion_r2002092652)
+- 2025-03-19 `ElizaWszola` on `csrc/quantization/cutlass_w8a8/scaled_mm_entry.cu`:214: I didn't make it an else to make it consistent with how other checks of this kind look in this file (https://github.com/vllm-project/vllm/pull/13972#discussion_r2003074973)
+- 2025-03-19 `ElizaWszola` on `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cuh`:163: I need to pass pointers here (https://github.com/vllm-project/vllm/pull/13972#discussion_r2003110038)
+- 2025-03-19 `ElizaWszola` on `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cuh`:30: I needed to do some extra templating for this. I moved this kernel to a separate file. (https://github.com/vllm-project/vllm/pull/13972#discussion_r2003476510)
+- 2025-03-24 `tlrmchlsmth` on `csrc/torch_bindings.cpp`:378: We should change this to: This might solve some problems you're running into but no promises (https://github.com/vllm-project/vllm/pull/13972#discussion_r2010205073)
+- 2025-03-24 `tlrmchlsmth` on `csrc/torch_bindings.cpp`:392: We should hit this one too, unless it's only called offline outside of any torch.compile region. (https://github.com/vllm-project/vllm/pull/13972#discussion_r2010206733)
+- 2025-03-24 `LucasWilkinson` on `vllm/utils.py`:1583: nit: Does a type union containing Any do anything more than Any? (https://github.com/vllm-project/vllm/pull/13972#discussion_r2010284682)
+- 2025-03-24 `LucasWilkinson` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:55: nit: for future PR, we should abstract this more like to make it easier to adopt as a backend for non-compressed-tensor checkpoints (https://github.com/vllm-project/vllm/pull/13972#discussion_r2010289695)
+- 2025-03-26 `tlrmchlsmth` on `csrc/cutlass_extensions/epilogue/scaled_mm_epilogues_c3x.hpp`:117: Consider revisiting this interface in a follow up? (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014745298)
+- 2025-03-26 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cuh`:15: This needs to be: Otherwise it will break on Blackwell, as these H100 CUTLASS kernel are not forward-compatible (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014750889)
+- 2025-03-26 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cu`:11: Also should be CUDA ARCH == 900 (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014751507)
+- 2025-03-26 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/get_group_starts.cuh`:65: nit: avoid C-style casts (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014757338)
+- 2025-03-26 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/grouped_mm_c3x.cuh`:87: ditto, avoid C-style casts: (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014758604)
+- 2025-03-26 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/moe_data.cu`:9: If unused, please remove before landing (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014761740)
+- 2025-03-26 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/get_group_starts.cuh`: One point on code organization: There are a lot of files in this directory already. Could you please create a subdirectory called moe and put the files specific to grouped gemm in there? (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014765594)
+- 2025-03-26 `tlrmchlsmth` on `tests/kernels/test_cutlass.py`:523: Could you address the TODO before we land this? I recently got bit by us not testing bias on the 2:4 sparse CUTLASS kernels so I'd like make sure we avoid that happening again... (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014776894)
+- 2025-03-26 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/scaled_mm_entry.cu`:124: This needs to be: (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014777755)
+- 2025-03-26 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/scaled_mm_entry.cu`:125: I think this needs to be: see (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014786716)
+- 2025-03-26 `tlrmchlsmth` on `CMakeLists.txt`:349: These need to go in their own block that's compiled for CUDA 12.3 or later. For example see what we do for the 2:4 sparse kernels to compile on 12.2 or later (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014789885)
+- 2025-03-26 `tlrmchlsmth` commented: Spotted some issues, mainly around the CUDA version and compute capability checks (https://github.com/vllm-project/vllm/pull/13972#pullrequestreview-2718218595)
+- 2025-03-26 `ElizaWszola` on `tests/kernels/test_cutlass.py`:523: We don't need bias in fused moe - I added this TODO when the gemm implementation was less MoE specific, so I think it's ok to remove it (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014809618)
+- 2025-03-26 `tlrmchlsmth` on `tests/kernels/test_cutlass.py`:523: ok, sounds good, let's kill the TODO then :) (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014811328)
+- 2025-03-26 `tlrmchlsmth` on `tests/kernels/test_cutlass_moe.py`: This takes 20 minutes to run. Could you please reduce the number of combinations run here? (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014822751)
+- 2025-03-26 `tlrmchlsmth` on `CMakeLists.txt`:478: I think this needs to be a different variable than the one we use for the dense scaled mm kernels. Perhaps: (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014908297)
+- 2025-03-26 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/moe/grouped_mm_c3x.cu`:12: Where is this used? (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014911127)
+- 2025-03-26 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/moe/grouped_mm_c3x.cu`:12: nit: remove it if unused (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014915674)
+- 2025-03-26 `ElizaWszola` on `csrc/quantization/cutlass_w8a8/moe/grouped_mm_c3x.cu`:12: looks like a leftover from an older version of the code, I'll delete it (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014938671)
+- 2025-03-26 `tlrmchlsmth` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors.py`:279: nit: this looks unused - please delete if so (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014947670)
+- 2025-03-26 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/scaled_mm_entry.cu`:205: Needs to be ENABLE CUTLASS MOE SM90 now (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014951390)
+- 2025-03-26 `ElizaWszola` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors.py`:279: it's used in compressed tensors moe.py (https://github.com/vllm-project/vllm/pull/13972#discussion_r2014970458)

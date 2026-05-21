@@ -1,79 +1,37 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#33892](https://github.com/vllm-project/vllm/pull/33892)
-- Source page: `sources/prs/vllm/PR-33892.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-33892`
-- Generated at: `2026-05-20T15:39:43.035457+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-02-05T09:32:23Z`
-- Merged: `2026-04-09T00:50:39Z`
-
-## Discussion Counts
-
-- Issue comments: 19
-- Review submissions: 37 (approved=2, commented=35)
-- Inline review comments: 43
-- Review threads observed: 21
-- Resolved/outdated thread markers: resolved=9, outdated=11
-- Human participants with discussion text: LucasWilkinson, maralbahari, mergify, tjtanaa
-- Automation comments/reviews omitted from high-signal summary: 5
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-02-05T09:35:42Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces a significant and well-designed refactoring of the FP8 block-scaled linear kernel integration. ... (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3755629900)
-- `2026-02-05T09:59:41Z` `COMMENTED` by `maralbahari` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3755774461)
-- `2026-02-25T10:08:20Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3853192127)
-- `2026-02-25T10:08:58Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3853196016)
-- `2026-02-25T10:09:05Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3853196599)
-- `2026-02-25T10:09:12Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3853197221)
-- `2026-02-25T10:09:23Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3853198180)
-- `2026-02-25T10:09:34Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3853199262)
-- `2026-02-25T10:09:58Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3853201720)
-- `2026-02-25T10:10:09Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3853202878)
-- `2026-02-25T10:10:24Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3853204590)
-- `2026-02-25T10:10:30Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3853205286)
-- `2026-02-25T10:11:33Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3853211765)
-- `2026-02-25T10:15:37Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3853234339)
-- `2026-02-25T10:23:02Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3853276216)
-- `2026-02-25T10:30:41Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3853324813)
-- `2026-02-26T05:38:28Z` `COMMENTED` by `maralbahari` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3858570205)
-- `2026-02-26T05:38:58Z` `COMMENTED` by `maralbahari` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3858571512)
-- `2026-02-26T05:39:41Z` `COMMENTED` by `maralbahari` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3858573208)
-- `2026-02-26T05:46:16Z` `COMMENTED` by `maralbahari` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3858580407)
-- `2026-02-26T15:28:58Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3861747289)
-- `2026-02-27T03:16:18Z` `COMMENTED` by `maralbahari` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3864623598)
-- `2026-03-02T02:12:49Z` `COMMENTED` by `maralbahari` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3873776404)
-- `2026-03-04T11:43:22Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3888915938)
-- ... 13 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`: 18 inline comment(s)
-- `vllm/model_executor/kernels/linear/scaled_mm/deep_gemm.py`: 8 inline comment(s)
-- `vllm/model_executor/kernels/linear/scaled_mm/aiter.py`: 5 inline comment(s)
-- `vllm/model_executor/kernels/linear/scaled_mm/flashinfer.py`: 4 inline comment(s)
-- `vllm/model_executor/kernels/linear/scaled_mm/BlockScaledMMLinearKernel.py`: 2 inline comment(s)
-- `vllm/model_executor/layers/quantization/modelopt.py`: 2 inline comment(s)
-- `tests/compile/passes/test_fusion.py`: 2 inline comment(s)
-- `tests/utils.py`: 1 inline comment(s)
-- `tests/conftest.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-20T03:21:02Z` `inline` by `maralbahari` `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:95; signals: block, cuda, cutlass, deepgemm, dtype, flashinfer, fp8, gemm; excerpt: "flashinfer-deepgemm and deepgemm are relying on weight shape and output dtype and input dtype (in should use deepgemm for fp8 linear and should use ..." (https://github.com/vllm-project/vllm/pull/33892#discussion_r2963751806)
-- `2026-03-20T05:10:22Z` `inline` by `maralbahari` `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:95; signals: block, cuda, cutlass, deepgemm, dtype, flashinfer, fp8, gemm; excerpt: "@LucasWilkinson so can we remove the assertion of input dtype==torch.bfloat16 check in should use flashinfer for blockscale fp8 gemm or keep it? so there ..." (https://github.com/vllm-project/vllm/pull/33892#discussion_r2963996999)
-- `2026-02-25T10:08:58Z` `inline` by `tjtanaa` `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:102; signals: block, cuda, deepgemm, flashinfer, fp8, gemm, kernel; excerpt: "This is set to true because FlashInferFp8DeepGEMMDynamicBlockScaledKernel is flashinfer fp8 blockscale gemm supported() is evaluated in the init () So, this condition self.flashinfer deepgemm ..." (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852068563)
-- `2026-03-02T02:12:49Z` `inline` by `maralbahari` `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:102; signals: block, cuda, dtype, flashinfer, fp8, gemm, kernel; excerpt: "to use this should use flashinfer for blockscale fp8 gemm function we need access to weight shape, input dtype and output dtype. since weight ..." (https://github.com/vllm-project/vllm/pull/33892#discussion_r2870211519)
-- `2026-03-20T02:54:57Z` `inline` by `maralbahari` `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:63; signals: cuda, cutlass, deepgemm, flashinfer, gemm, kernel, triton; excerpt: "on cuda the priority order is as follow: 1. flashinfer-deepgemm 2. deepgemm 3. cutlass 4. triton so the fallback kernels can be either cutlass ..." (https://github.com/vllm-project/vllm/pull/33892#discussion_r2963705050)
-- `2026-02-27T03:15:58Z` `inline` by `maralbahari` `tests/compile/passes/test_fusion.py`:84; signals: block, compile, cuda, fp8, kernel, triton; excerpt: "@tjtanaa added (TritonFp8BlockScaledMMKernel, GroupShape(1, 64)) for rocm similar to cuda." (https://github.com/vllm-project/vllm/pull/33892#discussion_r2862285542)
-- `2026-02-25T10:09:04Z` `inline` by `tjtanaa` `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:102; signals: cuda, deepgemm, flashinfer, gemm, kernel; excerpt: "Benefit of doing this self.flashinfer deepgemm kernel is not None first is that it short-circuits the conditions." (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852069093)
-- `2026-02-25T10:09:23Z` `inline` by `tjtanaa` `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:104; signals: cuda, deepgemm, fp8, gemm, kernel; excerpt: "The reason that the last argument of should use deepgemm for fp8 linear can be set to True is the same as in" (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852070797)
-- `2026-02-25T10:09:34Z` `inline` by `tjtanaa` `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:109; signals: cuda, deepgemm, fp8, gemm, kernel; excerpt: "The reason that the last argument of should use deepgemm for fp8 linear can be set to True is the same as in" (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852071883)
-- `2026-02-25T10:10:30Z` `inline` by `tjtanaa` `vllm/model_executor/kernels/linear/scaled_mm/deep_gemm.py`:47; signals: deepgemm, flashinfer, gemm, kernel, register; excerpt: "FlashInfer and DeepGEMM are not following current abstraction. They are wrapping the quant ops in a direct register custom op as shown in and" (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852077109)
-- `2026-02-26T05:45:59Z` `inline` by `maralbahari` `vllm/model_executor/kernels/linear/scaled_mm/BlockScaledMMLinearKernel.py`:53; signals: block, fp8, gemm, kernel, triton; excerpt: "@tjtanaa for the base Fp8BlockScaledMMLinear added use ue8m0=False and for each provider (eg. triton, deep gemm, etc) would override and instantiate quant fp8 as ..." (https://github.com/vllm-project/vllm/pull/33892#discussion_r2857047429)
-- `2026-03-19T14:43:36Z` `inline` by `LucasWilkinson` `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:63; signals: block, cuda, fp8, kernel, triton; excerpt: "is this the only place that uses ordered fallback kernels? if so feels like it always resolves to TritonFp8BlockScaledMMKernel?" (https://github.com/vllm-project/vllm/pull/33892#discussion_r2960555363)
+- 2026-02-05 `maralbahari` on `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:62: this class does not need to call the base constructor. it's overwritten. (https://github.com/vllm-project/vllm/pull/33892#discussion_r2768093112)
+- 2026-02-25 `tjtanaa` on `vllm/model_executor/kernels/linear/scaled_mm/BlockScaledMMLinearKernel.py`:53: Following the implementation here, it seems we always explicitly set the use ue8m0 (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852065018)
+- 2026-02-25 `tjtanaa` on `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:102: This is set to true because FlashInferFp8DeepGEMMDynamicBlockScaledKernel is flashinfer fp8 blockscale gemm supported() is evaluated in the init () So, this condition self.flashinfer deepgemm kernel is not None is testing whether is flashinfer supported. We can now set first argument of should ... (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852068563)
+- 2026-02-25 `tjtanaa` on `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:102: Benefit of doing this self.flashinfer deepgemm kernel is not None first is that it short-circuits the conditions. (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852069093)
+- 2026-02-25 `tjtanaa` on `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:102: We should try static dispatching either in this PR or upcoming PR. By doing in another PR we can confine the changes of this PR as just refactoring. Either ways work for me. (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852069789)
+- 2026-02-25 `tjtanaa` on `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:104: The reason that the last argument of should use deepgemm for fp8 linear can be set to True is the same as in (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852070797)
+- 2026-02-25 `tjtanaa` on `vllm/model_executor/kernels/linear/scaled_mm/deep_gemm.py`:39: Missing column major scales=True, (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852074156)
+- 2026-02-25 `tjtanaa` on `vllm/model_executor/kernels/linear/scaled_mm/deep_gemm.py`:40: Missing tma aligned scales=envs.VLLM USE DEEP GEMM TMA ALIGNED SCALES, (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852075171)
+- 2026-02-25 `tjtanaa` on `vllm/model_executor/kernels/linear/scaled_mm/deep_gemm.py`:47: It seems they hardcoded the output dtype for output tensor of deepgemm to torch.bfloat16, we can assume that it is a condition that we should add to is supported. (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852076614)
+- 2026-02-25 `tjtanaa` on `vllm/model_executor/kernels/linear/scaled_mm/deep_gemm.py`:47: FlashInfer and DeepGEMM are not following current abstraction. They are wrapping the quant ops in a direct register custom op as shown in and (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852077109)
+- 2026-02-25 `tjtanaa` on `vllm/model_executor/kernels/linear/scaled_mm/flashinfer.py`:80: I noticed that FlashInferFp8BlockScaledMMKernel is not using this quant op, can you add a comment why it is needed here? (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852082492)
+- 2026-02-25 `tjtanaa` on `vllm/model_executor/kernels/linear/scaled_mm/flashinfer.py`:117: Let's assert the group size to be 128 (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852102988)
+- 2026-02-25 `tjtanaa` on `vllm/model_executor/kernels/linear/scaled_mm/aiter.py`:135: This should be (1,128) (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852141586)
+- 2026-02-25 `tjtanaa` on `vllm/model_executor/layers/quantization/modelopt.py`:628: Let's retain the use of block n, block k so that it keeps the code readability where users knew how to unpack the block size. E.g. first element is block size along n dimension and second element refers to the block size ... (https://github.com/vllm-project/vllm/pull/33892#discussion_r2852184468)
+- 2026-02-26 `maralbahari` on `vllm/model_executor/layers/quantization/modelopt.py`:628: @tjtanaa fixed. reusing block n, block k. (https://github.com/vllm-project/vllm/pull/33892#discussion_r2857029143)
+- 2026-02-26 `maralbahari` on `vllm/model_executor/kernels/linear/scaled_mm/flashinfer.py`:117: @tjtanaa added the check in can implement, since we have access to kernel configuration in that method instead of is supported. is supported only checks device spec compatibility. (https://github.com/vllm-project/vllm/pull/33892#discussion_r2857036038)
+- 2026-02-26 `maralbahari` on `vllm/model_executor/kernels/linear/scaled_mm/BlockScaledMMLinearKernel.py`:53: @tjtanaa for the base Fp8BlockScaledMMLinear added use ue8m0=False and for each provider (eg. triton, deep gemm, etc) would override and instantiate quant fp8 as needed with required metadata. (https://github.com/vllm-project/vllm/pull/33892#discussion_r2857047429)
+- 2026-02-26 `tjtanaa` on `tests/compile/passes/test_fusion.py`:84: Do you know what is the equivalent of this (None, GroupShape(1, 64)), test case for this PR? (https://github.com/vllm-project/vllm/pull/33892#discussion_r2859692246)
+- 2026-02-27 `maralbahari` on `tests/compile/passes/test_fusion.py`:84: @tjtanaa added (TritonFp8BlockScaledMMKernel, GroupShape(1, 64)) for rocm similar to cuda. (https://github.com/vllm-project/vllm/pull/33892#discussion_r2862285542)
+- 2026-03-02 `maralbahari` on `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:102: to use this should use flashinfer for blockscale fp8 gemm function we need access to weight shape, input dtype and output dtype. since weight buffer is created in LinearMethod instances then we need to instantiate the kernels in create weight and we ... (https://github.com/vllm-project/vllm/pull/33892#discussion_r2870211519)
+- 2026-03-04 `tjtanaa` on `vllm/model_executor/kernels/linear/scaled_mm/deep_gemm.py`:39: NITS: self.use deep gemm e8m0 = is deep gemm e8m0 used() can reuse self.use deep gemm e8m0 (https://github.com/vllm-project/vllm/pull/33892#discussion_r2883342200)
+- 2026-03-04 `tjtanaa` on `vllm/model_executor/kernels/linear/scaled_mm/deep_gemm.py`:97: NITS: can reuse self.use deep gemm e8m0 (https://github.com/vllm-project/vllm/pull/33892#discussion_r2883406984)
+- 2026-03-18 `LucasWilkinson` on `vllm/model_executor/kernels/linear/scaled_mm/aiter.py`:158: There seems to be alot of repetition between this and Fp8BlockScaledMMLinearKernel.apply weights, why override it? is it purely for use triton? I think there must be a cleaner way to abstract this (https://github.com/vllm-project/vllm/pull/33892#discussion_r2955103940)
+- 2026-03-19 `LucasWilkinson` on `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:63: wont this pick the last supported one? this seems to conflict with comment in ordered fallback kernels? (https://github.com/vllm-project/vllm/pull/33892#discussion_r2960527721)
+- 2026-03-19 `LucasWilkinson` on `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:63: is this the only place that uses ordered fallback kernels? if so feels like it always resolves to TritonFp8BlockScaledMMKernel? (https://github.com/vllm-project/vllm/pull/33892#discussion_r2960555363)
+- 2026-03-19 `LucasWilkinson` on `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:104: cant this be resolved at init time? (https://github.com/vllm-project/vllm/pull/33892#discussion_r2960571690)
+- 2026-03-19 `LucasWilkinson` on `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:95: I think is dispatching is very confusing, I think we should add weight shape to FP8ScaledMMLinearLayerConfig, then at init time we should be able construct a priority list for dispatching, something kinda like Then at dispatch time we can just do: This ... (https://github.com/vllm-project/vllm/pull/33892#discussion_r2960640897)
+- 2026-03-19 `LucasWilkinson` commented: Thanks for doing this! This is a nice cleanup. DId a first pass. Happy to elaborate on any comments (apologies responses my be slow, at a conference). Overall it looks pretty good other than I find the dynamic dispatching logic and ordered ... (https://github.com/vllm-project/vllm/pull/33892#pullrequestreview-3969624568)
+- 2026-03-20 `maralbahari` on `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:63: on cuda the priority order is as follow: 1. flashinfer-deepgemm 2. deepgemm 3. cutlass 4. triton so the fallback kernels can be either cutlass or triton. flash infer-deepgemm kernel and deepgemm dispatching is decided on apply weight since it requires metadata related ... (https://github.com/vllm-project/vllm/pull/33892#discussion_r2963705050)
+- 2026-03-20 `maralbahari` on `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:95: flashinfer-deepgemm and deepgemm are relying on weight shape and output dtype and input dtype (in should use deepgemm for fp8 linear and should use flashinfer for blockscale fp8 gemm) which means the input 2d.shape is not required even... so it can be ... (https://github.com/vllm-project/vllm/pull/33892#discussion_r2963751806)
+- 2026-03-20 `LucasWilkinson` on `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:95: it should be safe to assume the activations are of type config.model config.dtype, i.e. (https://github.com/vllm-project/vllm/pull/33892#discussion_r2963939201)
+- 2026-03-20 `LucasWilkinson` on `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:95: so it can be dispatched during initialization of the kernels. which means that kernels need to be initialized in LinearMethod.create weight to add weight shape and input dtype into FP8ScaledMMLinearLayerConfig which might be confusing why sometimes kernels are initialized in LinearMethod. init ... (https://github.com/vllm-project/vllm/pull/33892#discussion_r2963945966)
+- 2026-03-20 `maralbahari` on `vllm/model_executor/kernels/linear/scaled_mm/aiter.py`:158: @LucasWilkinson yeh only because of use triton . I am thinking the cleanest way that FP8Quant selects to use triton only for ROCm platform but we dont have weight shape info available in FP8Quant to know whether to utilize triton or not. ... (https://github.com/vllm-project/vllm/pull/33892#discussion_r2963970578)
+- 2026-03-20 `maralbahari` on `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:95: @LucasWilkinson so can we remove the assertion of input dtype==torch.bfloat16 check in should use flashinfer for blockscale fp8 gemm or keep it? so there will two more fields, weight shape, input dtype added or just weight shape to FP8ScaledMMLinearLayerConfig. the should use ... (https://github.com/vllm-project/vllm/pull/33892#discussion_r2963996999)
+- 2026-03-20 `LucasWilkinson` on `vllm/model_executor/kernels/linear/scaled_mm/cuda.py`:95: I think adding both input dtype and weight shape to FP8ScaledMMLinearLayerConfig is fine :+1: especially if kernels have restrictions on input dtype, especially if it means we can fully remove kernels/linear/scale mm/cuda.py (https://github.com/vllm-project/vllm/pull/33892#discussion_r2967448614)
+- 2026-03-23 `maralbahari` on `vllm/model_executor/kernels/linear/scaled_mm/aiter.py`:158: @LucasWilkinson after including weight shape in FP8ScaledMMLinearConfig, the use triton can be instantiated during initialization so Fp8BlockScaledMMLinearKernel.use triton is now a property that defaults to False and only in AiterFp8BlockScaledMMKernel. use triton is set to True based on its condition. so the ... (https://github.com/vllm-project/vllm/pull/33892#discussion_r2972713083)
+- 2026-03-24 `maralbahari` on `tests/conftest.py`:251: @LucasWilkinson after including input dtype to FP8LinearLayerConfig. as discussed we can assume that the activation dtype is same as model config.dtype. However, XXLinearMethod objects do not have vllm config access then.. I used get current vllm config() to access the model config. ... (https://github.com/vllm-project/vllm/pull/33892#discussion_r2978409622)

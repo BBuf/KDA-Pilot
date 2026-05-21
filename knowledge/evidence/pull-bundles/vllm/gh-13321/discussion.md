@@ -1,55 +1,18 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#13321](https://github.com/vllm-project/vllm/pull/13321)
-- Source page: `sources/prs/vllm/PR-13321.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-13321`
-- Generated at: `2026-05-20T15:34:01.256880+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-02-15T05:52:44Z`
-- Merged: `2025-03-11T00:12:40Z`
-
-## Discussion Counts
-
-- Issue comments: 11
-- Review submissions: 7 (approved=1, commented=6)
-- Inline review comments: 11
-- Review threads observed: 6
-- Resolved/outdated thread markers: resolved=6, outdated=2
-- Human participants with discussion text: GreyZzzzzzXh, LagPixelLOL, jinzhen-lin, lizongyao123, mgoin, sunjianxide
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 2
-
-## Review Decisions
-
-- `2025-02-28T04:10:17Z` `COMMENTED` by `mgoin` - Nice work keeping the kernel clean! I do think we definitely need to refactor fused moe.py to give ... (https://github.com/vllm-project/vllm/pull/13321#pullrequestreview-2649646759)
-- `2025-02-28T05:18:31Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/13321#pullrequestreview-2649753183)
-- `2025-02-28T05:19:37Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/13321#pullrequestreview-2649754296)
-- `2025-02-28T05:21:25Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/13321#pullrequestreview-2649756052)
-- `2025-02-28T05:28:11Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/13321#pullrequestreview-2649763053)
-- `2025-02-28T16:09:04Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/13321#pullrequestreview-2651187602)
-- `2025-03-11T00:12:28Z` `APPROVED` by `mgoin` - Excellent work, thank you (https://github.com/vllm-project/vllm/pull/13321#pullrequestreview-2672434884)
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/layers/fused_moe/fused_moe.py`: 6 inline comment(s)
-- `csrc/moe/moe_wna16.cu`: 3 inline comment(s)
-- `CMakeLists.txt`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-02-18T07:01:14Z` `issue` by `jinzhen-lin`; signals: gemm, memory, mla, moe, perf, performance; excerpt: "@sunjianxide try to run with VLLM MLA DISABLE=1 and reduce max model len, increase gpu memory utilization. This PR only optimizes moe gemm operator, ..." (https://github.com/vllm-project/vllm/pull/13321#issuecomment-2664772332)
-- `2025-02-28T05:28:11Z` `inline` by `jinzhen-lin` `csrc/moe/moe_wna16.cu`:310; signals: cuda, gemm, moe, perf, performance; excerpt: "The first version of the moe wna16 gemm supports int4 only, so the should moe wna16 use cuda does a check bit == 4. ..." (https://github.com/vllm-project/vllm/pull/13321#discussion_r1974803297)
-- `2025-02-28T16:09:04Z` `inline` by `jinzhen-lin` `csrc/moe/moe_wna16.cu`:310; signals: cuda, kernel, moe, perf, triton; excerpt: "@mgoin My test result shows that the triton kernel perform well for int8 (even slightly better than cuda kernel). So it would be better ..." (https://github.com/vllm-project/vllm/pull/13321#discussion_r1975664260)
-- `2025-02-28T03:48:52Z` `inline` by `mgoin` `vllm/model_executor/layers/fused_moe/fused_moe.py`:746; signals: kernel, moe, triton; excerpt: "Why do you need to copy the config? I assume this config applies to the triton kernel as well and we don't rollback" (https://github.com/vllm-project/vllm/pull/13321#discussion_r1974721192)
-- `2025-02-28T03:59:02Z` `inline` by `mgoin` `csrc/moe/moe_wna16.cu`:310; signals: cuda, moe, perf; excerpt: "should moe wna16 use cuda checks for bit == 4 only, is it not as performant for 8bit?" (https://github.com/vllm-project/vllm/pull/13321#discussion_r1974727399)
-- `2025-02-28T04:10:17Z` `review` `COMMENTED` by `mgoin`; signals: kernel, moe; excerpt: "Nice work keeping the kernel clean! I do think we definitely need to refactor fused moe.py to give a better interface to plug in ..." (https://github.com/vllm-project/vllm/pull/13321#pullrequestreview-2649646759)
-- `2025-02-18T06:31:16Z` `issue` by `sunjianxide`; signals: memory, moe, speedup; excerpt: "can you show you run command with vllm ? I run on on 8 A800 + deepseek-r1-awq ，but the speedup ratio typically ranges from ..." (https://github.com/vllm-project/vllm/pull/13321#issuecomment-2664732753)
-- `2025-02-28T05:18:31Z` `inline` by `jinzhen-lin` `vllm/model_executor/layers/fused_moe/fused_moe.py`:746; signals: block, moe; excerpt: "The gate up proj and down proj have different N and K, so the optimal BLOCK SIZE N and BLOCK SIZE K may differ. ..." (https://github.com/vllm-project/vllm/pull/13321#discussion_r1974796740)
-- `2025-03-10T03:10:41Z` `issue` by `GreyZzzzzzXh`; signals: correctness, kernel; excerpt: "Hi @jinzhen-lin , the writes to output in these two places cannot guarantee the order of execution, which may lead to potential correctness issues. ..." (https://github.com/vllm-project/vllm/pull/13321#issuecomment-2709320512)
-- `2025-03-10T03:34:08Z` `issue` by `jinzhen-lin`; signals: correctness, kernel; excerpt: "Hi @jinzhen-lin , the writes to output in these two places cannot guarantee the order of execution, which may lead to potential correctness issues. ..." (https://github.com/vllm-project/vllm/pull/13321#issuecomment-2709345106)
-- `2025-02-28T04:06:25Z` `inline` by `mgoin` `CMakeLists.txt`:561; signals: cuda; excerpt: "We might want to put this source in a if(VLLM GPU LANG STREQUAL "CUDA") section - I'm not sure if this might accidentally get ..." (https://github.com/vllm-project/vllm/pull/13321#discussion_r1974732221)
-- `2025-02-28T03:52:59Z` `inline` by `mgoin` `vllm/model_executor/layers/fused_moe/fused_moe.py`:915; signals: moe; excerpt: "What is "int4 w8a16"? Is this just a typo for int4 w4a16?" (https://github.com/vllm-project/vllm/pull/13321#discussion_r1974723807)
+- 2025-02-15 `LagPixelLOL`: I merged this with the main branch but received the following error with the startup command, doesn't happen without this PR. Without enforce eager there's also an error but with cuBLAS, I didn't save that error messsage. Sorry for the messed up ... (https://github.com/vllm-project/vllm/pull/13321#issuecomment-2660932190)
+- 2025-02-15 `jinzhen-lin`: @LagPixelLOL Fixed. Note that the test result is tested without MLA. (https://github.com/vllm-project/vllm/pull/13321#issuecomment-2660990697)
+- 2025-02-18 `sunjianxide`: can you show you run command with vllm ? I run on on 8 A800 + deepseek-r1-awq ，but the speedup ratio typically ranges from 1.05-1.40 this is my command: vllm serve /shared/weights/DeepSeek-R1-AWQ --host 0.0.0.0 --port 12345 --max-model-len 65536 --trust-remote-code --tensor-parallel-size 8 --quantization ... (https://github.com/vllm-project/vllm/pull/13321#issuecomment-2664732753)
+- 2025-02-18 `jinzhen-lin`: @sunjianxide try to run with VLLM MLA DISABLE=1 and reduce max model len, increase gpu memory utilization. This PR only optimizes moe gemm operator, if the inference bottleneck is not in moe gemm, the overall performance improvement will be relatively low. My ... (https://github.com/vllm-project/vllm/pull/13321#issuecomment-2664772332)
+- 2025-02-28 `mgoin` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:746: Why do you need to copy the config? I assume this config applies to the triton kernel as well and we don't rollback (https://github.com/vllm-project/vllm/pull/13321#discussion_r1974721192)
+- 2025-02-28 `mgoin` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:915: What is "int4 w8a16"? Is this just a typo for int4 w4a16? (https://github.com/vllm-project/vllm/pull/13321#discussion_r1974723807)
+- 2025-02-28 `mgoin` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:1312: You can merge with main to get this (https://github.com/vllm-project/vllm/pull/13321#discussion_r1974724699)
+- 2025-02-28 `mgoin` on `csrc/moe/moe_wna16.cu`:310: should moe wna16 use cuda checks for bit == 4 only, is it not as performant for 8bit? (https://github.com/vllm-project/vllm/pull/13321#discussion_r1974727399)
+- 2025-02-28 `mgoin` on `CMakeLists.txt`:561: We might want to put this source in a if(VLLM GPU LANG STREQUAL "CUDA") section - I'm not sure if this might accidentally get built on AMD GPUs for instance (https://github.com/vllm-project/vllm/pull/13321#discussion_r1974732221)
+- 2025-02-28 `mgoin` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:882: nit: would be nice to leave comments for some of the cases in the config heuristics (https://github.com/vllm-project/vllm/pull/13321#discussion_r1974733233)
+- 2025-02-28 `mgoin` commented: Nice work keeping the kernel clean! I do think we definitely need to refactor fused moe.py to give a better interface to plug in multiple kernels - similar to vllm/model executor/layers/quantization/kernels/ for Linear modules Just a few questions (https://github.com/vllm-project/vllm/pull/13321#pullrequestreview-2649646759)
+- 2025-02-28 `jinzhen-lin` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:746: The gate up proj and down proj have different N and K, so the optimal BLOCK SIZE N and BLOCK SIZE K may differ. The config.copy() is used to avoid mutual influence. Additionally, this is also the reason why I moved the ... (https://github.com/vllm-project/vllm/pull/13321#discussion_r1974796740)
+- 2025-02-28 `jinzhen-lin` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:915: Yes, I would update it soon. (https://github.com/vllm-project/vllm/pull/13321#discussion_r1974797525)
+- 2025-02-28 `jinzhen-lin` on `csrc/moe/moe_wna16.cu`:310: The first version of the moe wna16 gemm supports int4 only, so the should moe wna16 use cuda does a check bit == 4. The moe wna16 gemm supports int8 now, but I forgot to update should moe wna16 use cuda. The ... (https://github.com/vllm-project/vllm/pull/13321#discussion_r1974803297)
+- 2025-02-28 `jinzhen-lin` on `csrc/moe/moe_wna16.cu`:310: @mgoin My test result shows that the triton kernel perform well for int8 (even slightly better than cuda kernel). So it would be better to only enable cuda kernel for int4. I may optimize the int8 kernel later, but I think we ... (https://github.com/vllm-project/vllm/pull/13321#discussion_r1975664260)
+- 2025-03-08 `jinzhen-lin`: @mgoin Can we merge this? Though provide a better kernel on sm80+ devices, this kernel can be used on sm70/sm75 devices. (https://github.com/vllm-project/vllm/pull/13321#issuecomment-2708398680)
+- 2025-03-10 `GreyZzzzzzXh`: Hi @jinzhen-lin , the writes to output in these two places cannot guarantee the order of execution, which may lead to potential correctness issues. Should we move the initialization of output outside the kernel, for example by using C.zero ()? (https://github.com/vllm-project/vllm/pull/13321#issuecomment-2709320512)
+- 2025-03-10 `jinzhen-lin`: Hi @jinzhen-lin , the writes to output in these two places cannot guarantee the order of execution, which may lead to potential correctness issues. Should we move the initialization of output outside the kernel, for example by using C.zero ()? I'm not ... (https://github.com/vllm-project/vllm/pull/13321#issuecomment-2709345106)

@@ -1,53 +1,21 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/TensorRT-LLM#12530](https://github.com/NVIDIA/TensorRT-LLM/pull/12530)
-- Source page: `sources/prs/tensorrt-llm/PR-12530.md`
-- Evidence bundle: `evidence/pull-bundles/tensorrt-llm/gh-12530`
-- Generated at: `2026-05-20T15:18:12.857519+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-03-25T07:43:11Z`
-- Merged: `2026-05-18T01:49:54Z`
-
-## Discussion Counts
-
-- Issue comments: 71
-- Review submissions: 7 (approved=2, commented=5)
-- Inline review comments: 6
-- Review threads observed: 3
-- Resolved/outdated thread markers: resolved=3, outdated=2
-- Human participants with discussion text: 2ez4bz, Wanli-Jiang, coderabbitai, sunnyqgg, tensorrt-cicd
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-04-15T05:37:52Z` `APPROVED` by `2ez4bz` (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#pullrequestreview-4111061867)
-- `2026-04-15T05:46:29Z` `COMMENTED` by `sunnyqgg` (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#pullrequestreview-4111098002)
-- `2026-04-15T07:45:47Z` `COMMENTED` by `Wanli-Jiang` (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#pullrequestreview-4111702167)
-- `2026-04-15T07:48:30Z` `COMMENTED` by `Wanli-Jiang` (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#pullrequestreview-4111720788)
-- `2026-04-15T07:48:37Z` `APPROVED` by `Wanli-Jiang` (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#pullrequestreview-4111721527)
-- `2026-04-21T08:40:48Z` `COMMENTED` by `sunnyqgg` (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#pullrequestreview-4146284912)
-- `2026-04-21T08:51:26Z` `COMMENTED` by `sunnyqgg` (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#pullrequestreview-4146348987)
-
-## Inline Comment Hotspots
-
-- `tensorrt_llm/_torch/models/modeling_deepseekv3.py`: 6 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-25T07:49:44Z` `issue` by `coderabbitai`; signals: attention, compile, cuda, fp8, hang, moe, tensorrt; excerpt: "📝 Walkthrough Walkthrough Modified DeepseekV3 weight loading to detect and handle MTP checkpoint-weight sharing by comparing num nextn predict layers between checkpoint and spec ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4124471329)
-- `2026-04-21T08:40:48Z` `inline` by `sunnyqgg` `tensorrt_llm/_torch/models/modeling_deepseekv3.py`:370; signals: tensorrt; excerpt: "Thanks for raising this. Looking at the code, num nextn predict layers = 0 is actually a valid and intentional state — the Kimi-K2.5 ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#discussion_r3116142682)
-- `2026-04-15T05:37:47Z` `inline` by `2ez4bz` `tensorrt_llm/_torch/models/modeling_deepseekv3.py`:428; signals: tensorrt; excerpt: "Nit: all these if can mark consumed and not is shared mtp layer lines could reuse a variable" (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#discussion_r3084216550)
-- `2026-04-15T05:46:29Z` `inline` by `sunnyqgg` `tensorrt_llm/_torch/models/modeling_deepseekv3.py`:428; signals: tensorrt; excerpt: "Done, thanks a lot" (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#discussion_r3084249017)
-- `2026-04-15T07:45:47Z` `inline` by `Wanli-Jiang` `tensorrt_llm/_torch/models/modeling_deepseekv3.py`:348; signals: tensorrt; excerpt: "can we make it as a helper function, to make the load weight function more readable?" (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#discussion_r3084798353)
-- `2026-04-15T07:48:30Z` `inline` by `Wanli-Jiang` `tensorrt_llm/_torch/models/modeling_deepseekv3.py`:370; signals: tensorrt; excerpt: "should we check self.config.num nextn predict layers cannot be 0 somewhere?" (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#discussion_r3084816054)
-- `2026-04-21T08:51:26Z` `inline` by `sunnyqgg` `tensorrt_llm/_torch/models/modeling_deepseekv3.py`:348; signals: tensorrt; excerpt: "Good suggestion , done" (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#discussion_r3116203825)
-- `2026-03-25T12:47:25Z` `issue` by `tensorrt-cicd`; signals: pipeline; excerpt: "[PR Github 40291]( [ run ] completed with state FAILURE. Commit: 3bdff72 [/LLM/main/L0 MergeRequest PR pipeline 31403]( completed with status: 'FAILURE' [CI Report]( ⚠️ ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4126337586)
-- `2026-04-01T16:09:55Z` `issue` by `tensorrt-cicd`; signals: pipeline; excerpt: "[PR Github 41201]( [ run ] completed with state SUCCESS. Commit: 3bdff72 [/LLM/main/L0 MergeRequest PR pipeline 32162]( completed with status: 'FAILURE' [CI Report]( ⚠️ ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4171182119)
-- `2026-04-03T05:40:20Z` `issue` by `tensorrt-cicd`; signals: pipeline; excerpt: "[PR Github 41576]( [ run ] completed with state SUCCESS. Commit: 4d2fcfb [/LLM/main/L0 MergeRequest PR pipeline 32487]( completed with status: 'FAILURE' [CI Report]( ⚠️ ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4181995501)
-- `2026-04-13T13:15:38Z` `issue` by `tensorrt-cicd`; signals: pipeline; excerpt: "[PR Github 42977]( [ run ] completed with state SUCCESS. Commit: 25261ea [/LLM/main/L0 MergeRequest PR pipeline 33632]( completed with status: 'SUCCESS' Pipeline passed with ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4236651266)
-- `2026-04-15T12:07:43Z` `issue` by `tensorrt-cicd`; signals: pipeline; excerpt: "[PR Github 43401]( [ run ] completed with state SUCCESS. Commit: eb42190 [/LLM/main/L0 MergeRequest PR pipeline 33937]( completed with status: 'FAILURE' [CI Report]( ⚠️ ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4251834431)
+- 2026-03-25 `tensorrt-cicd`: [PR Github 40291]( [ run ] completed with state FAILURE. Commit: 3bdff72 [/LLM/main/L0 MergeRequest PR pipeline 31403]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4126337586)
+- 2026-04-01 `tensorrt-cicd`: [PR Github 41201]( [ run ] completed with state SUCCESS. Commit: 3bdff72 [/LLM/main/L0 MergeRequest PR pipeline 32162]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4171182119)
+- 2026-04-03 `tensorrt-cicd`: [PR Github 41576]( [ run ] completed with state SUCCESS. Commit: 4d2fcfb [/LLM/main/L0 MergeRequest PR pipeline 32487]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4181995501)
+- 2026-04-13 `tensorrt-cicd`: [PR Github 42977]( [ run ] completed with state SUCCESS. Commit: 25261ea [/LLM/main/L0 MergeRequest PR pipeline 33632]( completed with status: 'SUCCESS' Pipeline passed with automatic retried tests. Check the [rerun report]( for details. [CI Report]( [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4236651266)
+- 2026-04-15 `2ez4bz` on `tensorrt_llm/_torch/models/modeling_deepseekv3.py`:428: Nit: all these if can mark consumed and not is shared mtp layer lines could reuse a variable (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#discussion_r3084216550)
+- 2026-04-15 `sunnyqgg` on `tensorrt_llm/_torch/models/modeling_deepseekv3.py`:428: Done, thanks a lot (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#discussion_r3084249017)
+- 2026-04-15 `Wanli-Jiang` on `tensorrt_llm/_torch/models/modeling_deepseekv3.py`:348: can we make it as a helper function, to make the load weight function more readable? (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#discussion_r3084798353)
+- 2026-04-15 `Wanli-Jiang` on `tensorrt_llm/_torch/models/modeling_deepseekv3.py`:370: should we check self.config.num nextn predict layers cannot be 0 somewhere? (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#discussion_r3084816054)
+- 2026-04-15 `tensorrt-cicd`: [PR Github 43401]( [ run ] completed with state SUCCESS. Commit: eb42190 [/LLM/main/L0 MergeRequest PR pipeline 33937]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4251834431)
+- 2026-04-18 `tensorrt-cicd`: [PR Github 44096]( [ run ] completed with state SUCCESS. Commit: 1e801a0 [/LLM/main/L0 MergeRequest PR pipeline 34525]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4273887268)
+- 2026-04-21 `sunnyqgg` on `tensorrt_llm/_torch/models/modeling_deepseekv3.py`:370: Thanks for raising this. Looking at the code, num nextn predict layers = 0 is actually a valid and intentional state — the Kimi-K2.5 backbone explicitly sets it to 0 to indicate MTP is not applicable (see the note at line 1917). ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#discussion_r3116142682)
+- 2026-04-21 `sunnyqgg` on `tensorrt_llm/_torch/models/modeling_deepseekv3.py`:348: Good suggestion , done (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#discussion_r3116203825)
+- 2026-04-21 `tensorrt-cicd`: [PR Github 44699]( [ run ] completed with state SUCCESS. Commit: d6d64fd [/LLM/main/L0 MergeRequest PR pipeline 35063]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4288960698)
+- 2026-04-22 `tensorrt-cicd`: [PR Github 44850]( [ run ] completed with state SUCCESS. Commit: d6d64fd [/LLM/main/L0 MergeRequest PR pipeline 35190]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4293455372)
+- 2026-04-22 `tensorrt-cicd`: [PR Github 44895]( [ run ] completed with state SUCCESS. Commit: d6d64fd [/LLM/main/L0 MergeRequest PR pipeline 35229]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4294749522)
+- 2026-04-23 `tensorrt-cicd`: [PR Github 45077]( [ run ] completed with state SUCCESS. Commit: 53b7c58 [/LLM/main/L0 MergeRequest PR pipeline 35380]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4302998516)
+- 2026-04-23 `tensorrt-cicd`: [PR Github 45177]( [ run ] completed with state SUCCESS. Commit: 53b7c58 [/LLM/main/L0 MergeRequest PR pipeline 35454]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4306933852)
+- 2026-04-27 `tensorrt-cicd`: [PR Github 45629]( [ run ] completed with state SUCCESS. Commit: 899d039 [/LLM/main/L0 MergeRequest PR pipeline 35843]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4324950583)
+- 2026-05-13 `tensorrt-cicd`: [PR Github 48166]( [ run ] completed with state SUCCESS. Commit: 2f35349 [/LLM/main/L0 MergeRequest PR pipeline 37987]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4441313238)
+- 2026-05-14 `tensorrt-cicd`: [PR Github 48277]( [ run ] completed with state SUCCESS. Commit: 2f35349 [/LLM/main/L0 MergeRequest PR pipeline 38089]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4448924302)
+- 2026-05-15 `tensorrt-cicd`: [PR Github 48580]( [ run ] completed with state SUCCESS. Commit: f6b7395 [/LLM/main/L0 MergeRequest PR pipeline 38366]( completed with status: 'SUCCESS' Pipeline passed with automatic retried tests. Check the [rerun report]( for details. [CI Report]( [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/12530#issuecomment-4464154371)

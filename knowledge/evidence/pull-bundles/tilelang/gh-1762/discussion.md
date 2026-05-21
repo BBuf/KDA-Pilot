@@ -1,61 +1,14 @@
-# PR Discussion Digest
-
-- Source PR: [tile-ai/tilelang#1762](https://github.com/tile-ai/tilelang/pull/1762)
-- Source page: `sources/prs/tilelang/PR-1762.md`
-- Evidence bundle: `evidence/pull-bundles/tilelang/gh-1762`
-- Generated at: `2026-05-20T15:32:24.297990+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-01-31T10:31:09Z`
-- Merged: `2026-02-13T17:55:17Z`
-
-## Discussion Counts
-
-- Issue comments: 20
-- Review submissions: 13 (approved=2, commented=11)
-- Inline review comments: 15
-- Review threads observed: 13
-- Resolved/outdated thread markers: resolved=11, outdated=4
-- Human participants with discussion text: LeiWang1999, Rachmanino, bucket-xv, coderabbitai, tzj-fxz
-- Automation comments/reviews omitted from high-signal summary: 4
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-01-31T10:41:56Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 1 🤖 Fix all issues with AI agents 🧹 Nitpick comments (1) testing/python/language/test tilelang language ... (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3732273758)
-- `2026-02-02T07:34:47Z` `COMMENTED` by `LeiWang1999` (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3737741913)
-- `2026-02-02T09:24:57Z` `COMMENTED` by `tzj-fxz` (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3738224686)
-- `2026-02-02T09:58:37Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 2 🤖 Fix all issues with AI agents (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3738400121)
-- `2026-02-04T05:21:11Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 1 🤖 Fix all issues with AI agents (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3749053635)
-- `2026-02-05T05:16:52Z` `COMMENTED` by `LeiWang1999` - Would be better to have some benchmark results (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3754640527)
-- `2026-02-06T01:20:56Z` `COMMENTED` by `bucket-xv` (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3750446485)
-- `2026-02-06T05:59:24Z` `COMMENTED` by `tzj-fxz` (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3761002987)
-- `2026-02-06T06:07:12Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 2 🤖 Fix all issues with AI agents 🧹 Nitpick comments (1) src/tl templates/cuda/reduce.h (1) ... (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3761035380)
-- `2026-02-07T02:39:28Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 2 🤖 Fix all issues with AI agents 🧹 Nitpick comments (2) testing/python/language/test tilelang language ... (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3765974244)
-- `2026-02-12T12:02:26Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 3 🤖 Fix all issues with AI agents 🧹 Nitpick comments (1) src/op/finalize reducer.cc (1) ... (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3790588174)
-- `2026-02-13T17:54:09Z` `APPROVED` by `LeiWang1999` (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3798664798)
-- `2026-02-13T17:55:04Z` `APPROVED` by `LeiWang1999` (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3798668229)
-
-## Inline Comment Hotspots
-
-- `src/tl_templates/cuda/reduce.h`: 10 inline comment(s)
-- `testing/python/language/test_tilelang_language_reduce.py`: 3 inline comment(s)
-- `src/op/reduce.cc`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-02-06T06:07:12Z` `review` `COMMENTED` by `coderabbitai`; signals: cuda, hang, hopper, memory, nan, warp; excerpt: "Actionable comments posted: 2 🤖 Fix all issues with AI agents 🧹 Nitpick comments (1) src/tl templates/cuda/reduce.h (1) 130-189: run hopper duplicates run except ..." (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3761035380)
-- `2026-01-31T10:32:19Z` `issue` by `coderabbitai`; signals: bf16, cuda, dtype, hang, hopper, tile, warp; excerpt: "[!NOTE] Reviews paused It looks like this branch is under active development. To avoid overwhelming you with review comments due to an influx of ..." (https://github.com/tile-ai/tilelang/pull/1762#issuecomment-3828122313)
-- `2026-02-07T02:39:28Z` `review` `COMMENTED` by `coderabbitai`; signals: dtype, kernel, regression, tile, warp; excerpt: "Actionable comments posted: 2 🤖 Fix all issues with AI agents 🧹 Nitpick comments (2) testing/python/language/test tilelang language reduce.py (2) 133-138: Bitwise reduce ops ..." (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3765974244)
-- `2026-02-02T09:58:36Z` `inline` by `coderabbitai` `src/tl_templates/cuda/reduce.h`:331; signals: benchmark, cuda, cute, tile, warp; excerpt: "⚠️ Potential issue 🟠 Major 🧩 Analysis chain 🏁 Script executed: Repository: tile-ai/tilelang Length of output: 142 --- 🏁 Script executed: Repository: tile-ai/tilelang Length ..." (https://github.com/tile-ai/tilelang/pull/1762#discussion_r2753509177)
-- `2026-02-12T12:02:25Z` `inline` by `coderabbitai` `src/tl_templates/cuda/reduce.h`:78; signals: block, cuda, cute, hang, tile; excerpt: "⚠️ Potential issue 🟡 Minor Barrier policies are clean and well-documented. Both SyncThreadsBarrier and NamedBarrier are straightforward. SyncThreadsBarrier correctly ignores the phase parameter since ..." (https://github.com/tile-ai/tilelang/pull/1762#discussion_r2798493897)
-- `2026-02-02T01:36:22Z` `issue` by `bucket-xv`; signals: perf, performance, ptx, sm100, warp; excerpt: "Thanks for your contribution! I've further investigated this problem this weekend and have some suggestions for the code: 1. Use intrinsic functions instead of ..." (https://github.com/tile-ai/tilelang/pull/1762#issuecomment-3832479002)
-- `2026-02-02T05:53:00Z` `issue` by `tzj-fxz`; signals: perf, performance, ptx, sm100, warp; excerpt: "Thanks for your contribution! I've further investigated this problem this weekend and have some suggestions for the code: 1. Use intrinsic functions instead of ..." (https://github.com/tile-ai/tilelang/pull/1762#issuecomment-3833080014)
-- `2026-02-05T07:38:23Z` `issue` by `tzj-fxz`; signals: block, perf, performance, regression, speedup; excerpt: "Threads=128. One block. Op M N Original (ms) Redux (ms) Original (tpt) Redux (tpt) Speedup :--- :--- :--- :--- :--- :--- :--- :--- MAX ..." (https://github.com/tile-ai/tilelang/pull/1762#issuecomment-3851566390)
-- `2026-01-31T10:41:55Z` `inline` by `coderabbitai` `testing/python/language/test_tilelang_language_reduce.py`:111; signals: benchmark, cute, dtype, tile; excerpt: "⚠️ Potential issue 🟡 Minor 🧩 Analysis chain 🏁 Script executed: Repository: tile-ai/tilelang Length of output: 42 --- 🏁 Script executed: Repository: tile-ai/tilelang Length ..." (https://github.com/tile-ai/tilelang/pull/1762#discussion_r2749377634)
-- `2026-02-07T02:39:27Z` `inline` by `coderabbitai` `testing/python/language/test_tilelang_language_reduce.py`:61; signals: compile, cute, kernel, tile; excerpt: "⚠️ Potential issue 🟡 Minor Missing else clause for unknown op — silent incorrect results. If an unsupported op string is passed, none of ..." (https://github.com/tile-ai/tilelang/pull/1762#discussion_r2776778089)
-- `2026-02-07T02:39:27Z` `inline` by `coderabbitai` `testing/python/language/test_tilelang_language_reduce.py`:111; signals: benchmark, dtype, kernel, tile; excerpt: "⚠️ Potential issue 🟠 Major ref fn is missing handlers for bitand, bitor, bitxor — will raise NameError. The kernel dispatch (lines 46-61) supports ..." (https://github.com/tile-ai/tilelang/pull/1762#discussion_r2776778092)
-- `2026-02-12T12:02:26Z` `review` `COMMENTED` by `coderabbitai`; signals: memory, shared memory, warp; excerpt: "Actionable comments posted: 3 🤖 Fix all issues with AI agents 🧹 Nitpick comments (1) src/op/finalize reducer.cc (1) 113-117: Minor inconsistency: workspace allocation threshold ..." (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3790588174)
+- 2026-01-31 `tzj-fxz`: Maybe we also need the performance regression tests. Where can I trigger them? @LeiWang1999 (https://github.com/tile-ai/tilelang/pull/1762#issuecomment-3828199511)
+- 2026-02-02 `bucket-xv`: Thanks for your contribution! I've further investigated this problem this weekend and have some suggestions for the code: 1. Use intrinsic functions instead of raw redux PTX for maintainability. Refer to Note that this is also for sm80+. 2. May leverage redux ... (https://github.com/tile-ai/tilelang/pull/1762#issuecomment-3832479002)
+- 2026-02-02 `LeiWang1999` on `src/op/reduce.cc`:379: It would be better to refactor this into a lambda function; that way, we can have cleaner code and more useful comments (https://github.com/tile-ai/tilelang/pull/1762#discussion_r2752947528)
+- 2026-02-02 `LeiWang1999` on `src/tl_templates/cuda/reduce.h`:63: why do we need to remove this piece of code? (https://github.com/tile-ai/tilelang/pull/1762#discussion_r2752957000)
+- 2026-02-02 `tzj-fxz` on `src/tl_templates/cuda/reduce.h`:63: It is more flexible to support reduction across any warps (not constrained to powers of 2) by doing warp-level reduction after inner-warp reduction. (https://github.com/tile-ai/tilelang/pull/1762#discussion_r2753367964)
+- 2026-02-03 `bucket-xv`: As far as I know, reduce max sync does not accept float types. May you use assembly to use redux.sync for floating types since sm 100a? It's indeed complex. It seems that reduce max sync can be used to substitute ASM, but ... (https://github.com/tile-ai/tilelang/pull/1762#issuecomment-3839560139)
+- 2026-02-04 `bucket-xv` on `src/tl_templates/cuda/reduce.h`:354: As the AI bot points out, the integer value may also go through this branch, causing correctness problems (https://github.com/tile-ai/tilelang/pull/1762#discussion_r2763472237)
+- 2026-02-04 `bucket-xv` on `src/tl_templates/cuda/reduce.h`:311: These reduce sync functions only accept integers. (https://github.com/tile-ai/tilelang/pull/1762#discussion_r2763478414)
+- 2026-02-05 `LeiWang1999` commented: Would be better to have some benchmark results (https://github.com/tile-ai/tilelang/pull/1762#pullrequestreview-3754640527)
+- 2026-02-05 `tzj-fxz`: Threads=128. One block. Op M N Original (ms) Redux (ms) Original (tpt) Redux (tpt) Speedup :--- :--- :--- :--- :--- :--- :--- :--- MAX 256 32 0.0077 0.0076 4.37 GB/s 4.46 GB/s +1.32% MIN 256 32 0.0067 0.0062 5.05 GB/s 5.41 GB/s ... (https://github.com/tile-ai/tilelang/pull/1762#issuecomment-3851566390)
+- 2026-02-06 `tzj-fxz` on `src/tl_templates/cuda/reduce.h`:311: Yes. This lambda expression will only be triggered when the input is an integer. (https://github.com/tile-ai/tilelang/pull/1762#discussion_r2772460203)
+- 2026-02-06 `bucket-xv`: May you add some more tests? i.e: 1. All datatypes and all types of reduce op. from fp4, fp8 to fp32 and int8 to int64. Also, max, min, add, absmax, absmin etc. 2. All shapes and block sizes. The current ones do ... (https://github.com/tile-ai/tilelang/pull/1762#issuecomment-3858761103)
+- 2026-02-07 `tzj-fxz`: 1. Add more tests for various datatypes and operations. Since we rarely do reductions on low-precision datatypes (warp shuffle instructions also do not support them), we skip the tests for them. 2. Add tests for threads < 32. (https://github.com/tile-ai/tilelang/pull/1762#issuecomment-3863382465)
+- 2026-02-07 `tzj-fxz`: I don't have a ROCm machine on hand to reproduce the error. The Hopper passes this test. It seems weird because the test function test reduce max clear and the source code are not modified in the latest commit. Could anyone help? (https://github.com/tile-ai/tilelang/pull/1762#issuecomment-3864348242)

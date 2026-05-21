@@ -1,59 +1,21 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#16387](https://github.com/vllm-project/vllm/pull/16387)
-- Source page: `sources/prs/vllm/PR-16387.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-16387`
-- Generated at: `2026-05-20T15:34:54.594549+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-04-10T04:05:22Z`
-- Merged: `2025-04-14T21:41:48Z`
-
-## Discussion Counts
-
-- Issue comments: 43
-- Review submissions: 10 (approved=3, commented=7)
-- Inline review comments: 8
-- Review threads observed: 4
-- Resolved/outdated thread markers: resolved=4, outdated=2
-- Human participants with discussion text: DarkLight1337, Husamx, Isotr0py, courage17340, guihonghao, nicoeiris11, yushuiwx, ywang96, zhouzaida
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 20
-
-## Review Decisions
-
-- `2025-04-10T04:51:18Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/16387#pullrequestreview-2755311250)
-- `2025-04-10T04:57:07Z` `COMMENTED` by `courage17340` (https://github.com/vllm-project/vllm/pull/16387#pullrequestreview-2755317700)
-- `2025-04-10T06:29:11Z` `COMMENTED` by `Isotr0py` (https://github.com/vllm-project/vllm/pull/16387#pullrequestreview-2755479428)
-- `2025-04-10T07:06:19Z` `COMMENTED` by `courage17340` (https://github.com/vllm-project/vllm/pull/16387#pullrequestreview-2755568374)
-- `2025-04-14T05:48:08Z` `COMMENTED` by `Isotr0py` (https://github.com/vllm-project/vllm/pull/16387#pullrequestreview-2763195944)
-- `2025-04-14T07:46:41Z` `APPROVED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/16387#pullrequestreview-2763426061)
-- `2025-04-14T07:48:35Z` `COMMENTED` by `courage17340` (https://github.com/vllm-project/vllm/pull/16387#pullrequestreview-2763430756)
-- `2025-04-14T08:01:16Z` `APPROVED` by `Isotr0py` (https://github.com/vllm-project/vllm/pull/16387#pullrequestreview-2763469709)
-- `2025-04-14T08:06:26Z` `APPROVED` by `ywang96` - Sorry for the late review - overall LGTM and I just left one comment (https://github.com/vllm-project/vllm/pull/16387#pullrequestreview-2763350860)
-- `2025-04-14T08:24:32Z` `COMMENTED` by `courage17340` (https://github.com/vllm-project/vllm/pull/16387#pullrequestreview-2763533174)
-
-## Inline Comment Hotspots
-
-- `vllm/v1/worker/gpu_model_runner.py`: 2 inline comment(s)
-- `vllm/transformers_utils/processors/processing_kimi_vl.py`: 2 inline comment(s)
-- `tests/models/decoder_only/vision_language/test_models.py`: 2 inline comment(s)
-- `vllm/model_executor/models/kimi_vl.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-04-10T04:48:50Z` `issue` by `ywang96`; signals: cache, memory; excerpt: "Hey @courage17340 thanks for the contribution! Before I review the PR just one quick question: It seems that recent versions of vllm have cpu ..." (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2791541617)
-- `2025-04-10T06:21:43Z` `issue` by `courage17340`; signals: cache, memory; excerpt: "Hey @courage17340 thanks for the contribution! Before I review the PR just one quick question: It seems that recent versions of vllm have cpu ..." (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2791676458)
-- `2025-04-11T02:59:07Z` `issue` by `courage17340`; signals: memory, oom; excerpt: "Edit: What GPU are you running this on? I get OOM even on A800 (80 GB) I'm running this on H800 (80GB too). It ..." (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2795717938)
-- `2025-04-11T04:36:21Z` `issue` by `DarkLight1337`; signals: memory, oom; excerpt: "I'm running this on H800 (80GB too). It seems that you are getting GPU OOM? In that case, you should check whether flash-attn (vllm-flash-attn ..." (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2795811758)
-- `2025-04-11T07:56:31Z` `issue` by `courage17340`; signals: cache, memory; excerpt: "Can you try VLLM ENABLE V1 MULTIPROCESSING=0 and see if it resolves the memory issue? This env doesn't help. I guess maybe it's not ..." (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2796138389)
-- `2025-04-11T09:03:58Z` `issue` by `DarkLight1337`; signals: cache, memory; excerpt: "I think it's just that the cache limit is multiplied unexpectedly. When I run your command, the memory usage plateaus out at approx. 224G ..." (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2796294323)
-- `2025-04-14T07:38:33Z` `issue` by `DarkLight1337`; signals: cache, memory; excerpt: "I think it's just that the cache limit is multiplied unexpectedly. When I run your command, the memory usage plateaus out at approx. 224G ..." (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2800744270)
-- `2025-04-10T06:28:09Z` `inline` by `Isotr0py` `vllm/transformers_utils/processors/processing_kimi_vl.py`:60; signals: register; excerpt: ""auto map": { "AutoImageProcessor": "image processing kimi vl.KimiVLImageProcessor", "AutoProcessor": "processing kimi vl.KimiVLProcessor" }, If the processor has been implemented and registered in model repo ..." (https://github.com/vllm-project/vllm/pull/16387#discussion_r2036597636)
-- `2025-04-10T04:14:37Z` `issue` by `ywang96`; signals: memory; excerpt: "Hey @courage17340 thanks for the contribution! Before I review the PR just one quick question: It seems that recent versions of vllm have cpu ..." (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2791503367)
-- `2025-04-10T04:40:33Z` `issue` by `courage17340`; signals: memory; excerpt: "Hey @courage17340 thanks for the contribution! Before I review the PR just one quick question: It seems that recent versions of vllm have cpu ..." (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2791531972)
-- `2025-04-10T08:16:32Z` `issue` by `DarkLight1337`; signals: memory; excerpt: "Could you elaborate on the memory leak when caching is enabled? Does the memory usage grow without bound or does it stabilize after a ..." (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2791941201)
-- `2025-04-10T09:43:24Z` `issue` by `courage17340`; signals: memory; excerpt: "Could you elaborate on the memory leak when caching is enabled? Does the memory usage grow without bound or does it stabilize after a ..." (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2792172798)
+- 2025-04-10 `ywang96`: Hey @courage17340 thanks for the contribution! Before I review the PR just one quick question: It seems that recent versions of vllm have cpu memory leak problem for multi modal models Are you still seeing this issue from the main branch? This ... (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2791503367)
+- 2025-04-10 `DarkLight1337` on `vllm/v1/worker/gpu_model_runner.py`:1027: Yeah I think we should split this out into a separate PR. Do you have minimal reproducible example so we can add a test case for it? (https://github.com/vllm-project/vllm/pull/16387#discussion_r2036489717)
+- 2025-04-10 `courage17340` on `vllm/v1/worker/gpu_model_runner.py`:1027: Unfortunately, the reproduction was not minimal. We tested it on OCRBench and found that some results were mad, while a few were correct but mismatched (e.g., test 2 returned the correct text for test 1). (https://github.com/vllm-project/vllm/pull/16387#discussion_r2036494087)
+- 2025-04-10 `Isotr0py` on `vllm/transformers_utils/processors/processing_kimi_vl.py`:60: "auto map": { "AutoImageProcessor": "image processing kimi vl.KimiVLImageProcessor", "AutoProcessor": "processing kimi vl.KimiVLProcessor" }, If the processor has been implemented and registered in model repo (preprocessor config.json), there is no need to port the hf processor implementation here. :) This folder is only ... (https://github.com/vllm-project/vllm/pull/16387#discussion_r2036597636)
+- 2025-04-10 `courage17340` on `vllm/transformers_utils/processors/processing_kimi_vl.py`:60: Thanks, it's removed now. (https://github.com/vllm-project/vllm/pull/16387#discussion_r2036653621)
+- 2025-04-10 `DarkLight1337`: Could you elaborate on the memory leak when caching is enabled? Does the memory usage grow without bound or does it stabilize after a while? (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2791941201)
+- 2025-04-10 `courage17340`: Could you elaborate on the memory leak when caching is enabled? Does the memory usage grow without bound or does it stabilize after a while? It grows without bound, and the machine runs out of memory very soon. (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2792172798)
+- 2025-04-10 `courage17340`: Can you show how to reproduce this issue? I served kimi-vl and used VLMEvalKit to test it. Maybe simple cases like sending random images can also reproduce, let me try that. (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2792202283)
+- 2025-04-10 `courage17340`: It seems that single-image requests can't reproduce any more, but multiple-image requests can. My local test env is rebased on 0d4d06f, which includes 16273 serve test I use ps auxf to see the memory cost (the RSS column, the unit should be ... (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2792563210)
+- 2025-04-10 `DarkLight1337`: Can you try VLLM ENABLE V1 MULTIPROCESSING=0 and see if it resolves the memory issue? (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2793347691)
+- 2025-04-10 `DarkLight1337`: Back to the PR , be sure to update the tests as mentioned here: And don't forget to update the supported models page! Thanks for your help in implementing the model! (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2793941130)
+- 2025-04-11 `courage17340`: Edit: What GPU are you running this on? I get OOM even on A800 (80 GB) I'm running this on H800 (80GB too). It seems that you are getting GPU OOM? In that case, you should check whether flash-attn (vllm-flash-attn is not ... (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2795717938)
+- 2025-04-11 `DarkLight1337`: I'm running this on H800 (80GB too). It seems that you are getting GPU OOM? In that case, you should check whether flash-attn (vllm-flash-attn is not compatible, see the first known issue) is installed, because otherwise MoonViT will use a fallback attn ... (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2795811758)
+- 2025-04-11 `courage17340`: Can you try VLLM ENABLE V1 MULTIPROCESSING=0 and see if it resolves the memory issue? This env doesn't help. I guess maybe it's not actually memory leak, but some errors that make the cache limit multiplied when there are multiple images within ... (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2796138389)
+- 2025-04-11 `DarkLight1337`: I think it's just that the cache limit is multiplied unexpectedly. When I run your command, the memory usage plateaus out at approx. 224G (virtual) / 135G (resident) even with subsequent calls of the script. (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2796294323)
+- 2025-04-14 `Isotr0py` on `tests/models/decoder_only/vision_language/test_models.py`:323: Don't forget to update examples/offline inference/vision language.py and examples/offline inference/vision language multi image.py! (https://github.com/vllm-project/vllm/pull/16387#discussion_r2041454067)
+- 2025-04-14 `DarkLight1337`: I think it's just that the cache limit is multiplied unexpectedly. When I run your command, the memory usage plateaus out at approx. 224G (virtual) / 135G (resident) even with subsequent calls of the script. Let's move this into a separate issue. ... (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2800744270)
+- 2025-04-14 `ywang96` on `vllm/model_executor/models/kimi_vl.py`:444: We typically try to avoid using get input embeddings v0 unless we necessarily need to (usually to deal with embedding merge with multiple modalities) Can we just put these code inside the forward? (https://github.com/vllm-project/vllm/pull/16387#discussion_r2041589336)
+- 2025-04-14 `courage17340` on `tests/models/decoder_only/vision_language/test_models.py`:323: Updated, please review again. (https://github.com/vllm-project/vllm/pull/16387#discussion_r2041596571)
+- 2025-04-14 `courage17340`: It seems that the ci machine can't run test models.py due to limited GPU memory. (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2801412836)
+- 2025-04-14 `DarkLight1337`: You can add large gpu mark to skip the OOM tests (https://github.com/vllm-project/vllm/pull/16387#issuecomment-2801427441)

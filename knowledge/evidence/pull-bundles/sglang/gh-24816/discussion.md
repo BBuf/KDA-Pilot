@@ -1,75 +1,37 @@
-# PR Discussion Digest
-
-- Source PR: [sgl-project/sglang#24816](https://github.com/sgl-project/sglang/pull/24816)
-- Source page: `sources/prs/sglang/PR-24816.md`
-- Evidence bundle: `evidence/pull-bundles/sglang/gh-24816`
-- Generated at: `2026-05-20T15:29:45.675299+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-05-09T09:57:28Z`
-- Merged: `2026-05-13T21:53:19Z`
-
-## Discussion Counts
-
-- Issue comments: 14
-- Review submissions: 28 (approved=3, commented=25)
-- Inline review comments: 39
-- Review threads observed: 18
-- Resolved/outdated thread markers: resolved=18, outdated=5
-- Human participants with discussion text: Fridge003, ch-wan, rainj-me, samuellees, yiakwy-xpu-ml-framework-team, yuan-luo
-- Automation comments/reviews omitted from high-signal summary: 4
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-05-09T09:59:58Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces support for FlashInfer's SM90 cutlass mixed-input MoE GEMM for MXFP4 quantization, specifically ... (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4257556696)
-- `2026-05-09T13:23:38Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4257832096)
-- `2026-05-09T13:27:14Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4257835451)
-- `2026-05-10T08:23:10Z` `COMMENTED` by `samuellees` - It's great that this PR adds a candidate path for DS4 W4A16, I think we still need end-to-end ... (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4259123385)
-- `2026-05-10T14:37:46Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4259487389)
-- `2026-05-10T14:40:10Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4259489621)
-- `2026-05-10T14:41:16Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4259490696)
-- `2026-05-11T09:06:41Z` `APPROVED` by `samuellees` - This PR could be an alternative of 23681 and 24492 cc @Fridge003 for more comments (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4262110753)
-- `2026-05-11T09:38:43Z` `COMMENTED` by `ch-wan` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4262276213)
-- `2026-05-11T09:49:14Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4262399991)
-- `2026-05-11T09:49:20Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4262400551)
-- `2026-05-11T09:58:59Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4262477780)
-- `2026-05-11T09:59:25Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4262482125)
-- `2026-05-11T18:29:58Z` `COMMENTED` by `rainj-me` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4266217224)
-- `2026-05-11T18:31:31Z` `APPROVED` by `rainj-me` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4266326568)
-- `2026-05-12T07:38:15Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4270136796)
-- `2026-05-12T07:39:40Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4270148088)
-- `2026-05-12T07:40:06Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4270152071)
-- `2026-05-13T06:00:18Z` `COMMENTED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4278542188)
-- `2026-05-13T06:07:45Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4278794374)
-- `2026-05-13T06:08:00Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4278795535)
-- `2026-05-13T06:16:27Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4278843253)
-- `2026-05-13T06:16:39Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4278844413)
-- `2026-05-13T06:29:24Z` `COMMENTED` by `yuan-luo` (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4278916016)
-- ... 4 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`: 16 inline comment(s)
-- `python/sglang/srt/layers/quantization/mxfp4.py`: 15 inline comment(s)
-- `test/registered/unit/layers/quantization/test_mxfp4_sm90_cutlass.py`: 4 inline comment(s)
-- `python/sglang/srt/layers/quantization/mxfp4_flashinfer_trtllm_moe.py`: 2 inline comment(s)
-- `python/sglang/srt/layers/quantization/fp8.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-05-12T07:38:15Z` `inline` by `yuan-luo` `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:229; signals: bf16, cutlass, dtype, flashinfer, fp4, gemm, kernel, moe; excerpt: "It has to be hard code to bf16, the FlashInfer SM90 mixed-input cutlass MoE kernels are templated with GemmOutputType = nv bfloat16 only. Mxfp4FlashinferTrtllmMoEMethod ..." (https://github.com/sgl-project/sglang/pull/24816#discussion_r3224571314)
-- `2026-05-12T07:39:39Z` `inline` by `yuan-luo` `python/sglang/srt/layers/quantization/mxfp4.py`:988; signals: bf16, cutlass, flashinfer, fp4, gemm, kernel, moe, mxfp4; excerpt: "It has to be hard code to bf16, the FlashInfer SM90 mixed-input cutlass MoE kernels are templated with GemmOutputType = nv bfloat16 only." (https://github.com/sgl-project/sglang/pull/24816#discussion_r3224579102)
-- `2026-05-13T05:22:08Z` `inline` by `Fridge003` `test/registered/unit/layers/quantization/test_mxfp4_sm90_cutlass.py`:2; signals: cutlass, flashinfer, fp4, h200, moe, mxfp4, register, sm90; excerpt: "We need to add an end-to-end test for flashinfer mxfp4 moe backend. Can be a new subtest under test/registered/dsv4/test deepseek v4 flash fp4 h200.py" (https://github.com/sgl-project/sglang/pull/24816#discussion_r3231681668)
-- `2026-05-13T06:16:38Z` `inline` by `yuan-luo` `test/registered/unit/layers/quantization/test_mxfp4_sm90_cutlass.py`:2; signals: cutlass, flashinfer, fp4, h200, moe, mxfp4, register, sm90; excerpt: "Added TestDSV4FlashFP4H200FlashInferCutlass in the same file, sibling subtest under the same TP=4 + EAGLE setup, swapping the MoE runner backend to flashinfer mxfp4." (https://github.com/sgl-project/sglang/pull/24816#discussion_r3231923148)
-- `2026-05-12T05:57:49Z` `issue` by `yuan-luo`; signals: accuracy, benchmark, cutlass, flashinfer, fp4, h100, mxfp4, sm90; excerpt: "@yuan-luo The 0.73 accuracy result is not as expected. For accuracy testing, please benchmark AIME25 on V4-Pro with this tool and: 1. When launching ..." (https://github.com/sgl-project/sglang/pull/24816#issuecomment-4427726026)
-- `2026-05-11T18:20:53Z` `inline` by `rainj-me` `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:229; signals: bf16, cutlass, dtype, flashinfer, fp4, moe, mxfp4; excerpt: "can this be x.dtype or it has to be hard code to bf16?" (https://github.com/sgl-project/sglang/pull/24816#discussion_r3221172950)
-- `2026-05-10T14:37:46Z` `inline` by `yuan-luo` `python/sglang/srt/layers/quantization/mxfp4.py`:1011; signals: cutlass, flashinfer, fp4, moe, mxfp4, sm90; excerpt: "The hunk you flagged is the GPT-OSS path — it already passes alpha=1.702, beta=1.0, limit=7.0 as explicit per-expert tensors (see process weights for sm90 ..." (https://github.com/sgl-project/sglang/pull/24816#discussion_r3215006128)
-- `2026-05-10T14:40:10Z` `inline` by `yuan-luo` `python/sglang/srt/layers/quantization/mxfp4.py`:1014; signals: cutlass, fp4, fp8, kernel, mxfp4, nvfp4; excerpt: "Real tp size/tp rank. SGLang shards the weights in create weights; the values passed here are for the kernel's AllReduce / inter-rank coordination, not ..." (https://github.com/sgl-project/sglang/pull/24816#discussion_r3215009004)
-- `2026-05-11T09:58:59Z` `inline` by `yuan-luo` `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:125; signals: cutlass, flashinfer, fp4, kernel, moe, mxfp4; excerpt: "You are right, but it matches Mxfp4FlashinferTrtllmMoEMethod.create moe runner style, neither FlashInfer path constructs a MoeRunner (the fused kernel is the runner). The hook ..." (https://github.com/sgl-project/sglang/pull/24816#discussion_r3217898952)
-- `2026-05-11T09:59:25Z` `inline` by `yuan-luo` `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:71; signals: cutlass, flashinfer, fp4, fp8, moe, mxfp4; excerpt: "It is intentional, the same pattern as Mxfp4MarlinMoEMethod and Mxfp4FlashinferTrtllmMoEMethod, both wrap Fp8MoEMethod via composition rather than inherit." (https://github.com/sgl-project/sglang/pull/24816#discussion_r3217902430)
-- `2026-05-13T06:29:24Z` `inline` by `yuan-luo` `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:237; signals: cutlass, flashinfer, fp4, memory, moe, mxfp4; excerpt: "The quick answer is yes. The torch.empty(...) is inside use symmetric memory, so when sym-mem allgather is enabled the output buffer is routed into ..." (https://github.com/sgl-project/sglang/pull/24816#discussion_r3231984013)
-- `2026-05-10T08:23:10Z` `review` `COMMENTED` by `samuellees`; signals: accuracy, correctness, flashinfer, fp4, layout; excerpt: "It's great that this PR adds a candidate path for DS4 W4A16, I think we still need end-to-end DS4 accuracy validation before calling it ..." (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4259123385)
+- 2026-05-09 `yuan-luo`: Per FlashInfer PR's result (below), it was tested on H200, but the performance is almost the same as my test on H100. FlashInfer kernel has some space to improve in the short token part. (https://github.com/sgl-project/sglang/pull/24816#issuecomment-4412235392)
+- 2026-05-09 `yuan-luo` on `python/sglang/srt/layers/quantization/mxfp4.py`:833: The original version did pass layer.w13 weight.data straight in, where .contiguous() would have been a useful guard. After the layout fix in a follow-up commit, the inputs to the interleave helpers are freshly-allocated padded buffers (torch.zeros + slice assignment), so they are ... (https://github.com/sgl-project/sglang/pull/24816#discussion_r3213205856)
+- 2026-05-10 `samuellees` on `python/sglang/srt/layers/quantization/mxfp4.py`:1011: SwiGLU clamp: DS4 may need explicit alpha=1, beta=0, limit, similar to 24492. (https://github.com/sgl-project/sglang/pull/24816#discussion_r3214559145)
+- 2026-05-10 `samuellees` on `python/sglang/srt/layers/quantization/mxfp4.py`:1014: it would be good to confirm whether FlashInfer should receive real tp size/tp rank, or tp size=1, tp rank=0 after SGLang has already sharded the weights. (https://github.com/sgl-project/sglang/pull/24816#discussion_r3214559411)
+- 2026-05-10 `samuellees` on `python/sglang/srt/layers/quantization/mxfp4_flashinfer_trtllm_moe.py`:441: DS4 uses routed scaling factor=1.5, so we should verify it is applied at the right stage. (https://github.com/sgl-project/sglang/pull/24816#discussion_r3214560431)
+- 2026-05-10 `samuellees` commented: It's great that this PR adds a candidate path for DS4 W4A16, I think we still need end-to-end DS4 accuracy validation before calling it fully supported. From the experience of a few areas may affect DS4 correctness: - SwiGLU clamp: DS4 may ... (https://github.com/sgl-project/sglang/pull/24816#pullrequestreview-4259123385)
+- 2026-05-10 `yuan-luo`: It's great that this PR adds a candidate path for DS4 W4A16, I think we still need end-to-end DS4 accuracy validation before calling it fully supported. From the experience of 24492, a few areas may affect DS4 correctness: SwiGLU clamp: DS4 may ... (https://github.com/sgl-project/sglang/pull/24816#issuecomment-4415011223)
+- 2026-05-10 `yuan-luo`: Updated DeepSeekV4 GSM8k result in description. metric value --- ---: GSM8K score (200 q, chat API, T=0) 0.985 Total latency 49.21 s Output throughput 469 tok/s (https://github.com/sgl-project/sglang/pull/24816#issuecomment-4415521550)
+- 2026-05-10 `yuan-luo` on `python/sglang/srt/layers/quantization/mxfp4.py`:1011: The hunk you flagged is the GPT-OSS path — it already passes alpha=1.702, beta=1.0, limit=7.0 as explicit per-expert tensors (see process weights for sm90 cutlass). DSv4 path in mxfp4 flashinfer cutlass moe.py was the sloppy one, it was passing alpha=None, beta=None, limit=tensor, ... (https://github.com/sgl-project/sglang/pull/24816#discussion_r3215006128)
+- 2026-05-10 `yuan-luo` on `python/sglang/srt/layers/quantization/mxfp4.py`:1014: Real tp size/tp rank. SGLang shards the weights in create weights; the values passed here are for the kernel's AllReduce / inter-rank coordination, not for re-sharding the inputs. Matches the existing FP8 and NVFP4 cutlass call sites. (https://github.com/sgl-project/sglang/pull/24816#discussion_r3215009004)
+- 2026-05-10 `yuan-luo` on `python/sglang/srt/layers/quantization/mxfp4_flashinfer_trtllm_moe.py`:441: Applied exactly once via maybe fuse routed scale and shared add. Same pattern as the existing Mxfp4MarlinMoEMethod / Mxfp4FlashinferTrtllmMoEMethod paths (production-correct on DSv4). DSv4-Flash GSM8K = 0.985 with TP=4 confirms numerically. (https://github.com/sgl-project/sglang/pull/24816#discussion_r3215010452)
+- 2026-05-11 `yuan-luo`: @yuan-luo is the issue resolved ? ref 23686 @yiakwy-xpu-ml-framework-team 23686 is the marlin w4a16 supporting. I've verified e2e DSV4 on H100 with FlashInffer SM90 mxfp4 backend. (https://github.com/sgl-project/sglang/pull/24816#issuecomment-4417116712)
+- 2026-05-11 `yuan-luo`: @samuellees We don't have the RSF-PREMUL fix in this PR, but we don't show the -7.5pp regression either. Our post-hoc multiply is a single fused op: shared.add (routed, alpha=routed scaling factor), which is exactly shared + rsf routed. It does not scale ... (https://github.com/sgl-project/sglang/pull/24816#issuecomment-4418104610)
+- 2026-05-11 `ch-wan` on `python/sglang/srt/layers/quantization/fp8.py`:267: move to the top of this file (https://github.com/sgl-project/sglang/pull/24816#discussion_r3217721145)
+- 2026-05-11 `ch-wan` on `python/sglang/srt/layers/quantization/mxfp4.py`:973: it would be better if we can check / handle this in topk.py (https://github.com/sgl-project/sglang/pull/24816#discussion_r3217746546)
+- 2026-05-11 `ch-wan` on `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:71: No inheritance here. Is this expected? (https://github.com/sgl-project/sglang/pull/24816#discussion_r3217751863)
+- 2026-05-11 `ch-wan` on `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:125: implementation here is not runner creation (https://github.com/sgl-project/sglang/pull/24816#discussion_r3217755301)
+- 2026-05-11 `yuan-luo` on `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:125: You are right, but it matches Mxfp4FlashinferTrtllmMoEMethod.create moe runner style, neither FlashInfer path constructs a MoeRunner (the fused kernel is the runner). The hook is reused for lazy per-expert SwiGLU tensor init because it's the dispatch entry point that receives moe runner ... (https://github.com/sgl-project/sglang/pull/24816#discussion_r3217898952)
+- 2026-05-11 `yuan-luo` on `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:71: It is intentional, the same pattern as Mxfp4MarlinMoEMethod and Mxfp4FlashinferTrtllmMoEMethod, both wrap Fp8MoEMethod via composition rather than inherit. (https://github.com/sgl-project/sglang/pull/24816#discussion_r3217902430)
+- 2026-05-11 `rainj-me` on `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:215: move to line 57? (https://github.com/sgl-project/sglang/pull/24816#discussion_r3221139128)
+- 2026-05-11 `rainj-me` on `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:216: move to the top of the file? (https://github.com/sgl-project/sglang/pull/24816#discussion_r3221140227)
+- 2026-05-11 `rainj-me` on `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:229: can this be x.dtype or it has to be hard code to bf16? (https://github.com/sgl-project/sglang/pull/24816#discussion_r3221172950)
+- 2026-05-11 `rainj-me` on `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:237: nitpik: maybe use the return value of the output instead of out directly? (https://github.com/sgl-project/sglang/pull/24816#discussion_r3221179073)
+- 2026-05-11 `rainj-me` on `python/sglang/srt/layers/quantization/mxfp4.py`:988: can this be x.dtype or it has to be hard code to bf16? (https://github.com/sgl-project/sglang/pull/24816#discussion_r3221233219)
+- 2026-05-12 `Fridge003`: @yuan-luo The 0.73 accuracy result is not as expected. For accuracy testing, please benchmark AIME25 on V4-Pro with this tool and: 1. When launching server, add these flags: 2. Set temperature to 1.0, top p to 1.0 and OSL to 400K as ... (https://github.com/sgl-project/sglang/pull/24816#issuecomment-4426763789)
+- 2026-05-12 `yuan-luo` on `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:229: It has to be hard code to bf16, the FlashInfer SM90 mixed-input cutlass MoE kernels are templated with GemmOutputType = nv bfloat16 only. Mxfp4FlashinferTrtllmMoEMethod already asserts hidden states.dtype == torch.bfloat16 for the same reason. (https://github.com/sgl-project/sglang/pull/24816#discussion_r3224571314)
+- 2026-05-12 `yuan-luo` on `python/sglang/srt/layers/quantization/mxfp4.py`:988: It has to be hard code to bf16, the FlashInfer SM90 mixed-input cutlass MoE kernels are templated with GemmOutputType = nv bfloat16 only. (https://github.com/sgl-project/sglang/pull/24816#discussion_r3224579102)
+- 2026-05-12 `yuan-luo` on `python/sglang/srt/layers/quantization/mxfp4.py`:988: Mxfp4FlashinferTrtllmMoEMethod already asserts hidden states.dtype == torch.bfloat16 for the same reason. (https://github.com/sgl-project/sglang/pull/24816#discussion_r3224581869)
+- 2026-05-13 `Fridge003` on `test/registered/unit/layers/quantization/test_mxfp4_sm90_cutlass.py`:1: Can we move this test to test/registered/unit/layers/quantization and register it as stage-b-test-1-gpu-large (https://github.com/sgl-project/sglang/pull/24816#discussion_r3231678439)
+- 2026-05-13 `Fridge003` on `test/registered/unit/layers/quantization/test_mxfp4_sm90_cutlass.py`:2: We need to add an end-to-end test for flashinfer mxfp4 moe backend. Can be a new subtest under test/registered/dsv4/test deepseek v4 flash fp4 h200.py (https://github.com/sgl-project/sglang/pull/24816#discussion_r3231681668)
+- 2026-05-13 `Fridge003` on `python/sglang/srt/layers/quantization/mxfp4.py`:29: Why setting this to default. Will there be many verbose logs (https://github.com/sgl-project/sglang/pull/24816#discussion_r3231725574)
+- 2026-05-13 `Fridge003` on `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:42: Same, why setting this (https://github.com/sgl-project/sglang/pull/24816#discussion_r3231727400)
+- 2026-05-13 `Fridge003` on `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:237: Is the preallocated out for symmetric memory usage? (https://github.com/sgl-project/sglang/pull/24816#discussion_r3231734642)
+- 2026-05-13 `yuan-luo` on `python/sglang/srt/layers/quantization/mxfp4.py`:29: s you may know flashinfer 0.6.11 has a bug where it builds some trt-llm kernels at debug log level, which introduces a huge amount of debug printing in sglang. This setdefault is a guard against that flood. It's a no-harm operation. TLLM's ... (https://github.com/sgl-project/sglang/pull/24816#discussion_r3231885769)
+- 2026-05-13 `yuan-luo` on `test/registered/unit/layers/quantization/test_mxfp4_sm90_cutlass.py`:2: Added TestDSV4FlashFP4H200FlashInferCutlass in the same file, sibling subtest under the same TP=4 + EAGLE setup, swapping the MoE runner backend to flashinfer mxfp4. (https://github.com/sgl-project/sglang/pull/24816#discussion_r3231923148)
+- 2026-05-13 `yuan-luo` on `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:237: The quick answer is yes. The torch.empty(...) is inside use symmetric memory, so when sym-mem allgather is enabled the output buffer is routed into NCCL symmetric memory. It is the same pattern as Mxfp4FlashinferTrtllmMoEMethod. @rainj-me This is why we can't switch to ... (https://github.com/sgl-project/sglang/pull/24816#discussion_r3231984013)
+- 2026-05-13 `rainj-me` on `python/sglang/srt/layers/quantization/mxfp4_flashinfer_cutlass_moe.py`:237: I checked the code, if the out is allocated from before call the function, the result will be put in the out tensor. Refer (https://github.com/sgl-project/sglang/pull/24816#discussion_r3236240416)

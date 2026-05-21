@@ -1,82 +1,38 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#30531](https://github.com/vllm-project/vllm/pull/30531)
-- Source page: `sources/prs/vllm/PR-30531.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-30531`
-- Generated at: `2026-05-20T15:39:01.358340+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-12-12T02:08:38Z`
-- Merged: `2025-12-18T06:36:49Z`
-
-## Discussion Counts
-
-- Issue comments: 4
-- Review submissions: 30 (approved=1, changes_requested=2, commented=27)
-- Inline review comments: 39
-- Review threads observed: 20
-- Resolved/outdated thread markers: resolved=12, outdated=6
-- Human participants with discussion text: DarkLight1337, aditew01, bigPYJ1151, chatgpt-codex-connector, fadara01, jikunshang
-- Automation comments/reviews omitted from high-signal summary: 2
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 2
-
-## Review Decisions
-
-- `2025-12-12T02:11:29Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request refactors the CPU fused MOE implementation, introducing significant performance optimizations through a new ... (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3569988482)
-- `2025-12-12T02:13:49Z` `COMMENTED` by `chatgpt-codex-connector` - 💡 Codex Review Here are some automated review suggestions for this pull request. ℹ️ About Codex in GitHub ... (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3569992402)
-- `2025-12-12T11:41:51Z` `COMMENTED` by `aditew01` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3571492862)
-- `2025-12-12T12:15:12Z` `CHANGES_REQUESTED` by `fadara01` - Great work! Thank you :) I added some initial comments, sorry for the NITs (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3571444367)
-- `2025-12-14T07:30:45Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3574842599)
-- `2025-12-14T08:03:24Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3574865578)
-- `2025-12-14T08:08:43Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3574870021)
-- `2025-12-14T18:59:34Z` `CHANGES_REQUESTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3575079425)
-- `2025-12-15T06:44:31Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3576517372)
-- `2025-12-15T10:06:44Z` `COMMENTED` by `fadara01` - btw, should we trim the SGLang CPU MoE kernel path? Is there any reason as to why it ... (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3577379106)
-- `2025-12-15T11:17:11Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3577654118)
-- `2025-12-15T13:28:29Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3578198912)
-- `2025-12-15T13:28:38Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3578200060)
-- `2025-12-15T13:28:45Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3578200953)
-- `2025-12-15T13:29:15Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3578203641)
-- `2025-12-15T13:29:25Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3578204960)
-- `2025-12-15T13:29:36Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3578205847)
-- `2025-12-15T13:29:43Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3578206422)
-- `2025-12-15T13:30:04Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3578207739)
-- `2025-12-15T13:34:44Z` `COMMENTED` by `bigPYJ1151` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3578226006)
-- `2025-12-15T17:10:12Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3579282775)
-- `2025-12-15T17:12:33Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3579293389)
-- `2025-12-15T17:16:16Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3579313653)
-- `2025-12-15T17:19:44Z` `COMMENTED` by `fadara01` (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3579331901)
-- ... 6 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `csrc/cpu/cpu_fused_moe.cpp`: 7 inline comment(s)
-- `csrc/cpu/micro_gemm/cpu_micro_gemm_vec.hpp`: 6 inline comment(s)
-- `tests/kernels/moe/test_cpu_fused_moe.py`: 5 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/cpu_fused_moe.py`: 4 inline comment(s)
-- `csrc/cpu/cpu_types_x86.hpp`: 4 inline comment(s)
-- `csrc/cpu/utils.hpp`: 4 inline comment(s)
-- `.buildkite/release-pipeline.yaml`: 2 inline comment(s)
-- `.buildkite/scripts/hardware_ci/run-cpu-test.sh`: 2 inline comment(s)
-- `requirements/cpu-build.txt`: 2 inline comment(s)
-- `csrc/cpu/cpu_arch_macros.h`: 1 inline comment(s)
-- `csrc/cpu/torch_bindings.cpp`: 1 inline comment(s)
-- `cmake/cpu_extension.cmake`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-12-12T11:32:56Z` `inline` by `fadara01` `csrc/cpu/cpu_fused_moe.cpp`:5; signals: hang, kernel, moe; excerpt: "It'd be a good idea to change the name of this cpu/cpu attn macros.h file. Maybe something like cpu exp impl or something, because ..." (https://github.com/vllm-project/vllm/pull/30531#discussion_r2613902730)
-- `2025-12-14T08:03:24Z` `inline` by `fadara01` `vllm/model_executor/layers/fused_moe/cpu_fused_moe.py`:245; signals: attention, gemm, moe; excerpt: "I think it's better to enable/disable CPU grouped gemm based on CpuArchEnum, rather than the existence of prepack moe weight which is currently determined ..." (https://github.com/vllm-project/vllm/pull/30531#discussion_r2616819104)
-- `2025-12-15T06:11:50Z` `inline` by `fadara01` `csrc/cpu/cpu_fused_moe.cpp`:52; signals: layout, memory, moe; excerpt: "let's add a comment saying why this is needed - i.e. because gpt-oss interleaves gate-up weights. I expressed worries before about hard-coding memory layout ..." (https://github.com/vllm-project/vllm/pull/30531#discussion_r2618088902)
-- `2025-12-15T13:29:25Z` `inline` by `bigPYJ1151` `csrc/cpu/micro_gemm/cpu_micro_gemm_vec.hpp`:115; signals: block, gemm, layout; excerpt: "Updated. For this weight should be packed as . In general weight should be packed as blocks with logical shape . The layout of ..." (https://github.com/vllm-project/vllm/pull/30531#discussion_r2619446684)
-- `2025-12-15T10:06:44Z` `review` `COMMENTED` by `fadara01`; signals: kernel, moe; excerpt: "btw, should we trim the SGLang CPU MoE kernel path? Is there any reason as to why it needs to co-exist with the new ..." (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3577379106)
-- `2025-12-15T13:30:04Z` `inline` by `bigPYJ1151` `tests/kernels/moe/test_cpu_fused_moe.py`:2; signals: dtype, kernel, moe; excerpt: "The numeric difference from dtype conversion is too large in ." (https://github.com/vllm-project/vllm/pull/30531#discussion_r2619448893)
-- `2025-12-12T02:13:49Z` `inline` by `chatgpt-codex-connector` `csrc/cpu/cpu_fused_moe.cpp`:626; signals: block, moe; excerpt: "![P1 Badge]( Avoid double‑adding expert outputs when top k == 1 The weighted‑sum code always initializes ws output buffer with the first expert and ..." (https://github.com/vllm-project/vllm/pull/30531#discussion_r2612642957)
-- `2025-12-12T11:27:43Z` `inline` by `fadara01` `.buildkite/release-pipeline.yaml`:75; signals: moe, pipeline; excerpt: "This is not related to CPU MoE, let's leave it for another PR to make history tractable. E.g. if we ever have to revert ..." (https://github.com/vllm-project/vllm/pull/30531#discussion_r2613887823)
-- `2025-12-12T12:09:06Z` `inline` by `fadara01` `csrc/cpu/micro_gemm/cpu_micro_gemm_vec.hpp`:112; signals: gemm, kernel; excerpt: "These kernels are exactly the same as those in vllm/csrc/cpu/cpu attn vec.hpp From a maintainability point of view, It's doesn't seem like a good ..." (https://github.com/vllm-project/vllm/pull/30531#discussion_r2613997962)
-- `2025-12-14T12:21:33Z` `inline` by `fadara01` `csrc/cpu/cpu_fused_moe.cpp`:248; signals: attention, moe; excerpt: "this implementation has nothing to do with oneDNN… Maybe we should rename this to CPUScratchPadManager? we have the same smell in CPU attention which ..." (https://github.com/vllm-project/vllm/pull/30531#discussion_r2617005421)
-- `2025-12-15T17:36:25Z` `inline` by `bigPYJ1151` `tests/kernels/moe/test_cpu_fused_moe.py`:2; signals: kernel, moe; excerpt: "Oh, I thought you suggest to use as reference impl likes test cases in . I think it is not needed to put them ..." (https://github.com/vllm-project/vllm/pull/30531#discussion_r2620280498)
-- `2025-12-14T12:59:01Z` `inline` by `fadara01` `tests/kernels/moe/test_cpu_fused_moe.py`:2; signals: kernel, moe; excerpt: "let's try to unify this with CPU MoE test in" (https://github.com/vllm-project/vllm/pull/30531#discussion_r2617057957)
+- 2025-12-12 `fadara01` on `csrc/cpu/cpu_arch_macros.h`:29: would you be open to making the same change for AArch64 part too for consistency? (https://github.com/vllm-project/vllm/pull/30531#discussion_r2613881159)
+- 2025-12-12 `fadara01` on `.buildkite/release-pipeline.yaml`:75: This is not related to CPU MoE, let's leave it for another PR to make history tractable. E.g. if we ever have to revert this PR, the "Build x86 CPU wheels" will get reverted too. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2613887823)
+- 2025-12-12 `fadara01` on `.buildkite/scripts/hardware_ci/run-cpu-test.sh`:53: Given you enabled this through ISA::Vec which is CPU agnostic, would it be a good idea to enable this for all run-cpu-tests, i.e: - .buildkite/scripts/hardware ci/run-cpu-test-arm.sh - .buildkite/scripts/hardware ci/run-cpu-test-ppc64le.sh - .buildkite/scripts/hardware ci/run-cpu-test-s390x.sh (https://github.com/vllm-project/vllm/pull/30531#discussion_r2613897983)
+- 2025-12-12 `fadara01` on `csrc/cpu/cpu_fused_moe.cpp`:5: It'd be a good idea to change the name of this cpu/cpu attn macros.h file. Maybe something like cpu exp impl or something, because it doesn't make sense to include cpu attn macros.h in a FusedMoE kernel. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2613902730)
+- 2025-12-12 `aditew01` on `requirements/cpu-build.txt`:4: The changes are unrelated to the description? (https://github.com/vllm-project/vllm/pull/30531#discussion_r2613926186)
+- 2025-12-12 `fadara01` on `csrc/cpu/micro_gemm/cpu_micro_gemm_vec.hpp`:112: These kernels are exactly the same as those in vllm/csrc/cpu/cpu attn vec.hpp From a maintainability point of view, It's doesn't seem like a good idea to have the same kernel copied in 2 different places, can we unify them? (https://github.com/vllm-project/vllm/pull/30531#discussion_r2613997962)
+- 2025-12-12 `fadara01` on `csrc/cpu/torch_bindings.cpp`:312: If isa::vec is the intended cross-arch abstraction (which is currently the case in cpu attention), it’d be nice if this wasn’t hard-wired to AVX512. If we only want to expose this on x86 for now, could we push that policy into Python ... (https://github.com/vllm-project/vllm/pull/30531#discussion_r2614001294)
+- 2025-12-12 `fadara01` changes_requested: Great work! Thank you :) I added some initial comments, sorry for the NITs (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3571444367)
+- 2025-12-14 `fadara01` on `csrc/cpu/micro_gemm/cpu_micro_gemm_vec.hpp`:115: can you say in the comments the format we're packing the weights to (https://github.com/vllm-project/vllm/pull/30531#discussion_r2616798830)
+- 2025-12-14 `fadara01` on `vllm/model_executor/layers/fused_moe/cpu_fused_moe.py`:245: I think it's better to enable/disable CPU grouped gemm based on CpuArchEnum, rather than the existence of prepack moe weight which is currently determined by an AVX512 ifdef. IMO, prepack moe weight should exist for all architectures given it relies on isa::vec. ... (https://github.com/vllm-project/vllm/pull/30531#discussion_r2616819104)
+- 2025-12-14 `fadara01` on `vllm/model_executor/layers/fused_moe/cpu_fused_moe.py`:262: w13 and w2 sizes are guaranteed to be a multiple of 32 by: let's remove these redundant checks. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2616822181)
+- 2025-12-14 `fadara01` on `csrc/cpu/cpu_types_x86.hpp`:356: in my opinion, we should aim to keep the vectorizer APIs consistent across CPUs supported in vLLM - similar to what we do in PyTorch vectorizer classes. I don't think vLLM vectorizers are currently consistent for different CPUs, but we should aim ... (https://github.com/vllm-project/vllm/pull/30531#discussion_r2616995390)
+- 2025-12-14 `fadara01` on `csrc/cpu/cpu_fused_moe.cpp`:248: this implementation has nothing to do with oneDNN… Maybe we should rename this to CPUScratchPadManager? we have the same smell in CPU attention which confused me when I was reviewing it :smile: (https://github.com/vllm-project/vllm/pull/30531#discussion_r2617005421)
+- 2025-12-14 `fadara01` on `cmake/cpu_extension.cmake`:367: See my comments above about isa::vec being platform agnostic. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2617015119)
+- 2025-12-14 `fadara01` on `tests/kernels/moe/test_cpu_fused_moe.py`:2: let's try to unify this with CPU MoE test in (https://github.com/vllm-project/vllm/pull/30531#discussion_r2617057957)
+- 2025-12-15 `fadara01` on `csrc/cpu/utils.hpp`:13: We have code that does the same thing in attention: - - Given that you're (re)introducing this get isa function and ISA enums at this high level in cpu/utils.hpp, can we try to unify it with what we already have in attention. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2618065353)
+- 2025-12-15 `fadara01` on `csrc/cpu/cpu_fused_moe.cpp`:52: let's add a comment saying why this is needed - i.e. because gpt-oss interleaves gate-up weights. I expressed worries before about hard-coding memory layout information in activation func implementations (see: but I guess we're stuck with this now. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2618088902)
+- 2025-12-15 `fadara01` on `csrc/cpu/utils.hpp`:64: Can we not reuse PyTorch ATen utilities? - (https://github.com/vllm-project/vllm/pull/30531#discussion_r2618100197)
+- 2025-12-15 `fadara01` on `csrc/cpu/cpu_fused_moe.cpp`:167: This cpu utils::get l2 size() function turned out to be problematic. See where it failed on Apple Silicon and where it returns zero on Arm CPUs. I wonder if we could rely on something more portable (and battle-tested) like cpuinfo from pytorch? (https://github.com/vllm-project/vllm/pull/30531#discussion_r2618139225)
+- 2025-12-15 `fadara01`: Thanks for working on this again - it's a great step forward for CPU MoE! I know I left quite a few comments. If it helps, I’m happy to collaborate directly on this (e.g. push commits to your branch or pair on ... (https://github.com/vllm-project/vllm/pull/30531#issuecomment-3653930416)
+- 2025-12-15 `fadara01` commented: btw, should we trim the SGLang CPU MoE kernel path? Is there any reason as to why it needs to co-exist with the new fused MoE impl? (https://github.com/vllm-project/vllm/pull/30531#pullrequestreview-3577379106)
+- 2025-12-15 `bigPYJ1151` on `requirements/cpu-build.txt`:4: It is a small change. I'd like to add it at one😂 (https://github.com/vllm-project/vllm/pull/30531#discussion_r2619442591)
+- 2025-12-15 `bigPYJ1151` on `.buildkite/release-pipeline.yaml`:75: It is an accidental addition. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2619443238)
+- 2025-12-15 `bigPYJ1151` on `.buildkite/scripts/hardware_ci/run-cpu-test.sh`:53: Not exactly. This kerenl is only avaliable on AVX512 because of some new vec op. Other platforms need a bit further change and verification. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2619443774)
+- 2025-12-15 `bigPYJ1151` on `csrc/cpu/micro_gemm/cpu_micro_gemm_vec.hpp`:112: Yes, they are almost same but with some difference, will unify them in another PR. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2619445991)
+- 2025-12-15 `bigPYJ1151` on `csrc/cpu/micro_gemm/cpu_micro_gemm_vec.hpp`:115: Updated. For this weight should be packed as . In general weight should be packed as blocks with logical shape . The layout of blocks is ISA-specific. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2619446684)
+- 2025-12-15 `bigPYJ1151` on `vllm/model_executor/layers/fused_moe/cpu_fused_moe.py`:262: Here checks input size rather than output size. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2619447327)
+- 2025-12-15 `bigPYJ1151` on `csrc/cpu/cpu_types_x86.hpp`:356: For these fundmental operations I think throwing error explicitly is more helpful for finding missed features. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2619447726)
+- 2025-12-15 `bigPYJ1151` on `tests/kernels/moe/test_cpu_fused_moe.py`:2: The numeric difference from dtype conversion is too large in . (https://github.com/vllm-project/vllm/pull/30531#discussion_r2619448893)
+- 2025-12-15 `bigPYJ1151`: btw, should we trim the SGLang CPU MoE kernel path? Is there any reason as to why it needs to co-exist with the new fused MoE impl? Yes, it will be deprecated finally. But some workloads are depending on it, should leave ... (https://github.com/vllm-project/vllm/pull/30531#issuecomment-3655673115)
+- 2025-12-15 `bigPYJ1151` on `csrc/cpu/utils.hpp`:64: I did't see in it 🤔 (https://github.com/vllm-project/vllm/pull/30531#discussion_r2619464078)
+- 2025-12-15 `fadara01` on `csrc/cpu/cpu_types_x86.hpp`:356: I guess this depends on what we want the vectorizer classes in vLLM to be. In PyTorch, the vectorizer class is an architecture agnostic interface for a bunch of ops with architecture specific implementations (e.g. Arm uses SVE, x86 uses AVX, etc). ... (https://github.com/vllm-project/vllm/pull/30531#discussion_r2620203456)
+- 2025-12-15 `fadara01` on `tests/kernels/moe/test_cpu_fused_moe.py`:2: sorry, I don't fully get you. I'm just proposing to have both CPU MoE tests in the same file. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2620210000)
+- 2025-12-15 `fadara01` on `csrc/cpu/utils.hpp`:64: ohh I assumed pytorch would have a corresponding floor div.h but they don't seem to have that. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2620221588)
+- 2025-12-15 `fadara01` on `csrc/cpu/micro_gemm/cpu_micro_gemm_vec.hpp`:112: ACK, looking forward to that PR. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2620234412)
+- 2025-12-15 `bigPYJ1151` on `tests/kernels/moe/test_cpu_fused_moe.py`:2: Oh, I thought you suggest to use as reference impl likes test cases in . I think it is not needed to put them togther as there is nothing to reuse. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2620280498)
+- 2025-12-15 `bigPYJ1151` on `csrc/cpu/cpu_types_x86.hpp`:356: Yes, in fact the vec op needs to refactor and clean up as many operations are no longer be used. (https://github.com/vllm-project/vllm/pull/30531#discussion_r2620286798)
+- 2025-12-15 `fadara01` on `tests/kernels/moe/test_cpu_fused_moe.py`:2: I'm just trying to say that it's a good idea to have 1 test file to test all CPU FusedMoE impls (https://github.com/vllm-project/vllm/pull/30531#discussion_r2620357252)

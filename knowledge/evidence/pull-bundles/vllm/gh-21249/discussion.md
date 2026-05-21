@@ -1,80 +1,51 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#21249](https://github.com/vllm-project/vllm/pull/21249)
-- Source page: `sources/prs/vllm/PR-21249.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-21249`
-- Generated at: `2026-05-20T15:36:37.238922+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-07-20T10:08:42Z`
-- Merged: `2025-08-07T00:03:43Z`
-
-## Discussion Counts
-
-- Issue comments: 8
-- Review submissions: 32 (approved=2, commented=30)
-- Inline review comments: 56
-- Review threads observed: 25
-- Resolved/outdated thread markers: resolved=22, outdated=20
-- Human participants with discussion text: Josephasafg, adamscarlat, heheda12345, mergify, tdoublep, tlrmchlsmth
-- Automation comments/reviews omitted from high-signal summary: 3
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-07-20T10:09:53Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces v1-style attention metadata support for Mamba-1 models and refactors the Mamba state ... (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3035957381)
-- `2025-07-21T23:41:19Z` `COMMENTED` by `heheda12345` - Thanks for the great job. Some questions: 1. Do we need enforce-eager to run mamba1? I'm OK with ... (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3039964296)
-- `2025-07-22T09:55:27Z` `COMMENTED` by `Josephasafg` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3042184581)
-- `2025-07-22T10:17:27Z` `COMMENTED` by `Josephasafg` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3042296977)
-- `2025-07-22T10:41:11Z` `COMMENTED` by `Josephasafg` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3042423288)
-- `2025-07-23T06:21:22Z` `COMMENTED` by `heheda12345` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3045830363)
-- `2025-07-23T06:53:52Z` `COMMENTED` by `heheda12345` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3045842123)
-- `2025-07-23T07:01:42Z` `COMMENTED` by `Josephasafg` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3045942062)
-- `2025-07-23T11:27:10Z` `COMMENTED` by `Josephasafg` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3046912718)
-- `2025-07-23T15:30:29Z` `COMMENTED` by `heheda12345` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3047984237)
-- `2025-07-23T15:41:32Z` `COMMENTED` by `Josephasafg` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3048035844)
-- `2025-07-23T15:42:22Z` `COMMENTED` by `Josephasafg` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3048038450)
-- `2025-07-23T16:06:39Z` `COMMENTED` by `Josephasafg` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3048139750)
-- `2025-07-24T15:45:07Z` `COMMENTED` by `tdoublep` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3052212440)
-- `2025-07-24T17:22:45Z` `COMMENTED` by `Josephasafg` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3052559485)
-- `2025-07-24T19:30:33Z` `COMMENTED` by `Josephasafg` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3053009772)
-- `2025-07-24T19:38:29Z` `COMMENTED` by `Josephasafg` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3053037565)
-- `2025-07-24T20:48:26Z` `COMMENTED` by `Josephasafg` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3053241210)
-- `2025-07-25T07:43:13Z` `COMMENTED` by `heheda12345` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3054375514)
-- `2025-07-25T07:46:42Z` `COMMENTED` by `Josephasafg` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3054455225)
-- `2025-08-03T16:27:17Z` `COMMENTED` by `Josephasafg` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3082241369)
-- `2025-08-03T16:34:25Z` `COMMENTED` by `Josephasafg` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3082243851)
-- `2025-08-03T16:35:53Z` `COMMENTED` by `Josephasafg` (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3082245541)
-- `2025-08-05T22:00:33Z` `COMMENTED` by `tdoublep` - I have a few (mostly minor) comments but this look nearly ready to go in my view. Great ... (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3089828629)
-- ... 8 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/layers/mamba/mamba_mixer.py`: 14 inline comment(s)
-- `vllm/v1/worker/gpu_model_runner.py`: 9 inline comment(s)
-- `vllm/model_executor/layers/mamba/mamba_utils.py`: 9 inline comment(s)
-- `vllm/v1/attention/backends/mamba1_attn.py`: 8 inline comment(s)
-- `tests/models/language/generation/test_hybrid.py`: 7 inline comment(s)
-- `vllm/v1/kv_cache_interface.py`: 4 inline comment(s)
-- `docs/usage/v1_guide.md`: 2 inline comment(s)
-- `vllm/attention/mamba_selectors.py`: 1 inline comment(s)
-- `vllm/model_executor/models/mamba.py`: 1 inline comment(s)
-- `csrc/mamba/mamba_ssm/selective_scan_fwd.cu`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-07-23T06:44:53Z` `inline` by `heheda12345` `vllm/model_executor/layers/mamba/mamba_mixer.py`:214; signals: kernel, perf, performance; excerpt: "Seems that we'll always use the prefill kernel in v1. Is my understanding correct? @tlrmchlsmth Will there be any performance issue if we don't ..." (https://github.com/vllm-project/vllm/pull/21249#discussion_r2224568033)
-- `2025-07-24T20:48:25Z` `inline` by `Josephasafg` `vllm/v1/attention/backends/mamba1_attn.py`:38; signals: attention, kernel, triton; excerpt: "Good question. I think we should keep both since Mamba2AttentionMetadata contains fields that aren't relevant for mamba1 like chunk indices, chunk offsets and triton ..." (https://github.com/vllm-project/vllm/pull/21249#discussion_r2229544047)
-- `2025-07-21T21:57:56Z` `inline` by `heheda12345` `vllm/v1/kv_cache_interface.py`:209; signals: cache, hang; excerpt: "Will it be better to make mamba type a plain string? There are many different state space model implementations. I hope the new models ..." (https://github.com/vllm-project/vllm/pull/21249#discussion_r2220445396)
-- `2025-07-22T09:55:26Z` `inline` by `Josephasafg` `vllm/v1/kv_cache_interface.py`:209; signals: cache, hang; excerpt: "Model vendors don't need to add their model name (e.g. Jamba). The mamba type is the type mamba the model is based on and ..." (https://github.com/vllm-project/vllm/pull/21249#discussion_r2221954703)
-- `2025-07-23T06:21:22Z` `inline` by `heheda12345` `vllm/v1/kv_cache_interface.py`:209; signals: attention, cache; excerpt: "Seems that many models are customizing the mamba layer, e.g., minimax linear attention, phi-4's modified mamba attention." (https://github.com/vllm-project/vllm/pull/21249#discussion_r2224519788)
-- `2025-07-23T11:27:10Z` `inline` by `Josephasafg` `vllm/model_executor/layers/mamba/mamba_mixer.py`:182; signals: cache, kv cache; excerpt: "Yes. I can move it to reshape kv cache tensors in GPUModelRunner to the part where we allocate the conv and ssm tensors" (https://github.com/vllm-project/vllm/pull/21249#discussion_r2225248686)
-- `2025-07-23T15:30:28Z` `inline` by `heheda12345` `vllm/model_executor/layers/mamba/mamba_mixer.py`:182; signals: attention, layout; excerpt: "OK but we are doing padding for mamba layers to align page size of attention layers and the state size of mamba layers. It ..." (https://github.com/vllm-project/vllm/pull/21249#discussion_r2225966827)
-- `2025-07-25T07:36:35Z` `inline` by `heheda12345` `vllm/v1/attention/backends/mamba1_attn.py`:77; signals: attention, kernel; excerpt: "Seems that you are still using one kernel for prefill and decode. Why are you computing these things? Can you either only keep necessary ..." (https://github.com/vllm-project/vllm/pull/21249#discussion_r2230391613)
-- `2025-07-21T23:41:19Z` `review` `COMMENTED` by `heheda12345`; signals: cuda; excerpt: "Thanks for the great job. Some questions: 1. Do we need enforce-eager to run mamba1? I'm OK with supporting cuda graph in a future ..." (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3039964296)
-- `2025-07-24T15:40:02Z` `inline` by `tdoublep` `vllm/model_executor/layers/mamba/mamba_mixer.py`:214; signals: perf, performance; excerpt: "We saw very bad performance for Mamba2 until we split prefill and decode iirc" (https://github.com/vllm-project/vllm/pull/21249#discussion_r2228885197)
-- `2025-07-21T21:45:25Z` `inline` by `heheda12345` `vllm/v1/worker/gpu_model_runner.py`:48; signals: attention; excerpt: "Can we avoid importing all mamba attention backends here? There will be more and more mamba-related backends." (https://github.com/vllm-project/vllm/pull/21249#discussion_r2220426561)
-- `2025-07-24T15:44:00Z` `inline` by `tdoublep` `vllm/v1/attention/backends/mamba1_attn.py`:38; signals: attention; excerpt: "How different is the Mamba1AttentionMetdata to the Mamba2AttentionMetadata? Do we really need two separate classes?" (https://github.com/vllm-project/vllm/pull/21249#discussion_r2228894512)
+- 2025-07-21 `heheda12345` on `vllm/v1/kv_cache_interface.py`:209: please also add this to MambaSpec.type id (https://github.com/vllm-project/vllm/pull/21249#discussion_r2220424093)
+- 2025-07-21 `heheda12345` on `vllm/v1/worker/gpu_model_runner.py`:48: Can we avoid importing all mamba attention backends here? There will be more and more mamba-related backends. (https://github.com/vllm-project/vllm/pull/21249#discussion_r2220426561)
+- 2025-07-21 `heheda12345` on `vllm/model_executor/layers/mamba/mamba_mixer.py`:153: Can you find a better place to put the shape information? (https://github.com/vllm-project/vllm/pull/21249#discussion_r2220439327)
+- 2025-07-21 `heheda12345` on `vllm/v1/kv_cache_interface.py`:209: Will it be better to make mamba type a plain string? There are many different state space model implementations. I hope the new models to be as plugable as possible and don't want each model vendor to change the MambaType here. (https://github.com/vllm-project/vllm/pull/21249#discussion_r2220445396)
+- 2025-07-21 `heheda12345` commented: Thanks for the great job. Some questions: 1. Do we need enforce-eager to run mamba1? I'm OK with supporting cuda graph in a future PR. 2. Can you show some lm-eval result on mamba1 model? 3. Please update tests/models/language/generation/test hybrid.py and tests/v1/test ... (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3039964296)
+- 2025-07-22 `Josephasafg` on `vllm/v1/kv_cache_interface.py`:209: Model vendors don't need to add their model name (e.g. Jamba). The mamba type is the type mamba the model is based on and should be transparent to any new/existing model vendors). The enum shouldn't change much unless a new architecture is ... (https://github.com/vllm-project/vllm/pull/21249#discussion_r2221954703)
+- 2025-07-22 `Josephasafg` on `vllm/v1/worker/gpu_model_runner.py`:48: Sure, moved to get mamba attn backend in its own file (https://github.com/vllm-project/vllm/pull/21249#discussion_r2222040926)
+- 2025-07-23 `heheda12345` on `vllm/v1/kv_cache_interface.py`:209: Seems that many models are customizing the mamba layer, e.g., minimax linear attention, phi-4's modified mamba attention. (https://github.com/vllm-project/vllm/pull/21249#discussion_r2224519788)
+- 2025-07-23 `heheda12345` on `vllm/attention/mamba_selectors.py`: prefer to put this file in v1/attention/backends. (https://github.com/vllm-project/vllm/pull/21249#discussion_r2224528297)
+- 2025-07-23 `heheda12345` on `vllm/model_executor/layers/mamba/mamba_mixer.py`:182: Can you avoid these two ops by initializing them with the target shape and stride? There's a risk that these operations will scan the whole tensor in every step. (https://github.com/vllm-project/vllm/pull/21249#discussion_r2224543199)
+- 2025-07-23 `heheda12345` on `vllm/model_executor/layers/mamba/mamba_utils.py`:50: Any special reason for not using the original conv state shape = (conv state shape[1], conv state shape[0])? same question for mamba1 implementation. (https://github.com/vllm-project/vllm/pull/21249#discussion_r2224567246)
+- 2025-07-23 `heheda12345` on `vllm/model_executor/layers/mamba/mamba_mixer.py`:214: Seems that we'll always use the prefill kernel in v1. Is my understanding correct? @tlrmchlsmth Will there be any performance issue if we don't split prefill and decode like mamba2? (https://github.com/vllm-project/vllm/pull/21249#discussion_r2224568033)
+- 2025-07-23 `heheda12345` on `vllm/model_executor/models/mamba.py`:240: Can you wrap the shape calculation logic in get mamba state shape from config like mamba2? We want this interface for all mamba-related models in v1. (https://github.com/vllm-project/vllm/pull/21249#discussion_r2224577645)
+- 2025-07-23 `Josephasafg` on `vllm/model_executor/layers/mamba/mamba_mixer.py`:214: I have the code for splitting prefill and decode as well, just wasn't sure if I should put it here as well. I can add it (https://github.com/vllm-project/vllm/pull/21249#discussion_r2224598793)
+- 2025-07-23 `Josephasafg` on `vllm/model_executor/layers/mamba/mamba_mixer.py`:182: Yes. I can move it to reshape kv cache tensors in GPUModelRunner to the part where we allocate the conv and ssm tensors (https://github.com/vllm-project/vllm/pull/21249#discussion_r2225248686)
+- 2025-07-23 `heheda12345` on `vllm/model_executor/layers/mamba/mamba_mixer.py`:182: OK but we are doing padding for mamba layers to align page size of attention layers and the state size of mamba layers. It is not a problem now but I think you can't do .contiguous() for hybrid mamba/attention models. See the ... (https://github.com/vllm-project/vllm/pull/21249#discussion_r2225966827)
+- 2025-07-23 `Josephasafg` on `vllm/model_executor/layers/mamba/mamba_mixer.py`:182: I ended up not using contiguous (https://github.com/vllm-project/vllm/pull/21249#discussion_r2225998238)
+- 2025-07-23 `Josephasafg` on `vllm/model_executor/layers/mamba/mamba_utils.py`:50: This code was already there for mamba2, I just moved it to a static class for readability. For mamba1 - I was under the impression it was needed at first. Reverted (https://github.com/vllm-project/vllm/pull/21249#discussion_r2226061317)
+- 2025-07-24 `tdoublep` on `tests/models/language/generation/test_hybrid.py`:105: Flashinfer backend shouldn't be required for SSM-only models (https://github.com/vllm-project/vllm/pull/21249#discussion_r2228880603)
+- 2025-07-24 `tdoublep` on `tests/models/language/generation/test_hybrid.py`:384: Why do we need to set enforce eager for V0? (https://github.com/vllm-project/vllm/pull/21249#discussion_r2228882250)
+- 2025-07-24 `tdoublep` on `vllm/model_executor/layers/mamba/mamba_mixer.py`:214: We saw very bad performance for Mamba2 until we split prefill and decode iirc (https://github.com/vllm-project/vllm/pull/21249#discussion_r2228885197)
+- 2025-07-24 `tdoublep` on `vllm/model_executor/layers/mamba/mamba_utils.py`:50: I guess what @heheda12345 means is why do you do the divide again in the not use v1 branch? This is not how it looks on main right now I believe. (https://github.com/vllm-project/vllm/pull/21249#discussion_r2228889375)
+- 2025-07-24 `tdoublep` on `vllm/model_executor/layers/mamba/mamba_mixer.py`:214: Could be addressed as a follow-up though (https://github.com/vllm-project/vllm/pull/21249#discussion_r2228890202)
+- 2025-07-24 `tdoublep` on `vllm/v1/attention/backends/mamba1_attn.py`:38: How different is the Mamba1AttentionMetdata to the Mamba2AttentionMetadata? Do we really need two separate classes? (https://github.com/vllm-project/vllm/pull/21249#discussion_r2228894512)
+- 2025-07-24 `tdoublep` on `vllm/v1/worker/gpu_model_runner.py`:2589: Should we factor this into separate function e.g. create mamba2 state tensors ? (https://github.com/vllm-project/vllm/pull/21249#discussion_r2228896806)
+- 2025-07-24 `Josephasafg` on `vllm/model_executor/layers/mamba/mamba_utils.py`:50: Got it. You are right conv state shape[1], conv state shape[0] shouldn't change. Thanks (https://github.com/vllm-project/vllm/pull/21249#discussion_r2229420593)
+- 2025-07-24 `Josephasafg` on `vllm/v1/attention/backends/mamba1_attn.py`:38: Good question. I think we should keep both since Mamba2AttentionMetadata contains fields that aren't relevant for mamba1 like chunk indices, chunk offsets and triton kernels related fields that mamba1 doesn't need which would add overhead to the class. (https://github.com/vllm-project/vllm/pull/21249#discussion_r2229544047)
+- 2025-07-25 `heheda12345` on `tests/models/language/generation/test_hybrid.py`:103: why removing this comment? (https://github.com/vllm-project/vllm/pull/21249#discussion_r2230353334)
+- 2025-07-25 `heheda12345` on `tests/models/language/generation/test_hybrid.py`:108: mamba2 already supports piece-wise cuda graph. Need to enable them in the test. (https://github.com/vllm-project/vllm/pull/21249#discussion_r2230355426)
+- 2025-07-25 `heheda12345` on `tests/models/language/generation/test_hybrid.py`:380: Why do you add this comment? Seems that it is running in v0 now. (https://github.com/vllm-project/vllm/pull/21249#discussion_r2230356714)
+- 2025-07-25 `heheda12345` on `vllm/model_executor/layers/mamba/mamba_mixer.py`:214: Yes it can be a follow-up. (https://github.com/vllm-project/vllm/pull/21249#discussion_r2230358699)
+- 2025-07-25 `heheda12345` on `vllm/model_executor/layers/mamba/mamba_utils.py`:50: Can you revert this change before marking it as resolved? (https://github.com/vllm-project/vllm/pull/21249#discussion_r2230364803)
+- 2025-07-25 `heheda12345` on `vllm/v1/attention/backends/mamba1_attn.py`:38: I prefer to keep mamba1 and mamba2 as seperate metadata classes. Comparing with one metadata class with many optional entry and branches for different types of layers, I prefer this pluggable design. We can extract common logic to a parent class if ... (https://github.com/vllm-project/vllm/pull/21249#discussion_r2230380096)
+- 2025-07-25 `heheda12345` on `vllm/v1/attention/backends/mamba1_attn.py`:77: Seems that you are still using one kernel for prefill and decode. Why are you computing these things? Can you either only keep necessary entry or implement the full prefill-decode-split support in this PR? (https://github.com/vllm-project/vllm/pull/21249#discussion_r2230391613)
+- 2025-07-25 `heheda12345` on `vllm/v1/worker/gpu_model_runner.py`:2706: Can you make the layout compatible with this? It is required by Jamba and I don't want unnecessary branches in this PR. Ping @tdoublep or me if you need more explanation about it. (in (https://github.com/vllm-project/vllm/pull/21249#discussion_r2230402665)
+- 2025-07-25 `Josephasafg` on `vllm/model_executor/layers/mamba/mamba_utils.py`:50: Apologies. I was under the impression I did, I forgot to push it. Thanks (https://github.com/vllm-project/vllm/pull/21249#discussion_r2230411568)
+- 2025-08-03 `Josephasafg` on `vllm/v1/attention/backends/mamba1_attn.py`:77: Good point. I'll add this part as part of the full prefill-decode-split in the next PR (https://github.com/vllm-project/vllm/pull/21249#discussion_r2250040077)
+- 2025-08-03 `Josephasafg` on `vllm/v1/worker/gpu_model_runner.py`:2706: Fixed. It is now using the exact same layout as mamba2 (https://github.com/vllm-project/vllm/pull/21249#discussion_r2250042769)
+- 2025-08-04 `Josephasafg`: @heheda12345 @tdoublep Thanks for the review. I've attended your comments. Regarding to some of @heheda12345 questions - 1. enforce eager currently works. I think it'd be best to add piecewise cuda support like this PR. Just so things will be cleaner. 2. ... (https://github.com/vllm-project/vllm/pull/21249#issuecomment-3150128318)
+- 2025-08-05 `tdoublep` on `docs/usage/v1_guide.md`:108: Should we make it clear that Mamba1 models also need enforce eager? In general I agree it should be done as a follow-up, but good to be precise in the docs. (https://github.com/vllm-project/vllm/pull/21249#discussion_r2255420452)
+- 2025-08-05 `tdoublep` on `tests/models/language/generation/test_hybrid.py`:107: nit: remove unnecessary whitespace diff (https://github.com/vllm-project/vllm/pull/21249#discussion_r2255421130)
+- 2025-08-05 `tdoublep` on `vllm/model_executor/layers/mamba/mamba_utils.py`:6: Is there any real reason to introduce class MambaStateShapeCalculator? Couldn't these just be different utils functions? It creates a lot of diff in the other files for little benefit as far as I can see. Right now it is making the PR ... (https://github.com/vllm-project/vllm/pull/21249#discussion_r2255424335)
+- 2025-08-05 `tdoublep` on `vllm/v1/attention/backends/mamba1_attn.py`:61: This function should not be needed anymore since landed. You should just need to set reorder batch threshold like here: (https://github.com/vllm-project/vllm/pull/21249#discussion_r2255431929)
+- 2025-08-05 `tdoublep` on `vllm/v1/worker/gpu_model_runner.py`:2603: any particular reason for this diff? (https://github.com/vllm-project/vllm/pull/21249#discussion_r2255432465)
+- 2025-08-05 `tdoublep` commented: I have a few (mostly minor) comments but this look nearly ready to go in my view. Great work. (https://github.com/vllm-project/vllm/pull/21249#pullrequestreview-3089828629)
+- 2025-08-06 `Josephasafg` on `vllm/model_executor/layers/mamba/mamba_utils.py`:6: The reason I added the class was because I needed to add a new function to calculate mamba1 state shape. The file already had a get mamba state shape function but it was mamba2 only, and I didn't want to introduce branching ... (https://github.com/vllm-project/vllm/pull/21249#discussion_r2255967262)
+- 2025-08-06 `Josephasafg` on `vllm/v1/worker/gpu_model_runner.py`:2603: I figured its more readable this way and less prone to mistakes when passing multiple args. I can revert if you think its unnecessary (https://github.com/vllm-project/vllm/pull/21249#discussion_r2255971572)
+- 2025-08-06 `tdoublep` on `vllm/model_executor/layers/mamba/mamba_utils.py`:6: I think it's reasonable. My main argument against was that the change touches a lot of files, but we would have to change the function name to mamba2 anyway which would create similar level of diff. (https://github.com/vllm-project/vllm/pull/21249#discussion_r2256019431)
+- 2025-08-06 `tlrmchlsmth` on `csrc/mamba/mamba_ssm/selective_scan_fwd.cu`:488: can this be pulled out of the if/else? (https://github.com/vllm-project/vllm/pull/21249#discussion_r2257502609)
+- 2025-08-06 `tdoublep` on `vllm/v1/attention/backends/mamba1_attn.py`:38: @heheda12345 Sorry I missed this question. Yes I agree let's keep the metadata classes separate and then factor the common things into a CommonMambaAttentionMetadata or something once it is clear what is truly common. This one is ready and we have the ... (https://github.com/vllm-project/vllm/pull/21249#discussion_r2258297520)
+- 2025-08-06 `tdoublep`: V1 test failure is known flaky test (see 22385), and the quantization test and blackwell tests look unrelated. This one is good to merge imo. (https://github.com/vllm-project/vllm/pull/21249#issuecomment-3161725996)

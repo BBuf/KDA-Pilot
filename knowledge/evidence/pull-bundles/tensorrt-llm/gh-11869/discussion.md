@@ -1,78 +1,54 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/TensorRT-LLM#11869](https://github.com/NVIDIA/TensorRT-LLM/pull/11869)
-- Source page: `sources/prs/tensorrt-llm/PR-11869.md`
-- Evidence bundle: `evidence/pull-bundles/tensorrt-llm/gh-11869`
-- Generated at: `2026-05-20T15:17:51.128795+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-03-03T19:04:36Z`
-- Merged: `2026-04-04T07:29:45Z`
-
-## Discussion Counts
-
-- Issue comments: 59
-- Review submissions: 28 (approved=3, commented=25)
-- Inline review comments: 42
-- Review threads observed: 23
-- Resolved/outdated thread markers: resolved=23, outdated=18
-- Human participants with discussion text: NVShreyas, chang-l, coderabbitai, karljang, liji-nv, tensorrt-cicd, yibinl-nvidia
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-03-03T22:21:13Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 3 🧹 Nitpick comments (5) cpp/tensorrt llm/kernels/fusedDiTQKNormRopeKernel.h (1) 17-17: Replace pragma once with the required ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-3885386059)
-- `2026-03-04T15:28:24Z` `COMMENTED` by `NVShreyas` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-3890154903)
-- `2026-03-04T15:30:36Z` `COMMENTED` by `NVShreyas` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-3890168102)
-- `2026-03-04T16:17:54Z` `COMMENTED` by `karljang` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-3890476379)
-- `2026-03-04T16:24:17Z` `COMMENTED` by `karljang` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-3890513758)
-- `2026-03-25T15:47:19Z` `APPROVED` by `yibinl-nvidia` - LGTM for LTX-2 model changes. (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4007790372)
-- `2026-03-25T17:40:13Z` `COMMENTED` by `karljang` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4008558677)
-- `2026-03-25T17:41:33Z` `COMMENTED` by `karljang` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4008569055)
-- `2026-03-27T17:18:27Z` `COMMENTED` by `chang-l` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4022186613)
-- `2026-03-28T00:26:00Z` `COMMENTED` by `karljang` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4024303922)
-- `2026-03-28T00:27:15Z` `COMMENTED` by `karljang` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4024306493)
-- `2026-03-28T01:01:13Z` `COMMENTED` by `karljang` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4024411127)
-- `2026-03-28T01:35:44Z` `COMMENTED` by `karljang` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4024477601)
-- `2026-03-28T01:38:38Z` `COMMENTED` by `karljang` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4024480710)
-- `2026-03-28T03:35:01Z` `COMMENTED` by `chang-l` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4024671066)
-- `2026-03-28T04:27:11Z` `COMMENTED` by `karljang` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4024787664)
-- `2026-03-30T22:47:00Z` `COMMENTED` by `chang-l` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4033684062)
-- `2026-03-31T00:44:39Z` `COMMENTED` by `karljang` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4034003964)
-- `2026-03-31T23:32:26Z` `COMMENTED` by `karljang` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4040822597)
-- `2026-03-31T23:33:15Z` `COMMENTED` by `karljang` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4040825684)
-- `2026-04-01T03:26:41Z` `COMMENTED` by `liji-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4041431040)
-- `2026-04-01T05:19:07Z` `APPROVED` by `liji-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4041730671)
-- `2026-04-01T05:27:01Z` `COMMENTED` by `chang-l` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4041752910)
-- `2026-04-01T05:29:12Z` `APPROVED` by `chang-l` (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-4041762076)
-- ... 4 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `tensorrt_llm/_torch/visual_gen/modules/attention.py`: 10 inline comment(s)
-- `tensorrt_llm/_torch/visual_gen/models/flux/attention.py`: 9 inline comment(s)
-- `cpp/tensorrt_llm/kernels/fusedDiTQKNormRopeKernel.cu`: 5 inline comment(s)
-- `tensorrt_llm/_torch/visual_gen/config.py`: 5 inline comment(s)
-- `examples/visual_gen/visual_gen_flux.py`: 4 inline comment(s)
-- `tests/unittest/_torch/thop/parallel/test_fused_dit_qk_norm_rope.py`: 4 inline comment(s)
-- `tensorrt_llm/_torch/visual_gen/models/ltx2/transformer_ltx2.py`: 3 inline comment(s)
-- `cpp/tensorrt_llm/thop/fusedDiTQKNormRopeOp.cpp`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-03T22:21:13Z` `review` `COMMENTED` by `coderabbitai`; signals: attention, cuda, hang, kernel, occupancy, tensorrt, throughput; excerpt: "Actionable comments posted: 3 🧹 Nitpick comments (5) cpp/tensorrt llm/kernels/fusedDiTQKNormRopeKernel.h (1) 17-17: Replace pragma once with the required TRTLLM header guard macro. This header ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#pullrequestreview-3885386059)
-- `2026-03-03T22:21:09Z` `issue` by `coderabbitai`; signals: attention, cuda, hang, kernel, perf, performance, tensorrt; excerpt: "📝 Walkthrough Walkthrough The pull request introduces a fused CUDA kernel for efficient per-head QK normalization and RoPE transformation in Diffusion Transformers. It includes ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-3993931348)
-- `2026-03-03T22:21:12Z` `inline` by `coderabbitai` `cpp/tensorrt_llm/kernels/fusedDiTQKNormRopeKernel.cu`:66; signals: benchmark, kernel, race, tensorrt; excerpt: "🛠️ Refactor suggestion 🟠 Major Add braces around the early return statement. As per coding guidelines: "The statement forming the body of a switch, ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r2880799916)
-- `2026-03-04T15:30:36Z` `inline` by `NVShreyas` `tensorrt_llm/_torch/visual_gen/models/flux/attention.py`:328; signals: attention, cuda, kernel, tensorrt; excerpt: "if the cuda kernel is always better and accurate, can we remove the old path?" (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r2884458668)
-- `2026-03-03T22:21:12Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/visual_gen/models/flux/attention.py`:416; signals: attention, kernel, tensorrt; excerpt: "⚠️ Potential issue 🟡 Minor Missing None check for image rotary emb could raise TypeError. The fused prepare qkv unconditionally unpacks image rotary emb ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r2880799924)
-- `2026-03-25T17:40:13Z` `inline` by `karljang` `tensorrt_llm/_torch/visual_gen/models/flux/attention.py`:328; signals: attention, hang, tensorrt; excerpt: "Based on discussion with @chang-l , the fused path has been integrated to Attention class itself, so now no additional wiring is needed :)" (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r2989909304)
-- `2026-03-30T22:47:00Z` `inline` by `chang-l` `tensorrt_llm/_torch/visual_gen/modules/attention.py`:252; signals: attention, kernel, tensorrt; excerpt: "Is it possible to avoid these reshape/contiguous ops before launching the fused kernel? For example, can we pre-compute freq cos/sin in the same format?" (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3012561555)
-- `2026-03-31T00:44:39Z` `inline` by `karljang` `tensorrt_llm/_torch/visual_gen/modules/attention.py`:252; signals: attention, block, tensorrt; excerpt: "I had the same feeling we might be able to take it out of attention block, moving to a higher model level instead. But ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3012871683)
-- `2026-03-04T16:24:17Z` `inline` by `karljang` `tensorrt_llm/_torch/visual_gen/models/flux/attention.py`:328; signals: attention, hang, tensorrt; excerpt: "@chang-l , do you agree on removing un-fused path? we'll be able to reduce code complexity a lot." (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r2884767078)
-- `2026-03-27T16:42:27Z` `inline` by `chang-l` `tensorrt_llm/_torch/visual_gen/modules/attention.py`:201; signals: attention, hang, tensorrt; excerpt: "Can we change this part back?" (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3002041823)
-- `2026-03-27T17:13:49Z` `inline` by `chang-l` `tensorrt_llm/_torch/visual_gen/modules/attention.py`:100; signals: attention, hang, tensorrt; excerpt: "can you remove any unnecessary or unrelated changes in this PR?" (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3002209710)
-- `2026-03-27T17:16:41Z` `inline` by `chang-l` `tensorrt_llm/_torch/visual_gen/modules/attention.py`:295; signals: attention, layout, tensorrt; excerpt: "Can you add back the comments including each attention backend has different layout?" (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3002222023)
+- 2026-03-03 `karljang`: @chang-l , could you please review this PR as well? Please feel free to suggest any changes you prefer @forrestl111 , I wanted to inform you that this PR has fixed a corner case of [fusedDiTQKNormRopeKernel.cu‎]( (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-3993927401)
+- 2026-03-04 `NVShreyas` on `examples/visual_gen/visual_gen_flux.py`:148: do we need this arg, can we not enable it by default? I dont think user should have to decide (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r2884446144)
+- 2026-03-04 `NVShreyas` on `tensorrt_llm/_torch/visual_gen/models/flux/attention.py`:328: if the cuda kernel is always better and accurate, can we remove the old path? (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r2884458668)
+- 2026-03-04 `karljang` on `tensorrt_llm/_torch/visual_gen/models/flux/attention.py`:328: @chang-l , do you agree on removing un-fused path? we'll be able to reduce code complexity a lot. (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r2884767078)
+- 2026-03-17 `karljang`: I’ve made it as a draft. I’d like to check whether other visual generation pipelines can benefit from this kernel. (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4076747421)
+- 2026-03-24 `karljang`: @chang-l , could you please review this PR again . thank you! (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4121645174)
+- 2026-03-25 `tensorrt-cicd`: [PR Github 40274]( [ run ] completed with state SUCCESS. Commit: 8da1a27 [/LLM/main/L0 MergeRequest PR pipeline 31392]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4126307109)
+- 2026-03-25 `yibinl-nvidia` on `tensorrt_llm/_torch/visual_gen/models/ltx2/transformer_ltx2.py`:112: do we need both variable? (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r2989210483)
+- 2026-03-25 `karljang` on `tensorrt_llm/_torch/visual_gen/models/flux/attention.py`:328: Based on discussion with @chang-l , the fused path has been integrated to Attention class itself, so now no additional wiring is needed :) (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r2989909304)
+- 2026-03-25 `karljang` on `tensorrt_llm/_torch/visual_gen/models/ltx2/transformer_ltx2.py`:112: Thank you for pointing it out. Actually, no.rope type == LTXRopeType.INTERLEAVED is clear enough. I'll clean it out. (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r2989917835)
+- 2026-03-25 `karljang`: I’m working on the LTX2 part again. It appears there’s an unnecessary loop in the kernel. (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4128513861)
+- 2026-03-26 `tensorrt-cicd`: [PR Github 40379]( [ run ] completed with state FAILURE. Commit: 96da52c [/LLM/main/L0 MergeRequest PR pipeline 31477]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4131388822)
+- 2026-03-26 `tensorrt-cicd`: [PR Github 40429]( [ run ] completed with state SUCCESS. Commit: d1ff94f [/LLM/main/L0 MergeRequest PR pipeline 31521]( completed with status: 'SUCCESS' [CI Report]( [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4133965524)
+- 2026-03-27 `chang-l` on `examples/visual_gen/visual_gen_flux.py`:151: Can we remove the AttentionConfig.fuse qk norm rope field and --disable fuse qk norm rope CLI flags for the examples? Each model's attention class (e.g., WanAttention or FluxAttention), when created, can explicitly set this arg. So, ideally, example files should not be ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3001877596)
+- 2026-03-27 `chang-l` on `tensorrt_llm/_torch/visual_gen/models/flux/attention.py`:418: Can we remove these two factory functions, instead, use the constructors directly. (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3001887137)
+- 2026-03-27 `chang-l` on `tensorrt_llm/_torch/visual_gen/models/flux/attention.py`:71: Can we remove fuse enabled and use self.fuse qk norm rope instead? (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3001912854)
+- 2026-03-27 `chang-l` on `tensorrt_llm/_torch/visual_gen/models/flux/attention.py`:213: why here are all q dim? (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3001927084)
+- 2026-03-27 `chang-l` on `tensorrt_llm/_torch/visual_gen/modules/attention.py`:244: Here, it may silently produces wrong shapes if freqs cos isn't exactly [1, S, 1, D]. Can we have something like: .reshape(-1, self.head dim) w/ an assertion? (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3001940087)
+- 2026-03-27 `chang-l` on `tensorrt_llm/_torch/visual_gen/modules/attention.py`:201: Can we change this part back? (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3002041823)
+- 2026-03-27 `chang-l` on `tensorrt_llm/_torch/visual_gen/modules/attention.py`:258: Why do we need tokens per batch, and why does it go to 0 when batch size = 1? Is it mainly used to toggle between dual-stream (text + image) and single-stream modes? (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3002167135)
+- 2026-03-27 `chang-l` on `tests/unittest/_torch/thop/parallel/test_fused_dit_qk_norm_rope.py`:294: Can we remove GQA tests as it is unused and may not related? (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3002173738)
+- 2026-03-27 `chang-l` on `tests/unittest/_torch/thop/parallel/test_fused_dit_qk_norm_rope.py`:176: Do we have any tests with batch size 1? Since you had tokens per batch, it seems to imply support for batch sizes 1? (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3002179925)
+- 2026-03-27 `chang-l` on `cpp/tensorrt_llm/kernels/fusedDiTQKNormRopeKernel.cu`:31: My CC flagged: The three common::packed as specializations in fusedDiTQKNormRopeKernel.cu should live in mathUtils.h, not in a per-kernel .cu file – can you double check? (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3002189302)
+- 2026-03-27 `chang-l` on `tensorrt_llm/_torch/visual_gen/config.py`:53: Same here – pls remove fuse qk norm rope from config (we dont need to make it user configurable) (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3002192796)
+- 2026-03-27 `chang-l` on `tensorrt_llm/_torch/visual_gen/models/ltx2/transformer_ltx2.py`:119: Since LTX2 is mostly using cross-attention, we haven’t enabled the fused path there, right? In that case, do we still need to plumb the interleave parameter into the Attention module for LTX2? (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3002202269)
+- 2026-03-27 `chang-l` on `tensorrt_llm/_torch/visual_gen/modules/attention.py`:100: can you remove any unnecessary or unrelated changes in this PR? (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3002209710)
+- 2026-03-27 `chang-l` on `tensorrt_llm/_torch/visual_gen/modules/attention.py`:295: Can you add back the comments including each attention backend has different layout? (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3002222023)
+- 2026-03-28 `karljang` on `tensorrt_llm/_torch/visual_gen/config.py`:53: I got confused, though. :) Didn’t you want to give users the option to enable or disable fusion? (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3003847230)
+- 2026-03-28 `karljang` on `cpp/tensorrt_llm/kernels/fusedDiTQKNormRopeKernel.cu`:31: cudaUtils.h looks like a better fit (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3003901397)
+- 2026-03-28 `karljang` on `tensorrt_llm/_torch/visual_gen/config.py`:53: However, I don’t insist. I’ve updated the code, so please review it. (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3003904668)
+- 2026-03-28 `chang-l` on `tensorrt_llm/_torch/visual_gen/config.py`:53: Sorry, I wasn't clear :( — I meant an option/argument (fuse qk norm rope) within the attention module, like LLM's qk norm attention module, not a user-facing CLI or config flag... (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3004066772)
+- 2026-03-28 `karljang` on `tensorrt_llm/_torch/visual_gen/config.py`:53: Good! No problem. It appears that we are now aligned. :) (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3004141364)
+- 2026-03-28 `tensorrt-cicd`: [PR Github 40529]( [ run ] completed with state DISABLED CI server is currently disabled for scheduled maintenance. Estimated completion time: 9 PM PST on 3/28. [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4147524442)
+- 2026-03-29 `tensorrt-cicd`: [PR Github 40578]( [ run ] completed with state FAILURE. Commit: cca3de7 [/LLM/main/L0 MergeRequest PR pipeline 31619]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4149593133)
+- 2026-03-30 `tensorrt-cicd`: [PR Github 40609]( [ run ] completed with state SUCCESS. Commit: c7d1545 [/LLM/main/L0 MergeRequest PR pipeline 31650]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4156795529)
+- 2026-03-30 `tensorrt-cicd`: [PR Github 40757]( [ run ] completed with state SUCCESS. Commit: c7d1545 [/LLM/main/L0 MergeRequest PR pipeline 31775]( completed with status: 'ABORTED' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4158304982)
+- 2026-03-30 `chang-l` on `tensorrt_llm/_torch/visual_gen/modules/attention.py`:252: Is it possible to avoid these reshape/contiguous ops before launching the fused kernel? For example, can we pre-compute freq cos/sin in the same format? (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3012561555)
+- 2026-03-31 `tensorrt-cicd`: [PR Github 40785]( [ run ] completed with state SUCCESS. Commit: c7d1545 [/LLM/main/L0 MergeRequest PR pipeline 31801]( completed with status: 'SUCCESS' [CI Report]( [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4158932174)
+- 2026-03-31 `karljang` on `tensorrt_llm/_torch/visual_gen/modules/attention.py`:252: I had the same feeling we might be able to take it out of attention block, moving to a higher model level instead. But it'll require model-level restructuring. Could we try that as a follow-up task? (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3012871683)
+- 2026-03-31 `karljang` on `tensorrt_llm/_torch/visual_gen/modules/attention.py`:258: Oops, sorry, I have missed this comment. Yes, mainly for dual-stream handling. :) (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3018974782)
+- 2026-03-31 `karljang` on `tensorrt_llm/_torch/visual_gen/modules/attention.py`:295: Yes , rolled back :) (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3018977295)
+- 2026-04-01 `liji-nv` on `cpp/tensorrt_llm/thop/fusedDiTQKNormRopeOp.cpp`:106: If num txt tokens is dynamic, suggest to use SymInt, tokens per batch as well. (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3019546179)
+- 2026-04-01 `karljang` on `tests/unittest/_torch/thop/parallel/test_fused_dit_qk_norm_rope.py`:294: Removed. I forgot to answer here. :( (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3020131230)
+- 2026-04-01 `karljang` on `tests/unittest/_torch/thop/parallel/test_fused_dit_qk_norm_rope.py`:176: Added. I forgot to answer here. :( (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3020132032)
+- 2026-04-01 `karljang` on `cpp/tensorrt_llm/thop/fusedDiTQKNormRopeOp.cpp`:106: Updated thank you for the suggestion! (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#discussion_r3020139811)
+- 2026-04-01 `tensorrt-cicd`: [PR Github 41134]( [ run ] completed with state SUCCESS. Commit: ff17c9f [/LLM/main/L0 MergeRequest PR pipeline 32104]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4170633451)
+- 2026-04-01 `tensorrt-cicd`: [PR Github 41216]( [ run ] completed with state SUCCESS. Commit: ff17c9f [/LLM/main/L0 MergeRequest PR pipeline 32177]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4171772093)
+- 2026-04-01 `tensorrt-cicd`: [PR Github 41245]( [ run ] completed with state SUCCESS. Commit: ff17c9f [/LLM/main/L0 MergeRequest PR pipeline 32204]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4172991077)
+- 2026-04-02 `tensorrt-cicd`: [PR Github 41270]( [ run ] completed with state SUCCESS. Commit: afa63ca [/LLM/main/L0 MergeRequest PR pipeline 32228]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4179900805)
+- 2026-04-02 `tensorrt-cicd`: [PR Github 41494]( [ run ] completed with state SUCCESS. Commit: afa63ca [/LLM/main/L0 MergeRequest PR pipeline 32414]( completed with status: 'SUCCESS' [CI Report]( [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4180685433)
+- 2026-04-03 `tensorrt-cicd`: [PR Github 41523]( [ run ] completed with state SUCCESS. Commit: 54683b7 [/LLM/main/L0 MergeRequest PR pipeline 32439]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4184837512)
+- 2026-04-03 `tensorrt-cicd`: [PR Github 41739]( [ run ] completed with state SUCCESS. Commit: 54683b7 [/LLM/main/L0 MergeRequest PR pipeline 32640]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4185275225)
+- 2026-04-03 `tensorrt-cicd`: [PR Github 41744]( [ run ] completed with state SUCCESS. Commit: 54683b7 [/LLM/main/L0 MergeRequest PR pipeline 32645]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4185408431)
+- 2026-04-04 `tensorrt-cicd`: [PR Github 41755]( [ run ] completed with state SUCCESS. Commit: 1c5fef3 [/LLM/main/L0 MergeRequest PR pipeline 32654]( completed with status: 'SUCCESS' Pipeline passed with automatic retried tests. Check the [rerun report]( for details. [CI Report]( [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/11869#issuecomment-4186670067)

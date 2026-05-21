@@ -1,51 +1,16 @@
-# PR Discussion Digest
-
-- Source PR: [triton-lang/triton#10242](https://github.com/triton-lang/triton/pull/10242)
-- Source page: `sources/prs/triton/PR-10242.md`
-- Evidence bundle: `evidence/pull-bundles/triton/gh-10242`
-- Generated at: `2026-05-20T15:33:29.634119+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-05-06T10:29:30Z`
-- Merged: `2026-05-07T12:24:13Z`
-
-## Discussion Counts
-
-- Issue comments: 15
-- Review submissions: 4 (approved=1, commented=3)
-- Inline review comments: 5
-- Review threads observed: 4
-- Resolved/outdated thread markers: resolved=4, outdated=3
-- Human participants with discussion text: copilot-pull-request-reviewer, lezcano, meinie0826
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-05-06T10:35:21Z` `COMMENTED` by `copilot-pull-request-reviewer` - Pull request overview This PR fixes NVIDIA convert layout lowering for CGA + slice layouts by relaxing an ... (https://github.com/triton-lang/triton/pull/10242#pullrequestreview-4235318088)
-- `2026-05-07T07:44:30Z` `COMMENTED` by `lezcano` (https://github.com/triton-lang/triton/pull/10242#pullrequestreview-4238136279)
-- `2026-05-07T08:04:25Z` `COMMENTED` by `meinie0826` (https://github.com/triton-lang/triton/pull/10242#pullrequestreview-4242176716)
-- `2026-05-07T08:26:17Z` `APPROVED` by `lezcano` - Sounds good, cheers (https://github.com/triton-lang/triton/pull/10242#pullrequestreview-4242319082)
-
-## Inline Comment Hotspots
-
-- `python/test/gluon/test_lowerings.py`: 4 inline comment(s)
-- `lib/Tools/GenericSwizzling.cpp`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-05-06T10:35:21Z` `review` `COMMENTED` by `copilot-pull-request-reviewer`; signals: block, hang, hopper, layout, memory, regression, tma, triton; excerpt: "Pull request overview This PR fixes NVIDIA convert layout lowering for CGA + slice layouts by relaxing an assumption in the optimized shared-memory swizzling ..." (https://github.com/triton-lang/triton/pull/10242#pullrequestreview-4235318088)
-- `2026-05-06T10:35:20Z` `inline` by `copilot-pull-request-reviewer` `python/test/gluon/test_lowerings.py`:75; signals: block, kernel, memory, race, regression; excerpt: "With num ctas 1, this kernel launch creates a CTA cluster, and make cga broadcast makes the block/CTA dimension a broadcast (all-zero bases). That ..." (https://github.com/triton-lang/triton/pull/10242#discussion_r3194756445)
-- `2026-05-06T13:30:56Z` `issue` by `meinie0826`; signals: block, layout, memory, shared memory, tma; excerpt: "I don't understand this fix then. The fix relaxes the assert because CGA slice introduces cross-CTA layouts where storeCvt/loadCvt can be non-trivial over {block}. ..." (https://github.com/triton-lang/triton/pull/10242#issuecomment-4388548537)
-- `2026-05-06T12:56:38Z` `issue` by `meinie0826`; signals: block, layout, memory, tma; excerpt: "can you print the linear layout associated to these layouts, also which shmem layout we generate? Here is the dump for num ctas={2,4,8}. In ..." (https://github.com/triton-lang/triton/pull/10242#issuecomment-4388214766)
-- `2026-05-06T16:09:32Z` `issue` by `meinie0826`; signals: block, failing, layout; excerpt: "are you using TOT? Yes, I'm on TOT. And yes, you're right — storeCvt being non-trivial over block is the real issue. The smem ..." (https://github.com/triton-lang/triton/pull/10242#issuecomment-4389946766)
-- `2026-05-06T16:59:40Z` `issue` by `meinie0826`; signals: block, layout, vector; excerpt: "Update: I've now implemented the fix in optimalSwizzling. The root cause was that flatten(srcFlat, kBlock) returns all zeros for CGA broadcast (e.g. [0, 0] ..." (https://github.com/triton-lang/triton/pull/10242#issuecomment-4390281368)
-- `2026-05-06T15:30:37Z` `issue` by `meinie0826`; signals: block, tma; excerpt: "but you said "The store conversion is trivial over block", which is expected, so you don't need to do cross-CTA work in the store? ..." (https://github.com/triton-lang/triton/pull/10242#issuecomment-4389623072)
-- `2026-05-07T07:42:54Z` `inline` by `lezcano` `python/test/gluon/test_lowerings.py`:203; signals: regression; excerpt: "how is this related? Just write a regression test" (https://github.com/triton-lang/triton/pull/10242#discussion_r3199729951)
-- `2026-05-06T14:06:35Z` `issue` by `lezcano`; signals: block; excerpt: "but you said "The store conversion is trivial over block", which is expected, so you don't need to do cross-CTA work in the store?" (https://github.com/triton-lang/triton/pull/10242#issuecomment-4388883090)
-- `2026-05-06T15:06:44Z` `issue` by `meinie0826`; signals: block; excerpt: "but you said "The store conversion is trivial over block", which is expected, so you don't need to do cross-CTA work in the store? ..." (https://github.com/triton-lang/triton/pull/10242#issuecomment-4389414192)
-- `2026-05-06T15:38:18Z` `issue` by `lezcano`; signals: block; excerpt: "For num ctas=4 and 8, storeCvt is non-trivial over block (block bases all map to 0, not identity) Then this is the bug. The ..." (https://github.com/triton-lang/triton/pull/10242#issuecomment-4389695312)
-- `2026-05-06T12:35:27Z` `issue` by `lezcano`; signals: layout; excerpt: "can you print the linear layout associated to these layouts, also which shmem layout we generate?" (https://github.com/triton-lang/triton/pull/10242#issuecomment-4387991141)
+- 2026-05-06 `copilot-pull-request-reviewer` on `python/test/gluon/test_lowerings.py`:75: With num ctas 1, this kernel launch creates a CTA cluster, and make cga broadcast makes the block/CTA dimension a broadcast (all-zero bases). That means dd (and therefore the out + dd addresses) are identical in each CTA, so multiple CTAs will ... (https://github.com/triton-lang/triton/pull/10242#discussion_r3194756445)
+- 2026-05-06 `copilot-pull-request-reviewer` commented: Pull request overview This PR fixes NVIDIA convert layout lowering for CGA + slice layouts by relaxing an assumption in the optimized shared-memory swizzling path: CTA-cluster (block-dependent) offsets are now allowed for regular ld.shared/st.shared lowering, while ldmatrix/stmatrix remain guarded because they cannot ... (https://github.com/triton-lang/triton/pull/10242#pullrequestreview-4235318088)
+- 2026-05-06 `lezcano`: can you print the linear layout associated to these layouts, also which shmem layout we generate? (https://github.com/triton-lang/triton/pull/10242#issuecomment-4387991141)
+- 2026-05-06 `meinie0826`: can you print the linear layout associated to these layouts, also which shmem layout we generate? Here is the dump for num ctas={2,4,8}. In all cases this is crossCTA=1 and optimalSwizzling selects idxSrc=0 / idxDst=0, i.e. st.shared + ld.shared. The store conversion ... (https://github.com/triton-lang/triton/pull/10242#issuecomment-4388214766)
+- 2026-05-06 `meinie0826`: I don't understand this fix then. The fix relaxes the assert because CGA slice introduces cross-CTA layouts where storeCvt/loadCvt can be non-trivial over {block}. When idxSrc == 0 (i.e. st.shared), lowerLdStShared already handles the block dimension via getClusterCTAId + mapa + st.shared::cluster, ... (https://github.com/triton-lang/triton/pull/10242#issuecomment-4388548537)
+- 2026-05-06 `lezcano`: but you said "The store conversion is trivial over block", which is expected, so you don't need to do cross-CTA work in the store? (https://github.com/triton-lang/triton/pull/10242#issuecomment-4388883090)
+- 2026-05-06 `meinie0826`: but you said "The store conversion is trivial over block", which is expected, so you don't need to do cross-CTA work in the store? when I checkout the fix: (https://github.com/triton-lang/triton/pull/10242#issuecomment-4389414192)
+- 2026-05-06 `meinie0826`: but you said "The store conversion is trivial over block", which is expected, so you don't need to do cross-CTA work in the store? I retest the code, and dump the log with new version : You're right that in the previous ... (https://github.com/triton-lang/triton/pull/10242#issuecomment-4389623072)
+- 2026-05-06 `lezcano`: For num ctas=4 and 8, storeCvt is non-trivial over block (block bases all map to 0, not identity) Then this is the bug. The store should always be trivial over block. Why does that happen? (https://github.com/triton-lang/triton/pull/10242#issuecomment-4389695312)
+- 2026-05-06 `meinie0826`: are you using TOT? Yes, I'm on TOT. And yes, you're right — storeCvt being non-trivial over block is the real issue. The smem generated by optimalSwizzling has block bases all mapping to 0 (because srcLayout's block dimension maps to dim0=0 due ... (https://github.com/triton-lang/triton/pull/10242#issuecomment-4389946766)
+- 2026-05-06 `meinie0826`: Update: I've now implemented the fix in optimalSwizzling. The root cause was that flatten(srcFlat, kBlock) returns all zeros for CGA broadcast (e.g. [0, 0] for num ctas=4), but these were passed to the inner optimalSwizzling via SetVector.getArrayRef(), which deduplicated them to {0}. ... (https://github.com/triton-lang/triton/pull/10242#issuecomment-4390281368)
+- 2026-05-07 `lezcano` on `python/test/gluon/test_lowerings.py`:203: how is this related? Just write a regression test (https://github.com/triton-lang/triton/pull/10242#discussion_r3199729951)
+- 2026-05-07 `lezcano` on `python/test/gluon/test_lowerings.py`:185: same here, how is this related? (https://github.com/triton-lang/triton/pull/10242#discussion_r3199731668)
+- 2026-05-07 `lezcano` on `lib/Tools/GenericSwizzling.cpp`:681: no need for any of this I don't think. (https://github.com/triton-lang/triton/pull/10242#discussion_r3199738259)
+- 2026-05-07 `meinie0826` on `python/test/gluon/test_lowerings.py`:185: sry, I messed up the lower path for gather and confused two different issues. so yes, you’re right. I have removed this test. (https://github.com/triton-lang/triton/pull/10242#discussion_r3199851023)
+- 2026-05-07 `meinie0826`: please don't update the PR, I'll just rerun the tests. I noticed you reran the test last time, and it failed at the same place again. That’s why I’ve updated the branch. (https://github.com/triton-lang/triton/pull/10242#issuecomment-4396718627)

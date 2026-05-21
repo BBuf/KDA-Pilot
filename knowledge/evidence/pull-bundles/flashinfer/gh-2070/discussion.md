@@ -1,77 +1,41 @@
-# PR Discussion Digest
-
-- Source PR: [flashinfer-ai/flashinfer#2070](https://github.com/flashinfer-ai/flashinfer/pull/2070)
-- Source page: `sources/prs/flashinfer/PR-2070.md`
-- Evidence bundle: `evidence/pull-bundles/flashinfer/gh-2070`
-- Generated at: `2026-05-20T15:23:59.188948+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-11-10T04:03:50Z`
-- Merged: `2026-01-10T01:33:19Z`
-
-## Discussion Counts
-
-- Issue comments: 26
-- Review submissions: 45 (approved=3, commented=42)
-- Inline review comments: 57
-- Review threads observed: 29
-- Resolved/outdated thread markers: resolved=25, outdated=15
-- Human participants with discussion text: Yang-YiFan, aidando73, aleozlx, bkryu, coderabbitai, jimmyzho, raayandhar, vadiklyutiy
-- Automation comments/reviews omitted from high-signal summary: 4
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 4
-
-## Review Decisions
-
-- `2025-11-10T04:23:30Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 6 📜 Review details Configuration used : CodeRabbit UI Review profile : CHILL Plan : ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3440745620)
-- `2025-11-10T04:26:37Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 3 ♻️ Duplicate comments (1) flashinfer/gemm/gemm base.py (1) 512-520: Materialize the transposed tensor before passing ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3440749814)
-- `2025-11-12T02:00:03Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 3 ♻️ Duplicate comments (5) include/flashinfer/gemm/bf16 gemm template sm100.h (1) 156-173: Restore workspace probe handling ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3450968044)
-- `2025-11-12T03:34:23Z` `COMMENTED` by `raayandhar` (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3451186762)
-- `2025-11-12T03:35:18Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3451188830)
-- `2025-11-12T03:39:25Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 2 ♻️ Duplicate comments (7) include/flashinfer/gemm/bf16 gemm cutlass template.h (2) 166-173: Improve MNK hash mixing ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3451197559)
-- `2025-11-16T22:41:04Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 0 ♻️ Duplicate comments (7) include/flashinfer/gemm/bf16 gemm template sm100.h (1) 156-170: Allow workspace probes to ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3470546036)
-- `2025-11-17T05:18:18Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 0 ♻️ Duplicate comments (7) tests/gemm/test mm bf16.py (2) 25-31: Use row‑major (k, n) weight ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3471027244)
-- `2025-11-17T06:14:12Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 1 📜 Review details Configuration used : CodeRabbit UI Review profile : CHILL Plan : ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3471157529)
-- `2025-11-17T06:23:53Z` `COMMENTED` by `raayandhar` (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3451188210)
-- `2025-11-17T06:24:18Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3471177988)
-- `2025-11-17T06:24:20Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3471178054)
-- `2025-11-17T06:24:27Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3471178305)
-- `2025-11-17T06:24:32Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3471178472)
-- `2025-11-17T06:24:34Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3471178635)
-- `2025-11-17T06:24:35Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3471178867)
-- `2025-11-17T06:28:12Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3471187255)
-- `2025-11-19T00:29:49Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 0 ♻️ Duplicate comments (2) include/flashinfer/gemm/bf16 gemm cutlass template.h (1) 136-176: Guard static workspace cache ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3480202972)
-- `2025-11-27T04:28:57Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 2 🧹 Nitpick comments (1) flashinfer/gemm/gemm base.py (1) 603-641: Consider adding support for SM103/SM110 and ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3513510916)
-- `2025-11-27T04:35:21Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 2 📜 Review details Configuration used : CodeRabbit UI Review profile : CHILL Plan : ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3513519924)
-- `2025-12-23T05:39:13Z` `COMMENTED` by `aleozlx` (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3606623087)
-- `2025-12-23T05:43:58Z` `COMMENTED` by `aleozlx` - left minor comments as my code review, and suggested adding tgv backend (as discussed above) if it doesn't ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3606630308)
-- `2025-12-23T06:54:29Z` `COMMENTED` by `raayandhar` (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3606845885)
-- `2025-12-23T07:02:40Z` `COMMENTED` by `raayandhar` (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3606868558)
-- ... 20 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `flashinfer/gemm/gemm_base.py`: 36 inline comment(s)
-- `include/flashinfer/gemm/bf16_gemm_template_sm100.h`: 5 inline comment(s)
-- `include/flashinfer/gemm/bf16_gemm_cutlass_template.h`: 5 inline comment(s)
-- `tests/gemm/test_bmm_bf16.py`: 4 inline comment(s)
-- `csrc/bf16_gemm_cutlass.cu`: 3 inline comment(s)
-- `tests/gemm/test_mm_bf16.py`: 3 inline comment(s)
-- `flashinfer/__init__.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-11-10T04:23:30Z` `review` `COMMENTED` by `coderabbitai`; signals: autotune, bf16, cache, cuda, cutlass, dtype, flashinfer, fp8; excerpt: "Actionable comments posted: 6 📜 Review details Configuration used : CodeRabbit UI Review profile : CHILL Plan : Pro 📥 Commits Reviewing files that ..." (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3440745620)
-- `2025-11-10T04:26:37Z` `review` `COMMENTED` by `coderabbitai`; signals: autotune, bf16, cache, cutlass, flashinfer, gemm, hang, moe; excerpt: "Actionable comments posted: 3 ♻️ Duplicate comments (1) flashinfer/gemm/gemm base.py (1) 512-520: Materialize the transposed tensor before passing to the CUTLASS runner. This is ..." (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3440749814)
-- `2025-11-12T02:00:03Z` `review` `COMMENTED` by `coderabbitai`; signals: autotune, b200, bf16, cache, cuda, cutlass, dtype, flashinfer; excerpt: "Actionable comments posted: 3 ♻️ Duplicate comments (5) include/flashinfer/gemm/bf16 gemm template sm100.h (1) 156-173: Restore workspace probe handling before launching kernels CutlassBf16GemmRunner::getWorkspaceSize() calls this ..." (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3450968044)
-- `2025-11-12T03:39:25Z` `review` `COMMENTED` by `coderabbitai`; signals: autotune, bf16, cache, cuda, cutlass, dtype, flashinfer, fp8; excerpt: "Actionable comments posted: 2 ♻️ Duplicate comments (7) include/flashinfer/gemm/bf16 gemm cutlass template.h (2) 166-173: Improve MNK hash mixing to avoid collisions. XORing h1 ^ ..." (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3451197559)
-- `2025-11-16T22:41:04Z` `review` `COMMENTED` by `coderabbitai`; signals: autotune, b200, bf16, cache, cuda, cutlass, dtype, epilogue; excerpt: "Actionable comments posted: 0 ♻️ Duplicate comments (7) include/flashinfer/gemm/bf16 gemm template sm100.h (1) 156-170: Allow workspace probes to succeed when no buffer is provided. ..." (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3470546036)
-- `2025-11-17T05:18:18Z` `review` `COMMENTED` by `coderabbitai`; signals: autotune, bf16, block, cache, cuda, cutlass, dtype, flashinfer; excerpt: "Actionable comments posted: 0 ♻️ Duplicate comments (7) tests/gemm/test mm bf16.py (2) 25-31: Use row‑major (k, n) weight and avoid .T to keep inputs ..." (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3471027244)
-- `2025-11-17T06:14:12Z` `review` `COMMENTED` by `coderabbitai`; signals: bf16, cutlass, flashinfer, fp4, fp8, gemm, hang, sm100; excerpt: "Actionable comments posted: 1 📜 Review details Configuration used : CodeRabbit UI Review profile : CHILL Plan : Pro 📥 Commits Reviewing files that ..." (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3471157529)
-- `2025-11-19T00:29:49Z` `review` `COMMENTED` by `coderabbitai`; signals: autotune, b200, bf16, cache, cuda, cutlass, dtype, flashinfer; excerpt: "Actionable comments posted: 0 ♻️ Duplicate comments (2) include/flashinfer/gemm/bf16 gemm cutlass template.h (1) 136-176: Guard static workspace cache against concurrent access CutlassBf16GemmRunner ::getWorkspaceSize uses ..." (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3480202972)
-- `2025-11-27T04:35:21Z` `review` `COMMENTED` by `coderabbitai`; signals: autotune, bf16, cache, cutlass, flashinfer, fp8, gemm, hang; excerpt: "Actionable comments posted: 2 📜 Review details Configuration used : CodeRabbit UI Review profile : CHILL Plan : Pro 📥 Commits Reviewing files that ..." (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3513519924)
-- `2025-12-24T00:31:52Z` `review` `COMMENTED` by `coderabbitai`; signals: bf16, cache, compile, correctness, cuda, cutlass, dtype, flashinfer; excerpt: "Actionable comments posted: 0 ♻️ Duplicate comments (2) flashinfer/gemm/gemm base.py (1) 535-609: Consider marking BF16 public APIs with @flashinfer api and aligning with backend ..." (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3609609484)
-- `2025-12-25T00:01:42Z` `review` `COMMENTED` by `coderabbitai`; signals: bf16, cuda, cutlass, dtype, flashinfer, fp8, gemm, hang; excerpt: "Actionable comments posted: 0 ♻️ Duplicate comments (1) tests/gemm/test mm bf16.py (1) 19-26: Add CUDA availability check before calling get compute capability. The test ..." (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3611680395)
-- `2025-12-25T02:02:32Z` `review` `COMMENTED` by `coderabbitai`; signals: autotune, bf16, cutlass, dtype, flashinfer, fp8, gemm, hang; excerpt: "Actionable comments posted: 3 🧹 Nitpick comments (1) flashinfer/gemm/gemm base.py (1) 770-788: Add assertion when no runners are available. Unlike fp8 gemm sm100 (line ..." (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3611746017)
+- 2025-11-10 `raayandhar`: Currently there is an error about the second matrix being non-contiguous: RuntimeError: Check failed: (mat2.IsContiguous()) is false: mat2 must be contiguous I am trying to work on it. However, I have limited access to B200s so it may be a bit difficult. ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#issuecomment-3509305971)
+- 2025-11-12 `raayandhar` on `include/flashinfer/gemm/bf16_gemm_cutlass_template.h`:151: I've added a comment here about why we do this, based on the FP8 file. (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2516597964)
+- 2025-11-12 `raayandhar` on `tests/gemm/test_bmm_bf16.py`:32: The other tests do this, so I'm going to ignore this for now. (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2516599284)
+- 2025-11-12 `raayandhar` on `include/flashinfer/gemm/bf16_gemm_template_sm100.h`:170: It's basically the same as what we do in CutlassFp8GemmRunner::getWorkspaceSizeImpl, so I'm ignoring. (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2516604413)
+- 2025-11-12 `raayandhar` on `flashinfer/gemm/gemm_base.py`:622: This is what the other tests do, so I'll do it as well. (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2516605457)
+- 2025-11-12 `raayandhar` on `flashinfer/gemm/gemm_base.py`:520: This is not the fix. I tried that before, we get SEGFAULT. I'm still looking into it. (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2516606292)
+- 2025-11-12 `raayandhar` on `flashinfer/gemm/gemm_base.py`:246: We do this at the .cu level, already. (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2516607126)
+- 2025-11-12 `raayandhar` on `flashinfer/gemm/gemm_base.py`:313: We do this at the .cu level already. (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2516607930)
+- 2025-11-12 `raayandhar` on `csrc/bf16_gemm_cutlass.cu`:136: I'm looking into it. (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2516608554)
+- 2025-11-17 `raayandhar`: Hi experts, I think this is now ready for review! I had more trouble than I expected, even though there were already FP8 and FP4 implementations of CUTLASS GEMMs, and I learned a lot working on this, especially since it was my ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#issuecomment-3540109198)
+- 2025-11-17 `raayandhar` on `include/flashinfer/gemm/bf16_gemm_template_sm100.h`:162: is there any advantage to doing these safety checks this way instead of just using the CUTLASS CHECK macro? I saw it done this way for FP8 and FP4, so I kept it this way. But just wondering because it seems the ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2532853147)
+- 2025-12-23 `vadiklyutiy`: @raayandhar Why you didn't use TGV implementation that already part of FI and has better performance? (https://github.com/flashinfer-ai/flashinfer/pull/2070#issuecomment-3684751280)
+- 2025-12-23 `raayandhar`: @raayandhar Why you didn't use TGV implementation that already part of FI and has better performance? The original issue asked about alternatives to TGV. Also, TGV is not better on all shapes. In the batch=64 case, the CUTLASS GEMM is the fastest. ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#issuecomment-3684754935)
+- 2025-12-23 `vadiklyutiy`: I meant the following. FI has a functionality of auto tuning. So, it can in runtime bench all available kernels: cublas, cutlass, your cutlass implementation, cudnn, TGV, etc and choose the best one. (https://github.com/flashinfer-ai/flashinfer/pull/2070#issuecomment-3684769578)
+- 2025-12-23 `raayandhar`: I meant the following. FI has a functionality of auto tuning. So, it can in runtime bench all available kernels: cublas, cutlass, your cutlass implementation, cudnn, TGV, etc and choose the best one. Still not sure I understand or what you are ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#issuecomment-3684775114)
+- 2025-12-23 `aleozlx`: Hi @raayandhar, thanks for the contribution. I can help review as well. We started talking about what this API shall offer. I think at some point it may make sense for this bmm bf16 API to offer backend = [cudnn, tgv, cutlass] ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#issuecomment-3685056196)
+- 2025-12-23 `aleozlx`: @raayandhar would it be feasible to at least add tgv backend to the bmm bf16 api? This could be a useful combo to help adoption, then we can get this in. (@vadiklyutiy pls shout if disagree with my suggestion) (https://github.com/flashinfer-ai/flashinfer/pull/2070#issuecomment-3685137561)
+- 2025-12-23 `aleozlx` on `flashinfer/gemm/gemm_base.py`:439: can we use @backend requirement and @flashinfer api e.g. (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2642002164)
+- 2025-12-23 `aleozlx` commented: left minor comments as my code review, and suggested adding tgv backend (as discussed above) if it doesn't seem too high effort (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3606630308)
+- 2025-12-23 `raayandhar` on `flashinfer/gemm/gemm_base.py`:439: yeah absolutely, I'll make changes tomorrow (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2642183544)
+- 2025-12-23 `raayandhar` on `flashinfer/gemm/gemm_base.py`:439: I think we actually want to do this for mm bf16 right? (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2642199020)
+- 2025-12-23 `raayandhar`: left minor comments as my code review, and suggested adding tgv backend (as discussed above) if it doesn't seem too high effort No, sounds good, I will add it. Thanks for your clarification, I understand what @vadiklyutiy means now. Will make the ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#issuecomment-3685442624)
+- 2025-12-23 `aleozlx` on `flashinfer/gemm/gemm_base.py`:439: i believe all public apis should be marked flashinfer api for reader clarity and automatic logging if an api has backends, then backend requirement is the current standard way to plumb in relevant functions (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2644232927)
+- 2025-12-24 `raayandhar`: Not sure about the error in CI - I am able to build and pass all the tests after I rebased. Seems to be related to the CI infra maybe, is my best guess. Working on making changes now. (https://github.com/flashinfer-ai/flashinfer/pull/2070#issuecomment-3688290086)
+- 2025-12-24 `raayandhar` on `flashinfer/gemm/gemm_base.py`:439: yeah, sorry, I was referring to the wrong thing -- it looks to me like the TGV gemm does not support a (b, m, n) matmul, just (m, n) kind of matmuls. Please correct if I'm wrong (i.e. bmm vs mm). So ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2644513395)
+- 2025-12-25 `raayandhar`: Right now with my changes, everything passes: Test Results (click to expand) (https://github.com/flashinfer-ai/flashinfer/pull/2070#issuecomment-3690680108)
+- 2025-12-25 `raayandhar` on `flashinfer/gemm/gemm_base.py`:187: This is consistent with get gemm sm120 module() (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2646446271)
+- 2025-12-25 `raayandhar` on `flashinfer/gemm/gemm_base.py`:290: I tried to unify the APIs a bit between the CUTLASS BF16 GEMM and the TGV GEMM. This meant that we add some parameters here that CUTLASS won't use and TGV won't use, but we check against those in our backend requirements, ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2646448791)
+- 2025-12-25 `raayandhar` on `flashinfer/gemm/gemm_base.py`:436: Even though we only have the CUTLASS backend for BMM BF16, I added this here because it helps me set up for adding the cuDNN backend, which is what I'm working on next. (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2646449311)
+- 2026-01-06 `Yang-YiFan` on `flashinfer/gemm/gemm_base.py`:290: This can be future work to add full feature support for both backends. With the correct instantiated config TGV can support custom out tensor/out dtype. Similarly, CUTLASS gemm supports PDL (I think it's in the run function or something there is a ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2664103071)
+- 2026-01-06 `raayandhar` on `flashinfer/gemm/gemm_base.py`:290: Yes I agree and it should also be possible to add bias support to the CUTLASS backend as well. (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2665178615)
+- 2026-01-06 `raayandhar`: @aleozlx could you trigger CI now that the checks have passed? (if you want others to review just ignore) (https://github.com/flashinfer-ai/flashinfer/pull/2070#issuecomment-3716647084)
+- 2026-01-08 `bkryu` on `flashinfer/gemm/gemm_base.py`:185: Hi @raayandhar, thank you for contributing. Is there any reason why this kernel should not be supported on 103? Based on other APIs, I would expect at least [100, 103] (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2670543205)
+- 2026-01-08 `bkryu` commented: Hi @raayandhar, this will be a great addition to FlashInfer. To facilitate benchmarking, would it be possible to add in this or a subsequent PR, benchmarking support in [flashinfer benchmark.py]( A reference benchmark routine for bmm fp8 can be [found here]( One ... (https://github.com/flashinfer-ai/flashinfer/pull/2070#pullrequestreview-3637342721)
+- 2026-01-08 `raayandhar` on `flashinfer/gemm/gemm_base.py`:185: I don't have GB300 or B300 machines. I don't even have B200 either so I rented. And I can't find B300 to rent so I never tested this. But if you know that it should work I'll add it. (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2670564051)
+- 2026-01-08 `raayandhar`: Hi @raayandhar, this will be a great addition to FlashInfer. To facilitate benchmarking, would it be possible to add in this or a subsequent PR, benchmarking support in , I spoke to @aleozlx about it already (https://github.com/flashinfer-ai/flashinfer/pull/2070#issuecomment-3721515988)
+- 2026-01-08 `bkryu` on `flashinfer/gemm/gemm_base.py`:185: That is something I can help with. I had to make some surgical changes, and have (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2670601379)
+- 2026-01-08 `raayandhar` on `flashinfer/gemm/gemm_base.py`:185: Yes I'll make the appropriate changes later tonight or tomorrow. Thanks!! (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2670606189)
+- 2026-01-08 `raayandhar` on `flashinfer/gemm/gemm_base.py`:185: Thanks for your help testing this! I cherry-picked your commit and applied it. Resolving this now. (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2671395674)
+- 2026-01-09 `aleozlx`: oh i see, just needs a code owner approval @jimmyzho or @yzh119 could you help us merge it in? thanks (https://github.com/flashinfer-ai/flashinfer/pull/2070#issuecomment-3730561202)
+- 2026-01-10 `jimmyzho` on `flashinfer/gemm/gemm_base.py`:363: [nit] can you move these checks to check mm bf16 problem size? (https://github.com/flashinfer-ai/flashinfer/pull/2070#discussion_r2678107677)

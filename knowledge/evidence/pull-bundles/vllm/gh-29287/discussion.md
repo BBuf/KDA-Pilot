@@ -1,79 +1,30 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#29287](https://github.com/vllm-project/vllm/pull/29287)
-- Source page: `sources/prs/vllm/PR-29287.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-29287`
-- Generated at: `2026-05-20T15:38:41.039639+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-11-24T02:11:14Z`
-- Merged: `2026-01-21T15:16:30Z`
-
-## Discussion Counts
-
-- Issue comments: 16
-- Review submissions: 31 (approved=1, changes_requested=1, commented=29)
-- Inline review comments: 36
-- Review threads observed: 17
-- Resolved/outdated thread markers: resolved=6, outdated=13
-- Human participants with discussion text: chatgpt-codex-connector, cursor, ganyi1996ppo, gronsti-amd, heheda12345, mergify, tjtanaa, vllmellm
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-11-24T13:49:12Z` `COMMENTED` by `chatgpt-codex-connector` - 💡 Codex Review Here are some automated review suggestions for this pull request. ℹ️ About Codex in GitHub ... (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3500475585)
-- `2025-11-26T01:04:30Z` `COMMENTED` by `heheda12345` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3507718111)
-- `2025-11-26T01:07:24Z` `COMMENTED` by `heheda12345` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3507730885)
-- `2025-11-26T01:10:57Z` `COMMENTED` by `heheda12345` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3507745715)
-- `2025-11-26T02:18:05Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3508055291)
-- `2025-11-26T02:23:41Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3508088148)
-- `2025-11-26T02:43:40Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3508199861)
-- `2025-11-27T13:05:24Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3515260184)
-- `2025-11-30T19:23:42Z` `COMMENTED` by `heheda12345` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3522135425)
-- `2025-12-18T12:01:15Z` `CHANGES_REQUESTED` by `gronsti-amd` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3592554163)
-- `2025-12-18T14:02:50Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3593155845)
-- `2025-12-30T10:17:24Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3617820615)
-- `2025-12-30T10:17:49Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3617821312)
-- `2025-12-30T12:04:35Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3618010589)
-- `2025-12-30T12:07:40Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3618016681)
-- `2026-01-05T12:25:26Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3625982384)
-- `2026-01-06T03:35:01Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3629220324)
-- `2026-01-07T06:40:11Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3633549254)
-- `2026-01-16T05:55:31Z` `COMMENTED` by `cursor` - Cursor Bugbot has reviewed your changes and found 4 potential issues. Bugbot Autofix is OFF. To automatically fix ... (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3669029955)
-- `2026-01-16T06:00:26Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3669049728)
-- `2026-01-16T06:03:10Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3669060869)
-- `2026-01-16T06:06:29Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3669071271)
-- `2026-01-21T02:38:48Z` `COMMENTED` by `tjtanaa` - I added some comments to expedite the review. I will add more in the next couple hours. (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3669148341)
-- `2026-01-21T02:44:09Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3685119810)
-- ... 7 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/v1/attention/ops/rocm_aiter_mla_sparse.py`: 11 inline comment(s)
-- `vllm/model_executor/layers/sparse_attn_indexer.py`: 7 inline comment(s)
-- `vllm/v1/attention/backends/mla/rocm_aiter_mla_sparse.py`: 5 inline comment(s)
-- `vllm/attention/ops/rocm_aiter_mla_sparse.py`: 3 inline comment(s)
-- `vllm/model_executor/models/deepseek_v2.py`: 3 inline comment(s)
-- `vllm/v1/attention/backends/mla/indexer.py`: 2 inline comment(s)
-- `vllm/_aiter_ops.py`: 2 inline comment(s)
-- `vllm/model_executor/layers/rotary_embedding/deepseek_scaling_rope.py`: 2 inline comment(s)
-- `vllm/platforms/rocm.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-11-26T02:18:05Z` `inline` by `ganyi1996ppo` `vllm/attention/ops/rocm_aiter_mla_sparse.py`:19; signals: attention, block, cache, cuda, deepgemm, fp8, gemm, kernel; excerpt: "Thanks for the comments. This triton kernel is mainly used to do the layout shuffle aside from quant and cache functionality. we will shuffle ..." (https://github.com/vllm-project/vllm/pull/29287#discussion_r2562546489)
-- `2025-12-18T12:00:53Z` `inline` by `gronsti-amd` `vllm/v1/attention/backends/mla/rocm_aiter_mla_sparse.py`:146; signals: attention, cuda, cudagraph, mla, perf, speedup; excerpt: "We did some profiling for DeepSeek v3.2, and noticed unexpected cuda graph breaks in decode. It seems that they are caused by a small ..." (https://github.com/vllm-project/vllm/pull/29287#discussion_r2630777277)
-- `2025-11-24T13:49:12Z` `inline` by `chatgpt-codex-connector` `vllm/v1/attention/backends/mla/rocm_aiter_mla_sparse.py`:185; signals: attention, block, cache, kernel, mla; excerpt: ", but the ROCM metadata builder still initializes paged kv last page len to all ones and never derives the actual last-page lengths before ..." (https://github.com/vllm-project/vllm/pull/29287#discussion_r2556362032)
-- `2025-11-26T01:04:30Z` `inline` by `heheda12345` `vllm/attention/ops/rocm_aiter_mla_sparse.py`:19; signals: attention, cuda, kernel, mla, triton; excerpt: "@LucasWilkinson do you think it is a good idea to use these triton kernel for CUDA platform? I'm not sure whether it is faster ..." (https://github.com/vllm-project/vllm/pull/29287#discussion_r2562272603)
-- `2025-11-26T02:23:41Z` `inline` by `ganyi1996ppo` `vllm/attention/ops/rocm_aiter_mla_sparse.py`:19; signals: attention, cuda, cudagraph, mla, triton; excerpt: "Although, we might consider to rewrite those part of code to cuda, to reduce the host overhead triton might brought during piecewise cudagraph, but ..." (https://github.com/vllm-project/vllm/pull/29287#discussion_r2562567491)
-- `2026-01-20T16:05:17Z` `inline` by `tjtanaa` `vllm/v1/attention/ops/rocm_aiter_mla_sparse.py`:415; signals: attention, fp8, kernel, mla, triton; excerpt: "In the AITER version used in the Dockerfile.rocm base, the kernel existed already. However, the path is different from the one used in latest ..." (https://github.com/vllm-project/vllm/pull/29287#discussion_r2709033828)
-- `2025-11-26T02:43:40Z` `inline` by `ganyi1996ppo` `vllm/v1/attention/backends/mla/indexer.py`:239; signals: attention, kernel, mla, oom; excerpt: "I think that kernel still have room for improvement..... And I'm doing that too, will file a PR to optimize it recently." (https://github.com/vllm-project/vllm/pull/29287#discussion_r2562647817)
-- `2026-01-16T06:29:43Z` `inline` by `tjtanaa` `vllm/v1/attention/ops/rocm_aiter_mla_sparse.py`:115; signals: attention, cache, fp8, mla; excerpt: "there is a helper function current platform.is fp8 fnuz(), can you also help to add cache decorator to is fp8 fnuz ?" (https://github.com/vllm-project/vllm/pull/29287#discussion_r2697169690)
-- `2026-01-21T02:45:45Z` `inline` by `ganyi1996ppo` `vllm/v1/attention/ops/rocm_aiter_mla_sparse.py`:115; signals: attention, cache, compile, mla; excerpt: "I found cache decorator can not be captured by torch.compile, maybe we can leave this one? This host overhead should minor to big models ..." (https://github.com/vllm-project/vllm/pull/29287#discussion_r2710757962)
-- `2025-11-26T01:10:57Z` `inline` by `heheda12345` `vllm/v1/attention/backends/mla/indexer.py`:239; signals: attention, kernel, mla; excerpt: "what's the difference between AMD kernel and NV kernel? Why NV kernel doesn't need this token to seq?" (https://github.com/vllm-project/vllm/pull/29287#discussion_r2562298422)
-- `2025-12-30T12:07:40Z` `inline` by `ganyi1996ppo` `vllm/_aiter_ops.py`:1171; signals: attention, mla, triton; excerpt: "@tjtanaa I move the defination of rocm aiter sprase atn indexer and other triton ops back to the vllm/attention/ops/rocm aiter mla sparse, but keep ..." (https://github.com/vllm-project/vllm/pull/29287#discussion_r2652870998)
-- `2026-01-16T05:55:32Z` `inline` by `cursor` `vllm/v1/attention/backends/mla/rocm_aiter_mla_sparse.py`:196; signals: attention, bf16, mla; excerpt: "Buffer undersized causing crash when tokens exceed sequences High Severity The paged kv last page len buffer is sized to max num seqs and ..." (https://github.com/vllm-project/vllm/pull/29287#discussion_r2697065796)
+- 2025-11-24 `tjtanaa`: @ganyi1996ppo Can you also include the AITER commit or requirements, and also information if the AITER commit in the Dockerfile.rocm base supports the feature? It will be easier for us to keep track and plan the merge. (https://github.com/vllm-project/vllm/pull/29287#issuecomment-3570943263)
+- 2025-11-25 `ganyi1996ppo`: @ganyi1996ppo Can you also include the AITER commit or requirements, and also information if the AITER commit in the Dockerfile.rocm base supports the feature? It will be easier for us to keep track and plan the merge. Should works fine after this ... (https://github.com/vllm-project/vllm/pull/29287#issuecomment-3574035993)
+- 2025-11-26 `heheda12345`: @ganyi1996ppo please use 20-shot gsm-8k to verify correctness. This model selects 2048 tokens so correctness evaluation should use requests longer than 2048 tokens (https://github.com/vllm-project/vllm/pull/29287#issuecomment-3578288022)
+- 2025-11-26 `heheda12345` on `vllm/attention/ops/rocm_aiter_mla_sparse.py`:19: @LucasWilkinson do you think it is a good idea to use these triton kernel for CUDA platform? I'm not sure whether it is faster than the CUDA code. (https://github.com/vllm-project/vllm/pull/29287#discussion_r2562272603)
+- 2025-11-26 `heheda12345` on `vllm/model_executor/models/deepseek_v2.py`:622: can you use CustomOp to select the kernel implementation for different platforms? (https://github.com/vllm-project/vllm/pull/29287#discussion_r2562284574)
+- 2025-11-26 `heheda12345` on `vllm/v1/attention/backends/mla/indexer.py`:239: what's the difference between AMD kernel and NV kernel? Why NV kernel doesn't need this token to seq? (https://github.com/vllm-project/vllm/pull/29287#discussion_r2562298422)
+- 2025-11-26 `ganyi1996ppo` on `vllm/attention/ops/rocm_aiter_mla_sparse.py`:19: Thanks for the comments. This triton kernel is mainly used to do the layout shuffle aside from quant and cache functionality. we will shuffle the kv cache layout to [num blocks, block size // block tile size, head dim// head tile size, ... (https://github.com/vllm-project/vllm/pull/29287#discussion_r2562546489)
+- 2025-11-26 `ganyi1996ppo` on `vllm/attention/ops/rocm_aiter_mla_sparse.py`:19: Although, we might consider to rewrite those part of code to cuda, to reduce the host overhead triton might brought during piecewise cudagraph, but since we haven't witness any bottleneck on host side during profiling, the priority of doing that is not ... (https://github.com/vllm-project/vllm/pull/29287#discussion_r2562567491)
+- 2025-11-26 `ganyi1996ppo`: @ganyi1996ppo please use 20-shot gsm-8k to verify correctness. This model selects 2048 tokens so correctness evaluation should use requests longer than 2048 tokens Sure, thanks for the suggestion! (https://github.com/vllm-project/vllm/pull/29287#issuecomment-3578606829)
+- 2025-11-26 `ganyi1996ppo` on `vllm/v1/attention/backends/mla/indexer.py`:239: I think that kernel still have room for improvement..... And I'm doing that too, will file a PR to optimize it recently. (https://github.com/vllm-project/vllm/pull/29287#discussion_r2562647817)
+- 2025-11-27 `ganyi1996ppo` on `vllm/model_executor/models/deepseek_v2.py`:622: hi @heheda12345 , Thanks for the suggestion. We actually planning to replace many kernels in sparse attn indexer. So perhaps it's better to wrap the sparse attn indexer to CustomOp. What's your thought? (https://github.com/vllm-project/vllm/pull/29287#discussion_r2568597547)
+- 2025-12-11 `ganyi1996ppo`: And @tjtanaa , we might need to wait triton update to 3.5.0 before merge this PR. Or the gluon version of fp8 paged mqa logits might just not be able to compile. Do you have any clue on the triton update plan ... (https://github.com/vllm-project/vllm/pull/29287#issuecomment-3640437508)
+- 2025-12-18 `gronsti-amd` on `vllm/v1/attention/backends/mla/rocm_aiter_mla_sparse.py`:146: We did some profiling for DeepSeek v3.2, and noticed unexpected cuda graph breaks in decode. It seems that they are caused by a small typo, a missing underscore on this line. ROCMAiterMLASparseMetadataBuilder sets cudagraph support, but the actual checked name is cudagraph ... (https://github.com/vllm-project/vllm/pull/29287#discussion_r2630777277)
+- 2025-12-18 `ganyi1996ppo` on `vllm/v1/attention/backends/mla/rocm_aiter_mla_sparse.py`:146: Thanks for pointing that out! Fixed. (https://github.com/vllm-project/vllm/pull/29287#discussion_r2631224243)
+- 2025-12-30 `tjtanaa` on `vllm/_aiter_ops.py`:1171: @ganyi1996ppo aiter ops should be about ops. We should avoid dispatching logic defined in this file. Moreover, these logics also uses attention metadata, so it is best to keep them where you kept them previously. Moreover, these ops are only use in ... (https://github.com/vllm-project/vllm/pull/29287#discussion_r2652684124)
+- 2025-12-30 `tjtanaa` on `vllm/model_executor/layers/rotary_embedding/deepseek_scaling_rope.py`:148: let's revert this empty changes. (https://github.com/vllm-project/vllm/pull/29287#discussion_r2652684828)
+- 2025-12-30 `ganyi1996ppo` on `vllm/_aiter_ops.py`:1171: @tjtanaa I move the defination of rocm aiter sprase atn indexer and other triton ops back to the vllm/attention/ops/rocm aiter mla sparse, but keep the registration part stay at the aiter ops to make sure the registration always happens before custom op ... (https://github.com/vllm-project/vllm/pull/29287#discussion_r2652870998)
+- 2026-01-06 `ganyi1996ppo` on `vllm/model_executor/layers/sparse_attn_indexer.py`:258: Yes indeed, but vllm's original implementation is cuda only by default for sparse attn indexer. I don't want to change its semantic which might have impact on the original usage (https://github.com/vllm-project/vllm/pull/29287#discussion_r2663473096)
+- 2026-01-07 `ganyi1996ppo` on `vllm/model_executor/layers/sparse_attn_indexer.py`:258: I rewrite the forward native path to dispatch cuda and rocm forward, and raise NotImplementedError on other platform. please take a look (https://github.com/vllm-project/vllm/pull/29287#discussion_r2667251197)
+- 2026-01-16 `ganyi1996ppo` on `vllm/v1/attention/backends/mla/rocm_aiter_mla_sparse.py`:196: You are right, changed. (https://github.com/vllm-project/vllm/pull/29287#discussion_r2697101621)
+- 2026-01-16 `ganyi1996ppo`: I removed all the triton 3.5.0 dependent feature from this PR, this PR now only depends on one aiter fix: . I have verified 20 shot accuracy after all dependency removed, please take a look @heheda12345 @tjtanaa : (https://github.com/vllm-project/vllm/pull/29287#issuecomment-3758348743)
+- 2026-01-16 `tjtanaa` on `vllm/v1/attention/ops/rocm_aiter_mla_sparse.py`:115: there is a helper function current platform.is fp8 fnuz(), can you also help to add cache decorator to is fp8 fnuz ? (https://github.com/vllm-project/vllm/pull/29287#discussion_r2697169690)
+- 2026-01-20 `tjtanaa` on `vllm/v1/attention/ops/rocm_aiter_mla_sparse.py`:415: In the AITER version used in the Dockerfile.rocm base, the kernel existed already. However, the path is different from the one used in latest main. The AITER code in Dockerfile.rocm base store the ops at path from aiter.ops.triton.fp8 mqa logits import fp8 ... (https://github.com/vllm-project/vllm/pull/29287#discussion_r2709033828)
+- 2026-01-20 `tjtanaa` on `vllm/v1/attention/ops/rocm_aiter_mla_sparse.py`:492: Is this triton function still needed? (https://github.com/vllm-project/vllm/pull/29287#discussion_r2709035130)
+- 2026-01-20 `tjtanaa` on `vllm/v1/attention/ops/rocm_aiter_mla_sparse.py`:521: Is the triton function still needed? (https://github.com/vllm-project/vllm/pull/29287#discussion_r2709036072)
+- 2026-01-21 `tjtanaa` commented: I added some comments to expedite the review. I will add more in the next couple hours. (https://github.com/vllm-project/vllm/pull/29287#pullrequestreview-3669148341)
+- 2026-01-21 `ganyi1996ppo` on `vllm/v1/attention/ops/rocm_aiter_mla_sparse.py`:115: I found cache decorator can not be captured by torch.compile, maybe we can leave this one? This host overhead should minor to big models like dsv3.2 (https://github.com/vllm-project/vllm/pull/29287#discussion_r2710757962)
+- 2026-01-21 `tjtanaa` on `vllm/v1/attention/ops/rocm_aiter_mla_sparse.py`:309: The AITER used in the Dockerfile.rocm base does not have this path yet. It should be (https://github.com/vllm-project/vllm/pull/29287#discussion_r2710794805)
+- 2026-01-21 `ganyi1996ppo` on `vllm/v1/attention/ops/rocm_aiter_mla_sparse.py`:415: Please take a look again, I have wrap them up to make it compatible to both aiter version (https://github.com/vllm-project/vllm/pull/29287#discussion_r2710818848)
+- 2026-01-21 `ganyi1996ppo` on `vllm/v1/attention/ops/rocm_aiter_mla_sparse.py`:309: This is also compatible too (https://github.com/vllm-project/vllm/pull/29287#discussion_r2710819289)

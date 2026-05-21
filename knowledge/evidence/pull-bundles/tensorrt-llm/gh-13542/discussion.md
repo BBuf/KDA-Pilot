@@ -1,72 +1,25 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/TensorRT-LLM#13542](https://github.com/NVIDIA/TensorRT-LLM/pull/13542)
-- Source page: `sources/prs/tensorrt-llm/PR-13542.md`
-- Evidence bundle: `evidence/pull-bundles/tensorrt-llm/gh-13542`
-- Generated at: `2026-05-20T15:18:46.998148+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-04-28T03:12:42Z`
-- Merged: `2026-05-08T06:47:56Z`
-
-## Discussion Counts
-
-- Issue comments: 30
-- Review submissions: 20 (approved=3, commented=17)
-- Inline review comments: 25
-- Review threads observed: 10
-- Resolved/outdated thread markers: resolved=10, outdated=2
-- Human participants with discussion text: PerkzZheng, coderabbitai, juney-nvidia, pengbowang-nv, tensorrt-cicd, tongyuantongyu
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-04-28T03:23:08Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 5 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4185643914)
-- `2026-04-28T03:38:12Z` `COMMENTED` by `pengbowang-nv` - I think we can reduce a lot of changes if we ignore xqa for now (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4185687138)
-- `2026-04-28T03:41:38Z` `COMMENTED` by `tongyuantongyu` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4185708076)
-- `2026-04-28T03:42:03Z` `COMMENTED` by `coderabbitai` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4185709390)
-- `2026-04-28T03:46:11Z` `COMMENTED` by `tongyuantongyu` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4185721404)
-- `2026-04-28T03:46:24Z` `COMMENTED` by `tongyuantongyu` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4185722254)
-- `2026-04-28T04:13:05Z` `COMMENTED` by `tongyuantongyu` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4185805754)
-- `2026-04-28T04:13:46Z` `COMMENTED` by `coderabbitai` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4185807396)
-- `2026-05-04T07:08:00Z` `APPROVED` by `juney-nvidia` - Approved from OSS compliance perspective (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4217990629)
-- `2026-05-05T03:40:03Z` `COMMENTED` by `pengbowang-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4225030968)
-- `2026-05-05T03:48:04Z` `COMMENTED` by `tongyuantongyu` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4225157019)
-- `2026-05-05T04:12:09Z` `COMMENTED` by `tongyuantongyu` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4225225418)
-- `2026-05-05T04:14:01Z` `COMMENTED` by `tongyuantongyu` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4225229628)
-- `2026-05-05T04:20:34Z` `COMMENTED` by `tongyuantongyu` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4225246785)
-- `2026-05-05T08:03:18Z` `COMMENTED` by `pengbowang-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4226247121)
-- `2026-05-05T08:10:01Z` `COMMENTED` by `tongyuantongyu` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4226281313)
-- `2026-05-05T09:36:31Z` `COMMENTED` by `pengbowang-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4226847274)
-- `2026-05-05T10:11:15Z` `COMMENTED` by `tongyuantongyu` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4227075861)
-- `2026-05-06T02:34:13Z` `APPROVED` by `PerkzZheng` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4232801680)
-- `2026-05-07T10:12:58Z` `APPROVED` by `pengbowang-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4243067384)
-
-## Inline Comment Hotspots
-
-- `cpp/kernels/fmha_v2/setup.py`: 8 inline comment(s)
-- `cpp/cmake/modules/tllm_cubin_archive.cmake`: 4 inline comment(s)
-- `cpp/tensorrt_llm/kernels/decoderMaskedMultiheadAttention/decoderXQAImplPrecompiled.cpp`: 4 inline comment(s)
-- `cpp/kernels/xqa/gen_cubins.py`: 3 inline comment(s)
-- `cpp/tensorrt_llm/kernels/decoderMaskedMultiheadAttention/CMakeLists.txt`: 3 inline comment(s)
-- `cpp/CMakeLists.txt`: 2 inline comment(s)
-- `cpp/include/tensorrt_llm/common/cubinIncbin.h`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-04-28T03:23:02Z` `issue` by `coderabbitai`; signals: attention, cuda, hang, kernel, pipeline, tensorrt; excerpt: "📝 Walkthrough Walkthrough This PR introduces a tarball-based cubin distribution pipeline for embedding GPU kernel binaries into TensorRT-LLM. It replaces the legacy git-lfs pointer ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#issuecomment-4332139633)
-- `2026-04-28T03:23:06Z` `inline` by `coderabbitai` `cpp/tensorrt_llm/kernels/decoderMaskedMultiheadAttention/CMakeLists.txt`:97; signals: attention, compile, hang, kernel, tensorrt; excerpt: "⚠️ Potential issue 🔴 Critical Exclude the legacy cubin .cpp stub from this target. decoder attention src still starts from file(GLOB RECURSE SRC CPP ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3151365908)
-- `2026-05-05T03:18:26Z` `inline` by `pengbowang-nv` `cpp/kernels/fmha_v2/setup.py`:3595; signals: compile, cuda, kernel, sm100, sm120; excerpt: "By Codex: This maps regular SM100/SM120 FMHA metadata to the family guards as well. That breaks CUDA 12.7/12.8 builds: build wheel.py defaults CMAKE CUDA ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3185852849)
-- `2026-05-05T03:24:09Z` `inline` by `pengbowang-nv` `cpp/tensorrt_llm/kernels/decoderMaskedMultiheadAttention/decoderXQAImplPrecompiled.cpp`:359; signals: attention, compile, hang, kernel, tensorrt; excerpt: "I just want to confirm my understanding: this PR changed the behavior of cubin generation from source - cubin - cubin.cpp (all before compile) ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3185865617)
-- `2026-04-28T03:32:52Z` `inline` by `pengbowang-nv` `cpp/tensorrt_llm/kernels/decoderMaskedMultiheadAttention/decoderXQAImplPrecompiled.cpp`:359; signals: attention, compile, kernel, tensorrt; excerpt: "Did you re-export all the cubins or did you just compressed them? I'm asking this because XQA pre-compiled kernels are built from an ancient ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3151406801)
-- `2026-04-28T03:46:23Z` `inline` by `tongyuantongyu` `cpp/tensorrt_llm/kernels/decoderMaskedMultiheadAttention/decoderXQAImplPrecompiled.cpp`:359; signals: attention, compile, kernel, tensorrt; excerpt: "In this PR, all cubins are extracted from the cubin.cpp files and compressed. I just verified the fmha v2 and xqa scripts can generate ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3151440038)
-- `2026-05-05T04:20:34Z` `inline` by `tongyuantongyu` `cpp/tensorrt_llm/kernels/decoderMaskedMultiheadAttention/decoderXQAImplPrecompiled.cpp`:359; signals: attention, compile, kernel, tensorrt; excerpt: "Conceptually yes. Practically, we are using the .incbin assembler directive and inline assembly to avoid the C array in .cubin.cpp altogether. The assembler directly ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3186014218)
-- `2026-04-28T03:23:08Z` `review` `COMMENTED` by `coderabbitai`; signals: attention, kernel, tensorrt; excerpt: "Actionable comments posted: 5 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4185643914)
-- `2026-04-28T03:23:06Z` `inline` by `coderabbitai` `cpp/cmake/modules/tllm_cubin_archive.cmake`:93; signals: benchmark, cute, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major 🧩 Analysis chain 🏁 Script executed: Repository: NVIDIA/TensorRT-LLM Length of output: 234 --- 🏁 Script executed: Repository: NVIDIA/TensorRT-LLM Length ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3151365893)
-- `2026-04-28T03:23:06Z` `inline` by `coderabbitai` `cpp/cmake/modules/tllm_cubin_archive.cmake`:167; signals: cuda, cute, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major 🧩 Analysis chain 🏁 Script executed: Repository: NVIDIA/TensorRT-LLM Length of output: 108 --- 🏁 Script executed: Repository: NVIDIA/TensorRT-LLM Length ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3151365902)
-- `2026-04-28T03:23:06Z` `inline` by `coderabbitai` `cpp/include/tensorrt_llm/common/cubinIncbin.h`:59; signals: block, hang, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major 🧩 Analysis chain 🌐 Web query: On GCC/Clang, is unix defined on non-Linux targets such as macOS or BSD, ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3151365904)
-- `2026-04-28T03:23:06Z` `inline` by `coderabbitai` `cpp/kernels/xqa/gen_cubins.py`:415; signals: cute, kernel, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major 🧩 Analysis chain 🏁 Script executed: Repository: NVIDIA/TensorRT-LLM Length of output: 8882 --- 🏁 Script executed: Repository: NVIDIA/TensorRT-LLM Length ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3151365906)
+- 2026-04-28 `pengbowang-nv` on `cpp/tensorrt_llm/kernels/decoderMaskedMultiheadAttention/decoderXQAImplPrecompiled.cpp`:359: Did you re-export all the cubins or did you just compressed them? I'm asking this because XQA pre-compiled kernels are built from an ancient version and by exporting using current branch I doubt if it is going to work. Can we keep ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3151406801)
+- 2026-04-28 `pengbowang-nv` on `cpp/CMakeLists.txt`:29: This might be a collateral change brought by changing XQA, we can remove these it we just ignore XQA/DecoderMaskedAttention kernels for now. (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3151412407)
+- 2026-04-28 `pengbowang-nv` commented: I think we can reduce a lot of changes if we ignore xqa for now (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#pullrequestreview-4185687138)
+- 2026-04-28 `tongyuantongyu` on `cpp/cmake/modules/tllm_cubin_archive.cmake`:167: Windows support is dormant now for TensorRT LLM. (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3151428172)
+- 2026-04-28 `tongyuantongyu` on `cpp/CMakeLists.txt`:29: Actually, this is required to determine the mangled symbol name for all cubins, not limited to XQA. (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3151439407)
+- 2026-04-28 `tongyuantongyu` on `cpp/tensorrt_llm/kernels/decoderMaskedMultiheadAttention/decoderXQAImplPrecompiled.cpp`:359: In this PR, all cubins are extracted from the cubin.cpp files and compressed. I just verified the fmha v2 and xqa scripts can generate new cubins but didn't ship the updated cubins. (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3151440038)
+- 2026-04-28 `tongyuantongyu` on `cpp/tensorrt_llm/kernels/decoderMaskedMultiheadAttention/CMakeLists.txt`:97: We still need xqa kernel cubin.cpp to provide the content of: (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3151514589)
+- 2026-04-28 `tensorrt-cicd`: [PR Github 45867]( [ run ] completed with state FAILURE. Commit: 4deeb4c [/LLM/main/L0 MergeRequest PR pipeline 36044]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#issuecomment-4334833961)
+- 2026-04-30 `tensorrt-cicd`: [PR Github 46309]( [ run ] completed with state SUCCESS. Commit: 4deeb4c [/LLM/main/L0 MergeRequest PR pipeline 36409]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#issuecomment-4352050499)
+- 2026-05-03 `tensorrt-cicd`: [PR Github 46591]( [ run ] completed with state SUCCESS. Commit: 4deeb4c [/LLM/main/L0 MergeRequest PR pipeline 36639]( completed with status: 'SUCCESS' [CI Report]( [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#issuecomment-4366346937)
+- 2026-05-05 `pengbowang-nv` on `cpp/kernels/fmha_v2/setup.py`:3357: NIT: Although no cubin is affected in this PR, FMHA v2 may generate names like cubin/... sm100.no i2f f2i.cu.cubin, as this PR is now generating .cubin.cpp at compile time and use filename for symbol name, we may get a cpp symbol like ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3185815637)
+- 2026-05-05 `pengbowang-nv` on `cpp/kernels/fmha_v2/setup.py`:3595: By Codex: This maps regular SM100/SM120 FMHA metadata to the family guards as well. That breaks CUDA 12.7/12.8 builds: build wheel.py defaults CMAKE CUDA ARCHITECTURES to all, and setup cuda architectures() includes 100/120 for CUDA = 12.7, but only enables family targets ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3185852849)
+- 2026-05-05 `pengbowang-nv` on `cpp/tensorrt_llm/kernels/decoderMaskedMultiheadAttention/decoderXQAImplPrecompiled.cpp`:359: I just want to confirm my understanding: this PR changed the behavior of cubin generation from source - cubin - cubin.cpp (all before compile) to source - cubin - cubin.tar.zst (before compile) - cubin.cpp (during compile). In the process of cubin.tar.zst - ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3185865617)
+- 2026-05-05 `pengbowang-nv` on `cpp/kernels/xqa/gen_cubins.py`:417: If we are now using unsigned char to interpret cubin, and old cubin are generated using unsigned long long, is the layout consistent? Note that this would not be a problem even if we are wrong here, as XQA cubins are not ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3185881075)
+- 2026-05-05 `tongyuantongyu` on `cpp/kernels/xqa/gen_cubins.py`:417: XQA used unsigned long long merely to reduce the overhead of cubin: With unsigned char, each byte is 6 characters 0x00, so a 6x bloat; with unsigned long long each 8 bytes is 23 characters 0x0000'0000'0000'0000ULL, so a 3x bloat. I verified ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3185930849)
+- 2026-05-05 `tongyuantongyu` on `cpp/kernels/fmha_v2/setup.py`:3595: Fixed. Kernels targeting the whole family should always use the F suffixed macros to avoid conflict (these definitions are global). I add rules to define these macros even when the CUDA compiler does not support family conditionals (only 12.8 has public released ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3185993434)
+- 2026-05-05 `tongyuantongyu` on `cpp/kernels/fmha_v2/setup.py`:3357: Seems like .no i2f f2i is the only exception. I simply changed it to no i2f f2i. (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3185997595)
+- 2026-05-05 `tongyuantongyu` on `cpp/tensorrt_llm/kernels/decoderMaskedMultiheadAttention/decoderXQAImplPrecompiled.cpp`:359: Conceptually yes. Practically, we are using the .incbin assembler directive and inline assembly to avoid the C array in .cubin.cpp altogether. The assembler directly convert the cubin binary to objects. unsigned long long or unsigned char does not matter as long as ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3186014218)
+- 2026-05-05 `pengbowang-nv` on `cpp/kernels/fmha_v2/setup.py`:3595: I see the fix is [this line]( , but before 12.8 the previous condition is always true, so exclude sm 100f is still defined in this case? (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3186876417)
+- 2026-05-05 `tongyuantongyu` on `cpp/kernels/fmha_v2/setup.py`:3595: CUDA supports SM100/120 starting from 12.8, so it's correct behavior to always exclude them for earlier version (by defining the macro). (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3186907711)
+- 2026-05-05 `pengbowang-nv` on `cpp/kernels/fmha_v2/setup.py`:3595: I tested on cuda 12.8 and it will define EXCLUDE SM 100F even if I set -a "100-real", although due to various dependency problem I didn't finish a full build, I managed to print some varibles by adding message(STATUS "FMHA defs: ${TRTLLM ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3187418689)
+- 2026-05-05 `tongyuantongyu` on `cpp/kernels/fmha_v2/setup.py`:3595: Thanks for the careful verification. This flaw should be fixed now. (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#discussion_r3187629700)
+- 2026-05-07 `tensorrt-cicd`: [PR Github 47169]( [ run ] completed with state SUCCESS. Commit: 5e53554 [/LLM/main/L0 MergeRequest PR pipeline 37130]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#issuecomment-4397140856)
+- 2026-05-08 `tensorrt-cicd`: [PR Github 47207]( [ run ] completed with state SUCCESS. Commit: 5e53554 [/LLM/main/L0 MergeRequest PR pipeline 37163]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#issuecomment-4402536087)
+- 2026-05-08 `tensorrt-cicd`: [PR Github 47293]( [ run ] completed with state SUCCESS. Commit: 5e53554 [/LLM/main/L0 MergeRequest PR pipeline 37235]( completed with status: 'SUCCESS' [CI Report]( [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/13542#issuecomment-4403814336)

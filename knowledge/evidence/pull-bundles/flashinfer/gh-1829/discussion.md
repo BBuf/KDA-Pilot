@@ -1,78 +1,25 @@
-# PR Discussion Digest
-
-- Source PR: [flashinfer-ai/flashinfer#1829](https://github.com/flashinfer-ai/flashinfer/pull/1829)
-- Source page: `sources/prs/flashinfer/PR-1829.md`
-- Evidence bundle: `evidence/pull-bundles/flashinfer/gh-1829`
-- Generated at: `2026-05-20T15:23:29.682145+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-10-01T11:58:37Z`
-- Merged: `2025-10-11T06:08:01Z`
-
-## Discussion Counts
-
-- Issue comments: 31
-- Review submissions: 22 (approved=1, commented=21)
-- Inline review comments: 30
-- Review threads observed: 23
-- Resolved/outdated thread markers: resolved=23, outdated=18
-- Human participants with discussion text: jdebache, nvjullin, nvpohanh, ttyio, yongwww, yzh119
-- Automation comments/reviews omitted from high-signal summary: 22
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-10-01T12:01:14Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces a new "flavored" GEMM implementation optimized for small batch sizes using FP8, ... (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3288779012)
-- `2025-10-01T13:29:03Z` `COMMENTED` by `jdebache` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3289154517)
-- `2025-10-01T13:30:05Z` `COMMENTED` by `jdebache` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3289160974)
-- `2025-10-01T15:57:17Z` `COMMENTED` by `ttyio` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3289933553)
-- `2025-10-01T15:58:18Z` `COMMENTED` by `ttyio` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3289937040)
-- `2025-10-01T15:59:25Z` `COMMENTED` by `jdebache` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3289940740)
-- `2025-10-01T16:02:14Z` `COMMENTED` by `ttyio` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3289951355)
-- `2025-10-01T16:05:04Z` `COMMENTED` by `ttyio` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3289962197)
-- `2025-10-01T16:08:39Z` `COMMENTED` by `ttyio` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3289974724)
-- `2025-10-01T16:11:31Z` `COMMENTED` by `ttyio` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3289984693)
-- `2025-10-01T16:17:52Z` `COMMENTED` by `ttyio` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3290007084)
-- `2025-10-02T00:48:27Z` `COMMENTED` by `nvpohanh` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3291738696)
-- `2025-10-02T03:35:30Z` `COMMENTED` by `nvjullin` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3291879010)
-- `2025-10-02T06:32:05Z` `COMMENTED` by `jdebache` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3292703554)
-- `2025-10-02T06:43:27Z` `COMMENTED` by `jdebache` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3292759723)
-- `2025-10-02T06:44:54Z` `COMMENTED` by `jdebache` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3292766361)
-- `2025-10-04T04:19:37Z` `COMMENTED` by `yzh119` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3301540382)
-- `2025-10-04T10:48:18Z` `COMMENTED` by `jdebache` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3301752730)
-- `2025-10-05T01:01:47Z` `COMMENTED` by `yzh119` - Another request, can we add gen trtllm low latency gemm module to so that the pre-built jit-cache will ... (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3302128007)
-- `2025-10-07T08:56:26Z` `COMMENTED` by `yzh119` (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3309110600)
-- `2025-10-07T09:00:28Z` `COMMENTED` by `yzh119` - Overall LGTM, ping @aleozlx for another review on hardware compatibility. (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3309123351)
-- `2025-10-11T06:07:54Z` `APPROVED` by `yzh119` - Failed UT is not relevant to this PR, let's merge this first, thanks for your contribution! @hypdeb (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3326703946)
-
-## Inline Comment Hotspots
-
-- `flashinfer/trtllm_flavored_gemm.py`: 10 inline comment(s)
-- `csrc/trtllm_low_latency_gemm_runner.cu`: 5 inline comment(s)
-- `flashinfer/trtllm_low_latency_gemm.py`: 4 inline comment(s)
-- `csrc/trtllm_flavored_gemm_runner.cu`: 3 inline comment(s)
-- `flashinfer/autotuner.py`: 2 inline comment(s)
-- `benchmarks/bench_trtllm_gen_flavored_gemm.py`: 1 inline comment(s)
-- `.gitignore`: 1 inline comment(s)
-- `flashinfer/artifacts.py`: 1 inline comment(s)
-- `tests/test_gemm_fp8.py`: 1 inline comment(s)
-- `flashinfer/utils.py`: 1 inline comment(s)
-- `tests/gemm/test_mm_fp8.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-10-01T16:02:14Z` `inline` by `ttyio` `tests/test_gemm_fp8.py`:41; signals: fp4, fp8, gemm, nvfp4; excerpt: "nit: the function start with seems internal only function to me, can we create some util function to simplify the user side code? e.g, ..." (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2395121048)
-- `2025-10-02T00:48:27Z` `inline` by `nvpohanh` `flashinfer/trtllm_flavored_gemm.py`:146; signals: flashinfer, fp4, fp8, gemm; excerpt: "Please align APIs between FP8 gemms and FP4 gemms: I don't mind if we follow this style for both FP8 and FP4, or we ..." (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2396364583)
-- `2025-10-02T03:30:50Z` `inline` by `nvjullin` `flashinfer/trtllm_flavored_gemm.py`:158; signals: flashinfer, fp8, gemm, layout; excerpt: "nit: don't write documentation in a conversational style. Conversational styles are good for tutorials where readers are learning something new, but bad for documentation ..." (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2396531731)
-- `2025-10-02T03:32:47Z` `inline` by `nvjullin` `flashinfer/trtllm_flavored_gemm.py`:166; signals: block, flashinfer, fp8, gemm; excerpt: "nit: write valid python, e.g., "Mat2 tensor, shape (k // block size, n, block size), where block size=128, fp8 e4m3." or "Mat2 tensor, shape ..." (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2396535094)
-- `2025-10-02T06:43:27Z` `inline` by `jdebache` `csrc/trtllm_low_latency_gemm_runner.cu`:283; signals: flashinfer, gemm, latency, oom; excerpt: "Good point. I wanted to avoid internal allocation on purpose here. The caller can appropriately size the workspace using getWorkspaceSizeInBytes, and be certain that ..." (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2397278348)
-- `2025-10-04T04:19:21Z` `inline` by `yzh119` `flashinfer/trtllm_low_latency_gemm.py`:47; signals: flashinfer, gemm, hang, latency; excerpt: "Hi @hypdeb Since 1726, we've moved all module generation functions under flashinfer.jit. The motivation for this change is explained in 1834. Could you please ..." (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2403734690)
-- `2025-10-05T01:01:47Z` `review` `COMMENTED` by `yzh119`; signals: cache, gemm, latency; excerpt: "Another request, can we add gen trtllm low latency gemm module to so that the pre-built jit-cache will include this module." (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3302128007)
-- `2025-10-01T16:17:52Z` `inline` by `ttyio` `flashinfer/autotuner.py`:333; signals: autotune, flashinfer, hang; excerpt: "fyi: we only make necessary change to this file, since this one was ported from trtllm , we may need integrate the new changes ..." (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2395157462)
-- `2025-10-02T03:03:04Z` `inline` by `nvjullin` `flashinfer/trtllm_flavored_gemm.py`:72; signals: flashinfer, fp4, gemm; excerpt: "nit: align with fp4 gemm naming get trtllm fp4 gemm module" (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2396493370)
-- `2025-10-04T10:48:18Z` `inline` by `jdebache` `flashinfer/trtllm_low_latency_gemm.py`:47; signals: flashinfer, gemm, latency; excerpt: "Done." (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2403904897)
-- `2025-10-07T08:59:58Z` `inline` by `yzh119` `flashinfer/trtllm_low_latency_gemm.py`:126; signals: flashinfer, gemm, latency; excerpt: "Please explicitly mention the compatible gpu architectures." (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2409919501)
-- `2025-10-01T16:05:04Z` `inline` by `ttyio` `csrc/trtllm_low_latency_gemm_runner.cu`:254; signals: gemm, latency; excerpt: "out of curious: can we use TORCH CHECK here to consistent with other code? then maybe no need the tvm header dependency" (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2395128418)
+- 2025-10-01 `jdebache` on `flashinfer/artifacts.py`:82: TODO: update when real path available (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2394594742)
+- 2025-10-01 `ttyio` on `flashinfer/trtllm_flavored_gemm.py`:43: nit: other code refer trtllm gen as trtllm. (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2395107753)
+- 2025-10-01 `ttyio` on `flashinfer/trtllm_flavored_gemm.py`:182: nit: can we put a short sample code as other APIs for less navigation? (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2395110360)
+- 2025-10-01 `ttyio` on `tests/test_gemm_fp8.py`:41: nit: the function start with seems internal only function to me, can we create some util function to simplify the user side code? e.g, nvfp4 quantize has a do shuffle argument for trtllm style swap trick. (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2395121048)
+- 2025-10-01 `ttyio` on `csrc/trtllm_low_latency_gemm_runner.cu`:254: out of curious: can we use TORCH CHECK here to consistent with other code? then maybe no need the tvm header dependency (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2395128418)
+- 2025-10-01 `ttyio` on `csrc/trtllm_low_latency_gemm_runner.cu`:283: can we internally alloc workspace instead of error out here? we can follow csrc\trtllm gemm runner.cu (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2395136717)
+- 2025-10-01 `ttyio` on `csrc/trtllm_flavored_gemm_runner.cu`:165: nit: can we put some heuristic here instead of error out? e.g, (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2395143215)
+- 2025-10-01 `ttyio` on `flashinfer/autotuner.py`:333: fyi: we only make necessary change to this file, since this one was ported from trtllm , we may need integrate the new changes from trtllm to flashinfer. (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2395157462)
+- 2025-10-02 `nvpohanh` on `flashinfer/trtllm_flavored_gemm.py`:146: Please align APIs between FP8 gemms and FP4 gemms: I don't mind if we follow this style for both FP8 and FP4, or we follow the FP4 gemm's style for both FP8 and FP4, but at least FP8 and FP4 should have ... (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2396364583)
+- 2025-10-02 `nvjullin` on `flashinfer/utils.py`:748: nit: "supported in torch," (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2396486589)
+- 2025-10-02 `nvjullin` on `flashinfer/trtllm_flavored_gemm.py`:43: flavored does not read well. I don't think you need to elaborate in the name beyond just trtllm, but if you must, call it trtllm swizzled gemm that explains the underlying difference. (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2396492901)
+- 2025-10-02 `nvjullin` on `flashinfer/trtllm_flavored_gemm.py`:72: nit: align with fp4 gemm naming get trtllm fp4 gemm module (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2396493370)
+- 2025-10-02 `nvjullin` on `flashinfer/trtllm_flavored_gemm.py`:158: nit: don't write documentation in a conversational style. Conversational styles are good for tutorials where readers are learning something new, but bad for documentation where readers are looking for specific information. So for example: "GEMM optimized for low M dimension. B is ... (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2396531731)
+- 2025-10-02 `nvjullin` on `flashinfer/trtllm_flavored_gemm.py`:166: nit: write valid python, e.g., "Mat2 tensor, shape (k // block size, n, block size), where block size=128, fp8 e4m3." or "Mat2 tensor, shape (k // 128, n, 128), fp8 e4m3." (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2396535094)
+- 2025-10-02 `nvjullin` on `flashinfer/trtllm_flavored_gemm.py`:174: Remove "auto", it is not functional. (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2396536825)
+- 2025-10-02 `jdebache` on `csrc/trtllm_low_latency_gemm_runner.cu`:254: I think we are intentionally moving away from making the C++ API depend on Pytorch in favour of TVM, which is agnostic to the framework. See (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2397226406)
+- 2025-10-02 `jdebache` on `csrc/trtllm_low_latency_gemm_runner.cu`:283: Good point. I wanted to avoid internal allocation on purpose here. The caller can appropriately size the workspace using getWorkspaceSizeInBytes, and be certain that the library will not allocate more. For the caller, this avoids: - Unexpected OOMs - Unexpected latency peaks ... (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2397278348)
+- 2025-10-02 `jdebache` on `flashinfer/autotuner.py`:333: Oh I see, I didn't know that. Would it make sense for TRTLLM to use it from here then, since it anyways depend on Flashinfer? (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2397284312)
+- 2025-10-04 `yzh119` on `flashinfer/trtllm_low_latency_gemm.py`:47: Hi @hypdeb Since 1726, we've moved all module generation functions under flashinfer.jit. The motivation for this change is explained in 1834. Could you please update your PR to reflect this reorganization? (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2403734690)
+- 2025-10-05 `yzh119` commented: Another request, can we add gen trtllm low latency gemm module to so that the pre-built jit-cache will include this module. (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3302128007)
+- 2025-10-07 `yzh119` on `csrc/trtllm_low_latency_gemm_runner.cu`:283: Agreed it's a better practice to avoid internal allocation here. (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2409908924)
+- 2025-10-07 `yzh119` on `tests/gemm/test_mm_fp8.py`:27: please add compute capability check. (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2409917568)
+- 2025-10-07 `yzh119` on `flashinfer/trtllm_low_latency_gemm.py`:126: Please explicitly mention the compatible gpu architectures. (https://github.com/flashinfer-ai/flashinfer/pull/1829#discussion_r2409919501)
+- 2025-10-07 `yzh119` commented: Overall LGTM, ping @aleozlx for another review on hardware compatibility. (https://github.com/flashinfer-ai/flashinfer/pull/1829#pullrequestreview-3309123351)
+- 2025-10-10 `yongwww`: pipeline [36399801]( is running (https://github.com/flashinfer-ai/flashinfer/pull/1829#issuecomment-3392440160)

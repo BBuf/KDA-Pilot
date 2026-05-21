@@ -1,79 +1,35 @@
-# PR Discussion Digest
-
-- Source PR: [sgl-project/sglang#19880](https://github.com/sgl-project/sglang/pull/19880)
-- Source page: `sources/prs/sglang/PR-19880.md`
-- Evidence bundle: `evidence/pull-bundles/sglang/gh-19880`
-- Generated at: `2026-05-20T15:28:57.792588+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-03-04T13:00:03Z`
-- Merged: `2026-03-20T10:24:08Z`
-
-## Discussion Counts
-
-- Issue comments: 11
-- Review submissions: 38 (approved=2, commented=36)
-- Inline review comments: 40
-- Review threads observed: 24
-- Resolved/outdated thread markers: resolved=20, outdated=16
-- Human participants with discussion text: BBuf, DarkSharpness, yuan-luo
-- Automation comments/reviews omitted from high-signal summary: 8
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-03-04T13:04:38Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces a JIT-compiled custom all-reduce implementation (v2) as an opt-in feature, including new ... (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3889315789)
-- `2026-03-14T10:31:57Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948616590)
-- `2026-03-14T11:55:05Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948755029)
-- `2026-03-14T13:15:58Z` `COMMENTED` by `DarkSharpness` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948841274)
-- `2026-03-14T13:21:33Z` `COMMENTED` by `DarkSharpness` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948848852)
-- `2026-03-14T13:50:16Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948869458)
-- `2026-03-14T13:51:39Z` `COMMENTED` by `DarkSharpness` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948870303)
-- `2026-03-14T13:53:06Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948871499)
-- `2026-03-14T13:57:22Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948874474)
-- `2026-03-14T14:01:29Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948877584)
-- `2026-03-14T14:01:38Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948877652)
-- `2026-03-14T14:05:51Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948880703)
-- `2026-03-14T14:07:36Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948882992)
-- `2026-03-14T14:40:00Z` `COMMENTED` by `DarkSharpness` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948913699)
-- `2026-03-14T14:40:42Z` `COMMENTED` by `DarkSharpness` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948914186)
-- `2026-03-14T14:43:31Z` `COMMENTED` by `DarkSharpness` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948916093)
-- `2026-03-14T14:57:42Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948928638)
-- `2026-03-14T15:05:44Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948936753)
-- `2026-03-14T15:14:40Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948943892)
-- `2026-03-14T15:15:11Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948944280)
-- `2026-03-14T15:17:13Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948945753)
-- `2026-03-14T15:17:38Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948946226)
-- `2026-03-14T15:18:41Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948946936)
-- `2026-03-14T15:19:33Z` `COMMENTED` by `BBuf` (https://github.com/sgl-project/sglang/pull/19880#pullrequestreview-3948947862)
-- ... 14 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `python/sglang/srt/distributed/device_communicators/custom_all_reduce_v2.py`: 15 inline comment(s)
-- `python/sglang/jit_kernel/benchmark/bench_custom_all_reduce.py`: 6 inline comment(s)
-- `python/sglang/jit_kernel/tests/test_custom_all_reduce.py`: 5 inline comment(s)
-- `python/sglang/jit_kernel/csrc/distributed/custom_all_reduce_base.cuh`: 4 inline comment(s)
-- `python/sglang/srt/distributed/device_communicators/custom_all_reduce.py`: 4 inline comment(s)
-- `python/sglang/jit_kernel/csrc/distributed/custom_all_reduce_pull.cuh`: 2 inline comment(s)
-- `python/sglang/jit_kernel/.clang-format`: 2 inline comment(s)
-- `python/sglang/jit_kernel/all_reduce.py`: 1 inline comment(s)
-- `python/sglang/srt/distributed/device_communicators/custom_all_reduce_utils.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-18T10:15:23Z` `issue` by `DarkSharpness`; signals: b200, benchmark, h200, perf, performance; excerpt: "Some performance results for TP=4 on H200/B200 H200 Size NCCL AOT JIT FI AOT/NCCL JIT/NCCL FI/NCCL --- --- --- --- --- --- --- --- ..." (https://github.com/sgl-project/sglang/pull/19880#issuecomment-4081305536)
-- `2026-03-18T11:17:24Z` `issue` by `yuan-luo`; signals: b200, benchmark, h200, perf, performance; excerpt: "Some performance results for TP=4 on H200/B200 benchmark result here @yuan-luo @DarkSharpness Awesome benchmark result. Could we put it in the PR description benchmark ..." (https://github.com/sgl-project/sglang/pull/19880#issuecomment-4081663695)
-- `2026-03-13T08:01:42Z` `issue` by `DarkSharpness`; signals: b200, h200, perf, performance; excerpt: "Some performance results for TP=4 on H200/B200 H200 Size NCCL AOT JIT FI AOT/NCCL JIT/NCCL FI/NCCL --- --- --- --- --- --- --- --- ..." (https://github.com/sgl-project/sglang/pull/19880#issuecomment-4053438023)
-- `2026-03-14T15:19:33Z` `inline` by `BBuf` `python/sglang/jit_kernel/benchmark/bench_custom_all_reduce.py`:176; signals: benchmark, kernel, latency; excerpt: "It seems that this function did not return median latency" (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935398808)
-- `2026-03-14T16:13:43Z` `issue` by `DarkSharpness`; signals: benchmark, flashinfer, memory; excerpt: "I'd like to know how peak memory usage differs between push mode and pull mode. Could the benchmark include this data? The buffer memory ..." (https://github.com/sgl-project/sglang/pull/19880#issuecomment-4060792340)
-- `2026-03-14T13:15:58Z` `inline` by `DarkSharpness` `python/sglang/jit_kernel/csrc/distributed/custom_all_reduce_base.cuh`:26; signals: benchmark, kernel; excerpt: "This was originally used in benchmark where the graph count may exceed the underlying slots. It's not used currently. Do you think we should ..." (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935278830)
-- `2026-03-14T15:34:45Z` `inline` by `BBuf` `python/sglang/jit_kernel/tests/test_custom_all_reduce.py`:148; signals: cuda, kernel; excerpt: "How do you plan to handle CUDA graph compatibility for the pull-based custom all-reduce path in real LLM runs? It seems this path depends ..." (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935414510)
-- `2026-03-14T15:59:27Z` `inline` by `DarkSharpness` `python/sglang/jit_kernel/csrc/distributed/custom_all_reduce_pull.cuh`:7; signals: kernel, memory; excerpt: "I'm not sure. Most of the pull kernel is rewritten to minimize the memory traffic and the push kernel is complete different from old ..." (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935438782)
-- `2026-03-14T14:40:42Z` `inline` by `DarkSharpness` `python/sglang/srt/distributed/device_communicators/custom_all_reduce_v2.py`:168; signals: b200, h200; excerpt: "These values are based on profiling results on H200 and B200. I will add a comment later." (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935361754)
-- `2026-03-14T15:18:41Z` `inline` by `BBuf` `python/sglang/jit_kernel/benchmark/bench_custom_all_reduce.py`:302; signals: benchmark, kernel; excerpt: "Should we set device first and do set stream ?" (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935397907)
-- `2026-03-14T15:37:39Z` `inline` by `DarkSharpness` `python/sglang/jit_kernel/benchmark/bench_custom_all_reduce.py`:302; signals: benchmark, kernel; excerpt: "true, will fix it" (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935417316)
-- `2026-03-14T15:40:47Z` `inline` by `DarkSharpness` `python/sglang/jit_kernel/benchmark/bench_custom_all_reduce.py`:176; signals: benchmark, kernel; excerpt: "will take a look and fix it" (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935420465)
+- 2026-03-11 `DarkSharpness`: cc @BBuf @yuan-luo @HydraQYH . For now we implement a push-mode 1-shot all reduce and normal pull-mode 1/2-shot all-reduce, which can be significantly faster than AOT custom all-reduce. Currently the SGLANG USE JIT ALL REDUCE is default to false (so no change ... (https://github.com/sgl-project/sglang/pull/19880#issuecomment-4039684992)
+- 2026-03-13 `DarkSharpness`: Some performance results for TP=4 on H200/B200 H200 Size NCCL AOT JIT FI AOT/NCCL JIT/NCCL FI/NCCL --- --- --- --- --- --- --- --- 4K 21.5 4.4 2.4 2.8 4.92x 9.04x 7.74x 16K 22.6 4.6 2.5 2.9 4.95x 8.97x 7.85x 64K 23.0 ... (https://github.com/sgl-project/sglang/pull/19880#issuecomment-4053438023)
+- 2026-03-14 `BBuf` on `python/sglang/srt/distributed/device_communicators/custom_all_reduce_v2.py`:47: Should we set self.disabled=False instead of return? (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935092690)
+- 2026-03-14 `BBuf` on `python/sglang/jit_kernel/csrc/distributed/custom_all_reduce_base.cuh`:26: Does this reset graph be used? (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935203063)
+- 2026-03-14 `DarkSharpness` on `python/sglang/jit_kernel/csrc/distributed/custom_all_reduce_base.cuh`:26: This was originally used in benchmark where the graph count may exceed the underlying slots. It's not used currently. Do you think we should still keep this or just remove this method? (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935278830)
+- 2026-03-14 `DarkSharpness` on `python/sglang/srt/distributed/device_communicators/custom_all_reduce_v2.py`:47: My mistake. I should set self.disabled=False before return. I somehow feel a bit (maybe very much) confused about self.disabled. If disabled due to some unsupported features, then it's better to raise an exception and do not complete the construction of this class. ... (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935287911)
+- 2026-03-14 `BBuf` on `python/sglang/jit_kernel/csrc/distributed/custom_all_reduce_base.cuh`:26: Ok, I’d prefer removing it for now rather than keeping an unused public method. (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935313477)
+- 2026-03-14 `DarkSharpness` on `python/sglang/jit_kernel/csrc/distributed/custom_all_reduce_base.cuh`:26: OK. I will remove this later. (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935314744)
+- 2026-03-14 `BBuf` on `python/sglang/srt/distributed/device_communicators/custom_all_reduce.py`:408: Can custom allreduce v2 be used in amd/musa now? If it's for cuda only, we should delay this check to cuda custom allreduce func. (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935316369)
+- 2026-03-14 `BBuf` on `python/sglang/srt/distributed/device_communicators/custom_all_reduce_v2.py`:168: Do we only need to support world sizes that are powers of 2? Also, could you add a comment explaining how these values were derived? (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935320374)
+- 2026-03-14 `BBuf` on `python/sglang/srt/distributed/device_communicators/custom_all_reduce_v2.py`:102: Regarding abbreviations, maintaining consistency is preferable. For instance, should use custom allreduce would be a more intelligible name in this context. (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935328027)
+- 2026-03-14 `BBuf` on `python/sglang/srt/distributed/device_communicators/custom_all_reduce_utils.py`:407: Move it to the file top (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935329901)
+- 2026-03-14 `DarkSharpness` on `python/sglang/srt/distributed/device_communicators/custom_all_reduce.py`:408: For CUDA only. I've never tested on other platforms (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935361029)
+- 2026-03-14 `DarkSharpness` on `python/sglang/srt/distributed/device_communicators/custom_all_reduce_v2.py`:168: These values are based on profiling results on H200 and B200. I will add a comment later. (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935361754)
+- 2026-03-14 `DarkSharpness` on `python/sglang/srt/distributed/device_communicators/custom_all_reduce_v2.py`:102: This class should follow most public interfaces of of CustomAllReduce, which is should custom ar (I have to say, the design of CustomAllReduce is not very good and we should clean it up in future PRs). (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935364521)
+- 2026-03-14 `BBuf` on `python/sglang/jit_kernel/csrc/distributed/custom_all_reduce_pull.cuh`:7: Should we add reference such as modified from vllm xxx (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935378294)
+- 2026-03-14 `BBuf`: I'd like to know how peak memory usage differs between push mode and pull mode. Could the benchmark include this data? (https://github.com/sgl-project/sglang/pull/19880#issuecomment-4060688977)
+- 2026-03-14 `BBuf` on `python/sglang/jit_kernel/tests/test_custom_all_reduce.py`:8: Should we rename test file to match this usage? (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935396621)
+- 2026-03-14 `BBuf` on `python/sglang/jit_kernel/.clang-format`:20: Why we need to update this regex? (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935396921)
+- 2026-03-14 `BBuf` on `python/sglang/jit_kernel/benchmark/bench_custom_all_reduce.py`:302: Should we set device first and do set stream ? (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935397907)
+- 2026-03-14 `BBuf` on `python/sglang/jit_kernel/benchmark/bench_custom_all_reduce.py`:176: It seems that this function did not return median latency (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935398808)
+- 2026-03-14 `BBuf` on `python/sglang/jit_kernel/tests/test_custom_all_reduce.py`:108: Move import to the top of this file (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935400297)
+- 2026-03-14 `BBuf` on `python/sglang/jit_kernel/tests/test_custom_all_reduce.py`:148: How do you plan to handle CUDA graph compatibility for the pull-based custom all-reduce path in real LLM runs? It seems this path depends on the extra comm.capture() address-registration flow, so I’m not sure what the intended graph capture / recapture lifecycle ... (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935414510)
+- 2026-03-14 `DarkSharpness` on `python/sglang/jit_kernel/benchmark/bench_custom_all_reduce.py`:302: true, will fix it (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935417316)
+- 2026-03-14 `DarkSharpness` on `python/sglang/jit_kernel/tests/test_custom_all_reduce.py`:8: I will fix this wrong comment. (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935418125)
+- 2026-03-14 `DarkSharpness` on `python/sglang/jit_kernel/.clang-format`:20: Because there's more secondary headers in JIT kernel. In this PR we introduce . This rule can work for all of them and there's no break for existing code. (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935420215)
+- 2026-03-14 `DarkSharpness` on `python/sglang/jit_kernel/benchmark/bench_custom_all_reduce.py`:176: will take a look and fix it (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935420465)
+- 2026-03-14 `DarkSharpness` on `python/sglang/jit_kernel/tests/test_custom_all_reduce.py`:148: The AOT custom all reduce already uses a similar graph register method. We just follow their design (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935424099)
+- 2026-03-14 `DarkSharpness` on `python/sglang/jit_kernel/csrc/distributed/custom_all_reduce_pull.cuh`:7: I'm not sure. Most of the pull kernel is rewritten to minimize the memory traffic and the push kernel is complete different from old custom all-reduce. I will add the credits later. (https://github.com/sgl-project/sglang/pull/19880#discussion_r2935438782)
+- 2026-03-14 `DarkSharpness`: I'd like to know how peak memory usage differs between push mode and pull mode. Could the benchmark include this data? The buffer memory usage of is 2 world size push buffer size + pull buffer size. By default, it will not ... (https://github.com/sgl-project/sglang/pull/19880#issuecomment-4060792340)
+- 2026-03-18 `yuan-luo`: Could you paste the benchmark results for this new CA kernel? That would be great. (https://github.com/sgl-project/sglang/pull/19880#issuecomment-4080331269)
+- 2026-03-18 `yuan-luo`: Some performance results for TP=4 on H200/B200 benchmark result here @yuan-luo @DarkSharpness Awesome benchmark result. Could we put it in the PR description benchmark and profiling column? (https://github.com/sgl-project/sglang/pull/19880#issuecomment-4081663695)
+- 2026-03-18 `yuan-luo` on `python/sglang/srt/distributed/device_communicators/custom_all_reduce.py`:392: If it is stable and outperforms than other ARs, can we set it default true? (https://github.com/sgl-project/sglang/pull/19880#discussion_r2952683896)
+- 2026-03-18 `yuan-luo` on `python/sglang/srt/distributed/device_communicators/custom_all_reduce_v2.py`:179: Is this 512 MB expected? Seems differ too much. (https://github.com/sgl-project/sglang/pull/19880#discussion_r2952701451)
+- 2026-03-18 `DarkSharpness` on `python/sglang/srt/distributed/device_communicators/custom_all_reduce.py`:392: I will enable this in another PR. This PR is too large which involves some clean up in parallel states. We should ensure the correctness of that part first. (https://github.com/sgl-project/sglang/pull/19880#discussion_r2952902869)

@@ -1,73 +1,31 @@
-# PR Discussion Digest
-
-- Source PR: [sgl-project/sglang#22218](https://github.com/sgl-project/sglang/pull/22218)
-- Source page: `sources/prs/sglang/PR-22218.md`
-- Evidence bundle: `evidence/pull-bundles/sglang/gh-22218`
-- Generated at: `2026-05-20T15:29:23.461237+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-04-07T01:05:43Z`
-- Merged: `2026-04-24T11:33:05Z`
-
-## Discussion Counts
-
-- Issue comments: 11
-- Review submissions: 20 (approved=1, commented=19)
-- Inline review comments: 33
-- Review threads observed: 22
-- Resolved/outdated thread markers: resolved=11, outdated=17
-- Human participants with discussion text: Oasis-Git, cctry, frgossen, ispobock, merrymercy, zminglei
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 7
-
-## Review Decisions
-
-- `2026-04-12T05:16:56Z` `COMMENTED` by `ispobock` - Awesome work! It's a very clean design and may make the pcg easier for debugging. May need to ... (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4094549678)
-- `2026-04-12T06:01:30Z` `COMMENTED` by `Oasis-Git` (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4094625223)
-- `2026-04-15T06:47:21Z` `COMMENTED` by `merrymercy` (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4111371847)
-- `2026-04-15T06:51:04Z` `COMMENTED` by `merrymercy` (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4111389243)
-- `2026-04-15T17:59:16Z` `COMMENTED` by `merrymercy` (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4115460774)
-- `2026-04-22T21:54:01Z` `COMMENTED` by `merrymercy` (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4158097256)
-- `2026-04-22T22:08:01Z` `COMMENTED` by `cctry` (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4158200637)
-- `2026-04-22T23:13:51Z` `COMMENTED` by `Oasis-Git` (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4158431721)
-- `2026-04-22T23:30:05Z` `COMMENTED` by `cctry` (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4158485556)
-- `2026-04-22T23:43:15Z` `COMMENTED` by `Oasis-Git` (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4158527572)
-- `2026-04-22T23:47:39Z` `COMMENTED` by `Oasis-Git` (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4158546225)
-- `2026-04-22T23:52:03Z` `COMMENTED` by `Oasis-Git` (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4158563099)
-- `2026-04-23T00:29:07Z` `COMMENTED` by `Oasis-Git` (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4158693778)
-- `2026-04-23T02:18:02Z` `APPROVED` by `merrymercy` (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4159144922)
-- `2026-04-23T02:21:21Z` `COMMENTED` by `merrymercy` (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4159159864)
-- `2026-04-23T11:29:01Z` `COMMENTED` by `merrymercy` (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4161941517)
-- `2026-04-23T19:39:51Z` `COMMENTED` by `Oasis-Git` (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4165374024)
-
-## Inline Comment Hotspots
-
-- `python/sglang/srt/layers/radix_attention.py`: 6 inline comment(s)
-- `python/sglang/srt/model_executor/breakable_cuda_graph_runner.py`: 6 inline comment(s)
-- `python/sglang/srt/model_executor/breakable_piecewise_cuda_graph_runner.py`: 5 inline comment(s)
-- `python/sglang/srt/model_executor/breakable_cuda_graph/breakable_cuda_graph.py`: 5 inline comment(s)
-- `python/sglang/srt/model_executor/breakable_cuda_graph/bcg_attention.py`: 3 inline comment(s)
-- `run_bcg_comparison.sh`: 2 inline comment(s)
-- `python/sglang/srt/models/nemotron_h.py`: 2 inline comment(s)
-- `python/sglang/srt/server_args.py`: 1 inline comment(s)
-- `python/sglang/srt/model_executor/model_runner.py`: 1 inline comment(s)
-- `test/registered/piecewise_cuda_graph/test_breakable_piecewise_cuda_graph.py`: 1 inline comment(s)
-- `python/sglang/srt/model_executor/breakable_cuda_graph/bcg_ops.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-04-12T05:16:56Z` `review` `COMMENTED` by `ispobock`; signals: memory, perf, performance; excerpt: "Awesome work! It's a very clean design and may make the pcg easier for debugging. May need to verify the performance and memory usage ..." (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4094549678)
-- `2026-04-12T04:52:12Z` `inline` by `ispobock` `python/sglang/srt/layers/radix_attention.py`:137; signals: attention, perf, performance; excerpt: "Bridge buffer copies may be introduce the performance degradation compared to PCG?" (https://github.com/sgl-project/sglang/pull/22218#discussion_r3068981339)
-- `2026-04-15T17:15:20Z` `inline` by `merrymercy` `python/sglang/srt/layers/radix_attention.py`:133; signals: attention, mla; excerpt: "1. style: make this more general, move this into a standalone function (e.g., processing mla) 2. functionality: try some hack to let the torch ..." (https://github.com/sgl-project/sglang/pull/22218#discussion_r3088168852)
-- `2026-04-15T06:51:05Z` `inline` by `merrymercy` `python/sglang/srt/model_executor/breakable_piecewise_cuda_graph_runner.py`:125; signals: cuda, cudagraph; excerpt: "is it possible to not inherit from PiecewiseCudaGraphRunner?" (https://github.com/sgl-project/sglang/pull/22218#discussion_r3084507366)
-- `2026-04-15T17:19:08Z` `inline` by `merrymercy` `python/sglang/srt/layers/radix_attention.py`:243; signals: attention, mla; excerpt: "give it a single function name (e.g., if mla dispatch to mha(...))" (https://github.com/sgl-project/sglang/pull/22218#discussion_r3088188990)
-- `2026-04-15T17:21:58Z` `inline` by `merrymercy` `python/sglang/srt/model_executor/breakable_piecewise_cuda_graph_runner.py`:105; signals: cuda, register; excerpt: "register buffers in the forward pass/model forward?" (https://github.com/sgl-project/sglang/pull/22218#discussion_r3088204256)
-- `2026-04-15T17:23:35Z` `inline` by `merrymercy` `python/sglang/srt/model_executor/breakable_piecewise_cuda_graph_runner.py`:125; signals: cuda, cudagraph; excerpt: "do not inherit from PiecewiseCudaGraphRunner" (https://github.com/sgl-project/sglang/pull/22218#discussion_r3088212392)
-- `2026-04-22T21:41:14Z` `inline` by `merrymercy` `python/sglang/srt/model_executor/breakable_cuda_graph/bcg_attention.py`:28; signals: attention, cuda; excerpt: "this is not needed" (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127065393)
-- `2026-04-22T21:49:19Z` `inline` by `merrymercy` `python/sglang/srt/model_executor/model_runner.py`:2682; signals: cuda, cudagraph; excerpt: "to avoid the confusion, maybe just call it BreakableCudaGraphRunner?" (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127096465)
-- `2026-04-22T23:30:05Z` `inline` by `cctry` `python/sglang/srt/model_executor/breakable_cuda_graph/bcg_attention.py`:49; signals: attention, cuda; excerpt: "nit: we can avoid global variable using" (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127418860)
-- `2026-04-22T23:43:15Z` `inline` by `Oasis-Git` `python/sglang/srt/model_executor/breakable_cuda_graph/bcg_attention.py`:49; signals: attention, cuda; excerpt: "Now we impl it with a helper function to regiser. Can u take a look at it?" (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127454383)
-- `2026-04-22T23:47:38Z` `inline` by `Oasis-Git` `python/sglang/srt/model_executor/breakable_cuda_graph_runner.py`:330; signals: cuda, register; excerpt: "Inherent from pcg. The problem for pcg is buffer registeration. Lett me take a test" (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127467504)
+- 2026-04-07 `cctry`: maybe we don't need the new runner file. the intention is to make pcg working at low level with minimal code change (decorator) (https://github.com/sgl-project/sglang/pull/22218#issuecomment-4195900011)
+- 2026-04-12 `ispobock` on `python/sglang/srt/layers/radix_attention.py`:137: Bridge buffer copies may be introduce the performance degradation compared to PCG? (https://github.com/sgl-project/sglang/pull/22218#discussion_r3068981339)
+- 2026-04-12 `ispobock` on `python/sglang/srt/layers/radix_attention.py`:119: This part makes the radix attention forward logic more complex. We need to think how to simplify it and make it cleaner. We also need to make it more general to handle inputs for attention varants (e.g. q rope/k rope/sinks/linear attn). (https://github.com/sgl-project/sglang/pull/22218#discussion_r3068986312)
+- 2026-04-12 `ispobock` on `run_bcg_comparison.sh`:7: It's a local test script. remove it or move to benchmark folder. (https://github.com/sgl-project/sglang/pull/22218#discussion_r3068992983)
+- 2026-04-12 `ispobock` commented: Awesome work! It's a very clean design and may make the pcg easier for debugging. May need to verify the performance and memory usage further on different model archs. Also need to think about the compatibility with existing pcg codes. (https://github.com/sgl-project/sglang/pull/22218#pullrequestreview-4094549678)
+- 2026-04-15 `merrymercy` on `python/sglang/srt/server_args.py`:627: Now the arguments are very confusing, we should introduce a new set of arguments for cuda graphs. Option 1 : A single argument --cuda-graph-mode Option 2 : separated arguments --cuda-graph-mode-prefill, --cuda-graph-mode-decode we also need to introduce similar arguments for batch sizes (https://github.com/sgl-project/sglang/pull/22218#discussion_r3084489645)
+- 2026-04-15 `merrymercy` on `python/sglang/srt/model_executor/breakable_piecewise_cuda_graph_runner.py`:125: is it possible to not inherit from PiecewiseCudaGraphRunner? (https://github.com/sgl-project/sglang/pull/22218#discussion_r3084507366)
+- 2026-04-15 `merrymercy` on `python/sglang/srt/layers/radix_attention.py`:133: 1. style: make this more general, move this into a standalone function (e.g., processing mla) 2. functionality: try some hack to let the torch allocator figure it out automatically. (https://github.com/sgl-project/sglang/pull/22218#discussion_r3088168852)
+- 2026-04-15 `merrymercy` on `python/sglang/srt/layers/radix_attention.py`:230: we should have a general way to handle all these args (https://github.com/sgl-project/sglang/pull/22218#discussion_r3088179396)
+- 2026-04-15 `merrymercy` on `python/sglang/srt/layers/radix_attention.py`:243: give it a single function name (e.g., if mla dispatch to mha(...)) (https://github.com/sgl-project/sglang/pull/22218#discussion_r3088188990)
+- 2026-04-15 `merrymercy` on `python/sglang/srt/model_executor/breakable_piecewise_cuda_graph_runner.py`:98: hidden size - mamba hidden size (https://github.com/sgl-project/sglang/pull/22218#discussion_r3088199820)
+- 2026-04-15 `merrymercy` on `python/sglang/srt/model_executor/breakable_piecewise_cuda_graph_runner.py`:105: register buffers in the forward pass/model forward? (https://github.com/sgl-project/sglang/pull/22218#discussion_r3088204256)
+- 2026-04-15 `merrymercy` on `python/sglang/srt/model_executor/breakable_piecewise_cuda_graph_runner.py`:125: do not inherit from PiecewiseCudaGraphRunner (https://github.com/sgl-project/sglang/pull/22218#discussion_r3088212392)
+- 2026-04-22 `merrymercy` on `python/sglang/srt/model_executor/breakable_cuda_graph/bcg_attention.py`:28: this is not needed (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127065393)
+- 2026-04-22 `merrymercy` on `python/sglang/srt/model_executor/breakable_piecewise_cuda_graph_runner.py`:366: separate piecewise cuda graph and breakable cuda graph (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127093309)
+- 2026-04-22 `merrymercy` on `python/sglang/srt/model_executor/model_runner.py`:2682: to avoid the confusion, maybe just call it BreakableCudaGraphRunner? (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127096465)
+- 2026-04-22 `merrymercy` on `python/sglang/srt/models/nemotron_h.py`:894: are the changes needed here? (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127098500)
+- 2026-04-22 `merrymercy` on `python/sglang/srt/model_executor/breakable_cuda_graph_runner.py`:377: do we still need the forward context? try to get rid of it (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127102575)
+- 2026-04-22 `merrymercy` on `python/sglang/srt/model_executor/breakable_cuda_graph_runner.py`:330: why cannot we run cuda graph for logprobs? (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127109136)
+- 2026-04-22 `merrymercy` on `python/sglang/srt/model_executor/breakable_cuda_graph_runner.py`:308: do we need print for every bs? (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127112403)
+- 2026-04-22 `cctry` on `python/sglang/srt/layers/radix_attention.py`:119: +1, why they cannot be merged (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127166851)
+- 2026-04-22 `Oasis-Git` on `python/sglang/srt/models/nemotron_h.py`:894: the registeration is necessary. Now we impl a better registration function (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127371806)
+- 2026-04-22 `cctry` on `python/sglang/srt/model_executor/breakable_cuda_graph/bcg_attention.py`:49: nit: we can avoid global variable using (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127418860)
+- 2026-04-22 `Oasis-Git` on `python/sglang/srt/model_executor/breakable_cuda_graph/bcg_attention.py`:49: Now we impl it with a helper function to regiser. Can u take a look at it? (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127454383)
+- 2026-04-22 `Oasis-Git` on `python/sglang/srt/model_executor/breakable_cuda_graph_runner.py`:330: Inherent from pcg. The problem for pcg is buffer registeration. Lett me take a test (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127467504)
+- 2026-04-22 `Oasis-Git` on `python/sglang/srt/model_executor/breakable_cuda_graph_runner.py`:330: same as pcg. solve it later (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127479874)
+- 2026-04-23 `Oasis-Git` on `python/sglang/srt/model_executor/breakable_cuda_graph_runner.py`:377: I hope to keep this since the context can provide forward batch instead of passing it as a input args of non graph section, which will be cleaner (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127586836)
+- 2026-04-23 `merrymercy` on `test/registered/piecewise_cuda_graph/test_breakable_piecewise_cuda_graph.py`: move to a new folder test/registered/breakable cuda graph/test breakable cuda graph.py (https://github.com/sgl-project/sglang/pull/22218#discussion_r3127963796)
+- 2026-04-23 `merrymercy` on `python/sglang/srt/model_executor/breakable_cuda_graph/bcg_ops.py`:27: This is redundant. eager on graph can also lazy import (https://github.com/sgl-project/sglang/pull/22218#discussion_r3130387814)
+- 2026-04-23 `merrymercy` on `python/sglang/srt/model_executor/breakable_cuda_graph/breakable_cuda_graph.py`:256: does it through exceptions correctly? (https://github.com/sgl-project/sglang/pull/22218#discussion_r3130414063)
+- 2026-04-23 `Oasis-Git` on `python/sglang/srt/model_executor/breakable_cuda_graph/breakable_cuda_graph.py`:256: It should but no error threw out before. (https://github.com/sgl-project/sglang/pull/22218#discussion_r3133347172)

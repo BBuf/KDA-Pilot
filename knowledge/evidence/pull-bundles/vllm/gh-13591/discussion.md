@@ -1,76 +1,43 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#13591](https://github.com/vllm-project/vllm/pull/13591)
-- Source page: `sources/prs/vllm/PR-13591.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-13591`
-- Generated at: `2026-05-20T15:34:01.263113+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-02-20T06:51:15Z`
-- Merged: `2025-02-22T11:29:00Z`
-
-## Discussion Counts
-
-- Issue comments: 9
-- Review submissions: 41 (approved=1, commented=40)
-- Inline review comments: 44
-- Review threads observed: 17
-- Resolved/outdated thread markers: resolved=11, outdated=5
-- Human participants with discussion text: QiuMike, WoosukKwon, comaniac, lewisword, mergify, njhill, robertgshaw2-redhat, tlrmchlsmth, youkaichao
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 5
-
-## Review Decisions
-
-- `2025-02-20T07:00:19Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2628873645)
-- `2025-02-20T19:06:41Z` `COMMENTED` by `tlrmchlsmth` - JFYI: I ran into an issue with the master port already being in use (see comment in config.py) (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2630740056)
-- `2025-02-20T22:48:57Z` `COMMENTED` by `comaniac` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2631326319)
-- `2025-02-21T01:44:53Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2631628178)
-- `2025-02-21T01:48:15Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2631631261)
-- `2025-02-21T01:48:44Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2631631685)
-- `2025-02-21T01:50:44Z` `COMMENTED` by `comaniac` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2631633429)
-- `2025-02-21T01:51:18Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2631633974)
-- `2025-02-21T01:52:07Z` `COMMENTED` by `comaniac` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2631634693)
-- `2025-02-21T01:53:41Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2631636090)
-- `2025-02-21T02:37:55Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2631685609)
-- `2025-02-21T07:57:15Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2632284099)
-- `2025-02-21T10:10:25Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2632595614)
-- `2025-02-21T10:24:08Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2632626749)
-- `2025-02-21T10:34:54Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2632654582)
-- `2025-02-21T14:58:15Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2633309768)
-- `2025-02-21T14:59:54Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2633316331)
-- `2025-02-21T15:03:55Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2633329137)
-- `2025-02-21T15:05:32Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2633299324)
-- `2025-02-21T15:08:24Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2633346533)
-- `2025-02-21T15:12:17Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2633357233)
-- `2025-02-21T15:52:39Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2633478280)
-- `2025-02-21T16:23:46Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2633594800)
-- `2025-02-21T16:25:10Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2633598628)
-- ... 16 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/v1/engine/llm_engine.py`: 14 inline comment(s)
-- `examples/offline_inference/data_parallel.py`: 11 inline comment(s)
-- `vllm/config.py`: 10 inline comment(s)
-- `vllm/forward_context.py`: 7 inline comment(s)
-- `vllm/distributed/parallel_state.py`: 1 inline comment(s)
-- `vllm/distributed/device_communicators/custom_all_reduce.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-02-21T18:13:11Z` `inline` by `youkaichao` `vllm/v1/engine/llm_engine.py`:52; signals: attention, moe; excerpt: "technically this is for dp moe, not for attention. but i feel calling it dp moe is to specific." (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965971272)
-- `2025-02-21T21:58:06Z` `review` `COMMENTED` by `comaniac`; signals: hang; excerpt: "Overall LGTM. Agree with Nick that it would be better to test the dummy run with fewer prompts. Also the idea of changing .step()" (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2634354078)
-- `2025-02-21T10:15:57Z` `issue` by `youkaichao`; signals: cuda, cudagraph; excerpt: "I think i'm close to make it work for both v0 and v1, but there are still some missing pieces in v0, especially w.r.t. ..." (https://github.com/vllm-project/vllm/pull/13591#issuecomment-2674140196)
-- `2025-02-22T04:03:12Z` `issue` by `youkaichao`; signals: cute, hang; excerpt: "@youkaichao instead of calling dummy forward as a utility method, could we instead modify the step() method in core.py like this.. and have model ..." (https://github.com/vllm-project/vllm/pull/13591#issuecomment-2675994825)
-- `2025-02-20T19:06:37Z` `inline` by `tlrmchlsmth` `vllm/config.py`:1401; signals: hang; excerpt: "Note that I'm hitting issues like: This is true even if I change the master port with torchrun --master-port .... Currently hacking around it ..." (https://github.com/vllm-project/vllm/pull/13591#discussion_r1964191339)
-- `2025-02-20T22:40:05Z` `inline` by `comaniac` `vllm/config.py`:1336; signals: hang; excerpt: "Ideally we should use the term world size for TPxPPxDP, and world size per dp for TPxPP to align general impressions. But I guess ..." (https://github.com/vllm-project/vllm/pull/13591#discussion_r1964440997)
-- `2025-02-21T01:44:53Z` `inline` by `youkaichao` `vllm/config.py`:1336; signals: hang; excerpt: "I guess this would change lots of places... yes that's so true. this is exactly the reason why i keep the meaning of the ..." (https://github.com/vllm-project/vllm/pull/13591#discussion_r1964625975)
-- `2025-02-21T17:16:34Z` `inline` by `comaniac` `vllm/v1/engine/llm_engine.py`:52; signals: attention; excerpt: "IMO dp enabled is also a bit confusing as well lol Because in general the term "DP" doesn't need any sync. dp attention enabled, ..." (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965902764)
-- `2025-02-21T18:19:28Z` `inline` by `youkaichao` `vllm/forward_context.py`:77; signals: attention; excerpt: "cc @WoosukKwon if you can create attention metadata for dummy run, with the correct number of num input tokens, then we don't need this ..." (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965978947)
-- `2025-02-21T18:03:49Z` `inline` by `youkaichao` `vllm/v1/engine/llm_engine.py`:116; signals: hang; excerpt: "changed in [216bbb9](" (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965959731)
-- `2025-02-20T19:06:41Z` `review` `COMMENTED` by `tlrmchlsmth`; signals: general review; excerpt: "JFYI: I ran into an issue with the master port already being in use (see comment in config.py)" (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2630740056)
-- `2025-02-21T20:39:46Z` `issue` by `njhill`; signals: cute; excerpt: "@youkaichao instead of calling dummy forward as a utility method, could we instead modify the step() method in core.py like this.. and have model ..." (https://github.com/vllm-project/vllm/pull/13591#issuecomment-2675498648)
+- 2025-02-20 `youkaichao` on `vllm/distributed/parallel_state.py`:948: example of the rank assignment for DP=2 x TP=2: (https://github.com/vllm-project/vllm/pull/13591#discussion_r1962961043)
+- 2025-02-20 `tlrmchlsmth` on `vllm/v1/engine/llm_engine.py`:113: Do we need to sync/reduce here? Not sure if it's used for anything besides the progress bar (https://github.com/vllm-project/vllm/pull/13591#discussion_r1964098847)
+- 2025-02-20 `tlrmchlsmth` on `vllm/config.py`:1401: Note that I'm hitting issues like: This is true even if I change the master port with torchrun --master-port .... Currently hacking around it by changing this to self.data parallel master port = envs.VLLM DP MASTER PORT + 1 (https://github.com/vllm-project/vllm/pull/13591#discussion_r1964191339)
+- 2025-02-20 `tlrmchlsmth` commented: JFYI: I ran into an issue with the master port already being in use (see comment in config.py) (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2630740056)
+- 2025-02-20 `comaniac` on `vllm/config.py`:1336: Ideally we should use the term world size for TPxPPxDP, and world size per dp for TPxPP to align general impressions. But I guess this would change lots of places... (https://github.com/vllm-project/vllm/pull/13591#discussion_r1964440997)
+- 2025-02-20 `comaniac` on `vllm/config.py`:1350: What if the port is already being used by other services? (https://github.com/vllm-project/vllm/pull/13591#discussion_r1964443516)
+- 2025-02-20 `comaniac` on `vllm/v1/engine/llm_engine.py`:188: Looks like this is not the right place for this logic? This should be in the EngineCore's busy loop I feel. (https://github.com/vllm-project/vllm/pull/13591#discussion_r1964465937)
+- 2025-02-21 `youkaichao` on `vllm/config.py`:1336: I guess this would change lots of places... yes that's so true. this is exactly the reason why i keep the meaning of the original world size and add a new world size across dp (https://github.com/vllm-project/vllm/pull/13591#discussion_r1964625975)
+- 2025-02-21 `youkaichao` on `vllm/config.py`:1350: Then it will error. We can document and say we will use more than one port starting from the specified port. And the assumption usually should be fine. NOTE: even if we only use the specified port, there're still chances that some ... (https://github.com/vllm-project/vllm/pull/13591#discussion_r1964628037)
+- 2025-02-21 `youkaichao` on `vllm/v1/engine/llm_engine.py`:188: I'm not familiar with the engine part, can you show me where i should put it? (https://github.com/vllm-project/vllm/pull/13591#discussion_r1964628393)
+- 2025-02-21 `comaniac` on `vllm/v1/engine/llm_engine.py`:188: Should be in this loop I guess (https://github.com/vllm-project/vllm/pull/13591#discussion_r1964629622)
+- 2025-02-21 `youkaichao` on `vllm/v1/engine/llm_engine.py`:113: not sure either, we need someone familiar with the engine loop, maybe @robertgshaw2-redhat can help? (https://github.com/vllm-project/vllm/pull/13591#discussion_r1964629948)
+- 2025-02-21 `comaniac` on `vllm/config.py`:1350: Alternatively we can just check if this port is being used using socket? So we just keep searching for the next available port (https://github.com/vllm-project/vllm/pull/13591#discussion_r1964630446)
+- 2025-02-21 `youkaichao` on `vllm/config.py`:1401: that's strange. I also met it once but then it disappeared. (https://github.com/vllm-project/vllm/pull/13591#discussion_r1964631428)
+- 2025-02-21 `youkaichao` on `vllm/config.py`:1350: this is not feasible because non-zero ranks will directly connect to the specified port, and it does not know if it is the master rank or some other services. and it also needs to wait for some time in case the master ... (https://github.com/vllm-project/vllm/pull/13591#discussion_r1964661870)
+- 2025-02-21 `youkaichao` on `vllm/config.py`:1401: it seems this disappeared when i remove torchrun in [af53b4b]( (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965030255)
+- 2025-02-21 `youkaichao` on `vllm/distributed/device_communicators/custom_all_reduce.py`:304: this is to fix some errors during clean up (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965219518)
+- 2025-02-21 `youkaichao`: I think i'm close to make it work for both v0 and v1, but there are still some missing pieces in v0, especially w.r.t. the control plance communication. in case anyone is interested, please refer to [4ac1f34]( . Anyway, V1 offline inference ... (https://github.com/vllm-project/vllm/pull/13591#issuecomment-2674140196)
+- 2025-02-21 `youkaichao` on `vllm/v1/engine/llm_engine.py`:188: a bitter lesson, we need to place this logic at the top level, which is the llmengine level in offline inference. we cannot put it in the EngineCore's busy loop, otherwise the llmengine will exit directly without checking the status of other ... (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965238166)
+- 2025-02-21 `youkaichao` on `vllm/v1/engine/llm_engine.py`:113: yeah it seems this is only used in progress bar. (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965255320)
+- 2025-02-21 `tlrmchlsmth` on `examples/offline_inference/data_parallel.py`:4: Remove this, since you removed torchrun in [af53b4b]( (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965622593)
+- 2025-02-21 `tlrmchlsmth` on `examples/offline_inference/data_parallel.py`: Seeing this when I try the example now: (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965626076)
+- 2025-02-21 `robertgshaw2-redhat` on `vllm/forward_context.py`:64: QQ - how do you intend to use this variable during the forward pass? (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965628137)
+- 2025-02-21 `robertgshaw2-redhat` on `vllm/v1/engine/llm_engine.py`:113: Yeah its just used in the progress bar (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965631178)
+- 2025-02-21 `youkaichao` on `vllm/forward_context.py`:64: yes this will be used during forward pass, for example, gathering tensors across dp ranks. the problem is, in dp, every rank can have different number of tokens. say we have an activation tensor of shape [num tokens, hidden size], if we ... (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965638826)
+- 2025-02-21 `robertgshaw2-redhat` on `vllm/v1/engine/llm_engine.py`:52: I think this variable should be called self.dp enabled --- I find it confusing that we call it self.need to sync across dp since this makes it seem like there is a state where dp is enabled but syncing is not required (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965651057)
+- 2025-02-21 `robertgshaw2-redhat` on `vllm/v1/engine/llm_engine.py`:116: I think we should try to encapsulate the DP related code as much as possible to keep these classes cleaner. Something like: (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965658212)
+- 2025-02-21 `youkaichao` on `examples/offline_inference/data_parallel.py`: it seems one of the dp rank process has exited in your case. i didn't encounter this though. strange. (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965730316)
+- 2025-02-21 `tlrmchlsmth` on `examples/offline_inference/data_parallel.py`: OK, this was because I was running in V0 (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965811107)
+- 2025-02-21 `tlrmchlsmth` on `examples/offline_inference/data_parallel.py`:2: Since this doesn't work in V0: (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965813653)
+- 2025-02-21 `youkaichao` on `examples/offline_inference/data_parallel.py`: so it is solved by using v1, right? (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965893805)
+- 2025-02-21 `youkaichao` on `vllm/v1/engine/llm_engine.py`:52: good point, fixed in [df0239f]( (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965900008)
+- 2025-02-21 `comaniac` on `vllm/v1/engine/llm_engine.py`:52: IMO dp enabled is also a bit confusing as well lol Because in general the term "DP" doesn't need any sync. dp attention enabled, synced dp enabled or something like this may be more clear. (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965902764)
+- 2025-02-21 `youkaichao` on `vllm/v1/engine/llm_engine.py`:52: technically this is for dp moe, not for attention. but i feel calling it dp moe is to specific. (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965971272)
+- 2025-02-21 `youkaichao` on `vllm/forward_context.py`:77: cc @WoosukKwon if you can create attention metadata for dummy run, with the correct number of num input tokens, then we don't need this hack. thanks! (https://github.com/vllm-project/vllm/pull/13591#discussion_r1965978947)
+- 2025-02-21 `njhill` on `examples/offline_inference/data_parallel.py`:35: @youkaichao what if there are fewer prompts than DP ranks? I guess we could send an dummy single-token prompt in those (with max tokens=1) (https://github.com/vllm-project/vllm/pull/13591#discussion_r1966129925)
+- 2025-02-21 `njhill`: @youkaichao instead of calling dummy forward as a utility method, could we instead modify the step() method in core.py like this.. and have model runner execute model call dummy run if it gets None as the scheduler output? (https://github.com/vllm-project/vllm/pull/13591#issuecomment-2675498648)
+- 2025-02-21 `comaniac` commented: Overall LGTM. Agree with Nick that it would be better to test the dummy run with fewer prompts. Also the idea of changing .step() (https://github.com/vllm-project/vllm/pull/13591#pullrequestreview-2634354078)
+- 2025-02-22 `WoosukKwon` on `vllm/forward_context.py`:77: @youkaichao Could you please check out 13689? (https://github.com/vllm-project/vllm/pull/13591#discussion_r1966376471)
+- 2025-02-22 `WoosukKwon` on `vllm/forward_context.py`:77: If it meets the needs here, we can merge 13689 before or after this PR. I'm fine with either. (https://github.com/vllm-project/vllm/pull/13591#discussion_r1966377240)
+- 2025-02-22 `youkaichao` on `examples/offline_inference/data_parallel.py`:35: good point, added in [6e5a472]( (https://github.com/vllm-project/vllm/pull/13591#discussion_r1966424047)
+- 2025-02-22 `youkaichao`: @youkaichao instead of calling dummy forward as a utility method, could we instead modify the step() method in core.py like this.. and have model runner execute model call dummy run if it gets None as the scheduler output? @njhill I tried that ... (https://github.com/vllm-project/vllm/pull/13591#issuecomment-2675994825)
+- 2025-02-22 `youkaichao` on `vllm/config.py`:1350: I added the code in [267cd82]( at least vllm's internal port usage will not conflict with the dp master ports. (https://github.com/vllm-project/vllm/pull/13591#discussion_r1966429280)

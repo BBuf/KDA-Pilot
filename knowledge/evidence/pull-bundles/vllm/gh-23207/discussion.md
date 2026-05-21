@@ -1,73 +1,45 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#23207](https://github.com/vllm-project/vllm/pull/23207)
-- Source page: `sources/prs/vllm/PR-23207.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-23207`
-- Generated at: `2026-05-20T15:37:27.095931+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-08-19T21:15:13Z`
-- Merged: `2025-10-28T22:36:43Z`
-
-## Discussion Counts
-
-- Issue comments: 53
-- Review submissions: 27 (approved=3, commented=24)
-- Inline review comments: 24
-- Review threads observed: 11
-- Resolved/outdated thread markers: resolved=3, outdated=7
-- Human participants with discussion text: DarkLight1337, JartX, Lucaskabela, ProExpertProg, ZJY0516, laithsakka, lgeiger, mergify, miladm, tanruixiang, tjtanaa, wwl2755, yanyongyu, ywang96, zou3519
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 15
-
-## Review Decisions
-
-- `2025-08-19T22:27:09Z` `COMMENTED` by `miladm` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3134030770)
-- `2025-08-19T22:51:19Z` `COMMENTED` by `Lucaskabela` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3134129769)
-- `2025-09-09T18:13:44Z` `COMMENTED` by `ywang96` - Hey @Lucaskabela! I actually had a chat with @youkaichao and the conclusion is that this current state is ... (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3202741234)
-- `2025-09-11T16:12:40Z` `COMMENTED` by `Lucaskabela` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3212602063)
-- `2025-09-11T18:36:22Z` `COMMENTED` by `Lucaskabela` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3212605863)
-- `2025-09-29T21:58:15Z` `COMMENTED` by `ywang96` - Thanks for the work! I left two questions (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3281914135)
-- `2025-09-29T22:48:08Z` `COMMENTED` by `Lucaskabela` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3282052225)
-- `2025-09-29T22:51:30Z` `COMMENTED` by `Lucaskabela` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3282056585)
-- `2025-10-02T06:28:27Z` `COMMENTED` by `ywang96` - @Lucaskabela Thanks for your work! I think this PR looks in a much better shape now, but I'm ... (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3292686119)
-- `2025-10-10T23:50:15Z` `APPROVED` by `ywang96` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3326304073)
-- `2025-10-11T12:24:22Z` `APPROVED` by `ProExpertProg` - LGTM overall! (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3327041004)
-- `2025-10-13T13:44:34Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3331707295)
-- `2025-10-13T13:47:01Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3331716011)
-- `2025-10-13T13:48:08Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3331719896)
-- `2025-10-13T14:01:14Z` `COMMENTED` by `lgeiger` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3331771447)
-- `2025-10-13T14:02:37Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3331776341)
-- `2025-10-13T17:39:39Z` `COMMENTED` by `Lucaskabela` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3332513075)
-- `2025-10-13T17:43:37Z` `COMMENTED` by `Lucaskabela` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3332518570)
-- `2025-10-13T18:29:44Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3332636284)
-- `2025-10-13T20:37:22Z` `COMMENTED` by `Lucaskabela` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3332979071)
-- `2025-10-13T20:39:11Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3332982651)
-- `2025-10-13T21:56:59Z` `COMMENTED` by `Lucaskabela` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3333124927)
-- `2025-10-15T02:33:17Z` `COMMENTED` by `yanyongyu` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3338145107)
-- `2025-10-15T16:46:04Z` `COMMENTED` by `Lucaskabela` (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3341412165)
-- ... 3 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/models/qwen2_5_vl.py`: 15 inline comment(s)
-- `vllm/compilation/decorators.py`: 5 inline comment(s)
-- `vllm/attention/ops/vit_attn_wrappers.py`: 4 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-09-30T02:52:01Z` `issue` by `DarkLight1337`; signals: benchmark, block, cuda, cudagraph, hang; excerpt: "@DarkLight1337 I went ahead and changed L477 (in VisionBlock) to use iadd: Did you use CUDAGraph for the benchmark? The original PR mentioned that ..." (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3349745244)
-- `2025-09-30T15:55:54Z` `issue` by `Lucaskabela`; signals: benchmark, block, cuda, cudagraph, hang; excerpt: "@DarkLight1337 I went ahead and changed L477 (in VisionBlock) to use iadd: Did you use CUDAGraph for the benchmark? The original PR mentioned that ..." (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3352850979)
-- `2025-09-09T18:13:44Z` `review` `COMMENTED` by `ywang96`; signals: compile, perf, performance; excerpt: "Hey @Lucaskabela! I actually had a chat with @youkaichao and the conclusion is that this current state is probably not good enough for us ..." (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3202741234)
-- `2025-09-17T22:50:11Z` `issue` by `Lucaskabela`; signals: compile, perf, performance, race; excerpt: "Thanks for the great work! I'm wondering what would be the main concern to split the large nn module into smaller ones. Would it ..." (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3304777701)
-- `2025-09-18T00:10:54Z` `issue` by `wwl2755`; signals: compile, perf, performance, race; excerpt: "When we put compile at the top level, there may be some code that torch compile's dynamo is not able to trace. In these ..." (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3304912979)
-- `2025-09-29T21:55:23Z` `inline` by `ywang96` `vllm/model_executor/models/qwen2_5_vl.py`:389; signals: attention, compile, hang; excerpt: "Is there a reason why we're doing this at top level instead of per-attention backend? We have already changed the logic here so that ..." (https://github.com/vllm-project/vllm/pull/23207#discussion_r2389357763)
-- `2025-09-29T22:51:30Z` `inline` by `Lucaskabela` `vllm/model_executor/models/qwen2_5_vl.py`:389; signals: attention, compile, flash attention; excerpt: "So there is a challenge here comes from two operations that don't play nicely with torch.compile (hence why we try to hide them here). ..." (https://github.com/vllm-project/vllm/pull/23207#discussion_r2389435304)
-- `2025-10-13T21:56:59Z` `inline` by `Lucaskabela` `vllm/model_executor/models/qwen2_5_vl.py`:455; signals: compile, cuda, cudagraph; excerpt: "My understanding is that since we don't do anything different here Cudagraphs will be on, and we will capture with multiple compile sizes (although ..." (https://github.com/vllm-project/vllm/pull/23207#discussion_r2427396023)
-- `2025-10-02T06:28:27Z` `review` `COMMENTED` by `ywang96`; signals: benchmark, perf; excerpt: "@Lucaskabela Thanks for your work! I think this PR looks in a much better shape now, but I'm not sure whether we want to ..." (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3292686119)
-- `2025-09-29T21:40:00Z` `issue` by `Lucaskabela`; signals: benchmark, block, hang; excerpt: "I wonder how much improvement this makes over 23932? @DarkLight1337 I went ahead and changed L477 (in VisionBlock) to use iadd: I didn't identify ..." (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3349148141)
-- `2025-10-16T17:42:45Z` `issue` by `Lucaskabela`; signals: compile, failing, hang; excerpt: "And now for the fun part - seems after these changes there is an Eagle3 test failing. I tried bisecting these changes to figure ..." (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3412049223)
-- `2025-10-16T21:33:13Z` `issue` by `Lucaskabela`; signals: h100, hang, throughput; excerpt: "Thanks @Lucaskabela! Can we reporting the MFU gains before and after this PR? MFU Estimate (from) Throughput Flops per token / Max theoretical Throughput ..." (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3412942293)
+- 2025-08-19 `miladm` on `vllm/model_executor/models/qwen2_5_vl.py`:470: qq: what happens to other dimensions? does dynamism on other dimensions trigger a recompile? (https://github.com/vllm-project/vllm/pull/23207#discussion_r2286473296)
+- 2025-08-19 `Lucaskabela` on `vllm/model_executor/models/qwen2_5_vl.py`:470: Yes dynamism on the other dimensions would trigger recompile here since they aren't explicitly marked (https://github.com/vllm-project/vllm/pull/23207#discussion_r2286539596)
+- 2025-08-21 `Lucaskabela`: Sorry I'm not familiar, why do mm components not have vllm config set? I am honestly not too sure; an alternative we could do here is forward the vllm config to these subclasses; this would be a less flexible solution (as it ... (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3211189777)
+- 2025-08-21 `Lucaskabela`: This modification may cause recompilation during runtime. It appears that this may cause timeouts in some scenarios.🤔 This is a valid concern, I will stress test this to check - if there is some easy way to trigger recompiles, can you share ... (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3211195422)
+- 2025-08-25 `zou3519`: This modification may cause recompilation during runtime. It appears that this may cause timeouts in some scenarios.🤔 @tanruixiang what do you mean by this? The way the vLLM-compile integration works, vLLM deletes the guards that TorchDynamo produces, so there will never be ... (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3221534932)
+- 2025-08-26 `tanruixiang`: @tanruixiang what do you mean by this? The way the vLLM-compile integration works, vLLM deletes the guards that TorchDynamo produces, so there will never be recompilations during inference serving time. @zou3519 Thanks for pointing this out. I also see slack's discussion. Let's ... (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3222654169)
+- 2025-08-26 `Lucaskabela`: @tanruixiang @zou3519 @ProExpertProg @ywang96 updated with some benchmark results for more context on our discussions (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3225838783)
+- 2025-09-09 `ywang96` commented: Hey @Lucaskabela! I actually had a chat with @youkaichao and the conclusion is that this current state is probably not good enough for us to merge this PR. Generally speaking, while it's feasible for us to add torch.compile support for encoder in ... (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3202741234)
+- 2025-09-11 `Lucaskabela` on `vllm/model_executor/models/qwen2_5_vl.py`:375: NOTE: We push all the compile breaking things here (such as .item/.tolist). This way, we can specify this as a custom op and compile around it (https://github.com/vllm-project/vllm/pull/23207#discussion_r2341635438)
+- 2025-09-11 `Lucaskabela` on `vllm/model_executor/models/qwen2_5_vl.py`:453: Other major change here; don't use optional primitives that are difficult to trace. Instead use tensor which works here (https://github.com/vllm-project/vllm/pull/23207#discussion_r2341638181)
+- 2025-09-17 `Lucaskabela`: One thing I want to get ahead of here - since we have torch.compile on lower level modules, that may have multiple instances (for example, the vision block here), each block is getting compiled. This does not lead to recompiles, as there ... (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3304180793)
+- 2025-09-17 `wwl2755`: Thanks for the great work! I'm wondering what would be the main concern to split the large nn module into smaller ones. Would it cause any problem or is it leading better optimization? I have investigated some other models before in torch.compile ... (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3304741113)
+- 2025-09-18 `wwl2755`: When we put compile at the top level, there may be some code that torch compile's dynamo is not able to trace. In these instances, we have a graph break; however, graph breaks mean that we will have less opportunities to optimize ... (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3304912979)
+- 2025-09-29 `Lucaskabela`: I wonder how much improvement this makes over 23932? @DarkLight1337 I went ahead and changed L477 (in VisionBlock) to use iadd: I didn't identify any other places to do this in this model; running the benchmarks this is the result: Since it ... (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3349148141)
+- 2025-09-29 `ywang96` on `vllm/model_executor/models/qwen2_5_vl.py`:389: Is there a reason why we're doing this at top level instead of per-attention backend? We have already changed the logic here so that there's no more repeative code on deciding attention backend - it'll be just populated from Qwen2.5VLVisionTransformer In this ... (https://github.com/vllm-project/vllm/pull/23207#discussion_r2389357763)
+- 2025-09-29 `ywang96` on `vllm/model_executor/models/qwen2_5_vl.py`:1135: Do we not need to set forward context for the DP ViT case? (https://github.com/vllm-project/vllm/pull/23207#discussion_r2389360194)
+- 2025-09-29 `ywang96` commented: Thanks for the work! I left two questions (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3281914135)
+- 2025-09-29 `Lucaskabela` on `vllm/model_executor/models/qwen2_5_vl.py`:1135: This is an oversight on my part in testing - let me move this over self.visual as well (https://github.com/vllm-project/vllm/pull/23207#discussion_r2389431530)
+- 2025-09-29 `Lucaskabela` on `vllm/model_executor/models/qwen2_5_vl.py`:389: So there is a challenge here comes from two operations that don't play nicely with torch.compile (hence why we try to hide them here). That is: .item() for the flash attention, and .tolist() in xformers. We could feasibly move this wrapper to ... (https://github.com/vllm-project/vllm/pull/23207#discussion_r2389435304)
+- 2025-09-30 `DarkLight1337`: @DarkLight1337 I went ahead and changed L477 (in VisionBlock) to use iadd: Did you use CUDAGraph for the benchmark? The original PR mentioned that add is optimized to iadd when CUDAGraph is used which might explain why. I wonder whether we can ... (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3349745244)
+- 2025-10-02 `ywang96` commented: @Lucaskabela Thanks for your work! I think this PR looks in a much better shape now, but I'm not sure whether we want to put vit attn wrappers.py under ops instead of having these methods live within vision.py (I'll discuss with Kaichao) ... (https://github.com/vllm-project/vllm/pull/23207#pullrequestreview-3292686119)
+- 2025-10-07 `Lucaskabela`: Hey @ywang96 any update on testing this change? Would love to cross validate the improvements and land this (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3378832236)
+- 2025-10-10 `yanyongyu`: After making a patch on our local version of vLLM, we gain about 20% vision encoder speedup (result from torch profiler) in some test cases. 👍🏻 (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3389650040)
+- 2025-10-11 `Lucaskabela`: Ah, I think this PR needs to be slightly reworked to still be compatible with previous model defs (I thought it was but seems CI tells a different story) - I will burn down these failures by Monday (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3392766259)
+- 2025-10-13 `zou3519` on `vllm/model_executor/models/qwen2_5_vl.py`:463: @Lucaskabela to check: previously we had an invariant that all dynamic dimensions were actually "the same". After this PR, that is no longer the case, right? (cc @laithsakka who wanted to make use of this information) This is not a problem, just ... (https://github.com/vllm-project/vllm/pull/23207#discussion_r2426403804)
+- 2025-10-13 `zou3519` on `vllm/model_executor/models/qwen2_5_vl.py`:455: Does this turn on CUDAGraphs capture too? How does that interaction work? (https://github.com/vllm-project/vllm/pull/23207#discussion_r2426410285)
+- 2025-10-13 `zou3519` on `vllm/compilation/decorators.py`:246: this is kind of sketchy, do you have an example? I don't know where old init came from (https://github.com/vllm-project/vllm/pull/23207#discussion_r2426413228)
+- 2025-10-13 `lgeiger` on `vllm/attention/ops/vit_attn_wrappers.py`:33: This is probably unrelated to this PR, but just checking: Do we still need .contiguous() here and in the other wrappers? Should be handled OK by the projection layer, or am I missing something? (https://github.com/vllm-project/vllm/pull/23207#discussion_r2426449098)
+- 2025-10-13 `zou3519` on `vllm/model_executor/models/qwen2_5_vl.py`:455: Similarly, how does the interaction with compile sizes go? (https://github.com/vllm-project/vllm/pull/23207#discussion_r2426452681)
+- 2025-10-13 `Lucaskabela` on `vllm/model_executor/models/qwen2_5_vl.py`:463: Actually for this instance these are still the same; since we are only compiling the inner TransformerBlock, the images have already been padded here to be consistent, so only batch dimension is dynamic. If we tried to uplevel compilation to the Qwen2 ... (https://github.com/vllm-project/vllm/pull/23207#discussion_r2426956402)
+- 2025-10-13 `Lucaskabela` on `vllm/attention/ops/vit_attn_wrappers.py`:33: This is just moved from the original code; I am not certain but fairly sure this would be a noop if already contiguous (cc @zou3519) (https://github.com/vllm-project/vllm/pull/23207#discussion_r2426960213)
+- 2025-10-13 `Lucaskabela` on `vllm/compilation/decorators.py`:246: old init is just defined above as is :) - it is the base cls. init (https://github.com/vllm-project/vllm/pull/23207#discussion_r2426963354)
+- 2025-10-13 `zou3519` on `vllm/model_executor/models/qwen2_5_vl.py`:463: got it, thanks for the clarification. this makes things like the cg and compile sizes handling easier (https://github.com/vllm-project/vllm/pull/23207#discussion_r2427044030)
+- 2025-10-13 `Lucaskabela` on `vllm/compilation/decorators.py`:246: Agree this is causing the unit tests failures - will polish this up to boost confidence and make less sketchy (https://github.com/vllm-project/vllm/pull/23207#discussion_r2427286818)
+- 2025-10-13 `zou3519` on `vllm/attention/ops/vit_attn_wrappers.py`:33: .contiguous() is a noop if already contiguous (https://github.com/vllm-project/vllm/pull/23207#discussion_r2427289581)
+- 2025-10-13 `Lucaskabela` on `vllm/model_executor/models/qwen2_5_vl.py`:455: My understanding is that since we don't do anything different here Cudagraphs will be on, and we will capture with multiple compile sizes (although we do mark these as dynamic still). We can try and validate this (https://github.com/vllm-project/vllm/pull/23207#discussion_r2427396023)
+- 2025-10-15 `ProExpertProg`: @Lucaskabela if we want to get this merged for this release we should make sure we test with Inductor partitioning to make sure there aren't any hidden surprises. (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3404189930)
+- 2025-10-15 `yanyongyu` on `vllm/compilation/decorators.py`:86: This arg is used with dynamic arg dims for Qwen2 5 VisionBlock. This overload does not provide a dynamic arg dims arg and my type checker complains about this. Should this be merged into overload above? (https://github.com/vllm-project/vllm/pull/23207#discussion_r2430953070)
+- 2025-10-15 `Lucaskabela` on `vllm/compilation/decorators.py`:86: cc @ProExpertProg @zou3519 @ywang96 can y'all have another look at this? I needed to add someway to mark a particular dimension as not only dynamic, but unbacked (so I did that here); without this, compile 0/1 specialized during tracing for when dumy ... (https://github.com/vllm-project/vllm/pull/23207#discussion_r2433314304)
+- 2025-10-15 `Lucaskabela`: @Lucaskabela if we want to get this merged for this release we should make sure we test with Inductor partitioning to make sure there aren't any hidden surprises. Do we have an example command to run to do this? (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3407402677)
+- 2025-10-16 `Lucaskabela`: @Lucaskabela if we want to get this merged for this release we should make sure we test with Inductor partitioning to make sure there aren't any hidden surprises. Do we have an example command to run to do this? -O.use inductor graph ... (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3411749036)
+- 2025-10-16 `Lucaskabela`: And now for the fun part - seems after these changes there is an Eagle3 test failing. I tried bisecting these changes to figure out what causes it to break, as it seems like something is causing the language model to compile ... (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3412049223)
+- 2025-10-16 `Lucaskabela`: Thanks @Lucaskabela! Can we reporting the MFU gains before and after this PR? MFU Estimate (from) Throughput Flops per token / Max theoretical Throughput changes from (base) 1478.44 to (change) 1548.80 We estimate Flops per token as: 2 (forward inference) 3 10 ... (https://github.com/vllm-project/vllm/pull/23207#issuecomment-3412942293)
+- 2025-10-27 `zou3519` on `vllm/attention/ops/vit_attn_wrappers.py`:1: @Lucaskabela can you add a test somewhere? I'm thinking we can have a test that counts the number of compilations. vLLM has some counters: (https://github.com/vllm-project/vllm/pull/23207#discussion_r2465869446)
+- 2025-10-28 `laithsakka` on `vllm/model_executor/models/qwen2_5_vl.py`:375: mm why are we not just instead allowing unbacked int the graph? have we tried? (https://github.com/vllm-project/vllm/pull/23207#discussion_r2468165603)

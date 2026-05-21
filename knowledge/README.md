@@ -27,8 +27,10 @@ complementary code samples, and live web/official/upstream source research.
 - PR corpus metadata under `data/`
 
 Each PR page points at its evidence bundle via `artifact_dir`. Each bundle
-contains `review.diff`, `upstream.json`, `ORIGIN.yaml`, `discussion.md`, and
-`source-snapshot/`.
+contains `review.diff`, `upstream.json`, `ORIGIN.yaml`, and
+`source-snapshot/`. Bundles with useful human review/comment signal also have
+a simple bullet-list `discussion.md`; PRs without substantive discussion omit
+that file.
 
 ## Three Peer Routes
 
@@ -55,7 +57,6 @@ Open the bundle named by `artifact_dir` when implementation details matter:
 
 ```bash
 less evidence/pull-bundles/flash-attention/gh-1940/review.diff
-less evidence/pull-bundles/flash-attention/gh-1940/discussion.md
 find evidence/pull-bundles/flash-attention/gh-1940/source-snapshot -type f
 ```
 
@@ -153,8 +154,8 @@ knowledge/
 |-- sources/
 |   `-- prs/
 |-- evidence/
-|   `-- pull-bundles/   # each PR bundle includes review.diff, discussion.md,
-|                       # upstream.json, ORIGIN.yaml, and source-snapshot/
+|   `-- pull-bundles/   # each PR bundle includes review.diff, upstream.json,
+|                       # ORIGIN.yaml, source-snapshot/, and discussion.md when useful
 |-- candidates/
 |-- index.json
 `-- data/

@@ -1,81 +1,28 @@
-# PR Discussion Digest
-
-- Source PR: [flashinfer-ai/flashinfer#3024](https://github.com/flashinfer-ai/flashinfer/pull/3024)
-- Source page: `sources/prs/flashinfer/PR-3024.md`
-- Evidence bundle: `evidence/pull-bundles/flashinfer/gh-3024`
-- Generated at: `2026-05-20T15:26:07.573274+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-04-09T10:19:30Z`
-- Merged: `2026-04-14T21:02:26Z`
-
-## Discussion Counts
-
-- Issue comments: 12
-- Review submissions: 50 (approved=2, changes_requested=2, commented=46)
-- Inline review comments: 58
-- Review threads observed: 23
-- Resolved/outdated thread markers: resolved=23, outdated=11
-- Human participants with discussion text: TomerBN-Nvidia, aleozlx, amirkl94, amitz-nv, coderabbitai
-- Automation comments/reviews omitted from high-signal summary: 7
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-04-09T10:27:11Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces a new "routing replay" feature for MoE (Mixture of Experts) kernels, allowing ... (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4081526582)
-- `2026-04-09T10:36:02Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 5 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to ... (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4081573685)
-- `2026-04-09T14:27:31Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 1 🤖 Prompt for all review comments with AI agents 🪄 Autofix (Beta) Fix all ... (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4083078520)
-- `2026-04-12T12:16:45Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095014633)
-- `2026-04-12T12:17:07Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095014938)
-- `2026-04-12T12:17:24Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095015211)
-- `2026-04-12T12:17:53Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095015622)
-- `2026-04-12T12:18:19Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095015983)
-- `2026-04-12T12:18:25Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095016058)
-- `2026-04-12T12:18:33Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095016181)
-- `2026-04-12T12:18:52Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095016457)
-- `2026-04-12T12:18:54Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095016477)
-- `2026-04-12T12:19:21Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095016797)
-- `2026-04-12T12:19:36Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095016996)
-- `2026-04-12T12:19:50Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095017210)
-- `2026-04-12T12:20:00Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095017332)
-- `2026-04-12T12:20:07Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095017421)
-- `2026-04-12T12:20:47Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095017897)
-- `2026-04-12T12:27:56Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095023821)
-- `2026-04-12T12:28:19Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095024128)
-- `2026-04-12T12:43:52Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 2 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to ... (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095040671)
-- `2026-04-12T13:02:57Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095057644)
-- `2026-04-12T13:03:19Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095057979)
-- `2026-04-12T13:03:34Z` `COMMENTED` by `TomerBN-Nvidia` (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095058215)
-- ... 26 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `csrc/trtllm_fused_moe_kernel_launcher.cu`: 15 inline comment(s)
-- `docs/vllm_routing_replay_integration.md`: 11 inline comment(s)
-- `tests/model_optimizations/test_dsv3_fused_routing.py`: 8 inline comment(s)
-- `flashinfer-cubin/flashinfer_cubin/__init__.py`: 7 inline comment(s)
-- `flashinfer/fused_moe/core.py`: 4 inline comment(s)
-- `csrc/fused_moe/noAuxTcKernels.cu`: 3 inline comment(s)
-- `csrc/fused_moe/trtllm_backend/trtllm_fused_moe_routing_llama4.cu`: 3 inline comment(s)
-- `tests/moe/test_trtllm_gen_routed_fused_moe.py`: 3 inline comment(s)
-- `csrc/fused_moe/trtllm_backend/trtllm_fused_moe_routing_custom.cu`: 2 inline comment(s)
-- `csrc/tvm_ffi_utils.h`: 1 inline comment(s)
-- `csrc/fused_moe/trtllm_backend/trtllm_fused_moe_routing_deepseek.cu`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-04-09T10:36:02Z` `review` `COMMENTED` by `coderabbitai`; signals: bf16, block, cuda, flashinfer, fp4, fp8, hang, kernel; excerpt: "Actionable comments posted: 5 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4081573685)
-- `2026-04-12T12:43:52Z` `review` `COMMENTED` by `coderabbitai`; signals: aligned, block, cuda, flashinfer, fp8, hang, kernel, moe; excerpt: "Actionable comments posted: 2 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095040671)
-- `2026-04-09T10:24:33Z` `issue` by `coderabbitai`; signals: cuda, dtype, flashinfer, gemm, hang, kernel, layout, moe; excerpt: "[!NOTE] Reviews paused It looks like this branch is under active development. To avoid overwhelming you with review comments due to an influx of ..." (https://github.com/flashinfer-ai/flashinfer/pull/3024#issuecomment-4213412386)
-- `2026-04-12T12:22:02Z` `issue` by `TomerBN-Nvidia`; signals: bf16, block, compile, fp4, fp8, moe; excerpt: "Addressing CodeRabbit "Outside diff range" findings (review 4081573685) All three Python API issues from the second review are fixed in 60b321d7: 1. trtllm bf16 ..." (https://github.com/flashinfer-ai/flashinfer/pull/3024#issuecomment-4231494101)
-- `2026-04-13T08:12:07Z` `inline` by `TomerBN-Nvidia` `flashinfer/fused_moe/core.py`:2652; signals: cuda, dtype, flashinfer, layout, moe; excerpt: "Added to docstring in 66cc35d3 with shape, dtype, and CUDA graph pre-allocation semantics. Shape validation is done in the C++ layer (validate routing replay ..." (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3071659253)
-- `2026-04-12T13:06:31Z` `review` `COMMENTED` by `coderabbitai`; signals: cuda, hang, kernel, moe; excerpt: "Actionable comments posted: 2 🧹 Nitpick comments (1) tests/moe/test trtllm gen routed fused moe.py (1) 772-774: Cover the oversized replay-buffer contract in this test. ..." (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095060630)
-- `2026-04-12T14:06:56Z` `review` `COMMENTED` by `coderabbitai`; signals: flashinfer, hang, kernel, moe; excerpt: "♻️ Duplicate comments (1) flashinfer-cubin/flashinfer cubin/ init .py (1) 78-78: ⚠️ Potential issue 🟠 Major Avoid hard-coding version ; it can break runtime version ..." (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4095115335)
-- `2026-04-13T07:07:24Z` `review` `COMMENTED` by `coderabbitai`; signals: flashinfer, hang, kernel, moe; excerpt: "Actionable comments posted: 1 🤖 Prompt for all review comments with AI agents 🪄 Autofix (Beta) Fix all unresolved CodeRabbit comments on this PR: ..." (https://github.com/flashinfer-ai/flashinfer/pull/3024#pullrequestreview-4096926818)
-- `2026-04-09T10:36:01Z` `inline` by `coderabbitai` `csrc/fused_moe/trtllm_backend/trtllm_fused_moe_routing_llama4.cu`:471; signals: kernel, layout, moe, warp; excerpt: "⚠️ Potential issue 🟠 Major Replay output is missing on the single-warp and single-cluster paths. run() only reaches this kernel on the large-token path. ..." (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3057161703)
-- `2026-04-09T10:36:01Z` `inline` by `coderabbitai` `csrc/trtllm_fused_moe_kernel_launcher.cu`:230; signals: cute, flashinfer, kernel, moe; excerpt: "⚠️ Potential issue 🔴 Critical 🧩 Analysis chain 🏁 Script executed: Repository: flashinfer-ai/flashinfer Length of output: 1146 --- 🏁 Script executed: Repository: flashinfer-ai/flashinfer Length ..." (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3057161707)
-- `2026-04-13T07:07:24Z` `inline` by `coderabbitai` `csrc/trtllm_fused_moe_kernel_launcher.cu`:59; signals: cuda, kernel, layout, moe; excerpt: "⚠️ Potential issue 🟠 Major Reject strided routing replay out views here. This validation accepts any 2D int16 tensor, but the routing kernels only ..." (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3071361653)
-- `2026-04-09T10:36:00Z` `inline` by `coderabbitai` `csrc/fused_moe/noAuxTcKernels.cu`:371; signals: benchmark, kernel, moe; excerpt: "⚠️ Potential issue 🔴 Critical Reject undersized replay buffers before launching the kernel. This validation dropped the exact dim0 == num tokens check, but ..." (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3057161686)
+- 2026-04-12 `TomerBN-Nvidia` on `tests/model_optimizations/test_dsv3_fused_routing.py`:598: Fixed in 60b321d7 — renamed the first definition to so both parametrizations run. (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069440646)
+- 2026-04-12 `TomerBN-Nvidia` on `csrc/trtllm_fused_moe_kernel_launcher.cu`:1795: The int16 dtype validation was already added in commit 375a229b. The duplication across the five launcher functions is intentional — each entry point has a different validation context (different dtypes, different tensor sets), and a shared helper would need to handle all ... (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069441008)
+- 2026-04-12 `TomerBN-Nvidia` on `csrc/trtllm_fused_moe_kernel_launcher.cu`:483: Same reasoning as above — each launcher validates and extracts in a slightly different context. The replay ptr extraction itself is 3 lines; a helper would add indirection without meaningfully reducing code. Happy to revisit if this becomes a maintenance burden. (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069441319)
+- 2026-04-12 `TomerBN-Nvidia` on `csrc/fused_moe/noAuxTcKernels.cu`:371: Intentionally omitted. With CUDA graphs, the routing replay out buffer is pre-allocated at maximum batch size and reused across steps with varying num tokens. The kernel only writes to indices [0, num tokens), so a larger buffer is safe. This is already ... (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069441911)
+- 2026-04-12 `TomerBN-Nvidia` on `csrc/fused_moe/trtllm_backend/trtllm_fused_moe_routing_llama4.cu`:471: Fixed in 60b321d7 — added routing replay writes to all three Llama4 kernel paths: - routingIndicesWarpKernel: scores path (elect one sync) and pre-computed path (per-thread) - routingIndicesClusterKernel: topKIds, scores, and packed paths - routingIndicesHistogramScoresKernel: already had the write (large-token path) (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069442329)
+- 2026-04-12 `TomerBN-Nvidia` on `csrc/trtllm_fused_moe_kernel_launcher.cu`:230: Fixed in 60b321d7 — moved set routing replay out() to a public section above the protected block. (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069442592)
+- 2026-04-12 `TomerBN-Nvidia` on `tests/model_optimizations/test_dsv3_fused_routing.py`:563: Set comparison is intentional here. The routing kernel writes expert IDs into routing replay out as it encounters them during the parallel routing reduction — this doesn't guarantee the same column ordering as topk indices, which may be sorted differently by the ... (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069443409)
+- 2026-04-12 `TomerBN-Nvidia` on `tests/model_optimizations/test_dsv3_fused_routing.py`:676: Fixed in 60b321d7 — first definition renamed to test routing replay out extended. (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069443681)
+- 2026-04-12 `TomerBN-Nvidia` on `flashinfer-cubin/flashinfer_cubin/__init__.py`:81: This is an intentional workaround for nightly base image compatibility — the editable install creates a namespace package at the system location without build meta.py, causing get version() to fail. This commit is already flagged in the PR description as potentially droppable ... (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069444228)
+- 2026-04-12 `TomerBN-Nvidia`: Addressing CodeRabbit "Outside diff range" findings (review 4081573685) All three Python API issues from the second review are fixed in 60b321d7: 1. trtllm bf16 routed moe silently dropping routing replay out — The parameter was accepted but not forwarded to the underlying ... (https://github.com/flashinfer-ai/flashinfer/pull/3024#issuecomment-4231494101)
+- 2026-04-12 `TomerBN-Nvidia` on `docs/vllm_routing_replay_integration.md`:32: Fixed in 777a82d5 — replaced "k-th ranked expert ID" with "stores one selected expert ID for token t / Column order is unspecified; compare per-token sets rather than positions". (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069492137)
+- 2026-04-12 `TomerBN-Nvidia` on `tests/moe/test_trtllm_gen_routed_fused_moe.py`:843: Fixed in 777a82d5 — replaced uniqueness-only check with sorted comparison against routing reference renormalize() output, which is already used elsewhere in this test file. (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069492812)
+- 2026-04-12 `TomerBN-Nvidia` on `docs/vllm_routing_replay_integration.md`:21: Fixed in 5929e150 — clarified as "vLLM integration path APIs" with a note that other MoE entry points also accept the parameter. (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069501915)
+- 2026-04-12 `TomerBN-Nvidia` on `docs/vllm_routing_replay_integration.md`:31: Fixed in 5929e150 — added language tag. (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069502198)
+- 2026-04-12 `TomerBN-Nvidia`: Addressing reviews 4095040671 and 4095060630 Fixed in 7e076e66: 1. Critical: trtllm fp8 per tensor scale moe op missing routing replay out — Same pattern as the FP4/MXINT4 fix. Added the parameter to the op signature, fake op, and updated mutates args. The ... (https://github.com/flashinfer-ai/flashinfer/pull/3024#issuecomment-4231590116)
+- 2026-04-12 `amirkl94` on `flashinfer/fused_moe/core.py`:2652: Can you add this arg to the docstring as well? Specifically I think we should write the shape we expect explicitly. Also maybe validate the shape? (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069601284)
+- 2026-04-12 `amirkl94` on `docs/vllm_routing_replay_integration.md`:5: Maybe mention that it's only with the trtllm backend? (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069611271)
+- 2026-04-12 `amirkl94` on `csrc/fused_moe/trtllm_backend/trtllm_fused_moe_routing_custom.cu`:424: It may be irrelevant, but does this work with EP? (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069617763)
+- 2026-04-12 `amirkl94` on `csrc/trtllm_fused_moe_kernel_launcher.cu`:1703: Consider extracting this to a function (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069631646)
+- 2026-04-12 `amirkl94` on `csrc/trtllm_fused_moe_kernel_launcher.cu`:1880: Consider extracting this to a function as well (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3069643275)
+- 2026-04-13 `TomerBN-Nvidia` on `flashinfer/fused_moe/core.py`:2652: Added to docstring in 66cc35d3 with shape, dtype, and CUDA graph pre-allocation semantics. Shape validation is done in the C++ layer (validate routing replay out helper): CUDA device, same device as hidden states, ndim==2, dim1==top k, int16 dtype, contiguous layout. (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3071659253)
+- 2026-04-13 `TomerBN-Nvidia` on `docs/vllm_routing_replay_integration.md`:5: Done in 72329b77, doc now says trtllm-gen backend only (not Triton MoE path). (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3071659888)
+- 2026-04-13 `TomerBN-Nvidia` on `csrc/trtllm_fused_moe_kernel_launcher.cu`:1703: Done in 72329b77 - extracted validate routing replay out() helper used by all 5 entry points. (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3071660414)
+- 2026-04-13 `TomerBN-Nvidia` on `csrc/trtllm_fused_moe_kernel_launcher.cu`:1880: Same helper covers this one too (validate routing replay out in 72329b77). (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3071660981)
+- 2026-04-13 `TomerBN-Nvidia` on `csrc/trtllm_fused_moe_kernel_launcher.cu`:59: Fixed in 26ad7a47 - added IsContiguous() check to validate routing replay out(). Kernels write via packed row-major indexing (token top k + k), so strided views would silently corrupt data. (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3071661497)
+- 2026-04-13 `TomerBN-Nvidia` on `csrc/fused_moe/trtllm_backend/trtllm_fused_moe_routing_custom.cu`:424: The routing replay writes the global expert index (warpTopKExpertIdx), which is the expert ID from the full num experts space before any EP partitioning (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3071670091)
+- 2026-04-13 `amirkl94` on `csrc/tvm_ffi_utils.h`:26: Can you move this to NoAuxTcKernels.cu ? (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3072931983)
+- 2026-04-13 `amirkl94` on `flashinfer/fused_moe/core.py`:3158: Consider adding an assert for the shape and dtype in the python code. (https://github.com/flashinfer-ai/flashinfer/pull/3024#discussion_r3072946083)

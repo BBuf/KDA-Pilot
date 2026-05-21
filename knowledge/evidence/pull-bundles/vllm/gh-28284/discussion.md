@@ -1,62 +1,30 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#28284](https://github.com/vllm-project/vllm/pull/28284)
-- Source page: `sources/prs/vllm/PR-28284.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-28284`
-- Generated at: `2026-05-20T15:38:27.934046+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-11-07T09:46:12Z`
-- Merged: `2026-01-12T14:23:04Z`
-
-## Discussion Counts
-
-- Issue comments: 68
-- Review submissions: 11 (approved=1, commented=10)
-- Inline review comments: 26
-- Review threads observed: 25
-- Resolved/outdated thread markers: resolved=14, outdated=17
-- Human participants with discussion text: 22quinn, ForeverDJ-ux, Kairosxy, QPHutu, ann-qin-lu, awcvec, chatgpt-codex-connector, cursor, david6666666, faresobeid, gxm651182644, heheda12345, linlinlinzhao, litianjian, lkm2835, mergify, mzusman, robertgshaw2-redhat, scut-zx, shenh10
-- Automation comments/reviews omitted from high-signal summary: 7
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 1
-
-## Review Decisions
-
-- `2025-11-07T09:49:14Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces support for recording expert routing decisions for MoE models, a feature named ... (https://github.com/vllm-project/vllm/pull/28284#pullrequestreview-3432649782)
-- `2025-12-16T11:09:49Z` `COMMENTED` by `sungyubkim` - First of all, thanks for this great feature! Really appreciate the work here. 🙏 I have a small ... (https://github.com/vllm-project/vllm/pull/28284#pullrequestreview-3582528903)
-- `2025-12-30T11:28:23Z` `COMMENTED` by `gxm651182644` (https://github.com/vllm-project/vllm/pull/28284#pullrequestreview-3617949025)
-- `2025-12-30T11:30:01Z` `COMMENTED` by `gxm651182644` (https://github.com/vllm-project/vllm/pull/28284#pullrequestreview-3617951612)
-- `2026-01-08T14:16:28Z` `APPROVED` by `22quinn` - thanks for the work! just some nits (https://github.com/vllm-project/vllm/pull/28284#pullrequestreview-3639520509)
-- `2026-01-09T02:05:33Z` `COMMENTED` by `cursor` (https://github.com/vllm-project/vllm/pull/28284#pullrequestreview-3642062482)
-- `2026-01-09T02:41:10Z` `COMMENTED` by `cursor` (https://github.com/vllm-project/vllm/pull/28284#pullrequestreview-3642109210)
-- `2026-01-10T10:15:15Z` `COMMENTED` by `xhx1022` (https://github.com/vllm-project/vllm/pull/28284#pullrequestreview-3646685180)
-- `2026-01-12T06:29:57Z` `COMMENTED` by `cursor` (https://github.com/vllm-project/vllm/pull/28284#pullrequestreview-3649320279)
-- `2026-01-12T11:36:32Z` `COMMENTED` by `cursor` (https://github.com/vllm-project/vllm/pull/28284#pullrequestreview-3650353551)
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/layers/fused_moe/routed_experts_capturer.py`: 11 inline comment(s)
-- `vllm/v1/core/sched/scheduler.py`: 5 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/layer.py`: 3 inline comment(s)
-- `vllm/v1/worker/gpu_model_runner.py`: 3 inline comment(s)
-- `vllm/config/model.py`: 2 inline comment(s)
-- `vllm/engine/arg_utils.py`: 1 inline comment(s)
-- `vllm/config/vllm.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-01-09T02:41:10Z` `inline` by `cursor` `vllm/model_executor/layers/fused_moe/routed_experts_capturer.py`:203; signals: block, latency, memory, moe, perf, performance, regression, shared memory; excerpt: "Performance regression with expert recording enabled High Severity As reported in the PR discussion, enabling enable return routed experts causes a 10x latency increase. ..." (https://github.com/vllm-project/vllm/pull/28284#discussion_r2674603949)
-- `2026-01-09T02:05:34Z` `inline` by `cursor` `vllm/model_executor/layers/fused_moe/routed_experts_capturer.py`:300; signals: cache, kv cache, memory, moe, race, shared memory; excerpt: "Race Condition: Reader Tries to Attach Before Shared Memory Exists High Severity The RoutedExpertsReaderReal.attach buffer() method opens the lock file with mode "rb+" (read+write, ..." (https://github.com/vllm-project/vllm/pull/28284#discussion_r2674553875)
-- `2026-01-09T02:05:33Z` `inline` by `cursor` `vllm/v1/worker/gpu_model_runner.py`:3503; signals: attention, block, cache, kv cache; excerpt: "Uninitialized self.slot mapping Attribute May Cause AttributeError High Severity self.slot mapping is only conditionally set in get block table and slot mapping() (line 1617-1618) ..." (https://github.com/vllm-project/vllm/pull/28284#discussion_r2674553873)
-- `2026-01-09T02:05:34Z` `inline` by `cursor` `vllm/model_executor/layers/fused_moe/routed_experts_capturer.py`:212; signals: memory, moe, shared memory; excerpt: "Lock File Resource Leak - Never Cleaned Up Low Severity The RoutedExpertsCapturerReal class creates a lock file at {LOCK FILE PREFIX} {instance id}.lock (line ..." (https://github.com/vllm-project/vllm/pull/28284#discussion_r2674553878)
-- `2026-01-09T02:41:10Z` `inline` by `cursor` `vllm/model_executor/layers/fused_moe/routed_experts_capturer.py`:201; signals: memory, moe, shared memory; excerpt: "No bounds checking for shared memory indices Medium Severity In save captured experts, the code writes to shared memory using self. host buffer view[indices, ..." (https://github.com/vllm-project/vllm/pull/28284#discussion_r2674603948)
-- `2026-01-09T02:41:10Z` `inline` by `cursor` `vllm/v1/core/sched/scheduler.py`:1209; signals: block, memory, shared memory; excerpt: "Slot mapping calculation mismatch with context parallelism High Severity The scheduler computes slot mapping using a simple formula: slot = block id block size ..." (https://github.com/vllm-project/vllm/pull/28284#discussion_r2674603956)
-- `2026-01-12T06:29:57Z` `inline` by `cursor` `vllm/model_executor/layers/fused_moe/routed_experts_capturer.py`:102; signals: memory, moe, shared memory; excerpt: "Singleton pattern prevents engine reinitialization Medium Severity The RoutedExpertsCapturer.create() and RoutedExpertsReader.create() methods raise RuntimeError if the global singleton already exists, but there's no mechanism ..." (https://github.com/vllm-project/vllm/pull/28284#discussion_r2681011878)
-- `2025-12-16T11:09:49Z` `review` `COMMENTED` by `sungyubkim`; signals: dtype, hang; excerpt: "First of all, thanks for this great feature! Really appreciate the work here. 🙏 I have a small suggestion regarding dtype compatibility. The current ..." (https://github.com/vllm-project/vllm/pull/28284#pullrequestreview-3582528903)
-- `2025-12-14T13:09:54Z` `issue` by `awcvec`; signals: attention, cache, kv cache; excerpt: "It looks like the current implementation only supports a single KV cache group (len(self.kv cache config.kv cache groups) == 1). Does it also support ..." (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3650963577)
-- `2025-12-16T02:10:37Z` `issue` by `xhx1022`; signals: attention, cache, kv cache; excerpt: "It looks like the current implementation only supports a single KV cache group (len(self.kv cache config.kv cache groups) == 1). Does it also support ..." (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3658396430)
-- `2025-12-16T04:33:39Z` `issue` by `lkm2835`; signals: attention, cache, kv cache; excerpt: "It looks like the current implementation only supports a single KV cache group (len(self.kv cache config.kv cache groups) == 1). Does it also support ..." (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3658759469)
-- `2025-12-16T08:35:31Z` `issue` by `xhx1022`; signals: attention, cache, kv cache; excerpt: "It looks like the current implementation only supports a single KV cache group (len(self.kv cache config.kv cache groups) == 1). Does it also support ..." (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3659394912)
+- 2025-11-14 `litianjian`: Will enabling prefix cache have any impact? (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3531552215)
+- 2025-11-14 `xhx1022`: Will enabling prefix cache have any impact? @litianjian There will be no impact. My implementation manages expert IDs in the same way as KV. As long as the KV for a given token exists, the corresponding expert ID can be retrieved. (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3532794994)
+- 2025-11-18 `xhx1022`: Interesting pr, any update? this pr and related pr [volcengine/verl 4101]( @david6666666 The overall implementation is basically complete. There might occasionally be some bugs that will be updated as they come up. Currently, the returned result has the shape [seq len, layer ... (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3547012948)
+- 2025-12-09 `faresobeid`: Great work, would be great to push this in priority given its increasing importance. Would also be great if we can return the router probabilities for the chosen experts to be able to support something like (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3633905644)
+- 2025-12-10 `scut-zx`: Thank you for this great work. I try to reproduce this project, but I meet some environment issues. My CUDA version is 12.1, but the project is based on vLLM 0.11.2, whose official Docker requires CUDA 12.9. When I download the code ... (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3635175581)
+- 2025-12-10 `xhx1022`: Interesting pr, any update? this pr and related pr ? Capture runs on every GPU, but reader runs only on rank 0. (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3635459994)
+- 2025-12-10 `xhx1022`: Great work, would be great to push this in priority given its increasing importance. Would also be great if we can return the router probabilities for the chosen experts to be able to support something like We will consider this depending on ... (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3635468214)
+- 2025-12-10 `litianjian`: Interesting pr, any update? this pr and related pr ? Capture runs on every GPU, but reader runs only on rank 0. It would be better to capture only once. (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3635468731)
+- 2025-12-10 `xhx1022`: Interesting pr, any update? this pr and related pr ? Capture runs on every GPU, but reader runs only on rank 0. It would be better to capture only once. If do that, CUDA Graph would no longer be compatible. Additionally, they ... (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3635499844)
+- 2025-12-14 `awcvec`: It looks like the current implementation only supports a single KV cache group (len(self.kv cache config.kv cache groups) == 1). Does it also support hybrid attention (global + SWA)? (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3650963577)
+- 2025-12-14 `stylke`: Hi, I tried R3 in verl async mode (vllm spmd)，and found that in Scheduler. init , vllm config.parallel config.rank is 0 (thus the instance id is 0) in every dp replica. Consequently, readers with replica rank 0 will attach to the buffer ... (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3651046691)
+- 2025-12-16 `xhx1022`: It looks like the current implementation only supports a single KV cache group (len(self.kv cache config.kv cache groups) == 1). Does it also support hybrid attention (global + SWA)? At the moment, hybrid attention (global + SWA) is not supported yet. I’ll ... (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3658396430)
+- 2025-12-16 `sungyubkim` commented: First of all, thanks for this great feature! Really appreciate the work here. 🙏 I have a small suggestion regarding dtype compatibility. The current implementation uses torch.int16 / np.int16, but this causes issues when running in multi-GPU or multi-node setups. Specifically, NCCL's ... (https://github.com/vllm-project/vllm/pull/28284#pullrequestreview-3582528903)
+- 2025-12-18 `shenh10`: This current implementation does not support TP, right? For TP to use MultiProc mode, it needs to pass tensors back from the Worker, and we cannot directly call get routed experts in the scheduler. (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3668628537)
+- 2025-12-18 `xhx1022`: This current implementation does not support TP, right? For TP to use MultiProc mode, it needs to pass tensors back from the Worker, and we cannot directly call get routed experts in the scheduler. It can support TP. In the TP setting, ... (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3668841489)
+- 2025-12-18 `shenh10`: 目前的实现不支持 TP，对吗？TP 要使用 MultiProc 模式，需要从 Worker 传递张量，而我们不能直接在调度器中调用 get routed experts。 它可以支持TP。 在 TP 设置中，每个 TP 组内的 0 级节点只需获取工作节点保存在共享内存中的已路由专家即可。 目前，我们已经验证了 DP + TP 训练在 verl 中能够正常工作。 OK... I see. Since you store the file directly into shm, you don't need to pass these ... (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3669558366)
+- 2025-12-29 `ForeverDJ-ux`: I use 2 node to run verl router replay with VLLM==0.12.0(change python code to standand version) tp=8 server async node， the result is error, while with 1 node, output loss is okay 2-node result: 1-node result: It looks like two server hava ... (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3696271128)
+- 2025-12-29 `xhx1022`: I use 2 node to run verl router replay with VLLM==0.12.0(change python code to standand version) tp=8 server async node， the result is error, while with 1 node, output loss is okay 2-node result: 1-node result: <img alt="image" width="1305" height="319" src=" It ... (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3696415274)
+- 2025-12-29 `gxm651182644`: 我把vllm这个分支，结合verl框架来做moe的RL训练。 模型qwen3-VL-30B-A3B 使用dapo的策略， 数据集用的eurus-2-RL- Data-Code 训练环境 单机8卡H200机器 推理Tp=1 训练Ep=8,Tp=1,pp=1 遇到的问题是，对比使用R2训练，R3训练的entropy是很大，差不多是 R2:R3=1:10的样子，这个应该不正确，这个情况有人遇到过么？ (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3696678398)
+- 2025-12-30 `ForeverDJ-ux`: I use 2 node to run verl router replay with VLLM==0.12.0(change python code to standand version) tp=8 server async node， the result is error, while with 1 node, output loss is okay 2-node result: 1-node result: @ForeverDJ-ux Could you please share a ... (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3698419266)
+- 2025-12-30 `ForeverDJ-ux`: 我把vllm这个分支，结合verl框架来做moe的RL训练。 模型qwen3-VL-30B-A3B 使用dapo的策略， 数据集用的eurus-2-RL- Data-Code 训练环境 单机8卡H200机器 推理Tp=1 训练Ep=8,Tp=1,pp=1 遇到的问题是，对比使用R2训练，R3训练的entropy是很大，差不多是 R2:R3=1:10的样子，这个应该不正确，这个情况有人遇到过么？ 你的结果应该和我的现象是一致的，你如果TP设置成8结果是不是就是对的，因为只起了一个server, 设置成TP=4，起了成两个服务结果就不对了，你看是不是这个现象 @gxm651182644 ，我调试了一下，好像两个启动服务后，routed experts和输入的token ids就不匹配了 (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3698467406)
+- 2025-12-30 `gxm651182644`: 我把vllm这个分支，结合verl框架来做moe的RL训练。 模型qwen3-VL-30B-A3B 使用dapo的策略， 数据集用的eurus-2-RL- Data-Code 训练环境 单机8卡H200机器 推理Tp=1 训练Ep=8,Tp=1,pp=1 遇到的问题是，对比使用R2训练，R3训练的entropy是很大，差不多是 R2:R3=1:10的样子，这个应该不正确，这个情况有人遇到过么？ 你的结果应该和我的现象是一致的，你如果TP设置成8结果是不是就是对的，因为只起了一个server, 设置成TP=4，起了成两个服务结果就不对了，你看是不是这个现象 @gxm651182644 ，我调试了一下，好像两个启动服务后，routed experts和输入的token ids就不匹配了 复现了，我在单机8卡上，其他配置都不变，只把推理TP=8, 这时候训练的entropy就正常了。 (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3698649712)
+- 2025-12-30 `gxm651182644` on `vllm/v1/core/sched/scheduler.py`:245: when world size==1 (e.g. tp=1 with multiple independent servers) use vllm config.instance id to ensure each server have a unique ID if world size==1: self.instance id=self.vllm config.instance id else: self.instance id = f"rank {rank // world size}" (https://github.com/vllm-project/vllm/pull/28284#discussion_r2652808705)
+- 2025-12-30 `gxm651182644` on `vllm/v1/worker/gpu_model_runner.py`:5515: when world size==1 (e.g. tp=1 with multiple independent servers) use vllm config.instance id to ensure each server have a unique ID. code like this: if world size==1: self.instance id=self.vllm config.instance id else: self.instance id = f"rank {rank // world size}" (https://github.com/vllm-project/vllm/pull/28284#discussion_r2652811661)
+- 2025-12-30 `xhx1022`: @gxm651182644 Thank you for the warm and helpful response. The issue occurred because I am using verl v0.5, while in the latest version of verl the code that modifies the vLLM instance id has been removed, which leads to this problem when ... (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3699095220)
+- 2026-01-08 `22quinn` on `vllm/model_executor/layers/fused_moe/layer.py`:682: since it's has a property annotation: (https://github.com/vllm-project/vllm/pull/28284#discussion_r2672441216)
+- 2026-01-08 `22quinn` on `vllm/config/model.py`:201: just call it return routed experts? (https://github.com/vllm-project/vllm/pull/28284#discussion_r2672508932)
+- 2026-01-08 `ann-qin-lu`: Hi, thanks for the great work! I am wondering if there are any latency profiling result? (for the context, I cherry-picked this PR into vllm.0.12.0, and observed that the latency is around 10X. Not sure if I accidentally introduced some bug during ... (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3725295933)
+- 2026-01-09 `ann-qin-lu`: Is the latency observed only when you turn on enable return routed experts? yeah, I tried to enable and disable the flag as comparison, and observed this big latency jump. (I haven't profiled the standalone inference yet, the metric is tracked in ... (https://github.com/vllm-project/vllm/pull/28284#issuecomment-3726495106)
+- 2026-01-10 `xhx1022` on `vllm/config/model.py`:201: I think this is fine. However, the verl framework currently uses this parameter when integrating with vLLM, so changing it would require coordinated changes in verl as well. (https://github.com/vllm-project/vllm/pull/28284#discussion_r2678525141)

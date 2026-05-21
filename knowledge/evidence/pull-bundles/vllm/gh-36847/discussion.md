@@ -1,73 +1,32 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#36847](https://github.com/vllm-project/vllm/pull/36847)
-- Source page: `sources/prs/vllm/PR-36847.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-36847`
-- Generated at: `2026-05-20T15:40:16.128722+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-03-12T04:38:42Z`
-- Merged: `2026-03-30T19:03:15Z`
-
-## Discussion Counts
-
-- Issue comments: 13
-- Review submissions: 20 (approved=1, commented=19)
-- Inline review comments: 27
-- Review threads observed: 13
-- Resolved/outdated thread markers: resolved=10, outdated=8
-- Human participants with discussion text: benchislett, geraldstanje1, jianc99, mergify, mgoin
-- Automation comments/reviews omitted from high-signal summary: 2
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-03-12T04:41:33Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces support for DFlash speculative decoding, a new method that leverages bidirectional attention. ... (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-3933877446)
-- `2026-03-12T04:43:30Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-3933882368)
-- `2026-03-18T16:38:57Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-3969274389)
-- `2026-03-18T21:41:00Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-3971019712)
-- `2026-03-20T23:09:30Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-3984457574)
-- `2026-03-20T23:29:06Z` `COMMENTED` by `mgoin` - Really really nice work! I think these are all the things I found for now, but I should ... (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-3984528123)
-- `2026-03-21T00:56:57Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-3984825941)
-- `2026-03-21T00:57:20Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-3984826697)
-- `2026-03-21T00:58:04Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-3984828220)
-- `2026-03-21T14:43:24Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-3986104710)
-- `2026-03-25T01:16:19Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-4003347493)
-- `2026-03-25T01:16:30Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-4003348092)
-- `2026-03-25T03:49:20Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-4003736911)
-- `2026-03-25T03:49:36Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-4003737925)
-- `2026-03-25T04:51:48Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-4003920233)
-- `2026-03-27T13:11:55Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-4005273036)
-- `2026-03-27T13:18:50Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-4021113290)
-- `2026-03-28T00:06:57Z` `APPROVED` by `mgoin` - LGTM otherwise (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-4024237252)
-- `2026-03-30T14:43:54Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-4031130399)
-- `2026-03-30T15:01:08Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-4031262689)
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/models/qwen3_dflash.py`: 9 inline comment(s)
-- `tests/v1/e2e/spec_decode/test_spec_decode.py`: 4 inline comment(s)
-- `vllm/config/speculative.py`: 4 inline comment(s)
-- `vllm/v1/spec_decode/dflash.py`: 3 inline comment(s)
-- `vllm/v1/spec_decode/utils.py`: 3 inline comment(s)
-- `tests/models/registry.py`: 2 inline comment(s)
-- `vllm/model_executor/models/interfaces.py`: 1 inline comment(s)
-- `vllm/v1/spec_decode/eagle.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-20T23:07:38Z` `inline` by `mgoin` `vllm/model_executor/models/qwen3_dflash.py`:412; signals: cuda, flashinfer, kernel; excerpt: "ditto here, but I understand based on the comment if this is more required. I think other than these two flashinfer kernels, everything else ..." (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968330844)
-- `2026-03-20T23:17:35Z` `inline` by `mgoin` `vllm/model_executor/models/qwen3_dflash.py`:9; signals: cuda, flashinfer; excerpt: "Ditto on CUDA platform check/lazy import when needed instead of unconditionally putting flashinfer import at the top of a model file" (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968352283)
-- `2026-03-18T16:38:53Z` `inline` by `mgoin` `tests/v1/e2e/spec_decode/test_spec_decode.py`:1102; signals: attention, flash attention; excerpt: "Is a specific flash attention version needed?" (https://github.com/vllm-project/vllm/pull/36847#discussion_r2954778845)
-- `2026-03-18T16:37:55Z` `issue` by `mgoin`; signals: attention, h100; excerpt: "@benchislett I tested locally on H100 Qwen3 starts up fine, but crashes on first inference. I tried both --attention-config.flash attn version=3 and --attention-config.flash attn ..." (https://github.com/vllm-project/vllm/pull/36847#issuecomment-4083951178)
-- `2026-03-20T22:53:41Z` `inline` by `mgoin` `tests/v1/e2e/spec_decode/test_spec_decode.py`:1100; signals: attention; excerpt: "Can we get this working across the board without needing to specify this arg? We should be able to resolve this internally by querying ..." (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968288964)
-- `2026-03-20T23:04:34Z` `inline` by `mgoin` `vllm/model_executor/models/qwen3_dflash.py`:374; signals: flashinfer; excerpt: "What is the purpose of using the flashinfer rmsnorm? I'd prefer to have this use the general rmsnorm op in vLLM, and the flashinfer ..." (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968324990)
-- `2026-03-21T00:56:56Z` `inline` by `benchislett` `vllm/model_executor/models/qwen3_dflash.py`:374; signals: kernel; excerpt: "Agree, most of this is due to my own ignorance about vLLM's kernel internals. It should be feasible to dispatch to vLLM's fused RMSNorm ..." (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968564061)
-- `2026-03-21T00:57:20Z` `inline` by `benchislett` `vllm/model_executor/models/qwen3_dflash.py`:374; signals: flashinfer; excerpt: "Definitely don't need the dependency on FlashInfer long-term. But was very easy in the prototype. I'll clean this up" (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968564643)
-- `2026-03-20T23:20:48Z` `inline` by `mgoin` `vllm/v1/spec_decode/dflash.py`:152; signals: perf; excerpt: "If this clones are a perf issue, I think it would be straightforward to double buffer" (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968359728)
-- `2026-03-20T23:24:36Z` `inline` by `mgoin` `vllm/v1/spec_decode/utils.py`:524; signals: kernel; excerpt: "I believe this is needs the same clamping used in the eagle kernel above" (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968367344)
-- `2026-03-20T23:27:13Z` `inline` by `mgoin` `vllm/v1/spec_decode/eagle.py`:26; signals: flashinfer; excerpt: "Yeah we should remove the top-level flashinfer import if we need to import the model class like this" (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968373173)
-- `2026-03-20T23:29:06Z` `review` `COMMENTED` by `mgoin`; signals: general review; excerpt: "Really really nice work! I think these are all the things I found for now, but I should take another look through soon" (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-3984528123)
+- 2026-03-12 `benchislett` on `vllm/model_executor/models/qwen3_dflash.py`:128: Hoping some reviewers can weigh in here. This feels like potentially uncharted territory. (https://github.com/vllm-project/vllm/pull/36847#discussion_r2922242526)
+- 2026-03-13 `benchislett`: Update on the graphs, I have a local workaround that I'm working on cleaning up. The solution is to put the context states in the forward context and access them via CustomOp similar to unified attention with output. Then all the ordinary ... (https://github.com/vllm-project/vllm/pull/36847#issuecomment-4052955356)
+- 2026-03-18 `jianc99`: Thanks @benchislett for implementing DFlash in vLLM. We’ve just released DFlash checkpoints for Qwen3.5-4B, 9B, 27B, and 35B-A3B. They perform very well and are faster than MTP. Feel free to try them out. We’ll continue adding support for more models, and I’m ... (https://github.com/vllm-project/vllm/pull/36847#issuecomment-4083221364)
+- 2026-03-18 `mgoin`: @benchislett I tested locally on H100 Qwen3 starts up fine, but crashes on first inference. I tried both --attention-config.flash attn version=3 and --attention-config.flash attn version=2 It does fail to start with the Qwen3.5 model, but makes sense multimodal is a separate challenge. (https://github.com/vllm-project/vllm/pull/36847#issuecomment-4083951178)
+- 2026-03-18 `mgoin` on `tests/v1/e2e/spec_decode/test_spec_decode.py`:1102: Is a specific flash attention version needed? (https://github.com/vllm-project/vllm/pull/36847#discussion_r2954778845)
+- 2026-03-18 `benchislett` on `tests/v1/e2e/spec_decode/test_spec_decode.py`:1102: Nope, worked for me with both FA2 and FA4. In theory any backend with non-causal support will work (for now) (https://github.com/vllm-project/vllm/pull/36847#discussion_r2956404144)
+- 2026-03-18 `benchislett`: Moving back to a draft while I integrate the optimizations I've been experimenting with. Perf is much improved, will be reopened by tomorrow (https://github.com/vllm-project/vllm/pull/36847#issuecomment-4085743201)
+- 2026-03-19 `benchislett`: @mgoin Regarding this issue: assert total num scheduled tokens <= self.max num scheduled tokens It is a side-effect of how we currently handle parallel drafting and max num batched tokens. It can be resolved by increasing max num batched tokens to 32768. ... (https://github.com/vllm-project/vllm/pull/36847#issuecomment-4092557917)
+- 2026-03-20 `mgoin` on `tests/v1/e2e/spec_decode/test_spec_decode.py`:1100: Can we get this working across the board without needing to specify this arg? We should be able to resolve this internally by querying the attention backend's supports attn type during selection (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968288964)
+- 2026-03-20 `mgoin` on `vllm/config/speculative.py`:873: nit: what is the point of use eagle being used for several methods? maybe we should rename this to a more general pattern like uses hidden state proposer (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968298084)
+- 2026-03-20 `mgoin` on `vllm/model_executor/models/qwen3_dflash.py`:374: What is the purpose of using the flashinfer rmsnorm? I'd prefer to have this use the general rmsnorm op in vLLM, and the flashinfer version should be a backend within it. (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968324990)
+- 2026-03-20 `mgoin` on `vllm/model_executor/models/qwen3_dflash.py`:412: ditto here, but I understand based on the comment if this is more required. I think other than these two flashinfer kernels, everything else should not necessarily have a dependency on NVIDA GPUs. If this must be kept, we should gate this ... (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968330844)
+- 2026-03-20 `mgoin` on `vllm/model_executor/models/qwen3_dflash.py`:9: Ditto on CUDA platform check/lazy import when needed instead of unconditionally putting flashinfer import at the top of a model file (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968352283)
+- 2026-03-20 `mgoin` on `vllm/model_executor/models/interfaces.py`:1385: nit: should be tuple[int, ...] since i think it can be variable in length (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968354843)
+- 2026-03-20 `mgoin` on `vllm/v1/spec_decode/dflash.py`:152: If this clones are a perf issue, I think it would be straightforward to double buffer (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968359728)
+- 2026-03-20 `mgoin` on `vllm/v1/spec_decode/utils.py`:524: I believe this is needs the same clamping used in the eagle kernel above (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968367344)
+- 2026-03-20 `mgoin` on `vllm/v1/spec_decode/eagle.py`:26: Yeah we should remove the top-level flashinfer import if we need to import the model class like this (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968373173)
+- 2026-03-20 `mgoin` commented: Really really nice work! I think these are all the things I found for now, but I should take another look through soon (https://github.com/vllm-project/vllm/pull/36847#pullrequestreview-3984528123)
+- 2026-03-21 `benchislett` on `vllm/model_executor/models/qwen3_dflash.py`:374: Agree, most of this is due to my own ignorance about vLLM's kernel internals. It should be feasible to dispatch to vLLM's fused RMSNorm here. For the RoPE though, I'm not sure if we have a native fused kernel. I can look ... (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968564061)
+- 2026-03-21 `benchislett` on `vllm/model_executor/models/qwen3_dflash.py`:374: Definitely don't need the dependency on FlashInfer long-term. But was very easy in the prototype. I'll clean this up (https://github.com/vllm-project/vllm/pull/36847#discussion_r2968564643)
+- 2026-03-21 `mgoin` on `vllm/model_executor/models/qwen3_dflash.py`:374: I think it's certainly okay to land as-is as long as we remove the global flashinfer imports (https://github.com/vllm-project/vllm/pull/36847#discussion_r2969662816)
+- 2026-03-24 `geraldstanje1`: hi @benchislett do you have an image of this branch for testing? would like to test it with gpt oss 20b on rtx 6000 pro. (https://github.com/vllm-project/vllm/pull/36847#issuecomment-4118911524)
+- 2026-03-25 `benchislett` on `vllm/config/speculative.py`:873: We're working on moving in this direction. We've already refactored the spec decoding into SpecDecodeBaseProposer in eagle.py. It's a slow crawl away from the legacy code where vLLM V1 implemented EAGLE first and everything else sprawled out from that base (https://github.com/vllm-project/vllm/pull/36847#discussion_r2985185917)
+- 2026-03-25 `benchislett` on `vllm/config/speculative.py`:873: I can change this in this PR if you want (https://github.com/vllm-project/vllm/pull/36847#discussion_r2985186377)
+- 2026-03-25 `benchislett` on `vllm/model_executor/models/qwen3_dflash.py`:412: Switched to use the vllm ops instead (https://github.com/vllm-project/vllm/pull/36847#discussion_r2985566172)
+- 2026-03-25 `benchislett` on `vllm/v1/spec_decode/dflash.py`:152: refactored. saved a few copies but overall impact is minor (https://github.com/vllm-project/vllm/pull/36847#discussion_r2985737350)
+- 2026-03-25 `mgoin` on `vllm/config/speculative.py`:873: It's okay to punt on it (https://github.com/vllm-project/vllm/pull/36847#discussion_r2986947891)
+- 2026-03-25 `mgoin` on `vllm/v1/spec_decode/utils.py`:513: If all of the tokens are rejected, could valid ctx end - 1 < ctx start and read a position from the previous request's range? (https://github.com/vllm-project/vllm/pull/36847#discussion_r2988159226)
+- 2026-03-27 `benchislett` on `vllm/v1/spec_decode/utils.py`:513: No, I think this is safe since we always have at least 1 context token that cannot be rejected (the bonus token from the previous step). Example: (https://github.com/vllm-project/vllm/pull/36847#discussion_r3000956871)
+- 2026-03-27 `mgoin`: New test is failing (https://github.com/vllm-project/vllm/pull/36847#issuecomment-4145927037)
+- 2026-03-28 `benchislett`: Yep, I think the test just didn't get properly updated after the last round of updates. Will take a deeper look and sort it out tomorrow. (https://github.com/vllm-project/vllm/pull/36847#issuecomment-4146468938)
+- 2026-03-30 `mgoin` on `tests/models/registry.py`:1167: Looks like this model is too big for CI @benchislett Can you use the 4B version? z-lab/Qwen3.5-4B-DFlash (https://github.com/vllm-project/vllm/pull/36847#discussion_r3010284709)

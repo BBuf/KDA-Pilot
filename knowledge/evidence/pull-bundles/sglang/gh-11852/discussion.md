@@ -1,49 +1,22 @@
-# PR Discussion Digest
-
-- Source PR: [sgl-project/sglang#11852](https://github.com/sgl-project/sglang/pull/11852)
-- Source page: `sources/prs/sglang/PR-11852.md`
-- Evidence bundle: `evidence/pull-bundles/sglang/gh-11852`
-- Generated at: `2026-05-20T15:27:29.902543+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-10-20T07:29:30Z`
-- Merged: `2025-12-12T04:54:17Z`
-
-## Discussion Counts
-
-- Issue comments: 26
-- Review submissions: 3 (approved=1, commented=2)
-- Inline review comments: 4
-- Review threads observed: 4
-- Resolved/outdated thread markers: resolved=3, outdated=2
-- Human participants with discussion text: MichoChan, ShangmingCai, XucSh, bluecoffee8, nvpohanh, weireweire, whybeyoung, zhangxiaolei123456
-- Automation comments/reviews omitted from high-signal summary: 5
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 1
-
-## Review Decisions
-
-- `2025-10-20T07:31:31Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request refactors the pipeline parallelism (PP) logic into a new SchedulerPPMixin and adds support ... (https://github.com/sgl-project/sglang/pull/11852#pullrequestreview-3355294255)
-- `2025-11-29T09:45:16Z` `COMMENTED` by `MichoChan` (https://github.com/sgl-project/sglang/pull/11852#pullrequestreview-3520616676)
-- `2025-12-12T04:52:44Z` `APPROVED` by `ShangmingCai` - We think this PR is ready for public testing now. Please ping me in the comment of (or ... (https://github.com/sgl-project/sglang/pull/11852#pullrequestreview-3570284612)
-
-## Inline Comment Hotspots
-
-- `python/sglang/srt/managers/scheduler_pp_mixin.py`: 4 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-11-04T13:10:10Z` `issue` by `zhangxiaolei123456`; signals: attention, benchmark, cache, cutlass, dtype, fp8, hang, moe; excerpt: "hi @XucSh @ShangmingCai @whybeyoung you can test use this command, I think this bubble is very small SGLANG PP LAYER PARTITION="3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,3" SGLANG CUTLASS MOE=1 ..." (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3485937871)
-- `2025-11-04T13:16:52Z` `issue` by `XucSh`; signals: attention, benchmark, cache, cutlass, dtype, fp8, hang, moe; excerpt: "hi @XucSh @ShangmingCai you can test use this command SGLANG PP LAYER PARTITION="3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,3" SGLANG CUTLASS MOE=1 GLOO SOCKET IFNAME=eth0 NCCL IB HCA=mlx5 NCCL IB ..." (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3485964713)
-- `2025-11-06T11:31:57Z` `issue` by `zhangxiaolei123456`; signals: block, cache, compile, cuda, hang, kernel, latency, memory; excerpt: "@ShangmingCai @bluecoffee8 I test different sequence length use '--num-prompts 1 --random-input-len sequence length --random-output-len 1' we use chunked prefill size = 1024 Sequence length ..." (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3496730120)
-- `2025-11-10T09:30:32Z` `issue` by `zhangxiaolei123456`; signals: attention, block, cuda, hang, kernel; excerpt: "Could you run with CUDA LAUNCH BLOCKING=1 to see which cuda kernel causes the illegal mem access? I am suspecting that SGL didn't reserve ..." (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3510424062)
-- `2025-10-24T04:54:06Z` `issue` by `bluecoffee8`; signals: benchmark, cache, compile, h100; excerpt: "H100 80G 8 benchmark: model: qwen3-8b commands: python -m sglang.launch server --model-path /path/to/Qwen3-8B --disable-radix-cache --pp-size 4 --trust-remote --host 0.0.0.0 --port 8001 --mem-fraction-static 0.8 --tokenizer-worker-num ..." (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3441061861)
-- `2025-11-05T10:02:22Z` `issue` by `ShangmingCai`; signals: benchmark, hang, tile; excerpt: "python3 benchmark serving.py --backend vllm --model /data00/DeepSeek-R1-0528/ --base-url --endpoint /v1/completions --num-prompts 512 --request-rate 10 --metric percentiles '50,90,95,99' --goodput ttft:5000 tpot:50 --max-concurrency 512 --random-input-len 3500 ..." (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3490290204)
-- `2025-11-07T01:32:12Z` `issue` by `nvpohanh`; signals: block, cuda, kernel; excerpt: "Could you run with CUDA LAUNCH BLOCKING=1 to see which cuda kernel causes the illegal mem access? I am suspecting that SGL didn't reserve ..." (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3500085446)
-- `2025-11-10T09:57:34Z` `issue` by `ShangmingCai`; signals: attention, hang, memory; excerpt: "The sending and receiving of bubbles occurs because attention calculations take varying amounts of time when processing chunked data, resulting in waiting periods between ..." (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3510557750)
-- `2025-11-21T01:35:05Z` `issue` by `nvpohanh`; signals: hang, perf, performance; excerpt: "@ShangmingCai @ByronHsu @zhyncs could you review this? We found that this PR significantly improves SGLang's PP performance. Thanks!" (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3560948364)
-- `2025-11-21T05:34:35Z` `issue` by `ShangmingCai`; signals: hang, perf, performance; excerpt: "@ShangmingCai @ByronHsu @zhyncs could you review this? We found that this PR significantly improves SGLang's PP performance. Thanks! @nvpohanh We are pretty close to ..." (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3561467556)
-- `2025-10-22T10:21:24Z` `issue` by `whybeyoung`; signals: cache, compile; excerpt: "here is the benmark result in a800 80G 8 model: qwen3-8b sglangserver: python -m sglang.launch server --model-path /work/models/qwen8b --disable-radix-cache --pp-size 4 --trust-remote --host 0.0.0.0 ..." (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3431597848)
-- `2025-11-04T09:41:24Z` `issue` by `ShangmingCai`; signals: hang, race; excerpt: "2025-11-03 11:53:19 TP1 PP0] Scheduler hit an exception: Traceback (most recent call last): File "/sgl-workspace/sglang/python/sglang/srt/managers/scheduler.py", line 2795, in run scheduler process scheduler.event loop pp ..." (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3484922606)
+- 2025-10-22 `whybeyoung`: here is the benmark result in a800 80G 8 model: qwen3-8b sglangserver: python -m sglang.launch server --model-path /work/models/qwen8b --disable-radix-cache --pp-size 4 --trust-remote --host 0.0.0.0 --port 8001 --mem-fraction-static 0.8 --tokenizer-worker-num 8 --tp-size 2 --pp-async-batch-depth 1 --torch-compile-max-bs 8 --max-running-requests 20 benchcmd: python -m sglang.bench ... (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3431597848)
+- 2025-10-24 `bluecoffee8`: H100 80G 8 benchmark: model: qwen3-8b commands: python -m sglang.launch server --model-path /path/to/Qwen3-8B --disable-radix-cache --pp-size 4 --trust-remote --host 0.0.0.0 --port 8001 --mem-fraction-static 0.8 --tokenizer-worker-num 8 --tp-size 2 --pp-async-batch-depth 1 --torch-compile-max-bs 8 --max-running-requests 20 python -m sglang.bench serving --port 8001 --dataset-name random-ids --num-prompts ... (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3441061861)
+- 2025-11-03 `zhangxiaolei123456`: 2025-11-03 11:53:19 TP1 PP0] Scheduler hit an exception: Traceback (most recent call last): File "/sgl-workspace/sglang/python/sglang/srt/managers/scheduler.py", line 2795, in run scheduler process scheduler.event loop pp disagg prefill() File "/usr/local/lib/python3.12/dist-packages/torch/utils/ contextlib.py", line 120, in decorate context return func( args, kwargs) ^^^^^^^^^^^^^^^^^^^^^ File "/sgl-workspace/sglang/python/sglang/srt/managers/scheduler pp ... (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3480251166)
+- 2025-11-03 `XucSh`: the new pd with pp is not available now. we are fousing on perf profile. once the opt is done， the pd will follow. (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3480261524)
+- 2025-11-04 `zhangxiaolei123456`: hi @XucSh @ShangmingCai @whybeyoung you can test use this command, I think this bubble is very small SGLANG PP LAYER PARTITION="3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,3" SGLANG CUTLASS MOE=1 GLOO SOCKET IFNAME=eth0 NCCL IB HCA=mlx5 NCCL IB DISABLE=0 NCCL SOCKET IFNAME=eth0 NCCL IB GID INDEX=3 MODEL LENGTH=131072 ... (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3485937871)
+- 2025-11-04 `XucSh`: hi @XucSh @ShangmingCai you can test use this command SGLANG PP LAYER PARTITION="3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,3" SGLANG CUTLASS MOE=1 GLOO SOCKET IFNAME=eth0 NCCL IB HCA=mlx5 NCCL IB DISABLE=0 NCCL SOCKET IFNAME=eth0 NCCL IB GID INDEX=3 MODEL LENGTH=131072 NCCL MIN NCHANNELS=24 NCCL IB QPS PER CONNECTION=8 ... (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3485964713)
+- 2025-11-05 `nvpohanh`: @XucSh Thanks for this great contribution! Do you think we can merge this PR anytime soon or are there still any blockers? Thanks! (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3490009698)
+- 2025-11-05 `XucSh`: @XucSh Thanks for this great contribution! Do you think we can merge this PR anytime soon or are there still any blockers? Thanks! This code will be reviewed and merged once we confirm there are no more GPU bubbles to eliminate from ... (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3490041045)
+- 2025-11-05 `ShangmingCai`: python3 benchmark serving.py --backend vllm --model /data00/DeepSeek-R1-0528/ --base-url --endpoint /v1/completions --num-prompts 512 --request-rate 10 --metric percentiles '50,90,95,99' --goodput ttft:5000 tpot:50 --max-concurrency 512 --random-input-len 3500 --random-output-len 1 --dataset-name random --ignore-eos --trust-remote-code @zhangxiaolei123456 Can you try --num-prompts 1 --random-input-len 130000 --random-output-len 1`? We are ... (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3490290204)
+- 2025-11-06 `zhangxiaolei123456`: @ShangmingCai @bluecoffee8 I test different sequence length use '--num-prompts 1 --random-input-len sequence length --random-output-len 1' we use chunked prefill size = 1024 Sequence length 1024 2048 4096 8192 16384 32768 -- -- -- -- -- -- -- TTFT 813 897.62 1093.36 1515.14 ... (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3496730120)
+- 2025-11-07 `nvpohanh`: Could you run with CUDA LAUNCH BLOCKING=1 to see which cuda kernel causes the illegal mem access? I am suspecting that SGL didn't reserve large enough buffer for the communications? (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3500085446)
+- 2025-11-10 `zhangxiaolei123456`: @ShangmingCai @bluecoffee8 @XucSh I profile using the command: '--num-prompts 64 --random-input-len 16384 --random-output-len 1 --request-rate 4 --max-concurrency 8' PP 0 profile result is like this: ![profile-pp-0]( PP 1 profile result is like this: ![profile-pp1]( this is my analysis result ![analysis-pp]( The sending ... (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3510054517)
+- 2025-11-10 `zhangxiaolei123456`: Could you run with CUDA LAUNCH BLOCKING=1 to see which cuda kernel causes the illegal mem access? I am suspecting that SGL didn't reserve large enough buffer for the communications? @ShangmingCai @bluecoffee8 @XucSh I update the command, modify the chunked prefill size ... (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3510424062)
+- 2025-11-10 `ShangmingCai`: The sending and receiving of bubbles occurs because attention calculations take varying amounts of time when processing chunked data, resulting in waiting periods between different gpu. This is a normal phenomenon. My next research focus will be on merging to reduce the ... (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3510557750)
+- 2025-11-21 `nvpohanh`: @ShangmingCai @ByronHsu @zhyncs could you review this? We found that this PR significantly improves SGLang's PP performance. Thanks! (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3560948364)
+- 2025-11-21 `ShangmingCai`: @ShangmingCai @ByronHsu @zhyncs could you review this? We found that this PR significantly improves SGLang's PP performance. Thanks! @nvpohanh We are pretty close to finishing and determining the final design, will merge this in main ASAP, thx for the testing and performance ... (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3561467556)
+- 2025-11-29 `MichoChan` on `python/sglang/srt/managers/scheduler_pp_mixin.py`:559: why d2h and copy stream ? there is no copy op in pp prep batch result? (https://github.com/sgl-project/sglang/pull/11852#discussion_r2572923015)
+- 2025-11-30 `MichoChan`: would hang when return logprob=True (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3592256089)
+- 2025-12-01 `XucSh`: would hang when return logprob=True thanks for your feedback. will dig into it. Could you provide your test command？ (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3594055803)
+- 2025-12-01 `MichoChan`: would hang when return logprob=True thanks for your feedback. will dig into it. Could you provide your test command？ only hang when tp=8 , pp=2, nodes=2，when pp=4,tp=8,nodes=4 is ok (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3594280583)
+- 2025-12-02 `weireweire`: Could we do another rebase so I can run this on torch2.9/cuda13？ (https://github.com/sgl-project/sglang/pull/11852#issuecomment-3601125634)
+- 2025-12-12 `ShangmingCai` approved: We think this PR is ready for public testing now. Please ping me in the comment of (or in the Slack channel or DM me in Slack) if you find any bugs or compatibility issues with this PR. We will come up ... (https://github.com/sgl-project/sglang/pull/11852#pullrequestreview-3570284612)

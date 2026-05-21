@@ -1,74 +1,59 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/cccl#7384](https://github.com/NVIDIA/cccl/pull/7384)
-- Source page: `sources/prs/cccl-cub/PR-7384.md`
-- Evidence bundle: `evidence/pull-bundles/cccl-cub/gh-7384`
-- Generated at: `2026-05-20T15:20:12.482222+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-01-27T14:11:22Z`
-- Merged: `2026-03-07T10:26:12Z`
-
-## Discussion Counts
-
-- Issue comments: 23
-- Review submissions: 32 (approved=2, changes_requested=1, commented=29)
-- Inline review comments: 69
-- Review threads observed: 39
-- Resolved/outdated thread markers: resolved=39, outdated=24
-- Human participants with discussion text: elstehle, fbusato, miscco, pauleonix
-- Automation comments/reviews omitted from high-signal summary: 19
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-02-27T08:20:45Z` `COMMENTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3865594132)
-- `2026-02-27T08:34:55Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3865683855)
-- `2026-02-27T08:35:32Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3865686162)
-- `2026-02-27T08:36:14Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3865688752)
-- `2026-02-27T10:36:47Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3866210001)
-- `2026-02-27T10:37:08Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3866211460)
-- `2026-03-04T14:39:58Z` `APPROVED` by `pauleonix` - LGTM (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3889484325)
-- `2026-03-05T01:00:57Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3892873654)
-- `2026-03-05T22:25:14Z` `CHANGES_REQUESTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3899544140)
-- `2026-03-06T05:45:39Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3901461794)
-- `2026-03-06T05:51:18Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3901488816)
-- `2026-03-06T07:14:49Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3901885552)
-- `2026-03-06T10:04:51Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3902765580)
-- `2026-03-06T10:05:11Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3902767401)
-- `2026-03-06T10:10:33Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3902798306)
-- `2026-03-06T11:21:59Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3903137371)
-- `2026-03-06T11:27:19Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3903159257)
-- `2026-03-06T11:40:21Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3903226446)
-- `2026-03-06T12:02:59Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3903335590)
-- `2026-03-06T14:25:29Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3904017251)
-- `2026-03-06T14:36:54Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3904082276)
-- `2026-03-06T14:41:23Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3904109878)
-- `2026-03-06T14:44:10Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3904124825)
-- `2026-03-06T14:44:26Z` `COMMENTED` by `elstehle` (https://github.com/NVIDIA/cccl/pull/7384#pullrequestreview-3904126154)
-- ... 8 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `cub/cub/block/specializations/block_topk_air.cuh`: 58 inline comment(s)
-- `cub/cub/block/block_topk.cuh`: 9 inline comment(s)
-- `cub/cub/agent/agent_batched_topk.cuh`: 1 inline comment(s)
-- `cub/test/catch2_test_device_segmented_topk_keys.cu`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-04T13:57:00Z` `inline` by `pauleonix` `cub/cub/block/specializations/block_topk_air.cuh`:197; signals: block, memory, perf, performance, register, shared memory; excerpt: "I wonder if using cub::BlockAdjacentDifference with the data already in registers from compute bin offsets() would improve performance over writing all bin offsets to ..." (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2883944056)
-- `2026-03-06T10:04:50Z` `inline` by `elstehle` `cub/cub/block/specializations/block_topk_air.cuh`:138; signals: block, cuda, memory, register, shared memory; excerpt: "Yes, generally agree. However, the data provision is planned to be abstracted away anyways in to allow supporting both registers and shared memory. I ..." (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2894910066)
-- `2026-03-06T14:41:23Z` `inline` by `elstehle` `cub/cub/block/specializations/block_topk_air.cuh`:197; signals: block, hang, memory, register, shared memory; excerpt: "Yes, that's a great observation about using the data already in registers and limiting shared memory exchange to just the first and last item ..." (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2896144622)
-- `2026-02-27T08:35:32Z` `inline` by `elstehle` `cub/cub/block/specializations/block_topk_air.cuh`:173; signals: benchmark, block, perf, performance; excerpt: "I had benchmarked it more extensively in AgentTopK, i.e., the implementation for single-problem DeviceTopK, where it had improved performance. I will do another pass ..." (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2863183238)
-- `2026-02-27T10:36:47Z` `inline` by `elstehle` `cub/cub/block/specializations/block_topk_air.cuh`:417; signals: benchmark, block, perf, performance; excerpt: "Yeah, all of this (two branches & using item class) has mostly been done as a performance concern, saving us a few instructions. I ..." (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2863670269)
-- `2026-03-06T21:13:54Z` `inline` by `fbusato` `cub/cub/block/specializations/block_topk_air.cuh`:165; signals: block, compile, perf, performance; excerpt: "not stylistic, my (little) concern is that the compiler doesn't optimize the code and performance the sum multiple times. Up to you, non-critical" (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2897901255)
-- `2026-03-06T14:36:54Z` `inline` by `elstehle` `cub/cub/block/specializations/block_topk_air.cuh`:151; signals: block, memory, shared memory; excerpt: "I've added this as follow-up work to I'm all in for using BlockHistogram and BlockAdjacentDifference here. But in a next step this algorithm will ..." (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2896120984)
-- `2026-02-27T10:37:07Z` `inline` by `elstehle` `cub/cub/block/specializations/block_topk_air.cuh`:408; signals: block, perf, performance; excerpt: "I've unified the branches, focusing on readability over performance." (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2863671699)
-- `2026-03-04T14:32:40Z` `inline` by `pauleonix` `cub/cub/block/specializations/block_topk_air.cuh`:305; signals: block, compile, register; excerpt: "I expect the compiler to do the aliasing for you. So this should not increase register pressure." (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2884130425)
-- `2026-02-27T08:20:34Z` `inline` by `miscco` `cub/cub/block/specializations/block_topk_air.cuh`:417; signals: block, hang; excerpt: "Nitpick: Those two branches of the big if are almost identical, except for small changes. However, the variable names and the conditions are then ..." (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2863128816)
-- `2026-03-05T22:25:05Z` `inline` by `fbusato` `cub/cub/block/specializations/block_topk_air.cuh`:310; signals: block, correctness; excerpt: "what happens if k < num valid ? my concern is that unsigned keys could contain garbage data (UB), and this affects the correctness ..." (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892703263)
-- `2026-03-06T05:51:17Z` `inline` by `elstehle` `cub/cub/block/block_topk.cuh`:56; signals: block, hang; excerpt: "I must have missed this change. @fbusato, could you help me find the relevant PR, style guide, or resource that introduced the switch. In ..." (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2893978313)
+- 2026-02-27 `miscco` on `cub/cub/block/block_topk.cuh`:12: Critical: Please move to after system header guard (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2863096212)
+- 2026-02-27 `miscco` on `cub/cub/block/specializations/block_topk_air.cuh`:9: Ditto needs to be and after system header guard (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2863099558)
+- 2026-02-27 `miscco` on `cub/cub/block/specializations/block_topk_air.cuh`:173: This is a very heavy use of force inline Do we really need it everywhere? (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2863109167)
+- 2026-02-27 `miscco` on `cub/cub/block/specializations/block_topk_air.cuh`:408: I believe this should rather be (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2863119211)
+- 2026-02-27 `miscco` on `cub/cub/block/specializations/block_topk_air.cuh`:417: Nitpick: Those two branches of the big if are almost identical, except for small changes. However, the variable names and the conditions are then quite different. This check here is effectively the same as is valid && is candidate which would be ... (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2863128816)
+- 2026-02-27 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:173: I had benchmarked it more extensively in AgentTopK, i.e., the implementation for single-problem DeviceTopK, where it had improved performance. I will do another pass of benchmarking here too. I'm planning to defer it to though, to be sure we're not hitting some ... (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2863183238)
+- 2026-02-27 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:173: I've added an item to (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2863185711)
+- 2026-02-27 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:417: Yeah, all of this (two branches & using item class) has mostly been done as a performance concern, saving us a few instructions. I unified the branches and re-benchmarked. It gives 2% slowdown in some cases. I will leave them unified for ... (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2863670269)
+- 2026-02-27 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:408: I've unified the branches, focusing on readability over performance. (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2863671699)
+- 2026-03-04 `pauleonix` on `cub/cub/block/specializations/block_topk_air.cuh`:99: Suggestion: Do the cast once instead of at every use of the member variable. (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2883842030)
+- 2026-03-04 `pauleonix` on `cub/cub/block/specializations/block_topk_air.cuh`:124: Suggestion: This is the parameter name used in the BlockScan overloads I added (which I took from another existing CUB API). (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2883869019)
+- 2026-03-04 `pauleonix` on `cub/cub/block/specializations/block_topk_air.cuh`:151: Question: Why are we not reusing the existing cub::BlockHistogram here? (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2883889451)
+- 2026-03-04 `pauleonix` on `cub/cub/block/specializations/block_topk_air.cuh`:197: I wonder if using cub::BlockAdjacentDifference with the data already in registers from compute bin offsets() would improve performance over writing all bin offsets to shared memory and reading all of them again twice. At least in cases where buckets per thread 1, ... (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2883944056)
+- 2026-03-04 `pauleonix` on `cub/cub/block/specializations/block_topk_air.cuh`:223: To avoid breaking due to max preprocessor macro being defined. (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2883958030)
+- 2026-03-04 `pauleonix` on `cub/cub/block/specializations/block_topk_air.cuh`:169: This seems redundant with the synchronization done in get kth key prefix(). (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2883970172)
+- 2026-03-04 `pauleonix` on `cub/cub/block/specializations/block_topk_air.cuh`:305: I expect the compiler to do the aliasing for you. So this should not increase register pressure. (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2884130425)
+- 2026-03-05 `fbusato` on `cub/cub/agent/agent_batched_topk.cuh`:205: this is a function, should be (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2886897911)
+- 2026-03-05 `fbusato` on `cub/cub/block/block_topk.cuh`:15: we should also update the Copyright (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2886910270)
+- 2026-03-05 `fbusato` on `cub/cub/block/block_topk.cuh`:56: the branch looks behind main. We should use CCCL DEVICE + inline (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2886919797)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:35: I would add a static assertion to ensure the type is actually unsigned (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2886931588)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:127: maybe we could use a stardard loop for (int i = ...; ) and compute histo offset = num buckets / block threads after that (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2886952405)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:151: strongly suggesting to use cuda::atomic here (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892220329)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:124: is any value for num valid valid? if not, we should add an assertion (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892225881)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:131: linear tid should be int natively (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892228939)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:165: we could also shift the histogram pointer instead by base (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892232466)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:172: please check that the code passes compute-sanitizer race check (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892243810)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:196: the same pattern occurs multiple times, consider using a reference for storage.stage.passes (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892262697)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:232: there are many parameters, please add some preconditions with assertions (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892271071)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:242: non critical but consider a loop with a fixed number of iterations + unroll (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892281811)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:223: if we know that we are using only integers, we can also use ::max (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892285427)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:242: the loop is pretty big, so it is hard to tell without benchmarking (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892300095)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:332: I would prefer cuda::std::bit cast over potentially UB. Also, I would suggest auto& unsigned keys = (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892313670)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:138: would not be better to use cuda::std::array or span? (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892338161)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:56: I would describe the workflow/algorithm because it consists of several steps (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892343702)
+- 2026-03-05 `fbusato` on `cub/test/catch2_test_device_segmented_topk_keys.cu`:135: not related to this PR, but it looks that there are unused headers (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892421733)
+- 2026-03-05 `fbusato` on `cub/cub/block/block_topk.cuh`:38: is it for public exposition? I don't see any other reference (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892432446)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:306: do we reverse -0.0f or is it expected that it translates to +0.0f (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892439918)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:433: is it applied to all items? even outside the candidate range? (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892445074)
+- 2026-03-05 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:310: what happens if k < num valid ? my concern is that unsigned keys could contain garbage data (UB), and this affects the correctness of the logic for ranking (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2892703263)
+- 2026-03-06 `elstehle` on `cub/cub/block/block_topk.cuh`:38: This was in preparation for further specializations BlockTopK specializations but as it is not used in this PR, I dropped it (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2893962053)
+- 2026-03-06 `elstehle` on `cub/cub/block/block_topk.cuh`:56: I must have missed this change. @fbusato, could you help me find the relevant PR, style guide, or resource that introduced the switch. In CUB's code base I could only find two occurrences of CCCL DEVICE inline. So, I'm probably missing something. (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2893978313)
+- 2026-03-06 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:127: This was the canonical way from CUB's device histogram which gave 2% improvement over the previous version. Since I expect this part to be abstracted away in future anyways, I'd prefer to keep it this way for now to not have to ... (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2894226554)
+- 2026-03-06 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:138: Yes, generally agree. However, the data provision is planned to be abstracted away anyways in to allow supporting both registers and shared memory. I added a note to support cuda::std::array to the issue and will leave this as follow-up work. (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2894910066)
+- 2026-03-06 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:124: Thanks, Paul. Changed the naming. (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2894911713)
+- 2026-03-06 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:124: The only minor catch is that if valid items is larger than tile size that we obviously won't be processing more items than we have. Nontheless, I added an assert for expect reasonable values. (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2894936797)
+- 2026-03-06 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:165: Could you elaborate on the benefit of that? Is there something beyond stylistic preference? (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2895248014)
+- 2026-03-06 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:169: Good catch. Dropped it. (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2895269529)
+- 2026-03-06 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:433: Yes, it's applied to oob items but we safeguard against doing anything with oob items subsequently: (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2895325010)
+- 2026-03-06 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:172: Had run the pairs tests with both racecheck and memcheck and no errors/races. (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2895422856)
+- 2026-03-06 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:310: what happens if k < num valid ? k < num valid is the expected case, so I want to make sure I understand your concern correctly. Is it that we are twiddling the oob keys unconditionally here? If so, we do ... (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2896065573)
+- 2026-03-06 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:151: I've added this as follow-up work to I'm all in for using BlockHistogram and BlockAdjacentDifference here. But in a next step this algorithm will be extended to take its inputs via shared memory, which would void the effort of temporarily switching to ... (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2896120984)
+- 2026-03-06 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:197: Yes, that's a great observation about using the data already in registers and limiting shared memory exchange to just the first and last item of each thread. I've added it as follow-up work to (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2896144622)
+- 2026-03-06 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:242: ...it's big and it has an early exit. But we can still give it a try. I will leave this as part of a benchmarking effort in (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2896158787)
+- 2026-03-06 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:306: Good catch, Federico. I had to change the logic here and add tests to verify we revert -0.0f back after the twiddling. (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2896842103)
+- 2026-03-06 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:165: not stylistic, my (little) concern is that the compiler doesn't optimize the code and performance the sum multiple times. Up to you, non-critical (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2897901255)
+- 2026-03-06 `fbusato` on `cub/cub/block/block_topk.cuh`:56: Sorry, I meant CCCL DEVICE API, the PR is (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2897939530)
+- 2026-03-06 `fbusato` on `cub/cub/block/specializations/block_topk_air.cuh`:310: yes, this is my concern. I see the guards, so it should be fine (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2897946381)
+- 2026-03-06 `miscco` on `cub/cub/block/specializations/block_topk_air.cuh`:223: C:\cccl\cub\cub/block/specializations/block topk air.cuh(223): error 177-D: variable "max bit" was declared but never referenced (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2897965576)
+- 2026-03-07 `elstehle` on `cub/cub/block/specializations/block_topk_air.cuh`:223: Thanks for saving me a lookup into the CI logs, Michael! 💚 (https://github.com/NVIDIA/cccl/pull/7384#discussion_r2899131920)

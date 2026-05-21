@@ -1,80 +1,42 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#26315](https://github.com/vllm-project/vllm/pull/26315)
-- Source page: `sources/prs/vllm/PR-26315.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-26315`
-- Generated at: `2026-05-20T15:38:06.387741+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-10-06T19:10:26Z`
-- Merged: `2025-12-05T17:48:43Z`
-
-## Discussion Counts
-
-- Issue comments: 14
-- Review submissions: 38 (approved=1, changes_requested=1, commented=36)
-- Inline review comments: 56
-- Review threads observed: 28
-- Resolved/outdated thread markers: resolved=27, outdated=22
-- Human participants with discussion text: MatthewBonanni, ProExpertProg, chatgpt-codex-connector, hmellor, mergify, mgoin, nvpohanh, tjtanaa, wangshangsam
-- Automation comments/reviews omitted from high-signal summary: 4
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 2
-
-## Review Decisions
-
-- `2025-10-06T19:12:22Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces a dedicated AttentionConfig to centralize attention-related settings and moves the attention backend ... (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3306733689)
-- `2025-10-06T19:13:21Z` `COMMENTED` by `chatgpt-codex-connector` - 💡 Codex Review Here are some automated review suggestions for this pull request. ℹ️ About Codex in GitHub ... (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3306738623)
-- `2025-10-08T15:55:17Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3315526060)
-- `2025-10-09T16:00:28Z` `CHANGES_REQUESTED` by `hmellor` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3319610663)
-- `2025-11-20T21:10:06Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3489947761)
-- `2025-11-20T21:12:00Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3489952920)
-- `2025-11-20T21:28:24Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3489999843)
-- `2025-11-20T21:37:40Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3490026708)
-- `2025-11-21T11:36:32Z` `COMMENTED` by `hmellor` - Thanks for the changes, while this PR has been ongoing the AttentionBackendEnum has been added/improved, I think we ... (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3492295745)
-- `2025-11-21T14:43:10Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3493056966)
-- `2025-11-21T14:44:54Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3493062940)
-- `2025-11-21T14:59:08Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3493121983)
-- `2025-11-21T15:24:22Z` `COMMENTED` by `hmellor` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3493228168)
-- `2025-11-21T15:25:58Z` `COMMENTED` by `hmellor` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3493235461)
-- `2025-11-21T15:26:23Z` `COMMENTED` by `hmellor` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3493237580)
-- `2025-11-21T15:30:47Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3493260426)
-- `2025-11-21T15:50:26Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3493358456)
-- `2025-11-21T15:53:33Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3493374325)
-- `2025-11-21T16:04:10Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3493420625)
-- `2025-11-21T16:09:29Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3493440957)
-- `2025-11-21T19:31:04Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3494105978)
-- `2025-11-24T09:50:48Z` `COMMENTED` by `hmellor` - All previous comments addressed and overall LGTM! Just a few comments/questions (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3499235241)
-- `2025-11-24T14:42:50Z` `APPROVED` by `hmellor` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3500772669)
-- `2025-11-24T14:47:02Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3500790198)
-- ... 14 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/engine/arg_utils.py`: 21 inline comment(s)
-- `vllm/config/attention.py`: 15 inline comment(s)
-- `vllm/attention/selector.py`: 7 inline comment(s)
-- `vllm/config/model.py`: 4 inline comment(s)
-- `vllm/utils/flashinfer.py`: 2 inline comment(s)
-- `tests/kernels/attention/test_attention_selector.py`: 2 inline comment(s)
-- `tests/v1/attention/test_attention_backends.py`: 2 inline comment(s)
-- `vllm/config/vllm.py`: 1 inline comment(s)
-- `vllm/attention/utils/fa_utils.py`: 1 inline comment(s)
-- `vllm/platforms/cuda.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-12-02T22:12:23Z` `issue` by `MatthewBonanni`; signals: attention, block, cache, failing, kv cache, layout, register, triton; excerpt: "NOTE : test nixl connector.py::test register kv caches is passing on main but should be failing because its cached get attn backend() implementation doesn't ..." (https://github.com/vllm-project/vllm/pull/26315#issuecomment-3604177866)
-- `2025-12-01T16:00:00Z` `inline` by `MatthewBonanni` `tests/kernels/attention/test_attention_selector.py`:244; signals: attention, hang, kernel; excerpt: "Strings like "FLASH ATTN" are used widely throughout the codebase right now. Maybe we could make a separate PR to clean this up throughout? ..." (https://github.com/vllm-project/vllm/pull/26315#discussion_r2577687773)
-- `2025-11-21T11:36:32Z` `review` `COMMENTED` by `hmellor`; signals: attention, hang; excerpt: "Thanks for the changes, while this PR has been ongoing the AttentionBackendEnum has been added/improved, I think we could use it as the type ..." (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3492295745)
-- `2025-11-21T11:24:17Z` `inline` by `hmellor` `vllm/utils/flashinfer.py`:510; signals: cache, flashinfer; excerpt: "I don't think we need to cache this anymore. The caching was because reading the environment was expensive" (https://github.com/vllm-project/vllm/pull/26315#discussion_r2549445510)
-- `2025-11-21T11:34:43Z` `inline` by `hmellor` `vllm/attention/selector.py`:97; signals: attention, cache; excerpt: "Again, I think this method was cached because it accessed the environment, if this is no longer true we might not need to cache ..." (https://github.com/vllm-project/vllm/pull/26315#discussion_r2549473812)
-- `2025-11-21T16:09:29Z` `inline` by `MatthewBonanni` `vllm/attention/selector.py`:97; signals: attention, cache; excerpt: "I think it was also cached because it's a bit of a heavy function -- maybe we leave it cached? I removed the conversion ..." (https://github.com/vllm-project/vllm/pull/26315#discussion_r2550266352)
-- `2025-11-25T18:08:46Z` `inline` by `mgoin` `vllm/engine/arg_utils.py`:1715; signals: attention, flashinfer; excerpt: "I think we should not just think about the vllm serve case but also the LLM class case. I want to see the user ..." (https://github.com/vllm-project/vllm/pull/26315#discussion_r2560956507)
-- `2025-11-29T01:36:27Z` `inline` by `tjtanaa` `tests/kernels/attention/test_attention_selector.py`:244; signals: attention, kernel; excerpt: "Should we retain the global definition of Constant string variable like the STR FLASH ATTN VAL (for "FLASH ATTN") so that it is easier ..." (https://github.com/vllm-project/vllm/pull/26315#discussion_r2572711094)
-- `2025-12-04T18:18:17Z` `inline` by `hmellor` `tests/v1/attention/test_attention_backends.py`; signals: attention, block; excerpt: "This seems a little excessive, where was the vllm config needed in this block where it could not be accessed?" (https://github.com/vllm-project/vllm/pull/26315#discussion_r2590110561)
-- `2025-12-04T18:58:57Z` `inline` by `MatthewBonanni` `tests/v1/attention/test_attention_backends.py`; signals: attention, flashinfer; excerpt: "You're right, it was because of an unnecessary call to get current vllm config() in FlashInferMetadataBuilder. init . Fixed in [a971d7c]( Thanks for catching ..." (https://github.com/vllm-project/vllm/pull/26315#discussion_r2590222814)
-- `2025-11-21T11:31:53Z` `inline` by `hmellor` `vllm/attention/utils/fa_utils.py`:48; signals: attention, hang; excerpt: "Not necessary with the suggested type hint change" (https://github.com/vllm-project/vllm/pull/26315#discussion_r2549466219)
-- `2025-11-21T15:30:47Z` `inline` by `MatthewBonanni` `vllm/utils/flashinfer.py`:510; signals: flashinfer, hang; excerpt: "changed in [2d017ae](" (https://github.com/vllm-project/vllm/pull/26315#discussion_r2550142722)
+- 2025-10-09 `hmellor` on `vllm/engine/arg_utils.py`:730: Please use get kwargs like the other groups (https://github.com/vllm-project/vllm/pull/26315#discussion_r2417228768)
+- 2025-10-09 `hmellor` on `vllm/config/model.py`: Why is AttentionConfig stored in the ModelConfig and VllmConfig? (https://github.com/vllm-project/vllm/pull/26315#discussion_r2417230596)
+- 2025-10-09 `hmellor` on `vllm/engine/arg_utils.py`:1264: Could these instead be set in AttentionConfig as overrides in post init ? (https://github.com/vllm-project/vllm/pull/26315#discussion_r2417237579)
+- 2025-11-20 `MatthewBonanni` on `vllm/config/model.py`: I changed it so it's no longer stored in ModelConfig. I put it in VllmConfig for consistency with the rest (https://github.com/vllm-project/vllm/pull/26315#discussion_r2547686343)
+- 2025-11-20 `MatthewBonanni`: @hmellor Thanks for the review, and sorry it's been a while! I believe I've addressed your comments; could you take another look? (https://github.com/vllm-project/vllm/pull/26315#issuecomment-3560117424)
+- 2025-11-21 `hmellor` on `vllm/config/attention.py`:51: This comment should no longer be necessary because the factors are opt out (https://github.com/vllm-project/vllm/pull/26315#discussion_r2549415225)
+- 2025-11-21 `hmellor` on `vllm/config/attention.py`:12: I don't think there are any arbitrary types in here anymore so this shouldn't be necessary? (https://github.com/vllm-project/vllm/pull/26315#discussion_r2549419253)
+- 2025-11-21 `hmellor` on `vllm/engine/arg_utils.py`:1383: Could these be moved into AttentionConfig. post init ? (https://github.com/vllm-project/vllm/pull/26315#discussion_r2549424097)
+- 2025-11-21 `hmellor` on `vllm/config/model.py`:479: Could you add this check to a field validator in AttentionConfig? (https://github.com/vllm-project/vllm/pull/26315#discussion_r2549427908)
+- 2025-11-21 `hmellor` on `vllm/config/attention.py`:98: Presumably we are planning on deprecating the environment variables in favour of real configs, could we add some warning once's here if an env var is used to override a field? The standard content of "this is deprecated and will be removed ... (https://github.com/vllm-project/vllm/pull/26315#discussion_r2549431235)
+- 2025-11-21 `hmellor` on `vllm/utils/flashinfer.py`:510: I don't think we need to cache this anymore. The caching was because reading the environment was expensive (https://github.com/vllm-project/vllm/pull/26315#discussion_r2549445510)
+- 2025-11-21 `hmellor` on `vllm/config/attention.py`:16: Instead of type hinting this as str could it be typed with AttentionBackendEnum? Then you can something similar to So that users are allowed to pass the from the keys like XFORMERS (https://github.com/vllm-project/vllm/pull/26315#discussion_r2549460133)
+- 2025-11-21 `hmellor` on `vllm/attention/utils/fa_utils.py`:48: Not necessary with the suggested type hint change (https://github.com/vllm-project/vllm/pull/26315#discussion_r2549466219)
+- 2025-11-21 `hmellor` on `vllm/attention/selector.py`:97: Again, I think this method was cached because it accessed the environment, if this is no longer true we might not need to cache it. Also, if attention config.backend was type hinted as AttentionBackendEnum we wouldn't need to convert it into the ... (https://github.com/vllm-project/vllm/pull/26315#discussion_r2549473812)
+- 2025-11-21 `hmellor` on `vllm/attention/selector.py`:204: If backend was enum, we wouldn't need to save it as the name here (https://github.com/vllm-project/vllm/pull/26315#discussion_r2549476026)
+- 2025-11-21 `hmellor` commented: Thanks for the changes, while this PR has been ongoing the AttentionBackendEnum has been added/improved, I think we could use it as the type for AttentionConfig.backend to simplify the downstream code where it is used. (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3492295745)
+- 2025-11-21 `MatthewBonanni` on `vllm/config/attention.py`:98: Do we want all of these to be CLI arguments? I wasn't sure (https://github.com/vllm-project/vllm/pull/26315#discussion_r2549996140)
+- 2025-11-21 `hmellor` on `vllm/config/attention.py`:98: We probably don't need to add them all individually. But you could add --attention-config to the VllmGroup in the CLI so that users could configure them all from the CLI if they wanted to (https://github.com/vllm-project/vllm/pull/26315#discussion_r2550120867)
+- 2025-11-21 `MatthewBonanni` on `vllm/config/model.py`:479: This is already handled by CudaPlatformBase.get attn backend cls (https://github.com/vllm-project/vllm/pull/26315#discussion_r2550251366)
+- 2025-11-21 `MatthewBonanni` on `vllm/attention/selector.py`:97: I think it was also cached because it's a bit of a heavy function -- maybe we leave it cached? I removed the conversion in [eb25b97]( (https://github.com/vllm-project/vllm/pull/26315#discussion_r2550266352)
+- 2025-11-24 `hmellor` on `vllm/engine/arg_utils.py`:1708: It's not necessarily wrong, but what's the reason for the deepcopy? (https://github.com/vllm-project/vllm/pull/26315#discussion_r2555376019)
+- 2025-11-24 `hmellor` on `vllm/config/attention.py`:83: We shouldn't use f-strings in logs because they will always be called, regardless of if the string is logged (also updates the python tip to use init instead of accessing the attr after init) (https://github.com/vllm-project/vllm/pull/26315#discussion_r2555419185)
+- 2025-11-24 `hmellor` on `vllm/attention/selector.py`:97: Ok, leaving it cached is harmless (https://github.com/vllm-project/vllm/pull/26315#discussion_r2555455973)
+- 2025-11-24 `hmellor` commented: All previous comments addressed and overall LGTM! Just a few comments/questions (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3499235241)
+- 2025-11-24 `MatthewBonanni` on `vllm/engine/arg_utils.py`:1708: This was just copying the pattern from compilation config, but I can change it if you'd like. I suppose it's good to leave the original config intact. (https://github.com/vllm-project/vllm/pull/26315#discussion_r2556590844)
+- 2025-11-24 `hmellor` on `vllm/engine/arg_utils.py`:1708: I was just curious, no need to change it :) (https://github.com/vllm-project/vllm/pull/26315#discussion_r2556600639)
+- 2025-11-24 `mgoin` on `vllm/config/attention.py`:49: Can we make these match styles? Like disable flashinfer q quantization? (https://github.com/vllm-project/vllm/pull/26315#discussion_r2556859881)
+- 2025-11-24 `MatthewBonanni` on `vllm/config/attention.py`:49: Done in , which is why I hadn't changed it, but I suppose now is a good time to make that change. (https://github.com/vllm-project/vllm/pull/26315#discussion_r2556932374)
+- 2025-11-25 `ProExpertProg` on `vllm/attention/selector.py`:152: I think this might not work if the "forcing" manager is outside the vLLM config creation. Can we just always use the config and fully remove this card manager? Or at least use the env variable? (https://github.com/vllm-project/vllm/pull/26315#discussion_r2558269389)
+- 2025-11-25 `ProExpertProg` on `vllm/engine/arg_utils.py`:1715: Instead of adding this alias, could we just alias attention config to --attention or a even -attn or -ac? That way users can use the dot notation --attn.backend= without polluting the global flag namespace (https://github.com/vllm-project/vllm/pull/26315#discussion_r2558279472)
+- 2025-11-25 `ProExpertProg` commented: Can we also support overriding the config with env variable (see VLLM DEBUG DUMP PATH handling for example) (https://github.com/vllm-project/vllm/pull/26315#pullrequestreview-3502925633)
+- 2025-11-25 `hmellor` on `vllm/engine/arg_utils.py`:1715: Sometimes it does make sense to have a top level cli arg if the arg is important enough (--reasoning-parser is an example). The choice of attention backend is arguably important enough. If we did go with a shortening, -ac would go nicely ... (https://github.com/vllm-project/vllm/pull/26315#discussion_r2560447217)
+- 2025-11-25 `MatthewBonanni` on `vllm/engine/arg_utils.py`:1715: cc @mgoin who requested --attention-backend -- what are your thoughts? (https://github.com/vllm-project/vllm/pull/26315#discussion_r2560468922)
+- 2025-11-25 `mgoin` on `vllm/engine/arg_utils.py`:1715: I think we should not just think about the vllm serve case but also the LLM class case. I want to see the user interface be nice for LLM as well, so LLM("model", attention backend="flashinfer") fits that. I do not like the ... (https://github.com/vllm-project/vllm/pull/26315#discussion_r2560956507)
+- 2025-11-25 `MatthewBonanni` on `vllm/engine/arg_utils.py`:1715: Great point, I'll leave --attention-backend in then and also add the -ac shorthand (https://github.com/vllm-project/vllm/pull/26315#discussion_r2560975974)
+- 2025-11-25 `MatthewBonanni` on `vllm/attention/selector.py`:152: Changed to use the config in [941be4f]( (https://github.com/vllm-project/vllm/pull/26315#discussion_r2561006406)
+- 2025-11-25 `ProExpertProg` on `vllm/engine/arg_utils.py`:1715: @hmellor I will put the two rfcs up for grabs for the community to implement, let me do that now. (https://github.com/vllm-project/vllm/pull/26315#discussion_r2561041921)
+- 2025-11-29 `tjtanaa` on `tests/kernels/attention/test_attention_selector.py`:244: Should we retain the global definition of Constant string variable like the STR FLASH ATTN VAL (for "FLASH ATTN") so that it is easier to rename backends when necessary? Maybe we can use AttentionBackendEnum.FLASH ATTN.name instead of hardcoding the string value. This ... (https://github.com/vllm-project/vllm/pull/26315#discussion_r2572711094)
+- 2025-12-01 `MatthewBonanni` on `tests/kernels/attention/test_attention_selector.py`:244: Strings like "FLASH ATTN" are used widely throughout the codebase right now. Maybe we could make a separate PR to clean this up throughout? I got rid of STR FLASH ATTN VAL and the like because they were not universally used. It ... (https://github.com/vllm-project/vllm/pull/26315#discussion_r2577687773)
+- 2025-12-02 `MatthewBonanni`: NOTE : test nixl connector.py::test register kv caches is passing on main but should be failing because its cached get attn backend() implementation doesn't include the selected backend as part of the cache key, so when tests run in order (FLASH ATTN ... (https://github.com/vllm-project/vllm/pull/26315#issuecomment-3604177866)
+- 2025-12-04 `hmellor` on `tests/v1/attention/test_attention_backends.py`: This seems a little excessive, where was the vllm config needed in this block where it could not be accessed? (https://github.com/vllm-project/vllm/pull/26315#discussion_r2590110561)
+- 2025-12-04 `MatthewBonanni` on `tests/v1/attention/test_attention_backends.py`: You're right, it was because of an unnecessary call to get current vllm config() in FlashInferMetadataBuilder. init . Fixed in [a971d7c]( Thanks for catching this! (https://github.com/vllm-project/vllm/pull/26315#discussion_r2590222814)

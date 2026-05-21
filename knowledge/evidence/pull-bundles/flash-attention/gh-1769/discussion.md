@@ -1,75 +1,49 @@
-# PR Discussion Digest
-
-- Source PR: [Dao-AILab/flash-attention#1769](https://github.com/Dao-AILab/flash-attention/pull/1769)
-- Source page: `sources/prs/flash-attention/PR-1769.md`
-- Evidence bundle: `evidence/pull-bundles/flash-attention/gh-1769`
-- Generated at: `2026-05-20T15:16:32.557490+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-07-22T01:16:29Z`
-- Merged: `2025-12-04T19:08:28Z`
-
-## Discussion Counts
-
-- Issue comments: 46
-- Review submissions: 34 (approved=2, commented=32)
-- Inline review comments: 32
-- Review threads observed: 14
-- Resolved/outdated thread markers: resolved=6, outdated=10
-- Human participants with discussion text: OutofAi, StrongerXi, Tomcli, Turakar, guilhermeleobas, haohaibo, imoneoi, janeyx99, lantudou, m3rcuriel, supercharleszhu, tridao, v0i0, vadimkantorov, varunneal, wzhang313, yijianggit, zou3519
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 9
-
-## Review Decisions
-
-- `2025-07-23T00:43:34Z` `COMMENTED` by `zou3519` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3045238601)
-- `2025-07-23T00:44:30Z` `COMMENTED` by `zou3519` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3045239773)
-- `2025-07-23T00:49:54Z` `COMMENTED` by `zou3519` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3045245639)
-- `2025-07-23T00:51:33Z` `COMMENTED` by `zou3519` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3045247366)
-- `2025-07-23T00:52:41Z` `COMMENTED` by `zou3519` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3045248559)
-- `2025-07-23T00:53:05Z` `COMMENTED` by `zou3519` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3045248934)
-- `2025-07-23T00:54:21Z` `COMMENTED` by `zou3519` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3045250317)
-- `2025-07-24T15:59:34Z` `COMMENTED` by `guilhermeleobas` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3052283547)
-- `2025-07-24T16:00:13Z` `COMMENTED` by `guilhermeleobas` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3052286169)
-- `2025-07-24T16:01:05Z` `COMMENTED` by `guilhermeleobas` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3052289290)
-- `2025-07-25T06:26:24Z` `COMMENTED` by `tridao` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3054247445)
-- `2025-07-25T06:26:57Z` `COMMENTED` by `tridao` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3054248432)
-- `2025-07-25T06:27:41Z` `COMMENTED` by `tridao` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3054249766)
-- `2025-07-25T19:32:53Z` `COMMENTED` by `guilhermeleobas` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3056600753)
-- `2025-07-30T13:52:30Z` `COMMENTED` by `zou3519` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3071664464)
-- `2025-07-30T13:52:46Z` `COMMENTED` by `zou3519` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3071665744)
-- `2025-07-30T13:53:49Z` `COMMENTED` by `zou3519` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3071670649)
-- `2025-07-30T13:55:38Z` `APPROVED` by `zou3519` - Looks good to me, modulo the prints (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3071680316)
-- `2025-08-22T20:14:49Z` `COMMENTED` by `supercharleszhu` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3145806994)
-- `2025-08-25T15:32:20Z` `COMMENTED` by `guilhermeleobas` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3152007976)
-- `2025-09-03T09:17:12Z` `COMMENTED` by `Turakar` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3179744940)
-- `2025-09-03T21:23:22Z` `COMMENTED` by `guilhermeleobas` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3182562065)
-- `2025-09-15T13:58:30Z` `COMMENTED` by `janeyx99` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3224782257)
-- `2025-09-19T18:31:17Z` `COMMENTED` by `guilhermeleobas` (https://github.com/Dao-AILab/flash-attention/pull/1769#pullrequestreview-3246415896)
-- ... 10 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `hopper/flash_attn_interface.py`: 17 inline comment(s)
-- `hopper/test_flash_attn.py`: 8 inline comment(s)
-- `hopper/flash_api.cpp`: 3 inline comment(s)
-- `hopper/build.sh`: 2 inline comment(s)
-- `hopper/setup.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-11-12T21:13:35Z` `issue` by `guilhermeleobas`; signals: attention, compile, dtype, hang, layout; excerpt: "Hi @v0i0. I'm starting to think that this failure is not actually related to the changes made in this PR (support torch.compile). It is ..." (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3523959882)
-- `2025-11-20T23:07:40Z` `issue` by `v0i0`; signals: attention, compile, dtype, hang, layout; excerpt: "Hi @v0i0. I'm starting to think that this failure is not actually related to the changes made in this PR (support torch.compile). It is ..." (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3560537787)
-- `2025-08-05T07:21:16Z` `issue` by `lantudou`; signals: attention, autotune, compile, cuda; excerpt: "@guilhermeleobas Anything update? I tried your commits and found there are still some shape errors in the backward function, here is my test code. ..." (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3153812366)
-- `2025-07-24T15:59:33Z` `inline` by `guilhermeleobas` `hopper/build.sh`:8; signals: attention, flash attention, hopper; excerpt: "I'll remove this file once the PR gets approved. I only keep it as it makes it easier to build and test flash attention." (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2228932929)
-- `2025-10-13T15:43:11Z` `inline` by `wzhang313` `hopper/flash_attn_interface.py`:357; signals: attention, flash attention, hopper; excerpt: "hi. I do not think flash attention 3 rely on hopper. It works fine on older gpu like a100. Can you remove this?" (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2426706914)
-- `2025-07-23T00:43:33Z` `inline` by `zou3519` `hopper/flash_api.cpp`:1514; signals: hopper, perf, performance; excerpt: "What's going on here? Adding additional clones is generally bad for performance" (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2224081503)
-- `2025-08-19T17:36:31Z` `issue` by `guilhermeleobas`; signals: attention, flash attention, register; excerpt: "I think the torch custom ops should be registered to a flash attn 3 namespace to match the TORCH LIBRARY registration in C. Would ..." (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3201615357)
-- `2025-07-23T00:51:33Z` `inline` by `zou3519` `hopper/setup.py`:85; signals: hopper, kernel; excerpt: "I'm confused about this file that's being written out. It looks like the Fake kernels don't use this? (am I reading this correctly?)" (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2224087929)
-- `2025-07-25T19:32:53Z` `inline` by `guilhermeleobas` `hopper/test_flash_attn.py`:63; signals: hang, hopper; excerpt: "I suspect it can double the time to run the tests, as fake check would run the function twice to compare the fake version ..." (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2231873437)
-- `2025-11-21T17:10:19Z` `inline` by `guilhermeleobas` `hopper/flash_attn_interface.py`:45; signals: attention, hopper; excerpt: "To avoid breaking existing FlashAttention code, I renamed out to out and now raise a TypeError if out is used when torch.compiling flash attn ..." (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2550444974)
-- `2025-07-30T13:52:30Z` `inline` by `zou3519` `hopper/flash_attn_interface.py`:218; signals: compile, hopper; excerpt: "nit: "tracing (torch.compile/torch.export) with num splits <=0 not supported"" (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2242764125)
-- `2025-08-20T15:52:00Z` `issue` by `m3rcuriel`; signals: attention, flash attention; excerpt: "... Is flash attention 3 an independent package of FA2? In the sense that in the future FA2 will be deprecated in favor of ..." (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3206964374)
+- 2025-07-23 `zou3519` on `hopper/flash_api.cpp`:1514: What's going on here? Adding additional clones is generally bad for performance (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2224081503)
+- 2025-07-23 `zou3519` on `hopper/build.sh`:8: do you have more context for this file? I don't see a mention of PHI-1 elsewhere (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2224082441)
+- 2025-07-23 `zou3519` on `hopper/test_flash_attn.py`:63: A bit jank but I'm fine with it (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2224086528)
+- 2025-07-23 `zou3519` on `hopper/setup.py`:85: I'm confused about this file that's being written out. It looks like the Fake kernels don't use this? (am I reading this correctly?) (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2224087929)
+- 2025-07-23 `zou3519` on `hopper/test_flash_attn.py`:107: Do we have a sense of how comprehensive the existing tests in this file are? Are they good at exercising a variety of inputs? (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2224088897)
+- 2025-07-23 `zou3519` on `hopper/setup.py`:85: nvm I see it in round up headdim (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2224089216)
+- 2025-07-23 `zou3519` on `hopper/flash_attn_interface.py`:65: is there a way to reuse code with here? (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2224090339)
+- 2025-07-24 `guilhermeleobas` on `hopper/build.sh`:8: I'll remove this file once the PR gets approved. I only keep it as it makes it easier to build and test flash attention. (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2228932929)
+- 2025-07-24 `guilhermeleobas` on `hopper/test_flash_attn.py`:63: @tridao, are you ok with running fake check as part of the tests? I can invert the flag to be opt-in instead of opt-out. (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2228934428)
+- 2025-07-24 `guilhermeleobas` on `hopper/test_flash_attn.py`:107: I guess @tridao would be a better person to answer this one. (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2228936291)
+- 2025-07-25 `tridao` on `hopper/flash_attn_interface.py`:65: we should just assume torch = 2.4 (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2230260173)
+- 2025-07-25 `tridao` on `hopper/test_flash_attn.py`:107: we do test a lot of input shapes and different attn options ( 100k tests iirc) (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2230261076)
+- 2025-07-25 `tridao` on `hopper/test_flash_attn.py`:63: would that slow down the tests much? Rn it takes 30-50mins to run all the tests (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2230262251)
+- 2025-07-25 `guilhermeleobas` on `hopper/test_flash_attn.py`:63: I suspect it can double the time to run the tests, as fake check would run the function twice to compare the fake version with the actual implementation. I can change this flag to be opt-in instead. So, to run fake check, ... (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2231873437)
+- 2025-07-30 `zou3519` on `hopper/flash_attn_interface.py`:218: nit: "tracing (torch.compile/torch.export) with num splits <=0 not supported" (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2242764125)
+- 2025-07-30 `zou3519` on `hopper/flash_attn_interface.py`:262: what's the print for? (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2242764861)
+- 2025-08-05 `lantudou`: @guilhermeleobas Anything update? I tried your commits and found there are still some shape errors in the backward function, here is my test code. import torch from flash attn interface import flash attn func, flash attn forward from torch import nn class ... (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3153812366)
+- 2025-08-18 `m3rcuriel`: I think the torch custom ops should be registered to a flash attn 3 namespace to match the TORCH LIBRARY registration in C. Would these conflict with FA2? (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3197831681)
+- 2025-08-19 `guilhermeleobas`: I think the torch custom ops should be registered to a flash attn 3 namespace to match the TORCH LIBRARY registration in C. Would these conflict with FA2? Is flash attention 3 an independent package of FA2? In the sense that in ... (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3201615357)
+- 2025-08-20 `m3rcuriel`: ... Is flash attention 3 an independent package of FA2? In the sense that in the future FA2 will be deprecated in favor of FA3? idk what the future plan is but at least right now transformers thinks it can have both ... (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3206964374)
+- 2025-08-20 `guilhermeleobas`: idk what the future plan is but at least right now transformers thinks it can have both at the same time Got it. I changed the namespace to flash attn 3. (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3207595697)
+- 2025-08-20 `Tomcli`: Thank you for the great work @guilhermeleobas. Just wondering have you tried to run training on the export FX graph? It seems like this implementation still missing register autograd in order to run the training loop. (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3208349213)
+- 2025-08-21 `guilhermeleobas`: Thanks for the feedback, @Tomcli. As for the second question. Probably it won't work. I based my implementation on what is implemented for FA2, which doesn't use register autograd as well. I can do this in a follow-up PR if needed. Edit: ... (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3211732138)
+- 2025-08-25 `guilhermeleobas` on `hopper/flash_attn_interface.py`:316: Thanks for the feedback. Fixed! (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2298438692)
+- 2025-08-30 `OutofAi`: thanks for fixing it @guilhermeleobas guilhermeleobas, the compile now works, but the compiled artifacts still breaks me for when using AOTInductor packaging. (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3239509360)
+- 2025-09-02 `Turakar`: I just want to share that for my workflow, based only on torch.compile() and not torch.export(), this PR works. Thanks a lot! (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3243959505)
+- 2025-09-03 `yijianggit`: Hi @guilhermeleobas I tried torch.compile with flash attn with kvcache , and received: I wonder if flash attn with kvcache is supported in this commit? (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3247630751)
+- 2025-09-03 `OutofAi`: @guilhermeleobas just saw you messages, seems to be working now with your new changes, gave it a try with my sort of unity test and it works now, thanks, for reference this the code (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3249563765)
+- 2025-09-03 `guilhermeleobas`: Hi @yijianggit, I wonder if flash attn with kvcache is supported in this commit? No, it is not. Implementing flash attn call with num splits < 0 requires one to implement the [num splits heuristic]( and it is not a trivial task. ... (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3250857211)
+- 2025-09-04 `yijianggit`: Hi @guilhermeleobas, Here is the code snippet for reproduce: Please let me know if there are things I can help support this. Thanks! (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3251772767)
+- 2025-09-15 `haohaibo`: @guilhermeleobas This change does not work properly with float8 dynamic activation float8 weight(granularity=PerRow()) My code snippet The output error (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3290724529)
+- 2025-09-15 `janeyx99` on `hopper/flash_api.cpp`: Now that 1791 is landed can you also update the stable file to keep them in sync? (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2349103123)
+- 2025-09-28 `varunneal`: Unfortunately the flash api stable.cpp code does not compile for me on any nightly version. I wrote a fork [here]( that is both ABI compatible and includes the torch.compile compatibility, but it uses a modified flash attn interface than the pre-ABI compatible ... (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3344327576)
+- 2025-09-29 `janeyx99`: @varunneal when you say flash api stable.cpp does not compile for you—do you mean on main or on this branch? If on main that would be concerning and I’d like to find out more about ur setup so we could fix it. (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3347254703)
+- 2025-09-29 `StrongerXi`: Having this would be quite helpful, what's blocking it from being merged? @guilhermeleobas. (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3349162641)
+- 2025-09-29 `guilhermeleobas`: On it. I'm on PTO this week and can work on this next week. Unfortunately the flash api stable.cpp code does not compile for me on any nightly version. I wrote a fork [here]( that is both ABI compatible and includes the ... (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3349339916)
+- 2025-10-13 `wzhang313` on `hopper/flash_attn_interface.py`:357: hi. I do not think flash attention 3 rely on hopper. It works fine on older gpu like a100. Can you remove this? (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2426706914)
+- 2025-10-21 `imoneoi`: Hi @tridao, have you had a chance to take another look at this PR? This is a much-needed feature for FA3 when used with torch.compile. (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3427095877)
+- 2025-11-07 `v0i0` on `hopper/flash_attn_interface.py`:45: @zou3519 @guilhermeleobas i might be off here, but i seem to remember that there are some requirements re: out arguments, specifically how they (a) cannot be returned unmodified, and (b) may need to be listed in mutates args? (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2501284069)
+- 2025-11-07 `v0i0`: @guilhermeleobas @zou3519 i am still seeing errors in the tests, like the following, could you have a look? (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3505119033)
+- 2025-11-07 `v0i0` on `hopper/test_flash_attn.py`:63: imo it would be good to have at least some of the tests on by default to prevent bit-rotting. how about instead doing a OPCHECK FREQ instead of ENABLE where 1 means every test runs with it, and 100 means every 100s ... (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2505736044)
+- 2025-11-12 `guilhermeleobas`: Hi @v0i0. I'm starting to think that this failure is not actually related to the changes made in this PR (support torch.compile). It is only reproducible when add unused qkv=True and attention chunk=0 are set. I manually verify the dtype, shape, strides, ... (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3523959882)
+- 2025-11-18 `guilhermeleobas`: @v0i0 I was able to reproduce this error without torch.compile. I changed the code to run flash attn varlen func twice, and the grad values differ between runs. Since no compilation is involved, can we assume this issue is independent of the ... (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3544627629)
+- 2025-11-20 `zou3519` on `hopper/flash_attn_interface.py`:45: 1) Inputs to this custom operator cannot be returned as-is (as an output). 2) any inputs to the custom operator that are being mutated need to be listed in mutates args It's a common paradigm to pass "the out tensor" as an ... (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2547536828)
+- 2025-11-20 `v0i0` on `hopper/flash_attn_interface.py`:45: this looks like it is trying to implement an optional out tensor, i.e. if it is passed an out, we use that to modify that and return it, but otherwise we allocate and return it. (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2547997592)
+- 2025-11-21 `guilhermeleobas` on `hopper/flash_attn_interface.py`:45: out needs to be in the list of mutate args. I'll update that. (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2549953125)
+- 2025-11-21 `guilhermeleobas` on `hopper/flash_attn_interface.py`:45: To avoid breaking existing FlashAttention code, I renamed out to out and now raise a TypeError if out is used when torch.compiling flash attn forward. (https://github.com/Dao-AILab/flash-attention/pull/1769#discussion_r2550444974)
+- 2025-11-21 `guilhermeleobas`: @v0i0, I couldn't reproduce the error you posted. I'm using a build of FA3 with all flags enabled. Could you share the stacktrace? And are you building FA with which flags? (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3564042576)
+- 2025-11-22 `v0i0`: @v0i0, I couldn't reproduce the error you posted. I'm using a build of FA3 with all flags enabled. Could you share the stacktrace? And are you building FA with which flags? i just tried with your latest changes & pytorch nightly, and ... (https://github.com/Dao-AILab/flash-attention/pull/1769#issuecomment-3565043560)

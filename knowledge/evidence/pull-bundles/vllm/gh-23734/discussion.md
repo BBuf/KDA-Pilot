@@ -1,81 +1,45 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#23734](https://github.com/vllm-project/vllm/pull/23734)
-- Source page: `sources/prs/vllm/PR-23734.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-23734`
-- Generated at: `2026-05-20T15:37:40.565530+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-08-27T10:37:01Z`
-- Merged: `2025-09-06T05:24:05Z`
-
-## Discussion Counts
-
-- Issue comments: 19
-- Review submissions: 54 (approved=2, commented=52)
-- Inline review comments: 50
-- Review threads observed: 18
-- Resolved/outdated thread markers: resolved=17, outdated=16
-- Human participants with discussion text: FirwoodLin, Livinfly, LucasWilkinson, MengqingCao, gary-wjc, hmellor, mergify, youkaichao, youzhedian, zhenwenqi2024
-- Automation comments/reviews omitted from high-signal summary: 4
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 4
-
-## Review Decisions
-
-- `2025-08-27T10:39:55Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces Context Parallelism (CP) support for MLA inference, which is a significant feature ... (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3159254094)
-- `2025-08-27T11:44:48Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3159441633)
-- `2025-08-27T11:49:06Z` `COMMENTED` by `youkaichao` - thanks for the great work! as discussed, there can be two types of cp, cp for prefill (where ... (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3159452608)
-- `2025-08-27T11:57:23Z` `COMMENTED` by `youzhedian` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3159475178)
-- `2025-08-28T11:22:43Z` `COMMENTED` by `youzhedian` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3164445384)
-- `2025-09-02T05:11:24Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3174890239)
-- `2025-09-02T05:23:03Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3174908232)
-- `2025-09-02T05:23:39Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3174909112)
-- `2025-09-02T05:24:39Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3174910701)
-- `2025-09-02T05:28:51Z` `COMMENTED` by `LucasWilkinson` - I dont think reorder batch in the metadata data builders is used anywhere except the cpu worker; this ... (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3174917474)
-- `2025-09-02T11:18:45Z` `COMMENTED` by `youzhedian` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3176096201)
-- `2025-09-02T11:19:51Z` `COMMENTED` by `youzhedian` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3176099339)
-- `2025-09-02T14:21:32Z` `COMMENTED` by `youzhedian` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3176806471)
-- `2025-09-02T14:22:38Z` `COMMENTED` by `youzhedian` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3176810726)
-- `2025-09-03T13:12:05Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3180614538)
-- `2025-09-03T13:19:25Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3180644933)
-- `2025-09-03T13:45:21Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3180750407)
-- `2025-09-03T20:29:37Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3182337657)
-- `2025-09-03T20:31:33Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3182348834)
-- `2025-09-03T20:40:58Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3182367984)
-- `2025-09-04T03:04:24Z` `COMMENTED` by `youzhedian` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3183240382)
-- `2025-09-04T03:10:43Z` `COMMENTED` by `youzhedian` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3183247976)
-- `2025-09-04T03:39:36Z` `COMMENTED` by `youzhedian` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3183306667)
-- `2025-09-04T04:51:07Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3183408566)
-- ... 30 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/v1/attention/backends/mla/common.py`: 16 inline comment(s)
-- `vllm/config/parallel.py`: 5 inline comment(s)
-- `vllm/attention/ops/flashmla.py`: 5 inline comment(s)
-- `vllm/v1/worker/block_table.py`: 4 inline comment(s)
-- `vllm/v1/worker/gpu_input_batch.py`: 4 inline comment(s)
-- `vllm/v1/attention/backends/mla/cutlass_mla.py`: 4 inline comment(s)
-- `vllm/v1/attention/backends/mla/flashattn_mla.py`: 4 inline comment(s)
-- `vllm/v1/attention/backends/utils.py`: 2 inline comment(s)
-- `vllm/v1/worker/gpu_model_runner.py`: 2 inline comment(s)
-- `vllm/engine/arg_utils.py`: 2 inline comment(s)
-- `vllm/v1/core/kv_cache_coordinator.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-09-05T06:42:32Z` `issue` by `MengqingCao`; signals: cache, kv cache, perf, performance, throughput; excerpt: "Thanks for the great work! I tested the performance of this pull request and here are the experimental results: test model: deepseek-r1 hardware: Nvidia ..." (https://github.com/vllm-project/vllm/pull/23734#issuecomment-3257246934)
-- `2025-09-02T05:23:03Z` `inline` by `LucasWilkinson` `vllm/v1/attention/backends/mla/common.py`:1527; signals: attention, cache, kernel, mla; excerpt: "why do we need a new kernel for this? can't we use -1 in the slot mapping to indicate that that token should be ..." (https://github.com/vllm-project/vllm/pull/23734#discussion_r2314940621)
-- `2025-09-03T13:19:24Z` `inline` by `LucasWilkinson` `vllm/v1/attention/backends/mla/common.py`:1374; signals: attention, block, cache, mla; excerpt: "not necessarily a blocker for this PR do we need to reorg kvcache? this could be quite expensive for longer contexts given the python ..." (https://github.com/vllm-project/vllm/pull/23734#discussion_r2318959564)
-- `2025-09-04T15:38:49Z` `inline` by `LucasWilkinson` `vllm/v1/attention/backends/mla/common.py`:1374; signals: attention, block, cache, mla; excerpt: "This is not blocking though; I think we can explore eliminating reorg kvcache in a follow-up PR. We can land this with reorg kvcache." (https://github.com/vllm-project/vllm/pull/23734#discussion_r2322590635)
-- `2025-09-05T03:09:54Z` `inline` by `youzhedian` `vllm/v1/attention/backends/mla/cutlass_mla.py`:225; signals: attention, cutlass, kernel, mla; excerpt: "I'm not sure. The old implementation had q pe.clone() before the kernel call. Anyway, i will revert it." (https://github.com/vllm-project/vllm/pull/23734#discussion_r2323995909)
-- `2025-09-02T11:18:45Z` `inline` by `youzhedian` `vllm/attention/ops/flashmla.py`:300; signals: attention, cute, mla; excerpt: "Because v up proj is invoked inside forward decode, and cp lse ag out rs need executed before v up proj I moved the ..." (https://github.com/vllm-project/vllm/pull/23734#discussion_r2315775170)
-- `2025-09-04T03:04:24Z` `inline` by `youzhedian` `vllm/v1/attention/backends/mla/common.py`:1374; signals: attention, cache, mla; excerpt: "this could be quite expensive for longer contexts given the python for loop Profiling shows that reorg kvcache is not expensive, since we first ..." (https://github.com/vllm-project/vllm/pull/23734#discussion_r2320690449)
-- `2025-09-04T15:08:33Z` `inline` by `LucasWilkinson` `vllm/v1/attention/backends/mla/common.py`:1374; signals: attention, cache, mla; excerpt: "Profiling shows that reorg kvcache is not expensive, since we first collect all intermediate tensors with a list and concatenate only once at the ..." (https://github.com/vllm-project/vllm/pull/23734#discussion_r2322503629)
-- `2025-09-04T15:35:58Z` `inline` by `LucasWilkinson` `vllm/v1/attention/backends/mla/cutlass_mla.py`:225; signals: attention, cutlass, mla; excerpt: "I dont think its requirement that these are .contiguoous we should avoid these expensive ops if possible" (https://github.com/vllm-project/vllm/pull/23734#discussion_r2322580445)
-- `2025-09-05T03:31:51Z` `inline` by `LucasWilkinson` `vllm/v1/attention/backends/mla/cutlass_mla.py`:225; signals: attention, cutlass, mla; excerpt: "oh weird; ok for CUTLASS MLA maybe its acceptable but for FlashAttn MLA we can definitely skip it :+1:" (https://github.com/vllm-project/vllm/pull/23734#discussion_r2324014050)
-- `2025-08-27T11:49:06Z` `review` `COMMENTED` by `youkaichao`; signals: hang, oom; excerpt: "thanks for the great work! as discussed, there can be two types of cp, cp for prefill (where the world size is enlarged by ..." (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3159452608)
-- `2025-09-05T04:01:44Z` `inline` by `youzhedian` `vllm/v1/attention/backends/mla/cutlass_mla.py`:225; signals: attention, cutlass, mla; excerpt: "done." (https://github.com/vllm-project/vllm/pull/23734#discussion_r2324039084)
+- 2025-08-27 `youkaichao` on `vllm/config/parallel.py`:174: We do want to support context parallel size < tp size in the near future, let's remove this flag and only use context parallel size, while asserting context parallel size == 1 or context parallel size == tp size now. (https://github.com/vllm-project/vllm/pull/23734#discussion_r2303684721)
+- 2025-08-27 `youkaichao` commented: thanks for the great work! as discussed, there can be two types of cp, cp for prefill (where the world size is enlarged by cp) and cp for decode (where the world size does not change by cp). if possible, let's denote ... (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3159452608)
+- 2025-08-27 `youkaichao`: @youzhedian to accelerate the review and merge (especially ci testing), maybe we can split the kernel side changes to a separate PR and get it merged first. then follow-up PRs can use pre-compiled wheels from that PR, with much faster ci testing. (https://github.com/vllm-project/vllm/pull/23734#issuecomment-3227973369)
+- 2025-08-27 `hmellor`: I've just come across this PR adding cp to non-MLA attention (https://github.com/vllm-project/vllm/pull/23734#issuecomment-3228472435)
+- 2025-08-28 `youzhedian`: @youzhedian to accelerate the review and merge (especially ci testing), maybe we can split the kernel side changes to a separate PR and get it merged first. then follow-up PRs can use pre-compiled wheels from that PR, with much faster ci testing. ... (https://github.com/vllm-project/vllm/pull/23734#issuecomment-3231664555)
+- 2025-08-28 `LucasWilkinson`: Cool thanks for taking this on! I think this can be done without any GPU model runner changes; I was working on a prototype but got unfortunately it got backburned for few months 😞 anyways just sharing here for an alternative solution ... (https://github.com/vllm-project/vllm/pull/23734#issuecomment-3231889853)
+- 2025-09-02 `LucasWilkinson` on `vllm/attention/ops/flashmla.py`:300: why does this have to be FlashMLA specific? can we move this up to mla/common.py so we can make this backend agnostic? (https://github.com/vllm-project/vllm/pull/23734#discussion_r2314926758)
+- 2025-09-02 `LucasWilkinson` on `vllm/v1/attention/backends/mla/common.py`:1527: why do we need a new kernel for this? can't we use -1 in the slot mapping to indicate that that token should be skipped; something concat and cache mla already supports (https://github.com/vllm-project/vllm/pull/23734#discussion_r2314940621)
+- 2025-09-02 `LucasWilkinson` on `vllm/v1/attention/backends/mla/common.py`:1465: Theres alot of duplication with forward; we should try to combine these (https://github.com/vllm-project/vllm/pull/23734#discussion_r2314941279)
+- 2025-09-02 `LucasWilkinson` on `vllm/attention/ops/flashmla.py`:300: we just may beed to add a flag to indicate if the backend supports returning LSE or not (https://github.com/vllm-project/vllm/pull/23734#discussion_r2314942626)
+- 2025-09-02 `LucasWilkinson` commented: I dont think reorder batch in the metadata data builders is used anywhere except the cpu worker; this should be corrected and all the reorder batch functions removed; but in the meantime I dont think we need update all the reorder batch ... (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3174917474)
+- 2025-09-02 `youzhedian` on `vllm/attention/ops/flashmla.py`:300: Because v up proj is invoked inside forward decode, and cp lse ag out rs need executed before v up proj I moved the defination of cp lse ag out rs to an independent file ops/common.py (https://github.com/vllm-project/vllm/pull/23734#discussion_r2315775170)
+- 2025-09-02 `youzhedian` on `vllm/v1/attention/backends/mla/common.py`:1527: Good idea. I will try. (https://github.com/vllm-project/vllm/pull/23734#discussion_r2315777674)
+- 2025-09-02 `youzhedian` on `vllm/v1/attention/backends/mla/common.py`:1527: done. Thank you for the suggestion. (https://github.com/vllm-project/vllm/pull/23734#discussion_r2316255679)
+- 2025-09-03 `LucasWilkinson` on `vllm/attention/ops/flashmla.py`:300: we can just move v up proj into mla/common.py theres not really any reason it needs to be in the MLA decode specific backends 👍 (https://github.com/vllm-project/vllm/pull/23734#discussion_r2318938756)
+- 2025-09-03 `LucasWilkinson` on `vllm/v1/attention/backends/mla/common.py`:1374: not necessarily a blocker for this PR do we need to reorg kvcache? this could be quite expensive for longer contexts given the python for loop could we maybe just have each rank compute kv b proj for all heads (ReplicatedLinear) and ... (https://github.com/vllm-project/vllm/pull/23734#discussion_r2318959564)
+- 2025-09-03 `LucasWilkinson` on `vllm/v1/worker/block_table.py`:167: this feels very messy and potentially very slow due to python for loop; can we maybe do something like (inside block table.compute slot mapping instead of touch this function at all) this will keep things cleaner and the call sites gpu model ... (https://github.com/vllm-project/vllm/pull/23734#discussion_r2319035327)
+- 2025-09-03 `LucasWilkinson` on `vllm/v1/attention/backends/utils.py`:76: nit: remove the tensor suffix; this class doesnt use that suffix for num computed tokens cpu; we should match that (https://github.com/vllm-project/vllm/pull/23734#discussion_r2320110800)
+- 2025-09-03 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:760: can we move the computation of self.input batch.cp num computed tokens cpu out of compute slot mapping (this is very confusing the since the function name does not communicate that this will be mutated) (https://github.com/vllm-project/vllm/pull/23734#discussion_r2320117513)
+- 2025-09-03 `LucasWilkinson` on `vllm/v1/worker/gpu_input_batch.py`:122: what does mean? it appears to be computed as: but only seems to be computed for prefill? this is very confusing; this math only seems to be correct if context len is a multiple of self.cp world size self.block size, please correct ... (https://github.com/vllm-project/vllm/pull/23734#discussion_r2320127677)
+- 2025-09-04 `youzhedian` on `vllm/v1/attention/backends/mla/common.py`:1374: this could be quite expensive for longer contexts given the python for loop Profiling shows that reorg kvcache is not expensive, since we first collect all intermediate tensors with a list and concatenate only once at the end, not too many D2Ds. ... (https://github.com/vllm-project/vllm/pull/23734#discussion_r2320690449)
+- 2025-09-04 `youzhedian` on `vllm/v1/worker/gpu_input_batch.py`:122: what does "context lengths in the perspective of cp rank0.' mean? The context length for prefix-prefill varies across CP ranks, with a maximum difference of one token; the value stored here is the context length on CP rank 0. only seems to ... (https://github.com/vllm-project/vllm/pull/23734#discussion_r2320696677)
+- 2025-09-04 `youzhedian` on `vllm/v1/worker/block_table.py`:167: Yes, it's dirty. I'll try tidy it up (https://github.com/vllm-project/vllm/pull/23734#discussion_r2320740384)
+- 2025-09-04 `LucasWilkinson` on `vllm/v1/worker/gpu_input_batch.py`:122: I think we can just compute this in mla/common.py; this seems very cheap so it would be nice to not pollute the model runner if possible. We can move it back to the gpu model runner if when we port this to ... (https://github.com/vllm-project/vllm/pull/23734#discussion_r2320820605)
+- 2025-09-04 `LucasWilkinson` on `vllm/v1/worker/block_table.py`:167: Sorry I only now ran the "introduce doc" through a translator (I think it would be extremely helpful for the community to have a brief description of the token layout in the PR description); I mis-understood the layout. More accurate code is ... (https://github.com/vllm-project/vllm/pull/23734#discussion_r2320833883)
+- 2025-09-04 `LucasWilkinson` on `vllm/v1/attention/backends/mla/common.py`:1374: Profiling shows that reorg kvcache is not expensive, since we first collect all intermediate tensors with a list and concatenate only once at the end, not too many D2Ds. Im more worried about the CPU side being slow and creating a GPU ... (https://github.com/vllm-project/vllm/pull/23734#discussion_r2322503629)
+- 2025-09-04 `LucasWilkinson` on `vllm/v1/attention/backends/mla/cutlass_mla.py`:225: I dont think its requirement that these are .contiguoous we should avoid these expensive ops if possible (https://github.com/vllm-project/vllm/pull/23734#discussion_r2322580445)
+- 2025-09-04 `LucasWilkinson` on `vllm/v1/attention/backends/mla/flashattn_mla.py`:180: As far as im aware its not a requirement that these are .contiguoous we should remove these (https://github.com/vllm-project/vllm/pull/23734#discussion_r2322582002)
+- 2025-09-04 `LucasWilkinson` on `vllm/v1/attention/backends/mla/common.py`:1569: We added FlashAttn MLA specifically to avoid this expensive concat for short seqlens Can we make sure this only happens in the cp case? i.e. Then make the forward decode signature be: then in the decode backends we can do: (https://github.com/vllm-project/vllm/pull/23734#discussion_r2322585114)
+- 2025-09-04 `LucasWilkinson` on `vllm/v1/attention/backends/mla/common.py`:1374: This is not blocking though; I think we can explore eliminating reorg kvcache in a follow-up PR. We can land this with reorg kvcache. (https://github.com/vllm-project/vllm/pull/23734#discussion_r2322590635)
+- 2025-09-04 `LucasWilkinson` commented: Thank you for all the hard work! this is looking much better! Left a couple more comments (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3185911453)
+- 2025-09-05 `youzhedian` on `vllm/v1/attention/backends/mla/cutlass_mla.py`:225: I'm not sure. The old implementation had q pe.clone() before the kernel call. Anyway, i will revert it. (https://github.com/vllm-project/vllm/pull/23734#discussion_r2323995909)
+- 2025-09-05 `youzhedian` on `vllm/v1/attention/backends/mla/flashattn_mla.py`:180: OK, i just seem to recall that flash attn internally calls maybe contiguous to guarantee the qkv tensor is contiguous. Anyway, i will revert it. (https://github.com/vllm-project/vllm/pull/23734#discussion_r2324002077)
+- 2025-09-05 `LucasWilkinson` on `vllm/v1/attention/backends/mla/cutlass_mla.py`:225: oh weird; ok for CUTLASS MLA maybe its acceptable but for FlashAttn MLA we can definitely skip it :+1: (https://github.com/vllm-project/vllm/pull/23734#discussion_r2324014050)
+- 2025-09-05 `LucasWilkinson` on `vllm/v1/attention/backends/mla/flashattn_mla.py`:180: it only calls .contiguous() if x.stride(-1) != 1 ( ) but .contiguous() will trigger a copy if x.stride(-2) != x.shape[-1] which is the case here but FA is ok if x.stride(-2) != x.shape[-1] (https://github.com/vllm-project/vllm/pull/23734#discussion_r2324017046)
+- 2025-09-05 `LucasWilkinson` approved: Looks good to me! Thanks for the awesome work! Excited to see this in vLLM 😄 Please fix the DCO (https://github.com/vllm-project/vllm/pull/23734#pullrequestreview-3187937309)
+- 2025-09-05 `youkaichao` on `vllm/config/parallel.py`:173: DCO is fine, not that important. can we change the name to decode context parallel size? i'm afraid we will have context parallel size in the future as well, and this naming would be confusing in the future. (https://github.com/vllm-project/vllm/pull/23734#discussion_r2324070603)
+- 2025-09-05 `MengqingCao`: Thanks for the great work! I tested the performance of this pull request and here are the experimental results: test model: deepseek-r1 hardware: Nvidia H20 Overall DCP brings some throughput gain in long-context/normal scenarios, and the kv cache grows to nearly cp-size ... (https://github.com/vllm-project/vllm/pull/23734#issuecomment-3257246934)
+- 2025-09-05 `youkaichao` on `vllm/engine/arg_utils.py`:1171: print tp size and dcp size in the assert error message. (https://github.com/vllm-project/vllm/pull/23734#discussion_r2324289192)
+- 2025-09-05 `youkaichao` on `vllm/v1/attention/backends/mla/common.py`:663: keep get dcp group().rank in group during init to avoid runtime call? similar to self.dcp world size (https://github.com/vllm-project/vllm/pull/23734#discussion_r2324292859)
+- 2025-09-05 `youkaichao` on `vllm/v1/attention/backends/mla/common.py`:1433: similar thing, only call get dcp group().world size once and keep it in self.dcp world size ? (https://github.com/vllm-project/vllm/pull/23734#discussion_r2324301430)
+- 2025-09-05 `youkaichao` on `vllm/v1/core/kv_cache_coordinator.py`:27: do we need to add default value like dcp world size=1 ? (https://github.com/vllm-project/vllm/pull/23734#discussion_r2324307494)
+- 2025-09-05 `zhenwenqi2024`: hello, deepseek mla with sequence parallel can save kvcache usage,we have done it ,do you have any plan to support sequence parallel? (https://github.com/vllm-project/vllm/pull/23734#issuecomment-3257401424)
+- 2025-09-05 `youzhedian`: hello, deepseek mla with sequence parallel can save kvcache usage,we have done it ,do you have any plan to support sequence parallel? I also have a SP implementation can work with this DCP which is only use for prefill. And vllm already ... (https://github.com/vllm-project/vllm/pull/23734#issuecomment-3257559979)
+- 2025-09-06 `youkaichao`: manually checked and verified that failures come from main. merging. hope we can have a clear and green main soon :( (https://github.com/vllm-project/vllm/pull/23734#issuecomment-3260931908)

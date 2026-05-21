@@ -1,76 +1,57 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#19351](https://github.com/vllm-project/vllm/pull/19351)
-- Source page: `sources/prs/vllm/PR-19351.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-19351`
-- Generated at: `2026-05-20T15:35:27.389951+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-06-09T08:23:57Z`
-- Merged: `2025-07-19T03:48:39Z`
-
-## Discussion Counts
-
-- Issue comments: 11
-- Review submissions: 23 (approved=1, changes_requested=1, commented=21)
-- Inline review comments: 69
-- Review threads observed: 49
-- Resolved/outdated thread markers: resolved=26, outdated=39
-- Human participants with discussion text: WoosukKwon, heheda12345, houseroad, huydhn, luccafong, mergify
-- Automation comments/reviews omitted from high-signal summary: 14
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-06-09T08:24:29Z` `COMMENTED` by `gemini-code-assist` - Hello @luccafong, I'm Gemini Code Assist[^1]! I'm currently reviewing this pull request and will post my feedback shortly. ... (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2909334415)
-- `2025-06-09T08:25:57Z` `CHANGES_REQUESTED` by `gemini-code-assist` - Code Review This pull request lays the groundwork for supporting local chunked attention in the hybrid KV cache. ... (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2909337625)
-- `2025-06-12T18:29:14Z` `COMMENTED` by `WoosukKwon` (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2922207704)
-- `2025-06-13T08:45:45Z` `COMMENTED` by `heheda12345` - Does the 1024-th token needs kv cache of token [0-1023] if attn chunk size is 1024? I think ... (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2923791877)
-- `2025-06-16T13:48:56Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2932226573)
-- `2025-06-16T13:53:06Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2932241482)
-- `2025-06-16T13:55:09Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2932248617)
-- `2025-06-16T13:55:18Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2932249184)
-- `2025-06-16T13:58:15Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2932260018)
-- `2025-06-16T14:02:00Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2932273438)
-- `2025-06-16T14:06:27Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2932288769)
-- `2025-06-16T14:11:01Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2932305169)
-- `2025-06-17T16:35:50Z` `COMMENTED` by `heheda12345` (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2932715006)
-- `2025-06-18T11:39:32Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2938862759)
-- `2025-06-18T11:40:28Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2938866721)
-- `2025-06-18T11:41:00Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2938869113)
-- `2025-06-18T11:42:33Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2938873474)
-- `2025-06-19T15:42:58Z` `COMMENTED` by `heheda12345` - Thanks for the great job. I think we have aligned on the expect behavior. Can you write some ... (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2943302180)
-- `2025-07-01T17:32:05Z` `COMMENTED` by `heheda12345` - Thank you very much! Left a few comments. (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2976280495)
-- `2025-07-14T18:24:22Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-3017355335)
-- `2025-07-15T08:25:20Z` `COMMENTED` by `heheda12345` - Thank you very much! Only some nits and eagle support. (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-3019261415)
-- `2025-07-16T19:49:39Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-3026590087)
-- `2025-07-17T01:54:59Z` `APPROVED` by `heheda12345` - Thanks for your contribution. Let's support hybrid allocator + local attention + eagle in a follow-up PR. (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-3027445145)
-
-## Inline Comment Hotspots
-
-- `vllm/v1/core/single_type_kv_cache_manager.py`: 38 inline comment(s)
-- `vllm/v1/kv_cache_interface.py`: 9 inline comment(s)
-- `tests/v1/core/test_specialized_manager.py`: 7 inline comment(s)
-- `vllm/v1/core/kv_cache_utils.py`: 5 inline comment(s)
-- `vllm/v1/attention/backends/flash_attn.py`: 4 inline comment(s)
-- `vllm/v1/worker/gpu_model_runner.py`: 4 inline comment(s)
-- `vllm/executor/executor_base.py`: 1 inline comment(s)
-- `vllm/entrypoints/openai/tool_parsers/xlam_tool_parser.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-06-19T15:42:58Z` `review` `COMMENTED` by `heheda12345`; signals: aligned, block, cache; excerpt: "Thanks for the great job. I think we have aligned on the expect behavior. Can you write some examples in find longest cache hit ..." (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2943302180)
-- `2025-06-16T14:06:27Z` `inline` by `luccafong` `vllm/v1/core/single_type_kv_cache_manager.py`:467; signals: attention, block, cache; excerpt: "Yeah For current token, we check from the first block that contains the attention window for cache hit until it miss. it mark computed ..." (https://github.com/vllm-project/vllm/pull/19351#discussion_r2150100786)
-- `2025-06-16T16:03:32Z` `inline` by `heheda12345` `vllm/v1/kv_cache_interface.py`:140; signals: attention, cache, kv cache; excerpt: "Please also update FullAttentionSpec.merge. This is for cases that hybrid allocator is disabled and we put all FullAttentionSpec and SlidingWindowSpec into the same kv ..." (https://github.com/vllm-project/vllm/pull/19351#discussion_r2150366166)
-- `2025-06-18T11:42:33Z` `inline` by `luccafong` `tests/v1/core/test_specialized_manager.py`:96; signals: block, cache, kv cache; excerpt: "Still confused about line 90. Given that the 20th token only attends on itself and doesn't need the kv cache of tokens [16-19], why ..." (https://github.com/vllm-project/vllm/pull/19351#discussion_r2154387585)
-- `2025-06-19T15:26:51Z` `inline` by `heheda12345` `vllm/v1/kv_cache_interface.py`:149; signals: attention, cache, kv cache; excerpt: "I think we shouldn't put layers with different chunk size to the same kv cache group. So I suggest to include attention chunk size ..." (https://github.com/vllm-project/vllm/pull/19351#discussion_r2157272651)
-- `2025-06-13T08:34:44Z` `inline` by `heheda12345` `vllm/v1/core/single_type_kv_cache_manager.py`:404; signals: attention, block, cache; excerpt: "assert self.attention chunk size % block size == 0?" (https://github.com/vllm-project/vllm/pull/19351#discussion_r2144496015)
-- `2025-06-13T08:45:45Z` `review` `COMMENTED` by `heheda12345`; signals: cache, kv cache; excerpt: "Does the 1024-th token needs kv cache of token [0-1023] if attn chunk size is 1024? I think most of my question comes from ..." (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2923791877)
-- `2025-06-13T08:24:48Z` `inline` by `heheda12345` `tests/v1/core/test_specialized_manager.py`:96; signals: attention, cache; excerpt: "The test result of line 89-93 is strange for me. Maybe I have some misunderstanding on the expect behavior. See my comment in ChunkedLocalAttentionManager.find ..." (https://github.com/vllm-project/vllm/pull/19351#discussion_r2144478136)
-- `2025-06-13T08:31:38Z` `inline` by `heheda12345` `vllm/v1/core/single_type_kv_cache_manager.py`:467; signals: block, cache; excerpt: "Can you explain the rule of cache hit? For example, block size 1 and chunk size 2, what is the expect result of the ..." (https://github.com/vllm-project/vllm/pull/19351#discussion_r2144490703)
-- `2025-06-13T08:37:24Z` `inline` by `heheda12345` `vllm/v1/core/single_type_kv_cache_manager.py`:454; signals: attention, cache; excerpt: "Why 1024 - 0? Does the attention of the 1024-th token (the first token of the next chunk) need tokens 0-1023?" (https://github.com/vllm-project/vllm/pull/19351#discussion_r2144500633)
-- `2025-06-16T13:55:09Z` `inline` by `luccafong` `vllm/v1/core/kv_cache_utils.py`:961; signals: attention, cache; excerpt: "This is not legal for existing models, either has sliding window or has chunked local attention is True, not both" (https://github.com/vllm-project/vllm/pull/19351#discussion_r2150075171)
-- `2025-06-17T16:17:43Z` `inline` by `heheda12345` `tests/v1/core/test_specialized_manager.py`:96; signals: cache, kv cache; excerpt: "Still confused about line 90. Given that the 20th token only attends on itself and doesn't need the kv cache of tokens [16-19], why ..." (https://github.com/vllm-project/vllm/pull/19351#discussion_r2152672221)
+- 2025-06-12 `WoosukKwon` on `vllm/v1/attention/backends/flash_attn.py`:541: Just curious: What is this for? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2143372749)
+- 2025-06-13 `heheda12345` on `vllm/v1/core/kv_cache_utils.py`:961: What if both has sliding window and has chunked local attention is true? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2144448261)
+- 2025-06-13 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:389: Why do we need to change the comment of SlidingWindowManager? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2144452624)
+- 2025-06-13 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:424: And format the code for the length limit constraint. Same for other parts of the code (https://github.com/vllm-project/vllm/pull/19351#discussion_r2144456440)
+- 2025-06-13 `heheda12345` on `tests/v1/core/test_specialized_manager.py`:96: The test result of line 89-93 is strange for me. Maybe I have some misunderstanding on the expect behavior. See my comment in ChunkedLocalAttentionManager.find longest cache hit (https://github.com/vllm-project/vllm/pull/19351#discussion_r2144478136)
+- 2025-06-13 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:467: Can you explain the rule of cache hit? For example, block size 1 and chunk size 2, what is the expect result of the following cases? 1. [miss miss] [miss miss] [miss miss]. Should it be 0 or 6? 2. [miss miss] ... (https://github.com/vllm-project/vllm/pull/19351#discussion_r2144490703)
+- 2025-06-13 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:404: assert self.attention chunk size % block size == 0? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2144496015)
+- 2025-06-13 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:454: Why 1024 - 0? Does the attention of the 1024-th token (the first token of the next chunk) need tokens 0-1023? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2144500633)
+- 2025-06-13 `heheda12345` on `vllm/v1/kv_cache_interface.py`:144: Please update FullAttentionSpec just like sliding window (https://github.com/vllm-project/vllm/pull/19351#discussion_r2144506985)
+- 2025-06-13 `heheda12345` commented: Does the 1024-th token needs kv cache of token [0-1023] if attn chunk size is 1024? I think most of my question comes from this problem. (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2923791877)
+- 2025-06-16 `luccafong` on `vllm/v1/attention/backends/flash_attn.py`:541: use local attention does not support cascade attention as noted in we make sure this is turned off here. (https://github.com/vllm-project/vllm/pull/19351#discussion_r2150060760)
+- 2025-06-16 `luccafong` on `vllm/v1/core/single_type_kv_cache_manager.py`:417: we need the actual index instead of the length here to calculate the actual attending window, e.g. given a max length of 128, and chunk size = 64, the context chunked as [0, 63] and [64, 127], the 127th should attend with ... (https://github.com/vllm-project/vllm/pull/19351#discussion_r2150070370)
+- 2025-06-16 `luccafong`: Does the 1024-th token needs kv cache of token [0-1023] if attn chunk size is 1024? I think most of my question comes from this problem. it does not need [0-1023] for 1024th token (https://github.com/vllm-project/vllm/pull/19351#issuecomment-2976758581)
+- 2025-06-16 `luccafong` on `vllm/v1/core/kv_cache_utils.py`:961: This is not legal for existing models, either has sliding window or has chunked local attention is True, not both (https://github.com/vllm-project/vllm/pull/19351#discussion_r2150075171)
+- 2025-06-16 `luccafong` on `vllm/v1/core/single_type_kv_cache_manager.py`:389: will revert the comment (https://github.com/vllm-project/vllm/pull/19351#discussion_r2150075511)
+- 2025-06-16 `luccafong` on `vllm/v1/core/single_type_kv_cache_manager.py`:454: here num computed tokens = 1024, so it is indexed 1023, which the local attention start from 0. (https://github.com/vllm-project/vllm/pull/19351#discussion_r2150082518)
+- 2025-06-16 `luccafong` on `vllm/v1/core/single_type_kv_cache_manager.py`:404: the logic should have covered case !=0? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2150090879)
+- 2025-06-16 `luccafong` on `vllm/v1/core/single_type_kv_cache_manager.py`:467: Yeah For current token, we check from the first block that contains the attention window for cache hit until it miss. it mark computed blocks = previous unattended blocks + of hit blocks, so even zero hit, it return the previous unattended ... (https://github.com/vllm-project/vllm/pull/19351#discussion_r2150100786)
+- 2025-06-16 `luccafong` on `tests/v1/core/test_specialized_manager.py`:96: 89: in total 21 tokens since we have tail token =1, for the last token(20th), it only attend on it self, [0-3][4-7]...[20], so hit blocks is 20/2 = 10. 90 88: in total 20 tokens since we have tail token=0, for the ... (https://github.com/vllm-project/vllm/pull/19351#discussion_r2150110899)
+- 2025-06-16 `heheda12345` on `vllm/v1/kv_cache_interface.py`:140: Please also update FullAttentionSpec.merge. This is for cases that hybrid allocator is disabled and we put all FullAttentionSpec and SlidingWindowSpec into the same kv cache group. (https://github.com/vllm-project/vllm/pull/19351#discussion_r2150366166)
+- 2025-06-17 `heheda12345` on `tests/v1/core/test_specialized_manager.py`:96: Still confused about line 90. Given that the 20th token only attends on itself and doesn't need the kv cache of tokens [16-19], why is the longest cache hit not 20? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2152672221)
+- 2025-06-17 `heheda12345` on `tests/v1/core/test_specialized_manager.py`:203: This test, as token 4 doesn't need the kv cache of tokens [0-3], why do you need to keep them? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2152687212)
+- 2025-06-17 `heheda12345` on `vllm/v1/attention/backends/flash_attn.py`:541: Do you need this line in this function? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2152690742)
+- 2025-06-17 `heheda12345` on `vllm/v1/worker/gpu_model_runner.py`:2341: Can you implement or add assertion for both sliding window and chunked attention are used? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2152706872)
+- 2025-06-18 `luccafong` on `tests/v1/core/test_specialized_manager.py`:203: token 4 (if 1 indexed) need kv cache of [0-4], (https://github.com/vllm-project/vllm/pull/19351#discussion_r2154380173)
+- 2025-06-18 `luccafong` on `vllm/v1/attention/backends/flash_attn.py`:541: I left it out when merging, will add back (https://github.com/vllm-project/vllm/pull/19351#discussion_r2154383060)
+- 2025-06-18 `luccafong` on `tests/v1/core/test_specialized_manager.py`:96: Still confused about line 90. Given that the 20th token only attends on itself and doesn't need the kv cache of tokens [16-19], why is the longest cache hit not 20? sorry my previous comment for 90 meant for line 88 (where ... (https://github.com/vllm-project/vllm/pull/19351#discussion_r2154387585)
+- 2025-06-19 `heheda12345` on `vllm/entrypoints/openai/tool_parsers/xlam_tool_parser.py`:7: why do you need this line? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2157183559)
+- 2025-06-19 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:445: In eagle, we can't simply pop the last block. For example, chunk size 2 and block size 1: [miss, miss] [miss miss] - cache hit length 4 if we remove the 3-th block (0-indexed), the cache hit length becomes 3, but [miss, ... (https://github.com/vllm-project/vllm/pull/19351#discussion_r2157218429)
+- 2025-06-19 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:432: Can you change the length of each line to 80 characters? And should [430-432] be put before [425-429]? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2157222854)
+- 2025-06-19 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:424: Why do you need this comment? what is x for? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2157223543)
+- 2025-06-19 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:452: Can you change the comment to 80 characters per line? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2157226508)
+- 2025-06-19 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:455: Can you make the comment more clear? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2157227606)
+- 2025-06-19 `heheda12345` on `vllm/v1/worker/gpu_model_runner.py`:2480: Can you avoid using \ to split lines? Use () + formatter instead like line 2466-2467 (https://github.com/vllm-project/vllm/pull/19351#discussion_r2157230702)
+- 2025-06-19 `heheda12345` on `vllm/v1/kv_cache_interface.py`:129: Can you try to avoid the code duplication of sliding window & chunk attention? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2157236758)
+- 2025-06-19 `heheda12345` on `vllm/v1/kv_cache_interface.py`:137: I feel that this version is easier to understand (https://github.com/vllm-project/vllm/pull/19351#discussion_r2157246249)
+- 2025-06-19 `heheda12345` on `vllm/v1/kv_cache_interface.py`:149: I think we shouldn't put layers with different chunk size to the same kv cache group. So I suggest to include attention chunk size into the type id just like sliding window in SlidingWindowSpec. Then, you don't need to implement ChunkedLocalAttentionSpec.merge as ... (https://github.com/vllm-project/vllm/pull/19351#discussion_r2157272651)
+- 2025-06-19 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:404: Yes, you are right. (https://github.com/vllm-project/vllm/pull/19351#discussion_r2157276649)
+- 2025-06-19 `heheda12345` on `tests/v1/core/test_specialized_manager.py`:96: Talked with @luccafong offline. The examples have been updated and make sense to me. (https://github.com/vllm-project/vllm/pull/19351#discussion_r2157286562)
+- 2025-06-19 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:454: can you update the comment? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2157287783)
+- 2025-06-19 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:465: why do you need this blocdids? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2157292442)
+- 2025-06-19 `heheda12345` on `vllm/v1/kv_cache_interface.py`:166: remove this function after updating type id (https://github.com/vllm-project/vllm/pull/19351#discussion_r2157297027)
+- 2025-06-19 `heheda12345` commented: Thanks for the great job. I think we have aligned on the expect behavior. Can you write some examples in find longest cache hit and remove skipped blocks to help people understand it? (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2943302180)
+- 2025-07-01 `heheda12345` on `vllm/v1/kv_cache_interface.py`:117: Can you make the assertion message a bit general? Don't want to update this when adding more types of attention layers. (https://github.com/vllm-project/vllm/pull/19351#discussion_r2178143687)
+- 2025-07-01 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:417: A counter example: chunk size 4, block size 1, max length 4. [hit hit hit miss], should return cache hit length 2 but seems that current logic returns 3. Note that eagle removes the last hit block instead of the last block (https://github.com/vllm-project/vllm/pull/19351#discussion_r2178167564)
+- 2025-07-01 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:406: Can you add some examples in the comment of this function? (https://github.com/vllm-project/vllm/pull/19351#discussion_r2178176787)
+- 2025-07-01 `heheda12345` commented: Thank you very much! Left a few comments. (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-2976280495)
+- 2025-07-14 `luccafong` on `vllm/v1/core/single_type_kv_cache_manager.py`:417: Hey @heheda12345 , for your example, max length 4, where the next token is 4th (zero indexed), we need to recompute for the 3rd token( zero indexed), and consider the first window with block 0 to block 2, if they are hit, ... (https://github.com/vllm-project/vllm/pull/19351#discussion_r2205548322)
+- 2025-07-15 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:402: please remember to move this comment (https://github.com/vllm-project/vllm/pull/19351#discussion_r2206802566)
+- 2025-07-15 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:421: Thanks for the detailed examples! (https://github.com/vllm-project/vllm/pull/19351#discussion_r2206808625)
+- 2025-07-15 `heheda12345` on `vllm/v1/core/single_type_kv_cache_manager.py`:435: Reminder: check this example after we decide how to implement eagle (https://github.com/vllm-project/vllm/pull/19351#discussion_r2206810788)
+- 2025-07-15 `heheda12345` commented: Thank you very much! Only some nits and eagle support. (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-3019261415)
+- 2025-07-16 `luccafong` on `vllm/v1/core/single_type_kv_cache_manager.py`:435: as discussed offline, remove this to implement eagle + local chunked attention in another PR (https://github.com/vllm-project/vllm/pull/19351#discussion_r2211411310)
+- 2025-07-17 `heheda12345` approved: Thanks for your contribution. Let's support hybrid allocator + local attention + eagle in a follow-up PR. (https://github.com/vllm-project/vllm/pull/19351#pullrequestreview-3027445145)
+- 2025-07-17 `luccafong`: for [buildkite/ci/pr/basic-models-test]( this is due to corrupted model file on CI server, can pass locally for [buildkite/ci/pr/tpu-v1-test]( can not see the exact error from logs (https://github.com/vllm-project/vllm/pull/19351#issuecomment-3085028373)
+- 2025-07-18 `luccafong`: @houseroad @mgoin the failed two tests all related to a new model not supported in transformer and not related to this PR, could you check if this is good to merge? (https://github.com/vllm-project/vllm/pull/19351#issuecomment-3090784222)
+- 2025-07-19 `huydhn`: @houseroad @mgoin the failed two tests all related to a new model not supported in transformer and not related to this PR, could you check if this is good to merge? Just FYI, that is a new failure coming from so not ... (https://github.com/vllm-project/vllm/pull/19351#issuecomment-3091357334)

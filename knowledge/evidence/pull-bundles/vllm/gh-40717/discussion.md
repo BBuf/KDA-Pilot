@@ -1,74 +1,42 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#40717](https://github.com/vllm-project/vllm/pull/40717)
-- Source page: `sources/prs/vllm/PR-40717.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-40717`
-- Generated at: `2026-05-20T15:40:50.160357+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-04-23T16:33:12Z`
-- Merged: `2026-05-20T08:46:56Z`
-
-## Discussion Counts
-
-- Issue comments: 17
-- Review submissions: 33 (approved=1, commented=32)
-- Inline review comments: 37
-- Review threads observed: 11
-- Resolved/outdated thread markers: resolved=11, outdated=8
-- Human participants with discussion text: ZJY0516, arpera, claude, mergify, sighingnow, vadiklyutiy
-- Automation comments/reviews omitted from high-signal summary: 3
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-04-23T16:33:16Z` `COMMENTED` by `claude` - Claude Code Review This pull request is from a fork — automated review is disabled. A repository maintainer ... (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4164174843)
-- `2026-04-23T16:35:10Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request adds support for FlashInfer's Blackwell SM100 GDN prefill kernel by introducing the nvidia-cutlass-dsl ... (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4164184319)
-- `2026-04-30T17:42:51Z` `COMMENTED` by `ZJY0516` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4207268116)
-- `2026-05-01T08:36:26Z` `COMMENTED` by `arpera` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4210575690)
-- `2026-05-01T17:02:20Z` `COMMENTED` by `ZJY0516` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4212283690)
-- `2026-05-01T17:09:32Z` `COMMENTED` by `arpera` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4212312571)
-- `2026-05-01T17:27:55Z` `COMMENTED` by `ZJY0516` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4212400292)
-- `2026-05-04T14:29:06Z` `COMMENTED` by `arpera` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4220881238)
-- `2026-05-05T02:15:47Z` `COMMENTED` by `ZJY0516` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4224866858)
-- `2026-05-05T05:00:24Z` `COMMENTED` by `arpera` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4225379511)
-- `2026-05-05T08:35:07Z` `COMMENTED` by `ZJY0516` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4226431211)
-- `2026-05-05T08:45:14Z` `COMMENTED` by `arpera` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4226495916)
-- `2026-05-05T08:56:53Z` `COMMENTED` by `ZJY0516` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4226555476)
-- `2026-05-05T09:03:42Z` `COMMENTED` by `arpera` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4226609266)
-- `2026-05-05T09:05:15Z` `COMMENTED` by `ZJY0516` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4226619027)
-- `2026-05-05T09:08:34Z` `COMMENTED` by `arpera` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4226638299)
-- `2026-05-05T09:12:45Z` `COMMENTED` by `ZJY0516` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4226675186)
-- `2026-05-05T10:39:26Z` `COMMENTED` by `arpera` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4227236004)
-- `2026-05-05T10:41:39Z` `COMMENTED` by `arpera` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4227247825)
-- `2026-05-05T11:24:02Z` `COMMENTED` by `ZJY0516` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4227488625)
-- `2026-05-05T11:46:13Z` `COMMENTED` by `arpera` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4227623940)
-- `2026-05-05T11:52:55Z` `COMMENTED` by `arpera` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4227667688)
-- `2026-05-05T11:53:24Z` `COMMENTED` by `arpera` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4227670205)
-- `2026-05-06T12:03:29Z` `COMMENTED` by `vadiklyutiy` (https://github.com/vllm-project/vllm/pull/40717#pullrequestreview-4235850906)
-- ... 9 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/layers/mamba/gdn_linear_attn.py`: 11 inline comment(s)
-- `setup.py`: 10 inline comment(s)
-- `docker/Dockerfile`: 8 inline comment(s)
-- `vllm/platforms/interface.py`: 8 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-05-01T08:36:26Z` `inline` by `arpera` `docker/Dockerfile`:179; signals: blackwell, cuda, cutlass, flashinfer, kernel, sm100; excerpt: "FI has already this dependency but just as an optional extra. From the flashinfer repo: - requirements.txt uses base nvidia-cutlass-dsl =4.4.2 unconditionally. - pyproject.toml ..." (https://github.com/vllm-project/vllm/pull/40717#discussion_r3172619121)
-- `2026-05-06T12:08:31Z` `inline` by `arpera` `setup.py`:972; signals: blackwell, cutlass, flashinfer, hang, kernel; excerpt: "Blackwell GDN kernel requires nvidia-cutlass-dsl[cu13] extras that we do not install normally. Flashinfer also doesn't install it by default unless you specify it during ..." (https://github.com/vllm-project/vllm/pull/40717#discussion_r3195274667)
-- `2026-05-05T08:45:14Z` `inline` by `arpera` `vllm/platforms/interface.py`:365; signals: cuda, cutlass, flashinfer, kernel; excerpt: "Do you mean this function get cuda runtime major? No, we still need it. We use it in should use flashinfer gdn prefill because ..." (https://github.com/vllm-project/vllm/pull/40717#discussion_r3187099017)
-- `2026-05-04T14:29:06Z` `inline` by `arpera` `docker/Dockerfile`:179; signals: cutlass, flashinfer, kernel; excerpt: "I figured out that Flashinfer's wheel package supports [cu13] extras that includes the same dependency I need nvidia-cutlass-dsl[cu13]. I started to use this approach ..." (https://github.com/vllm-project/vllm/pull/40717#discussion_r3182252004)
-- `2026-05-06T12:50:51Z` `inline` by `arpera` `vllm/model_executor/layers/mamba/gdn_linear_attn.py`:89; signals: blackwell, hopper, kernel; excerpt: "FI GDN prefill for Blackwell support only 128 head k dim? Yes, have a look: (search for "requires head size=128" on this web page). ..." (https://github.com/vllm-project/vllm/pull/40717#discussion_r3195526865)
-- `2026-05-19T06:52:47Z` `inline` by `ZJY0516` `vllm/model_executor/layers/mamba/gdn_linear_attn.py`:132; signals: cutlass, kernel, sm90; excerpt: "only show this log for sm90, because only sm90 is cutlass jit kernel" (https://github.com/vllm-project/vllm/pull/40717#discussion_r3264242964)
-- `2026-05-05T09:12:45Z` `inline` by `ZJY0516` `setup.py`:972; signals: cutlass, flashinfer; excerpt: "We need to install nvidia-cutlass-dsl[cu13], but now it requires nvidia-cutlass-dsl. But flashinfer-python[cu13] requires nvidia-cutlass-dsl[cu13], not sure if it will conflict" (https://github.com/vllm-project/vllm/pull/40717#discussion_r3187265806)
-- `2026-05-05T10:39:26Z` `inline` by `arpera` `setup.py`:972; signals: cutlass, flashinfer; excerpt: "If we install flashinfer-python[cu13] then nvidia-cutlass-dsl[cu13] package will be installed automatically. See:" (https://github.com/vllm-project/vllm/pull/40717#discussion_r3187779068)
-- `2026-05-19T08:23:07Z` `issue` by `arpera`; signals: b200, hang, kernel; excerpt: "CI job [kernels-b200]( failed not because of this change. It also failed on main today:" (https://github.com/vllm-project/vllm/pull/40717#issuecomment-4485809537)
-- `2026-05-05T08:54:42Z` `inline` by `ZJY0516` `vllm/platforms/interface.py`:365; signals: aligned, cuda; excerpt: "I think we can expect users have aligned cuda version and torch version" (https://github.com/vllm-project/vllm/pull/40717#discussion_r3187156294)
-- `2026-05-05T09:03:42Z` `inline` by `arpera` `vllm/platforms/interface.py`:372; signals: cuda, cutlass; excerpt: "Should I then remove these cuda version and cutlass dsl verions checks?" (https://github.com/vllm-project/vllm/pull/40717#discussion_r3187203871)
-- `2026-05-05T10:41:38Z` `inline` by `arpera` `setup.py`:972; signals: cuda, hang; excerpt: "In cuda.txt we cannot change this because users might want to use cu128 for example" (https://github.com/vllm-project/vllm/pull/40717#discussion_r3187790601)
+- 2026-04-26 `sighingnow`: @arpera I have managed to resolve the problem with the following change to flashinfer: (https://github.com/vllm-project/vllm/pull/40717#issuecomment-4321742951)
+- 2026-04-26 `arpera`: I’m still interested in the following: have you used this patch for Flashinfer ( If yes, could you please share more details about your hardware, environment, and a reproducible example? (https://github.com/vllm-project/vllm/pull/40717#issuecomment-4321958834)
+- 2026-04-27 `sighingnow`: I’m still interested in the following: have you used this patch for Flashinfer ([flashinfer-ai/flashinfer 3155]( If yes, could you please share more details about your hardware, environment, and a reproducible example? This patch was already included. (https://github.com/vllm-project/vllm/pull/40717#issuecomment-4324080213)
+- 2026-04-30 `ZJY0516` on `docker/Dockerfile`:179: Could you ask flashinfer team why this is not added to flashinfer dependency? (https://github.com/vllm-project/vllm/pull/40717#discussion_r3169783239)
+- 2026-05-01 `arpera` on `docker/Dockerfile`:179: FI has already this dependency but just as an optional extra. From the flashinfer repo: - requirements.txt uses base nvidia-cutlass-dsl =4.4.2 unconditionally. - pyproject.toml defines two extras for the SM100 path: - This was added in the same PR that introduced the ... (https://github.com/vllm-project/vllm/pull/40717#discussion_r3172619121)
+- 2026-05-01 `ZJY0516` on `docker/Dockerfile`:179: vllm also has cu12 and cu13 variants, so we may have a way to install different package on different platform (https://github.com/vllm-project/vllm/pull/40717#discussion_r3174221093)
+- 2026-05-01 `arpera` on `docker/Dockerfile`:179: Since I am not much familiar with our build policies, Jiangyun, could you please a bit clarify for me what I should do about this issue? (https://github.com/vllm-project/vllm/pull/40717#discussion_r3174246924)
+- 2026-05-01 `ZJY0516` on `docker/Dockerfile`:179: I have no idea too. You can ask LLM for more build related knowledge. I'm wondering can we set different dependency for different wheel variant (https://github.com/vllm-project/vllm/pull/40717#discussion_r3174327851)
+- 2026-05-04 `arpera` on `docker/Dockerfile`:179: I figured out that Flashinfer's wheel package supports [cu13] extras that includes the same dependency I need nvidia-cutlass-dsl[cu13]. I started to use this approach to properly install dependencies for Backwell GDN FI kernel. It should be more clear. (https://github.com/vllm-project/vllm/pull/40717#discussion_r3182252004)
+- 2026-05-05 `ZJY0516` on `docker/Dockerfile`:179: I think it's not only about docker, what about users directly install by pip install vllm (https://github.com/vllm-project/vllm/pull/40717#discussion_r3185674133)
+- 2026-05-05 `arpera` on `docker/Dockerfile`:179: I also did the same change in setup.py for those who uses pip install vllm. (https://github.com/vllm-project/vllm/pull/40717#discussion_r3186128477)
+- 2026-05-05 `ZJY0516` on `vllm/platforms/interface.py`:365: Now we don't need this anymore, right? (https://github.com/vllm-project/vllm/pull/40717#discussion_r3187043001)
+- 2026-05-05 `arpera` on `vllm/platforms/interface.py`:365: Do you mean this function get cuda runtime major? No, we still need it. We use it in should use flashinfer gdn prefill because there might be a case when user have installed nvidia-cutlass-dsl-libs-cu13 but have torch version 12.8 for example. This ... (https://github.com/vllm-project/vllm/pull/40717#discussion_r3187099017)
+- 2026-05-05 `ZJY0516` on `vllm/platforms/interface.py`:365: I think we can expect users have aligned cuda version and torch version (https://github.com/vllm-project/vllm/pull/40717#discussion_r3187156294)
+- 2026-05-05 `ZJY0516` on `vllm/platforms/interface.py`:372: We don't need this too (https://github.com/vllm-project/vllm/pull/40717#discussion_r3187158712)
+- 2026-05-05 `ZJY0516` on `setup.py`:972: we may also parse and handle nvidia-cutlass-dsl see and (https://github.com/vllm-project/vllm/pull/40717#discussion_r3187167570)
+- 2026-05-05 `arpera` on `vllm/platforms/interface.py`:372: Should I then remove these cuda version and cutlass dsl verions checks? (https://github.com/vllm-project/vllm/pull/40717#discussion_r3187203871)
+- 2026-05-05 `arpera` on `setup.py`:972: I think I didn't catch your idea. Could you explain what do you want there to see? (https://github.com/vllm-project/vllm/pull/40717#discussion_r3187229805)
+- 2026-05-05 `ZJY0516` on `setup.py`:972: We need to install nvidia-cutlass-dsl[cu13], but now it requires nvidia-cutlass-dsl. But flashinfer-python[cu13] requires nvidia-cutlass-dsl[cu13], not sure if it will conflict (https://github.com/vllm-project/vllm/pull/40717#discussion_r3187265806)
+- 2026-05-05 `arpera` on `setup.py`:972: If we install flashinfer-python[cu13] then nvidia-cutlass-dsl[cu13] package will be installed automatically. See: (https://github.com/vllm-project/vllm/pull/40717#discussion_r3187779068)
+- 2026-05-05 `arpera` on `setup.py`:972: In cuda.txt we cannot change this because users might want to use cu128 for example (https://github.com/vllm-project/vllm/pull/40717#discussion_r3187790601)
+- 2026-05-05 `ZJY0516` on `setup.py`:972: the version constraint in cuda.txt is for flash-attn (https://github.com/vllm-project/vllm/pull/40717#discussion_r3188017304)
+- 2026-05-05 `arpera` on `setup.py`:972: I don't understand what's wrong with my current approach to detect cuda13 installed in setup.py (https://github.com/vllm-project/vllm/pull/40717#discussion_r3188141034)
+- 2026-05-06 `sighingnow`: @arpera I just found that the final state needs to be transposed with .transpose(-1, -2) to get the correct result with flashinfer GDN prefill on B300. I'm curious about why you didn't handle that? (https://github.com/vllm-project/vllm/pull/40717#issuecomment-4386111665)
+- 2026-05-06 `vadiklyutiy` on `setup.py`:972: I am also a bit confused with changes in installation process. Could you please explain me what we try to do/fix. (https://github.com/vllm-project/vllm/pull/40717#discussion_r3195246726)
+- 2026-05-06 `arpera` on `setup.py`:972: Blackwell GDN kernel requires nvidia-cutlass-dsl[cu13] extras that we do not install normally. Flashinfer also doesn't install it by default unless you specify it during installation with flashinfer-python[cu13] extras. I think this change should not be done in this PR but in a ... (https://github.com/vllm-project/vllm/pull/40717#discussion_r3195274667)
+- 2026-05-06 `vadiklyutiy` on `vllm/model_executor/layers/mamba/gdn_linear_attn.py`:89: FI GDN prefill for Blackwell support only 128 head k dim? Any ror Hopper? Want to double check. (https://github.com/vllm-project/vllm/pull/40717#discussion_r3195285097)
+- 2026-05-06 `vadiklyutiy` on `vllm/model_executor/layers/mamba/gdn_linear_attn.py`:117: triton is also JIT compiled... (https://github.com/vllm-project/vllm/pull/40717#discussion_r3195293390)
+- 2026-05-06 `vadiklyutiy` on `vllm/model_executor/layers/mamba/gdn_linear_attn.py`:197: In my flavor, I'd place if use flashinfer inside forward cuda. (https://github.com/vllm-project/vllm/pull/40717#discussion_r3195458027)
+- 2026-05-06 `vadiklyutiy` on `setup.py`:972: Ok, lets move this discussion to 41711 (https://github.com/vllm-project/vllm/pull/40717#discussion_r3195469821)
+- 2026-05-06 `arpera` on `vllm/model_executor/layers/mamba/gdn_linear_attn.py`:89: FI GDN prefill for Blackwell support only 128 head k dim? Yes, have a look: (search for "requires head size=128" on this web page). Any ror Hopper? I think for Hooper we use different kernel, so there is not such a requirement. (https://github.com/vllm-project/vllm/pull/40717#discussion_r3195526865)
+- 2026-05-06 `arpera` on `vllm/model_executor/layers/mamba/gdn_linear_attn.py`:117: This print was before my change. Of course I can change this, but should I do that? If so then what we should print there? (https://github.com/vllm-project/vllm/pull/40717#discussion_r3195534993)
+- 2026-05-06 `sighingnow`: Good question, let me check first @arpera I see what went wrong: vllm main has already changed the state layout in 33291, I should do a cherry-pick. (https://github.com/vllm-project/vllm/pull/40717#issuecomment-4389471852)
+- 2026-05-07 `arpera` on `vllm/model_executor/layers/mamba/gdn_linear_attn.py`:89: I did double check based on FI source code: Blackwell implementation requires head size == 128 ([link]( Hooper does not have such a requirement (https://github.com/vllm-project/vllm/pull/40717#discussion_r3202090256)
+- 2026-05-07 `arpera` on `vllm/model_executor/layers/mamba/gdn_linear_attn.py`:197: Are you sure? Currently we set self. forward method only once in init . You propose to move this if statement inside forward cuda that means we will process this if statement each time in runtime. (https://github.com/vllm-project/vllm/pull/40717#discussion_r3202153036)
+- 2026-05-19 `ZJY0516`: Does any thing block this PR now? (https://github.com/vllm-project/vllm/pull/40717#issuecomment-4483723176)
+- 2026-05-19 `arpera`: No, there are no blockers more. FI bump v0.6.11.post2 and cutlass-dsl bump 4.5.1 were merged. We can review and merge this PR too. (https://github.com/vllm-project/vllm/pull/40717#issuecomment-4484962107)
+- 2026-05-19 `ZJY0516` on `vllm/model_executor/layers/mamba/gdn_linear_attn.py`:115: This is a little noisy actually. Could you follow the logging style of the normal attention selector (https://github.com/vllm-project/vllm/pull/40717#discussion_r3264237802)
+- 2026-05-19 `ZJY0516` on `vllm/model_executor/layers/mamba/gdn_linear_attn.py`:132: only show this log for sm90, because only sm90 is cutlass jit kernel (https://github.com/vllm-project/vllm/pull/40717#discussion_r3264242964)
+- 2026-05-19 `arpera`: CI job [kernels-b200]( failed not because of this change. It also failed on main today: (https://github.com/vllm-project/vllm/pull/40717#issuecomment-4485809537)
+- 2026-05-19 `arpera`: CI job [language-models-tests-hybrid-1]( failed not because of this change. It also failed on main today: (https://github.com/vllm-project/vllm/pull/40717#issuecomment-4487204251)
+- 2026-05-19 `arpera`: CI job [model-executor]( failed not because of this change. It also failed on main today: (https://github.com/vllm-project/vllm/pull/40717#issuecomment-4488637086)

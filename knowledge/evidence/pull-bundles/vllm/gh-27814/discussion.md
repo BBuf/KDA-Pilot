@@ -1,82 +1,50 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#27814](https://github.com/vllm-project/vllm/pull/27814)
-- Source page: `sources/prs/vllm/PR-27814.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-27814`
-- Generated at: `2026-05-20T15:38:20.076085+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-10-30T14:25:04Z`
-- Merged: `2026-01-20T06:48:20Z`
-
-## Discussion Counts
-
-- Issue comments: 31
-- Review submissions: 74 (approved=2, commented=72)
-- Inline review comments: 124
-- Review threads observed: 69
-- Resolved/outdated thread markers: resolved=43, outdated=50
-- Human participants with discussion text: LucasWilkinson, ProExpertProg, chatgpt-codex-connector, cursor, hangy-amd, mergify, nvpohanh, robertgshaw2-redhat, tjtanaa, vllmellm
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-11-01T16:41:47Z` `COMMENTED` by `chatgpt-codex-connector` - 💡 Codex Review Here are some automated review suggestions for this pull request. ℹ️ About Codex in GitHub ... (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3407594216)
-- `2025-11-03T22:13:23Z` `COMMENTED` by `ProExpertProg` - Thanks for this work, this has been long overdue! A few initial comments, will take a closer look ... (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3412938365)
-- `2025-11-04T14:12:50Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3416701860)
-- `2025-11-04T14:13:03Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3416703096)
-- `2025-11-04T14:14:09Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3416710350)
-- `2025-11-04T14:14:29Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3416712551)
-- `2025-11-04T14:17:06Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3416727969)
-- `2025-11-04T14:26:37Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3416773457)
-- `2025-11-04T14:27:24Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3416776820)
-- `2025-11-04T14:28:12Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3416780367)
-- `2025-11-04T14:28:19Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3416780917)
-- `2025-11-04T14:28:30Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3416781723)
-- `2025-11-04T14:33:44Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3416805423)
-- `2025-11-04T14:36:43Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3416818300)
-- `2025-11-06T22:35:13Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3430812722)
-- `2025-11-06T22:53:06Z` `COMMENTED` by `ProExpertProg` - Great improvements, thanks! a few more comments and then we should be ready for review! (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3430815200)
-- `2025-11-07T12:15:10Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3433534617)
-- `2025-11-07T12:15:22Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3433535879)
-- `2025-11-07T12:15:28Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3433536598)
-- `2025-11-07T12:15:45Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3433538386)
-- `2025-11-07T12:15:53Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3433539051)
-- `2025-11-07T12:16:03Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3433540325)
-- `2025-11-07T12:16:21Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3433542104)
-- `2025-11-07T12:16:37Z` `COMMENTED` by `vllmellm` (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3433543778)
-- ... 50 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/layers/quantization/kernels/scaled_mm/ScaledMMLinearKernel.py`: 19 inline comment(s)
-- `vllm/model_executor/layers/quantization/kernels/scaled_mm/flashinfer.py`: 14 inline comment(s)
-- `vllm/model_executor/layers/quantization/kernels/scaled_mm/__init__.py`: 11 inline comment(s)
-- `tests/compile/test_fusion.py`: 11 inline comment(s)
-- `tests/compile/test_fusion_attn.py`: 9 inline comment(s)
-- `vllm/model_executor/layers/quantization/kernels/scaled_mm/pytorch.py`: 8 inline comment(s)
-- `vllm/model_executor/layers/quantization/fp8.py`: 7 inline comment(s)
-- `tests/utils.py`: 7 inline comment(s)
-- `vllm/model_executor/layers/quantization/compressed_tensors/schemes/compressed_tensors_w8a8_fp8.py`: 5 inline comment(s)
-- `vllm/model_executor/layers/quantization/kernels/scaled_mm/aiter.py`: 5 inline comment(s)
-- `vllm/model_executor/layers/quantization/utils/quant_utils.py`: 5 inline comment(s)
-- `vllm/model_executor/layers/quantization/kernels/scaled_mm/utils.py`: 4 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-01-13T18:08:31Z` `inline` by `cursor` `vllm/model_executor/layers/quantization/kernels/scaled_mm/flashinfer.py`:57; signals: blackwell, cuda, cutlass, flashinfer, fp8, gemm, kernel; excerpt: "FlashInfer kernel missing output reshape to expected shape High Severity FlashInferFP8ScaledMMLinearKernel.apply scaled mm returns the raw output from flashinfer scaled fp8 mm without calling ..." (https://github.com/vllm-project/vllm/pull/27814#discussion_r2687519726)
-- `2025-11-12T07:48:29Z` `inline` by `chatgpt-codex-connector` `vllm/model_executor/layers/quantization/kernels/scaled_mm/pytorch.py`:117; signals: cuda, cute, fp8, gemm, kernel; excerpt: "is never invoked, so on PyTorch ≥2.5 (where scaled mm requires non‑None scale tensors) this path will raise at runtime before the GEMM executes. ..." (https://github.com/vllm-project/vllm/pull/27814#discussion_r2517267640)
-- `2025-11-13T16:35:51Z` `inline` by `chatgpt-codex-connector` `vllm/model_executor/layers/quantization/kernels/scaled_mm/__init__.py`:70; signals: cuda, fp8, gemm, kernel, regression; excerpt: "now only lists CUDA and ROCm kernels, yet init fp8 linear kernel always indexes this dict with current platform. enum. On a CPU build ..." (https://github.com/vllm-project/vllm/pull/27814#discussion_r2524158294)
-- `2026-01-09T10:28:32Z` `inline` by `cursor` `vllm/model_executor/layers/quantization/kernels/scaled_mm/flashinfer.py`:57; signals: cutlass, flashinfer, fp8, gemm, kernel; excerpt: "FlashInfer kernel missing output tensor reshape High Severity The FlashInferScaledMMLinearKernel.apply scaled mm method accepts output shape as a parameter but does not use it ..." (https://github.com/vllm-project/vllm/pull/27814#discussion_r2675656270)
-- `2026-01-13T13:02:39Z` `inline` by `cursor` `vllm/model_executor/layers/quantization/kernels/scaled_mm/flashinfer.py`:57; signals: cutlass, flashinfer, fp8, gemm, kernel; excerpt: "FlashInfer kernel missing output shape transformation High Severity FlashInferScaledMMLinearKernel.apply scaled mm ignores the output shape parameter and returns the raw GEMM output without reshaping ..." (https://github.com/vllm-project/vllm/pull/27814#discussion_r2686326215)
-- `2026-01-13T15:50:38Z` `inline` by `cursor` `vllm/model_executor/layers/quantization/kernels/scaled_mm/flashinfer.py`:57; signals: cutlass, flashinfer, fp8, gemm, kernel; excerpt: "FlashInfer kernel missing output tensor reshape High Severity The FlashInferFP8ScaledMMLinearKernel.apply scaled mm method returns the raw GEMM output without reshaping it using the output ..." (https://github.com/vllm-project/vllm/pull/27814#discussion_r2687007569)
-- `2025-11-01T16:41:47Z` `inline` by `chatgpt-codex-connector` `vllm/model_executor/layers/quantization/kernels/scaled_mm/flash_infer.py`:25; signals: cuda, flashinfer, fp8, kernel; excerpt: ". When FlashInfer is selected as the FP8 kernel this raises TypeError: flashinfer w8a8 scaled mm() got an unexpected keyword argument 'output shape' before ..." (https://github.com/vllm-project/vllm/pull/27814#discussion_r2483791189)
-- `2026-01-13T15:50:38Z` `inline` by `cursor` `tests/compile/test_fusion.py`:66; signals: compile, flashinfer, fp8, kernel; excerpt: "Test configurations mismatch kernel capabilities for per-token Medium Severity The test configurations and comments claim FlashInferFP8ScaledMMLinearKernel and ROCmFP8ScaledMMLinearKernel support both per-tensor and per-token group ..." (https://github.com/vllm-project/vllm/pull/27814#discussion_r2687007575)
-- `2025-11-04T14:36:43Z` `inline` by `vllmellm` `vllm/model_executor/layers/quantization/kernels/scaled_mm/__init__.py`:51; signals: cuda, kernel, triton; excerpt: "The current implementation does not dispatch triton kernels on CUDA platforms. Can we follow up with another PR that adds triton kernels to CUDA?" (https://github.com/vllm-project/vllm/pull/27814#discussion_r2490771968)
-- `2025-11-13T16:35:51Z` `inline` by `chatgpt-codex-connector` `vllm/model_executor/layers/quantization/fp8.py`:387; signals: block, cutlass, fp8; excerpt: "activation scales on a cutlass‑capable GPU and to kFp8DynamicTensorSym for all other cases (lines 382‑387). This reverses the semantics of the key: dynamic models ..." (https://github.com/vllm-project/vllm/pull/27814#discussion_r2524158287)
-- `2026-01-09T06:17:40Z` `inline` by `cursor` `vllm/model_executor/layers/quantization/compressed_tensors/schemes/compressed_tensors_w8a8_fp8.py`:158; signals: block, cute, fp8; excerpt: "Undefined variable causes NameError in BLOCK strategy High Severity In process weights after loading, the BLOCK strategy branch no longer assigns input scale = ..." (https://github.com/vllm-project/vllm/pull/27814#discussion_r2674990832)
-- `2026-01-09T06:17:40Z` `inline` by `cursor` `vllm/model_executor/layers/quantization/kernels/scaled_mm/pytorch.py`:82; signals: fp8, gemm, kernel; excerpt: "Wrong dimension used for output narrowing in torch kernels Low Severity The PyTorch FP8 kernels use output shape[0] for narrowing the output after GEMM. ..." (https://github.com/vllm-project/vllm/pull/27814#discussion_r2674990834)
+- 2025-11-03 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/__init__.py`:51: Add Triton kernel to CUDA? (https://github.com/vllm-project/vllm/pull/27814#discussion_r2487858802)
+- 2025-11-03 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/utils.py`:11: This is an unnecessary utility that just makes the code more complex and opaque. Please inline the code into its users (https://github.com/vllm-project/vllm/pull/27814#discussion_r2487865359)
+- 2025-11-03 `ProExpertProg` on `vllm/model_executor/layers/quantization/fp8.py`:454: Why is this necessary? I think register parameter is only needed for tensors that get loaded from model checkpoint (https://github.com/vllm-project/vllm/pull/27814#discussion_r2487944840)
+- 2025-11-03 `ProExpertProg` on `vllm/model_executor/layers/quantization/fbgemm_fp8.py`:104: Can we make these accept QuantKey instances as the quantization descriptors? (https://github.com/vllm-project/vllm/pull/27814#discussion_r2487949894)
+- 2025-11-03 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/ScaledMMLinearKernel.py`:20: This can use GroupShape (https://github.com/vllm-project/vllm/pull/27814#discussion_r2487957147)
+- 2025-11-03 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/ScaledMMLinearKernel.py`:44: Use QuantKey for activation and weight (https://github.com/vllm-project/vllm/pull/27814#discussion_r2487958186)
+- 2025-11-03 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/pytorch.py`:143: I don;t think these need to be separate classes, you can just make them separate methods in the same class or use control flow in the apply weights method (https://github.com/vllm-project/vllm/pull/27814#discussion_r2487962552)
+- 2025-11-03 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/__init__.py`:58: CUDA also uses the torch. scaled mm kernels if CUTLASS is not available (https://github.com/vllm-project/vllm/pull/27814#discussion_r2487963786)
+- 2025-11-03 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:208: With the utility, this should look like: (https://github.com/vllm-project/vllm/pull/27814#discussion_r2487969666)
+- 2025-11-03 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:190: Can you add a utility that can be reused across fusion tests that constructs the layer, passes it to the kernel, etc. (https://github.com/vllm-project/vllm/pull/27814#discussion_r2487970831)
+- 2025-11-03 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:190: Also it should be easy to select each (supported) implementation so that tests can test with all of them, (https://github.com/vllm-project/vllm/pull/27814#discussion_r2487972381)
+- 2025-11-03 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/flashinfer.py`:1: Please name this file flashinfer.py (https://github.com/vllm-project/vllm/pull/27814#discussion_r2487973467)
+- 2025-11-03 `ProExpertProg` commented: Thanks for this work, this has been long overdue! A few initial comments, will take a closer look after the first round is addressed (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3412938365)
+- 2025-11-03 `tjtanaa`: @ProExpertProg Thank you for the quick comprehensive review of this refactor PR. We will address as quickly as possible as we want to introduce some swizzle operators where we think this new refactor code makes the integration of those operators more cleanly. ... (https://github.com/vllm-project/vllm/pull/27814#issuecomment-3483064339)
+- 2025-11-03 `ProExpertProg`: Yep, I agree with all of the listed benefits :) thanks for doing this, hopefully the rest of vLLM also moves further in this direction. (https://github.com/vllm-project/vllm/pull/27814#issuecomment-3483068591)
+- 2025-11-06 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/utils.py`:11: Sure, let's give that a try (https://github.com/vllm-project/vllm/pull/27814#discussion_r2501074208)
+- 2025-11-06 `ProExpertProg` on `tests/compile/test_fusion.py`:96: Make this a loop? (https://github.com/vllm-project/vllm/pull/27814#discussion_r2501076383)
+- 2025-11-06 `ProExpertProg` on `tests/compile/test_fusion.py`:99: fp8 linear is no longer defined? (https://github.com/vllm-project/vllm/pull/27814#discussion_r2501077141)
+- 2025-11-06 `ProExpertProg` on `tests/utils.py`:1433: input scale should be optional in case quant is dynamic (https://github.com/vllm-project/vllm/pull/27814#discussion_r2501081419)
+- 2025-11-06 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/ScaledMMLinearKernel.py`:28: Let's add a TODO to make int8 also use QuantKey (https://github.com/vllm-project/vllm/pull/27814#discussion_r2501086737)
+- 2025-11-06 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/pytorch.py`:143: Didn't notice that, thanks - can you add that as a comment? (https://github.com/vllm-project/vllm/pull/27814#discussion_r2501093775)
+- 2025-11-06 `ProExpertProg` on `vllm/model_executor/layers/quantization/compressed_tensors/schemes/compressed_tensors_w8a8_fp8.py`:74: Let's move these into the if (https://github.com/vllm-project/vllm/pull/27814#discussion_r2501096826)
+- 2025-11-06 `ProExpertProg` on `vllm/model_executor/layers/quantization/fbgemm_fp8.py`:99: Weight quant is never dynamic token (I assume you meant static per-channel)? (https://github.com/vllm-project/vllm/pull/27814#discussion_r2501100726)
+- 2025-11-06 `ProExpertProg` on `tests/utils.py`:1395: Great utility! Something that's not easy to but should be is selecting all possible backends for the platform so that we can test with each of them (https://github.com/vllm-project/vllm/pull/27814#discussion_r2501103240)
+- 2025-11-06 `ProExpertProg` on `tests/compile/test_fusion.py`:75: Refactor this so that we test with all possible backends for FP linear (https://github.com/vllm-project/vllm/pull/27814#discussion_r2501104204)
+- 2025-11-06 `ProExpertProg` commented: Great improvements, thanks! a few more comments and then we should be ready for review! (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3430815200)
+- 2025-11-12 `ProExpertProg` on `tests/utils.py`:1433: Not reflected in the type annotation though? (https://github.com/vllm-project/vllm/pull/27814#discussion_r2516521078)
+- 2026-01-05 `ProExpertProg` on `tests/compile/test_fusion.py`:222: Can we not just set the group shape to 128 and avoid special-casing? (https://github.com/vllm-project/vllm/pull/27814#discussion_r2662366374)
+- 2026-01-05 `ProExpertProg` on `tests/compile/distributed/test_fusion_all_reduce.py`:92: Let's move this init into TestFP8Layer, and add optional params if anyone wants to override any of the weights/scales. That way we're not repeating ourselves in every test (https://github.com/vllm-project/vllm/pull/27814#discussion_r2662381538)
+- 2026-01-05 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/aiter.py`:24: Let's get rid of get min capability and just implement is supported here, that makes it more general as some devices don't have a concept of compute capability anyway (https://github.com/vllm-project/vllm/pull/27814#discussion_r2662426613)
+- 2026-01-05 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/cutlass.py`:24: We can remove these once we just implement CutlassScaledMMLinearKernel.apply scaled mm (https://github.com/vllm-project/vllm/pull/27814#discussion_r2662442607)
+- 2026-01-05 `ProExpertProg` on `tests/compile/test_fusion.py`:154: I think this is getting a bit complicated, hopefully once we move scale/weight init into test layer, we can simplify this (https://github.com/vllm-project/vllm/pull/27814#discussion_r2662450515)
+- 2026-01-05 `ProExpertProg` commented: I think this is almost good to go, just a few minor notes on structure! (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3545094836)
+- 2026-01-06 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/aiter.py`:27: Also, let's do the import check inside is platform supported instead of can implement (https://github.com/vllm-project/vllm/pull/27814#discussion_r2665740935)
+- 2026-01-13 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:185: This code is no longer used? (https://github.com/vllm-project/vllm/pull/27814#discussion_r2684394977)
+- 2026-01-13 `ProExpertProg` on `tests/utils.py`:1409: Add TODO with link to 31818 to fold this into TestFP8Layer (https://github.com/vllm-project/vllm/pull/27814#discussion_r2684397534)
+- 2026-01-13 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/__init__.py`:85: Can we add this to vllm.envs? Can be a follow-up (https://github.com/vllm-project/vllm/pull/27814#discussion_r2684400273)
+- 2026-01-13 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/__init__.py`:203: Can we create a "help wanted" issue to rewrite this to use QuantKey? Less urgent than w8a8 block refactor (https://github.com/vllm-project/vllm/pull/27814#discussion_r2684416598)
+- 2026-01-13 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/pytorch.py`:45: Is this even true anymore? It would be nice if we could get some perf numbers collected on CUDA and ROCm (https://github.com/vllm-project/vllm/pull/27814#discussion_r2684420941)
+- 2026-01-13 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/flashinfer.py`:60: Just make this return None by default and only override in pytorch.py (https://github.com/vllm-project/vllm/pull/27814#discussion_r2684421826)
+- 2026-01-13 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/ScaledMMLinearKernel.py`:127: Nit: no need for local variable, just call directly (https://github.com/vllm-project/vllm/pull/27814#discussion_r2684429872)
+- 2026-01-13 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/ScaledMMLinearKernel.py`:140: Can we address this TODO, can be a follow-up? (https://github.com/vllm-project/vllm/pull/27814#discussion_r2684430685)
+- 2026-01-13 `ProExpertProg` on `vllm/model_executor/layers/quantization/kernels/scaled_mm/triton.py`:23: add int8 to name? (https://github.com/vllm-project/vllm/pull/27814#discussion_r2684436540)
+- 2026-01-13 `ProExpertProg` on `vllm/model_executor/layers/quantization/fp8.py`:347: Let's get rid of self.act q group shape, should be inferable from self.activation quant key.group shape. Also, let's reverse the order of the branches, it looks a bit confusing to do: - dynamic cutlass - static - dynamic not cutlass Can we ... (https://github.com/vllm-project/vllm/pull/27814#discussion_r2684448581)
+- 2026-01-13 `ProExpertProg` commented: A few minor notes, otherwise LGTM! For the follow-ups, if you won't do them in this PR, please add a follow-up checklist to this PR (https://github.com/vllm-project/vllm/pull/27814#pullrequestreview-3653302670)
+- 2026-01-16 `hangy-amd` on `vllm/model_executor/layers/quantization/utils/quant_utils.py`:62: PER TENSOR should be GroupShape(1, 1)? Another thing, GroupShape seems for 2D tensors only. What about tensors that have more than 2 dimensions like weight of conv? (https://github.com/vllm-project/vllm/pull/27814#discussion_r2697326227)
+- 2026-01-16 `hangy-amd` on `vllm/model_executor/layers/quantization/utils/quant_utils.py`:62: A little suggestion here. I don't think hiding the quant scheme(per tensor, per channel, per token) in GroupShape of ScaleDesc is a good idea. Users definitely know what quant schemes they want. Why don't we specify quant schem explicitly in QuantKey like ... (https://github.com/vllm-project/vllm/pull/27814#discussion_r2697371835)
+- 2026-01-16 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/quant_utils.py`:62: If you open an issue we can discuss, definitely not something to be changed in this PR. Just FYI I like the group shape more because it's IMO the proper abstraction here to represent tensor/token/group quant all together. Also per-tensor is not ... (https://github.com/vllm-project/vllm/pull/27814#discussion_r2699477534)
+- 2026-01-16 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:184: Why was this needed? Isn't this the default also? (https://github.com/vllm-project/vllm/pull/27814#discussion_r2699487141)
+- 2026-01-19 `hangy-amd` on `vllm/model_executor/layers/quantization/utils/quant_utils.py`:62: @vllmellm @ProExpertProg Hi, guys, we can continue discussing on this [RFC]( (https://github.com/vllm-project/vllm/pull/27814#discussion_r2704175022)

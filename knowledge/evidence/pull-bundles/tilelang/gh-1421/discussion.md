@@ -1,82 +1,44 @@
-# PR Discussion Digest
-
-- Source PR: [tile-ai/tilelang#1421](https://github.com/tile-ai/tilelang/pull/1421)
-- Source page: `sources/prs/tilelang/PR-1421.md`
-- Evidence bundle: `evidence/pull-bundles/tilelang/gh-1421`
-- Generated at: `2026-05-20T15:32:06.254082+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete via REST overflow fallback`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-12-13T12:47:17Z`
-- Merged: `2025-12-18T03:55:18Z`
-
-## Discussion Counts
-
-- Issue comments: 9
-- Review submissions: 153 (approved=1, commented=152)
-- Inline review comments: 196
-- Review threads observed: 72
-- Resolved/outdated thread markers: resolved=71, outdated=23
-- Human participants with discussion text: LeiWang1999, SiriusNEO, chatgpt-codex-connector, cherichy, coderabbitai, kurisu6912, lucifer1004, oraluben
-- Automation comments/reviews omitted from high-signal summary: 79
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-12-13T12:53:42Z` `COMMENTED` by `coderabbitai[bot]` - Actionable comments posted: 9 [!NOTE] Due to the large number of review comments, Critical, Major severity comments were ... (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574369953)
-- `2025-12-13T13:05:04Z` `COMMENTED` by `coderabbitai[bot]` - Actionable comments posted: 18 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to ... (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574373576)
-- `2025-12-13T14:27:28Z` `COMMENTED` by `coderabbitai[bot]` - Actionable comments posted: 5 ♻️ Duplicate comments (3) src/target/codegen py.cc (3) 81-102: Collision check needed for name hint ... (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574406590)
-- `2025-12-13T15:03:30Z` `COMMENTED` by `coderabbitai[bot]` - Actionable comments posted: 0 🧹 Nitpick comments (1) requirements-test-cuda.txt (1) 10-11: Verify nvidia-cutclass-dsl version and consider clarifying GEMM ... (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574418883)
-- `2025-12-13T15:44:38Z` `COMMENTED` by `kurisu6912` - Thanks @lucifer1004 for your great contribution to tilelang! (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574399801)
-- `2025-12-13T15:44:59Z` `COMMENTED` by `coderabbitai[bot]` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574443346)
-- `2025-12-14T05:59:17Z` `COMMENTED` by `lucifer1004` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574793148)
-- `2025-12-14T09:35:28Z` `COMMENTED` by `lucifer1004` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574927436)
-- `2025-12-14T09:45:18Z` `COMMENTED` by `lucifer1004` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574935032)
-- `2025-12-14T10:00:20Z` `COMMENTED` by `lucifer1004` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574943763)
-- `2025-12-14T10:02:44Z` `COMMENTED` by `coderabbitai[bot]` - Actionable comments posted: 0 ♻️ Duplicate comments (1) src/target/codegen cutedsl.cc (1) 843-843: Define the missing constant LOOP UNROLL ... (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574944702)
-- `2025-12-14T10:10:55Z` `COMMENTED` by `lucifer1004` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574948349)
-- `2025-12-14T10:11:28Z` `COMMENTED` by `coderabbitai[bot]` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574948616)
-- `2025-12-14T10:14:06Z` `COMMENTED` by `lucifer1004` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574949574)
-- `2025-12-14T10:14:42Z` `COMMENTED` by `coderabbitai[bot]` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574949796)
-- `2025-12-14T10:15:14Z` `COMMENTED` by `lucifer1004` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574950360)
-- `2025-12-14T10:15:42Z` `COMMENTED` by `coderabbitai[bot]` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574950604)
-- `2025-12-14T10:17:31Z` `COMMENTED` by `lucifer1004` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574951279)
-- `2025-12-14T10:17:56Z` `COMMENTED` by `coderabbitai[bot]` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574951432)
-- `2025-12-14T10:18:37Z` `COMMENTED` by `lucifer1004` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574951688)
-- `2025-12-14T10:19:43Z` `COMMENTED` by `lucifer1004` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574952070)
-- `2025-12-14T10:28:49Z` `COMMENTED` by `lucifer1004` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574961069)
-- `2025-12-14T10:34:25Z` `COMMENTED` by `coderabbitai[bot]` - Actionable comments posted: 8 ♻️ Duplicate comments (4) src/target/codegen py.cc (3) 47-68: Prevent duplicate Python def names in ... (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574963154)
-- `2025-12-14T10:47:12Z` `COMMENTED` by `lucifer1004` (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574969851)
-- ... 129 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `src/target/codegen_cutedsl.cc`: 53 inline comment(s)
-- `tilelang/jit/adapter/cutedsl/wrapper.py`: 27 inline comment(s)
-- `src/target/codegen_py.cc`: 21 inline comment(s)
-- `tilelang/cache/kernel_cache.py`: 18 inline comment(s)
-- `tilelang/jit/adapter/cutedsl/adapter.py`: 15 inline comment(s)
-- `tilelang/contrib/cutedsl/cpasync.py`: 9 inline comment(s)
-- `tilelang/contrib/cutedsl/reduce.py`: 6 inline comment(s)
-- `tilelang/jit/adapter/cutedsl/libgen.py`: 6 inline comment(s)
-- `3rdparty/tvm`: 5 inline comment(s)
-- `tilelang/contrib/cutedsl/threadblock_swizzle.py`: 5 inline comment(s)
-- `src/target/rt_mod_cutedsl.cc`: 4 inline comment(s)
-- `src/target/codegen_py.h`: 3 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-12-13T12:47:29Z` `issue` by `coderabbitai`; signals: attention, block, cache, compile, cuda, cute, cutlass, dtype; excerpt: "[!NOTE] Other AI code review bot(s) detected CodeRabbit has detected other AI code review bot(s) in this pull request and will avoid duplicating their ..." (https://github.com/tile-ai/tilelang/pull/1421#issuecomment-3649381201)
-- `2025-12-14T10:34:23Z` `inline` by `coderabbitai` `src/target/codegen_cutedsl.cc`:839; signals: alignment, compile, cute, dtype, memory, shared memory, tile; excerpt: "⚠️ Potential issue 🟡 Minor 🧩 Analysis chain 🏁 Script executed: Repository: tile-ai/tilelang Length of output: 2329 --- 🏁 Script executed: Repository: tile-ai/tilelang Length ..." (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616910550)
-- `2025-12-13T12:53:41Z` `inline` by `coderabbitai` `tilelang/contrib/cutedsl/reduce.py`:27; signals: compile, cuda, cute, cutlass, ptx, tile; excerpt: "⚠️ Potential issue 🔴 Critical 🧩 Analysis chain 🏁 Script executed: Repository: tile-ai/tilelang Length of output: 1083 --- 🏁 Script executed: Repository: tile-ai/tilelang Length ..." (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616291528)
-- `2025-12-13T13:04:51Z` `inline` by `coderabbitai` `tilelang/contrib/cutedsl/cpasync.py`:56; signals: cute, cutlass, kernel, memory, tile, tma; excerpt: "⚠️ Potential issue 🔴 Critical 🧩 Analysis chain 🏁 Script executed: Repository: tile-ai/tilelang Length of output: 535 --- 🏁 Script executed: Repository: tile-ai/tilelang Length ..." (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616296000)
-- `2025-12-13T13:04:51Z` `inline` by `coderabbitai` `tilelang/contrib/cutedsl/mbar.py`:19; signals: benchmark, block, cute, cutlass, nan, tile; excerpt: "⚠️ Potential issue 🟡 Minor 🧩 Analysis chain 🏁 Script executed: Repository: tile-ai/tilelang Length of output: 1043 --- 🏁 Script executed: Repository: tile-ai/tilelang Length ..." (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616296008)
-- `2025-12-14T12:34:32Z` `inline` by `coderabbitai` `tilelang/jit/adapter/cutedsl/wrapper.py`:196; signals: cute, hang, kernel, race, tile, tma; excerpt: "⚠️ Potential issue 🟠 Major 🧩 Analysis chain 🏁 Script executed: Repository: tile-ai/tilelang Length of output: 148 --- 🏁 Script executed: Repository: tile-ai/tilelang Length ..." (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2617024429)
-- `2025-12-15T07:37:40Z` `inline` by `coderabbitai` `tilelang/cache/kernel_cache.py`:453; signals: cache, cute, hang, kernel, perf, tile; excerpt: "🧩 Analysis chain 🏁 Script executed: Length of output: 1348 --- @lucifer1004 Perfect! ✅ The fix looks great. By initializing device kernel source and ..." (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618311554)
-- `2025-12-15T12:17:39Z` `inline` by `coderabbitai` `src/target/codegen_cutedsl.cc`:803; signals: alignment, cute, hopper, memory, shared memory, tile; excerpt: "⚠️ Potential issue 🟠 Major 🧩 Analysis chain 🏁 Script executed: Repository: tile-ai/tilelang Length of output: 960 --- 🏁 Script executed: Repository: tile-ai/tilelang Length ..." (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2619171881)
-- `2025-12-13T13:04:51Z` `inline` by `coderabbitai` `tilelang/contrib/cutedsl/cpasync.py`:150; signals: benchmark, cute, sm90, tile, tma; excerpt: "⚠️ Potential issue 🟠 Major 🧩 Analysis chain 🏁 Script executed: Repository: tile-ai/tilelang Length of output: 2693 --- 🏁 Script executed: Repository: tile-ai/tilelang Length ..." (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616296005)
-- `2025-12-13T13:04:51Z` `inline` by `coderabbitai` `tilelang/contrib/cutedsl/reduce.py`:184; signals: cute, hopper, kernel, ptx, tile; excerpt: "⚠️ Potential issue 🟡 Minor Hardcoded barrier IDs may conflict with other barriers. run hopper uses hardcoded barrier IDs 1 and 2 in bar ..." (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616296009)
-- `2025-12-15T06:39:42Z` `inline` by `coderabbitai` `tilelang/cache/kernel_cache.py`:453; signals: cache, cute, hang, kernel, tile; excerpt: "🧩 Analysis chain 🏁 Script executed: Length of output: 3735 --- 🏁 Script executed: Length of output: 2037 --- 🏁 Script executed: Length of ..." (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618157955)
-- `2025-12-15T07:38:17Z` `inline` by `coderabbitai` `tilelang/cache/kernel_cache.py`:302; signals: benchmark, cache, kernel, race, tile; excerpt: "⚠️ Potential issue 🟡 Minor Use logging.exception for exception logging. When catching exceptions during kernel save operations, use logging.exception() instead of logging.error() to automatically ..." (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618313431)
+- 2025-12-13 `kurisu6912` on `src/target/codegen_cutedsl.cc`:619: @lucifer1004, maybe we should check the pass config for whether to use fastmath. (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616328789)
+- 2025-12-13 `kurisu6912` on `src/target/codegen_cutedsl.cc`:180: We should use hexfloat to generate full-precision float numbers. Please see (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616330398)
+- 2025-12-13 `kurisu6912` on `.github/workflows/ci.yml`:392: I think we should also run tests on the examples. Maybe a good choice is to use an environment variable to set the default jit execution backend to cutedsl (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616335504)
+- 2025-12-13 `kurisu6912` on `src/target/codegen_cutedsl.cc`:686: Why do we check the buffer ends with ')' to use .load? (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616340845)
+- 2025-12-13 `kurisu6912` on `src/target/codegen_py.cc`:103: Maybe we should also add cutlass or other package names that the generated code would import (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616341959)
+- 2025-12-13 `kurisu6912` on `src/target/codegen_py.cc`:202: This is a bug (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616342279)
+- 2025-12-13 `kurisu6912` on `src/target/codegen_py.cc`:22: This function replicates in codegen cutedsl.cc, is this the behavior we wanted? (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616342724)
+- 2025-12-13 `kurisu6912` on `src/target/rt_mod_cutedsl.cc`:56: maybe we can use tilelang callback cutedsl postproc (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616349811)
+- 2025-12-13 `kurisu6912` on `tilelang/contrib/cutedsl/.gitignore`: I think this file can be removed since pycache has already been excluded in the root gitignore (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616355795)
+- 2025-12-13 `kurisu6912` on `tilelang/contrib/cutedsl/cpasync.py`:24: @lucifer1004 would be great to go to add a comment on why we select the mode based on the size (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616361968)
+- 2025-12-13 `kurisu6912` on `tilelang/contrib/cutedsl/gemm_V1.py`:494: Tilelang will insert a barrier automatically. Will these two barrier be conflict? (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616366676)
+- 2025-12-13 `kurisu6912` commented: Thanks @lucifer1004 for your great contribution to tilelang! (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3574399801)
+- 2025-12-14 `lucifer1004` on `.github/workflows/ci.yml`:392: Currently not all examples are supported yet. Maybe we need to systematically add an optional target argument for all examples which would make it easier to reuse the examples for multiple-target testing. (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616753751)
+- 2025-12-14 `lucifer1004` on `examples/gemm_fp8/example_tilelang_gemm_fp8.py`:14: This was accidentally included. (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616873134)
+- 2025-12-14 `lucifer1004` on `src/target/codegen_cutedsl.cc`:909: The constant is defined in codegen cutedsl.h @coderabbitai (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2616898261)
+- 2025-12-14 `oraluben` on `3rdparty/tvm`:1: The PR seems to revert a recent tvm upgrade and set it to a commit that's 3 days ago (but it's existed) (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2617120337)
+- 2025-12-15 `oraluben`: Github seems to have issue about commenting on submodule change so I'll post here: The PR seems to revert 3rdparty/tvm to an older version. The change seems unnecessary. (https://github.com/tile-ai/tilelang/pull/1421#issuecomment-3652502802)
+- 2025-12-15 `oraluben` on `src/target/codegen_cutedsl.cc`:513: I believe I've seen somebody else commented about this but cannot find it🤔 Maybe we could group these unsupported branches together? (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2617672732)
+- 2025-12-15 `cherichy` on `src/target/codegen_cutedsl.cc`:686: In CuteDSL, we would use TensorSSA to express a vec dtype like Float4. This kind of buffer would be generated as tl.make tensor(xxx.iteratior, shape, ... ), so a .load() is required for TensorSSA. But for element access, we would generate codes like ... (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2617749186)
+- 2025-12-15 `cherichy` on `tilelang/contrib/cutedsl/gemm_V1.py`:494: Afaik, in Gemm V1, the warpgroup fence is used inside the tl.gemm ss call, and barrier is used to sync outside the call, so there would be no conflict. In Gemm V2, Tilelang will control all the warpgroup fence, but in this ... (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2617753912)
+- 2025-12-15 `cherichy` on `src/target/codegen_cutedsl.cc`:513: Keeping these branches serves as a reminder during development of what features are still unimplemented, making it easier to add functionality later. (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2617757641)
+- 2025-12-15 `cherichy` on `tilelang/contrib/cutedsl/reduce.py`:27: @coderabbitai. In CuteDSL, the nvmm.fmin is defined as: def fmin(res, a, b, , c=None, ftz=None, nan=None, abs=None, loc=None, ip=None) so, the parameter c is supported. (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618055491)
+- 2025-12-15 `SiriusNEO` on `3rdparty/tvm`: Need to fix submodule dependency (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618056909)
+- 2025-12-15 `SiriusNEO` on `tilelang/utils/target.py`:18: Is it necessary to register cutedsl as a target? As it has been registered as a new execution backend (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618088145)
+- 2025-12-15 `SiriusNEO` on `tilelang/cache/kernel_cache.py`: Logic for CuteDSL backend is kind of special. For now I think it's OK. But maybe we need some refactor here in the future. Code structure like: will make us hard to maintain as the backends become more. (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618112350)
+- 2025-12-15 `SiriusNEO` commented: Great works! Overall it looks good, just some comments (https://github.com/tile-ai/tilelang/pull/1421#pullrequestreview-3576506325)
+- 2025-12-15 `lucifer1004` on `src/target/codegen_cutedsl.cc`:619: Please have a look at There are two types of functions which we handle differently. Some are forced to use fastmath, e.g., the exp case. Others would respect the pass config setting. (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618134203)
+- 2025-12-15 `lucifer1004` on `tilelang/cache/kernel_cache.py`:453: But fixing this signature would lead to more problems: all adapters' constructor and from database methods' signature would need to be modified, otherwise we would need to add unnecessary nullability checks. What do you think @coderabbitai ? (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618154204)
+- 2025-12-15 `cherichy` on `tilelang/contrib/cutedsl/threadblock_swizzle.py`:54: This won't happened since we have if panel idx + 1 < total panel (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618248795)
+- 2025-12-15 `cherichy` on `tilelang/contrib/cutedsl/cpasync.py`:56: I confirm that the usage of generic address space is correct in this code. (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618270375)
+- 2025-12-15 `lucifer1004` on `src/target/codegen_cutedsl.cc`:669: We explicitly leave these branches for future updates. (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618283005)
+- 2025-12-15 `cherichy` on `tilelang/contrib/cutedsl/threadblock_swizzle.py`:54: grid size = 49, gridDim.x = 10, panel width = 2 panel size = panel width gridDim.x = 2 10 = 20 total panel = ceil(49 / 20) = 3 @coderabbitai But as you see, grid size is computed as gridDim.x gridDim.y ... (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618293505)
+- 2025-12-15 `cherichy` on `src/target/codegen_cutedsl.cc`:825: In CuteDSL, this arg can accept both Integer and Tuple of Integer. So you can accept it as is @coderabbitai (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618342963)
+- 2025-12-15 `cherichy` on `tilelang/contrib/cutedsl/ldsm.py`:72: @coderabbitai , Thanks, done. (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618397715)
+- 2025-12-15 `cherichy` on `tilelang/contrib/cutedsl/cpasync.py`:108: I have changed into if not isinstance(crd, tuple) and isinstance(tma desc, cute.Pointer): Done. @coderabbitai (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618404236)
+- 2025-12-15 `lucifer1004` on `tilelang/cache/kernel_cache.py`: We should move the kernel cache logic to adapters in the future. (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618405237)
+- 2025-12-15 `lucifer1004` on `tilelang/utils/target.py`:18: CuteDSL uses different codegen, so it must be defined as a new target, while backends like cython/nvrtc can reuse the code from CUDA codegen. (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618410150)
+- 2025-12-15 `cherichy` on `tilelang/contrib/cutedsl/reduce.py`:184: @coderabbitai In Tilelang's CUDA backend, it also use bar with id 1 and 2, and Tilelang will use other bar id starting from 3 to avoid sync issues. (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618532932)
+- 2025-12-15 `cherichy` on `tilelang/contrib/cutedsl/mbar.py`:19: @coderabbitai I have add the impl with time out, and according to the comment in CuteDSL src: This NVVM Op is a spin-loop wrapping the mbarrier.try wait.parity.shared.b64 PTX The timeout in ns only applies to the latter and this call is truly ... (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618547762)
+- 2025-12-15 `cherichy` on `src/target/codegen_cutedsl.cc`:239: I understand, but the generated code is python, we need to follow the semantics of Python instead of C++. Also, in the generated codes, // is used for index calculation, which are positive integer, so I would keep the code as is. ... (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618596972)
+- 2025-12-15 `cherichy` on `src/target/codegen_cutedsl.cc`:839: Changed 1024 to 1, since This tensor is a fake tensor, I just want to get its iterator, so the tensor shape is 1, and div by set to 1 is OK in this case. @coderabbitai (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618633720)
+- 2025-12-15 `cherichy` on `src/target/codegen_cutedsl.cc`:490: The arg size check has been addressed in TIR and in codegen we can trust it, so just keep it as is. @coderabbitai (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2618685797)
+- 2025-12-17 `lucifer1004` on `src/target/rt_mod_cutedsl.cc`:59: This will not fail. All tests can pass. (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2627123826)
+- 2025-12-17 `LeiWang1999` on `tilelang/cache/kernel_cache.py`:355: This feels a bit hacky now that we have so many backends. Could we refactor this part to make it more maintainable? If you don’t have time right now, we can spin it off into a separate thread/issue—otherwise, LGTM. (https://github.com/tile-ai/tilelang/pull/1421#discussion_r2627210397)

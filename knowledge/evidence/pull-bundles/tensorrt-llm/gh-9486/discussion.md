@@ -1,80 +1,59 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/TensorRT-LLM#9486](https://github.com/NVIDIA/TensorRT-LLM/pull/9486)
-- Source page: `sources/prs/tensorrt-llm/PR-9486.md`
-- Evidence bundle: `evidence/pull-bundles/tensorrt-llm/gh-9486`
-- Generated at: `2026-05-20T15:19:24.864059+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-11-26T08:22:14Z`
-- Merged: `2025-12-01T00:37:07Z`
-
-## Discussion Counts
-
-- Issue comments: 31
-- Review submissions: 35 (approved=4, commented=31)
-- Inline review comments: 57
-- Review threads observed: 29
-- Resolved/outdated thread markers: resolved=29, outdated=12
-- Human participants with discussion text: QiJune, bobboli, coderabbitai, dongxuy04, kaiyux, nekorobov, syuoni, tensorrt-cicd, tomeras91, xxi-nv
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-11-26T08:30:47Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 0 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3509668859)
-- `2025-11-26T10:19:47Z` `COMMENTED` by `nekorobov` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3509815166)
-- `2025-11-26T10:23:45Z` `COMMENTED` by `bobboli` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3510241768)
-- `2025-11-26T10:24:28Z` `COMMENTED` by `bobboli` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3510244640)
-- `2025-11-26T11:21:02Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3510441468)
-- `2025-11-26T11:24:21Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3510451968)
-- `2025-11-26T11:26:45Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3510459484)
-- `2025-11-26T11:27:18Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3510461276)
-- `2025-11-26T11:28:23Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3510464891)
-- `2025-11-26T11:30:58Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3510475453)
-- `2025-11-26T11:31:23Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3510477168)
-- `2025-11-26T11:41:28Z` `COMMENTED` by `dongxuy04` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3510486274)
-- `2025-11-26T12:14:44Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3510649697)
-- `2025-11-26T12:18:33Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3510671365)
-- `2025-11-27T00:41:50Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3513107572)
-- `2025-11-27T00:55:39Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3513132109)
-- `2025-11-27T10:24:06Z` `COMMENTED` by `bobboli` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3514024020)
-- `2025-11-27T11:07:25Z` `COMMENTED` by `bobboli` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3514472047)
-- `2025-11-27T11:09:11Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3514668763)
-- `2025-11-27T11:12:48Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3514685461)
-- `2025-11-27T11:46:23Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3514842194)
-- `2025-11-27T11:46:42Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3514843193)
-- `2025-11-27T11:50:03Z` `COMMENTED` by `xxi-nv` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3514858540)
-- `2025-11-28T05:48:05Z` `APPROVED` by `dongxuy04` (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3517551685)
-- ... 11 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`: 23 inline comment(s)
-- `tensorrt_llm/_torch/modules/fused_moe/communication/nvlink_one_sided.py`: 9 inline comment(s)
-- `tensorrt_llm/_torch/models/modeling_gpt_oss.py`: 4 inline comment(s)
-- `tensorrt_llm/_torch/modules/fused_moe/interface.py`: 4 inline comment(s)
-- `tensorrt_llm/_torch/modules/fused_moe/communication/communication_factory.py`: 4 inline comment(s)
-- `tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py`: 4 inline comment(s)
-- `tensorrt_llm/_torch/modules/fused_moe/communication/nvlink_two_sided.py`: 3 inline comment(s)
-- `tensorrt_llm/_torch/modules/fused_moe/fused_moe_wide_ep.py`: 2 inline comment(s)
-- `tensorrt_llm/_torch/modules/fused_moe/create_moe.py`: 2 inline comment(s)
-- `tensorrt_llm/_torch/modules/fused_moe/communication/deep_ep_low_latency.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-11-26T08:30:47Z` `review` `COMMENTED` by `coderabbitai`; signals: aligned, block, cache, correctness, cutlass, deepgemm, dtype, fp4; excerpt: "Actionable comments posted: 0 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3509668859)
-- `2025-11-26T08:30:44Z` `issue` by `coderabbitai`; signals: alignment, attention, cache, cutlass, deepgemm, dtype, fp4, fp8; excerpt: "📝 Walkthrough Walkthrough This pull request refactors the MoE framework with a new composition-based ConfigurableMoE class, communication strategy updates renaming MNNVL backends to NVLink ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#issuecomment-3580102213)
-- `2025-11-26T12:18:32Z` `inline` by `xxi-nv` `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:765; signals: memory, moe, perf, performance, tensorrt, tiling; excerpt: "I have confirmed with @jinyangyuan-nvidia , the original two stream have no sync, o, it is essentially equivalent to what I did in this ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564777616)
-- `2025-11-26T11:41:00Z` `inline` by `dongxuy04` `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:765; signals: moe, perf, performance, tensorrt; excerpt: "I am not sure of the overlap performance here, e.g. is this Compute/Comm overlap? But maybe not important since this is not Alltoall case." (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564654109)
-- `2025-11-27T10:39:58Z` `inline` by `bobboli` `tensorrt_llm/_torch/modules/fused_moe/communication/communication_factory.py`:170; signals: latency, moe, tensorrt, throughput; excerpt: "We no longer need such a switch. Just try-catch in the following order (assume that init of Communication may throw RuntimeError): NVLinkOneSided NVLinkTwoSided DeepEP ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2568009097)
-- `2025-11-26T10:23:45Z` `inline` by `bobboli` `tensorrt_llm/_torch/modules/fused_moe/communication/nvlink_one_sided.py`:116; signals: benchmark, moe, tensorrt; excerpt: "512 is not enough for some benchmarks in InferenceMax. The size will be automatically decided in the future, without the need to specify a ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564418238)
-- `2025-11-26T11:26:45Z` `inline` by `xxi-nv` `tensorrt_llm/_torch/modules/fused_moe/communication/nvlink_one_sided.py`:170; signals: cutlass, moe, tensorrt; excerpt: "That's right, it is configurable and the parameters could be passed from the ConfigurableMoE. When the ConfigurableMoE supports cutlass as the new backend, it ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564610515)
-- `2025-11-26T11:30:58Z` `inline` by `xxi-nv` `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:932; signals: attention, moe, tensorrt; excerpt: "I override the require routing separation in TRTLLMGenMoE, which will return true only when attention is DP." (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564624087)
-- `2025-11-27T10:28:24Z` `inline` by `bobboli` `tensorrt_llm/_torch/modules/fused_moe/communication/deep_ep_low_latency.py`:83; signals: latency, moe, tensorrt; excerpt: "Should we create an abstract function is platform supported in base class Communication? And call is platform supported in the init of the base ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2567965008)
-- `2025-11-27T11:50:02Z` `inline` by `xxi-nv` `tensorrt_llm/_torch/models/modeling_gpt_oss.py`; signals: hang, moe, tensorrt; excerpt: "To parse the MoE weights from the model weights, because after the MoE refactor, the name of the NamedModule is changed. So I need ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2568282011)
-- `2025-11-28T15:11:04Z` `inline` by `syuoni` `tensorrt_llm/_torch/modules/fused_moe/communication/nvlink_one_sided.py`:170; signals: cutlass, moe, tensorrt; excerpt: "BTW, -1 should also work in CutlassMoE, any value out of the range [0, num local experts) is recognized as invalid expert ID." (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2571950538)
-- `2025-11-29T00:05:04Z` `inline` by `xxi-nv` `tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py`:253; signals: cutlass, moe, tensorrt; excerpt: "Yeah, this is the preparatory work for cutlass. This PR focuses on the TRTLLMGenFusedMoE. I am going to implement the cutlass backend in the ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2572675358)
+- 2025-11-26 `nekorobov` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_wide_ep.py`:92: I do not understand this logic. Don't we always set model config.moe max num tokens to model config.max num tokens model config.mapping.dp size? (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564073044)
+- 2025-11-26 `nekorobov` on `tensorrt_llm/_torch/models/modeling_gpt_oss.py`: Why modifying only GPT-OSS, Hunyuan and DS R1 model files? (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564077367)
+- 2025-11-26 `nekorobov` on `tensorrt_llm/_torch/modules/fused_moe/interface.py`:580: TRTLLMGenFusedMoE can do both. Fused routing and separate routing (e.g. when post quant all-gather or all to all are enabled) (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564115663)
+- 2025-11-26 `nekorobov` on `tensorrt_llm/_torch/modules/fused_moe/interface.py`:565: Is this going to be None for TRTLLMGenMoE with fused routing? (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564120752)
+- 2025-11-26 `nekorobov` on `tensorrt_llm/_torch/modules/fused_moe/communication/nvlink_one_sided.py`:116: Why increasing? cc @bobboli for awareness (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564125701)
+- 2025-11-26 `nekorobov` on `tensorrt_llm/_torch/modules/fused_moe/communication/nvlink_one_sided.py`:170: I presume this is not the same for all backends? Should this be conditioned on the MoE backend? (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564130475)
+- 2025-11-26 `nekorobov` on `tensorrt_llm/_torch/modules/fused_moe/communication/nvlink_one_sided.py`:234: Also why moving to after hidden states? (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564136398)
+- 2025-11-26 `nekorobov` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:220: Should this class be only an interface and throw NotImplemented? Not all backends support load balancing afaik. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564174588)
+- 2025-11-26 `nekorobov` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:932: This will never be true since for TRTLLMGenMoE, require routing separation returns True, which is not always correct (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564199687)
+- 2025-11-26 `bobboli` on `tensorrt_llm/_torch/modules/fused_moe/communication/nvlink_one_sided.py`:116: 512 is not enough for some benchmarks in InferenceMax. The size will be automatically decided in the future, without the need to specify a given value. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564418238)
+- 2025-11-26 `bobboli` on `tensorrt_llm/_torch/modules/fused_moe/communication/nvlink_one_sided.py`:170: Yeah CutlassMoE uses num experts instead. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564420750)
+- 2025-11-26 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_wide_ep.py`:92: No, that's the value when the user doesn't set the model config.max num tokens, when users set model config.max num tokens we take this value, otherwise we use the default moe max num tokens = model config.max num tokens model config.mapping.dp size (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564593827)
+- 2025-11-26 `xxi-nv` on `tensorrt_llm/_torch/models/modeling_gpt_oss.py`: GPT-OSS and DS R1, Hunyuan handle the weight loading in its model file. And the other models load weights by sharing a common utils. The motivation to modify is that the name of the MoE weights ended with 'experts'. But after the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564603379)
+- 2025-11-26 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/communication/nvlink_one_sided.py`:170: That's right, it is configurable and the parameters could be passed from the ConfigurableMoE. When the ConfigurableMoE supports cutlass as the new backend, it needs to pass the num experts to create the Comm. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564610515)
+- 2025-11-26 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/communication/nvlink_one_sided.py`:234: Actually, no hard constraint at all. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564612030)
+- 2025-11-26 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:220: After the MoE is refactored, all the backends will support the load balancer, that's the goal in my task. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564615075)
+- 2025-11-26 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:932: I override the require routing separation in TRTLLMGenMoE, which will return true only when attention is DP. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564624087)
+- 2025-11-26 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/interface.py`:580: Will update the comment. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564625279)
+- 2025-11-26 `dongxuy04` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:817: Maybe static routing also need backend.require routing separation? (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564632435)
+- 2025-11-26 `dongxuy04` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:538: Maybe not only for dynamic routing, but static routing also need separate routing since need map model topk output to real slots.. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564636668)
+- 2025-11-26 `dongxuy04` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:765: I am not sure of the overlap performance here, e.g. is this Compute/Comm overlap? But maybe not important since this is not Alltoall case. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564654109)
+- 2025-11-26 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:765: I have confirmed with @jinyangyuan-nvidia , the original two stream have no sync, o, it is essentially equivalent to what I did in this PR, but achieved in an easier way. The original goal was to reduce peak memory, without any performance ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2564777616)
+- 2025-11-27 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/interface.py`:565: Yeah, you are right. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2566796069)
+- 2025-11-27 `tensorrt-cicd`: [PR Github 25919]( [ run ] completed with state SUCCESS. Commit: 7e09d1b [/LLM/main/L0 MergeRequest PR pipeline 19652]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#issuecomment-3584104306)
+- 2025-11-27 `bobboli` on `tensorrt_llm/_torch/modules/fused_moe/create_moe.py`:62: Why we separate create moe backend from create moe? Is this for fallback capability now? Is this planned to be deleted after the migration, so that we always create ConfigurebleMoE inside create moe, and there is no self.backend anymore? (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2567587785)
+- 2025-11-27 `bobboli` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:192: Why prefix for comm? (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2567598163)
+- 2025-11-27 `bobboli` on `tensorrt_llm/_torch/modules/fused_moe/communication/nvlink_two_sided.py`:37: for latency-sensitive scenarios isn't very accurate as NVLinkOneSided will also improve. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2567937177)
+- 2025-11-27 `bobboli` on `tensorrt_llm/_torch/modules/fused_moe/communication/nvlink_two_sided.py`:43: cc @dongxuy04 to check the correctness of the description. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2567952587)
+- 2025-11-27 `bobboli` on `tensorrt_llm/_torch/modules/fused_moe/communication/deep_ep_low_latency.py`:83: Should we create an abstract function is platform supported in base class Communication? And call is platform supported in the init of the base class, so that super(). init () of each subclass will check this and delete calling of is platform ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2567965008)
+- 2025-11-27 `bobboli` on `tensorrt_llm/_torch/modules/fused_moe/communication/communication_factory.py`:144: Should be checked in the init of base class Communication and throw error if not supported. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2567976700)
+- 2025-11-27 `bobboli` on `tensorrt_llm/_torch/modules/fused_moe/communication/communication_factory.py`:170: We no longer need such a switch. Just try-catch in the following order (assume that init of Communication may throw RuntimeError): NVLinkOneSided NVLinkTwoSided DeepEP DeepEPLowLatency (I am not sure if DeepEP is favored over DeepEPLowLatency?) In this way, we do not need ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2568009097)
+- 2025-11-27 `bobboli` on `tensorrt_llm/_torch/models/modeling_gpt_oss.py`: What's the relationship between the change in modeling utils.py and the changes in modeling files? (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2568111815)
+- 2025-11-27 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/create_moe.py`:62: Yeah, in the future we always create ConfigurableMoE inside the create moe and create moe backend works as a helper function here, it will also be needed to create backend. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2568121300)
+- 2025-11-27 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:192: same as backend, I treat them as private data member and expose it by property. With the property, I can do some verification when setting. So prefer to keep it. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2568135185)
+- 2025-11-27 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/communication/communication_factory.py`:170: Thanks for the suggestion. LGTM and fixed as suggested. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2568268049)
+- 2025-11-27 `xxi-nv` on `tensorrt_llm/_torch/models/modeling_gpt_oss.py`: To parse the MoE weights from the model weights, because after the MoE refactor, the name of the NamedModule is changed. So I need to handle this case. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2568282011)
+- 2025-11-27 `tensorrt-cicd`: [PR Github 26033]( [ run ] completed with state FAILURE. Commit: 4de79e5 [/LLM/main/L0 MergeRequest PR pipeline 19759]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#issuecomment-3585607115)
+- 2025-11-28 `tensorrt-cicd`: [PR Github 26072]( [ run ] completed with state SUCCESS. Commit: dd5fdbf [/LLM/main/L0 MergeRequest PR pipeline 19796]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#issuecomment-3587625551)
+- 2025-11-28 `tensorrt-cicd`: [PR Github 26114]( [ run ] completed with state SUCCESS. Commit: ba75b99 [/LLM/main/L0 MergeRequest PR pipeline 19830]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#issuecomment-3588364513)
+- 2025-11-28 `tensorrt-cicd`: [PR Github 26175]( [ run ] completed with state SUCCESS. Commit: cb5027c [/LLM/main/L0 MergeRequest PR pipeline 19882]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#issuecomment-3589128103)
+- 2025-11-28 `tensorrt-cicd`: [PR Github 26195]( [ run ] completed with state SUCCESS. Commit: cb5027c [/LLM/main/L0 MergeRequest PR pipeline 19899]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#issuecomment-3589523738)
+- 2025-11-28 `syuoni` on `tensorrt_llm/_torch/modules/fused_moe/communication/nvlink_one_sided.py`:170: BTW, -1 should also work in CutlassMoE, any value out of the range [0, num local experts) is recognized as invalid expert ID. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2571950538)
+- 2025-11-28 `syuoni` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:182: A bit concerned with this. Every time we add/delete an attribute, we need sync here. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2571974034)
+- 2025-11-28 `syuoni` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:179: Why the backend still require EPLB-related attributes? I suppose EPLB is handled at ConfigurableMoE side, while backend is responsible for MoE compute, right? (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2571979310)
+- 2025-11-28 `syuoni` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:319: This should be import at the beginning of the file. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2571983937)
+- 2025-11-28 `syuoni` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:777: Just out of curiosity, why alltoall doesn't enable overlap between chunks? (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2572013263)
+- 2025-11-28 `syuoni` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:925: Why not use isinstance(self.backend, XXXFusedMoE) for this list of conditions? (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2572018547)
+- 2025-11-28 `syuoni` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py`:253: Should we use this quantize input in forward chunk for deduplication? (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2572039556)
+- 2025-11-28 `syuoni` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py`:307: I suppose I'm missing something, where is CutlassFusedMoE.run moe method? (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2572046739)
+- 2025-11-28 `syuoni` commented: Hi @xxi-nv , the new ConfigurableMoE looks very well organized, thanks for this great effort! I think we need at least one integration test to protect the e2e flow of this new ConfigurableMoE path. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#pullrequestreview-3519318433)
+- 2025-11-29 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:182: This is a temporary WAR. In phase 2, all weight-related functions should be located only in the backend, and the necessary parameters should be passed. For now, we are in a co-existence phase where both the original fused moe and ConfigurableMoE need ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2572667901)
+- 2025-11-29 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:777: Alltoall need workspace for each stream. In the future, I will continue to implement an advanced scheduler to give a better overlap by chunking the batch. At the same time, all the Comms could be used, not only Allgather. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2572673864)
+- 2025-11-29 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py`:253: Yeah, this is the preparatory work for cutlass. This PR focuses on the TRTLLMGenFusedMoE. I am going to implement the cutlass backend in the next PR. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2572675358)
+- 2025-11-29 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/fused_moe_cutlass.py`:307: This PR focuses on TRTLLMGEN. CutlassMoE will be implemented in the following PR. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2572675963)
+- 2025-11-29 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:925: Yeah, I can. Will update it. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2572676292)
+- 2025-11-29 `xxi-nv` on `tensorrt_llm/_torch/modules/fused_moe/configurable_moe.py`:179: Because the weights handling is done in the backend and the weights loading needs the EPLB-related attributes. But don't worry about it, at phase 2, I will separate them and make it clearer. (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#discussion_r2572677257)
+- 2025-11-29 `xxi-nv`: Hi @xxi-nv , the new ConfigurableMoE looks very well organized, thanks for this great effort! I think we need at least one integration test to protect the e2e flow of this new ConfigurableMoE path. Yeah, actually, I will add several tests to ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#issuecomment-3590741966)
+- 2025-11-29 `tensorrt-cicd`: [PR Github 26231]( [ run ] completed with state SUCCESS. Commit: 17666b9 [/LLM/main/L0 MergeRequest PR pipeline 19929]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#issuecomment-3591488661)
+- 2025-11-29 `tensorrt-cicd`: [PR Github 26257]( [ run ] completed with state SUCCESS. Commit: 17666b9 [/LLM/main/L0 MergeRequest PR pipeline 19952]( completed with status: 'SUCCESS' (https://github.com/NVIDIA/TensorRT-LLM/pull/9486#issuecomment-3591585987)

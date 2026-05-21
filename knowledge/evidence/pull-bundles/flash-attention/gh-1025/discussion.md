@@ -1,47 +1,25 @@
-# PR Discussion Digest
-
-- Source PR: [Dao-AILab/flash-attention#1025](https://github.com/Dao-AILab/flash-attention/pull/1025)
-- Source page: `sources/prs/flash-attention/PR-1025.md`
-- Evidence bundle: `evidence/pull-bundles/flash-attention/gh-1025`
-- Generated at: `2026-05-20T15:16:26.753984+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2024-07-03T19:39:49Z`
-- Merged: `2024-07-08T18:24:48Z`
-
-## Discussion Counts
-
-- Issue comments: 39
-- Review submissions: 3 (commented=3)
-- Inline review comments: 3
-- Review threads observed: 2
-- Resolved/outdated thread markers: resolved=0, outdated=0
-- Human participants with discussion text: Narsil, Oxi84, Ph0rk0z, Shreya-Pathak, foreverlms, iamsaurabhgupt, lucidrains, tridao, turboderp
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 11
-
-## Review Decisions
-
-- No review submissions were returned by GitHub.
-
-## Inline Comment Hotspots
-
-- `flash_attn/flash_attn_interface.py`: 3 inline comment(s)
-
-## High-Signal Discussion
-
-- `2024-07-04T06:57:37Z` `issue` by `tridao`; signals: attention, gemm, tma; excerpt: "Sorry I missed the tanh. The step should be S = gemm(Q, K), then S = tanh(softmax scale 1 / softcap), then masking, taking ..." (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2208252644)
-- `2024-07-05T15:12:10Z` `issue` by `Narsil`; signals: gemm, hang, tma; excerpt: "Hi @Shreya-Pathak, I looked at your changes. Personally I prefer the single flag (less things to know for users, and softcapping is unlikely to ..." (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2211046942)
-- `2024-07-05T17:33:30Z` `issue` by `Shreya-Pathak`; signals: failing, hang, tma; excerpt: "@Narsil I think I have also done what Tri mentioned with the softcap / softmax scale and from a brief look at your code, ..." (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2211194117)
-- `2024-07-03T19:46:36Z` `issue` by `tridao`; signals: gemm, tma; excerpt: "I think softcapping should be done before the masking. i.e. the sequence is gemm, softcapping, masking, then softmax. If you do softcapping after masking, ..." (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2207085160)
-- `2024-07-03T19:50:13Z` `issue` by `tridao`; signals: gemm, tma; excerpt: "softcapping can be fused with dividing by softmax scale. i.e. we do S = gemm(Q, K), then S = softmax scale 1 / softcap ..." (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2207095410)
-- `2024-07-04T14:18:51Z` `issue` by `Narsil`; signals: gemm, tma; excerpt: "Ok I put the template for Is softcapping, however I cannot get your idea working. I may be missing something. My understandling is that ..." (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2209111566)
-- `2024-07-04T15:15:34Z` `issue` by `Narsil`; signals: gemm, tma; excerpt: "My understanding is that scales softmax log2 is only ever used in the partial exponentiation (the log2 is to use exp2f which I assume ..." (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2209213223)
-- `2024-07-04T16:34:09Z` `issue` by `lucidrains`; signals: gemm, hang; excerpt: "@Narsil oh yea, your code looks way better than what i have lmao, let's just go with your changes so eventually you'll have to ..." (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2209325874)
-- `2024-07-04T17:58:09Z` `issue` by `lucidrains`; signals: cute, hang; excerpt: "@Narsil yea, it is really hard to contribute with these compilation times. how fast were you able to get the times down to? i'm ..." (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2209412183)
-- `2024-07-05T08:38:52Z` `issue` by `Narsil`; signals: hang, kernel; excerpt: "@lucidrains Can't see your changes anywhere, are you on a branch somewhere ? I got compilation times down to 1mn but results seems wrong ..." (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2210451057)
-- `2024-07-05T12:08:04Z` `issue` by `lucidrains`; signals: cute, hang; excerpt: "@Narsil nice, i got it to around the same ballpark! unfortunately was working off a runpod that went down before i can push the ..." (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2210761282)
-- `2024-07-05T12:39:16Z` `issue` by `Narsil`; signals: cuda, hang; excerpt: "Nice doing the backward ! You're saying this branch is supposed to work ? Can I try your branch ? (My local changes were ..." (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2210806641)
+- 2024-07-03 `tridao`: I think softcapping should be done before the masking. i.e. the sequence is gemm, softcapping, masking, then softmax. If you do softcapping after masking, then some masked tokens will contribute a tiny amount to the softmax. In practice it's probably ok if ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2207085160)
+- 2024-07-03 `tridao`: softcapping can be fused with dividing by softmax scale. i.e. we do S = gemm(Q, K), then S = softmax scale 1 / softcap where "softmax scale 1 / softcap" is a constant we can compute before hand and put in the ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2207095410)
+- 2024-07-04 `Narsil`: There is still the tanh that's missing somewhere, where would you put it ? I was thinking adding a const template for softcapping so the cost of the branch wouldn't affect non softcapped kernels. wdyt ? (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2208237047)
+- 2024-07-04 `tridao`: Sorry I missed the tanh. The step should be S = gemm(Q, K), then S = tanh(softmax scale 1 / softcap), then masking, taking max, then exp2f(scores softcap log 2(e) - max softcap log 2(e)). Yeah we should template to avoid slowing ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2208252644)
+- 2024-07-04 `Narsil`: Ok I put the template for Is softcapping, however I cannot get your idea working. I may be missing something. My understandling is that Happens right when I was already doing it (but after gemm, before masking since tanh would throw -inf ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2209111566)
+- 2024-07-04 `Narsil`: My understanding is that scales softmax log2 is only ever used in the partial exponentiation (the log2 is to use exp2f which I assume has better intrinsics than expf, or is it more about numeric stability ?). scale softmax is only used ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2209213223)
+- 2024-07-04 `lucidrains`: @Narsil oh yea, your code looks way better than what i have lmao, let's just go with your changes so eventually you'll have to expose a customizable softcapping scale, which you should default to 30. (iirc used by Grok and Gemma2). maybe ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2209325874)
+- 2024-07-04 `lucidrains`: @Narsil backwards pass looks something like this in [naive pytorch]( - and done another way [here]( both examples are functional i understand things are 10-20x harder translating it to CUDA (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2209327364)
+- 2024-07-04 `lucidrains`: @Narsil yea, it is really hard to contribute with these compilation times. how fast were you able to get the times down to? i'm still waiting up to 10 minutes per change edit: it is 26 minutes, just timed it, let me ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2209412183)
+- 2024-07-05 `Narsil`: @lucidrains Can't see your changes anywhere, are you on a branch somewhere ? I got compilation times down to 1mn but results seems wrong with them (meaning the regular non softcapped flash fail). I am starting a branch from scratch to bisect ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2210451057)
+- 2024-07-05 `lucidrains`: @Narsil nice, i got it to around the same ballpark! unfortunately was working off a runpod that went down before i can push the changes 😞. but the good news is that i was luckily able to get backwards pass working as ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2210761282)
+- 2024-07-05 `Narsil`: Nice doing the backward ! You're saying this branch is supposed to work ? Can I try your branch ? (My local changes were exactly this branch). A10G (sm 86). Cuda 12.5 Ubuntu 20.04 Here. I've also dealt a few times with ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2210806641)
+- 2024-07-05 `lucidrains`: @Narsil lost my changes, but will work on restoring it later today (traveling with dog for the 4th, American holiday) yes, i think you are probably just off by some scale, error could even be in your tests (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2210811412)
+- 2024-07-05 `lucidrains`: i also want to do a separate PR just to make it easy for contributors to get started (specify a few hyperparameters, and enable/disable booleans for those flags, and only those kernels get compiled and tested) that ended up being the hardest ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2210815832)
+- 2024-07-05 `Shreya-Pathak`: Hello, I was separately working on adding softcapping to FA for Gemma 2. But seeing this PR, I'll add my WIP repo here if needed for double-checking: It is using the same idea as discussed above. The forward seemed correct (read passing ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2210939998)
+- 2024-07-05 `lucidrains`: @Shreya-Pathak looks great Shreya! i actually prefer your way for the interface, with boolean flag to turn on with a default softcapping scale (realistically the public won't know the right value, so it should just default to something proven and working) But ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2210952155)
+- 2024-07-05 `lucidrains`: regardless, i think the forward issue is done for, and Gemma2 inference will be viable soon i'll PR in the backwards pass once one of you get your changes in. there's actually two ways to approach backwards, and i'm not sure which ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2210953973)
+- 2024-07-05 `Narsil`: Hi @Shreya-Pathak, I looked at your changes. Personally I prefer the single flag (less things to know for users, and softcapping is unlikely to have a good default. Gemma2 uses 50, not 30 for instance: Taste and preferences I guess, ultimately it's ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2211046942)
+- 2024-07-05 `lucidrains`: @Narsil ah, good to know that Gemma 2 used 50., i believe Grok used 30.. and yea, it is a matter of preference (edit: actually may change my mind on this, since they are using different values probably better to leave it ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2211060343)
+- 2024-07-05 `lucidrains`: @Narsil ok, i'm sure you'll figure it out. @Shreya-Pathak can probably help too ping me when you want me to throw up the backwards pass (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2211139081)
+- 2024-07-05 `Shreya-Pathak`: @Narsil I think I have also done what Tri mentioned with the softcap / softmax scale and from a brief look at your code, you seem to be doing the same as well. Could you give more details about what tests are ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2211194117)
+- 2024-07-05 `tridao`: I think we should pass to tanh with softclapping scale = softmax scale (e.g. 1/sqrt(headdim) / softcap val (e.g. 50.0). As an example, with headdim = 128 and softcap = 50, we would do tanh(acc s 1/sqrt(128) / 50) = tanh(acc s ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2211414707)
+- 2024-07-06 `Narsil`: OK it's updated and now working. I have no idea why but cute::transform seems to be the culprit. Thanks @Shreya-Pathak for the apply softcap function that I did use in the end. (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2211565674)
+- 2024-07-06 `lucidrains`: OK it's updated and now working. I have no idea why but cute::transform seems to be the culprit. Thanks @Shreya-Pathak for the apply softcap function that I did use in the end. that's strange! i used cute::transform in both fwd and bwd ... (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2211571307)
+- 2024-07-08 `Narsil`: @tridao do you know what's missing to merge ? Should I run the CI manually maybe (without backward since it's not implemented yet.) (https://github.com/Dao-AILab/flash-attention/pull/1025#issuecomment-2214205691)

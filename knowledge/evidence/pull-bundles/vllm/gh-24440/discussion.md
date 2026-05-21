@@ -1,62 +1,24 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#24440](https://github.com/vllm-project/vllm/pull/24440)
-- Source page: `sources/prs/vllm/PR-24440.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-24440`
-- Generated at: `2026-05-20T15:37:47.155228+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-09-08T12:02:04Z`
-- Merged: `2025-10-10T16:43:40Z`
-
-## Discussion Counts
-
-- Issue comments: 16
-- Review submissions: 12 (approved=2, changes_requested=1, commented=9)
-- Inline review comments: 25
-- Review threads observed: 17
-- Resolved/outdated thread markers: resolved=0, outdated=13
-- Human participants with discussion text: BlackSamorez, LopezCastroRoberto, bbrowning, kylesayrs, mergify, mgoin, voipmonitor
-- Automation comments/reviews omitted from high-signal summary: 3
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 8
-
-## Review Decisions
-
-- `2025-09-08T12:06:03Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request integrates the QuTLASS library to add support for 4-bit quantization kernels, including new ... (https://github.com/vllm-project/vllm/pull/24440#pullrequestreview-3196224025)
-- `2025-09-08T19:45:16Z` `COMMENTED` by `kylesayrs` (https://github.com/vllm-project/vllm/pull/24440#pullrequestreview-3197826260)
-- `2025-09-09T10:07:09Z` `COMMENTED` by `LopezCastroRoberto` (https://github.com/vllm-project/vllm/pull/24440#pullrequestreview-3200637425)
-- `2025-09-09T11:16:12Z` `COMMENTED` by `LopezCastroRoberto` (https://github.com/vllm-project/vllm/pull/24440#pullrequestreview-3200983865)
-- `2025-09-09T11:21:16Z` `COMMENTED` by `LopezCastroRoberto` (https://github.com/vllm-project/vllm/pull/24440#pullrequestreview-3200999999)
-- `2025-09-11T15:53:10Z` `COMMENTED` by `kylesayrs` (https://github.com/vllm-project/vllm/pull/24440#pullrequestreview-3212496301)
-- `2025-09-11T15:53:57Z` `COMMENTED` by `kylesayrs` (https://github.com/vllm-project/vllm/pull/24440#pullrequestreview-3212500045)
-- `2025-09-11T15:54:08Z` `APPROVED` by `kylesayrs` - LGTM! (https://github.com/vllm-project/vllm/pull/24440#pullrequestreview-3212501108)
-- `2025-09-22T23:10:10Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/24440#pullrequestreview-3254906593)
-- `2025-10-07T19:45:38Z` `CHANGES_REQUESTED` by `mgoin` - Requesting changes for qutlass utils (https://github.com/vllm-project/vllm/pull/24440#pullrequestreview-3311652322)
-- `2025-10-09T21:07:36Z` `APPROVED` by `mgoin` (https://github.com/vllm-project/vllm/pull/24440#pullrequestreview-3320646395)
-
-## Inline Comment Hotspots
-
-- `vllm/_custom_ops.py`: 6 inline comment(s)
-- `benchmarks/kernels/bench_nvfp4_qutlass.py`: 5 inline comment(s)
-- `benchmarks/kernels/bench_mxfp4_qutlass.py`: 4 inline comment(s)
-- `vllm/qutlass_utils/utils.py`: 4 inline comment(s)
-- `cmake/external_projects/qutlass.cmake`: 3 inline comment(s)
-- `tests/kernels/quantization/test_mxfp4_qutlass.py`: 2 inline comment(s)
-- `vllm/model_executor/layers/quantization/qutlass_utils.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-09-08T19:44:54Z` `inline` by `kylesayrs` `benchmarks/kernels/bench_nvfp4_qutlass.py`:69; signals: benchmark, compile, fp4, kernel, nvfp4, triton; excerpt: "Will the triton jit affect benchmarked runtime? Ie, first time compile causes the first graph to take longer than normal?" (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331203601)
-- `2025-09-09T11:16:12Z` `inline` by `LopezCastroRoberto` `benchmarks/kernels/bench_nvfp4_qutlass.py`:69; signals: benchmark, cache, fp4, kernel, nvfp4; excerpt: "yes—the very first time is slower, but after that it's cached" (https://github.com/vllm-project/vllm/pull/24440#discussion_r2333137596)
-- `2025-09-22T19:44:48Z` `inline` by `mgoin` `tests/kernels/quantization/test_mxfp4_qutlass.py`; signals: blackwell, fp4, kernel, mxfp4; excerpt: "Please convert these to use pytest like other tests and add a skipif based on compute capability. You can add these tests to the ..." (https://github.com/vllm-project/vllm/pull/24440#discussion_r2370096843)
-- `2025-09-08T19:15:53Z` `inline` by `kylesayrs` `benchmarks/kernels/bench_mxfp4_qutlass.py`:39; signals: benchmark, fp4, kernel, mxfp4; excerpt: "Can you use our hadamard utility for consistency?" (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331147814)
-- `2025-09-08T19:17:57Z` `inline` by `kylesayrs` `benchmarks/kernels/bench_nvfp4_qutlass.py`:39; signals: benchmark, fp4, kernel, nvfp4; excerpt: "Same here, use our util" (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331151564)
-- `2025-09-08T19:19:30Z` `inline` by `kylesayrs` `benchmarks/kernels/bench_mxfp4_qutlass.py`:147; signals: benchmark, fp4, kernel, mxfp4; excerpt: "Please wrap in `if name == " main "" (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331154583)
-- `2025-09-08T19:21:39Z` `inline` by `kylesayrs` `benchmarks/kernels/bench_mxfp4_qutlass.py`:147; signals: benchmark, fp4, kernel, mxfp4; excerpt: "Consider adding some user arguments" (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331158845)
-- `2025-09-08T19:21:48Z` `inline` by `kylesayrs` `benchmarks/kernels/bench_nvfp4_qutlass.py`:149; signals: benchmark, fp4, kernel, nvfp4; excerpt: "Please wrap in `if name == "main"" (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331159130)
-- `2025-09-08T19:22:09Z` `inline` by `kylesayrs` `benchmarks/kernels/bench_nvfp4_qutlass.py`:149; signals: benchmark, fp4, kernel, nvfp4; excerpt: "Consider allowing users to specify arguments, that way you don't have to have commented code" (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331159792)
-- `2025-09-08T19:41:57Z` `inline` by `kylesayrs` `vllm/qutlass_utils/utils.py`:140; signals: block, kernel, triton; excerpt: "Just as a style thing, consider calling triton mx block rearrange in cases where you want to use the triton kernel and to blocked ..." (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331198391)
-- `2025-09-08T12:14:03Z` `issue` by `voipmonitor`; signals: fp4, mxfp4, sm120; excerpt: "@LopezCastroRoberto does this PR support gpt-oss on sm120 ? How to exactly test some mxfp4 models with this PR? Would love to test rtx ..." (https://github.com/vllm-project/vllm/pull/24440#issuecomment-3266011153)
+- 2025-09-08 `voipmonitor`: @LopezCastroRoberto does this PR support gpt-oss on sm120 ? How to exactly test some mxfp4 models with this PR? Would love to test rtx 6000 pro on this (https://github.com/vllm-project/vllm/pull/24440#issuecomment-3266011153)
+- 2025-09-08 `kylesayrs` on `benchmarks/kernels/bench_mxfp4_qutlass.py`:39: Can you use our hadamard utility for consistency? (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331147814)
+- 2025-09-08 `kylesayrs` on `benchmarks/kernels/bench_nvfp4_qutlass.py`:39: Same here, use our util (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331151564)
+- 2025-09-08 `kylesayrs` on `benchmarks/kernels/bench_mxfp4_qutlass.py`:147: Please wrap in `if name == " main " (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331154583)
+- 2025-09-08 `kylesayrs` on `benchmarks/kernels/bench_mxfp4_qutlass.py`:147: Consider adding some user arguments (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331158845)
+- 2025-09-08 `kylesayrs` on `benchmarks/kernels/bench_nvfp4_qutlass.py`:149: Please wrap in `if name == "main" (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331159130)
+- 2025-09-08 `kylesayrs` on `benchmarks/kernels/bench_nvfp4_qutlass.py`:149: Consider allowing users to specify arguments, that way you don't have to have commented code (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331159792)
+- 2025-09-08 `kylesayrs` on `vllm/_custom_ops.py`:2033: These should probably be moved somewhere else (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331170103)
+- 2025-09-08 `kylesayrs` on `vllm/_custom_ops.py`:2037: What's the point of this ? (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331170740)
+- 2025-09-08 `kylesayrs` on `vllm/_custom_ops.py`:2033: Consider moving the type def into the function defs (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331173093)
+- 2025-09-08 `kylesayrs` on `vllm/_custom_ops.py`:2049: Because these functions have a return value, you'll want to register a fake function so torch compile works right (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331187685)
+- 2025-09-08 `kylesayrs` on `vllm/qutlass_utils/utils.py`:28: Is this over-indented? I think we should standardize on 4 space indent (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331188852)
+- 2025-09-08 `kylesayrs` on `vllm/qutlass_utils/utils.py`:140: Just as a style thing, consider calling triton mx block rearrange in cases where you want to use the triton kernel and to blocked otherwise (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331198391)
+- 2025-09-08 `kylesayrs` on `benchmarks/kernels/bench_nvfp4_qutlass.py`:69: Will the triton jit affect benchmarked runtime? Ie, first time compile causes the first graph to take longer than normal? (https://github.com/vllm-project/vllm/pull/24440#discussion_r2331203601)
+- 2025-09-09 `LopezCastroRoberto` on `vllm/_custom_ops.py`:2037: Means all arguments that come after the must be passed by keyword, not by position. My point was to make the API clearer and less error-prone. (https://github.com/vllm-project/vllm/pull/24440#discussion_r2332884864)
+- 2025-09-09 `LopezCastroRoberto` on `benchmarks/kernels/bench_nvfp4_qutlass.py`:69: yes—the very first time is slower, but after that it's cached (https://github.com/vllm-project/vllm/pull/24440#discussion_r2333137596)
+- 2025-09-09 `LopezCastroRoberto` on `vllm/qutlass_utils/utils.py`:140: How about keeping one but making the backend explicit ? (https://github.com/vllm-project/vllm/pull/24440#discussion_r2333149579)
+- 2025-09-09 `LopezCastroRoberto`: @voipmonitor This PR supports dense models only, and it's perfectly fine to use an RTX 6000 Pro. We will add usage examples to this PR soon. We’re actively working on MoE support in QuTLASS—stay tuned :) (https://github.com/vllm-project/vllm/pull/24440#issuecomment-3270247047)
+- 2025-09-22 `mgoin` on `tests/kernels/quantization/test_mxfp4_qutlass.py`: Please convert these to use pytest like other tests and add a skipif based on compute capability. You can add these tests to the blackwell test runner (https://github.com/vllm-project/vllm/pull/24440#discussion_r2370096843)
+- 2025-09-22 `mgoin` on `cmake/external_projects/qutlass.cmake`: Does this require some minimum CUDA version? (https://github.com/vllm-project/vllm/pull/24440#discussion_r2370561463)
+- 2025-09-30 `BlackSamorez`: Fixed register fakes. They had a wrong namespace ( C:: qutlass C instead of just qutlass C) and quite a few kernels (matmul mxf4 bf16 tn, matmul ada mxf4 bf16 tn, fused quantize nv) didn't have fake impls at all. (https://github.com/vllm-project/vllm/pull/24440#issuecomment-3351991167)
+- 2025-10-02 `mgoin`: @LopezCastroRoberto it looks like the blackwell tests are broken at the moment ERROR : Arch conditional MMA instruction used without targeting appropriate compute capability. Aborting. (https://github.com/vllm-project/vllm/pull/24440#issuecomment-3361902103)
+- 2025-10-07 `mgoin` on `vllm/model_executor/layers/quantization/qutlass_utils.py`: We definitely shouldn't make a top-level vllm/qutluss utils/ directory. It looks like the only function imported is to blocked and it is only used in tests or benchmarks... If it is easiest to keep it in the package to share between both ... (https://github.com/vllm-project/vllm/pull/24440#discussion_r2411718890)
+- 2025-10-07 `mgoin` changes_requested: Requesting changes for qutlass utils (https://github.com/vllm-project/vllm/pull/24440#pullrequestreview-3311652322)

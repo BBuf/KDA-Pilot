@@ -1,63 +1,31 @@
-# PR Discussion Digest
-
-- Source PR: [sgl-project/sglang#23482](https://github.com/sgl-project/sglang/pull/23482)
-- Source page: `sources/prs/sglang/PR-23482.md`
-- Evidence bundle: `evidence/pull-bundles/sglang/gh-23482`
-- Generated at: `2026-05-20T15:29:37.360971+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-04-22T14:34:29Z`
-- Merged: `2026-05-19T09:46:55Z`
-
-## Discussion Counts
-
-- Issue comments: 7
-- Review submissions: 11 (approved=1, commented=10)
-- Inline review comments: 35
-- Review threads observed: 27
-- Resolved/outdated thread markers: resolved=10, outdated=11
-- Human participants with discussion text: Napkin-AI, OrangeRedeng, ping1jing2, ssshinigami
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-04-22T15:03:03Z` `COMMENTED` by `ssshinigami` (https://github.com/sgl-project/sglang/pull/23482#pullrequestreview-4155731191)
-- `2026-04-22T18:23:47Z` `COMMENTED` by `ping1jing2` (https://github.com/sgl-project/sglang/pull/23482#pullrequestreview-4155752651)
-- `2026-05-04T11:52:11Z` `COMMENTED` by `Napkin-AI` (https://github.com/sgl-project/sglang/pull/23482#pullrequestreview-4219760642)
-- `2026-05-04T11:52:33Z` `COMMENTED` by `Napkin-AI` (https://github.com/sgl-project/sglang/pull/23482#pullrequestreview-4219763102)
-- `2026-05-04T11:52:55Z` `COMMENTED` by `Napkin-AI` (https://github.com/sgl-project/sglang/pull/23482#pullrequestreview-4219765786)
-- `2026-05-04T11:54:07Z` `COMMENTED` by `Napkin-AI` (https://github.com/sgl-project/sglang/pull/23482#pullrequestreview-4219774274)
-- `2026-05-04T12:51:49Z` `COMMENTED` by `Napkin-AI` (https://github.com/sgl-project/sglang/pull/23482#pullrequestreview-4220190961)
-- `2026-05-10T19:48:14Z` `COMMENTED` by `ping1jing2` (https://github.com/sgl-project/sglang/pull/23482#pullrequestreview-4259824798)
-- `2026-05-10T19:49:16Z` `COMMENTED` by `ping1jing2` (https://github.com/sgl-project/sglang/pull/23482#pullrequestreview-4259825839)
-- `2026-05-18T08:59:50Z` `COMMENTED` by `Napkin-AI` (https://github.com/sgl-project/sglang/pull/23482#pullrequestreview-4308710173)
-- `2026-05-19T09:45:40Z` `APPROVED` by `ping1jing2` (https://github.com/sgl-project/sglang/pull/23482#pullrequestreview-4317766788)
-
-## Inline Comment Hotspots
-
-- `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`: 12 inline comment(s)
-- `python/sglang/multimodal_gen/runtime/layers/attention/backends/rain_fusion_attn.py`: 8 inline comment(s)
-- `python/sglang/multimodal_gen/runtime/layers/attention/backends/laser_attn.py`: 5 inline comment(s)
-- `docs/diffusion/performance/attention_backends.md`: 4 inline comment(s)
-- `python/sglang/multimodal_gen/runtime/platforms/npu.py`: 4 inline comment(s)
-- `python/sglang/multimodal_gen/configs/models/adapter/base.py`: 1 inline comment(s)
-- `python/sglang/multimodal_gen/configs/models/dits/base.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-05-04T11:52:33Z` `inline` by `Napkin-AI` `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`:169; signals: accuracy, attention, block, kernel, layout; excerpt: "This is possible, but the kernel has issues with BSND layout accuracy. This may be fixed in the future." (https://github.com/sgl-project/sglang/pull/23482#discussion_r3181312756)
-- `2026-04-22T15:05:51Z` `inline` by `ping1jing2` `docs/diffusion/performance/attention_backends.md`:39; signals: attention, hang, perf, performance; excerpt: "please change both docs and docs new" (https://github.com/sgl-project/sglang/pull/23482#discussion_r3124934607)
-- `2026-04-22T17:49:48Z` `inline` by `ping1jing2` `python/sglang/multimodal_gen/runtime/layers/attention/backends/laser_attn.py`:82; signals: attention, perf, performance; excerpt: "torch.zeros + torch.cat is always not a better choice in this scenarios, please use F.pad to optimize it for performance consideration." (https://github.com/sgl-project/sglang/pull/23482#discussion_r3125892043)
-- `2026-04-22T18:14:21Z` `inline` by `ping1jing2` `python/sglang/multimodal_gen/runtime/layers/attention/backends/rain_fusion_attn.py`:141; signals: attention, latency, memory; excerpt: "I'm certain this func can be optimized in terms of memory and latency. please rewrite it with AI, espeically for long-context scenarios." (https://github.com/sgl-project/sglang/pull/23482#discussion_r3126022920)
-- `2026-05-10T19:48:14Z` `inline` by `ping1jing2` `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`:4; signals: attention, block, kernel; excerpt: "This library is part of sgl-kernel-npu and should not be added to pyproject.toml. I think it will break GPU CIs, let me trigger the ..." (https://github.com/sgl-project/sglang/pull/23482#discussion_r3215413203)
-- `2026-05-18T08:59:50Z` `inline` by `Napkin-AI` `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`:4; signals: attention, block, hang; excerpt: "This shouldn't break any CIs, as these backends aren't currently used in tests. Adding tests for these backends requires updating as a CI installation ..." (https://github.com/sgl-project/sglang/pull/23482#discussion_r3257602111)
-- `2026-04-22T15:02:57Z` `inline` by `ssshinigami` `docs/diffusion/performance/attention_backends.md`:115; signals: attention, perf, performance; excerpt: "seems like merge artefacts" (https://github.com/sgl-project/sglang/pull/23482#discussion_r3124915525)
-- `2026-04-22T17:12:00Z` `inline` by `ping1jing2` `docs/diffusion/performance/attention_backends.md`:40; signals: attention, perf, performance; excerpt: "Shall we integrate these newly added attn into the existing attn, just like 21383 and 20248" (https://github.com/sgl-project/sglang/pull/23482#discussion_r3125690247)
-- `2026-05-04T11:52:11Z` `inline` by `Napkin-AI` `docs/diffusion/performance/attention_backends.md`:40; signals: attention, perf, performance; excerpt: "I don't think it needs to be integrated due to backends compatibility with other models." (https://github.com/sgl-project/sglang/pull/23482#discussion_r3181310542)
-- `2026-05-04T12:51:49Z` `inline` by `Napkin-AI` `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`:4; signals: attention, block, kernel; excerpt: "This library is part of sgl-kernel-npu and should not be added to ." (https://github.com/sgl-project/sglang/pull/23482#discussion_r3181647364)
-- `2026-05-04T12:55:14Z` `issue` by `Napkin-AI`; signals: kernel, perf, performance; excerpt: "please read firstly, and post your performance result here The description has been updated. When a new release of sgl-kernel-npu with [this PR]( released, ..." (https://github.com/sgl-project/sglang/pull/23482#issuecomment-4371210156)
-- `2026-04-22T17:21:41Z` `inline` by `ping1jing2` `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`:4; signals: attention, block; excerpt: "please double check this. we should update pyproject.toml if we add new 3rd lib, but we should avoid it" (https://github.com/sgl-project/sglang/pull/23482#discussion_r3125741922)
+- 2026-04-22 `ssshinigami` on `docs/diffusion/performance/attention_backends.md`:115: seems like merge artefacts (https://github.com/sgl-project/sglang/pull/23482#discussion_r3124915525)
+- 2026-04-22 `ping1jing2` on `docs/diffusion/performance/attention_backends.md`:39: please change both docs and docs new (https://github.com/sgl-project/sglang/pull/23482#discussion_r3124934607)
+- 2026-04-22 `ping1jing2` on `docs/diffusion/performance/attention_backends.md`:40: Shall we integrate these newly added attn into the existing attn, just like 21383 and 20248 (https://github.com/sgl-project/sglang/pull/23482#discussion_r3125690247)
+- 2026-04-22 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`:4: please double check this. we should update pyproject.toml if we add new 3rd lib, but we should avoid it (https://github.com/sgl-project/sglang/pull/23482#discussion_r3125741922)
+- 2026-04-22 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`:71: please add docstring for this func (https://github.com/sgl-project/sglang/pull/23482#discussion_r3125771954)
+- 2026-04-22 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`:115: please confirm that patch size[2] is always right, we don't need to check the out-of-bounds access. (https://github.com/sgl-project/sglang/pull/23482#discussion_r3125796479)
+- 2026-04-22 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`:144: why don't use torch.ops.attentions.sparse block estimate directly (https://github.com/sgl-project/sglang/pull/23482#discussion_r3125815043)
+- 2026-04-22 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`:169: I think we should support BSND here, and we will avoid use permute(0, 2, 1, 3).contiguous() below (https://github.com/sgl-project/sglang/pull/23482#discussion_r3125828083)
+- 2026-04-22 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`:243: please confirm if we really need it here (https://github.com/sgl-project/sglang/pull/23482#discussion_r3125831463)
+- 2026-04-22 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/laser_attn.py`:48: please use LaserAttention instead of LA here. and please tell user how to fix this raise error, if they don't need to handle it, use warning info (https://github.com/sgl-project/sglang/pull/23482#discussion_r3125840727)
+- 2026-04-22 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/laser_attn.py`:82: torch.zeros + torch.cat is always not a better choice in this scenarios, please use F.pad to optimize it for performance consideration. (https://github.com/sgl-project/sglang/pull/23482#discussion_r3125892043)
+- 2026-04-22 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/laser_attn.py`:165: according to my previous experience, we might can avoid using transpose OP during preprocess and postprocess. (https://github.com/sgl-project/sglang/pull/23482#discussion_r3125910568)
+- 2026-04-22 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/rain_fusion_attn.py`:7: In my opinion, this kernel is not Ascend-friendly, please check it. if so, just use matmul, reshape, transpose directly. (https://github.com/sgl-project/sglang/pull/23482#discussion_r3125934879)
+- 2026-04-22 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/rain_fusion_attn.py`:130: Shall we use F.avg pool directly? (https://github.com/sgl-project/sglang/pull/23482#discussion_r3125960357)
+- 2026-04-22 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/rain_fusion_attn.py`:167: why do we need int64 - float32 - int64 here? (https://github.com/sgl-project/sglang/pull/23482#discussion_r3125979177)
+- 2026-04-22 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/rain_fusion_attn.py`:141: I'm certain this func can be optimized in terms of memory and latency. please rewrite it with AI, espeically for long-context scenarios. (https://github.com/sgl-project/sglang/pull/23482#discussion_r3126022920)
+- 2026-04-22 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/rain_fusion_attn.py`:189: avoid using torch.einsum in code (https://github.com/sgl-project/sglang/pull/23482#discussion_r3126028018)
+- 2026-04-22 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/rain_fusion_attn.py`:1: I strongly recommand reviewing the whole file, especially for long-context scenarios. (https://github.com/sgl-project/sglang/pull/23482#discussion_r3126046466)
+- 2026-04-22 `ping1jing2` on `python/sglang/multimodal_gen/runtime/platforms/npu.py`:134: please describe how to install it (https://github.com/sgl-project/sglang/pull/23482#discussion_r3126067607)
+- 2026-04-22 `ping1jing2`: please read firstly, and post your performance result here (https://github.com/sgl-project/sglang/pull/23482#issuecomment-4298928119)
+- 2026-04-23 `OrangeRedeng`: Which attention is currently used by default, SDPA? Shouldn't we use Laser Attention by default? (https://github.com/sgl-project/sglang/pull/23482#issuecomment-4302585995)
+- 2026-04-23 `Napkin-AI`: Which attention is currently used by default, SDPA? Shouldn't we use Laser Attention by default? Currently SDPA is used by default. Laser Attention does not support cross-attention, so it cannot be used universally. (https://github.com/sgl-project/sglang/pull/23482#issuecomment-4303034757)
+- 2026-05-04 `Napkin-AI` on `docs/diffusion/performance/attention_backends.md`:40: I don't think it needs to be integrated due to backends compatibility with other models. (https://github.com/sgl-project/sglang/pull/23482#discussion_r3181310542)
+- 2026-05-04 `Napkin-AI` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`:169: This is possible, but the kernel has issues with BSND layout accuracy. This may be fixed in the future. (https://github.com/sgl-project/sglang/pull/23482#discussion_r3181312756)
+- 2026-05-04 `Napkin-AI` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/laser_attn.py`:165: Laser attention doesn`t support BSND layout, tensors should be transposed. (https://github.com/sgl-project/sglang/pull/23482#discussion_r3181314814)
+- 2026-05-04 `Napkin-AI` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/rain_fusion_attn.py`:1: I think the current version is quite optimal. Potential improvements include integrating Python code with Triton or a device-specific programming language. (https://github.com/sgl-project/sglang/pull/23482#discussion_r3181321713)
+- 2026-05-04 `Napkin-AI` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`:4: This library is part of sgl-kernel-npu and should not be added to . (https://github.com/sgl-project/sglang/pull/23482#discussion_r3181647364)
+- 2026-05-04 `Napkin-AI`: please read firstly, and post your performance result here The description has been updated. When a new release of sgl-kernel-npu with [this PR]( released, tests can be added, as this will require additional installation in ci/scripts. (https://github.com/sgl-project/sglang/pull/23482#issuecomment-4371210156)
+- 2026-05-10 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`:4: This library is part of sgl-kernel-npu and should not be added to pyproject.toml. I think it will break GPU CIs, let me trigger the CI to check (https://github.com/sgl-project/sglang/pull/23482#discussion_r3215413203)
+- 2026-05-10 `ping1jing2` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`:169: so add TODO here (https://github.com/sgl-project/sglang/pull/23482#discussion_r3215414512)
+- 2026-05-18 `Napkin-AI` on `python/sglang/multimodal_gen/runtime/layers/attention/backends/block_sparse_attn.py`:4: This shouldn't break any CIs, as these backends aren't currently used in tests. Adding tests for these backends requires updating as a CI installation dependency and installing with it, which I plan to do in the future. Any CI failures are unrelated ... (https://github.com/sgl-project/sglang/pull/23482#discussion_r3257602111)

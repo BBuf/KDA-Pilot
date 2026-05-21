@@ -1,67 +1,25 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#28775](https://github.com/vllm-project/vllm/pull/28775)
-- Source page: `sources/prs/vllm/PR-28775.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-28775`
-- Generated at: `2026-05-20T15:38:33.735220+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-11-15T06:24:57Z`
-- Merged: `2025-12-30T16:11:39Z`
-
-## Discussion Counts
-
-- Issue comments: 27
-- Review submissions: 13 (approved=1, commented=12)
-- Inline review comments: 20
-- Review threads observed: 14
-- Resolved/outdated thread markers: resolved=5, outdated=14
-- Human participants with discussion text: AndreasKaratzas, DarkLight1337, LucasWilkinson, chatgpt-codex-connector, mergify, yt0428
-- Automation comments/reviews omitted from high-signal summary: 4
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 3
-
-## Review Decisions
-
-- `2025-11-15T06:27:11Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request adds support for the openPangu Pro Moe v2 model, which introduces a new ... (https://github.com/vllm-project/vllm/pull/28775#pullrequestreview-3467783074)
-- `2025-11-15T06:27:36Z` `COMMENTED` by `chatgpt-codex-connector` - 💡 Codex Review Here are some automated review suggestions for this pull request. ℹ️ About Codex in GitHub ... (https://github.com/vllm-project/vllm/pull/28775#pullrequestreview-3467783170)
-- `2025-12-10T04:31:40Z` `COMMENTED` by `LucasWilkinson` - Thanks for the diagram that helps! First round of comments cc @heheda12345 and @NickLucche I tagged you two ... (https://github.com/vllm-project/vllm/pull/28775#pullrequestreview-3559664367)
-- `2025-12-10T06:17:42Z` `COMMENTED` by `yt0428` (https://github.com/vllm-project/vllm/pull/28775#pullrequestreview-3560913030)
-- `2025-12-10T06:30:09Z` `COMMENTED` by `yt0428` (https://github.com/vllm-project/vllm/pull/28775#pullrequestreview-3560955790)
-- `2025-12-10T06:43:05Z` `COMMENTED` by `yt0428` (https://github.com/vllm-project/vllm/pull/28775#pullrequestreview-3560992502)
-- `2025-12-10T06:45:57Z` `COMMENTED` by `yt0428` (https://github.com/vllm-project/vllm/pull/28775#pullrequestreview-3560999230)
-- `2025-12-16T06:22:29Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/28775#pullrequestreview-3581501485)
-- `2025-12-16T06:23:00Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/28775#pullrequestreview-3581502566)
-- `2025-12-17T18:28:27Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/28775#pullrequestreview-3589083116)
-- `2025-12-18T01:24:04Z` `COMMENTED` by `yt0428` (https://github.com/vllm-project/vllm/pull/28775#pullrequestreview-3590294371)
-- `2025-12-19T16:14:11Z` `COMMENTED` by `LucasWilkinson` - @yt0428 sorry for all the back and forth and thanks for all the clean-up! this is looking much ... (https://github.com/vllm-project/vllm/pull/28775#pullrequestreview-3599171733)
-- `2025-12-24T22:24:38Z` `APPROVED` by `LucasWilkinson` - LGTM; thanks for the back and forth! (https://github.com/vllm-project/vllm/pull/28775#pullrequestreview-3611639896)
-
-## Inline Comment Hotspots
-
-- `vllm/v1/worker/gpu_model_runner.py`: 6 inline comment(s)
-- `vllm/v1/attention/backends/flash_diffkv_attn.py`: 4 inline comment(s)
-- `vllm/model_executor/models/openpangu.py`: 2 inline comment(s)
-- `vllm/v1/attention/backends/flash_sink_attn.py`: 2 inline comment(s)
-- `vllm/v1/core/sched/scheduler.py`: 2 inline comment(s)
-- `vllm/attention/layer.py`: 1 inline comment(s)
-- `vllm/v1/kv_cache_interface.py`: 1 inline comment(s)
-- `vllm/v1/worker/gpu_input_batch.py`: 1 inline comment(s)
-- `vllm/v1/worker/kv_connector_model_runner_mixin.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-11-15T06:27:36Z` `inline` by `chatgpt-codex-connector` `vllm/v1/attention/backends/flash_sink_attn.py`:694; signals: attention, block, cache, cute, fp8, kv cache; excerpt: "![P0 Badge]( Define cached KV buffers for decode paths without new keys Inside FlashSinkAttentionImpl.forward the variables key cache, value cache, and num sink blocks ..." (https://github.com/vllm-project/vllm/pull/28775#discussion_r2529645826)
-- `2025-12-13T10:39:46Z` `issue` by `yt0428`; signals: attention, block, cache, kv cache, layout, perf; excerpt: "@LucasWilkinson Hello, I have refactored the code by: Remove the FLASH DIFFKV ATTN backend, instead, FLASH ATTN backend is extended to support the different ..." (https://github.com/vllm-project/vllm/pull/28775#issuecomment-3649200767)
-- `2025-12-16T06:22:29Z` `inline` by `LucasWilkinson` `vllm/v1/worker/gpu_model_runner.py`:5214; signals: attention, block, cache, kernel, kv cache; excerpt: "I wonder if it would be cleaner to just move get kv cache shape to the AttentionMetadataBuilder since that would be naturally aware of ..." (https://github.com/vllm-project/vllm/pull/28775#discussion_r2621950010)
-- `2025-12-10T06:43:05Z` `inline` by `yt0428` `vllm/v1/attention/backends/flash_diffkv_attn.py`; signals: attention, cache, kv cache; excerpt: "I think we can upgrade the get kv cache shape function to receive an additional args head size v, which equals head size by ..." (https://github.com/vllm-project/vllm/pull/28775#discussion_r2605403080)
-- `2025-12-19T16:14:11Z` `review` `COMMENTED` by `LucasWilkinson`; signals: attention, block; excerpt: "@yt0428 sorry for all the back and forth and thanks for all the clean-up! this is looking much better! lets do for now to ..." (https://github.com/vllm-project/vllm/pull/28775#pullrequestreview-3599171733)
-- `2025-12-10T04:19:38Z` `inline` by `LucasWilkinson` `vllm/v1/kv_cache_interface.py`:162; signals: attention, cache; excerpt: "I think we can simplify this by just adding head size v with it defaulting to head size v = head size to FullAttentionSpec ..." (https://github.com/vllm-project/vllm/pull/28775#discussion_r2605134466)
-- `2025-12-10T04:29:18Z` `inline` by `LucasWilkinson` `vllm/v1/worker/gpu_model_runner.py`:5312; signals: attention, cache; excerpt: "nit: similar to we should move this into a AttentionWithStaticSink layer; I think then you can just populate it on the first model pass ..." (https://github.com/vllm-project/vllm/pull/28775#discussion_r2605148422)
-- `2025-12-17T18:28:26Z` `inline` by `LucasWilkinson` `vllm/v1/worker/gpu_model_runner.py`:5214; signals: attention, mla; excerpt: "If this is too messy to do know I think we can make a FlashAttentionDiffKVBackend subclass of FlashAttentionBackend that just assumes 192/128 (is that ..." (https://github.com/vllm-project/vllm/pull/28775#discussion_r2628164449)
-- `2025-12-18T01:24:04Z` `inline` by `yt0428` `vllm/v1/worker/gpu_model_runner.py`:5214; signals: cache, kv cache; excerpt: "Do you mean something like this: This way we don't have to modify get kv cache shape interface anymore." (https://github.com/vllm-project/vllm/pull/28775#discussion_r2629160143)
-- `2025-12-13T07:52:26Z` `issue` by `mergify`; signals: failing, hang; excerpt: "Hi @yt0428, the pre-commit checks have failed. Please run: Then, commit the changes and push to your branch. For future commits, pre-commit will run ..." (https://github.com/vllm-project/vllm/pull/28775#issuecomment-3649089976)
-- `2025-12-13T08:29:56Z` `issue` by `mergify`; signals: failing, hang; excerpt: "Hi @yt0428, the pre-commit checks have failed. Please run: Then, commit the changes and push to your branch. For future commits, pre-commit will run ..." (https://github.com/vllm-project/vllm/pull/28775#issuecomment-3649113439)
-- `2025-12-17T02:45:18Z` `issue` by `mergify`; signals: failing, hang; excerpt: "Hi @yt0428, the pre-commit checks have failed. Please run: Then, commit the changes and push to your branch. For future commits, pre-commit will run ..." (https://github.com/vllm-project/vllm/pull/28775#issuecomment-3663390320)
+- 2025-11-25 `DarkLight1337`: @LucasWilkinson @zou3519 @mgoin can you review the attention implementation? (https://github.com/vllm-project/vllm/pull/28775#issuecomment-3575218963)
+- 2025-12-09 `yt0428`: @LucasWilkinson @zou3519 @mgoin can you review the attention implementation? Hello, everyone. I wonder if there are any reviews or suggestions? Many Thanks! @LucasWilkinson @zou3519 @mgoin @DarkLight1337 (https://github.com/vllm-project/vllm/pull/28775#issuecomment-3629867721)
+- 2025-12-09 `LucasWilkinson`: @yt0428 is there a tech report or model stub that you can share that you can share so we can better understand the architecture? (i dont see a huggingface stub) (https://github.com/vllm-project/vllm/pull/28775#issuecomment-3630325210)
+- 2025-12-09 `yt0428`: @yt0428 is there a tech report or model stub that you can share that you can share so we can better understand the architecture? (i dont see a huggingface stub) @LucasWilkinson The model will be released soon so currently there is no ... (https://github.com/vllm-project/vllm/pull/28775#issuecomment-3632692741)
+- 2025-12-09 `LucasWilkinson` on `vllm/v1/attention/backends/flash_diffkv_attn.py`:362: I think you should be setting headdim v here too (https://github.com/vllm-project/vllm/pull/28775#discussion_r2604320930)
+- 2025-12-10 `LucasWilkinson` on `vllm/v1/attention/backends/flash_diffkv_attn.py`: I think we can just add this support to FlashAttnBackend; just do self.head size v = head size Technically we could just leave in that case and it should still work but could break P/D dissagg cc @NickLucche so might be safer ... (https://github.com/vllm-project/vllm/pull/28775#discussion_r2605130885)
+- 2025-12-10 `LucasWilkinson` on `vllm/v1/kv_cache_interface.py`:162: I think we can simplify this by just adding head size v with it defaulting to head size v = head size to FullAttentionSpec since this just a generalization of FullAttentionSpec; not sure if this would break things, cc @heheda12345 like: (https://github.com/vllm-project/vllm/pull/28775#discussion_r2605134466)
+- 2025-12-10 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:1623: can we move this out of the GPU model runner into a AttentionWithStaticSink layer kinda like: (https://github.com/vllm-project/vllm/pull/28775#discussion_r2605138591)
+- 2025-12-10 `LucasWilkinson` on `vllm/v1/worker/gpu_input_batch.py`:140: nit: I think it would be clearer to pass this as separate param like num speculative tokens instead overloading the semantics of max model len; cc @heheda12345 (https://github.com/vllm-project/vllm/pull/28775#discussion_r2605144486)
+- 2025-12-10 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:5312: nit: similar to we should move this into a AttentionWithStaticSink layer; I think then you can just populate it on the first model pass with an allocated kv-cache (we have warmup runs so this should be safe) (https://github.com/vllm-project/vllm/pull/28775#discussion_r2605148422)
+- 2025-12-10 `LucasWilkinson` on `vllm/v1/core/sched/scheduler.py`:195: hmm I don't love this being in the scheduler since its somewhat model specific but I haven't thought of something cleaner; do you have any ideas @heheda12345 ? (https://github.com/vllm-project/vllm/pull/28775#discussion_r2605150673)
+- 2025-12-10 `LucasWilkinson` commented: Thanks for the diagram that helps! First round of comments cc @heheda12345 and @NickLucche I tagged you two in a couple (https://github.com/vllm-project/vllm/pull/28775#pullrequestreview-3559664367)
+- 2025-12-10 `yt0428` on `vllm/v1/core/sched/scheduler.py`:195: Yeah, I totally agree that! Looking forward for suggestions on cleaner implementation. (https://github.com/vllm-project/vllm/pull/28775#discussion_r2605346313)
+- 2025-12-10 `yt0428` on `vllm/v1/attention/backends/flash_diffkv_attn.py`: Yes! Actually the support for different head size of K and V is a natural extension for current flash attn backend and I also think it would be more elegant to modify the flash attn backend directly. Given this, I think we ... (https://github.com/vllm-project/vllm/pull/28775#discussion_r2605373927)
+- 2025-12-10 `yt0428` on `vllm/v1/attention/backends/flash_diffkv_attn.py`: I think we can upgrade the get kv cache shape function to receive an additional args head size v, which equals head size by default. (https://github.com/vllm-project/vllm/pull/28775#discussion_r2605403080)
+- 2025-12-10 `yt0428` on `vllm/v1/worker/gpu_model_runner.py`:5312: Awesome! Thanks for the suggestion! I will look into these to find out how to fix it :) (https://github.com/vllm-project/vllm/pull/28775#discussion_r2605409070)
+- 2025-12-13 `yt0428`: @LucasWilkinson Hello, I have refactored the code by: Remove the FLASH DIFFKV ATTN backend, instead, FLASH ATTN backend is extended to support the different head size for K and V. I primarily modify the logic of get kv cache shape and get ... (https://github.com/vllm-project/vllm/pull/28775#issuecomment-3649200767)
+- 2025-12-16 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:5214: I wonder if it would be cleaner to just move get kv cache shape to the AttentionMetadataBuilder since that would be naturally aware of most of this; then we could do metadata builder.get kv cache shape(kernel num blocks, kernel block size) (wouldnt ... (https://github.com/vllm-project/vllm/pull/28775#discussion_r2621950010)
+- 2025-12-17 `yt0428`: 12.17 update: We move the sink blocks management to the SinkFullAttentionManager, so that we don't need to update block table tensor in the AttentionMetadataBuilder every step. (https://github.com/vllm-project/vllm/pull/28775#issuecomment-3663438301)
+- 2025-12-17 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:5214: If this is too messy to do know I think we can make a FlashAttentionDiffKVBackend subclass of FlashAttentionBackend that just assumes 192/128 (is that what this model uses? thats what MiMo-V2-Flash uses and I assume this would be similar since it aligns ... (https://github.com/vllm-project/vllm/pull/28775#discussion_r2628164449)
+- 2025-12-18 `yt0428` on `vllm/v1/worker/gpu_model_runner.py`:5214: Do you mean something like this: This way we don't have to modify get kv cache shape interface anymore. (https://github.com/vllm-project/vllm/pull/28775#discussion_r2629160143)
+- 2025-12-19 `LucasWilkinson` commented: @yt0428 sorry for all the back and forth and thanks for all the clean-up! this is looking much better! lets do for now to make this PR less controversial and get it across the line and we can discuss refactors/cleanups in future ... (https://github.com/vllm-project/vllm/pull/28775#pullrequestreview-3599171733)
+- 2025-12-22 `LucasWilkinson`: Glad to hear that! This new implementation looks much more elegant. However, it comes with a trade-off: we now need to copy the block table tensor at every step. Do you think this could become a bottleneck in most cases? I dont ... (https://github.com/vllm-project/vllm/pull/28775#issuecomment-3680035937)
+- 2025-12-25 `yt0428`: @LucasWilkinson Hello, I notice that there are two failing checks in CI, but it seems the failing code has no relevance with our modification. What can I do for this? (https://github.com/vllm-project/vllm/pull/28775#issuecomment-3691348000)
+- 2025-12-29 `yt0428`: Retrying the failed test Hello, I tried to test the failing case in my local environment and it seems work well, since the failing code has no relevance with our modification. So I wonder if there are any missing bugs. My test ... (https://github.com/vllm-project/vllm/pull/28775#issuecomment-3695275239)

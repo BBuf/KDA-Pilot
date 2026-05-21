@@ -1,78 +1,31 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#31415](https://github.com/vllm-project/vllm/pull/31415)
-- Source page: `sources/prs/vllm/PR-31415.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-31415`
-- Generated at: `2026-05-20T15:39:19.980065+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-12-27T18:45:58Z`
-- Merged: `2026-01-08T00:42:34Z`
-
-## Discussion Counts
-
-- Issue comments: 14
-- Review submissions: 32 (approved=2, commented=30)
-- Inline review comments: 32
-- Review threads observed: 12
-- Resolved/outdated thread markers: resolved=8, outdated=7
-- Human participants with discussion text: bnellnm, mergify, mgoin, robertgshaw2-redhat, zyongye
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-12-27T18:47:32Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request refactors the Fused MoE backend selection logic by moving Fp8MoeBackend and get fp8 ... (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3614403399)
-- `2025-12-29T20:16:31Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3616674358)
-- `2026-01-07T15:50:04Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3635541019)
-- `2026-01-07T15:54:15Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3635557855)
-- `2026-01-07T16:03:49Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3635603711)
-- `2026-01-07T16:10:29Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3635631341)
-- `2026-01-07T16:16:14Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3635654206)
-- `2026-01-07T16:24:23Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3635686436)
-- `2026-01-07T17:17:03Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3635918707)
-- `2026-01-07T17:17:50Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3635922573)
-- `2026-01-07T17:21:51Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3635944670)
-- `2026-01-07T17:22:43Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3635949632)
-- `2026-01-07T17:42:55Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3636069769)
-- `2026-01-07T18:11:35Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3636197597)
-- `2026-01-07T18:14:40Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3636207680)
-- `2026-01-07T18:16:23Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3636213201)
-- `2026-01-07T18:18:16Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3636219670)
-- `2026-01-07T18:46:41Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3636331260)
-- `2026-01-07T19:10:01Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3636424640)
-- `2026-01-07T19:12:57Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3636367064)
-- `2026-01-07T19:17:33Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3636448744)
-- `2026-01-07T19:17:45Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3636449440)
-- `2026-01-07T19:37:32Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3636510590)
-- `2026-01-07T19:38:05Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3636512119)
-- ... 8 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/layers/fused_moe/oracle/fp8.py`: 9 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/triton_cutlass_moe.py`: 9 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/cutlass_moe.py`: 5 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/fallback.py`: 2 inline comment(s)
-- `vllm/model_executor/models/llama4.py`: 2 inline comment(s)
-- `tests/evals/gsm8k/configs/moe-refactor/Llama-4-Scout-Fp8-ModelOpt-fi-cutlass.yaml`: 2 inline comment(s)
-- `vllm/model_executor/layers/quantization/utils/flashinfer_utils.py`: 2 inline comment(s)
-- `benchmarks/kernels/benchmark_cutlass_moe_fp8.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-01-07T18:11:35Z` `inline` by `robertgshaw2-redhat` `vllm/model_executor/layers/fused_moe/triton_cutlass_moe.py`:75; signals: cutlass, deepgemm, gemm, hang, moe, triton; excerpt: "okay, I remember why I could not do this The reason is that for the DeepGEMM case, we have different logic for workspace vs ..." (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669586245)
-- `2026-01-07T17:21:51Z` `inline` by `robertgshaw2-redhat` `vllm/model_executor/layers/fused_moe/triton_cutlass_moe.py`:75; signals: cutlass, deepgemm, gemm, moe, triton; excerpt: "I originally had it that way, but I thought there might be times that the workspace shapes selection and gemm impl selection might not ..." (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669354476)
-- `2025-12-29T20:16:31Z` `inline` by `robertgshaw2-redhat` `benchmarks/kernels/benchmark_cutlass_moe_fp8.py`:130; signals: benchmark, cutlass, fp8, kernel, moe; excerpt: "this function was unused" (https://github.com/vllm-project/vllm/pull/31415#discussion_r2651700883)
-- `2026-01-07T20:01:56Z` `inline` by `robertgshaw2-redhat` `vllm/model_executor/layers/fused_moe/triton_cutlass_moe.py`:75; signals: cutlass, deepgemm, gemm, moe, triton; excerpt: "I think we could avoid having the weights. We need to cleanup the logic for deepgemm selection" (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669901834)
-- `2026-01-07T19:38:05Z` `inline` by `robertgshaw2-redhat` `vllm/model_executor/layers/fused_moe/triton_cutlass_moe.py`:65; signals: b200, cutlass, moe, triton; excerpt: "addressed. I hadnt actually hooked up CutlassOrTritonExperts I also added a test to ensure it runs on B200" (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669833695)
-- `2026-01-07T16:16:13Z` `inline` by `bnellnm` `vllm/model_executor/layers/fused_moe/triton_cutlass_moe.py`:75; signals: cutlass, moe, triton; excerpt: "Would it make more sense to have a select experts (or maybe use primary) method that returns a bool instead that indicates primary or ..." (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669099890)
-- `2026-01-07T17:17:50Z` `inline` by `robertgshaw2-redhat` `vllm/model_executor/layers/fused_moe/oracle/fp8.py`:290; signals: fp8, hang, moe; excerpt: "yeah I think that could work. I would prefer to make the change in a separate PR though as this one already has a ..." (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669331918)
-- `2026-01-07T18:16:23Z` `inline` by `robertgshaw2-redhat` `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:267; signals: cutlass, kernel, moe; excerpt: "I think 10MB per layer for llama maverick. So something like 0.5GB Given this kernel is not the most critical, I think we should ..." (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669598465)
-- `2026-01-07T18:18:15Z` `inline` by `robertgshaw2-redhat` `vllm/model_executor/layers/fused_moe/oracle/fp8.py`:131; signals: fp8, kernel, moe; excerpt: "I tend to agree that the oracle should validate. That being said, the spirit of this PR is to move from several places that ..." (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669604123)
-- `2026-01-07T19:11:58Z` `inline` by `mgoin` `vllm/model_executor/layers/fused_moe/triton_cutlass_moe.py`:65; signals: cutlass, moe, triton; excerpt: "Shouldn't this be select experts impl since select experts impl is marked as abstract in FallbackExperts" (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669762764)
-- `2026-01-07T19:40:09Z` `inline` by `bnellnm` `vllm/model_executor/layers/fused_moe/triton_cutlass_moe.py`:75; signals: cutlass, moe, triton; excerpt: "Do you know if it needs the actual weights or just the weight shapes? Either way, I'm fine with deferring this til later." (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669839343)
-- `2026-01-07T20:02:33Z` `inline` by `robertgshaw2-redhat` `tests/evals/gsm8k/configs/moe-refactor/Llama-4-Scout-Fp8-ModelOpt-fi-cutlass.yaml`:5; signals: cutlass, fp8, moe; excerpt: "yeah, thats a good idea. It makes the logs much easier to read by not logging out /completions every request" (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669903772)
+- 2025-12-29 `robertgshaw2-redhat` on `benchmarks/kernels/benchmark_cutlass_moe_fp8.py`:130: this function was unused (https://github.com/vllm-project/vllm/pull/31415#discussion_r2651700883)
+- 2026-01-07 `robertgshaw2-redhat`: green build: going to push up another fix with the docs change (https://github.com/vllm-project/vllm/pull/31415#issuecomment-3719194864)
+- 2026-01-07 `bnellnm` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:267: I think this is more convenient from an API point of view but IIRC the strides tensors were pulled out so that they could be shared among multiple experts instances. (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669004660)
+- 2026-01-07 `bnellnm` on `vllm/model_executor/layers/fused_moe/fallback.py`:50: Shouldn't the fallback and primary experts match behavior here as well? (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669019665)
+- 2026-01-07 `bnellnm` on `vllm/model_executor/layers/fused_moe/oracle/fp8.py`:131: Should we check the block size too? (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669057415)
+- 2026-01-07 `bnellnm` on `vllm/model_executor/layers/fused_moe/oracle/fp8.py`:290: Would it make more sense to have two different versions of this class instead of a flag? I don't have any particular preference here. (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669080427)
+- 2026-01-07 `bnellnm` on `vllm/model_executor/layers/fused_moe/triton_cutlass_moe.py`:75: Would it make more sense to have a select experts (or maybe use primary) method that returns a bool instead that indicates primary or fallback experts? Then it could be used by workspace shapes, apply, etc? This would prevent duplicating the selection ... (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669099890)
+- 2026-01-07 `bnellnm` on `vllm/model_executor/models/llama4.py`:435: Was this a bug? (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669128319)
+- 2026-01-07 `robertgshaw2-redhat` on `vllm/model_executor/layers/fused_moe/oracle/fp8.py`:131: is there a specific size that is supported? I just copied over the existing logic here (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669328238)
+- 2026-01-07 `robertgshaw2-redhat` on `vllm/model_executor/layers/fused_moe/oracle/fp8.py`:290: yeah I think that could work. I would prefer to make the change in a separate PR though as this one already has a lot going on (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669331918)
+- 2026-01-07 `robertgshaw2-redhat` on `vllm/model_executor/layers/fused_moe/triton_cutlass_moe.py`:75: I originally had it that way, but I thought there might be times that the workspace shapes selection and gemm impl selection might not be the same. I think that the TritonOrDeepGEMM experts had a comment about this (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669354476)
+- 2026-01-07 `robertgshaw2-redhat` on `vllm/model_executor/layers/fused_moe/fallback.py`:50: yeah I think you are right (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669359064)
+- 2026-01-07 `robertgshaw2-redhat` on `vllm/model_executor/models/llama4.py`:435: I meant to remove this. There is an issue with where loading Llama4 checkpoints for ModelOpt takes a very long time and this makes it go faster (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669470624)
+- 2026-01-07 `robertgshaw2-redhat` on `vllm/model_executor/layers/fused_moe/triton_cutlass_moe.py`:75: okay, I remember why I could not do this The reason is that for the DeepGEMM case, we have different logic for workspace vs gemm selection and the gemm selection requires the weights to be there I think we should fix this ... (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669586245)
+- 2026-01-07 `robertgshaw2-redhat` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:267: I think 10MB per layer for llama maverick. So something like 0.5GB Given this kernel is not the most critical, I think we should leave it as is (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669598465)
+- 2026-01-07 `robertgshaw2-redhat` on `vllm/model_executor/layers/fused_moe/oracle/fp8.py`:131: I tend to agree that the oracle should validate. That being said, the spirit of this PR is to move from several places that make the selection to a single centralized place. I plan to do a more extensive validation for all ... (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669604123)
+- 2026-01-07 `bnellnm` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:267: Maybe you can use the buffer manager for this? i.e. the same one used for workspaces (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669689411)
+- 2026-01-07 `mgoin` on `vllm/model_executor/layers/fused_moe/oracle/fp8.py`:110: nit: just check for cuda first (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669713492)
+- 2026-01-07 `mgoin` on `vllm/model_executor/layers/fused_moe/oracle/fp8.py`:131: In reality I think nothing has been tested e2e except for 128x128, so we can safely assert that for now (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669716651)
+- 2026-01-07 `robertgshaw2-redhat` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:267: yeah I think thats a good follow up item (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669757123)
+- 2026-01-07 `mgoin` on `vllm/model_executor/layers/fused_moe/triton_cutlass_moe.py`:65: Shouldn't this be select experts impl since select experts impl is marked as abstract in FallbackExperts (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669762764)
+- 2026-01-07 `mgoin` on `tests/evals/gsm8k/configs/moe-refactor/Llama-4-Scout-Fp8-ModelOpt-fi-cutlass.yaml`:5: What is this? Do you just want to add it to the eval script here (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669769587)
+- 2026-01-07 `mgoin` on `vllm/model_executor/layers/fused_moe/oracle/fp8.py`:294: I think we should just put each import within each conditional, rather than importing all (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669772093)
+- 2026-01-07 `robertgshaw2-redhat` on `vllm/model_executor/layers/fused_moe/triton_cutlass_moe.py`:65: yeah, I must not be triggering this code in the CI (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669778220)
+- 2026-01-07 `robertgshaw2-redhat` on `vllm/model_executor/layers/fused_moe/triton_cutlass_moe.py`:65: addressed. I hadnt actually hooked up CutlassOrTritonExperts I also added a test to ensure it runs on B200 (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669833695)
+- 2026-01-07 `bnellnm` on `vllm/model_executor/layers/fused_moe/triton_cutlass_moe.py`:75: Do you know if it needs the actual weights or just the weight shapes? Either way, I'm fine with deferring this til later. (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669839343)
+- 2026-01-07 `robertgshaw2-redhat` on `vllm/model_executor/layers/fused_moe/triton_cutlass_moe.py`:75: I think we could avoid having the weights. We need to cleanup the logic for deepgemm selection (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669901834)
+- 2026-01-07 `robertgshaw2-redhat` on `tests/evals/gsm8k/configs/moe-refactor/Llama-4-Scout-Fp8-ModelOpt-fi-cutlass.yaml`:5: yeah, thats a good idea. It makes the logs much easier to read by not logging out /completions every request (https://github.com/vllm-project/vllm/pull/31415#discussion_r2669903772)
+- 2026-01-07 `zyongye` on `vllm/model_executor/layers/quantization/utils/flashinfer_utils.py`:361: Should we register this inside the FusedMoEMethod? instead of in the utils? (https://github.com/vllm-project/vllm/pull/31415#discussion_r2670109722)
+- 2026-01-07 `zyongye` commented: The overall structure LGTM. But we will need to revisit the fallback experts abstraction in the future as discussed. (https://github.com/vllm-project/vllm/pull/31415#pullrequestreview-3636845066)
+- 2026-01-07 `robertgshaw2-redhat` on `vllm/model_executor/layers/quantization/utils/flashinfer_utils.py`:361: there is some work to make TRTLLM a modular kernel. once that is done, we can revisit it (https://github.com/vllm-project/vllm/pull/31415#discussion_r2670122019)

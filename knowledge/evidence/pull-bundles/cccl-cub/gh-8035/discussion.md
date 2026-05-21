@@ -1,80 +1,43 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/cccl#8035](https://github.com/NVIDIA/cccl/pull/8035)
-- Source page: `sources/prs/cccl-cub/PR-8035.md`
-- Evidence bundle: `evidence/pull-bundles/cccl-cub/gh-8035`
-- Generated at: `2026-05-20T15:20:28.007997+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-03-14T02:03:47Z`
-- Merged: `2026-03-26T03:28:03Z`
-
-## Discussion Counts
-
-- Issue comments: 50
-- Review submissions: 51 (approved=3, commented=48)
-- Inline review comments: 53
-- Review threads observed: 25
-- Resolved/outdated thread markers: resolved=21, outdated=12
-- Human participants with discussion text: NaderAlAwar, andralex, caugonnet, miscco
-- Automation comments/reviews omitted from high-signal summary: 20
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-03-18T06:46:55Z` `COMMENTED` by `caugonnet` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3965467519)
-- `2026-03-18T06:51:23Z` `COMMENTED` by `caugonnet` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3965484840)
-- `2026-03-18T06:54:26Z` `COMMENTED` by `caugonnet` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3965498415)
-- `2026-03-18T06:55:41Z` `COMMENTED` by `caugonnet` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3965505187)
-- `2026-03-18T06:57:01Z` `COMMENTED` by `caugonnet` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3965511717)
-- `2026-03-18T07:00:50Z` `COMMENTED` by `caugonnet` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3965525516)
-- `2026-03-18T07:01:38Z` `COMMENTED` by `caugonnet` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3965528241)
-- `2026-03-18T07:11:17Z` `COMMENTED` by `caugonnet` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3965569422)
-- `2026-03-18T07:14:21Z` `COMMENTED` by `caugonnet` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3965582594)
-- `2026-03-18T14:55:12Z` `COMMENTED` by `andralex` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3968461305)
-- `2026-03-18T14:56:09Z` `COMMENTED` by `andralex` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3968469102)
-- `2026-03-18T14:59:44Z` `COMMENTED` by `andralex` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3968501511)
-- `2026-03-18T15:00:30Z` `COMMENTED` by `andralex` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3968507897)
-- `2026-03-18T15:00:54Z` `COMMENTED` by `andralex` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3968511302)
-- `2026-03-18T17:52:16Z` `COMMENTED` by `andralex` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3969766611)
-- `2026-03-18T17:58:04Z` `COMMENTED` by `andralex` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3969806947)
-- `2026-03-20T05:55:19Z` `COMMENTED` by `caugonnet` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3979605414)
-- `2026-03-20T06:01:49Z` `COMMENTED` by `caugonnet` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3979631252)
-- `2026-03-20T06:02:55Z` `COMMENTED` by `caugonnet` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3979634339)
-- `2026-03-20T06:04:00Z` `COMMENTED` by `caugonnet` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3979637478)
-- `2026-03-20T06:04:46Z` `COMMENTED` by `caugonnet` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3979640677)
-- `2026-03-20T06:06:06Z` `COMMENTED` by `caugonnet` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3979644742)
-- `2026-03-20T06:12:13Z` `COMMENTED` by `caugonnet` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3979663305)
-- `2026-03-20T06:46:50Z` `COMMENTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/8035#pullrequestreview-3979738603)
-- ... 27 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `cudax/include/cuda/experimental/__stf/places/places.cuh`: 20 inline comment(s)
-- `cudax/include/cuda/experimental/__stf/places/exec/cuda_stream.cuh`: 9 inline comment(s)
-- `cudax/include/cuda/experimental/__stf/internal/parallel_for_scope.cuh`: 5 inline comment(s)
-- `cudax/include/cuda/experimental/__stf/places/place_partition.cuh`: 4 inline comment(s)
-- `cudax/include/cuda/experimental/__stf/stream/stream_task.cuh`: 4 inline comment(s)
-- `cudax/include/cuda/experimental/__stf/internal/backend_ctx.cuh`: 3 inline comment(s)
-- `cudax/include/cuda/experimental/__stf/internal/launch.cuh`: 2 inline comment(s)
-- `cudax/include/cuda/experimental/__stf/graph/interfaces/slice.cuh`: 2 inline comment(s)
-- `cudax/include/cuda/experimental/__stf/internal/logical_data.cuh`: 2 inline comment(s)
-- `cudax/include/cuda/experimental/__stf/localization/composite_slice.cuh`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-21T00:17:41Z` `inline` by `andralex` `cudax/include/cuda/experimental/__stf/internal/backend_ctx.cuh`:1107; signals: cuda, cudagraph, kernel; excerpt: "Indeed. As per our discussion today, @caugonnet and I decided to simplify by removing the dedicated statically-typed classes (exec place host, exec place device, ..." (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968486762)
-- `2026-03-21T02:06:09Z` `inline` by `andralex` `cudax/include/cuda/experimental/__stf/internal/parallel_for_scope.cuh`:659; signals: compile, cuda, cute; excerpt: "Actually we're better off now. The old code used static type dispatch to skip compiling device code when exec place t was exec place ..." (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968685600)
-- `2026-03-18T07:00:50Z` `inline` by `caugonnet` `cudax/include/cuda/experimental/__stf/places/places.cuh`:753; signals: cuda, memory; excerpt: "this is wrong, one could make a device exec place where the memory is "backed" by pinned (host) memory, can't we rely on the ..." (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2951336799)
-- `2026-03-21T01:36:32Z` `inline` by `andralex` `cudax/include/cuda/experimental/__stf/places/exec/cuda_stream.cuh`:46; signals: cuda, hang; excerpt: "will change, thanks" (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968655515)
-- `2026-03-21T01:37:38Z` `inline` by `andralex` `cudax/include/cuda/experimental/__stf/places/exec/cuda_stream.cuh`:101; signals: attention, cuda; excerpt: "done thanks love the attention to detail" (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968656601)
-- `2026-03-18T06:57:01Z` `inline` by `caugonnet` `cudax/include/cuda/experimental/__stf/places/places.cuh`:666; signals: cuda; excerpt: "should we have a grid iterator object in the exec place::impl and leverage that instead ? If this is just a counter a new ..." (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2951322883)
-- `2026-03-20T06:34:11Z` `inline` by `miscco` `cudax/include/cuda/experimental/__stf/internal/parallel_for_scope.cuh`:554; signals: cuda; excerpt: "Nitpick: In the context of mdspan and other standard C++ multidimensional access, I would have expected rank() as the name of that function" (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2964210332)
-- `2026-03-20T13:01:08Z` `inline` by `caugonnet` `cudax/include/cuda/experimental/__stf/places/places.cuh`:998; signals: cuda; excerpt: "Should not we have an exec place host type, and a make static instance for the exec place, instead of the impl ?" (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2965649013)
-- `2026-03-20T13:03:43Z` `inline` by `caugonnet` `cudax/include/cuda/experimental/__stf/internal/parallel_for_scope.cuh`:554; signals: cuda; excerpt: "just my 2cents, but don't you find rank() is ambiguous with the rank/size semantic we have in SPMD programs ? (where rank is the ..." (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2965660526)
-- `2026-03-20T23:32:45Z` `inline` by `andralex` `cudax/include/cuda/experimental/__stf/places/place_partition.cuh`:318; signals: cuda; excerpt: "I think the loop works in all cases because for scalar devices the loop iterates exactly once and get place(0) returns shared from this(). ..." (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968385418)
-- `2026-03-21T00:05:02Z` `inline` by `andralex` `cudax/include/cuda/experimental/__stf/graph/interfaces/slice.cuh`:90; signals: cuda; excerpt: "Seems correct. For composite data places, affine exec place() returns the execution grid - it goes through get affine exec impl() which returns the ..." (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968464936)
-- `2026-03-21T00:28:55Z` `inline` by `andralex` `cudax/include/cuda/experimental/__stf/internal/logical_data.cuh`:1487; signals: cuda; excerpt: "Unscoped activation is possible via get impl()- activate(idx) and get impl()- deactivate(prev, idx) - these are public. But RAII is the intended pattern because ..." (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968515574)
+- 2026-03-18 `caugonnet` on `cudax/include/cuda/experimental/__stf/internal/launch.cuh`:98: all these assertions should have been CCCL ASSERT in the first place (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2951284457)
+- 2026-03-18 `caugonnet` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:382: i avoided this in data place but maybe it's impossible to ignore here (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2951299644)
+- 2026-03-18 `caugonnet` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:509: device auto() looks very surprising (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2951311411)
+- 2026-03-18 `caugonnet` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:511: (preexisting) this is a weird situation (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2951317138)
+- 2026-03-18 `caugonnet` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:666: should we have a grid iterator object in the exec place::impl and leverage that instead ? If this is just a counter a new class is maybe unnecessary (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2951322883)
+- 2026-03-18 `caugonnet` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:753: this is wrong, one could make a device exec place where the memory is "backed" by pinned (host) memory, can't we rely on the dynamic cast mambo jambo with exec place host instead ? (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2951336799)
+- 2026-03-18 `caugonnet` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:692: cool, no need for forward declarations (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2951339646)
+- 2026-03-18 `caugonnet` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:1070: can't we use the make static factory style you had in data place ? (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2951378893)
+- 2026-03-18 `caugonnet` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:1330: should that move to exec place::impl as an iterator class ? (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2951390009)
+- 2026-03-18 `andralex` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:382: Due to possible overheads? It's not too bad I think. (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2954033350)
+- 2026-03-18 `andralex` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:509: I deleted that ctor. (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2954064986)
+- 2026-03-18 `andralex` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:666: I'll look into it. (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2954074218)
+- 2026-03-18 `andralex` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:753: I added virtual functions is host and is device to the interface (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2955223030)
+- 2026-03-20 `caugonnet` on `cudax/include/cuda/experimental/__stf/internal/backend_ctx.cuh`:1107: where is this implemented now ? (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2964131622)
+- 2026-03-20 `caugonnet` on `cudax/include/cuda/experimental/__stf/internal/logical_data.cuh`:1487: no way to avoid the RAII style now ? (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2964133947)
+- 2026-03-20 `caugonnet` on `cudax/include/cuda/experimental/__stf/localization/composite_slice.cuh`:483: get grid() == affine exec place() ? (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2964135947)
+- 2026-03-20 `caugonnet` on `cudax/include/cuda/experimental/__stf/places/place_partition.cuh`:134: the const was abusive ? (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2964139044)
+- 2026-03-20 `caugonnet` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:502: are we using it for devices ? (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2964152846)
+- 2026-03-20 `miscco` on `cudax/include/cuda/experimental/__stf/internal/parallel_for_scope.cuh`:554: Nitpick: In the context of mdspan and other standard C++ multidimensional access, I would have expected rank() as the name of that function (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2964210332)
+- 2026-03-20 `miscco` on `cudax/include/cuda/experimental/__stf/places/exec/cuda_stream.cuh`:46: Should that be an CCCL ASSERT? We also have CCCL VERIFY for always on checks (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2964214471)
+- 2026-03-20 `miscco` on `cudax/include/cuda/experimental/__stf/places/exec/cuda_stream.cuh`:101: Nitpick We prefer list-initialization to better disambiguate function calls for the reader (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2964219347)
+- 2026-03-20 `miscco` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:420: Should this be pure virtual? (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2964231365)
+- 2026-03-20 `caugonnet` on `cudax/include/cuda/experimental/__stf/internal/backend_ctx.cuh`:1107: It looks like ctx.launch(exec place::host(), ...) is no longer possible (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2965565184)
+- 2026-03-20 `caugonnet` on `cudax/include/cuda/experimental/__stf/places/exec/cuda_stream.cuh`:47: shared from this() looks like a member function, not a free function (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2965595651)
+- 2026-03-20 `caugonnet` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:998: Should not we have an exec place host type, and a make static instance for the exec place, instead of the impl ? (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2965649013)
+- 2026-03-20 `caugonnet` on `cudax/include/cuda/experimental/__stf/internal/parallel_for_scope.cuh`:554: just my 2cents, but don't you find rank() is ambiguous with the rank/size semantic we have in SPMD programs ? (where rank is the position in the grid, not the dim) (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2965660526)
+- 2026-03-20 `caugonnet` on `cudax/include/cuda/experimental/__stf/internal/parallel_for_scope.cuh`:659: there is a chance this breaks parallel for on the host (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2965668680)
+- 2026-03-20 `andralex` on `cudax/include/cuda/experimental/__stf/places/place_partition.cuh`:318: I think the loop works in all cases because for scalar devices the loop iterates exactly once and get place(0) returns shared from this(). So I fixed by just using the loop. (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968385418)
+- 2026-03-21 `andralex` on `cudax/include/cuda/experimental/__stf/graph/interfaces/slice.cuh`:90: Seems correct. For composite data places, affine exec place() returns the execution grid - it goes through get affine exec impl() which returns the stored grid from data place composite. Will resolve for now. (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968464936)
+- 2026-03-21 `andralex` on `cudax/include/cuda/experimental/__stf/internal/backend_ctx.cuh`:1107: Indeed. As per our discussion today, @caugonnet and I decided to simplify by removing the dedicated statically-typed classes (exec place host, exec place device, exec place grid, etc.). The previous design had a dual hierarchy: polymorphic implementations with virtual functions, plus pimpl ... (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968486762)
+- 2026-03-21 `andralex` on `cudax/include/cuda/experimental/__stf/internal/logical_data.cuh`:1487: Unscoped activation is possible via get impl()- activate(idx) and get impl()- deactivate(prev, idx) - these are public. But RAII is the intended pattern because it's safer and exception-safe. It's good that unscoped activation is more verbose because it's more dangerous! (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968515574)
+- 2026-03-21 `andralex` on `cudax/include/cuda/experimental/__stf/localization/composite_slice.cuh`:483: Yah, for composite data places they're equivalent. data place composite::get affine exec impl() returns grid .get impl(), and affine exec place() wraps that into an exec place. So affine exec place() is the correct replacement for the removed get grid(). (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968528857)
+- 2026-03-21 `andralex` on `cudax/include/cuda/experimental/__stf/places/place_partition.cuh`:134: thanks, got back to const (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968530702)
+- 2026-03-21 `andralex` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:502: Yah, though the impl is different by necessity (see exec place::device(int devid)). We do save on allocations etc. (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968612572)
+- 2026-03-21 `andralex` on `cudax/include/cuda/experimental/__stf/internal/parallel_for_scope.cuh`:554: Arguably size() is the correct mdspan name here - it returns total element count. In mdspan, rank() means number of dimensions (e.g., 2 for a 2D grid), not element count. Also claude seems to have a similar point with @caugonnet 's about ... (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968654861)
+- 2026-03-21 `andralex` on `cudax/include/cuda/experimental/__stf/places/exec/cuda_stream.cuh`:47: yah it's a member, resolving (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968656350)
+- 2026-03-21 `andralex` on `cudax/include/cuda/experimental/__stf/places/exec/cuda_stream.cuh`:101: done thanks love the attention to detail (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968656601)
+- 2026-03-21 `andralex` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:420: I asked Claude to look at all implementations and make an assessment :). The base class default (shared from this()) works for dynamically allocated scalar places (cuda stream, green context) which should be the usual case. Only static instances and grids need ... (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968670434)
+- 2026-03-21 `andralex` on `cudax/include/cuda/experimental/__stf/places/places.cuh`:998: Per discussion we repudiated exec place host for simplicity's sake (at the cost of more ifs). We can add it back if necessary. (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968671563)
+- 2026-03-21 `andralex` on `cudax/include/cuda/experimental/__stf/internal/parallel_for_scope.cuh`:659: Actually we're better off now. The old code used static type dispatch to skip compiling device code when exec place t was exec place host. With exec place host removed, we rely on runtime is host() checks and early returns (line 639-641). ... (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2968685600)
+- 2026-03-25 `caugonnet` on `cudax/include/cuda/experimental/__stf/stream/stream_task.cuh`:218: is there a way to "early exit" on that exec place scope (eg. with a reset() method) ? (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2989769993)
+- 2026-03-25 `andralex` on `cudax/include/cuda/experimental/__stf/stream/stream_task.cuh`:218: Currently you can early-exit by assigning an empty scope: scope = exec place scope(); But a dedicated reset() method would be cleaner. Want me to add it? Want me to add this method? (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2990220127)
+- 2026-03-25 `caugonnet` on `cudax/include/cuda/experimental/__stf/stream/stream_task.cuh`:218: scope = exec place scope(); is quite a surprising API to deactivate :) (https://github.com/NVIDIA/cccl/pull/8035#discussion_r2990492693)

@@ -1,82 +1,39 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/TensorRT-LLM#13340](https://github.com/NVIDIA/TensorRT-LLM/pull/13340)
-- Source page: `sources/prs/tensorrt-llm/PR-13340.md`
-- Evidence bundle: `evidence/pull-bundles/tensorrt-llm/gh-13340`
-- Generated at: `2026-05-20T15:18:37.765298+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-04-22T11:35:40Z`
-- Merged: `2026-05-07T09:39:36Z`
-
-## Discussion Counts
-
-- Issue comments: 89
-- Review submissions: 29 (approved=6, commented=23)
-- Inline review comments: 37
-- Review threads observed: 30
-- Resolved/outdated thread markers: resolved=30, outdated=13
-- Human participants with discussion text: Barry-Delaney, StanleySun639, coderabbitai, dc3671, hyukn, juney-nvidia, lfr-0531, mikeiovine, pcastonguay, reasonsolo, tensorrt-cicd, yuxianq
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-04-22T11:51:55Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 12 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4154396789)
-- `2026-04-23T04:37:35Z` `COMMENTED` by `Barry-Delaney` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4159681277)
-- `2026-04-27T11:58:21Z` `COMMENTED` by `reasonsolo` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4180373573)
-- `2026-04-27T13:28:31Z` `APPROVED` by `hyukn` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4181280915)
-- `2026-04-28T03:16:22Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4185616938)
-- `2026-04-28T03:24:19Z` `COMMENTED` by `dc3671` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4185649790)
-- `2026-04-28T03:24:25Z` `COMMENTED` by `dc3671` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4185650367)
-- `2026-04-28T03:34:02Z` `COMMENTED` by `dc3671` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4185690141)
-- `2026-04-28T03:57:21Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4185760791)
-- `2026-04-28T04:24:45Z` `COMMENTED` by `dc3671` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4185840722)
-- `2026-04-28T04:32:01Z` `COMMENTED` by `dc3671` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4185866535)
-- `2026-04-28T04:34:06Z` `APPROVED` by `reasonsolo` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4185873532)
-- `2026-04-28T04:36:24Z` `COMMENTED` by `dc3671` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4185886429)
-- `2026-04-28T05:12:14Z` `APPROVED` by `juney-nvidia` - Approved from oss compliance perspective. (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4186013848)
-- `2026-04-28T06:58:28Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4186501263)
-- `2026-04-28T07:14:13Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4186579642)
-- `2026-04-28T07:35:34Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4186697504)
-- `2026-04-28T07:39:54Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4186720969)
-- `2026-04-28T07:49:08Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4186772624)
-- `2026-04-28T07:51:06Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4186783435)
-- `2026-04-28T07:54:34Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4186804129)
-- `2026-04-28T08:07:50Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4186882699)
-- `2026-04-28T08:31:16Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4187041441)
-- `2026-04-28T08:32:19Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4187048533)
-- ... 5 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`: 10 inline comment(s)
-- `tensorrt_llm/_torch/modules/attention.py`: 4 inline comment(s)
-- `tests/unittest/_torch/attention/sparse/test_dsa_fp4_indexer.py`: 4 inline comment(s)
-- `cpp/include/tensorrt_llm/executor/dataTransceiverState.h`: 2 inline comment(s)
-- `tests/unittest/_torch/attention/sparse/test_dsa_indexer.py`: 2 inline comment(s)
-- `cpp/tensorrt_llm/nanobind/batch_manager/kvCacheManager.cpp`: 2 inline comment(s)
-- `tensorrt_llm/_torch/custom_ops/cpp_custom_ops.py`: 2 inline comment(s)
-- `tensorrt_llm/llmapi/llm_args.py`: 2 inline comment(s)
-- `tests/integration/defs/accuracy/test_llm_api_pytorch.py`: 2 inline comment(s)
-- `cpp/include/tensorrt_llm/batch_manager/kvCacheManager.h`: 1 inline comment(s)
-- `cpp/tensorrt_llm/kernels/fusedCatFp4.cu`: 1 inline comment(s)
-- `cpp/tensorrt_llm/thop/fusedCatFp4Op.cpp`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-04-22T11:51:55Z` `review` `COMMENTED` by `coderabbitai`; signals: attention, block, cache, fp4, gemm, hang, kernel, layout; excerpt: "Actionable comments posted: 12 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#pullrequestreview-4154396789)
-- `2026-04-22T11:51:52Z` `inline` by `coderabbitai` `cpp/tensorrt_llm/kernels/fusedCatFp4.cu`:207; signals: aligned, alignment, bf16, cute, fp4, kernel, perf, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major 🧩 Analysis chain 🏁 Script executed: Repository: NVIDIA/TensorRT-LLM Length of output: 104 --- 🏁 Script executed: Repository: NVIDIA/TensorRT-LLM Length ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3123709180)
-- `2026-04-22T11:51:53Z` `inline` by `coderabbitai` `tests/unittest/_torch/attention/sparse/test_dsa_fp4_indexer.py`:308; signals: attention, b200, block, correctness, fp4, hang, kernel, perf; excerpt: "⚠️ Potential issue 🟠 Major The JIT probe is not a perf gate. This always passes and only logs timings, so a regression in ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3123709238)
-- `2026-04-22T11:51:49Z` `issue` by `coderabbitai`; signals: alignment, attention, bf16, blackwell, block, cache, compile, correctness; excerpt: "📝 Walkthrough Walkthrough This pull request adds FP4 quantization support to the indexer K-cache system. It introduces new CUDA kernels for fused concatenation and ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4295920478)
-- `2026-04-22T11:51:52Z` `inline` by `coderabbitai` `cpp/include/tensorrt_llm/executor/dataTransceiverState.h`:123; signals: benchmark, block, cache, fp4, layout, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major operator== is still missing layout-defining fields. Adding mIndexerKCacheUseFp4 here is only a partial fix. States that differ in mEnableBlockReuse, ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3123709159)
-- `2026-04-22T11:51:53Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:2060; signals: attention, benchmark, fp4, fp8, layout, tensorrt; excerpt: "⚠️ Potential issue 🔴 Critical Reshape q scale back to token-major layout in the FP4 branch. torch.ops.trtllm.fused cat fp4() returns scales as [num tokens ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3123709207)
-- `2026-04-22T11:51:53Z` `inline` by `coderabbitai` `tests/unittest/_torch/attention/sparse/test_dsa_fp4_indexer.py`:229; signals: attention, block, cache, dtype, fp4, layout; excerpt: "⚠️ Potential issue 🟠 Major This footprint check never exercises the implementation. All of these assertions are recomputed from literals inside the test, so ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3123709235)
-- `2026-04-22T11:51:53Z` `inline` by `coderabbitai` `tests/unittest/_torch/attention/sparse/test_dsa_indexer.py`:475; signals: attention, cache, cuda, kernel, kv cache, regression; excerpt: "⚠️ Potential issue 🟠 Major Populate the mock scheduler metadata from kv lens cuda 2d. The real generation path updates both kv lens cuda ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3123709246)
-- `2026-04-22T11:51:53Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/modules/attention.py`:1828; signals: attention, compile, mla, race, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major Update the fake custom-op contract to 9 outputs. forward dsa proj() now returns q scale as a 9th tensor, ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3123709216)
-- `2026-04-22T11:51:53Z` `inline` by `coderabbitai` `tests/unittest/_torch/attention/sparse/test_cpp_custom_ops.py`:165; signals: attention, cache, fp4, fp8, hang; excerpt: "⚠️ Potential issue 🟡 Minor Add a head dim=64 gather case. These assertions still only cover the legacy FP8 branch because HEAD DIM is ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3123709220)
-- `2026-04-22T11:51:53Z` `inline` by `coderabbitai` `tests/unittest/_torch/attention/sparse/test_dsa_fp4_indexer.py`:34; signals: attention, fp4, gemm, regression, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major Don't skip on arbitrary deep gemm import failures. Catching Exception here turns real regressions in the FP4 import path ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3123709227)
-- `2026-04-28T07:54:34Z` `inline` by `yuxianq` `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:1020; signals: attention, fp4, fp8, hang, tensorrt; excerpt: "Will we change the name of fp8 indices since it supports fp8/fp4 now? There are many places that still use fp8 prefix for fp8+fp4 ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3152412223)
+- 2026-04-23 `Barry-Delaney` on `cpp/tensorrt_llm/deep_gemm/CMakeLists.txt`:44: Should be replacing from .. import C into import tensorrt llm.deep gemm cpp tllm. The following part will call tensorrt llm.deep gemm cpp tllm.foo(), current replace will resulting in import errors. (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3128367077)
+- 2026-04-23 `tensorrt-cicd`: [PR Github 45181]( [ run ] completed with state FAILURE. Commit: bbd7b05 [/LLM/main/L0 MergeRequest PR pipeline 35457]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4305865169)
+- 2026-04-24 `tensorrt-cicd`: [PR Github 45296]( [ run ] completed with state SUCCESS. Commit: 8a060c2 [/LLM/main/L0 MergeRequest PR pipeline 35550]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4313229111)
+- 2026-04-25 `tensorrt-cicd`: [PR Github 45494]( [ run ] completed with state SUCCESS. Commit: 8a060c2 [/LLM/main/L0 MergeRequest PR pipeline 35721]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4319904027)
+- 2026-04-26 `tensorrt-cicd`: [PR Github 45547]( [ run ] completed with state SUCCESS. Commit: 6077352 [/LLM/main/L0 MergeRequest PR pipeline 35765]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4322031149)
+- 2026-04-27 `reasonsolo` on `cpp/tensorrt_llm/nanobind/batch_manager/kvCacheManager.cpp`:636: It's better to append the binding arg list only when there are default values , I have encountered some misaligned arg-vs-param in similar cases. (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3146818181)
+- 2026-04-27 `reasonsolo` on `tensorrt_llm/_torch/modules/attention.py`:1055: I think it's better to use indexer.use fp4 explicity than getattr and fallback to False silently. This makes me feel that we are hiding config/api changes in implementation details. (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3147018281)
+- 2026-04-27 `reasonsolo` on `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:1149: Same here, why not add the indexer k dtype with default fp8 to the config itself? (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3147052374)
+- 2026-04-27 `hyukn` on `tensorrt_llm/_torch/custom_ops/cpp_custom_ops.py`:1186: NITS: It is a little confusing to use k fp8 still for the fp4 path. And I guess the head dim means the same thing as "payload bytes per token", as described in the cpp. (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3147627945)
+- 2026-04-28 `yuxianq` on `tensorrt_llm/llmapi/llm_args.py`:355: "Requires index head dim=128." is ambiguous, only fp4 requires it, we can say "fp4 requires Blackwell+ (SM =100) and index head dim=128, it can halve the indexer K cache per-token footprint from 132 B to 68 B." (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3151350776)
+- 2026-04-28 `dc3671` on `tensorrt_llm/_torch/modules/attention.py`:1055: done and I also removed getattr for kvcache manager. (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3151370512)
+- 2026-04-28 `dc3671` on `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:1149: done and I also removed getattr for kvcache manager. (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3151371150)
+- 2026-04-28 `dc3671` on `tensorrt_llm/llmapi/llm_args.py`:355: reasonable for me. Done (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3151409986)
+- 2026-04-28 `yuxianq` on `tests/integration/defs/accuracy/test_llm_api_pytorch.py`:3450: We do not add accuracy/test llm api pytorch.py::TestDeepSeekV32::test nvfp4 multi gpus[fp4 indexer] to any test list, please add it to cover this test in CI. (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3151471177)
+- 2026-04-28 `dc3671` on `cpp/tensorrt_llm/nanobind/batch_manager/kvCacheManager.cpp`:636: As dicussed offline, Lizhi recommended just append new arg to the end to avoid positional args mismatch. But it will always use self.impl = KVCacheManagerCpp( kwargs) to avoid this problem. So just keep the order to make indexer related args together. (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3151546640)
+- 2026-04-28 `dc3671` on `tensorrt_llm/_torch/custom_ops/cpp_custom_ops.py`:1186: As discussed offline, k fp8 always hold fp8 tensor in cpp side. And there are lots of fp8 vars in cpp side. Will keep the name with additional comment to demonstrate the usage. (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3151574214)
+- 2026-04-28 `yuxianq` on `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:1457: These two line does not store to variable, should we remove them? (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3152138922)
+- 2026-04-28 `yuxianq` on `tests/integration/test_lists/test-db/l0_dgx_b200.yml`:186: Please also add to tests/integration/test lists/qa/llm function core.txt for QA. (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3152210860)
+- 2026-04-28 `yuxianq` on `cpp/tensorrt_llm/batch_manager/kvCacheManager.cpp`:1042: We should also do the same thing for cache transmission. see computeDimsPerHead in and and (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3152315973)
+- 2026-04-28 `yuxianq` on `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:1926: The annotation should be Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor] 5 tuples now. (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3152337032)
+- 2026-04-28 `yuxianq` on `tests/unittest/_torch/attention/sparse/test_dsa_indexer.py`: Should we add a indexer k cache scatter op test for fp4 case? (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3152383966)
+- 2026-04-28 `yuxianq` on `tensorrt_llm/_torch/modules/attention.py`:1831: Update doc, we have 5 elements now. (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3152394107)
+- 2026-04-28 `yuxianq` on `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:1020: Will we change the name of fp8 indices since it supports fp8/fp4 now? There are many places that still use fp8 prefix for fp8+fp4 variable name. (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3152412223)
+- 2026-04-28 `yuxianq` on `tests/unittest/_torch/attention/sparse/test_dsa_fp4_indexer.py`:36: We skip DeepGEMM tests when we cannot find fp8 fp4 mqa logits, but this case indicates that we use a wrong version of DeepGEMM, should we fail the test instead of skipping it? (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3152480366)
+- 2026-04-28 `yuxianq` on `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:1654: We always provide not-none q scale in non-test cases, so we cannot skip chunk q scale in fp8 case, how about use if self.use fp4 as condition to skip it? (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3152618381)
+- 2026-04-28 `yuxianq` on `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:1708: Same issue, how about use if self.use fp4 as condition? (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3152624632)
+- 2026-04-29 `dc3671` on `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:1020: As discussed offline and previous discussion with Yukun, we will not do this in this PR. (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#discussion_r3158731096)
+- 2026-04-30 `tensorrt-cicd`: [PR Github 46131]( [ run ] completed with state SUCCESS. Commit: 64ad759 [/LLM/main/L0 MergeRequest PR pipeline 36263]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4348616344)
+- 2026-05-02 `tensorrt-cicd`: [PR Github 46502]( [ run ] completed with state FAILURE. Commit: c94fd8f [/LLM/main/L0 MergeRequest PR pipeline 36563]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4363389588)
+- 2026-05-02 `tensorrt-cicd`: [PR Github 46559]( [ run ] completed with state FAILURE. Commit: c94fd8f [/LLM/main/L0 MergeRequest PR pipeline 36614]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4364770360)
+- 2026-05-05 `tensorrt-cicd`: [PR Github 46681]( [ run ] completed with state SUCCESS. Commit: 5789923 [/LLM/main/L0 MergeRequest PR pipeline 36720]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4376657210)
+- 2026-05-06 `tensorrt-cicd`: [PR Github 46875]( [ run ] completed with state SUCCESS. Commit: fc17fad [/LLM/main/L0 MergeRequest PR pipeline 36886]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4386200106)
+- 2026-05-06 `tensorrt-cicd`: [PR Github 46991]( [ run ] completed with state SUCCESS. Commit: edf9dd7 [/LLM/main/L0 MergeRequest PR pipeline 36967]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4388533344)
+- 2026-05-06 `tensorrt-cicd`: [PR Github 47010]( [ run ] completed with state SUCCESS. Commit: 102e6be [/LLM/main/L0 MergeRequest PR pipeline 36985]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4389621360)
+- 2026-05-07 `tensorrt-cicd`: [PR Github 47024]( [ run ] completed with state SUCCESS. Commit: 102e6be [/LLM/main/L0 MergeRequest PR pipeline 36999]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4393218165)
+- 2026-05-07 `tensorrt-cicd`: [PR Github 47061]( [ run ] completed with state SUCCESS. Commit: 102e6be [/LLM/main/L0 MergeRequest PR pipeline 37033]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4394059734)
+- 2026-05-07 `tensorrt-cicd`: [PR Github 47104]( [ run ] completed with state SUCCESS. Commit: 102e6be [/LLM/main/L0 MergeRequest PR pipeline 37073]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4394437229)
+- 2026-05-07 `tensorrt-cicd`: [PR Github 47153]( [ run ] completed with state FAILURE. Commit: 102e6be [/LLM/main/L0 MergeRequest PR pipeline 37114]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4395137126)
+- 2026-05-07 `tensorrt-cicd`: [PR Github 47157]( [ run ] completed with state SUCCESS. Commit: 102e6be [/LLM/main/L0 MergeRequest PR pipeline 37117]( completed with status: 'SUCCESS' [CI Report]( [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/13340#issuecomment-4395969646)

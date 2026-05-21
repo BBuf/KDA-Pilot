@@ -1,80 +1,36 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/cccl#5578](https://github.com/NVIDIA/cccl/pull/5578)
-- Source page: `sources/prs/cccl-cub/PR-5578.md`
-- Evidence bundle: `evidence/pull-bundles/cccl-cub/gh-5578`
-- Generated at: `2026-05-20T15:19:51.015563+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-08-19T16:20:46Z`
-- Merged: `2025-08-26T21:22:11Z`
-
-## Discussion Counts
-
-- Issue comments: 12
-- Review submissions: 28 (approved=2, changes_requested=1, commented=25)
-- Inline review comments: 45
-- Review threads observed: 22
-- Resolved/outdated thread markers: resolved=4, outdated=14
-- Human participants with discussion text: NaderAlAwar, oleksandr-pavlyk, shwina
-- Automation comments/reviews omitted from high-signal summary: 12
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-08-25T14:14:18Z` `CHANGES_REQUESTED` by `NaderAlAwar` - Scan doesn't show performance improvements right now due to us not reusing CUB policies yet, but do we ... (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3151513971)
-- `2025-08-26T11:49:11Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155281992)
-- `2025-08-26T11:49:15Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155282161)
-- `2025-08-26T11:49:47Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155284179)
-- `2025-08-26T11:53:57Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155299172)
-- `2025-08-26T11:54:08Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155299686)
-- `2025-08-26T11:54:22Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155300395)
-- `2025-08-26T12:01:30Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155322030)
-- `2025-08-26T12:02:09Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155323877)
-- `2025-08-26T12:02:59Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155326394)
-- `2025-08-26T12:03:30Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155327956)
-- `2025-08-26T12:03:35Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155328237)
-- `2025-08-26T12:03:46Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155328780)
-- `2025-08-26T12:04:01Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155329501)
-- `2025-08-26T12:06:30Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155337517)
-- `2025-08-26T12:10:50Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155350917)
-- `2025-08-26T12:51:18Z` `COMMENTED` by `oleksandr-pavlyk` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155488970)
-- `2025-08-26T12:52:03Z` `COMMENTED` by `oleksandr-pavlyk` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155491699)
-- `2025-08-26T14:13:55Z` `APPROVED` by `NaderAlAwar` - Looks great, thanks @shwina! Left a few minor comments (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3155780985)
-- `2025-08-26T14:53:57Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3156040072)
-- `2025-08-26T15:11:58Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3156124681)
-- `2025-08-26T15:12:04Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3156125083)
-- `2025-08-26T15:12:09Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3156125376)
-- `2025-08-26T15:12:16Z` `COMMENTED` by `shwina` (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3156125803)
-- ... 4 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `python/cuda_cccl/benchmarks/parallel/bench_scan.py`: 16 inline comment(s)
-- `python/cuda_cccl/cuda/cccl/parallel/experimental/_bindings_impl.pyx`: 8 inline comment(s)
-- `python/cuda_cccl/benchmarks/parallel/bench_reduce.py`: 4 inline comment(s)
-- `python/cuda_cccl/tests/parallel/test_merge_sort_api.py`: 4 inline comment(s)
-- `python/cuda_cccl/cuda/cccl/parallel/experimental/_bindings.pyi`: 3 inline comment(s)
-- `python/cuda_cccl/tests/parallel/examples/segmented/segmented_reduce.py`: 2 inline comment(s)
-- `python/cuda_cccl/tests/parallel/examples/transform/binary_transform_object.py`: 2 inline comment(s)
-- `python/cuda_cccl/tests/parallel/test_transform.py`: 2 inline comment(s)
-- `python/cuda_cccl/tests/parallel/test_unique_by_key_api.py`: 2 inline comment(s)
-- `python/cuda_cccl/tests/parallel/examples/scan/basic_scan.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-08-26T11:53:57Z` `inline` by `shwina` `python/cuda_cccl/benchmarks/parallel/bench_scan.py`:106; signals: benchmark, cuda, hang; excerpt: "Well, not really - it.value type returns the data type as a numba type. We can (and should) change it to return a numpy ..." (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2300757376)
-- `2025-08-25T14:14:18Z` `review` `CHANGES_REQUESTED` by `NaderAlAwar`; signals: perf, performance; excerpt: "Scan doesn't show performance improvements right now due to us not reusing CUB policies yet, but do we know if reduce, segmented reduce, or ..." (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3151513971)
-- `2025-08-25T13:46:12Z` `inline` by `NaderAlAwar` `python/cuda_cccl/benchmarks/parallel/bench_scan.py`; signals: benchmark, cuda; excerpt: "We should parameterize the benchmarks to select inclusive or exclusive instead of duplicating the code" (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2298157373)
-- `2025-08-25T13:56:39Z` `inline` by `NaderAlAwar` `python/cuda_cccl/cuda/cccl/parallel/experimental/_bindings_impl.pyx`:559; signals: cuda, hang; excerpt: "Why do we need this change? I think this will have to go through the Python runtime and will be slower" (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2298185607)
-- `2025-08-26T11:49:47Z` `inline` by `shwina` `python/cuda_cccl/benchmarks/parallel/bench_scan.py`:145; signals: benchmark, cuda; excerpt: "Yes, I've added the parametrization both on the benchmark type, as well as on inclusive/exclusive scan as suggested below." (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2300746781)
-- `2025-08-26T12:02:09Z` `inline` by `shwina` `python/cuda_cccl/tests/parallel/examples/segmented/segmented_reduce.py`:7; signals: cuda, hang; excerpt: "Instead, I've modified the existing examples to use well-known ops where possible. I also removed these changes to the "header" comment so as to ..." (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2300775792)
-- `2025-08-26T12:10:49Z` `inline` by `shwina` `python/cuda_cccl/tests/parallel/test_merge_sort_api.py`:11; signals: cuda, hang; excerpt: "No you're right. Not sure what happened here. I undid these changes. Also, I'm trying to get rid of all the test api.py files, ..." (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2300795273)
-- `2025-08-26T12:51:18Z` `inline` by `oleksandr-pavlyk` `python/cuda_cccl/benchmarks/parallel/bench_reduce.py`:10; signals: benchmark, cuda; excerpt: "Just to be clear, np.empty(tuple()) creates 0d array, and np.empty(1) creates 1d array with a single element. It is a matter of taste, of ..." (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2300894490)
-- `2025-08-26T13:58:43Z` `inline` by `NaderAlAwar` `python/cuda_cccl/benchmarks/parallel/bench_reduce.py`:10; signals: benchmark, cuda; excerpt: "Ah I understand now. My preference for using 1 is just that it conveys intent better, but if there is a functional difference and ..." (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2301097447)
-- `2025-08-26T14:03:20Z` `inline` by `NaderAlAwar` `python/cuda_cccl/benchmarks/parallel/bench_scan.py`:8; signals: benchmark, cuda; excerpt: "I think it's better to use the well known op as the default. So rename this function to scan pointer custom add and the ..." (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2301112340)
-- `2025-08-26T15:44:02Z` `inline` by `oleksandr-pavlyk` `python/cuda_cccl/cuda/cccl/parallel/experimental/_bindings_impl.pyx`:453; signals: cuda, hang; excerpt: "Since Enumeration OpKind.PLUS has type IntEnumerationMember, the OpKind.PLUS double-packs the value: With this change the OpKind.PLUS would just become . We would also need ..." (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2301418568)
-- `2025-08-25T13:38:06Z` `inline` by `NaderAlAwar` `python/cuda_cccl/benchmarks/parallel/bench_reduce.py`:28; signals: benchmark, cuda; excerpt: "NIT: use size = 1 instead of tuple()" (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2298137620)
+- 2025-08-25 `NaderAlAwar` on `python/cuda_cccl/benchmarks/parallel/bench_reduce.py`:28: NIT: use size = 1 instead of tuple() (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2298137620)
+- 2025-08-25 `NaderAlAwar` on `python/cuda_cccl/benchmarks/parallel/bench_scan.py`:11: Same as above, and similarly for other occurrences (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2298143988)
+- 2025-08-25 `NaderAlAwar` on `python/cuda_cccl/benchmarks/parallel/bench_scan.py`:145: Could we parameterize these tests like we did for reduce? (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2298147657)
+- 2025-08-25 `NaderAlAwar` on `python/cuda_cccl/benchmarks/parallel/bench_scan.py`:106: Is there any way to retrieve the datatype from the iteartor? (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2298153177)
+- 2025-08-25 `NaderAlAwar` on `python/cuda_cccl/benchmarks/parallel/bench_scan.py`: We should parameterize the benchmarks to select inclusive or exclusive instead of duplicating the code (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2298157373)
+- 2025-08-25 `NaderAlAwar` on `python/cuda_cccl/cuda/cccl/parallel/experimental/_bindings_impl.pyx`:683: Instead of duplicating the call to the IntEnumerationMember constructor, could we instead have something like this and that way the body of each of these could be reduced to return make OP("PLUS", cccl op kind t.PLUS). Not sure if this is doable ... (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2298174977)
+- 2025-08-25 `NaderAlAwar` on `python/cuda_cccl/cuda/cccl/parallel/experimental/_bindings_impl.pyx`:559: Why do we need this change? I think this will have to go through the Python runtime and will be slower (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2298185607)
+- 2025-08-25 `NaderAlAwar` on `python/cuda_cccl/tests/parallel/examples/segmented/segmented_reduce.py`:7: Need to add the well known op examples here still (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2298204211)
+- 2025-08-25 `NaderAlAwar` on `python/cuda_cccl/tests/parallel/examples/transform/binary_transform_object.py`:38: Should we modify the examples to replace the existing add op examples where we define the operator in Python with PLUS? Ideally we want people to use well known operations instead of them defining their own, and keeping both add op and ... (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2298218560)
+- 2025-08-25 `NaderAlAwar` on `python/cuda_cccl/tests/parallel/test_merge_sort_api.py`:11: Don't think we need this change? (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2298222337)
+- 2025-08-25 `NaderAlAwar` on `python/cuda_cccl/tests/parallel/test_transform.py`:273: Might be helpful to add an explanation as to why this happens and whether it will be fixed or not (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2298228531)
+- 2025-08-25 `NaderAlAwar` on `python/cuda_cccl/tests/parallel/test_unique_by_key_api.py`:11: Don't think this change is needed (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2298229436)
+- 2025-08-25 `NaderAlAwar` on `python/cuda_cccl/cuda/cccl/parallel/experimental/_bindings.pyi`:51: Why do we assign STATELESS and STATEFUL but use type annotations for the others? (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2298232164)
+- 2025-08-25 `NaderAlAwar` changes_requested: Scan doesn't show performance improvements right now due to us not reusing CUB policies yet, but do we know if reduce, segmented reduce, or transform do? They should be using the CUB policies (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3151513971)
+- 2025-08-26 `shwina` on `python/cuda_cccl/benchmarks/parallel/bench_scan.py`:145: Yes, I've added the parametrization both on the benchmark type, as well as on inclusive/exclusive scan as suggested below. (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2300746781)
+- 2025-08-26 `shwina` on `python/cuda_cccl/benchmarks/parallel/bench_scan.py`:106: Well, not really - it.value type returns the data type as a numba type. We can (and should) change it to return a numpy type, but that will first need (the value type of a ZipIterator is a struct). TL;DR not yet (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2300757376)
+- 2025-08-26 `shwina` on `python/cuda_cccl/cuda/cccl/parallel/experimental/_bindings_impl.pyx`:683: Nice - I have simplified this class quite a bit using your suggestion (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2300758322)
+- 2025-08-26 `shwina` on `python/cuda_cccl/cuda/cccl/parallel/experimental/_bindings_impl.pyx`:559: OpKind is now a true Python Enum which I think is appropriate as it's now a user-facing type. For this type, isinstance check is about 50ns which may be acceptable. Happy to revisit if it becomes a bottleneck. (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2300774478)
+- 2025-08-26 `shwina` on `python/cuda_cccl/tests/parallel/examples/segmented/segmented_reduce.py`:7: Instead, I've modified the existing examples to use well-known ops where possible. I also removed these changes to the "header" comment so as to not refer to "well-known operations" explicitly. (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2300775792)
+- 2025-08-26 `shwina` on `python/cuda_cccl/tests/parallel/examples/transform/binary_transform_object.py`:38: Good suggestion. I've modified all examples to use well-known ops wherever possible, and also added a few examples that use even-add as suggested. (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2300777628)
+- 2025-08-26 `shwina` on `python/cuda_cccl/tests/parallel/test_merge_sort_api.py`:11: I don't think many of our examples do imports within the example code. So I moved the imports out in the handful of places we are doing that. (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2300778753)
+- 2025-08-26 `shwina` on `python/cuda_cccl/tests/parallel/test_merge_sort_api.py`:11: Hang on, missing a few. (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2300785606)
+- 2025-08-26 `shwina` on `python/cuda_cccl/tests/parallel/test_merge_sort_api.py`:11: No you're right. Not sure what happened here. I undid these changes. Also, I'm trying to get rid of all the test api.py files, so I moved all the tests added to these files into the respective test .py file, since you ... (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2300795273)
+- 2025-08-26 `oleksandr-pavlyk` on `python/cuda_cccl/benchmarks/parallel/bench_reduce.py`:10: Just to be clear, np.empty(tuple()) creates 0d array, and np.empty(1) creates 1d array with a single element. It is a matter of taste, of course, which one to use because both represent a single item, but I was using tuple() were the ... (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2300894490)
+- 2025-08-26 `oleksandr-pavlyk` on `python/cuda_cccl/cuda/cccl/parallel/experimental/_bindings.pyi`:71: Should MAXIMUM: IntEnumerationMember also become MAXIMUM = IntEnumerationMember? (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2300896449)
+- 2025-08-26 `NaderAlAwar` on `python/cuda_cccl/benchmarks/parallel/bench_reduce.py`:10: Ah I understand now. My preference for using 1 is just that it conveys intent better, but if there is a functional difference and a benefit to using a 0d array, then we should go with that instead. (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2301097447)
+- 2025-08-26 `NaderAlAwar` on `python/cuda_cccl/benchmarks/parallel/bench_scan.py`:8: I think it's better to use the well known op as the default. So rename this function to scan pointer custom add and the bottom one just becomes scan pointer. (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2301112340)
+- 2025-08-26 `NaderAlAwar` on `python/cuda_cccl/benchmarks/parallel/bench_scan.py`:77: I believe it is better to just use the well known op as the default (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2301114384)
+- 2025-08-26 `NaderAlAwar` on `python/cuda_cccl/benchmarks/parallel/bench_scan.py`:188: Replace with well known op (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2301115865)
+- 2025-08-26 `NaderAlAwar` on `python/cuda_cccl/tests/parallel/examples/scan/basic_scan.py`:60: Lets keep one example with MAX instead of PLUS (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2301133887)
+- 2025-08-26 `shwina` on `python/cuda_cccl/tests/parallel/examples/scan/basic_scan.py`:60: Max doesn't work yet (github.com/NVIDIA/cccl/issues/5515) (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2301269692)
+- 2025-08-26 `shwina` on `python/cuda_cccl/benchmarks/parallel/bench_scan.py`:8: Done as part of (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2301323845)
+- 2025-08-26 `oleksandr-pavlyk` on `python/cuda_cccl/cuda/cccl/parallel/experimental/_bindings_impl.pyx`:453: Since Enumeration OpKind.PLUS has type IntEnumerationMember, the OpKind.PLUS double-packs the value: With this change the OpKind.PLUS would just become . We would also need to change class OpKind(Enum): to class OpKind(enum.IntEnum): (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2301418568)
+- 2025-08-26 `shwina` on `python/cuda_cccl/cuda/cccl/parallel/experimental/_bindings_impl.pyx`:453: I implemented this in Unfortunately, it effectively requires a redefinition of the enum in bindings.pyi to work. Using = int doesn't give the desired behaviour, where it indicates that the member is an object of type type[int]. (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2301578399)
+- 2025-08-26 `shwina` on `python/cuda_cccl/cuda/cccl/parallel/experimental/_bindings_impl.pyx`:453: OK, never mind. The fix is apparently to use a value type annotation specifying the type of the members: See end of this section: (https://github.com/NVIDIA/cccl/pull/5578#discussion_r2301614925)
+- 2025-08-26 `oleksandr-pavlyk` approved: Looks good to me, @shwina ! Great solution for keeping enum values in sync with C++ integral values while keeping Python type-checking (https://github.com/NVIDIA/cccl/pull/5578#pullrequestreview-3156960897)

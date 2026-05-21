@@ -1,58 +1,18 @@
-# PR Discussion Digest
-
-- Source PR: [flashinfer-ai/flashinfer#1675](https://github.com/flashinfer-ai/flashinfer/pull/1675)
-- Source page: `sources/prs/flashinfer/PR-1675.md`
-- Evidence bundle: `evidence/pull-bundles/flashinfer/gh-1675`
-- Generated at: `2026-05-20T15:23:12.616642+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-09-11T20:26:49Z`
-- Merged: `2025-09-15T06:40:42Z`
-
-## Discussion Counts
-
-- Issue comments: 15
-- Review submissions: 10 (approved=1, commented=9)
-- Inline review comments: 11
-- Review threads observed: 7
-- Resolved/outdated thread markers: resolved=2, outdated=5
-- Human participants with discussion text: Edenzzzz, Fridge003, MasterJH5574, happierpig, yzh119
-- Automation comments/reviews omitted from high-signal summary: 5
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 4
-
-## Review Decisions
-
-- `2025-09-11T20:27:13Z` `COMMENTED` by `gemini-code-assist` - Summary of Changes Hello @Edenzzzz, I'm Gemini Code Assist[^1]! I'm currently reviewing this pull request and will post ... (https://github.com/flashinfer-ai/flashinfer/pull/1675#pullrequestreview-3213526385)
-- `2025-09-11T20:28:52Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces a fixed split size parameter to enable batch-invariant attention computation in prefill ... (https://github.com/flashinfer-ai/flashinfer/pull/1675#pullrequestreview-3213532905)
-- `2025-09-11T20:31:02Z` `COMMENTED` by `Edenzzzz` (https://github.com/flashinfer-ai/flashinfer/pull/1675#pullrequestreview-3213539348)
-- `2025-09-11T22:50:10Z` `COMMENTED` by `yzh119` (https://github.com/flashinfer-ai/flashinfer/pull/1675#pullrequestreview-3213846529)
-- `2025-09-12T00:30:21Z` `COMMENTED` by `Edenzzzz` (https://github.com/flashinfer-ai/flashinfer/pull/1675#pullrequestreview-3214088202)
-- `2025-09-14T04:35:57Z` `COMMENTED` by `yzh119` - LGTM in general, left some minor suggestions. (https://github.com/flashinfer-ai/flashinfer/pull/1675#pullrequestreview-3221733827)
-- `2025-09-14T15:38:34Z` `COMMENTED` by `Edenzzzz` (https://github.com/flashinfer-ai/flashinfer/pull/1675#pullrequestreview-3222184000)
-- `2025-09-15T06:40:36Z` `APPROVED` by `yzh119` (https://github.com/flashinfer-ai/flashinfer/pull/1675#pullrequestreview-3223110072)
-
-## Inline Comment Hotspots
-
-- `tests/test_invariant_batch_decode.py`: 4 inline comment(s)
-- `tvm_binding/batch_prefill.cu`: 3 inline comment(s)
-- `csrc/batch_prefill.cu`: 2 inline comment(s)
-- `flashinfer/decode.py`: 1 inline comment(s)
-- `flashinfer/prefill.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-09-13T13:20:13Z` `issue` by `Edenzzzz`; signals: attention, cache, hang, kernel, kv cache; excerpt: "I'm worried about the use cases where we manually merge attention outputs from different KV components (e.g. in chunked-prefill, speculative decoding), it's okay to ..." (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3288352715)
-- `2025-09-11T22:50:22Z` `issue` by `yzh119`; signals: attention, hang, kernel; excerpt: "One minor note, the attention merge kernel ( uses parallel reduction, I'm not sure if we need to change it to sequential reduction to ..." (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3282870180)
-- `2025-09-13T19:09:14Z` `issue` by `Fridge003`; signals: attention, cache, hang; excerpt: "I'm worried about the use cases where we manually merge attention outputs from different KV components (e.g. in chunked-prefill, speculative decoding), it's okay to ..." (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3288744561)
-- `2025-09-11T22:15:58Z` `issue` by `yzh119`; signals: flashinfer, hang; excerpt: "The easiest way to turn off split-k in flashinfer is to change these two lines to std::numeric limits ::max(): 1. 2." (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3282799163)
-- `2025-09-12T00:43:24Z` `issue` by `Edenzzzz`; signals: block, hang; excerpt: "Though I thought the threads in a block just collectively reduce along the head dim, one position & head at a time in threadblock ..." (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3283101745)
-- `2025-09-12T03:41:46Z` `issue` by `Edenzzzz`; signals: hang, kernel; excerpt: "It matters if you want to guarantee the reproducibility across prefill and decode, my question is what kind of reproducibility do you want to ..." (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3283537966)
-- `2025-09-12T17:18:05Z` `issue` by `happierpig`; signals: attention, hang; excerpt: "the order might change for different kv-length. I think the current merge states should be fine for the batch-invariant reproducibility (which IMO means a ..." (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3286216249)
-- `2025-09-11T22:25:08Z` `issue` by `Edenzzzz`; signals: perf, performance; excerpt: "Yes, but simply turning it off would hurt performance" (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3282823611)
-- `2025-09-12T03:34:38Z` `issue` by `yzh119`; signals: hang; excerpt: "@happierpig has done some work on changing the reduction order before. As long as changing one request's kv len doesn't affect other requests, it ..." (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3283527611)
-- `2025-09-12T20:48:28Z` `issue` by `Edenzzzz`; signals: cuda; excerpt: "One more note, in the case of CUDA graph, we can binary-search a split size that just launches below max batch size if split ..." (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3286782456)
-- `2025-09-12T22:10:18Z` `issue` by `Fridge003`; signals: cuda; excerpt: "Do we need to add a flag for disabling split-kv? Since finally we want to use cuda graph for decoding." (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3286977582)
-- `2025-09-12T22:55:32Z` `issue` by `Edenzzzz`; signals: cuda; excerpt: "Do we need to add a flag for disabling split-kv? Since finally we want to use cuda graph for decoding. It should work now" (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3287046666)
+- 2025-09-11 `Edenzzzz` on `tests/test_invariant_batch_decode.py`:162: feel free to debug this if anyone has time (https://github.com/flashinfer-ai/flashinfer/pull/1675#discussion_r2342272864)
+- 2025-09-11 `yzh119`: The easiest way to turn off split-k in flashinfer is to change these two lines to std::numeric limits ::max(): 1. 2. (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3282799163)
+- 2025-09-11 `Edenzzzz`: Yes, but simply turning it off would hurt performance (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3282823611)
+- 2025-09-11 `yzh119` on `tests/test_invariant_batch_decode.py`:149: can we add utility functions to compare bitwise identical check? (https://github.com/flashinfer-ai/flashinfer/pull/1675#discussion_r2342496339)
+- 2025-09-11 `yzh119`: One minor note, the attention merge kernel ( uses parallel reduction, I'm not sure if we need to change it to sequential reduction to guarantee full reproducibility. Current reduction order: 1. thread 0-8: out[0] = merge(0, 16, 32, ...) 2. thread 9-16: ... (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3282870180)
+- 2025-09-12 `Edenzzzz` on `tests/test_invariant_batch_decode.py`:149: switched to torch.equal, should do the job (https://github.com/flashinfer-ai/flashinfer/pull/1675#discussion_r2342639007)
+- 2025-09-12 `Edenzzzz`: Though I thought the threads in a block just collectively reduce along the head dim, one position & head at a time in threadblock sync state? No matter which head/seq id it picks up. As long as changing one request's kv len ... (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3283101745)
+- 2025-09-12 `yzh119`: @happierpig has done some work on changing the reduction order before. As long as changing one request's kv len doesn't affect other requests, it should be fine It matters if you want to guarantee the reproducibility across prefill and decode, my question ... (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3283527611)
+- 2025-09-12 `Edenzzzz`: It matters if you want to guarantee the reproducibility across prefill and decode, my question is what kind of reproducibility do you want to achieve in this PR? We want to ensure that changing the batch size(adding requests) does not change the ... (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3283537966)
+- 2025-09-12 `happierpig`: the order might change for different kv-length. I think the current merge states should be fine for the batch-invariant reproducibility (which IMO means a single request's attention is exactly the same result no matter how many requests are batched together). As the ... (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3286216249)
+- 2025-09-12 `Edenzzzz`: One more note, in the case of CUDA graph, we can binary-search a split size that just launches below max batch size if split CTAs, when the provided one would launch too many CTAs. This can be done in a follow up ... (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3286782456)
+- 2025-09-12 `Fridge003`: Do we need to add a flag for disabling split-kv? Since finally we want to use cuda graph for decoding. (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3286977582)
+- 2025-09-12 `Edenzzzz`: Do we need to add a flag for disabling split-kv? Since finally we want to use cuda graph for decoding. It should work now (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3287046666)
+- 2025-09-13 `yzh119`: To be more clear on my comments about "prefill and decode consistency": I'm worried about the use cases where we manually merge attention outputs from different KV components (e.g. in chunked-prefill, speculative decoding), it's okay to ignore these cases at this moment ... (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3287543806)
+- 2025-09-13 `Edenzzzz`: I'm worried about the use cases where we manually merge attention outputs from different KV components (e.g. in chunked-prefill, speculative decoding), it's okay to ignore these cases at this moment but we should know their possible effect on reprodubility. Yes, I think ... (https://github.com/flashinfer-ai/flashinfer/pull/1675#issuecomment-3288352715)
+- 2025-09-14 `yzh119` on `csrc/batch_prefill.cu`:50: I don't encourage setting up default value in C++ APIs (as these APIs are directly exposed as python bindings), any use case of them? (https://github.com/flashinfer-ai/flashinfer/pull/1675#discussion_r2347114163)
+- 2025-09-14 `yzh119` on `tvm_binding/batch_prefill.cu`:49: For TVM bindings, @MasterJH5574 could probably help with checking them. (https://github.com/flashinfer-ai/flashinfer/pull/1675#discussion_r2347114358)
+- 2025-09-14 `Edenzzzz` on `csrc/batch_prefill.cu`:50: just example default values for python interface writers, removing now (https://github.com/flashinfer-ai/flashinfer/pull/1675#discussion_r2347398768)

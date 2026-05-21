@@ -1,77 +1,34 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/TensorRT-LLM#12236](https://github.com/NVIDIA/TensorRT-LLM/pull/12236)
-- Source page: `sources/prs/tensorrt-llm/PR-12236.md`
-- Evidence bundle: `evidence/pull-bundles/tensorrt-llm/gh-12236`
-- Generated at: `2026-05-20T15:18:04.516379+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-03-16T05:29:44Z`
-- Merged: `2026-03-19T04:05:36Z`
-
-## Discussion Counts
-
-- Issue comments: 18
-- Review submissions: 53 (approved=3, commented=50)
-- Inline review comments: 64
-- Review threads observed: 33
-- Resolved/outdated thread markers: resolved=33, outdated=22
-- Human participants with discussion text: Superjomn, coderabbitai, hyukn, limin2021, tensorrt-cicd, yuxianq
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-03-16T05:41:06Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 9 🧹 Nitpick comments (7) tensorrt llm/ torch/cute dsl kernels/blackwell/top k/filtered top k decode varlen.py ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3951558138)
-- `2026-03-17T07:07:14Z` `APPROVED` by `Superjomn` - LGTM on the llm api (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3958614462)
-- `2026-03-17T08:24:24Z` `COMMENTED` by `hyukn` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3958892023)
-- `2026-03-17T10:00:55Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3959520330)
-- `2026-03-17T14:48:10Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3961373310)
-- `2026-03-17T14:48:33Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3961377143)
-- `2026-03-17T14:50:54Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3961401298)
-- `2026-03-17T14:55:52Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3961451864)
-- `2026-03-18T01:21:46Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3964511616)
-- `2026-03-18T01:27:39Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3964525169)
-- `2026-03-18T01:51:59Z` `APPROVED` by `hyukn` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3964575386)
-- `2026-03-18T07:52:37Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3965748960)
-- `2026-03-18T08:00:49Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3965781775)
-- `2026-03-18T08:06:47Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3965806167)
-- `2026-03-18T08:10:19Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3965826351)
-- `2026-03-18T08:11:53Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3965835076)
-- `2026-03-18T08:14:10Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3965846593)
-- `2026-03-18T08:17:09Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3965863708)
-- `2026-03-18T08:18:20Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3965871452)
-- `2026-03-18T08:19:19Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3965877713)
-- `2026-03-18T08:22:28Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3965896331)
-- `2026-03-18T09:35:29Z` `COMMENTED` by `yuxianq` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3966381254)
-- `2026-03-18T09:37:06Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3966390603)
-- `2026-03-18T09:37:09Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3966390950)
-- ... 29 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`: 40 inline comment(s)
-- `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`: 11 inline comment(s)
-- `tests/unittest/_torch/thop/parallel/test_indexer_topk.py`: 7 inline comment(s)
-- `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`: 2 inline comment(s)
-- `tensorrt_llm/llmapi/llm_args.py`: 2 inline comment(s)
-- `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/block_scan.py`: 1 inline comment(s)
-- `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_varlen_util.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-16T05:41:06Z` `review` `COMMENTED` by `coderabbitai`; signals: attention, blackwell, block, compile, cute, hang, kernel, pipeline; excerpt: "Actionable comments posted: 9 🧹 Nitpick comments (7) tensorrt llm/ torch/cute dsl kernels/blackwell/top k/filtered top k decode varlen.py (5) 244-244: Avoid shadowing Python builtin ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#pullrequestreview-3951558138)
-- `2026-03-16T05:41:01Z` `issue` by `coderabbitai`; signals: attention, benchmark, blackwell, block, compile, cute, dtype, hang; excerpt: "📝 Walkthrough Walkthrough Introduces CuTE DSL-based Top-K decode kernels for Blackwell GPUs with distributed multi-CTA support. Adds configuration flag to enable CuTE DSL top-k ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#issuecomment-4065180643)
-- `2026-03-16T05:41:04Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/block_scan.py`:79; signals: blackwell, block, cute, kernel, tensorrt, tile, warp; excerpt: "⚠️ Potential issue 🟠 Major Validate the supported shape contract up front. This helper only works when min(num bins, num threads per block) // ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2938273045)
-- `2026-03-16T05:41:04Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`:654; signals: benchmark, blackwell, cute, cutlass, dtype, kernel, tensorrt; excerpt: "⚠️ Potential issue 🟡 Minor Variable torch dtype shadows the imported function. Line 651 assigns torch dtype = input values.dtype, but torch dtype is ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2938273047)
-- `2026-03-16T05:41:04Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:2822; signals: cache, compile, cuda, cute, kernel, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major Scope the CuTE DSL caches by CUDA device. get num sms() memoizes the first GPU's SM count, and none ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2938273039)
-- `2026-03-18T09:46:34Z` `inline` by `limin2021` `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:2831; signals: cache, cuda, cute, kernel, memory, tensorrt; excerpt: "The top-k buffers are only used within each kernel invocation and fully overwritten each call — there's no cross-module sharing opportunity. The current per-Runner ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2952164470)
-- `2026-03-18T08:06:45Z` `inline` by `yuxianq` `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:2831; signals: cute, deepgemm, gemm, memory, moe, tensorrt; excerpt: "Canwe reuse get memory buffers in like DeepGemmFusedMoE in" (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2951602512)
-- `2026-03-16T05:41:04Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:914; signals: attention, compile, cuda, cute, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major Warmup coverage is incomplete for non-default execution paths. tensorrt llm/ torch/custom ops/cute dsl custom ops.py::warmup cute dsl indexer topk() ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2938273036)
-- `2026-03-16T05:41:04Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3010; signals: cache, cute, hang, race, tensorrt; excerpt: "⚠️ Potential issue 🔴 Critical Don't return shared cached storage from the value-returning APIs. When output indices/output values is omitted, these paths hand back ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2938273040)
-- `2026-03-16T05:41:04Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3925; signals: cute, dtype, kernel, tensorrt; excerpt: "⚠️ Potential issue 🔴 Critical Validate output indices and the seq lens contract before dispatch. This public op currently trusts the caller. A wrong ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2938273044)
-- `2026-03-16T05:41:04Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`:1387; signals: blackwell, cute, kernel, tensorrt; excerpt: "⚠️ Potential issue 🟡 Minor CLI argument --use cold l2 has ineffective configuration. Using action="store true" with default=True means the flag has no effect—the ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2938273054)
-- `2026-03-16T05:41:04Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_varlen_util.py`:1117; signals: blackwell, cute, kernel, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major Convert reference indices back to row-relative offsets. torch.topk returns absolute column indices, but this helper masks them as if ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2938273055)
+- 2026-03-17 `Superjomn` on `tensorrt_llm/llmapi/llm_args.py`:325: When adding new knobs, a correspoinding update to [llm.yaml]( is needed. (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2944801366)
+- 2026-03-17 `hyukn` on `tests/unittest/_torch/thop/parallel/test_indexer_topk.py`:429: Let us remove these debugging lines before merging. (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2945073181)
+- 2026-03-17 `hyukn` on `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:1663: Shall we document here why using 256? (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2945086581)
+- 2026-03-17 `hyukn` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3182: There are three copies of this method. I highly recommend using a standalone util method class to manage this . (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2945092601)
+- 2026-03-17 `hyukn` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3857: So we intende to use 2-pass, because distributed=False is not settled on the model side. (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2945104761)
+- 2026-03-17 `hyukn` on `tests/unittest/_torch/thop/parallel/test_indexer_topk.py`:377: Shall we test distributed=True? (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2945106826)
+- 2026-03-17 `limin2021` on `tests/unittest/_torch/thop/parallel/test_indexer_topk.py`:377: test cute dsl topk decode distributed this function is used to test distributed kernel. (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2945635658)
+- 2026-03-17 `tensorrt-cicd`: [PR Github 39189]( [ run ] completed with state SUCCESS. Commit: 1dbb27a [/LLM/main/L0 MergeRequest PR pipeline 30443]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#issuecomment-4073842279)
+- 2026-03-17 `limin2021` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3857: distributed=true didn't bring much perf improvements in adaptive api for my test. so I don't open it in model side. However, my test is not enough, so I make it a parameter, it could be enable if it's better in more benchmark ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2947351710)
+- 2026-03-18 `limin2021` on `tensorrt_llm/llmapi/llm_args.py`:325: use cute dsl topk lives inside DeepSeekSparseAttentionConfig, which is a nested config passed through the existing sparse attention config kwarg (already tracked in llm.yaml at line 198). It's not a new top-level LLM. init parameter, so llm.yaml shouldn't need a direct update. ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2950340899)
+- 2026-03-18 `tensorrt-cicd`: [PR Github 39346]( [ run ] completed with state SUCCESS. Commit: 9ba8f35 [/LLM/main/L0 MergeRequest PR pipeline 30593]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#issuecomment-4079807506)
+- 2026-03-18 `yuxianq` on `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:1026: We have already log it in can remove this log or use logger.info once instead. (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2951544366)
+- 2026-03-18 `yuxianq` on `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:1636: Please also pass self.index topk to torch.ops.trtllm.indexer topk decode like torch.ops.trtllm.cute dsl indexer topk decode. (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2951578458)
+- 2026-03-18 `yuxianq` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:2831: Canwe reuse get memory buffers in like DeepGemmFusedMoE in (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2951602512)
+- 2026-03-18 `yuxianq` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:2985: Can we use cls. compile( key) instead to avoid duplication? (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2951619034)
+- 2026-03-18 `yuxianq` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3002: Can use output indices torch = output indices or get or alloc buffer(...) instead. (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2951626991)
+- 2026-03-18 `yuxianq` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3023: Don't need to list all cases, maybe 8MB + 256MB are enough? (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2951636967)
+- 2026-03-18 `yuxianq` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3026: Is it necessary to pre-allocate a single-element tensor? (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2951651315)
+- 2026-03-18 `yuxianq` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3347: Can we use cls. compile( key) instead? (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2951657766)
+- 2026-03-18 `yuxianq` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3376: Can we use output indices torch = output indices or get or alloc buffer(...) instead? (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2951663442)
+- 2026-03-18 `yuxianq` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3525: Can we add comment to explain the calculation of overhead? (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2951681147)
+- 2026-03-18 `limin2021` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3026: Yes. It's used as a counter in global memory. (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2952115829)
+- 2026-03-18 `limin2021` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:2831: The top-k buffers are only used within each kernel invocation and fully overwritten each call — there's no cross-module sharing opportunity. The current per-Runner grow-only cache already ensures stable addresses for CUDA Graph capture. Switching to get memory buffers() would add complexity ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2952164470)
+- 2026-03-18 `yuxianq` on `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:1038: We use fp8 paged mqa logits's output to call indexer topk decode, which is always fp32. However, this dtype is not always fp32. Should we use fp32 here instead? (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2952209088)
+- 2026-03-18 `yuxianq` on `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:1024: Should we fallback to self.use cute dsl topk = False if IS CUTLASS DSL AVAILABLE is False? (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2952236820)
+- 2026-03-18 `yuxianq` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3972: Should we add a single pass multi cta: bool = False argument to this warmup function so that we can skip single pass multi cta configs since we do not use them at all? (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2952258863)
+- 2026-03-18 `yuxianq` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3000: Should we keep this warning? (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2952324833)
+- 2026-03-18 `yuxianq` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3527: Should we use get smem capacity in bytes instead of 227 1024? (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2952345973)
+- 2026-03-18 `limin2021` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3645: Boolean value of Tensor with more than one value is ambiguous. Reverted to if is not None. (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2952375172)
+- 2026-03-18 `limin2021` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3000: I add such cap in dsa.py when calling top k function. So the extra mem reqirements won't exceed 1GB. We don't need this warn at all. (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2952711022)
+- 2026-03-18 `tensorrt-cicd`: [PR Github 39452]( [ run ] completed with state SUCCESS. Commit: 225223b [/LLM/main/L0 MergeRequest PR pipeline 30678]( completed with status: 'SUCCESS' [CI Report]( [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#issuecomment-4084825111)
+- 2026-03-19 `yuxianq` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3946: Add single pass multi cta to docstring's args part. (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2957659687)
+- 2026-03-19 `limin2021` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3946: Will fix it (and getting buffer api) in the next MR. (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2957733858)
+- 2026-03-19 `yuxianq` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3946: Will address in a follow-up PR (https://github.com/NVIDIA/TensorRT-LLM/pull/12236#discussion_r2957734660)

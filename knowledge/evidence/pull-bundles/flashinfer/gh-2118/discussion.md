@@ -1,76 +1,36 @@
-# PR Discussion Digest
-
-- Source PR: [flashinfer-ai/flashinfer#2118](https://github.com/flashinfer-ai/flashinfer/pull/2118)
-- Source page: `sources/prs/flashinfer/PR-2118.md`
-- Evidence bundle: `evidence/pull-bundles/flashinfer/gh-2118`
-- Generated at: `2026-05-20T15:24:08.721566+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-11-20T04:20:50Z`
-- Merged: `2025-12-12T19:28:03Z`
-
-## Discussion Counts
-
-- Issue comments: 2
-- Review submissions: 49 (approved=3, commented=46)
-- Inline review comments: 63
-- Review threads observed: 36
-- Resolved/outdated thread markers: resolved=13, outdated=16
-- Human participants with discussion text: coderabbitai, kahyunnam, nvmbreughe, nvpohanh, timlee0212, wenscarl, yzh119
-- Automation comments/reviews omitted from high-signal summary: 9
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-11-20T04:23:40Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request is a significant refactoring of the MNNVL all-reduce implementation, introducing a new, cleaner ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3485598104)
-- `2025-11-20T04:27:31Z` `COMMENTED` by `timlee0212` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3485607184)
-- `2025-11-20T04:28:00Z` `COMMENTED` by `timlee0212` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3485608234)
-- `2025-11-20T04:29:05Z` `COMMENTED` by `timlee0212` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3485610007)
-- `2025-11-20T04:30:09Z` `COMMENTED` by `timlee0212` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3485612145)
-- `2025-11-20T04:31:51Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 4 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3485615620)
-- `2025-11-20T04:33:42Z` `COMMENTED` by `timlee0212` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3485619689)
-- `2025-11-20T04:33:50Z` `COMMENTED` by `timlee0212` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3485619896)
-- `2025-11-20T04:33:58Z` `COMMENTED` by `timlee0212` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3485620359)
-- `2025-11-20T04:36:34Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 2 ♻️ Duplicate comments (2) csrc/trtllm mnnvl allreduce.cu (1) 56-69: Guard RMSNorm fusion against missing ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3485626493)
-- `2025-11-20T21:46:30Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 0 ♻️ Duplicate comments (2) flashinfer/comm/mnnvl.py (1) 566-664: Close remaining POSIX FDs in IPC path ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3490062027)
-- `2025-11-20T22:58:26Z` `COMMENTED` by `nvmbreughe` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3490228995)
-- `2025-11-20T23:40:25Z` `COMMENTED` by `nvmbreughe` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3490545076)
-- `2025-11-21T22:20:57Z` `COMMENTED` by `timlee0212` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3494571625)
-- `2025-11-21T22:30:44Z` `COMMENTED` by `timlee0212` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3494589341)
-- `2025-11-21T22:33:22Z` `COMMENTED` by `timlee0212` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3494594600)
-- `2025-11-21T22:34:46Z` `COMMENTED` by `timlee0212` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3494596966)
-- `2025-11-21T22:38:09Z` `COMMENTED` by `timlee0212` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3494602601)
-- `2025-11-21T22:38:16Z` `COMMENTED` by `timlee0212` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3494602775)
-- `2025-11-21T22:39:05Z` `COMMENTED` by `timlee0212` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3494603997)
-- `2025-11-21T22:41:05Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 0 ♻️ Duplicate comments (1) flashinfer/comm/trtllm mnnvl ar.py (1) 361-362: Critical: Restore epsilon default to ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3494606938)
-- `2025-11-21T23:24:25Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 0 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3494672928)
-- `2025-11-25T19:26:41Z` `COMMENTED` by `nvmbreughe` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3506452933)
-- `2025-11-25T19:32:30Z` `COMMENTED` by `nvmbreughe` (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3506530480)
-- ... 25 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `flashinfer/comm/trtllm_mnnvl_ar.py`: 34 inline comment(s)
-- `flashinfer/comm/mnnvl.py`: 9 inline comment(s)
-- `include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh`: 9 inline comment(s)
-- `csrc/trtllm_mnnvl_allreduce.cu`: 5 inline comment(s)
-- `tests/comm/test_trtllm_mnnvl_allreduce.py`: 5 inline comment(s)
-- `include/flashinfer/utils.cuh`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-11-20T04:31:51Z` `review` `COMMENTED` by `coderabbitai`; signals: block, cuda, deadlock, failing, flashinfer, hang, kernel, layout; excerpt: "Actionable comments posted: 4 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3485615620)
-- `2025-11-20T04:36:34Z` `review` `COMMENTED` by `coderabbitai`; signals: block, cuda, dtype, flashinfer, hang, kernel, memory, overflow; excerpt: "Actionable comments posted: 2 ♻️ Duplicate comments (2) csrc/trtllm mnnvl allreduce.cu (1) 56-69: Guard RMSNorm fusion against missing residual in and validate its shape. ..." (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3485626493)
-- `2025-11-20T21:46:30Z` `review` `COMMENTED` by `coderabbitai`; signals: aligned, alignment, cache, cuda, deadlock, dtype, flashinfer, hang; excerpt: "Actionable comments posted: 0 ♻️ Duplicate comments (2) flashinfer/comm/mnnvl.py (1) 566-664: Close remaining POSIX FDs in IPC path to avoid leaks In the POSIX ..." (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3490062027)
-- `2025-11-21T22:41:05Z` `review` `COMMENTED` by `coderabbitai`; signals: cache, cuda, cute, dtype, flashinfer, hang, kernel, memory; excerpt: "Actionable comments posted: 0 ♻️ Duplicate comments (1) flashinfer/comm/trtllm mnnvl ar.py (1) 361-362: Critical: Restore epsilon default to 1e-5 to match kernel. This epsilon ..." (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3494606938)
-- `2025-11-21T23:24:25Z` `review` `COMMENTED` by `coderabbitai`; signals: cache, cuda, dtype, flashinfer, hang, kernel, memory, register; excerpt: "Actionable comments posted: 0 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3494672928)
-- `2025-11-27T00:03:35Z` `review` `COMMENTED` by `coderabbitai`; signals: aligned, alignment, block, cache, cuda, flashinfer, hang, kernel; excerpt: "Actionable comments posted: 3 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3513066780)
-- `2025-11-27T00:10:55Z` `review` `COMMENTED` by `coderabbitai`; signals: aligned, cache, cuda, dtype, flashinfer, hang, kernel, layout; excerpt: "Actionable comments posted: 0 ♻️ Duplicate comments (2) flashinfer/comm/mnnvl.py (1) 566-664: Still leaking the local POSIX FD in alloc mn mcast mem’s IPC path. ..." (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3513074628)
-- `2025-11-27T00:24:04Z` `review` `COMMENTED` by `coderabbitai`; signals: block, deadlock, dtype, failing, flashinfer, hang, kernel, memory; excerpt: "Actionable comments posted: 0 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3513088733)
-- `2025-11-27T00:33:15Z` `review` `COMMENTED` by `coderabbitai`; signals: cuda, dtype, failing, flashinfer, hang, memory, nan, tmem; excerpt: "Actionable comments posted: 0 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3513098741)
-- `2025-12-04T21:32:35Z` `review` `COMMENTED` by `coderabbitai`; signals: cache, dtype, flashinfer, hang, kernel, memory, moe, tensorrt; excerpt: "Actionable comments posted: 2 ♻️ Duplicate comments (1) tests/comm/test trtllm mnnvl allreduce.py (1) 263-263: Ensure epsilon consistency with the API under test. Line 263 ..." (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3542182885)
-- `2025-12-09T13:31:43Z` `review` `COMMENTED` by `coderabbitai`; signals: cache, cuda, dtype, flashinfer, hang, kernel, memory, pipeline; excerpt: "Actionable comments posted: 1 ♻️ Duplicate comments (1) flashinfer/comm/trtllm mnnvl ar.py (1) 419-420: Critical: RMSNorm epsilon default breaks parity with TensorRT-LLM. The code sets ..." (https://github.com/flashinfer-ai/flashinfer/pull/2118#pullrequestreview-3557467275)
-- `2025-11-20T04:21:00Z` `issue` by `coderabbitai`; signals: attention, cache, cuda, flashinfer, hang, kernel, layout, race; excerpt: "[!NOTE] Other AI code review bot(s) detected CodeRabbit has detected other AI code review bot(s) in this pull request and will avoid duplicating their ..." (https://github.com/flashinfer-ai/flashinfer/pull/2118#issuecomment-3555695807)
+- 2025-11-20 `timlee0212` on `flashinfer/comm/trtllm_mnnvl_ar.py`:529: This can be waived as this is in legacy API path. (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2544288517)
+- 2025-11-20 `timlee0212` on `include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh`:618: This can be waived as the accuracy satisfied the requirement in testing. (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2544289213)
+- 2025-11-20 `timlee0212` on `flashinfer/comm/mnnvl.py`:1242: This class is used internally, and left as a placeholder but not implemented. Thus, a breaking changes is fine. Tag @nvmbreughe for confirmation. (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2544290608)
+- 2025-11-20 `timlee0212` on `flashinfer/comm/trtllm_mnnvl_ar.py`:314: Do we want this check to be on the execution path? Or should we assuming it is the user's liability to ensure it does not overflow. (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2544292064)
+- 2025-11-20 `nvmbreughe` on `flashinfer/comm/trtllm_mnnvl_ar.py`:57: Is there a way we can check this? (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2547879440)
+- 2025-11-20 `nvmbreughe` on `flashinfer/comm/trtllm_mnnvl_ar.py`:59: Could you provide guidance for buffer size in bytes? E.g., in function of number of tokens and hidden size? Or just refer to get required buffer size bytes (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2547882082)
+- 2025-11-20 `nvmbreughe` on `flashinfer/comm/trtllm_mnnvl_ar.py`:155: Why? Before we used the real dtype (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2547887131)
+- 2025-11-20 `nvmbreughe` on `flashinfer/comm/trtllm_mnnvl_ar.py`:314: We do want this check. I recently added it because it did bite others. (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2547906990)
+- 2025-11-20 `nvmbreughe` on `flashinfer/comm/trtllm_mnnvl_ar.py`:59: Another option would be to replace "buffer size in bytes" by the parameters that get required buffer size bytes takes, and just call this from the init function. Seems more user friendly. If you do want to just allocate a blob of ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2547961779)
+- 2025-11-20 `nvmbreughe` on `csrc/trtllm_mnnvl_allreduce.cu`:29: I don't think it is a problem (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2547970102)
+- 2025-11-20 `nvmbreughe` on `flashinfer/comm/trtllm_mnnvl_ar.py`:36: Maybe rename this to "heuristic for one shot" or something like that. (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2548059334)
+- 2025-11-21 `timlee0212` on `flashinfer/comm/trtllm_mnnvl_ar.py`:155: We are using LDG.128 for all data read/write, and if the allocation is 4-byte (word) aligned, reading/writing each word can be considered atomic. Thus, it is sufficient to check in FP32 granularity regardless of the dtype. This will simplify the buffer management ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2551116946)
+- 2025-11-21 `timlee0212` on `flashinfer/comm/trtllm_mnnvl_ar.py`:59: I don't think that is a good design as it might give the user an impression that the allocated workspace will ONLY support the set of parameters (max num tokens, hidden dim, dtype, strategy) But actually, the workspace usage is quite flexible ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2551130814)
+- 2025-11-21 `timlee0212` on `flashinfer/comm/trtllm_mnnvl_ar.py`:59: just refer to get required buffer size bytes (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2551135319)
+- 2025-11-21 `timlee0212` on `flashinfer/comm/trtllm_mnnvl_ar.py`:57: Forgot to update the doc. Fixed. (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2551137474)
+- 2025-11-25 `nvmbreughe` on `include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh`:237: Does this mean the kernel is supported for archs < 700? What's the minimal requirement? For the API we use the @backend requirement decorator, which lists supported SMs. So as a minimum I think we can list: 70,80,90,100,103,110,120 Would you agree? Further ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2561103164)
+- 2025-11-25 `nvmbreughe` on `include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh`:816: Instead of clearing the buffer here, could we assume we have properly initialized lamport buffers at the start? And then, at the end (e.g., right after we call PDL), we can clear the buffers, so that a next kernel using the same ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2561154332)
+- 2025-11-25 `nvmbreughe` on `include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh`:838: As long as one of the values in WorldSize isNegZero, we will keep reading the others over and over again. Perhaps these are all cache hits, in which case: ignore my comment. Otherwise, would it make sense to break out of the ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2561168614)
+- 2025-11-25 `yzh119` on `include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh`:237: This macro is fairly common in barrier and semaphore utility functions, largely due to the memory consistency qualifiers introduced with the Volta architecture. For example, CUTLASS uses a similar pattern: That said, I believe our usage here simply follows established convention. Given ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2561206455)
+- 2025-11-25 `timlee0212` on `include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh`:237: The kernel needs multicast to work, which at least requires SM90 and needs NVSwitch (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2561237105)
+- 2025-11-25 `timlee0212` on `include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh`:816: We use triple buffer so you can move the buffer clear anywhere. I found the current arrangement get the best performance. If your assumption is using single buffer, clear the buffer at the end then assume the buffer is initialized for the ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2561248079)
+- 2025-11-25 `timlee0212` on `include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh`:838: It will be cache hit if it is still invalid. For the inner loop, I had a version that only check one element for validity. But there is no architecture guarantee that a 128B read/write is atomic, which mean beak the inner ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2561252362)
+- 2025-11-25 `nvmbreughe` on `flashinfer/comm/mnnvl.py`:982: [nit] Add a comment regarding handle type in this case: CU MEM HANDLE TYPE POSIX FILE DESCRIPTOR (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2561631064)
+- 2025-11-25 `nvmbreughe` on `flashinfer/comm/mnnvl.py`:1026: With all the branching on this handle type, would it make sense to build a class that encapsulate this logic? Roughly thinking: (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2561653479)
+- 2025-11-27 `timlee0212` on `flashinfer/comm/mnnvl.py`:982: Branching logic no longer exists in the latest commit. (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2566778478)
+- 2025-11-27 `timlee0212` on `flashinfer/comm/mnnvl.py`:1026: Refactored in the latest commit. (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2566778653)
+- 2025-12-04 `nvmbreughe` on `flashinfer/comm/trtllm_mnnvl_ar.py`:217: As discussed we would like to make one-shot vs two-shot at runtime, so here I would add MAX ONE SHOT SIZE= MNNVL ONE SHOT THRESHOLD and buffer size = max(...., MAX ONE SHOT SIZE). And add a comment explaining that this workspace ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2590540120)
+- 2025-12-04 `nvmbreughe` on `flashinfer/comm/trtllm_mnnvl_ar.py`:217: Forgot to press submit. Ignore this. (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2590772783)
+- 2025-12-04 `nvmbreughe` on `flashinfer/comm/trtllm_mnnvl_ar.py`:76: [nit] document the new parameters, and also bring up the point that buffer size in bytes is needed when we force one-shot. (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2590830480)
+- 2025-12-09 `timlee0212` on `flashinfer/comm/trtllm_mnnvl_ar.py`:217: I assume this is considered resolved? This function is used purely as an utility for calculating required workspace given a problem size and implementaation. It should not implement the logic we discuss, which is implemented in the constructor. (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2602654802)
+- 2025-12-09 `wenscarl` on `flashinfer/comm/trtllm_mnnvl_ar.py`:313: Before calling this API, users are expected to create workspace = MNNVLAllreduceFusionWorkspace(...), which internally decides whether to use the one-shot or two-shot strategy. But what happens if the framework (user) chooses a different strategy than the one determined by the workspace? (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2603707212)
+- 2025-12-09 `nvmbreughe` on `flashinfer/comm/trtllm_mnnvl_ar.py`:313: It's possible, and by design actually. There is a check "if not workspace.is buffer size sufficient(...)" that happens before the allreduce executes. (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2604396526)
+- 2025-12-09 `nvmbreughe` on `flashinfer/comm/trtllm_mnnvl_ar.py`:313: The longer answer is that: (1) the workspace creation will use a heuristic to find the optimal situation: create one-shot space (the largest one for the same problem space) up to a certain threshold, and two-shot after that. ( ) Then at ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2604410335)
+- 2025-12-10 `nvpohanh` on `flashinfer/comm/trtllm_mnnvl_ar.py`:191: simplify this to: return required buffer size <= self.buffer size bytes (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2604895595)
+- 2025-12-10 `nvpohanh` on `flashinfer/comm/trtllm_mnnvl_ar.py`:311: should we just make this optional and default to True? (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2604897226)
+- 2025-12-10 `nvpohanh` on `flashinfer/comm/trtllm_mnnvl_ar.py`:332: Not a blocker for this PR, but just a question: is there a plan to fuse FP8-Quant and NVFP4-Quant into this kernel later? Currently, the frameworks are using the AR+Norm+Q fused kernels in . It becomes quite difficult for us to choose ... (https://github.com/flashinfer-ai/flashinfer/pull/2118#discussion_r2604900757)

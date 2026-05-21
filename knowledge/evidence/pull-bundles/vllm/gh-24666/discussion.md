@@ -1,77 +1,65 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#24666](https://github.com/vllm-project/vllm/pull/24666)
-- Source page: `sources/prs/vllm/PR-24666.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-24666`
-- Generated at: `2026-05-20T15:37:49.691310+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-09-11T13:39:08Z`
-- Merged: `2025-09-23T19:03:10Z`
-
-## Discussion Counts
-
-- Issue comments: 3
-- Review submissions: 39 (approved=3, commented=36)
-- Inline review comments: 68
-- Review threads observed: 33
-- Resolved/outdated thread markers: resolved=31, outdated=24
-- Human participants with discussion text: ElizaWszola, ProExpertProg, mergify, mgoin
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-09-11T15:08:50Z` `COMMENTED` by `ProExpertProg` - A few overall notes (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3212092907)
-- `2025-09-11T15:09:52Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3212252820)
-- `2025-09-12T04:33:33Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3214571200)
-- `2025-09-17T13:12:29Z` `COMMENTED` by `ProExpertProg` - Looks pretty good overall! A few minor notes (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3234389294)
-- `2025-09-17T13:29:18Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3234480245)
-- `2025-09-17T16:05:32Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3235211267)
-- `2025-09-17T16:05:56Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3235212481)
-- `2025-09-17T16:07:06Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3235215472)
-- `2025-09-17T17:54:03Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3235606571)
-- `2025-09-17T18:02:16Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3235633208)
-- `2025-09-18T12:50:08Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3239481462)
-- `2025-09-18T16:29:56Z` `COMMENTED` by `ProExpertProg` - Not really sure what the different block size variables/members are, could we have a separate weight block shape: ... (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3240612620)
-- `2025-09-19T05:56:40Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3243225269)
-- `2025-09-19T07:58:51Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3243667794)
-- `2025-09-19T08:10:09Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3243705085)
-- `2025-09-19T08:12:04Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3243711136)
-- `2025-09-19T08:51:27Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3243858212)
-- `2025-09-19T12:30:25Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3244569070)
-- `2025-09-19T12:52:42Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3244729615)
-- `2025-09-19T13:04:56Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3244775185)
-- `2025-09-19T13:10:37Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3244794452)
-- `2025-09-19T14:59:31Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3245306279)
-- `2025-09-19T15:28:54Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3245469111)
-- `2025-09-19T15:57:36Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3245624503)
-- ... 15 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/layers/quantization/utils/fp8_utils.py`: 39 inline comment(s)
-- `vllm/config/__init__.py`: 8 inline comment(s)
-- `vllm/model_executor/layers/quantization/fp8.py`: 7 inline comment(s)
-- `vllm/model_executor/layers/quantization/input_quant_fp8.py`: 7 inline comment(s)
-- `vllm/model_executor/layers/quantization/compressed_tensors/schemes/compressed_tensors_w8a8_fp8.py`: 3 inline comment(s)
-- `tests/kernels/quantization/test_fp8_quant_group.py`: 2 inline comment(s)
-- `tests/quantization/test_compressed_tensors.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-09-17T13:29:18Z` `inline` by `ElizaWszola` `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:49; signals: blackwell, block, compile, cutlass, fp8; excerpt: "This is here so we can compile this function on Blackwell (it doesn't need padding), but I could also modify Blackwell code in W8A8BlockFp8LinearOp:: ..." (https://github.com/vllm-project/vllm/pull/24666#discussion_r2355533518)
-- `2025-09-19T12:16:14Z` `inline` by `ProExpertProg` `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:171; signals: cutlass, deepgemm, fp8, gemm, triton; excerpt: "Oh I see, because we don't know at init time what size the tensor will be and so we need separate quants for deepgemm ..." (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362699681)
-- `2025-09-11T15:07:59Z` `inline` by `ProExpertProg` `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:155; signals: cutlass, deepgemm, fp8, gemm; excerpt: "It might be worth extracting some of this dispatching logic to init - long-term we want these to be separate classes like int8 ScaledMM ..." (https://github.com/vllm-project/vllm/pull/24666#discussion_r2341353060)
-- `2025-09-12T04:33:33Z` `inline` by `ElizaWszola` `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:155; signals: block, deepgemm, fp8, gemm; excerpt: "From what I'm seeing, almost all dispatching logic in this function depends on weight shapes (both should use deepgemm for fp8 linear and dispatch ..." (https://github.com/vllm-project/vllm/pull/24666#discussion_r2342926294)
-- `2025-09-17T17:54:03Z` `inline` by `ElizaWszola` `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:49; signals: blackwell, compile, cutlass, fp8; excerpt: "If we simply remove it, then CUTLASS+compile won't work on Blackwell because current platform.is device capability(90) is not supported by the compiler" (https://github.com/vllm-project/vllm/pull/24666#discussion_r2356303258)
-- `2025-09-19T15:57:36Z` `inline` by `ElizaWszola` `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:259; signals: deepgemm, fp8, gemm, hang; excerpt: "use e8m0 should be true only when we use deepgemm, but it seems to only affect one line in per token group quant fp8: ..." (https://github.com/vllm-project/vllm/pull/24666#discussion_r2363422361)
-- `2025-09-22T11:27:24Z` `inline` by `ProExpertProg` `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:212; signals: block, deepgemm, fp8, gemm; excerpt: "w8a8 deepgemm block scaled mm?" (https://github.com/vllm-project/vllm/pull/24666#discussion_r2367806332)
-- `2025-09-23T15:45:38Z` `review` `COMMENTED` by `ProExpertProg`; signals: blackwell, cuda, h100; excerpt: "Gonna submit this to always use the cuda path - we can enable torch for Blackwell in a follow-up as suggested by @mgoin, he ..." (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3258635052)
-- `2025-09-17T18:02:16Z` `inline` by `ElizaWszola` `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:187; signals: block, fp8, hang; excerpt: "It's not used for anything after this PR's changes (its logic has been replaced by dispatch w8a8 blockscale op()), so I'll remove it." (https://github.com/vllm-project/vllm/pull/24666#discussion_r2356322599)
-- `2025-09-18T16:22:12Z` `inline` by `ProExpertProg` `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:302; signals: blackwell, fp8, kernel; excerpt: "Can we use the QuantFP8 abstraction here, and in config init we can enable the custom kernel (so that per token group quant fp8 ..." (https://github.com/vllm-project/vllm/pull/24666#discussion_r2360153837)
-- `2025-09-19T07:58:51Z` `inline` by `ElizaWszola` `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:302; signals: cuda, fp8, perf; excerpt: "Is forward cuda() also undeperforming? From what I'm seeing, it's what would replace per token group quant fp8()" (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362101968)
-- `2025-09-19T12:09:47Z` `inline` by `ProExpertProg` `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:171; signals: block, fp8, gemm; excerpt: "Why not just pass the proper use ue8m0=is deep gemm e8m0 used() to the dispatch w8a8 blockscale op method so that we can always ..." (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362685086)
+- 2025-09-11 `ProExpertProg` on `vllm/model_executor/layers/quantization/fp8.py`:253: We should probably construct these conditionally (https://github.com/vllm-project/vllm/pull/24666#discussion_r2341240973)
+- 2025-09-11 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:185: We should use QuantFP8 once 24342 lands - I'll expedite that one (https://github.com/vllm-project/vllm/pull/24666#discussion_r2341336460)
+- 2025-09-11 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:155: It might be worth extracting some of this dispatching logic to init - long-term we want these to be separate classes like int8 ScaledMM anyway but for now you could make them methods (forward deepgemm, forward cutlass, forward aiter, etc.) (https://github.com/vllm-project/vllm/pull/24666#discussion_r2341353060)
+- 2025-09-11 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:144: If there's extra time could you take a look at this issue and see if we can resolve it? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2341356007)
+- 2025-09-11 `ProExpertProg` on `vllm/model_executor/layers/quantization/fp8.py`:259: Why not read these inside the constructor - we don't need to pass them in right? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2341360311)
+- 2025-09-12 `ElizaWszola` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:155: From what I'm seeing, almost all dispatching logic in this function depends on weight shapes (both should use deepgemm for fp8 linear and dispatch w8a8 blockscale func need them), so we'd need to figure them out in advance before we can move ... (https://github.com/vllm-project/vllm/pull/24666#discussion_r2342926294)
+- 2025-09-17 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:49: Is this ever different from current platform.is device capability(90)? If not, I don't think we need to pas it through (https://github.com/vllm-project/vllm/pull/24666#discussion_r2355470962)
+- 2025-09-17 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:143: I would call this padded cutlass scaled mm (https://github.com/vllm-project/vllm/pull/24666#discussion_r2355473390)
+- 2025-09-17 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:143: Also, can you create an issue with the stuff you ran into with padding, and all the attempts we had to solve it, and add a TODO here? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2355475359)
+- 2025-09-17 `ProExpertProg` commented: Looks pretty good overall! A few minor notes (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3234389294)
+- 2025-09-17 `ElizaWszola` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:49: This is here so we can compile this function on Blackwell (it doesn't need padding), but I could also modify Blackwell code in W8A8BlockFp8LinearOp:: run cutlass() to run ops.cutlass scaled mm() directly with the right transposes - which one would be cleaner? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2355533518)
+- 2025-09-17 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:49: Sorry, that's not what I mean. The current code structure is fine. I'm just saying we can just remove this as a param? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2356025788)
+- 2025-09-17 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:187: Can we move this logic (dispatch w8a8 blockscale func) into the object or is it used somewhere else? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2356029510)
+- 2025-09-17 `ElizaWszola` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:49: If we simply remove it, then CUTLASS+compile won't work on Blackwell because current platform.is device capability(90) is not supported by the compiler (https://github.com/vllm-project/vllm/pull/24666#discussion_r2356303258)
+- 2025-09-17 `ElizaWszola` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:187: It's not used for anything after this PR's changes (its logic has been replaced by dispatch w8a8 blockscale op()), so I'll remove it. (https://github.com/vllm-project/vllm/pull/24666#discussion_r2356322599)
+- 2025-09-18 `ElizaWszola` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:49: ditto reply to comment above (https://github.com/vllm-project/vllm/pull/24666#discussion_r2359093356)
+- 2025-09-18 `ProExpertProg` on `vllm/model_executor/layers/quantization/compressed_tensors/schemes/compressed_tensors_w8a8_fp8.py`:155: Seems to me like we know weight block size at construction time (self.weight block size)? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2359996833)
+- 2025-09-18 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:49: Can you add that as a comment? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2360000640)
+- 2025-09-18 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:162: Could we use GroupShape for block size? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2360008272)
+- 2025-09-18 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:252: Should we assert blocksize 128 here (looking at the kernel name)? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2360015016)
+- 2025-09-18 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:252: cc @tjtanaa @vllmellm @gshtras (https://github.com/vllm-project/vllm/pull/24666#discussion_r2360016548)
+- 2025-09-18 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:302: Can we use the QuantFP8 abstraction here, and in config init we can enable the custom kernel (so that per token group quant fp8 runs) except on Blackwell (and link issue: 25094). (https://github.com/vllm-project/vllm/pull/24666#discussion_r2360153837)
+- 2025-09-18 `ProExpertProg` on `vllm/model_executor/layers/quantization/fp8.py`:411: This can also be self.weight block size (https://github.com/vllm-project/vllm/pull/24666#discussion_r2360168264)
+- 2025-09-18 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:162: I see, this contains both weight and activation? Can we separate them out into separate GroupShape objects? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2360179102)
+- 2025-09-18 `ProExpertProg` commented: Not really sure what the different block size variables/members are, could we have a separate weight block shape: GroupShape and act block shape: GroupShape that we use everywhere, and set it at linear method init time (unless it's not possible?) (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3240612620)
+- 2025-09-19 `ElizaWszola` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:162: I'm getting AttributeError: type object 'GroupShape' has no attribute ' origin ' when I try to register custom ops that take GroupShape type args -- this comes from pytorch I'd leave this all as is for now in the functions that get ... (https://github.com/vllm-project/vllm/pull/24666#discussion_r2361860161)
+- 2025-09-19 `ElizaWszola` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:302: Is forward cuda() also undeperforming? From what I'm seeing, it's what would replace per token group quant fp8() (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362101968)
+- 2025-09-19 `ElizaWszola` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:252: I asserted it for now (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362125483)
+- 2025-09-19 `ElizaWszola` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:302: In any case, I needed to modify QuantFP8 with one extra arg for compilation (so it won't complain when we call forward) (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362129851)
+- 2025-09-19 `ElizaWszola` on `vllm/model_executor/layers/quantization/fp8.py`:254: Is it reasonable to get act quant group shape this way? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362218992)
+- 2025-09-19 `ProExpertProg` on `vllm/model_executor/layers/quantization/input_quant_fp8.py`:52: Does use ue8m0 change the output/semantics of this op? If so, we should assert use ue8m0 is false/unset in the group native method as it doesn't do anything right now. (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362677245)
+- 2025-09-19 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:171: Why not just pass the proper use ue8m0=is deep gemm e8m0 used() to the dispatch w8a8 blockscale op method so that we can always use self.input quant op? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362685086)
+- 2025-09-19 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:275: If you call forward cuda directly we won't ever dispatch to torch - just call the op directly and add compilation config.custom ops.append( ["+quant fp8"]) in config for non-Blackwell arches. (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362689456)
+- 2025-09-19 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:171: Oh I see, because we don't know at init time what size the tensor will be and so we need separate quants for deepgemm and cutlass/triton paths. (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362699681)
+- 2025-09-19 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:259: What would it take to be able to run forward native here? Adding use e8m0 support to the native path? If yes can we try to do that? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362710445)
+- 2025-09-19 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:162: Can you make an issue for this, ideally we can pass these simple classes to pytorch ops. Until then you can just make themp tuple[int, int] and convert the group shape when passing by doing tuple(group shape) (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362722039)
+- 2025-09-19 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:275: Unless there's another reason we want to always dispatch to the CUDA impl here (then we should resolve that) (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362724939)
+- 2025-09-19 `ProExpertProg` on `vllm/model_executor/layers/quantization/fp8.py`:254: I am not sure, @mgoin do you know if the quant block size is always just the weight block size (element 1)? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362729540)
+- 2025-09-19 `ProExpertProg` on `vllm/model_executor/layers/quantization/fp8.py`:254: Also @ElizaWszola can you properly set the act q group shape member above? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362731638)
+- 2025-09-19 `ElizaWszola` on `vllm/model_executor/layers/quantization/input_quant_fp8.py`:52: It is only used in forward cuda(), I'll put an assert in forward native() (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362788965)
+- 2025-09-19 `ElizaWszola` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:171: I'll also add a comment on this (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362823661)
+- 2025-09-19 `ElizaWszola` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:275: My reasoning here was that all operations that call forward cuda() in the current implementation have previously called fp8 utils.per token group quant fp8(), which is now on forward cuda()'s codepath, but I can make it more general (https://github.com/vllm-project/vllm/pull/24666#discussion_r2362838291)
+- 2025-09-19 `mgoin` on `vllm/model_executor/layers/quantization/compressed_tensors/schemes/compressed_tensors_w8a8_fp8.py`:55: Technically this should be self.weight block size[0], right? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2363185032)
+- 2025-09-19 `mgoin` on `vllm/model_executor/layers/quantization/fp8.py`:254: Yeah it needs to match up with the weight blocks size (https://github.com/vllm-project/vllm/pull/24666#discussion_r2363202727)
+- 2025-09-19 `ElizaWszola` on `vllm/model_executor/layers/quantization/compressed_tensors/schemes/compressed_tensors_w8a8_fp8.py`:55: good catch, I'll update (https://github.com/vllm-project/vllm/pull/24666#discussion_r2363298951)
+- 2025-09-19 `ElizaWszola` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:259: use e8m0 should be true only when we use deepgemm, but it seems to only affect one line in per token group quant fp8: So probably should be changed to ? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2363422361)
+- 2025-09-19 `ElizaWszola` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:259: Ok, I added it + expanded unit test in tests/kernels/quantization/test fp8 quant group.py to capture it (https://github.com/vllm-project/vllm/pull/24666#discussion_r2363918169)
+- 2025-09-19 `ElizaWszola` on `vllm/model_executor/layers/quantization/input_quant_fp8.py`:52: Implemented it + unit test (https://github.com/vllm-project/vllm/pull/24666#discussion_r2363952694)
+- 2025-09-19 `ProExpertProg` on `tests/kernels/quantization/test_fp8_quant_group.py`:96: Can you add e8m0 tests to the accuracy tests above as well? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2364589723)
+- 2025-09-19 `ProExpertProg` on `vllm/config/__init__.py`:2827: Oh, we should also check here that it's group quant that's getting used here (likely need to read quantization config). And add a comment with a link to the perf issue as well as describe the group shape issue - might be ... (https://github.com/vllm-project/vllm/pull/24666#discussion_r2364641360)
+- 2025-09-19 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:162: Add issue link here? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2364654468)
+- 2025-09-19 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:302: When enabled, QuantFP8 will use the per token group quant fp8 kernel, otherwise it will use the forward native torch implementation. (https://github.com/vllm-project/vllm/pull/24666#discussion_r2364662282)
+- 2025-09-22 `ElizaWszola` on `vllm/config/__init__.py`:2827: Do you mean this issue? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2367766005)
+- 2025-09-22 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:115: It would also be nice if we renamed w8a8 block fp8 matmul to be consistent with others - maybe w8a8 triton block scaled mm? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2367803909)
+- 2025-09-22 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:212: w8a8 deepgemm block scaled mm? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2367806332)
+- 2025-09-22 `ProExpertProg` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:239: I think we can simplify this a bit (the no-op view will get eliminated by torch.compile) (https://github.com/vllm-project/vllm/pull/24666#discussion_r2367829029)
+- 2025-09-22 `ProExpertProg` commented: Looking good, just a few naming/comment nits! (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3252079196)
+- 2025-09-22 `ProExpertProg` on `vllm/config/__init__.py`:695: 1. This doesn't actually work with compressed tensors. @dsikka @kylesayrs do we have a way of checking if there's (linear layer) block quant somewhere in the quant config? 2. Could you add and not is blackwell where is blackwell is only true ... (https://github.com/vllm-project/vllm/pull/24666#discussion_r2370392732)
+- 2025-09-22 `ProExpertProg` on `vllm/model_executor/layers/quantization/input_quant_fp8.py`:162: Can you add this to the tests? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2370416876)
+- 2025-09-22 `ProExpertProg` on `vllm/model_executor/layers/quantization/input_quant_fp8.py`:162: (can be in a follow-up if not straightforward) (https://github.com/vllm-project/vllm/pull/24666#discussion_r2370449853)
+- 2025-09-22 `ProExpertProg` on `vllm/config/__init__.py`:695: @mgoin and I discussed and we can keep the cuda kernel always enabled in this PR and switch to torch in a follow-up (https://github.com/vllm-project/vllm/pull/24666#discussion_r2370451300)
+- 2025-09-23 `ElizaWszola` on `vllm/config/__init__.py`:695: I've updated the condition. I also added a function to CompressedTensorsConfig that looks for blocked weights @dsikka can you check if it makes sense and doesn't duplicate some functionality that we already have? (https://github.com/vllm-project/vllm/pull/24666#discussion_r2371245248)
+- 2025-09-23 `ElizaWszola` on `vllm/model_executor/layers/quantization/input_quant_fp8.py`:162: I've added/modified asserts for scales col in tests/kernels/quantization/test fp8 quant group.py:test quantfp8 group functionality to test this (https://github.com/vllm-project/vllm/pull/24666#discussion_r2371334860)
+- 2025-09-23 `mgoin` on `tests/kernels/quantization/test_fp8_quant_group.py`:57: Nit we should be checking the strides here (https://github.com/vllm-project/vllm/pull/24666#discussion_r2372469856)
+- 2025-09-23 `ProExpertProg` commented: Gonna submit this to always use the cuda path - we can enable torch for Blackwell in a follow-up as suggested by @mgoin, he also has improvements to the torch path for H100. (https://github.com/vllm-project/vllm/pull/24666#pullrequestreview-3258635052)

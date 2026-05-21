@@ -1,68 +1,38 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/TensorRT-LLM#9838](https://github.com/NVIDIA/TensorRT-LLM/pull/9838)
-- Source page: `sources/prs/tensorrt-llm/PR-9838.md`
-- Evidence bundle: `evidence/pull-bundles/tensorrt-llm/gh-9838`
-- Generated at: `2026-05-20T15:19:26.782904+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-12-09T08:13:01Z`
-- Merged: `2026-01-06T02:16:42Z`
-
-## Discussion Counts
-
-- Issue comments: 48
-- Review submissions: 19 (approved=2, commented=17)
-- Inline review comments: 23
-- Review threads observed: 10
-- Resolved/outdated thread markers: resolved=10, outdated=5
-- Human participants with discussion text: StudyingShao, coderabbitai, djns99, rosenrodt, tensorrt-cicd, yumin066
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-12-09T08:18:36Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 0 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3556047338)
-- `2025-12-19T01:31:32Z` `APPROVED` by `djns99` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3595994504)
-- `2025-12-19T01:37:24Z` `COMMENTED` by `djns99` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3596098420)
-- `2025-12-19T01:40:00Z` `COMMENTED` by `djns99` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3596114632)
-- `2025-12-19T01:43:54Z` `COMMENTED` by `rosenrodt` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3596137177)
-- `2025-12-19T01:51:55Z` `COMMENTED` by `djns99` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3596183911)
-- `2025-12-19T02:46:36Z` `COMMENTED` by `rosenrodt` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3596488000)
-- `2025-12-19T02:55:08Z` `COMMENTED` by `rosenrodt` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3596530257)
-- `2025-12-19T02:55:20Z` `COMMENTED` by `rosenrodt` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3596530852)
-- `2025-12-19T02:57:28Z` `COMMENTED` by `rosenrodt` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3596537230)
-- `2025-12-19T03:13:26Z` `COMMENTED` by `rosenrodt` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3596590272)
-- `2025-12-19T07:35:55Z` `COMMENTED` by `yumin066` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3597361041)
-- `2025-12-22T06:57:13Z` `COMMENTED` by `StudyingShao` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3602824728)
-- `2025-12-22T08:29:29Z` `COMMENTED` by `yumin066` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3603112239)
-- `2025-12-25T07:13:58Z` `COMMENTED` by `yumin066` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3611946106)
-- `2025-12-30T06:39:16Z` `COMMENTED` by `rosenrodt` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3617394021)
-- `2025-12-30T06:40:57Z` `COMMENTED` by `rosenrodt` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3617395917)
-- `2025-12-30T10:10:13Z` `COMMENTED` by `rosenrodt` (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3617808505)
-- `2026-01-05T04:18:41Z` `APPROVED` by `StudyingShao` - LGTM (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3625447786)
-
-## Inline Comment Hotspots
-
-- `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`: 11 inline comment(s)
-- `cpp/tensorrt_llm/kernels/cutlass_kernels/include/moe_kernels.h`: 7 inline comment(s)
-- `cpp/tests/unit_tests/kernels/mixtureOfExpertsTest.cu`: 3 inline comment(s)
-- `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_gemm_template_dispatch.h`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-12-09T08:18:36Z` `review` `COMMENTED` by `coderabbitai`; signals: aligned, alignment, block, compile, cuda, cutlass, dtype, epilogue; excerpt: "Actionable comments posted: 0 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#pullrequestreview-3556047338)
-- `2025-12-19T01:37:24Z` `inline` by `djns99` `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:2259; signals: block, cutlass, gemm, kernel, moe, nan, perf, tensorrt; excerpt: "FYI it was pointed out to me that this last block of padding might not actually be required. All the associated data is OOB ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633258914)
-- `2025-12-19T01:51:55Z` `inline` by `djns99` `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:2124; signals: cache, cutlass, gemm, kernel, moe, perf, register, tensorrt; excerpt: "How much does this improve perf compared to the old version? Since we aren't staging in smem/registers afaict. I would have assumed we would ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633283723)
-- `2025-12-09T08:18:33Z` `issue` by `coderabbitai`; signals: alignment, cutlass, dtype, epilogue, fp4, fp8, gemm, hang; excerpt: "📝 Walkthrough Walkthrough The changes introduce epilogue fusion mode configuration to MOE GEMM kernels. Updates replace gating condition flags (use w4 groupwise → use ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3630939081)
-- `2025-12-18T14:54:59Z` `issue` by `rosenrodt`; signals: benchmark, block, fp8, hang, hopper, kernel, moe, perf; excerpt: "@djns99 @StudyingShao Need your help reviewing this PR. @yumin066 added the finalize fusion for W4A8 MoE, and enable single-kernel topk routing for W4A8 MoE ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3670708180)
-- `2025-12-19T02:46:36Z` `inline` by `rosenrodt` `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:2124; signals: compile, cutlass, gemm, hang, kernel, moe, tensorrt; excerpt: "I did not measure before and after for this change, so all the gain L1 or L2 reuse was my wishful thinking :) TBH ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633388678)
-- `2025-12-25T07:13:58Z` `inline` by `yumin066` `cpp/tensorrt_llm/kernels/cutlass_kernels/include/moe_kernels.h`:830; signals: cutlass, dtype, fp4, h100, kernel, moe, tensorrt; excerpt: "H100 PCIe-PyTorch-3.unittest. torch.modules.test fused moe.test fused moe wfp4a16[CUTLASS-2880-dtype0] failed when I removed !use wfp4a16. I think the reason is finalize fusion kernel for wfp4a16 ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2646656114)
-- `2025-12-19T01:10:45Z` `inline` by `djns99` `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:2095; signals: block, cutlass, gemm, kernel, moe, tensorrt; excerpt: "Would it make more sense to use a block shape of dims3(1, ACTIVATION THREADS PER BLOCK, 1) that way we can use: int64 t ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633211092)
-- `2025-12-19T02:57:28Z` `inline` by `rosenrodt` `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:2095; signals: cutlass, gemm, hang, kernel, moe, tensorrt; excerpt: "Good suggestion. I can make the changes locally and push them opportunistically when we need a rebase or a bug fix. I'd like to ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633406778)
-- `2025-12-19T03:13:26Z` `inline` by `rosenrodt` `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:3875; signals: autotune, cutlass, gemm, kernel, moe, tensorrt; excerpt: "Good point. I haven't considered autotuner yet because prequant fusion hardcoded as part of W4A8 AWQ recipe hence not tunable. Or do you mean ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633428820)
-- `2025-12-19T01:19:26Z` `inline` by `djns99` `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:3875; signals: autotune, cutlass, gemm, kernel, moe, tensorrt; excerpt: "Does the autotuner need updated to enable this?" (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633222782)
-- `2025-12-19T02:55:20Z` `inline` by `rosenrodt` `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:2259; signals: cutlass, gemm, hang, kernel, moe, tensorrt; excerpt: "Good to know. But I would like to keep changes to a minimum if you do not mind :)" (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633402829)
+- 2025-12-09 `tensorrt-cicd`: [PR Github 27472]( [ run ] completed with state DISABLED L0 testing is limited to prioritized users. User yumin066 is not in the prioritized list. L0 testing cannot be triggered. (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3630942783)
+- 2025-12-09 `tensorrt-cicd`: [PR Github 27478]( [ run ] completed with state DISABLED L0 testing is limited to prioritized users. User yumin066 is not in the prioritized list. L0 testing cannot be triggered. (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3631202647)
+- 2025-12-10 `tensorrt-cicd`: [PR Github 27660]( [ run ] completed with state FAILURE. Commit: e0b5888 [/LLM/main/L0 MergeRequest PR pipeline 21115]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3636118329)
+- 2025-12-11 `tensorrt-cicd`: [PR Github 27767]( [ run ] completed with state SUCCESS. Commit: e0b5888 [/LLM/main/L0 MergeRequest PR pipeline 21192]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3639973360)
+- 2025-12-12 `tensorrt-cicd`: [PR Github 28021]( [ run ] completed with state SUCCESS. Commit: 355e910 [/LLM/main/L0 MergeRequest PR pipeline 21400]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3646326186)
+- 2025-12-15 `tensorrt-cicd`: [PR Github 28298]( [ run ] completed with state FAILURE. Commit: 98e864a [/LLM/main/L0 MergeRequest PR pipeline 21646]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3652790370)
+- 2025-12-15 `tensorrt-cicd`: [PR Github 28312]( [ run ] completed with state SUCCESS. Commit: 98e864a [/LLM/main/L0 MergeRequest PR pipeline 21656]( completed with status: 'FAILURE' (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3654766760)
+- 2025-12-16 `tensorrt-cicd`: [PR Github 28561]( [ run ] completed with state SUCCESS. Commit: 7c7579b [/LLM/main/L0 MergeRequest PR pipeline 21878]( completed with status: 'FAILURE' ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the failures, ask ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3660370302)
+- 2025-12-17 `tensorrt-cicd`: [PR Github 28650]( [ run ] completed with state DISABLED CI server is currently disabled for scheduled maintenance. Estimated completion time: 1 PM PST on 12/16. (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3663312837)
+- 2025-12-18 `tensorrt-cicd`: [PR Github 28900]( [ run ] completed with state SUCCESS. Commit: f4d45d1 [/LLM/main/L0 MergeRequest PR pipeline 22135]( completed with status: 'FAILURE' ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the failures, ask ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3668668155)
+- 2025-12-18 `tensorrt-cicd`: [PR Github 28938]( [ run ] completed with state SUCCESS. Commit: f4d45d1 [/LLM/main/L0 MergeRequest PR pipeline 22167]( completed with status: 'SUCCESS' Pipeline passed with automatic retried tests. Check the [rerun report]( for details. (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3669690188)
+- 2025-12-18 `rosenrodt`: @djns99 @StudyingShao Need your help reviewing this PR. @yumin066 added the finalize fusion for W4A8 MoE, and enable single-kernel topk routing for W4A8 MoE flow when applicable. I added activation + prequant scale fusion. A few notes on the activation + prequant ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3670708180)
+- 2025-12-19 `djns99` on `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:2095: Would it make more sense to use a block shape of dims3(1, ACTIVATION THREADS PER BLOCK, 1) that way we can use: int64 t const col offset = blockIdx.y blockDim.y + threadIdx.y; which might be more intuitive to most people (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633211092)
+- 2025-12-19 `djns99` on `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:2124: What data is actually reused here? My understanding is that this is mostly operating per token and not reusing any information? (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633216869)
+- 2025-12-19 `djns99` on `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:3875: Does the autotuner need updated to enable this? (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633222782)
+- 2025-12-19 `djns99` on `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:2259: FYI it was pointed out to me that this last block of padding might not actually be required. All the associated data is OOB and so nan values here don't actually affect any in-bounds data and should get discarded. We would need ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633258914)
+- 2025-12-19 `djns99` on `cpp/tests/unit_tests/kernels/mixtureOfExpertsTest.cu`:680: I haven't fixed it yet but we figured out the reason symmetric int quant is broken. We need to transpose the data before calling symmetric quantize (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633263240)
+- 2025-12-19 `rosenrodt` on `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:2124: The per-expert prequant scale [num experts, intermediate size] can be resued for tokens assigned to the same expert. (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633269577)
+- 2025-12-19 `djns99` on `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:2124: How much does this improve perf compared to the old version? Since we aren't staging in smem/registers afaict. I would have assumed we would cache hit and still get pretty good perf even with the more sparse approach. (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633283723)
+- 2025-12-19 `rosenrodt` on `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:2124: I did not measure before and after for this change, so all the gain L1 or L2 reuse was my wishful thinking :) TBH having to compile an entirety of libtensorrt llm.so just to optimize a kernel on the spot has been ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633388678)
+- 2025-12-19 `rosenrodt` on `cpp/tests/unit_tests/kernels/mixtureOfExpertsTest.cu`:680: Add @yumin066 for comment. I recall hearing from him about something was broken due to weight transpose & SF interleave as well (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633402539)
+- 2025-12-19 `rosenrodt` on `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:2259: Good to know. But I would like to keep changes to a minimum if you do not mind :) (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633402829)
+- 2025-12-19 `rosenrodt` on `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:2095: Good suggestion. I can make the changes locally and push them opportunistically when we need a rebase or a bug fix. I'd like to keep CI status green a little longer. (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633406778)
+- 2025-12-19 `rosenrodt` on `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:3875: Good point. I haven't considered autotuner yet because prequant fusion hardcoded as part of W4A8 AWQ recipe hence not tunable. Or do you mean something else? (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2633428820)
+- 2025-12-19 `yumin066` on `cpp/tests/unit_tests/kernels/mixtureOfExpertsTest.cu`:680: symmtric quantize does not work well for W4A8 AWQ because it assumes weight as row-major. And after quantization, symmetric quantize performs several operations, including permute B rows for mixed gemm, subbyte transpose, interleave column major tensor and add bias and interleave quantized ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2634034912)
+- 2025-12-22 `StudyingShao` on `cpp/tensorrt_llm/kernels/cutlass_kernels/include/moe_kernels.h`:815: Is this function really being used? Pre-quant is binded with the AWQ method. (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2638812015)
+- 2025-12-22 `StudyingShao` on `cpp/tensorrt_llm/kernels/cutlass_kernels/include/moe_kernels.h`:830: wfp4a16 and w4a8 awq share the same CUTLASS kernel. This can be removed if w4a8 works. (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2638815284)
+- 2025-12-22 `StudyingShao` on `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_gemm_template_dispatch.h`:794: To make the code more concise, could we package this part into a function? (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2638825943)
+- 2025-12-22 `StudyingShao` on `cpp/tensorrt_llm/kernels/cutlass_kernels/include/moe_kernels.h`:653: What's the meaning of num active experts per? Is this supposed to be num active experts per node? (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2638856388)
+- 2025-12-22 `yumin066` on `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_gemm_template_dispatch.h`:794: Agree. I will implement it. (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2639064920)
+- 2025-12-24 `tensorrt-cicd`: [PR Github 29749]( [ run ] completed with state SUCCESS. Commit: efe0418 [/LLM/main/L0 MergeRequest PR pipeline 22860]( completed with status: 'FAILURE' ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the failures, ask ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3689369285)
+- 2025-12-25 `yumin066` on `cpp/tensorrt_llm/kernels/cutlass_kernels/include/moe_kernels.h`:830: H100 PCIe-PyTorch-3.unittest. torch.modules.test fused moe.test fused moe wfp4a16[CUTLASS-2880-dtype0] failed when I removed !use wfp4a16. I think the reason is finalize fusion kernel for wfp4a16 hasn't been implemented yet. I'd like to submit another PR for wfp4a16 finalize fusion but keep !use wfp4a16 ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2646656114)
+- 2025-12-25 `tensorrt-cicd`: [PR Github 29916]( [ run ] completed with state SUCCESS. Commit: 606baa1 [/LLM/main/L0 MergeRequest PR pipeline 23005]( completed with status: 'SUCCESS' Pipeline passed with automatic retried tests. Check the [rerun report]( for details. (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3691386776)
+- 2025-12-30 `rosenrodt` on `cpp/tensorrt_llm/kernels/cutlass_kernels/include/moe_kernels.h`:653: I think you are right. I did not touch the variable name though. It appears to be around since 6 months ago. (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2652336330)
+- 2025-12-30 `rosenrodt` on `cpp/tensorrt_llm/kernels/cutlass_kernels/include/moe_kernels.h`:815: Yes the function provides a single definition and replaces the scattered expressions here and there in moe kernels.cu. (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2652338207)
+- 2025-12-30 `tensorrt-cicd`: [PR Github 30139]( [ run ] completed with state FAILURE. Commit: 5907169 [/LLM/main/L0 MergeRequest PR pipeline 23192]( completed with status: 'FAILURE' ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the failures, ask ... (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3698524343)
+- 2025-12-30 `rosenrodt` on `cpp/tensorrt_llm/kernels/cutlass_kernels/moe_gemm/moe_kernels.cu`:2095: Revised in d2384f1f61a7884975a97d57fcaecea158faa8b9. Thanks (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#discussion_r2652672097)
+- 2025-12-30 `tensorrt-cicd`: [PR Github 30169]( [ run ] completed with state SUCCESS. Commit: d2384f1 [/LLM/main/L0 MergeRequest PR pipeline 23216]( completed with status: 'SUCCESS' (https://github.com/NVIDIA/TensorRT-LLM/pull/9838#issuecomment-3699875651)

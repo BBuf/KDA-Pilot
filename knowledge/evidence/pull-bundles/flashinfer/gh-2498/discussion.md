@@ -1,69 +1,34 @@
-# PR Discussion Digest
-
-- Source PR: [flashinfer-ai/flashinfer#2498](https://github.com/flashinfer-ai/flashinfer/pull/2498)
-- Source page: `sources/prs/flashinfer/PR-2498.md`
-- Evidence bundle: `evidence/pull-bundles/flashinfer/gh-2498`
-- Generated at: `2026-05-20T15:24:57.105387+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-02-05T03:12:03Z`
-- Merged: `2026-02-17T16:16:16Z`
-
-## Discussion Counts
-
-- Issue comments: 34
-- Review submissions: 19 (approved=2, changes_requested=1, commented=16)
-- Inline review comments: 25
-- Review threads observed: 19
-- Resolved/outdated thread markers: resolved=9, outdated=8
-- Human participants with discussion text: aditya-narayan5, ameynaik-hub, coderabbitai, guangyunh-nv, kahyunnam, vadiklyutiy, xutizhou, yzh119
-- Automation comments/reviews omitted from high-signal summary: 7
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-02-05T03:14:42Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces a high-performance Gated Delta Rule linear attention kernel using CuTe-DSL, supporting sequence ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3754283984)
-- `2026-02-05T03:17:43Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 4 🤖 Fix all issues with AI agents 🧹 Nitpick comments (5) flashinfer/cute dsl/gated delta ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3754289325)
-- `2026-02-05T23:31:25Z` `APPROVED` by `kahyunnam` - @ameynaik-hub this LGTM as the initial PR to just get the kernel into the Flashinfer codebase, approved. (still ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3759946468)
-- `2026-02-05T23:46:02Z` `CHANGES_REQUESTED` by `yzh119` (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3759981489)
-- `2026-02-06T00:44:35Z` `COMMENTED` by `vadiklyutiy` (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3760127656)
-- `2026-02-06T01:26:05Z` `COMMENTED` by `yzh119` (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3760239113)
-- `2026-02-06T01:59:31Z` `COMMENTED` by `ameynaik-hub` (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3760340120)
-- `2026-02-07T05:56:32Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 2 🤖 Fix all issues with AI agents 🧹 Nitpick comments (4) flashinfer/cute dsl/gated delta ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3766357830)
-- `2026-02-10T21:20:00Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 1 🤖 Fix all issues with AI agents 🧹 Nitpick comments (2) flashinfer/cute dsl/gated delta ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3781668525)
-- `2026-02-10T21:27:08Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 1 🤖 Fix all issues with AI agents 🧹 Nitpick comments (2) flashinfer/cute dsl/gated delta ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3781703453)
-- `2026-02-12T04:21:06Z` `COMMENTED` by `guangyunh-nv` (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3788670014)
-- `2026-02-13T05:14:28Z` `COMMENTED` by `guangyunh-nv` (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3795082678)
-- `2026-02-13T05:14:46Z` `COMMENTED` by `guangyunh-nv` (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3795083608)
-- `2026-02-13T05:14:56Z` `COMMENTED` by `guangyunh-nv` (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3795084159)
-- `2026-02-16T04:06:21Z` `COMMENTED` by `ameynaik-hub` (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3806493301)
-- `2026-02-16T04:07:31Z` `COMMENTED` by `ameynaik-hub` (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3806496332)
-- `2026-02-16T04:22:04Z` `COMMENTED` by `yzh119` - Overall LGTM, some minor nits. (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3806518646)
-- `2026-02-16T20:50:59Z` `COMMENTED` by `ameynaik-hub` (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3810484891)
-- `2026-02-17T04:32:59Z` `APPROVED` by `yzh119` - Hi @ameynaik-hub thanks, I think we can create another PR for the f32 acceleration. This PR itself is ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3811631324)
-
-## Inline Comment Hotspots
-
-- `flashinfer/gdn_kernels/gdn_decode_bf16_state.py`: 14 inline comment(s)
-- `tests/gdn/reference_delta_rule.py`: 4 inline comment(s)
-- `flashinfer/cute_dsl/gated_delta_rule.py`: 3 inline comment(s)
-- `flashinfer/cute_dsl/benchmark_gated_delta_rule.py`: 3 inline comment(s)
-- `benchmarks/bench_gdn_decode.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-02-05T03:17:42Z` `inline` by `coderabbitai` `flashinfer/gdn_kernels/gdn_decode_bf16_state.py`:1181; signals: bf16, compile, cuda, cute, cutlass, flashinfer, hang, kernel; excerpt: "⚠️ Potential issue 🟡 Minor 🧩 Analysis chain 🏁 Script executed: Repository: flashinfer-ai/flashinfer Length of output: 138 --- 🏁 Script executed: Repository: flashinfer-ai/flashinfer Length ..." (https://github.com/flashinfer-ai/flashinfer/pull/2498#discussion_r2766867180)
-- `2026-02-10T21:20:00Z` `review` `COMMENTED` by `coderabbitai`; signals: cache, compile, cute, flashinfer, hang, kernel, warp; excerpt: "Actionable comments posted: 1 🤖 Fix all issues with AI agents 🧹 Nitpick comments (2) flashinfer/cute dsl/gated delta rule.py (2) 696-1097: Seqlen=1 kernel: 4 ..." (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3781668525)
-- `2026-02-05T03:12:22Z` `issue` by `coderabbitai`; signals: attention, benchmark, bf16, cache, compile, cuda, cute, dtype; excerpt: "[!NOTE] Reviews paused It looks like this branch is under active development. To avoid overwhelming you with review comments due to an influx of ..." (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3850831417)
-- `2026-02-10T21:27:08Z` `review` `COMMENTED` by `coderabbitai`; signals: block, compile, cute, flashinfer, hang, kernel; excerpt: "Actionable comments posted: 1 🤖 Fix all issues with AI agents 🧹 Nitpick comments (2) flashinfer/cute dsl/gated delta rule.py (2) 696-1097: Seqlen=1 kernel: 4 ..." (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3781703453)
-- `2026-02-09T02:13:57Z` `issue` by `guangyunh-nv`; signals: blackwell, hopper, kernel, perf, performance, register, tmem; excerpt: "@vadiklyutiy The reason for K-last is as follows, In prefill, you need to repeatly update State in the kernel mainloop, so you better put ..." (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3868918157)
-- `2026-02-05T03:17:42Z` `inline` by `coderabbitai` `flashinfer/gdn_kernels/gdn_decode_bf16_state.py`:1905; signals: bf16, cache, compile, cute, flashinfer, kernel; excerpt: "⚠️ Potential issue 🟠 Major 🧩 Analysis chain 🏁 Script executed: Repository: flashinfer-ai/flashinfer Length of output: 900 --- 🏁 Script executed: Repository: flashinfer-ai/flashinfer Length ..." (https://github.com/flashinfer-ai/flashinfer/pull/2498#discussion_r2766867184)
-- `2026-02-05T03:17:42Z` `inline` by `coderabbitai` `flashinfer/cute_dsl/gated_delta_rule.py`:1774; signals: cache, correctness, cute, flashinfer, hang, kernel; excerpt: "⚠️ Potential issue 🟠 Major Cache key may cause unnecessary recompilations or cache misses. The cache key (T, B) doesn't account for tensor shapes ..." (https://github.com/flashinfer-ai/flashinfer/pull/2498#discussion_r2766867186)
-- `2026-02-10T21:27:08Z` `inline` by `coderabbitai` `flashinfer/gdn_kernels/gdn_decode_bf16_state.py`:1186; signals: bank conflict, bf16, flashinfer, kernel, layout, warp; excerpt: "⚠️ Potential issue 🟡 Minor reduce sh layout has 4-way bank conflicts despite the "bank-conflict-free" comment. With stride (128, 4, 1), reduce sh[slot, lane ..." (https://github.com/flashinfer-ai/flashinfer/pull/2498#discussion_r2790368744)
-- `2026-02-05T03:17:43Z` `review` `COMMENTED` by `coderabbitai`; signals: benchmark, cute, flashinfer, kernel, overflow; excerpt: "Actionable comments posted: 4 🤖 Fix all issues with AI agents 🧹 Nitpick comments (5) flashinfer/cute dsl/gated delta rule.py (3) 118-136: Potential numerical stability ..." (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3754289325)
-- `2026-02-07T05:56:32Z` `review` `COMMENTED` by `coderabbitai`; signals: benchmark, cute, flashinfer, hang, kernel; excerpt: "Actionable comments posted: 2 🤖 Fix all issues with AI agents 🧹 Nitpick comments (4) flashinfer/cute dsl/gated delta rule.py (1) 311-360: Remove unused o ..." (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3766357830)
-- `2026-02-07T05:56:31Z` `inline` by `coderabbitai` `flashinfer/cute_dsl/gated_delta_rule.py`:1765; signals: bf16, cute, dtype, flashinfer, kernel; excerpt: "⚠️ Potential issue 🟠 Major Add explicit dtype/shape validation for kernel invariants. The kernel stores outputs and state as BF16 and assumes K/V=128 plus ..." (https://github.com/flashinfer-ai/flashinfer/pull/2498#discussion_r2777097899)
-- `2026-02-06T04:03:22Z` `issue` by `xutizhou`; signals: accuracy, benchmark, hang, perf, performance; excerpt: "Have you tested the end-to-end accuracy with FP16 SSM state? Does the performance remain unchanged on common benchmarks such as MMLU, GSM8K, etc.?" (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3857837169)
+- 2026-02-05 `ameynaik-hub`: @yzh119 compared benchmark here kernel supports K-major and V-major h state layout. Also I believe it supports seqlen 4. on other hand, this kernel only support V-major (K contiguous , k -last dim) h state layout which is used for qwen models ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3850945138)
+- 2026-02-05 `vadiklyutiy`: @ameynaik-hub would you mind comparing with ? It's better to unify the file location and interface. and test as well (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3851114975)
+- 2026-02-05 `vadiklyutiy`: @yzh119 compared benchmark here [ 2493 (comment)]( I think it's worth to copy results here (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3851119489)
+- 2026-02-05 `vadiklyutiy`: New kernel is always better than old with pretranspose except batch=1 that we can excuse. Does it make sense to keep old pretranspose varian? (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3851123710)
+- 2026-02-05 `aditya-narayan5`: @ameynaik-hub I might have overlooked details during reading but does anyone have a source for this: V-major (K contiguous , k -last dim) h state layout which is used for qwen models (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3851860070)
+- 2026-02-05 `ameynaik-hub`: New kernel is always better than old with pretranspose except batch=1 that we can excuse. Does it make sense to keep old pretranspose varian? @vadiklyutiy since it has support for T 4 (seqlen) and also support for v-last dim of h I ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3855179165)
+- 2026-02-05 `yzh119`: @ameynaik-hub can you reuse the gdn decode interface and set your implementation as default when we use k-layout (V-major) layout and T <=4? (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3856946513)
+- 2026-02-05 `kahyunnam` approved: @ameynaik-hub this LGTM as the initial PR to just get the kernel into the Flashinfer codebase, approved. (still need a codeowner approval for this directory to merge ... maybe @yzh119 or @bkryu ). We can follow up with another PR for some ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3759946468)
+- 2026-02-05 `yzh119`: Hi @kahyunnam , I encourage not to push more code to flashinfer/cute dsl anymore as we plan to categorize modules by functionalities, not sources. Other PRs are starting to remove codes out of flashinfer.cute dsl. The required work to unify the existing ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3857000937)
+- 2026-02-05 `yzh119` on `flashinfer/cute_dsl/benchmark_gated_delta_rule.py`:18: We already have benchmarking APIs please refer to on how to use these APIs. (https://github.com/flashinfer-ai/flashinfer/pull/2498#discussion_r2771615706)
+- 2026-02-05 `yzh119` on `flashinfer/gdn_kernels/gdn_decode_bf16_state.py`:2025: please enable tvm-ffi with options="--enable-tvm-ffi",, otherwise the host side overhead of converting torch.tensor to dlpack would be non-neglibile. Reference can be found at (https://github.com/flashinfer-ai/flashinfer/pull/2498#discussion_r2771621086)
+- 2026-02-06 `vadiklyutiy` on `flashinfer/cute_dsl/benchmark_gated_delta_rule.py`:18: I just curious why that wasn't addressed and pointed in 2370 but was here? (https://github.com/flashinfer-ai/flashinfer/pull/2498#discussion_r2771746355)
+- 2026-02-06 `yzh119` on `flashinfer/cute_dsl/benchmark_gated_delta_rule.py`:18: The benchmarking script in 2370 should use bench gpu time as well. I didn't notice that when reviewing that PR (it's my bad) and it was fixed in 2405. Let's get it right in one shot in this PR. (https://github.com/flashinfer-ai/flashinfer/pull/2498#discussion_r2771827846)
+- 2026-02-06 `ameynaik-hub`: @ameynaik-hub can you reuse the gdn decode interface and set your implementation as default when we use k-layout (V-major) layout and T <=4? @yzh119 yeah I can do that. I noticed that my kernel utilizes bf16 inputs for the state h, which ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3857451968)
+- 2026-02-06 `guangyunh-nv`: FP16 state might not be a good choice due to the dynamic range limitation. The range is not guaranteed and purely depends on the model activation dynamics. So this purely depends on the model behavior. Datapoint: Previously with MiniMax M1 (lighting attention, ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3857632075)
+- 2026-02-06 `xutizhou`: Have you tested the end-to-end accuracy with FP16 SSM state? Does the performance remain unchanged on common benchmarks such as MMLU, GSM8K, etc.? (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3857837169)
+- 2026-02-06 `vadiklyutiy`: I think what we can do at the moment is to tolerate all kinds of state input, and learn from the production environment feedback :) I don't think this is right approach. Imagine car manufacturer introduce new self driving car and say ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3857837170)
+- 2026-02-06 `ameynaik-hub`: Is someone looking into fp16/bf16 state benchmarks? meanwhile I am looking into fp32 state based improvements. looking at the current implementation I see it is at 50-60% SOL at BS =64, with bf16 I was able to achieve 60-75% SOL at BS ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3861997665)
+- 2026-02-06 `vadiklyutiy`: I noticed that my kernel utilizes bf16 inputs for the state h, which appears to be compatible with sglang and other models. However, it seems that the default state for h is fp32. I am investigating the possibility of optimizing this configuration ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3862863608)
+- 2026-02-07 `aditya-narayan5`: @ameynaik-hub Thanks for linking to the PR by @yzh119: fix the docstring of the GDN prefill kernel; instead of N,H,K,V, it expects N,H,V,K Could the maintainers clarify why the N,H,V,K layout is preferred? Most GDN reference implementations (e.g., the FLA project) expect ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3863690197)
+- 2026-02-08 `ameynaik-hub`: generally speaking if it is k-last (k contiguous), you can vectorize the reads along k-dim, and the inner products with k and q can be performed parallelly across rows more easily. (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3868000088)
+- 2026-02-09 `guangyunh-nv`: @vadiklyutiy The reason for K-last is as follows, In prefill, you need to repeatly update State in the kernel mainloop, so you better put state in register (hopper). This means you put S in the A operand. This further avoids the repeated ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3868918157)
+- 2026-02-11 `ameynaik-hub`: cute dsl bf16 h perf on B200 batch T time(us) -- -- -- 1 1 3.62 1 2 5.86 1 3 6.94 1 4 7.79 4 1 4.9 4 2 6.62 4 3 7.65 4 4 8.64 8 1 7.04 8 2 ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3885879095)
+- 2026-02-12 `guangyunh-nv` on `flashinfer/gdn_kernels/gdn_decode_bf16_state.py`:35: GQA: HQ = HV GVA: HQ = HV, I confirmed this naming in a group chat with GDN paper author :) (https://github.com/flashinfer-ai/flashinfer/pull/2498#discussion_r2796700803)
+- 2026-02-12 `guangyunh-nv`: Out of curisity, why the perf degenerate when batch goes from 1 to 4. batch T time(us) -- -- -- 1 1 3.62 4 1 4.9 I'd assume you have not reached the parallelism limit and bandwidth limit, then the time should ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3889476068)
+- 2026-02-12 `ameynaik-hub`: Out of curisity, why the perf degenerate when batch goes from 1 to 4. @guangyunh-nv for BS <=4 I use 4 ctas per head. so for BS=1 it has 32 4 = 128 CTAs and for BS=4 it has 32 4 4 ... (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3892864478)
+- 2026-02-13 `guangyunh-nv` on `tests/gdn/reference_delta_rule.py`:139: I think you should remove kv dtype, it is named as kv dtype because in some earlier papers call the state directly as KV. It is not dtype for K and V (https://github.com/flashinfer-ai/flashinfer/pull/2498#discussion_r2802320391)
+- 2026-02-16 `ameynaik-hub` on `flashinfer/gdn_kernels/gdn_decode_bf16_state.py`:35: @guangyunh-nv sorry do you mean it is called GVA and not GQA? (https://github.com/flashinfer-ai/flashinfer/pull/2498#discussion_r2810558489)
+- 2026-02-16 `ameynaik-hub` on `tests/gdn/reference_delta_rule.py`:139: done, can you please confirm if the change is okay? Thanks! (https://github.com/flashinfer-ai/flashinfer/pull/2498#discussion_r2810560794)
+- 2026-02-16 `yzh119` on `flashinfer/gdn_kernels/gdn_decode_bf16_state.py`: Can we moved it to flashinfer/gdn decode.py (or making it a module)? We don't want to keep the directoryflashinfer/cute dsl in the future. (https://github.com/flashinfer-ai/flashinfer/pull/2498#discussion_r2810585559)
+- 2026-02-16 `vadiklyutiy`: I would like to speed up this review a bit. The Qwen3.5 headline model has been released today. (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3909952583)
+- 2026-02-16 `ameynaik-hub` on `flashinfer/gdn_kernels/gdn_decode_bf16_state.py`: pushed a change, does this structure look okay to you? added in flashinfer/gdn kernels eventually we can not gdn decode.py under it? (https://github.com/flashinfer-ai/flashinfer/pull/2498#discussion_r2814001268)
+- 2026-02-16 `ameynaik-hub`: I have made some improvement for fp32 h state version of gdn decode BS,FI-PreTr (us),BS32opt-V2 (us),Speedup 1,3.74,3.52,1.06x 4,5.31,5.31,1.00x 8,7.68,7.58,1.01x 16,13.39,12.74,1.05x 32,22.99,22.72,1.01x 64,54.85,42.38,1.29x 128,92.21,81.39,1.13x 256,172.64,158.62,1.09x 512,336.56,313.69,1.07x Zihao, I am thinking of creating a seperate PR for it. what do you think? @yzh119 (https://github.com/flashinfer-ai/flashinfer/pull/2498#issuecomment-3910477077)
+- 2026-02-17 `yzh119` approved: Hi @ameynaik-hub thanks, I think we can create another PR for the f32 acceleration. This PR itself is in good shape. (https://github.com/flashinfer-ai/flashinfer/pull/2498#pullrequestreview-3811631324)

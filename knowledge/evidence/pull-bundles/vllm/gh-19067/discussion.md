@@ -1,71 +1,33 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#19067](https://github.com/vllm-project/vllm/pull/19067)
-- Source page: `sources/prs/vllm/PR-19067.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-19067`
-- Generated at: `2026-05-20T15:35:23.921427+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-06-03T08:28:52Z`
-- Merged: `2025-07-01T08:12:19Z`
-
-## Discussion Counts
-
-- Issue comments: 10
-- Review submissions: 24 (approved=2, commented=22)
-- Inline review comments: 25
-- Review threads observed: 10
-- Resolved/outdated thread markers: resolved=8, outdated=9
-- Human participants with discussion text: DarkLight1337, ProExpertProg, houseroad, mergify, tjtanaa, tywuAMD
-- Automation comments/reviews omitted from high-signal summary: 2
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-06-03T09:12:35Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2891433720)
-- `2025-06-03T10:17:07Z` `COMMENTED` by `tywuAMD` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2891671048)
-- `2025-06-07T01:50:16Z` `COMMENTED` by `ProExpertProg` - Could you please move the Triton code into the Triton backend? (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2906558769)
-- `2025-06-07T01:51:22Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2906562498)
-- `2025-06-09T13:25:18Z` `COMMENTED` by `ProExpertProg` - This is a good change but I think it could be slightly cleaner! (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2910062194)
-- `2025-06-10T01:06:24Z` `COMMENTED` by `tywuAMD` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2911710679)
-- `2025-06-10T01:11:12Z` `COMMENTED` by `tywuAMD` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2911714987)
-- `2025-06-10T04:26:19Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2911920175)
-- `2025-06-10T04:26:57Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2911920977)
-- `2025-06-10T12:27:51Z` `COMMENTED` by `houseroad` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2913350978)
-- `2025-06-10T12:41:29Z` `COMMENTED` by `houseroad` - Thanks for the contribution, could you rebase the PR and address the comments? (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2913396818)
-- `2025-06-11T07:35:12Z` `COMMENTED` by `tywuAMD` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2915987849)
-- `2025-06-11T07:35:59Z` `COMMENTED` by `tywuAMD` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2915990338)
-- `2025-06-11T07:36:37Z` `COMMENTED` by `tywuAMD` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2915992354)
-- `2025-06-11T13:58:53Z` `COMMENTED` by `houseroad` - Overall looks fine. One question about why do we need to switch to triton flash attention for rocm ... (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2917329808)
-- `2025-06-12T00:38:31Z` `COMMENTED` by `tywuAMD` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2919040914)
-- `2025-06-16T20:22:34Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2933403595)
-- `2025-06-16T20:24:29Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2933408560)
-- `2025-06-16T20:28:38Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2933419812)
-- `2025-06-19T08:20:04Z` `COMMENTED` by `tywuAMD` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2942059407)
-- `2025-06-29T23:45:14Z` `COMMENTED` by `tywuAMD` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2969589475)
-- `2025-06-30T20:49:05Z` `APPROVED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2972651230)
-- `2025-06-30T20:49:16Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2972652112)
-- `2025-07-01T08:12:13Z` `APPROVED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2974106434)
-
-## Inline Comment Hotspots
-
-- `vllm/v1/attention/backends/mla/triton_mla.py`: 18 inline comment(s)
-- `vllm/v1/attention/backends/mla/common.py`: 7 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-06-12T00:38:31Z` `inline` by `tywuAMD` `vllm/v1/attention/backends/mla/triton_mla.py`:122; signals: attention, mla, perf, tma, triton; excerpt: "shall we just directly pass False to return softmax lse? Just realize return softmax lse never got used in the helper function; thus I ..." (https://github.com/vllm-project/vllm/pull/19067#discussion_r2141311071)
-- `2025-06-07T01:51:22Z` `inline` by `ProExpertProg` `vllm/v1/attention/backends/mla/common.py`:666; signals: attention, mla, tma, triton; excerpt: "(if return softmax lse=True and Triton can't handle the request, super().varlen fwd(...) can be used)" (https://github.com/vllm-project/vllm/pull/19067#discussion_r2133190073)
-- `2025-06-10T04:26:13Z` `inline` by `ProExpertProg` `vllm/v1/attention/backends/mla/triton_mla.py`:110; signals: attention, mla, tma, triton; excerpt: "Wait, so why can't we always use triton if it can return the softmax lse? Or is that different from encoded softmax?" (https://github.com/vllm-project/vllm/pull/19067#discussion_r2136883805)
-- `2025-06-11T07:35:12Z` `inline` by `tywuAMD` `vllm/v1/attention/backends/mla/triton_mla.py`:110; signals: attention, mla, tma, triton; excerpt: "I went through Triton's implementation, and it turns out that RETURN ENCODED SOFTMAX is always False so the output encoded softmax is always None." (https://github.com/vllm-project/vllm/pull/19067#discussion_r2139424970)
-- `2025-06-11T13:58:24Z` `inline` by `houseroad` `vllm/v1/attention/backends/mla/triton_mla.py`:122; signals: attention, mla, perf, triton; excerpt: "Also wondering hwy do we need to use triton flash attn in this case? Is the perf better or something else?" (https://github.com/vllm-project/vllm/pull/19067#discussion_r2140263189)
-- `2025-06-16T20:22:34Z` `inline` by `ProExpertProg` `vllm/v1/attention/backends/mla/triton_mla.py`:110; signals: attention, mla, tma, triton; excerpt: "This is on V0, and I don't think you really answered my question. triton attention outputs a tuple, and the second element is the ..." (https://github.com/vllm-project/vllm/pull/19067#discussion_r2150807161)
-- `2025-06-16T20:28:38Z` `inline` by `ProExpertProg` `vllm/v1/attention/backends/mla/triton_mla.py`:110; signals: attention, mla, tma, triton; excerpt: "Never mind, I see the linked op is used. Could we not modify it though so that return encoded softmax is passed through successfully?" (https://github.com/vllm-project/vllm/pull/19067#discussion_r2150818869)
-- `2025-06-19T08:20:04Z` `inline` by `tywuAMD` `vllm/v1/attention/backends/mla/triton_mla.py`:110; signals: attention, mla, tma, triton; excerpt: "I kept tracing the call stack and it seems like the encoded softmax is not fully ready, and that might be the reason why ..." (https://github.com/vllm-project/vllm/pull/19067#discussion_r2156432289)
-- `2025-06-29T23:45:14Z` `inline` by `tywuAMD` `vllm/v1/attention/backends/mla/triton_mla.py`:116; signals: attention, mla, tma, triton; excerpt: "Hi @ProExpertProg, not sure if you saw my if you don't have any further comments. Meanwhile I will keep investigating return softmax lse and ..." (https://github.com/vllm-project/vllm/pull/19067#discussion_r2174005972)
-- `2025-06-11T13:55:33Z` `inline` by `houseroad` `vllm/v1/attention/backends/mla/triton_mla.py`:122; signals: attention, mla, tma, triton; excerpt: "shall we just directly pass False to return softmax lse?" (https://github.com/vllm-project/vllm/pull/19067#discussion_r2140251817)
-- `2025-06-11T13:58:53Z` `review` `COMMENTED` by `houseroad`; signals: attention, flash attention, triton; excerpt: "Overall looks fine. One question about why do we need to switch to triton flash attention for rocm case?" (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2917329808)
-- `2025-06-16T20:24:29Z` `inline` by `ProExpertProg` `vllm/v1/attention/backends/mla/triton_mla.py`:116; signals: attention, mla, tma, triton; excerpt: "Why can't we use this path if return softmax lse is True?" (https://github.com/vllm-project/vllm/pull/19067#discussion_r2150810662)
+- 2025-06-03 `tjtanaa` on `vllm/v1/attention/backends/mla/common.py`:651: Let's store the envs.VLLM USER TRITON FLASH ATTN in the init. e.g. The overhead of envs.VLLM USER TRITON FLASH ATTN is very large (https://github.com/vllm-project/vllm/pull/19067#discussion_r2123220727)
+- 2025-06-03 `tjtanaa`: @tywuAMD Can you also include lm eval score of models that is using this backend to show the correctness of the implementation? Thank you so much for enabling V1 MLA Triton backend on ROCm. (https://github.com/vllm-project/vllm/pull/19067#issuecomment-2934293940)
+- 2025-06-03 `tywuAMD` on `vllm/v1/attention/backends/mla/common.py`:651: Oh good to know. Thanks for pointing it out. (https://github.com/vllm-project/vllm/pull/19067#discussion_r2123373294)
+- 2025-06-03 `tywuAMD`: @tywuAMD Can you also include lm eval score of models that is using this backend to show the correctness of the implementation? Thank you so much for enabling V1 MLA Triton backend on ROCm. Sure thing. I've updated the lm eval result ... (https://github.com/vllm-project/vllm/pull/19067#issuecomment-2934583367)
+- 2025-06-06 `tjtanaa`: @tjtanaa Could you please take a look at this PR again to see whether you have any other comments on it? I do not have approval permission. I have commented to help address some issue that I found. Could you ping the ... (https://github.com/vllm-project/vllm/pull/19067#issuecomment-2950019114)
+- 2025-06-07 `ProExpertProg` on `vllm/v1/attention/backends/mla/common.py`:666: This should not live in common; instead it should live inside TritonMLABackend. Here, a new method should be called (varlen forward or similar), which by default invokes FA, and the triton backend can override it. (https://github.com/vllm-project/vllm/pull/19067#discussion_r2133186566)
+- 2025-06-07 `ProExpertProg` on `vllm/v1/attention/backends/mla/common.py`:685: Minor suggestion to improve readability (this will go in the varlen forward): (https://github.com/vllm-project/vllm/pull/19067#discussion_r2133189739)
+- 2025-06-07 `ProExpertProg` commented: Could you please move the Triton code into the Triton backend? (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2906558769)
+- 2025-06-07 `ProExpertProg` on `vllm/v1/attention/backends/mla/common.py`:666: (if return softmax lse=True and Triton can't handle the request, super().varlen fwd(...) can be used) (https://github.com/vllm-project/vllm/pull/19067#discussion_r2133190073)
+- 2025-06-09 `tywuAMD`: Hi @ProExpertProg, thank your for your suggestion, which makes perfect sense to me. I've updated this PR accordingly. Let me know whether I was doing the right thing. (https://github.com/vllm-project/vllm/pull/19067#issuecomment-2955395423)
+- 2025-06-09 `ProExpertProg` on `vllm/v1/attention/backends/mla/triton_mla.py`:140: I think this code should live in common.py, and we should just call the super() method here (https://github.com/vllm-project/vllm/pull/19067#discussion_r2135717036)
+- 2025-06-09 `ProExpertProg` on `vllm/v1/attention/backends/mla/triton_mla.py`:91: Is padding actually required for the Triton backend? It seems like no, so this is not needed (https://github.com/vllm-project/vllm/pull/19067#discussion_r2135718731)
+- 2025-06-09 `ProExpertProg` commented: This is a good change but I think it could be slightly cleaner! (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2910062194)
+- 2025-06-10 `tywuAMD` on `vllm/v1/attention/backends/mla/triton_mla.py`:140: Ahh I got it. Call triton attention() in triton mla.py and handle all the flash attn varlen() cases in common.py. (https://github.com/vllm-project/vllm/pull/19067#discussion_r2136733843)
+- 2025-06-10 `tywuAMD` on `vllm/v1/attention/backends/mla/triton_mla.py`:91: Actually v has to be padded for triton attention. Since vllm flash attn version can never be 3 on a ROCm platform, pad v is always true. Also I tried with non-padded v, which led to the following error message: (https://github.com/vllm-project/vllm/pull/19067#discussion_r2136737039)
+- 2025-06-10 `ProExpertProg` on `vllm/v1/attention/backends/mla/triton_mla.py`:110: Wait, so why can't we always use triton if it can return the softmax lse? Or is that different from encoded softmax? (https://github.com/vllm-project/vllm/pull/19067#discussion_r2136883805)
+- 2025-06-10 `houseroad` on `vllm/v1/attention/backends/mla/triton_mla.py`:92: can we do the following: 1) move the logic related to rocm to a helper function like ' flash attn varlen diff headdims rocm', and move the logic there to improve the readability, 2) could you move the triton fa func logic ... (https://github.com/vllm-project/vllm/pull/19067#discussion_r2137765559)
+- 2025-06-10 `houseroad` on `vllm/v1/attention/backends/mla/common.py`:649: nit: explain a bit more, like ROCm leverage upstream flash attn instead of vllm version. (https://github.com/vllm-project/vllm/pull/19067#discussion_r2137793099)
+- 2025-06-10 `houseroad` commented: Thanks for the contribution, could you rebase the PR and address the comments? (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2913396818)
+- 2025-06-11 `tywuAMD` on `vllm/v1/attention/backends/mla/triton_mla.py`:110: I went through Triton's implementation, and it turns out that RETURN ENCODED SOFTMAX is always False so the output encoded softmax is always None. (https://github.com/vllm-project/vllm/pull/19067#discussion_r2139424970)
+- 2025-06-11 `tywuAMD` on `vllm/v1/attention/backends/mla/triton_mla.py`:92: Sounds good to me! (https://github.com/vllm-project/vllm/pull/19067#discussion_r2139427580)
+- 2025-06-11 `houseroad` on `vllm/v1/attention/backends/mla/triton_mla.py`:122: shall we just directly pass False to return softmax lse? (https://github.com/vllm-project/vllm/pull/19067#discussion_r2140251817)
+- 2025-06-11 `houseroad` on `vllm/v1/attention/backends/mla/triton_mla.py`:122: Also wondering hwy do we need to use triton flash attn in this case? Is the perf better or something else? (https://github.com/vllm-project/vllm/pull/19067#discussion_r2140263189)
+- 2025-06-11 `houseroad` commented: Overall looks fine. One question about why do we need to switch to triton flash attention for rocm case? (https://github.com/vllm-project/vllm/pull/19067#pullrequestreview-2917329808)
+- 2025-06-12 `houseroad`: The failure seems related to the change, could you take a look? (https://github.com/vllm-project/vllm/pull/19067#issuecomment-2964595954)
+- 2025-06-12 `tywuAMD` on `vllm/v1/attention/backends/mla/triton_mla.py`:122: shall we just directly pass False to return softmax lse? Just realize return softmax lse never got used in the helper function; thus I removed the parameter. Also wondering why do we need to use triton flash attn in this case? Is ... (https://github.com/vllm-project/vllm/pull/19067#discussion_r2141311071)
+- 2025-06-12 `tywuAMD`: Hi @houseroad , I checked the CI failures. The attention kernel failures were caused by some wrong logic in the test script, where the backend selector only expects TRITON MLA but not TRITON MLA VLLM V1. I modified those tests accordingly. The ... (https://github.com/vllm-project/vllm/pull/19067#issuecomment-2964639868)
+- 2025-06-16 `ProExpertProg` on `vllm/v1/attention/backends/mla/triton_mla.py`:110: This is on V0, and I don't think you really answered my question. triton attention outputs a tuple, and the second element is the softmax values. But earlier we skip Triton if softmax values are requested becuase they're not supported. But clearly ... (https://github.com/vllm-project/vllm/pull/19067#discussion_r2150807161)
+- 2025-06-16 `ProExpertProg` on `vllm/v1/attention/backends/mla/triton_mla.py`:116: Why can't we use this path if return softmax lse is True? (https://github.com/vllm-project/vllm/pull/19067#discussion_r2150810662)
+- 2025-06-16 `ProExpertProg` on `vllm/v1/attention/backends/mla/triton_mla.py`:110: Never mind, I see the linked op is used. Could we not modify it though so that return encoded softmax is passed through successfully? (https://github.com/vllm-project/vllm/pull/19067#discussion_r2150818869)
+- 2025-06-19 `tywuAMD` on `vllm/v1/attention/backends/mla/triton_mla.py`:110: I kept tracing the call stack and it seems like the encoded softmax is not fully ready, and that might be the reason why return encoded softmax is hardcoded to false for now: (https://github.com/vllm-project/vllm/pull/19067#discussion_r2156432289)
+- 2025-06-29 `tywuAMD` on `vllm/v1/attention/backends/mla/triton_mla.py`:116: Hi @ProExpertProg, not sure if you saw my if you don't have any further comments. Meanwhile I will keep investigating return softmax lse and probably open another PR for it. (https://github.com/vllm-project/vllm/pull/19067#discussion_r2174005972)
+- 2025-06-30 `ProExpertProg` on `vllm/v1/attention/backends/mla/triton_mla.py`:116: Sounds good to me (https://github.com/vllm-project/vllm/pull/19067#discussion_r2175900068)

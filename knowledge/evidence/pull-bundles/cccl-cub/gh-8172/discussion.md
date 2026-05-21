@@ -1,65 +1,37 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/cccl#8172](https://github.com/NVIDIA/cccl/pull/8172)
-- Source page: `sources/prs/cccl-cub/PR-8172.md`
-- Evidence bundle: `evidence/pull-bundles/cccl-cub/gh-8172`
-- Generated at: `2026-05-20T15:20:32.179032+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-03-25T15:29:20Z`
-- Merged: `2026-05-07T07:03:14Z`
-
-## Discussion Counts
-
-- Issue comments: 19
-- Review submissions: 13 (approved=3, changes_requested=3, commented=7)
-- Inline review comments: 30
-- Review threads observed: 25
-- Resolved/outdated thread markers: resolved=18, outdated=24
-- Human participants with discussion text: bernhardmgruber, charan-003, fbusato, miscco
-- Automation comments/reviews omitted from high-signal summary: 5
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-03-25T17:17:10Z` `CHANGES_REQUESTED` by `miscco` - Thanks a lot for the interest. I agree with @bernhardmgruber that we want to move this into libcu++ ... (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4008328620)
-- `2026-03-25T23:46:00Z` `COMMENTED` by `charan-003` (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4010594344)
-- `2026-03-26T00:00:23Z` `COMMENTED` by `charan-003` (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4010634595)
-- `2026-03-26T00:35:44Z` `COMMENTED` by `charan-003` (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4010735551)
-- `2026-03-26T18:17:53Z` `COMMENTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4016395674)
-- `2026-03-30T07:44:00Z` `CHANGES_REQUESTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4028647331)
-- `2026-03-31T15:51:30Z` `COMMENTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4038395194)
-- `2026-04-23T15:02:26Z` `COMMENTED` by `bernhardmgruber` - @miscco can you please review the libcu++ changes? I also want to see a SASS diff for the ... (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4163532155)
-- `2026-04-23T16:16:35Z` `COMMENTED` by `charan-003` (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4164083439)
-- `2026-05-06T12:40:41Z` `APPROVED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4236091666)
-- `2026-05-06T13:31:21Z` `APPROVED` by `miscco` (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4236461476)
-- `2026-05-06T13:33:26Z` `CHANGES_REQUESTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4236479331)
-- `2026-05-07T07:01:59Z` `APPROVED` by `miscco` (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4241787069)
-
-## Inline Comment Hotspots
-
-- `cub/cub/detail/uninitialized_array.cuh`: 17 inline comment(s)
-- `cub/test/catch2_test_detail_uninitialized_array.cu`: 5 inline comment(s)
-- `libcudacxx/test/libcudacxx/libcxx/memory/uninitialized_array.pass.cpp`: 2 inline comment(s)
-- `cub/cub/device/dispatch/kernels/kernel_transform.cuh`: 2 inline comment(s)
-- `cub/cub/device/dispatch/tuning/common.cuh`: 2 inline comment(s)
-- `libcudacxx/include/cuda/__memory/uninitialized_array.h`: 1 inline comment(s)
-- `thrust/thrust/system/cuda/detail/core/util.h`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-05-06T13:33:21Z` `inline` by `miscco` `libcudacxx/test/libcudacxx/libcxx/memory/uninitialized_array.pass.cpp`:84; signals: cuda, memory, tile; excerpt: "Final comment: We need to replace open coded host device with TEST FUNC because of future tile support." (https://github.com/NVIDIA/cccl/pull/8172#discussion_r3195809313)
-- `2026-04-23T15:02:26Z` `review` `COMMENTED` by `bernhardmgruber`; signals: benchmark, hang; excerpt: "@miscco can you please review the libcu++ changes? I also want to see a SASS diff for the fill benchmark of device transform. I ..." (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4163532155)
-- `2026-03-26T22:32:46Z` `issue` by `charan-003`; signals: cuda, hang, kernel; excerpt: "before making further changes I want to make sure the implementation of uninitialized array in the libcu++ is correct. Based on searching for all ..." (https://github.com/NVIDIA/cccl/pull/8172#issuecomment-4138754519)
-- `2026-03-25T17:01:59Z` `inline` by `miscco` `cub/cub/detail/uninitialized_array.cuh`:37; signals: compile, cuda; excerpt: "This is missing cuda::std::launder to tell the compiler we really know that there is an object in here See" (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989699074)
-- `2026-03-25T17:04:27Z` `inline` by `miscco` `cub/cub/detail/uninitialized_array.cuh`:7; signals: cuda, memory; excerpt: "Please move this file into libcudacxx/include/cuda/ memory/uninitialized array Also please adopt the license and the config accoringly" (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989711785)
-- `2026-03-25T17:11:44Z` `inline` by `miscco` `cub/test/catch2_test_detail_uninitialized_array.cu`; signals: cuda, memory; excerpt: "This is an internal CCCL API, please move the test into libcudacxx/test/libcudacxx/libcxx/memory/uninitialized array.pass.cpp" (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989750017)
-- `2026-03-30T07:41:53Z` `inline` by `miscco` `libcudacxx/include/cuda/__memory/uninitialized_array.h`:34; signals: cuda, memory; excerpt: "We do not want this to be publicly available, because it is a very dangerous feature. Please rename to" (https://github.com/NVIDIA/cccl/pull/8172#discussion_r3008092415)
-- `2026-03-30T07:43:39Z` `inline` by `miscco` `libcudacxx/test/libcudacxx/libcxx/memory/uninitialized_array.pass.cpp`; signals: cuda, memory; excerpt: "I believe this is an internal only feature we use. We should move this test to the other internal only tests, aka ‎libcudacxx/test/libcudacxx/libcxx/memory/uninitialized array.pass.cpp" (https://github.com/NVIDIA/cccl/pull/8172#discussion_r3008099921)
-- `2026-03-25T17:17:10Z` `review` `CHANGES_REQUESTED` by `miscco`; signals: hang; excerpt: "Thanks a lot for the interest. I agree with @bernhardmgruber that we want to move this into libcu++ unfortunately that requires a certain amount ..." (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4008328620)
-- `2026-03-25T17:22:18Z` `issue` by `charan-003`; signals: cuda, hang; excerpt: "Thanks a lot for the interest. I agree with @bernhardmgruber that we want to move this into libcu++ unfortunately that requires a certain amount ..." (https://github.com/NVIDIA/cccl/pull/8172#issuecomment-4128366386)
-- `2026-03-25T23:46:00Z` `inline` by `charan-003` `cub/cub/detail/uninitialized_array.cuh`:29; signals: cuda; excerpt: "i was following the [cccl/thrust/thrust/system/cuda/detail/core/util.h]( well i removed it, we can get the size from the template parameter Size directly if needed" (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2991701311)
-- `2026-03-26T00:35:44Z` `inline` by `charan-003` `cub/test/catch2_test_detail_uninitialized_array.cu`:43; signals: compile; excerpt: "@miscco for the non-trivial type tests should these be .fail.cpp tests that verify the static assert which complain at compile time, or would you ..." (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2991834365)
+- 2026-03-25 `bernhardmgruber`: Thank you for the PR! I think we would want this new facility as an internal type in libcu++. It should also replace thrust::cuda cub::core::detail::uninitialized array. Can you please update the PR to reflect this? Thx! (https://github.com/NVIDIA/cccl/pull/8172#issuecomment-4128185428)
+- 2026-03-25 `miscco`: What is the use case for that? I have libcudacxx/include/cuda/std/ pstl/cuda/temporary storage.h otherwise we already have cuda:: uninitialized async buffer that does a lot of the things (https://github.com/NVIDIA/cccl/pull/8172#issuecomment-4128219120)
+- 2026-03-25 `miscco` on `cub/cub/detail/uninitialized_array.cuh`:30: This needs to be Only unsigned char and std::byte are blessed by the standard (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989694204)
+- 2026-03-25 `miscco` on `cub/cub/detail/uninitialized_array.cuh`:37: This is missing cuda::std::launder to tell the compiler we really know that there is an object in here See (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989699074)
+- 2026-03-25 `miscco` on `cub/cub/detail/uninitialized_array.cuh`:41: This is missing a bounds check (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989704003)
+- 2026-03-25 `miscco` on `cub/cub/detail/uninitialized_array.cuh`:19: Please only include the sub headers we need, its fine for cstddef but type traits is too big (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989708538)
+- 2026-03-25 `miscco` on `cub/cub/detail/uninitialized_array.cuh`:7: Please move this file into libcudacxx/include/cuda/ memory/uninitialized array Also please adopt the license and the config accoringly (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989711785)
+- 2026-03-25 `miscco` on `cub/cub/detail/uninitialized_array.cuh`:21: This needs to be (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989714093)
+- 2026-03-25 `miscco` on `cub/cub/detail/uninitialized_array.cuh`:24: We can drop the detail namespace (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989714777)
+- 2026-03-25 `miscco` on `cub/cub/detail/uninitialized_array.cuh`:26: Everything here should be ugly or Ugly (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989719410)
+- 2026-03-25 `miscco` on `cub/cub/detail/uninitialized_array.cuh`:30: Please structure this a bit differently so that we can easily see what is what (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989725577)
+- 2026-03-25 `miscco` on `cub/cub/detail/uninitialized_array.cuh`:29: What do we need size for? (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989726443)
+- 2026-03-25 `miscco` on `cub/cub/detail/uninitialized_array.cuh`:34: This should be reworded and also needs a const overload (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989733298)
+- 2026-03-25 `miscco` on `cub/cub/detail/uninitialized_array.cuh`:49: I believe this is never used, we should drop it (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989736190)
+- 2026-03-25 `miscco` on `cub/test/catch2_test_detail_uninitialized_array.cu`: This is an internal CCCL API, please move the test into libcudacxx/test/libcudacxx/libcxx/memory/uninitialized array.pass.cpp (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989750017)
+- 2026-03-25 `miscco` on `cub/test/catch2_test_detail_uninitialized_array.cu`:28: libcu++ uses lit as the testing infrastructure, please have a look at the surrounding files. If you need any guidance, feel free to ask (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989756784)
+- 2026-03-25 `miscco` on `cub/cub/detail/uninitialized_array.cuh`:31: Question: This currently does not support any way to properly emplace any object into the array. That limmits us to is trivially {copy,move} constructible types (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989763725)
+- 2026-03-25 `miscco` on `cub/test/catch2_test_detail_uninitialized_array.cu`:43: We should have tests for basic integers float / double a type that is not trivially copy cconstructible a type that is not trivially move constructible a type that is not trivially constructible from another one (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989772159)
+- 2026-03-25 `miscco` on `cub/cub/detail/uninitialized_array.cuh`:35: Question: Should this have begin() and end() convenience functions? or are we fine with just data() (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2989775547)
+- 2026-03-25 `miscco` changes_requested: Thanks a lot for the interest. I agree with @bernhardmgruber that we want to move this into libcu++ unfortunately that requires a certain amount of changes, because the requirements are much stricter (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4008328620)
+- 2026-03-25 `charan-003`: Thanks a lot for the interest. I agree with @bernhardmgruber that we want to move this into libcu++ unfortunately that requires a certain amount of changes, because the requirements are much stricter i will address the comments soon From what I understand, ... (https://github.com/NVIDIA/cccl/pull/8172#issuecomment-4128366386)
+- 2026-03-25 `charan-003` on `cub/cub/detail/uninitialized_array.cuh`:29: i was following the [cccl/thrust/thrust/system/cuda/detail/core/util.h]( well i removed it, we can get the size from the template parameter Size directly if needed (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2991701311)
+- 2026-03-26 `charan-003` on `cub/cub/detail/uninitialized_array.cuh`:35: i think data() is sufficient for this. Adding begin() and end() would be iterator/ranges please do let me know if we want to see begin()/end() (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2991740133)
+- 2026-03-26 `charan-003` on `cub/test/catch2_test_detail_uninitialized_array.cu`:43: @miscco for the non-trivial type tests should these be .fail.cpp tests that verify the static assert which complain at compile time, or would you prefer a different approach? (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2991834365)
+- 2026-03-26 `miscco` on `cub/test/catch2_test_detail_uninitialized_array.cu`:43: it should be sufficient to e.g. use a type with an uninitialized data member and then assert that the member is properly zeroed out (https://github.com/NVIDIA/cccl/pull/8172#discussion_r2996838950)
+- 2026-03-26 `charan-003`: before making further changes I want to make sure the implementation of uninitialized array in the libcu++ is correct. Based on searching for all usages of uninitialized array in the repo: I think the following changes are needed: Replace the struct definition ... (https://github.com/NVIDIA/cccl/pull/8172#issuecomment-4138754519)
+- 2026-03-30 `miscco` on `libcudacxx/include/cuda/__memory/uninitialized_array.h`:34: We do not want this to be publicly available, because it is a very dangerous feature. Please rename to (https://github.com/NVIDIA/cccl/pull/8172#discussion_r3008092415)
+- 2026-03-30 `miscco` on `libcudacxx/test/libcudacxx/libcxx/memory/uninitialized_array.pass.cpp`: I believe this is an internal only feature we use. We should move this test to the other internal only tests, aka ‎libcudacxx/test/libcudacxx/libcxx/memory/uninitialized array.pass.cpp (https://github.com/NVIDIA/cccl/pull/8172#discussion_r3008099921)
+- 2026-03-31 `miscco` on `thrust/thrust/system/cuda/detail/core/util.h`:494: This is an internal helper type, I believe we should just use ::cuda:: uninitialized array internally Could you please replace all internal uses and remove that type here? (https://github.com/NVIDIA/cccl/pull/8172#discussion_r3016799640)
+- 2026-04-22 `charan-003`: @bernhardmgruber, I hope these changes will fix it. (https://github.com/NVIDIA/cccl/pull/8172#issuecomment-4300515279)
+- 2026-04-23 `bernhardmgruber` on `cub/cub/device/dispatch/kernels/kernel_transform.cuh`:282: Suggestion: just use the type directly: (https://github.com/NVIDIA/cccl/pull/8172#discussion_r3131724081)
+- 2026-04-23 `bernhardmgruber` on `cub/cub/device/dispatch/tuning/common.cuh`:54: Q: Why is this change necessary? (https://github.com/NVIDIA/cccl/pull/8172#discussion_r3131726715)
+- 2026-04-23 `bernhardmgruber` commented: @miscco can you please review the libcu++ changes? I also want to see a SASS diff for the fill benchmark of device transform. I can do that once we agree on the proposed changes. (https://github.com/NVIDIA/cccl/pull/8172#pullrequestreview-4163532155)
+- 2026-04-23 `charan-003` on `cub/cub/device/dispatch/tuning/common.cuh`:54: I noticed several expected ' ' parse errors and assumed wrapping the conditions would resolve them. Would you like me to revert those changes? I also applied the same fix to a few other files. (https://github.com/NVIDIA/cccl/pull/8172#discussion_r3132208810)
+- 2026-04-23 `fbusato`: What is the use case for that? I have libcudacxx/include/cuda/std/ pstl/cuda/temporary storage.h otherwise we already have cuda:: uninitialized async buffer that does a lot of the things @pciolkosz how much overlap we have in this direction? (https://github.com/NVIDIA/cccl/pull/8172#issuecomment-4306054822)
+- 2026-05-03 `charan-003`: @bernhardmgruber @miscco i've applied the suggested changes for the direct type Please do let me know if any more changes are required Thanks (https://github.com/NVIDIA/cccl/pull/8172#issuecomment-4367024674)
+- 2026-05-06 `miscco` on `libcudacxx/test/libcudacxx/libcxx/memory/uninitialized_array.pass.cpp`:84: Final comment: We need to replace open coded host device with TEST FUNC because of future tile support. (https://github.com/NVIDIA/cccl/pull/8172#discussion_r3195809313)

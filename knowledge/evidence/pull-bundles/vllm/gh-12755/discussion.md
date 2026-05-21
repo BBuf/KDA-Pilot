@@ -1,81 +1,46 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#12755](https://github.com/vllm-project/vllm/pull/12755)
-- Source page: `sources/prs/vllm/PR-12755.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-12755`
-- Generated at: `2026-05-20T15:33:51.876186+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-02-04T23:58:11Z`
-- Merged: `2025-02-19T09:06:23Z`
-
-## Discussion Counts
-
-- Issue comments: 26
-- Review submissions: 37 (approved=2, commented=35)
-- Inline review comments: 45
-- Review threads observed: 20
-- Resolved/outdated thread markers: resolved=8, outdated=12
-- Human participants with discussion text: BoyuanS, JoeyYoung, KiroSummer, LiuXiaoxuanPKU, Neo9061, Pokemons386, QualityGN, WhatGhost, benchislett, comaniac, fan-niu, hxt365, luccafong, mergify, mgoin, parambole, simon-mo, yangchou19, youkaichao
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 20
-
-## Review Decisions
-
-- `2025-02-05T01:09:54Z` `COMMENTED` by `comaniac` - Otherwise LGTM. It's pretty clean so no concerns. (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2594390518)
-- `2025-02-05T01:50:46Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2594448354)
-- `2025-02-05T01:51:03Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2594448592)
-- `2025-02-05T02:01:21Z` `COMMENTED` by `LiuXiaoxuanPKU` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2594458175)
-- `2025-02-05T03:14:59Z` `COMMENTED` by `Neo9061` - Any way to put a MD file instructing examples on how to use the MTP for SD? Especially, ... (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2594519335)
-- `2025-02-05T04:01:46Z` `COMMENTED` by `Neo9061` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2594568345)
-- `2025-02-05T11:05:45Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2595343375)
-- `2025-02-05T11:07:19Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2595347208)
-- `2025-02-05T11:10:33Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2595355082)
-- `2025-02-05T14:12:47Z` `COMMENTED` by `Neo9061` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2595904624)
-- `2025-02-05T14:14:30Z` `COMMENTED` by `Neo9061` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2595909683)
-- `2025-02-05T18:56:35Z` `COMMENTED` by `simon-mo` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2596710732)
-- `2025-02-05T18:57:21Z` `COMMENTED` by `simon-mo` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2596712108)
-- `2025-02-05T19:00:03Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2596720153)
-- `2025-02-06T17:46:27Z` `COMMENTED` by `Neo9061` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2599455829)
-- `2025-02-06T17:53:29Z` `COMMENTED` by `Neo9061` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2599471593)
-- `2025-02-06T20:25:25Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2599824192)
-- `2025-02-07T00:32:20Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2600470280)
-- `2025-02-07T19:17:53Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2602622737)
-- `2025-02-13T00:07:25Z` `COMMENTED` by `luccafong` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2613516137)
-- `2025-02-13T00:54:52Z` `COMMENTED` by `LiuXiaoxuanPKU` - Just left some comments, will finish review by EOD. (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2613560929)
-- `2025-02-13T08:08:59Z` `COMMENTED` by `LiuXiaoxuanPKU` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2614148290)
-- `2025-02-13T14:58:23Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2615274407)
-- `2025-02-13T17:13:03Z` `COMMENTED` by `benchislett` (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2615724901)
-- ... 11 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/models/deepseek_mtp.py`: 23 inline comment(s)
-- `tests/spec_decode/e2e/test_mtp_correctness.py`: 4 inline comment(s)
-- `vllm/transformers_utils/configs/deepseek_v3.py`: 3 inline comment(s)
-- `vllm/spec_decode/multi_step_worker.py`: 3 inline comment(s)
-- `vllm/spec_decode/spec_decode_worker.py`: 2 inline comment(s)
-- `vllm/transformers_utils/configs/__init__.py`: 2 inline comment(s)
-- `vllm/transformers_utils/configs/deepseek_mtp.py`: 2 inline comment(s)
-- `vllm/config.py`: 2 inline comment(s)
-- `vllm/worker/model_runner.py`: 2 inline comment(s)
-- `vllm/spec_decode/draft_model_runner.py`: 1 inline comment(s)
-- `vllm/worker/worker.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-02-06T20:25:25Z` `inline` by `benchislett` `vllm/model_executor/models/deepseek_mtp.py`:81; signals: attention, cuda, mla; excerpt: "I have found that this line might interfere with CUDA graph recording. I am unsure why, but removing this line allowed the draft acceptance ..." (https://github.com/vllm-project/vllm/pull/12755#discussion_r1945376095)
-- `2025-02-13T17:13:02Z` `inline` by `benchislett` `vllm/model_executor/models/deepseek_mtp.py`:81; signals: benchmark, perf, performance; excerpt: "Thanks for the effort @luccafong . Could you update the benchmarks with performance based on max number of concurrent requests? I find this to ..." (https://github.com/vllm-project/vllm/pull/12755#discussion_r1954908937)
-- `2025-02-13T17:22:15Z` `inline` by `luccafong` `vllm/spec_decode/multi_step_worker.py`:101; signals: cuda, cudagraph, hang; excerpt: "this branch will be used by TP 1, and the spec step idx can only be passed in this way since we are using ..." (https://github.com/vllm-project/vllm/pull/12755#discussion_r1954921956)
-- `2025-02-05T18:30:43Z` `issue` by `benchislett`; signals: attention, hang, mla; excerpt: "@luccafong I have been working on a similar implementation locally, and have faced a few challenges that I'm not sure are addressed here. Have ..." (https://github.com/vllm-project/vllm/pull/12755#issuecomment-2637712616)
-- `2025-02-06T04:54:01Z` `issue` by `luccafong`; signals: attention, hang, mla; excerpt: "@luccafong I have been working on a similar implementation locally, and have faced a few challenges that I'm not sure are addressed here. Have ..." (https://github.com/vllm-project/vllm/pull/12755#issuecomment-2638821699)
-- `2025-02-05T11:07:19Z` `inline` by `luccafong` `tests/spec_decode/e2e/test_mtp_correctness.py`:35; signals: block, correctness; excerpt: "this is a test file on dummy model. num speculative tokens should be <= num nextn predict layers, the transformer blocks are different in ..." (https://github.com/vllm-project/vllm/pull/12755#discussion_r1942673169)
-- `2025-02-13T17:20:24Z` `inline` by `luccafong` `vllm/model_executor/models/deepseek_mtp.py`:276; signals: attention, block; excerpt: "the model weights of the transformer layer and the other part of MTP are on the same level in weights, so we need to ..." (https://github.com/vllm-project/vllm/pull/12755#discussion_r1954919457)
-- `2025-02-06T17:55:50Z` `issue` by `Neo9061`; signals: h200, hang; excerpt: "@luccafong Sorry have to ask those questions as I hope to use your implementation. 1. Have you tested it e2e with VLLM's multi-node distributed ..." (https://github.com/vllm-project/vllm/pull/12755#issuecomment-2640596610)
-- `2025-02-16T09:39:50Z` `issue` by `QualityGN`; signals: latency, throughput; excerpt: "Hi, have you replicated the inference acceleration effect after enabling MTP on multiple nodes？ My envs: Ray cluster: two nodes of 8 x H20, ..." (https://github.com/vllm-project/vllm/pull/12755#issuecomment-2661346140)
-- `2025-02-05T03:10:47Z` `inline` by `Neo9061` `tests/spec_decode/e2e/test_mtp_correctness.py`:35; signals: correctness; excerpt: "The num nextn predict layers in DeepSeek V3 has only 1. Will that mean you will reuse the MTP head if I specify MAX ..." (https://github.com/vllm-project/vllm/pull/12755#discussion_r1942187827)
-- `2025-02-05T11:05:45Z` `inline` by `luccafong` `vllm/model_executor/models/deepseek_mtp.py`:79; signals: hang; excerpt: "for 1st stage: position 0 is masked for MTP, but it only applies to k=1, I need to change the mask to the [position ..." (https://github.com/vllm-project/vllm/pull/12755#discussion_r1942671120)
-- `2025-02-05T14:14:30Z` `inline` by `Neo9061` `tests/spec_decode/e2e/test_mtp_correctness.py`:35; signals: correctness; excerpt: "Is there a way to just re-use the MTP to predict tokens whose k 1? as essentially they are the same right? You can ..." (https://github.com/vllm-project/vllm/pull/12755#discussion_r1943020801)
+- 2025-02-05 `comaniac` on `tests/spec_decode/e2e/test_mtp_correctness.py`: Do you know how long does it take to run all tests in this file? (https://github.com/vllm-project/vllm/pull/12755#discussion_r1942100702)
+- 2025-02-05 `comaniac` on `vllm/spec_decode/draft_model_runner.py`:281: Since probably no other models have this attribute, please add comment saying this is for DeepSeekMTP. (https://github.com/vllm-project/vllm/pull/12755#discussion_r1942104545)
+- 2025-02-05 `comaniac` on `vllm/spec_decode/spec_decode_worker.py`:187: nit: Better to use tuple as it is immutable and should be (slightly) faster. (https://github.com/vllm-project/vllm/pull/12755#discussion_r1942112362)
+- 2025-02-05 `comaniac` on `vllm/transformers_utils/configs/__init__.py`:48: Is this done by the formatter in vLLM? If not can we revert it? (https://github.com/vllm-project/vllm/pull/12755#discussion_r1942112665)
+- 2025-02-05 `comaniac` on `vllm/transformers_utils/configs/deepseek_mtp.py`:16: Remember to remove the print before merging. (https://github.com/vllm-project/vllm/pull/12755#discussion_r1942112887)
+- 2025-02-05 `comaniac` commented: Otherwise LGTM. It's pretty clean so no concerns. (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2594390518)
+- 2025-02-05 `luccafong` on `vllm/transformers_utils/configs/__init__.py`:48: yes, it is formatted during pre-commit hook (https://github.com/vllm-project/vllm/pull/12755#discussion_r1942140152)
+- 2025-02-05 `LiuXiaoxuanPKU` on `vllm/model_executor/models/deepseek_mtp.py`:79: QQ: where did we truncate the input ids? (https://github.com/vllm-project/vllm/pull/12755#discussion_r1942146451)
+- 2025-02-05 `Neo9061` on `tests/spec_decode/e2e/test_mtp_correctness.py`:35: The num nextn predict layers in DeepSeek V3 has only 1. Will that mean you will reuse the MTP head if I specify MAX SEC TOKENS more than 1? (https://github.com/vllm-project/vllm/pull/12755#discussion_r1942187827)
+- 2025-02-05 `Neo9061` commented: Any way to put a MD file instructing examples on how to use the MTP for SD? Especially, 1. The num nextn predict layers is 1, can we specify speculation length more than 1? and what are requirements on formatting the draft ... (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2594519335)
+- 2025-02-05 `Neo9061` on `vllm/model_executor/models/deepseek_mtp.py`:103: shouldn't the mtp start layer idx be num hidden layers -1? num hidden layers is 61 in DeepSeek config. The index of last layer is 60. (https://github.com/vllm-project/vllm/pull/12755#discussion_r1942214843)
+- 2025-02-05 `luccafong` on `vllm/model_executor/models/deepseek_mtp.py`:79: for 1st stage: position 0 is masked for MTP, but it only applies to k=1, I need to change the mask to the [position 1 on different layers, need to look into. in short, the current change works for k=1 (which deepseek ... (https://github.com/vllm-project/vllm/pull/12755#discussion_r1942671120)
+- 2025-02-05 `luccafong` on `tests/spec_decode/e2e/test_mtp_correctness.py`:35: this is a test file on dummy model. num speculative tokens should be <= num nextn predict layers, the transformer blocks are different in different steps. I am adding some assertion for this case when user pass higher number. (https://github.com/vllm-project/vllm/pull/12755#discussion_r1942673169)
+- 2025-02-05 `luccafong` on `vllm/model_executor/models/deepseek_mtp.py`:103: the last layer is 61 which is the mtp layer. (https://github.com/vllm-project/vllm/pull/12755#discussion_r1942677619)
+- 2025-02-05 `Neo9061` on `vllm/model_executor/models/deepseek_mtp.py`:103: the last layer is 61 which is the mtp layer. I see, thanks for clarifying! (https://github.com/vllm-project/vllm/pull/12755#discussion_r1943018039)
+- 2025-02-05 `Neo9061` on `tests/spec_decode/e2e/test_mtp_correctness.py`:35: Is there a way to just re-use the MTP to predict tokens whose k 1? as essentially they are the same right? You can print some warning that this is not expected though. (https://github.com/vllm-project/vllm/pull/12755#discussion_r1943020801)
+- 2025-02-05 `Neo9061`: @luccafong Sorry have to ask those questions as I hope to use your implementation. 1. Have you tested it e2e with VLLM's multi-node distributed inference setting? asking as I can only deploy the model in multi-node settings. 2. If I want to ... (https://github.com/vllm-project/vllm/pull/12755#issuecomment-2637448976)
+- 2025-02-05 `benchislett`: @luccafong I have been working on a similar implementation locally, and have faced a few challenges that I'm not sure are addressed here. Have you validated the acceptance rate for k=1 for real weights? I believe that the final RMSNorm in the ... (https://github.com/vllm-project/vllm/pull/12755#issuecomment-2637712616)
+- 2025-02-05 `simon-mo` on `vllm/transformers_utils/configs/deepseek_v3.py`: Do we need a copy of the configuration? I think for local usage we don't need this file if you have --trust-remote-code. (https://github.com/vllm-project/vllm/pull/12755#discussion_r1943505717)
+- 2025-02-05 `simon-mo` on `vllm/transformers_utils/configs/deepseek_v3.py`: Ah i see it is used for deepseek mtp config...hmmm (https://github.com/vllm-project/vllm/pull/12755#discussion_r1943506604)
+- 2025-02-05 `luccafong` on `vllm/transformers_utils/configs/deepseek_v3.py`: I realized we don't need it if we add tokenizer config in both models, so going to remove these (https://github.com/vllm-project/vllm/pull/12755#discussion_r1943511248)
+- 2025-02-06 `Neo9061` on `vllm/model_executor/models/deepseek_mtp.py`:81: Please excuse my multiple questions. inputs embeds[positions <= spec step index] = 0 is for pre-filling stage for each MTP head correct? as during draft model (MTP head) decoding stage, the inputs embeds is a single hidden vector. That is what I ... (https://github.com/vllm-project/vllm/pull/12755#discussion_r1945172071)
+- 2025-02-06 `Neo9061` on `vllm/model_executor/models/deepseek_mtp.py`:110: For my case of re-using the single MTP for k 1. I will specify k to be the same as number of MTP heads. In that case, can I simply hack f"{prefix}.layers.{idx}" to be models.layers.61 and self.num mtp layers to be k? (https://github.com/vllm-project/vllm/pull/12755#discussion_r1945180681)
+- 2025-02-06 `benchislett` on `vllm/model_executor/models/deepseek_mtp.py`:81: I have found that this line might interfere with CUDA graph recording. I am unsure why, but removing this line allowed the draft acceptance rate to go up to 85% in my testing, from <50% prior. This issue was not present for ... (https://github.com/vllm-project/vllm/pull/12755#discussion_r1945376095)
+- 2025-02-07 `luccafong` on `vllm/model_executor/models/deepseek_mtp.py`:81: Tried, but got 58%, not much improvement though. could you share your impl, there could be some difference (https://github.com/vllm-project/vllm/pull/12755#discussion_r1945720556)
+- 2025-02-07 `benchislett` on `vllm/model_executor/models/deepseek_mtp.py`:81: Hi @luccafong , see my code here: I hope this can clear up any inconsistency. Please let me know if you cannot reproduce using my implementation, or if you identify any issues. (https://github.com/vllm-project/vllm/pull/12755#discussion_r1947059502)
+- 2025-02-08 `WhatGhost`: @luccafong Nice work,inspired me a lot! I have two very small problems that have been bothering me. 1. I notice you use luccafong/deepseek mtp main random model . I wonder is it only a small size deepseek-like model for testing? 2. How ... (https://github.com/vllm-project/vllm/pull/12755#issuecomment-2644467545)
+- 2025-02-13 `luccafong` on `vllm/model_executor/models/deepseek_mtp.py`:81: Hi @benchislett thanks for sharing your impl, I figured out that residual was forgotten added to the output of the MTP block layer, now after fixing this issue, we got on average 82.3% acceptance rate, results for K=1 are updated in the ... (https://github.com/vllm-project/vllm/pull/12755#discussion_r1953579431)
+- 2025-02-13 `LiuXiaoxuanPKU` on `vllm/config.py`:1981: It seems we run drafting head with TP1 by default? (https://github.com/vllm-project/vllm/pull/12755#discussion_r1953608206)
+- 2025-02-13 `LiuXiaoxuanPKU` on `vllm/model_executor/models/deepseek_mtp.py`:79: QQ: what's the shape of input ids here? (https://github.com/vllm-project/vllm/pull/12755#discussion_r1953614848)
+- 2025-02-13 `LiuXiaoxuanPKU` commented: Just left some comments, will finish review by EOD. (https://github.com/vllm-project/vllm/pull/12755#pullrequestreview-2613560929)
+- 2025-02-13 `LiuXiaoxuanPKU` on `vllm/model_executor/models/deepseek_mtp.py`:276: is there any constraint that we have to use .block? can we give it a better name specifying it's a spec/mtp block? (https://github.com/vllm-project/vllm/pull/12755#discussion_r1954000627)
+- 2025-02-13 `LiuXiaoxuanPKU` on `vllm/spec_decode/multi_step_worker.py`:101: QQ: what's the purpose of spec step idx? (https://github.com/vllm-project/vllm/pull/12755#discussion_r1954006942)
+- 2025-02-13 `LiuXiaoxuanPKU` on `vllm/spec_decode/spec_decode_worker.py`:299: each step layer - each MTP layer? (https://github.com/vllm-project/vllm/pull/12755#discussion_r1954008449)
+- 2025-02-13 `benchislett` on `vllm/spec_decode/multi_step_worker.py`:101: It looks to me like it's used to track which MTP module to call (therefore which layer to dispatch during eval). Is this implementation compatible with CUDA graphs? If so, how? (https://github.com/vllm-project/vllm/pull/12755#discussion_r1954663947)
+- 2025-02-13 `benchislett` on `vllm/model_executor/models/deepseek_mtp.py`:81: Thanks for the effort @luccafong . Could you update the benchmarks with performance based on max number of concurrent requests? I find this to be a more telling metric for DeepSeek where the RPS output of the server is generally <1 anyways, ... (https://github.com/vllm-project/vllm/pull/12755#discussion_r1954908937)
+- 2025-02-13 `benchislett` on `vllm/model_executor/models/deepseek_mtp.py`:81: Also, could you report the average acceptance rate at each of these benchmark values? I am curious if yours falls off similarly to how mine does (https://github.com/vllm-project/vllm/pull/12755#discussion_r1954909642)
+- 2025-02-13 `luccafong` on `vllm/model_executor/models/deepseek_mtp.py`:276: the model weights of the transformer layer and the other part of MTP are on the same level in weights, so we need to split the block out to reuse DeepseekV2DecoderLayer. we can have a better name maybe calling it mtp transformer ... (https://github.com/vllm-project/vllm/pull/12755#discussion_r1954919457)
+- 2025-02-13 `luccafong` on `vllm/spec_decode/multi_step_worker.py`:101: this branch will be used by TP 1, and the spec step idx can only be passed in this way since we are using the normal model runner. @benchislett good point, for now k=1 is not a problem, we need to work ... (https://github.com/vllm-project/vllm/pull/12755#discussion_r1954921956)
+- 2025-02-13 `luccafong` on `vllm/model_executor/models/deepseek_mtp.py`:35: it is used in Line 148: logits = self.logits processor(mtp layer.shared head.head, (https://github.com/vllm-project/vllm/pull/12755#discussion_r1954924224)
+- 2025-02-13 `luccafong` on `vllm/model_executor/models/deepseek_mtp.py`:79: the incremental length, here its [B 1] (https://github.com/vllm-project/vllm/pull/12755#discussion_r1954926803)
+- 2025-02-13 `luccafong` on `vllm/worker/model_runner.py`:1653: updated to support TP 1, it is used to pass previous hidden states in latest codes (https://github.com/vllm-project/vllm/pull/12755#discussion_r1955196240)
+- 2025-02-14 `luccafong` on `vllm/model_executor/models/deepseek_mtp.py`:81: I did not restart it for each QPS settings, I run at once on serving instance, base on my observation, they are relatively similar. For concurrent requests let me do that later and share with you (https://github.com/vllm-project/vllm/pull/12755#discussion_r1955428495)
+- 2025-02-14 `luccafong` on `vllm/config.py`:1981: it is remove now (https://github.com/vllm-project/vllm/pull/12755#discussion_r1956523891)
+- 2025-02-14 `luccafong` on `vllm/model_executor/models/deepseek_mtp.py`:81: @benchislett max-concurrency results are updated in the PR (https://github.com/vllm-project/vllm/pull/12755#discussion_r1956701619)
+- 2025-02-16 `QualityGN`: Hi, have you replicated the inference acceleration effect after enabling MTP on multiple nodes？ My envs: Ray cluster: two nodes of 8 x H20, ray status is right. It turns out that I got low throughput (approximately 8.5 requests/sec on average) and ... (https://github.com/vllm-project/vllm/pull/12755#issuecomment-2661346140)

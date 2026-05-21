@@ -1,80 +1,16 @@
-# PR Discussion Digest
-
-- Source PR: [flashinfer-ai/flashinfer#1769](https://github.com/flashinfer-ai/flashinfer/pull/1769)
-- Source page: `sources/prs/flashinfer/PR-1769.md`
-- Evidence bundle: `evidence/pull-bundles/flashinfer/gh-1769`
-- Generated at: `2026-05-20T15:23:23.471771+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-09-25T07:59:13Z`
-- Merged: `2025-10-27T22:56:29Z`
-
-## Discussion Counts
-
-- Issue comments: 13
-- Review submissions: 24 (approved=1, commented=23)
-- Inline review comments: 36
-- Review threads observed: 25
-- Resolved/outdated thread markers: resolved=2, outdated=13
-- Human participants with discussion text: aleozlx, coderabbitai, jdebache, nvmbreughe, qsang-nv, sricketts, yzh119
-- Automation comments/reviews omitted from high-signal summary: 16
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-09-25T08:01:35Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces support for FP8 multi-head attention (MHA) and FP8 KV cache within the ... (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3266323455)
-- `2025-09-25T08:01:50Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces support for FP8 multi-head attention (MHA) and FP8 KV cache in the ... (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3266324594)
-- `2025-09-25T08:05:49Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces support for FP8 multi-head attention (MHA) and FP8 KV cache for Cross-Query ... (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3266344104)
-- `2025-10-08T19:16:33Z` `COMMENTED` by `jdebache` (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3316155968)
-- `2025-10-13T02:46:34Z` `COMMENTED` by `qsang-nv` (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3329854310)
-- `2025-10-13T02:48:24Z` `COMMENTED` by `qsang-nv` (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3329855533)
-- `2025-10-14T15:04:03Z` `COMMENTED` by `sricketts` (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3336168232)
-- `2025-10-16T01:35:01Z` `COMMENTED` by `qsang-nv` (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3342797208)
-- `2025-10-16T15:31:34Z` `COMMENTED` by `sricketts` (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3345576316)
-- `2025-10-16T20:52:21Z` `COMMENTED` by `aleozlx` (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3346970411)
-- `2025-10-17T10:32:09Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 1 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to ... (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3349376594)
-- `2025-10-17T19:25:29Z` `COMMENTED` by `sricketts` (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3351686905)
-- `2025-10-20T08:25:50Z` `COMMENTED` by `qsang-nv` (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3355454747)
-- `2025-10-20T08:28:03Z` `COMMENTED` by `qsang-nv` (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3355462716)
-- `2025-10-23T06:36:12Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 8 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to ... (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3368429184)
-- `2025-10-23T06:45:08Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 4 📜 Review details Configuration used : CodeRabbit UI Review profile : CHILL Plan : ... (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3368451319)
-- `2025-10-24T02:59:03Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 1 🧹 Nitpick comments (2) flashinfer/aot.py (2) 374-383: Simplify sm versions construction (nit). Current appends ... (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3374133719)
-- `2025-10-24T18:07:12Z` `COMMENTED` by `nvmbreughe` (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3378159018)
-- `2025-10-24T18:09:34Z` `COMMENTED` by `nvmbreughe` (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3378173005)
-- `2025-10-27T01:03:21Z` `COMMENTED` by `yzh119` (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3381542248)
-- `2025-10-27T03:40:02Z` `COMMENTED` by `qsang-nv` (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3381714079)
-- `2025-10-27T03:40:10Z` `COMMENTED` by `qsang-nv` (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3381714215)
-- `2025-10-27T03:45:14Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 0 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to ... (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3381719089)
-- `2025-10-27T22:56:11Z` `APPROVED` by `yzh119` - LGTM (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3385798966)
-
-## Inline Comment Hotspots
-
-- `flashinfer/jit/xqa.py`: 9 inline comment(s)
-- `tests/attention/test_xqa.py`: 8 inline comment(s)
-- `csrc/xqa/mla_sm120.cu`: 4 inline comment(s)
-- `flashinfer/xqa.py`: 3 inline comment(s)
-- `flashinfer/aot.py`: 3 inline comment(s)
-- `csrc/xqa/xqa_wrapper.cu`: 2 inline comment(s)
-- `csrc/flashinfer_xqa_binding.cu`: 2 inline comment(s)
-- `csrc/xqa/utils.cuh`: 2 inline comment(s)
-- `csrc/xqa/tma.h`: 1 inline comment(s)
-- `csrc/xqa/mha.cu`: 1 inline comment(s)
-- `csrc/xqa/mla_sm120.cuh`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-10-17T10:32:09Z` `review` `COMMENTED` by `coderabbitai`; signals: accuracy, attention, bf16, blackwell, block, cache, compile, cuda; excerpt: "Actionable comments posted: 1 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3349376594)
-- `2025-10-23T06:36:12Z` `review` `COMMENTED` by `coderabbitai`; signals: attention, block, cache, cuda, cute, dtype, flashinfer, fp8; excerpt: "Actionable comments posted: 8 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3368429184)
-- `2025-10-23T06:45:08Z` `review` `COMMENTED` by `coderabbitai`; signals: cache, cuda, fp8, hang, mla, pipeline, sm120, sm90; excerpt: "Actionable comments posted: 4 📜 Review details Configuration used : CodeRabbit UI Review profile : CHILL Plan : Pro 📥 Commits Reviewing files that ..." (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3368451319)
-- `2025-10-24T02:59:03Z` `review` `COMMENTED` by `coderabbitai`; signals: block, cache, cuda, flashinfer, fp8, hang, kv cache, mla; excerpt: "Actionable comments posted: 1 🧹 Nitpick comments (2) flashinfer/aot.py (2) 374-383: Simplify sm versions construction (nit). Current appends are verbose; a small tidy improves ..." (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3374133719)
-- `2025-10-27T03:45:14Z` `review` `COMMENTED` by `coderabbitai`; signals: alignment, attention, cache, cuda, flashinfer, hang, kv cache, layout; excerpt: "Actionable comments posted: 0 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/flashinfer-ai/flashinfer/pull/1769#pullrequestreview-3381719089)
-- `2025-10-23T06:45:07Z` `inline` by `coderabbitai` `csrc/xqa/mla_sm120.cu`:1787; signals: cache, cute, dtype, flashinfer, fp8, hang, mla, sm120; excerpt: "⚠️ Potential issue 🔴 Critical 🧩 Analysis chain Ensure Q tensor‑map dtype matches InputHead, not CacheElem. dtype is derived from CacheElem then reused for ..." (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2454085400)
-- `2025-10-17T10:24:54Z` `issue` by `coderabbitai`; signals: attention, block, cache, correctness, cuda, cute, dtype, flashinfer; excerpt: "[!NOTE] Other AI code review bot(s) detected CodeRabbit has detected other AI code review bot(s) in this pull request and will avoid duplicating their ..." (https://github.com/flashinfer-ai/flashinfer/pull/1769#issuecomment-3414851931)
-- `2025-10-08T19:07:08Z` `inline` by `jdebache` `csrc/flashinfer_xqa_binding.cu`:19; signals: bf16, cache, dtype, flashinfer, fp8, perf; excerpt: "Instead of making this a flag, could we pass a dtype? Same for the other places where we pass: - the type of the ..." (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2414777555)
-- `2025-10-16T15:31:34Z` `inline` by `sricketts` `flashinfer/jit/xqa.py`:74; signals: flashinfer, perf, performance, sm100, sm120; excerpt: "The "a" means "arch-specific" and the "f" means "family". SM100 and SM103 are in the "SM100f family". SM100a (SM100 arch-specific) will only run on ..." (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2436484633)
-- `2025-10-23T06:45:07Z` `inline` by `coderabbitai` `csrc/xqa/mla_sm120.cu`:127; signals: cache, layout, mla, sm120, tile; excerpt: "⚠️ Potential issue 🔴 Critical Fix K/V selection in KV page indexing (layout 0 and non‑paged). V currently reads K pages. In layout 0, ..." (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2454085378)
-- `2025-10-24T02:59:02Z` `inline` by `coderabbitai` `flashinfer/aot.py`:534; signals: compile, cuda, cute, flashinfer, hang; excerpt: "⚠️ Potential issue 🔴 Critical 🧩 Analysis chain Fix CUDA version gate: ‘ 12.8’ contradicts the comment; use ‘ = 12.8’. As written, CUDA ..." (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2458544780)
-- `2025-10-27T03:40:10Z` `inline` by `qsang-nv` `flashinfer/aot.py`:360; signals: bf16, cache, flashinfer, fp8, kv cache; excerpt: "The kv cache option remains to be True/False as kv cache must be fp8 or consistent with input data type, combination such as (input ..." (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2464354985)
+- 2025-10-08 `jdebache` on `csrc/flashinfer_xqa_binding.cu`:19: Instead of making this a flag, could we pass a dtype? Same for the other places where we pass: - the type of the input (only bf16 and fp16 supported I think) - the type of the kv-cache (fp8 or bf16) - ... (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2414777555)
+- 2025-10-08 `jdebache` on `csrc/xqa/utils.cuh`:34: That's interesting: what were the symptoms of the instability? Accuracy loss? (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2414793406)
+- 2025-10-08 `jdebache` on `tests/attention/test_xqa.py`:368: How did you tune this tolerance? Can it be smaller? (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2414796213)
+- 2025-10-13 `qsang-nv` on `tests/attention/test_xqa.py`:368: From 0.01 to 0.05, add 0.01 every step. And it can't be smaller from my test. (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2425128202)
+- 2025-10-13 `qsang-nv` on `csrc/xqa/utils.cuh`:34: This is copied from you may ask the author, I am not sure about this question. (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2425129095)
+- 2025-10-14 `sricketts` on `flashinfer/jit/xqa.py`:74: Is it possible to add SM103 support by targeting SM100f instead of SM100a? And similarly, can we add SM121 support by targeting SM120f instead of SM120a? (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2429532406)
+- 2025-10-16 `qsang-nv` on `flashinfer/jit/xqa.py`:74: What's the difference in those archs? I mean SM103/SM100f/SM100a, and SM121/SM120f/SM120a. (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2434334787)
+- 2025-10-16 `sricketts` on `flashinfer/jit/xqa.py`:74: The "a" means "arch-specific" and the "f" means "family". SM100 and SM103 are in the "SM100f family". SM100a (SM100 arch-specific) will only run on SM100 devices. But I believe SM103 devices have a superset of the SM100 features, and therefore if you ... (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2436484633)
+- 2025-10-16 `aleozlx` on `flashinfer/jit/xqa.py`:74: yes sm 100f is known as family specific or family conditional. this is important to enhance device compatibility in a sort of out of the box fashion. i'd like to point out a few things tho based on my experience: 1. with ... (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2437440275)
+- 2025-10-17 `sricketts` on `flashinfer/jit/xqa.py`:74: Makes sense, let me clarify my guidance then: 1. Since SM120 and SM121 are identical architectures, naively I would think that supporting both is only marginally harder than supporting one. 2. The story seems even a little harder for SM100 and SM103, ... (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2441016777)
+- 2025-10-20 `qsang-nv` on `csrc/flashinfer_xqa_binding.cu`:19: Now it is passing dtype in flashinfer/flashinfer/xqa.py (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2444161006)
+- 2025-10-20 `qsang-nv` on `flashinfer/jit/xqa.py`:74: Thanks for the detailed explanation! I've added support for sm100f and sm121a. (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2444167863)
+- 2025-10-24 `nvmbreughe` on `tests/attention/test_xqa.py`:185: Can we make this parameter more explicit? like input data type? (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2461485622)
+- 2025-10-24 `nvmbreughe` on `flashinfer/aot.py`:360: same here, maybe we can make the data types explicit instead of a combination of bools. It seems like the options are: - kv cache dtype = torch.float8 e4m3fn - kv cache dtype = torch.float16 - kv cache dtype = torch.bfloat16 (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2461497898)
+- 2025-10-27 `yzh119` on `flashinfer/jit/xqa.py`:74: We should rely on compilation context instead: (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2464210347)
+- 2025-10-27 `qsang-nv` on `flashinfer/aot.py`:360: The kv cache option remains to be True/False as kv cache must be fp8 or consistent with input data type, combination such as (input fp16, kv cache bf16) is invalid. Input now use explicit data types. (https://github.com/flashinfer-ai/flashinfer/pull/1769#discussion_r2464354985)

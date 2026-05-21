@@ -1,70 +1,33 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/TensorRT-LLM#12470](https://github.com/NVIDIA/TensorRT-LLM/pull/12470)
-- Source page: `sources/prs/tensorrt-llm/PR-12470.md`
-- Evidence bundle: `evidence/pull-bundles/tensorrt-llm/gh-12470`
-- Generated at: `2026-05-20T15:18:10.404757+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-03-24T01:34:05Z`
-- Merged: `2026-04-19T03:33:27Z`
-
-## Discussion Counts
-
-- Issue comments: 65
-- Review submissions: 14 (approved=3, commented=11)
-- Inline review comments: 26
-- Review threads observed: 18
-- Resolved/outdated thread markers: resolved=18, outdated=18
-- Human participants with discussion text: PerkzZheng, QiJune, coderabbitai, heyuhhh, lfr-0531, tensorrt-cicd
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-03-24T01:48:46Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 10 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#pullrequestreview-3995766328)
-- `2026-03-30T08:25:55Z` `COMMENTED` by `lfr-0531` (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#pullrequestreview-4028708516)
-- `2026-03-30T08:42:00Z` `COMMENTED` by `heyuhhh` (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#pullrequestreview-4028975216)
-- `2026-03-30T08:42:23Z` `COMMENTED` by `heyuhhh` (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#pullrequestreview-4028977126)
-- `2026-03-30T08:46:04Z` `COMMENTED` by `heyuhhh` (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#pullrequestreview-4028996680)
-- `2026-03-30T08:47:11Z` `COMMENTED` by `heyuhhh` (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#pullrequestreview-4029003679)
-- `2026-03-30T08:47:32Z` `COMMENTED` by `heyuhhh` (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#pullrequestreview-4029005593)
-- `2026-03-30T08:48:11Z` `COMMENTED` by `heyuhhh` (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#pullrequestreview-4029010012)
-- `2026-03-30T08:49:10Z` `COMMENTED` by `heyuhhh` (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#pullrequestreview-4029016405)
-- `2026-03-31T14:41:14Z` `COMMENTED` by `PerkzZheng` (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#pullrequestreview-4037919782)
-- `2026-04-08T11:18:42Z` `COMMENTED` by `heyuhhh` (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#pullrequestreview-4074706343)
-- `2026-04-08T12:57:44Z` `APPROVED` by `PerkzZheng` (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#pullrequestreview-4075232466)
-- `2026-04-13T04:31:43Z` `APPROVED` by `QiJune` - LGTM (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#pullrequestreview-4096409615)
-- `2026-04-13T07:37:39Z` `APPROVED` by `lfr-0531` (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#pullrequestreview-4097080997)
-
-## Inline Comment Hotspots
-
-- `cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/fmhaKernels.h`: 5 inline comment(s)
-- `cpp/tensorrt_llm/thop/attentionOp.cpp`: 5 inline comment(s)
-- `cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/fmhaRunnerParams.h`: 4 inline comment(s)
-- `tensorrt_llm/_torch/attention_backend/sparse/kernel.py`: 2 inline comment(s)
-- `tests/unittest/_torch/attention/sparse/test_sparse_attention.py`: 2 inline comment(s)
-- `cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/fmhaReduction.cu`: 2 inline comment(s)
-- `tensorrt_llm/_torch/attention_backend/trtllm.py`: 2 inline comment(s)
-- `cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/kernelParams.h`: 1 inline comment(s)
-- `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`: 1 inline comment(s)
-- `tensorrt_llm/_torch/attention_backend/trtllm_gen.py`: 1 inline comment(s)
-- `tests/unittest/_torch/attention/sparse/test_dsa_indexer.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-24T01:48:40Z` `issue` by `coderabbitai`; signals: attention, block, cache, correctness, hang, kernel, kv cache, layout; excerpt: "📝 Walkthrough Walkthrough This PR refactors sparse attention parameter naming and control flow across C++ kernel dispatchers and Python attention backends. It separates paged-sparse-attention ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4114830704)
-- `2026-03-24T01:48:46Z` `review` `COMMENTED` by `coderabbitai`; signals: attention, hang, kernel, mla, nan, tensorrt; excerpt: "Actionable comments posted: 10 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#pullrequestreview-3995766328)
-- `2026-03-24T01:48:44Z` `inline` by `coderabbitai` `cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/kernelParams.h`:780; signals: attention, fp4, kernel, layout, tensorrt, tma; excerpt: "⚠️ Potential issue 🟠 Major FP4 sparse attention still reads scales from the dense KV layout. This branch flattens K/V into a 2-D sparse ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r2978536812)
-- `2026-03-24T01:48:44Z` `inline` by `coderabbitai` `cpp/tensorrt_llm/thop/attentionOp.cpp`:378; signals: attention, cache, fp4, kv cache, nvfp4, tensorrt; excerpt: "⚠️ Potential issue 🔴 Critical Reuse host primary pool pointer for sparse kv cache pool. Line 407 assumes host kv cache pool pointers is ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r2978536818)
-- `2026-03-24T01:48:44Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/attention_backend/sparse/kernel.py`:1858; signals: attention, block, cute, kernel, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major 🧩 Analysis chain 🏁 Script executed: Repository: NVIDIA/TensorRT-LLM Length of output: 122 --- 🏁 Script executed: Repository: NVIDIA/TensorRT-LLM Length ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r2978536832)
-- `2026-03-30T08:42:00Z` `inline` by `heyuhhh` `cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/fmhaKernels.h`:353; signals: attention, hang, kernel, mla, tensorrt; excerpt: "We use an enum class to indicate the sparse type: So that different sparse attention will choose specific kernels. We only have sparse mla ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3008371958)
-- `2026-03-24T01:48:44Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/attention_backend/sparse/kernel.py`:1910; signals: attention, cache, kernel, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major Don’t silently synthesize stride factor from an incomplete formula. The documented page span includes num layers, but the fallback ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r2978536837)
-- `2026-03-24T01:48:44Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/attention_backend/trtllm_gen.py`:253; signals: attention, flashinfer, tensorrt, tma; excerpt: "⚠️ Potential issue 🟠 Major Don't advertise skip softmax support until this backend actually uses it. Line 243 returns True, but this file never ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r2978536840)
-- `2026-03-30T08:48:11Z` `inline` by `heyuhhh` `cpp/tensorrt_llm/thop/attentionOp.cpp`:377; signals: attention, cache, kv cache, tensorrt; excerpt: "use kv cache includes this check" (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3008403138)
-- `2026-03-24T01:48:44Z` `inline` by `coderabbitai` `cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/fmhaKernels.h`:436; signals: attention, kernel, tensorrt; excerpt: "⚠️ Potential issue 🔴 Critical Treat mSparseTopK == 0 as “unknown”, not “attend to zero tokens”. Line 435 collapses the attention window to 0 ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r2978536806)
-- `2026-03-24T01:48:44Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/attention_backend/sparse/dsa.py`:794; signals: attention, benchmark, tensorrt; excerpt: "⚠️ Potential issue 🟡 Minor Wrap this comparison to clear the lint failure. Flake8 is flagging this continuation with E123; the wrapped form keeps ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r2978536820)
-- `2026-03-24T01:48:44Z` `inline` by `coderabbitai` `tests/unittest/_torch/attention/sparse/test_dsa_indexer.py`:612; signals: attention, benchmark, block; excerpt: "⚠️ Potential issue 🟡 Minor The generation skip mock still has a dead draft-token adjustment. self.max draft tokens + 1 is a no-op, so ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r2978536843)
+- 2026-03-30 `lfr-0531` on `cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/fmhaKernels.h`:943: static cast (params.mSparseAttention) should use 2 bits to distinguish different types of sparse attention. But only one bit is used in hash ID // Bit 55 - 55: sparseAttention. (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3008174770)
+- 2026-03-30 `lfr-0531` on `cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/fmhaRunnerParams.h`:142: Reserved should not be used. It'd be better to remove it and use SparseMqaGqa = 2, or add a TLLM CHECK that Reserved is never used in the dispatch paths. (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3008184417)
+- 2026-03-30 `lfr-0531` on `cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/fmhaReduction.cu`:392: The input sparseAttention should be a bool type, but mSparseAttn is an int. (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3008196090)
+- 2026-03-30 `lfr-0531` on `cpp/tensorrt_llm/thop/attentionOp.cpp`:756: What's the difference between mUseTllmGenSparseAttentionPaged and mUseTllmGenSparseAttention? Can we combine them into a single one? (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3008203325)
+- 2026-03-30 `lfr-0531` on `cpp/tensorrt_llm/thop/attentionOp.cpp`:377: Looks like we should restore this .has value() check, or add an assertion. (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3008221398)
+- 2026-03-30 `lfr-0531` on `tensorrt_llm/_torch/attention_backend/trtllm.py`:243: I don't think we should add the entire sparse attention config to the TrtllmAttentionWrapper. Instead, we should only pass the specific fields that are actually needed. (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3008245662)
+- 2026-03-30 `heyuhhh` on `cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/fmhaKernels.h`:353: We use an enum class to indicate the sparse type: So that different sparse attention will choose specific kernels. We only have sparse mla kernels before and now we have sparse mqa/gqa kernels, so we need to expand the sparse types, also ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3008371958)
+- 2026-03-30 `heyuhhh` on `cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/fmhaKernels.h`:943: Right. Thanks for figure it out. I'll fix it later (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3008373908)
+- 2026-03-30 `heyuhhh` on `cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/fmhaRunnerParams.h`:142: Actually we will not use it in the code. Even we forcefully use it we don't have corresponding kernels. I'll adjust the order for better clarify and add some comments here (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3008391991)
+- 2026-03-30 `heyuhhh` on `cpp/tensorrt_llm/thop/attentionOp.cpp`:756: The suffix Paged means that we will use page-level sparse attention and will not use sparse kernels. (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3008397566)
+- 2026-03-30 `heyuhhh` on `cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/fmhaReduction.cu`:392: Right. I'll fix it later (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3008399239)
+- 2026-03-30 `heyuhhh` on `cpp/tensorrt_llm/thop/attentionOp.cpp`:377: use kv cache includes this check (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3008403138)
+- 2026-03-30 `heyuhhh` on `tensorrt_llm/_torch/attention_backend/trtllm.py`:243: Got it. So we can only pass the sparse attention algorithm filed but not config. (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3008408977)
+- 2026-03-31 `PerkzZheng` on `cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/fmhaRunnerParams.h`:143: I think we just need one sparse type (TokenSparse). The kernel itself already indicates whether it is MLA or GQA or MQA. (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3016377128)
+- 2026-04-08 `heyuhhh` on `cpp/tensorrt_llm/kernels/trtllmGenKernels/fmha/fmhaRunnerParams.h`:143: Updated. Now we use TokenSparse to indicate the sparse type (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#discussion_r3050963394)
+- 2026-04-08 `heyuhhh`: Hi @lfr-0531 @PerkzZheng @QiJune , could you please take a look again about this PR? I've rebased it and checked the correctness locally but pushed only some upper files for the review. After review finished i'll push the remaining files and run ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4205866595)
+- 2026-04-08 `tensorrt-cicd`: [PR Github 42327]( [ run ] completed with state FAILURE. Commit: 5c7319f [/LLM/main/L0 MergeRequest PR pipeline 33117]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4206471333)
+- 2026-04-13 `tensorrt-cicd`: [PR Github 42974]( [ run ] completed with state FAILURE. Commit: 3c8c16d [/LLM/main/L0 MergeRequest PR pipeline 33629]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4235591278)
+- 2026-04-13 `tensorrt-cicd`: [PR Github 43066]( [ run ] completed with state FAILURE. Commit: 742ba21 [/LLM/main/L0 MergeRequest PR pipeline 33708]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4238902721)
+- 2026-04-14 `tensorrt-cicd`: [PR Github 43124]( [ run ] completed with state FAILURE. Commit: 742ba21 [/LLM/main/L0 MergeRequest PR pipeline 33760]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4240904397)
+- 2026-04-14 `tensorrt-cicd`: [PR Github 43150]( [ run ] completed with state FAILURE. Commit: 2f724cf [/LLM/main/L0 MergeRequest PR pipeline 33782]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4241189602)
+- 2026-04-14 `tensorrt-cicd`: [PR Github 43175]( [ run ] completed with state SUCCESS. Commit: 2f724cf [/LLM/main/L0 MergeRequest PR pipeline 33803]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4242303338)
+- 2026-04-15 `tensorrt-cicd`: [PR Github 43320]( [ run ] completed with state FAILURE. Commit: 450a8a1 [/LLM/main/L0 MergeRequest PR pipeline 33863]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4248723635)
+- 2026-04-15 `tensorrt-cicd`: [PR Github 43367]( [ run ] completed with state FAILURE. Commit: 72f2434 [/LLM/main/L0 MergeRequest PR pipeline 33905]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4249523388)
+- 2026-04-15 `tensorrt-cicd`: [PR Github 43423]( [ run ] completed with state SUCCESS. Commit: d016db3 [/LLM/main/L0 MergeRequest PR pipeline 33956]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4251629708)
+- 2026-04-16 `tensorrt-cicd`: [PR Github 43536]( [ run ] completed with state FAILURE. Commit: e929e64 [/LLM/main/L0 MergeRequest PR pipeline 34042]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4256508701)
+- 2026-04-16 `tensorrt-cicd`: [PR Github 43685]( [ run ] completed with state SUCCESS. Commit: e8539d4 [/LLM/main/L0 MergeRequest PR pipeline 34172]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4259460571)
+- 2026-04-16 `tensorrt-cicd`: [PR Github 43768]( [ run ] completed with state SUCCESS. Commit: 6892e22 [/LLM/main/L0 MergeRequest PR pipeline 34249]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4261166404)
+- 2026-04-16 `tensorrt-cicd`: [PR Github 43798]( [ run ] completed with state FAILURE. Commit: 6892e22 [/LLM/main/L0 MergeRequest PR pipeline 34275]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4263992931)
+- 2026-04-17 `tensorrt-cicd`: [PR Github 43853]( [ run ] completed with state FAILURE. Commit: 19e9eb5 [/LLM/main/L0 MergeRequest PR pipeline 34314]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4265020710)
+- 2026-04-17 `tensorrt-cicd`: [PR Github 43939]( [ run ] completed with state SUCCESS. Commit: 19e9eb5 [/LLM/main/L0 MergeRequest PR pipeline 34387]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4266231564)
+- 2026-04-18 `tensorrt-cicd`: [PR Github 44085]( [ run ] completed with state SUCCESS. Commit: 95036b7 [/LLM/main/L0 MergeRequest PR pipeline 34515]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the ... (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4273833812)
+- 2026-04-18 `tensorrt-cicd`: [PR Github 44124]( [ run ] completed with state SUCCESS. Commit: 95036b7 [/LLM/main/L0 MergeRequest PR pipeline 34551]( completed with status: 'SUCCESS' [CI Report]( [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/12470#issuecomment-4274391125)

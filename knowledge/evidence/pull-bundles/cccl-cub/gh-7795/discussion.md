@@ -1,73 +1,50 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/cccl#7795](https://github.com/NVIDIA/cccl/pull/7795)
-- Source page: `sources/prs/cccl-cub/PR-7795.md`
-- Evidence bundle: `evidence/pull-bundles/cccl-cub/gh-7795`
-- Generated at: `2026-05-20T15:20:18.043737+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-02-25T20:05:51Z`
-- Merged: `2026-03-25T13:45:45Z`
-
-## Discussion Counts
-
-- Issue comments: 16
-- Review submissions: 53 (approved=1, commented=52)
-- Inline review comments: 65
-- Review threads observed: 40
-- Resolved/outdated thread markers: resolved=37, outdated=21
-- Human participants with discussion text: bernhardmgruber, gonidelis, miscco, pauleonix, srinivasyadav18
-- Automation comments/reviews omitted from high-signal summary: 13
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-02-26T09:51:46Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3859763278)
-- `2026-03-09T22:28:33Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3918539429)
-- `2026-03-09T22:30:01Z` `COMMENTED` by `gonidelis` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3918597136)
-- `2026-03-10T08:25:51Z` `COMMENTED` by `miscco` - Looks good. @bernhardmgruber I observe that we are really loose with the naming conventions We have InitValueT, init ... (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3920601835)
-- `2026-03-10T10:49:27Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3921478976)
-- `2026-03-10T10:51:40Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3921491512)
-- `2026-03-10T10:54:22Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3921506370)
-- `2026-03-10T15:19:58Z` `COMMENTED` by `gonidelis` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3923285339)
-- `2026-03-10T15:33:15Z` `COMMENTED` by `gonidelis` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3923376111)
-- `2026-03-10T15:33:44Z` `COMMENTED` by `gonidelis` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3923379447)
-- `2026-03-10T22:20:18Z` `COMMENTED` by `srinivasyadav18` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3925719363)
-- `2026-03-11T08:47:35Z` `COMMENTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3927879730)
-- `2026-03-19T09:44:23Z` `COMMENTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3973919806)
-- `2026-03-19T12:26:31Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3974650576)
-- `2026-03-19T17:33:43Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3976788833)
-- `2026-03-19T17:34:58Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3976797298)
-- `2026-03-19T17:36:36Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3976808037)
-- `2026-03-19T17:43:38Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3976852435)
-- `2026-03-19T17:48:23Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3976883539)
-- `2026-03-19T17:53:41Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3976912510)
-- `2026-03-19T17:55:14Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3976922727)
-- `2026-03-19T17:57:39Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3976936078)
-- `2026-03-19T18:08:14Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3976995769)
-- `2026-03-19T18:08:45Z` `COMMENTED` by `pauleonix` (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3976998971)
-- ... 29 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `cub/cub/device/device_segmented_reduce.cuh`: 52 inline comment(s)
-- `cub/test/catch2_test_device_segmented_reduce_env.cu`: 9 inline comment(s)
-- `cub/test/catch2_test_device_segmented_reduce_env_api.cu`: 4 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-10T08:21:09Z` `inline` by `miscco` `cub/cub/device/device_segmented_reduce.cuh`:967; signals: perf, performance; excerpt: "Question: This uses plus and we have observed performance issues with this, because for smaller integer types it promotes. Shuld this rather be" (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2910110414)
-- `2026-03-11T08:47:35Z` `inline` by `miscco` `cub/cub/device/device_segmented_reduce.cuh`:967; signals: perf, performance; excerpt: "For integer types plus< introduces integer promotion, which e.g plus does not. So depending on the tested types, this can actually have some considerable ..." (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2916805881)
-- `2026-03-19T09:43:14Z` `inline` by `miscco` `cub/cub/device/device_segmented_reduce.cuh`:707; signals: hang, perf; excerpt: "I thought we wanted to use plus< and change it globally with proper perf investigations" (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2958895813)
-- `2026-03-10T08:23:51Z` `inline` by `miscco` `cub/cub/device/device_segmented_reduce.cuh`:1025; signals: compile; excerpt: "This implicitly requires numeric limits to be specialized, which is commonly not the case. Should we assert that to avoid unfortunate compile issues?" (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2910122285)
-- `2026-03-10T10:49:27Z` `inline` by `bernhardmgruber` `cub/cub/device/device_segmented_reduce.cuh`:114; signals: compile; excerpt: "This is a @gevtushenko UX thing. He thinks that compiler error messages should stop at the first static assert and not continue compilation and ..." (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2910895565)
-- `2026-03-10T10:51:40Z` `inline` by `bernhardmgruber` `cub/cub/device/device_segmented_reduce.cuh`:967; signals: hang; excerpt: "Such changes should definitely go to separate PRs, since they change the status quo. AFAIK @gonidelis copies the setup for the dispatch call from ..." (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2910907197)
-- `2026-03-10T22:06:56Z` `inline` by `srinivasyadav18` `cub/test/catch2_test_device_segmented_reduce_env_api.cu`:123; signals: memory; excerpt: "where is env used in the env API tests ? If the focus here is just to show single-phase API with default env ? ..." (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2914748334)
-- `2026-03-09T22:28:24Z` `inline` by `bernhardmgruber` `cub/test/catch2_test_device_segmented_reduce_env.cu`:2; signals: hang; excerpt: "Critical: we must not change the license of existing code. Please revert." (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2908263605)
-- `2026-03-10T08:25:51Z` `review` `COMMENTED` by `miscco`; signals: general review; excerpt: "Looks good. @bernhardmgruber I observe that we are really loose with the naming conventions We have InitValueT, init value t, init t, no alias ..." (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3920601835)
-- `2026-03-10T15:19:58Z` `inline` by `gonidelis` `cub/cub/device/device_segmented_reduce.cuh`:967; signals: hang; excerpt: "true ☝🏼 why do they change status quo?" (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2912538568)
-- `2026-03-19T12:07:24Z` `inline` by `bernhardmgruber` `cub/cub/device/device_segmented_reduce.cuh`:707; signals: hang; excerpt: "Critical: This is a breaking change, why is this necessary? I would revert this." (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2959617541)
-- `2026-03-19T12:20:17Z` `inline` by `bernhardmgruber` `cub/cub/device/device_segmented_reduce.cuh`:905; signals: cuda; excerpt: "Remark: I guess this is ok since we use ::cuda::std::numeric limits :max() below." (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2959678440)
+- 2026-02-26 `bernhardmgruber` on `cub/cub/device/device_segmented_reduce.cuh`:370: Question: This constraint looks super weird and I am not even sure it's correct :S Why is this necessary? Suggestion: if you even need a constraint, can we just constrain InputIteratorT to not be void in case we this is trying to ... (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2858039225)
+- 2026-03-09 `gonidelis`: I removed the helper underlying implementation function for fixed segment size overloads as it pre required knowledge of the AccumT and added extra logic that was unnecessary. Non fixed-size overloads still do use the impl function though (https://github.com/NVIDIA/cccl/pull/7795#issuecomment-4027177810)
+- 2026-03-09 `bernhardmgruber` on `cub/cub/device/device_segmented_reduce.cuh`:120: Important: querying the tuning environment should use query result or t: Also, let's use the term policy selector where it applies. The term tuning is too overloaded already. (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2908216641)
+- 2026-03-09 `bernhardmgruber` on `cub/test/catch2_test_device_segmented_reduce_env.cu`:2: Critical: we must not change the license of existing code. Please revert. (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2908263605)
+- 2026-03-09 `gonidelis` on `cub/test/catch2_test_device_segmented_reduce_env.cu`:2: yeah i caught that later on sorry (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2908269615)
+- 2026-03-10 `miscco` on `cub/cub/device/device_segmented_reduce.cuh`:967: Question: This uses plus and we have observed performance issues with this, because for smaller integer types it promotes. Shuld this rather be (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2910110414)
+- 2026-03-10 `miscco` on `cub/cub/device/device_segmented_reduce.cuh`:1018: Ditto: Should this rather be (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2910113135)
+- 2026-03-10 `miscco` on `cub/cub/device/device_segmented_reduce.cuh`:114: Question: Is this really needed anymore or is the static assert sufficient? (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2910115988)
+- 2026-03-10 `miscco` on `cub/cub/device/device_segmented_reduce.cuh`:1025: This implicitly requires numeric limits to be specialized, which is commonly not the case. Should we assert that to avoid unfortunate compile issues? (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2910122285)
+- 2026-03-10 `miscco` commented: Looks good. @bernhardmgruber I observe that we are really loose with the naming conventions We have InitValueT, init value t, init t, no alias at all Same for AccumT and so on We really should be more consistent (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-3920601835)
+- 2026-03-10 `bernhardmgruber` on `cub/cub/device/device_segmented_reduce.cuh`:114: This is a @gevtushenko UX thing. He thinks that compiler error messages should stop at the first static assert and not continue compilation and produce errors for follow-up issues, generating a longer error report that can confuse users. I don't believe in ... (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2910895565)
+- 2026-03-10 `bernhardmgruber` on `cub/cub/device/device_segmented_reduce.cuh`:967: Such changes should definitely go to separate PRs, since they change the status quo. AFAIK @gonidelis copies the setup for the dispatch call from the other non-env overloads. (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2910907197)
+- 2026-03-10 `bernhardmgruber` on `cub/cub/device/device_segmented_reduce.cuh`:1025: That's a good point! @gonidelis please also add this to the non-env overload: (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2910921857)
+- 2026-03-10 `gonidelis` on `cub/cub/device/device_segmented_reduce.cuh`:967: true ☝🏼 why do they change status quo? (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2912538568)
+- 2026-03-10 `gonidelis` on `cub/cub/device/device_segmented_reduce.cuh`:1358: resolving these per bernhard's suggestion and will handle in a separate PR (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2912625128)
+- 2026-03-10 `srinivasyadav18` on `cub/test/catch2_test_device_segmented_reduce_env_api.cu`:123: where is env used in the env API tests ? If the focus here is just to show single-phase API with default env ? We use stream or memory resources in other algorithm env API tests to show the usage. Do we ... (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2914748334)
+- 2026-03-11 `miscco` on `cub/cub/device/device_segmented_reduce.cuh`:967: For integer types plus< introduces integer promotion, which e.g plus does not. So depending on the tested types, this can actually have some considerable performance implications (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2916805881)
+- 2026-03-19 `miscco` on `cub/cub/device/device_segmented_reduce.cuh`:707: I thought we wanted to use plus< and change it globally with proper perf investigations (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2958895813)
+- 2026-03-19 `bernhardmgruber` on `cub/cub/device/device_segmented_reduce.cuh`:707: Critical: This is a breaking change, why is this necessary? I would revert this. (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2959617541)
+- 2026-03-19 `bernhardmgruber` on `cub/cub/device/device_segmented_reduce.cuh`:509: Q: This seems to implement a constraint that begin and end offset iterators have a value type. Why is this no longer necessary? (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2959666454)
+- 2026-03-19 `bernhardmgruber` on `cub/cub/device/device_segmented_reduce.cuh`:905: Remark: I guess this is ok since we use ::cuda::std::numeric limits :max() below. (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2959678440)
+- 2026-03-19 `bernhardmgruber` on `cub/cub/device/device_segmented_reduce.cuh`:1015: Important: This is different then the non-env overload, which uses minimum< . I think we should stay consistent with the old overload. (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2959702064)
+- 2026-03-19 `pauleonix` on `cub/cub/device/device_segmented_reduce.cuh`:113: Not needed after static assert (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2961630559)
+- 2026-03-19 `pauleonix` on `cub/cub/device/device_segmented_reduce.cuh`:116: Is this on par with the current tuning infrastructure? (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2961639755)
+- 2026-03-19 `pauleonix` on `cub/cub/device/device_segmented_reduce.cuh`:307: Relative path could be shorter (remove ../cub) (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2961682216)
+- 2026-03-19 `pauleonix` on `cub/cub/device/device_segmented_reduce.cuh`:124: Why does this differ from the old API which did not pass AccumT and OffsetT to dispatch? (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2961710356)
+- 2026-03-19 `pauleonix` on `cub/cub/device/device_segmented_reduce.cuh`:616: Maybe the diff is just funky, but m,ake sure the old API did not get overwritten (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2961737019)
+- 2026-03-19 `pauleonix` on `cub/cub/device/device_segmented_reduce.cuh`:707: Is this needed here? @miscco (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2961745488)
+- 2026-03-19 `pauleonix` on `cub/cub/device/device_segmented_reduce.cuh`:696: Is above SFINAE not needed for the env version? (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2961758528)
+- 2026-03-19 `pauleonix` on `cub/cub/device/device_segmented_reduce.cuh`:1015: Again, does this need to be specified? (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2961813254)
+- 2026-03-19 `pauleonix` on `cub/cub/device/device_segmented_reduce.cuh`:904: Should this be in this PR? (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2961816068)
+- 2026-03-19 `pauleonix` on `cub/cub/device/device_segmented_reduce.cuh`:1716: No need to specialize? (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2961858840)
+- 2026-03-19 `pauleonix` on `cub/cub/device/device_segmented_reduce.cuh`:2004: Missing Check previous overload of ArgMin (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2961876095)
+- 2026-03-19 `pauleonix` on `cub/test/catch2_test_device_segmented_reduce_env.cu`:30: Should this be cuda::execution? (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2961906409)
+- 2026-03-19 `pauleonix` on `cub/test/catch2_test_device_segmented_reduce_env.cu`:164: Maybe have the 0 everywhere or nowhere? (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2961934754)
+- 2026-03-19 `pauleonix` on `cub/test/catch2_test_device_segmented_reduce_env.cu`:239: NVM, they are below, order could be better (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2961949573)
+- 2026-03-19 `pauleonix` on `cub/test/catch2_test_device_segmented_reduce_env.cu`:370: This belongs higher above all custom stream tests. (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2961953352)
+- 2026-03-19 `pauleonix` on `cub/test/catch2_test_device_segmented_reduce_env_api.cu`:440: This test should exist for other overloads as well (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2961966764)
+- 2026-03-20 `gonidelis` on `cub/cub/device/device_segmented_reduce.cuh`:905: is it ok if we let it slide as a byproduct of this pr? @pauleonix (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2963409367)
+- 2026-03-20 `gonidelis` on `cub/cub/device/device_segmented_reduce.cuh`:1101: same as above. let is slide as a byproduct? (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2963412335)
+- 2026-03-20 `gonidelis` on `cub/cub/device/device_segmented_reduce.cuh`:1236: keeping it unresolved until we agree it's ok (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2963413551)
+- 2026-03-20 `gonidelis` on `cub/test/catch2_test_device_segmented_reduce_env.cu`:164: it's needed, gives compilation error otherwise (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2963442194)
+- 2026-03-20 `gonidelis` on `cub/test/catch2_test_device_segmented_reduce_env.cu`:30: yes it should :) (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2963442722)
+- 2026-03-20 `pauleonix` on `cub/cub/device/device_segmented_reduce.cuh`:905: Sure, it does not significantly add to the review-workload. Maybe add it to the PR description. (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2966764793)
+- 2026-03-25 `gonidelis` on `cub/cub/device/device_segmented_reduce.cuh`:113: i will choose to keep it for two reasons: a) provides a clearer message that if constexpr b) we already have it in non-env overloads from Bernhard's code let's open a new pr to discuss separately if you insist (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2986010324)
+- 2026-03-25 `gonidelis` on `cub/cub/device/device_segmented_reduce.cuh`:116: yes, policy selector t is the facility we use in the new dispatch layers (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2986147115)
+- 2026-03-25 `gonidelis` on `cub/test/catch2_test_device_segmented_reduce_env_api.cu`:150: it's added already on upstream from previous pr (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2986295829)
+- 2026-03-25 `bernhardmgruber` on `cub/cub/device/device_segmented_reduce.cuh`:107: Important: I am confused. What should this code mean? This is asking for the result of querying get determinism t with the argument run to run t and using not guaranteed t if the query is invalid. This makes no sense to ... (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2986511155)
+- 2026-03-25 `bernhardmgruber` on `cub/cub/device/device_segmented_reduce.cuh`:124: I think we want to refactor this at some point, but it's not so easy. For all public APIs except for ArgMin Max we don't need to override AccumT and OffsetT, so we could use the same = use default trick. But ... (https://github.com/NVIDIA/cccl/pull/7795#discussion_r2986538643)
+- 2026-03-25 `bernhardmgruber` commented: The header looks fine, except one issue: (https://github.com/NVIDIA/cccl/pull/7795#pullrequestreview-4004769765)

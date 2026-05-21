@@ -1,71 +1,36 @@
-# PR Discussion Digest
-
-- Source PR: [sgl-project/sglang#13959](https://github.com/sgl-project/sglang/pull/13959)
-- Source page: `sources/prs/sglang/PR-13959.md`
-- Evidence bundle: `evidence/pull-bundles/sglang/gh-13959`
-- Generated at: `2026-05-20T15:27:53.141306+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-11-26T03:22:12Z`
-- Merged: `2026-01-02T15:49:14Z`
-
-## Discussion Counts
-
-- Issue comments: 20
-- Review submissions: 17 (approved=1, changes_requested=2, commented=14)
-- Inline review comments: 32
-- Review threads observed: 21
-- Resolved/outdated thread markers: resolved=19, outdated=9
-- Human participants with discussion text: Fridge003, ch-wan, llc-kc, whybeyoung, xu-yfei, yhyang201, yiakwy-xpu-ml-framework-team
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 5
-
-## Review Decisions
-
-- `2025-11-26T10:52:50Z` `COMMENTED` by `ch-wan` - Could you add some test cases? I will have a closer check tomorrow. (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3510349292)
-- `2025-12-21T06:39:51Z` `COMMENTED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3574276823)
-- `2025-12-22T02:26:17Z` `COMMENTED` by `xu-yfei` (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3602352138)
-- `2025-12-22T04:00:15Z` `COMMENTED` by `xu-yfei` (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3602556941)
-- `2025-12-23T09:07:26Z` `CHANGES_REQUESTED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3606957112)
-- `2025-12-23T09:23:28Z` `COMMENTED` by `xu-yfei` (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3607292105)
-- `2025-12-23T09:24:58Z` `COMMENTED` by `xu-yfei` (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3607301922)
-- `2025-12-23T09:27:10Z` `COMMENTED` by `xu-yfei` (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3607313915)
-- `2025-12-23T09:30:16Z` `COMMENTED` by `xu-yfei` (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3607325628)
-- `2025-12-23T09:35:52Z` `COMMENTED` by `xu-yfei` (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3607343532)
-- `2025-12-23T09:39:24Z` `COMMENTED` by `xu-yfei` (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3607353449)
-- `2025-12-23T09:40:08Z` `COMMENTED` by `xu-yfei` (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3607355379)
-- `2025-12-23T09:41:30Z` `COMMENTED` by `xu-yfei` (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3607359216)
-- `2025-12-23T09:43:29Z` `COMMENTED` by `xu-yfei` (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3607364688)
-- `2025-12-25T09:20:13Z` `CHANGES_REQUESTED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3612051318)
-- `2025-12-25T09:27:51Z` `COMMENTED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3612065291)
-- `2025-12-28T07:48:38Z` `APPROVED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3614566889)
-
-## Inline Comment Hotspots
-
-- `python/sglang/srt/layers/attention/nsa/utils.py`: 8 inline comment(s)
-- `python/sglang/srt/layers/attention/nsa_backend.py`: 6 inline comment(s)
-- `python/sglang/srt/models/deepseek_v2.py`: 4 inline comment(s)
-- `python/sglang/srt/layers/communicator.py`: 4 inline comment(s)
-- `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`: 3 inline comment(s)
-- `docs/advanced_features/server_arguments.md`: 2 inline comment(s)
-- `python/sglang/srt/server_args.py`: 2 inline comment(s)
-- `python/sglang/srt/layers/communicator_nsa_cp.py`: 2 inline comment(s)
-- `docs/basic_usage/deepseek_v32.md`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-12-23T07:37:04Z` `inline` by `Fridge003` `python/sglang/srt/models/deepseek_v2.py`:1843; signals: cache, fp8, kv cache, mla; excerpt: "concat mla absorb q general is for concatnation of q. It assumes that the last dim of k nope and k pe are 512 ..." (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642265344)
-- `2025-11-28T03:04:15Z` `issue` by `xu-yfei`; signals: hang, moe, perf, performance; excerpt: "Out of curiosity, may I ask whether the performance before the PR was measured after tuning? If not, could you please provide the performance ..." (https://github.com/sgl-project/sglang/pull/13959#issuecomment-3587769648)
-- `2025-12-23T09:24:58Z` `inline` by `xu-yfei` `python/sglang/srt/models/deepseek_v2.py`:1843; signals: cache, dtype, kv cache; excerpt: "k nope and k pe are not retrieved from the KV cache, but generated through computation, and both are in bfloat16 dtype." (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642548287)
-- `2025-11-27T15:43:41Z` `issue` by `yhyang201`; signals: hang, perf, performance; excerpt: "Out of curiosity, may I ask whether the performance before the PR was measured after tuning? If not, could you please provide the performance ..." (https://github.com/sgl-project/sglang/pull/13959#issuecomment-3586520005)
-- `2025-12-21T06:25:54Z` `inline` by `Fridge003` `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:258; signals: attention, hang; excerpt: "Will moving the allgather after rotation affect result? Since the q and k for rotate activateion changed" (https://github.com/sgl-project/sglang/pull/13959#discussion_r2637615451)
-- `2025-12-22T02:26:17Z` `inline` by `xu-yfei` `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:258; signals: attention, perf; excerpt: "The result will not be affected. rotate activation, i.e., hadamard transform, operates on the head dim dimension, while cp all gather rerange output targets ..." (https://github.com/sgl-project/sglang/pull/13959#discussion_r2638412920)
-- `2025-12-23T08:33:11Z` `inline` by `Fridge003` `python/sglang/srt/layers/communicator.py`:552; signals: kernel, moe; excerpt: "Does this apply for both cp mode? For in-seq mode, deepep doesn't apply reduce scatter after the moe kernel" (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642385491)
-- `2025-12-23T08:52:41Z` `inline` by `Fridge003` `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:496; signals: attention, hang; excerpt: "Can you please run dpsk v3.2 with pure tp 8 and see whether this change breaks anything. Or this change can be split into ..." (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642436642)
-- `2025-12-23T09:41:30Z` `inline` by `xu-yfei` `python/sglang/srt/layers/communicator_nsa_cp.py`:18; signals: cute, moe; excerpt: "The in-seq CP mode can execute properly, and this implementation takes both the DeepEP and Fused MoE into account." (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642595771)
-- `2025-12-23T08:30:51Z` `inline` by `Fridge003` `python/sglang/srt/layers/attention/nsa/utils.py`:164; signals: attention, hang; excerpt: "Can we change a name for this util function. It can be easily confused with nsa enable prefill cp" (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642380442)
-- `2025-11-26T15:55:41Z` `issue` by `whybeyoung`; signals: perf, performance; excerpt: "maybe we can combine the pp to gain the best performance" (https://github.com/sgl-project/sglang/pull/13959#issuecomment-3582015179)
-- `2025-12-23T08:20:13Z` `inline` by `Fridge003` `python/sglang/srt/layers/attention/nsa/utils.py`:233; signals: attention; excerpt: "We need to put this part in a new util function for all gather rearange on continuous split mode. A figure(like line 219-232 above) ..." (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642355677)
+- 2025-11-26 `ch-wan` commented: Could you add some test cases? I will have a closer check tomorrow. (https://github.com/sgl-project/sglang/pull/13959#pullrequestreview-3510349292)
+- 2025-11-26 `whybeyoung`: maybe we can combine the pp to gain the best performance (https://github.com/sgl-project/sglang/pull/13959#issuecomment-3582015179)
+- 2025-11-27 `yhyang201`: Out of curiosity, may I ask whether the performance before the PR was measured after tuning? If not, could you please provide the performance metrics before the PR but after tuning? This would help better highlight the performance improvements brought by the ... (https://github.com/sgl-project/sglang/pull/13959#issuecomment-3586520005)
+- 2025-12-13 `Fridge003` on `docs/advanced_features/server_arguments.md`:404: Using 0 or 1 for cp mode is confusing. Is it possible to use strings instead? For example, mode 0 might be in-seq-split and mode 1 might be continuous-split, or other names if you have better idea Also please update the detailed ... (https://github.com/sgl-project/sglang/pull/13959#discussion_r2616184914)
+- 2025-12-21 `Fridge003`: @xu-yfei Can you please split this PR into 2 parts: 1. new cp implementation 2. other optimizations, including MTP target verify, topk ragged and other refactors Thanks (https://github.com/sgl-project/sglang/pull/13959#issuecomment-3678508124)
+- 2025-12-21 `Fridge003` on `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:258: Will moving the allgather after rotation affect result? Since the q and k for rotate activateion changed (https://github.com/sgl-project/sglang/pull/13959#discussion_r2637615451)
+- 2025-12-22 `xu-yfei` on `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:258: The result will not be affected. rotate activation, i.e., hadamard transform, operates on the head dim dimension, while cp all gather rerange output targets the tokens dimension. Moreover, performing cp all gather rerange output later can significantly reduce redundant computations. (https://github.com/sgl-project/sglang/pull/13959#discussion_r2638412920)
+- 2025-12-22 `xu-yfei` on `docs/advanced_features/server_arguments.md`:404: done, split mode has been replaced with in-seq-split and continuous-split (https://github.com/sgl-project/sglang/pull/13959#discussion_r2638560944)
+- 2025-12-22 `xu-yfei`: @xu-yfei Can you please split this PR into 2 parts: 1. new cp implementation 2. other optimizations, including MTP target verify, topk ragged and other refactors Thanks done (https://github.com/sgl-project/sglang/pull/13959#issuecomment-3680331989)
+- 2025-12-23 `Fridge003` on `python/sglang/srt/models/deepseek_v2.py`:1843: concat mla absorb q general is for concatnation of q. It assumes that the last dim of k nope and k pe are 512 and 64 respectively, but this doesn't apply for fp8 kv cache. We had better not use concat mla ... (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642265344)
+- 2025-12-23 `Fridge003` on `python/sglang/srt/models/deepseek_v2.py`:3172: Is the operation of cp split and rebuild data, cp split and rebuild position and cp all gather rerange output only needed by in-seq-split mode? (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642285220)
+- 2025-12-23 `Fridge003` on `docs/basic_usage/deepseek_v32.md`:293: Add a subtitle here: (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642288810)
+- 2025-12-23 `Fridge003` on `python/sglang/srt/layers/attention/nsa/utils.py`:233: We need to put this part in a new util function for all gather rearange on continuous split mode. A figure(like line 219-232 above) will be really helpful for reader to understand (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642355677)
+- 2025-12-23 `Fridge003` on `python/sglang/srt/layers/attention/nsa/utils.py`:148: Does it mean the total number of tokens must be multiple of cp size (8)? But for many input data this doesn't hold true. For example, bs=1 with isl=100001 (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642373474)
+- 2025-12-23 `Fridge003` on `python/sglang/srt/layers/attention/nsa/utils.py`:164: Can we change a name for this util function. It can be easily confused with nsa enable prefill cp (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642380442)
+- 2025-12-23 `Fridge003` on `python/sglang/srt/layers/communicator.py`:552: Does this apply for both cp mode? For in-seq mode, deepep doesn't apply reduce scatter after the moe kernel (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642385491)
+- 2025-12-23 `Fridge003` on `python/sglang/srt/server_args.py`:1076: Is continuous mode requiring fused moe? Is so, the self.moe a2a backend should be set to None for continuous mode (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642396994)
+- 2025-12-23 `Fridge003` on `python/sglang/srt/layers/communicator.py`:356: Why doing this split? (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642398900)
+- 2025-12-23 `Fridge003` on `python/sglang/srt/layers/communicator_nsa_cp.py`:18: Just please make sure the modification in this file doesn't break the functionality of in-seq cp mode (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642425554)
+- 2025-12-23 `Fridge003` on `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:496: Can you please run dpsk v3.2 with pure tp 8 and see whether this change breaks anything. Or this change can be split into another PR (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642436642)
+- 2025-12-23 `Fridge003` on `python/sglang/srt/layers/attention/nsa_backend.py`:133: Please add comments for these three variables (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642439647)
+- 2025-12-23 `Fridge003` on `python/sglang/srt/layers/attention/nsa_backend.py`:635: Please move this function to utils.py (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642455426)
+- 2025-12-23 `Fridge003` on `python/sglang/srt/layers/attention/nsa_backend.py`:543: Can we set two different metadata init workflow, one for continuous split and one for other cases, and refactor like this The current init code is really hard to understand and maintain (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642461385)
+- 2025-12-23 `xu-yfei` on `python/sglang/srt/models/deepseek_v2.py`:3172: Both required; the only difference lies in the token splitting method, and the implementations are separated within the function. (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642541301)
+- 2025-12-23 `xu-yfei` on `python/sglang/srt/models/deepseek_v2.py`:1843: k nope and k pe are not retrieved from the KV cache, but generated through computation, and both are in bfloat16 dtype. (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642548287)
+- 2025-12-23 `xu-yfei` on `python/sglang/srt/layers/attention/nsa/utils.py`:480: It was moved from outside the original function to inside it. (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642557620)
+- 2025-12-23 `xu-yfei` on `python/sglang/srt/layers/attention/nsa/utils.py`:148: prepare mlp sync batch - pad inputs to size pads the tokens to a multiple of the attention TP size (i.e., cp size). This is the original logic of DP attention, designed to accelerate all-gather and reduce-scatter operations. (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642567326)
+- 2025-12-23 `xu-yfei` on `python/sglang/srt/layers/attention/nsa/utils.py`:164: renamed to nsa use prefill cp? (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642581730)
+- 2025-12-23 `xu-yfei` on `python/sglang/srt/layers/communicator.py`:552: Currently, use reduce scatter flag skips the all-reduce operation in the MLP, and no other functions have been identified for it so far. (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642590515)
+- 2025-12-23 `xu-yfei` on `python/sglang/srt/server_args.py`:1076: In addition to Fused MoE, continuous mode also supports DeepEP. (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642592462)
+- 2025-12-23 `xu-yfei` on `python/sglang/srt/layers/communicator_nsa_cp.py`:18: The in-seq CP mode can execute properly, and this implementation takes both the DeepEP and Fused MoE into account. (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642595771)
+- 2025-12-23 `xu-yfei` on `python/sglang/srt/layers/communicator.py`:356: The communication initialization method for NSA differs from that in the normal scenario. A new function has been created, and subclasses inherit and modify it to isolate the impact. (https://github.com/sgl-project/sglang/pull/13959#discussion_r2642600840)
+- 2025-12-25 `Fridge003` on `python/sglang/srt/layers/attention/nsa_backend.py`:381: Are bs idx cpu and indexer seq lens cpu only used when cp is enabled? If so please add explanation to avoid confusion (https://github.com/sgl-project/sglang/pull/13959#discussion_r2646771937)
+- 2025-12-25 `Fridge003` on `python/sglang/srt/layers/attention/nsa_backend.py`:574: Can we create two different cal indexer k start end methods. One for cp+continuous mode and one for other cases. It seems a little confusing to me that the bs idx cpu here is None when cp+continuous is not enabled. (https://github.com/sgl-project/sglang/pull/13959#discussion_r2646779743)
+- 2025-12-25 `Fridge003` on `python/sglang/srt/layers/attention/nsa/utils.py`:252: Please add explanation for the 4 returned values (https://github.com/sgl-project/sglang/pull/13959#discussion_r2646786410)
+- 2026-01-02 `Fridge003`: Just verified this feature on local H200. It should be correct (https://github.com/sgl-project/sglang/pull/13959#issuecomment-3705621666)

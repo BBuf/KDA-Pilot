@@ -1,79 +1,46 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/cccl#6642](https://github.com/NVIDIA/cccl/pull/6642)
-- Source page: `sources/prs/cccl-cub/PR-6642.md`
-- Evidence bundle: `evidence/pull-bundles/cccl-cub/gh-6642`
-- Generated at: `2026-05-20T15:19:57.099824+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-11-17T17:00:31Z`
-- Merged: `2026-03-26T16:36:12Z`
-
-## Discussion Counts
-
-- Issue comments: 56
-- Review submissions: 31 (approved=3, changes_requested=4, commented=24)
-- Inline review comments: 41
-- Review threads observed: 16
-- Resolved/outdated thread markers: resolved=11, outdated=12
-- Human participants with discussion text: NaderAlAwar, bernhardmgruber, fbusato, toxicteddy00077
-- Automation comments/reviews omitted from high-signal summary: 17
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 2
-
-## Review Decisions
-
-- `2025-11-18T00:04:21Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3474983607)
-- `2025-11-18T00:13:32Z` `CHANGES_REQUESTED` by `fbusato` - thanks @toxicteddy00077. It is great to see this feature in CUB. Initial feedbacl: This work could be extended ... (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3474987072)
-- `2025-11-18T06:49:31Z` `COMMENTED` by `toxicteddy00077` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3475778035)
-- `2025-11-18T07:23:03Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3475872851)
-- `2025-11-18T07:30:54Z` `COMMENTED` by `toxicteddy00077` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3475897884)
-- `2025-11-18T07:59:38Z` `COMMENTED` by `toxicteddy00077` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3476010210)
-- `2025-11-18T08:36:21Z` `COMMENTED` by `toxicteddy00077` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3476181687)
-- `2025-11-18T18:02:37Z` `CHANGES_REQUESTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3479070882)
-- `2025-11-19T22:40:22Z` `COMMENTED` by `bernhardmgruber` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3485016852)
-- `2025-11-19T22:46:05Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3485028137)
-- `2025-11-19T22:48:33Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3485032772)
-- `2025-11-23T07:20:08Z` `COMMENTED` by `toxicteddy00077` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3497451480)
-- `2025-11-23T07:20:40Z` `COMMENTED` by `toxicteddy00077` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3497451599)
-- `2025-11-23T07:21:42Z` `COMMENTED` by `toxicteddy00077` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3497451891)
-- `2025-11-24T17:47:42Z` `CHANGES_REQUESTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3501527206)
-- `2025-11-26T06:35:03Z` `COMMENTED` by `toxicteddy00077` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3509142133)
-- `2025-11-26T15:35:38Z` `COMMENTED` by `toxicteddy00077` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3511553335)
-- `2025-11-26T15:36:00Z` `COMMENTED` by `toxicteddy00077` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3511554824)
-- `2025-11-26T15:36:37Z` `COMMENTED` by `toxicteddy00077` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3511557307)
-- `2025-11-26T16:28:53Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3511773527)
-- `2025-11-26T16:34:44Z` `CHANGES_REQUESTED` by `fbusato` - good progress! Most of the kernel parameters now have the grid constant attribute. There still a couple of ... (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3511776718)
-- `2025-11-26T16:36:24Z` `COMMENTED` by `toxicteddy00077` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3511800769)
-- `2025-12-04T07:29:43Z` `COMMENTED` by `toxicteddy00077` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3538528406)
-- `2025-12-04T09:30:17Z` `COMMENTED` by `toxicteddy00077` (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3538945184)
-- ... 7 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `cub/cub/device/dispatch/kernels/kernel_radix_sort.cuh`: 10 inline comment(s)
-- `cub/cub/device/dispatch/kernels/kernel_merge_sort.cuh`: 8 inline comment(s)
-- `cub/cub/device/dispatch/kernels/kernel_histogram.cuh`: 7 inline comment(s)
-- `cub/cub/device/dispatch/kernels/kernel_scan.cuh`: 4 inline comment(s)
-- `cub/cub/device/dispatch/kernels/kernel_for_each.cuh`: 3 inline comment(s)
-- `cub/cub/agent/agent_histogram.cuh`: 3 inline comment(s)
-- `cub/cub/device/dispatch/kernels/kernel_reduce.cuh`: 2 inline comment(s)
-- `cub/cub/device/dispatch/kernels/kernel_transform.cuh`: 2 inline comment(s)
-- `cub/cub/device/dispatch/kernels/kernel_segmented_sort.cuh`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-16T20:27:51Z` `issue` by `NaderAlAwar`; signals: benchmark, cuda, hang, perf, performance; excerpt: "@fbusato Looked into this. The LDL/STL instructions appear even with NVCC, this is not specific to cuda.compute. I ran some benchmarks and the performance ..." (https://github.com/NVIDIA/cccl/pull/6642#issuecomment-4070403592)
-- `2025-11-19T22:40:22Z` `inline` by `bernhardmgruber` `cub/cub/device/dispatch/kernels/kernel_histogram.cuh`:449; signals: cuda, hang, kernel; excerpt: "I assume this had historical reasons, because we could not change AgentHistogram to take pointers by const before CCCL 3.0, where we moved them ..." (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2543787649)
-- `2025-11-18T07:30:54Z` `inline` by `toxicteddy00077` `cub/cub/device/dispatch/kernels/kernel_merge_sort.cuh`:282; signals: kernel, memory; excerpt: "From what i understand the CCCL GRID CONSTANT const was applied to the outer pointers, not the inner pointers which actually point to the ..." (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2536639991)
-- `2025-11-18T17:55:46Z` `inline` by `fbusato` `cub/cub/device/dispatch/kernels/kernel_histogram.cuh`:449; signals: cuda, kernel; excerpt: "I didn't check the code. It is a bit unexpected that we modify internal cuda::std::array pointers. Maybe @bernhardmgruber knows more about this point. Excluding ..." (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2539171600)
-- `2025-11-18T18:00:59Z` `inline` by `fbusato` `cub/cub/device/dispatch/kernels/kernel_radix_sort.cuh`:243; signals: correctness, kernel; excerpt: "question. Why CCCL GRID CONSTANT cannot be applied to const T pointer? note, for const-correctness you have to write even better if you introduce ..." (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2539187609)
-- `2025-11-26T06:35:03Z` `inline` by `toxicteddy00077` `cub/cub/device/dispatch/kernels/kernel_scan.cuh`:149; signals: hang, kernel; excerpt: "I'm not sure we can apply CCCL GRID CONSTANT to a non const type . Even when I did apply the CCCL GRID CONSTANT ..." (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2563495209)
-- `2025-11-26T16:36:24Z` `inline` by `toxicteddy00077` `cub/cub/device/dispatch/kernels/kernel_scan.cuh`:149; signals: hang, kernel; excerpt: "Yes I tried this earlier, but InitValueT is type converted and I think it requires me to change the operator in to make it ..." (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2565692832)
-- `2025-12-13T06:25:18Z` `inline` by `toxicteddy00077` `cub/cub/device/dispatch/kernels/kernel_histogram.cuh`:449; signals: cuda, kernel; excerpt: "I have added CCCL GRID CONSTANT const to the ::cuda::std::array, just had to make the necessary AgentHistogram members const(I marked them as read-only) and ..." (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2616124304)
-- `2025-11-18T00:06:31Z` `inline` by `fbusato` `cub/cub/device/dispatch/kernels/kernel_histogram.cuh`:449; signals: cuda, kernel; excerpt: "why CCCL GRID CONSTANT is skipped on cuda::std::array parameters?" (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2535879236)
-- `2025-11-18T00:09:07Z` `inline` by `fbusato` `cub/cub/device/dispatch/kernels/kernel_merge_sort.cuh`:282; signals: kernel, memory; excerpt: "is it a write memory location? or CCCL GRID CONSTANT was not applied to pointers" (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2535883381)
-- `2025-11-18T00:13:32Z` `review` `CHANGES_REQUESTED` by `fbusato`; signals: cuda; excerpt: "thanks @toxicteddy00077. It is great to see this feature in CUB. Initial feedbacl: This work could be extended to more parameters, e.g. cuda::std::array and ..." (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3474987072)
-- `2025-11-23T07:20:39Z` `inline` by `toxicteddy00077` `cub/cub/device/dispatch/kernels/kernel_radix_sort.cuh`:243; signals: hang, kernel; excerpt: "i have made the changes" (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2553840623)
+- 2025-11-17 `bernhardmgruber`: Thank you for this contribution! I think we should also do a benchmark and a SASS check somewhere, just because I am curious about the impact of this change. @toxicteddy00077 you can leave this to us. (https://github.com/NVIDIA/cccl/pull/6642#issuecomment-3543039376)
+- 2025-11-18 `fbusato` on `cub/cub/device/dispatch/kernels/kernel_for_each.cuh`:90: @bernhardmgruber Rare but possible. I guess this is problematic if the operator has an internal state (non-const). (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2535876134)
+- 2025-11-18 `fbusato` on `cub/cub/device/dispatch/kernels/kernel_histogram.cuh`:449: why CCCL GRID CONSTANT is skipped on cuda::std::array parameters? (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2535879236)
+- 2025-11-18 `fbusato` on `cub/cub/device/dispatch/kernels/kernel_merge_sort.cuh`:282: is it a write memory location? or CCCL GRID CONSTANT was not applied to pointers (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2535883381)
+- 2025-11-18 `fbusato` on `cub/cub/device/dispatch/kernels/kernel_radix_sort.cuh`:86: CCCL GRID CONSTANT is should be fine on const pointers (if not modified) (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2535885151)
+- 2025-11-18 `fbusato` changes_requested: thanks @toxicteddy00077. It is great to see this feature in CUB. Initial feedbacl: This work could be extended to more parameters, e.g. cuda::std::array and pointers. Also, we need to double-check the implications for custom operators (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3474987072)
+- 2025-11-18 `toxicteddy00077` on `cub/cub/device/dispatch/kernels/kernel_histogram.cuh`:449: I tried it earlier, but when i tested the benches I ran into errors regarding AgentHistogram since the .data() function in it is expected to return type CounterT but with CCCL GRID CONSTANT const seems to return something else. Please let me ... (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2536538650)
+- 2025-11-18 `bernhardmgruber` on `cub/cub/device/dispatch/kernels/kernel_for_each.cuh`:90: Good catch! I think we definitely should not mark operators as const. Lot's of them have a mutable operator(). Please remove CCCL GRID CONSTANT const from all operators. (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2536619365)
+- 2025-11-18 `toxicteddy00077` on `cub/cub/device/dispatch/kernels/kernel_merge_sort.cuh`:282: From what i understand the CCCL GRID CONSTANT const was applied to the outer pointers, not the inner pointers which actually point to the write memory. (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2536639991)
+- 2025-11-18 `toxicteddy00077` on `cub/cub/device/dispatch/kernels/kernel_radix_sort.cuh`:86: For this too, I ran into errors when I ran the benches after I added CCCL GRID CONSTANT (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2536725561)
+- 2025-11-18 `toxicteddy00077` on `cub/cub/device/dispatch/kernels/kernel_for_each.cuh`:90: I have removed CCCL GRID CONSTANT const from the operators (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2536863118)
+- 2025-11-18 `fbusato` on `cub/cub/device/dispatch/kernels/kernel_histogram.cuh`:449: I didn't check the code. It is a bit unexpected that we modify internal cuda::std::array pointers. Maybe @bernhardmgruber knows more about this point. Excluding pointers, other ::cuda::std::array parameters should work. (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2539171600)
+- 2025-11-18 `fbusato` on `cub/cub/device/dispatch/kernels/kernel_merge_sort.cuh`:178: side effects here are extremely rare, but I would remove CCCL GRID CONSTANT from compare op (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2539176893)
+- 2025-11-18 `fbusato` on `cub/cub/device/dispatch/kernels/kernel_radix_sort.cuh`:243: question. Why CCCL GRID CONSTANT cannot be applied to const T pointer? note, for const-correctness you have to write even better if you introduce a new macro for pointers (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2539187609)
+- 2025-11-19 `bernhardmgruber` on `cub/cub/device/dispatch/kernels/kernel_histogram.cuh`:449: I assume this had historical reasons, because we could not change AgentHistogram to take pointers by const before CCCL 3.0, where we moved them to a detail namespace. Please add CCCL GRID CONSTANT const to the ::cuda::std::array for histogram and propagatge const ... (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2543787649)
+- 2025-11-19 `fbusato` on `cub/cub/device/dispatch/kernels/kernel_merge_sort.cuh`:282: yes, this is the reason I asked. It doesn't matter if the pointer is for read or write (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2543797803)
+- 2025-11-19 `fbusato` on `cub/cub/device/dispatch/kernels/kernel_radix_sort.cuh`:86: got it. What errors? is d keys modified, e.g. d keys += value? or const propagation? (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2543802082)
+- 2025-11-23 `toxicteddy00077` on `cub/cub/device/dispatch/kernels/kernel_radix_sort.cuh`:243: i have made the changes (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2553840623)
+- 2025-11-23 `toxicteddy00077` on `cub/cub/device/dispatch/kernels/kernel_radix_sort.cuh`:86: sorry this was an oversight on my part. I wasn't applying const correctly to the pointers. i have made the necessary improvements. (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2553840953)
+- 2025-11-23 `toxicteddy00077`: Apologies for the delay. I will be making changes and adding CCCL GRID CONSTANT const to ::cuda::std::array for histogram and make sure it propogates const (https://github.com/NVIDIA/cccl/pull/6642#issuecomment-3567592351)
+- 2025-11-24 `fbusato` on `cub/cub/device/dispatch/kernels/kernel_histogram.cuh`:446: the previous kernel DeviceHistogramInitKernel misses CCCL GRID CONSTANT (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2557174466)
+- 2025-11-24 `fbusato` on `cub/cub/device/dispatch/kernels/kernel_radix_sort.cuh`:343: @bernhardmgruber what do you think about num items? CCCL GRID CONSTANT should prevent the issue described in the comment below (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2557184901)
+- 2025-11-24 `fbusato` on `cub/cub/device/dispatch/kernels/kernel_radix_sort.cuh`:486: DeviceRadixSortExclusiveSumKernel (below) is missing (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2557186834)
+- 2025-11-24 `fbusato` on `cub/cub/device/dispatch/kernels/kernel_merge_sort.cuh`:176: if yes, please propage it to other occurences (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2557199498)
+- 2025-11-26 `toxicteddy00077` on `cub/cub/device/dispatch/kernels/kernel_scan.cuh`:149: I'm not sure we can apply CCCL GRID CONSTANT to a non const type . Even when I did apply the CCCL GRID CONSTANT const it resulted in a error, since InitValueT seems to be type converted, and as the type conversion ... (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2563495209)
+- 2025-11-26 `toxicteddy00077` on `cub/cub/device/dispatch/kernels/kernel_merge_sort.cuh`:176: Yes this actually worked, I have added it over to multiple types KeyT, ValueT, OffsetT, etc (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2565483071)
+- 2025-11-26 `fbusato` on `cub/cub/device/dispatch/kernels/kernel_segmented_sort.cuh`:470: can we also apply CCCL GRID CONSTANT here? (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2565671919)
+- 2025-11-26 `fbusato` changes_requested: good progress! Most of the kernel parameters now have the grid constant attribute. There still a couple of open issues. After that, we can merge the PR (https://github.com/NVIDIA/cccl/pull/6642#pullrequestreview-3511776718)
+- 2025-11-26 `toxicteddy00077` on `cub/cub/device/dispatch/kernels/kernel_scan.cuh`:149: Yes I tried this earlier, but InitValueT is type converted and I think it requires me to change the operator in to make it take const type (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2565692832)
+- 2025-12-04 `toxicteddy00077` on `cub/cub/device/dispatch/kernels/kernel_segmented_sort.cuh`:470: yes i have applied it successfully in the last commit (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2587886974)
+- 2025-12-04 `toxicteddy00077` on `cub/cub/device/dispatch/kernels/kernel_radix_sort.cuh`:343: @fbusato num items is modified in this kernel (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2588237764)
+- 2025-12-13 `toxicteddy00077` on `cub/cub/device/dispatch/kernels/kernel_histogram.cuh`:449: I have added CCCL GRID CONSTANT const to the ::cuda::std::array, just had to make the necessary AgentHistogram members const(I marked them as read-only) and also make some kernel histogram.cuh methods in Transform which are utilized as const (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2616124304)
+- 2025-12-13 `toxicteddy00077`: @fbusato I think I have made most of the changes as specified. If there are any changes I missed or need to make further, do let me know, I'll get to it ASAP (https://github.com/NVIDIA/cccl/pull/6642#issuecomment-3649038894)
+- 2026-02-09 `toxicteddy00077`: @bernhardmgruber I had a look at the CI tests but Im not exactly sure why they're failing. Is it just because of standard incompatibility or something I'm missing? (https://github.com/NVIDIA/cccl/pull/6642#issuecomment-3872892810)
+- 2026-02-09 `toxicteddy00077`: @fbusato thanks I was not aware if this. I've made the changes (https://github.com/NVIDIA/cccl/pull/6642#issuecomment-3873166981)
+- 2026-02-17 `fbusato`: @toxicteddy00077 Bernhard is OOTO this week. I don't see a clear reason why the CI is failing. Let me investigate a bit. (https://github.com/NVIDIA/cccl/pull/6642#issuecomment-3916774785)
+- 2026-02-22 `bernhardmgruber`: Hi @bernhardmgruber anything further to be done? Yes, please rebase and resolve conflicts ;) I don't see a clear reason why the CI is failing I think we are hitting timeouts because the changeset leads to too many recompilations. This should be ... (https://github.com/NVIDIA/cccl/pull/6642#issuecomment-3939743182)
+- 2026-02-22 `bernhardmgruber` on `cub/cub/agent/agent_histogram.cuh`:230: Please remove the added comment, since it does not convey any additional information that const does not already spell. (https://github.com/NVIDIA/cccl/pull/6642#discussion_r2837861447)
+- 2026-02-25 `bernhardmgruber`: Some CI jobs are getting stuck compiling now. I have seen this previously with the warpspeed scan, where adding CCCL GRID CONSTANT to one specific kernel parameter caused nvcc = 12.8 or start finding out which line(s) of this PR cause an ... (https://github.com/NVIDIA/cccl/pull/6642#issuecomment-3957959263)
+- 2026-02-25 `fbusato`: thanks, @bernhardmgruber. This is very helpful to address the problem. Yes, I strongly suggest to enable it only for nvcc = 12.8. I will track the potential bug offline and chat with the compiler team. (https://github.com/NVIDIA/cccl/pull/6642#issuecomment-3960614012)
+- 2026-03-11 `fbusato`: @toxicteddy00077 sorry again, this not a known issue. Please go ahead and enable CCCL GRID CONSTANT only for nvcc = 12.8 (https://github.com/NVIDIA/cccl/pull/6642#issuecomment-4040402014)
+- 2026-03-12 `toxicteddy00077`: @fbusato there's still one test failing, what could be the reason? Anything i can fix? (https://github.com/NVIDIA/cccl/pull/6642#issuecomment-4044030176)
+- 2026-03-12 `fbusato`: this is unrelated to your changes. It has been fixed quite recently. Let me try to rebase the PR. (https://github.com/NVIDIA/cccl/pull/6642#issuecomment-4048150391)
+- 2026-03-14 `fbusato`: Python nvcc GCC / SQ / [CTK13.1 GCC13 py3.13] Test cuda.compute(amd64, L4) AssertionError: LDL instruction found in SASS @NaderAlAwar could you please check? (https://github.com/NVIDIA/cccl/pull/6642#issuecomment-4058812712)
+- 2026-03-16 `NaderAlAwar`: @fbusato Looked into this. The LDL/STL instructions appear even with NVCC, this is not specific to cuda.compute. I ran some benchmarks and the performance after the changes in this PR are 0-2% better, so this is not an issue. I will open ... (https://github.com/NVIDIA/cccl/pull/6642#issuecomment-4070403592)
+- 2026-03-26 `toxicteddy00077`: @NaderAlAwar @fbusato seems to be still failing. please take a look (https://github.com/NVIDIA/cccl/pull/6642#issuecomment-4134134769)

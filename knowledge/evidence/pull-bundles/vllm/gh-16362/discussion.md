@@ -1,81 +1,41 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#16362](https://github.com/vllm-project/vllm/pull/16362)
-- Source page: `sources/prs/vllm/PR-16362.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-16362`
-- Generated at: `2026-05-20T15:34:54.587878+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-04-09T20:42:04Z`
-- Merged: `2025-05-09T23:24:41Z`
-
-## Discussion Counts
-
-- Issue comments: 16
-- Review submissions: 26 (approved=2, commented=24)
-- Inline review comments: 43
-- Review threads observed: 30
-- Resolved/outdated thread markers: resolved=23, outdated=24
-- Human participants with discussion text: LucasWilkinson, Receiling, mergify, mgoin, pavanimajety, tlrmchlsmth, xwuShirley
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 3
-
-## Review Decisions
-
-- `2025-04-11T21:44:57Z` `COMMENTED` by `xwuShirley` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2761640058)
-- `2025-04-24T00:28:56Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2788976526)
-- `2025-04-24T02:12:23Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2789185836)
-- `2025-04-25T17:01:44Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2794764053)
-- `2025-04-25T17:03:48Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2794772514)
-- `2025-04-25T17:17:01Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2794810521)
-- `2025-04-30T19:18:23Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2808163839)
-- `2025-05-07T17:30:43Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2822621961)
-- `2025-05-07T17:35:03Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2822583309)
-- `2025-05-07T17:46:37Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2822651048)
-- `2025-05-07T17:53:16Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2822700656)
-- `2025-05-07T17:59:39Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2822720678)
-- `2025-05-07T18:06:52Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2822740397)
-- `2025-05-07T18:37:13Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2822818230)
-- `2025-05-07T18:43:02Z` `COMMENTED` by `tlrmchlsmth` - I left a few comments here and there but looks good overall. Thanks for the contribution! (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2822850541)
-- `2025-05-07T18:59:56Z` `COMMENTED` by `mgoin` - LGTM just a few comments (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2822832378)
-- `2025-05-07T19:07:53Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2822920822)
-- `2025-05-07T19:08:23Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2822921813)
-- `2025-05-07T19:12:09Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2822930518)
-- `2025-05-07T19:14:39Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2822935755)
-- `2025-05-07T19:17:55Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2822944024)
-- `2025-05-07T21:09:19Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2823213176)
-- `2025-05-08T13:23:32Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2825128337)
-- `2025-05-08T22:50:52Z` `COMMENTED` by `pavanimajety` (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2826547181)
-- ... 2 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `CMakeLists.txt`: 7 inline comment(s)
-- `vllm/model_executor/layers/quantization/modelopt.py`: 6 inline comment(s)
-- `tests/kernels/test_nvfp4_moe.py`: 6 inline comment(s)
-- `tests/kernels/quantization/test_nvfp4_moe.py`: 6 inline comment(s)
-- `csrc/quantization/fp4/nvfp4_blockwise_moe_kernel.cu`: 5 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/cutlass_moe.py`: 4 inline comment(s)
-- `vllm/_custom_ops.py`: 3 inline comment(s)
-- `benchmarks/kernels/benchmark_cutlass_fp4_moe.py`: 3 inline comment(s)
-- `csrc/quantization/cutlass_w8a8/scaled_mm_entry.cu`: 1 inline comment(s)
-- `csrc/torch_bindings.cpp`: 1 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/layer.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-05-07T18:37:02Z` `inline` by `mgoin` `benchmarks/kernels/benchmark_cutlass_fp4_moe.py`:78; signals: benchmark, block, cutlass, fp4, fp8, kernel, moe, triton; excerpt: "It is worth a mention that the triton fp8 is comparing per-tensor vs cutlass fp4 with block scales, maybe at the top of this ..." (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078269146)
-- `2025-04-25T17:17:01Z` `inline` by `tlrmchlsmth` `csrc/quantization/fp4/nvfp4_blockwise_moe_kernel.cu`:80; signals: block, fp4, hang, kernel, moe, nvfp4, overflow; excerpt: "To prevent int32 overflows from happening in the future, I'd like to propose using int64 t for some of these stride calculations. Changing group ..." (https://github.com/vllm-project/vllm/pull/16362#discussion_r2060618806)
-- `2025-05-08T13:23:31Z` `inline` by `tlrmchlsmth` `tests/kernels/quantization/test_nvfp4_moe.py`; signals: compile, cuda, cutlass, fp4, kernel, moe, nvfp4; excerpt: "Looks like we need to add some skips to the new tests when unsupported. I think we need functions like cutlass fp4 group mm ..." (https://github.com/vllm-project/vllm/pull/16362#discussion_r2079712062)
-- `2025-05-07T19:14:39Z` `inline` by `pavanimajety` `csrc/quantization/fp4/nvfp4_blockwise_moe_kernel.cu`:281; signals: block, fp4, gemm, kernel, moe, nvfp4; excerpt: "Ah good catch. I was earlier using dynamic cluster shape, now it is just cruft. I'll remove these options since we no longer need ..." (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078325683)
-- `2025-05-07T19:17:55Z` `inline` by `pavanimajety` `benchmarks/kernels/benchmark_cutlass_fp4_moe.py`:78; signals: benchmark, cutlass, fp4, kernel, moe, tile; excerpt: "That's a good point, I'll add a third benchmark when I do the follow-up for more tile sizes and shapes" (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078330468)
-- `2025-05-07T17:46:32Z` `inline` by `tlrmchlsmth` `tests/kernels/quantization/test_nvfp4_moe.py`:43; signals: dtype, fp4, kernel, moe, nvfp4; excerpt: "Could you move break fp4 bytes, convert swizzled to linearand dequantize to dtype to a utils file? It would be nice to reuse them ..." (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078168043)
-- `2025-05-07T18:39:41Z` `inline` by `tlrmchlsmth` `tests/kernels/quantization/test_nvfp4_moe.py`:93; signals: cutlass, fp4, kernel, moe, nvfp4; excerpt: "How long do these tests take to run? I suggest doing something like we do in test cutlass.py and explicitly listing out the m, ..." (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078273339)
-- `2025-04-24T00:09:55Z` `inline` by `mgoin` `csrc/quantization/fp4/nvfp4_blockwise_moe_kernel.cu`:32; signals: block, fp4, kernel, moe, nvfp4; excerpt: "Cruft?" (https://github.com/vllm-project/vllm/pull/16362#discussion_r2057078706)
-- `2025-04-24T00:10:27Z` `inline` by `mgoin` `csrc/quantization/fp4/nvfp4_blockwise_moe_kernel.cu`:165; signals: block, fp4, kernel, moe, nvfp4; excerpt: "Cruft?" (https://github.com/vllm-project/vllm/pull/16362#discussion_r2057079620)
-- `2025-05-07T18:30:54Z` `inline` by `tlrmchlsmth` `csrc/quantization/fp4/nvfp4_blockwise_moe_kernel.cu`:281; signals: block, fp4, kernel, moe, nvfp4; excerpt: "What does the cluster shape fallback do? Is it OK that it's the same as cluster shape?" (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078257428)
-- `2025-05-07T18:33:57Z` `inline` by `mgoin` `benchmarks/kernels/benchmark_cutlass_fp4_moe.py`:376; signals: benchmark, cutlass, fp4, kernel, moe; excerpt: "Update description" (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078262465)
-- `2025-04-12T19:47:37Z` `issue` by `pavanimajety`; signals: accuracy, gemm, hang, kernel, perf; excerpt: "@xwuShirley Thanks for the review, I am still working on it. I have an accuracy issue with some configs, which I am figuring out. ..." (https://github.com/vllm-project/vllm/pull/16362#issuecomment-2799015875)
+- 2025-04-11 `xwuShirley` on `vllm/model_executor/layers/quantization/modelopt.py`:613: @pavanimajety thanks so much for the work, currently there is a minor issue here need to put apply router weight on input: bool = False, to make it work. as [/vllm/model executor/layers/fused moe/layer.py]( (https://github.com/vllm-project/vllm/pull/16362#discussion_r2040333700)
+- 2025-04-12 `pavanimajety`: @xwuShirley Thanks for the review, I am still working on it. I have an accuracy issue with some configs, which I am figuring out. Quite a bit of the actual kernels performing the gemms would need to change. Will open it up ... (https://github.com/vllm-project/vllm/pull/16362#issuecomment-2799015875)
+- 2025-04-24 `mgoin` on `tests/kernels/test_nvfp4_moe.py`: make sure to move this to tests/kernels/moe/test nvfp4 moe.py now (https://github.com/vllm-project/vllm/pull/16362#discussion_r2057083653)
+- 2025-04-24 `mgoin` on `tests/kernels/test_nvfp4_moe.py`:10: Missing a CC check here (https://github.com/vllm-project/vllm/pull/16362#discussion_r2057085625)
+- 2025-04-24 `mgoin` on `tests/kernels/test_nvfp4_moe.py`:107: Could you test both half and bfloat16 (https://github.com/vllm-project/vllm/pull/16362#discussion_r2057087486)
+- 2025-04-24 `mgoin` on `vllm/_custom_ops.py`:755: Why does this return now? (https://github.com/vllm-project/vllm/pull/16362#discussion_r2057088229)
+- 2025-04-24 `mgoin` on `vllm/_custom_ops.py`:1017: Maybe you could store these in scalar type.py and reuse them in many places (https://github.com/vllm-project/vllm/pull/16362#discussion_r2057090244)
+- 2025-04-24 `mgoin` on `vllm/model_executor/layers/quantization/modelopt.py`:617: Also needs asserts on num expert group, expert map, and apply router weight on input (https://github.com/vllm-project/vllm/pull/16362#discussion_r2057093483)
+- 2025-04-24 `mgoin` on `CMakeLists.txt`:272: You need to set GIT SHALLOW FALSE below if this is a commit (https://github.com/vllm-project/vllm/pull/16362#discussion_r2057234305)
+- 2025-04-24 `pavanimajety`: @xwuShirley Could you share your run commands? This one works for me (I agree it is limited in support) - I'll test today for (1) graph mode (which should give some perf) (2) V1 For the full size model length without the ... (https://github.com/vllm-project/vllm/pull/16362#issuecomment-2828380554)
+- 2025-04-24 `xwuShirley`: @xwuShirley Could you share your run commands? This one works for me (I agree it is limited in support) - Thanks! Let me try your script. I used the vllm serve, probably that's why. (https://github.com/vllm-project/vllm/pull/16362#issuecomment-2828515532)
+- 2025-04-25 `mgoin`: Could you run an lm-eval to confirm accuracy before ready? i.e. (https://github.com/vllm-project/vllm/pull/16362#issuecomment-2830539202)
+- 2025-04-25 `tlrmchlsmth` on `CMakeLists.txt`:272: Can this be v3.9.0 now that it's been released? And could you update line 254 in this file as well to keep them in sync? (I swear there was a PR that factored these out into a single variable...) (https://github.com/vllm-project/vllm/pull/16362#discussion_r2060591256)
+- 2025-04-25 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/scaled_mm_entry.cu`:227: IIUC, we still need to have a check here, but it can be more flexible to allow for blackwell in addition to hopper (https://github.com/vllm-project/vllm/pull/16362#discussion_r2060595817)
+- 2025-04-25 `tlrmchlsmth` on `csrc/quantization/fp4/nvfp4_blockwise_moe_kernel.cu`:80: To prevent int32 overflows from happening in the future, I'd like to propose using int64 t for some of these stride calculations. Changing group k, half k and n to int64 t should prevent this from happening (https://github.com/vllm-project/vllm/pull/16362#discussion_r2060618806)
+- 2025-04-30 `pavanimajety` on `CMakeLists.txt`:272: Cutlass was updated in main as of today, so I am removing those changes (https://github.com/vllm-project/vllm/pull/16362#discussion_r2069305732)
+- 2025-05-07 `pavanimajety`: Kernel checks: gsm8k lm eval accuracy results: (https://github.com/vllm-project/vllm/pull/16362#issuecomment-2857337222)
+- 2025-05-07 `tlrmchlsmth` on `CMakeLists.txt`:540: I think we need to modify this so that the 10.0a kernels only gets compiled on 12.8 and up - right now I think this will break the build for CUDA 12.3 through 12.6 (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078111658)
+- 2025-05-07 `LucasWilkinson` on `csrc/torch_bindings.cpp`:508: nit: can you fix the alignment/formatting here please (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078135406)
+- 2025-05-07 `tlrmchlsmth` on `vllm/model_executor/layers/quantization/modelopt.py`:640: Does this mean the activations will be fp16/bf16? (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078153875)
+- 2025-05-07 `tlrmchlsmth` on `vllm/model_executor/layers/fused_moe/layer.py`:739: nit: could you fix the alignment of this comment? (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078157152)
+- 2025-05-07 `tlrmchlsmth` on `tests/kernels/quantization/test_nvfp4_moe.py`:43: Could you move break fp4 bytes, convert swizzled to linearand dequantize to dtype to a utils file? It would be nice to reuse them across this file and tests/kernels/quantization/test nvfp4 scaled mm.py (I also appreciate the nice comments in the other file ... (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078168043)
+- 2025-05-07 `pavanimajety` on `vllm/model_executor/layers/quantization/modelopt.py`:640: That's correct. The quantization is done inside the cutlass moe fp4 function because it has to be done for both w13 gemm and w2 gemm (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078182946)
+- 2025-05-07 `pavanimajety` on `CMakeLists.txt`:540: The build for 12.4 is passing and tests are running. The SCALED MM ARCHS changes based on platform, correct? We take an intersection here - I believe that's why it is working as is (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078194253)
+- 2025-05-07 `tlrmchlsmth` on `CMakeLists.txt`:540: OK, you're right, sorry! -- I had though we'd upgraded docker-build-image to use 12.8 (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078205784)
+- 2025-05-07 `tlrmchlsmth` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:186: Why is this? Do we use uint16 t to represent the number of tokens per expert somewhere? (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078254374)
+- 2025-05-07 `tlrmchlsmth` on `csrc/quantization/fp4/nvfp4_blockwise_moe_kernel.cu`:281: What does the cluster shape fallback do? Is it OK that it's the same as cluster shape? (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078257428)
+- 2025-05-07 `tlrmchlsmth` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:275: should we pass in MAX TOKENS PER EXPERT here? Right now it will use the default value, which is 163840 (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078268011)
+- 2025-05-07 `mgoin` on `benchmarks/kernels/benchmark_cutlass_fp4_moe.py`:78: It is worth a mention that the triton fp8 is comparing per-tensor vs cutlass fp4 with block scales, maybe at the top of this file. I assumed this would be using block 128x128 scales since that is the reference for deepseek (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078269146)
+- 2025-05-07 `tlrmchlsmth` on `tests/kernels/quantization/test_nvfp4_moe.py`:93: How long do these tests take to run? I suggest doing something like we do in test cutlass.py and explicitly listing out the m, n, k, e combinations to test. Since these are all powers of two, could you add some nastier ... (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078273339)
+- 2025-05-07 `mgoin` on `tests/kernels/quantization/test_nvfp4_moe.py`: nit: move this to tests/kernels/moe/ (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078276585)
+- 2025-05-07 `tlrmchlsmth` commented: I left a few comments here and there but looks good overall. Thanks for the contribution! (https://github.com/vllm-project/vllm/pull/16362#pullrequestreview-2822850541)
+- 2025-05-07 `mgoin` on `vllm/model_executor/layers/quantization/modelopt.py`:640: This is standard for MoE functions usually though right? (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078305999)
+- 2025-05-07 `pavanimajety` on `vllm/model_executor/layers/quantization/modelopt.py`:640: yeah, just a comment for the expected types :) (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078317298)
+- 2025-05-07 `pavanimajety` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:186: For graph mode, I am allocating a statically sized large blockscale tensor for the activations quantization. I use this m to compute the size for blockscale tensor. The purpose is just a random big number that doesn't cause OOM. (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078322425)
+- 2025-05-07 `pavanimajety` on `csrc/quantization/fp4/nvfp4_blockwise_moe_kernel.cu`:281: Ah good catch. I was earlier using dynamic cluster shape, now it is just cruft. I'll remove these options since we no longer need them. I think in general I have seen it try the hw info.cluster shape first to check if ... (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078325683)
+- 2025-05-07 `pavanimajety` on `benchmarks/kernels/benchmark_cutlass_fp4_moe.py`:78: That's a good point, I'll add a third benchmark when I do the follow-up for more tile sizes and shapes (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078330468)
+- 2025-05-07 `pavanimajety` on `tests/kernels/quantization/test_nvfp4_moe.py`:93: Modified it to run specific sets of shapes. Takes 60s now. (https://github.com/vllm-project/vllm/pull/16362#discussion_r2078496151)
+- 2025-05-08 `tlrmchlsmth` on `tests/kernels/quantization/test_nvfp4_moe.py`: Looks like we need to add some skips to the new tests when unsupported. I think we need functions like cutlass fp4 group mm supported to handle the case where the compiled CUDA version diverges from PyTorch's CUDA version. (https://github.com/vllm-project/vllm/pull/16362#discussion_r2079712062)
+- 2025-05-08 `pavanimajety` on `tests/kernels/quantization/test_nvfp4_moe.py`: Adding the CC check, I accidently got rid of it in the refactoring (https://github.com/vllm-project/vllm/pull/16362#discussion_r2080586823)
+- 2025-05-09 `pavanimajety`: Hey @mgoin the failing tests seem unrelated to the PR. Could you do a merge if it looks good to you? Thanks! (https://github.com/vllm-project/vllm/pull/16362#issuecomment-2867997814)

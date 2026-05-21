@@ -1,69 +1,23 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/TensorRT-LLM#11900](https://github.com/NVIDIA/TensorRT-LLM/pull/11900)
-- Source page: `sources/prs/tensorrt-llm/PR-11900.md`
-- Evidence bundle: `evidence/pull-bundles/tensorrt-llm/gh-11900`
-- Generated at: `2026-05-20T15:17:56.790269+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-03-04T08:09:21Z`
-- Merged: `2026-03-09T05:36:03Z`
-
-## Discussion Counts
-
-- Issue comments: 20
-- Review submissions: 19 (approved=2, commented=17)
-- Inline review comments: 33
-- Review threads observed: 20
-- Resolved/outdated thread markers: resolved=20, outdated=10
-- Human participants with discussion text: coderabbitai, hyukn, limin2021, longlee0622, tensorrt-cicd
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-03-04T08:19:09Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 8 🧹 Nitpick comments (6) tensorrt llm/ torch/custom ops/cute dsl custom ops.py (1) 3013-3016: Clean ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3887855665)
-- `2026-03-04T08:28:01Z` `COMMENTED` by `longlee0622` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3887895967)
-- `2026-03-04T08:28:33Z` `COMMENTED` by `longlee0622` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3887898270)
-- `2026-03-04T08:55:38Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3888020651)
-- `2026-03-04T08:58:07Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3888032837)
-- `2026-03-06T04:14:15Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3901182315)
-- `2026-03-06T06:53:21Z` `APPROVED` by `longlee0622` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3901769007)
-- `2026-03-06T10:53:49Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3903004354)
-- `2026-03-06T12:37:42Z` `COMMENTED` by `hyukn` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3903370840)
-- `2026-03-06T13:38:26Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3903769595)
-- `2026-03-06T13:39:13Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3903772988)
-- `2026-03-06T13:45:51Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3903802581)
-- `2026-03-06T13:48:20Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3903813915)
-- `2026-03-06T14:07:42Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3903914385)
-- `2026-03-06T14:08:01Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3903916453)
-- `2026-03-06T14:08:06Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3903917029)
-- `2026-03-06T14:08:11Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3903917492)
-- `2026-03-06T14:08:22Z` `COMMENTED` by `limin2021` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3903918480)
-- `2026-03-09T02:37:06Z` `APPROVED` by `hyukn` (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3912552431)
-
-## Inline Comment Hotspots
-
-- `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`: 17 inline comment(s)
-- `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`: 11 inline comment(s)
-- `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/__init__.py`: 2 inline comment(s)
-- `tests/unittest/_torch/thop/parallel/test_indexer_topk.py`: 2 inline comment(s)
-- `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_varlen_util.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-04T08:19:09Z` `review` `COMMENTED` by `coderabbitai`; signals: blackwell, block, cache, cute, dtype, hang, kernel, nan; excerpt: "Actionable comments posted: 8 🧹 Nitpick comments (6) tensorrt llm/ torch/custom ops/cute dsl custom ops.py (1) 3013-3016: Clean up the fake registration stub. Line ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#pullrequestreview-3887855665)
-- `2026-03-04T08:19:03Z` `issue` by `coderabbitai`; signals: benchmark, blackwell, block, cuda, cute, dtype, hang, kernel; excerpt: "📝 Walkthrough Walkthrough This PR introduces CuTE DSL Top-K decode functionality for Blackwell GPUs, including a custom CUDA operator, kernel implementations for block prefix ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#issuecomment-3995985804)
-- `2026-03-04T08:19:07Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`:13; signals: benchmark, blackwell, cute, hang, kernel, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major Update the copyright year to reflect this 2026 change. This file is introduced in a PR created on March ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2882427342)
-- `2026-03-04T08:19:07Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_varlen_util.py`:1091; signals: benchmark, blackwell, cuda, cute, kernel, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major create random logits currently ignores its seed for CUDA RNG. Line 1090 hardcodes torch.cuda.manual seed(1111), so CUDA-generated logits are ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2882427357)
-- `2026-03-06T13:38:26Z` `inline` by `limin2021` `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`:1330; signals: accuracy, blackwell, cute, hang, kernel, tensorrt; excerpt: "I will clean up the test in the main in the kernel file in the next MR. The kernel file is copy from dsl ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2895820889)
-- `2026-03-04T08:19:06Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:2798; signals: benchmark, block, cute, cutlass, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major Remove duplicate cutlass/cute imports in this scope. Line 2797 and Line 2798 re-import names already imported in the same ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2882427328)
-- `2026-03-04T08:19:07Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`:33; signals: blackwell, cute, kernel, tensorrt; excerpt: "🛠️ Refactor suggestion 🟠 Major Use module-level imports instead of importing symbols directly. The direct symbol imports here violate the repo import rule and ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2882427348)
-- `2026-03-04T08:19:07Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`:526; signals: blackwell, cute, kernel, tensorrt; excerpt: "⚠️ Potential issue 🔴 Critical load balance=True path passes a missing global counter to dynamic scheduling. When Line 526 enables persistent scheduling, the kernel ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2882427349)
-- `2026-03-04T08:19:07Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`:588; signals: blackwell, cute, kernel, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major Guard unsupported load balance in the multi-CTA wrapper. Line 586 forces enable multi cta=True, but Lines 662/706 still forward ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2882427351)
-- `2026-03-04T08:19:07Z` `inline` by `coderabbitai` `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`:975; signals: blackwell, cute, kernel, tensorrt; excerpt: "⚠️ Potential issue 🟠 Major 🧩 Analysis chain 🏁 Script executed: Repository: NVIDIA/TensorRT-LLM Length of output: 154 --- 🏁 Script executed: Repository: NVIDIA/TensorRT-LLM Length ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2882427355)
-- `2026-03-04T08:28:02Z` `inline` by `longlee0622` `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:321; signals: cute, hang, perf, tensorrt; excerpt: "@limin2021 thanks for the PR. Any measured silicon data to show the perf gain? We do have a few DS R1/3.2 perf tests in ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2882463736)
-- `2026-03-06T12:10:46Z` `inline` by `hyukn` `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`:1330; signals: blackwell, cute, kernel, tensorrt; excerpt: "I highly recommend using a test to cover this part. Because the main code in the core lib might be confusing. We can use ..." (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2895454067)
+- 2026-03-04 `longlee0622` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:321: @limin2021 thanks for the PR. Any measured silicon data to show the perf gain? We do have a few DS R1/3.2 perf tests in CI. Will any of them benefit from this change? If so, @chenfeiz0326 may guide you to run specific ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2882463736)
+- 2026-03-04 `longlee0622` on `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/__init__.py`:1: 2026. same for other license headers (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2882465874)
+- 2026-03-04 `limin2021` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:321: @longlee0622 Hi jonas, I will add the benchmark data latter, because currently, no GPU nodes are available. (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2882590167)
+- 2026-03-04 `tensorrt-cicd`: [PR Github 37687]( [ run ] completed with state SUCCESS. Commit: ed534b8 [/LLM/main/L0 MergeRequest PR pipeline 29169]( completed with status: 'SUCCESS' [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#issuecomment-3998180547)
+- 2026-03-06 `longlee0622` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3614: if block has a return, else: is not needed (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2894151539)
+- 2026-03-06 `tensorrt-cicd`: [PR Github 37986]( [ run ] completed with state SUCCESS. Commit: c79bdb1 [/LLM/main/L0 MergeRequest PR pipeline 29420]( completed with status: 'FAILURE' ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the failures, ask ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#issuecomment-4010108756)
+- 2026-03-06 `limin2021` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3614: The two branches are symmetric (both call runner.forward with slightly different args), so I think if/else reads more clearly here as a "pick one of two" structure. Early return works better for guard clauses. Happy to change if you feel strongly about ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2895127084)
+- 2026-03-06 `hyukn` on `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`:1330: I highly recommend using a test to cover this part. Because the main code in the core lib might be confusing. We can use unittest or a standalone example to do this. Also, run filtered topk decode, run topk decode, generate seq ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2895454067)
+- 2026-03-06 `hyukn` on `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`:658: Do we really need a hard coded here? (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2895457722)
+- 2026-03-06 `hyukn` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3585: Is this mismatched with CUTE DSL TOPK WARMUP BUCKETED NUM COLS? (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2895461462)
+- 2026-03-06 `hyukn` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:2795: Can we combine the two implementations or directly use next positive power of 2? (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2895473641)
+- 2026-03-06 `hyukn` on `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`:615: Not sure if this is really necessary. Is there any issue with directly using next positive power of 2. (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2895488882)
+- 2026-03-06 `hyukn` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:2809: Because init is empty, I recommend making this one a method class (no attributes), or use singleton instead. This can save the host overhead of creating python object. (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2895506861)
+- 2026-03-06 `hyukn` on `tests/unittest/_torch/thop/parallel/test_indexer_topk.py`:293: Consider using pytest.skipif instead of those conditions at the begining. (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2895541724)
+- 2026-03-06 `hyukn` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3290: Can we guarantee that this compile will not occur during the inference stage? This might affect the perf a lot. (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2895564582)
+- 2026-03-06 `limin2021` on `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`:1330: I will clean up the test in the main in the kernel file in the next MR. The kernel file is copy from dsl repo, then during integration process, the kernel file changed (e.g., some bugs fix). After the code is fixed ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2895820889)
+- 2026-03-06 `limin2021` on `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`:658: same as above reason. (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2895824263)
+- 2026-03-06 `limin2021` on `tensorrt_llm/_torch/cute_dsl_kernels/blackwell/top_k/filtered_top_k_decode_varlen.py`:615: Could ignore this. I will delete this in the next MR, and only leave the contents in the class. (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2895853365)
+- 2026-03-06 `limin2021` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:3290: Will do the compilation in the warmup phase. This logic will be in the next MR. (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2895864318)
+- 2026-03-06 `limin2021` on `tensorrt_llm/_torch/custom_ops/cute_dsl_custom_ops.py`:2809: done. changed to method class. (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#discussion_r2895979466)
+- 2026-03-06 `tensorrt-cicd`: [PR Github 38015]( [ run ] completed with state SUCCESS. Commit: dc2f296 [/LLM/main/L0 MergeRequest PR pipeline 29446]( completed with status: 'FAILURE' ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the failures, ask ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#issuecomment-4011995108)
+- 2026-03-06 `tensorrt-cicd`: [PR Github 38037]( [ run ] completed with state FAILURE. Commit: c784439 [/LLM/main/L0 MergeRequest PR pipeline 29465]( completed with status: 'FAILURE' ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the failures, ask ... (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#issuecomment-4012216564)
+- 2026-03-09 `tensorrt-cicd`: [PR Github 38167]( [ run ] completed with state SUCCESS. Commit: fb3e81d [/LLM/main/L0 MergeRequest PR pipeline 29570]( completed with status: 'SUCCESS' Pipeline passed with automatic retried tests. Check the [rerun report]( for details. [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/11900#issuecomment-4021266928)

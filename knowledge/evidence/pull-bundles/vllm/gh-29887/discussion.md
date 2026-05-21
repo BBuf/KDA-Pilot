@@ -1,71 +1,23 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#29887](https://github.com/vllm-project/vllm/pull/29887)
-- Source page: `sources/prs/vllm/PR-29887.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-29887`
-- Generated at: `2026-05-20T15:38:51.117872+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-12-02T14:22:10Z`
-- Merged: `2026-01-15T15:29:54Z`
-
-## Discussion Counts
-
-- Issue comments: 7
-- Review submissions: 33 (approved=2, commented=31)
-- Inline review comments: 35
-- Review threads observed: 16
-- Resolved/outdated thread markers: resolved=2, outdated=9
-- Human participants with discussion text: cursor, ganyi1996ppo, tjtanaa
-- Automation comments/reviews omitted from high-signal summary: 2
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-12-02T14:24:01Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces a new shuffle KV cache layout and an assembly paged attention kernel ... (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3530406781)
-- `2025-12-02T14:28:12Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3530427222)
-- `2025-12-04T05:50:26Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3538246410)
-- `2025-12-04T06:51:36Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3538424108)
-- `2025-12-08T02:41:40Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3549916966)
-- `2025-12-08T02:43:06Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3549919050)
-- `2025-12-08T02:44:13Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3549920696)
-- `2026-01-12T07:55:02Z` `COMMENTED` by `cursor` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3649512392)
-- `2026-01-14T05:42:21Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3658966122)
-- `2026-01-14T05:43:33Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3658968222)
-- `2026-01-14T05:44:27Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3658970792)
-- `2026-01-14T05:45:23Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3658972552)
-- `2026-01-14T05:49:36Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3658980219)
-- `2026-01-14T05:52:59Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3658986291)
-- `2026-01-14T05:53:03Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3658986379)
-- `2026-01-14T05:53:13Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3658986729)
-- `2026-01-14T05:53:17Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3658986847)
-- `2026-01-14T05:55:08Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3658990421)
-- `2026-01-14T05:56:39Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3658993276)
-- `2026-01-14T06:07:21Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3659016848)
-- `2026-01-14T06:09:22Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3659020996)
-- `2026-01-14T07:41:15Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3659312693)
-- `2026-01-14T07:47:33Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3659335021)
-- `2026-01-14T07:48:36Z` `COMMENTED` by `ganyi1996ppo` (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3659338492)
-- ... 9 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/v1/attention/backends/rocm_aiter_fa.py`: 35 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-12-10T08:46:45Z` `issue` by `tjtanaa`; signals: attention, cache, hang, kernel, layout, throughput; excerpt: "@ganyi1996ppo I would suggest creating a new attention backend class. Since the kvcache layout logic and the kernels are independents. This allows to communicate ..." (https://github.com/vllm-project/vllm/pull/29887#issuecomment-3635999081)
-- `2025-12-11T06:34:40Z` `issue` by `ganyi1996ppo`; signals: attention, cache, hang, kernel, layout, throughput; excerpt: "@ganyi1996ppo I would suggest creating a new attention backend class. Since the kvcache layout logic and the kernels are independents. This allows to communicate ..." (https://github.com/vllm-project/vllm/pull/29887#issuecomment-3640453799)
-- `2026-01-15T14:56:24Z` `review` `APPROVED` by `tjtanaa`; signals: accuracy, attention, bf16, cache, fp8, triton; excerpt: "LGTM. I have also validated against baseline. Flexible-Extract Metric (Primary) Implementation Accuracy Stderr Δ from Baseline ---------------- ---------- -------- ----------------- Baseline (TRITON ATTN) 0.9060 ..." (https://github.com/vllm-project/vllm/pull/29887#pullrequestreview-3666028525)
-- `2026-01-12T07:55:02Z` `inline` by `cursor` `vllm/v1/attention/backends/rocm_aiter_fa.py`:795; signals: attention, cache, kv cache, layout, triton; excerpt: "Sliding window extend path uses wrong cache layout High Severity The extend for sliding window function hardcodes kv cache layout="NHD" regardless of USING SHUFFLE ..." (https://github.com/vllm-project/vllm/pull/29887#discussion_r2681184520)
-- `2026-01-12T07:55:02Z` `inline` by `cursor` `vllm/v1/attention/backends/rocm_aiter_fa.py`:245; signals: attention, cache, dtype, kernel, nan; excerpt: "Division by zero when quantizing all-zero values Medium Severity In reshape and cache shuffle kernel, when QUANT is true, k scale and v scale ..." (https://github.com/vllm-project/vllm/pull/29887#discussion_r2681184521)
-- `2026-01-14T06:09:21Z` `inline` by `tjtanaa` `vllm/v1/attention/backends/rocm_aiter_fa.py`:991; signals: attention, cuda, cudagraph, dtype, fp8; excerpt: "Because this part is also invoked outside of cudagraph, like in prefill, let's pre-store the platform dtype value in class property, and prevent keep ..." (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689089807)
-- `2026-01-14T09:02:10Z` `inline` by `ganyi1996ppo` `vllm/v1/attention/backends/rocm_aiter_fa.py`:245; signals: attention, kernel, memory, perf, performance; excerpt: "Since its a pure memory bound kernel, it should have no impact on the kernel performance, and it could be more clearer for reviewer ..." (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689566021)
-- `2026-01-14T06:13:31Z` `issue` by `tjtanaa`; signals: attention, cache, kernel, kv cache, layout; excerpt: "As a footnote for other reviewers, we will introduce another flag, and this will be deprecated in coming months. We have new kernels (that ..." (https://github.com/vllm-project/vllm/pull/29887#issuecomment-3747948757)
-- `2026-01-12T07:55:02Z` `inline` by `cursor` `vllm/v1/attention/backends/rocm_aiter_fa.py`:112; signals: attention, cache, kernel, memory; excerpt: "Missing head offset in output writes causes data corruption High Severity In cp mha gather cache kernel, the output tensors key ptr and value ..." (https://github.com/vllm-project/vllm/pull/29887#discussion_r2681184523)
-- `2026-01-12T07:55:02Z` `inline` by `cursor` `vllm/v1/attention/backends/rocm_aiter_fa.py`:1173; signals: attention, gemm, kernel, tma; excerpt: "Assembly kernel ignores scale, alibi, and softcap parameters High Severity The aiter.pa fwd asm call doesn't pass self.scale, self.alibi slopes, or self.logits soft cap, ..." (https://github.com/vllm-project/vllm/pull/29887#discussion_r2681184525)
-- `2026-01-14T07:41:15Z` `inline` by `ganyi1996ppo` `vllm/v1/attention/backends/rocm_aiter_fa.py`:1176; signals: attention, cuda, cudagraph, kernel; excerpt: "cudagraph only track the kernel, the host code should have no concern on cudagraph. But according to my test, this is compatible with the ..." (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689326744)
-- `2026-01-14T06:07:21Z` `inline` by `tjtanaa` `vllm/v1/attention/backends/rocm_aiter_fa.py`:1176; signals: attention, cuda, cudagraph, race; excerpt: "Do you know if torch.finfo this op will be traced in cudagraph?" (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689086255)
+- 2025-12-04 `tjtanaa` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:33: I understand that we have a lot of flags, but hardcoding the code means we cannot enable the feature at all. (https://github.com/vllm-project/vllm/pull/29887#discussion_r2587665744)
+- 2025-12-04 `ganyi1996ppo` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:33: Yes, for now we might need manual setup of this flag, consider this kernel might not that flexible for different input. Will consider to remove this flag after this kernel be verified by the community (https://github.com/vllm-project/vllm/pull/29887#discussion_r2587800189)
+- 2025-12-04 `ganyi1996ppo`: Can you also share the server command? @tjtanaa The launch script is just as what you normally run the model, qwen for example. Here is my launch script, but you must set the USING SHUFFLE LAYOUT=True first to get the kernel work. (https://github.com/vllm-project/vllm/pull/29887#issuecomment-3610577084)
+- 2025-12-08 `tjtanaa` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:33: As per offline discussion, this was once tested on V0 engine and it is faster on high concurrency (batch size 32) but it is slower when (batch size 32), so let's evaluate when the batch size is small. Because there are usecase ... (https://github.com/vllm-project/vllm/pull/29887#discussion_r2596870688)
+- 2025-12-08 `tjtanaa` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:196: AITER offers a reshape and cache with pertoken quant function that we can use to get a quantized kvcache while also returning ASM layout kvcache. (I don't have a preference, we can either enable in this PR or in another PR) (https://github.com/vllm-project/vllm/pull/29887#discussion_r2596872231)
+- 2025-12-08 `tjtanaa` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:33: If we don't find any regression for all batch sizes, we can temporarily added a flag for user to pick if they want to use the ASM or not, and comment on the flag that it is experimental, we will remove the ... (https://github.com/vllm-project/vllm/pull/29887#discussion_r2596873632)
+- 2025-12-10 `ganyi1996ppo`: hi @tjtanaa , I tested the asm pa and the old pa on Mi308, here is what I get: concurrency 16 8 4 2 1 - - - - - - asm throughput (output token/s) 1759 1144 355 185 103 old pa ... (https://github.com/vllm-project/vllm/pull/29887#issuecomment-3635870638)
+- 2025-12-10 `tjtanaa`: @ganyi1996ppo I would suggest creating a new attention backend class. Since the kvcache layout logic and the kernels are independents. This allows to communicate easier to say "use this ATTENTION backend for high throughput workload". This way also we don't need to ... (https://github.com/vllm-project/vllm/pull/29887#issuecomment-3635999081)
+- 2026-01-12 `ganyi1996ppo`: Update the accuracy result of asm pa with fp8 kv cache on Qwen3-235B-A22B-Instruct-2507-FP8 : (https://github.com/vllm-project/vllm/pull/29887#issuecomment-3737265173)
+- 2026-01-14 `ganyi1996ppo` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:1173: asm pa will calculate the softmax scale inside the kernel (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689038473)
+- 2026-01-14 `ganyi1996ppo` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:795: Sliding window implementation doesn't support shuffle layout, I already add a assert check before. (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689040537)
+- 2026-01-14 `ganyi1996ppo` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:245: For now, we adopt the scale as 1 for quant and dequant, we might update it to per token quant in the future (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689042400)
+- 2026-01-14 `ganyi1996ppo` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:196: We found per token qunat will caused accuracy issue, for now I just use 1.0 to do the quant and dequant (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689044171)
+- 2026-01-14 `tjtanaa` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:467: Shouldn't this be rocm aiter ops.is shuffle kv cache enabled() (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689050903)
+- 2026-01-14 `tjtanaa` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:895: let's use rocm aiter ops.is shuffle kv cache enabled() (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689056764)
+- 2026-01-14 `tjtanaa` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:155: We also have to remove "v0" and "HND" from the message, right? (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689060570)
+- 2026-01-14 `tjtanaa` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:245: If this is the case, will removing the / op for now improve performance? we can document down that it is equivalent to k scale=1.0 and v scale=1.0, and also add a TODO to support scale value that is not equal to ... (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689063299)
+- 2026-01-14 `tjtanaa` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:1176: Do you know if torch.finfo this op will be traced in cudagraph? (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689086255)
+- 2026-01-14 `tjtanaa` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:991: Because this part is also invoked outside of cudagraph, like in prefill, let's pre-store the platform dtype value in class property, and prevent keep on invoking current platform.fp8 dtype() As it will call this property on CPU which can be costly. (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689089807)
+- 2026-01-14 `tjtanaa`: As a footnote for other reviewers, we will introduce another flag, and this will be deprecated in coming months. We have new kernels (that rely on shuffled kvcache) that we want to integrate into this existing class without adding new attention backend. ... (https://github.com/vllm-project/vllm/pull/29887#issuecomment-3747948757)
+- 2026-01-14 `ganyi1996ppo` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:1176: cudagraph only track the kernel, the host code should have no concern on cudagraph. But according to my test, this is compatible with the torch.dynamo (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689326744)
+- 2026-01-14 `ganyi1996ppo` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:991: Ok, maybe I can add an lru cache to this function. (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689343634)
+- 2026-01-14 `ganyi1996ppo` on `vllm/v1/attention/backends/rocm_aiter_fa.py`:245: Since its a pure memory bound kernel, it should have no impact on the kernel performance, and it could be more clearer for reviewer to notice the scale used for quant and dequant is 1.0 (https://github.com/vllm-project/vllm/pull/29887#discussion_r2689566021)

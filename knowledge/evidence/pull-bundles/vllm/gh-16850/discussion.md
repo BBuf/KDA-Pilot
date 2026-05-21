@@ -1,75 +1,40 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#16850](https://github.com/vllm-project/vllm/pull/16850)
-- Source page: `sources/prs/vllm/PR-16850.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-16850`
-- Generated at: `2026-05-20T15:35:02.452777+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-04-18T15:46:46Z`
-- Merged: `2025-05-05T16:39:31Z`
-
-## Discussion Counts
-
-- Issue comments: 15
-- Review submissions: 19 (approved=1, commented=18)
-- Inline review comments: 38
-- Review threads observed: 23
-- Resolved/outdated thread markers: resolved=22, outdated=13
-- Human participants with discussion text: ElizaWszola, jinzhen-lin, mergify, mgoin, robertgshaw2-redhat
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 4
-
-## Review Decisions
-
-- `2025-04-23T02:36:41Z` `COMMENTED` by `mgoin` - This does increase the wheel size by about 10MB to 313MB, so we should try to trim down ... (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2785670546)
-- `2025-04-23T03:01:55Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2785818793)
-- `2025-04-23T03:03:34Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2785806276)
-- `2025-04-23T03:05:16Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2785821563)
-- `2025-04-23T05:17:28Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2785957357)
-- `2025-04-23T05:18:22Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2785958380)
-- `2025-04-23T05:21:04Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2785962077)
-- `2025-04-23T05:25:20Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2785967477)
-- `2025-04-23T06:05:32Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2786031951)
-- `2025-04-23T06:07:02Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2786035172)
-- `2025-04-23T06:09:50Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2786041774)
-- `2025-04-23T07:55:50Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2786317727)
-- `2025-04-23T08:02:13Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2786336077)
-- `2025-04-23T11:59:04Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2787036187)
-- `2025-04-23T12:02:17Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2787045785)
-- `2025-04-29T06:45:36Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2802228199)
-- `2025-04-29T06:56:12Z` `COMMENTED` by `ElizaWszola` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2802274898)
-- `2025-04-29T07:18:24Z` `COMMENTED` by `jinzhen-lin` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2802325423)
-- `2025-05-05T16:14:55Z` `APPROVED` by `mgoin` (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2815341032)
-
-## Inline Comment Hotspots
-
-- `csrc/moe/marlin_moe_wna16/ops.cu`: 9 inline comment(s)
-- `csrc/moe/marlin_moe_wna16/marlin_template.h`: 5 inline comment(s)
-- `CMakeLists.txt`: 4 inline comment(s)
-- `vllm/model_executor/layers/quantization/utils/marlin_utils.py`: 4 inline comment(s)
-- `csrc/quantization/gptq_marlin/generate_kernels.py`: 3 inline comment(s)
-- `vllm/model_executor/layers/quantization/utils/marlin_utils_fp8.py`: 3 inline comment(s)
-- `vllm/scalar_type.py`: 3 inline comment(s)
-- `csrc/moe/marlin_moe_wna16/generate_kernels.py`: 2 inline comment(s)
-- `csrc/quantization/gptq_marlin/gptq_marlin.cu`: 2 inline comment(s)
-- `vllm/model_executor/layers/quantization/fp8.py`: 2 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/fused_marlin_moe.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-04-29T07:18:23Z` `inline` by `jinzhen-lin` `csrc/moe/marlin_moe_wna16/marlin_template.h`:1835; signals: block, memory, moe, shared memory; excerpt: "This optimization aims to minimize redundant reads of matrix A by utilizing the remaining shared memory to store a half-precision matrix of size moe ..." (https://github.com/vllm-project/vllm/pull/16850#discussion_r2065678722)
-- `2025-04-19T13:49:13Z` `issue` by `jinzhen-lin`; signals: benchmark, moe, perf, performance; excerpt: "moe marlin benchmark tests (on A800) ( NOTE1 : The optimization methods introduced in this PR have already been implemented in for cases where ..." (https://github.com/vllm-project/vllm/pull/16850#issuecomment-2816716194)
-- `2025-04-23T07:55:50Z` `inline` by `jinzhen-lin` `vllm/model_executor/layers/quantization/utils/marlin_utils.py`:394; signals: kernel, memory, moe; excerpt: "It seems that gptq/awq marlin does not support using in-place operations here to reduce redundant memory usage. My main goal is to keep the ..." (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055471772)
-- `2025-04-23T12:02:17Z` `inline` by `jinzhen-lin` `csrc/moe/marlin_moe_wna16/ops.cu`:196; signals: memory, moe, shared memory; excerpt: "I miscalculated the shared memory size occupied by scale. Indeed, there's no need to add 1 here. Updated." (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055897104)
-- `2025-04-23T02:54:58Z` `inline` by `mgoin` `vllm/model_executor/layers/quantization/utils/marlin_utils_fp8.py`:120; signals: block, fp8; excerpt: "Please add comments for the operations here, as this answered a question I had with how to support block quant with group quant support ..." (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055169047)
-- `2025-04-23T08:02:13Z` `inline` by `jinzhen-lin` `vllm/model_executor/layers/quantization/utils/marlin_utils.py`:192; signals: block, kernel; excerpt: "Yes. In previous, marlin kernel have (size m / block size m) (size n / block size n) output blocks, so we need a ..." (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055483093)
-- `2025-04-29T06:56:12Z` `inline` by `ElizaWszola` `csrc/moe/marlin_moe_wna16/ops.cu`:361; signals: cute, moe; excerpt: "Does this mean that the code in hqq marlin.py will not be able to execute? Or is there some fallback in place?" (https://github.com/vllm-project/vllm/pull/16850#discussion_r2065647336)
-- `2025-04-23T00:30:38Z` `inline` by `mgoin` `csrc/moe/marlin_moe_wna16/generate_kernels.py`:59; signals: kernel, moe; excerpt: "Please add a comment for this case" (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055078524)
-- `2025-04-23T00:30:51Z` `inline` by `mgoin` `csrc/moe/marlin_moe_wna16/generate_kernels.py`:73; signals: kernel, moe; excerpt: "Please add a comment for this case" (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055078642)
-- `2025-04-23T02:36:41Z` `review` `COMMENTED` by `mgoin`; signals: compile; excerpt: "This does increase the wheel size by about 10MB to 313MB, so we should try to trim down a bit. I think there may ..." (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2785670546)
-- `2025-04-19T14:10:43Z` `issue` by `jinzhen-lin`; signals: benchmark, hang; excerpt: "@mgoin @LucasWilkinson The benchmark results is posted. BTW, should we change the default value of VLLM MARLIN USE ATOMIC ADD to 1 now ? ..." (https://github.com/vllm-project/vllm/pull/16850#issuecomment-2816722820)
-- `2025-05-04T14:16:28Z` `issue` by `jinzhen-lin`; signals: failing, moe; excerpt: "Looks like several of the failing tests are related to the merge 😞 @mgoin The error seems introduced by rebase. FIxed now (The content ..." (https://github.com/vllm-project/vllm/pull/16850#issuecomment-2849245302)
+- 2025-04-19 `jinzhen-lin`: dense marlin benchmark tests (on A800) ![image]( ![image]( ![image]( (https://github.com/vllm-project/vllm/pull/16850#issuecomment-2816696776)
+- 2025-04-19 `jinzhen-lin`: moe marlin benchmark tests (on A800) ( NOTE1 : The optimization methods introduced in this PR have already been implemented in for cases where k <= 256, resulting in limited performance improvement under such conditions.) ( NOTE2 :The "main" section in the ... (https://github.com/vllm-project/vllm/pull/16850#issuecomment-2816716194)
+- 2025-04-19 `jinzhen-lin`: @mgoin @LucasWilkinson The benchmark results is posted. BTW, should we change the default value of VLLM MARLIN USE ATOMIC ADD to 1 now ? (still don't sure if this would cause some bugs though, see ) (https://github.com/vllm-project/vllm/pull/16850#issuecomment-2816722820)
+- 2025-04-23 `mgoin` on `CMakeLists.txt`:309: This is not for the MOE generation right? So should be MARLIN GEN SCRIPT (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055074139)
+- 2025-04-23 `mgoin` on `CMakeLists.txt`:320: Curious why you need cutlass extensions? (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055074594)
+- 2025-04-23 `mgoin` on `CMakeLists.txt`:347: Won't "csrc/quantization/gptq marlin/ .cu" include the following kernels specified in the set(MARLIN SRCS section below? (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055077468)
+- 2025-04-23 `mgoin` on `csrc/moe/marlin_moe_wna16/generate_kernels.py`:59: Please add a comment for this case (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055078524)
+- 2025-04-23 `mgoin` on `csrc/moe/marlin_moe_wna16/marlin_template.h`:652: Why did you move to using auto in many places? (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055134735)
+- 2025-04-23 `mgoin` on `csrc/moe/marlin_moe_wna16/ops.cu`:361: It looks like FZP GET IF isn't called anywhere? (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055141234)
+- 2025-04-23 `mgoin` on `csrc/moe/marlin_moe_wna16/ops.cu`:294: Can you add comments to the beginning of each of these sections? I don't understand what COMMON, BIGGROUP, FZP, ACT are (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055141711)
+- 2025-04-23 `mgoin` on `csrc/moe/marlin_moe_wna16/ops.cu`:405: Did we actually support HQQ for MoE before? (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055142137)
+- 2025-04-23 `mgoin` on `csrc/quantization/gptq_marlin/generate_kernels.py`:36: It looks like "vllm::kU8" is included here actually so we should update the comment. I think it might be fair to remove it at this point though since AWQ 8bit is rare (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055145043)
+- 2025-04-23 `mgoin` on `csrc/quantization/gptq_marlin/generate_kernels.py`:72: Ditto about comments on these cases just to be explicit (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055146060)
+- 2025-04-23 `mgoin` on `csrc/quantization/gptq_marlin/gptq_marlin.cu`:49: Why does this file now have an entrypoint for moe marlin? (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055147274)
+- 2025-04-23 `mgoin` commented: This does increase the wheel size by about 10MB to 313MB, so we should try to trim down a bit. I think there may be some compiled function overlap that I uncovered during review. (https://github.com/vllm-project/vllm/pull/16850#pullrequestreview-2785670546)
+- 2025-04-23 `mgoin` on `vllm/model_executor/layers/quantization/fp8.py`:338: Why can you get rid of the weight scale expand? fp8.py usually makes per-tensor scales, which we don't support (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055164631)
+- 2025-04-23 `mgoin` on `vllm/model_executor/layers/quantization/utils/marlin_utils.py`:192: So we need much smaller workspaces in all cases now? Just making sure that all the changes in places with larger workspaces is intentional (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055165635)
+- 2025-04-23 `mgoin` on `vllm/model_executor/layers/fused_moe/fused_marlin_moe.py`:128: Should we do this warning even if atomic add wasn't enabled? (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055166858)
+- 2025-04-23 `mgoin` on `vllm/model_executor/layers/quantization/utils/marlin_utils.py`:394: Why not pass in the output here if you added the ability to do inplace? (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055167244)
+- 2025-04-23 `mgoin` on `vllm/model_executor/layers/quantization/utils/marlin_utils_fp8.py`:120: Please add comments for the operations here, as this answered a question I had with how to support block quant with group quant support - clever! (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055169047)
+- 2025-04-23 `jinzhen-lin` on `CMakeLists.txt`:309: This is some edits that were accidentally left out after copying. Would be fixed later. (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055173303)
+- 2025-04-23 `mgoin` on `vllm/model_executor/layers/quantization/utils/marlin_utils_fp8.py`:231: Nice optimization for this function. This gave me an idea for an easy comment for future readers if you want to add (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055173570)
+- 2025-04-23 `jinzhen-lin` on `csrc/moe/marlin_moe_wna16/marlin_template.h`:652: Just follow this pr (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055175176)
+- 2025-04-23 `jinzhen-lin` on `csrc/moe/marlin_moe_wna16/ops.cu`:294: The comments are added. (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055263321)
+- 2025-04-23 `jinzhen-lin` on `csrc/moe/marlin_moe_wna16/ops.cu`:405: The Marlin template support is zp float = true (HQQ), but I don't enable it. (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055264017)
+- 2025-04-23 `jinzhen-lin` on `csrc/moe/marlin_moe_wna16/ops.cu`:361: FZP GET IF is for HQQ. Although we don't enable it now, I think it would be better to leave this here. (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055266622)
+- 2025-04-23 `jinzhen-lin` on `csrc/quantization/gptq_marlin/generate_kernels.py`:36: Ok, since vllm awq doesn't support 8bit now, I would remove it so that we can reduce the wheel size. (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055270256)
+- 2025-04-23 `jinzhen-lin` on `vllm/scalar_type.py`:306: some comments: 1. The error msg for ValueError is missing, I have added it just now. 2. Torch ops do not support using ScalarType as an argument type, but I need to pass quant type to torch.ops.vllm.fused marlin moe. Therefore, I can ... (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055311051)
+- 2025-04-23 `jinzhen-lin` on `vllm/model_executor/layers/quantization/utils/marlin_utils_fp8.py`:231: I added a comment about shapes before and after .view(int32). (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055312626)
+- 2025-04-23 `jinzhen-lin` on `vllm/model_executor/layers/quantization/fp8.py`:338: The expansion operation is moved to prepare fp8 layer for marlin. (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055315607)
+- 2025-04-23 `jinzhen-lin` on `vllm/model_executor/layers/quantization/utils/marlin_utils.py`:394: It seems that gptq/awq marlin does not support using in-place operations here to reduce redundant memory usage. My main goal is to keep the parameters consistent with the moe marlin kernel. (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055471772)
+- 2025-04-23 `jinzhen-lin` on `vllm/model_executor/layers/quantization/utils/marlin_utils.py`:192: Yes. In previous, marlin kernel have (size m / block size m) (size n / block size n) output blocks, so we need a workspace with size max m par (size n / min block size n) as barriers. But in fact, ... (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055483093)
+- 2025-04-23 `jinzhen-lin`: @mgoin After removing kU8 support, the wheel size is 306.59MB, which is smaller than the main (307.60MB). Besides, all mentioned comments and typos are updated. (https://github.com/vllm-project/vllm/pull/16850#issuecomment-2824041621)
+- 2025-04-23 `mgoin` on `vllm/scalar_type.py`:306: These comments would be useful to put in the function description, if other users run into the same issues (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055891005)
+- 2025-04-23 `jinzhen-lin` on `csrc/moe/marlin_moe_wna16/ops.cu`:196: I miscalculated the shared memory size occupied by scale. Indeed, there's no need to add 1 here. Updated. (https://github.com/vllm-project/vllm/pull/16850#discussion_r2055897104)
+- 2025-04-29 `ElizaWszola` on `csrc/moe/marlin_moe_wna16/marlin_template.h`:1835: Can you add a comment on what situations this condition covers? (https://github.com/vllm-project/vllm/pull/16850#discussion_r2065615116)
+- 2025-04-29 `ElizaWszola` on `csrc/moe/marlin_moe_wna16/ops.cu`:361: Does this mean that the code in hqq marlin.py will not be able to execute? Or is there some fallback in place? (https://github.com/vllm-project/vllm/pull/16850#discussion_r2065647336)
+- 2025-04-29 `jinzhen-lin` on `csrc/moe/marlin_moe_wna16/marlin_template.h`:1835: This optimization aims to minimize redundant reads of matrix A by utilizing the remaining shared memory to store a half-precision matrix of size moe block size prob k whenever possible. The condition: - slice col == 0: when move to a new ... (https://github.com/vllm-project/vllm/pull/16850#discussion_r2065678722)
+- 2025-05-03 `mgoin`: Looks like several of the failing tests are related to the merge 😞 (https://github.com/vllm-project/vllm/pull/16850#issuecomment-2848728714)
+- 2025-05-04 `jinzhen-lin`: Looks like several of the failing tests are related to the merge 😞 @mgoin The error seems introduced by rebase. FIxed now (The content of test awq marlin.py is test cases for moe, it should be removed, the moe marlin test cases ... (https://github.com/vllm-project/vllm/pull/16850#issuecomment-2849245302)

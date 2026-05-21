@@ -1,73 +1,28 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#30515](https://github.com/vllm-project/vllm/pull/30515)
-- Source page: `sources/prs/vllm/PR-30515.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-30515`
-- Generated at: `2026-05-20T15:39:01.346783+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-12-11T21:12:12Z`
-- Merged: `2026-03-07T21:49:23Z`
-
-## Discussion Counts
-
-- Issue comments: 28
-- Review submissions: 28 (approved=1, changes_requested=1, commented=26)
-- Inline review comments: 32
-- Review threads observed: 18
-- Resolved/outdated thread markers: resolved=17, outdated=16
-- Human participants with discussion text: LopezCastroRoberto, LucasWilkinson, MatthewBonanni, chatgpt-codex-connector, cursor, eugr, mergify, mgoin, robertgshaw2-redhat
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 7
-
-## Review Decisions
-
-- `2025-12-11T21:16:03Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces a mechanism to estimate CUDA graph memory usage during startup, which is ... (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3569342279)
-- `2025-12-11T21:24:57Z` `COMMENTED` by `chatgpt-codex-connector` - 💡 Codex Review Here are some automated review suggestions for this pull request. ℹ️ About Codex in GitHub ... (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3569371019)
-- `2025-12-15T19:09:33Z` `CHANGES_REQUESTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3579718133)
-- `2025-12-16T22:49:25Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3585279736)
-- `2025-12-18T20:22:04Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3594902291)
-- `2025-12-19T16:36:45Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3599260694)
-- `2026-01-12T15:56:07Z` `COMMENTED` by `cursor` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3651501978)
-- `2026-01-12T16:44:19Z` `COMMENTED` by `cursor` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3651716231)
-- `2026-01-12T18:53:32Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3652238133)
-- `2026-01-12T20:14:47Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3652590815)
-- `2026-01-12T20:19:44Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3652605522)
-- `2026-01-12T20:21:48Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3652611447)
-- `2026-01-12T20:34:56Z` `COMMENTED` by `cursor` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3652653074)
-- `2026-01-12T20:58:04Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3652719508)
-- `2026-01-12T21:10:19Z` `COMMENTED` by `cursor` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3652756234)
-- `2026-01-12T21:46:58Z` `COMMENTED` by `cursor` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3652870322)
-- `2026-01-12T22:06:10Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3652929490)
-- `2026-01-23T14:40:33Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3697762763)
-- `2026-01-26T16:00:55Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3706748815)
-- `2026-01-26T17:55:03Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3707259856)
-- `2026-01-26T18:08:58Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3707316934)
-- `2026-02-18T20:03:33Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3821968594)
-- `2026-02-18T22:07:09Z` `COMMENTED` by `MatthewBonanni` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3822469744)
-- `2026-02-24T14:10:56Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/30515#pullrequestreview-3848181679)
-- ... 4 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/v1/worker/gpu_model_runner.py`: 26 inline comment(s)
-- `vllm/v1/worker/gpu_worker.py`: 4 inline comment(s)
-- `vllm/v1/attention/backends/mla/flashattn_mla.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-01-12T20:34:56Z` `inline` by `cursor` `vllm/v1/worker/gpu_model_runner.py`:4813; signals: cache, cuda, cudagraph, kv cache, memory, oom; excerpt: "CUDA graph profiling doesn't count FULL mixed-mode graphs Medium Severity The get cudagraph profiling info() method only counts PIECEWISE graphs when checking mixed mode(), ..." (https://github.com/vllm-project/vllm/pull/30515#discussion_r2683826728)
-- `2025-12-11T21:24:57Z` `inline` by `chatgpt-codex-connector` `vllm/v1/worker/gpu_worker.py`:361; signals: cache, cuda, cudagraph, kv cache, memory; excerpt: ", so its graph captures contribute to profile result.torch peak increase and are already folded into profile result.non kv cache memory. The code here ..." (https://github.com/vllm-project/vllm/pull/30515#discussion_r2612121322)
-- `2026-01-12T18:53:32Z` `inline` by `MatthewBonanni` `vllm/v1/worker/gpu_worker.py`:361; signals: cache, cuda, cudagraph, kv cache, memory; excerpt: "This concern is based on a misunderstanding of how the memory tracking works. There is no double-counting of CUDA graph pool memory. Here's why: ..." (https://github.com/vllm-project/vllm/pull/30515#discussion_r2683494969)
-- `2026-01-12T21:10:19Z` `inline` by `cursor` `vllm/v1/worker/gpu_model_runner.py`:5137; signals: attention, block, cuda, cudagraph, hang; excerpt: "Simple FULL cudagraph mode does not capture any graphs High Severity The condition cudagraph mode.mixed mode() == CUDAGraphMode.PIECEWISE changed from the original != CUDAGraphMode.NONE, ..." (https://github.com/vllm-project/vllm/pull/30515#discussion_r2683921294)
-- `2025-12-16T22:49:25Z` `inline` by `MatthewBonanni` `vllm/v1/attention/backends/mla/flashattn_mla.py`:204; signals: attention, cache, hang, mla; excerpt: "You're right, I removed this. Adding some torch.empty cache() calls ahead of profiling and CG capture (plus one after capture to reduce fragmentation) was ..." (https://github.com/vllm-project/vllm/pull/30515#discussion_r2625003899)
-- `2026-01-12T15:56:07Z` `inline` by `cursor` `vllm/v1/worker/gpu_model_runner.py`:5042; signals: attention, cuda, cudagraph, memory; excerpt: "FULL mode profiling mismatches actual capture settings Medium Severity When profiling FULL mode CUDA graphs, profile cudagraph memory() always uses uniform decode=True and batch ..." (https://github.com/vllm-project/vllm/pull/30515#discussion_r2682884845)
-- `2026-01-12T15:56:07Z` `inline` by `cursor` `vllm/v1/worker/gpu_model_runner.py`:5012; signals: cuda, cudagraph, memory, oom; excerpt: "Empty decode batch sizes causes zero per-graph estimate Medium Severity When get decode cudagraph batch sizes() returns an empty list (which occurs when max ..." (https://github.com/vllm-project/vllm/pull/30515#discussion_r2682884847)
-- `2026-01-12T21:46:58Z` `inline` by `cursor` `vllm/v1/worker/gpu_model_runner.py`:5457; signals: cuda, cute, memory, oom; excerpt: "Piecewise graph memory estimate is zero with single batch size Low Severity When profiling PIECEWISE graphs, if only one batch size is configured, the ..." (https://github.com/vllm-project/vllm/pull/30515#discussion_r2684019330)
-- `2026-01-12T16:24:33Z` `issue` by `mgoin`; signals: memory, nan, perf, performance; excerpt: "After talking with @MatthewBonanni offline about the concerns of messing with --gpu-memory-utilization behavior, we think it makes the most sense to land this functionality ..." (https://github.com/vllm-project/vllm/pull/30515#issuecomment-3739405494)
-- `2026-01-12T20:14:47Z` `inline` by `MatthewBonanni` `vllm/v1/worker/gpu_model_runner.py`:5473; signals: compile, cuda, cudagraph; excerpt: "Not a bug. Piecewise graphs are stored in separate CUDAGraphWrapper instances inside compiled submodules, not in the top-level concrete cudagraph entries. Clearing the top-level ..." (https://github.com/vllm-project/vllm/pull/30515#discussion_r2683770784)
-- `2026-01-12T15:40:37Z` `issue` by `mergify`; signals: failing, hang, nan; excerpt: "Hi @MatthewBonanni, the pre-commit checks have failed. Please run: Then, commit the changes and push to your branch. For future commits, pre-commit will run ..." (https://github.com/vllm-project/vllm/pull/30515#issuecomment-3739198470)
-- `2026-03-04T23:16:01Z` `issue` by `mergify`; signals: failing, hang, nan; excerpt: "Hi @MatthewBonanni, the pre-commit checks have failed. Please run: Then, commit the changes and push to your branch. For future commits, pre-commit will run ..." (https://github.com/vllm-project/vllm/pull/30515#issuecomment-4000905026)
+- 2025-12-11 `LucasWilkinson`: Amazing work thanks for taking this on! Can you please provide logs of: 1) KV-caches sizes with the branch compared to main (with 0.87) 2) Logs showing the actual vs estimated CG sizes (seems like there is already logging code to do ... (https://github.com/vllm-project/vllm/pull/30515#issuecomment-3643843282)
+- 2025-12-12 `robertgshaw2-redhat`: QQ (unrelated to this PR) - why is the FA workspace so large? Is this something we should try to chunk (https://github.com/vllm-project/vllm/pull/30515#issuecomment-3644558855)
+- 2025-12-12 `LucasWilkinson`: moving to draft while we figure out how to get to fully boot (i.e. resolve FA workspace issues) (https://github.com/vllm-project/vllm/pull/30515#issuecomment-3648213394)
+- 2025-12-12 `MatthewBonanni`: @LucasWilkinson got it working completely at 0.9! Just required a small tweak to make sure FA workspace was captured properly. Updated the description accordingly. (https://github.com/vllm-project/vllm/pull/30515#issuecomment-3648469345)
+- 2025-12-15 `LucasWilkinson` on `vllm/v1/attention/backends/mla/flashattn_mla.py`:204: this scares me since it could cause a mismatch between schedule decode for a replay and a capture unless im missing something? I think part of the issues may be a large split buffer caused by a large reorder batch threshold: int ... (https://github.com/vllm-project/vllm/pull/30515#discussion_r2620521623)
+- 2025-12-16 `MatthewBonanni` on `vllm/v1/attention/backends/mla/flashattn_mla.py`:204: You're right, I removed this. Adding some torch.empty cache() calls ahead of profiling and CG capture (plus one after capture to reduce fragmentation) was sufficient to get the PR working without this change. (https://github.com/vllm-project/vllm/pull/30515#discussion_r2625003899)
+- 2025-12-18 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:4863: can we make this less repetitive? (https://github.com/vllm-project/vllm/pull/30515#discussion_r2632515737)
+- 2026-01-12 `mgoin`: After talking with @MatthewBonanni offline about the concerns of messing with --gpu-memory-utilization behavior, we think it makes the most sense to land this functionality behind an environment variable that is off by default. Then we can ask people to experiment with turning ... (https://github.com/vllm-project/vllm/pull/30515#issuecomment-3739405494)
+- 2026-01-12 `MatthewBonanni` on `vllm/v1/worker/gpu_worker.py`:361: This concern is based on a misunderstanding of how the memory tracking works. There is no double-counting of CUDA graph pool memory. Here's why: 1. torch peak increase (part of non kv cache memory) uses torch.cuda.memory stats()["allocated bytes.all.peak"] which only tracks PyTorch's ... (https://github.com/vllm-project/vllm/pull/30515#discussion_r2683494969)
+- 2026-01-12 `MatthewBonanni` on `vllm/v1/worker/gpu_model_runner.py`:5473: Not a bug. Piecewise graphs are stored in separate CUDAGraphWrapper instances inside compiled submodules, not in the top-level concrete cudagraph entries. Clearing the top-level entries only affects FULL graphs. (https://github.com/vllm-project/vllm/pull/30515#discussion_r2683770784)
+- 2026-01-12 `MatthewBonanni` on `vllm/v1/worker/gpu_model_runner.py`:5042: mixed mode is only ever PIECEWISE or NONE. FULL graphs are only ever captured for decode-only batches (via decode mode() == FULL), which use uniform decode=True (https://github.com/vllm-project/vllm/pull/30515#discussion_r2683784372)
+- 2026-01-12 `MatthewBonanni` on `vllm/v1/worker/gpu_model_runner.py`:4813: Non-issue, mixed mode is never FULL (https://github.com/vllm-project/vllm/pull/30515#discussion_r2683887719)
+- 2026-01-12 `MatthewBonanni` on `vllm/v1/worker/gpu_model_runner.py`:5457: This is a rare edge case and worst-case scenario recovers current behavior (https://github.com/vllm-project/vllm/pull/30515#discussion_r2684067221)
+- 2026-01-23 `LucasWilkinson` on `vllm/v1/worker/gpu_worker.py`:472: is full graph memory bytes needed? (https://github.com/vllm-project/vllm/pull/30515#discussion_r2721407155)
+- 2026-01-23 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:4967: get the pool from platform to make sure this isnt nvidia specfic; also if we capture the largest grraphs first here its ok to use the same pool that will be used for the real cudagraph capture (https://github.com/vllm-project/vllm/pull/30515#discussion_r2721440535)
+- 2026-01-23 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:4985: is this really necessary since we can ignore the first return? (https://github.com/vllm-project/vllm/pull/30515#discussion_r2721448255)
+- 2026-01-23 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:4900: amd uses this model runner too so need something not cuda specific (https://github.com/vllm-project/vllm/pull/30515#discussion_r2721451814)
+- 2026-01-23 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:4829: can we not get this information more naturally from the cudagraph disaptacher? i think we can refactor GPUModelRunner.capture model to do this to (https://github.com/vllm-project/vllm/pull/30515#discussion_r2721473424)
+- 2026-01-23 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:5155: can we generally use the memory profiling from vllm/utils/mem utils.py? (https://github.com/vllm-project/vllm/pull/30515#discussion_r2721481927)
+- 2026-01-26 `MatthewBonanni` on `vllm/v1/worker/gpu_worker.py`:472: This was left over from earlier, removed in [c946aae]( (https://github.com/vllm-project/vllm/pull/30515#discussion_r2728205191)
+- 2026-01-26 `MatthewBonanni` on `vllm/v1/worker/gpu_model_runner.py`:4900: This should work on AMD too, no? I've changed the references in this PR to current platform.synchronize() in is also used in many other places in this file (https://github.com/vllm-project/vllm/pull/30515#discussion_r2728648741)
+- 2026-01-26 `MatthewBonanni` on `vllm/v1/worker/gpu_model_runner.py`:4967: Made cross-platform in [041c1fc]( see We already capture the PIECEWISE graphs in the global pool since we reuse them, but for the FULL graphs, I don't think we can use the same pool if we aren't using the same kv cache buffers, ... (https://github.com/vllm-project/vllm/pull/30515#discussion_r2728693723)
+- 2026-02-18 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:5244: second largest, largest = sorted(batch sizes)[-2:] (https://github.com/vllm-project/vllm/pull/30515#discussion_r2824212386)
+- 2026-02-18 `MatthewBonanni` on `vllm/v1/worker/gpu_model_runner.py`:4985: We use it to estimate the fixed cost in the first FULL capture and ignore it in the PIECEWISE captures (https://github.com/vllm-project/vllm/pull/30515#discussion_r2824691061)
+- 2026-02-24 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:5290: can we use self.cudagraph dispatcher.get capture descs() like in: (https://github.com/vllm-project/vllm/pull/30515#discussion_r2847399335)
+- 2026-02-24 `LucasWilkinson` on `vllm/v1/worker/gpu_model_runner.py`:5542: can we remove duplication with self. capture cudagraphs? (https://github.com/vllm-project/vllm/pull/30515#discussion_r2847409291)
+- 2026-02-24 `MatthewBonanni` on `vllm/v1/worker/gpu_model_runner.py`:5542: self. capture cudagraphs calls self. warmup and capture, so there isn't duplication. Maybe the names should be clearer? (https://github.com/vllm-project/vllm/pull/30515#discussion_r2849534437)
+- 2026-03-04 `MatthewBonanni`: Holding off on merge until I figure out why caused a significant increase in pytorch reserved but unallocated memory, causing OOMs (https://github.com/vllm-project/vllm/pull/30515#issuecomment-4000456667)

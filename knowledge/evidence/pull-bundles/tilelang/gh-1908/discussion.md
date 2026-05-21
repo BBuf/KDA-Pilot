@@ -1,70 +1,35 @@
-# PR Discussion Digest
-
-- Source PR: [tile-ai/tilelang#1908](https://github.com/tile-ai/tilelang/pull/1908)
-- Source page: `sources/prs/tilelang/PR-1908.md`
-- Evidence bundle: `evidence/pull-bundles/tilelang/gh-1908`
-- Generated at: `2026-05-20T15:32:35.065909+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-03-07T09:22:12Z`
-- Merged: `2026-05-20T06:44:17Z`
-
-## Discussion Counts
-
-- Issue comments: 34
-- Review submissions: 13 (approved=1, commented=12)
-- Inline review comments: 45
-- Review threads observed: 42
-- Resolved/outdated thread markers: resolved=28, outdated=39
-- Human participants with discussion text: He-Jingkai, LeiWang1999, Rachmanino, coderabbitai, sigmoidsee
-- Automation comments/reviews omitted from high-signal summary: 3
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-03-07T09:53:11Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 20 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to ... (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3908391419)
-- `2026-03-09T11:38:00Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 4 ♻️ Duplicate comments (3) docs/programming guides/cluster tma.md (1) 6-6: ⚠️ Potential issue 🟡 Minor ... (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3914792461)
-- `2026-03-09T13:04:19Z` `COMMENTED` by `sigmoidsee` (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3915270513)
-- `2026-03-09T13:05:05Z` `COMMENTED` by `coderabbitai` (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3915275645)
-- `2026-03-09T14:08:45Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 1 ♻️ Duplicate comments (3) src/op/copy.cc (3) 1479-1518: ⚠️ Potential issue 🟠 Major The bulk ... (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3915677918)
-- `2026-03-09T14:30:59Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 1 ♻️ Duplicate comments (3) src/op/copy.cc (3) 934-948: ⚠️ Potential issue 🟠 Major Don't reject ... (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3915835367)
-- `2026-03-09T14:40:15Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 2 ♻️ Duplicate comments (2) src/transform/warp specialized rewriter.cc (2) 1488-1493: ⚠️ Potential issue 🟡 Minor ... (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3915902826)
-- `2026-03-10T07:37:16Z` `COMMENTED` by `Rachmanino` (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3912532947)
-- `2026-03-13T05:48:38Z` `COMMENTED` by `Rachmanino` (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3941815380)
-- `2026-03-13T05:54:56Z` `COMMENTED` by `Rachmanino` (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3941835733)
-- `2026-03-13T05:58:07Z` `COMMENTED` by `Rachmanino` - left some minor comments. Besides, I think we should discuss with @LeiWang1999 on the frontend API design: whether ... (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3941849721)
-- `2026-04-13T09:39:02Z` `COMMENTED` by `LeiWang1999` - Thanks for your contributions! I left some comments. (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-4097651362)
-- `2026-05-20T06:43:30Z` `APPROVED` by `LeiWang1999` (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-4325252295)
-
-## Inline Comment Hotspots
-
-- `tilelang/language/builtin.py`: 6 inline comment(s)
-- `src/op/copy.cc`: 5 inline comment(s)
-- `docs/programming_guides/cluster_tma.md`: 4 inline comment(s)
-- `src/transform/inject_tma_barrier.cc`: 4 inline comment(s)
-- `tilelang/language/copy_op.py`: 4 inline comment(s)
-- `src/transform/lower_hopper_intrin.cc`: 3 inline comment(s)
-- `src/transform/warp_specialized_rewriter.cc`: 3 inline comment(s)
-- `tilelang/engine/phase.py`: 3 inline comment(s)
-- `src/tl_templates/cuda/cluster.h`: 2 inline comment(s)
-- `src/transform/lower_tile_op.cc`: 2 inline comment(s)
-- `testing/python/cuda/test_tma_dsmem.py`: 2 inline comment(s)
-- `src/transform/pipeline_planning.cc`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-07T09:53:11Z` `review` `COMMENTED` by `coderabbitai`; signals: cuda, hang, hopper, pipeline, sm90, tile, tma, warp; excerpt: "Actionable comments posted: 20 [!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range ..." (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3908391419)
-- `2026-03-09T11:38:00Z` `review` `COMMENTED` by `coderabbitai`; signals: block, compile, cuda, dtype, hang, hopper, layout, ptx; excerpt: "Actionable comments posted: 4 ♻️ Duplicate comments (3) docs/programming guides/cluster tma.md (1) 6-6: ⚠️ Potential issue 🟡 Minor Use the current cluster dims launch ..." (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3914792461)
-- `2026-03-09T14:08:45Z` `review` `COMMENTED` by `coderabbitai`; signals: compile, cuda, hang, hopper, layout, memory, ptx, tile; excerpt: "Actionable comments posted: 1 ♻️ Duplicate comments (3) src/op/copy.cc (3) 1479-1518: ⚠️ Potential issue 🟠 Major The bulk cluster fast path still assumes contiguous ..." (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3915677918)
-- `2026-03-09T14:30:59Z` `review` `COMMENTED` by `coderabbitai`; signals: dtype, hang, hopper, layout, memory, ptx, tile, tma; excerpt: "Actionable comments posted: 1 ♻️ Duplicate comments (3) src/op/copy.cc (3) 934-948: ⚠️ Potential issue 🟠 Major Don't reject multicast loads just because they're 1D-eligible. ..." (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3915835367)
-- `2026-03-09T14:40:15Z` `review` `COMMENTED` by `coderabbitai`; signals: cuda, cute, hang, pipeline, tile, tma, warp; excerpt: "Actionable comments posted: 2 ♻️ Duplicate comments (2) src/transform/warp specialized rewriter.cc (2) 1488-1493: ⚠️ Potential issue 🟡 Minor Missing check for else case before ..." (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3915902826)
-- `2026-03-07T09:22:29Z` `issue` by `coderabbitai`; signals: block, cuda, hang, hopper, memory, pipeline, ptx, regression; excerpt: "[!NOTE] Reviews paused It looks like this branch is under active development. To avoid overwhelming you with review comments due to an influx of ..." (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4016075964)
-- `2026-03-09T14:40:14Z` `inline` by `coderabbitai` `tilelang/engine/phase.py`:300; signals: alignment, hopper, kernel, memory, occupancy, tile, tma; excerpt: "⚠️ Potential issue 🟠 Major Scope the 128-byte alignment to kernels that actually use TMA. Line 295 now flips align bytes based on target-level ..." (https://github.com/tile-ai/tilelang/pull/1908#discussion_r2905873071)
-- `2026-03-07T09:53:08Z` `inline` by `coderabbitai` `testing/python/cuda/test_tma_multicast_demo.py`:45; signals: compile, cuda, hopper, kernel, sm90, tma; excerpt: "⚠️ Potential issue 🟠 Major Guard this Hopper-only test. The test unconditionally compiles and launches a cluster-TMA kernel. On non-CUDA or pre-SM90 runners, that ..." (https://github.com/tile-ai/tilelang/pull/1908#discussion_r2899438914)
-- `2026-03-07T09:53:08Z` `inline` by `coderabbitai` `tilelang/engine/phase.py`:300; signals: alignment, hopper, kernel, tile, tma, warp; excerpt: "⚠️ Potential issue 🟠 Major Align shared allocations for any TMA-lowered kernel. Line 295 only switches to 128-byte alignment when warp specialization is also ..." (https://github.com/tile-ai/tilelang/pull/1908#discussion_r2899438920)
-- `2026-03-09T14:40:14Z` `inline` by `coderabbitai` `testing/python/cuda/test_tma_dsmem.py`:84; signals: block, cuda, kernel, regression, tile, tma; excerpt: "⚠️ Potential issue 🟠 Major Assert the tl::tma store cluster lowering, not just the output. This check only proves functional equivalence. The documented slow ..." (https://github.com/tile-ai/tilelang/pull/1908#discussion_r2905873052)
-- `2026-03-07T09:53:07Z` `inline` by `coderabbitai` `src/op/copy.cc`:936; signals: block, hopper, ptx, tma; excerpt: "⚠️ Potential issue 🟠 Major dst block currently bypasses target-capability checks. Once dst block is set, Lower() jumps straight into cluster lowering and can ..." (https://github.com/tile-ai/tilelang/pull/1908#discussion_r2899438863)
-- `2026-03-07T09:53:07Z` `inline` by `coderabbitai` `src/transform/lower_tile_op.cc`:671; signals: layout, memory, tile, tma; excerpt: "⚠️ Potential issue 🟠 Major tma store cluster still needs normal shared-layout address remapping. Line 668 forces this path through in tma context , ..." (https://github.com/tile-ai/tilelang/pull/1908#discussion_r2899438888)
+- 2026-03-09 `Rachmanino` on `src/tl_templates/cuda/barrier.h`: No need to introduce such extra template functions here: mbarrier {init, wait, arrive}. As we applied using Barrier = cutlass::arch::ClusterTransactionBarrier;, we can simply handle them in codegen (checkout codegen cuda.cc) (https://github.com/tile-ai/tilelang/pull/1908#discussion_r2902881305)
+- 2026-03-09 `Rachmanino` on `src/backend/cuda/codegen/codegen_cuda.cc`: plz remove these mbarrier related function's codegen (same reason as above) (https://github.com/tile-ai/tilelang/pull/1908#discussion_r2902889446)
+- 2026-03-09 `Rachmanino` on `src/target/codegen_cuda.cc`:3142: wonder whether we could reuse functions in cluster.h and remove dependency on cg. (https://github.com/tile-ai/tilelang/pull/1908#discussion_r2902893368)
+- 2026-03-09 `Rachmanino` on `tilelang/language/builtin.py`:32: remove this function directly (https://github.com/tile-ai/tilelang/pull/1908#discussion_r2902898661)
+- 2026-03-09 `Rachmanino` on `tilelang/language/builtin.py`:427: we don not need this function exposed to frontend, as lower tma barrier.cc will automatically inject mbarrier init stmts for us (https://github.com/tile-ai/tilelang/pull/1908#discussion_r2902900436)
+- 2026-03-09 `Rachmanino` on `tilelang/language/builtin.py`:644: duplicated with functions in language/cluster.py (https://github.com/tile-ai/tilelang/pull/1908#discussion_r2902901779)
+- 2026-03-09 `Rachmanino` on `tilelang/language/copy_op.py`: not sure whether we shall expose all these params to T.copy APIs? cc @LeiWang1999 (https://github.com/tile-ai/tilelang/pull/1908#discussion_r2902906024)
+- 2026-03-09 `Rachmanino`: Thanks for you awesome contribution! Left some comments though, we can discuss on them later. I can also fix them for you if needed :) (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4020728028)
+- 2026-03-09 `sigmoidsee` on `src/transform/inject_tma_barrier.cc`:112: In this change, my intent was to fix a different issue: the default StmtExprVisitor walks both then and else, which double-counts mutually exclusive paths and can overestimate mbarrier expect tx. For the specific if/else shape this pass is targeting, both branches are ... (https://github.com/tile-ai/tilelang/pull/1908#discussion_r2905302068)
+- 2026-03-10 `Rachmanino`: Deeply appreciate that! 👏I’ll take a look when I’m available ---- Replied Message ---- From Jingkai @ . Date 03/10/2026 12:46 To @ . Cc Tong @ . , Mention @ . Subject Re: [tile-ai/tilelang] [Feature] Extend T.copy to support TMA multicast ... (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4028725506)
+- 2026-03-10 `Rachmanino`: Hi @Rachmanino , all comments have been addressed. Could you please take another look? Thanks! Actually my comments above have not been resolved. Please consider them, thanks (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4029014035)
+- 2026-03-10 `He-Jingkai`: @Rachmanino I can only see the commits from CodeRabbit, but don't see any manual comments from you yet. Not sure if I missed something or if they are still in pending status? (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4029080338)
+- 2026-03-10 `Rachmanino`: @Rachmanino I can only see the commits from CodeRabbit, but don't see any manual comments from you yet. Not sure if I missed something or if they are still in pending status? <img alt="截屏2026-03-10 14 46 08" width="1102" height="1168" src=" Sry for ... (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4029326113)
+- 2026-03-13 `Rachmanino` on `tilelang/language/builtin.py`:600: Duplicated with T.block rank in cluster (https://github.com/tile-ai/tilelang/pull/1908#discussion_r2929216279)
+- 2026-03-13 `Rachmanino` on `src/op/builtin.h`:266: I suggest renaming this to sth like ptx arrive cluster barerier (which is used in 1882) to align with the single-cta version intrin ptx arrive barrier (https://github.com/tile-ai/tilelang/pull/1908#discussion_r2929235231)
+- 2026-03-13 `Rachmanino` commented: left some minor comments. Besides, I think we should discuss with @LeiWang1999 on the frontend API design: whether to append new params to T.copy (I'm a bit worried about that there seems to have many params now) or to create a new ... (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-3941849721)
+- 2026-03-16 `He-Jingkai`: whether to append new params to T.copy (I'm a bit worried about that there seems to have many params now) or to create a new interface (sth like T.copy cluster) I agree. Creating a more specific interface like T.copy cluster seems like ... (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4064720053)
+- 2026-03-17 `He-Jingkai`: @Rachmanino We have gone with T.copy cluster and keep T.copy simple and focused. And the comments are fixed. (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4072794921)
+- 2026-03-17 `Rachmanino`: Plz remove unused mbarrier arrive in builin.cc. Another small question: I see nothing like ptx arrive barrier in the codebase changes. Is it not used at all in this pr? (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4074545403)
+- 2026-03-17 `He-Jingkai`: @Rachmanino Good catch, and thanks for the careful review. To clarify: this PR does not use ptx arrive barrier, but it does introduce use of ptx arrive cluster barrier. T.cluster copy is lowered through three distinct paths in LowerClusterCopy (copy.cc): - TMA ... (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4074927317)
+- 2026-03-18 `He-Jingkai`: @Rachmanino Let me know if there are further changes needed (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4080058020)
+- 2026-03-18 `He-Jingkai`: SIMT element-wise fallback (non-contiguous src/dst regions such as non-full-span multi-dimensional tiles): all threads cooperatively write via cooperative groups::map shared rank. When a remote barrierwas supplied but the fast path could not be taken, we auto-generate a thread-0-guarded ptx arrive cluster barrier call ... (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4080330411)
+- 2026-03-18 `Rachmanino`: I have no further concern as long as CI passed, cc @LeiWang1999. Besides, just a friendly note: some TileLang APIs have changed in recent prs (e.g. it is required to use T.tma copy to manually bind tma load and barrier) (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4083058121)
+- 2026-03-20 `He-Jingkai`: @Rachmanino We've merged the recent changes. Could you please help us to rerun the CI? (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4094941244)
+- 2026-03-20 `Rachmanino`: @Rachmanino We've merged the recent changes. Could you please help us to rerun the CI? Sure, ask me whenever in need! (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4096072741)
+- 2026-03-26 `He-Jingkai`: Hi @Rachmanino @LeiWang1999 , just a gentle follow-up. Since there are frequent changes in the upstream, we have to resolve conflicts and rerun the CI quite often to keep this branch updated. 🥺 Is there anything else you'd like us to address, ... (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4132459402)
+- 2026-04-13 `LeiWang1999` on `tilelang/engine/phase.py`:10: it's likely that mod uses tma barriers is never called (https://github.com/tile-ai/tilelang/pull/1908#discussion_r3072010308)
+- 2026-04-13 `LeiWang1999` on `tilelang/language/builtin.py`:649: Docstring claims codegen emits cooperative groups::this cluster().num blocks(), but the actual codegen (codegen cuda.cc:3412-3416) emits tl::cluster shape().x .y .z. (https://github.com/tile-ai/tilelang/pull/1908#discussion_r3072063404)
+- 2026-04-13 `LeiWang1999` on `src/op/copy.cc`:1610: It finds the first non-trivial-extent dim (pivot) but only checks dims after pivot are full-span. It never checks dims before pivot have extent 1 — unlike the outer is contiguous region in LowerClusterCopy (lines 672-688), which does. In practice MakeTMARows is only ... (https://github.com/tile-ai/tilelang/pull/1908#discussion_r3072073353)
+- 2026-04-13 `LeiWang1999` on `src/tl_templates/cuda/cluster.h`:14: I don't see any call site in the diff? (https://github.com/tile-ai/tilelang/pull/1908#discussion_r3072092239)
+- 2026-04-13 `LeiWang1999` on `src/transform/lower_hopper_intrin.cc`:25: declared but I don't see its use in the diff excerpts I read (https://github.com/tile-ai/tilelang/pull/1908#discussion_r3072097533)
+- 2026-04-13 `LeiWang1999` commented: Thanks for your contributions! I left some comments. (https://github.com/tile-ai/tilelang/pull/1908#pullrequestreview-4097651362)
+- 2026-04-16 `He-Jingkai`: I saw random RuntimeError: Compilation error: (caused by SIGTERM) in recent CI runs, but I cannot reproduce the errors in my environment. I'm wondering if this is caused by resource contention in the CI environment? (e.g., CPU OOM) I'm still trying to ... (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4259818593)
+- 2026-04-17 `He-Jingkai`: @regression-perf Does it require a regression-perf check? (https://github.com/tile-ai/tilelang/pull/1908#issuecomment-4265821605)
+- 2026-05-20 `LeiWang1999` on `tilelang/language/copy_op.py`: This is likely not relevant to the changes in this PR? (https://github.com/tile-ai/tilelang/pull/1908#discussion_r3271277661)

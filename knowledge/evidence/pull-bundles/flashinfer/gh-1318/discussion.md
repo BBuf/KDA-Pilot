@@ -1,75 +1,31 @@
-# PR Discussion Digest
-
-- Source PR: [flashinfer-ai/flashinfer#1318](https://github.com/flashinfer-ai/flashinfer/pull/1318)
-- Source page: `sources/prs/flashinfer/PR-1318.md`
-- Evidence bundle: `evidence/pull-bundles/flashinfer/gh-1318`
-- Generated at: `2026-05-20T15:22:18.603836+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-07-24T09:31:10Z`
-- Merged: `2025-07-29T00:51:14Z`
-
-## Discussion Counts
-
-- Issue comments: 6
-- Review submissions: 32 (approved=1, commented=31)
-- Inline review comments: 39
-- Review threads observed: 21
-- Resolved/outdated thread markers: resolved=17, outdated=18
-- Human participants with discussion text: nvpohanh, weireweire, yyihuang, yzh119
-- Automation comments/reviews omitted from high-signal summary: 6
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 1
-
-## Review Decisions
-
-- `2025-07-24T09:31:57Z` `COMMENTED` by `gemini-code-assist` - Summary of Changes Hello @weireweire, I'm Gemini Code Assist[^1]! I'm currently reviewing this pull request and will post ... (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3050873362)
-- `2025-07-24T09:33:26Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces support for nvfp4 output in the trtllm-gen function call, which is a ... (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3050878921)
-- `2025-07-24T11:33:02Z` `COMMENTED` by `yzh119` - Overall LGTM, @weireweire thanks for your contribution! Left some suggestions for improvements. (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3051236487)
-- `2025-07-25T02:05:29Z` `COMMENTED` by `weireweire` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3053870275)
-- `2025-07-25T02:10:46Z` `COMMENTED` by `weireweire` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3053877816)
-- `2025-07-25T02:12:43Z` `COMMENTED` by `weireweire` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3053879960)
-- `2025-07-25T02:12:47Z` `COMMENTED` by `weireweire` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3053880028)
-- `2025-07-25T02:17:09Z` `COMMENTED` by `weireweire` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3053885848)
-- `2025-07-25T02:22:12Z` `COMMENTED` by `nvpohanh` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3053891182)
-- `2025-07-25T02:23:57Z` `COMMENTED` by `nvpohanh` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3053892985)
-- `2025-07-25T02:59:57Z` `COMMENTED` by `weireweire` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3053946755)
-- `2025-07-25T03:09:29Z` `COMMENTED` by `weireweire` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3053959594)
-- `2025-07-25T04:45:36Z` `COMMENTED` by `nvpohanh` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3054068256)
-- `2025-07-25T04:48:06Z` `COMMENTED` by `nvpohanh` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3054071741)
-- `2025-07-25T04:48:36Z` `COMMENTED` by `nvpohanh` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3054072535)
-- `2025-07-25T04:54:02Z` `COMMENTED` by `nvpohanh` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3054079468)
-- `2025-07-25T04:55:17Z` `COMMENTED` by `nvpohanh` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3054080838)
-- `2025-07-25T04:55:54Z` `COMMENTED` by `nvpohanh` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3054081598)
-- `2025-07-25T04:56:44Z` `COMMENTED` by `nvpohanh` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3054082622)
-- `2025-07-25T04:57:14Z` `COMMENTED` by `nvpohanh` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3054083236)
-- `2025-07-25T05:18:25Z` `COMMENTED` by `weireweire` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3054111781)
-- `2025-07-25T05:48:04Z` `COMMENTED` by `nvpohanh` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3054175151)
-- `2025-07-25T08:05:21Z` `COMMENTED` by `weireweire` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3054506968)
-- `2025-07-25T08:58:15Z` `COMMENTED` by `weireweire` (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3054655730)
-- ... 8 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `csrc/trtllm_fmha_kernel_launcher.cu`: 14 inline comment(s)
-- `flashinfer/decode.py`: 11 inline comment(s)
-- `flashinfer/utils.py`: 8 inline comment(s)
-- `tests/utils_fp4.py`: 5 inline comment(s)
-- `tests/test_trtllm_gen_decode.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-07-25T04:56:44Z` `inline` by `nvpohanh` `flashinfer/utils.py`:519; signals: flashinfer, fp4, mxfp4, nvfp4; excerpt: "Maybe call it NVFP4Tensor? Just to distinguish it from MXFP4 (which is E2M1 data + E8M0 sf) in case we add that later?" (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230137464)
-- `2025-07-25T09:17:25Z` `inline` by `weireweire` `flashinfer/utils.py`:519; signals: dtype, flashinfer, fp4, nvfp4; excerpt: "added dtype = "nvfp4"" (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230603425)
-- `2025-07-25T04:55:17Z` `inline` by `nvpohanh` `flashinfer/decode.py`:1977; signals: dtype, flashinfer, fp4; excerpt: "just a thought: If we return FP4Tensor, should we also just ask user to provide FP4Tensor when output dtype is fp4? Otherwise, the asymmetry ..." (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230135938)
-- `2025-07-25T02:12:43Z` `inline` by `weireweire` `csrc/trtllm_fmha_kernel_launcher.cu`:256; signals: cache, kernel; excerpt: "we only have a key value cache as argument, I think we can only check with that and not really support k-dim != v-dim" (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2229978586)
-- `2025-07-25T04:55:54Z` `inline` by `nvpohanh` `flashinfer/decode.py`:2016; signals: dtype, flashinfer; excerpt: "maybe to tight? if user already provides out/out scale factor, we should be able to infer out dtype from it, right?" (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230136585)
-- `2025-07-25T13:18:16Z` `inline` by `yzh119` `tests/utils_fp4.py`:86; signals: fp4, hang; excerpt: "also please comment if we need to make fp4 quantize op also return a FP4Tensor wrapper instead of two tensor I welcome such design, ..." (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2231064399)
-- `2025-07-24T11:24:46Z` `inline` by `yzh119` `tests/utils_fp4.py`:86; signals: flashinfer, fp4; excerpt: "you can import it from flashinfer.utils" (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2228238372)
-- `2025-07-25T09:11:22Z` `issue` by `weireweire`; signals: cache, kv cache; excerpt: "@nvpohanh @yzh119 I added a new commit to optimize the trtllm batch decode with kv cache API to use different type, please have a ..." (https://github.com/flashinfer-ai/flashinfer/pull/1318#issuecomment-3117013759)
-- `2025-07-24T11:29:04Z` `inline` by `yzh119` `csrc/trtllm_fmha_kernel_launcher.cu`:256; signals: kernel; excerpt: "Better to add a equality check with key.size(-1), to avoid errors when q and k's data type is different (mixed precision)," (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2228247128)
-- `2025-07-24T11:32:31Z` `inline` by `yzh119` `csrc/trtllm_fmha_kernel_launcher.cu`:185; signals: kernel; excerpt: "the type of out scale factor could be std::optional so that we can pass None instead of empty(0) at python side." (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2228253709)
-- `2025-07-25T02:17:09Z` `inline` by `weireweire` `tests/utils_fp4.py`:86; signals: fp4; excerpt: "note the filename is util fp4.py, cause I want all util become util xx.py so that the are in similar position in file explore. ..." (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2229982857)
-- `2025-07-25T02:22:11Z` `inline` by `nvpohanh` `csrc/trtllm_fmha_kernel_launcher.cu`:185; signals: kernel; excerpt: "It seems that the convention is: - Use at::Tensor const& for required non-mutable tensor. - Use at::Tensor& for required mutable tensor. - Use at::optional ..." (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2229987196)
+- 2025-07-24 `yzh119` on `flashinfer/decode.py`:1822: Add some comments when arguments meaning is not clear. (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2228234915)
+- 2025-07-24 `yzh119` on `tests/utils_fp4.py`:86: you can import it from flashinfer.utils (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2228238372)
+- 2025-07-24 `yzh119` on `csrc/trtllm_fmha_kernel_launcher.cu`:256: Better to add a equality check with key.size(-1), to avoid errors when q and k's data type is different (mixed precision), (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2228247128)
+- 2025-07-24 `yzh119` on `csrc/trtllm_fmha_kernel_launcher.cu`:260: ditto, add an equality check with value.size(-1) (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2228250671)
+- 2025-07-24 `yzh119` on `csrc/trtllm_fmha_kernel_launcher.cu`:185: the type of out scale factor could be std::optional so that we can pass None instead of empty(0) at python side. (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2228253709)
+- 2025-07-24 `yzh119` commented: Overall LGTM, @weireweire thanks for your contribution! Left some suggestions for improvements. (https://github.com/flashinfer-ai/flashinfer/pull/1318#pullrequestreview-3051236487)
+- 2025-07-24 `yzh119`: Also, there appear to be conflicts with the main branch in tests/test fp4 quantize and tests/test trtllm gen decode. Please rebase to resolve them. (https://github.com/flashinfer-ai/flashinfer/pull/1318#issuecomment-3113113510)
+- 2025-07-25 `weireweire` on `csrc/trtllm_fmha_kernel_launcher.cu`:185: then we cannot use & here, it's ok right? (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2229971680)
+- 2025-07-25 `weireweire` on `csrc/trtllm_fmha_kernel_launcher.cu`:185: and maybe we should remove & for other tensor to keep consistency (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2229976835)
+- 2025-07-25 `weireweire` on `csrc/trtllm_fmha_kernel_launcher.cu`:256: we only have a key value cache as argument, I think we can only check with that and not really support k-dim != v-dim (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2229978586)
+- 2025-07-25 `weireweire` on `tests/utils_fp4.py`:86: note the filename is util fp4.py, cause I want all util become util xx.py so that the are in similar position in file explore. Please comment if you still want xx util.py, or I can also rename those to util xx.py (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2229982857)
+- 2025-07-25 `nvpohanh` on `csrc/trtllm_fmha_kernel_launcher.cu`:185: It seems that the convention is: - Use at::Tensor const& for required non-mutable tensor. - Use at::Tensor& for required mutable tensor. - Use at::optional const& for optional non-mutable tensor. What about optional mutable tensor? I have not seen an example... See: (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2229987196)
+- 2025-07-25 `nvpohanh` on `csrc/trtllm_fmha_kernel_launcher.cu`:203: Add a comment explaining why we need to multiply by 2 here: (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2229988582)
+- 2025-07-25 `weireweire` on `csrc/trtllm_fmha_kernel_launcher.cu`:185: optional mutable tensor yes that's the problem, non-const ref cannot ref the right value that constructed when create std::optional. And optional\ & won't avoid the tensor copy. And adding const won't working as we always got raw pointer from tensor. And at::Tensor ... (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230033909)
+- 2025-07-25 `weireweire` on `tests/utils_fp4.py`:86: also please comment if we need to make fp4 quantize op also return a FP4Tensor wrapper instead of two tensor (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230042555)
+- 2025-07-25 `nvpohanh` on `flashinfer/decode.py`:1978: Should we document what "auto" means? Something like: (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230126487)
+- 2025-07-25 `nvpohanh` on `flashinfer/decode.py`:2043: this else is redundant: or (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230134786)
+- 2025-07-25 `nvpohanh` on `flashinfer/decode.py`:1977: just a thought: If we return FP4Tensor, should we also just ask user to provide FP4Tensor when output dtype is fp4? Otherwise, the asymmetry bugs me a little bit. (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230135938)
+- 2025-07-25 `nvpohanh` on `flashinfer/decode.py`:2016: maybe to tight? if user already provides out/out scale factor, we should be able to infer out dtype from it, right? (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230136585)
+- 2025-07-25 `nvpohanh` on `flashinfer/utils.py`:519: Maybe call it NVFP4Tensor? Just to distinguish it from MXFP4 (which is E2M1 data + E8M0 sf) in case we add that later? (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230137464)
+- 2025-07-25 `nvpohanh` on `flashinfer/utils.py`:524: we should document the expected shape for this. (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230137986)
+- 2025-07-25 `weireweire` on `flashinfer/utils.py`:519: I think we can share this class and add a "type" to it, like torch tensor. (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230159866)
+- 2025-07-25 `nvpohanh` on `flashinfer/utils.py`:568: should we add a shape property, like what TRT-LLM did? so that user can treat it as a normal torch tensor and do: tensor.shape? See: (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230207273)
+- 2025-07-25 `weireweire` on `flashinfer/decode.py`:1977: I think we can do that and remove out scale factor arg (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230450497)
+- 2025-07-25 `weireweire` on `flashinfer/utils.py`:524: but that's depend on the vec size and quant method, so currently we check in the decode API. (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230562551)
+- 2025-07-25 `weireweire` on `flashinfer/utils.py`:568: The reason I didn't add it here is I'm not sure if we could assume the original shape is even at last dim. The logic could be: but if the shape is not even, the 2 here will be wrong, so I ... (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230574689)
+- 2025-07-25 `weireweire`: @nvpohanh @yzh119 I added a new commit to optimize the trtllm batch decode with kv cache API to use different type, please have a look. (https://github.com/flashinfer-ai/flashinfer/pull/1318#issuecomment-3117013759)
+- 2025-07-25 `weireweire` on `flashinfer/utils.py`:519: added dtype = "nvfp4" (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230603425)
+- 2025-07-25 `yzh119` on `csrc/trtllm_fmha_kernel_launcher.cu`:185: Just use at::Tensor is fine, we directly use at::Tensor for most of the bindings codes, no need to use reference here as you mentioned at::Tensor is a smart pointer.. (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2230842114)
+- 2025-07-25 `yzh119` on `tests/utils_fp4.py`:86: also please comment if we need to make fp4 quantize op also return a FP4Tensor wrapper instead of two tensor I welcome such design, but please make a note that we have breaking changes on the interface to let user know about ... (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2231064399)
+- 2025-07-25 `yzh119` on `tests/utils_fp4.py`:86: note the filename is util fp4.py, cause I want all util become util xx.py so that the are in similar position in file explore. Please comment if you still want xx util.py, or I can also rename those to util xx.py I ... (https://github.com/flashinfer-ai/flashinfer/pull/1318#discussion_r2231066247)

@@ -1,71 +1,35 @@
-# PR Discussion Digest
-
-- Source PR: [NVIDIA/cccl#5371](https://github.com/NVIDIA/cccl/pull/5371)
-- Source page: `sources/prs/cccl-cub/PR-5371.md`
-- Evidence bundle: `evidence/pull-bundles/cccl-cub/gh-5371`
-- Generated at: `2026-05-20T15:19:46.440744+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-07-25T23:46:55Z`
-- Merged: `2025-08-18T17:27:48Z`
-
-## Discussion Counts
-
-- Issue comments: 8
-- Review submissions: 30 (approved=3, changes_requested=4, commented=23)
-- Inline review comments: 45
-- Review threads observed: 20
-- Resolved/outdated thread markers: resolved=18, outdated=18
-- Human participants with discussion text: davebayer, fbusato, miscco, s-oboyle
-- Automation comments/reviews omitted from high-signal summary: 5
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-07-26T17:02:51Z` `CHANGES_REQUESTED` by `davebayer` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3058309171)
-- `2025-07-28T09:43:38Z` `COMMENTED` by `davebayer` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3061601602)
-- `2025-08-04T08:12:46Z` `CHANGES_REQUESTED` by `miscco` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3083150810)
-- `2025-08-04T18:41:15Z` `CHANGES_REQUESTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3085333987)
-- `2025-08-06T18:19:48Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3093730403)
-- `2025-08-06T18:25:22Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3093747668)
-- `2025-08-06T18:40:15Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3093786341)
-- `2025-08-06T18:45:38Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3093802549)
-- `2025-08-06T18:47:38Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3093810938)
-- `2025-08-06T18:54:03Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3093829419)
-- `2025-08-06T19:02:39Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3093856392)
-- `2025-08-06T22:06:13Z` `COMMENTED` by `fbusato` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3094460256)
-- `2025-08-07T16:10:44Z` `COMMENTED` by `davebayer` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3097848424)
-- `2025-08-07T16:16:02Z` `COMMENTED` by `davebayer` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3097870557)
-- `2025-08-13T15:33:13Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3116567336)
-- `2025-08-13T16:00:13Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3116661250)
-- `2025-08-13T16:06:13Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3116680872)
-- `2025-08-13T16:20:04Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3116732097)
-- `2025-08-15T05:47:37Z` `APPROVED` by `miscco` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3122969547)
-- `2025-08-15T09:40:22Z` `CHANGES_REQUESTED` by `davebayer` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3123472562)
-- `2025-08-15T13:39:15Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3123880046)
-- `2025-08-15T14:00:57Z` `COMMENTED` by `davebayer` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3123929356)
-- `2025-08-15T16:28:32Z` `APPROVED` by `fbusato` - looks good. A minor comment on inf check (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3124474902)
-- `2025-08-15T19:12:15Z` `COMMENTED` by `s-oboyle` (https://github.com/NVIDIA/cccl/pull/5371#pullrequestreview-3124885046)
-- ... 6 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `libcudacxx/include/cuda/std/__complex/roots.h`: 45 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-08-06T18:19:48Z` `inline` by `s-oboyle` `libcudacxx/include/cuda/std/__complex/roots.h`:55; signals: compile, cuda, fp4, hang; excerpt: "That change should be ok here, it might be the case in other functions that we want to delete eg the float128/fp4/6/8 versions at ..." (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2257939715)
-- `2025-08-06T18:47:38Z` `inline` by `s-oboyle` `libcudacxx/include/cuda/std/__complex/roots.h`:48; signals: compile, cuda, hang; excerpt: "I think this errors for some combinations of compiler/toolkit/etc. If it is changed to a single function as Dave suggested above however if could ..." (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2257997154)
-- `2025-08-06T19:02:39Z` `inline` by `s-oboyle` `libcudacxx/include/cuda/std/__complex/roots.h`:98; signals: accuracy, cuda, nan; excerpt: "If z is (x,+∞), the result is (+∞,+∞) even if x is NaN 2) std::sqrt(std::conj(z)) == std::conj(std::sqrt(z)) I'll leave the generic constants up to ..." (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2258027267)
-- `2025-08-15T19:12:15Z` `inline` by `s-oboyle` `libcudacxx/include/cuda/std/__complex/roots.h`:159; signals: cuda, nan, perf; excerpt: "Doing it this way is possible, however the inf checks here are a little more complicated than inf checks in other functions. (Most of ..." (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2279714478)
-- `2025-08-06T18:45:38Z` `inline` by `s-oboyle` `libcudacxx/include/cuda/std/__complex/roots.h`:53; signals: cuda, hang; excerpt: "We can change this, I was victim of a macro bug a some time ago that made my keep as little in it as ..." (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2257991732)
-- `2025-08-13T15:33:13Z` `inline` by `s-oboyle` `libcudacxx/include/cuda/std/__complex/roots.h`:96; signals: cuda, hang; excerpt: "Ah, I did not know about the lack of constexpr for bit cast with older GCC's, thanks. Will make the change." (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2273840916)
-- `2025-08-15T19:20:30Z` `inline` by `s-oboyle` `libcudacxx/include/cuda/std/__complex/roots.h`:85; signals: cuda, fp8; excerpt: "Ah, apologies. A lesson in reading feedback when very sleepy. So this would have fp explicit bit mask == 0 for say fp32/64, while ..." (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2279727172)
-- `2025-08-15T21:19:36Z` `inline` by `s-oboyle` `libcudacxx/include/cuda/std/__complex/roots.h`:60; signals: cuda, nan; excerpt: "I meant to swing back round to this. Do these assertions cause program halt? There are no "bad values" that break these functions, every ..." (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2279909627)
-- `2025-08-06T18:25:22Z` `inline` by `s-oboyle` `libcudacxx/include/cuda/std/__complex/roots.h`:55; signals: cuda; excerpt: "Re adding rqsrt into a cuda:: namespace, there are a lot of other cuda only functions you may want to do at the same ..." (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2257952724)
-- `2025-08-06T18:40:15Z` `inline` by `s-oboyle` `libcudacxx/include/cuda/std/__complex/roots.h`:96; signals: cuda; excerpt: "Does fp from storage make sure the sizes of the input and output types are the same? Having to understand the fp storage system ..." (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2257980962)
-- `2025-08-06T18:54:03Z` `inline` by `s-oboyle` `libcudacxx/include/cuda/std/__complex/roots.h`:60; signals: cuda; excerpt: "For CUDA that usually belongs to the higher level calling functions, as there is no exceptions or flags in the CUDA math functions. If ..." (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2258009796)
-- `2025-08-07T16:10:44Z` `inline` by `davebayer` `libcudacxx/include/cuda/std/__complex/roots.h`:55; signals: cuda; excerpt: "I think it would be better to keep this internal version for now and we can introduce + use the cuda::rsqrt function later" (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2260795437)
+- 2025-07-26 `davebayer` on `libcudacxx/include/cuda/std/__complex/roots.h`:55: It can be simplified to: Btw. don't we want to expose rsqrt in cuda:: namespace? (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2233100359)
+- 2025-07-26 `davebayer` on `libcudacxx/include/cuda/std/__complex/roots.h`:64: The storage type is always unsigned (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2233100676)
+- 2025-07-26 `davebayer` on `libcudacxx/include/cuda/std/__complex/roots.h`:75: the CUDA VSTD:: is unnecessary here (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2233101004)
+- 2025-07-26 `davebayer` on `libcudacxx/include/cuda/std/__complex/roots.h`:96: Please, prefer fp from storage over bit cast (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2233102101)
+- 2025-07-28 `davebayer` on `libcudacxx/include/cuda/std/__complex/roots.h`:55: I made a PR 5375 (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2235612008)
+- 2025-08-04 `miscco` on `libcudacxx/include/cuda/std/__complex/roots.h`:53: Why dont we just use x ? (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2250741099)
+- 2025-08-04 `miscco` on `libcudacxx/include/cuda/std/__complex/roots.h`:75: To be sure, do we need to worry about signs here? Currently this will always return {+inf, +- inf} (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2250743535)
+- 2025-08-04 `miscco` on `libcudacxx/include/cuda/std/__complex/roots.h`:78: We do need some constants for generic FP types (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2250744711)
+- 2025-08-04 `miscco` on `libcudacxx/include/cuda/std/__complex/roots.h`:98: Should those be constexpr (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2250746344)
+- 2025-08-04 `fbusato` on `libcudacxx/include/cuda/std/__complex/roots.h`:44: prefer Tp{1} if possible (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2252283559)
+- 2025-08-04 `fbusato` on `libcudacxx/include/cuda/std/__complex/roots.h`:48: should not all these functions be noexcept? (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2252289893)
+- 2025-08-04 `fbusato` on `libcudacxx/include/cuda/std/__complex/roots.h`:60: should we add assertions for FE INVALID cases? (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2252307519)
+- 2025-08-06 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/roots.h`:55: That change should be ok here, it might be the case in other functions that we want to delete eg the float128/fp4/6/8 versions at some point. If this is more lightweight on the compiler I'll add it. (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2257939715)
+- 2025-08-06 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/roots.h`:55: Re adding rqsrt into a cuda:: namespace, there are a lot of other cuda only functions you may want to do at the same time if you do this. I have already used ::sincos here: (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2257952724)
+- 2025-08-06 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/roots.h`:96: Does fp from storage make sure the sizes of the input and output types are the same? Having to understand the fp storage system to maintain a math function is not a particularly natural crossover, but if it is more efficient for ... (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2257980962)
+- 2025-08-06 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/roots.h`:53: We can change this, I was victim of a macro bug a some time ago that made my keep as little in it as possible, but it should be long fixed. (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2257991732)
+- 2025-08-06 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/roots.h`:48: I think this errors for some combinations of compiler/toolkit/etc. If it is changed to a single function as Dave suggested above however if could work. Will try. (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2257997154)
+- 2025-08-06 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/roots.h`:60: For CUDA that usually belongs to the higher level calling functions, as there is no exceptions or flags in the CUDA math functions. If we did want to add this it would be best to do this systematically for all functions in ... (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2258009796)
+- 2025-08-06 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/roots.h`:98: If z is (x,+∞), the result is (+∞,+∞) even if x is NaN 2) std::sqrt(std::conj(z)) == std::conj(std::sqrt(z)) I'll leave the generic constants up to you, I'm just here for the accuracy. I'll add constexpr. (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2258027267)
+- 2025-08-06 `fbusato` on `libcudacxx/include/cuda/std/__complex/roots.h`:60: yes, we have CCCL ASSERT(expression, message) for this purpose (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2258416820)
+- 2025-08-07 `davebayer` on `libcudacxx/include/cuda/std/__complex/roots.h`:55: I think it would be better to keep this internal version for now and we can introduce + use the cuda::rsqrt function later (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2260795437)
+- 2025-08-07 `davebayer` on `libcudacxx/include/cuda/std/__complex/roots.h`:96: The signature is: The idea is to provide uniform API for all FP types. bit cast would be fine, but it's not constexpr for older GCC versions. This funciton allows us to construct the types such as half and nv bfloat16 in ... (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2260810811)
+- 2025-08-13 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/roots.h`:96: Ah, I did not know about the lack of constexpr for bit cast with older GCC's, thanks. Will make the change. (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2273840916)
+- 2025-08-13 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/roots.h`:98: Follow-up, these get modified by the range-reduction so not constexpr. (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2273910313)
+- 2025-08-13 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/roots.h`:53: This got fixed up in another commit, thanks. (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2273960176)
+- 2025-08-15 `davebayer` on `libcudacxx/include/cuda/std/__complex/roots.h`:85: I believe you are missing to set the explicit precision bit here (unless any of them is denormal): Btw. I added this trait in 5467 which is not merged yet.. (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2278693554)
+- 2025-08-15 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/roots.h`:85: For fp bithacky int- float stuff we would usually be removing the explicit bit, as opposed to adding it. However what's happening here is more direct, this is creating a float with just the exponent bits set, and the explicit bit is ... (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2279009826)
+- 2025-08-15 `davebayer` on `libcudacxx/include/cuda/std/__complex/roots.h`:85: That is correct for types with the implicit precision bits, such as ieee binary formats. However, the x86 80-bit fp type has the explicit bit in the mantissa and unless a denormalized number is represented, it must be set to 1 otherwise ... (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2279048114)
+- 2025-08-15 `fbusato` on `libcudacxx/include/cuda/std/__complex/roots.h`:159: would not be possible to move this check on the top part of the function and add an early return? (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2279436754)
+- 2025-08-15 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/roots.h`:159: Doing it this way is possible, however the inf checks here are a little more complicated than inf checks in other functions. (Most of the . eg: inf's can override NaN's, hypot style. By putting the inf check mid-algorithm it becomes a ... (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2279714478)
+- 2025-08-15 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/roots.h`:85: Ah, apologies. A lesson in reading feedback when very sleepy. So this would have fp explicit bit mask == 0 for say fp32/64, while having the correct bit set for fp80. In that case I'll go ahead and add it, I guess ... (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2279727172)
+- 2025-08-15 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/roots.h`:60: I meant to swing back round to this. Do these assertions cause program halt? There are no "bad values" that break these functions, every input has a well defined output. Classically what might happen is for values that you might consider "bad", ... (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2279909627)
+- 2025-08-15 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/roots.h`:60: And if we did want to add something like this, I think it would make more sense to do it for all math functions at once in it's own pull-request. (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2279911481)
+- 2025-08-16 `davebayer` on `libcudacxx/include/cuda/std/__complex/roots.h`:85: Yes, exactly! The PR is already merged, so you can just rebase :) (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2280308909)
+- 2025-08-18 `s-oboyle` on `libcudacxx/include/cuda/std/__complex/roots.h`:85: Done, though I ended up using fp explicit bit mask of v. (https://github.com/NVIDIA/cccl/pull/5371#discussion_r2282668592)

@@ -1,56 +1,20 @@
-# PR Discussion Digest
-
-- Source PR: [sgl-project/sglang#6226](https://github.com/sgl-project/sglang/pull/6226)
-- Source page: `sources/prs/sglang/PR-6226.md`
-- Evidence bundle: `evidence/pull-bundles/sglang/gh-6226`
-- Generated at: `2026-05-20T15:30:37.579014+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-05-12T10:05:42Z`
-- Merged: `2025-09-08T05:05:35Z`
-
-## Discussion Counts
-
-- Issue comments: 30
-- Review submissions: 9 (approved=2, commented=7)
-- Inline review comments: 7
-- Review threads observed: 7
-- Resolved/outdated thread markers: resolved=7, outdated=7
-- Human participants with discussion text: AniZpZ, FlamingoPg, WeiweiZhang1, mingfeima, wenhuach21, yiliu30, zhyncs
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-06-20T03:21:17Z` `APPROVED` by `FlamingoPg` - LGTM (https://github.com/sgl-project/sglang/pull/6226#pullrequestreview-2944444065)
-- `2025-07-09T06:47:48Z` `COMMENTED` by `AniZpZ` (https://github.com/sgl-project/sglang/pull/6226#pullrequestreview-3000255332)
-- `2025-07-11T01:29:55Z` `COMMENTED` by `wenhuach21` (https://github.com/sgl-project/sglang/pull/6226#pullrequestreview-3008120639)
-- `2025-07-11T01:30:08Z` `COMMENTED` by `wenhuach21` (https://github.com/sgl-project/sglang/pull/6226#pullrequestreview-3008121191)
-- `2025-07-11T01:30:39Z` `COMMENTED` by `wenhuach21` (https://github.com/sgl-project/sglang/pull/6226#pullrequestreview-3008121866)
-- `2025-07-11T01:31:13Z` `COMMENTED` by `wenhuach21` (https://github.com/sgl-project/sglang/pull/6226#pullrequestreview-3008122614)
-- `2025-07-11T02:11:09Z` `COMMENTED` by `wenhuach21` (https://github.com/sgl-project/sglang/pull/6226#pullrequestreview-3008196196)
-- `2025-07-11T02:12:21Z` `COMMENTED` by `wenhuach21` (https://github.com/sgl-project/sglang/pull/6226#pullrequestreview-3008197530)
-- `2025-07-11T07:58:46Z` `APPROVED` by `AniZpZ` (https://github.com/sgl-project/sglang/pull/6226#pullrequestreview-3009102372)
-
-## Inline Comment Hotspots
-
-- `docs/backend/quantization.md`: 6 inline comment(s)
-- `python/sglang/srt/layers/quantization/auto_round.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-09-06T09:36:40Z` `issue` by `yiliu30`; signals: accuracy, b200, fp4, hang, memory, mxfp4; excerpt: "Hi @zhyncs, regarding the failed UTs, here’s the summary: 1) unit-test-backend-8-gpu-b200 (TestGptOss4Gpu.test mxfp4 120b) This accuracy test seems a bit unstable. In our local ..." (https://github.com/sgl-project/sglang/pull/6226#issuecomment-3261700202)
-- `2025-07-11T02:11:09Z` `inline` by `wenhuach21` `docs/backend/quantization.md`:97; signals: kernel, moe; excerpt: "Most quantized MoE models may encounter inference issues due to kernel-related limitation. These issues might be resolved in future updates of sglang. If you ..." (https://github.com/sgl-project/sglang/pull/6226#discussion_r2199303894)
-- `2025-06-04T06:10:20Z` `issue` by `WeiweiZhang1`; signals: kernel, moe; excerpt: "MoE quantization is quite important. Is there hope that these MoE issues will be resolved in the near future? For MoE and VLM model, ..." (https://github.com/sgl-project/sglang/pull/6226#issuecomment-2938702735)
-- `2025-06-04T06:13:52Z` `issue` by `FlamingoPg`; signals: kernel, moe; excerpt: "MoE quantization is quite important. Is there hope that these MoE issues will be resolved in the near future? For MoE and VLM model, ..." (https://github.com/sgl-project/sglang/pull/6226#issuecomment-2938712221)
-- `2025-06-04T05:46:59Z` `issue` by `FlamingoPg`; signals: moe; excerpt: "MoE quantization is quite important. Is there hope that these MoE issues will be resolved in the near future?" (https://github.com/sgl-project/sglang/pull/6226#issuecomment-2938649442)
-- `2025-06-09T07:45:18Z` `issue` by `wenhuach21`; signals: hang; excerpt: "@yinfan98 Hi Yinfan, when you have a moment, could you kindly review this PR? It's been open for nearly a month. Regarding the CI ..." (https://github.com/sgl-project/sglang/pull/6226#issuecomment-2954967053)
-- `2025-07-09T06:49:55Z` `issue` by `AniZpZ`; signals: hang; excerpt: "@WeiweiZhang1 Thanks for the work! I think it would be better to list known issues in the quantization documentation and provide specific user guidance ..." (https://github.com/sgl-project/sglang/pull/6226#issuecomment-3051386564)
-- `2025-06-04T05:40:28Z` `issue` by `FlamingoPg`; signals: hang; excerpt: "Hi @WeiweiZhang1 , i will help review this pr" (https://github.com/sgl-project/sglang/pull/6226#issuecomment-2938639913)
-- `2025-07-08T07:47:56Z` `issue` by `zhyncs`; signals: hang; excerpt: "@WeiweiZhang1 please rebase @AniZpZ please help review" (https://github.com/sgl-project/sglang/pull/6226#issuecomment-3047759387)
-- `2025-07-09T06:46:36Z` `inline` by `AniZpZ` `python/sglang/srt/layers/quantization/auto_round.py`:9; signals: general review; excerpt: "We are planning to remove the dependency on vLLM in the SGLang quantization module. Could you please implement this with minimal vLLM dependency?" (https://github.com/sgl-project/sglang/pull/6226#discussion_r2194196839)
-- `2025-07-11T01:29:54Z` `inline` by `wenhuach21` `docs/backend/quantization.md`:45; signals: general review; excerpt: "add known issues" (https://github.com/sgl-project/sglang/pull/6226#discussion_r2199248047)
-- `2025-07-11T01:30:08Z` `inline` by `wenhuach21` `docs/backend/quantization.md`:67; signals: general review; excerpt: "remove comment" (https://github.com/sgl-project/sglang/pull/6226#discussion_r2199248808)
+- 2025-05-28 `WeiweiZhang1`: How can I start the test CI process? BTW please kindly have a review when you are free. Thanks! @BBuf @HaiShaw @Ying1123 @ch-wan @ispobock @merrymercy @zhyncs (https://github.com/sgl-project/sglang/pull/6226#issuecomment-2914741563)
+- 2025-06-04 `FlamingoPg`: Hi @WeiweiZhang1 , i will help review this pr (https://github.com/sgl-project/sglang/pull/6226#issuecomment-2938639913)
+- 2025-06-04 `FlamingoPg`: MoE quantization is quite important. Is there hope that these MoE issues will be resolved in the near future? (https://github.com/sgl-project/sglang/pull/6226#issuecomment-2938649442)
+- 2025-06-04 `WeiweiZhang1`: MoE quantization is quite important. Is there hope that these MoE issues will be resolved in the near future? For MoE and VLM model, the problem is not auto-round related, it is not supported by VLLM kernel. gptq and awq face the ... (https://github.com/sgl-project/sglang/pull/6226#issuecomment-2938702735)
+- 2025-06-09 `wenhuach21`: @yinfan98 Hi Yinfan, when you have a moment, could you kindly review this PR? It's been open for nearly a month. Regarding the CI failure, it doesn’t seem related to our changes. If it is, please let us know and provide any ... (https://github.com/sgl-project/sglang/pull/6226#issuecomment-2954967053)
+- 2025-06-23 `wenhuach21`: @yinfan98 @mingfeima After several attempts to sync with the main branch and rerun the ut, it seems the unit test failure is unrelated to our PR. Could you please double-check? If that’s the case, would it be possible to proceed with the ... (https://github.com/sgl-project/sglang/pull/6226#issuecomment-2995020902)
+- 2025-07-08 `zhyncs`: @WeiweiZhang1 please rebase @AniZpZ please help review (https://github.com/sgl-project/sglang/pull/6226#issuecomment-3047759387)
+- 2025-07-09 `AniZpZ` on `python/sglang/srt/layers/quantization/auto_round.py`:9: We are planning to remove the dependency on vLLM in the SGLang quantization module. Could you please implement this with minimal vLLM dependency? (https://github.com/sgl-project/sglang/pull/6226#discussion_r2194196839)
+- 2025-07-09 `AniZpZ`: @WeiweiZhang1 Thanks for the work! I think it would be better to list known issues in the quantization documentation and provide specific user guidance to avoid potential issues. (https://github.com/sgl-project/sglang/pull/6226#issuecomment-3051386564)
+- 2025-07-11 `wenhuach21` on `docs/backend/quantization.md`:91: why not using the same API as shown in the above (https://github.com/sgl-project/sglang/pull/6226#discussion_r2199249409)
+- 2025-07-11 `wenhuach21` on `docs/backend/quantization.md`:97: Most quantized MoE models may encounter inference issues due to kernel-related limitation. These issues might be resolved in future updates of sglang. If you experience any problems, consider using Hugging Face Transformers as an alternative. Detailed failure cases are listed below. (https://github.com/sgl-project/sglang/pull/6226#discussion_r2199303894)
+- 2025-07-11 `wenhuach21` on `docs/backend/quantization.md`:120: same, it would be better to add reason and backup solution (https://github.com/sgl-project/sglang/pull/6226#discussion_r2199304799)
+- 2025-07-11 `WeiweiZhang1`: Thank you for your thorough review. I've updated the code based on your comments. Any additional feedback or suggestions? @AniZpZ (https://github.com/sgl-project/sglang/pull/6226#issuecomment-3060256308)
+- 2025-07-11 `AniZpZ`: Thank you for your thorough review. I've updated the code based on your comments. Any additional feedback or suggestions? @AniZpZ no more concerns from me (https://github.com/sgl-project/sglang/pull/6226#issuecomment-3061121020)
+- 2025-07-11 `wenhuach21`: @AniZpZ Hi, would it be possible for you to take a look at the unit test failures and help identify whether any of them are related to this PR? We're not very familiar with SGlang, and I noticed similar failures have also ... (https://github.com/sgl-project/sglang/pull/6226#issuecomment-3061646884)
+- 2025-07-15 `wenhuach21`: @AniZpZ @yinfan98 @zhyncs Thank you for your kind review and support. If there are any remaining issues, please let us know. Otherwise, could you kindly help with the merge? Thanks! (https://github.com/sgl-project/sglang/pull/6226#issuecomment-3071798979)
+- 2025-07-25 `WeiweiZhang1`: @AniZpZ @zhyncs If there are any remaining issues, please let me know. Otherwise, could you help with the merge? TKS (https://github.com/sgl-project/sglang/pull/6226#issuecomment-3115786738)
+- 2025-08-27 `WeiweiZhang1`: Hi @FlamingoPg, the conflicts have been resolved. I also checked the CI errors, and they don’t seem related to this quantization feature. Could you please help us merge this PR? Thanks! Fix conflicts and ping me. I will help you merge PR! (https://github.com/sgl-project/sglang/pull/6226#issuecomment-3226894860)
+- 2025-09-03 `wenhuach21`: @zhyncs Could you please let us know if this PR can be merged when you have time? If the plan is not to merge it, we’d also appreciate a direct confirmation. We’ve maintained this PR for over three months and have been ... (https://github.com/sgl-project/sglang/pull/6226#issuecomment-3247717891)
+- 2025-09-06 `yiliu30`: Hi @zhyncs, regarding the failed UTs, here’s the summary: 1) unit-test-backend-8-gpu-b200 (TestGptOss4Gpu.test mxfp4 120b) This accuracy test seems a bit unstable. In our local runs, it failed about 1 out of 10 times. Could we either relax the target scores or consider ... (https://github.com/sgl-project/sglang/pull/6226#issuecomment-3261700202)

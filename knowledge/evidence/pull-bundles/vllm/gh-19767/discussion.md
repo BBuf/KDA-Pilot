@@ -1,78 +1,46 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#19767](https://github.com/vllm-project/vllm/pull/19767)
-- Source page: `sources/prs/vllm/PR-19767.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-19767`
-- Generated at: `2026-05-20T15:35:33.390844+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-06-17T20:17:16Z`
-- Merged: `2025-09-10T20:59:55Z`
-
-## Discussion Counts
-
-- Issue comments: 9
-- Review submissions: 28 (approved=1, commented=27)
-- Inline review comments: 51
-- Review threads observed: 28
-- Resolved/outdated thread markers: resolved=21, outdated=23
-- Human participants with discussion text: ProExpertProg, gshtras, mergify
-- Automation comments/reviews omitted from high-signal summary: 5
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-06-17T20:17:42Z` `COMMENTED` by `gemini-code-assist` - Summary of Changes Hello @gshtras, I'm Gemini Code Assist[^1]! I'm currently reviewing this pull request and will post ... (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-2936981965)
-- `2025-06-17T20:18:39Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces FP8 output fusion for V1 attention backends, which is a valuable feature ... (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-2936984169)
-- `2025-06-18T14:45:50Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-2939553092)
-- `2025-06-30T18:40:53Z` `COMMENTED` by `ProExpertProg` - I don't think non-LLM tests (with custom TestModels) need to use the check function, this is only for ... (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-2972162509)
-- `2025-06-30T21:46:46Z` `COMMENTED` by `gshtras` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-2972844298)
-- `2025-06-30T21:56:59Z` `COMMENTED` by `gshtras` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-2972858791)
-- `2025-06-30T22:43:00Z` `COMMENTED` by `gshtras` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-2972973510)
-- `2025-06-30T22:43:08Z` `COMMENTED` by `gshtras` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-2972973758)
-- `2025-06-30T23:24:38Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-2973055067)
-- `2025-06-30T23:25:50Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-2973056343)
-- `2025-07-09T18:55:08Z` `COMMENTED` by `ProExpertProg` - There were a few comments still unaddressed from last time, let me know once those are all addressed ... (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3002710395)
-- `2025-07-10T04:38:16Z` `COMMENTED` by `gshtras` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3003866818)
-- `2025-07-10T04:39:41Z` `COMMENTED` by `gshtras` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3003868894)
-- `2025-07-10T20:49:23Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3007315424)
-- `2025-07-10T20:49:47Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3007317678)
-- `2025-07-14T09:56:24Z` `COMMENTED` by `gshtras` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3015628599)
-- `2025-07-14T10:16:44Z` `COMMENTED` by `gshtras` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3015715199)
-- `2025-07-14T13:59:05Z` `COMMENTED` by `gshtras` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3016497810)
-- `2025-09-04T23:26:08Z` `COMMENTED` by `ProExpertProg` - A couple of minor notes! Glad we don't have to do the complicated model loading anymore & great ... (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3187509632)
-- `2025-09-05T14:30:50Z` `COMMENTED` by `gshtras` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3189617067)
-- `2025-09-05T14:31:17Z` `COMMENTED` by `gshtras` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3189619194)
-- `2025-09-05T14:34:07Z` `COMMENTED` by `gshtras` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3189630652)
-- `2025-09-05T20:41:41Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3190738290)
-- `2025-09-05T20:51:37Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3190759618)
-- ... 4 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `tests/compile/test_fusion_attn.py`: 25 inline comment(s)
-- `vllm/compilation/fusion_attn.py`: 8 inline comment(s)
-- `vllm/attention/ops/chunked_prefill_paged_decode.py`: 5 inline comment(s)
-- `tests/compile/test_async_tp.py`: 4 inline comment(s)
-- `vllm/attention/ops/triton_unified_attention.py`: 3 inline comment(s)
-- `vllm/v1/attention/backends/triton_attn.py`: 2 inline comment(s)
-- `vllm/attention/ops/prefix_prefill.py`: 2 inline comment(s)
-- `tests/compile/backend.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-09-05T14:30:50Z` `inline` by `gshtras` `tests/compile/test_fusion_attn.py`:182; signals: cache, compile, cuda, kernel; excerpt: "Using on-cpu tensors in the reshape and cache kernel causes a crash. In production the default device is set to CUDA before the tensors ..." (https://github.com/vllm-project/vllm/pull/19767#discussion_r2325265362)
-- `2025-06-30T18:06:08Z` `inline` by `ProExpertProg` `tests/compile/test_fusion_attn.py`:194; signals: compile, hang, register; excerpt: "It's currently not clear that this registers the custom pass into current vllm config, could you change it so that it is?" (https://github.com/vllm-project/vllm/pull/19767#discussion_r2175625031)
-- `2025-07-14T13:59:05Z` `inline` by `gshtras` `tests/compile/test_fusion_attn.py`:26; signals: compile, memory, oom; excerpt: "Did you figure out the OOM issue? Not really. At least on ROCm currently no manual deletion seems to free the memory" (https://github.com/vllm-project/vllm/pull/19767#discussion_r2205021517)
-- `2025-09-05T14:34:06Z` `inline` by `gshtras` `tests/compile/test_fusion_attn.py`:325; signals: compile, cuda, hang; excerpt: "I considered this approach, but this implies that if it is not cuda, it's automatically rocm without clarification, which may not always remain true. ..." (https://github.com/vllm-project/vllm/pull/19767#discussion_r2325274074)
-- `2025-09-05T21:22:00Z` `inline` by `ProExpertProg` `tests/compile/test_fusion_attn.py`:338; signals: attention, compile, triton; excerpt: "I see, this actually dispatches to the triton backend. We should cleanup the attention backend selection logic on rocm" (https://github.com/vllm-project/vllm/pull/19767#discussion_r2326072995)
-- `2025-09-05T21:25:44Z` `inline` by `ProExpertProg` `tests/compile/test_fusion_attn.py`:338; signals: compile, cuda, triton; excerpt: "Also, I just remembered: we could test the Triton backend on CUDA as well, it would run in CI automatically which would be nice. ..." (https://github.com/vllm-project/vllm/pull/19767#discussion_r2326079879)
-- `2025-06-30T17:56:42Z` `inline` by `ProExpertProg` `vllm/attention/ops/triton_unified_attention.py`:250; signals: attention, kernel, triton; excerpt: "Should we invert the scale outside the kernel?" (https://github.com/vllm-project/vllm/pull/19767#discussion_r2175611617)
-- `2025-06-30T22:43:00Z` `inline` by `gshtras` `tests/compile/test_fusion_attn.py`:143; signals: compile, oom; excerpt: "Running multiple test parallelizations in a row often causes OOM if the test creates an LLM object, something is not getting cleaned up properly ..." (https://github.com/vllm-project/vllm/pull/19767#discussion_r2176094196)
-- `2025-07-09T18:48:13Z` `inline` by `ProExpertProg` `tests/compile/test_async_tp.py`:161; signals: compile, hang; excerpt: "No need to change these, check function only necessary when the checks must happen during compilation" (https://github.com/vllm-project/vllm/pull/19767#discussion_r2195749848)
-- `2025-07-10T04:39:41Z` `inline` by `gshtras` `vllm/attention/ops/chunked_prefill_paged_decode.py`:39; signals: attention, kernel; excerpt: "Arguably this name is now more correct after the inversion since now we're multiplying by it inside the kernel" (https://github.com/vllm-project/vllm/pull/19767#discussion_r2196531478)
-- `2025-09-04T23:06:33Z` `inline` by `ProExpertProg` `vllm/compilation/fusion_attn.py`:50; signals: cuda, dtype; excerpt: "Apply below: ``` self.dtype = dtype assert self.quant key in QUANT OPS, \ f"unsupported quantization scheme {self.quant key}" self.QUANT OP = QUANT OPS[self.quant key] ..." (https://github.com/vllm-project/vllm/pull/19767#discussion_r2323722576)
-- `2025-09-04T23:21:32Z` `inline` by `ProExpertProg` `tests/compile/test_fusion_attn.py`:182; signals: blackwell, compile; excerpt: "Why is this necessary? Where would ROCm actually do this? Because I think it might break the Blackwell FI?" (https://github.com/vllm-project/vllm/pull/19767#discussion_r2323736992)
+- 2025-06-18 `ProExpertProg` on `vllm/v1/attention/backends/triton_attn.py`:81: This should only return true for static per-tensor for now (see v0) (https://github.com/vllm-project/vllm/pull/19767#discussion_r2154808002)
+- 2025-06-30 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:107: I don't think this is necessary, I think only the reshape had to be removed (https://github.com/vllm-project/vllm/pull/19767#discussion_r2175605478)
+- 2025-06-30 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:103: Should these also be of type dtype? (https://github.com/vllm-project/vllm/pull/19767#discussion_r2175606665)
+- 2025-06-30 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:69: Thx for this fix! (https://github.com/vllm-project/vllm/pull/19767#discussion_r2175607129)
+- 2025-06-30 `ProExpertProg` on `vllm/attention/ops/triton_unified_attention.py`:567: same here for inverted out scale (https://github.com/vllm-project/vllm/pull/19767#discussion_r2175608515)
+- 2025-06-30 `ProExpertProg` on `vllm/attention/ops/triton_unified_attention.py`:250: Should we invert the scale outside the kernel? (https://github.com/vllm-project/vllm/pull/19767#discussion_r2175611617)
+- 2025-06-30 `ProExpertProg` on `vllm/attention/ops/chunked_prefill_paged_decode.py`:202: Should we invert the scale outside the kernel? (https://github.com/vllm-project/vllm/pull/19767#discussion_r2175613244)
+- 2025-06-30 `ProExpertProg` on `tests/compile/backend.py`:35: Can you remove this TODO (https://github.com/vllm-project/vllm/pull/19767#discussion_r2175618336)
+- 2025-06-30 `ProExpertProg` on `tests/compile/backend.py`:119: Can we remove/inline these (https://github.com/vllm-project/vllm/pull/19767#discussion_r2175620881)
+- 2025-06-30 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:143: This shouldn't be necessary? (https://github.com/vllm-project/vllm/pull/19767#discussion_r2175622645)
+- 2025-06-30 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:127: Is there a reason you changed these? (https://github.com/vllm-project/vllm/pull/19767#discussion_r2175622895)
+- 2025-06-30 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:194: It's currently not clear that this registers the custom pass into current vllm config, could you change it so that it is? (https://github.com/vllm-project/vllm/pull/19767#discussion_r2175625031)
+- 2025-06-30 `ProExpertProg` commented: I don't think non-LLM tests (with custom TestModels) need to use the check function, this is only for LLM-based tests that have to do the check during compilation. (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-2972162509)
+- 2025-06-30 `gshtras` on `vllm/compilation/fusion_attn.py`:107: Seems like this one is required, here is a mismatch in the number of arguments without it (https://github.com/vllm-project/vllm/pull/19767#discussion_r2176024921)
+- 2025-06-30 `gshtras` on `vllm/compilation/fusion_attn.py`:103: Doesn't seem to be required, fusion happens in fp16 models as well, but I agree, that even if that's the case, for clarity it may be best to explicitly use the right dtype (https://github.com/vllm-project/vllm/pull/19767#discussion_r2176035205)
+- 2025-06-30 `gshtras` on `tests/compile/test_fusion_attn.py`:143: Running multiple test parallelizations in a row often causes OOM if the test creates an LLM object, something is not getting cleaned up properly (on ROCm only??). This is an attempt to solve it. (https://github.com/vllm-project/vllm/pull/19767#discussion_r2176094196)
+- 2025-06-30 `gshtras` on `tests/compile/test_fusion_attn.py`:127: Same OOM issue from above (https://github.com/vllm-project/vllm/pull/19767#discussion_r2176094342)
+- 2025-06-30 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:107: I mean this could be empty instead of full as well (https://github.com/vllm-project/vllm/pull/19767#discussion_r2176135831)
+- 2025-06-30 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:143: I thought I resolved this by deleting all other objects that might hold a reference but ok (https://github.com/vllm-project/vllm/pull/19767#discussion_r2176136804)
+- 2025-07-09 `ProExpertProg` on `tests/compile/test_async_tp.py`:161: No need to change these, check function only necessary when the checks must happen during compilation (https://github.com/vllm-project/vllm/pull/19767#discussion_r2195749848)
+- 2025-07-09 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:143: Did you figure out the OOM issue? (https://github.com/vllm-project/vllm/pull/19767#discussion_r2195751122)
+- 2025-07-09 `ProExpertProg` on `vllm/attention/ops/chunked_prefill_paged_decode.py`:39: Can we call this out descale or out scale inv? (https://github.com/vllm-project/vllm/pull/19767#discussion_r2195757047)
+- 2025-07-09 `ProExpertProg` commented: There were a few comments still unaddressed from last time, let me know once those are all addressed and I'll take a final look (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3002710395)
+- 2025-07-10 `gshtras` on `tests/compile/test_async_tp.py`:161: TestBackend with your suggested change no longer has check before ops and check after ops (https://github.com/vllm-project/vllm/pull/19767#discussion_r2196530017)
+- 2025-07-10 `gshtras` on `vllm/attention/ops/chunked_prefill_paged_decode.py`:39: Arguably this name is now more correct after the inversion since now we're multiplying by it inside the kernel (https://github.com/vllm-project/vllm/pull/19767#discussion_r2196531478)
+- 2025-07-10 `ProExpertProg` on `vllm/attention/ops/chunked_prefill_paged_decode.py`:39: Yes but I think the convention in vllm is that x scale is the scaling factor for x in the quantized representation, and so this is the inverse of the scaling factor. (https://github.com/vllm-project/vllm/pull/19767#discussion_r2198709018)
+- 2025-07-10 `ProExpertProg` on `tests/compile/test_async_tp.py`:161: test backend.test pass.check before ops can be used (https://github.com/vllm-project/vllm/pull/19767#discussion_r2198710440)
+- 2025-07-14 `gshtras` on `tests/compile/test_async_tp.py`:161: So some change is required, why not use the function? (https://github.com/vllm-project/vllm/pull/19767#discussion_r2204421994)
+- 2025-07-14 `gshtras` on `tests/compile/test_fusion_attn.py`:26: There is no vllm config field in the pass manager. Do you propose to add it? I think it's worth getting this PR done with and leave further refactor of the torch compile testing infrastructure for a separate effort (https://github.com/vllm-project/vllm/pull/19767#discussion_r2204482626)
+- 2025-07-14 `gshtras` on `tests/compile/test_fusion_attn.py`:26: Did you figure out the OOM issue? Not really. At least on ROCm currently no manual deletion seems to free the memory (https://github.com/vllm-project/vllm/pull/19767#discussion_r2205021517)
+- 2025-09-04 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:50: Apply below: ``` self.dtype = dtype assert self.quant key in QUANT OPS, \ f"unsupported quantization scheme {self.quant key}" self.QUANT OP = QUANT OPS[self.quant key] def empty(self, args, kwargs): return torch.empty( args, { kwargs, 'device': "cuda"}) def empty quant(self, args, kwargs): return torch.empty( ... (https://github.com/vllm-project/vllm/pull/19767#discussion_r2323722576)
+- 2025-09-04 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:338: Don't we want to test the triton backend as well? (https://github.com/vllm-project/vllm/pull/19767#discussion_r2323726709)
+- 2025-09-04 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:325: Why not just a single if statement: (https://github.com/vllm-project/vllm/pull/19767#discussion_r2323729881)
+- 2025-09-04 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:347: Also need to make sure this is skipped on non-cuda-alike platforms: (https://github.com/vllm-project/vllm/pull/19767#discussion_r2323730890)
+- 2025-09-04 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:182: Why is this necessary? Where would ROCm actually do this? Because I think it might break the Blackwell FI? (https://github.com/vllm-project/vllm/pull/19767#discussion_r2323736992)
+- 2025-09-04 `ProExpertProg` commented: A couple of minor notes! Glad we don't have to do the complicated model loading anymore & great job reusing existing test. And we will remove the V0 test soon as well! (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3187509632)
+- 2025-09-05 `gshtras` on `tests/compile/test_fusion_attn.py`:182: Using on-cpu tensors in the reshape and cache kernel causes a crash. In production the default device is set to CUDA before the tensors are created, but not in the test (https://github.com/vllm-project/vllm/pull/19767#discussion_r2325265362)
+- 2025-09-05 `gshtras` on `tests/compile/test_fusion_attn.py`:338: It is tested with the split attention parameter. The 2 approaches share the same backend class (https://github.com/vllm-project/vllm/pull/19767#discussion_r2325266568)
+- 2025-09-05 `gshtras` on `tests/compile/test_fusion_attn.py`:325: I considered this approach, but this implies that if it is not cuda, it's automatically rocm without clarification, which may not always remain true. I can change it if you want (https://github.com/vllm-project/vllm/pull/19767#discussion_r2325274074)
+- 2025-09-05 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:182: Why not just set the default device at the start of the test then? (https://github.com/vllm-project/vllm/pull/19767#discussion_r2326011795)
+- 2025-09-05 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:325: You could do elif rocm: ... else: MODELS=[] ... (https://github.com/vllm-project/vllm/pull/19767#discussion_r2326027473)
+- 2025-09-05 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:338: I see, this actually dispatches to the triton backend. We should cleanup the attention backend selection logic on rocm (https://github.com/vllm-project/vllm/pull/19767#discussion_r2326072995)
+- 2025-09-05 `ProExpertProg` approved: Looks good apart from the remaining comments. Is it possible to see unit tests running in AMD CI somewhere? (https://github.com/vllm-project/vllm/pull/19767#pullrequestreview-3190830869)
+- 2025-09-05 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:338: Also, I just remembered: we could test the Triton backend on CUDA as well, it would run in CI automatically which would be nice. Could you add the triton backend to the list of cuda backends? (https://github.com/vllm-project/vllm/pull/19767#discussion_r2326079879)
+- 2025-09-09 `gshtras`: Looks good apart from the remaining comments. Is it possible to see unit tests running in AMD CI somewhere? Verified this locally, until we have AMD tests running again for PRs (https://github.com/vllm-project/vllm/pull/19767#issuecomment-3271043226)
+- 2025-09-09 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:338: We can add Triton backend here as a follow-up (https://github.com/vllm-project/vllm/pull/19767#discussion_r2334142034)

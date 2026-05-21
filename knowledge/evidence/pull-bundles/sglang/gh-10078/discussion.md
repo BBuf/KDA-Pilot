@@ -1,65 +1,36 @@
-# PR Discussion Digest
-
-- Source PR: [sgl-project/sglang#10078](https://github.com/sgl-project/sglang/pull/10078)
-- Source page: `sources/prs/sglang/PR-10078.md`
-- Evidence bundle: `evidence/pull-bundles/sglang/gh-10078`
-- Generated at: `2026-05-20T15:27:14.165000+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-09-05T13:18:06Z`
-- Merged: `2025-11-02T05:24:58Z`
-
-## Discussion Counts
-
-- Issue comments: 38
-- Review submissions: 14 (approved=2, commented=12)
-- Inline review comments: 19
-- Review threads observed: 13
-- Resolved/outdated thread markers: resolved=12, outdated=12
-- Human participants with discussion text: AniZpZ, Fridge003, JackChuang, b8zhong, pipecat, yicwang, zejunchen-zejun, zhyncs
-- Automation comments/reviews omitted from high-signal summary: 5
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-09-05T13:18:27Z` `COMMENTED` by `gemini-code-assist` - Summary of Changes Hello @JackChuang, I'm Gemini Code Assist[^1]! I'm currently reviewing this pull request and will post ... (https://github.com/sgl-project/sglang/pull/10078#pullrequestreview-3189345499)
-- `2025-09-05T13:21:01Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces FP4 (E2M1) KV cache support, which is a great feature for reducing ... (https://github.com/sgl-project/sglang/pull/10078#pullrequestreview-3189353565)
-- `2025-09-08T23:19:48Z` `COMMENTED` by `JackChuang` (https://github.com/sgl-project/sglang/pull/10078#pullrequestreview-3198461539)
-- `2025-09-08T23:19:58Z` `COMMENTED` by `JackChuang` (https://github.com/sgl-project/sglang/pull/10078#pullrequestreview-3198461745)
-- `2025-09-08T23:53:34Z` `COMMENTED` by `JackChuang` (https://github.com/sgl-project/sglang/pull/10078#pullrequestreview-3198509227)
-- `2025-09-10T03:37:13Z` `COMMENTED` by `AniZpZ` (https://github.com/sgl-project/sglang/pull/10078#pullrequestreview-3204284500)
-- `2025-09-10T06:50:35Z` `COMMENTED` by `AniZpZ` (https://github.com/sgl-project/sglang/pull/10078#pullrequestreview-3204657144)
-- `2025-09-10T11:46:40Z` `COMMENTED` by `JackChuang` (https://github.com/sgl-project/sglang/pull/10078#pullrequestreview-3205775027)
-- `2025-09-16T02:29:49Z` `APPROVED` by `AniZpZ` - LGTM but i think we'd better note that FP4 (E2M1) KV Cache might lead to a accuracy drop ... (https://github.com/sgl-project/sglang/pull/10078#pullrequestreview-3226851582)
-- `2025-10-08T06:56:10Z` `COMMENTED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/10078#pullrequestreview-3308718961)
-- `2025-10-10T18:01:54Z` `COMMENTED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/10078#pullrequestreview-3325141943)
-- `2025-10-20T22:00:37Z` `APPROVED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/10078#pullrequestreview-3358068125)
-- `2025-10-31T05:09:16Z` `COMMENTED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/10078#pullrequestreview-3402610879)
-- `2025-10-31T05:09:30Z` `COMMENTED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/10078#pullrequestreview-3402612328)
-
-## Inline Comment Hotspots
-
-- `python/sglang/srt/mem_cache/memory_pool.py`: 7 inline comment(s)
-- `python/sglang/srt/model_executor/model_runner.py`: 4 inline comment(s)
-- `python/sglang/test/test_kvfp4_quant_dequant.py`: 2 inline comment(s)
-- `python/sglang/srt/server_args.py`: 2 inline comment(s)
-- `python/sglang/srt/layers/quantization/kvfp4_tensor.py`: 2 inline comment(s)
-- `python/sglang/srt/layers/attention/trtllm_mla_backend.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-10-21T01:29:31Z` `issue` by `zejunchen-zejun`; signals: bf16, cache, fp4, fp8, kv cache, mla, sm100; excerpt: "Good job, May I know if the sglang supports the FP8 mla kv cache or is there any plan for that? Thank you Hi ..." (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3424323268)
-- `2025-10-21T03:59:08Z` `issue` by `yicwang`; signals: bf16, cache, fp4, fp8, kv cache, mla, sm100; excerpt: "Good job, May I know if the sglang supports the FP8 mla kv cache or is there any plan for that? Thank you Hi ..." (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3424575740)
-- `2025-10-20T17:30:13Z` `issue` by `JackChuang`; signals: cache, fp4, fp8, kv cache, mla, sm100; excerpt: "Good job, May I know if the sglang supports the FP8 mla kv cache or is there any plan for that? Thank you Hi ..." (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3423073796)
-- `2025-10-08T06:56:05Z` `inline` by `Fridge003` `python/sglang/srt/mem_cache/memory_pool.py`:1310; signals: cache, kernel, memory, mla, triton; excerpt: "The set mla kv buffer triton kernel might also be moved to utils file" (https://github.com/sgl-project/sglang/pull/10078#discussion_r2412781055)
-- `2025-09-16T03:55:15Z` `issue` by `JackChuang`; signals: accuracy, cache, failing, fp4, kv cache; excerpt: "LGTM but i think we'd better note that FP4 (E2M1) KV Cache might lead to a accuracy drop @AniZpZ Sounds good. Where do you ..." (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3294789732)
-- `2025-09-17T03:04:17Z` `issue` by `AniZpZ`; signals: accuracy, cache, failing, fp4, kv cache; excerpt: "LGTM but i think we'd better note that FP4 (E2M1) KV Cache might lead to a accuracy drop @AniZpZ Sounds good. Where do you ..." (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3301072628)
-- `2025-10-12T00:17:59Z` `issue` by `yicwang`; signals: cache, fp4, kernel, mxfp4, nvfp4; excerpt: "Hi, I'm currently trying to quantize kvcache with nvfp4 and noticed your PR. I see the comment here says that nvfp4 quantization was used, ..." (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3393760336)
-- `2025-10-16T22:26:08Z` `issue` by `JackChuang`; signals: cache, fp4, kernel, mxfp4, nvfp4; excerpt: "Hi, I'm currently trying to quantize kvcache with nvfp4 and noticed your PR. I see the comment here says that nvfp4 quantization was used, ..." (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3413107415)
-- `2025-10-26T04:38:27Z` `issue` by `JackChuang`; signals: cache, dtype, fp8, mla, tensorrt; excerpt: "@JackChuang Please fix the conflicts Hi @Fridge003 @zhyncs, I've rebased to v0.5.3 and fix the conflicts. Can you please launch the CI and check ..." (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3448008951)
-- `2025-10-08T06:53:45Z` `inline` by `Fridge003` `python/sglang/srt/mem_cache/memory_pool.py`:1275; signals: cache, fp4, memory, mla; excerpt: "Can we make FP4 MLA Pool a derived class of MLATokenToKVPool? So that we don't need these if-else conditions." (https://github.com/sgl-project/sglang/pull/10078#discussion_r2412774044)
-- `2025-10-31T05:08:27Z` `inline` by `Fridge003` `python/sglang/srt/layers/attention/trtllm_mla_backend.py`:363; signals: attention, cuda, hang, mla; excerpt: "Can we change self.data type == getattr(torch, "float4 e2m1fn x2", None) and is cuda to a utils function for better readability?" (https://github.com/sgl-project/sglang/pull/10078#discussion_r2480178538)
-- `2025-10-08T06:41:21Z` `inline` by `Fridge003` `python/sglang/srt/mem_cache/memory_pool.py`:1020; signals: cache, kernel, memory, triton; excerpt: "Maybe we can open a new utils.py file for storing these triton kernels?" (https://github.com/sgl-project/sglang/pull/10078#discussion_r2412735837)
+- 2025-09-08 `JackChuang` on `python/sglang/srt/model_executor/model_runner.py`:1076: Not a problem because torch. utils. element size() always returns an integer as shown below: (https://github.com/sgl-project/sglang/pull/10078#discussion_r2331573755)
+- 2025-09-08 `JackChuang` on `python/sglang/srt/mem_cache/memory_pool.py`:905: Due to a circular import, this code must be imported inside the function rather than at the file level. (https://github.com/sgl-project/sglang/pull/10078#discussion_r2331612310)
+- 2025-09-10 `AniZpZ` on `python/sglang/srt/server_args.py`:991: i think it might be better to clarify that only nvfp4 e2m1 but not mxfp4 e4m1 is supported (https://github.com/sgl-project/sglang/pull/10078#discussion_r2335453757)
+- 2025-09-10 `AniZpZ`: Are there any more tests to evaluate accuracy drop in long-context scenarios? (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3273207161)
+- 2025-09-10 `JackChuang`: Thanks @AniZpZ for the prompt review and helpful feedback! We will fix them and then you know. Are there any more tests to evaluate accuracy drop in long-context scenarios? Do you have a specific dataset result you’d like to see? We can ... (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3274599421)
+- 2025-09-11 `JackChuang`: I've observed a significantly larger drop in accuracy in AIME 25 compared to GSM8K, which leads me to hypothesize that accuracy is related to context length. If AIME25 is considered a long-context dataset, then GPQA Diamond should also fall into the long-context ... (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3279261315)
+- 2025-09-11 `JackChuang`: please fix ci and lint @AniZpZ I have pushed a new version. The lint works fine on our own branch, but I cannot test CI by ourselves. Could you please launch the CI & lint tests again? Thank you. (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3281958934)
+- 2025-09-12 `JackChuang`: Thank you @AniZpZ . I found that most of the CI errors were caused by the Torch version not supporting torch.float4 e2m1fn x2, and I have already fixed it and pushed it. Please run again. I also noticed that the remaining CI ... (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3285006892)
+- 2025-09-18 `JackChuang`: Add a log here to note the accuracy issue. Quantization docs will be revised in a few days Done and pushed. Added a logger.warning(). (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3305044746)
+- 2025-09-19 `JackChuang`: Hi @AniZpZ @b8zhong @zhyncs, I’ve checked the CI failures again, and they don’t seem related to my changes. If there are no further comments, would it be possible for a maintainer to help merge this PR? Thanks! (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3311759548)
+- 2025-10-01 `b8zhong`: Btw, if the recipe is from the existing ModelOpt R1-FP4 checkpt, I wonder if recalibrating with --kv cache qformat could make a difference in the long context scenario. Since, the kv cache quant algo is null, a new checkpt with --kv cache ... (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3357626459)
+- 2025-10-07 `Fridge003` on `python/sglang/srt/model_executor/model_runner.py`:1266: Can you please import is cuda on top of file and add a variable is cuda as here: (https://github.com/sgl-project/sglang/pull/10078#discussion_r2409622917)
+- 2025-10-08 `Fridge003` on `python/sglang/srt/layers/quantization/kvfp4_tensor.py`:1: Can you paste the link to the source of these codes? (https://github.com/sgl-project/sglang/pull/10078#discussion_r2412642151)
+- 2025-10-08 `Fridge003` on `python/sglang/srt/mem_cache/memory_pool.py`:1020: Maybe we can open a new utils.py file for storing these triton kernels? (https://github.com/sgl-project/sglang/pull/10078#discussion_r2412735837)
+- 2025-10-08 `Fridge003` on `python/sglang/srt/mem_cache/memory_pool.py`:1275: Can we make FP4 MLA Pool a derived class of MLATokenToKVPool? So that we don't need these if-else conditions. (https://github.com/sgl-project/sglang/pull/10078#discussion_r2412774044)
+- 2025-10-08 `Fridge003` on `python/sglang/srt/mem_cache/memory_pool.py`:1071: Will n loc become a large number? In which case there will be too many blocks in the grid. This might be optimized in future PRs. (https://github.com/sgl-project/sglang/pull/10078#discussion_r2412777214)
+- 2025-10-08 `Fridge003` on `python/sglang/srt/mem_cache/memory_pool.py`:1310: The set mla kv buffer triton kernel might also be moved to utils file (https://github.com/sgl-project/sglang/pull/10078#discussion_r2412781055)
+- 2025-10-09 `JackChuang`: @Fridge003 Thank you for your feedback. I will address them as soon as I can and push the code again. (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3383695125)
+- 2025-10-10 `JackChuang`: Hi @Fridge003, I've addressed all the comments you provided, except for one that's still a bit unclear. Please check again and let me know. Thanks. (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3389115952)
+- 2025-10-10 `Fridge003` on `python/sglang/srt/layers/quantization/kvfp4_tensor.py`:1: @JackChuang Is this file copied from Nvidia repo or written by yourself? Just for checking. (https://github.com/sgl-project/sglang/pull/10078#discussion_r2421508848)
+- 2025-10-11 `pipecat`: Hi, I'm currently trying to quantize kvcache with nvfp4 and noticed your PR. I see the comment here says that nvfp4 quantization was used, but it looks more like mxfp4 ？ in python/sglang/srt/layers/quantization/kvfp4 tensor.py, line 29: (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3393090081)
+- 2025-10-12 `yicwang`: Hi, I'm currently trying to quantize kvcache with nvfp4 and noticed your PR. I see the comment here says that nvfp4 quantization was used, but it looks more like mxfp4 ？ in python/sglang/srt/layers/quantization/kvfp4 tensor.py, line 29: Ah, yes, you are right. This ... (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3393760336)
+- 2025-10-16 `yicwang`: Hi @JackChuang please fix the conflicts. Thanks Both me and Jack are traveling attending conferences. We will be back next Monday and will be back working resolving this asap! (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3413066292)
+- 2025-10-16 `JackChuang`: Hi @JackChuang please fix the conflicts. Thanks @zhyncs Will rebase to v0.5.3 and fix the conflicts once I get back from a conference. Thanks. (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3413105959)
+- 2025-10-20 `zejunchen-zejun`: Good job, May I know if the sglang supports the FP8 mla kv cache or is there any plan for that? Thank you (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3420364956)
+- 2025-10-20 `JackChuang`: Good job, May I know if the sglang supports the FP8 mla kv cache or is there any plan for that? Thank you Hi @zejunchen-zejun, Thank you! MLA's KV8 on SM100 has been supported. We ran DeepSeek-R1-0528-FP4-KV8 e4m3 in the experiment. (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3423073796)
+- 2025-10-21 `zejunchen-zejun`: Good job, May I know if the sglang supports the FP8 mla kv cache or is there any plan for that? Thank you Hi @zejunchen-zejun, Thank you! MLA's KV8 on SM100 has been supported. We ran DeepSeek-R1-0528-FP4-KV8 e4m3 in the experiment. Hi, ... (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3424323268)
+- 2025-10-22 `JackChuang`: @JackChuang Please fix the conflicts Thank you for the approval! I will rebase to v0.5.3 and fix the conflicts as soon as I can, as I’m currently tied up with a few other tasks. (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3433567186)
+- 2025-10-24 `JackChuang`: @JackChuang Please fix the conflicts Hi @Fridge003 @zhyncs, I've rebased to v0.5.3 and fix the conflicts. Can you please launch the CI and check again? Thank you (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3440876152)
+- 2025-10-24 `JackChuang`: @JackChuang It shows there are still conflicts with latest main @Fridge003 Oops. You are right. It seems like v0.5.3 is also outdated. I will rebase to main then. Thanks, and sry for the inconvenience. (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3440909956)
+- 2025-10-26 `JackChuang`: @JackChuang Please fix the conflicts Hi @Fridge003 @zhyncs, I've rebased to v0.5.3 and fix the conflicts. Can you please launch the CI and check again? Thank you While merging with the main branch, I noticed that the latest main branch includes the ... (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3448008951)
+- 2025-10-28 `JackChuang`: Hi @Fridge003 @zhyncs, I’ve rebased to main and fixed the conflicts. Could you please check again? Thank you! Note: Turns out the current 'main' and 'v0.5.4.post1' branches cannot run. As a result, I’ve tested my code on v0.5.4, and it’s working. (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3455110088)
+- 2025-10-28 `Fridge003`: Note: Turns out the current 'main' and 'v0.5.4.post1' branches cannot run. As a result, I’ve tested my code on v0.5.4, and it’s working. Do you mean the v0.5.4.post1 cannot run on this PR, or is there other bugs? (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3458739318)
+- 2025-10-29 `JackChuang`: Note: Turns out the current 'main' and 'v0.5.4.post1' branches cannot run. As a result, I’ve tested my code on v0.5.4, and it’s working. Do you mean the v0.5.4.post1 cannot run on this PR, or is there other bugs? @Fridge003 What I mean ... (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3460662211)
+- 2025-10-30 `JackChuang`: Hi @Fridge003 @zhyncs, When you get a chance, could you please check again if this is ready to merge? Thanks a lot! (https://github.com/sgl-project/sglang/pull/10078#issuecomment-3469169680)
+- 2025-10-31 `Fridge003` on `python/sglang/srt/layers/attention/trtllm_mla_backend.py`:363: Can we change self.data type == getattr(torch, "float4 e2m1fn x2", None) and is cuda to a utils function for better readability? (https://github.com/sgl-project/sglang/pull/10078#discussion_r2480178538)

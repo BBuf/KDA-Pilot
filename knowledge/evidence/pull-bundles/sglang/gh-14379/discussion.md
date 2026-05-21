@@ -1,69 +1,30 @@
-# PR Discussion Digest
-
-- Source PR: [sgl-project/sglang#14379](https://github.com/sgl-project/sglang/pull/14379)
-- Source page: `sources/prs/sglang/PR-14379.md`
-- Evidence bundle: `evidence/pull-bundles/sglang/gh-14379`
-- Generated at: `2026-05-20T15:28:00.662089+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-12-04T01:18:45Z`
-- Merged: `2025-12-09T20:05:57Z`
-
-## Discussion Counts
-
-- Issue comments: 15
-- Review submissions: 18 (approved=2, changes_requested=2, commented=13, dismissed=1)
-- Inline review comments: 25
-- Review threads observed: 16
-- Resolved/outdated thread markers: resolved=15, outdated=10
-- Human participants with discussion text: Fridge003, b8zhong, copilot-pull-request-reviewer, kaixih
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-12-04T04:33:29Z` `COMMENTED` by `copilot-pull-request-reviewer` - Pull request overview This PR adds a new CLI flag --fp8-gemm-runner-backend (with alias --fp8-gemm-backend) to allow users to ... (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3538002604)
-- `2025-12-04T04:36:34Z` `COMMENTED` by `b8zhong` (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3538017527)
-- `2025-12-04T04:36:39Z` `COMMENTED` by `b8zhong` (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3538018039)
-- `2025-12-04T04:53:38Z` `COMMENTED` by `copilot-pull-request-reviewer` - Pull request overview Copilot reviewed 7 out of 7 changed files in this pull request and generated 2 ... (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3538073044)
-- `2025-12-04T04:57:25Z` `COMMENTED` by `b8zhong` (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3538084280)
-- `2025-12-04T20:37:58Z` `CHANGES_REQUESTED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3541573097)
-- `2025-12-04T20:41:33Z` `COMMENTED` by `b8zhong` (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3542012328)
-- `2025-12-05T00:15:11Z` `COMMENTED` by `b8zhong` (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3542632422)
-- `2025-12-05T00:17:36Z` `COMMENTED` by `b8zhong` (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3542636470)
-- `2025-12-06T00:42:05Z` `COMMENTED` by `copilot-pull-request-reviewer` - Pull request overview Copilot reviewed 10 out of 10 changed files in this pull request and generated 4 ... (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3546798152)
-- `2025-12-08T03:10:43Z` `CHANGES_REQUESTED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3549957497)
-- `2025-12-08T17:18:56Z` `COMMENTED` by `b8zhong` (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3553168254)
-- `2025-12-08T17:50:00Z` `COMMENTED` by `kaixih` - Sorry for the late reply. Just leave a minor comment. (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3553285787)
-- `2025-12-08T21:03:09Z` `COMMENTED` by `b8zhong` (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3554052543)
-- `2025-12-08T21:08:48Z` `APPROVED` by `kaixih` (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3554072398)
-- `2025-12-08T21:34:52Z` `APPROVED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3554155011)
-- `2025-12-09T01:38:50Z` `DISMISSED` by `Fridge003` (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3554866243)
-- `2025-12-09T06:30:35Z` `COMMENTED` by `b8zhong` (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3555698899)
-
-## Inline Comment Hotspots
-
-- `python/sglang/srt/layers/quantization/fp8_utils.py`: 9 inline comment(s)
-- `python/sglang/srt/managers/scheduler.py`: 4 inline comment(s)
-- `test/srt/test_fp8_blockwise_gemm.py`: 4 inline comment(s)
-- `python/sglang/srt/server_args.py`: 3 inline comment(s)
-- `docs/references/environment_variables.md`: 3 inline comment(s)
-- `python/sglang/srt/utils/common.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-12-04T04:33:29Z` `review` `COMMENTED` by `copilot-pull-request-reviewer`; signals: benchmark, blackwell, block, cutlass, flashinfer, fp8, gemm, hang; excerpt: "Pull request overview This PR adds a new CLI flag --fp8-gemm-runner-backend (with alias --fp8-gemm-backend) to allow users to explicitly configure the FP8 GEMM backend ..." (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3538002604)
-- `2025-12-04T20:51:13Z` `issue` by `Fridge003`; signals: blackwell, cutlass, deepgemm, flashinfer, fp8, gemm, kernel, triton; excerpt: "Also please add a per-commit CI test (on 4-GPU Blackwell) for fp8 gemm. It should cover Triton/DeepGemm/Flashinfer/TRTLLM kernels (cutlass is unimportant), and uses qwen3-fp8 ..." (https://github.com/sgl-project/sglang/pull/14379#issuecomment-3614274133)
-- `2025-12-09T01:38:47Z` `inline` by `Fridge003` `python/sglang/srt/layers/quantization/fp8_utils.py`:253; signals: accuracy, blackwell, cutlass, deepgemm, flashinfer, fp8, gemm; excerpt: "Please put deepgemm backend after flashinfer/cutlass backend. Since on Blackwell deepgemm can only be applied to ue8m0 scale, and might cause accuracy drops on ..." (https://github.com/sgl-project/sglang/pull/14379#discussion_r2600741401)
-- `2025-12-06T00:42:04Z` `inline` by `copilot-pull-request-reviewer` `test/srt/test_fp8_blockwise_gemm.py`:68; signals: b200, block, fp4, fp8, gemm, triton; excerpt: "The class name TestFp8BlockwiseGemmTriton uses lowercase Fp8, which is inconsistent with the codebase convention. Based on similar test classes (e.g., TestLlama31FP4B200 in test llama31 ..." (https://github.com/sgl-project/sglang/pull/14379#discussion_r2594293528)
-- `2025-12-06T00:42:04Z` `inline` by `copilot-pull-request-reviewer` `test/srt/test_fp8_blockwise_gemm.py`:63; signals: b200, block, deepgemm, fp4, fp8, gemm; excerpt: "The class name TestFp8BlockwiseGemmDeepGemm uses lowercase Fp8, which is inconsistent with the codebase convention. Based on similar test classes (e.g., TestLlama31FP4B200 in test llama31 ..." (https://github.com/sgl-project/sglang/pull/14379#discussion_r2594293543)
-- `2025-12-06T00:42:04Z` `inline` by `copilot-pull-request-reviewer` `test/srt/test_fp8_blockwise_gemm.py`:68; signals: b200, block, flashinfer, fp4, fp8, gemm; excerpt: "The class name TestFp8BlockwiseGemmFlashinferTrtllm uses lowercase Fp8, which is inconsistent with the codebase convention. Based on similar test classes (e.g., TestLlama31FP4B200 in test llama31 ..." (https://github.com/sgl-project/sglang/pull/14379#discussion_r2594293550)
-- `2025-12-04T04:53:38Z` `inline` by `copilot-pull-request-reviewer` `python/sglang/srt/server_args.py`:2974; signals: attention, fp8, gemm, hang, moe; excerpt: "The CLI flag name --fp8-gemm-backend should map to internal field name fp8 gemm backend for consistency with other backend flags (e.g., --moe-runner-backend → moe ..." (https://github.com/sgl-project/sglang/pull/14379#discussion_r2587525501)
-- `2025-12-06T00:42:04Z` `inline` by `copilot-pull-request-reviewer` `test/srt/test_fp8_blockwise_gemm.py`:17; signals: b200, block, fp4, fp8, gemm; excerpt: "The class name Fp8BlockwiseGemmBase uses lowercase Fp8, which is inconsistent with the codebase convention. Based on similar test classes (e.g., TestLlama31FP4B200 in test llama31 ..." (https://github.com/sgl-project/sglang/pull/14379#discussion_r2594293521)
-- `2025-12-06T00:42:05Z` `review` `COMMENTED` by `copilot-pull-request-reviewer`; signals: flashinfer, fp8, gemm, hang; excerpt: "Pull request overview Copilot reviewed 10 out of 10 changed files in this pull request and generated 4 comments. Comments suppressed due to low ..." (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3546798152)
-- `2025-12-05T23:18:44Z` `issue` by `b8zhong`; signals: deepgemm, flashinfer, fp8, gemm, triton; excerpt: "New test covers DeepGEMM/Triton/Flashinfer TRTLLM impl on Qwen/Qwen3-4B-Instruct-2507-FP8: DeepGEMM Flashinfer TRTLLM Triton" (https://github.com/sgl-project/sglang/pull/14379#issuecomment-3618937738)
-- `2025-12-08T03:10:40Z` `inline` by `Fridge003` `python/sglang/srt/layers/quantization/fp8_utils.py`:252; signals: flashinfer, fp8, gemm, hang; excerpt: "Can we handle the two deprecated environs here? For example, if the user passes in SGLANG ENABLE FLASHINFER FP8 GEMM, we need to set ..." (https://github.com/sgl-project/sglang/pull/14379#discussion_r2596904195)
-- `2025-12-05T18:48:10Z` `issue` by `Fridge003`; signals: flashinfer, fp8, gemm, hang; excerpt: "cc @kaixih @leejnau We might need to fix some documents/recipes after this change, since the flashinfer fp8 gemm environ var is deprecated." (https://github.com/sgl-project/sglang/pull/14379#issuecomment-3618117254)
+- 2025-12-04 `copilot-pull-request-reviewer` on `python/sglang/srt/managers/scheduler.py`:68: Duplicate import of initialize fp8 gemm config. Line 68 imports from a non-existent module fp8 gemm backend, while line 69 imports from the correct module fp8 utils. Remove line 68. (https://github.com/sgl-project/sglang/pull/14379#discussion_r2587472644)
+- 2025-12-04 `copilot-pull-request-reviewer` on `python/sglang/srt/layers/quantization/fp8_utils.py`:11: Duplicate import of is blackwell supported. It's imported on line 11 and again on line 40. Remove one of the duplicate imports. (https://github.com/sgl-project/sglang/pull/14379#discussion_r2587472655)
+- 2025-12-04 `copilot-pull-request-reviewer` commented: Pull request overview This PR adds a new CLI flag --fp8-gemm-runner-backend (with alias --fp8-gemm-backend) to allow users to explicitly configure the FP8 GEMM backend selection. This replaces the deprecated environment variables SGLANG ENABLE FLASHINFER FP8 GEMM and SGLANG SUPPORT CUTLASS BLOCK FP8, ... (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3538002604)
+- 2025-12-04 `copilot-pull-request-reviewer` on `python/sglang/srt/server_args.py`:2973: Missing dest parameter for argument with multiple flag names. When argparse receives two flag names like --fp8-gemm-backend and --fp8-gemm-runner-backend, the destination variable is derived from the first flag (resulting in fp8 gemm backend), but the ServerArgs attribute is named fp8 gemm runner ... (https://github.com/sgl-project/sglang/pull/14379#discussion_r2587472666)
+- 2025-12-04 `copilot-pull-request-reviewer` on `docs/references/environment_variables.md`:45: Incorrect escaping in markdown. The escaped quotes \"0\" should be unescaped as "0" since this is already within a markdown table cell. (https://github.com/sgl-project/sglang/pull/14379#discussion_r2587472681)
+- 2025-12-04 `copilot-pull-request-reviewer` commented: Pull request overview Copilot reviewed 7 out of 7 changed files in this pull request and generated 2 comments. --- 💡 Add Copilot custom instructions for smarter, more guided reviews. Learn how to get started . (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3538073044)
+- 2025-12-04 `copilot-pull-request-reviewer` on `python/sglang/srt/layers/quantization/fp8_utils.py`:244: Inconsistent capitalization: "Flashinfer" should be "FlashInfer" to match the capitalization used elsewhere in the codebase (lines 200-202). (https://github.com/sgl-project/sglang/pull/14379#discussion_r2587525493)
+- 2025-12-04 `copilot-pull-request-reviewer` on `python/sglang/srt/server_args.py`:2974: The CLI flag name --fp8-gemm-backend should map to internal field name fp8 gemm backend for consistency with other backend flags (e.g., --moe-runner-backend → moe runner backend, --attention-backend → attention backend). Currently it's mapping to fp8 gemm runner backend which includes an extra ... (https://github.com/sgl-project/sglang/pull/14379#discussion_r2587525501)
+- 2025-12-04 `b8zhong` on `python/sglang/srt/server_args.py`:2974: For internal consistency with the runner interface, I'll leave it. I left the cli flag name for ease of use (e.g, I feel this doesn't add anything there.) (https://github.com/sgl-project/sglang/pull/14379#discussion_r2587534469)
+- 2025-12-04 `b8zhong`: (I'll add back run ci now, I'll avoid doing it next time before I'm done reviewing the code myself 😅 ) (https://github.com/sgl-project/sglang/pull/14379#issuecomment-3610375016)
+- 2025-12-04 `Fridge003` on `python/sglang/srt/utils/common.py`:230: Is it OK to remove torch.version.cuda = "12.8"? (https://github.com/sgl-project/sglang/pull/14379#discussion_r2590192689)
+- 2025-12-04 `Fridge003` on `docs/references/environment_variables.md`:81: Also mark them as deprecated in environ.py, with print deprecated env function (https://github.com/sgl-project/sglang/pull/14379#discussion_r2590214503)
+- 2025-12-04 `Fridge003` on `python/sglang/srt/managers/scheduler.py`:310: We can rename it to init gemm config So initialization of other gemm related arguments/environs (e.g. fp4 gemm) can also be included in this part (https://github.com/sgl-project/sglang/pull/14379#discussion_r2590499601)
+- 2025-12-04 `b8zhong` on `python/sglang/srt/utils/common.py`:230: is sm100 checks torch cuda version, same w/ is sm120 (https://github.com/sgl-project/sglang/pull/14379#discussion_r2590513523)
+- 2025-12-04 `Fridge003`: Also please add a per-commit CI test (on 4-GPU Blackwell) for fp8 gemm. It should cover Triton/DeepGemm/Flashinfer/TRTLLM kernels (cutlass is unimportant), and uses qwen3-fp8 as tested model maybe) (https://github.com/sgl-project/sglang/pull/14379#issuecomment-3614274133)
+- 2025-12-05 `Fridge003`: cc @kaixih @leejnau We might need to fix some documents/recipes after this change, since the flashinfer fp8 gemm environ var is deprecated. (https://github.com/sgl-project/sglang/pull/14379#issuecomment-3618117254)
+- 2025-12-05 `b8zhong`: New test covers DeepGEMM/Triton/Flashinfer TRTLLM impl on Qwen/Qwen3-4B-Instruct-2507-FP8: DeepGEMM Flashinfer TRTLLM Triton (https://github.com/sgl-project/sglang/pull/14379#issuecomment-3618937738)
+- 2025-12-06 `copilot-pull-request-reviewer` on `test/srt/test_fp8_blockwise_gemm.py`:17: The class name Fp8BlockwiseGemmBase uses lowercase Fp8, which is inconsistent with the codebase convention. Based on similar test classes (e.g., TestLlama31FP4B200 in test llama31 fp4.py line 17), acronyms like FP4 and FP8 should be capitalized. Consider renaming to FP8BlockwiseGemmBase for consistency. (https://github.com/sgl-project/sglang/pull/14379#discussion_r2594293521)
+- 2025-12-06 `copilot-pull-request-reviewer` on `test/srt/test_fp8_blockwise_gemm.py`:68: The class name TestFp8BlockwiseGemmTriton uses lowercase Fp8, which is inconsistent with the codebase convention. Based on similar test classes (e.g., TestLlama31FP4B200 in test llama31 fp4.py), acronyms should be capitalized. Consider renaming to TestFP8BlockwiseGemmTriton for consistency. (https://github.com/sgl-project/sglang/pull/14379#discussion_r2594293528)
+- 2025-12-06 `copilot-pull-request-reviewer` on `test/srt/test_fp8_blockwise_gemm.py`:63: The class name TestFp8BlockwiseGemmDeepGemm uses lowercase Fp8, which is inconsistent with the codebase convention. Based on similar test classes (e.g., TestLlama31FP4B200 in test llama31 fp4.py), acronyms should be capitalized. Consider renaming to TestFP8BlockwiseGemmDeepGemm for consistency. (https://github.com/sgl-project/sglang/pull/14379#discussion_r2594293543)
+- 2025-12-06 `copilot-pull-request-reviewer` on `test/srt/test_fp8_blockwise_gemm.py`:68: The class name TestFp8BlockwiseGemmFlashinferTrtllm uses lowercase Fp8, which is inconsistent with the codebase convention. Based on similar test classes (e.g., TestLlama31FP4B200 in test llama31 fp4.py), acronyms should be capitalized. Consider renaming to TestFP8BlockwiseGemmFlashinferTrtllm for consistency. (https://github.com/sgl-project/sglang/pull/14379#discussion_r2594293550)
+- 2025-12-06 `copilot-pull-request-reviewer` commented: Pull request overview Copilot reviewed 10 out of 10 changed files in this pull request and generated 4 comments. Comments suppressed due to low confidence (1) python/sglang/srt/environ.py:373 Conflicting deprecation path detected: Line 371-373 deprecates SGLANG ENABLE FLASHINFER GEMM in favor of SGLANG ... (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3546798152)
+- 2025-12-08 `Fridge003` on `python/sglang/srt/layers/quantization/fp8_utils.py`:252: Can we handle the two deprecated environs here? For example, if the user passes in SGLANG ENABLE FLASHINFER FP8 GEMM, we need to set fp8 gemm backend to flashinfer. So the users will not be impacted by this usage change (https://github.com/sgl-project/sglang/pull/14379#discussion_r2596904195)
+- 2025-12-08 `b8zhong` on `python/sglang/srt/layers/quantization/fp8_utils.py`:252: Yeah, 👍 I added these back. I added a warning too, that they will completely be removed in 0.5.7 (https://github.com/sgl-project/sglang/pull/14379#discussion_r2599460068)
+- 2025-12-08 `kaixih` on `python/sglang/srt/layers/quantization/fp8_utils.py`:272: I suggest we add a warning message to clarify that this environment variable currently overrides any simultaneously configured server arguments. However, since the server arguments represent the newer, long-term approach, and users setting them are likely aware of the change of the ... (https://github.com/sgl-project/sglang/pull/14379#discussion_r2599529584)
+- 2025-12-08 `kaixih` commented: Sorry for the late reply. Just leave a minor comment. (https://github.com/sgl-project/sglang/pull/14379#pullrequestreview-3553285787)
+- 2025-12-08 `b8zhong` on `python/sglang/srt/layers/quantization/fp8_utils.py`:272: Good point. If the server args is set I made the server args override any config provided by the env var. I think this makes the most sense. (https://github.com/sgl-project/sglang/pull/14379#discussion_r2600127327)
+- 2025-12-09 `Fridge003` on `python/sglang/srt/layers/quantization/fp8_utils.py`:253: Please put deepgemm backend after flashinfer/cutlass backend. Since on Blackwell deepgemm can only be applied to ue8m0 scale, and might cause accuracy drops on most models. (https://github.com/sgl-project/sglang/pull/14379#discussion_r2600741401)
+- 2025-12-09 `b8zhong` on `python/sglang/srt/layers/quantization/fp8_utils.py`:253: (discuss on slack) motivation for leaving it as dg: 1 currently since the default is deepgemm we leave it, 2 also, the drop in gsm8k is minimal (it may be more for other evals) (https://github.com/sgl-project/sglang/pull/14379#discussion_r2601278578)
+- 2025-12-09 `Fridge003`: Failing b200 tests have been fixed on main (https://github.com/sgl-project/sglang/pull/14379#issuecomment-3634051106)

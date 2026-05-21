@@ -1,78 +1,40 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#14568](https://github.com/vllm-project/vllm/pull/14568)
-- Source page: `sources/prs/vllm/PR-14568.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-14568`
-- Generated at: `2026-05-20T15:34:28.833132+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-03-10T14:26:17Z`
-- Merged: `2025-05-02T18:31:55Z`
-
-## Discussion Counts
-
-- Issue comments: 27
-- Review submissions: 30 (approved=2, commented=28)
-- Inline review comments: 27
-- Review threads observed: 21
-- Resolved/outdated thread markers: resolved=14, outdated=19
-- Human participants with discussion text: CalebDu, bnellnm, gzy19990617, mergify, tlrmchlsmth
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-04-17T17:47:22Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776524565)
-- `2025-04-17T17:49:41Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776529129)
-- `2025-04-17T17:55:13Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776540037)
-- `2025-04-17T18:01:29Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776552276)
-- `2025-04-17T18:03:17Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776555711)
-- `2025-04-17T18:05:20Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776559669)
-- `2025-04-17T18:07:45Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776564604)
-- `2025-04-17T18:08:51Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776566689)
-- `2025-04-17T18:13:23Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776575872)
-- `2025-04-17T18:14:57Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776578821)
-- `2025-04-17T18:22:33Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776593357)
-- `2025-04-17T18:41:58Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776630306)
-- `2025-04-17T18:54:24Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776653993)
-- `2025-04-17T18:54:30Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776654176)
-- `2025-04-17T18:55:44Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776656521)
-- `2025-04-17T18:59:47Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776664011)
-- `2025-04-17T19:00:11Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776664744)
-- `2025-04-17T19:05:34Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2776674647)
-- `2025-04-18T10:48:43Z` `COMMENTED` by `CalebDu` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2778317519)
-- `2025-04-18T11:14:43Z` `COMMENTED` by `CalebDu` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2778349105)
-- `2025-04-18T12:16:28Z` `COMMENTED` by `CalebDu` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2778424768)
-- `2025-04-18T12:20:56Z` `COMMENTED` by `CalebDu` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2778431117)
-- `2025-04-18T17:18:33Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2779048027)
-- `2025-04-28T16:57:16Z` `COMMENTED` by `bnellnm` - There seems to be a few lint errors that need to be fixed but looks good otherwise! (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2800030815)
-- ... 6 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `CMakeLists.txt`: 8 inline comment(s)
-- `csrc/moe/permute_unpermute_kernels/moe_permute_unpermute_kernel.h`: 7 inline comment(s)
-- `csrc/moe/moe_permute_unpermute_op.cu`: 4 inline comment(s)
-- `tests/kernels/test_moe_permute_unpermute.py`: 3 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/moe_permute_unpermute.py`: 2 inline comment(s)
-- `csrc/moe/torch_bindings.cpp`: 1 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/fused_moe.py`: 1 inline comment(s)
-- `csrc/moe/permute_unpermute_kernels/moe_permute_unpermute_kernel.cu`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-03-27T05:02:12Z` `issue` by `CalebDu`; signals: aligned, bf16, block, correctness, deepgemm, fp8, gemm, moe; excerpt: "@CalebDu , thanks for adding the blocking support! I've been working on integrating the new version with DeepGemm but I'm running into problems with ..." (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2756686361)
-- `2025-03-27T13:14:09Z` `issue` by `bnellnm`; signals: aligned, bf16, block, correctness, deepgemm, fp8, gemm, moe; excerpt: "@CalebDu , thanks for adding the blocking support! I've been working on integrating the new version with DeepGemm but I'm running into problems with ..." (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2758003179)
-- `2025-03-27T13:51:13Z` `issue` by `CalebDu`; signals: block, deepgemm, gemm, kernel, memory, moe; excerpt: "The -1 in the original DeepGemm documentation was a bug. They never actually supported it (I ran into this while doing the initial integration). ..." (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2758136194)
-- `2025-03-27T14:59:57Z` `issue` by `bnellnm`; signals: block, deepgemm, gemm, kernel, memory, moe; excerpt: "The -1 in the original DeepGemm documentation was a bug. They never actually supported it (I ran into this while doing the initial integration). ..." (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2758384533)
-- `2025-04-18T02:27:20Z` `issue` by `CalebDu`; signals: aligned, bf16, cuda, fp8, kernel, vector; excerpt: "@CalebDu overall the PR looks good. I mostly had minor comments. I was wondering if there were any size restrictions on the new kernels, ..." (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2814375413)
-- `2025-03-27T02:00:09Z` `issue` by `bnellnm`; signals: block, correctness, deepgemm, gemm, moe; excerpt: "@CalebDu , thanks for adding the blocking support! I've been working on integrating the new version with DeepGemm but I'm running into problems with ..." (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2756265582)
-- `2025-03-26T14:30:00Z` `issue` by `CalebDu`; signals: aligned, block, deepgemm, gemm; excerpt: "Add align block size support for contiguous group gemm in deepgemm. Round up token amount in each expert to align block size and scan ..." (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2754637844)
-- `2025-05-02T08:04:56Z` `issue` by `CalebDu`; signals: benchmark, gemm, kernel, moe; excerpt: "@tlrmchlsmth I update code with your review. And fix ci failed in calling FusedMoE.select experts. I add benchmark for comparison permute/unpermte customized kernel in ..." (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2846612852)
-- `2025-05-02T00:37:52Z` `inline` by `tlrmchlsmth` `csrc/moe/permute_unpermute_kernels/moe_permute_unpermute_kernel.cu`:115; signals: kernel, moe, overflow; excerpt: "I think this should be: I think the way it is now, it won't cast until after the multiplication, which would allow for overflowing ..." (https://github.com/vllm-project/vllm/pull/14568#discussion_r2070963101)
-- `2025-05-02T00:47:35Z` `review` `COMMENTED` by `tlrmchlsmth`; signals: benchmark, overflow; excerpt: "The implementation looks nice and clean. Are there any benchmark results? (I did spot one potential overflow that should be addressed)" (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2810991987)
-- `2025-03-12T08:57:13Z` `issue` by `gzy19990617`; signals: gemm, kernel, moe; excerpt: "请问预计什么时候会支持呐 ---- Replied Message ---- From @ . Date 03/12/2025 16:54 To vllm-project/vllm @ . Cc gaoziyuan @ . , Comment @ . Subject ..." (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2717116678)
-- `2025-03-12T11:23:44Z` `issue` by `CalebDu`; signals: gemm, kernel, moe; excerpt: "请问预计什么时候会支持呐 ---- Replied Message ---- From @ . Date 03/12/2025 16:54 To vllm-project/vllm @ . Cc gaoziyuan @ . , Comment @ . Subject ..." (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2717547933)
+- 2025-03-12 `gzy19990617`: 请问预计什么时候会支持呐 ---- Replied Message ---- From @ . Date 03/12/2025 16:54 To vllm-project/vllm @ . Cc gaoziyuan @ . , Comment @ . Subject Re: [vllm-project/vllm] permute/unpermute kernel for moe optimization (PR 14568) 请问这个算子是为后面做group gemm做准备工作嘛 yes — Reply to this email directly, ... (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2717116678)
+- 2025-03-15 `CalebDu`: This PR submits 2 kernel moe permute and moe unpermute. moe permute includes: - preprocess topk id launcher(optional for EP)：preprocess topk id is to map global expert id to local expert id for each ep rank. For example, 4 expert with ep ... (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2726291523)
+- 2025-03-18 `bnellnm`: Hi @CalebDu , thanks for working on this. I think this might help me out with I am currently trying to use your PR to do the permute/unpermute steps needed for the DeepGemm grouped gemm kernel. I did run into a test ... (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2734182256)
+- 2025-03-19 `CalebDu`: Hi @CalebDu , thanks for working on this. I think this might help me out with 13932. I am currently trying to use your PR to do the permute/unpermute steps needed for the DeepGemm grouped gemm kernel. I did run into a ... (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2735196438)
+- 2025-03-19 `CalebDu`: @bnellnm this bug is caused by the workspace is too small for cub radix sort. After I expand workspace, I fix it. (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2736477030)
+- 2025-03-19 `bnellnm`: @bnellnm this bug is caused by the workspace is too small for cub radix sort. After I expand workspace, I fix it. Thanks! (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2736518506)
+- 2025-03-26 `CalebDu`: Add align block size support for contiguous group gemm in deepgemm. Round up token amount in each expert to align block size and scan aligned amount to get align first token offset for each expert. In permuted hidden , align permuted token ... (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2754637844)
+- 2025-03-27 `bnellnm`: @CalebDu , thanks for adding the blocking support! I've been working on integrating the new version with DeepGemm but I'm running into problems with the m indices. I don't think they are being computed correctly. I think the best way to test ... (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2756265582)
+- 2025-03-27 `CalebDu`: The -1 in the original DeepGemm documentation was a bug. They never actually supported it (I ran into this while doing the initial integration). In the non expert map case, moe align block size fills in unused sections with 0s. I haven't ... (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2758136194)
+- 2025-03-27 `CalebDu`: Cool, I didn't realize you could use the first offset tokens to exclude the unused bits. If that's the case I don't think it matters what goes into m indices since they will be sliced off anyway. You can try it. (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2758439597)
+- 2025-04-17 `bnellnm` on `CMakeLists.txt`:610: I don't think it's necessary to add header files. (https://github.com/vllm-project/vllm/pull/14568#discussion_r2049414269)
+- 2025-04-17 `bnellnm` on `CMakeLists.txt`:665: I think it might be cleaner and more forward compatible if the CUDA arch check was moved to C++. We could skip registering the new ops for incompatible versions. (https://github.com/vllm-project/vllm/pull/14568#discussion_r2049421164)
+- 2025-04-17 `bnellnm` on `csrc/moe/moe_permute_unpermute_op.cu`:69: nit: remove debugging code, ditto elsewhere. (https://github.com/vllm-project/vllm/pull/14568#discussion_r2049428509)
+- 2025-04-17 `bnellnm` on `csrc/moe/torch_bindings.cpp`:78: We shouldn't mark all the inputs as mutating (!), only where necessary. (https://github.com/vllm-project/vllm/pull/14568#discussion_r2049430525)
+- 2025-04-17 `bnellnm` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:1095: Might as well delete this line now. (https://github.com/vllm-project/vllm/pull/14568#discussion_r2049432813)
+- 2025-04-17 `bnellnm` on `vllm/model_executor/layers/fused_moe/moe_permute_unpermute.py`:17: Is there any reason not to make the return type an explicit tuple of tensors? So users will know exactly how many outputs to expect? (https://github.com/vllm-project/vllm/pull/14568#discussion_r2049435518)
+- 2025-04-17 `bnellnm` on `vllm/model_executor/layers/fused_moe/moe_permute_unpermute.py`:55: I think you can do torch.full(permuted row size, fill invalid expert, ...). (https://github.com/vllm-project/vllm/pull/14568#discussion_r2049436634)
+- 2025-04-17 `bnellnm` on `csrc/moe/permute_unpermute_kernels/moe_permute_unpermute_kernel.h`:16: Should this type and its specializations live in dispatch.h? (https://github.com/vllm-project/vllm/pull/14568#discussion_r2049441921)
+- 2025-04-17 `bnellnm` on `csrc/moe/permute_unpermute_kernels/moe_permute_unpermute_kernel.h`: Can you move all the non-trivial definitions from this file into a .cu file? (https://github.com/vllm-project/vllm/pull/14568#discussion_r2049443666)
+- 2025-04-17 `bnellnm` on `csrc/moe/permute_unpermute_kernels/moe_permute_unpermute_kernel.h`:142: could you use std::binary search here instead? (https://github.com/vllm-project/vllm/pull/14568#discussion_r2049452630)
+- 2025-04-17 `bnellnm` on `csrc/moe/moe_permute_unpermute_op.cu`:63: Can you use get ptr (expert map.value()) here? (https://github.com/vllm-project/vllm/pull/14568#discussion_r2049475494)
+- 2025-04-17 `bnellnm` on `csrc/moe/permute_unpermute_kernels/moe_permute_unpermute_kernel.h`:380: Is this flag used by anything? (https://github.com/vllm-project/vllm/pull/14568#discussion_r2049491383)
+- 2025-04-17 `bnellnm` on `tests/kernels/test_moe_permute_unpermute.py`:39: there's a stable=True option on torch.sort (https://github.com/vllm-project/vllm/pull/14568#discussion_r2049496056)
+- 2025-04-17 `bnellnm` on `tests/kernels/test_moe_permute_unpermute.py`:36: nit: remove debugging prints (https://github.com/vllm-project/vllm/pull/14568#discussion_r2049496469)
+- 2025-04-17 `bnellnm`: @CalebDu overall the PR looks good. I mostly had minor comments. I was wondering if there were any size restrictions on the new kernels, e.g. do M (num tokens) or K (hidden dim) need to be multiples of 128, etc? If so, ... (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2813804779)
+- 2025-04-18 `CalebDu` on `CMakeLists.txt`:18: This flag is to export compile commands.json in build path for clangd language server parsing c++ code. So clangd can support Code hinting and code completion in vscode. This line is an auxiliary code that can be removed. (https://github.com/vllm-project/vllm/pull/14568#discussion_r2050480591)
+- 2025-04-18 `CalebDu` on `CMakeLists.txt`:665: Do You mean that use macro to skip register op like if CUDA ARCH 800? (https://github.com/vllm-project/vllm/pull/14568#discussion_r2050499273)
+- 2025-04-18 `CalebDu` on `csrc/moe/permute_unpermute_kernels/moe_permute_unpermute_kernel.h`:380: This flag is unused. I'll delete it. (https://github.com/vllm-project/vllm/pull/14568#discussion_r2050541857)
+- 2025-04-18 `CalebDu` on `csrc/moe/moe_permute_unpermute_op.cu`:63: I plan to replace all get ptr () with tensor.data ptr (). But I encounter a strange error, MOE C.so can not find kernel function. So I give up to use data ptr. (https://github.com/vllm-project/vllm/pull/14568#discussion_r2050545149)
+- 2025-04-18 `CalebDu`: @bnellnm I update code with your review. But I do not get your idea about CUDA Arch in cmakeLists.txt. Can you give more detail? (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2815877157)
+- 2025-04-18 `bnellnm` on `CMakeLists.txt`:665: Yeah (also use it to skip compiling the implementation). I think that will be more robust than checking version strings in cmake. (https://github.com/vllm-project/vllm/pull/14568#discussion_r2050890756)
+- 2025-04-18 `bnellnm`: @bnellnm I update code with your review. But I do not get your idea about CUDA Arch in cmakeLists.txt. Can you give more detail? I meant using the preprocessor to avoid compiling/registering the new ops when they aren't supported (like you mentioned ... (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2815883343)
+- 2025-04-19 `CalebDu`: @bnellnm I remove arch limit in cmake. I review permute/unpermute kernel implementation. There is no arch specialzed instruction like cp.async/tma/tensor core, only with cub.sort, ld/st and scalar compute with cuda core. So I think it's compatible for all cuda target and does ... (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2816488678)
+- 2025-04-22 `tlrmchlsmth` on `CMakeLists.txt`:689: I'm a little confused by this - should it be MOE PERMUTE SRC? (https://github.com/vllm-project/vllm/pull/14568#discussion_r2054831414)
+- 2025-04-28 `bnellnm` commented: There seems to be a few lint errors that need to be fixed but looks good otherwise! (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2800030815)
+- 2025-05-02 `tlrmchlsmth` on `csrc/moe/moe_permute_unpermute_op.cu`:118: Debug cruft? Could you delete if so? (https://github.com/vllm-project/vllm/pull/14568#discussion_r2070961483)
+- 2025-05-02 `tlrmchlsmth` on `csrc/moe/permute_unpermute_kernels/moe_permute_unpermute_kernel.cu`:115: I think this should be: I think the way it is now, it won't cast until after the multiplication, which would allow for overflowing an int32 (https://github.com/vllm-project/vllm/pull/14568#discussion_r2070963101)
+- 2025-05-02 `tlrmchlsmth` commented: The implementation looks nice and clean. Are there any benchmark results? (I did spot one potential overflow that should be addressed) (https://github.com/vllm-project/vllm/pull/14568#pullrequestreview-2810991987)
+- 2025-05-02 `CalebDu` on `CMakeLists.txt`:689: this line should be removed with bnell‘s review. I'll remove it. (https://github.com/vllm-project/vllm/pull/14568#discussion_r2071202911)
+- 2025-05-02 `CalebDu`: @tlrmchlsmth I update code with your review. And fix ci failed in calling FusedMoE.select experts. I add benchmark for comparison permute/unpermte customized kernel in deepseek v3 with naive python implementation( moe permute moe unpermute and reduce) in deep gemm moe.py. benchmark in ... (https://github.com/vllm-project/vllm/pull/14568#issuecomment-2846612852)

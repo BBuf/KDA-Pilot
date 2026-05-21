@@ -1,74 +1,40 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#14227](https://github.com/vllm-project/vllm/pull/14227)
-- Source page: `sources/prs/vllm/PR-14227.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-14227`
-- Generated at: `2026-05-20T15:34:19.636367+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-03-04T18:29:59Z`
-- Merged: `2025-03-20T04:00:39Z`
-
-## Discussion Counts
-
-- Issue comments: 16
-- Review submissions: 27 (approved=4, changes_requested=1, commented=22)
-- Inline review comments: 44
-- Review threads observed: 26
-- Resolved/outdated thread markers: resolved=17, outdated=19
-- Human participants with discussion text: NickLucche, WoosukKwon, alexm-redhat, hyeygit, mergify, mgoin, robertgshaw2-redhat, yaochengji
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 1
-
-## Review Decisions
-
-- `2025-03-06T01:26:40Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2662856329)
-- `2025-03-06T08:12:52Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2663666504)
-- `2025-03-06T08:13:22Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2663667780)
-- `2025-03-06T09:09:51Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2663804377)
-- `2025-03-06T21:18:42Z` `COMMENTED` by `alexm-redhat` - @NickLucche Nice work with the sampler and the optimizations to improve compilations times. Left some comments and questions. (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2659219126)
-- `2025-03-07T10:44:45Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2666899877)
-- `2025-03-07T11:33:35Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2667003361)
-- `2025-03-07T11:38:37Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2667012978)
-- `2025-03-07T11:39:38Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2667015156)
-- `2025-03-07T11:40:44Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2667017199)
-- `2025-03-07T11:48:16Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2667031608)
-- `2025-03-07T11:50:40Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2667036527)
-- `2025-03-07T15:18:08Z` `APPROVED` by `mgoin` - Awesome work building the structure for future sampling param enablement once we get performant kernels! Eval smoke test ... (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2667584709)
-- `2025-03-07T15:33:51Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2667625050)
-- `2025-03-07T16:51:30Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2667822419)
-- `2025-03-08T03:59:20Z` `COMMENTED` by `yaochengji` - Hi @NickLucche , thanks for your contribution, I found two places causing recompilation. Is is possible to resolve ... (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2668888555)
-- `2025-03-08T23:13:04Z` `CHANGES_REQUESTED` by `WoosukKwon` - Sorry for chiming in this late, but I think we need a broader discussion on how to share ... (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2669279315)
-- `2025-03-09T10:15:22Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2669385559)
-- `2025-03-09T10:21:01Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2669386754)
-- `2025-03-09T10:56:13Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2669393922)
-- `2025-03-09T20:04:27Z` `COMMENTED` by `yaochengji` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2669510961)
-- `2025-03-10T09:56:43Z` `COMMENTED` by `NickLucche` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2670379141)
-- `2025-03-17T21:19:11Z` `APPROVED` by `alexm-redhat` - LGTM! (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2692108317)
-- `2025-03-17T21:19:20Z` `COMMENTED` by `robertgshaw2-redhat` (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2692108562)
-- ... 3 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/v1/worker/tpu_model_runner.py`: 32 inline comment(s)
-- `tests/v1/tpu/test_sampler.py`: 7 inline comment(s)
-- `vllm/v1/sample/sampler.py`: 4 inline comment(s)
-- `requirements-tpu.txt`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-03-07T11:38:37Z` `inline` by `NickLucche` `tests/v1/tpu/test_sampler.py`:57; signals: kernel, perf, performance; excerpt: "performance is back with the kernel update in so I'll bring back the 0.1 check :)" (https://github.com/vllm-project/vllm/pull/14227#discussion_r1984917515)
-- `2025-03-07T11:40:44Z` `inline` by `NickLucche` `vllm/v1/worker/tpu_model_runner.py`:88; signals: perf, performance; excerpt: "yep but they're still disabled for now, I'd like to add args incrementally following a deeper analysis of performances" (https://github.com/vllm-project/vllm/pull/14227#discussion_r1984920218)
-- `2025-03-07T11:48:16Z` `inline` by `NickLucche` `vllm/v1/worker/tpu_model_runner.py`:164; signals: compile, race; excerpt: "I can elaborate a bit in the code too, what I mean is that we trace Sampler.forward by turning on all supported params (min ..." (https://github.com/vllm-project/vllm/pull/14227#discussion_r1984929434)
-- `2025-03-10T09:56:43Z` `inline` by `NickLucche` `vllm/v1/worker/tpu_model_runner.py`:642; signals: compile, hang; excerpt: "oh sure, I thought it would just call mark step on forced sync and realize post processing graph didn't change after the first inference ..." (https://github.com/vllm-project/vllm/pull/14227#discussion_r1986960545)
-- `2025-03-17T21:19:20Z` `inline` by `robertgshaw2-redhat` `vllm/v1/sample/sampler.py`:217; signals: perf, performance; excerpt: "Should we revert this or does it also help GPu performance?" (https://github.com/vllm-project/vllm/pull/14227#discussion_r1999689290)
-- `2025-03-07T12:05:54Z` `issue` by `NickLucche`; signals: perf, performance; excerpt: "Thanks a lot for the review and comments @alexm-redhat ! Just rebased on top of and performances are back to normal. I also addressed ..." (https://github.com/vllm-project/vllm/pull/14227#issuecomment-2706285721)
-- `2025-03-07T15:18:08Z` `review` `APPROVED` by `mgoin`; signals: kernel, perf; excerpt: "Awesome work building the structure for future sampling param enablement once we get performant kernels! Eval smoke test looks good (and runs fast!)" (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2667584709)
-- `2025-03-09T20:06:23Z` `issue` by `yaochengji`; signals: compile, race; excerpt: "@NickLucche Thanks for your contribution! I'm thinking about whether we can put the computation in torch.compile if possible. It brings two benefits: 1. the ..." (https://github.com/vllm-project/vllm/pull/14227#issuecomment-2709045419)
-- `2025-03-12T15:56:18Z` `issue` by `NickLucche`; signals: compile, cuda; excerpt: "Rebased and updated. @WoosukKwon I've separated the Sampler code for TPU into a different namespace so it doesn't make use of the CUDA path ..." (https://github.com/vllm-project/vllm/pull/14227#issuecomment-2718359711)
-- `2025-03-06T09:09:51Z` `inline` by `NickLucche` `vllm/v1/worker/tpu_model_runner.py`:805; signals: compile; excerpt: "I don't think I can do it in in M+N here as sampling will be dependent on both num reqs to sample and hidden ..." (https://github.com/vllm-project/vllm/pull/14227#discussion_r1982971934)
-- `2025-03-06T19:39:18Z` `inline` by `alexm-redhat` `tests/v1/tpu/test_sampler.py`:57; signals: compile; excerpt: "How much is run1 slower? maybe it will be safer to do something like run1 run 2 (else you may be in the noise ..." (https://github.com/vllm-project/vllm/pull/14227#discussion_r1983951395)
-- `2025-03-07T11:50:40Z` `inline` by `NickLucche` `vllm/v1/worker/tpu_model_runner.py`:192; signals: hang; excerpt: "yeah it avoids logits. div(temperature) division by zero later in sampler code. Behavior was changed in 13587 where temperature=0 would be replaced by 1 ..." (https://github.com/vllm-project/vllm/pull/14227#discussion_r1984932490)
+- 2025-03-04 `alexm-redhat` on `requirements-tpu.txt`:3: looks like redundant changes, ditto below (https://github.com/vllm-project/vllm/pull/14227#discussion_r1980328474)
+- 2025-03-04 `alexm-redhat` on `tests/v1/tpu/test_sampler.py`:38: I would mark "too slow" as TODO (https://github.com/vllm-project/vllm/pull/14227#discussion_r1980329955)
+- 2025-03-04 `alexm-redhat` on `vllm/v1/sample/sampler.py`:217: how did you discover this optimization? :) (https://github.com/vllm-project/vllm/pull/14227#discussion_r1980332069)
+- 2025-03-05 `NickLucche`: Also, sadly compilation takes forever now. Waiting for new kernels to address that. (https://github.com/vllm-project/vllm/pull/14227#issuecomment-2701413044)
+- 2025-03-06 `mgoin` on `vllm/v1/worker/tpu_model_runner.py`:805: This doesn't seem right.. each time we are only passing in num tokens, so what is the point of num reqs to sample in this loop? Looking around it seems like num tokens to sample is missing to be passed in. This ... (https://github.com/vllm-project/vllm/pull/14227#discussion_r1982420437)
+- 2025-03-06 `mgoin` on `vllm/v1/worker/tpu_model_runner.py`:904: Please keep the named args here and add back inputs embeds (https://github.com/vllm-project/vllm/pull/14227#discussion_r1982422508)
+- 2025-03-06 `NickLucche` on `vllm/v1/worker/tpu_model_runner.py`:805: I don't think I can do it in in M+N here as sampling will be dependent on both num reqs to sample and hidden state , so for each different hidden state shape we still need to compile. But we will only ... (https://github.com/vllm-project/vllm/pull/14227#discussion_r1982971934)
+- 2025-03-06 `NickLucche`: Quickly looking into an issue with greedy sampling and the control flow introduced here . EDIT: pushed a new commit addressing it. (https://github.com/vllm-project/vllm/pull/14227#issuecomment-2704033358)
+- 2025-03-06 `alexm-redhat` on `tests/v1/tpu/test_sampler.py`:57: How much is run1 slower? maybe it will be safer to do something like run1 run 2 (else you may be in the noise area if does recompile) (https://github.com/vllm-project/vllm/pull/14227#discussion_r1983951395)
+- 2025-03-06 `alexm-redhat` on `tests/v1/tpu/test_sampler.py`:94: maybe a better name for the test is test sampler different (https://github.com/vllm-project/vllm/pull/14227#discussion_r1983956293)
+- 2025-03-06 `alexm-redhat` on `vllm/v1/worker/tpu_model_runner.py`:88: all of the above should use tensor too, no? (https://github.com/vllm-project/vllm/pull/14227#discussion_r1983958780)
+- 2025-03-06 `alexm-redhat` on `vllm/v1/worker/tpu_model_runner.py`:148: nice reuse of non-padded copy across of sampling tensors (https://github.com/vllm-project/vllm/pull/14227#discussion_r1983974635)
+- 2025-03-06 `alexm-redhat` on `vllm/v1/worker/tpu_model_runner.py`:164: not clear about this comment. What is "single traced function"? (https://github.com/vllm-project/vllm/pull/14227#discussion_r1983976185)
+- 2025-03-06 `alexm-redhat` on `vllm/v1/worker/tpu_model_runner.py`:614: thanks for the comment! non-trivial behavior (https://github.com/vllm-project/vllm/pull/14227#discussion_r1983982517)
+- 2025-03-06 `alexm-redhat` on `vllm/v1/worker/tpu_model_runner.py`:700: why did you need torch.no grad? I recall this was causing errors (https://github.com/vllm-project/vllm/pull/14227#discussion_r1983983831)
+- 2025-03-06 `alexm-redhat` on `vllm/v1/worker/tpu_model_runner.py`:767: good catch about not needing to wait here! (https://github.com/vllm-project/vllm/pull/14227#discussion_r1983985066)
+- 2025-03-06 `alexm-redhat` on `vllm/v1/worker/tpu_model_runner.py`:769: how much comp times improve by moving wait device here? did you had a chance to check? (https://github.com/vllm-project/vllm/pull/14227#discussion_r1983985626)
+- 2025-03-06 `alexm-redhat` commented: @NickLucche Nice work with the sampler and the optimizations to improve compilations times. Left some comments and questions. (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2659219126)
+- 2025-03-07 `NickLucche` on `vllm/v1/sample/sampler.py`:217: I think I was inspecting the compilations with PT XLA DEBUG=2 (https://github.com/vllm-project/vllm/pull/14227#discussion_r1984911972)
+- 2025-03-07 `NickLucche` on `tests/v1/tpu/test_sampler.py`:57: performance is back with the kernel update in so I'll bring back the 0.1 check :) (https://github.com/vllm-project/vllm/pull/14227#discussion_r1984917515)
+- 2025-03-07 `NickLucche` on `vllm/v1/worker/tpu_model_runner.py`:88: yep but they're still disabled for now, I'd like to add args incrementally following a deeper analysis of performances (https://github.com/vllm-project/vllm/pull/14227#discussion_r1984920218)
+- 2025-03-07 `NickLucche` on `vllm/v1/worker/tpu_model_runner.py`:164: I can elaborate a bit in the code too, what I mean is that we trace Sampler.forward by turning on all supported params (min p and temp here) so we don't have to compile one graph for each flow in Sampler.forward (basically ... (https://github.com/vllm-project/vllm/pull/14227#discussion_r1984929434)
+- 2025-03-07 `NickLucche` on `vllm/v1/worker/tpu_model_runner.py`:192: yeah it avoids logits. div(temperature) division by zero later in sampler code. Behavior was changed in 13587 where temperature=0 would be replaced by 1 in sampler code. (https://github.com/vllm-project/vllm/pull/14227#discussion_r1984932490)
+- 2025-03-07 `NickLucche`: Thanks a lot for the review and comments @alexm-redhat ! Just rebased on top of and performances are back to normal. I also addressed your comments! (https://github.com/vllm-project/vllm/pull/14227#issuecomment-2706285721)
+- 2025-03-07 `mgoin` approved: Awesome work building the structure for future sampling param enablement once we get performant kernels! Eval smoke test looks good (and runs fast!) (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2667584709)
+- 2025-03-07 `NickLucche` on `vllm/v1/worker/tpu_model_runner.py`:769: unfortunately it doesn't make much of a difference when compiling the graph, not sure if there's some env var we can set. It does make a lot of difference obv when executing the compiled graph though. (https://github.com/vllm-project/vllm/pull/14227#discussion_r1985272695)
+- 2025-03-07 `mgoin` on `vllm/v1/worker/tpu_model_runner.py`:774: Actually I think we should use self.max num tokens still here since I made this be the padded number of tokens, in case the user put in an odd number or something weird (https://github.com/vllm-project/vllm/pull/14227#discussion_r1985389337)
+- 2025-03-08 `yaochengji` commented: Hi @NickLucche , thanks for your contribution, I found two places causing recompilation. Is is possible to resolve them? (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2668888555)
+- 2025-03-08 `WoosukKwon` changes_requested: Sorry for chiming in this late, but I think we need a broader discussion on how to share the sampler between different hardware backends. In V0, we found that the sampler implementation got over-complicated partly because different hardware backends added some if ... (https://github.com/vllm-project/vllm/pull/14227#pullrequestreview-2669279315)
+- 2025-03-09 `mgoin`: I think we are fine to duplicate the sampler, and we will likely need to once we get to integrating custom kernels. This was just a minimal implementation. (https://github.com/vllm-project/vllm/pull/14227#issuecomment-2708572874)
+- 2025-03-09 `NickLucche` on `vllm/v1/worker/tpu_model_runner.py`:642: In the tolist() move? How come? (https://github.com/vllm-project/vllm/pull/14227#discussion_r1986282395)
+- 2025-03-09 `NickLucche` on `vllm/v1/worker/tpu_model_runner.py`:602: can you share the logs to help me debug this? It's not showing on the tests we have, perhaps we can add more to prevent it from happening. I will double check with enfore eager=False which is not tested rn. (https://github.com/vllm-project/vllm/pull/14227#discussion_r1986283509)
+- 2025-03-09 `NickLucche`: Thanks for reviewing @yaochengji ! The re-compilation you're referring to is actually the one I mention in this TODO If we add a mark step there we can see it happening. from sampling metadata just happens to be the only mark step ... (https://github.com/vllm-project/vllm/pull/14227#issuecomment-2708799560)
+- 2025-03-09 `yaochengji` on `vllm/v1/worker/tpu_model_runner.py`:642: Because tolist moves data from TPU to CPU, and as selected token ids's value is not ready, a graph capture and recompilation will be trigged. (https://github.com/vllm-project/vllm/pull/14227#discussion_r1986408908)
+- 2025-03-09 `yaochengji`: @NickLucche Thanks for your contribution! I'm thinking about whether we can put the computation in torch.compile if possible. It brings two benefits: 1. the compilation boundary is much more clean compared with xm.mark step 2. the graph trace overhead is lower. (https://github.com/vllm-project/vllm/pull/14227#issuecomment-2709045419)
+- 2025-03-10 `NickLucche` on `vllm/v1/worker/tpu_model_runner.py`:642: oh sure, I thought it would just call mark step on forced sync and realize post processing graph didn't change after the first inference nvm I see you're referring to moving the cpu sync in the warmup graph so it won't recompile ... (https://github.com/vllm-project/vllm/pull/14227#discussion_r1986960545)
+- 2025-03-12 `NickLucche`: Rebased and updated. @WoosukKwon I've separated the Sampler code for TPU into a different namespace so it doesn't make use of the CUDA path any longer. Let me know what you think. @yaochengji I've addressed the small recompilation issue that was happening ... (https://github.com/vllm-project/vllm/pull/14227#issuecomment-2718359711)
+- 2025-03-12 `yaochengji`: @NickLucche Thanks for your update! Previously when resolving the recompilation issue in logits processor, I noticed the compilation time is about 500ms. This is not acceptable in some use cases. (E.g. a typical requirement of TPOT is 100ms). Therefore, could you resolve ... (https://github.com/vllm-project/vllm/pull/14227#issuecomment-2718545060)
+- 2025-03-17 `robertgshaw2-redhat` on `vllm/v1/sample/sampler.py`:217: Should we revert this or does it also help GPu performance? (https://github.com/vllm-project/vllm/pull/14227#discussion_r1999689290)
+- 2025-03-18 `NickLucche` on `vllm/v1/sample/sampler.py`:217: good point, I can add this in a separate PR if needs be now that the two samplers are separated. (https://github.com/vllm-project/vllm/pull/14227#discussion_r2000649667)

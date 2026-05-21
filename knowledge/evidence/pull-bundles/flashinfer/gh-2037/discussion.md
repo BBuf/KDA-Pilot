@@ -1,77 +1,20 @@
-# PR Discussion Digest
-
-- Source PR: [flashinfer-ai/flashinfer#2037](https://github.com/flashinfer-ai/flashinfer/pull/2037)
-- Source page: `sources/prs/flashinfer/PR-2037.md`
-- Evidence bundle: `evidence/pull-bundles/flashinfer/gh-2037`
-- Generated at: `2026-05-20T15:23:52.124651+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-11-04T18:50:38Z`
-- Merged: `2025-11-18T07:15:14Z`
-
-## Discussion Counts
-
-- Issue comments: 15
-- Review submissions: 32 (approved=2, commented=30)
-- Inline review comments: 33
-- Review threads observed: 18
-- Resolved/outdated thread markers: resolved=12, outdated=11
-- Human participants with discussion text: coderabbitai, kahyunnam, nvpohanh, pavanimajety, yzh119
-- Automation comments/reviews omitted from high-signal summary: 6
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-11-04T19:50:49Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 1 📜 Review details Configuration used : CodeRabbit UI Review profile : CHILL Plan : ... (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3418412416)
-- `2025-11-04T20:00:59Z` `COMMENTED` by `kahyunnam` (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3418445170)
-- `2025-11-04T20:01:35Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3418447049)
-- `2025-11-04T20:04:47Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 1 ♻️ Duplicate comments (1) flashinfer/rope.py (1) 1591-1596: Missing validation: GQA/MHA requires non-None V tensor. ... (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3418456797)
-- `2025-11-04T20:15:13Z` `COMMENTED` by `kahyunnam` (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3418488160)
-- `2025-11-04T20:16:49Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3418492965)
-- `2025-11-04T20:18:37Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 2 🧹 Nitpick comments (2) flashinfer/rope.py (2) 1639-1639: Consider moving import to module level. Importing ... (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3418498319)
-- `2025-11-04T20:26:58Z` `COMMENTED` by `kahyunnam` (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3418522812)
-- `2025-11-04T20:27:40Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3418524825)
-- `2025-11-04T20:27:48Z` `COMMENTED` by `kahyunnam` (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3418525212)
-- `2025-11-04T20:28:31Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3418527294)
-- `2025-11-04T20:30:03Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 0 🧹 Nitpick comments (1) flashinfer/rope.py (1) 1587-1617: Consider validating kv layout for clearer error ... (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3418531769)
-- `2025-11-05T00:17:39Z` `COMMENTED` by `yzh119` - Overall LGTM, would you mind adding benchmark suites for this operator? (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3419057135)
-- `2025-11-05T00:22:51Z` `COMMENTED` by `pavanimajety` (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3419071266)
-- `2025-11-05T00:56:00Z` `COMMENTED` by `pavanimajety` (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3419146740)
-- `2025-11-05T01:05:06Z` `COMMENTED` by `pavanimajety` (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3419165960)
-- `2025-11-05T01:06:15Z` `COMMENTED` by `pavanimajety` (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3419168362)
-- `2025-11-05T01:06:54Z` `COMMENTED` by `pavanimajety` (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3419169766)
-- `2025-11-05T01:09:21Z` `COMMENTED` by `pavanimajety` (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3419175069)
-- `2025-11-05T01:11:50Z` `APPROVED` by `pavanimajety` - Thanks Kahyun, LGTM overall! A few comments. (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3419183057)
-- `2025-11-05T02:50:35Z` `COMMENTED` by `nvpohanh` (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3419333298)
-- `2025-11-13T02:46:05Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 2 ♻️ Duplicate comments (1) include/flashinfer/pos enc.cuh (1) 756-769: Drop redundant IS MLA template parameter ... (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3456880490)
-- `2025-11-13T04:12:11Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 2 📜 Review details Configuration used : CodeRabbit UI Review profile : CHILL Plan : ... (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3457218109)
-- `2025-11-13T05:54:46Z` `APPROVED` by `yzh119` - Hi @kahyunnam thanks for the great work, I run the benchmark on Hopper and it seems the achieved ... (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3457626618)
-- ... 8 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `flashinfer/rope.py`: 18 inline comment(s)
-- `tests/attention/test_rope.py`: 4 inline comment(s)
-- `include/flashinfer/pos_enc.cuh`: 4 inline comment(s)
-- `csrc/rope.cu`: 3 inline comment(s)
-- `benchmarks/bench_rope_quantize_fp8_append_cache.py`: 2 inline comment(s)
-- `flashinfer/utils.py`: 1 inline comment(s)
-- `include/flashinfer/utils.cuh`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-11-04T19:50:49Z` `review` `COMMENTED` by `coderabbitai`; signals: attention, benchmark, cache, cuda, flashinfer, fp8, hang, kv cache; excerpt: "Actionable comments posted: 1 📜 Review details Configuration used : CodeRabbit UI Review profile : CHILL Plan : Pro 📥 Commits Reviewing files that ..." (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3418412416)
-- `2025-11-04T20:04:47Z` `review` `COMMENTED` by `coderabbitai`; signals: aligned, cache, flashinfer, hang, kernel, kv cache, layout, mla; excerpt: "Actionable comments posted: 1 ♻️ Duplicate comments (1) flashinfer/rope.py (1) 1591-1596: Missing validation: GQA/MHA requires non-None V tensor. The code validates that MLA does ..." (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3418456797)
-- `2025-11-04T20:30:03Z` `review` `COMMENTED` by `coderabbitai`; signals: cache, compile, cuda, flashinfer, hang, kernel, kv cache, layout; excerpt: "Actionable comments posted: 0 🧹 Nitpick comments (1) flashinfer/rope.py (1) 1587-1617: Consider validating kv layout for clearer error messages. At line 1590, accessing TensorLayout[kv ..." (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3418531769)
-- `2025-11-13T02:46:05Z` `review` `COMMENTED` by `coderabbitai`; signals: aligned, alignment, attention, benchmark, bf16, block, cache, cuda; excerpt: "Actionable comments posted: 2 ♻️ Duplicate comments (1) include/flashinfer/pos enc.cuh (1) 756-769: Drop redundant IS MLA template parameter IS MLA duplicates CacheT. Prefer deriving ..." (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3456880490)
-- `2025-11-13T04:12:11Z` `review` `COMMENTED` by `coderabbitai`; signals: benchmark, cache, cuda, cudagraph, flashinfer, fp8, hang, kv cache; excerpt: "Actionable comments posted: 2 📜 Review details Configuration used : CodeRabbit UI Review profile : CHILL Plan : Pro 📥 Commits Reviewing files that ..." (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3457218109)
-- `2025-11-13T06:00:59Z` `review` `COMMENTED` by `coderabbitai`; signals: benchmark, cache, cuda, cudagraph, flashinfer, fp8, hang, kv cache; excerpt: "Actionable comments posted: 1 🧹 Nitpick comments (2) flashinfer/utils.py (1) 258-296: Consider module-level NVML initialization for better resource management. The function initializes and shuts ..." (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3457652177)
-- `2025-11-13T08:50:55Z` `review` `COMMENTED` by `coderabbitai`; signals: block, cache, flashinfer, hang, kernel, kv cache, layout, mla; excerpt: "Actionable comments posted: 1 ♻️ Duplicate comments (2) include/flashinfer/pos enc.cuh (2) 922-947: 🔴 CRITICAL: Out-of-bounds V tail vector loads (unresolved from previous review). This ..." (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3458468618)
-- `2025-11-13T02:46:04Z` `inline` by `coderabbitai` `csrc/rope.cu`:609; signals: aligned, alignment, cache, cute, kernel, kv cache, perf, vector; excerpt: "⚠️ Potential issue 🔴 Critical 🧩 Analysis chain Guard against V tail vector overread in kernel This binding sets head dim = rope dim ..." (https://github.com/flashinfer-ai/flashinfer/pull/2037#discussion_r2521004124)
-- `2025-11-04T20:18:37Z` `review` `COMMENTED` by `coderabbitai`; signals: cache, flashinfer, hang, kv cache, layout, mla, register; excerpt: "Actionable comments posted: 2 🧹 Nitpick comments (2) flashinfer/rope.py (2) 1639-1639: Consider moving import to module level. Importing TensorLayout inside the function works but ..." (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3418498319)
-- `2025-11-04T18:50:49Z` `issue` by `coderabbitai`; signals: alignment, attention, benchmark, block, cache, compile, cuda, dtype; excerpt: "Walkthrough Adds a fused RoPE + FP8 quantize + paged-KV append flow: new unified CUDA kernel and host wrappers, new TVM FFI binding and ..." (https://github.com/flashinfer-ai/flashinfer/pull/2037#issuecomment-3487562549)
-- `2025-11-04T19:50:48Z` `inline` by `coderabbitai` `flashinfer/rope.py`:324; signals: cache, compile, flashinfer, fp8, kernel, kv cache, register; excerpt: "⚠️ Potential issue 🟠 Major Align fake op registration with the custom op name The custom op is registered under flashinfer::rope quantize append paged ..." (https://github.com/flashinfer-ai/flashinfer/pull/2037#discussion_r2491870528)
-- `2025-11-13T05:54:46Z` `review` `APPROVED` by `yzh119`; signals: benchmark, blackwell, hopper, kernel, memory, perf, performance; excerpt: "Hi @kahyunnam thanks for the great work, I run the benchmark on Hopper and it seems the achieved bandwidth reaches 80%+ region for large ..." (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3457626618)
+- 2025-11-04 `kahyunnam`: @yzh119 @pavanimajety do you think a benchmarking script similar to is needed here? AFAIK there is not really a direct pytorch equivalent of append-kv-cache. However, we could still have a benchmark comparing flashinfer.rope.rope quantize fp8 append paged kv cache (fused flashinfer) vs ... (https://github.com/flashinfer-ai/flashinfer/pull/2037#issuecomment-3487796162)
+- 2025-11-04 `kahyunnam` on `flashinfer/rope.py`:324: Fixed here: [align fake op registration with the custom op name]( (https://github.com/flashinfer-ai/flashinfer/pull/2037#discussion_r2491896122)
+- 2025-11-04 `kahyunnam`: Also some other questions for reviewers: 1. Sould defining/using a struct for the params into the new kernel help? not sure whether it would simplify or overly complicate. 2. Is there any benefit in trying to route the mla rope quantize fp8 ... (https://github.com/flashinfer-ai/flashinfer/pull/2037#issuecomment-3487835988)
+- 2025-11-04 `kahyunnam` on `flashinfer/rope.py`:1633: Fixed here: [only 4D k cache/v cache]( (https://github.com/flashinfer-ai/flashinfer/pull/2037#discussion_r2491929371)
+- 2025-11-04 `kahyunnam` on `flashinfer/rope.py`:1521: Fixed here by getting rid of example code in documentation: [034be6a]( Maybe users can just refer to test code for examples? Also I haven't fully tested these examples; so I don't want to make it the official public documentation for how to ... (https://github.com/flashinfer-ai/flashinfer/pull/2037#discussion_r2491958579)
+- 2025-11-05 `yzh119` on `csrc/rope.cu`:491: Can we unify the two branches? In C++ side, we assume K tensor is 3D. At python side, if we found K tensor is 2D, we unsqueeze its dimension 1. (https://github.com/flashinfer-ai/flashinfer/pull/2037#discussion_r2492387945)
+- 2025-11-05 `yzh119` commented: Overall LGTM, would you mind adding benchmark suites for this operator? (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3419057135)
+- 2025-11-05 `pavanimajety` on `tests/attention/test_rope.py`:533: Could we also parameterize this? [16, 32]? (https://github.com/flashinfer-ai/flashinfer/pull/2037#discussion_r2492397341)
+- 2025-11-05 `pavanimajety` on `flashinfer/rope.py`:1411: Seems like vLLM uses these tensors directly as query, key rather than slicing the tensors. Is this strictly necessary from the kernel perspective? See like this WIP fusion kernel [here]( (https://github.com/flashinfer-ai/flashinfer/pull/2037#discussion_r2492454146)
+- 2025-11-05 `pavanimajety` on `flashinfer/rope.py`:1411: Actually, it seems like this is slightly different for each model. Qwen: [qwen3.py L149-L153]( and [deepseek v2.py]( Let's leave it as-is for now. Will get back to you if I see any issue with integration (https://github.com/flashinfer-ai/flashinfer/pull/2037#discussion_r2492466905)
+- 2025-11-05 `pavanimajety` on `flashinfer/rope.py`:1467: If we don't have nope dimension, can we pass this as None? (https://github.com/flashinfer-ai/flashinfer/pull/2037#discussion_r2492468363)
+- 2025-11-05 `pavanimajety` on `tests/attention/test_rope.py`:561: When no rope dim is 0, we should instead give an option of None. It seems unnecessary to allocate albeit a zero dim tensor (https://github.com/flashinfer-ai/flashinfer/pull/2037#discussion_r2492472134)
+- 2025-11-05 `nvpohanh` on `include/flashinfer/pos_enc.cuh`:757: Are IS MLA and CacheT duplicated? Isn't IS MLA just std::is same ::value? (https://github.com/flashinfer-ai/flashinfer/pull/2037#discussion_r2492571822)
+- 2025-11-06 `nvpohanh`: @kahyunnam could we get some basic perf benchmarking results? Just want to make sure we are achieving reasonably good DRAM bw or not too much worse than TRT-LLM's kernel. Thanks! (https://github.com/flashinfer-ai/flashinfer/pull/2037#issuecomment-3495161890)
+- 2025-11-13 `yzh119` approved: Hi @kahyunnam thanks for the great work, I run the benchmark on Hopper and it seems the achieved bandwidth reaches 80%+ region for large number of tokens which meets our previous standard of memory bound kernels so I suppose it should be ... (https://github.com/flashinfer-ai/flashinfer/pull/2037#pullrequestreview-3457626618)
+- 2025-11-13 `kahyunnam` on `tests/attention/test_rope.py`:533: Yes, added here: [paramaterize page size 16,32 for testing]( (https://github.com/flashinfer-ai/flashinfer/pull/2037#discussion_r2522379852)
+- 2025-11-13 `kahyunnam` on `flashinfer/rope.py`:1467: Yes, resolved here: [when no rope dim, optional None for nope tensors]( (https://github.com/flashinfer-ai/flashinfer/pull/2037#discussion_r2522382144)
+- 2025-11-13 `kahyunnam` on `tests/attention/test_rope.py`:561: Yes, resolved here: [when no rope dim, optional None for nope tensors]( (https://github.com/flashinfer-ai/flashinfer/pull/2037#discussion_r2522382390)
+- 2025-11-13 `kahyunnam` on `flashinfer/rope.py`:1411: I think either way works; combining rather than pre-slicing may be cleaner in terms of number of params (and more "fool-proof" from user-side), but pre-slicing keeps the new API similar to the prexisting rope.mla rope quantize fp8 API which pre-slices (https://github.com/flashinfer-ai/flashinfer/pull/2037#discussion_r2524615140)
+- 2025-11-18 `yzh119`: Hi @kahyunnam let's merge this one first and fix the (potential) performance issues on A100 later. (https://github.com/flashinfer-ai/flashinfer/pull/2037#issuecomment-3545806083)

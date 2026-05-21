@@ -1,78 +1,19 @@
-# PR Discussion Digest
-
-- Source PR: [flashinfer-ai/flashinfer#3066](https://github.com/flashinfer-ai/flashinfer/pull/3066)
-- Source page: `sources/prs/flashinfer/PR-3066.md`
-- Evidence bundle: `evidence/pull-bundles/flashinfer/gh-3066`
-- Generated at: `2026-05-20T15:26:13.386605+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-04-14T18:31:16Z`
-- Merged: `2026-04-15T15:42:08Z`
-
-## Discussion Counts
-
-- Issue comments: 21
-- Review submissions: 37 (approved=2, commented=35)
-- Inline review comments: 48
-- Review threads observed: 19
-- Resolved/outdated thread markers: resolved=11, outdated=9
-- Human participants with discussion text: aleozlx, bkryu, coderabbitai, kiwi3shark, nv-yunzheq
-- Automation comments/reviews omitted from high-signal summary: 15
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 1
-
-## Review Decisions
-
-- `2026-04-14T18:36:03Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces support for Blackwell (SM120/SM121) architectures in the CuTe DSL MoE kernels, including ... (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108296637)
-- `2026-04-14T18:48:00Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 8 🧹 Nitpick comments (1) tests/moe/test cute dsl fused moe.py (1) 38-54: Use flashinfer.utils for ... (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108359486)
-- `2026-04-14T18:57:19Z` `COMMENTED` by `bkryu` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108410997)
-- `2026-04-14T18:57:22Z` `COMMENTED` by `bkryu` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108411234)
-- `2026-04-14T19:01:24Z` `COMMENTED` by `bkryu` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108431956)
-- `2026-04-14T19:02:39Z` `COMMENTED` by `bkryu` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108438642)
-- `2026-04-14T19:04:25Z` `COMMENTED` by `bkryu` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108450295)
-- `2026-04-14T19:05:10Z` `COMMENTED` by `bkryu` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108455495)
-- `2026-04-14T19:05:36Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108458308)
-- `2026-04-14T19:06:21Z` `COMMENTED` by `bkryu` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108463535)
-- `2026-04-14T19:06:46Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108466345)
-- `2026-04-14T19:07:37Z` `COMMENTED` by `bkryu` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108471189)
-- `2026-04-14T19:08:48Z` `COMMENTED` by `bkryu` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108477730)
-- `2026-04-14T19:09:07Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108479394)
-- `2026-04-14T19:10:04Z` `COMMENTED` by `bkryu` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108484565)
-- `2026-04-14T19:10:33Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108487077)
-- `2026-04-14T19:10:53Z` `COMMENTED` by `bkryu` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108488733)
-- `2026-04-14T19:11:23Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108491654)
-- `2026-04-14T19:13:49Z` `COMMENTED` by `bkryu` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108504932)
-- `2026-04-14T19:14:15Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108507500)
-- `2026-04-14T19:52:43Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108711201)
-- `2026-04-14T20:09:46Z` `COMMENTED` by `coderabbitai` - Actionable comments posted: 6 🧹 Nitpick comments (1) tests/moe/test cute dsl fused moe.py (1) 38-67: Split the “supported ... (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108802715)
-- `2026-04-14T20:21:35Z` `COMMENTED` by `bkryu` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108883614)
-- `2026-04-14T20:22:08Z` `COMMENTED` by `coderabbitai` (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108887958)
-- ... 13 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `flashinfer/fused_moe/cute_dsl/fused_moe.py`: 15 inline comment(s)
-- `benchmarks/routines/moe.py`: 8 inline comment(s)
-- `flashinfer/fused_moe/cute_dsl/blackwell_geforce/moe_dispatch.py`: 8 inline comment(s)
-- `flashinfer/fused_moe/cute_dsl/blackwell_sm12x/moe_dispatch.py`: 7 inline comment(s)
-- `flashinfer/fused_moe/cute_dsl/blackwell_sm12x/moe_dynamic_kernel.py`: 5 inline comment(s)
-- `flashinfer/fused_moe/cute_dsl/blackwell_geforce/moe_dynamic_kernel.py`: 2 inline comment(s)
-- `flashinfer/fused_moe/cute_dsl/blackwell_geforce/moe_static_kernel.py`: 2 inline comment(s)
-- `tests/moe/test_cute_dsl_fused_moe.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-04-14T18:48:00Z` `review` `COMMENTED` by `coderabbitai`; signals: aligned, benchmark, blackwell, cuda, cute, flashinfer, fp4, hang; excerpt: "Actionable comments posted: 8 🧹 Nitpick comments (1) tests/moe/test cute dsl fused moe.py (1) 38-54: Use flashinfer.utils for architecture gating. These helpers reimplement compute-capability ..." (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108359486)
-- `2026-04-14T20:09:46Z` `review` `COMMENTED` by `coderabbitai`; signals: benchmark, blackwell, cute, flashinfer, hang, kernel, moe, sm100; excerpt: "Actionable comments posted: 6 🧹 Nitpick comments (1) tests/moe/test cute dsl fused moe.py (1) 38-67: Split the “supported family” check from the true SM100-only ..." (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4108802715)
-- `2026-04-14T18:47:58Z` `inline` by `coderabbitai` `flashinfer/fused_moe/cute_dsl/blackwell_sm12x/moe_dispatch.py`:257; signals: aligned, blackwell, cute, flashinfer, kernel, moe, sm120, tile; excerpt: "⚠️ Potential issue 🟠 Major Reject non-128-aligned n before concatenating w13. Both SM120 kernels split w13 into gate/up halves by tile index. That only ..." (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3081692004)
-- `2026-04-14T18:47:58Z` `inline` by `coderabbitai` `flashinfer/fused_moe/cute_dsl/blackwell_sm12x/moe_dynamic_kernel.py`:383; signals: blackwell, cute, flashinfer, kernel, layout, memory, moe, overflow; excerpt: "⚠️ Potential issue 🟠 Major Clamp ab stage against the real shared-memory footprint. compute stages() only sizes the dense-kernel layouts, but this kernel later ..." (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3081692017)
-- `2026-04-14T19:10:04Z` `inline` by `bkryu` `flashinfer/fused_moe/cute_dsl/blackwell_sm12x/moe_dynamic_kernel.py`:383; signals: blackwell, cute, flashinfer, kernel, layout, moe, overflow, sm120; excerpt: "The compute stages output is already conservatively clamped (max(1, min(ab stage, 4))) and then further reduced by the k tile cnt divisibility check. In ..." (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3081805581)
-- `2026-04-14T20:09:44Z` `inline` by `coderabbitai` `benchmarks/routines/moe.py`:1373; signals: benchmark, cache, cuda, cute, fp4, hang, moe, nvfp4; excerpt: "⚠️ Potential issue 🟡 Minor Persist the runner mode in the benchmark output. --use functional api changes the implementation under test, but the printed/saved ..." (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3082095840)
-- `2026-04-14T20:09:44Z` `inline` by `coderabbitai` `flashinfer/fused_moe/cute_dsl/blackwell_sm12x/moe_dispatch.py`:256; signals: blackwell, block, cache, cute, flashinfer, fp4, hang, moe; excerpt: "⚠️ Potential issue 🟠 Major The shared WEIGHT CACHE has the same alpha hole. Lines 248-249 copy w1 alphas / w2 alphas into the ..." (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3082095851)
-- `2026-04-14T20:27:55Z` `inline` by `bkryu` `flashinfer/fused_moe/cute_dsl/fused_moe.py`:391; signals: bf16, block, cute, cutlass, flashinfer, fp4, moe, nvfp4; excerpt: "I'd push back on this one. @backend requirement is for APIs that dispatch across multiple backends via a backend= parameter (e.g., mm fp4 choosing ..." (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3082227693)
-- `2026-04-14T20:50:17Z` `inline` by `coderabbitai` `flashinfer/fused_moe/cute_dsl/blackwell_sm12x/moe_dispatch.py`:251; signals: blackwell, cache, compile, cute, flashinfer, kernel, moe, sm120; excerpt: "⚠️ Potential issue 🟠 Major 🧩 Analysis chain 🏁 Script executed: Repository: flashinfer-ai/flashinfer Length of output: 996 --- 🏁 Script executed: Repository: flashinfer-ai/flashinfer Length ..." (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3082411617)
-- `2026-04-14T21:36:43Z` `review` `COMMENTED` by `coderabbitai`; signals: bf16, cute, flashinfer, hang, moe, sm100, sm120; excerpt: "[!CAUTION] Some comments are outside the diff and can’t be posted inline due to platform limitations. ⚠️ Outside diff range comments (1) tests/moe/test cute ..." (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4109358717)
-- `2026-04-14T18:31:39Z` `issue` by `coderabbitai`; signals: aligned, benchmark, bf16, blackwell, block, cache, cuda, cute; excerpt: "[!NOTE] Reviews paused It looks like this branch is under active development. To avoid overwhelming you with review comments due to an influx of ..." (https://github.com/flashinfer-ai/flashinfer/pull/3066#issuecomment-4246243732)
-- `2026-04-14T18:47:58Z` `inline` by `coderabbitai` `flashinfer/fused_moe/cute_dsl/blackwell_geforce/moe_dispatch.py`:1206; signals: blackwell, cache, cute, flashinfer, moe, sm120, tile; excerpt: "⚠️ Potential issue 🔴 Critical The dynamic workspace cache can reuse undersized buffers. For Sm120DynamicMoEWorkspace, max rows is physical tiles 128, not the required ..." (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3081692010)
+- 2026-04-14 `bkryu` on `flashinfer/fused_moe/cute_dsl/blackwell_geforce/moe_dynamic_kernel.py`:359: Good catch. The hardcoded 32 assumed K=4096 with tile k=128. Fixed by passing hidden size from a input.shape[1] into setup attributes and computing k tile cnt = hidden size // tile shape mnk[2] dynamically. Applied to both static and dynamic kernels (two ... (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3081739805)
+- 2026-04-14 `bkryu` on `flashinfer/fused_moe/cute_dsl/blackwell_geforce/moe_static_kernel.py`:529: Good catch. The hardcoded 32 assumed K=4096 with tile k=128. Fixed by passing hidden size from a input.shape[1] into setup attributes and computing k tile cnt = hidden size // tile shape mnk[2] dynamically. Applied to both static and dynamic kernels (two ... (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3081740021)
+- 2026-04-14 `bkryu` on `benchmarks/routines/moe.py`:1466: Refactored in next commit to define run cute dsl moe once. The if/else now sets a runner variable — either a functools.partial wrapping the functional API or moe.run — and a single function definition delegates to it. (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3081760090)
+- 2026-04-14 `bkryu` on `flashinfer/fused_moe/cute_dsl/blackwell_geforce/moe_dispatch.py`:210: Agreed — no circular dependency here. Moved convert sf from mma layout to the top-level import block alongside the other flashinfer.cute dsl.utils imports in next commit (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3081766212)
+- 2026-04-14 `bkryu` on `flashinfer/fused_moe/cute_dsl/blackwell_sm12x/moe_dynamic_kernel.py`:718: Good suggestion. Added a documenting comment in the next commit that maps byte offsets to field names. Deferring the full struct refactor to a follow-up — the ctrl buffer is accessed via raw PTX ld.shared/st.shared intrinsics using byte addresses, and restructuring to ... (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3081776458)
+- 2026-04-14 `bkryu` on `benchmarks/routines/moe.py`:1393: Good catch. Added local expert offset=local expert offset to the partial binding in the functional benchmark path in next commit (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3081780667)
+- 2026-04-14 `bkryu` on `flashinfer/fused_moe/cute_dsl/blackwell_sm12x/moe_dispatch.py`:257: Agreed — added in next commit a fail-fast check that rejects n % LEVEL TILE N != 0 before weight view construction. Padding/repacking is left as a future enhancement if models with non-aligned intermediate sizes need support. (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3081786787)
+- 2026-04-14 `bkryu` on `flashinfer/fused_moe/cute_dsl/blackwell_geforce/moe_dispatch.py`:1206: Good catch. The dynamic workspace's max rows is physical tiles 128 which includes per-expert tail padding and doesn't directly reflect the routed-row capacity for task queue sizing. Fixed in next commit by checking routed rows capacity for dynamic workspaces (the original routed ... (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3081793203)
+- 2026-04-14 `bkryu` on `flashinfer/fused_moe/cute_dsl/blackwell_geforce/moe_dispatch.py`:1321: Agreed. The dynamic kernel lacks the global to local expert remapping that the static kernel has, so it can only run safely when num local experts == num experts. Added in next commit a guard that falls back to the static backend ... (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3081799078)
+- 2026-04-14 `bkryu` on `flashinfer/fused_moe/cute_dsl/blackwell_sm12x/moe_dynamic_kernel.py`:383: The compute stages output is already conservatively clamped (max(1, min(ab stage, 4))) and then further reduced by the k tile cnt divisibility check. In practice this yields ab stage=1 or 2 for all tested configurations, which fits within SM120's 232KB SMEM budget ... (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3081805581)
+- 2026-04-14 `bkryu` on `flashinfer/fused_moe/cute_dsl/fused_moe.py`:232: Expert parallelism (EP) is not supported on the SM120 so this is intentional. The dynamic kernel lacks global to local expert remapping, and EP tests are gated to SM100-only (@sm100 only). The local expert offset parameter is intentionally not forwarded because passing ... (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3081809443)
+- 2026-04-14 `bkryu` on `flashinfer/fused_moe/cute_dsl/fused_moe.py`:690: Good point. Added a data ptr() tuple check that invalidates the cached weight views when weight tensor pointers change. This is a cheap comparison (4 int comparisons) that catches the case where the wrapper is reused with different expert weights. Note that ... (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3081823624)
+- 2026-04-14 `bkryu` on `benchmarks/routines/moe.py`:1373: This is fine for the benchmark. (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3082176623)
+- 2026-04-14 `bkryu` on `flashinfer/fused_moe/cute_dsl/blackwell_sm12x/moe_dispatch.py`:256: Good catch — the wrapper's weight cache in fused moe.py had the same hole. Fixed both in next commit: - get weight views in moe dispatch.py: added w1 alphas.data ptr() and w2 alphas.data ptr() to the WEIGHT CACHE key - CuteDslMoEWrapper.run in ... (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3082215543)
+- 2026-04-14 `bkryu` on `flashinfer/fused_moe/cute_dsl/fused_moe.py`:391: I'd push back on this one. @backend requirement is for APIs that dispatch across multiple backends via a backend= parameter (e.g., mm fp4 choosing between cudnn/cutlass/cute-dsl/b12x). cute dsl fused moe nvfp4 is a specific backend — it has no backend=kwarg and no ... (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3082227693)
+- 2026-04-14 `bkryu` on `flashinfer/fused_moe/cute_dsl/fused_moe.py`:512: Valid catch. When use cuda graph=True, the wrapper pre-allocates one workspace type based on max num tokens, but launch sm120 moe re-selects the backend from the actual num tokens in each call. If a small batch crosses below the 640-pair cutover, a ... (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3082244930)
+- 2026-04-14 `bkryu` on `flashinfer/fused_moe/cute_dsl/fused_moe.py`:726: Already done when addressing the same issue above. Will see fix in next commit (https://github.com/flashinfer-ai/flashinfer/pull/3066#discussion_r3082253661)
+- 2026-04-14 `bkryu`: left minor naming suggestion , lgtm Thanks. Renamed blackwell geforce to blackwell sm12x as per your suggestion. (https://github.com/flashinfer-ai/flashinfer/pull/3066#issuecomment-4247346903)
+- 2026-04-14 `nv-yunzheq` approved: Didn't inspect kernel code. But the rest of integration looks good to me (https://github.com/flashinfer-ai/flashinfer/pull/3066#pullrequestreview-4109624332)

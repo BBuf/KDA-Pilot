@@ -1,78 +1,46 @@
-# PR Discussion Digest
-
-- Source PR: [triton-lang/triton#9704](https://github.com/triton-lang/triton/pull/9704)
-- Source page: `sources/prs/triton/PR-9704.md`
-- Evidence bundle: `evidence/pull-bundles/triton/gh-9704`
-- Generated at: `2026-05-20T15:33:34.100054+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-03-12T19:00:36Z`
-- Merged: `2026-05-14T22:57:03Z`
-
-## Discussion Counts
-
-- Issue comments: 3
-- Review submissions: 21 (approved=2, changes_requested=1, commented=18)
-- Inline review comments: 49
-- Review threads observed: 32
-- Resolved/outdated thread markers: resolved=29, outdated=26
-- Human participants with discussion text: CRobeck, Jokeren, ZelboK, antiagainst
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-03-13T14:28:42Z` `COMMENTED` by `CRobeck` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-3944428399)
-- `2026-03-13T16:52:33Z` `COMMENTED` by `ZelboK` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-3945546792)
-- `2026-03-13T16:55:08Z` `COMMENTED` by `Jokeren` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-3945564452)
-- `2026-03-13T17:01:02Z` `COMMENTED` by `Jokeren` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-3945605092)
-- `2026-03-13T20:14:31Z` `COMMENTED` by `ZelboK` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-3946723855)
-- `2026-03-13T21:23:35Z` `COMMENTED` by `ZelboK` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-3947024030)
-- `2026-03-13T21:40:57Z` `COMMENTED` by `Jokeren` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-3947090205)
-- `2026-03-17T15:49:14Z` `COMMENTED` by `Jokeren` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-3961754315)
-- `2026-03-17T18:59:52Z` `COMMENTED` by `ZelboK` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-3963070622)
-- `2026-03-17T19:12:37Z` `COMMENTED` by `ZelboK` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-3963149096)
-- `2026-03-17T19:38:15Z` `COMMENTED` by `Jokeren` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-3963306443)
-- `2026-03-17T19:47:04Z` `COMMENTED` by `ZelboK` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-3963357020)
-- `2026-04-13T23:07:51Z` `COMMENTED` by `Jokeren` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-4102412974)
-- `2026-04-24T16:46:43Z` `COMMENTED` by `Jokeren` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-4171164300)
-- `2026-04-25T19:12:08Z` `CHANGES_REQUESTED` by `antiagainst` - Nice! Just some nits from my side. (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-4175771509)
-- `2026-04-26T00:50:15Z` `COMMENTED` by `Jokeren` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-4176363899)
-- `2026-04-26T00:51:14Z` `COMMENTED` by `Jokeren` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-4176365120)
-- `2026-04-30T21:28:38Z` `APPROVED` by `antiagainst` - Cool! Looks good to me now; only few nits left. Please wait for @Jokeren to approve too. (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-4208625254)
-- `2026-04-30T22:25:26Z` `APPROVED` by `Jokeren` - Nice work. Thanks! Also kindly remind to make another PR for new architecture related updates. (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-4208882192)
-- `2026-05-02T21:57:38Z` `COMMENTED` by `Jokeren` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-4215564697)
-- `2026-05-04T22:37:47Z` `COMMENTED` by `antiagainst` (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-4224012794)
-
-## Inline Comment Hotspots
-
-- `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`: 18 inline comment(s)
-- `.github/workflows/integration-tests-amd.yml`: 6 inline comment(s)
-- `third_party/proton/proton/profile.py`: 5 inline comment(s)
-- `third_party/proton/test/test_api.py`: 4 inline comment(s)
-- `third_party/proton/proton/__init__.py`: 4 inline comment(s)
-- `third_party/amd/backend/include/hip/amd_detail/hip_api_trace.hpp`: 3 inline comment(s)
-- `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfilerStub.cpp`: 2 inline comment(s)
-- `third_party/proton/csrc/Proton.cpp`: 2 inline comment(s)
-- `third_party/proton/csrc/lib/Driver/CMakeLists.txt`: 1 inline comment(s)
-- `third_party/proton/csrc/include/Driver/Dispatch.h`: 1 inline comment(s)
-- `.github/workflows/runner-preparation.yml`: 1 inline comment(s)
-- `third_party/proton/test/test_instrumentation.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-03-13T20:14:31Z` `inline` by `ZelboK` `third_party/proton/proton/profile.py`:26; signals: race; excerpt: "Is rocprofiler-sdk available on rocm 6? We can completely deprecated roctracer? It should be but it won't have late start. I think I'll resort ..." (https://github.com/triton-lang/triton/pull/9704#discussion_r2933538535)
-- `2026-03-17T15:34:23Z` `inline` by `Jokeren` `third_party/proton/csrc/lib/Driver/CMakeLists.txt`:10; signals: race; excerpt: "Let's keep RoctracerApi for now. Otherwise, AMD GPU profiling is disabled on machines without RocprofApi" (https://github.com/triton-lang/triton/pull/9704#discussion_r2947676893)
-- `2026-03-17T15:36:18Z` `inline` by `Jokeren` `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfilerStub.cpp`:1; signals: race; excerpt: "OK, I guess it's for compilation related problems when rocsdkprofiler is missing. Like I mentioned, let's fallback to roctracer api" (https://github.com/triton-lang/triton/pull/9704#discussion_r2947688759)
-- `2026-03-17T18:59:52Z` `inline` by `ZelboK` `third_party/proton/proton/__init__.py`:19; signals: triton; excerpt: "Right, and looking back at it this isn't actually a proper solution. With a script like this: leads to As you can see it ..." (https://github.com/triton-lang/triton/pull/9704#discussion_r2948929999)
-- `2026-04-26T00:51:14Z` `inline` by `Jokeren` `third_party/amd/backend/include/hip/amd_detail/hip_api_trace.hpp`; signals: race; excerpt: "So we will actually have three PRs to land. 1. Fix future hardware issues 2. Land additional HIP headers 3. Support rocprofilersdk and deprecate ..." (https://github.com/triton-lang/triton/pull/9704#discussion_r3142796854)
-- `2026-03-13T17:00:59Z` `inline` by `Jokeren` `third_party/proton/proton/profile.py`:26; signals: race; excerpt: "Is rocprofiler-sdk available on rocm 6? We can completely deprecated roctracer?" (https://github.com/triton-lang/triton/pull/9704#discussion_r2932576671)
-- `2026-04-24T16:41:31Z` `inline` by `Jokeren` `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:1; signals: race; excerpt: "Have you deprecated RoctracerProfiler.h?" (https://github.com/triton-lang/triton/pull/9704#discussion_r3139100164)
-- `2026-04-25T15:10:07Z` `inline` by `antiagainst` `third_party/amd/backend/include/hip/amd_detail/hip_api_trace.hpp`; signals: race; excerpt: "Can we have a separate pull request to land all these needed HIP headers?" (https://github.com/triton-lang/triton/pull/9704#discussion_r3142146215)
-- `2026-04-26T00:50:15Z` `inline` by `Jokeren` `third_party/amd/backend/include/hip/amd_detail/hip_api_trace.hpp`; signals: race; excerpt: "@ZelboK please do" (https://github.com/triton-lang/triton/pull/9704#discussion_r3142796062)
-- `2026-04-25T19:12:08Z` `review` `CHANGES_REQUESTED` by `antiagainst`; signals: general review; excerpt: "Nice! Just some nits from my side." (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-4175771509)
-- `2026-03-13T21:23:35Z` `inline` by `ZelboK` `third_party/proton/test/test_api.py`:99; signals: general review; excerpt: "A branch locally I have seems to work with stochastic sampling. I can push it to a separate PR and we can go from ..." (https://github.com/triton-lang/triton/pull/9704#discussion_r2933832343)
-- `2026-03-13T21:40:57Z` `inline` by `Jokeren` `third_party/proton/proton/profile.py`:26; signals: general review; excerpt: "Let's probably have both backends. Even the previous version of rocprofiler-sdk doesn't support late start" (https://github.com/triton-lang/triton/pull/9704#discussion_r2933894001)
+- 2026-03-13 `CRobeck` on `third_party/proton/test/test_api.py`:99: Any ideas when this feature might be supported? (https://github.com/triton-lang/triton/pull/9704#discussion_r2931548591)
+- 2026-03-13 `ZelboK` on `third_party/proton/test/test_api.py`:99: Let me try working on it right now, it might not be that much effort. (https://github.com/triton-lang/triton/pull/9704#discussion_r2932526046)
+- 2026-03-13 `Jokeren` on `third_party/proton/test/test_api.py`:99: Let's separate it into another PR (https://github.com/triton-lang/triton/pull/9704#discussion_r2932541528)
+- 2026-03-13 `Jokeren` on `third_party/proton/proton/profile.py`:26: Is rocprofiler-sdk available on rocm 6? We can completely deprecated roctracer? (https://github.com/triton-lang/triton/pull/9704#discussion_r2932576671)
+- 2026-03-13 `ZelboK` on `third_party/proton/proton/profile.py`:26: Is rocprofiler-sdk available on rocm 6? We can completely deprecated roctracer? It should be but it won't have late start. I think I'll resort to having roctracer as the fallback then? I am likely missing some context. (https://github.com/triton-lang/triton/pull/9704#discussion_r2933538535)
+- 2026-03-13 `ZelboK` on `third_party/proton/test/test_api.py`:99: A branch locally I have seems to work with stochastic sampling. I can push it to a separate PR and we can go from there. (https://github.com/triton-lang/triton/pull/9704#discussion_r2933832343)
+- 2026-03-13 `Jokeren` on `third_party/proton/proton/profile.py`:26: Let's probably have both backends. Even the previous version of rocprofiler-sdk doesn't support late start (https://github.com/triton-lang/triton/pull/9704#discussion_r2933894001)
+- 2026-03-17 `Jokeren` on `third_party/proton/csrc/lib/Driver/CMakeLists.txt`:10: Let's keep RoctracerApi for now. Otherwise, AMD GPU profiling is disabled on machines without RocprofApi (https://github.com/triton-lang/triton/pull/9704#discussion_r2947676893)
+- 2026-03-17 `Jokeren` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfilerStub.cpp`:1: Why do you add this file? (https://github.com/triton-lang/triton/pull/9704#discussion_r2947681880)
+- 2026-03-17 `Jokeren` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfilerStub.cpp`:1: OK, I guess it's for compilation related problems when rocsdkprofiler is missing. Like I mentioned, let's fallback to roctracer api (https://github.com/triton-lang/triton/pull/9704#discussion_r2947688759)
+- 2026-03-17 `Jokeren` on `third_party/proton/proton/__init__.py`:19: Well we can still start GPU operations before proton is imported (https://github.com/triton-lang/triton/pull/9704#discussion_r2947700445)
+- 2026-03-17 `Jokeren` on `third_party/proton/csrc/Proton.cpp`:239: This is not clear to me (https://github.com/triton-lang/triton/pull/9704#discussion_r2947701808)
+- 2026-03-17 `Jokeren` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:69: There's no header file containing this struct? (https://github.com/triton-lang/triton/pull/9704#discussion_r2947743109)
+- 2026-03-17 `Jokeren` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:562: There's another phases besides ROCPROFILER CALLBACK PHASE EXIT and ROCPROFILER CALLBACK PHASE ENTER? (https://github.com/triton-lang/triton/pull/9704#discussion_r2947757524)
+- 2026-03-17 `ZelboK` on `third_party/proton/proton/__init__.py`:19: Right, and looking back at it this isn't actually a proper solution. With a script like this: leads to As you can see it currently fails. This is due to the limitation that we cannot retroactively intercept existing queues. This means that ... (https://github.com/triton-lang/triton/pull/9704#discussion_r2948929999)
+- 2026-03-17 `ZelboK` on `third_party/proton/csrc/Proton.cpp`:239: Idea of this was to call force configure at proton import time instead of proton.start(). So when you import it that's when the interception would occur (https://github.com/triton-lang/triton/pull/9704#discussion_r2949003785)
+- 2026-03-17 `Jokeren` on `third_party/proton/proton/__init__.py`:19: cc @ThomasRaoux, we need to resolve this constraint asap (https://github.com/triton-lang/triton/pull/9704#discussion_r2949151375)
+- 2026-03-17 `ZelboK` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:562: ROCPROFILER CALLBACK PHASE NONE is the other phase (https://github.com/triton-lang/triton/pull/9704#discussion_r2949198856)
+- 2026-04-13 `Jokeren` on `third_party/proton/csrc/include/Driver/Dispatch.h`:128: Can you describe why we need such a complex library loading logic? I would prefer it staying as simple as possible. (https://github.com/triton-lang/triton/pull/9704#discussion_r3076252591)
+- 2026-04-13 `Jokeren` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:69: @ZelboK this is not answered yet (https://github.com/triton-lang/triton/pull/9704#discussion_r3076258042)
+- 2026-04-13 `Jokeren` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:562: what does ROCPROFILER CALLBACK PHASE NONE mean though? (https://github.com/triton-lang/triton/pull/9704#discussion_r3076259171)
+- 2026-04-13 `Jokeren` on `third_party/proton/proton/profile.py`:17: Why do you call is active here? (https://github.com/triton-lang/triton/pull/9704#discussion_r3076270443)
+- 2026-04-13 `Jokeren` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:464: What does ".kd" mean? Please add a comment (https://github.com/triton-lang/triton/pull/9704#discussion_r3076278701)
+- 2026-04-13 `Jokeren` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:764: Why do you need to check contextIsValid? (https://github.com/triton-lang/triton/pull/9704#discussion_r3076284970)
+- 2026-04-24 `Jokeren` on `.github/workflows/runner-preparation.yml`:99: Why this is so complex? (https://github.com/triton-lang/triton/pull/9704#discussion_r3138294772)
+- 2026-04-24 `Jokeren` on `third_party/proton/test/test_instrumentation.py`:181: This is not related. Can you move it to a separate PR? (https://github.com/triton-lang/triton/pull/9704#discussion_r3139072900)
+- 2026-04-24 `Jokeren` on `third_party/proton/Dialect/lib/ProtonGPUToLLVM/ProtonAMDGPUToLLVM/TargetInfo.cpp`:11: Again the following updates are not related with this PR (https://github.com/triton-lang/triton/pull/9704#discussion_r3139095787)
+- 2026-04-24 `Jokeren` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:1: Have you deprecated RoctracerProfiler.h? (https://github.com/triton-lang/triton/pull/9704#discussion_r3139100164)
+- 2026-04-24 `Jokeren` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:863: What does watermark mean? Can you add an inline comment? (https://github.com/triton-lang/triton/pull/9704#discussion_r3139103031)
+- 2026-04-24 `Jokeren` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:846: In general this is not needed because we will skip records without correlations (https://github.com/triton-lang/triton/pull/9704#discussion_r3139107516)
+- 2026-04-24 `Jokeren` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:886: Likely we will have the main thread to initialize the tool and finalize the tool. So a lock is not required. (https://github.com/triton-lang/triton/pull/9704#discussion_r3139120753)
+- 2026-04-25 `antiagainst` on `third_party/amd/backend/include/hip/amd_detail/hip_api_trace.hpp`: Can we have a separate pull request to land all these needed HIP headers? (https://github.com/triton-lang/triton/pull/9704#discussion_r3142146215)
+- 2026-04-25 `antiagainst` on `.github/workflows/integration-tests-amd.yml`:229: This timeout should be shrinked given only meant for proton tests. (https://github.com/triton-lang/triton/pull/9704#discussion_r3142273722)
+- 2026-04-25 `antiagainst` on `.github/workflows/integration-tests-amd.yml`:237: We don't need to define RUNNER TYPE here? (https://github.com/triton-lang/triton/pull/9704#discussion_r3142276292)
+- 2026-04-25 `antiagainst` on `.github/workflows/integration-tests-amd.yml`:334: We should actually support probing and loading versioned dylib with something like to make developer life easier. Though, do we really need to manually handle all of these? We should be able to dlopen only the "entry" dylib and others will be ... (https://github.com/triton-lang/triton/pull/9704#discussion_r3142400707)
+- 2026-04-25 `antiagainst` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:46: Nit: this comment is not useful given it's fairly clear this is forward declaration. (https://github.com/triton-lang/triton/pull/9704#discussion_r3142414411)
+- 2026-04-25 `antiagainst` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:613: This is scanning every version? What's the min version we want to support? (https://github.com/triton-lang/triton/pull/9704#discussion_r3142421761)
+- 2026-04-25 `antiagainst` changes_requested: Nice! Just some nits from my side. (https://github.com/triton-lang/triton/pull/9704#pullrequestreview-4175771509)
+- 2026-04-26 `Jokeren` on `third_party/amd/backend/include/hip/amd_detail/hip_api_trace.hpp`: So we will actually have three PRs to land. 1. Fix future hardware issues 2. Land additional HIP headers 3. Support rocprofilersdk and deprecate roctracer (https://github.com/triton-lang/triton/pull/9704#discussion_r3142796854)
+- 2026-04-30 `antiagainst` on `.github/workflows/integration-tests-amd.yml`:209: Nit: name it as proton-tests- to be more clear? Similarly for the name at L212.. (https://github.com/triton-lang/triton/pull/9704#discussion_r3170928858)
+- 2026-04-30 `antiagainst` on `.github/workflows/integration-tests-amd.yml`:296: No need to have these anymore given already tested in earlier integration tests? (https://github.com/triton-lang/triton/pull/9704#discussion_r3170940430)
+- 2026-04-30 `antiagainst` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:613: Do we have an update on this? (https://github.com/triton-lang/triton/pull/9704#discussion_r3170945746)
+- 2026-04-30 `Jokeren` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:613: NIT: I would prefer libroctx64.so to be loaded from another file/module (https://github.com/triton-lang/triton/pull/9704#discussion_r3171155329)
+- 2026-05-02 `Jokeren` on `.github/workflows/integration-tests-amd.yml`:192: Why do you need this env variable? (https://github.com/triton-lang/triton/pull/9704#discussion_r3177281298)
+- 2026-05-04 `antiagainst` on `third_party/proton/csrc/lib/Profiler/RocprofSDK/RocprofSDKProfiler.cpp`:146: There are fairly non-trivial magic happening here regarding visible devices. :) Would be great to add some high level comments to explain what this is doing and why needed so in the future it is still easy to understand. :) (https://github.com/triton-lang/triton/pull/9704#discussion_r3184928192)
+- 2026-05-12 `Jokeren`: Hi @ZelboK can you please address the last comment and fix the CI problem? We may want to merge the PR this week (https://github.com/triton-lang/triton/pull/9704#issuecomment-4430092486)

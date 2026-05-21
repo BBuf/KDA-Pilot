@@ -1,76 +1,40 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#20358](https://github.com/vllm-project/vllm/pull/20358)
-- Source page: `sources/prs/vllm/PR-20358.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-20358`
-- Generated at: `2026-05-20T15:36:06.797394+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-07-02T07:18:42Z`
-- Merged: `2025-08-29T10:57:35Z`
-
-## Discussion Counts
-
-- Issue comments: 58
-- Review submissions: 30 (approved=1, commented=29)
-- Inline review comments: 29
-- Review threads observed: 7
-- Resolved/outdated thread markers: resolved=6, outdated=7
-- Human participants with discussion text: DarkLight1337, ProExpertProg, cjackal, drdown33, elvischenv, hmellor, huydhn, jeejeelee, learning4life, lgeiger, mergify, mgoin, nWEIdia, simon-mo, tlrmchlsmth, vadimkantorov, youkaichao, zifeitong, zou3519
-- Automation comments/reviews omitted from high-signal summary: 4
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 30
-
-## Review Decisions
-
-- `2025-07-02T07:19:14Z` `COMMENTED` by `gemini-code-assist` - Summary of Changes Hello @huydhn, I'm Gemini Code Assist[^1]! I'm currently reviewing this pull request and will post ... (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-2978027458)
-- `2025-07-02T07:20:17Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request updates PyTorch to version 2.8.0 and its related dependencies like torchvision, torchaudio, and ... (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-2978030278)
-- `2025-07-15T19:27:00Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3022012532)
-- `2025-07-16T00:20:40Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3022682091)
-- `2025-07-16T00:59:26Z` `COMMENTED` by `huydhn` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3022752150)
-- `2025-07-16T15:09:08Z` `COMMENTED` by `jeejeelee` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3025489474)
-- `2025-07-16T18:31:14Z` `COMMENTED` by `huydhn` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3026355124)
-- `2025-07-16T18:35:05Z` `COMMENTED` by `huydhn` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3026364905)
-- `2025-07-16T21:58:19Z` `COMMENTED` by `huydhn` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3027024439)
-- `2025-07-17T20:45:57Z` `COMMENTED` by `huydhn` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3030968336)
-- `2025-08-06T17:57:34Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3093671205)
-- `2025-08-06T18:45:14Z` `COMMENTED` by `huydhn` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3093801297)
-- `2025-08-06T18:46:41Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3093806317)
-- `2025-08-06T23:06:54Z` `COMMENTED` by `huydhn` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3094566375)
-- `2025-08-06T23:56:21Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3094658484)
-- `2025-08-07T01:07:31Z` `COMMENTED` by `huydhn` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3094745665)
-- `2025-08-10T19:48:58Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3103729213)
-- `2025-08-10T20:06:22Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3103732424)
-- `2025-08-11T21:17:52Z` `COMMENTED` by `huydhn` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3107807432)
-- `2025-08-13T01:20:44Z` `COMMENTED` by `zifeitong` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3113687828)
-- `2025-08-13T01:59:35Z` `COMMENTED` by `huydhn` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3113729547)
-- `2025-08-13T02:16:23Z` `COMMENTED` by `huydhn` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3113747046)
-- `2025-08-26T22:33:54Z` `COMMENTED` by `huydhn` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3157512162)
-- `2025-08-27T00:02:16Z` `COMMENTED` by `huydhn` (https://github.com/vllm-project/vllm/pull/20358#pullrequestreview-3157700917)
-- ... 6 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `docker/Dockerfile`: 11 inline comment(s)
-- `tests/models/test_transformers.py`: 7 inline comment(s)
-- `tests/distributed/test_sequence_parallel.py`: 5 inline comment(s)
-- `tests/lora/test_chatglm3_tp.py`: 3 inline comment(s)
-- `requirements/cuda.txt`: 2 inline comment(s)
-- `.pre-commit-config.yaml`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-08-28T10:01:34Z` `inline` by `huydhn` `tests/models/test_transformers.py`:190; signals: attention, failing, oom, pipeline; excerpt: "@zou3519 @drisspg I'm pretty sure that the increase is either coming from or is partly due to it. Here is what I have been ..." (https://github.com/vllm-project/vllm/pull/20358#discussion_r2306907125)
-- `2025-08-13T02:16:23Z` `inline` by `huydhn` `requirements/cuda.txt`:15; signals: block, cuda, hang; excerpt: "Keep this here would effectively block this change until xformers release a new package working with 2.8.0. I'm asking for the release timeline of ..." (https://github.com/vllm-project/vllm/pull/20358#discussion_r2271911807)
-- `2025-08-26T22:33:53Z` `inline` by `huydhn` `tests/models/test_transformers.py`:190; signals: compile, hang, memory; excerpt: "I start to see a slight memory increase for jason9693/Qwen2.5-1.5B-apeach in 2.8 torch.compile, i.e. This must have come from a change(s) in the past ..." (https://github.com/vllm-project/vllm/pull/20358#discussion_r2302291962)
-- `2025-08-26T02:07:37Z` `issue` by `huydhn`; signals: hang, kernel, moe; excerpt: "[Kernels MoE]( failures seem to come from @mgoin @simon-mo Should we force merge this change now or continue to wait for fixes and do ..." (https://github.com/vllm-project/vllm/pull/20358#issuecomment-3222315211)
-- `2025-07-15T19:27:00Z` `inline` by `zou3519` `tests/distributed/test_sequence_parallel.py`:299; signals: fp8, sm90; excerpt: "@tlrmchlsmth @cascade812 @ProExpertProg upgrading to PyTorch 2.8 causes this test to fail with "FP8 reduction requires sm90 or higher". Is this expected?" (https://github.com/vllm-project/vllm/pull/20358#discussion_r2208473696)
-- `2025-08-11T21:17:52Z` `inline` by `huydhn` `docker/Dockerfile`:387; signals: attention, cuda; excerpt: "Well, I'm encountering a build issue with xformers v0.0.31 or later and have cut an issue for the team at As the build failure ..." (https://github.com/vllm-project/vllm/pull/20358#discussion_r2268035970)
-- `2025-08-13T01:20:44Z` `inline` by `zifeitong` `docker/Dockerfile`:387; signals: cuda, ptx; excerpt: "Limiting TORCH CUDA ARCH LIST for xformers build worked for me: xformers official wheel is built with TORCH CUDA ARCH LIST: 7.5 8.0+PTX 9.0a" (https://github.com/vllm-project/vllm/pull/20358#discussion_r2271859359)
-- `2025-08-27T20:50:18Z` `inline` by `zou3519` `tests/models/test_transformers.py`:190; signals: kernel, triton; excerpt: "cc @BoyuanFeng it sounds like Inductor generated a triton kernel that doesn't work on L4 gpus because the machine type doesn't have enough sram" (https://github.com/vllm-project/vllm/pull/20358#discussion_r2305266528)
-- `2025-07-16T00:20:40Z` `inline` by `ProExpertProg` `tests/distributed/test_sequence_parallel.py`:299; signals: fp8, hang; excerpt: "Huh, did something change in PyTorch around fp8 on sm89?" (https://github.com/vllm-project/vllm/pull/20358#discussion_r2208941940)
-- `2025-08-13T06:59:51Z` `issue` by `huydhn`; signals: block, hang; excerpt: "What's the status of this PR? The change itself is ready to land with one condition that we need to build xformers from source ..." (https://github.com/vllm-project/vllm/pull/20358#issuecomment-3182426583)
-- `2025-08-25T19:40:31Z` `issue` by `huydhn`; signals: hang, kernel; excerpt: "@zhewenl I'm seeing this new failure showing up where a bunch of libraries used by EP kernel needs to be uploaded to Ray pushing ..." (https://github.com/vllm-project/vllm/pull/20358#issuecomment-3221515897)
-- `2025-07-16T18:31:14Z` `inline` by `huydhn` `tests/lora/test_chatglm3_tp.py`:100; signals: oom; excerpt: "I'm getting OOM when running this test on CI. It's unclear if it's related to 2.8 upgrade" (https://github.com/vllm-project/vllm/pull/20358#discussion_r2211262822)
+- 2025-07-15 `zou3519` on `tests/distributed/test_sequence_parallel.py`:299: @tlrmchlsmth @cascade812 @ProExpertProg upgrading to PyTorch 2.8 causes this test to fail with "FP8 reduction requires sm90 or higher". Is this expected? (https://github.com/vllm-project/vllm/pull/20358#discussion_r2208473696)
+- 2025-07-16 `ProExpertProg` on `tests/distributed/test_sequence_parallel.py`:299: Huh, did something change in PyTorch around fp8 on sm89? (https://github.com/vllm-project/vllm/pull/20358#discussion_r2208941940)
+- 2025-07-16 `huydhn` on `tests/distributed/test_sequence_parallel.py`:299: As the [error]( seems to come from [NCCL]( this might be due to NCCl update to nvidia-nccl-cu12==2.27.3. @atalman @Skylion007 Should we cherry pick to 2.8 and see if it helps? (https://github.com/vllm-project/vllm/pull/20358#discussion_r2208979278)
+- 2025-07-16 `jeejeelee` on `tests/lora/test_chatglm3_tp.py`:100: QQ: Why do we need to set cpu offload gb? (https://github.com/vllm-project/vllm/pull/20358#discussion_r2210705486)
+- 2025-07-16 `huydhn` on `tests/lora/test_chatglm3_tp.py`:100: I'm getting OOM when running this test on CI. It's unclear if it's related to 2.8 upgrade (https://github.com/vllm-project/vllm/pull/20358#discussion_r2211262822)
+- 2025-07-16 `huydhn` on `tests/distributed/test_sequence_parallel.py`:299: I re-enable this test as this seems to point to a real issue with the upgrade (https://github.com/vllm-project/vllm/pull/20358#discussion_r2211269333)
+- 2025-07-16 `huydhn` on `tests/distributed/test_sequence_parallel.py`:299: It's working now after rebasing so it's probably an issue from vLLM that has been fixed. No cherry pick is needed (https://github.com/vllm-project/vllm/pull/20358#discussion_r2211690959)
+- 2025-07-17 `huydhn` on `tests/lora/test_chatglm3_tp.py`:100: Per the chat with @zou3519, let me put this test back and we will try to see if OOM still happens (https://github.com/vllm-project/vllm/pull/20358#discussion_r2214262625)
+- 2025-08-04 `huydhn`: PyTorch 2.8.0 final RC is ready and the release will be on Aug 6th I will update this PR to use the official release once they are ready (https://github.com/vllm-project/vllm/pull/20358#issuecomment-3148996433)
+- 2025-08-06 `tlrmchlsmth` on `docker/Dockerfile`:166: This should only be needed in the test image - or is there some reason you found that you had to add it here @huydhn? (https://github.com/vllm-project/vllm/pull/20358#discussion_r2257897846)
+- 2025-08-06 `huydhn` on `docker/Dockerfile`:166: This is needed until we have a mamba package built with 2.8.0 (https://github.com/vllm-project/vllm/pull/20358#discussion_r2257990949)
+- 2025-08-06 `huydhn` on `docker/Dockerfile`:166: I have seen undefined symbol error here and there without rebuilding the package, for example (https://github.com/vllm-project/vllm/pull/20358#discussion_r2258490949)
+- 2025-08-06 `tlrmchlsmth` on `docker/Dockerfile`:166: I'm trying to handle it like this (https://github.com/vllm-project/vllm/pull/20358#discussion_r2258561580)
+- 2025-08-07 `huydhn` on `docker/Dockerfile`:166: This makes sense. I will rebase once lands. Thank you for making the update easier. Every bit counts as this is not a trivial process :) (https://github.com/vllm-project/vllm/pull/20358#discussion_r2258629130)
+- 2025-08-10 `mgoin` on `docker/Dockerfile`:166: FYI the PR that resolved this was (https://github.com/vllm-project/vllm/pull/20358#discussion_r2265417253)
+- 2025-08-10 `mgoin` on `docker/Dockerfile`:387: Is there a reason why you aren't using [v0.0.31]( I previously upgraded this intentionally for 2.7.1 (https://github.com/vllm-project/vllm/pull/20358#discussion_r2265422130)
+- 2025-08-10 `mgoin` on `requirements/cuda.txt`:15: I think we need to keep xformers in the wheel deps to prevent issues for users (https://github.com/vllm-project/vllm/pull/20358#discussion_r2265422509)
+- 2025-08-11 `huydhn` on `docker/Dockerfile`:387: Well, I'm encountering a build issue with xformers v0.0.31 or later and have cut an issue for the team at As the build failure is coming from flash-attention, this might be related to but I'm not exactly sure yet because it seems ... (https://github.com/vllm-project/vllm/pull/20358#discussion_r2268035970)
+- 2025-08-13 `zifeitong` on `docker/Dockerfile`:387: Limiting TORCH CUDA ARCH LIST for xformers build worked for me: xformers official wheel is built with TORCH CUDA ARCH LIST: 7.5 8.0+PTX 9.0a (https://github.com/vllm-project/vllm/pull/20358#discussion_r2271859359)
+- 2025-08-13 `huydhn` on `docker/Dockerfile`:387: I see, I didn't realize that xformers doesn't work with Blackwell (sm 100) (https://github.com/vllm-project/vllm/pull/20358#discussion_r2271895889)
+- 2025-08-13 `huydhn` on `requirements/cuda.txt`:15: Keep this here would effectively block this change until xformers release a new package working with 2.8.0. I'm asking for the release timeline of xformers on In the previous 2.7.1 update, it was done rather quickly. (https://github.com/vllm-project/vllm/pull/20358#discussion_r2271911807)
+- 2025-08-13 `huydhn`: What's the status of this PR? The change itself is ready to land with one condition that we need to build xformers from source because there isn't any official build of xformers for PyTorch 2.8.0 yet. Here is the issue I create ... (https://github.com/vllm-project/vllm/pull/20358#issuecomment-3182426583)
+- 2025-08-14 `huydhn`: It looks like xformers has released the new version to support torch 2.8.0, see: Yes, I have been chatting with xformers maintainers and the new version (v0.0.32) is coming. I just need to wait for it to be promoted to pypi (https://github.com/vllm-project/vllm/pull/20358#issuecomment-3187889735)
+- 2025-08-19 `cjackal`: Now that 0.10.1 has been released, is there any remaining blocker for this PR? (https://github.com/vllm-project/vllm/pull/20358#issuecomment-3200006328)
+- 2025-08-21 `mgoin`: @ProExpertProg I think there may be some related fusion issue in the blackwell test (https://github.com/vllm-project/vllm/pull/20358#issuecomment-3208658561)
+- 2025-08-21 `ProExpertProg`: @mgoin I assume it means the fusion isn't happening. @nvpohanh could someone from NVIDIA take a look? Our B200 machine is currently broken so I can't reproduce (https://github.com/vllm-project/vllm/pull/20358#issuecomment-3211921467)
+- 2025-08-22 `elvischenv`: @mgoin @ProExpertProg The fusion broken is caused by the different reshape op between 2.7.1 and 2.8.0. This [fix]( in the 22703 should make the fusion work fine in both 2.7.1 and 2.8.0. Let's merge that PR first to fix this issue. Thanks. (https://github.com/vllm-project/vllm/pull/20358#issuecomment-3213450173)
+- 2025-08-25 `huydhn`: @zhewenl I'm seeing this new failure showing up where a bunch of libraries used by EP kernel needs to be uploaded to Ray pushing it over the size limit. The change is probably coming from Any suggestions you have in mind here? (https://github.com/vllm-project/vllm/pull/20358#issuecomment-3221515897)
+- 2025-08-26 `huydhn`: [Kernels MoE]( failures seem to come from @mgoin @simon-mo Should we force merge this change now or continue to wait for fixes and do another rebase? (https://github.com/vllm-project/vllm/pull/20358#issuecomment-3222315211)
+- 2025-08-26 `hmellor`: If we force merge this now, then we'll end up with another situation where we start force merging everything and everything catches fire. I'd suggest we prioritise fixing the blocking failures. (https://github.com/vllm-project/vllm/pull/20358#issuecomment-3224993119)
+- 2025-08-26 `mgoin`: Those two failing tests are fixed on main. I will update this PR now (https://github.com/vllm-project/vllm/pull/20358#issuecomment-3225048362)
+- 2025-08-26 `huydhn` on `tests/models/test_transformers.py`:190: I start to see a slight memory increase for jason9693/Qwen2.5-1.5B-apeach in 2.8 torch.compile, i.e. This must have come from a change(s) in the past 4 days between and because nothing else has changed. cc @zou3519 if you could spot anything here (https://github.com/vllm-project/vllm/pull/20358#discussion_r2302291962)
+- 2025-08-27 `huydhn` on `tests/models/test_transformers.py`:190: Oh well, lowering gpu memory utilization to 0.85 doesn't seem to help (https://github.com/vllm-project/vllm/pull/20358#discussion_r2302436732)
+- 2025-08-27 `zou3519` on `tests/models/test_transformers.py`:190: How did you diagnose the problem to torch.compile? Was it using --enforce-eager? (https://github.com/vllm-project/vllm/pull/20358#discussion_r2305237465)
+- 2025-08-27 `zou3519` on `tests/models/test_transformers.py`:190: nvm, I see the triton error (https://github.com/vllm-project/vllm/pull/20358#discussion_r2305239223)
+- 2025-08-27 `zou3519` on `tests/models/test_transformers.py`:190: cc @BoyuanFeng it sounds like Inductor generated a triton kernel that doesn't work on L4 gpus because the machine type doesn't have enough sram (https://github.com/vllm-project/vllm/pull/20358#discussion_r2305266528)
+- 2025-08-28 `huydhn` on `tests/models/test_transformers.py`:190: @zou3519 @drisspg I'm pretty sure that the increase is either coming from or is partly due to it. Here is what I have been able to find out: 1. On L4 runner, build vLLM from this PR, running pytest -v -s models/test ... (https://github.com/vllm-project/vllm/pull/20358#discussion_r2306907125)
+- 2025-08-29 `huydhn` on `tests/models/test_transformers.py`:190: Confirm that fixes the issue, I will wait for that to land given that it has been approved (https://github.com/vllm-project/vllm/pull/20358#discussion_r2309203550)
+- 2025-08-29 `youkaichao`: Looks we are good now? any new blockers? (https://github.com/vllm-project/vllm/pull/20358#issuecomment-3236173920)
+- 2025-08-29 `huydhn`: Looks we are good now? any new blockers? Yes, this is ready to land now if you could stamp it. There is no other blocker. We have ironed out all the known issues. (https://github.com/vllm-project/vllm/pull/20358#issuecomment-3236599425)

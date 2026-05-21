@@ -1,72 +1,41 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#32195](https://github.com/vllm-project/vllm/pull/32195)
-- Source page: `sources/prs/vllm/PR-32195.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-32195`
-- Generated at: `2026-05-20T15:39:26.192424+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2026-01-12T17:23:12Z`
-- Merged: `2026-03-01T02:55:25Z`
-
-## Discussion Counts
-
-- Issue comments: 6
-- Review submissions: 36 (approved=1, commented=35)
-- Inline review comments: 46
-- Review threads observed: 17
-- Resolved/outdated thread markers: resolved=11, outdated=9
-- Human participants with discussion text: RunkaiTao, cursor, dcmaddix, gnovack, jeejeelee, mergify, varun-sundar-rabindranath, xyang16
-- Automation comments/reviews omitted from high-signal summary: 3
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2026-01-12T17:24:43Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request introduces support for TMA (Tensor Memory Accelerator) descriptors in the fused moe lora ... (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3651879380)
-- `2026-01-12T17:53:17Z` `COMMENTED` by `gnovack` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3651986075)
-- `2026-01-12T17:54:18Z` `COMMENTED` by `gnovack` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3651989188)
-- `2026-01-12T20:16:09Z` `COMMENTED` by `cursor` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3652594592)
-- `2026-01-13T18:46:59Z` `COMMENTED` by `dcmaddix` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3657303983)
-- `2026-01-13T18:47:26Z` `COMMENTED` by `dcmaddix` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3657306001)
-- `2026-01-20T18:22:32Z` `COMMENTED` by `gnovack` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3683673279)
-- `2026-01-20T18:23:11Z` `COMMENTED` by `gnovack` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3683676855)
-- `2026-01-20T18:23:41Z` `COMMENTED` by `gnovack` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3683678764)
-- `2026-01-20T18:25:05Z` `COMMENTED` by `gnovack` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3683683498)
-- `2026-01-23T19:40:44Z` `COMMENTED` by `xyang16` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3699285815)
-- `2026-01-27T00:50:11Z` `COMMENTED` by `gnovack` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3708653819)
-- `2026-01-31T03:30:55Z` `COMMENTED` by `jeejeelee` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3731353378)
-- `2026-02-03T05:46:46Z` `COMMENTED` by `gnovack` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3743092879)
-- `2026-02-03T05:54:42Z` `COMMENTED` by `gnovack` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3743124080)
-- `2026-02-11T17:06:39Z` `COMMENTED` by `RunkaiTao` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3786127439)
-- `2026-02-18T21:32:46Z` `COMMENTED` by `gnovack` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3822345359)
-- `2026-02-21T05:08:39Z` `COMMENTED` by `varun-sundar-rabindranath` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3835056705)
-- `2026-02-21T22:57:40Z` `COMMENTED` by `varun-sundar-rabindranath` - Thanks for the work @gnovack - Nice speed up 🙌 . Left some comments - PTAL! (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3835058048)
-- `2026-02-23T05:55:26Z` `COMMENTED` by `jeejeelee` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3839264868)
-- `2026-02-23T14:25:03Z` `COMMENTED` by `jeejeelee` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3841351713)
-- `2026-02-23T20:21:43Z` `COMMENTED` by `gnovack` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3843325760)
-- `2026-02-23T22:01:27Z` `COMMENTED` by `gnovack` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3843753020)
-- `2026-02-23T23:55:16Z` `COMMENTED` by `gnovack` (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3844186625)
-- ... 12 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`: 43 inline comment(s)
-- `tests/lora/test_olmoe_tp.py`: 3 inline comment(s)
-
-## High-Signal Discussion
-
-- `2026-02-21T22:34:27Z` `inline` by `varun-sundar-rabindranath` `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:767; signals: block, cache, kernel, moe, tma, triton; excerpt: "Question about intermediate cache shape. Focusing on the use tma and sorted tokens ids != None case IIUC, this is an intermediate tensor to ..." (https://github.com/vllm-project/vllm/pull/32195#discussion_r2836751137)
-- `2026-01-12T20:16:10Z` `inline` by `cursor` `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:555; signals: memory, moe, perf, tma, triton; excerpt: "Buffer size mismatch when EM not divisible by top k num Medium Severity When EM is not perfectly divisible by top k num, there's ..." (https://github.com/vllm-project/vllm/pull/32195#discussion_r2683774574)
-- `2026-02-03T05:46:46Z` `inline` by `gnovack` `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:295; signals: cuda, kernel, moe, tma, triton; excerpt: "Main currently has 2 calls to tl.extra.cuda.gdc wait() (one within the loop over k and one before the loop). I don't think we need ..." (https://github.com/vllm-project/vllm/pull/32195#discussion_r2757309433)
-- `2026-02-24T16:56:03Z` `inline` by `gnovack` `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:380; signals: block, hang, moe, tma, triton; excerpt: "I took a quick stab at this, but it ended up looking a bit messier when these were factored out. Mostly because different sets ..." (https://github.com/vllm-project/vllm/pull/32195#discussion_r2848381526)
-- `2026-01-12T20:16:10Z` `inline` by `cursor` `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:857; signals: moe, register, tma, triton; excerpt: "Fake implementations missing new use tma parameter High Severity The fused moe lora shrink fake and fused moe lora expand fake functions are missing ..." (https://github.com/vllm-project/vllm/pull/32195#discussion_r2683774573)
-- `2026-02-03T05:54:42Z` `inline` by `gnovack` `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:587; signals: kernel, moe, tma, triton; excerpt: "We could implement this as a pre-run hook, but I think that might be a bit messier / more fragile, since it would require ..." (https://github.com/vllm-project/vllm/pull/32195#discussion_r2757328893)
-- `2026-02-21T05:50:39Z` `inline` by `varun-sundar-rabindranath` `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:726; signals: memory, moe, tma, triton; excerpt: "why isn't this no longer M ? I think it should still be M for the non-tma case so we don't allocate extra memory ..." (https://github.com/vllm-project/vllm/pull/32195#discussion_r2835874035)
-- `2026-02-21T22:44:36Z` `inline` by `varun-sundar-rabindranath` `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:767; signals: kernel, moe, tma, triton; excerpt: "I was a bit confused by the cdiv and top k num but I believe this is to play well with how the strides ..." (https://github.com/vllm-project/vllm/pull/32195#discussion_r2836762475)
-- `2026-02-21T22:56:18Z` `inline` by `varun-sundar-rabindranath` `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:226; signals: kernel, moe, tma, triton; excerpt: "can you add a comment describing the various combinations possible with use tma - IIUC, a desc b desc sort c comment -- -- ..." (https://github.com/vllm-project/vllm/pull/32195#discussion_r2836782611)
-- `2026-02-23T22:01:27Z` `inline` by `gnovack` `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:120; signals: kernel, moe, tma, triton; excerpt: "Yes, technically it would be possible to implement this as more of a temporary override within a context manager; however, this would require reaching ..." (https://github.com/vllm-project/vllm/pull/32195#discussion_r2843300377)
-- `2026-02-23T23:55:16Z` `inline` by `gnovack` `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:767; signals: cache, moe, tma, triton; excerpt: "Great point. Originally, I was trying to just use one consistent cache shape (regardless of whether TMA was enabled or not). To address [the ..." (https://github.com/vllm-project/vllm/pull/32195#discussion_r2843690598)
-- `2026-02-25T03:30:07Z` `inline` by `varun-sundar-rabindranath` `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:120; signals: kernel, moe, tma, triton; excerpt: "Thanks for researching this @gnovack . I was generally worried that it'd affect another kernel in the same forward pass. It looks like everytime ..." (https://github.com/vllm-project/vllm/pull/32195#discussion_r2850619138)
+- 2026-01-12 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:41: I used torch.int8 here following the example in triton kernels - (https://github.com/vllm-project/vllm/pull/32195#discussion_r2683299856)
+- 2026-01-13 `dcmaddix` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:214: nice that we have a parameter to control TMA on or off and could tune to test if its beneficial. (https://github.com/vllm-project/vllm/pull/32195#discussion_r2687643195)
+- 2026-01-13 `dcmaddix` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:104: What is sorted c used for? To check if the memory is contiguous? Could you add comment defining it thanks! (https://github.com/vllm-project/vllm/pull/32195#discussion_r2687645009)
+- 2026-01-20 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:857: Added these parameters to the fakes (https://github.com/vllm-project/vllm/pull/32195#discussion_r2709570260)
+- 2026-01-20 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:555: Updated this buffer size to use triton.cdiv(EM, top k num) to handle the case where EM % top k num != 0 (https://github.com/vllm-project/vllm/pull/32195#discussion_r2709572668)
+- 2026-01-20 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:214: Yep. This is also to ensure that we don't try to use TMA for pre-hopper GPUs that don't support it (https://github.com/vllm-project/vllm/pull/32195#discussion_r2709574274)
+- 2026-01-20 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:104: I added a comment that describes this now. Essentially it is a flag to determine if the output of the kernel should be written in 'sorted' order (i.e. sorted by expert ID, the same as in sorted token ids) or the original ... (https://github.com/vllm-project/vllm/pull/32195#discussion_r2709578691)
+- 2026-01-23 `xyang16` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:295: Why is the GDC wait removed here? (https://github.com/vllm-project/vllm/pull/32195#discussion_r2722586857)
+- 2026-01-27 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:295: There is another call to gdc wait a few lines above this one. So I don't think this one actually has any effect (https://github.com/vllm-project/vllm/pull/32195#discussion_r2729818667)
+- 2026-01-31 `jeejeelee` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:295: Why not keep this? I remember that adding GDC here can achieve greater overlap (https://github.com/vllm-project/vllm/pull/32195#discussion_r2748734579)
+- 2026-01-31 `jeejeelee` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:587: Can we use add pre run hook? (https://github.com/vllm-project/vllm/pull/32195#discussion_r2748787517)
+- 2026-02-03 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:295: Main currently has 2 calls to tl.extra.cuda.gdc wait() (one within the loop over k and one before the loop). I don't think we need both of these, since only the earlier call will force the kernel to wait. When only the tl.extra.cuda.gdc ... (https://github.com/vllm-project/vllm/pull/32195#discussion_r2757309433)
+- 2026-02-03 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:587: We could implement this as a pre-run hook, but I think that might be a bit messier / more fragile, since it would require us to read the values of use tma, num slices, and device from the kernel positional and keyword ... (https://github.com/vllm-project/vllm/pull/32195#discussion_r2757328893)
+- 2026-02-11 `RunkaiTao` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:365: In sort c case, you have to add an extra lora id dim for the c buffer, otherwise different tokens might end up store in the same position in c buffer. (https://github.com/vllm-project/vllm/pull/32195#discussion_r2794459425)
+- 2026-02-18 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:365: Thanks Runkai for catching this! I pushed a change adding an extra lora id dim to the buffer and added a test case to validate that tokens from different loras do not interfere with one another (https://github.com/vllm-project/vllm/pull/32195#discussion_r2824568851)
+- 2026-02-21 `varun-sundar-rabindranath` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:302: feels like a desc is not None should be a static assert ? (https://github.com/vllm-project/vllm/pull/32195#discussion_r2835841734)
+- 2026-02-21 `varun-sundar-rabindranath` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:726: why isn't this no longer M ? I think it should still be M for the non-tma case so we don't allocate extra memory in that case. (https://github.com/vllm-project/vllm/pull/32195#discussion_r2835874035)
+- 2026-02-21 `varun-sundar-rabindranath` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:302: nvm. I see that this accounts for the num slices 1 case. (https://github.com/vllm-project/vllm/pull/32195#discussion_r2835876612)
+- 2026-02-21 `varun-sundar-rabindranath` on `tests/lora/test_olmoe_tp.py`:5: Can you also add some kernel level tests that test the combinations of use tma, naive assignment and num slices ? Thanks. (https://github.com/vllm-project/vllm/pull/32195#discussion_r2836344574)
+- 2026-02-21 `varun-sundar-rabindranath` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:120: is this a global setting affecting other kernels ? if yes, I think we should set it to default after kernel invocation (would be better to do it with a context manager) (https://github.com/vllm-project/vllm/pull/32195#discussion_r2836357191)
+- 2026-02-21 `varun-sundar-rabindranath` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:767: Question about intermediate cache shape. Focusing on the use tma and sorted tokens ids != None case IIUC, this is an intermediate tensor to store the outputs of the shrink operation, without permuting it (as being done in the non-tma case). The ... (https://github.com/vllm-project/vllm/pull/32195#discussion_r2836751137)
+- 2026-02-21 `varun-sundar-rabindranath` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:767: I was a bit confused by the cdiv and top k num but I believe this is to play well with how the strides are fetched in the existing calls to fused moe lora kernel. If that is the case, I think ... (https://github.com/vllm-project/vllm/pull/32195#discussion_r2836762475)
+- 2026-02-21 `varun-sundar-rabindranath` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:380: nit: would be nice to factor this out. (https://github.com/vllm-project/vllm/pull/32195#discussion_r2836776210)
+- 2026-02-21 `varun-sundar-rabindranath` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:380: would be nice to factor this out to something like, (https://github.com/vllm-project/vllm/pull/32195#discussion_r2836778857)
+- 2026-02-21 `varun-sundar-rabindranath` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:226: can you add a comment describing the various combinations possible with use tma - IIUC, a desc b desc sort c comment -- -- -- -- yes yes FALSE expand kernel - num slices = 1 no yes TRUE shrink kernel - ... (https://github.com/vllm-project/vllm/pull/32195#discussion_r2836782611)
+- 2026-02-21 `varun-sundar-rabindranath` commented: Thanks for the work @gnovack - Nice speed up 🙌 . Left some comments - PTAL! (https://github.com/vllm-project/vllm/pull/32195#pullrequestreview-3835058048)
+- 2026-02-23 `jeejeelee` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:120: @gnovack I think @varun-sundar-rabindranath comment is reasonable. (https://github.com/vllm-project/vllm/pull/32195#discussion_r2839196389)
+- 2026-02-23 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:302: This is to account for the distinction between shrink/expand calls. In the shrink call, we cannot use a TMA descriptor to load A weights, even if USE TMA is true. (https://github.com/vllm-project/vllm/pull/32195#discussion_r2842897087)
+- 2026-02-23 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:120: Yes, technically it would be possible to implement this as more of a temporary override within a context manager; however, this would require reaching into some Triton internals from what I can tell, since there is no public API to retrieve the ... (https://github.com/vllm-project/vllm/pull/32195#discussion_r2843300377)
+- 2026-02-23 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:767: Great point. Originally, I was trying to just use one consistent cache shape (regardless of whether TMA was enabled or not). To address [the issue found by runkai]( I had to use a different cache shape for the TMA-enabled case, but didn't ... (https://github.com/vllm-project/vllm/pull/32195#discussion_r2843690598)
+- 2026-02-23 `gnovack` on `tests/lora/test_olmoe_tp.py`:5: I added kernel-level test cases with num slices 1 both with and without naive assignment. In terms of testing the functionality both with and without TMA, it's a bit tricky since TMA is enabled based on the device CC. Do you think ... (https://github.com/vllm-project/vllm/pull/32195#discussion_r2843700801)
+- 2026-02-23 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:726: Good point. Switched this dim back to M in my latest commit. Thanks for catching this. (https://github.com/vllm-project/vllm/pull/32195#discussion_r2843701971)
+- 2026-02-24 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:380: factored this out into a get c ptrs function (https://github.com/vllm-project/vllm/pull/32195#discussion_r2843704943)
+- 2026-02-24 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:226: that's correct. I added a comment on sort c to explain how it is used in shrink/expand in conjunction with a desc. (https://github.com/vllm-project/vllm/pull/32195#discussion_r2848348788)
+- 2026-02-24 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:380: I took a quick stab at this, but it ended up looking a bit messier when these were factored out. Mostly because different sets of offsets/masks are initialized depending on whether TMA is on or off. I think it would require some ... (https://github.com/vllm-project/vllm/pull/32195#discussion_r2848381526)
+- 2026-02-25 `varun-sundar-rabindranath` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:120: Thanks for researching this @gnovack . I was generally worried that it'd affect another kernel in the same forward pass. It looks like everytime a kernel needs to use TMA, that kernel needs to explicitly set this ? if that is indeed ... (https://github.com/vllm-project/vllm/pull/32195#discussion_r2850619138)
+- 2026-02-25 `varun-sundar-rabindranath` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:380: Yeah. I figured. Thanks for trying. This is not a blocker 👍 (https://github.com/vllm-project/vllm/pull/32195#discussion_r2850629488)
+- 2026-02-25 `varun-sundar-rabindranath` on `tests/lora/test_olmoe_tp.py`:5: I'd prefer not adding an env var. We are hardware specific functionality in other parts of the code-base and we just them on different hardware. Thanks. (https://github.com/vllm-project/vllm/pull/32195#discussion_r2850642807)
+- 2026-02-25 `varun-sundar-rabindranath` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:226: Thanks @gnovack. Do you think it'd clearer to add the table ? I feel like this kernel is getting harder to follow and more comments will help the reader better understand. wdyt ? (https://github.com/vllm-project/vllm/pull/32195#discussion_r2850651722)
+- 2026-02-26 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:226: Makes sense. I added this table to the comments to show the param combinations (https://github.com/vllm-project/vllm/pull/32195#discussion_r2861223372)
+- 2026-02-26 `gnovack` on `vllm/lora/ops/triton_ops/fused_moe_lora_op.py`:120: Moved this into triton utils now. lmk what you think (https://github.com/vllm-project/vllm/pull/32195#discussion_r2861225497)

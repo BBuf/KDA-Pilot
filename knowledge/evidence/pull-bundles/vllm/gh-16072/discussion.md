@@ -1,75 +1,55 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#16072](https://github.com/vllm-project/vllm/pull/16072)
-- Source page: `sources/prs/vllm/PR-16072.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-16072`
-- Generated at: `2026-05-20T15:34:48.688026+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-04-04T20:56:30Z`
-- Merged: `2025-05-08T05:30:16Z`
-
-## Discussion Counts
-
-- Issue comments: 29
-- Review submissions: 39 (approved=4, changes_requested=2, commented=33)
-- Inline review comments: 48
-- Review threads observed: 18
-- Resolved/outdated thread markers: resolved=12, outdated=13
-- Human participants with discussion text: Juelianqvq, Lmywl, LucasWilkinson, ProExpertProg, WoosukKwon, alexm-redhat, chanh, dblincoe, happierpig, hidva, mergify, renjie0, sarckk, simon-mo, tlrmchlsmth, vadiklyutiy, xsank, youkaichao, zou3519
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 8
-
-## Review Decisions
-
-- `2025-04-10T17:27:36Z` `CHANGES_REQUESTED` by `alexm-redhat` - @chanh went over the PR in detail, looks really good. Left some comments. Thanks for adding the test, ... (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2757632316)
-- `2025-04-11T18:58:17Z` `COMMENTED` by `chanh` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2761313085)
-- `2025-04-11T19:04:28Z` `COMMENTED` by `chanh` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2761331053)
-- `2025-04-11T22:06:31Z` `COMMENTED` by `chanh` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2761672936)
-- `2025-04-17T21:47:50Z` `APPROVED` by `alexm-redhat` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2777000290)
-- `2025-04-21T05:52:32Z` `COMMENTED` by `youkaichao` - the usage of a persistent buffer looks good to me. is FA3 prefill / chunked prefill kernel compatible ... (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2780590418)
-- `2025-04-21T06:00:22Z` `COMMENTED` by `WoosukKwon` - @chanh Thanks for submitting this PR. This looks very useful! I've left some nits. Please check out my ... (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2780580083)
-- `2025-04-21T06:04:24Z` `CHANGES_REQUESTED` by `WoosukKwon` - Actually, what's max seq len and max query len at the capture time? If it's 0, I guess ... (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2780603973)
-- `2025-04-24T22:52:45Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2792685061)
-- `2025-04-25T04:53:33Z` `COMMENTED` by `chanh` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2792987923)
-- `2025-04-25T09:21:05Z` `COMMENTED` by `chanh` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2793520569)
-- `2025-04-25T09:46:28Z` `COMMENTED` by `chanh` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2793584499)
-- `2025-04-25T10:06:07Z` `COMMENTED` by `chanh` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2793635838)
-- `2025-04-25T10:11:37Z` `COMMENTED` by `chanh` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2793651154)
-- `2025-04-25T12:54:30Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2794030070)
-- `2025-04-25T16:16:48Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2794654455)
-- `2025-04-25T23:39:48Z` `COMMENTED` by `vadiklyutiy` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2795531269)
-- `2025-04-28T16:31:38Z` `COMMENTED` by `chanh` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2799954559)
-- `2025-04-28T21:03:26Z` `COMMENTED` by `WoosukKwon` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2800915165)
-- `2025-04-28T21:31:53Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2800989468)
-- `2025-04-28T23:15:16Z` `COMMENTED` by `WoosukKwon` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2801275158)
-- `2025-04-29T14:19:17Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2803853949)
-- `2025-04-29T18:46:56Z` `COMMENTED` by `chanh` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2804653405)
-- `2025-04-29T20:32:35Z` `COMMENTED` by `chanh` (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2805008213)
-- ... 14 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/v1/worker/gpu_model_runner.py`: 24 inline comment(s)
-- `vllm/config.py`: 18 inline comment(s)
-- `vllm/v1/attention/backends/flash_attn.py`: 3 inline comment(s)
-- `docs/source/design/v1/torch_compile.md`: 2 inline comment(s)
-- `tests/compile/piecewise/test_full_cudagraph.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-04-21T12:24:45Z` `issue` by `youkaichao`; signals: attention, cache, cuda, cudagraph, kernel, perf, performance; excerpt: "there are two reasons why this can't be enabled default then we should have clear documentation around it, when full-cudagraph can be used. The ..." (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2818312281)
-- `2025-04-25T16:16:48Z` `inline` by `youkaichao` `vllm/config.py`:3235; signals: attention, cuda, cudagraph, kernel, mla; excerpt: "I'm still worried that this full cudagraph support can be easily broken silently, when some attention kernels have defferent design and implementation for prefill ..." (https://github.com/vllm-project/vllm/pull/16072#discussion_r2060532486)
-- `2025-04-21T05:52:32Z` `review` `COMMENTED` by `youkaichao`; signals: cuda, cudagraph, kernel; excerpt: "the usage of a persistent buffer looks good to me. is FA3 prefill / chunked prefill kernel compatible with cudagraph? if we can figure ..." (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2780590418)
-- `2025-04-21T06:05:40Z` `issue` by `WoosukKwon`; signals: attention, kernel, perf, performance; excerpt: "@youkaichao if we can figure out the conditions, we can try to enable it automatically I think, without introducing a new user interface like ..." (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2817713729)
-- `2025-04-10T17:08:11Z` `inline` by `alexm-redhat` `tests/compile/piecewise/test_full_cudagraph.py`:16; signals: compile, cuda, cudagraph; excerpt: "I would expand this test a bit with more parameters. For example, it would be good to test: 1. Batch size 1, 7, 11, ..." (https://github.com/vllm-project/vllm/pull/16072#discussion_r2037894148)
-- `2025-04-11T22:06:30Z` `inline` by `chanh` `vllm/v1/worker/gpu_model_runner.py`:624; signals: attention, cuda, kernel; excerpt: "@alexm-redhat good question -- is there a reason you are thinking it should be 0's? I couldn't find a clear contract in the attention ..." (https://github.com/vllm-project/vllm/pull/16072#discussion_r2040352041)
-- `2025-04-28T16:31:38Z` `inline` by `chanh` `vllm/config.py`:3235; signals: attention, block, cuda; excerpt: "@WoosukKwon do you have a preference on which UI is the best to enable this feature? 1. -O4 flag 2. --full-cuda-graphs flag 3. --splitting-ops ..." (https://github.com/vllm-project/vllm/pull/16072#discussion_r2064056287)
-- `2025-04-28T23:15:16Z` `inline` by `WoosukKwon` `vllm/v1/worker/gpu_model_runner.py`:149; signals: cuda, perf, performance; excerpt: "@tlrmchlsmth @chanh I think 1. We should use piecewise CUDA graphs as default, since it supports most features and the performance is ok for ..." (https://github.com/vllm-project/vllm/pull/16072#discussion_r2064993592)
-- `2025-04-10T17:09:44Z` `inline` by `alexm-redhat` `vllm/config.py`:3093; signals: latency, perf, performance; excerpt: "I would add a note: "This helps performance with smaller models and latency."" (https://github.com/vllm-project/vllm/pull/16072#discussion_r2037896318)
-- `2025-04-25T18:33:15Z` `issue` by `vadiklyutiy`; signals: compile, cuda, cudagraph; excerpt: "I think cudagraph and torch.compile are not directly connected things. In my opinion it is better to introduce standalone option to enable full cudagraph ..." (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2831146033)
-- `2025-05-05T16:03:42Z` `issue` by `WoosukKwon`; signals: cuda, perf, performance; excerpt: "Hmm.... For some reason, I see lower performance for Llama 3.2 1B with the full cuda graphs, compared to piecewise cuda graphs." (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2851486080)
-- `2025-04-10T17:26:00Z` `inline` by `alexm-redhat` `vllm/v1/worker/gpu_model_runner.py`:1643; signals: attention, cuda; excerpt: "I would explicitly say: Use -O3 for piecewise cuda graphs (attention is skipped) and -O4 for full cuda graphs (attention included)" (https://github.com/vllm-project/vllm/pull/16072#discussion_r2037921662)
+- 2025-04-08 `alexm-redhat`: @chanh thanks for the PR, I have tested llama 8b on my side with your PR and I see 7% improvement for TPOT. Great work! Before PR: After PR: (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2787518771)
+- 2025-04-09 `sarckk`: Work in progress: 1. Investigating changes needed to make this work with Llama4 / local attention just a heads up @zou3519 (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2788186260)
+- 2025-04-09 `chanh`: @chanh thanks for the PR, I have tested llama 8b on my side with your PR and I see 7% improvement for TPOT. Great work! Before PR: After PR: Thanks for @alexm-redhat for verifying! (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2790724311)
+- 2025-04-10 `alexm-redhat` on `tests/compile/piecewise/test_full_cudagraph.py`:16: I would expand this test a bit with more parameters. For example, it would be good to test: 1. Batch size 1, 7, 11, 16, 25, 32, 45, 64 (to stress the paddings etc) 2. max tokens can be 5, 10, 20 ... (https://github.com/vllm-project/vllm/pull/16072#discussion_r2037894148)
+- 2025-04-10 `alexm-redhat` on `vllm/config.py`:3093: I would add a note: "This helps performance with smaller models and latency." (https://github.com/vllm-project/vllm/pull/16072#discussion_r2037896318)
+- 2025-04-10 `alexm-redhat` on `vllm/config.py`:3623: Why we force piecewise for any compilation level below piecewise? (https://github.com/vllm-project/vllm/pull/16072#discussion_r2037898215)
+- 2025-04-10 `alexm-redhat` on `vllm/v1/worker/gpu_model_runner.py`:622: This filling here runs in parallel to the non-blocking copy above? Or is it serialized? (https://github.com/vllm-project/vllm/pull/16072#discussion_r2037918503)
+- 2025-04-10 `alexm-redhat` on `vllm/v1/worker/gpu_model_runner.py`:624: isn't quert start loc is supposed to have 0s for fillings/paddings? (https://github.com/vllm-project/vllm/pull/16072#discussion_r2037919168)
+- 2025-04-10 `alexm-redhat` on `vllm/v1/worker/gpu_model_runner.py`:1643: I would explicitly say: Use -O3 for piecewise cuda graphs (attention is skipped) and -O4 for full cuda graphs (attention included) (https://github.com/vllm-project/vllm/pull/16072#discussion_r2037921662)
+- 2025-04-10 `alexm-redhat` changes_requested: @chanh went over the PR in detail, looks really good. Left some comments. Thanks for adding the test, I think it can be expanded a bit to cover CUDA graph's edge cases a bit better. (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2757632316)
+- 2025-04-11 `alexm-redhat`: @chanh tell me if you need help with extending the tests, I can do it on my side. (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2797287047)
+- 2025-04-11 `dblincoe`: I ran some latency-focused testing on this PR using LLaMA 3.2 1B Instruct with a small batch size ( 1-2) in a highly latency-constrained setting where minimizing CUDA graph launches can significantly improve GPU utilization. Here are the results: Before PR: After ... (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2797438432)
+- 2025-04-11 `chanh` on `vllm/config.py`:3623: It was already forcing PIECEWISE for any level, idea here was to preserve that logic except don't force FULL GRAPH to PIECEWISE. Would it be better to rewrite as (https://github.com/vllm-project/vllm/pull/16072#discussion_r2040136394)
+- 2025-04-11 `chanh` on `vllm/v1/worker/gpu_model_runner.py`:622: My understanding is that it should be serialized since the non-blocking still ensures tensor operations on the same stream are queued and executed in order. (it only serves to unblock the CPU thread from doing queuing operations, etc) (https://github.com/vllm-project/vllm/pull/16072#discussion_r2040145915)
+- 2025-04-11 `chanh` on `vllm/v1/worker/gpu_model_runner.py`:624: @alexm-redhat good question -- is there a reason you are thinking it should be 0's? I couldn't find a clear contract in the attention kernel docs that state what the filling should be, and found that either 0 or -1 works. Honestly ... (https://github.com/vllm-project/vllm/pull/16072#discussion_r2040352041)
+- 2025-04-17 `alexm-redhat` on `vllm/v1/worker/gpu_model_runner.py`:624: I think if -1 works, then it does not matter. (https://github.com/vllm-project/vllm/pull/16072#discussion_r2049691198)
+- 2025-04-21 `youkaichao` commented: the usage of a persistent buffer looks good to me. is FA3 prefill / chunked prefill kernel compatible with cudagraph? if we can figure out the conditions, we can try to enable it automatically I think, without introducing a new user interface ... (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2780590418)
+- 2025-04-21 `WoosukKwon` on `vllm/v1/worker/gpu_model_runner.py`:1659: Shouldn't this depend on whether it's O3 or O4? (https://github.com/vllm-project/vllm/pull/16072#discussion_r2051992164)
+- 2025-04-21 `WoosukKwon` on `vllm/v1/worker/gpu_model_runner.py`:1420: nit: Maybe we can rename this for clarity? (https://github.com/vllm-project/vllm/pull/16072#discussion_r2051992854)
+- 2025-04-21 `WoosukKwon` on `vllm/v1/worker/gpu_model_runner.py`: Should we make sure the attention backend supports full graphs? For example, we should raise an error if FA2 is being used. (https://github.com/vllm-project/vllm/pull/16072#discussion_r2051996133)
+- 2025-04-21 `WoosukKwon` commented: @chanh Thanks for submitting this PR. This looks very useful! I've left some nits. Please check out my review. Also, can we print a warning that cascade attention will be disabled when O4 is used? (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2780580083)
+- 2025-04-21 `WoosukKwon` changes_requested: Actually, what's max seq len and max query len at the capture time? If it's 0, I guess this could cause a bug. (https://github.com/vllm-project/vllm/pull/16072#pullrequestreview-2780603973)
+- 2025-04-21 `WoosukKwon`: @youkaichao if we can figure out the conditions, we can try to enable it automatically I think, without introducing a new user interface like level 4 optimization. To my understanding, there are two reasons why this can't be enabled default 1. Cascade ... (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2817713729)
+- 2025-04-21 `youkaichao`: there are two reasons why this can't be enabled default then we should have clear documentation around it, when full-cudagraph can be used. The attention kernel's performance could be lower, because the kernel's scheduling is determined at the capture time and is ... (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2818312281)
+- 2025-04-24 `zou3519` on `vllm/config.py`:3235: Why have a new compilation level for full cuda graphs? This seems like a special case of PIECEWISE where there is only a single graph (https://github.com/vllm-project/vllm/pull/16072#discussion_r2059348863)
+- 2025-04-25 `chanh` on `vllm/config.py`:3563: We should remove the if not self.splitting ops: too right? otherwise assert would be redundant. (https://github.com/vllm-project/vllm/pull/16072#discussion_r2059555575)
+- 2025-04-25 `chanh` on `vllm/v1/worker/gpu_model_runner.py`:1659: In this part of the code we are doing dummy run for graph capture purposes, so from that perspective it makes sense to always be initializing attention metadata, even if a mode like O3 doesn't end up using it. It doesn't give ... (https://github.com/vllm-project/vllm/pull/16072#discussion_r2059881296)
+- 2025-04-25 `chanh`: Actually, what's max seq len and max query len at the capture time? If it's 0, I guess this could cause a bug. max query len is the num tokens being passed to dummy run which is the cudagraph batch size to ... (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2829956366)
+- 2025-04-25 `chanh` on `vllm/config.py`:3235: Yes that's true. I think it's nicer from a usability perspective to have an explicit level that people can just enable with -O4 flag rather than write a compilation config that specifies level 4 and sets an empty array for splitting ops. ... (https://github.com/vllm-project/vllm/pull/16072#discussion_r2059951154)
+- 2025-04-25 `chanh` on `vllm/v1/worker/gpu_model_runner.py`:1420: renamed, also flipped it to False by default. (https://github.com/vllm-project/vllm/pull/16072#discussion_r2059962771)
+- 2025-04-25 `zou3519` on `vllm/config.py`:3235: My hot take is that O4 implies that the code is actually faster than O3 and therefore O4 should be enabled by default, but I don't think we have made that conclusion in general yet, so don't think we should have this ... (https://github.com/vllm-project/vllm/pull/16072#discussion_r2060188665)
+- 2025-04-25 `youkaichao` on `vllm/config.py`:3235: I'm still worried that this full cudagraph support can be easily broken silently, when some attention kernels have defferent design and implementation for prefill and decode, for example, deepseek MLA attention. Anyway we should know the list of situations where the current ... (https://github.com/vllm-project/vllm/pull/16072#discussion_r2060532486)
+- 2025-04-25 `vadiklyutiy`: I think cudagraph and torch.compile are not directly connected things. In my opinion it is better to introduce standalone option to enable full cudagraph capture. Also -O4 might be better to reserve for future more aggressive torch.compile mode. (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2831146033)
+- 2025-04-25 `vadiklyutiy` on `vllm/config.py`:3235: @youkaichao How did this issue was solved in V1? (https://github.com/vllm-project/vllm/pull/16072#discussion_r2061033461)
+- 2025-04-28 `chanh` on `vllm/config.py`:3235: @WoosukKwon do you have a preference on which UI is the best to enable this feature? 1. -O4 flag 2. --full-cuda-graphs flag 3. --splitting-ops [] Or @youkaichao do you feel strongly either way? @youkaichao I have added logic to disable Cascade Attention ... (https://github.com/vllm-project/vllm/pull/16072#discussion_r2064056287)
+- 2025-04-28 `WoosukKwon` on `vllm/config.py`:3235: @chanh I'd slightly prefer --full-cuda-graphs over others, but I'd like to follow @youkaichao's opinion since he has much more knowledge about this API than me. (https://github.com/vllm-project/vllm/pull/16072#discussion_r2064721786)
+- 2025-04-28 `tlrmchlsmth` on `vllm/config.py`:3235: IMO--full-cuda-graphs will be the best UX for most people (https://github.com/vllm-project/vllm/pull/16072#discussion_r2064782101)
+- 2025-04-28 `tlrmchlsmth` on `vllm/v1/worker/gpu_model_runner.py`:149: I think vLLM should fall back to using partial CUDA graphs if the attention backend doesn't support it. Asserting here is especially bad as this is something a user could easily trigger. I don't see anything that would guard against this. And ... (https://github.com/vllm-project/vllm/pull/16072#discussion_r2064802185)
+- 2025-04-28 `WoosukKwon` on `vllm/v1/worker/gpu_model_runner.py`:149: @tlrmchlsmth @chanh I think 1. We should use piecewise CUDA graphs as default, since it supports most features and the performance is ok for most cases. 2. With the full cuda graphs flag, we should use full CUDA graph and print warnings ... (https://github.com/vllm-project/vllm/pull/16072#discussion_r2064993592)
+- 2025-04-29 `tlrmchlsmth` on `vllm/v1/worker/gpu_model_runner.py`:149: @WoosukKwon sounds good to me, as long as we raise instead of asserting :) (https://github.com/vllm-project/vllm/pull/16072#discussion_r2066663143)
+- 2025-04-29 `chanh` on `vllm/v1/worker/gpu_model_runner.py`:149: Ah good point about asserts being turned off in -O. Raising an error is definitely right. (https://github.com/vllm-project/vllm/pull/16072#discussion_r2067143706)
+- 2025-04-29 `chanh` on `vllm/config.py`:3235: Okay rather than -04 i will use a separate flag for this feature. I am thinking to keep it under --compilation-config since in v1 we are forcing PIECEWISE compilation backend as default and all related configs (including other cudagraph configs) are under ... (https://github.com/vllm-project/vllm/pull/16072#discussion_r2067381720)
+- 2025-04-30 `zou3519` on `vllm/config.py`:3235: Keeping it in compilation-config sounds reasonable to me (https://github.com/vllm-project/vllm/pull/16072#discussion_r2069380330)
+- 2025-05-02 `chanh` on `vllm/config.py`:3235: sounds good, PR has been updated (https://github.com/vllm-project/vllm/pull/16072#discussion_r2071067618)
+- 2025-05-05 `WoosukKwon`: Hmm.... For some reason, I see lower performance for Llama 3.2 1B with the full cuda graphs, compared to piecewise cuda graphs. (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2851486080)
+- 2025-05-05 `WoosukKwon` on `vllm/v1/worker/gpu_model_runner.py`:1700: Shouldn't skip attn depend on the full cuda graphs flag? (https://github.com/vllm-project/vllm/pull/16072#discussion_r2073979929)
+- 2025-05-05 `WoosukKwon` on `vllm/v1/worker/gpu_model_runner.py`:238: Just wondering: Why do we have this difference? (https://github.com/vllm-project/vllm/pull/16072#discussion_r2073988474)
+- 2025-05-05 `WoosukKwon`: @alexm-redhat It's I think it makes sense because the full graph capture essentially disables the FlashAttention's heuristics to tune the kernel parameters based on max seq len and other information. (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2852013686)
+- 2025-05-06 `youkaichao` on `docs/source/design/v1/torch_compile.md`:143: should be --compilation-config "{'full cuda graph': True}" . we use double quote in the outside so that it will not be treated as escape chars by some shells. (https://github.com/vllm-project/vllm/pull/16072#discussion_r2074834255)
+- 2025-05-07 `tlrmchlsmth` on `vllm/v1/attention/backends/flash_attn.py`:321: Just wondering: Why do we have this difference? @WoosukKwon it's because we call .long() here. We might want to still call it here, to keep the dtypes consistent in the model runner. (https://github.com/vllm-project/vllm/pull/16072#discussion_r2076622858)
+- 2025-05-07 `chanh` on `vllm/v1/worker/gpu_model_runner.py`:238: slot mapping is used to index into another tensor and torch kernels expect indices to be int64. actually I think the right thing to do here is to also make the CPU tensor int64 too. Updated the code. (https://github.com/vllm-project/vllm/pull/16072#discussion_r2076805541)
+- 2025-05-07 `chanh` on `vllm/v1/attention/backends/flash_attn.py`:321: @tlrmchlsmth what do you think about just making the CPU tensor int64 too? (that's the route that i went with in latest update on this PR) (https://github.com/vllm-project/vllm/pull/16072#discussion_r2076808463)
+- 2025-05-07 `tlrmchlsmth` on `vllm/v1/attention/backends/flash_attn.py`:321: Had to check - that takes the slot mapping CPU- GPU transfer from 32KB to 64KB (by default serving on an H100). That seems fine to me since now we don't do that copy in every layer (https://github.com/vllm-project/vllm/pull/16072#discussion_r2077597692)
+- 2025-05-07 `LucasWilkinson`: I think we may need to disable ahead-of-time scheduling for FA3 when using full cuda-graph: since this scheduler may choose a different number of splits than what the graph was captured with do we have lm-eval accuracy results with full cuda-graphs on? (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2859011084)
+- 2025-05-07 `chanh`: I think we may need to disable ahead-of-time scheduling for FA3 when using full cuda-graph: since this scheduler may choose a different number of splits than what the graph was captured with do we have lm-eval accuracy results with full cuda-graphs on? ... (https://github.com/vllm-project/vllm/pull/16072#issuecomment-2859897270)

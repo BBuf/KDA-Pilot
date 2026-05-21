@@ -1,82 +1,56 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#20037](https://github.com/vllm-project/vllm/pull/20037)
-- Source page: `sources/prs/vllm/PR-20037.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-20037`
-- Generated at: `2026-05-20T15:35:40.281873+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-06-24T19:29:46Z`
-- Merged: `2025-07-18T04:32:45Z`
-
-## Discussion Counts
-
-- Issue comments: 8
-- Review submissions: 30 (approved=1, commented=29)
-- Inline review comments: 70
-- Review threads observed: 59
-- Resolved/outdated thread markers: resolved=57, outdated=53
-- Human participants with discussion text: bnellnm, kaixih, mergify, mgoin, wenscarl
-- Automation comments/reviews omitted from high-signal summary: 6
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-06-24T19:31:05Z` `COMMENTED` by `gemini-code-assist` - Summary of Changes Hello @wenscarl, I'm Gemini Code Assist[^1]! I'm currently reviewing this pull request and will post ... (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-2955059396)
-- `2025-06-24T19:32:54Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request integrates the Flashinfer CUTLASS MoE kernel for NVFP4, which is a valuable performance ... (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-2955065741)
-- `2025-06-27T02:32:05Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-2964503921)
-- `2025-06-27T02:35:08Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-2964509777)
-- `2025-06-27T02:37:05Z` `COMMENTED` by `bnellnm` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-2964511813)
-- `2025-07-01T06:07:47Z` `COMMENTED` by `kaixih` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-2973549501)
-- `2025-07-09T01:46:31Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-2999498237)
-- `2025-07-09T04:39:52Z` `COMMENTED` by `wenscarl` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-2999937850)
-- `2025-07-09T04:40:30Z` `COMMENTED` by `wenscarl` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-2999938642)
-- `2025-07-09T04:41:01Z` `COMMENTED` by `wenscarl` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-2999939287)
-- `2025-07-09T17:10:23Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-3002347103)
-- `2025-07-10T01:26:50Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-3002919667)
-- `2025-07-10T04:56:26Z` `COMMENTED` by `wenscarl` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-3003912694)
-- `2025-07-12T22:38:51Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-3010885861)
-- `2025-07-12T22:44:03Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-3013610987)
-- `2025-07-15T21:23:19Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-3022176786)
-- `2025-07-15T21:25:30Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-3022379387)
-- `2025-07-16T01:59:58Z` `COMMENTED` by `wenscarl` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-3022861780)
-- `2025-07-16T02:19:20Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-3022867061)
-- `2025-07-16T02:39:33Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-3022906610)
-- `2025-07-16T15:47:08Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-3022927977)
-- `2025-07-16T17:53:47Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-3026045840)
-- `2025-07-16T18:03:41Z` `COMMENTED` by `mgoin` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-3026186781)
-- `2025-07-17T02:38:06Z` `COMMENTED` by `wenscarl` (https://github.com/vllm-project/vllm/pull/20037#pullrequestreview-3027516172)
-- ... 6 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/layers/quantization/modelopt.py`: 21 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/layer.py`: 10 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/cutlass_moe.py`: 10 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/flashinfer_cutlass_moe.py`: 7 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/utils.py`: 5 inline comment(s)
-- `vllm/distributed/parallel_state.py`: 4 inline comment(s)
-- `vllm/distributed/device_communicators/cuda_communicator.py`: 3 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/modular_kernel.py`: 2 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/prepare_finalize.py`: 2 inline comment(s)
-- `vllm/distributed/device_communicators/base_device_communicator.py`: 1 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/config.py`: 1 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/flashinfer_cutlass_prepare_finalize.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-07-09T01:42:38Z` `inline` by `mgoin` `vllm/model_executor/layers/fused_moe/flashinfer_cutlass_moe.py`:118; signals: cutlass, flashinfer, fp4, kernel, moe, nvfp4; excerpt: "Can we assert that self.use nvfp4 w4a4 is True if we are just supporting nvfp4 for now with this kernel?" (https://github.com/vllm-project/vllm/pull/20037#discussion_r2193738092)
-- `2025-07-01T05:29:33Z` `inline` by `kaixih` `vllm/model_executor/layers/quantization/modelopt.py`:500; signals: cuda, cutlass, flashinfer, fp4, nvfp4; excerpt: "Can we simplify this as ``` if cutlass nvfp4 and is cuda and has cc(10, 0): allow flashinfer = True logger. info(...) else: logger. ..." (https://github.com/vllm-project/vllm/pull/20037#discussion_r2176461086)
-- `2025-06-27T02:32:05Z` `inline` by `bnellnm` `vllm/model_executor/layers/fused_moe/flashinfer_cutlass_moe.py`:129; signals: cutlass, flashinfer, kernel, moe; excerpt: "The FusedMoEModularKernel isn't intended to be subclassed. It should be generic enough so that any prepare/finalze + experts should work. If there are features ..." (https://github.com/vllm-project/vllm/pull/20037#discussion_r2170595119)
-- `2025-07-09T01:44:46Z` `inline` by `mgoin` `vllm/model_executor/layers/fused_moe/flashinfer_cutlass_moe.py`:150; signals: cutlass, dtype, flashinfer, moe; excerpt: "Assert or use out dtype?" (https://github.com/vllm-project/vllm/pull/20037#discussion_r2193748618)
-- `2025-07-10T04:56:25Z` `inline` by `wenscarl` `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:699; signals: cutlass, fp4, moe, nvfp4; excerpt: "This PR only targets at DeepSeek-R1-nvfp4." (https://github.com/vllm-project/vllm/pull/20037#discussion_r2196566525)
-- `2025-07-17T02:38:06Z` `inline` by `wenscarl` `vllm/model_executor/layers/fused_moe/layer.py`:759; signals: gemm, kernel, moe; excerpt: "select gemm impl is only called for DP case. This kernel support both DP and TP, thus another selection function." (https://github.com/vllm-project/vllm/pull/20037#discussion_r2212028002)
-- `2025-07-09T01:40:41Z` `inline` by `mgoin` `vllm/model_executor/layers/fused_moe/flashinfer_cutlass_moe.py`:34; signals: cutlass, flashinfer, moe; excerpt: "Update comment for flashinfer" (https://github.com/vllm-project/vllm/pull/20037#discussion_r2193730764)
-- `2025-07-09T01:44:23Z` `inline` by `mgoin` `vllm/model_executor/layers/fused_moe/flashinfer_cutlass_moe.py`:141; signals: cutlass, flashinfer, moe; excerpt: "Can you add an assert on activation and expert map since they are not used?" (https://github.com/vllm-project/vllm/pull/20037#discussion_r2193746397)
-- `2025-07-09T01:45:51Z` `inline` by `mgoin` `vllm/model_executor/layers/fused_moe/flashinfer_cutlass_prepare_finalize.py`:6; signals: cutlass, flashinfer, moe; excerpt: "Needs a lazy import for flashinfer" (https://github.com/vllm-project/vllm/pull/20037#discussion_r2193754255)
-- `2025-07-16T02:30:36Z` `inline` by `mgoin` `vllm/v1/worker/gpu_model_runner.py`:2029; signals: autotune, hang, kernel; excerpt: "Let's add the autotuner in another PR to avoid changing behavior outside of this kernel" (https://github.com/vllm-project/vllm/pull/20037#discussion_r2209081110)
-- `2025-07-16T02:48:03Z` `inline` by `mgoin` `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:542; signals: cutlass, dtype, moe; excerpt: "Also does this need to be half? Previously we used out dtype" (https://github.com/vllm-project/vllm/pull/20037#discussion_r2209097255)
-- `2025-07-17T17:14:26Z` `inline` by `mgoin` `vllm/model_executor/layers/fused_moe/layer.py`:1484; signals: cutlass, flashinfer, moe; excerpt: "So for TP we can still use the FlashInfer Cutlass path, but with no need for chunking?" (https://github.com/vllm-project/vllm/pull/20037#discussion_r2213884030)
+- 2025-06-27 `bnellnm` on `vllm/model_executor/layers/fused_moe/flashinfer_cutlass_moe.py`:129: The FusedMoEModularKernel isn't intended to be subclassed. It should be generic enough so that any prepare/finalze + experts should work. If there are features of these new kernels that don't quite fit, we should update the abstract interfaces or make the base ... (https://github.com/vllm-project/vllm/pull/20037#discussion_r2170595119)
+- 2025-06-27 `bnellnm` on `vllm/model_executor/layers/quantization/modelopt.py`:836: Swapping out self.fused experts for subclasses of FusedMoEMethodBase should be done by an overload of select gemm impl. This is so decisions about which communication method to use can be handled in one place in layer.py. (https://github.com/vllm-project/vllm/pull/20037#discussion_r2170598975)
+- 2025-06-27 `bnellnm` on `vllm/model_executor/layers/fused_moe/layer.py`:1447: The parallel params should be captured by the experts or prepare/finalize classes so they don't need to be added as extra parameters to apply (https://github.com/vllm-project/vllm/pull/20037#discussion_r2170600550)
+- 2025-07-01 `kaixih` on `vllm/model_executor/layers/quantization/modelopt.py`:500: Can we simplify this as ``` if cutlass nvfp4 and is cuda and has cc(10, 0): allow flashinfer = True logger. info(...) else: logger. warning(...) (https://github.com/vllm-project/vllm/pull/20037#discussion_r2176461086)
+- 2025-07-01 `kaixih` on `vllm/model_executor/layers/quantization/modelopt.py`:519: Can we use return self.allow flashinfer cutlass? Or maybe we can directly access the self.quant method.quant config.allow flashinfer cutlass at the callsite? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2176468984)
+- 2025-07-01 `kaixih` on `vllm/model_executor/layers/quantization/modelopt.py`:707: Do you think it makes more sense to use rank=0 and size=1 as the default values? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2176470238)
+- 2025-07-01 `kaixih` on `vllm/model_executor/layers/fused_moe/utils.py`:98: Can we make qtype to be torch.dtype or scalar types and then use scalar types.float4 e2m1f? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2176496084)
+- 2025-07-01 `kaixih` on `vllm/model_executor/layers/fused_moe/utils.py`:94: nit: maybe it is more clear to call it is fp4 scalar swizzled to indicate this only affect to fp4. (https://github.com/vllm-project/vllm/pull/20037#discussion_r2176498572)
+- 2025-07-09 `mgoin` on `vllm/distributed/device_communicators/cuda_communicator.py`:218: This special case seems like it could be calculated in all gatherv before calling all gather single (https://github.com/vllm-project/vllm/pull/20037#discussion_r2193717498)
+- 2025-07-09 `mgoin` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:417: Let's mark it as inplace (https://github.com/vllm-project/vllm/pull/20037#discussion_r2193722361)
+- 2025-07-09 `mgoin` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:577: Leave a comment why workspace2 is empty? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2193725141)
+- 2025-07-09 `mgoin` on `vllm/model_executor/layers/fused_moe/flashinfer_cutlass_moe.py`:34: Update comment for flashinfer (https://github.com/vllm-project/vllm/pull/20037#discussion_r2193730764)
+- 2025-07-09 `mgoin` on `vllm/model_executor/layers/fused_moe/flashinfer_cutlass_moe.py`:118: Can we assert that self.use nvfp4 w4a4 is True if we are just supporting nvfp4 for now with this kernel? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2193738092)
+- 2025-07-09 `mgoin` on `vllm/model_executor/layers/fused_moe/flashinfer_cutlass_moe.py`:141: Can you add an assert on activation and expert map since they are not used? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2193746397)
+- 2025-07-09 `mgoin` on `vllm/model_executor/layers/fused_moe/flashinfer_cutlass_moe.py`:150: Assert or use out dtype? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2193748618)
+- 2025-07-09 `mgoin` on `vllm/model_executor/layers/fused_moe/flashinfer_cutlass_prepare_finalize.py`:6: Needs a lazy import for flashinfer (https://github.com/vllm-project/vllm/pull/20037#discussion_r2193754255)
+- 2025-07-09 `wenscarl` on `vllm/distributed/device_communicators/cuda_communicator.py`:218: All pynccl stuff will be from Already rebased on the latest. @trevor-m (https://github.com/vllm-project/vllm/pull/20037#discussion_r2193999453)
+- 2025-07-09 `wenscarl` on `vllm/distributed/parallel_state.py`:373: Resolved by rebase onto latest of 20154 . (https://github.com/vllm-project/vllm/pull/20037#discussion_r2194000001)
+- 2025-07-09 `mgoin` on `vllm/distributed/device_communicators/cuda_communicator.py`:218: I see, will review that PR now (https://github.com/vllm-project/vllm/pull/20037#discussion_r2195531841)
+- 2025-07-09 `mgoin` on `vllm/model_executor/layers/quantization/modelopt.py`:566: Remove debug or make more useful (https://github.com/vllm-project/vllm/pull/20037#discussion_r2195875674)
+- 2025-07-09 `mgoin` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:730: Do you need to skip quantization? This is worth a comment if so (https://github.com/vllm-project/vllm/pull/20037#discussion_r2195885402)
+- 2025-07-09 `mgoin` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:699: Could you include support for apply router weight on input for Llama 4? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2195886265)
+- 2025-07-09 `mgoin` on `vllm/model_executor/layers/fused_moe/layer.py`:936: Please update the comment to say what the kernel assumes and that we know the kernel is used if load up proj weight first is set (https://github.com/vllm-project/vllm/pull/20037#discussion_r2195895649)
+- 2025-07-09 `mgoin` on `vllm/model_executor/layers/fused_moe/prepare_finalize.py`:51: Cruft? Also would be nice to detail the case where we want to skip quant (https://github.com/vllm-project/vllm/pull/20037#discussion_r2195897845)
+- 2025-07-10 `wenscarl` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:699: This PR only targets at DeepSeek-R1-nvfp4. (https://github.com/vllm-project/vllm/pull/20037#discussion_r2196566525)
+- 2025-07-12 `mgoin` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:552: Please add back the apply router weight on input conditional for Llama 4 support (https://github.com/vllm-project/vllm/pull/20037#discussion_r2202965012)
+- 2025-07-12 `mgoin` on `vllm/model_executor/layers/quantization/modelopt.py`:990: Can you please support apply router weight on input? This was supported before (https://github.com/vllm-project/vllm/pull/20037#discussion_r2202967907)
+- 2025-07-12 `mgoin` on `vllm/model_executor/layers/quantization/modelopt.py`:485: Use is since we only support SM100 (https://github.com/vllm-project/vllm/pull/20037#discussion_r2202968677)
+- 2025-07-12 `mgoin` on `vllm/model_executor/layers/quantization/modelopt.py`:515: Should we remove this if we have the raise in gemm impl? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2202971527)
+- 2025-07-15 `mgoin` on `vllm/_custom_ops.py`:965: It seems like these args are ignored now. Should either remove or use (https://github.com/vllm-project/vllm/pull/20037#discussion_r2208583516)
+- 2025-07-15 `mgoin` on `vllm/model_executor/layers/fused_moe/utils.py`:186: What does "scalar swizzled" mean? Should this be scale swizzled? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2208698840)
+- 2025-07-15 `mgoin` on `vllm/model_executor/layers/quantization/modelopt.py`:46: We should make a common wrapper for this. I can work on a wrapper similar to vllm/utils/deep gemm.py (https://github.com/vllm-project/vllm/pull/20037#discussion_r2208700404)
+- 2025-07-15 `mgoin` on `vllm/model_executor/layers/quantization/modelopt.py`:765: Could this be a debug once? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2208708049)
+- 2025-07-15 `mgoin` on `vllm/model_executor/layers/quantization/modelopt.py`:807: Could this be a debug once or combined with the log above? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2208709603)
+- 2025-07-15 `mgoin` on `vllm/model_executor/layers/quantization/modelopt.py`:822: Can you add the environment variable in the message to make it easy for the user (https://github.com/vllm-project/vllm/pull/20037#discussion_r2208711836)
+- 2025-07-15 `mgoin` on `vllm/model_executor/layers/fused_moe/layer.py`:950: Could we put this switch logic in process weights after loading in modelopt.py? Usually if we need to process the weights/scales after loading, we prefer to do it within the quant method if possible (https://github.com/vllm-project/vllm/pull/20037#discussion_r2208715207)
+- 2025-07-15 `mgoin` on `vllm/model_executor/layers/fused_moe/utils.py`:109: Is there a reason why we need to use flashinfer's quantize function over ours? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2208722200)
+- 2025-07-16 `wenscarl` on `vllm/model_executor/layers/fused_moe/utils.py`:109: We need to quantize without the scaling factor being swizzled since the communication op is scheduled after quantization. The pattern is quantize(no swizzle sf) - all-gather - swizzle sf. vllm's native scaled fp4 quant cannot do so. (https://github.com/vllm-project/vllm/pull/20037#discussion_r2209046784)
+- 2025-07-16 `mgoin` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:552: Unresolving since this doesn't seem resolved (https://github.com/vllm-project/vllm/pull/20037#discussion_r2209050201)
+- 2025-07-16 `mgoin` on `vllm/v1/worker/gpu_model_runner.py`:2029: Let's add the autotuner in another PR to avoid changing behavior outside of this kernel (https://github.com/vllm-project/vllm/pull/20037#discussion_r2209081110)
+- 2025-07-16 `mgoin`: I added an import wrapper for flashinfer in vllm/utils/flashinfer.py to help avoid the try-except and fixed the pre-commit. I'll try to also help with the changes I can clearly apply myself (https://github.com/vllm-project/vllm/pull/20037#issuecomment-3076525154)
+- 2025-07-16 `mgoin` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:542: Also does this need to be half? Previously we used out dtype (https://github.com/vllm-project/vllm/pull/20037#discussion_r2209097255)
+- 2025-07-16 `mgoin` on `vllm/model_executor/layers/quantization/modelopt.py`:806: Why do we need both of these functions now? Can we just use select gemm impl to maintain the interface? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2211065832)
+- 2025-07-16 `mgoin` on `vllm/model_executor/layers/quantization/modelopt.py`:1136: Could you assert apply router weight on input isn't supported, either here or passing it into the function (https://github.com/vllm-project/vllm/pull/20037#discussion_r2211071955)
+- 2025-07-16 `mgoin` on `vllm/model_executor/layers/quantization/modelopt.py`:1067: Move this into the conditional since it is only used for fi case. You could also preprocess these parameters in process weights after loading (https://github.com/vllm-project/vllm/pull/20037#discussion_r2211106259)
+- 2025-07-16 `mgoin` on `vllm/model_executor/layers/fused_moe/modular_kernel.py`:730: Fix these long line issues (https://github.com/vllm-project/vllm/pull/20037#discussion_r2211118025)
+- 2025-07-16 `mgoin` on `vllm/model_executor/layers/fused_moe/layer.py`:759: Is this new function really needed if we already have select gemm impl? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2211138498)
+- 2025-07-16 `mgoin` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:675: Please use named args here to prevent errors (https://github.com/vllm-project/vllm/pull/20037#discussion_r2211151889)
+- 2025-07-17 `wenscarl` on `vllm/model_executor/layers/fused_moe/layer.py`:759: select gemm impl is only called for DP case. This kernel support both DP and TP, thus another selection function. (https://github.com/vllm-project/vllm/pull/20037#discussion_r2212028002)
+- 2025-07-17 `wenscarl` on `vllm/model_executor/layers/quantization/modelopt.py`:806: select gemm impl is only called for DP case. This kernel support both DP and TP, thus another selection function. (https://github.com/vllm-project/vllm/pull/20037#discussion_r2212028593)
+- 2025-07-17 `mgoin` on `vllm/model_executor/layers/fused_moe/layer.py`:220: I think this should not raise an error if it is a maybe function. Currently this will fail all other FusedMoEMethodBase classes (https://github.com/vllm-project/vllm/pull/20037#discussion_r2213806812)
+- 2025-07-17 `mgoin` on `vllm/model_executor/layers/fused_moe/layer.py`:217: Would be good to leave a docstring on the purpose of this function and when to implement it (https://github.com/vllm-project/vllm/pull/20037#discussion_r2213877354)
+- 2025-07-17 `mgoin` on `vllm/model_executor/layers/fused_moe/layer.py`:1484: So for TP we can still use the FlashInfer Cutlass path, but with no need for chunking? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2213884030)
+- 2025-07-17 `mgoin`: It looks like we are initializing CUDA too early now, breaking many tests. I'm looking into it (https://github.com/vllm-project/vllm/pull/20037#issuecomment-3085426109)
+- 2025-07-17 `wenscarl` on `vllm/model_executor/layers/fused_moe/layer.py`:1484: Yes. The chunking feature is just there in order not to break modular kernel. Do you suggest to improve the description here? (https://github.com/vllm-project/vllm/pull/20037#discussion_r2214351935)
+- 2025-07-17 `mgoin` on `vllm/model_executor/layers/fused_moe/layer.py`:1484: No need I just wanted to ensure I understood, thanks (https://github.com/vllm-project/vllm/pull/20037#discussion_r2214359773)

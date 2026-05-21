@@ -1,78 +1,69 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#16078](https://github.com/vllm-project/vllm/pull/16078)
-- Source page: `sources/prs/vllm/PR-16078.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-16078`
-- Generated at: `2026-05-20T15:34:51.398777+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-04-04T22:43:18Z`
-- Merged: `2025-06-07T04:58:55Z`
-
-## Discussion Counts
-
-- Issue comments: 19
-- Review submissions: 55 (approved=3, commented=52)
-- Inline review comments: 56
-- Review threads observed: 25
-- Resolved/outdated thread markers: resolved=23, outdated=13
-- Human participants with discussion text: ProExpertProg, WoosukKwon, drisspg, houseroad, mergify, robertgshaw2-redhat, tlrmchlsmth, youkaichao, zou3519
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-04-10T22:51:41Z` `COMMENTED` by `drisspg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2758679134)
-- `2025-04-16T03:00:17Z` `COMMENTED` by `drisspg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2770515554)
-- `2025-04-16T03:05:06Z` `COMMENTED` by `drisspg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2770520257)
-- `2025-04-16T03:05:43Z` `COMMENTED` by `drisspg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2770520793)
-- `2025-04-16T03:06:01Z` `COMMENTED` by `drisspg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2770521121)
-- `2025-04-16T03:07:15Z` `COMMENTED` by `drisspg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2770522448)
-- `2025-04-16T03:08:39Z` `COMMENTED` by `drisspg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2770524946)
-- `2025-04-17T17:45:09Z` `COMMENTED` by `drisspg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2776520212)
-- `2025-04-25T21:39:13Z` `COMMENTED` by `houseroad` - This is exciting, thanks! (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2795313355)
-- `2025-04-30T14:23:40Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2807257492)
-- `2025-04-30T14:28:21Z` `COMMENTED` by `zou3519` - The main feedback I have from the compilation side is that we don't support compile(custom op(compile(flex attention))) (or ... (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2807272932)
-- `2025-04-30T14:34:27Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2807292154)
-- `2025-05-03T23:54:42Z` `COMMENTED` by `drisspg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2813322921)
-- `2025-05-03T23:55:01Z` `COMMENTED` by `drisspg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2813322961)
-- `2025-05-07T20:42:10Z` `COMMENTED` by `drisspg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2823160352)
-- `2025-05-07T20:42:32Z` `COMMENTED` by `drisspg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2823161115)
-- `2025-05-08T16:21:43Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2825705404)
-- `2025-05-08T22:01:35Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2826458822)
-- `2025-05-08T22:02:31Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2826460022)
-- `2025-05-08T22:14:13Z` `COMMENTED` by `drisspg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2826474541)
-- `2025-05-08T22:33:33Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2826495602)
-- `2025-05-09T01:25:26Z` `COMMENTED` by `drisspg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2826735301)
-- `2025-05-09T01:27:07Z` `COMMENTED` by `drisspg` (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2826736919)
-- `2025-05-12T19:12:23Z` `COMMENTED` by `ProExpertProg` - A couple of thoughts. Also, an unrelated question: could we make the FlexAttention backend "extensible"? I assume a ... (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2834191125)
-- ... 31 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/v1/attention/backends/flex_attention.py`: 40 inline comment(s)
-- `vllm/attention/layer.py`: 6 inline comment(s)
-- `tests/kernels/test_flex_attention.py`: 3 inline comment(s)
-- `requirements/cuda.txt`: 2 inline comment(s)
-- `vllm/platforms/interface.py`: 2 inline comment(s)
-- `vllm/platforms/cuda.py`: 1 inline comment(s)
-- `vllm/attention/backends/abstract.py`: 1 inline comment(s)
-- `vllm/engine/arg_utils.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-05-07T20:42:10Z` `inline` by `drisspg` `vllm/v1/attention/backends/flex_attention.py`:32; signals: attention, cache, compile, kernel, kv cache, oom; excerpt: "This is a good point, however using flex without compile in vllm is pretty silly since it is a very unfused kernel and will ..." (https://github.com/vllm-project/vllm/pull/16078#discussion_r2078463014)
-- `2025-04-30T14:28:21Z` `review` `COMMENTED` by `zou3519`; signals: attention, compile, perf, performance; excerpt: "The main feedback I have from the compilation side is that we don't support compile(custom op(compile(flex attention))) (or anything really) that well. This problem ..." (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2807272932)
-- `2025-06-02T15:58:33Z` `review` `COMMENTED` by `WoosukKwon`; signals: benchmark, perf, performance, throughput; excerpt: "@drisspg I'm seeing 10x slowdown of e2e performance on sharegpt throughput benchmark (I'm using torch 2.7.0). Is this expected? Is this because re-compilation happens ..." (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2889061977)
-- `2025-04-25T21:38:26Z` `inline` by `houseroad` `tests/kernels/test_flex_attention.py`:90; signals: attention, cache, kernel, kv cache; excerpt: "Do we have a way to test the KV cache management?" (https://github.com/vllm-project/vllm/pull/16078#discussion_r2060909231)
-- `2025-06-03T15:56:04Z` `issue` by `drisspg`; signals: attention, block, compile, race; excerpt: "@WoosukKwon Yup, as implemented this is expected and touched upon in the summary but it is not due to recompilation, the problem is that ..." (https://github.com/vllm-project/vllm/pull/16078#issuecomment-2936092679)
-- `2025-04-16T03:05:05Z` `inline` by `drisspg` `vllm/v1/attention/backends/flex_attention.py`:77; signals: attention, block, perf; excerpt: "this was having weird perf results will highlight later. TBH this is the stickiest point since we rebuild at every decode step and this ..." (https://github.com/vllm-project/vllm/pull/16078#discussion_r2045917201)
-- `2025-04-30T14:23:40Z` `inline` by `zou3519` `vllm/v1/attention/backends/flex_attention.py`:463; signals: attention, cache, compile; excerpt: "Btw, I don't know how this interacts with vLLM's multigraph dynamic shape compilation. It is possible that we will have a problem there. The ..." (https://github.com/vllm-project/vllm/pull/16078#discussion_r2068775536)
-- `2025-04-30T14:34:27Z` `inline` by `zou3519` `vllm/v1/attention/backends/flex_attention.py`:126; signals: attention, cuda, cudagraph; excerpt: "@tlrmchlsmth @chanh FlexAttention should be CUDAGraphable so we could also use full CUDAGraphs with it. Is there anything special we would need to do ..." (https://github.com/vllm-project/vllm/pull/16078#discussion_r2068795732)
-- `2025-05-12T19:04:36Z` `inline` by `ProExpertProg` `vllm/v1/attention/backends/flex_attention.py`:126; signals: attention, cuda, triton; excerpt: "I think we should add either a property or likely better a method supports cuda graph to the attention backend that we call in ..." (https://github.com/vllm-project/vllm/pull/16078#discussion_r2085283600)
-- `2025-05-28T23:29:26Z` `inline` by `drisspg` `vllm/v1/attention/backends/flex_attention.py`:436; signals: attention, cache, kv cache; excerpt: "Ohh that makes way more sense, I am not quite sure how if its possible to get this to work, because on profiling run ..." (https://github.com/vllm-project/vllm/pull/16078#discussion_r2112921335)
-- `2025-05-30T00:44:45Z` `inline` by `ProExpertProg` `vllm/v1/attention/backends/flex_attention.py`:436; signals: attention, cuda, cudagraph; excerpt: "We could just do full cudagraphs by default when using flex attention, if that's supported? They set up some attention metadata" (https://github.com/vllm-project/vllm/pull/16078#discussion_r2114951987)
-- `2025-05-30T00:52:38Z` `inline` by `drisspg` `vllm/v1/attention/backends/flex_attention.py`:436; signals: attention, cuda, cudagraph; excerpt: "Is the full cudagraph path landed yet? I remember there was a PR somewhere but I can't find right now" (https://github.com/vllm-project/vllm/pull/16078#discussion_r2114959330)
+- 2025-04-10 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:186: add real doc block (https://github.com/vllm-project/vllm/pull/16078#discussion_r2038493443)
+- 2025-04-15 `drisspg`: I will flesh out the PR summary, one thing I have found is that we need a newer version of PT since I have fixed a number of dynamic shape issues since 2.6.0. On nightly PT VLLM ENABLE V1 MULTIPROCESSING=1 seems to ... (https://github.com/vllm-project/vllm/pull/16078#issuecomment-2807702631)
+- 2025-04-16 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:49: we support all in the range 16-256 (https://github.com/vllm-project/vllm/pull/16078#discussion_r2045914316)
+- 2025-04-16 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:77: this was having weird perf results will highlight later. TBH this is the stickiest point since we rebuild at every decode step and this ends up being block size n blocks. For the extremal case I have seen which is not setting ... (https://github.com/vllm-project/vllm/pull/16078#discussion_r2045917201)
+- 2025-04-16 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:240: TODO highlight 1 recompile for self.num actual tokens wobble (https://github.com/vllm-project/vllm/pull/16078#discussion_r2045917621)
+- 2025-04-16 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:249: I need to audit these and see what we actually support (https://github.com/vllm-project/vllm/pull/16078#discussion_r2045917862)
+- 2025-04-16 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:367: Another component to be figured out is that for all of these we likely want to handle the modification at block mask creation e.g. sliding window alibilslopes and softcapping are score mod only + causal so I need to figure out a ... (https://github.com/vllm-project/vllm/pull/16078#discussion_r2045918805)
+- 2025-04-16 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:463: we get kinda lucky here that this works. Richard just opened up an issue showing how compile within python custom ops doesn't work. This does work since for flex we override the fake mode / other dispatch keys. I am not sure ... (https://github.com/vllm-project/vllm/pull/16078#discussion_r2045920578)
+- 2025-04-17 `drisspg` on `tests/kernels/test_flex_attention.py`:36: Todo Fix this test (https://github.com/vllm-project/vllm/pull/16078#discussion_r2049408634)
+- 2025-04-25 `houseroad` on `requirements/cuda.txt`:9: I guess we will not land this, lol (https://github.com/vllm-project/vllm/pull/16078#discussion_r2060904888)
+- 2025-04-25 `houseroad` on `vllm/v1/attention/backends/flex_attention.py`:49: Do we want to list 16, or no such use case? (https://github.com/vllm-project/vllm/pull/16078#discussion_r2060905815)
+- 2025-04-25 `houseroad` on `vllm/v1/attention/backends/flex_attention.py`:32: Do we want to have a way to disable torch.compile? Otherwise, the FORCE EAGER=1 may not work? (https://github.com/vllm-project/vllm/pull/16078#discussion_r2060908765)
+- 2025-04-25 `houseroad` on `tests/kernels/test_flex_attention.py`:90: Do we have a way to test the KV cache management? (https://github.com/vllm-project/vllm/pull/16078#discussion_r2060909231)
+- 2025-04-25 `houseroad`: Btw, have we compared the perf with other attention backend, like FA3? (https://github.com/vllm-project/vllm/pull/16078#issuecomment-2831485806)
+- 2025-04-30 `zou3519` on `vllm/v1/attention/backends/flex_attention.py`:463: Btw, I don't know how this interacts with vLLM's multigraph dynamic shape compilation. It is possible that we will have a problem there. The question is: does this specialize on the batch sizes? When vLLM compiles for dynamic shapes, we should have ... (https://github.com/vllm-project/vllm/pull/16078#discussion_r2068775536)
+- 2025-04-30 `zou3519` commented: The main feedback I have from the compilation side is that we don't support compile(custom op(compile(flex attention))) (or anything really) that well. This problem is further exacerbated by vLLM's special precompilation and multigraph dynamic shapes logic. For example, I am not convinced ... (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2807272932)
+- 2025-04-30 `zou3519` on `vllm/v1/attention/backends/flex_attention.py`:126: @tlrmchlsmth @chanh FlexAttention should be CUDAGraphable so we could also use full CUDAGraphs with it. Is there anything special we would need to do with the unified attention operator (i.e. is the non-cudagraphable part of the unified attention operator just dependent on ... (https://github.com/vllm-project/vllm/pull/16078#discussion_r2068795732)
+- 2025-05-03 `drisspg` on `requirements/cuda.txt`:9: ohhh whoops let me undo and rebase this PR (https://github.com/vllm-project/vllm/pull/16078#discussion_r2072486411)
+- 2025-05-03 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:126: Agree there is some overlap here obviously: (https://github.com/vllm-project/vllm/pull/16078#discussion_r2072486508)
+- 2025-05-07 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:32: This is a good point, however using flex without compile in vllm is pretty silly since it is a very unfused kernel and will honestly just oom with any realistic kv cache size (https://github.com/vllm-project/vllm/pull/16078#discussion_r2078463014)
+- 2025-05-08 `tlrmchlsmth` on `vllm/v1/attention/backends/flex_attention.py`:126: Sorry missed this -- There shouldn't be anything special needed, and I think the only change we need to make is to enable it here: (https://github.com/vllm-project/vllm/pull/16078#discussion_r2080055529)
+- 2025-05-08 `ProExpertProg` on `vllm/v1/attention/backends/flex_attention.py`:463: What if we set use direct call here and not go through the unified attention custom op? (https://github.com/vllm-project/vllm/pull/16078#discussion_r2080524662)
+- 2025-05-08 `ProExpertProg` on `vllm/v1/attention/backends/flex_attention.py`:463: We could make flex attention as a splitting op if we still want to split the graph and compile piecewise (https://github.com/vllm-project/vllm/pull/16078#discussion_r2080525469)
+- 2025-05-08 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:463: That should work, should I just update use direct call to read the vllm attention backend? (https://github.com/vllm-project/vllm/pull/16078#discussion_r2080534860)
+- 2025-05-08 `ProExpertProg` on `vllm/v1/attention/backends/flex_attention.py`:463: Let's try that. But I'm not sure if there will be other issues if we don't use the unified attention op so we might need to revert to this approach (https://github.com/vllm-project/vllm/pull/16078#discussion_r2080549118)
+- 2025-05-09 `drisspg` on `vllm/attention/layer.py`:148: Added the hook but not using yet since it doesn't appear to produce correct output for Flex (https://github.com/vllm-project/vllm/pull/16078#discussion_r2080735496)
+- 2025-05-09 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:126: Is this meaningfully different then: ? (https://github.com/vllm-project/vllm/pull/16078#discussion_r2080736597)
+- 2025-05-12 `ProExpertProg` on `vllm/attention/layer.py`:148: These platforms have their own backends, right? Should we just set the use direct call property on those backends? (https://github.com/vllm-project/vllm/pull/16078#discussion_r2085268691)
+- 2025-05-12 `ProExpertProg` on `vllm/v1/attention/backends/flex_attention.py`:126: I think we should add either a property or likely better a method supports cuda graph to the attention backend that we call in the code @tlrmchlsmth linked above. Then that gets checked in the runner or even better config, if possible. ... (https://github.com/vllm-project/vllm/pull/16078#discussion_r2085283600)
+- 2025-05-12 `ProExpertProg` on `vllm/v1/attention/backends/flex_attention.py`:126: Is this meaningfully different then: ? I think yes - FA3 supports full CUDA graphs even though it doesn't use a direct call. But correct me if I'm wrong here (https://github.com/vllm-project/vllm/pull/16078#discussion_r2085285500)
+- 2025-05-12 `ProExpertProg` commented: A couple of thoughts. Also, an unrelated question: could we make the FlexAttention backend "extensible"? I assume a big benefit of it is its customizability, and if we made it easy to subclass/otherwise extend without touching vLLM source code, that might be ... (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2834191125)
+- 2025-05-12 `drisspg`: @ProExpertProg Totally agree, fwiw much of the work was to abstract out the physical layout from the "logical" layout in order to make it much easier to utilize flex as a backend for new models. That being said want to get something ... (https://github.com/vllm-project/vllm/pull/16078#issuecomment-2873754136)
+- 2025-05-12 `drisspg` on `vllm/attention/layer.py`:148: Would this be IPEX, HPU, CPU MLA ? (https://github.com/vllm-project/vllm/pull/16078#discussion_r2085320446)
+- 2025-05-12 `ProExpertProg`: Yeah that's true. I was considering the use case where someone is experimenting with attention out of source for existing models but you're right that new model definitions are the primary use case. (https://github.com/vllm-project/vllm/pull/16078#issuecomment-2873801554)
+- 2025-05-13 `ProExpertProg` on `vllm/attention/layer.py`:148: I think so but could you look through the whole list just to make sure? (https://github.com/vllm-project/vllm/pull/16078#discussion_r2085846911)
+- 2025-05-13 `zou3519` on `vllm/attention/layer.py`:258: you may need to re-run the precommit hooks? (https://github.com/vllm-project/vllm/pull/16078#discussion_r2086993037)
+- 2025-05-13 `zou3519` on `vllm/attention/layer.py`:148: @drisspg is the plan to figure out why the outputs are wrong before merging this? (https://github.com/vllm-project/vllm/pull/16078#discussion_r2087003347)
+- 2025-05-13 `zou3519` commented: This looks good to me overall, I think it's reasonable to ship this first (the current iteration works!) and continue iterating on it (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2837057847)
+- 2025-05-13 `drisspg`: @zou3519 I would really like to but also want to land this so that I have a foundation landed to build off of. I don think this is blocker, it is a major perf bump but I was hoping to do that ... (https://github.com/vllm-project/vllm/pull/16078#issuecomment-2877690511)
+- 2025-05-16 `WoosukKwon` on `vllm/engine/arg_utils.py`:1356: nit: please append , at the end to minimize the code diff. (https://github.com/vllm-project/vllm/pull/16078#discussion_r2093673490)
+- 2025-05-16 `WoosukKwon` on `vllm/platforms/interface.py`:56: nit: Maybe we don't need VLLM V1 since it's only supported by V1. (https://github.com/vllm-project/vllm/pull/16078#discussion_r2093674182)
+- 2025-05-16 `WoosukKwon` on `vllm/v1/attention/backends/flex_attention.py`:49: Just wondering: Does it also support head sizes not divisible by 16? (https://github.com/vllm-project/vllm/pull/16078#discussion_r2093678976)
+- 2025-05-16 `WoosukKwon` on `vllm/v1/attention/backends/flex_attention.py`:68: I think this came from FlashAttention. Is this also required for Flex? (https://github.com/vllm-project/vllm/pull/16078#discussion_r2093679411)
+- 2025-05-16 `WoosukKwon` on `vllm/v1/attention/backends/flex_attention.py`:8: attn gym is not a dependency of vLLM atm. Given that offsets to doc ids tensor is a simple helper function, can we simply copy the code into this file? (https://github.com/vllm-project/vllm/pull/16078#discussion_r2093696874)
+- 2025-05-16 `WoosukKwon` commented: @drisspg Sorry for the delayed review 🙏. Could you please merge again from main? I got this error when running the basic example with the FlexAttention backend: Also, when I manually turned off the cascade attention, I got an illegal memory access ... (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2847663897)
+- 2025-05-19 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:8: Ohh great catch I thought I removed this already (https://github.com/vllm-project/vllm/pull/16078#discussion_r2096365791)
+- 2025-05-21 `youkaichao` on `tests/kernels/test_flex_attention.py`:53: rename FLEX ATTENTION VLLM to FLEX ATTENTION or FLEX ATTENTION V1 (https://github.com/vllm-project/vllm/pull/16078#discussion_r2099799654)
+- 2025-05-21 `youkaichao` on `vllm/v1/attention/backends/flex_attention.py`:142: anything special for the block 0? i think the function should handle it naturally? like if no block table entry contains block 0, then physical to logical[:, 0] will be guarenteed to be -1 . (https://github.com/vllm-project/vllm/pull/16078#discussion_r2099853964)
+- 2025-05-21 `youkaichao` on `vllm/v1/attention/backends/flex_attention.py`:141: is this a no-op? I think values will always be equal to block table. (https://github.com/vllm-project/vllm/pull/16078#discussion_r2099859759)
+- 2025-05-21 `youkaichao` on `vllm/v1/attention/backends/flex_attention.py`:436: this is definitely not compatible with direct call . Dynamo will trace this code path, and flex attention will not be called at all. (https://github.com/vllm-project/vllm/pull/16078#discussion_r2099902860)
+- 2025-05-28 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:141: ahh good call out (https://github.com/vllm-project/vllm/pull/16078#discussion_r2112906475)
+- 2025-05-28 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:142: The problem is that the block-table, is [1, 0, 0,....] where 0 seems to indicate unused so if we don't manually set this we get a nonzero dynamic zero at position 0 (https://github.com/vllm-project/vllm/pull/16078#discussion_r2112912278)
+- 2025-05-28 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:436: Ohh that makes way more sense, I am not quite sure how if its possible to get this to work, because on profiling run we have no attn metadata and the kv cache is not populated so it seems like we can't ... (https://github.com/vllm-project/vllm/pull/16078#discussion_r2112921335)
+- 2025-05-28 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:436: cc @zou3519 I didn't realize that the profiling run is really Dynamo graph creation. I think we ideally need to be able to trace flex w/ realistic values for each of the N graphs we produce (https://github.com/vllm-project/vllm/pull/16078#discussion_r2112927178)
+- 2025-05-28 `drisspg`: @WoosukKwon I added an example script to the summary and rebased the PR, are you still seeing garbage? (https://github.com/vllm-project/vllm/pull/16078#issuecomment-2917851693)
+- 2025-05-29 `drisspg`: @WoosukKwon So we fixed a few more dynamic shape bugs, I have been testing this against latest pytorch nightly which might be why we are seeing different results, I am getting ` (https://github.com/vllm-project/vllm/pull/16078#issuecomment-2919842081)
+- 2025-05-29 `zou3519` approved: This looks good to me. I think we should ship this and continue iterating on it (it's already gotten pretty large, and we have a sense of the cases where it doesn't work for yet). (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2878831997)
+- 2025-05-30 `ProExpertProg` on `vllm/v1/attention/backends/flex_attention.py`:436: We could just do full cudagraphs by default when using flex attention, if that's supported? They set up some attention metadata (https://github.com/vllm-project/vllm/pull/16078#discussion_r2114951987)
+- 2025-05-30 `ProExpertProg` on `vllm/v1/attention/backends/flex_attention.py`:436: Otherwise we can find some other way to make sure skip attn is false inside GPUModelRunner. dummy run (https://github.com/vllm-project/vllm/pull/16078#discussion_r2114953920)
+- 2025-05-30 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:436: Is the full cudagraph path landed yet? I remember there was a PR somewhere but I can't find right now (https://github.com/vllm-project/vllm/pull/16078#discussion_r2114959330)
+- 2025-05-30 `WoosukKwon`: I have been testing this against latest pytorch nightly @drisspg Is torch nightly required? I'm now seeing reasonable outputs with torch v2.7.0. (https://github.com/vllm-project/vllm/pull/16078#issuecomment-2922855792)
+- 2025-05-30 `drisspg`: Its possible to run into a few dynamic shapes issues, w/ 2.7.0 around max-autotune that we resolved, specifically this line: ideally we would compile w/ max-autotune. But as implemented it should be good w/ 2.7 (https://github.com/vllm-project/vllm/pull/16078#issuecomment-2923215731)
+- 2025-05-31 `drisspg` on `vllm/v1/attention/backends/flex_attention.py`:436: So I gave this a spin, locally and didn't have much success - garbage output, I think this is because its also baking in the meta-data building into the cuda graphs and for flex, which is a little more complicated for Flex ... (https://github.com/vllm-project/vllm/pull/16078#discussion_r2118016666)
+- 2025-06-01 `WoosukKwon` on `vllm/platforms/interface.py`:58: Just curious: Why include VLLM in the name? 😄 (https://github.com/vllm-project/vllm/pull/16078#discussion_r2118662026)
+- 2025-06-02 `youkaichao` commented: While not blocking, I placed several comments above 😄 (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2887234207)
+- 2025-06-02 `WoosukKwon` commented: @drisspg I'm seeing 10x slowdown of e2e performance on sharegpt throughput benchmark (I'm using torch 2.7.0). Is this expected? Is this because re-compilation happens at run time? (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2889061977)
+- 2025-06-03 `drisspg`: @WoosukKwon Yup, as implemented this is expected and touched upon in the summary but it is not due to recompilation, the problem is that flex-attention and create block mask consist of alot of small cpu bound operations in order to prep the ... (https://github.com/vllm-project/vllm/pull/16078#issuecomment-2936092679)
+- 2025-06-06 `WoosukKwon` approved: LGMT overall. Sorry for the delayed review 🙏 Looking forward to extending this to more diverse attention algorithms! Also, hope we can get the fix for the recompilation issue. (https://github.com/vllm-project/vllm/pull/16078#pullrequestreview-2903721028)
+- 2025-06-06 `WoosukKwon`: @drisspg Could you please check the failed CI tests and rebase the PR? Will merge once the CI gets green. :) (https://github.com/vllm-project/vllm/pull/16078#issuecomment-2948026858)

@@ -1,81 +1,85 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#20930](https://github.com/vllm-project/vllm/pull/20930)
-- Source page: `sources/prs/vllm/PR-20930.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-20930`
-- Generated at: `2026-05-20T15:36:19.911985+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-07-14T15:21:49Z`
-- Merged: `2025-08-11T16:41:37Z`
-
-## Discussion Counts
-
-- Issue comments: 23
-- Review submissions: 92 (approved=2, commented=90)
-- Inline review comments: 95
-- Review threads observed: 30
-- Resolved/outdated thread markers: resolved=29, outdated=28
-- Human participants with discussion text: DarkLight1337, hmellor, maxdebayser, mergify, noooop, vrdn-23
-- Automation comments/reviews omitted from high-signal summary: 8
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 16
-
-## Review Decisions
-
-- `2025-07-14T15:22:28Z` `COMMENTED` by `gemini-code-assist` - Summary of Changes Hello @noooop, I'm Gemini Code Assist[^1]! I'm currently reviewing this pull request and will post ... (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3016785121)
-- `2025-07-14T15:24:04Z` `COMMENTED` by `gemini-code-assist` - Code Review This pull request refactors the model loading and registration logic to automatically support ForSequenceClassification models, which ... (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3016790114)
-- `2025-07-15T08:56:47Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3019402986)
-- `2025-07-15T08:59:57Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3019418645)
-- `2025-07-15T09:14:56Z` `COMMENTED` by `noooop` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3019473537)
-- `2025-07-15T09:16:08Z` `COMMENTED` by `noooop` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3019477554)
-- `2025-07-15T09:17:37Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3019482455)
-- `2025-07-15T09:20:23Z` `COMMENTED` by `noooop` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3019491318)
-- `2025-07-15T09:23:32Z` `COMMENTED` by `noooop` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3019501120)
-- `2025-07-15T09:26:17Z` `COMMENTED` by `noooop` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3019510405)
-- `2025-07-15T10:00:14Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3019623010)
-- `2025-07-15T10:00:22Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3019623465)
-- `2025-07-15T10:19:05Z` `COMMENTED` by `noooop` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3019679741)
-- `2025-07-15T10:37:23Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3019731275)
-- `2025-07-15T14:42:53Z` `COMMENTED` by `maxdebayser` - Nice, this is going in the right direction (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3020747727)
-- `2025-07-16T02:33:55Z` `COMMENTED` by `noooop` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3022910451)
-- `2025-07-21T07:01:16Z` `COMMENTED` by `noooop` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3036804469)
-- `2025-07-21T07:24:56Z` `COMMENTED` by `noooop` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3036871207)
-- `2025-07-21T07:43:32Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3036919319)
-- `2025-07-21T07:55:13Z` `COMMENTED` by `noooop` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3036952434)
-- `2025-07-21T07:56:51Z` `COMMENTED` by `DarkLight1337` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3036956414)
-- `2025-07-21T13:32:13Z` `COMMENTED` by `maxdebayser` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3038132368)
-- `2025-07-22T02:44:22Z` `COMMENTED` by `maxdebayser` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3040634535)
-- `2025-07-22T02:48:35Z` `COMMENTED` by `maxdebayser` (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3040648246)
-- ... 64 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/config.py`: 42 inline comment(s)
-- `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`: 13 inline comment(s)
-- `vllm/v1/worker/gpu_model_runner.py`: 12 inline comment(s)
-- `vllm/model_executor/models/interfaces.py`: 7 inline comment(s)
-- `vllm/entrypoints/openai/api_server.py`: 7 inline comment(s)
-- `vllm/model_executor/model_loader/utils.py`: 5 inline comment(s)
-- `vllm/entrypoints/llm.py`: 3 inline comment(s)
-- `tests/models/registry.py`: 2 inline comment(s)
-- `tests/models/language/pooling/test_snowflake_arctic_embed.py`: 2 inline comment(s)
-- `vllm/model_executor/models/registry.py`: 1 inline comment(s)
-- `vllm/model_executor/layers/pooler.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-07-21T13:32:13Z` `inline` by `maxdebayser` `vllm/config.py`:4669; signals: attention, cache, kv cache; excerpt: "@noooop , in I'm disabling chunked prefill in the engine core if a model without kv cache is detected. I'm not sure if it's ..." (https://github.com/vllm-project/vllm/pull/20930#discussion_r2219229594)
-- `2025-07-22T15:43:07Z` `inline` by `maxdebayser` `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64; signals: attention, cache, hang; excerpt: "Oh, I wasn't aware of that. Thanks a lot, I'll read the paper. But then I think we should change the qwen modeling code ..." (https://github.com/vllm-project/vllm/pull/20930#discussion_r2223000073)
-- `2025-07-21T07:00:54Z` `inline` by `noooop` `vllm/config.py`:4669; signals: attention, cache; excerpt: "@maxdebayser disabling chunked prefill & auto prefix cache should be controlled by attn type rather than pooling type. For instance, Alibaba-NLP/gte-Qwen2-1.5B-instruct uses encoder-only attention, ..." (https://github.com/vllm-project/vllm/pull/20930#discussion_r2218362179)
-- `2025-07-22T15:08:22Z` `inline` by `noooop` `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64; signals: attention, cache; excerpt: "The models "Alibaba-NLP/gte-Qwen2-1.5B-instruct" and "Alibaba-NLP/gte-Qwen2-7B-instruct" have their configuration parameter "is causal" set to false. This indicates that they using the [llm2vec]( method to transform ..." (https://github.com/vllm-project/vllm/pull/20930#discussion_r2222864828)
-- `2025-07-22T13:36:40Z` `inline` by `maxdebayser` `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64; signals: attention, cache; excerpt: "The attention type for this model is DECODER:" (https://github.com/vllm-project/vllm/pull/20930#discussion_r2222566436)
-- `2025-07-21T06:59:04Z` `inline` by `noooop` `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:49; signals: cache; excerpt: "todo Alibaba-NLP/gte-Qwen2-1.5B-instruct uses encoder only attn the enable prefix caching should not be used." (https://github.com/vllm-project/vllm/pull/20930#discussion_r2218359660)
-- `2025-07-22T04:10:43Z` `inline` by `noooop` `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64; signals: cache; excerpt: "Using this method, it can be determined that Alibaba-NLP/gte-Qwen2-1.5B-instruct does not use prefix caching." (https://github.com/vllm-project/vllm/pull/20930#discussion_r2221040358)
-- `2025-07-22T13:00:28Z` `inline` by `maxdebayser` `vllm/config.py`:4856; signals: attention; excerpt: "The problem is that you can only find out the attention types once the model is loaded in the model runner, which runs in ..." (https://github.com/vllm-project/vllm/pull/20930#discussion_r2222460235)
-- `2025-07-22T13:29:12Z` `inline` by `maxdebayser` `vllm/config.py`:964; signals: attention; excerpt: "Yes, but this is not reliable. What counts is what the the models pass as argument to the Attention module when they are constructed:" (https://github.com/vllm-project/vllm/pull/20930#discussion_r2222542372)
-- `2025-07-22T13:34:02Z` `inline` by `maxdebayser` `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64; signals: cache; excerpt: "Just to get the context, why does the prefix cache need disabling for this model? Since it's a decoder with LAST pooling it shouldn't ..." (https://github.com/vllm-project/vllm/pull/20930#discussion_r2222557573)
-- `2025-07-22T15:59:54Z` `inline` by `maxdebayser` `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64; signals: cache; excerpt: "Pretty cool paper! And in the paper they used LoRA for the fine tuning. Have you come across a model that has been transformed ..." (https://github.com/vllm-project/vllm/pull/20930#discussion_r2223046889)
-- `2025-07-22T16:05:20Z` `inline` by `maxdebayser` `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64; signals: cache; excerpt: "Qwen2 code already uses is causal flag. v0 result is correct. Right! When I first looked I only saw the default argument. So in ..." (https://github.com/vllm-project/vllm/pull/20930#discussion_r2223058491)
+- 2025-07-14 `vrdn-23`: This looks awesome @noooop! Question: Would this extend to only currently supported models or would it negate the need to have separate PRs for non-LLM models (like this for example (https://github.com/vllm-project/vllm/pull/20930#issuecomment-3071196819)
+- 2025-07-15 `noooop`: This looks awesome @noooop! Question: Would this extend to only currently supported models or would it negate the need to have separate PRs for non-LLM models (like this for example 20215)? DebertaV2ForSequenceClassification uses classifier, while this pr uses score, so it is ... (https://github.com/vllm-project/vllm/pull/20930#issuecomment-3071830500)
+- 2025-07-15 `DarkLight1337` on `vllm/model_executor/model_loader/utils.py`:249: What if there is a SequenceClassification model that is already registered to vLLM? (https://github.com/vllm-project/vllm/pull/20930#discussion_r2206896262)
+- 2025-07-15 `DarkLight1337` on `vllm/config.py`:799: Why can't we set this during model creation? (https://github.com/vllm-project/vllm/pull/20930#discussion_r2206906447)
+- 2025-07-15 `noooop` on `vllm/config.py`:799: - FIX the issue reported in 20894， This piece of code may not affect the main process… model creation is not in the main process, It's already too late to set this parameter. refer to 20012 After moving the default pooler config ... (https://github.com/vllm-project/vllm/pull/20930#discussion_r2206942361)
+- 2025-07-15 `noooop` on `vllm/model_executor/model_loader/utils.py`:249: vllm not supported means it is not registered with vLLM (https://github.com/vllm-project/vllm/pull/20930#discussion_r2206944983)
+- 2025-07-15 `DarkLight1337` on `vllm/config.py`:799: Maybe this actually belongs in verify and update config? (https://github.com/vllm-project/vllm/pull/20930#discussion_r2206948101)
+- 2025-07-15 `noooop` on `vllm/config.py`:799: This small issue may require us to refactor the entire vllm/model executor/layers/pooler.py (╯‵□′)╯︵┻━┻ (https://github.com/vllm-project/vllm/pull/20930#discussion_r2206954058)
+- 2025-07-15 `noooop` on `vllm/config.py`:799: I think it should be part of init pooler config, very intuitive Just like (https://github.com/vllm-project/vllm/pull/20930#discussion_r2206960911)
+- 2025-07-15 `noooop` on `vllm/config.py`:799: We can also fix 20538 in this refactoring All pooler behavior can be controlled by pooler config override pooler config\sentence-transformers configuration\pooling configuration\default pooling type - pooler config - Control pooler behavior which using implementation in vllm/model executor/layers/pooler.py (https://github.com/vllm-project/vllm/pull/20930#discussion_r2206967206)
+- 2025-07-15 `DarkLight1337` on `vllm/config.py`:799: I think this change belongs in a separate PR (https://github.com/vllm-project/vllm/pull/20930#discussion_r2207041398)
+- 2025-07-15 `DarkLight1337` on `vllm/config.py`:799: Probably best to do it after my PR is merged (https://github.com/vllm-project/vllm/pull/20930#discussion_r2207041717)
+- 2025-07-15 `noooop` on `vllm/config.py`:799: I actually want you to help implement All pooler behavior can be controlled by pooler config, which is too complicated for me. Anyway, do you think this direction is feasible? (https://github.com/vllm-project/vllm/pull/20930#discussion_r2207079102)
+- 2025-07-15 `DarkLight1337` on `vllm/config.py`:799: I am actually trying to enable some of the pooling parameters to be specified at inference time so we can potentially support multiple pooling tasks at once in the same engine (https://github.com/vllm-project/vllm/pull/20930#discussion_r2207114021)
+- 2025-07-15 `maxdebayser` on `vllm/model_executor/model_loader/utils.py`:254: There is something strange here, vllm supported has the exact same definition as vllm not supported. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2207707998)
+- 2025-07-15 `maxdebayser` commented: Nice, this is going in the right direction (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3020747727)
+- 2025-07-16 `noooop` on `vllm/model_executor/model_loader/utils.py`:254: There is indeed a problem with this logic, thank you for pointing it out. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2209084065)
+- 2025-07-21 `noooop` on `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:49: todo Alibaba-NLP/gte-Qwen2-1.5B-instruct uses encoder only attn the enable prefix caching should not be used. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2218359660)
+- 2025-07-21 `noooop` on `vllm/config.py`:4669: @maxdebayser disabling chunked prefill & auto prefix cache should be controlled by attn type rather than pooling type. For instance, Alibaba-NLP/gte-Qwen2-1.5B-instruct uses encoder-only attention, which should have chunked prefill & auto prefix cache disabled. Please help implement this feature in 21270 (https://github.com/vllm-project/vllm/pull/20930#discussion_r2218362179)
+- 2025-07-21 `noooop` on `vllm/config.py`:819: @DarkLight1337 I'm not sure if setting default pooler config in vllm.config conflicts with the goal of 21227 (https://github.com/vllm-project/vllm/pull/20930#discussion_r2218397428)
+- 2025-07-21 `DarkLight1337` on `vllm/config.py`:819: Yes there is a bit of a conflict. While it's fine to have defaults, we should generalize beyond having just a single PoolingConfig for all the poolers, and instead have a separate config for each pooler. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2218429838)
+- 2025-07-21 `noooop` on `vllm/config.py`:819: Is the current approach of auto-resolving default pooling type by introducing the CLSPooling Protocol and get default pooling type method in correct path? If this direction conflicts with 21227, we should wait until the entire series is merged before further discussion. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2218450915)
+- 2025-07-21 `DarkLight1337` on `vllm/config.py`:819: Yeah there will be a conflict, let's hold this PR for now (https://github.com/vllm-project/vllm/pull/20930#discussion_r2218453800)
+- 2025-07-21 `maxdebayser` on `vllm/config.py`:4669: @noooop , in I'm disabling chunked prefill in the engine core if a model without kv cache is detected. I'm not sure if it's the best place or if there are attention-free models that support chunking, but that can be future work. ... (https://github.com/vllm-project/vllm/pull/20930#discussion_r2219229594)
+- 2025-07-22 `maxdebayser` on `vllm/model_executor/models/interfaces.py`:609: This feels a bit weird to me. What if we had a decorator like this? (https://github.com/vllm-project/vllm/pull/20930#discussion_r2220874855)
+- 2025-07-22 `maxdebayser` on `tests/models/language/pooling/test_snowflake_arctic_embed.py`:14: Is it to be less verbose that you're using a new class definition instead of setting the attribute? (https://github.com/vllm-project/vllm/pull/20930#discussion_r2220884380)
+- 2025-07-22 `noooop` on `tests/models/language/pooling/test_snowflake_arctic_embed.py`:14: Both methods are very verbose。┓( ´∀` )┏ (https://github.com/vllm-project/vllm/pull/20930#discussion_r2220905433)
+- 2025-07-22 `noooop` on `vllm/config.py`:4856: @maxdebayser how about determine whether to enable chunked prefill by testing attn type='decoder'? (https://github.com/vllm-project/vllm/pull/20930#discussion_r2221036043)
+- 2025-07-22 `noooop` on `vllm/config.py`:964: property attn type calculation logic is here (https://github.com/vllm-project/vllm/pull/20930#discussion_r2221037708)
+- 2025-07-22 `noooop` on `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64: Using this method, it can be determined that Alibaba-NLP/gte-Qwen2-1.5B-instruct does not use prefix caching. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2221040358)
+- 2025-07-22 `maxdebayser` on `vllm/config.py`:4856: The problem is that you can only find out the attention types once the model is loaded in the model runner, which runs in another process. So it's not possible to get the attention type in advance in config.py or arg utils.py ... (https://github.com/vllm-project/vllm/pull/20930#discussion_r2222460235)
+- 2025-07-22 `noooop` on `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64: @maxdebayser This test can now pass locally. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2222516152)
+- 2025-07-22 `maxdebayser` on `vllm/config.py`:964: Yes, but this is not reliable. What counts is what the the models pass as argument to the Attention module when they are constructed: (https://github.com/vllm-project/vllm/pull/20930#discussion_r2222542372)
+- 2025-07-22 `maxdebayser` on `vllm/config.py`:4856: For now in main we only support decoder models anyway. So for the time being can we perhaps leave this as is? (https://github.com/vllm-project/vllm/pull/20930#discussion_r2222545795)
+- 2025-07-22 `maxdebayser` on `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64: Just to get the context, why does the prefix cache need disabling for this model? Since it's a decoder with LAST pooling it shouldn't cause any problems to run with prefix caching. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2222557573)
+- 2025-07-22 `maxdebayser` on `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64: The attention type for this model is DECODER: (https://github.com/vllm-project/vllm/pull/20930#discussion_r2222566436)
+- 2025-07-22 `noooop` on `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64: The models "Alibaba-NLP/gte-Qwen2-1.5B-instruct" and "Alibaba-NLP/gte-Qwen2-7B-instruct" have their configuration parameter "is causal" set to false. This indicates that they using the [llm2vec]( method to transform the attention from a decoder into an encoder. Sync the latest updates: If you remember, the gte-Qwen2-1.5B-instruct model ... (https://github.com/vllm-project/vllm/pull/20930#discussion_r2222864828)
+- 2025-07-22 `maxdebayser` on `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64: Oh, I wasn't aware of that. Thanks a lot, I'll read the paper. But then I think we should change the qwen modeling code to change the attention type to encoder only when is causal is set. Currently V1 doesn't support encoder ... (https://github.com/vllm-project/vllm/pull/20930#discussion_r2223000073)
+- 2025-07-22 `noooop` on `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64: Qwen2 code already uses is causal flag. v0 result is correct. Please consider llm2vec in 21270. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2223028142)
+- 2025-07-22 `maxdebayser` on `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64: Pretty cool paper! And in the paper they used LoRA for the fine tuning. Have you come across a model that has been transformed with llm2vec and has lora weights? (https://github.com/vllm-project/vllm/pull/20930#discussion_r2223046889)
+- 2025-07-22 `maxdebayser` on `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64: Qwen2 code already uses is causal flag. v0 result is correct. Right! When I first looked I only saw the default argument. So in theory it should work in 21270 already. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2223058491)
+- 2025-07-22 `noooop` on `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64: I’m not very familiar with LoRA. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2223080084)
+- 2025-07-22 `maxdebayser` on `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64: But anyway, I think there can be no single place where we have all the information needed to enable or disable the chunked prefill and prefix caching. There will be a flow where these settings are updated along the way as the ... (https://github.com/vllm-project/vllm/pull/20930#discussion_r2223128863)
+- 2025-07-22 `maxdebayser` on `tests/models/language/pooling/test_classify_auto_prefix_cache_support.py`:64: I’m not very familiar with LoRA. I'm not too familiar either (https://github.com/vllm-project/vllm/pull/20930#discussion_r2223244076)
+- 2025-08-07 `DarkLight1337` on `vllm/entrypoints/openai/api_server.py`:1714: What does this endpoint have to do with chunked prefill? IMO we should check this internally as an assertion instead of having it at the API level (https://github.com/vllm-project/vllm/pull/20930#discussion_r2259661370)
+- 2025-08-07 `DarkLight1337` on `vllm/entrypoints/openai/api_server.py`:1714: The "encode" task shouldn't inherently disable chunked prefill , it should depend on the specific model config (https://github.com/vllm-project/vllm/pull/20930#discussion_r2259671005)
+- 2025-08-07 `noooop` on `vllm/entrypoints/openai/api_server.py`:1714: LLM.encode() and pooling server uses ALL pooling, which does not support chunked prefill. e.g. jason9693/Qwen2.5-1.5B-apeach (https://github.com/vllm-project/vllm/pull/20930#discussion_r2259674478)
+- 2025-08-07 `noooop` on `vllm/entrypoints/openai/api_server.py`:1714: Otherwise, an error will raise here. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2259679764)
+- 2025-08-07 `DarkLight1337` on `vllm/entrypoints/openai/api_server.py`:1714: We can just remove "encode" from get supported tasks in the model runner, no need to change the API code (https://github.com/vllm-project/vllm/pull/20930#discussion_r2259684065)
+- 2025-08-07 `noooop` on `vllm/entrypoints/openai/api_server.py`:1714: Very Weird error occurs, so we must prevent users from encountering it in advance. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2259685227)
+- 2025-08-07 `noooop` on `vllm/entrypoints/openai/api_server.py`:1714: We can just remove "encode" from get supported tasks in the model runner, no need to change the API code I'll try (https://github.com/vllm-project/vllm/pull/20930#discussion_r2259689280)
+- 2025-08-08 `noooop` on `vllm/entrypoints/llm.py`:285: @DarkLight1337 What's the special reason that v1 uses supported tasks = self.llm engine.get supported tasks() (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262193494)
+- 2025-08-08 `noooop` on `vllm/config.py`:4894: If supported tasks = self.llm engine.get supported tasks() is used, then self.model config.supported tasks.remove("encode") will not work. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262196468)
+- 2025-08-08 `noooop` on `vllm/entrypoints/llm.py`:1096: Here we need to add a check of if pooling task not in self.supported tasks (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262198346)
+- 2025-08-08 `noooop` on `vllm/entrypoints/llm.py`:285: v1 uses a multi-threaded architecture, config is best parsed first in the startup phase in vllm config, and after the log is printed during startup, it should no longer be modified Other processes using vllm config will not result in config inconsistencies. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262215477)
+- 2025-08-08 `DarkLight1337` on `vllm/config.py`:4894: model config.supported tasks is deprecated already, you should set this inside model runner (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262453230)
+- 2025-08-08 `DarkLight1337` on `vllm/config.py`:4918: Can remove this now (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262595361)
+- 2025-08-08 `DarkLight1337` on `vllm/config.py`:5142: Also remove this since it's deprecated (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262596245)
+- 2025-08-08 `DarkLight1337` on `vllm/model_executor/models/interfaces.py`:644: Use a docstring instead of code comment (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262598737)
+- 2025-08-08 `DarkLight1337` on `vllm/model_executor/models/interfaces.py`:644: And also need to add type annotations (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262599065)
+- 2025-08-08 `DarkLight1337` on `vllm/v1/worker/gpu_model_runner.py`:1243: In case encode doesn't actually use ALL pooling, perhaps we can pass the VllmConfig to get supported tasks so each pooler can decide for itself (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262612660)
+- 2025-08-08 `noooop` on `vllm/config.py`:4908: how about add logger.info here (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262614218)
+- 2025-08-08 `noooop` on `vllm/v1/worker/gpu_model_runner.py`:1243: How about considering it during the refactoring later? (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262618245)
+- 2025-08-08 `DarkLight1337` on `vllm/config.py`:4908: It won't work when we completely remove self.model config.supported tasks (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262620035)
+- 2025-08-08 `noooop` on `vllm/config.py`:4908: But I don't want to put it in the runner This is the best place to put this logger.info, and we can consider where it should go in the future during the refactoring. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262628837)
+- 2025-08-08 `DarkLight1337` on `vllm/config.py`:4908: Shouldn't we consider this now? Otherwise we just create more tech debt for us to solve later (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262636262)
+- 2025-08-08 `noooop` on `vllm/config.py`:4908: If there will be no model config.supported tasks in the end, what if we need to make a check on supported tasks during the initialization of model config or vllm config later? If there is some way to obtain supported tasks within ... (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262644982)
+- 2025-08-08 `DarkLight1337` on `vllm/config.py`:4908: The point is to move all the supported tasks stuff to model runner because some supported tasks cannot be determined before the model is loaded. That is why I don't want any supported tasks stuff to be in model config (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262647020)
+- 2025-08-08 `noooop` on `vllm/config.py`:4908: I personally think we should avoid any config that can only be known after loading the model. It must have a flag in the configuration file let's know in advance; otherwise, we add a configuration and let the user enable it manually. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262655370)
+- 2025-08-08 `DarkLight1337` on `vllm/config.py`:4908: e.g. We cannot know whether the model actually supports it until the pooler is created (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262661127)
+- 2025-08-08 `noooop` on `vllm/config.py`:4908: I try to avoid it, for example (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262668520)
+- 2025-08-08 `DarkLight1337` on `vllm/config.py`:4908: We can modify the error message inside EngineCore.add request to suggest the user to set --no-enable-chunked-prefill if the task is "encode" and chunked prefill is enabled (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262670450)
+- 2025-08-08 `noooop` on `vllm/config.py`:4908: Let's proceed this way for now until we find a case that we can't avoid entirely. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262670997)
+- 2025-08-08 `noooop` on `vllm/config.py`:4908: We can modify the error message inside EngineCore.add request to suggest the user to set --no-enable-chunked-prefill if the task is "encode" and chunked prefill is enabled That's too late, I think it should have been output at startup We have already disabled ... (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262675364)
+- 2025-08-08 `DarkLight1337` on `vllm/config.py`:4908: Put this inside the API methods then (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262678404)
+- 2025-08-08 `noooop` on `vllm/config.py`:4908: The vllm openai server directly disables the pooling api, leaving no opportunity for outputting logger.info. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262685061)
+- 2025-08-08 `noooop` on `vllm/config.py`:4908: This is the earliest place where logger.info can be output, because it is the only place where chunked prefill enabled is parsed. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262687186)
+- 2025-08-08 `noooop` on `vllm/v1/worker/gpu_model_runner.py`:1251: how about put it in gpu model runner.py (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262694628)
+- 2025-08-08 `DarkLight1337` on `vllm/v1/worker/gpu_model_runner.py`:1251: Yes that is fine. I'm just slightly concerned that this would become a nuisance because most pooling models support encode task. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262703378)
+- 2025-08-08 `DarkLight1337` on `vllm/v1/worker/gpu_model_runner.py`:1251: We have been trying to cut down on the amount of logs at startup time (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262704554)
+- 2025-08-08 `noooop` on `vllm/v1/worker/gpu_model_runner.py`:1251: I think this log is needed, as many people don't realize that encode and chunked-prefill have conflict. (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262712738)
+- 2025-08-08 `DarkLight1337` on `vllm/v1/worker/gpu_model_runner.py`:1251: Ok let's keep this then, we can always remove it if anyone complains (https://github.com/vllm-project/vllm/pull/20930#discussion_r2262714685)
+- 2025-08-08 `maxdebayser` on `vllm/v1/worker/gpu_model_runner.py`:1251: What if instead of logging we return a 400 error message if anyone tries to use the model with encode? (https://github.com/vllm-project/vllm/pull/20930#discussion_r2263983765)
+- 2025-08-08 `maxdebayser` commented: I'm still a bit ambivalent about the default pooling type. If the model config doesn't come with a definition, shouldn't the user set this value? (https://github.com/vllm-project/vllm/pull/20930#pullrequestreview-3102155247)
+- 2025-08-09 `noooop`: I'm still a bit ambivalent about the default pooling type. If the model config doesn't come with a definition, shouldn't the user set this value? - For embedding models, most have a sentence-transformers config with the correct pooling type, and we also ... (https://github.com/vllm-project/vllm/pull/20930#issuecomment-3170242349)

@@ -1,80 +1,42 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#16756](https://github.com/vllm-project/vllm/pull/16756)
-- Source page: `sources/prs/vllm/PR-16756.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-16756`
-- Generated at: `2026-05-20T15:34:59.648485+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-04-17T04:15:37Z`
-- Merged: `2025-06-12T15:31:04Z`
-
-## Discussion Counts
-
-- Issue comments: 21
-- Review submissions: 46 (approved=5, commented=41)
-- Inline review comments: 44
-- Review threads observed: 21
-- Resolved/outdated thread markers: resolved=20, outdated=11
-- Human participants with discussion text: LucasWilkinson, ProExpertProg, bnellnm, cascade812, eellison, gshtras, houseroad, mergify, youkaichao, zou3519
-- Automation comments/reviews omitted from high-signal summary: 13
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-04-17T04:16:25Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2774529282)
-- `2025-04-22T14:03:47Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2784239951)
-- `2025-04-22T14:06:04Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2784247292)
-- `2025-04-22T14:06:25Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2784248388)
-- `2025-04-22T14:08:36Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2784255647)
-- `2025-04-22T14:09:30Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2784258582)
-- `2025-04-22T14:13:02Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2784270309)
-- `2025-04-22T14:14:59Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2784276611)
-- `2025-04-22T14:15:37Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2784278672)
-- `2025-04-22T14:15:43Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2784278974)
-- `2025-04-22T14:28:59Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2784328879)
-- `2025-04-23T01:45:29Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2785747942)
-- `2025-04-28T04:36:41Z` `COMMENTED` by `cascade812` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2797960323)
-- `2025-04-28T04:42:30Z` `COMMENTED` by `cascade812` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2797965395)
-- `2025-04-28T14:13:41Z` `COMMENTED` by `eellison` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2799459079)
-- `2025-04-29T14:01:38Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2803733445)
-- `2025-04-29T16:01:07Z` `COMMENTED` by `eellison` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2804230875)
-- `2025-04-30T18:03:44Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2807995128)
-- `2025-04-30T18:04:41Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2807997124)
-- `2025-04-30T18:08:53Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2808006431)
-- `2025-05-01T19:04:51Z` `COMMENTED` by `ProExpertProg` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2810486974)
-- `2025-05-12T13:58:04Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2833338325)
-- `2025-05-12T14:06:10Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2833368913)
-- `2025-05-12T14:09:19Z` `COMMENTED` by `zou3519` (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2833381011)
-- ... 22 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/compilation/fusion_attn.py`: 15 inline comment(s)
-- `tests/compile/test_fusion_attn.py`: 7 inline comment(s)
-- `vllm/compilation/noop_elimination.py`: 5 inline comment(s)
-- `vllm/compilation/fx_utils.py`: 4 inline comment(s)
-- `vllm/compilation/vllm_inductor_pass.py`: 3 inline comment(s)
-- `vllm/attention/backends/abstract.py`: 3 inline comment(s)
-- `vllm/attention/layer.py`: 2 inline comment(s)
-- `tests/kernels/test_triton_flash_attention.py`: 2 inline comment(s)
-- `vllm/envs.py`: 2 inline comment(s)
-- `vllm/attention/backends/rocm_flash_attn.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-04-29T14:01:38Z` `inline` by `ProExpertProg` `vllm/compilation/fusion_attn.py`:137; signals: compile, dtype, hang; excerpt: "Later passes rely on accurate meta information, and because we update nodes manually here, it's not set. Also, this gets run anyway after the ..." (https://github.com/vllm-project/vllm/pull/16756#discussion_r2066583978)
-- `2025-05-12T14:15:15Z` `inline` by `zou3519` `vllm/compilation/fusion_attn.py`:24; signals: attention, cuda, cudagraph; excerpt: "I remember there was some discussion before on how we needed to get the attention op and the quantization op into the same subgraph ..." (https://github.com/vllm-project/vllm/pull/16756#discussion_r2084780779)
-- `2025-06-11T01:29:20Z` `inline` by `ProExpertProg` `tests/kernels/test_triton_flash_attention.py`:391; signals: attention, kernel, triton; excerpt: "Fixed" (https://github.com/vllm-project/vllm/pull/16756#discussion_r2139004032)
-- `2025-04-17T18:10:11Z` `issue` by `ProExpertProg`; signals: compile, failing, triton; excerpt: "Triton compile issue resolved The code is currently failing with a Triton compilation error (weird): The offending :" (https://github.com/vllm-project/vllm/pull/16756#issuecomment-2813698861)
-- `2025-06-04T14:19:27Z` `issue` by `ProExpertProg`; signals: attention, cuda, cudagraph; excerpt: "to make it work for v1, maybe we can stick to the full-graph approach, then we can have this fusion optimization together with cudagraph. ..." (https://github.com/vllm-project/vllm/pull/16756#issuecomment-2940227524)
-- `2025-06-05T06:12:19Z` `issue` by `ProExpertProg`; signals: compile, cuda, cudagraph; excerpt: "I agree that would be too tricky but I'm thinking we put the quant nodes (there's just 1 or 2) into the split item. ..." (https://github.com/vllm-project/vllm/pull/16756#issuecomment-2942901293)
-- `2025-06-11T02:54:53Z` `issue` by `ProExpertProg`; signals: latency, perf, performance; excerpt: "Perf results below. It seems like decode performance (ITL) is heavily improved (2-10%) and prefill is worse. Will investigate prefill after this PR. 📊 ..." (https://github.com/vllm-project/vllm/pull/16756#issuecomment-2961097819)
-- `2025-04-17T18:12:56Z` `issue` by `ProExpertProg`; signals: attention, memory, triton; excerpt: "Memory issue resolved Triton memory issue Repro steps: Works without attention fusion:" (https://github.com/vllm-project/vllm/pull/16756#issuecomment-2813704425)
-- `2025-05-12T14:06:10Z` `inline` by `zou3519` `tests/compile/test_fusion_attn.py`:142; signals: attention, compile; excerpt: ""TODO: test for AttnFusionPass. I might need help on this as I don't know how to properly set the attention metadata for testing." still ..." (https://github.com/vllm-project/vllm/pull/16756#discussion_r2084761341)
-- `2025-05-13T21:41:04Z` `inline` by `ProExpertProg` `vllm/attention/layer.py`:417; signals: attention, hang; excerpt: "Not yet - currently only static quant is supported. We can change this later if we want to support dynamic quant." (https://github.com/vllm-project/vllm/pull/16756#discussion_r2087675976)
-- `2025-05-15T15:03:08Z` `inline` by `LucasWilkinson` `vllm/attention/backends/abstract.py`:292; signals: attention, hang; excerpt: "nit: do we want to change per token: bool to scale group shape and adopt so we are future proof for per-token-per-group DeepSeek style?" (https://github.com/vllm-project/vllm/pull/16756#discussion_r2091406111)
-- `2025-04-17T04:16:25Z` `inline` by `ProExpertProg` `tests/compile/test_fusion_attn.py`:65; signals: attention, compile; excerpt: "This is currently broken, need to add attention metadata stuff" (https://github.com/vllm-project/vllm/pull/16756#discussion_r2048201316)
+- 2025-04-17 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:65: This is currently broken, need to add attention metadata stuff (https://github.com/vllm-project/vllm/pull/16756#discussion_r2048201316)
+- 2025-04-17 `ProExpertProg`: Triton compile issue resolved The code is currently failing with a Triton compilation error (weird): The offending : (https://github.com/vllm-project/vllm/pull/16756#issuecomment-2813698861)
+- 2025-04-17 `ProExpertProg`: Memory issue resolved Triton memory issue Repro steps: Works without attention fusion: (https://github.com/vllm-project/vllm/pull/16756#issuecomment-2813704425)
+- 2025-04-18 `houseroad`: Hi @zou3519 , could you also help review on the torch.compile pass part? Thanks. (https://github.com/vllm-project/vllm/pull/16756#issuecomment-2814600882)
+- 2025-04-22 `zou3519` on `vllm/compilation/vllm_inductor_pass.py`:38: What's going on here? This is technically private API, so it would be best if we could find another way to do this (https://github.com/vllm-project/vllm/pull/16756#discussion_r2054194140)
+- 2025-04-22 `ProExpertProg` on `vllm/compilation/vllm_inductor_pass.py`:38: This is where @youkaichao's depyf package hooks into for capturing graphs, so we defer to it. This will allow us to get rid of custom dump graph logic. But I can make that a separate PR. (https://github.com/vllm-project/vllm/pull/16756#discussion_r2054198387)
+- 2025-04-22 `zou3519` on `vllm/compilation/noop_elimination.py`:36: Do you know where the reshape nodes are coming from? I would have expected them to all get decomposed before hitting Inductor (https://github.com/vllm-project/vllm/pull/16756#discussion_r2054198989)
+- 2025-04-22 `ProExpertProg` on `vllm/compilation/noop_elimination.py`:36: I don't know, but I think these are cases with dynamic dimensions that don't get properly eliminated by existing inductor noop elimination . Happy to help upstream this and eliminate this pass once it's no longer needed. (https://github.com/vllm-project/vllm/pull/16756#discussion_r2054203176)
+- 2025-04-22 `zou3519` on `vllm/compilation/fx_utils.py`:82: I haven't thought about this very hard, but it is possible that a node "A" has only one user but there is another node whose Tensor shares storage with node "A" that needs to be taken into account (https://github.com/vllm-project/vllm/pull/16756#discussion_r2054204752)
+- 2025-04-22 `zou3519` on `vllm/compilation/vllm_inductor_pass.py`:38: Nvm, this is pretty stable on the pytorch side. (https://github.com/vllm-project/vllm/pull/16756#discussion_r2054211542)
+- 2025-04-22 `zou3519` on `vllm/compilation/fusion_attn.py`:117: Could you clarify what the bug is? (Also, please submit a bug to pytorch if you haven't already) (https://github.com/vllm-project/vllm/pull/16756#discussion_r2054215409)
+- 2025-04-22 `ProExpertProg` on `vllm/compilation/fx_utils.py`:82: I think if we find a workaround for pytorch/pytorch 151649 we can go with the pattern matcher approach (https://github.com/vllm-project/vllm/pull/16756#discussion_r2054216620)
+- 2025-04-22 `zou3519` on `vllm/compilation/fusion_attn.py`:44: @eellison any thoughts on out-of-core usage for FakeTensorUpdator? (https://github.com/vllm-project/vllm/pull/16756#discussion_r2054216796)
+- 2025-04-22 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:117: Yep, it's on my to-do list to submit the bugs here. They just weren't blocking so I haven't gotten around to it yet (https://github.com/vllm-project/vllm/pull/16756#discussion_r2054245318)
+- 2025-04-23 `ProExpertProg` on `vllm/compilation/fx_utils.py`:82: I can add that as a comment. But I think here we're just tracking the data flow, not storage (to match the pattern) so I think this should be fine (https://github.com/vllm-project/vllm/pull/16756#discussion_r2055123720)
+- 2025-04-28 `cascade812` on `vllm/compilation/fusion_attn.py`:88: Can we break it here if first attn is not supported? (https://github.com/vllm-project/vllm/pull/16756#discussion_r2062874745)
+- 2025-04-28 `eellison` on `vllm/compilation/fusion_attn.py`:44: Uh, would be great to formalize what the public api of it is. currently we're reaching into the attributes which will be restricting on updating implementation (https://github.com/vllm-project/vllm/pull/16756#discussion_r2063753610)
+- 2025-04-28 `eellison` on `vllm/compilation/fusion_attn.py`:137: Why do we need to do this ? (https://github.com/vllm-project/vllm/pull/16756#discussion_r2063755246)
+- 2025-04-29 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:137: Later passes rely on accurate meta information, and because we update nodes manually here, it's not set. Also, this gets run anyway after the post pass and fails if not correct. Due to bugs described above (not propagating through auto-func and sometimes ... (https://github.com/vllm-project/vllm/pull/16756#discussion_r2066583978)
+- 2025-04-29 `eellison` on `vllm/compilation/fusion_attn.py`:137: Would you mind filing issues for them ? (https://github.com/vllm-project/vllm/pull/16756#discussion_r2066889143)
+- 2025-04-30 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:88: I think there's no need to optimize like this, because some models might have different attention impls for different layers (https://github.com/vllm-project/vllm/pull/16756#discussion_r2069204729)
+- 2025-04-30 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:44: I am removing this because I was able to use the pattern matcher, but I think the FakeTensorUpdater would still be a helpful api to have, if we need to do any other custom graph editing (https://github.com/vllm-project/vllm/pull/16756#discussion_r2069210265)
+- 2025-05-12 `zou3519` on `vllm/compilation/noop_elimination.py`:79: Nit: an example directly here (I know there are some above) would have helped. Also the way I would have described this is "rewrite all reshape chains to calling reshape on the base Tensor" e.g. (https://github.com/vllm-project/vllm/pull/16756#discussion_r2084742441)
+- 2025-05-12 `zou3519` on `tests/compile/test_fusion_attn.py`:142: "TODO: test for AttnFusionPass. I might need help on this as I don't know how to properly set the attention metadata for testing." still a TODO? (Just checking -- I don't know how this works either so I won't be of much ... (https://github.com/vllm-project/vllm/pull/16756#discussion_r2084761341)
+- 2025-05-12 `zou3519` on `vllm/attention/layer.py`:417: Does this function mutate output scale? If so, we need to update Also, the typing should be Optional[torch.Tensor] (https://github.com/vllm-project/vllm/pull/16756#discussion_r2084768621)
+- 2025-05-12 `zou3519` on `vllm/compilation/fusion_attn.py`:24: I remember there was some discussion before on how we needed to get the attention op and the quantization op into the same subgraph (but the CUDAGraph splitting made it so that we split every graph around the attention op). How was ... (https://github.com/vllm-project/vllm/pull/16756#discussion_r2084780779)
+- 2025-05-12 `zou3519` commented: The compilation pieces (vllm/compilation) look good to me. I don't have too many thoughts on the other pieces of the design (they seem reasonable to me) but left some questions about how things work (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2833403026)
+- 2025-05-12 `ProExpertProg` on `vllm/compilation/fusion_attn.py`:24: That is for V1, not supported by this PR yet. I will put a second one up but basically my idea is to let passes "inspect" the split graph mapping and make changes if needed. (https://github.com/vllm-project/vllm/pull/16756#discussion_r2084835363)
+- 2025-05-13 `ProExpertProg` on `vllm/attention/layer.py`:417: Not yet - currently only static quant is supported. We can change this later if we want to support dynamic quant. (https://github.com/vllm-project/vllm/pull/16756#discussion_r2087675976)
+- 2025-05-13 `ProExpertProg` on `vllm/compilation/noop_elimination.py`:79: I added the comment but I think the example above is enough, I don't want this for loop to blow up (https://github.com/vllm-project/vllm/pull/16756#discussion_r2087680420)
+- 2025-05-13 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:142: I got to a running impl but it's giving very wrong results and I don't have bandwidth to debug it right now. I'll get to it when I can. (https://github.com/vllm-project/vllm/pull/16756#discussion_r2087681461)
+- 2025-05-14 `bnellnm` on `vllm/compilation/fusion_attn.py`:99: Can you add a brief comment describing why the fake context is needed here? (https://github.com/vllm-project/vllm/pull/16756#discussion_r2089661421)
+- 2025-05-15 `LucasWilkinson` on `vllm/attention/backends/abstract.py`:292: nit: do we want to change per token: bool to scale group shape and adopt so we are future proof for per-token-per-group DeepSeek style? (https://github.com/vllm-project/vllm/pull/16756#discussion_r2091406111)
+- 2025-05-15 `LucasWilkinson` commented: Overall looks pretty good me (one nit), just need to clean up the unit tests (if its helpful we construct V1 metadata in: (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2844087916)
+- 2025-05-15 `ProExpertProg` on `vllm/attention/backends/abstract.py`:292: I'm torn. On one hand I agree. On the other hand, I was planning to do that once we have a proper QuantDescriptor so we can use utility methods like is per tensor() etc. - otherwise this might be very unreadable. But ... (https://github.com/vllm-project/vllm/pull/16756#discussion_r2091515511)
+- 2025-06-04 `youkaichao` approved: sorry for the late response, the idea makes sense to me. to make it work for v1, maybe we can stick to the full-graph approach, then we can have this fusion optimization together with cudagraph. (https://github.com/vllm-project/vllm/pull/16756#pullrequestreview-2895575110)
+- 2025-06-04 `ProExpertProg`: to make it work for v1, maybe we can stick to the full-graph approach, then we can have this fusion optimization together with cudagraph. Yeah I think that's one option! Another option I am considering is letting AttnFusionPass peek at the splitting ... (https://github.com/vllm-project/vllm/pull/16756#issuecomment-2940227524)
+- 2025-06-05 `youkaichao`: Another option I am considering is letting AttnFusionPass peek at the splitting code and modify it manually to put the nodes that will be fused into the attention pieces. @ProExpertProg this would be too tricky. graph optimization passes should only apply to ... (https://github.com/vllm-project/vllm/pull/16756#issuecomment-2942610119)
+- 2025-06-05 `ProExpertProg`: I agree that would be too tricky but I'm thinking we put the quant nodes (there's just 1 or 2) into the split item. So we just let the custom pass tweak the node- graph id mapping after it's created. We'd also ... (https://github.com/vllm-project/vllm/pull/16756#issuecomment-2942901293)
+- 2025-06-10 `ProExpertProg` on `vllm/envs.py`:18: This is just making the type declaration match actual default behavior (https://github.com/vllm-project/vllm/pull/16756#discussion_r2138753399)
+- 2025-06-11 `ProExpertProg`: Perf results below. It seems like decode performance (ITL) is heavily improved (2-10%) and prefill is worse. Will investigate prefill after this PR. 📊 ITL Median (ms) Source 1 5 10 15 20 :--------- -----: -----: -----: ------: ------: fused 5.35 5.98 ... (https://github.com/vllm-project/vllm/pull/16756#issuecomment-2961097819)
+- 2025-06-11 `ProExpertProg` on `tests/compile/test_fusion_attn.py`:34: @zou3519 this was a weird thing I ran into, wasn't sure it was worth running down but lmk if you want help with a repro (https://github.com/vllm-project/vllm/pull/16756#discussion_r2140314251)

@@ -1,74 +1,33 @@
-# PR Discussion Digest
-
-- Source PR: [deepseek-ai/DeepGEMM#112](https://github.com/deepseek-ai/DeepGEMM/pull/112)
-- Source page: `sources/prs/deepgemm/PR-112.md`
-- Evidence bundle: `evidence/pull-bundles/deepgemm/gh-112`
-- Generated at: `2026-05-20T15:21:28.701085+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-06-12T02:03:59Z`
-- Merged: `2025-07-18T03:32:22Z`
-
-## Discussion Counts
-
-- Issue comments: 13
-- Review submissions: 23 (approved=1, commented=22)
-- Inline review comments: 23
-- Review threads observed: 6
-- Resolved/outdated thread markers: resolved=0, outdated=3
-- Human participants with discussion text: LyricZhao, RayWang96, fzyzcjy, lucifer1004, simple86, yewentao256, youkaichao, zhyncs
-- Automation comments/reviews omitted from high-signal summary: 0
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-06-12T02:10:50Z` `APPROVED` by `zhyncs` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2919197803)
-- `2025-06-12T05:10:14Z` `COMMENTED` by `lucifer1004` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2919562623)
-- `2025-06-12T05:19:31Z` `COMMENTED` by `RayWang96` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2919576117)
-- `2025-06-12T06:33:51Z` `COMMENTED` by `fzyzcjy` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2919707022)
-- `2025-06-12T08:13:13Z` `COMMENTED` by `fzyzcjy` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2920017961)
-- `2025-06-12T09:11:00Z` `COMMENTED` by `RayWang96` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2920193815)
-- `2025-06-12T09:31:27Z` `COMMENTED` by `fzyzcjy` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2920283868)
-- `2025-06-16T19:13:38Z` `COMMENTED` by `yewentao256` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2933220021)
-- `2025-06-17T06:36:15Z` `COMMENTED` by `RayWang96` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2934313529)
-- `2025-06-17T13:24:03Z` `COMMENTED` by `yewentao256` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2935671359)
-- `2025-06-17T23:19:33Z` `COMMENTED` by `yewentao256` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2937305172)
-- `2025-06-18T01:13:32Z` `COMMENTED` by `youkaichao` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2937449670)
-- `2025-06-18T01:51:10Z` `COMMENTED` by `RayWang96` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2937491410)
-- `2025-06-18T02:23:55Z` `COMMENTED` by `RayWang96` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2937543895)
-- `2025-06-18T14:13:57Z` `COMMENTED` by `yewentao256` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2939420427)
-- `2025-07-03T20:19:52Z` `COMMENTED` by `yewentao256` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2984546758)
-- `2025-07-07T02:40:49Z` `COMMENTED` by `simple86` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2992003175)
-- `2025-07-07T15:07:41Z` `COMMENTED` by `RayWang96` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2994282713)
-- `2025-07-07T15:16:58Z` `COMMENTED` by `RayWang96` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2994313211)
-- `2025-07-07T18:05:06Z` `COMMENTED` by `yewentao256` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2994864136)
-- `2025-07-07T18:05:53Z` `COMMENTED` by `yewentao256` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-2994865950)
-- `2025-07-09T14:15:25Z` `COMMENTED` by `RayWang96` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-3001757418)
-- `2025-07-09T23:10:22Z` `COMMENTED` by `yewentao256` (https://github.com/deepseek-ai/DeepGEMM/pull/112#pullrequestreview-3003358449)
-
-## Inline Comment Hotspots
-
-- `deep_gemm/__init__.py`: 7 inline comment(s)
-- `tests/test_core.py`: 5 inline comment(s)
-- `deep_gemm/utils/layout.py`: 4 inline comment(s)
-- `deep_gemm/utils/math.py`: 3 inline comment(s)
-- `CMakeLists.txt`: 2 inline comment(s)
-- `setup.py`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-07-02T13:27:11Z` `issue` by `yewentao256`; signals: b200, benchmark, bf16, blackwell, correctness, deepgemm, fp8, gemm; excerpt: "@yewentao256 I read and tried to debug the unit test of VLLM, and I think the problem is that the scale is not being ..." (https://github.com/deepseek-ai/DeepGEMM/pull/112#issuecomment-3027890132)
-- `2025-07-02T14:03:10Z` `issue` by `RayWang96`; signals: accuracy, b200, bf16, blackwell, correctness, deepgemm, gemm, h100; excerpt: "So the correctness of DeepGemm narrow down to a smaller scope? I am thinking since this is supported on H100, to make sure the ..." (https://github.com/deepseek-ai/DeepGEMM/pull/112#issuecomment-3028006591)
-- `2025-06-17T06:36:15Z` `inline` by `RayWang96` `deep_gemm/__init__.py`:12; signals: aligned, deepgemm, gemm, layout, sm100, sm90, tma; excerpt: "get col major tma aligned tensor is this function deprecated? Not used in SM100, will be added to utils/layout.py in SM90 support. Is this ..." (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2151437748)
-- `2025-07-02T10:28:46Z` `issue` by `RayWang96`; signals: benchmark, bf16, blackwell, deepgemm, fp8, gemm, triton; excerpt: "@yewentao256 I read and tried to debug the unit test of VLLM, and I think the problem is that the scale is not being ..." (https://github.com/deepseek-ai/DeepGEMM/pull/112#issuecomment-3027324053)
-- `2025-06-25T18:27:31Z` `issue` by `yewentao256`; signals: accuracy, b200, deepgemm, gemm, h100; excerpt: "Added unit test in vllm that may be helpful. This unit test can pass on H100. But for B200 of your integration, it can ..." (https://github.com/deepseek-ai/DeepGEMM/pull/112#issuecomment-3005746833)
-- `2025-06-18T02:23:55Z` `inline` by `RayWang96` `deep_gemm/__init__.py`:12; signals: fp8, gemm, kernel, layout; excerpt: "fp8 gemm nt can implicitly handle the transformation, or this step can be skipped to only validate the layout. It's recommended to use a ..." (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2153503399)
-- `2025-07-07T15:07:41Z` `inline` by `RayWang96` `deep_gemm/utils/math.py`:15; signals: gemm, kernel, perf, performance; excerpt: "Thanks, this function is primarily intended for testing purposes. For performance optimization, a custom implementation should be considered, potentially fused into other kernels." (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2190361732)
-- `2025-06-12T06:33:48Z` `inline` by `fzyzcjy` `deep_gemm/utils/layout.py`:136; signals: gemm, kernel, layout; excerpt: "would be great to allow skipping (INT, 128, 128) case where the data is already pre-transformed by other fused kernels. For example, my patch:" (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2141824027)
-- `2025-06-18T14:13:53Z` `inline` by `yewentao256` `deep_gemm/__init__.py`:12; signals: aligned, gemm, tma; excerpt: "So do you mean it is recommended that we call this get col major tma aligned tensor each time before we call any gemm ..." (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2154724678)
-- `2025-06-16T19:12:12Z` `inline` by `yewentao256` `deep_gemm/__init__.py`:12; signals: aligned, gemm, tma; excerpt: "get col major tma aligned tensor is this function deprecated?" (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2150681938)
-- `2025-06-12T09:11:00Z` `inline` by `RayWang96` `deep_gemm/utils/layout.py`:136; signals: gemm, layout; excerpt: "That makes sense. I'm thinking about how to skip transform in the most appropriate way, but for now, let me merge your patch as ..." (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2142132407)
-- `2025-06-17T23:19:32Z` `inline` by `yewentao256` `deep_gemm/__init__.py`:12; signals: gemm, sm100; excerpt: "@RayWang96 When you said not used in SM100, does this mean it will be automatically handled in SM100 and we don't need the code ..." (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2153317583)
+- 2025-06-12 `LyricZhao`: Thanks for this, as we don't have SM100 GPUs, so let's make it a draft and wait for community feedback :) (https://github.com/deepseek-ai/DeepGEMM/pull/112#issuecomment-2964774132)
+- 2025-06-12 `lucifer1004` on `CMakeLists.txt`:6: Why change back to 17 from 20? (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2141726405)
+- 2025-06-12 `RayWang96` on `CMakeLists.txt`:6: This is a conflict after rebasing. I'll resolve this later. (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2141735544)
+- 2025-06-12 `zhyncs`: The Blackwell part looks good to me. I believe the remaining work involves making it compatible with Hopper. Thanks for this great work! (https://github.com/deepseek-ai/DeepGEMM/pull/112#issuecomment-2965229644)
+- 2025-06-12 `fzyzcjy` on `deep_gemm/utils/layout.py`:136: would be great to allow skipping (INT, 128, 128) case where the data is already pre-transformed by other fused kernels. For example, my patch: (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2141824027)
+- 2025-06-12 `fzyzcjy` on `deep_gemm/utils/layout.py`:136: update: please refer to (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2142021257)
+- 2025-06-12 `RayWang96` on `deep_gemm/utils/layout.py`:136: That makes sense. I'm thinking about how to skip transform in the most appropriate way, but for now, let me merge your patch as a workaround. (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2142132407)
+- 2025-06-12 `fzyzcjy` on `deep_gemm/utils/layout.py`:136: Yes, there may be better methods, my patch is just quickly hack to ensure SGLang can work (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2142188453)
+- 2025-06-16 `yewentao256` on `deep_gemm/__init__.py`:12: get col major tma aligned tensor is this function deprecated? (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2150681938)
+- 2025-06-16 `yewentao256` on `deep_gemm/__init__.py`:12: Also, if we don't import the function here, the users have to refactor the code. Eg: Is this expected? (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2150685308)
+- 2025-06-17 `RayWang96` on `deep_gemm/__init__.py`:12: get col major tma aligned tensor is this function deprecated? Not used in SM100, will be added to utils/layout.py in SM90 support. Is this expected? Yes, I think they are not main functions of DeepGEMM, should not be exposed at the top ... (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2151437748)
+- 2025-06-17 `yewentao256` on `deep_gemm/__init__.py`:12: Make sense to me, thanks! (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2152270941)
+- 2025-06-17 `yewentao256` on `deep_gemm/__init__.py`:12: @RayWang96 When you said not used in SM100, does this mean it will be automatically handled in SM100 and we don't need the code like (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2153317583)
+- 2025-06-18 `youkaichao` on `setup.py`:72: for large API changes, we can bump version to 2.0? (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2153431203)
+- 2025-06-18 `RayWang96` on `setup.py`:72: Thanks! We will sync up with the DeepGEMM team to decide on the version number. (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2153462939)
+- 2025-06-18 `RayWang96` on `deep_gemm/__init__.py`:12: fp8 gemm nt can implicitly handle the transformation, or this step can be skipped to only validate the layout. It's recommended to use a previous kernel to transform to the specified layout first, then call GEMM. (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2153503399)
+- 2025-06-18 `yewentao256` on `deep_gemm/__init__.py`:12: So do you mean it is recommended that we call this get col major tma aligned tensor each time before we call any gemm operation? (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2154724678)
+- 2025-06-25 `yewentao256`: @RayWang96 Hi, will this pr be merged soon? I think my integration has been merged to the vllm main by accident But if we merge this pr now, I think it would be fine. (https://github.com/deepseek-ai/DeepGEMM/pull/112#issuecomment-3002225771)
+- 2025-06-25 `LyricZhao`: @yewentao256 Sorry, not now. We still needs 2-3 weeks to merge with the Hopper code. (https://github.com/deepseek-ai/DeepGEMM/pull/112#issuecomment-3002262268)
+- 2025-06-25 `yewentao256`: @yewentao256 Sorry, not now. We still needs 2-3 weeks to merge with the Hopper code. okk, thanks for letting me know (https://github.com/deepseek-ai/DeepGEMM/pull/112#issuecomment-3002272250)
+- 2025-06-25 `yewentao256`: Added unit test in vllm that may be helpful. This unit test can pass on H100. But for B200 of your integration, it can not pass, so perhaps you can use this to validate the accuracy as well. Even if we use ... (https://github.com/deepseek-ai/DeepGEMM/pull/112#issuecomment-3005746833)
+- 2025-07-02 `RayWang96`: @yewentao256 I read and tried to debug the unit test of VLLM, and I think the problem is that the scale is not being converted to E8M0, DeepGEMM Blackwell currently supports only E8M0 scale. The unit test is also comparing the precision ... (https://github.com/deepseek-ai/DeepGEMM/pull/112#issuecomment-3027324053)
+- 2025-07-02 `RayWang96`: So the correctness of DeepGemm narrow down to a smaller scope? I am thinking since this is supported on H100, to make sure the correctness for all of the models that used DeepGemm, it should still pass on B200. Actually this makes ... (https://github.com/deepseek-ai/DeepGEMM/pull/112#issuecomment-3028006591)
+- 2025-07-02 `yewentao256`: @RayWang96 Thanks for your reply! I checked it over, the main reason is that we use torch.assert allclose for element-wise comparison. Just switched to your cal diff function in test core for a global comparison, it works now. Although the element-wise accuracy ... (https://github.com/deepseek-ai/DeepGEMM/pull/112#issuecomment-3029493085)
+- 2025-07-03 `yewentao256` on `deep_gemm/utils/math.py`:15: Here .item() will cause an cuda graph issue. Perhaps deleting the assert statement? (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2183683719)
+- 2025-07-07 `simple86` on `tests/test_core.py`:35: Should it be deep gemm.fp8 gemm nt(a, b, d, c=c) ? (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2188856368)
+- 2025-07-07 `RayWang96` on `deep_gemm/utils/math.py`:15: Thanks, this function is primarily intended for testing purposes. For performance optimization, a custom implementation should be considered, potentially fused into other kernels. (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2190361732)
+- 2025-07-07 `RayWang96` on `tests/test_core.py`:35: Good catch, thanks. We did fix this in our internal version. (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2190381561)
+- 2025-07-07 `yewentao256` on `tests/test_core.py`:35: Are there any other changes in the internal version, especially for the interfaces? Currently we are actively working on integration on this version in vllm (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2190745517)
+- 2025-07-07 `yewentao256` on `deep_gemm/utils/math.py`:15: Thanks for letting me know (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2190746674)
+- 2025-07-09 `RayWang96` on `tests/test_core.py`:35: Mostly performance optimization, and will not break old interfaces. (https://github.com/deepseek-ai/DeepGEMM/pull/112#discussion_r2195152890)
+- 2025-07-09 `yewentao256`: In our tests, we found that this does not have much impact on the accuracy of the DeepSeek model. Hi @RayWang96 Another question is about E2E accuracy, this is the result we have on vllm, does this match your result internally? (https://github.com/deepseek-ai/DeepGEMM/pull/112#issuecomment-3053463849)
+- 2025-07-18 `RayWang96`: We've added Hopper support, it's ready to be merged into main branch, @LyricZhao. (https://github.com/deepseek-ai/DeepGEMM/pull/112#issuecomment-3086574393)

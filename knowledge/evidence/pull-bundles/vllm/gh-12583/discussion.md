@@ -1,79 +1,39 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#12583](https://github.com/vllm-project/vllm/pull/12583)
-- Source page: `sources/prs/vllm/PR-12583.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-12583`
-- Generated at: `2026-05-20T15:33:45.922465+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-01-30T18:24:13Z`
-- Merged: `2025-02-24T15:33:22Z`
-
-## Discussion Counts
-
-- Issue comments: 15
-- Review submissions: 26 (approved=2, commented=24)
-- Inline review comments: 35
-- Review threads observed: 21
-- Resolved/outdated thread markers: resolved=21, outdated=16
-- Human participants with discussion text: LucasWilkinson, Neo9061, cakeng, comaniac, lewisword, liweiqing1997, simon-mo, tlrmchlsmth, xiuxin121, yiz-liu, youkaichao, zarzen
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 5
-
-## Review Decisions
-
-- `2025-01-30T22:40:50Z` `COMMENTED` by `comaniac` - Left some comment but overall LGTM (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2585183583)
-- `2025-02-08T02:50:39Z` `COMMENTED` by `youkaichao` - the change in moe makes sense and it's great! I'm mainly concerned with the user interface. I don't ... (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2603205074)
-- `2025-02-11T13:44:32Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2608798211)
-- `2025-02-11T13:46:27Z` `COMMENTED` by `youkaichao` - since we have not finalize the user interface yet, I think we should not change the parallel config, ... (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2608803218)
-- `2025-02-11T22:55:17Z` `COMMENTED` by `cakeng` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2610293051)
-- `2025-02-12T02:55:24Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2610704358)
-- `2025-02-12T02:58:05Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2610707041)
-- `2025-02-12T04:43:14Z` `COMMENTED` by `cakeng` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2610798446)
-- `2025-02-13T03:28:24Z` `COMMENTED` by `youkaichao` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2613739954)
-- `2025-02-19T19:38:32Z` `APPROVED` by `LucasWilkinson` - Overall LGTM, left a couple comments (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2627787456)
-- `2025-02-19T19:41:40Z` `COMMENTED` by `LucasWilkinson` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2627803738)
-- `2025-02-19T19:47:18Z` `COMMENTED` by `tlrmchlsmth` - The kernel looks good to me. There are a couple of places where the ep rank and the ... (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2627686209)
-- `2025-02-19T20:41:00Z` `COMMENTED` by `cakeng` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2627934902)
-- `2025-02-19T20:50:56Z` `COMMENTED` by `cakeng` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2627952654)
-- `2025-02-19T20:51:09Z` `COMMENTED` by `cakeng` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2627953029)
-- `2025-02-19T20:51:20Z` `COMMENTED` by `cakeng` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2627953317)
-- `2025-02-19T20:51:33Z` `COMMENTED` by `cakeng` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2627953728)
-- `2025-02-19T20:52:45Z` `COMMENTED` by `cakeng` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2627955752)
-- `2025-02-19T20:53:42Z` `COMMENTED` by `cakeng` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2627957456)
-- `2025-02-19T20:54:33Z` `COMMENTED` by `cakeng` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2627959006)
-- `2025-02-19T21:46:07Z` `COMMENTED` by `cakeng` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2628051328)
-- `2025-02-19T22:30:04Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2628120373)
-- `2025-02-19T22:30:07Z` `APPROVED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2628120471)
-- `2025-02-19T22:56:35Z` `COMMENTED` by `cakeng` (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2628156778)
-- ... 2 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `vllm/model_executor/layers/fused_moe/layer.py`: 8 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/fused_moe.py`: 8 inline comment(s)
-- `vllm/config.py`: 7 inline comment(s)
-- `vllm/model_executor/layers/quantization/awq_marlin.py`: 4 inline comment(s)
-- `vllm/engine/arg_utils.py`: 2 inline comment(s)
-- `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`: 2 inline comment(s)
-- `vllm/model_executor/layers/fused_moe/moe_torch_iterative.py`: 2 inline comment(s)
-- `vllm/distributed/parallel_state.py`: 1 inline comment(s)
-- `tests/utils.py`: 1 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-02-11T13:46:27Z` `review` `COMMENTED` by `youkaichao`; signals: block, hang, moe; excerpt: "since we have not finalize the user interface yet, I think we should not change the parallel config, nor add cli args for it. ..." (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2608803218)
-- `2025-02-08T02:50:39Z` `review` `COMMENTED` by `youkaichao`; signals: hang, moe; excerpt: "the change in moe makes sense and it's great! I'm mainly concerned with the user interface. I don't think it makes sense to have ..." (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2603205074)
-- `2025-02-19T19:47:18Z` `review` `COMMENTED` by `tlrmchlsmth`; signals: kernel, moe; excerpt: "The kernel looks good to me. There are a couple of places where the ep rank and the tp rank in layers/fused moe.py look ..." (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2627686209)
-- `2025-02-04T18:42:27Z` `issue` by `LucasWilkinson`; signals: attention, cuda, mla; excerpt: "but the problem with CUDA graph seems to be on the current attention layer (MLA?) implementation. can you please elaborate on this, a bit? ..." (https://github.com/vllm-project/vllm/pull/12583#issuecomment-2634779819)
-- `2025-02-04T23:25:05Z` `issue` by `cakeng`; signals: cuda, hang, moe; excerpt: "@youkaichao The current design support TP within an EP, but we can easily change that to have EP only on MoE layers. I think ..." (https://github.com/vllm-project/vllm/pull/12583#issuecomment-2635287239)
-- `2025-02-12T02:55:24Z` `inline` by `youkaichao` `vllm/model_executor/layers/fused_moe/layer.py`:638; signals: compile, moe; excerpt: "can we directly put this into init with the correct device? doing it in forward might break torch.compile" (https://github.com/vllm-project/vllm/pull/12583#discussion_r1951905529)
-- `2025-02-19T22:56:34Z` `inline` by `cakeng` `vllm/model_executor/layers/fused_moe/layer.py`:504; signals: hang, moe; excerpt: "I changed it to tp rank = 0 if self.ep size 1 else get tensor model parallel rank(), I think this is more explicit ..." (https://github.com/vllm-project/vllm/pull/12583#discussion_r1962484850)
-- `2025-02-21T09:11:47Z` `inline` by `cakeng` `vllm/model_executor/layers/fused_moe/moe_torch_iterative.py`:16; signals: kernel, moe; excerpt: "Thank you! Yes there were a bug in the test moe.py script making the iterative moe kernel from moe torch iterative.py pass when it ..." (https://github.com/vllm-project/vllm/pull/12583#discussion_r1965131101)
-- `2025-01-30T22:34:33Z` `inline` by `comaniac` `vllm/model_executor/layers/fused_moe/layer.py`:289; signals: moe; excerpt: "I feel this message may be confusing, because the TP size here is not the actual TP size provided by --tp. IIUC, it's tp ..." (https://github.com/vllm-project/vllm/pull/12583#discussion_r1936381782)
-- `2025-02-11T13:44:31Z` `inline` by `youkaichao` `vllm/config.py`:1396; signals: hang; excerpt: "why do we need to change the TP size? I think we should still create processes in the original tp size." (https://github.com/vllm-project/vllm/pull/12583#discussion_r1950881657)
-- `2025-02-11T22:55:17Z` `inline` by `cakeng` `vllm/config.py`:1396; signals: moe; excerpt: "Alright, I will remove args for expert parallel size for now and make FusedMoE layer check the env var directly." (https://github.com/vllm-project/vllm/pull/12583#discussion_r1951721849)
-- `2025-02-19T19:39:29Z` `inline` by `tlrmchlsmth` `vllm/model_executor/layers/fused_moe/fused_moe.py`:589; signals: moe; excerpt: "Looks like if a global expert i is not on the current device, then expert map[i] == -1? Could you add this to the ..." (https://github.com/vllm-project/vllm/pull/12583#discussion_r1962267448)
+- 2025-01-30 `comaniac` on `vllm/config.py`:703: Remember to remove the print before merging the PR. (https://github.com/vllm-project/vllm/pull/12583#discussion_r1936374885)
+- 2025-01-30 `comaniac` on `vllm/config.py`:1317: Add the following comment here again (https://github.com/vllm-project/vllm/pull/12583#discussion_r1936376508)
+- 2025-01-30 `comaniac` on `vllm/distributed/parallel_state.py`:1032: Should be in verify with parallel config as well. (https://github.com/vllm-project/vllm/pull/12583#discussion_r1936377508)
+- 2025-01-30 `comaniac` on `vllm/model_executor/layers/fused_moe/layer.py`:289: I feel this message may be confusing, because the TP size here is not the actual TP size provided by --tp. IIUC, it's tp ep. Thus this to me is more like an internal error, so we should just use assert. (https://github.com/vllm-project/vllm/pull/12583#discussion_r1936381782)
+- 2025-01-30 `comaniac` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:1115: Better to enhance the function docstring instead of adding a standalone comment. (https://github.com/vllm-project/vllm/pull/12583#discussion_r1936384426)
+- 2025-01-30 `comaniac` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:921: Ditto. Better to have good docstring for these functions. (https://github.com/vllm-project/vllm/pull/12583#discussion_r1936384921)
+- 2025-01-30 `comaniac` commented: Left some comment but overall LGTM (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2585183583)
+- 2025-02-04 `youkaichao`: need to check the user-interface, but I feel right now we can just reuse the tp size for ep? in the future, when we have DP, EP size will automatically be DP x TP. (https://github.com/vllm-project/vllm/pull/12583#issuecomment-2633325775)
+- 2025-02-04 `LucasWilkinson`: but the problem with CUDA graph seems to be on the current attention layer (MLA?) implementation. can you please elaborate on this, a bit? MLA + CUDA graphs + TP is working fine on main as far as I am aware (https://github.com/vllm-project/vllm/pull/12583#issuecomment-2634779819)
+- 2025-02-04 `cakeng`: @youkaichao The current design support TP within an EP, but we can easily change that to have EP only on MoE layers. I think we will need more discussion with others on that design decision, the current implementation of EP+TP is based ... (https://github.com/vllm-project/vllm/pull/12583#issuecomment-2635287239)
+- 2025-02-08 `youkaichao` commented: the change in moe makes sense and it's great! I'm mainly concerned with the user interface. I don't think it makes sense to have EP != TP when we have only one vLLM instance. In the future, we should have EP = ... (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2603205074)
+- 2025-02-11 `cakeng`: Added VLLM TEST ENABLE EP env variable to turn on/off EP, default is turned off (Full TP on FusedMoE layers). When VLLM TEST ENABLE EP=1, EP of TP size will be applied on the FusedMoE layers. (https://github.com/vllm-project/vllm/pull/12583#issuecomment-2649564912)
+- 2025-02-11 `youkaichao` on `vllm/config.py`:1396: why do we need to change the TP size? I think we should still create processes in the original tp size. (https://github.com/vllm-project/vllm/pull/12583#discussion_r1950881657)
+- 2025-02-11 `youkaichao` commented: since we have not finalize the user interface yet, I think we should not change the parallel config, nor add cli args for it. to unblock this PR, let's just change the MoE layer, which checks the env var directly? (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2608803218)
+- 2025-02-11 `cakeng` on `vllm/config.py`:1396: Alright, I will remove args for expert parallel size for now and make FusedMoE layer check the env var directly. (https://github.com/vllm-project/vllm/pull/12583#discussion_r1951721849)
+- 2025-02-12 `youkaichao` on `vllm/model_executor/layers/fused_moe/layer.py`:638: can we directly put this into init with the correct device? doing it in forward might break torch.compile (https://github.com/vllm-project/vllm/pull/12583#discussion_r1951905529)
+- 2025-02-12 `youkaichao` on `vllm/engine/arg_utils.py`:427: do i miss anything? the cli arg is still here @cakeng (https://github.com/vllm-project/vllm/pull/12583#discussion_r1951907277)
+- 2025-02-12 `cakeng` on `vllm/engine/arg_utils.py`:427: No I haven't updated the code yet. The development server was down today and I wasn't able to make much progress... I will update the cli args and add some test cases hopefully by tomorrow or Thursday. (https://github.com/vllm-project/vllm/pull/12583#discussion_r1951968297)
+- 2025-02-13 `youkaichao` on `tests/utils.py`:509: nit: clean up debugging prints? (https://github.com/vllm-project/vllm/pull/12583#discussion_r1953734059)
+- 2025-02-19 `tlrmchlsmth` on `vllm/config.py`:736: Consider factoring this out into a helper function (https://github.com/vllm-project/vllm/pull/12583#discussion_r1962198652)
+- 2025-02-19 `tlrmchlsmth` on `vllm/model_executor/layers/quantization/awq_marlin.py`:468: Does FusedMoE support EP in awq marlin? Should we assert that expert map is None? (https://github.com/vllm-project/vllm/pull/12583#discussion_r1962202576)
+- 2025-02-19 `cakeng`: @zarzen By TP disabled you mean without using TP in the MoE layers, right? Yes, the current implementation only uses EP in the MoE layers, when VLLM TEST ENABLE TP is set. (https://github.com/vllm-project/vllm/pull/12583#issuecomment-2669532888)
+- 2025-02-19 `tlrmchlsmth` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:135: Since this is duplicated, I think it'd be nice to factor this out into a helper function: (https://github.com/vllm-project/vllm/pull/12583#discussion_r1962239351)
+- 2025-02-19 `LucasWilkinson` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:548: Just to avoid bugs in the future I think this should raise NotImplementedError if expert map is set (https://github.com/vllm-project/vllm/pull/12583#discussion_r1962260541)
+- 2025-02-19 `LucasWilkinson` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:631: why does this need to be zeros now? do you think you can add a comment? (https://github.com/vllm-project/vllm/pull/12583#discussion_r1962264832)
+- 2025-02-19 `tlrmchlsmth` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:589: Looks like if a global expert i is not on the current device, then expert map[i] == -1? Could you add this to the comment? (https://github.com/vllm-project/vllm/pull/12583#discussion_r1962267448)
+- 2025-02-19 `LucasWilkinson` on `vllm/model_executor/layers/quantization/awq_marlin.py`:468: Just to avoid bugs in the future I think this should raise NotImplementedError if expert map is set (https://github.com/vllm-project/vllm/pull/12583#discussion_r1962270193)
+- 2025-02-19 `tlrmchlsmth` on `vllm/model_executor/layers/fused_moe/layer.py`:315: Could you double check this? I thought ep rank should be the same as get tensor model parallel rank() with this implementation (https://github.com/vllm-project/vllm/pull/12583#discussion_r1962270504)
+- 2025-02-19 `tlrmchlsmth` on `vllm/model_executor/layers/fused_moe/layer.py`:504: similarly, won't this always be the same as get tensor model parallel rank()? (https://github.com/vllm-project/vllm/pull/12583#discussion_r1962271584)
+- 2025-02-19 `tlrmchlsmth` commented: The kernel looks good to me. There are a couple of places where the ep rank and the tp rank in layers/fused moe.py look a little sketchy - could you look into those? (https://github.com/vllm-project/vllm/pull/12583#pullrequestreview-2627686209)
+- 2025-02-19 `cakeng` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:631: Expert ids must be zeroed out to prevent index out of bounds error while mapping global expert ids to local expert ids (expert ids = expert map[expert ids]) - Comment added. (https://github.com/vllm-project/vllm/pull/12583#discussion_r1962344513)
+- 2025-02-19 `cakeng` on `vllm/model_executor/layers/fused_moe/layer.py`:315: Yes, this was not cleaned properly from the previous TP+EP implementation. I will remove it. (https://github.com/vllm-project/vllm/pull/12583#discussion_r1962357796)
+- 2025-02-19 `cakeng` on `vllm/model_executor/layers/fused_moe/layer.py`:504: This is required as it's a modulo and will return 0 for all ranks when we are using EP. (https://github.com/vllm-project/vllm/pull/12583#discussion_r1962358876)
+- 2025-02-19 `tlrmchlsmth` on `vllm/model_executor/layers/fused_moe/layer.py`:504: Ok, I understand it now. I think this is a potentially confusing line. Could you add a short comment explaining it? Otherwise, LGTM! (https://github.com/vllm-project/vllm/pull/12583#discussion_r1962460982)
+- 2025-02-19 `cakeng` on `vllm/model_executor/layers/fused_moe/layer.py`:504: I changed it to tp rank = 0 if self.ep size 1 else get tensor model parallel rank(), I think this is more explicit for the current implementation. The modulo is originally from the TP+EP implementation. (https://github.com/vllm-project/vllm/pull/12583#discussion_r1962484850)
+- 2025-02-20 `cakeng`: I think there is a bug in the current commit regarding topk weights, it should not produce correct results but it is producing correct results so I will check if it is actually a bug and fix it if it is until ... (https://github.com/vllm-project/vllm/pull/12583#issuecomment-2672745049)
+- 2025-02-21 `yiz-liu` on `vllm/model_executor/layers/fused_moe/moe_torch_iterative.py`:16: Should add global num experts arg here? otherwise gating output.view will fail when enable EP. (https://github.com/vllm-project/vllm/pull/12583#discussion_r1964607021)
+- 2025-02-21 `cakeng` on `vllm/model_executor/layers/fused_moe/moe_torch_iterative.py`:16: Thank you! Yes there were a bug in the test moe.py script making the iterative moe kernel from moe torch iterative.py pass when it should fail. The test moe.py script and moe torch iterative.py have been updated. (https://github.com/vllm-project/vllm/pull/12583#discussion_r1965131101)
+- 2025-02-21 `simon-mo`: @cakeng can you merge the latest main branch to pick up some fixes for test failures? Thank you! (https://github.com/vllm-project/vllm/pull/12583#issuecomment-2675515949)

@@ -1,76 +1,58 @@
-# PR Discussion Digest
-
-- Source PR: [vllm-project/vllm#12348](https://github.com/vllm-project/vllm/pull/12348)
-- Source page: `sources/prs/vllm/PR-12348.md`
-- Evidence bundle: `evidence/pull-bundles/vllm/gh-12348`
-- Generated at: `2026-05-20T15:33:43.570068+00:00`
-- Fetch scope: GitHub PR conversation comments, PR review submissions, and inline review-thread comments were fetched with pagination-aware GraphQL plus REST overflow fallback.
-- Completeness: issue comments `complete`, reviews `complete`, inline comments `complete`.
-
-## Timeline
-
-- Opened: `2025-01-23T08:02:20Z`
-- Merged: `2025-03-03T17:24:45Z`
-
-## Discussion Counts
-
-- Issue comments: 14
-- Review submissions: 51 (approved=2, commented=49)
-- Inline review comments: 61
-- Review threads observed: 20
-- Resolved/outdated thread markers: resolved=18, outdated=12
-- Human participants with discussion text: DarkLight1337, hongxiayang, mergify, poyenc, tjtanaa, tlrmchlsmth
-- Automation comments/reviews omitted from high-signal summary: 1
-- Post-merge comments/reviews fetched but excluded from pre-merge high-signal summary: 0
-
-## Review Decisions
-
-- `2025-01-30T20:03:05Z` `APPROVED` by `hongxiayang` - Thanks a lot. LGTM. (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2584906873)
-- `2025-01-31T03:16:11Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2585590818)
-- `2025-02-01T04:35:07Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2588240598)
-- `2025-02-05T02:59:19Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2594508692)
-- `2025-02-07T16:34:53Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2602236645)
-- `2025-02-07T16:38:54Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2602249236)
-- `2025-02-07T17:31:59Z` `COMMENTED` by `tlrmchlsmth` - Thank you for this contribution! The performance improvements look very nice and would be great to get into ... (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2602311715)
-- `2025-02-08T03:55:52Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2603257829)
-- `2025-02-08T04:00:53Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2603259406)
-- `2025-02-08T04:01:27Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2603259493)
-- `2025-02-08T04:10:55Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2603261150)
-- `2025-02-13T03:17:03Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2613730830)
-- `2025-02-13T03:18:04Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2613731679)
-- `2025-02-13T03:20:31Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2613733606)
-- `2025-02-13T03:20:38Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2613733688)
-- `2025-02-13T03:21:25Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2613734296)
-- `2025-02-13T03:21:28Z` `COMMENTED` by `tjtanaa` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2613734333)
-- `2025-02-13T17:38:32Z` `COMMENTED` by `poyenc` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2615788720)
-- `2025-02-13T18:15:26Z` `COMMENTED` by `poyenc` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2615875007)
-- `2025-02-13T18:16:20Z` `COMMENTED` by `poyenc` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2615876792)
-- `2025-02-13T18:19:30Z` `COMMENTED` by `poyenc` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2615883182)
-- `2025-02-13T18:22:38Z` `COMMENTED` by `poyenc` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2615889836)
-- `2025-02-14T14:08:14Z` `COMMENTED` by `hongxiayang` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2617898047)
-- `2025-02-14T14:35:32Z` `COMMENTED` by `tlrmchlsmth` (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2617974113)
-- ... 27 additional review decision entries omitted from this digest.
-
-## Inline Comment Hotspots
-
-- `csrc/rocm/attention.cu`: 43 inline comment(s)
-- `tests/kernels/test_attention.py`: 6 inline comment(s)
-- `vllm/attention/ops/nki_flash_attn.py`: 4 inline comment(s)
-- `vllm/spec_decode/spec_decode_worker.py`: 4 inline comment(s)
-- `vllm/lora/punica_wrapper/punica_base.py`: 2 inline comment(s)
-- `.buildkite/run-amd-test.sh`: 2 inline comment(s)
-
-## High-Signal Discussion
-
-- `2025-02-01T04:35:07Z` `inline` by `tjtanaa` `tests/kernels/test_attention.py`:151; signals: attention, compile, kernel, perf, performance; excerpt: "@tlrmchlsmth This line is defined to tell the compiler that the PARTITION SIZE within the test scope test paged attention function that PARTITION SIZE ..." (https://github.com/vllm-project/vllm/pull/12348#discussion_r1938192643)
-- `2025-02-14T14:08:14Z` `inline` by `hongxiayang` `tests/kernels/test_attention.py`:151; signals: attention, hang, kernel, overflow; excerpt: "@tlrmchlsmth Anything that I should update to merge this PR? @tjtanaa Let's change the places where int64 t is needed to avoid overflow. You ..." (https://github.com/vllm-project/vllm/pull/12348#discussion_r1956204934)
-- `2025-02-07T17:31:59Z` `review` `COMMENTED` by `tlrmchlsmth`; signals: kernel, perf, performance; excerpt: "Thank you for this contribution! The performance improvements look very nice and would be great to get into mainline vLLM. I took a pass ..." (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2602311715)
-- `2025-02-20T21:04:21Z` `inline` by `tlrmchlsmth` `csrc/rocm/attention.cu`:469; signals: attention, hang, overflow; excerpt: "Upon revisiting this one, this actually looks like it might have been safe. However, I think there's a minor issue here to fix this ..." (https://github.com/vllm-project/vllm/pull/12348#discussion_r1964336041)
-- `2025-01-23T14:14:03Z` `issue` by `tjtanaa`; signals: attention, fp8, hang; excerpt: "Regarding to the API changes of paged attention in csrc/rocm/torch bindings.cpp. This change only affects ROCm code path and does not interfere with code ..." (https://github.com/vllm-project/vllm/pull/12348#issuecomment-2609916787)
-- `2025-01-31T03:16:11Z` `inline` by `tlrmchlsmth` `tests/kernels/test_attention.py`:151; signals: attention, kernel; excerpt: "why make PARTITION SIZE a global here? Not sure what PARTITION SIZE does, or why would it be different on RoCM" (https://github.com/vllm-project/vllm/pull/12348#discussion_r1936627896)
-- `2025-02-07T16:38:54Z` `inline` by `tlrmchlsmth` `csrc/rocm/attention.cu`:79; signals: attention, kernel; excerpt: "Does the gcn mfma4x4x4 instruction impose any hardware or software versioning requirements that this kernel didn't have before? More generally, I wanted to check ..." (https://github.com/vllm-project/vllm/pull/12348#discussion_r1946834753)
-- `2025-02-07T17:01:56Z` `inline` by `tlrmchlsmth` `csrc/rocm/attention.cu`:208; signals: attention, kernel; excerpt: "I was a little confused by this since I didn't initially catch that gfx90a was the least-capable target supported by this kernel. Could you ..." (https://github.com/vllm-project/vllm/pull/12348#discussion_r1946868352)
-- `2025-02-07T17:26:43Z` `inline` by `tlrmchlsmth` `csrc/rocm/attention.cu`:722; signals: attention, overflow; excerpt: "ditto: possible to overflow an int32 here? This one looks a little more concerning so we should consider doing the arithmetic and storing offset ..." (https://github.com/vllm-project/vllm/pull/12348#discussion_r1946901519)
-- `2025-02-08T04:10:55Z` `inline` by `tjtanaa` `csrc/rocm/attention.cu`:79; signals: attention, kernel; excerpt: "Given that vLLM officially supports MI200 and above, gcn mfma4x4x4 does not impose any hardware or software versioning requirements. This kernel has been implemented ..." (https://github.com/vllm-project/vllm/pull/12348#discussion_r1947460558)
-- `2025-02-13T17:38:32Z` `inline` by `poyenc` `csrc/rocm/attention.cu`:208; signals: attention, fp8; excerpt: "@tlrmchlsmth From MI300+ platforms, we have v cvt pk f32 fp8 instruction to convert 2 packed fp8 to 2 packed fp32 values. However, in ..." (https://github.com/vllm-project/vllm/pull/12348#discussion_r1954944932)
-- `2025-02-13T18:19:30Z` `inline` by `poyenc` `csrc/rocm/attention.cu`:469; signals: attention, overflow; excerpt: "@tlrmchlsmth it hardly overflows an int32, because the local token idx never exceeds T PAR SIZE (=256). However, the global token idx may do." (https://github.com/vllm-project/vllm/pull/12348#discussion_r1955014723)
+- 2025-01-23 `tjtanaa`: Regarding to the API changes of paged attention in csrc/rocm/torch bindings.cpp. This change only affects ROCm code path and does not interfere with code path of other platform. Seeking advice on handling the variables fp8 out scale and partition size. Situation: Currently ... (https://github.com/vllm-project/vllm/pull/12348#issuecomment-2609916787)
+- 2025-01-23 `hongxiayang`: @tjtanaa Please fix the DCO error: Ensure you have a local copy of your branch by [checking out the pull request locally via command line]( In your local branch, run: git rebase HEAD 4 --signoff Force push your changes to overwrite the ... (https://github.com/vllm-project/vllm/pull/12348#issuecomment-2611162806)
+- 2025-01-30 `hongxiayang`: I also verified the throughput numbers using the image built from @tjtanaa 's branch. (https://github.com/vllm-project/vllm/pull/12348#issuecomment-2625744004)
+- 2025-01-31 `hongxiayang`: @tjtanaa Can you work with @DarkLight1337 to see what else is needed in order to merge this PR? Thanks for your effort for upstreaming this and fixing the test and clean up other spelling errors as well. (https://github.com/vllm-project/vllm/pull/12348#issuecomment-2626011365)
+- 2025-01-31 `tlrmchlsmth` on `tests/kernels/test_attention.py`:151: why make PARTITION SIZE a global here? Not sure what PARTITION SIZE does, or why would it be different on RoCM (https://github.com/vllm-project/vllm/pull/12348#discussion_r1936627896)
+- 2025-02-01 `tjtanaa` on `tests/kernels/test_attention.py`:151: @tlrmchlsmth This line is defined to tell the compiler that the PARTITION SIZE within the test scope test paged attention function that PARTITION SIZE should be from the global variable. This is needed after we defined a line to reassign PARTITION SIZE ... (https://github.com/vllm-project/vllm/pull/12348#discussion_r1938192643)
+- 2025-02-05 `tjtanaa` on `tests/kernels/test_attention.py`:151: @tlrmchlsmth Anything that I should update to merge this PR? (https://github.com/vllm-project/vllm/pull/12348#discussion_r1942181135)
+- 2025-02-07 `tlrmchlsmth` on `vllm/attention/ops/nki_flash_attn.py`: Could you revert changes to files that aren't relevant to for ROCm attention? (https://github.com/vllm-project/vllm/pull/12348#discussion_r1946827449)
+- 2025-02-07 `tlrmchlsmth` on `csrc/rocm/attention.cu`:79: Does the gcn mfma4x4x4 instruction impose any hardware or software versioning requirements that this kernel didn't have before? More generally, I wanted to check if this PR adds any requirements that didn't exist previously, since it looks like we are modifying the ... (https://github.com/vllm-project/vllm/pull/12348#discussion_r1946834753)
+- 2025-02-07 `tlrmchlsmth` on `csrc/rocm/attention.cu`:208: I was a little confused by this since I didn't initially catch that gfx90a was the least-capable target supported by this kernel. Could you add a comment explaining this fallback case and when/why it's used? (https://github.com/vllm-project/vllm/pull/12348#discussion_r1946868352)
+- 2025-02-07 `tlrmchlsmth` on `csrc/rocm/attention.cu`:252: Please write short comments describing the functionality of these various conversion utilities (https://github.com/vllm-project/vllm/pull/12348#discussion_r1946886590)
+- 2025-02-07 `tlrmchlsmth` on `csrc/rocm/attention.cu`:351: Could you clean up the formatting for these tensor shape annotations? You can turn off clang-format if that helps (https://github.com/vllm-project/vllm/pull/12348#discussion_r1946887855)
+- 2025-02-07 `tlrmchlsmth` on `csrc/rocm/attention.cu`:385: QQ: what is dpp terminology? (https://github.com/vllm-project/vllm/pull/12348#discussion_r1946889322)
+- 2025-02-07 `tlrmchlsmth` on `csrc/rocm/attention.cu`:484: Do you know what sizes this starts to make sense to do? And does this help for large prefills as well? Or only large batch sized decodes? Wondering if we could simplify the code by removing this case (https://github.com/vllm-project/vllm/pull/12348#discussion_r1946893694)
+- 2025-02-07 `tlrmchlsmth` on `csrc/rocm/attention.cu`:469: Is it possible to overflow an int32 here? (https://github.com/vllm-project/vllm/pull/12348#discussion_r1946899374)
+- 2025-02-07 `tlrmchlsmth` on `csrc/rocm/attention.cu`:722: ditto: possible to overflow an int32 here? This one looks a little more concerning so we should consider doing the arithmetic and storing offset as an int64 t (https://github.com/vllm-project/vllm/pull/12348#discussion_r1946901519)
+- 2025-02-07 `tlrmchlsmth` on `csrc/rocm/attention.cu`:746: ditto: likely use an int64 t for seq idx total num heads hsz maxp mult (https://github.com/vllm-project/vllm/pull/12348#discussion_r1946903114)
+- 2025-02-07 `tlrmchlsmth` on `csrc/rocm/attention.cu`:752: and out head idx hsz maxp mult (https://github.com/vllm-project/vllm/pull/12348#discussion_r1946903404)
+- 2025-02-07 `tlrmchlsmth` on `csrc/rocm/attention.cu`:1510: I think this arithmetic should be in int64 t as well (https://github.com/vllm-project/vllm/pull/12348#discussion_r1946907913)
+- 2025-02-07 `tlrmchlsmth` commented: Thank you for this contribution! The performance improvements look very nice and would be great to get into mainline vLLM. I took a pass through the kernel but will likely need to spend more time to understand it better. Are there any ... (https://github.com/vllm-project/vllm/pull/12348#pullrequestreview-2602311715)
+- 2025-02-08 `tjtanaa` on `vllm/lora/punica_wrapper/punica_base.py`: The pre-commit linter hook does not like the spelling. Either we should fix the spelling or update the pyproject.toml. Which one would you prefer? (https://github.com/vllm-project/vllm/pull/12348#discussion_r1947457576)
+- 2025-02-08 `tjtanaa` on `vllm/attention/ops/nki_flash_attn.py`: The pre-commit linter hook does not like the spelling. Either we should fix the spelling or update the pyproject.toml. Which one would you prefer? And the code is formated based on the pre-commit hook. Should we by-pass the pre-commit hook lint check? (https://github.com/vllm-project/vllm/pull/12348#discussion_r1947458647)
+- 2025-02-08 `tjtanaa` on `vllm/spec_decode/spec_decode_worker.py`: The code is formated based on the pre-commit hook. Should we by-pass the pre-commit hook lint check? (https://github.com/vllm-project/vllm/pull/12348#discussion_r1947458748)
+- 2025-02-08 `tjtanaa` on `csrc/rocm/attention.cu`:79: Given that vLLM officially supports MI200 and above, gcn mfma4x4x4 does not impose any hardware or software versioning requirements. This kernel has been implemented in ROCm/vllm It is a kernel that has the same feature parity with the old kernels. So we ... (https://github.com/vllm-project/vllm/pull/12348#discussion_r1947460558)
+- 2025-02-13 `tjtanaa` on `csrc/rocm/attention.cu`:208: @poyenc could you help to comment on this. Thank you. (https://github.com/vllm-project/vllm/pull/12348#discussion_r1953727786)
+- 2025-02-13 `tjtanaa` on `csrc/rocm/attention.cu`:385: DPP means Data Parallel Processing (https://github.com/vllm-project/vllm/pull/12348#discussion_r1953729779)
+- 2025-02-13 `tjtanaa` on `csrc/rocm/attention.cu`:469: @poyenc could you help to comment on this, will it have other implications. Thank you. (https://github.com/vllm-project/vllm/pull/12348#discussion_r1953730214)
+- 2025-02-13 `poyenc` on `csrc/rocm/attention.cu`:208: @tlrmchlsmth From MI300+ platforms, we have v cvt pk f32 fp8 instruction to convert 2 packed fp8 to 2 packed fp32 values. However, in MI200 platforms, we only have v cvt f32 fp8 to convert fp8 values individually. So we added else ... (https://github.com/vllm-project/vllm/pull/12348#discussion_r1954944932)
+- 2025-02-13 `poyenc` on `csrc/rocm/attention.cu`:252: @tjtanaa since this function is no longer used. can we delete it? (https://github.com/vllm-project/vllm/pull/12348#discussion_r1955009714)
+- 2025-02-13 `poyenc` on `csrc/rocm/attention.cu`:484: @tlrmchlsmth I think we can just remove it (https://github.com/vllm-project/vllm/pull/12348#discussion_r1955010914)
+- 2025-02-13 `poyenc` on `csrc/rocm/attention.cu`:469: @tlrmchlsmth it hardly overflows an int32, because the local token idx never exceeds T PAR SIZE (=256). However, the global token idx may do. (https://github.com/vllm-project/vllm/pull/12348#discussion_r1955014723)
+- 2025-02-13 `poyenc` on `csrc/rocm/attention.cu`:722: @tlrmchlsmth I agree. offset may overflow an int32. (https://github.com/vllm-project/vllm/pull/12348#discussion_r1955018637)
+- 2025-02-14 `hongxiayang` on `tests/kernels/test_attention.py`:151: @tlrmchlsmth Anything that I should update to merge this PR? @tjtanaa Let's change the places where int64 t is needed to avoid overflow. You can do static cast when needed. Then it should be able to go. (https://github.com/vllm-project/vllm/pull/12348#discussion_r1956204934)
+- 2025-02-14 `tlrmchlsmth` on `vllm/attention/ops/nki_flash_attn.py`: Could you merge in latest main? I think these misspellings have been fixed (https://github.com/vllm-project/vllm/pull/12348#discussion_r1956248850)
+- 2025-02-14 `tlrmchlsmth` on `vllm/spec_decode/spec_decode_worker.py`: I think this diff will also disappear when you merge in latest main. (https://github.com/vllm-project/vllm/pull/12348#discussion_r1956250653)
+- 2025-02-14 `tlrmchlsmth` on `tests/kernels/test_attention.py`:151: @tjtanaa and @hongxiayang are there any unit tests for this kernel that we could take from the RoCM fork? If possible that would be very nice to have (https://github.com/vllm-project/vllm/pull/12348#discussion_r1956257146)
+- 2025-02-14 `tjtanaa` on `csrc/rocm/attention.cu`:252: @poyenc Sure. Let me clean it up. Thank you for your feedback. (https://github.com/vllm-project/vllm/pull/12348#discussion_r1956376452)
+- 2025-02-20 `tjtanaa` on `csrc/rocm/attention.cu`:1510: @tlrmchlsmth This has been addressed. Please take a look. (https://github.com/vllm-project/vllm/pull/12348#discussion_r1963661786)
+- 2025-02-20 `tjtanaa` on `csrc/rocm/attention.cu`:469: @tlrmchlsmth Thank you for your feedback. We have addressed this issue. Please take a look. (https://github.com/vllm-project/vllm/pull/12348#discussion_r1963673592)
+- 2025-02-20 `tjtanaa` on `csrc/rocm/attention.cu`:484: @tlrmchlsmth Thank you for your feedback. We have removed this from the code. (https://github.com/vllm-project/vllm/pull/12348#discussion_r1963674229)
+- 2025-02-20 `tjtanaa` on `csrc/rocm/attention.cu`:385: @tlrmchlsmth Thank you. We have added the fullname instead of the acronym (https://github.com/vllm-project/vllm/pull/12348#discussion_r1963676192)
+- 2025-02-20 `tjtanaa` on `csrc/rocm/attention.cu`:351: @tlrmchlsmth Thank you. We have cleaned up the tensor shape annotations. (https://github.com/vllm-project/vllm/pull/12348#discussion_r1963680430)
+- 2025-02-20 `tjtanaa` on `csrc/rocm/attention.cu`:252: @tlrmchlsmth Thank you. We have removed the function. (https://github.com/vllm-project/vllm/pull/12348#discussion_r1963681160)
+- 2025-02-20 `tjtanaa` on `csrc/rocm/attention.cu`:208: @tlrmchlsmth Thank you for your feedback. For clarity, we have add a comment to explain the fallback in the attention.cu (https://github.com/vllm-project/vllm/pull/12348#discussion_r1963684204)
+- 2025-02-20 `tjtanaa` on `vllm/spec_decode/spec_decode_worker.py`: @tlrmchlsmth Yes. thank you. We have pulled the latest change in main and the diff disappeared. (https://github.com/vllm-project/vllm/pull/12348#discussion_r1963685127)
+- 2025-02-20 `tjtanaa` on `vllm/attention/ops/nki_flash_attn.py`: @tlrmchlsmth Yes. thank you. We have pulled the latest change in main and the these misspellings have been fixed. (https://github.com/vllm-project/vllm/pull/12348#discussion_r1963686106)
+- 2025-02-20 `tjtanaa` on `tests/kernels/test_attention.py`:151: @tlrmchlsmth The unit tests for this kernel in this PR is the same as the one in ROCm/vllm fork. It is an optimized implementation of the original ROCm Custom Paged Attention. So, the new and older version is sharing the same unit ... (https://github.com/vllm-project/vllm/pull/12348#discussion_r1963689881)
+- 2025-02-20 `tlrmchlsmth` on `csrc/rocm/attention.cu`:469: Upon revisiting this one, this actually looks like it might have been safe. However, I think there's a minor issue here to fix this up, because casting partition start token idx like this probably won't have an effect, since vlocal token idx ... (https://github.com/vllm-project/vllm/pull/12348#discussion_r1964336041)
+- 2025-02-20 `tlrmchlsmth` on `csrc/rocm/attention.cu`:208: Thanks for the comment, it helps a lot (https://github.com/vllm-project/vllm/pull/12348#discussion_r1964336754)
+- 2025-02-20 `tlrmchlsmth` on `.buildkite/run-amd-test.sh`:80: Will be happy to enable this test in buildkite if it's green! (https://github.com/vllm-project/vllm/pull/12348#discussion_r1964337450)
+- 2025-02-20 `tlrmchlsmth` on `csrc/rocm/attention.cu`:91: Is this used anywhere? One general comment is that we should not try to add unused/untested/unexercised code to the codebase, so could you remove any other functions or types that aren't being used in this file? (https://github.com/vllm-project/vllm/pull/12348#discussion_r1964346359)
+- 2025-02-20 `tlrmchlsmth` on `csrc/rocm/attention.cu`:408: Similar: please delete scaled convert b8x8 now that it's not being used anymore (https://github.com/vllm-project/vllm/pull/12348#discussion_r1964350578)
+- 2025-02-25 `poyenc` on `csrc/rocm/attention.cu`:469: @tjtanaa I thought partition start token idx itself may overflow as well. But soon I realized that it's hardly larger than 2^31 - 1 (which means 2G tokens). So I think it's safe to declare it as an int32 (https://github.com/vllm-project/vllm/pull/12348#discussion_r1969698042)
+- 2025-02-25 `tjtanaa` on `.buildkite/run-amd-test.sh`:80: We ran this test on MI300X locally and it is all green. (https://github.com/vllm-project/vllm/pull/12348#discussion_r1969913661)
+- 2025-02-26 `tlrmchlsmth` on `csrc/rocm/attention.cu`:472: Small nit that this should would be better as the following, per conversation above (https://github.com/vllm-project/vllm/pull/12348#discussion_r1971649498)
+- 2025-02-28 `tjtanaa` on `csrc/rocm/attention.cu`:472: @tlrmchlsmth We have done updating this back to int32, but we are using int type to represent int32 t type. Is that ok? (https://github.com/vllm-project/vllm/pull/12348#discussion_r1975630920)
+- 2025-02-28 `tlrmchlsmth` on `csrc/rocm/attention.cu`:472: Yep, I think that's fine especially as the rest of the file uses int (https://github.com/vllm-project/vllm/pull/12348#discussion_r1975647434)
+- 2025-02-28 `tlrmchlsmth`: @tjtanaa could you take a look at the pre-commit? It's failing as well (https://github.com/vllm-project/vllm/pull/12348#issuecomment-2691008864)
