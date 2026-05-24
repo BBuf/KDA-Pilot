@@ -70,10 +70,12 @@ Optimization guidance:
 
 Completion:
 - Continue iterating until the final correct candidate beats FlashAttention-4
-  by at least 5% geometric-mean TFLOPS across all configured cases, or until at
-  least six substantial evidence-backed attempts show why the target is blocked.
+  by at least 5% geometric-mean TFLOPS across all configured cases.
+- Do not stop with a "target blocked" or "best effort" final report. If a
+  lineage stalls, use the evidence to replan or rewrite the kernel path and
+  continue. Only user cancellation or verified target completion may end the
+  loop.
 - The final report must include FlashAttention-4 baseline numbers, final
   numbers, geometric mean TFLOPS, correctness tolerances, build/test/benchmark
-  commands, key design decisions, and the next most promising follow-up if the
-  target is not reached.
+  commands, and key design decisions.
 ```

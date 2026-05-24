@@ -212,12 +212,14 @@ After writing and committing the workspace scaffold, start the loop from inside
 the chosen workspace root:
 
 ```bash
-"{{HUMANIZE_RUNTIME_ROOT}}/scripts/setup-rlcr-loop.sh" .humanize/kernel-agent/refined-plan.md --yolo
+"{{HUMANIZE_RUNTIME_ROOT}}/scripts/setup-rlcr-loop.sh" .humanize/kernel-agent/refined-plan.md --yolo --strict-success
 ```
 
 If setup exits non-zero, report the error instead of bypassing the gate. The
-loop uses Humanize's configured review model and default max iteration limit
-unless the caller explicitly passes overrides such as `--max` or a model flag.
+loop uses Humanize's configured review model and strict-success mode by default,
+so max-iteration and stagnation checks trigger recovery prompts rather than
+ending the run before the acceptance target is met. The caller may still pass
+explicit overrides such as `--max` or a model flag.
 
 After setup succeeds:
 

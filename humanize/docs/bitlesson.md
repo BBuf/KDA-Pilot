@@ -18,12 +18,9 @@ Provider routing is automatic:
 
 If the configured provider binary is missing, the selector falls back to the default Codex model so the loop can still proceed.
 
-When installing the Humanize runtime into Codex CLI, Humanize writes
-`provider_mode: "codex-only"` into that runtime's user config. When that mode
-is present, the selector forces BitLesson selection onto the Codex/OpenAI path
-before provider resolution, even if an older default such as `haiku` would
-otherwise route to Claude. This is not a repository-level limitation: Claude
-Code installs are supported separately.
+On Codex-only installs, Humanize writes `provider_mode: "codex-only"` into the user config.
+When that mode is present, the selector forces BitLesson selection onto the Codex/OpenAI path
+before provider resolution, even if an older default such as `haiku` would otherwise route to Claude.
 
 ## Workflow
 

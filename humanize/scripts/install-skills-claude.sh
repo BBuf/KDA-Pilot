@@ -104,7 +104,7 @@ replacements = {
     "{{NCU_REPORT_SKILL_ROOT}}": str(ncu_report_skill_root),
 }
 
-for path in sorted((plugin_root / "skills").glob("*/SKILL.md")):
+for path in sorted((plugin_root / "skills").glob("*/SKILL*.md")):
     text = path.read_text(encoding="utf-8")
     updated = text
     for old, new in replacements.items():

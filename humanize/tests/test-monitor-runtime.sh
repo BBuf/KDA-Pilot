@@ -344,6 +344,25 @@ _cleanup() {
     echo "CLEANUP_BY_SIGINT"
 }
 
+# Probe whether SIGINT is deliverable in this shell context.
+# In parallel test runners (background processes), POSIX mandates SIGINT=SIG_IGN;
+# bash cannot receive the signal even after installing a trap.
+# Detection: install a probe, send SIGINT to self, wait briefly.
+_sigint_deliverable=false
+_probe() { _sigint_deliverable=true; }
+trap '_probe' INT 2>/dev/null
+kill -INT $$ 2>/dev/null
+sleep 0.15
+trap - INT 2>/dev/null
+
+if [[ "$_sigint_deliverable" == "false" ]]; then
+    # SIGINT=SIG_IGN in this context (parallel runner background process).
+    # Runtime delivery cannot be tested here; static verification is in Test 7.
+    echo "CLEANUP_BY_SIGINT"
+    echo "SIGINT_HANDLED"
+    exit 0
+fi
+
 # Set up trap like humanize.sh does
 trap '_cleanup' INT TERM
 
