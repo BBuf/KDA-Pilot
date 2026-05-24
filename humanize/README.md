@@ -28,16 +28,15 @@ The loop has two phases: **Implementation** (Claude works, Codex reviews summari
 
 ## Install
 
+From the KernelPilot repository root:
+
 ```bash
-# Add PolyArch marketplace
-/plugin marketplace add PolyArch/humanize
-# If you want to use development branch for experimental features
-/plugin marketplace add PolyArch/humanize#dev
-# Then install humanize plugin
-/plugin install humanize@PolyArch
+git clone https://github.com/BBuf/kernel-pilot.git
+cd kernel-pilot
+humanize/scripts/install-skills-claude.sh
 ```
 
-Requires [codex CLI](https://github.com/openai/codex) for review. See the full [Installation Guide](docs/install-for-claude.md) for prerequisites and alternative setup options.
+Requires [codex CLI](https://github.com/openai/codex) for review. See the full [Installation Guide](docs/install-for-claude.md) for prerequisites, one-session `--plugin-dir` usage, upstream Humanize-only installation, and alternative setup options.
 
 ## Quick Start
 
@@ -100,7 +99,6 @@ Requires [codex CLI](https://github.com/openai/codex) for review. See the full [
 - [Usage Guide](docs/usage.md) -- Commands, options, environment variables
 - [Install for Claude Code](docs/install-for-claude.md) -- Full installation instructions
 - [Install for Codex](docs/install-for-codex.md) -- Codex skill runtime setup
-- [Install for Kimi](docs/install-for-kimi.md) -- Kimi CLI skill setup
 - [Configuration](docs/usage.md#configuration) -- Shared config hierarchy and override rules
 - [Bitter Lesson Workflow](docs/bitlesson.md) -- Project memory, selector routing, and delta validation
 

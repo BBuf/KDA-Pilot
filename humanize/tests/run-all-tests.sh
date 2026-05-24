@@ -65,6 +65,7 @@ TEST_SUITES=(
     "test-template-references.sh"
     "test-state-exit-naming.sh"
     "test-stop-gate.sh"
+    "test-strict-success.sh"
     "test-templates-comprehensive.sh"
     "test-plan-file-hooks.sh"
     "test-stop-hook-legacy-compat.sh"
