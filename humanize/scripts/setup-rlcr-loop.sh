@@ -16,7 +16,7 @@ set -euo pipefail
 
 # DEFAULT_CODEX_MODEL and DEFAULT_CODEX_EFFORT are provided by loop-common.sh
 DEFAULT_CODEX_TIMEOUT=5400
-DEFAULT_MAX_ITERATIONS=84
+DEFAULT_MAX_ITERATIONS=42
 DEFAULT_FULL_REVIEW_ROUND=5
 
 # Default timeout for git operations (30 seconds)
@@ -53,7 +53,6 @@ ASK_CODEX_QUESTION="true"
 AGENT_TEAMS="${DEFAULT_AGENT_TEAMS:-false}"
 BITLESSON_ALLOW_EMPTY_NONE="true"
 PRIVACY_MODE="true"
-STRICT_SUCCESS="false"
 
 extract_plan_goal_content() {
     local plan_path="$1"
@@ -103,7 +102,7 @@ ARGUMENTS:
 OPTIONS:
   --plan-file <path>   Explicit plan file path (alternative to positional arg)
   --track-plan-file    Indicate plan file should be tracked in git (must be clean)
-  --max <N>            Maximum iterations before auto-stop (default: 84)
+  --max <N>            Maximum iterations before auto-stop (default: 42)
   --codex-model <MODEL:EFFORT>
                        Codex model and reasoning effort for codex exec (default: ${DEFAULT_CODEX_MODEL}:${DEFAULT_CODEX_EFFORT})
   --codex-timeout <SECONDS>
@@ -139,8 +138,6 @@ OPTIONS:
                        Require at least one BitLesson entry when action is none
   --privacy            No-op; analysis is disabled by default (kept for backward compatibility)
   --no-privacy         Enable methodology analysis at loop exit (default: analysis disabled)
-  --strict-success     Do not exit on max-iteration or stagnation STOP; only
-                       final completion after all ACs are met can end the loop.
   -h, --help           Show this help message
 
 DESCRIPTION:
@@ -173,7 +170,7 @@ EXAMPLES:
 
 STOPPING:
   - /humanize:cancel-rlcr-loop   Cancel the active loop
-  - Reach --max iterations (unless --strict-success is enabled)
+  - Reach --max iterations
   - Pass code review (no [P0-9] issues) after COMPLETE
 
 MONITORING:
@@ -307,10 +304,6 @@ while [[ $# -gt 0 ]]; do
             ;;
         --no-privacy)
             PRIVACY_MODE="false"
-            shift
-            ;;
-        --strict-success)
-            STRICT_SUCCESS="true"
             shift
             ;;
         -*)
@@ -908,7 +901,6 @@ ask_codex_question: $ASK_CODEX_QUESTION
 session_id:
 agent_teams: $AGENT_TEAMS
 privacy_mode: $PRIVACY_MODE
-strict_success: $STRICT_SUCCESS
 bitlesson_required: $BITLESSON_STATE_VALUE
 bitlesson_file: $BITLESSON_FILE_REL
 bitlesson_allow_empty_none: $BITLESSON_ALLOW_EMPTY_NONE

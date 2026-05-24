@@ -172,7 +172,7 @@ Look for the "Skills" section in the help output.
 | Option | Description | Default |
 |--------|-------------|---------|
 | `path/to/plan.md` | Plan file path | Required (unless --skip-impl) |
-| `--max N` | Maximum iterations | 84 |
+| `--max N` | Maximum iterations | 42 |
 | `--codex-model MODEL:EFFORT` | Codex model | gpt-5.5:high |
 | `--codex-timeout SECONDS` | Review timeout | 5400 |
 | `--base-branch BRANCH` | Base for code review | auto-detect |

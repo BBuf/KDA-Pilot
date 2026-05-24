@@ -97,7 +97,7 @@ Pass these through `setup-rlcr-loop.sh`:
 | `path/to/plan.md` | Plan file path | Required unless `--skip-impl` |
 | `--plan-file <path>` | Explicit plan path | - |
 | `--track-plan-file` | Enforce tracked plan immutability | false |
-| `--max N` | Maximum iterations | 84 |
+| `--max N` | Maximum iterations | 42 |
 | `--codex-model MODEL:EFFORT` | Codex model and effort for `codex exec` | gpt-5.5:high |
 | `--codex-timeout SECONDS` | Codex timeout | 5400 |
 | `--base-branch BRANCH` | Base for review phase | auto-detect |

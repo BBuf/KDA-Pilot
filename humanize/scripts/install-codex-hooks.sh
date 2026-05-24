@@ -227,6 +227,8 @@ log "codex config dir: $CODEX_CONFIG_DIR"
 log "runtime root: $RUNTIME_ROOT"
 log "hooks file: $HOOKS_FILE"
 
+require_native_hooks_support
+
 if [[ "$DRY_RUN" == "true" ]]; then
     log "DRY-RUN merge $HOOKS_TEMPLATE -> $HOOKS_FILE"
     if [[ "$ENABLE_FEATURE" == "true" ]]; then
@@ -234,8 +236,6 @@ if [[ "$DRY_RUN" == "true" ]]; then
     fi
     exit 0
 fi
-
-require_native_hooks_support
 
 merge_hooks_json "$HOOKS_FILE" "$HOOKS_TEMPLATE" "$RUNTIME_ROOT"
 enable_feature "$CODEX_CONFIG_DIR"
