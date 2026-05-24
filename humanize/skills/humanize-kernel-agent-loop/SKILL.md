@@ -60,17 +60,58 @@ run `gen-plan`, `refine-plan`, or `humanize-rlcr`.
 1. Turn the user's request into a small kernel-specific plan with acceptance
    checks.
 2. Select or create exactly one clean standalone optimization workspace.
-3. Add a correctness harness, benchmark harness, and minimal ledgers.
-4. Inspect the baseline/reference enough to know what must be matched.
-5. Iterate on candidate kernels with correctness and benchmark evidence.
-6. Use KernelWiki or live upstream sources when prior art can guide a design.
-7. Use ncu-report-skill when profile evidence can answer the current question.
-8. Autotune or dispatch by shape only when `W` actually needs it.
-9. Start RLCR and let Humanize review the round evidence.
+3. Bootstrap only the minimal scaffold, harness placeholders, ledgers, and
+   refined plan needed to start RLCR.
+4. Ensure the workspace is a git repository with one clean scaffold commit.
+5. Start RLCR with `--strict-success` and verify that an active
+   `.humanize/rlcr/<timestamp>/state.md` exists.
+6. Read `.humanize/rlcr/<timestamp>/round-0-prompt.md`.
+7. Only then iterate on candidate kernels with correctness and benchmark
+   evidence under Humanize review.
+8. Use KernelWiki or live upstream sources when prior art can guide a design.
+9. Use ncu-report-skill when profile evidence can answer the current question.
+10. Autotune or dispatch by shape only when `W` actually needs it.
 
 This is a loop, not a fixed research checklist. A good round may be a tiny
 correctness fix, a benchmark cleanup, a KernelWiki-informed redesign, an NCU
 profile digest, or an autotuning pass, depending on what the evidence says.
+
+## Pre-RLCR Bootstrap Gate
+
+This skill has a hard ordering requirement: before RLCR is active, do not
+implement candidate kernels, run long benchmarks, collect NCU reports, or write
+a final report. Pre-RLCR work is limited to:
+
+- Choosing the workspace root.
+- Writing the scaffold, refined plan, empty or placeholder harness files, and
+  ledgers.
+- Creating `.gitignore` entries that keep `.humanize*` untracked.
+- Initializing git and committing the scaffold.
+- Running `setup-rlcr-loop.sh`.
+
+If the workspace has no git repository, initialize it before the scaffold
+commit:
+
+```bash
+git init
+git add .gitignore README.md workloads/ src/ bindings/ tests/ benchmarks/ dispatch/ ledgers/ profile-artifacts/
+git commit -m "Initialize kernel optimization workspace"
+```
+
+Adjust the path list to match the scaffold that actually exists, and add
+optional build files such as `setup.py` or `python/` only if they exist, but do
+not add `.humanize/`. If git has no user identity configured, set a local
+identity such as `git config user.name KernelPilot` and `git config user.email
+kernelpilot@example.invalid`.
+
+After `setup-rlcr-loop.sh` succeeds, immediately verify that RLCR is active:
+
+```bash
+find .humanize/rlcr -maxdepth 2 -name state.md -print
+```
+
+If no `state.md` is present, stop and report that RLCR did not start. Do not
+continue into kernel implementation outside the Humanize loop.
 
 ## Workspace Root
 
@@ -133,7 +174,7 @@ fi
 ```
 
 Commit the scaffold and harness files from the workspace root, not
-`.humanize/` loop state.
+`.humanize/` loop state. This commit must exist before running RLCR setup.
 
 ## Lightweight Acceptance Checks
 
