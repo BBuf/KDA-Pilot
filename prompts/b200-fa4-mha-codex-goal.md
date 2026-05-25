@@ -49,11 +49,10 @@ Workload:
 Implementation-source policy:
 - This run is baseline-aware kernel evolution, not blind kernel synthesis.
 - Treat official FlashAttention-4, CUTLASS/CuTe SM100 examples, TileLang
-  kernels, and other public Blackwell attention kernels as reference materials
-  or porting parents. They may be studied or used as sources for
-  license-compatible CUDA/C++/inline-PTX ports and canonical helper code.
-  Record the exact source path, commit or installed version, and what was
-  adapted.
+  kernels, and other public Blackwell attention kernels as working materials.
+  They may be used as reference, parent implementation, or source for canonical
+  helper code when license-compatible. Record the exact source path, commit or
+  installed version, and what was adapted.
 - The first performance-oriented candidate should be baseline-derived or
   canonical-helper-derived unless there is a measured reason not to. A naive
   kernel is acceptable only as a harness/correctness smoke test, not as the
@@ -62,12 +61,9 @@ Implementation-source policy:
   swizzles, warpgroup synchronization protocols, or Blackwell MMA instruction
   wrappers when an official or de facto canonical helper exists. Prefer porting
   the helper and validating it with a microcase.
-- The final candidate implementation must be CUDA/C++ with optional inline PTX.
-  Do not use TileLang, Triton, Python DSLs, or a wholesale CUTLASS/CuTe kernel
-  as the primary candidate substrate. CuTe, CUTLASS, TileLang, and other public
-  sources may still be inspected, and small license-compatible helper logic may
-  be ported into CUDA/C++ when it makes Blackwell-specific details more
-  reliable.
+- CUDA/C++ and inline PTX are allowed, but not required to be the only
+  implementation substrate. CuTe, CUTLASS, TileLang, or small generated helper
+  code are allowed when they make the Blackwell-specific details more reliable.
 
 Verification surface:
 - Establish an immutable official FlashAttention-4 baseline in the same
@@ -112,9 +108,9 @@ Allowed knowledge and profiling tools:
 
 Iteration policy:
 - Start by identifying the official FA4 source path/version, at least one
-  canonical Blackwell helper source to inspect or port from, the baseline
-  command, correctness command, benchmark command, first candidate direction,
-  major risks, and promotion evidence.
+  canonical Blackwell helper source, the baseline command, correctness command,
+  benchmark command, first candidate direction, major risks, and promotion
+  evidence.
 - Establish the smallest correctness smoke test needed to prove the harness,
   then immediately move to a baseline-derived or canonical-helper-derived
   performance candidate.
@@ -122,7 +118,7 @@ Iteration policy:
   incapable of approaching FA4.
 - If a correct candidate is more than 3x slower than official FA4 after one
   tensor-core-capable attempt, stop local micro-tuning of that lineage and
-  reset to a stronger FA4-derived or canonical-helper-derived CUDA parent.
+  reset to a stronger FA4/CUTLASS/CuTe/TileLang-derived parent.
 - If a tensor-core/TMEM/tcgen05 microcase remains incorrect for two focused
   iterations, stop hand-deriving that path and switch to canonical helper
   extraction or a different parent implementation.
