@@ -61,7 +61,7 @@ Scope:
 - No serving or framework integration
 
 Implementation-source policy:
-- This run is AVO-style baseline-aware evolution, not blind kernel synthesis.
+- This run is baseline-aware kernel evolution, not blind kernel synthesis.
 - Treat official FlashAttention-4, CUTLASS/CuTe SM100 examples, TileLang
   kernels, and other public Blackwell attention kernels as working materials.
   They may be used as reference, parent implementation, or source for canonical
