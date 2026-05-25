@@ -49,10 +49,21 @@ Workload:
 Implementation-source policy:
 - This run is baseline-aware kernel evolution, not blind kernel synthesis.
 - Treat official FlashAttention-4, CUTLASS/CuTe SM100 examples, TileLang
-  kernels, and other public Blackwell attention kernels as working materials.
-  They may be used as reference, parent implementation, or source for canonical
-  helper code when license-compatible. Record the exact source path, commit or
-  installed version, and what was adapted.
+  kernels, and other public Blackwell attention kernels as reference and
+  porting materials. They may be studied or used as sources for
+  license-compatible CUDA/C++/CUTLASS/CuTe ports and canonical helper code.
+  Record the exact source path, commit or installed version, and what was
+  adapted.
+- The final candidate implementation must be a native CUDA kernel built from
+  workspace-owned C++/CUDA source, such as `.cu`, `.cuh`, `.cpp`, or `.h`
+  files compiled with nvcc or an equivalent CUDA extension build. Python is
+  allowed for harnesses, bindings, benchmark scripts, and dispatch glue, but
+  not as the primary kernel implementation.
+- Do not use official FlashAttention-4, `flash_attn.cute.flash_attn_func`,
+  `FlashAttentionForwardSm100`, Python `cute.compile` over the FA4 CuTe DSL
+  kernel class, TileLang, Triton, torch SDPA, or any other prebuilt attention
+  op as the candidate execution path. These sources may only be inspected or
+  ported into native C++/CUDA/CUTLASS/CuTe code owned by this workspace.
 - The first performance-oriented candidate should be baseline-derived or
   canonical-helper-derived unless there is a measured reason not to. A naive
   kernel is acceptable only as a harness/correctness smoke test, not as the
@@ -61,9 +72,9 @@ Implementation-source policy:
   swizzles, warpgroup synchronization protocols, or Blackwell MMA instruction
   wrappers when an official or de facto canonical helper exists. Prefer porting
   the helper and validating it with a microcase.
-- CUDA/C++ and inline PTX are allowed, but not required to be the only
-  implementation substrate. CuTe, CUTLASS, TileLang, or small generated helper
-  code are allowed when they make the Blackwell-specific details more reliable.
+- Use CUDA C++, CUTLASS/CuTe C++ templates, generated CUDA helper code, and
+  optional inline PTX when they make the Blackwell-specific details more
+  reliable.
 
 Verification surface:
 - Establish an immutable official FlashAttention-4 baseline in the same
@@ -103,14 +114,15 @@ Allowed knowledge and profiling tools:
 - Use ncu-report-skill / Nsight Compute when a correct candidate is not clearly
   target-complete or when profiler evidence would change the next edit.
 - Before attempting a hand-written Blackwell primitive, inspect the relevant
-  upstream/reference implementation and record whether the run will port, wrap,
-  simplify, or deliberately avoid it.
+  upstream/reference implementation and record whether the run will port,
+  simplify, or deliberately avoid it. Wrapping or importing the upstream
+  Python/DSL kernel object is not a valid candidate implementation.
 
 Iteration policy:
 - Start by identifying the official FA4 source path/version, at least one
-  canonical Blackwell helper source, the baseline command, correctness command,
-  benchmark command, first candidate direction, major risks, and promotion
-  evidence.
+  canonical Blackwell helper source to inspect and port from, the baseline
+  command, correctness command, benchmark command, first candidate direction,
+  major risks, and promotion evidence.
 - Establish the smallest correctness smoke test needed to prove the harness,
   then immediately move to a baseline-derived or canonical-helper-derived
   performance candidate.
@@ -118,7 +130,7 @@ Iteration policy:
   incapable of approaching FA4.
 - If a correct candidate is more than 3x slower than official FA4 after one
   tensor-core-capable attempt, stop local micro-tuning of that lineage and
-  reset to a stronger FA4/CUTLASS/CuTe/TileLang-derived parent.
+  reset to a stronger native CUDA/CUTLASS/CuTe porting parent.
 - If a tensor-core/TMEM/tcgen05 microcase remains incorrect for two focused
   iterations, stop hand-deriving that path and switch to canonical helper
   extraction or a different parent implementation.
