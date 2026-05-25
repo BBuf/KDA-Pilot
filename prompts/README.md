@@ -15,6 +15,16 @@ prompts. The FA4 card is seeded from
 Each prompt is intended to be pasted as one complete task. The prompt itself
 names the required remote GPU skill and acceptance target.
 
+## Codex Goal Variants
+
+These variants keep the original task targets but express them as Codex
+`/goal` completion contracts instead of Humanize kernel agent loop prompts.
+
+| Prompt | Goal |
+| --- | --- |
+| [B200 int8_scaled_mm Codex Goal](b200-int8-scaled-mm-codex-goal.md) | Optimize SGLang `int8_scaled_mm` on B200 for one focused shape and target at least 2.5x speedup over the SGLang baseline. |
+| [B200 FA4 MHA Codex Goal](b200-fa4-mha-codex-goal.md) | Build a standalone BF16 forward-only MHA kernel and beat official FlashAttention-4 by at least 5% geometric-mean TFLOPS across the configured B200 cases. |
+
 ## Recommended Claude Code Launch
 
 Start Claude Code with Opus, maximum reasoning effort, and bypassed permission
