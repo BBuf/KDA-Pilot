@@ -13,5 +13,7 @@ Wrapped SGLang baseline entry points:
 Reference SGLang test used as the correctness oracle:
 `python/sglang/jit_kernel/tests/test_rmsnorm.py`
 
-Promotion target: at least 1.5x geometric-mean speedup over the SGLang
-baseline across all configured shape buckets.
+Promotion target: optimize toward the active hardware performance bound across
+all configured shape buckets. Report geometric-mean speedup over the SGLang
+baseline, but use roofline-style bandwidth/FLOP/s evidence rather than a fixed
+speedup multiplier as the completion criterion.

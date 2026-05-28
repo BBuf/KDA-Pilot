@@ -21,9 +21,11 @@ bucket with a dispatcher when measured evidence justifies it.
 - `sglang.jit_kernel.diffusion.cutedsl.scale_residual_norm_scale_shift:fused_scale_residual_norm_scale_shift`
 - Correctness oracle reference test:
 `python/sglang/jit_kernel/tests/diffusion/test_fused_norm_scale_shift.py`
-- Promotion target: at least 1.5x median-latency
-speedup over the current SGLang baseline, computed as the geometric mean
-of per-shape speedups across the configured shape table below.
+- Promotion target: optimize toward the active hardware performance bound,
+not a fixed speedup multiplier. Report median-latency speedup over the
+current SGLang baseline as the geometric mean of per-shape speedups
+across the configured shape table below, but treat that value as an
+outcome metric rather than a pass/fail threshold.
 
 This kernel is implemented in CuTe-DSL and currently requires `D % 256 == 0` and `D <= 8192`. Candidate implementations must keep these constraints or document any tightening / loosening in `interface.md`.
 
@@ -95,11 +97,16 @@ configs for different points in this axis space:
 - residual+gate path enabled (Z-Image residual block)
 - dtype (bfloat16 / float16 / float32)
 
-The promotion target is per-shape correctness with at least
-1.5x geometric-mean speedup over the SGLang baseline
-across **all** configured shapes. Per-shape specialization is allowed and
-encouraged when profiler or benchmark evidence shows that one kernel cannot
-cover the whole axis space. See the Shape Specialization Policy below.
+The promotion target is per-shape correctness plus hardware-bound
+performance evidence across **all** configured shapes. A candidate is
+target-complete when benchmarks and profiler data show that each important
+shape bucket is close to its active bound (memory bandwidth, compute
+throughput, launch overhead, occupancy, or dependency/latency limit), or
+when a well-supported no-go explains why the remaining gap is not
+reachable inside this task boundary. Per-shape specialization is allowed
+and encouraged when profiler or benchmark evidence shows that one kernel
+cannot cover the whole axis space. See the Shape Specialization Policy
+below.
 
 ## Required Claude Code Skill
 
@@ -209,6 +216,12 @@ version and the exact command used to produce the result.
 or when profiler evidence would change the next edit.
 - Final claim must be the geometric mean of per-shape speedups across the
 full shape table, not the best-case shape alone.
+- Final promotion or no-go must include a roofline-style bound analysis:
+  estimate the effective bytes moved and useful scalar/vector operations
+  for each representative shape bucket, report achieved bandwidth and/or
+  FLOP/s, and use profiler metrics to identify the active limiting resource.
+  Do not continue RLCR solely to hit a fixed speedup number once the
+  evidence shows the candidate is already near the attainable bound.
 
 ## Prior Art Research Scope
 
@@ -484,11 +497,12 @@ The work is complete only when:
 
 - correctness tests pass for every configured shape;
 - every dispatched variant is correct for its assigned shape bucket;
-- NVIDIA B200 benchmark evidence shows at least 1.5x
-geometric-mean median-latency speedup over the SGLang baseline across all
-configured shape buckets, or a well-supported no-go conclusion explains
-why no defensible path remains under the available workspace;
-- NCU evidence explains the improvement, blocker, and active hardware
-bound;
+- NVIDIA B200 benchmark evidence reports geometric-mean median-latency
+speedup over the SGLang baseline across all configured shape buckets;
+- roofline-style analysis and NCU evidence explain the improvement,
+blocker, active hardware bound, and why the final candidate is close to
+the attainable performance limit for the important shape buckets, or a
+well-supported no-go explains why no defensible path remains under the
+available workspace;
 - `prompt.md`, `interface.md`, `benchmark.csv`, and `solutions.jsonl` are
 updated with the final result.

@@ -253,7 +253,7 @@ Then start RLCR (the launcher prints the exact `--base-branch` value — paste
 it back rather than guessing):
 
 ```text
-/humanize:start-rlcr-loop kernels/<kernel-folder>/.humanize/kernel-agent/refined-plan.md --skip-quiz --claude-answer-codex --codex-model gpt-5.5:xhigh --codex-timeout 5400 --base-branch <printed-kda-base-branch>
+/humanize:start-rlcr-loop kernels/<kernel-folder>/.humanize/kernel-agent/refined-plan.md --skip-quiz --claude-answer-codex --max 12 --codex-model gpt-5.5:xhigh --codex-timeout 5400 --base-branch <printed-kda-base-branch>
 ```
 
 After RLCR starts, Claude should continue only from the generated

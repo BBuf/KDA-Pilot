@@ -20,9 +20,11 @@ bucket with a dispatcher when measured evidence justifies it.
 - `sglang.jit_kernel.diffusion.qknorm_rope:fused_inplace_qknorm_rope`
 - Correctness oracle reference test:
 `python/sglang/jit_kernel/tests/diffusion/test_qknorm_rope.py`
-- Promotion target: at least 1.3x median-latency
-speedup over the current SGLang baseline, computed as the geometric mean
-of per-shape speedups across the configured shape table below.
+- Promotion target: optimize toward the active hardware performance bound,
+not a fixed speedup multiplier. Report median-latency speedup over the
+current SGLang baseline as the geometric mean of per-shape speedups
+across the configured shape table below, but treat that value as an
+outcome metric rather than a pass/fail threshold.
 
 The baseline is a native CUDA kernel (templated by head_dim, rope_dim, is_neox, dtype) loaded via JIT. The optimized candidate must also be a native C++/CUDA kernel built from workspace-owned `.cu`/`.cuh`/`.cpp`/`.h` sources, not pure Python.
 
@@ -93,11 +95,16 @@ configs for different points in this axis space:
 - total_tokens range (4096 - 75600)
 - num_heads (16 / 24 / 32 / 40)
 
-The promotion target is per-shape correctness with at least
-1.3x geometric-mean speedup over the SGLang baseline
-across **all** configured shapes. Per-shape specialization is allowed and
-encouraged when profiler or benchmark evidence shows that one kernel cannot
-cover the whole axis space. See the Shape Specialization Policy below.
+The promotion target is per-shape correctness plus hardware-bound
+performance evidence across **all** configured shapes. A candidate is
+target-complete when benchmarks and profiler data show that each important
+shape bucket is close to its active bound (memory bandwidth, compute
+throughput, launch overhead, occupancy, or dependency/latency limit), or
+when a well-supported no-go explains why the remaining gap is not
+reachable inside this task boundary. Per-shape specialization is allowed
+and encouraged when profiler or benchmark evidence shows that one kernel
+cannot cover the whole axis space. See the Shape Specialization Policy
+below.
 
 ## Required Claude Code Skill
 
@@ -208,6 +215,12 @@ version and the exact command used to produce the result.
 or when profiler evidence would change the next edit.
 - Final claim must be the geometric mean of per-shape speedups across the
 full shape table, not the best-case shape alone.
+- Final promotion or no-go must include a roofline-style bound analysis:
+  estimate the effective bytes moved and useful scalar/vector operations
+  for each representative shape bucket, report achieved bandwidth and/or
+  FLOP/s, and use profiler metrics to identify the active limiting resource.
+  Do not continue RLCR solely to hit a fixed speedup number once the
+  evidence shows the candidate is already near the attainable bound.
 
 ## Prior Art Research Scope
 
@@ -483,11 +496,12 @@ The work is complete only when:
 
 - correctness tests pass for every configured shape;
 - every dispatched variant is correct for its assigned shape bucket;
-- NVIDIA H200 benchmark evidence shows at least 1.3x
-geometric-mean median-latency speedup over the SGLang baseline across all
-configured shape buckets, or a well-supported no-go conclusion explains
-why no defensible path remains under the available workspace;
-- NCU evidence explains the improvement, blocker, and active hardware
-bound;
+- NVIDIA H200 benchmark evidence reports geometric-mean median-latency
+speedup over the SGLang baseline across all configured shape buckets;
+- roofline-style analysis and NCU evidence explain the improvement,
+blocker, active hardware bound, and why the final candidate is close to
+the attainable performance limit for the important shape buckets, or a
+well-supported no-go explains why no defensible path remains under the
+available workspace;
 - `prompt.md`, `interface.md`, `benchmark.csv`, and `solutions.jsonl` are
 updated with the final result.

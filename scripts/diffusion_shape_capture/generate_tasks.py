@@ -32,7 +32,6 @@ class Family:
     description: str  # short kernel description
     shape_table_md: str  # markdown table of canonical shapes
     config_axes: list[str]  # axes that vary (dispatch knobs)
-    completion_speedup: str  # how much faster vs baseline
 
 
 FAMILIES: list[Family] = [
@@ -75,7 +74,6 @@ FAMILIES: list[Family] = [
             "total_tokens range (4096 - 75600)",
             "num_heads (16 / 24 / 32 / 40)",
         ],
-        completion_speedup="1.3x",
     ),
     Family(
         slug="diffusion_rms_norm_fn__multi_shape",
@@ -118,7 +116,6 @@ FAMILIES: list[Family] = [
             "dtype (bfloat16 / float16 / float32)",
             "out_dtype != input dtype path",
         ],
-        completion_speedup="1.5x",
     ),
     Family(
         slug="diffusion_norm_infer__multi_shape",
@@ -159,7 +156,6 @@ FAMILIES: list[Family] = [
             "has_weight / has_bias",
             "dtype (bfloat16 / float16 / float32)",
         ],
-        completion_speedup="1.3x",
     ),
     Family(
         slug="diffusion_group_norm_silu__multi_shape",
@@ -204,7 +200,6 @@ FAMILIES: list[Family] = [
             "one-pass vs chunked (controlled by _LARGE_GROUP_THRESHOLD)",
             "scalar-affine fast path",
         ],
-        completion_speedup="1.4x",
     ),
     Family(
         slug="diffusion_rotary_embedding__multi_shape",
@@ -248,7 +243,6 @@ FAMILIES: list[Family] = [
             "total tokens range (4096 - 75600)",
             "dtype (bfloat16 / float16)",
         ],
-        completion_speedup="1.4x",
     ),
     Family(
         slug="diffusion_fuse_scale_shift__multi_shape",
@@ -292,7 +286,6 @@ FAMILIES: list[Family] = [
             "BLOCK_L / BLOCK_C / num_warps / num_stages choice",
             "dtype (bfloat16 / float16 / float32)",
         ],
-        completion_speedup="1.5x",
     ),
     Family(
         slug="diffusion_cutedsl_norm_tanh_mul_add__multi_shape",
@@ -332,7 +325,6 @@ FAMILIES: list[Family] = [
             "second-norm scale path enabled vs disabled",
             "dtype (bfloat16 / float16 / float32)",
         ],
-        completion_speedup="1.5x",
     ),
     Family(
         slug="diffusion_cutedsl_norm_scale_shift__multi_shape",
@@ -374,7 +366,6 @@ FAMILIES: list[Family] = [
             "residual+gate path enabled (Z-Image residual block)",
             "dtype (bfloat16 / float16 / float32)",
         ],
-        completion_speedup="1.5x",
     ),
 ]
 
@@ -450,9 +441,11 @@ def render_prompt(family: Family, arch: dict) -> str:
         {targets_md}
         - Correctness oracle reference test:
           `{family.test_file}`
-        - Promotion target: at least {family.completion_speedup} median-latency
-          speedup over the current SGLang baseline, computed as the geometric mean
-          of per-shape speedups across the configured shape table below.
+        - Promotion target: optimize toward the active hardware performance bound,
+          not a fixed speedup multiplier. Report median-latency speedup over the
+          current SGLang baseline as the geometric mean of per-shape speedups
+          across the configured shape table below, but treat that value as an
+          outcome metric rather than a pass/fail threshold.
         {cuda_note}{cutedsl_note}
         ## Workload Cases (Production Shapes)
 
@@ -477,11 +470,16 @@ def render_prompt(family: Family, arch: dict) -> str:
 
         {config_md}
 
-        The promotion target is per-shape correctness with at least
-        {family.completion_speedup} geometric-mean speedup over the SGLang baseline
-        across **all** configured shapes. Per-shape specialization is allowed and
-        encouraged when profiler or benchmark evidence shows that one kernel cannot
-        cover the whole axis space. See the Shape Specialization Policy below.
+        The promotion target is per-shape correctness plus hardware-bound
+        performance evidence across **all** configured shapes. A candidate is
+        target-complete when benchmarks and profiler data show that each important
+        shape bucket is close to its active bound (memory bandwidth, compute
+        throughput, launch overhead, occupancy, or dependency/latency limit), or
+        when a well-supported no-go explains why the remaining gap is not
+        reachable inside this task boundary. Per-shape specialization is allowed
+        and encouraged when profiler or benchmark evidence shows that one kernel
+        cannot cover the whole axis space. See the Shape Specialization Policy
+        below.
 
         ## Environment And Remote Rule
 
@@ -576,6 +574,12 @@ def render_prompt(family: Family, arch: dict) -> str:
           or when profiler evidence would change the next edit.
         - Final claim must be the geometric mean of per-shape speedups across the
           full shape table, not the best-case shape alone.
+        - Final promotion or no-go must include a roofline-style bound analysis:
+          estimate the effective bytes moved and useful scalar/vector operations
+          for each representative shape bucket, report achieved bandwidth and/or
+          FLOP/s, and use profiler metrics to identify the active limiting resource.
+          Do not continue RLCR solely to hit a fixed speedup number once the
+          evidence shows the candidate is already near the attainable bound.
 
         ## Prior Art Research Scope
 
@@ -686,12 +690,13 @@ def render_prompt(family: Family, arch: dict) -> str:
 
         - correctness tests pass for every configured shape;
         - every dispatched variant is correct for its assigned shape bucket;
-        - {arch_title} benchmark evidence shows at least {family.completion_speedup}
-          geometric-mean median-latency speedup over the SGLang baseline across all
-          configured shape buckets, or a well-supported no-go conclusion explains
-          why no defensible path remains under the available workspace;
-        - NCU evidence explains the improvement, blocker, and active hardware
-          bound;
+        - {arch_title} benchmark evidence reports geometric-mean median-latency
+          speedup over the SGLang baseline across all configured shape buckets;
+        - roofline-style analysis and NCU evidence explain the improvement,
+          blocker, active hardware bound, and why the final candidate is close to
+          the attainable performance limit for the important shape buckets, or a
+          well-supported no-go explains why no defensible path remains under the
+          available workspace;
         - `prompt.md`, `interface.md`, `benchmark.csv`, and `solutions.jsonl` are
           updated with the final result.
         """
@@ -1096,8 +1101,10 @@ Wrapped SGLang baseline entry points:
 Reference SGLang test used as the correctness oracle:
 `{test_file}`
 
-Promotion target: at least {speedup} geometric-mean speedup over the SGLang
-baseline across all configured shape buckets.
+Promotion target: optimize toward the active hardware performance bound across
+all configured shape buckets. Report geometric-mean speedup over the SGLang
+baseline, but use roofline-style bandwidth/FLOP/s evidence rather than a fixed
+speedup multiplier as the completion criterion.
 """
 
 
@@ -1128,7 +1135,6 @@ def write_task(family: Family, arch: dict) -> Path:
             arch_title=arch["title"],
             targets_md=targets_md,
             test_file=family.test_file,
-            speedup=family.completion_speedup,
         )
     )
     (folder / "benchmark.csv").touch()

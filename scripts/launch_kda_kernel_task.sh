@@ -233,7 +233,7 @@ echo
 echo "Draft: .humanize/kernel-agent/draft.md"
 echo "Inside Claude Code, use:"
 echo "/humanize:gen-plan --input .humanize/kernel-agent/draft.md --output .humanize/kernel-agent/refined-plan.md --direct"
-echo "/humanize:start-rlcr-loop .humanize/kernel-agent/refined-plan.md --skip-quiz --claude-answer-codex --codex-model gpt-5.5:xhigh --codex-timeout 5400 --base-branch $REVIEW_BASE"
+echo "/humanize:start-rlcr-loop .humanize/kernel-agent/refined-plan.md --skip-quiz --claude-answer-codex --max 12 --codex-model gpt-5.5:xhigh --codex-timeout 5400 --base-branch $REVIEW_BASE"
 echo
 
 if [[ "${KDA_NO_CLAUDE:-}" == "1" ]]; then

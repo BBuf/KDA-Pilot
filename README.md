@@ -181,7 +181,7 @@ Inside Claude Code, run the two commands printed by the launcher:
 
 ```text
 /humanize:gen-plan --input .humanize/kernel-agent/draft.md --output .humanize/kernel-agent/refined-plan.md --direct
-/humanize:start-rlcr-loop .humanize/kernel-agent/refined-plan.md --skip-quiz --claude-answer-codex --codex-model gpt-5.5:xhigh --codex-timeout 5400 --base-branch <printed-review-base>
+/humanize:start-rlcr-loop .humanize/kernel-agent/refined-plan.md --skip-quiz --claude-answer-codex --max 12 --codex-model gpt-5.5:xhigh --codex-timeout 5400 --base-branch <printed-review-base>
 ```
 
 Useful overrides:
