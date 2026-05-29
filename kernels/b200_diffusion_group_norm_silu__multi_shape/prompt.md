@@ -29,36 +29,193 @@ outcome metric rather than a pass/fail threshold.
 
 ## Workload Cases (Production Shapes)
 
-These shapes were captured from the SGLang diffusion benchmark skill running
-on the NVIDIA B200 reference host, plus derived from the upstream model
-configurations. Every shape in the table below is part of the optimization
-target.
+These workload cases are empirical-only. They are the unique kernel call
+signatures observed from successful `status=ok` runs while sweeping every
+preset listed by the current `bench_diffusion_denoise.py --list-models`
+source under the SGLang diffusion benchmark skill. Do not add
+model-config-derived or analytical shapes to this table.
 
-| Preset | Model | dtype | x shape | num_groups | group_size | dimensionality | notes |
-|---|---|---|---|---:|---:|---|---|
-| flux | FLUX.1-dev | bfloat16 | (1, 128, 1024, 1024) | 32 | 4 | 4D | VAE decoder upsample stage |
-| flux | FLUX.1-dev | bfloat16 | (1, 256, 512, 512) | 32 | 8 | 4D | VAE decoder mid |
-| flux | FLUX.1-dev | bfloat16 | (1, 512, 256, 256) | 32 | 16 | 4D | VAE decoder block |
-| flux2 | FLUX.2-dev | bfloat16 | (1, 128, 1024, 1024) | 32 | 4 | 4D | similar VAE decoder |
-| qwen | Qwen-Image-2512 | bfloat16 | (1, 128, 1024, 1024) | 32 | 4 | 4D | Qwen-VAE decoder |
-| zimage | Z-Image-Turbo | bfloat16 | (1, 128, 1024, 1024) | 32 | 4 | 4D | Z-Image VAE decoder |
-| wan-ti2v | Wan2.2-TI2V-5B | bfloat16 | (1, 128, 21, 90, 160) | 32 | 4 | 5D | causal 3D VAE 720p decoder |
-| wan-t2v | Wan2.2-T2V-A14B | bfloat16 | (1, 128, 21, 90, 160) | 32 | 4 | 5D | same 3D VAE shape |
-| wan-i2v | Wan2.2-I2V-A14B | bfloat16 | (1, 128, 21, 90, 160) | 32 | 4 | 5D | I2V 3D VAE |
-| ltx2 | LTX-2 | bfloat16 | (1, 128, 31, 64, 96) | 32 | 4 | 5D | LTX video VAE decoder |
-| hunyuanvideo | HunyuanVideo | bfloat16 | (1, 128, 17, 60, 106) | 32 | 4 | 5D | 848x480 65f VAE |
-| mova-720p | MOVA-720p | bfloat16 | (1, 128, 49, 90, 160) | 32 | 4 | 5D | 193f 720p VAE |
-| helios | Helios-Base | bfloat16 | (1, 128, 9, 48, 80) | 32 | 4 | 5D | 33f VAE |
+| Preset | Model | Kernel | dtype | x shape | affine tensors | group/eps | Evidence |
+|---|---|---|---|---|---|---|---|
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 5, 32, 32]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 1 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 5, 32, 32]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 5, 64, 64]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 11 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 5, 64, 64]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 12 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 9, 128, 128]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 17 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 9, 128, 128]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 18 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 9, 128, 128]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 19 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 17, 256, 256]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 23 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 128, 17, 256, 256]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 24 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 128, 17, 256, 256]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 25 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 5, 32, 10]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 117 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 5, 32, 10]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 118 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 5, 64, 20]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 127 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 5, 64, 20]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 128 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 9, 128, 40]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 133 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 9, 128, 40]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 134 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 9, 128, 40]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 135 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 17, 256, 80]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 139 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 128, 17, 256, 80]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 140 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 128, 17, 256, 80]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 141 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 5, 12, 32]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 291 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 5, 12, 32]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 292 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 5, 24, 64]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 301 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 5, 24, 64]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 302 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 9, 48, 128]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 307 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 9, 48, 128]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 308 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 9, 48, 128]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 309 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 17, 96, 256]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 313 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 128, 17, 96, 256]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 314 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 128, 17, 96, 256]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 315 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 5, 12, 10]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 407 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 5, 12, 10]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 408 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 5, 24, 20]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 417 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 5, 24, 20]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 418 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 9, 48, 40]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 423 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 9, 48, 40]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 424 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 9, 48, 40]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 425 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 17, 96, 80]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 429 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 128, 17, 96, 80]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 430 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 128, 17, 96, 80]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 431 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 2, 32, 32]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2176 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 2, 32, 32]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2177 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 2, 64, 64]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2186 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 2, 64, 64]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2187 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 3, 128, 128]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2192 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 3, 128, 128]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2193 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 3, 128, 128]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2194 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 5, 256, 256]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2198 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 128, 5, 256, 256]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2199 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 128, 5, 256, 256]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2200 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 2, 32, 10]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2292 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 2, 32, 10]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2293 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 2, 64, 20]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2302 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 2, 64, 20]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2303 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 3, 128, 40]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2308 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 3, 128, 40]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2309 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 3, 128, 40]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2310 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 5, 256, 80]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2314 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 128, 5, 256, 80]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2315 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 128, 5, 256, 80]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2316 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 2, 12, 32]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2466 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 2, 12, 32]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2467 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 2, 24, 64]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2476 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 2, 24, 64]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2477 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 3, 48, 128]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2482 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 3, 48, 128]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2483 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 3, 48, 128]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2484 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 5, 96, 256]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2488 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 128, 5, 96, 256]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2489 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 128, 5, 96, 256]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2490 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 2, 12, 10]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2582 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 2, 12, 10]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2583 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 2, 24, 20]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2592 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 2, 24, 20]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2593 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 512, 3, 48, 40]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2598 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 3, 48, 40]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2599 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 3, 48, 40]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2600 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 256, 5, 96, 80]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2604 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 128, 5, 96, 80]/float16NC` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2605 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.apply_group_norm_silu` | float16 | arg0=`[1, 128, 5, 96, 80]/float16C` | (none) | arg1=`<GroupNorm>` ; arg2=`<SiLU>` | ion-b200 call 2606 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 5, 32, 32]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 1 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 5, 32, 32]/float16NC` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 5, 64, 64]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 11 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 5, 64, 64]/float16NC` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 12 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 9, 128, 128]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 17 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 9, 128, 128]/float16NC` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 18 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 9, 128, 128]/float16C` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 19 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 17, 256, 256]/float16C` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 23 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 128, 17, 256, 256]/float16NC` | arg1=`[128]/float16C` ; arg2=`[128]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 24 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 128, 17, 256, 256]/float16C` | arg1=`[128]/float16C` ; arg2=`[128]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 25 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 5, 32, 10]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 117 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 5, 32, 10]/float16NC` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 118 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 5, 64, 20]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 127 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 5, 64, 20]/float16NC` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 128 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 9, 128, 40]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 133 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 9, 128, 40]/float16NC` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 134 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 9, 128, 40]/float16C` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 135 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 17, 256, 80]/float16C` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 139 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 128, 17, 256, 80]/float16NC` | arg1=`[128]/float16C` ; arg2=`[128]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 140 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 128, 17, 256, 80]/float16C` | arg1=`[128]/float16C` ; arg2=`[128]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 141 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 5, 12, 32]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 291 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 5, 12, 32]/float16NC` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 292 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 5, 24, 64]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 301 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 5, 24, 64]/float16NC` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 302 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 9, 48, 128]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 307 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 9, 48, 128]/float16NC` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 308 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 9, 48, 128]/float16C` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 309 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 17, 96, 256]/float16C` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 313 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 128, 17, 96, 256]/float16NC` | arg1=`[128]/float16C` ; arg2=`[128]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 314 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 128, 17, 96, 256]/float16C` | arg1=`[128]/float16C` ; arg2=`[128]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 315 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 5, 12, 10]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 407 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 5, 12, 10]/float16NC` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 408 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 5, 24, 20]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 417 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 5, 24, 20]/float16NC` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 418 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 9, 48, 40]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 423 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 9, 48, 40]/float16NC` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 424 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 9, 48, 40]/float16C` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 425 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 17, 96, 80]/float16C` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 429 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 128, 17, 96, 80]/float16NC` | arg1=`[128]/float16C` ; arg2=`[128]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 430 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 128, 17, 96, 80]/float16C` | arg1=`[128]/float16C` ; arg2=`[128]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 431 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 2, 32, 32]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2176 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 2, 32, 32]/float16NC` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2177 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 2, 64, 64]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2186 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 2, 64, 64]/float16NC` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2187 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 3, 128, 128]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2192 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 3, 128, 128]/float16NC` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2193 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 3, 128, 128]/float16C` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2194 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 5, 256, 256]/float16C` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2198 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 128, 5, 256, 256]/float16NC` | arg1=`[128]/float16C` ; arg2=`[128]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2199 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 128, 5, 256, 256]/float16C` | arg1=`[128]/float16C` ; arg2=`[128]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2200 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 2, 32, 10]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2292 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 2, 32, 10]/float16NC` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2293 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 2, 64, 20]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2302 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 2, 64, 20]/float16NC` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2303 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 3, 128, 40]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2308 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 3, 128, 40]/float16NC` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2309 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 3, 128, 40]/float16C` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2310 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 5, 256, 80]/float16C` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2314 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 128, 5, 256, 80]/float16NC` | arg1=`[128]/float16C` ; arg2=`[128]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2315 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 128, 5, 256, 80]/float16C` | arg1=`[128]/float16C` ; arg2=`[128]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2316 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 2, 12, 32]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2466 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 2, 12, 32]/float16NC` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2467 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 2, 24, 64]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2476 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 2, 24, 64]/float16NC` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2477 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 3, 48, 128]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2482 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 3, 48, 128]/float16NC` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2483 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 3, 48, 128]/float16C` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2484 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 5, 96, 256]/float16C` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2488 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 128, 5, 96, 256]/float16NC` | arg1=`[128]/float16C` ; arg2=`[128]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2489 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 128, 5, 96, 256]/float16C` | arg1=`[128]/float16C` ; arg2=`[128]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2490 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 2, 12, 10]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2582 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 2, 12, 10]/float16NC` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2583 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 2, 24, 20]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2592 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 2, 24, 20]/float16NC` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2593 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 512, 3, 48, 40]/float16C` | arg1=`[512]/float16C` ; arg2=`[512]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2598 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 3, 48, 40]/float16NC` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2599 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 3, 48, 40]/float16C` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2600 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 256, 5, 96, 80]/float16C` | arg1=`[256]/float16C` ; arg2=`[256]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2604 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 128, 5, 96, 80]/float16NC` | arg1=`[128]/float16C` ; arg2=`[128]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2605 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `group_norm_silu.triton_group_norm_silu` | float16 | arg0=`[1, 128, 5, 96, 80]/float16C` | arg1=`[128]/float16C` ; arg2=`[128]/float16C` | num_groups=`32` ; eps=`1e-06` | ion-b200 call 2606 |
 
+Shape collection methodology: all entries above come directly from
+`kernel_shape_capture.py` JSONL records collected while running the
+full SGLang diffusion benchmark preset list on `ion-b200`, `ion8-h200`,
+and/or `ion9-h200`. Each accepted preset had `status=ok`, a valid
+denoise/refinement perf dump, and more than install-only capture lines.
+Each preset run used `--backend=sglang` through the benchmark helper and
+model weights were deleted from the Hugging Face cache immediately after
+that preset completed.
 
-Shape collection methodology: the SGLang diffusion benchmark skill at
-`~/.codex/skills/sglang-diffusion-benchmark-profile/scripts/bench_diffusion_denoise.py`
-was run for each preset with the `kernel_shape_capture.py` monkey-patch
-active on `ion-b200` (B200) and `ion8-h200` / `ion9-h200` (H200). For this
-kernel family no live captures were observed in the latest sweep, so the
-table above reflects analytical/derived shapes from each model's published
-config. Re-run the sweep with the matching presets before final promotion;
-write the captured raw JSONL to `docs/captured_shapes_<arch>.jsonl`.
+- Captured presets for this task/arch: `['hunyuanvideo']`
+- Capture hosts for this task/arch: `['ion-b200']`
+- Raw evidence: `docs/captured_shapes_b200.jsonl`
+- Summary: `docs/captured_shapes_b200.md`
+
+Humanize/RLCR instruction: do not determine, derive, broaden, or
+reinterpret optimization shapes during plan generation. The workload
+shape set is exactly the rows in this prompt and the matching
+`docs/captured_shapes_b200.jsonl`; use those shapes verbatim.
 
 ## Canonical Regression Shapes (from SGLang test)
 
@@ -165,7 +322,7 @@ registration entrypoint.
 - `tests/`: correctness tests adapted from the SGLang reference test under
 `python/sglang/jit_kernel/tests/diffusion/test_group_norm_silu.py`.
 - `docs/draft.md`: implementation-plan draft written before code changes.
-- `docs/shapes_<host>.jsonl`: captured shape JSONL from the diffusion
+- `docs/captured_shapes_b200.jsonl`: captured shape JSONL from the diffusion
 benchmark sweep, copied into this folder.
 - `benchmark.csv`: every measured baseline vs candidate comparison.
 - `solutions.jsonl`: every candidate implementation, parent link, status,
@@ -314,7 +471,7 @@ The mandatory pattern in this repo when you do profile:
   2. Build a standalone harness under `profile/<run_name>/harness/`.
      Build the harness from your `src/` `.cu` / `.cuh` sources with
   `-lineinfo` so SASS maps back to source. Match the exact captured
-  shape from `docs/captured_shapes_<arch>.jsonl` for the slice you
+  shape from `docs/captured_shapes_b200.jsonl` for the slice you
   are profiling.
   3. Run two profiles into `profile/<run_name>/reports/`:
 
@@ -425,7 +582,7 @@ baseline.
 `../../external/ncu-report-skill/SKILL.md` from this kernel folder.
 3. Recover the SGLang baseline path, tensor contract, and exact benchmark
 command for every shape in the shape table.
-4. Copy the captured shape JSONL into `docs/shapes_<host>.jsonl`.
+4. Copy the captured shape JSONL into `docs/captured_shapes_b200.jsonl`.
 5. Write an implementation-plan draft to `docs/draft.md`.
 6. Run official Humanize plan generation on that draft.
 7. Start official Humanize RLCR from this kernel folder.

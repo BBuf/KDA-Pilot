@@ -29,38 +29,39 @@ outcome metric rather than a pass/fail threshold.
 
 ## Workload Cases (Production Shapes)
 
-These shapes were captured from the SGLang diffusion benchmark skill running
-on the NVIDIA H200 reference host, plus derived from the upstream model
-configurations. Every shape in the table below is part of the optimization
-target.
+These workload cases are empirical-only. They are the unique kernel call
+signatures observed from successful `status=ok` runs while sweeping every
+preset listed by the current `bench_diffusion_denoise.py --list-models`
+source under the SGLang diffusion benchmark skill. Do not add
+model-config-derived or analytical shapes to this table.
 
-| Preset | Model | dtype | M (rows = B*S) | N (hidden) | norm_type | notes |
-|---|---|---|---:|---:|---|---|
-| flux | FLUX.1-dev | bfloat16 | 4608 | 3072 | layer | adaLN pre-norm path |
-| flux2 | FLUX.2-dev | bfloat16 | 4608 | 3072 | layer | flux2 dit |
-| qwen | Qwen-Image-2512 | bfloat16 | 4352 | 3072 | rms | RMSN pre-attn |
-| qwen-edit | Qwen-Image-Edit-2511 | bfloat16 | 4608 | 3072 | rms | edit conditioning |
-| zimage | Z-Image-Turbo | bfloat16 | 4096 | 3072 | layer | Z-Image modulation |
-| wan-ti2v | Wan2.2-TI2V-5B | bfloat16 | 75600 | 3072 | rms | 720p video |
-| wan-t2v | Wan2.2-T2V-A14B | bfloat16 | 75600 | 5120 | rms | A14B |
-| wan-i2v | Wan2.2-I2V-A14B | bfloat16 | 75600 | 5120 | rms | A14B image |
-| ltx2 | LTX-2 | bfloat16 | 65520 | 2048 | rms | 1536x1024 121 frames |
-| hunyuanvideo | HunyuanVideo | bfloat16 | 33280 | 3072 | layer | 848x480 65 frames |
-| mova-720p | MOVA-720p | bfloat16 | 65536 | 3072 | layer | 720p video |
-| helios | Helios-Base | bfloat16 | 8448 | 2048 | layer | 640x384 33 frames |
+| Preset | Model | Kernel | dtype | x shape | weight/bias | flags | Evidence |
+|---|---|---|---|---|---|---|---|
+| helios | BestWishYsh/Helios-Base | `norm.norm_infer` | float32 | arg0=`[8640, 5120]/float32C` | arg1=`[5120]/float32C` ; arg2=`[5120]/float32C` | eps=`1e-06` ; is_rms_norm=`False` | ion8-h200 call 1 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `rmsnorm_onepass.triton_one_pass_rms_norm` | bfloat16 | arg0=`[648720, 128]/bfloat16C` | arg1=`[128]/bfloat16C` | arg2=`1e-06` | ion8-h200 call 1 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `rmsnorm_onepass.triton_one_pass_rms_norm` | bfloat16 | arg0=`[1320, 128]/bfloat16C` | arg1=`[128]/bfloat16C` | arg2=`1e-06` | ion8-h200 call 3 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `rmsnorm_onepass.triton_one_pass_rms_norm` | bfloat16 | arg0=`[650040, 128]/bfloat16C` | arg1=`[128]/bfloat16C` | arg2=`1e-06` | ion8-h200 call 81 |
+| zimage | Tongyi-MAI/Z-Image-Turbo | `rmsnorm_onepass.triton_one_pass_rms_norm` | bfloat16 | arg0=`[16384, 128]/bfloat16C` | arg1=`[128]/bfloat16C` | arg2=`1e-06` | ion8-h200 call 1 |
+| zimage | Tongyi-MAI/Z-Image-Turbo | `rmsnorm_onepass.triton_one_pass_rms_norm` | bfloat16 | arg0=`[4096, 128]/bfloat16C` | arg1=`[128]/bfloat16C` | arg2=`1e-06` | ion8-h200 call 2 |
 
+Shape collection methodology: all entries above come directly from
+`kernel_shape_capture.py` JSONL records collected while running the
+full SGLang diffusion benchmark preset list on `ion-b200`, `ion8-h200`,
+and/or `ion9-h200`. Each accepted preset had `status=ok`, a valid
+denoise/refinement perf dump, and more than install-only capture lines.
+Each preset run used `--backend=sglang` through the benchmark helper and
+model weights were deleted from the Hugging Face cache immediately after
+that preset completed.
 
-Shape collection methodology: the SGLang diffusion benchmark skill at
-`~/.codex/skills/sglang-diffusion-benchmark-profile/scripts/bench_diffusion_denoise.py`
-was run for each preset with the `kernel_shape_capture.py` monkey-patch
-active on `ion-b200` (B200) and `ion8-h200` / `ion9-h200` (H200). For
-this kernel family live captures fired on presets `['zimage']` and are saved verbatim under `docs/captured_shapes_h200.jsonl` and
-summarized in `docs/captured_shapes_h200.md` (2 unique
-shape signatures). The analytical table above is the superset; any
-additional shape observed in a future capture must be appended before
-being claimed as part of the promotion target. Note: tensor shapes are
-arch-independent for this kernel; if `captured_shapes_b200.jsonl` is empty
-the agent must treat the H200 capture as the authoritative shape ledger.
+- Captured presets for this task/arch: `['helios', 'hunyuanvideo', 'zimage']`
+- Capture hosts for this task/arch: `['ion8-h200']`
+- Raw evidence: `docs/captured_shapes_h200.jsonl`
+- Summary: `docs/captured_shapes_h200.md`
+
+Humanize/RLCR instruction: do not determine, derive, broaden, or
+reinterpret optimization shapes during plan generation. The workload
+shape set is exactly the rows in this prompt and the matching
+`docs/captured_shapes_h200.jsonl`; use those shapes verbatim.
 
 ## Canonical Regression Shapes (from SGLang test)
 
@@ -165,7 +166,7 @@ registration entrypoint.
 - `tests/`: correctness tests adapted from the SGLang reference test under
 `python/sglang/jit_kernel/tests/diffusion/test_qwen_image_modulation.py`.
 - `docs/draft.md`: implementation-plan draft written before code changes.
-- `docs/shapes_<host>.jsonl`: captured shape JSONL from the diffusion
+- `docs/captured_shapes_h200.jsonl`: captured shape JSONL from the diffusion
 benchmark sweep, copied into this folder.
 - `benchmark.csv`: every measured baseline vs candidate comparison.
 - `solutions.jsonl`: every candidate implementation, parent link, status,
@@ -314,7 +315,7 @@ The mandatory pattern in this repo when you do profile:
   2. Build a standalone harness under `profile/<run_name>/harness/`.
      Build the harness from your `src/` `.cu` / `.cuh` sources with
   `-lineinfo` so SASS maps back to source. Match the exact captured
-  shape from `docs/captured_shapes_<arch>.jsonl` for the slice you
+  shape from `docs/captured_shapes_h200.jsonl` for the slice you
   are profiling.
   3. Run two profiles into `profile/<run_name>/reports/`:
 
@@ -425,7 +426,7 @@ baseline.
 `../../external/ncu-report-skill/SKILL.md` from this kernel folder.
 3. Recover the SGLang baseline path, tensor contract, and exact benchmark
 command for every shape in the shape table.
-4. Copy the captured shape JSONL into `docs/shapes_<host>.jsonl`.
+4. Copy the captured shape JSONL into `docs/captured_shapes_h200.jsonl`.
 5. Write an implementation-plan draft to `docs/draft.md`.
 6. Run official Humanize plan generation on that draft.
 7. Start official Humanize RLCR from this kernel folder.

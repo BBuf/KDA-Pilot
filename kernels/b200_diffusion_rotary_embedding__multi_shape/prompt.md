@@ -29,38 +29,45 @@ outcome metric rather than a pass/fail threshold.
 
 ## Workload Cases (Production Shapes)
 
-These shapes were captured from the SGLang diffusion benchmark skill running
-on the NVIDIA B200 reference host, plus derived from the upstream model
-configurations. Every shape in the table below is part of the optimization
-target.
+These workload cases are empirical-only. They are the unique kernel call
+signatures observed from successful `status=ok` runs while sweeping every
+preset listed by the current `bench_diffusion_denoise.py --list-models`
+source under the SGLang diffusion benchmark skill. Do not add
+model-config-derived or analytical shapes to this table.
 
-| Preset | Model | kernel | dtype | x layout | total tokens | num_heads | head_dim | interleaved | notes |
-|---|---|---|---|---|---:|---:|---:|---|---|
-| flux | FLUX.1-dev | apply_rotary_embedding | bfloat16 | (B*S, H, D) | 4608 | 24 | 128 | False | joint qk RoPE |
-| flux2 | FLUX.2-dev | apply_rotary_embedding | bfloat16 | (B*S, H, D) | 4608 | 24 | 128 | False | joint qk RoPE |
-| qwen | Qwen-Image-2512 | apply_rotary_embedding | bfloat16 | (B*S, H, D) | 4352 | 24 | 128 | True | NeoX RoPE |
-| qwen-edit | Qwen-Image-Edit-2511 | apply_rotary_embedding | bfloat16 | (B*S, H, D) | 4608 | 24 | 128 | True | edit RoPE |
-| zimage | Z-Image-Turbo | apply_rotary_embedding | bfloat16 | (B*S, H, D) | 4096 | 24 | 128 | False | Z-Image RoPE |
-| wan-ti2v | Wan2.2-TI2V-5B | apply_rotary_embedding | bfloat16 | (B*S, H, D) | 75600 | 24 | 128 | False | 720p RoPE |
-| wan-t2v | Wan2.2-T2V-A14B | apply_rotary_embedding | bfloat16 | (B*S, H, D) | 75600 | 40 | 128 | False | A14B RoPE |
-| wan-i2v | Wan2.2-I2V-A14B | apply_rotary_embedding | bfloat16 | (B*S, H, D) | 75600 | 40 | 128 | False | A14B RoPE |
-| ltx2 | LTX-2 | apply_ltx2_split_rotary_emb | bfloat16 | (B, S, inner_dim) | 65520 | 24 | 128 | n/a | rope_dim=96, split half_dim |
-| hunyuanvideo | HunyuanVideo | apply_rotary_embedding | bfloat16 | (B*S, H, D) | 33280 | 24 | 128 | False | 848x480 RoPE |
-| mova-720p | MOVA-720p | apply_rotary_embedding | bfloat16 | (B*S, H, D) | 65536 | 24 | 128 | False | 720p RoPE |
-| helios | Helios-Base | apply_rotary_embedding | bfloat16 | (B*S, H, D) | 8448 | 16 | 128 | False | 640x384 RoPE |
+| Preset | Model | Kernel | dtype | x shape | cos/sin/cache shapes | flags | Evidence |
+|---|---|---|---|---|---|---|---|
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `rotary.apply_rotary_embedding` | bfloat16 | arg0=`[1, 27030, 24, 128]/bfloat16C` | arg1=`[27030, 64]/float32C` ; arg2=`[27030, 64]/float32C` | arg3=`False` | ion-b200 call 1 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `rotary.apply_rotary_embedding` | bfloat16 | arg0=`[1, 27030, 24, 128]/bfloat16C` | arg1=`[27030, 64]/float32C` ; arg2=`[27030, 64]/float32C` | arg3=`False` | ion-b200 call 41 |
+| ltx23-ti2v-two-stage | Lightricks/LTX-2.3 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | bfloat16 | arg0=`[1, 1536, 4096]/bfloat16C` | arg1=`[1, 32, 1536, 64]/bfloat16NC` ; arg2=`[1, 32, 1536, 64]/bfloat16NC` | (none) | ion-b200 call 1 |
+| ltx23-ti2v-two-stage | Lightricks/LTX-2.3 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | bfloat16 | arg0=`[1, 126, 2048]/bfloat16C` | arg1=`[1, 32, 126, 32]/bfloat16NC` ; arg2=`[1, 32, 126, 32]/bfloat16NC` | (none) | ion-b200 call 3 |
+| ltx23-ti2v-two-stage | Lightricks/LTX-2.3 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | bfloat16 | arg0=`[1, 1536, 2048]/bfloat16C` | arg1=`[1, 32, 1536, 32]/bfloat16NC` ; arg2=`[1, 32, 1536, 32]/bfloat16NC` | (none) | ion-b200 call 5 |
+| ltx23-ti2v-two-stage | Lightricks/LTX-2.3 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | bfloat16 | arg0=`[1, 6144, 4096]/bfloat16C` | arg1=`[1, 32, 6144, 64]/bfloat16NC` ; arg2=`[1, 32, 6144, 64]/bfloat16NC` | (none) | ion-b200 call 765 |
+| ltx23-ti2v-two-stage | Lightricks/LTX-2.3 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | bfloat16 | arg0=`[1, 6144, 2048]/bfloat16C` | arg1=`[1, 32, 6144, 32]/bfloat16NC` ; arg2=`[1, 32, 6144, 32]/bfloat16NC` | (none) | ion-b200 call 769 |
+| ltx23-two-stage | Lightricks/LTX-2.3 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | bfloat16 | arg0=`[2, 6144, 4096]/bfloat16C` | arg1=`[2, 32, 6144, 64]/bfloat16NC` ; arg2=`[2, 32, 6144, 64]/bfloat16NC` | (none) | ion-b200 call 1 |
+| ltx23-two-stage | Lightricks/LTX-2.3 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | bfloat16 | arg0=`[2, 126, 2048]/bfloat16C` | arg1=`[2, 32, 126, 32]/bfloat16NC` ; arg2=`[2, 32, 126, 32]/bfloat16NC` | (none) | ion-b200 call 3 |
+| ltx23-two-stage | Lightricks/LTX-2.3 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | bfloat16 | arg0=`[2, 6144, 2048]/bfloat16C` | arg1=`[2, 32, 6144, 32]/bfloat16NC` ; arg2=`[2, 32, 6144, 32]/bfloat16NC` | (none) | ion-b200 call 5 |
+| ltx23-two-stage | Lightricks/LTX-2.3 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | bfloat16 | arg0=`[1, 24576, 4096]/bfloat16C` | arg1=`[1, 32, 24576, 64]/bfloat16NC` ; arg2=`[1, 32, 24576, 64]/bfloat16NC` | (none) | ion-b200 call 385 |
+| ltx23-two-stage | Lightricks/LTX-2.3 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | bfloat16 | arg0=`[1, 24576, 2048]/bfloat16C` | arg1=`[1, 32, 24576, 32]/bfloat16NC` ; arg2=`[1, 32, 24576, 32]/bfloat16NC` | (none) | ion-b200 call 389 |
 
+Shape collection methodology: all entries above come directly from
+`kernel_shape_capture.py` JSONL records collected while running the
+full SGLang diffusion benchmark preset list on `ion-b200`, `ion8-h200`,
+and/or `ion9-h200`. Each accepted preset had `status=ok`, a valid
+denoise/refinement perf dump, and more than install-only capture lines.
+Each preset run used `--backend=sglang` through the benchmark helper and
+model weights were deleted from the Hugging Face cache immediately after
+that preset completed.
 
-Shape collection methodology: the SGLang diffusion benchmark skill at
-`~/.codex/skills/sglang-diffusion-benchmark-profile/scripts/bench_diffusion_denoise.py`
-was run for each preset with the `kernel_shape_capture.py` monkey-patch
-active on `ion-b200` (B200) and `ion8-h200` / `ion9-h200` (H200). For
-this kernel family live captures fired on presets `['ltx2']` and are saved verbatim under `docs/captured_shapes_b200.jsonl` and
-summarized in `docs/captured_shapes_b200.md` (4 unique
-shape signatures). The analytical table above is the superset; any
-additional shape observed in a future capture must be appended before
-being claimed as part of the promotion target. Note: tensor shapes are
-arch-independent for this kernel; if `captured_shapes_b200.jsonl` is empty
-the agent must treat the H200 capture as the authoritative shape ledger.
+- Captured presets for this task/arch: `['hunyuanvideo', 'ltx23-ti2v-two-stage', 'ltx23-two-stage']`
+- Capture hosts for this task/arch: `['ion-b200']`
+- Raw evidence: `docs/captured_shapes_b200.jsonl`
+- Summary: `docs/captured_shapes_b200.md`
+
+Humanize/RLCR instruction: do not determine, derive, broaden, or
+reinterpret optimization shapes during plan generation. The workload
+shape set is exactly the rows in this prompt and the matching
+`docs/captured_shapes_b200.jsonl`; use those shapes verbatim.
 
 ## Canonical Regression Shapes (from SGLang test)
 
@@ -165,7 +172,7 @@ registration entrypoint.
 - `tests/`: correctness tests adapted from the SGLang reference test under
 `python/sglang/jit_kernel/tests/test_rope.py`.
 - `docs/draft.md`: implementation-plan draft written before code changes.
-- `docs/shapes_<host>.jsonl`: captured shape JSONL from the diffusion
+- `docs/captured_shapes_b200.jsonl`: captured shape JSONL from the diffusion
 benchmark sweep, copied into this folder.
 - `benchmark.csv`: every measured baseline vs candidate comparison.
 - `solutions.jsonl`: every candidate implementation, parent link, status,
@@ -314,7 +321,7 @@ The mandatory pattern in this repo when you do profile:
   2. Build a standalone harness under `profile/<run_name>/harness/`.
      Build the harness from your `src/` `.cu` / `.cuh` sources with
   `-lineinfo` so SASS maps back to source. Match the exact captured
-  shape from `docs/captured_shapes_<arch>.jsonl` for the slice you
+  shape from `docs/captured_shapes_b200.jsonl` for the slice you
   are profiling.
   3. Run two profiles into `profile/<run_name>/reports/`:
 
@@ -425,7 +432,7 @@ baseline.
 `../../external/ncu-report-skill/SKILL.md` from this kernel folder.
 3. Recover the SGLang baseline path, tensor contract, and exact benchmark
 command for every shape in the shape table.
-4. Copy the captured shape JSONL into `docs/shapes_<host>.jsonl`.
+4. Copy the captured shape JSONL into `docs/captured_shapes_b200.jsonl`.
 5. Write an implementation-plan draft to `docs/draft.md`.
 6. Run official Humanize plan generation on that draft.
 7. Start official Humanize RLCR from this kernel folder.

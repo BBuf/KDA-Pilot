@@ -30,38 +30,42 @@ The baseline is a native CUDA kernel (templated by head_dim, rope_dim, is_neox, 
 
 ## Workload Cases (Production Shapes)
 
-These shapes were captured from the SGLang diffusion benchmark skill running
-on the NVIDIA H200 reference host, plus derived from the upstream model
-configurations. Every shape in the table below is part of the optimization
-target.
+These workload cases are empirical-only. They are the unique kernel call
+signatures observed from successful `status=ok` runs while sweeping every
+preset listed by the current `bench_diffusion_denoise.py --list-models`
+source under the SGLang diffusion benchmark skill. Do not add
+model-config-derived or analytical shapes to this table.
 
-| Preset | Model | dtype | total_tokens (B*S) | num_heads_q | num_heads_k | head_dim | rope_dim | is_neox | notes |
-|---|---|---|---:|---:|---:|---:|---:|---|---|
-| flux | FLUX.1-dev | bfloat16 | 4608 | 24 | 24 | 128 | 128 | False | 1024^2 @ patch=2; 4096 image + 512 text tokens |
-| flux2 | FLUX.2-dev | bfloat16 | 4608 | 24 | 24 | 128 | 128 | False | 1024^2 @ patch=2; ~4608 joint tokens |
-| qwen | Qwen-Image-2512 | bfloat16 | 4352 | 24 | 24 | 128 | 128 | True | 1024^2 transformer joint qkv |
-| qwen-edit | Qwen-Image-Edit-2511 | bfloat16 | 4608 | 24 | 24 | 128 | 128 | True | image + edit conditioning |
-| zimage | Z-Image-Turbo | bfloat16 | 4096 | 24 | 24 | 128 | 128 | False | residual-form modulation pipeline |
-| wan-ti2v | Wan2.2-TI2V-5B | bfloat16 | 75600 | 24 | 24 | 128 | 128 | False | 720p, 81 frames, patch=(1,2,2) |
-| wan-t2v | Wan2.2-T2V-A14B | bfloat16 | 75600 | 40 | 40 | 128 | 128 | False | 720p, 81 frames, A14B branch |
-| wan-i2v | Wan2.2-I2V-A14B | bfloat16 | 75600 | 40 | 40 | 128 | 128 | False | 720p, 81 frames, image conditioning |
-| ltx2 | LTX-2 | bfloat16 | 65520 | 24 | 24 | 128 | 96 | False | 1536x1024, 121 frames, split rotary, rope_dim<head_dim |
-| hunyuanvideo | HunyuanVideo | bfloat16 | 33280 | 24 | 24 | 128 | 128 | False | 848x480, 65 frames |
-| mova-720p | MOVA-720p | bfloat16 | 65536 | 24 | 24 | 128 | 128 | False | 720p talking-face, 193 frames |
-| helios | Helios-Base | bfloat16 | 8448 | 16 | 16 | 128 | 128 | False | 640x384, 33 frames |
+| Preset | Model | Kernel | dtype | q shape | k shape | weights/cache/positions | flags | Evidence |
+|---|---|---|---|---|---|---|---|---|
+| qwen | Qwen/Qwen-Image-2512 | `qknorm_rope.fused_inplace_qknorm_rope` | bfloat16 | `[4096, 24, 128]/bfloat16C` | `[4096, 24, 128]/bfloat16C` | q_weight=`[128]/bfloat16C` ; k_weight=`[128]/bfloat16C` ; cos_sin_cache=`[4096, 128]/float32C` ; positions=`[4096]/int64C` | is_neox=`False` ; eps=`1e-06` ; head_dim=`128` ; rope_dim=`128` | ion8-h200 call 1 |
+| qwen | Qwen/Qwen-Image-2512 | `qknorm_rope.fused_inplace_qknorm_rope` | bfloat16 | `[19, 24, 128]/bfloat16C` | `[19, 24, 128]/bfloat16C` | q_weight=`[128]/bfloat16C` ; k_weight=`[128]/bfloat16C` ; cos_sin_cache=`[19, 128]/float32C` ; positions=`[19]/int64C` | is_neox=`False` ; eps=`1e-06` ; head_dim=`128` ; rope_dim=`128` | ion8-h200 call 2 |
+| qwen | Qwen/Qwen-Image-2512 | `qknorm_rope.fused_inplace_qknorm_rope` | bfloat16 | `[47, 24, 128]/bfloat16C` | `[47, 24, 128]/bfloat16C` | q_weight=`[128]/bfloat16C` ; k_weight=`[128]/bfloat16C` ; cos_sin_cache=`[47, 128]/float32C` ; positions=`[47]/int64C` | is_neox=`False` ; eps=`1e-06` ; head_dim=`128` ; rope_dim=`128` | ion8-h200 call 122 |
+| qwen-edit | Qwen/Qwen-Image-Edit-2511 | `qknorm_rope.fused_inplace_qknorm_rope` | bfloat16 | `[8424, 24, 128]/bfloat16C` | `[8424, 24, 128]/bfloat16C` | q_weight=`[128]/bfloat16C` ; k_weight=`[128]/bfloat16C` ; cos_sin_cache=`[8424, 128]/float32C` ; positions=`[8424]/int64C` | is_neox=`False` ; eps=`1e-06` ; head_dim=`128` ; rope_dim=`128` | ion8-h200 call 1 |
+| qwen-edit | Qwen/Qwen-Image-Edit-2511 | `qknorm_rope.fused_inplace_qknorm_rope` | bfloat16 | `[195, 24, 128]/bfloat16C` | `[195, 24, 128]/bfloat16C` | q_weight=`[128]/bfloat16C` ; k_weight=`[128]/bfloat16C` ; cos_sin_cache=`[195, 128]/float32C` ; positions=`[195]/int64C` | is_neox=`False` ; eps=`1e-06` ; head_dim=`128` ; rope_dim=`128` | ion8-h200 call 2 |
+| qwen-edit | Qwen/Qwen-Image-Edit-2511 | `qknorm_rope.fused_inplace_qknorm_rope` | bfloat16 | `[189, 24, 128]/bfloat16C` | `[189, 24, 128]/bfloat16C` | q_weight=`[128]/bfloat16C` ; k_weight=`[128]/bfloat16C` ; cos_sin_cache=`[189, 128]/float32C` ; positions=`[189]/int64C` | is_neox=`False` ; eps=`1e-06` ; head_dim=`128` ; rope_dim=`128` | ion8-h200 call 122 |
+| zimage | Tongyi-MAI/Z-Image-Turbo | `qknorm_rope.fused_inplace_qknorm_rope` | bfloat16 | `[4096, 30, 128]/bfloat16C` | `[4096, 30, 128]/bfloat16C` | q_weight=`[128]/bfloat16C` ; k_weight=`[128]/bfloat16C` ; cos_sin_cache=`[4096, 128]/float32C` ; positions=`[4096]/int64C` | is_neox=`False` ; eps=`1e-05` ; head_dim=`128` ; rope_dim=`128` | ion8-h200 call 1 |
+| zimage | Tongyi-MAI/Z-Image-Turbo | `qknorm_rope.fused_inplace_qknorm_rope` | bfloat16 | `[32, 30, 128]/bfloat16C` | `[32, 30, 128]/bfloat16C` | q_weight=`[128]/bfloat16C` ; k_weight=`[128]/bfloat16C` ; cos_sin_cache=`[32, 128]/float32C` ; positions=`[32]/int64C` | is_neox=`False` ; eps=`1e-05` ; head_dim=`128` ; rope_dim=`128` | ion8-h200 call 3 |
+| zimage | Tongyi-MAI/Z-Image-Turbo | `qknorm_rope.fused_inplace_qknorm_rope` | bfloat16 | `[4128, 30, 128]/bfloat16C` | `[4128, 30, 128]/bfloat16C` | q_weight=`[128]/bfloat16C` ; k_weight=`[128]/bfloat16C` ; cos_sin_cache=`[4128, 128]/float32C` ; positions=`[4128]/int64C` | is_neox=`False` ; eps=`1e-05` ; head_dim=`128` ; rope_dim=`128` | ion8-h200 call 5 |
 
+Shape collection methodology: all entries above come directly from
+`kernel_shape_capture.py` JSONL records collected while running the
+full SGLang diffusion benchmark preset list on `ion-b200`, `ion8-h200`,
+and/or `ion9-h200`. Each accepted preset had `status=ok`, a valid
+denoise/refinement perf dump, and more than install-only capture lines.
+Each preset run used `--backend=sglang` through the benchmark helper and
+model weights were deleted from the Hugging Face cache immediately after
+that preset completed.
 
-Shape collection methodology: the SGLang diffusion benchmark skill at
-`~/.codex/skills/sglang-diffusion-benchmark-profile/scripts/bench_diffusion_denoise.py`
-was run for each preset with the `kernel_shape_capture.py` monkey-patch
-active on `ion-b200` (B200) and `ion8-h200` / `ion9-h200` (H200). For
-this kernel family live captures fired on presets `['qwen', 'zimage']` and are saved verbatim under `docs/captured_shapes_h200.jsonl` and
-summarized in `docs/captured_shapes_h200.md` (6 unique
-shape signatures). The analytical table above is the superset; any
-additional shape observed in a future capture must be appended before
-being claimed as part of the promotion target. Note: tensor shapes are
-arch-independent for this kernel; if `captured_shapes_b200.jsonl` is empty
-the agent must treat the H200 capture as the authoritative shape ledger.
+- Captured presets for this task/arch: `['qwen', 'qwen-edit', 'zimage']`
+- Capture hosts for this task/arch: `['ion8-h200']`
+- Raw evidence: `docs/captured_shapes_h200.jsonl`
+- Summary: `docs/captured_shapes_h200.md`
+
+Humanize/RLCR instruction: do not determine, derive, broaden, or
+reinterpret optimization shapes during plan generation. The workload
+shape set is exactly the rows in this prompt and the matching
+`docs/captured_shapes_h200.jsonl`; use those shapes verbatim.
 
 ## Canonical Regression Shapes (from SGLang test)
 
@@ -170,7 +174,7 @@ registration entrypoint.
 - `tests/`: correctness tests adapted from the SGLang reference test under
 `python/sglang/jit_kernel/tests/diffusion/test_qknorm_rope.py`.
 - `docs/draft.md`: implementation-plan draft written before code changes.
-- `docs/shapes_<host>.jsonl`: captured shape JSONL from the diffusion
+- `docs/captured_shapes_h200.jsonl`: captured shape JSONL from the diffusion
 benchmark sweep, copied into this folder.
 - `benchmark.csv`: every measured baseline vs candidate comparison.
 - `solutions.jsonl`: every candidate implementation, parent link, status,
@@ -320,7 +324,7 @@ The mandatory pattern in this repo when you do profile:
   2. Build a standalone harness under `profile/<run_name>/harness/`.
      Build the harness from your `src/` `.cu` / `.cuh` sources with
   `-lineinfo` so SASS maps back to source. Match the exact captured
-  shape from `docs/captured_shapes_<arch>.jsonl` for the slice you
+  shape from `docs/captured_shapes_h200.jsonl` for the slice you
   are profiling.
   3. Run two profiles into `profile/<run_name>/reports/`:
 
@@ -431,7 +435,7 @@ baseline.
 `../../external/ncu-report-skill/SKILL.md` from this kernel folder.
 3. Recover the SGLang baseline path, tensor contract, and exact benchmark
 command for every shape in the shape table.
-4. Copy the captured shape JSONL into `docs/shapes_<host>.jsonl`.
+4. Copy the captured shape JSONL into `docs/captured_shapes_h200.jsonl`.
 5. Write an implementation-plan draft to `docs/draft.md`.
 6. Run official Humanize plan generation on that draft.
 7. Start official Humanize RLCR from this kernel folder.

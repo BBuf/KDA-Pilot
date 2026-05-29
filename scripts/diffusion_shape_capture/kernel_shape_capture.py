@@ -26,6 +26,7 @@ _ARCH_LABEL = os.environ.get("DIFFUSION_SHAPE_ARCH", "unknown")
 
 _lock = threading.Lock()
 _call_counters: dict[str, int] = {}
+_seen_signatures: set[tuple[str, str]] = set()
 _installed = False
 
 
@@ -66,10 +67,21 @@ def _emit(record: dict[str, Any]) -> None:
 def _wrap(kernel_name: str, fn):
     def wrapped(*args, **kwargs):
         try:
+            shaped_args = [_shape(a) for a in args]
+            shaped_kwargs = {k: _shape(v) for k, v in kwargs.items()}
+            signature = json.dumps(
+                {"args": shaped_args, "kwargs": shaped_kwargs},
+                sort_keys=True,
+                default=str,
+            )
             with _lock:
                 _call_counters[kernel_name] = _call_counters.get(kernel_name, 0) + 1
                 call_idx = _call_counters[kernel_name]
-            if call_idx <= 4 or call_idx % 256 == 0:
+                signature_key = (kernel_name, signature)
+                is_new_signature = signature_key not in _seen_signatures
+                if is_new_signature:
+                    _seen_signatures.add(signature_key)
+            if is_new_signature or call_idx <= 4 or call_idx % 1024 == 0:
                 _emit(
                     {
                         "kernel": kernel_name,
@@ -77,8 +89,9 @@ def _wrap(kernel_name: str, fn):
                         "host": _HOST_LABEL,
                         "arch": _ARCH_LABEL,
                         "call_idx": call_idx,
-                        "args": [_shape(a) for a in args],
-                        "kwargs": {k: _shape(v) for k, v in kwargs.items()},
+                        "new_signature": is_new_signature,
+                        "args": shaped_args,
+                        "kwargs": shaped_kwargs,
                         "ts": time.time(),
                     }
                 )

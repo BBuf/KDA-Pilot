@@ -124,13 +124,12 @@ patch-regeneration when upstream sglang edits `__init__.py`).
 ### SGLang Diffusion Multi-Shape Tasks
 
 These tasks cover the SGLang non-gemm/non-attention diffusion kernels under
-`python/sglang/jit_kernel/diffusion/`. Each task's shape table was derived from
-running the SGLang diffusion benchmark skill's preset models on the
-corresponding remote GPU box and recording the live input shapes and dtypes that
-hit each kernel. The full preset list (FLUX, FLUX.2, Qwen-Image, Qwen-Image-Edit,
-Z-Image-Turbo, Wan2.2-T2V/I2V/TI2V, LTX-2, HunyuanVideo, MOVA-720p, Helios-Base)
-runs on `ion-b200` for the B200 variants and on `ion8-h200` / `ion9-h200` for the
-H200 variants.
+`python/sglang/jit_kernel/diffusion/`. Each task's shape table is captured from
+accepted live SGLang diffusion benchmark preset runs on the corresponding remote
+GPU box. Presets only contribute shapes when the native SGLang run finishes with
+a valid denoise/refinement perf dump, so gated or failed runs are excluded from
+the workload tables. The preset sweep runs on `ion-b200` for the B200 variants
+and on `ion8-h200` / `ion9-h200` for the H200 variants.
 
 Each task's `prompt.md` carries the full shape table and explicitly allows
 shape-bucketed dispatchers, per-bucket configs, and per-bucket kernel variants

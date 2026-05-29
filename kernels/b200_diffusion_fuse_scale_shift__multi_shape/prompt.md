@@ -30,38 +30,48 @@ outcome metric rather than a pass/fail threshold.
 
 ## Workload Cases (Production Shapes)
 
-These shapes were captured from the SGLang diffusion benchmark skill running
-on the NVIDIA B200 reference host, plus derived from the upstream model
-configurations. Every shape in the table below is part of the optimization
-target.
+These workload cases are empirical-only. They are the unique kernel call
+signatures observed from successful `status=ok` runs while sweeping every
+preset listed by the current `bench_diffusion_denoise.py --list-models`
+source under the SGLang diffusion benchmark skill. Do not add
+model-config-derived or analytical shapes to this table.
 
-| Preset | Model | dtype | x shape (B,L,C) | scale/shift layout | dual-modulation | residual | notes |
+| Preset | Model | Kernel | dtype | x shape | modulation tensors | flags | Evidence |
 |---|---|---|---|---|---|---|---|
-| flux | FLUX.1-dev | bfloat16 | (1, 4608, 3072) | (B,C) | No | No | adaLN modulation in joint attention |
-| flux2 | FLUX.2-dev | bfloat16 | (1, 4608, 3072) | (B,C) | No | No | flux2 adaLN |
-| qwen | Qwen-Image-2512 | bfloat16 | (1, 4352, 3072) | (B,C) | Yes (select01) | No | dual-modulation select |
-| qwen-edit | Qwen-Image-Edit-2511 | bfloat16 | (1, 4608, 3072) | (B,C) | Yes (select01) | No | dual-modulation with edit |
-| zimage | Z-Image-Turbo | bfloat16 | (1, 4096, 3072) | (B,C) | Yes (select01) | Yes | residual+gate+dual-modulation |
-| wan-ti2v | Wan2.2-TI2V-5B | bfloat16 | (1, 75600, 3072) | (B,F,1,C) | No | No | 4D scale/shift over frames |
-| wan-t2v | Wan2.2-T2V-A14B | bfloat16 | (1, 75600, 5120) | (B,F,1,C) | No | No | A14B frames modulation |
-| wan-i2v | Wan2.2-I2V-A14B | bfloat16 | (1, 75600, 5120) | (B,F,1,C) | No | No | A14B I2V frames modulation |
-| ltx2 | LTX-2 | bfloat16 | (1, 65520, 2048) | (B,C) | No | No | LTX-2 modulation |
-| hunyuanvideo | HunyuanVideo | bfloat16 | (1, 33280, 3072) | (B,F,1,C) | No | No | Hunyuan frames modulation |
-| mova-720p | MOVA-720p | bfloat16 | (1, 65536, 3072) | (B,F,1,C) | No | No | MOVA frames |
-| helios | Helios-Base | bfloat16 | (1, 8448, 2048) | (B,C) | No | No | small video |
+| firered-edit-1.0 | FireRedTeam/FireRed-Image-Edit-1.0 | `scale_shift.fuse_scale_shift_kernel` | bfloat16 | arg0=`[1, 8424, 3072]/bfloat16C` | arg1=`[1, 1, 3072]/bfloat16C` ; arg2=`[1, 8424, 3072]/bfloat16C` | scale_constant=`0` | ion-b200 call 1 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `scale_shift.fuse_scale_shift_kernel` | bfloat16 | arg0=`[1, 27030, 3072]/bfloat16C` | arg1=`[1, 3072]/bfloat16C` ; arg2=`[1, 27030, 3072]/bfloat16C` | scale_constant=`0` | ion-b200 call 1 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `scale_shift.fuse_scale_shift_kernel` | bfloat16 | arg0=`[1, 55, 3072]/bfloat16C` | arg1=`[1, 3072]/bfloat16C` ; arg2=`[1, 55, 3072]/bfloat16C` | scale_constant=`0` | ion-b200 call 2 |
+| hunyuanvideo | hunyuanvideo-community/HunyuanVideo | `scale_shift.fuse_scale_shift_kernel` | bfloat16 | arg0=`[1, 27085, 3072]/bfloat16C` | arg1=`[1, 3072]/bfloat16C` ; arg2=`[1, 27085, 3072]/bfloat16C` | scale_constant=`0` | ion-b200 call 41 |
+| qwen | Qwen/Qwen-Image-2512 | `scale_shift.fuse_scale_shift_kernel` | bfloat16 | arg0=`[1, 4096, 3072]/bfloat16C` | arg1=`[1, 1, 3072]/bfloat16C` ; arg2=`[1, 4096, 3072]/bfloat16C` | scale_constant=`0` | ion-b200 call 1 |
+| qwen | Qwen/Qwen-Image-2512 | `scale_shift.fuse_scale_shift_kernel` | bfloat16 | arg0=`[1, 19, 3072]/bfloat16C` | arg1=`[1, 1, 3072]/bfloat16C` ; arg2=`[1, 19, 3072]/bfloat16C` | scale_constant=`0` | ion-b200 call 2 |
+| qwen | Qwen/Qwen-Image-2512 | `scale_shift.fuse_scale_shift_kernel` | bfloat16 | arg0=`[1, 47, 3072]/bfloat16C` | arg1=`[1, 1, 3072]/bfloat16C` ; arg2=`[1, 47, 3072]/bfloat16C` | scale_constant=`0` | ion-b200 call 122 |
+| qwen-edit | Qwen/Qwen-Image-Edit-2511 | `scale_shift.fuse_layernorm_scale_shift_gate_select01_kernel` | bfloat16 | arg0=`[1, 8424, 3072]/bfloat16C` | scale0=`[1, 3072]/bfloat16C` ; shift0=`[1, 3072]/bfloat16C` ; gate0=`[1, 3072]/bfloat16C` ; scale1=`[1, 3072]/bfloat16C` ; shift1=`[1, 3072]/bfloat16C` ; gate1=`[1, 3072]/bfloat16C` ; index=`[1, 8424]/int32C` | weight=`None` ; bias=`None` ; eps=`1e-06` | ion-b200 call 1 |
+| qwen-edit | Qwen/Qwen-Image-Edit-2511 | `scale_shift.fuse_residual_layernorm_scale_shift_gate_select01_kernel` | bfloat16 | arg0=`[1, 8424, 3072]/bfloat16C` | residual=`[1, 8424, 3072]/bfloat16C` ; residual_gate=`[1, 8424, 3072]/bfloat16C` ; scale0=`[1, 3072]/bfloat16C` ; shift0=`[1, 3072]/bfloat16C` ; gate0=`[1, 3072]/bfloat16C` ; scale1=`[1, 3072]/bfloat16C` ; shift1=`[1, 3072]/bfloat16C` ; gate1=`[1, 3072]/bfloat16C` ; index=`[1, 8424]/int32C` | weight=`None` ; bias=`None` ; eps=`1e-06` | ion-b200 call 1 |
+| qwen-edit | Qwen/Qwen-Image-Edit-2511 | `scale_shift.fuse_scale_shift_kernel` | bfloat16 | arg0=`[1, 8424, 3072]/bfloat16C` | arg1=`[1, 8424, 3072]/bfloat16C` ; arg2=`[1, 8424, 3072]/bfloat16C` | scale_constant=`0` | ion-b200 call 1 |
+| qwen-edit | Qwen/Qwen-Image-Edit-2511 | `scale_shift.fuse_scale_shift_kernel` | bfloat16 | arg0=`[1, 195, 3072]/bfloat16C` | arg1=`[1, 1, 3072]/bfloat16C` ; arg2=`[1, 195, 3072]/bfloat16C` | scale_constant=`0` | ion-b200 call 2 |
+| qwen-edit | Qwen/Qwen-Image-Edit-2511 | `scale_shift.fuse_scale_shift_kernel` | bfloat16 | arg0=`[1, 189, 3072]/bfloat16C` | arg1=`[1, 1, 3072]/bfloat16C` ; arg2=`[1, 189, 3072]/bfloat16C` | scale_constant=`0` | ion-b200 call 122 |
+| wan-i2v | Wan-AI/Wan2.2-I2V-A14B-Diffusers | `scale_shift.fuse_scale_shift_kernel` | bfloat16 | arg0=`[1, 37044, 5120]/bfloat16C` | arg1=`[1, 1, 5120]/float32C` ; arg2=`[1, 37044, 5120]/bfloat16C` | scale_constant=`0` | ion-b200 call 1 |
+| wan-t2v | Wan-AI/Wan2.2-T2V-A14B-Diffusers | `scale_shift.fuse_scale_shift_kernel` | bfloat16 | arg0=`[1, 37800, 5120]/bfloat16C` | arg1=`[1, 1, 5120]/float32C` ; arg2=`[1, 37800, 5120]/bfloat16C` | scale_constant=`0` | ion-b200 call 1 |
+| wan-ti2v | Wan-AI/Wan2.2-TI2V-5B-Diffusers | `scale_shift.fuse_scale_shift_kernel` | bfloat16 | arg0=`[1, 18144, 3072]/bfloat16C` | arg1=`[1, 18144, 3072]/float32NC` ; arg2=`[1, 18144, 3072]/bfloat16C` | scale_constant=`0` | ion-b200 call 1 |
 
+Shape collection methodology: all entries above come directly from
+`kernel_shape_capture.py` JSONL records collected while running the
+full SGLang diffusion benchmark preset list on `ion-b200`, `ion8-h200`,
+and/or `ion9-h200`. Each accepted preset had `status=ok`, a valid
+denoise/refinement perf dump, and more than install-only capture lines.
+Each preset run used `--backend=sglang` through the benchmark helper and
+model weights were deleted from the Hugging Face cache immediately after
+that preset completed.
 
-Shape collection methodology: the SGLang diffusion benchmark skill at
-`~/.codex/skills/sglang-diffusion-benchmark-profile/scripts/bench_diffusion_denoise.py`
-was run for each preset with the `kernel_shape_capture.py` monkey-patch
-active on `ion-b200` (B200) and `ion8-h200` / `ion9-h200` (H200). For
-this kernel family live captures fired on presets `['qwen']` and are saved verbatim under `docs/captured_shapes_b200.jsonl` and
-summarized in `docs/captured_shapes_b200.md` (3 unique
-shape signatures). The analytical table above is the superset; any
-additional shape observed in a future capture must be appended before
-being claimed as part of the promotion target. Note: tensor shapes are
-arch-independent for this kernel; if `captured_shapes_b200.jsonl` is empty
-the agent must treat the H200 capture as the authoritative shape ledger.
+- Captured presets for this task/arch: `['firered-edit-1.0', 'hunyuanvideo', 'qwen', 'qwen-edit', 'wan-i2v', 'wan-t2v', 'wan-ti2v']`
+- Capture hosts for this task/arch: `['ion-b200']`
+- Raw evidence: `docs/captured_shapes_b200.jsonl`
+- Summary: `docs/captured_shapes_b200.md`
+
+Humanize/RLCR instruction: do not determine, derive, broaden, or
+reinterpret optimization shapes during plan generation. The workload
+shape set is exactly the rows in this prompt and the matching
+`docs/captured_shapes_b200.jsonl`; use those shapes verbatim.
 
 ## Canonical Regression Shapes (from SGLang test)
 
@@ -169,7 +179,7 @@ registration entrypoint.
 - `tests/`: correctness tests adapted from the SGLang reference test under
 `python/sglang/jit_kernel/tests/diffusion/test_qwen_image_modulation.py`.
 - `docs/draft.md`: implementation-plan draft written before code changes.
-- `docs/shapes_<host>.jsonl`: captured shape JSONL from the diffusion
+- `docs/captured_shapes_b200.jsonl`: captured shape JSONL from the diffusion
 benchmark sweep, copied into this folder.
 - `benchmark.csv`: every measured baseline vs candidate comparison.
 - `solutions.jsonl`: every candidate implementation, parent link, status,
@@ -318,7 +328,7 @@ The mandatory pattern in this repo when you do profile:
   2. Build a standalone harness under `profile/<run_name>/harness/`.
      Build the harness from your `src/` `.cu` / `.cuh` sources with
   `-lineinfo` so SASS maps back to source. Match the exact captured
-  shape from `docs/captured_shapes_<arch>.jsonl` for the slice you
+  shape from `docs/captured_shapes_b200.jsonl` for the slice you
   are profiling.
   3. Run two profiles into `profile/<run_name>/reports/`:
 
@@ -429,7 +439,7 @@ baseline.
 `../../external/ncu-report-skill/SKILL.md` from this kernel folder.
 3. Recover the SGLang baseline path, tensor contract, and exact benchmark
 command for every shape in the shape table.
-4. Copy the captured shape JSONL into `docs/shapes_<host>.jsonl`.
+4. Copy the captured shape JSONL into `docs/captured_shapes_b200.jsonl`.
 5. Write an implementation-plan draft to `docs/draft.md`.
 6. Run official Humanize plan generation on that draft.
 7. Start official Humanize RLCR from this kernel folder.

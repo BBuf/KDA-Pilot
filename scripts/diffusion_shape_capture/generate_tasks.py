@@ -449,19 +449,20 @@ def render_prompt(family: Family, arch: dict) -> str:
         {cuda_note}{cutedsl_note}
         ## Workload Cases (Production Shapes)
 
-        These shapes were captured from the SGLang diffusion benchmark skill running
-        on the {arch_title} reference host, plus derived from the upstream model
-        configurations. Every shape in the table below is part of the optimization
-        target.
+        This section is populated by
+        `scripts/diffusion_shape_capture/distribute_shapes.py` from live SGLang
+        diffusion benchmark captures. Do not fill it from model configs or
+        analytical shape estimates.
 
-        {family.shape_table_md}
+        No live call signatures are bundled in the generator template. Run a
+        full-preset sweep with `kernel_shape_capture.py`, then rerun
+        `distribute_shapes.py --input <captures.jsonl> --sweep-log <sweep.log>`
+        before using this prompt for optimization.
 
-        Shape collection methodology: the SGLang diffusion benchmark skill at
-        `~/.codex/skills/sglang-diffusion-benchmark-profile/scripts/bench_diffusion_denoise.py`
-        was run for each preset with the `kernel_shape_capture.py` monkey-patch
-        active. Captured shapes are saved under `docs/shapes_<host>.jsonl`. Any
-        additional shape encountered in a future capture must be added to the
-        table above before being claimed as part of the promotion target.
+        Humanize/RLCR instruction: do not determine, derive, broaden, or
+        reinterpret optimization shapes during plan generation. The workload
+        shape set must be exactly the rows inserted by `distribute_shapes.py`
+        and the matching `docs/captured_shapes_<arch>.jsonl`.
 
         ## Configurable Optimization Axes
 
@@ -529,7 +530,7 @@ def render_prompt(family: Family, arch: dict) -> str:
         - `tests/`: correctness tests adapted from the SGLang reference test under
           `{family.test_file}`.
         - `docs/draft.md`: implementation-plan draft written before code changes.
-        - `docs/shapes_<host>.jsonl`: captured shape JSONL from the diffusion
+        - `docs/captured_shapes_<arch>.jsonl`: captured shape JSONL from the diffusion
           benchmark sweep, copied into this folder.
         - `benchmark.csv`: every measured baseline vs candidate comparison.
         - `solutions.jsonl`: every candidate implementation, parent link, status,
@@ -675,7 +676,7 @@ def render_prompt(family: Family, arch: dict) -> str:
            `../../external/ncu-report-skill/SKILL.md` from this kernel folder.
         3. Recover the SGLang baseline path, tensor contract, and exact benchmark
            command for every shape in the shape table.
-        4. Copy the captured shape JSONL into `docs/shapes_<host>.jsonl`.
+        4. Copy the captured shape JSONL into `docs/captured_shapes_<arch>.jsonl`.
         5. Write an implementation-plan draft to `docs/draft.md`.
         6. Run official Humanize plan generation on that draft.
         7. Start official Humanize RLCR from this kernel folder.
