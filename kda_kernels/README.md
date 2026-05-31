@@ -60,7 +60,6 @@
               # *.cu / *.cuh / *.cpp / *.h  — CUDA source copied from kernels/<task>/src/
               # wrapper.py                  — Python JIT loader for the CUDA module
               # KDA_STATUS.md               — task / commit / date / speedup stamps
-            rms_norm_fn/__init__.py
             norm_infer/__init__.py          # owns norm_infer + triton_one_pass_rms_norm
             group_norm_silu/__init__.py     # owns triton_group_norm_silu + apply_group_norm_silu
             rotary_embedding/__init__.py    # owns apply_rotary_embedding + apply_ltx2_split_rotary_emb
@@ -85,10 +84,9 @@
 
         ## Swap table
 
-        | sglang entry point | kda mirror | owning KDA task family |
-        |---|---|---|
-        | `sglang.jit_kernel.diffusion.qknorm_rope:fused_inplace_qknorm_rope` | `kda_kernels.diffusion.qknorm_rope:fused_inplace_qknorm_rope` | `qknorm_rope` |
-| `sglang.jit_kernel.diffusion.triton.norm:rms_norm_fn` | `kda_kernels.diffusion.triton.norm:rms_norm_fn` | `rms_norm_fn` |
+| sglang entry point | kda mirror | owning KDA task family |
+|---|---|---|
+| `sglang.jit_kernel.diffusion.qknorm_rope:fused_inplace_qknorm_rope` | `kda_kernels.diffusion.qknorm_rope:fused_inplace_qknorm_rope` | `qknorm_rope` |
 | `sglang.jit_kernel.diffusion.triton.norm:norm_infer` | `kda_kernels.diffusion.triton.norm:norm_infer` | `norm_infer` |
 | `sglang.jit_kernel.diffusion.triton.rmsnorm_onepass:triton_one_pass_rms_norm` | `kda_kernels.diffusion.triton.rmsnorm_onepass:triton_one_pass_rms_norm` | `norm_infer` |
 | `sglang.jit_kernel.diffusion.triton.group_norm_silu:triton_group_norm_silu` | `kda_kernels.diffusion.triton.group_norm_silu:triton_group_norm_silu` | `group_norm_silu` |

@@ -55,10 +55,6 @@ FAMILY_TO_SWAPS: dict[str, list[tuple[str, str, str, str]]] = {
         ("sglang.jit_kernel.diffusion.qknorm_rope", "fused_inplace_qknorm_rope",
          "kda_kernels.diffusion.qknorm_rope", "fused_inplace_qknorm_rope"),
     ],
-    "rms_norm_fn": [
-        ("sglang.jit_kernel.diffusion.triton.norm", "rms_norm_fn",
-         "kda_kernels.diffusion.rms_norm_fn", "rms_norm_fn"),
-    ],
     "norm_infer": [
         ("sglang.jit_kernel.diffusion.triton.norm", "norm_infer",
          "kda_kernels.diffusion.norm_infer", "norm_infer"),

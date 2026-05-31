@@ -482,16 +482,6 @@ This ledger contains only shapes captured from real SGLang diffusion benchmark p
 | zimage | `qknorm_rope.fused_inplace_qknorm_rope` | q=`[32, 30, 128]/bfloat16C` ; k=`[32, 30, 128]/bfloat16C` ; q_weight=`[128]/bfloat16C` ; k_weight=`[128]/bfloat16C` ; cos_sin_cache=`[32, 128]/float32C` ; positions=`[32]/int64C` | is_neox=`False` ; eps=`1e-05` ; head_dim=`128` ; rope_dim=`128` | ion8-h200 call 3 |
 | zimage | `qknorm_rope.fused_inplace_qknorm_rope` | q=`[4128, 30, 128]/bfloat16C` ; k=`[4128, 30, 128]/bfloat16C` ; q_weight=`[128]/bfloat16C` ; k_weight=`[128]/bfloat16C` ; cos_sin_cache=`[4128, 128]/float32C` ; positions=`[4128]/int64C` | is_neox=`False` ; eps=`1e-05` ; head_dim=`128` ; rope_dim=`128` | ion8-h200 call 5 |
 
-## `diffusion_rms_norm_fn__multi_shape`
-
-### `b200`
-
-No live call signatures captured.
-
-### `h200`
-
-No live call signatures captured.
-
 ## `diffusion_rotary_embedding__multi_shape`
 
 ### `b200`
@@ -522,4 +512,3 @@ No live call signatures captured.
 | ltx2 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | arg0=`[1, 1536, 2048]/bfloat16C` ; arg1=`[1, 32, 1536, 32]/bfloat16NC` ; arg2=`[1, 32, 1536, 32]/bfloat16NC` | (none) | ion8-h200 call 5 |
 | ltx2 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | arg0=`[1, 6144, 4096]/bfloat16C` ; arg1=`[1, 32, 6144, 64]/bfloat16NC` ; arg2=`[1, 32, 6144, 64]/bfloat16NC` | (none) | ion8-h200 call 385 |
 | ltx2 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | arg0=`[1, 6144, 2048]/bfloat16C` ; arg1=`[1, 32, 6144, 32]/bfloat16NC` ; arg2=`[1, 32, 6144, 32]/bfloat16NC` | (none) | ion8-h200 call 389 |
-

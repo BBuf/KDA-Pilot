@@ -9,28 +9,27 @@ from __future__ import annotations
 from pathlib import Path
 
 
-REPO_ROOT = Path(__file__).resolve().parent
+REPO_ROOT = Path(__file__).resolve().parents[2]
 LAUNCH_DIR = REPO_ROOT / "scripts" / "launch_kernels"
 
-# Order matters: assigns k03, k04, ... starting after the existing two.
+# Preserve existing launcher numbers. k05/k06 were retired after their task
+# family was removed for having no captured production shapes.
 TASKS = [
-    # (kernel-folder-name,)
-    "b200_diffusion_qknorm_rope__multi_shape",
-    "h200_diffusion_qknorm_rope__multi_shape",
-    "b200_diffusion_rms_norm_fn__multi_shape",
-    "h200_diffusion_rms_norm_fn__multi_shape",
-    "b200_diffusion_norm_infer__multi_shape",
-    "h200_diffusion_norm_infer__multi_shape",
-    "b200_diffusion_group_norm_silu__multi_shape",
-    "h200_diffusion_group_norm_silu__multi_shape",
-    "b200_diffusion_rotary_embedding__multi_shape",
-    "h200_diffusion_rotary_embedding__multi_shape",
-    "b200_diffusion_fuse_scale_shift__multi_shape",
-    "h200_diffusion_fuse_scale_shift__multi_shape",
-    "b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape",
-    "h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape",
-    "b200_diffusion_cutedsl_norm_scale_shift__multi_shape",
-    "h200_diffusion_cutedsl_norm_scale_shift__multi_shape",
+    # (launcher index, kernel-folder-name)
+    (3, "b200_diffusion_qknorm_rope__multi_shape"),
+    (4, "h200_diffusion_qknorm_rope__multi_shape"),
+    (7, "b200_diffusion_norm_infer__multi_shape"),
+    (8, "h200_diffusion_norm_infer__multi_shape"),
+    (9, "b200_diffusion_group_norm_silu__multi_shape"),
+    (10, "h200_diffusion_group_norm_silu__multi_shape"),
+    (11, "b200_diffusion_rotary_embedding__multi_shape"),
+    (12, "h200_diffusion_rotary_embedding__multi_shape"),
+    (13, "b200_diffusion_fuse_scale_shift__multi_shape"),
+    (14, "h200_diffusion_fuse_scale_shift__multi_shape"),
+    (15, "b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape"),
+    (16, "h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape"),
+    (17, "b200_diffusion_cutedsl_norm_scale_shift__multi_shape"),
+    (18, "h200_diffusion_cutedsl_norm_scale_shift__multi_shape"),
 ]
 
 LAUNCHER_TEMPLATE = """\
@@ -45,10 +44,7 @@ exec "$SCRIPT_DIR/../launch_kda_kernel_task.sh" "kernels/{task}" "$@"
 
 def main() -> None:
     LAUNCH_DIR.mkdir(parents=True, exist_ok=True)
-    next_index = 3
-    for task in TASKS:
-        index = next_index
-        next_index += 1
+    for index, task in TASKS:
         path = LAUNCH_DIR / f"k{index:02d}_{task}.sh"
         path.write_text(LAUNCHER_TEMPLATE.format(task=task))
         path.chmod(0o755)

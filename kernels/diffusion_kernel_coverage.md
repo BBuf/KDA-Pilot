@@ -54,14 +54,10 @@ contributed live captures for `qwen-edit`, `zimage`, `wan-ti2v`, and partial
 | `rotary.apply_rotary_embedding` | hunyuanvideo | ✅ (new in phase 2) |
 | `group_norm_silu.apply_group_norm_silu` | hunyuanvideo | ✅ (new in phase 2) |
 | `group_norm_silu.triton_group_norm_silu` | hunyuanvideo | ✅ (new in phase 2) |
-| `norm.rms_norm_fn` | — | ❌ Not exercised by any of the 12 sweep presets (all routes go through CuTe-DSL or fused-QKNorm). Analytical shape table only. |
 
-**14 of 15 kernel entry points have empirical capture coverage** after the
-phase-2 sweep (helios picked up `norm.norm_infer` as the very last addition).
-Only the flash-attention-style 1-pass `norm.rms_norm_fn` remains in the
-analytical-only column, because the current SGLang diffusion code paths never
-dispatch to it for the 12 sweep presets — it stays available as a generic
-LayerNorm/RMSNorm fast path for future models.
+**14 of 14 tracked kernel entry points have empirical capture coverage** after
+the phase-2 sweep (helios picked up `norm.norm_infer` as the very last
+addition).
 
 ## Re-capture procedure
 

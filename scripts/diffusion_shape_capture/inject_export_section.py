@@ -19,7 +19,6 @@ SECTION_HEADER = "## Promotion: Export Into kda_kernels"
 
 FAMILY_TO_FUNCTIONS: dict[str, list[str]] = {
     "qknorm_rope": ["fused_inplace_qknorm_rope"],
-    "rms_norm_fn": ["rms_norm_fn"],
     "norm_infer": ["norm_infer", "triton_one_pass_rms_norm"],
     "group_norm_silu": ["triton_group_norm_silu", "apply_group_norm_silu"],
     "rotary_embedding": ["apply_rotary_embedding", "apply_ltx2_split_rotary_emb"],

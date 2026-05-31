@@ -26,12 +26,6 @@ KW_QUERIES: dict[str, list[str]] = {
         'python3 ../../external/KernelWiki/scripts/query.py --repo sglang --tag rope --architecture sm100 --limit 20',
         'python3 ../../external/KernelWiki/scripts/query.py --repo flashinfer --tag rope --limit 20',
     ],
-    "rms_norm_fn": [
-        'python3 ../../external/KernelWiki/scripts/query.py "flash-attention layer norm residual fused"',
-        'python3 ../../external/KernelWiki/scripts/query.py --tag layer-norm --type kernel',
-        'python3 ../../external/KernelWiki/scripts/query.py --tag rms-norm --architecture sm100 --limit 20',
-        'python3 ../../external/KernelWiki/scripts/query.py --repo flash-attention --tag norm --limit 20',
-    ],
     "norm_infer": [
         'python3 ../../external/KernelWiki/scripts/query.py "layer norm 2-pass inference sm100"',
         'python3 ../../external/KernelWiki/scripts/query.py "one pass rmsnorm tiled per head"',
@@ -72,7 +66,6 @@ KW_QUERIES: dict[str, list[str]] = {
 
 FAMILY_BLURB: dict[str, str] = {
     "qknorm_rope": "fused in-place RMS-norm + RoPE on (Q, K) for DiT joint attention blocks",
-    "rms_norm_fn": "flash-attention-style 1-pass LayerNorm / RMSNorm with optional residual and dual-branch",
     "norm_infer": "inference-only 2-pass LayerNorm / RMSNorm and tiled one-pass RMSNorm baselines",
     "group_norm_silu": "fused GroupNorm + SiLU used by image (2D/3D) and video (5D) VAE decoders",
     "rotary_embedding": "standard apply_rotary_embedding plus the LTX-2 split-RoPE variant with 4D cos/sin",

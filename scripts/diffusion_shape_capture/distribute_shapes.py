@@ -35,7 +35,6 @@ SWEEP_STATUS_RE = re.compile(
 
 KERNEL_TO_FAMILY = {
     "qknorm_rope.fused_inplace_qknorm_rope": "diffusion_qknorm_rope__multi_shape",
-    "norm.rms_norm_fn": "diffusion_rms_norm_fn__multi_shape",
     "norm.norm_infer": "diffusion_norm_infer__multi_shape",
     "rmsnorm_onepass.triton_one_pass_rms_norm": "diffusion_norm_infer__multi_shape",
     "group_norm_silu.triton_group_norm_silu": "diffusion_group_norm_silu__multi_shape",
@@ -218,8 +217,6 @@ def model_name(model: str | None) -> str:
 def workload_header_for_family(family: str) -> str:
     if family == "diffusion_qknorm_rope__multi_shape":
         return "| Preset | Model | Kernel | dtype | q shape | k shape | weights/cache/positions | flags | Evidence |"
-    if family == "diffusion_rms_norm_fn__multi_shape":
-        return "| Preset | Model | Kernel | dtype | x shape | weight/bias/residual | flags | Evidence |"
     if family == "diffusion_norm_infer__multi_shape":
         return "| Preset | Model | Kernel | dtype | x shape | weight/bias | flags | Evidence |"
     if family == "diffusion_group_norm_silu__multi_shape":

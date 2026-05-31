@@ -10,7 +10,6 @@ package and swaps the attribute on the sglang module if True.
 
 KERNEL_REGISTRY = {
     "sglang.jit_kernel.diffusion.qknorm_rope:fused_inplace_qknorm_rope": "kda_kernels.diffusion.qknorm_rope:fused_inplace_qknorm_rope",
-    "sglang.jit_kernel.diffusion.triton.norm:rms_norm_fn": "kda_kernels.diffusion.rms_norm_fn:rms_norm_fn",
     "sglang.jit_kernel.diffusion.triton.norm:norm_infer": "kda_kernels.diffusion.norm_infer:norm_infer",
     "sglang.jit_kernel.diffusion.triton.rmsnorm_onepass:triton_one_pass_rms_norm": "kda_kernels.diffusion.norm_infer:triton_one_pass_rms_norm",
     "sglang.jit_kernel.diffusion.triton.group_norm_silu:triton_group_norm_silu": "kda_kernels.diffusion.group_norm_silu:triton_group_norm_silu",

@@ -76,48 +76,6 @@ FAMILIES: list[Family] = [
         ],
     ),
     Family(
-        slug="diffusion_rms_norm_fn__multi_shape",
-        title="Flash-attn-style 1-pass LN/RMSN with optional residual",
-        op_type="layer_or_rms_norm_fn",
-        sglang_targets=[
-            "sglang.jit_kernel.diffusion.triton.norm:rms_norm_fn",
-        ],
-        cute_dsl=False,
-        is_cuda_kernel=False,
-        test_file="python/sglang/jit_kernel/tests/test_rmsnorm.py",
-        description=(
-            "Optimize the SGLang diffusion `rms_norm_fn` Triton kernel (ported from Dao-AILab "
-            "flash-attention). Supports LayerNorm and RMSNorm, optional residual/x1/weight1/bias1 "
-            "branches, optional zero-centered weight, and optional output dtype override."
-        ),
-        shape_table_md="""\
-| Preset | Model | dtype | row_count (M = B*S) | hidden (N) | residual | extra branch | zero_centered_weight | notes |
-|---|---|---|---:|---:|---|---|---|---|
-| flux | FLUX.1-dev | bfloat16 | 4608 | 3072 | optional | none | True | adaLN pre-norm + post-norm |
-| flux2 | FLUX.2-dev | bfloat16 | 4608 | 3072 | optional | none | True | flux2 DiT 24+19 blocks |
-| qwen | Qwen-Image-2512 | bfloat16 | 4352 | 3072 | optional | none | False | RMSNorm pre-attn |
-| qwen-edit | Qwen-Image-Edit-2511 | bfloat16 | 4608 | 3072 | optional | none | False | image+edit conditioning |
-| zimage | Z-Image-Turbo | bfloat16 | 4096 | 3072 | required | none | False | dual-modulation post-norm |
-| wan-ti2v | Wan2.2-TI2V-5B | bfloat16 | 75600 | 3072 | optional | none | False | 720p video |
-| wan-t2v | Wan2.2-T2V-A14B | bfloat16 | 75600 | 5120 | optional | none | False | A14B branch hidden=5120 |
-| wan-i2v | Wan2.2-I2V-A14B | bfloat16 | 75600 | 5120 | optional | none | False | A14B image conditioning |
-| ltx2 | LTX-2 | bfloat16 | 65520 | 2048 | optional | none | False | 1536x1024 121 frames |
-| hunyuanvideo | HunyuanVideo | bfloat16 | 33280 | 3072 | optional | none | False | 848x480 65 frames |
-| mova-720p | MOVA-720p | bfloat16 | 65536 | 3072 | optional | none | False | 720p talking-face |
-| helios | Helios-Base | bfloat16 | 8448 | 2048 | optional | none | False | 640x384 33 frames |
-""",
-        config_axes=[
-            "is_rms_norm (True/False)",
-            "hidden (N) in 1024..8192",
-            "residual present / absent",
-            "x1/weight1/bias1 (dual branch) present / absent",
-            "zero_centered_weight present",
-            "row_count (M) in 4096..75600",
-            "dtype (bfloat16 / float16 / float32)",
-            "out_dtype != input dtype path",
-        ],
-    ),
-    Family(
         slug="diffusion_norm_infer__multi_shape",
         title="Inference-only LN/RMSN 2-pass kernel",
         op_type="layer_or_rms_norm_infer",

@@ -39,24 +39,6 @@ CANONICAL_SECTIONS: dict[str, str] = {
         "The candidate kernel must support every `(batch_size, num_heads, head_dim, rope_dim, is_neox, position_dtype)`\n"
         "tuple above or fall back to the SGLang baseline for the unsupported tail.\n"
     ),
-    "diffusion_rms_norm_fn__multi_shape": (
-        "## Canonical Regression Shapes (from SGLang test)\n"
-        "\n"
-        "Source: `python/sglang/jit_kernel/tests/test_rmsnorm.py` (closest in-repo enumeration; "
-        "no diffusion-specific test exists yet for `rms_norm_fn`).\n"
-        "\n"
-        "- `batch_size` (== row count `M`): every power of two in `[1, 8192]` plus `x+i+1` jitter,\n"
-        "  CI subset `[1, 9, 256, 4109]`.\n"
-        "- `hidden_size` (`N`): `[64, 128, 256, 512, 1024, 2048, 3072, 4096, 5120, 6144, 7168, 8192, 2304, 2560, 12288, 16384]`;\n"
-        "  CI subset `[256, 1024, 16384]`.\n"
-        "- `dtype`: `[torch.float16, torch.bfloat16]`; `eps=1e-6`.\n"
-        "- `specify_out`: `[True, False]` (out tensor preallocated vs reuse input).\n"
-        "- `hidden_size` support gate: `[64, 128, 256, 512, 8192, 8704, 16384]` (extra `_is_supported_rmsnorm_hidden_size` cases).\n"
-        "- Oracle: FlashInfer `flashinfer_rmsnorm`, tolerance `1e-2`.\n"
-        "\n"
-        "These cover only the LLM-style hidden sizes. The diffusion-specific extras (residual / x1 / weight1 / bias1 / "
-        "zero_centered_weight / out_dtype) must be exercised manually using the production shape table.\n"
-    ),
     "diffusion_norm_infer__multi_shape": (
         "## Canonical Regression Shapes (from SGLang test)\n"
         "\n"

@@ -116,7 +116,6 @@ families, plus the remaining four families in either arch):
 | K11 / K12 | `*_diffusion_rotary_embedding__multi_shape` — standard RoPE (hunyuanvideo) + LTX-2 split RoPE. |
 | K7 / K8 | `*_diffusion_norm_infer__multi_shape` — 2-pass LN/RMSN baseline + one-pass per-head RMSN. |
 | K9 / K10 | `*_diffusion_group_norm_silu__multi_shape` — VAE GroupNorm + SiLU (hunyuanvideo 5D shapes). |
-| K5 / K6 (rms_norm_fn) | `*_diffusion_rms_norm_fn__multi_shape` — analytical-only; no current preset hits this entry point. Optimize last. |
 
 ### Task Completion Log
 
@@ -124,8 +123,6 @@ families, plus the remaining four families in either arch):
 |---|---|---|---|
 | **K3** `kernels/b200_diffusion_qknorm_rope__multi_shape` | _pending_ | _to be filled_ | _to be filled_ |
 | **K4** `kernels/h200_diffusion_qknorm_rope__multi_shape` | _pending_ | _to be filled_ | _to be filled_ |
-| **K5** `kernels/b200_diffusion_rms_norm_fn__multi_shape` | _pending_ | _to be filled_ | _to be filled_ |
-| **K6** `kernels/h200_diffusion_rms_norm_fn__multi_shape` | _pending_ | _to be filled_ | _to be filled_ |
 | **K7-K18** all other diffusion tasks | _pending_ | _to be filled_ | _to be filled_ |
 
 Closed-row template (from the upstream kernel-design-agent-with-sglang-omini workflow): record outcome (`IMPROVEMENT | NO-GO`), measured speedup or geomean, host + GPU id, base/candidate commits, and Claude Code `/usage` cost.
@@ -160,8 +157,6 @@ Full launcher list:
 | `k02_b200_fa4_mha.sh` | reference task (single shape) |
 | `k03_b200_diffusion_qknorm_rope__multi_shape.sh` | B200 fused QKNorm + RoPE |
 | `k04_h200_diffusion_qknorm_rope__multi_shape.sh` | H200 fused QKNorm + RoPE |
-| `k05_b200_diffusion_rms_norm_fn__multi_shape.sh` | B200 flash-attn-style 1-pass LN/RMSN |
-| `k06_h200_diffusion_rms_norm_fn__multi_shape.sh` | H200 flash-attn-style 1-pass LN/RMSN |
 | `k07_b200_diffusion_norm_infer__multi_shape.sh` | B200 inference-only LN/RMSN + one-pass RMSN |
 | `k08_h200_diffusion_norm_infer__multi_shape.sh` | H200 inference-only LN/RMSN + one-pass RMSN |
 | `k09_b200_diffusion_group_norm_silu__multi_shape.sh` | B200 VAE GroupNorm + SiLU |
@@ -337,12 +332,6 @@ quick chooser.
 - Folder: `kernels/{b200,h200}_diffusion_group_norm_silu__multi_shape/`
 - Wrapped baseline: `sglang.jit_kernel.diffusion.triton.group_norm_silu:triton_group_norm_silu` + `sglang.jit_kernel.diffusion.group_norm_silu:apply_group_norm_silu`.
 - Live captures: hunyuanvideo VAE decoder — `(1, 512, 5, 32, 32)/fp16` and `(1, 128, 17, 256, 256)/fp16`, `num_groups=32`.
-
-### K5 / K6. Flash-attn-style 1-pass LN/RMSN
-
-- Folder: `kernels/{b200,h200}_diffusion_rms_norm_fn__multi_shape/`
-- Wrapped baseline: `sglang.jit_kernel.diffusion.triton.norm:rms_norm_fn` (ported from Dao-AILab flash-attention).
-- Status: analytical-only. No sweep preset currently dispatches here; queue last in case a future model lands on this path. Use the canonical SGLang test grid (`tests/test_rmsnorm.py`) as the primary regression contract.
 
 ### Continue The Queue
 

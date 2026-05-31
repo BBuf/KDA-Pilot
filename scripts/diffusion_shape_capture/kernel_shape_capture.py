@@ -106,7 +106,6 @@ def _wrap(kernel_name: str, fn):
 
 _TARGETS = [
     ("sglang.jit_kernel.diffusion.qknorm_rope", "fused_inplace_qknorm_rope"),
-    ("sglang.jit_kernel.diffusion.triton.norm", "rms_norm_fn"),
     ("sglang.jit_kernel.diffusion.triton.norm", "norm_infer"),
     ("sglang.jit_kernel.diffusion.triton.rmsnorm_onepass", "triton_one_pass_rms_norm"),
     ("sglang.jit_kernel.diffusion.triton.group_norm_silu", "triton_group_norm_silu"),

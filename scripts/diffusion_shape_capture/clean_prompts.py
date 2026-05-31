@@ -15,7 +15,6 @@ KERNELS_DIR = REPO_ROOT / "kernels"
 
 FAMILIES = [
     "diffusion_qknorm_rope__multi_shape",
-    "diffusion_rms_norm_fn__multi_shape",
     "diffusion_norm_infer__multi_shape",
     "diffusion_group_norm_silu__multi_shape",
     "diffusion_rotary_embedding__multi_shape",
