@@ -364,3 +364,4 @@ def test_fallback_gate_rejects_noncaptured() -> None:
     assert mod.supported_rms(t(4096, 128, bf16, device="cpu"), w128.cpu(), 1e-6) is False  # device
     assert mod.supported_rms(t(4096, 128, bf16), w128, 1e-5) is False  # eps != captured 1e-6
     assert mod.supported_rms(t(4096, 128, bf16), w128.reshape(1, 128), 1e-6) is False  # weight rank (1,128)
+    assert mod.supported_rms(t(4096, 128, bf16), w128.reshape(128, 1), 1e-6) is False  # weight rank (128,1)

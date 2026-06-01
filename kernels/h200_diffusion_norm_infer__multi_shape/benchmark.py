@@ -20,6 +20,7 @@ import csv
 import math
 import os
 import statistics
+import subprocess
 import sys
 import time
 from datetime import datetime, timezone
@@ -68,15 +69,44 @@ def _geom(vals: list[float]) -> float:
     return math.exp(sum(math.log(x) for x in v) / len(v)) if v else float("nan")
 
 
+def _require_env(name: str) -> str:
+    """Fail fast on missing benchmark metadata so an under-documented row can never
+    become the exported KDA_SPEEDUP stamp (round-1 review requirement)."""
+    v = os.environ.get(name, "").strip()
+    if not v:
+        raise SystemExit(
+            f"benchmark.py: required metadata env {name} is missing/empty; refusing "
+            f"to write under-documented benchmark evidence. Set KDA_COMMIT, KDA_HOST, "
+            f"KDA_GPU_ID, KDA_CMD."
+        )
+    return v
+
+
+def _gpu_idle(gpu_id: str) -> str:
+    """Snapshot the selected GPU's util/mem via nvidia-smi (recorded before+after timing)."""
+    try:
+        r = subprocess.run(
+            ["nvidia-smi", "-i", str(gpu_id),
+             "--query-gpu=utilization.gpu,memory.used,memory.total",
+             "--format=csv,noheader,nounits"],
+            capture_output=True, text=True, timeout=30,
+        )
+        vals = [x.strip() for x in r.stdout.strip().split(",")]
+        if len(vals) >= 3:
+            return f"util={vals[0]}% mem_used={vals[1]}MiB mem_total={vals[2]}MiB"
+        return r.stdout.strip() or f"nvidia-smi_rc={r.returncode}"
+    except Exception as exc:  # noqa: BLE001
+        return f"unavailable({type(exc).__name__})"
+
+
 def main() -> int:
     assert torch.cuda.is_available(), "benchmark must run on a CUDA H200"
     gpu_model = torch.cuda.get_device_name(0)
-    host = os.environ.get("KDA_HOST", "unknown")
-    gpu_id = os.environ.get("KDA_GPU_ID", os.environ.get("CUDA_VISIBLE_DEVICES", "?"))
-    commit = os.environ.get("KDA_COMMIT", "uncommitted")
-    cmd = os.environ.get("KDA_CMD", "python benchmark.py")
-    idle = os.environ.get("KDA_GPU_IDLE", "")
-    meta = f"host={host} gpu_id={gpu_id} gpu={gpu_model} kp_commit={commit} idle={idle} cmd='{cmd}'"
+    host = _require_env("KDA_HOST")
+    gpu_id = _require_env("KDA_GPU_ID")
+    commit = _require_env("KDA_COMMIT")
+    cmd = _require_env("KDA_CMD")
+    idle_before = _gpu_idle(gpu_id)  # snapshot BEFORE warm build / timing
 
     # Bind callables once (no per-iter module reload), warm the CUDA build.
     mod = T._load_register_module()
@@ -112,7 +142,15 @@ def main() -> int:
         print(f"{case['name']:42s} base={b['median']:9.3f}us cand={c['median']:9.3f}us "
               f"speedup={sp:6.3f}x  (cand p10={c['p10']:.3f} p90={c['p90']:.3f})")
 
+    # Settle so the rolling nvidia-smi util window and memory reflect the idle card
+    # (not this process's own just-finished work) before the after-snapshot.
+    _sync()
+    torch.cuda.empty_cache()
+    time.sleep(2.0)
+    idle_after = _gpu_idle(gpu_id)  # snapshot AFTER all timing + settle
     geo = _geom(speedups)
+    meta = (f"host={host} gpu_id={gpu_id} gpu={gpu_model} kp_commit={commit} "
+            f"idle_before=[{idle_before}] idle_after=[{idle_after}] cmd=\"{cmd}\"")
     print(f"\nGEOMEAN per-shape median-latency speedup (all 6 captured shapes): {geo:.4f}x")
     print(f"meta: {meta}")
 
