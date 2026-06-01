@@ -20,11 +20,11 @@ KDA_OPTIMIZED_triton_one_pass_rms_norm = True
 
 KDA_ARCHES_norm_infer = ('h200',)
 KDA_TASK_norm_infer = 'h200_diffusion_norm_infer__multi_shape'
-KDA_COMMIT_norm_infer = 'c66ed429d3226f5502a47c16f481ad2ae35e02b2'
+KDA_COMMIT_norm_infer = 'e8e2a09208c9eef4e3e1d377ec5eb97a21215ae3'
 KDA_DATE_norm_infer = '2026-06-01'
-KDA_SPEEDUP_norm_infer = '1.496424x'
+KDA_SPEEDUP_norm_infer = '1.512597x'
 KDA_ARCHES_triton_one_pass_rms_norm = ('h200',)
 KDA_TASK_triton_one_pass_rms_norm = 'h200_diffusion_norm_infer__multi_shape'
-KDA_COMMIT_triton_one_pass_rms_norm = 'c66ed429d3226f5502a47c16f481ad2ae35e02b2'
+KDA_COMMIT_triton_one_pass_rms_norm = 'e8e2a09208c9eef4e3e1d377ec5eb97a21215ae3'
 KDA_DATE_triton_one_pass_rms_norm = '2026-06-01'
-KDA_SPEEDUP_triton_one_pass_rms_norm = '1.496424x'
+KDA_SPEEDUP_triton_one_pass_rms_norm = '1.512597x'

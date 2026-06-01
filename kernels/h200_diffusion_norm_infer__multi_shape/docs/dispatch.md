@@ -6,18 +6,19 @@ contiguous + 16B-aligned + H200 cap 9.0). Everything else falls back to the SGLa
 baseline. Two specialized kernels (no single universal kernel) because the buckets
 have different active bounds.
 
-Round-2 measurements (commit `c66ed429d`, idle GPU 7; geomean from `benchmark.csv`):
+Round-3 measurements (commit `e8e2a09208c9`, idle GPU 7 validated before AND after:
+idle_before util0%/100MiB/procs0, idle_after util0%/717MiB/procs1; geomean from `benchmark.csv`):
 
 | Bucket | Signature | Kernel | baseline → candidate (median) | speedup | NCU active bound | Decision |
 |---|---|---|---|---|---|---|
-| small image (FP32 LN) | `norm_infer` fp32 [8640,5120] w+b | `layer_norm_fp32` (double) | 111.7 → 109.9 µs | 1.016× | mixed memory/compute (DRAM 62.7% / SM 56.7%) | **promote** |
-| large video (RMS huge-M) | rms bf16 [648720,128] | `rms_norm_bf16_n128` | 107.8 → 98.8 µs | 1.091× | DRAM 75.7% peak | **promote** |
-| large video (RMS huge-M) | rms bf16 [650040,128] | `rms_norm_bf16_n128` | 108.2 → 98.6 µs | 1.098× | DRAM bandwidth | **promote** |
-| small video (RMS) | rms bf16 [16384,128] | `rms_norm_bf16_n128` | 32.8 → 15.8 µs | 2.073× | launch/occupancy | **promote** |
-| small image (RMS) | rms bf16 [4096,128] | `rms_norm_bf16_n128` | 32.2 → 15.3 µs | 2.106× | launch/occupancy | **promote** |
-| tiny (RMS) | rms bf16 [1320,128] | `rms_norm_bf16_n128` | 32.4 → 15.3 µs | 2.115× | launch (0.08 waves) | **promote** |
+| small image (FP32 LN) | `norm_infer` fp32 [8640,5120] w+b | `layer_norm_fp32` (double) | 111.7 → 109.7 µs | 1.018× | mixed memory/compute (DRAM 62.7% / SM 56.7%) | **promote** |
+| large video (RMS huge-M) | rms bf16 [648720,128] | `rms_norm_bf16_n128` | 108.0 → 98.1 µs | 1.101× | DRAM 75.7% peak | **promote** |
+| large video (RMS huge-M) | rms bf16 [650040,128] | `rms_norm_bf16_n128` | 107.7 → 97.9 µs | 1.100× | DRAM bandwidth | **promote** |
+| small video (RMS) | rms bf16 [16384,128] | `rms_norm_bf16_n128` | 32.7 → 15.4 µs | 2.117× | launch/occupancy | **promote** |
+| small image (RMS) | rms bf16 [4096,128] | `rms_norm_bf16_n128` | 32.4 → 15.1 µs | 2.146× | launch/occupancy | **promote** |
+| tiny (RMS) | rms bf16 [1320,128] | `rms_norm_bf16_n128` | 32.5 → 15.2 µs | 2.139× | launch (0.08 waves) | **promote** |
 
-Geomean (equal-shape) = **1.496×**. No per-shape regression → no evidence-backed
+Geomean (equal-shape) = **1.513×**. No per-shape regression → no evidence-backed
 no-go was required; both `EXPORTS` functions promoted to
 `kda_kernels/diffusion/norm_infer/_impls/h200/`.
 

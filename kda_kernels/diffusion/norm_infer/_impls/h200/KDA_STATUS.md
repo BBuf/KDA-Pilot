@@ -5,9 +5,9 @@
 | Task slug | `h200_diffusion_norm_infer__multi_shape` |
 | Arch | `h200` |
 | CUDA capability | `(9, 0)` |
-| Commit (kernel-pilot) | `c66ed429d3226f5502a47c16f481ad2ae35e02b2` |
+| Commit (kernel-pilot) | `e8e2a09208c9eef4e3e1d377ec5eb97a21215ae3` |
 | Promotion date | 2026-06-01 |
-| Reported geomean speedup | 1.496424x |
+| Reported geomean speedup | 1.512597x |
 | Promoted functions | norm_infer, triton_one_pass_rms_norm |
 
 ## Files
