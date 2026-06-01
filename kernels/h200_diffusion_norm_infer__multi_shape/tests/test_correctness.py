@@ -365,3 +365,28 @@ def test_fallback_gate_rejects_noncaptured() -> None:
     assert mod.supported_rms(t(4096, 128, bf16), w128, 1e-5) is False  # eps != captured 1e-6
     assert mod.supported_rms(t(4096, 128, bf16), w128.reshape(1, 128), 1e-6) is False  # weight rank (1,128)
     assert mod.supported_rms(t(4096, 128, bf16), w128.reshape(128, 1), 1e-6) is False  # weight rank (128,1)
+
+
+def test_registry_callable_routes_both_entry_points() -> None:
+    """register()['callable'] must preserve BOTH wrapped callsite contracts:
+    triton_one_pass_rms_norm(x, w, eps) AND norm_infer(x, weight, bias, eps, is_rms_norm)."""
+    assert torch.cuda.is_available()
+    mod = _load_register_module()
+    reg_callable = mod.register()["callable"]
+    base_norm_infer, base_rms = get_baselines()
+
+    # RMS callsite (x, w, eps) routed through the single registry callable.
+    rms_case = next(c for c in make_cases() if c["fn"] == "rms" and c["kind"] == "perf")
+    inp = build_inputs(rms_case)
+    out = reg_callable(inp["x"], inp["weight"], inp["eps"])
+    base = base_rms(inp["x"], inp["weight"], inp["eps"])
+    _check_accuracy(rms_case, out, base, reference(rms_case, inp))
+    assert mod.last_dispatch("rms") == "cuda", "registry callable must route RMS (x,w,eps) to the RMS CUDA path"
+
+    # norm_infer callsite (x, weight, bias, eps, is_rms_norm) routed through the same callable.
+    ln_case = next(c for c in make_cases() if c["fn"] == "norm_infer" and c["kind"] == "perf")
+    inp2 = build_inputs(ln_case)
+    out2 = reg_callable(inp2["x"], inp2["weight"], inp2["bias"], inp2["eps"], inp2["is_rms_norm"])
+    base2 = base_norm_infer(inp2["x"], inp2["weight"], inp2["bias"], inp2["eps"], inp2["is_rms_norm"])
+    _check_accuracy(ln_case, out2, base2, reference(ln_case, inp2))
+    assert mod.last_dispatch("norm_infer") == "cuda", "registry callable must route norm_infer to the LN CUDA path"

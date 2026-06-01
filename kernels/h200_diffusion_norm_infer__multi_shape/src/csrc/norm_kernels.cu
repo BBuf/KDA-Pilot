@@ -21,6 +21,7 @@
 #include <cuda_runtime.h>
 #include <cuda_bf16.h>
 #include <c10/cuda/CUDAStream.h>
+#include <c10/cuda/CUDAGuard.h>
 
 namespace {
 
@@ -175,6 +176,9 @@ torch::Tensor rms_norm_bf16_n128(torch::Tensor x, torch::Tensor w, double eps) {
   TORCH_CHECK(x.dim() == 2 && x.size(1) == RMS_N, "rms_norm_bf16_n128: x must be [M,128]");
   TORCH_CHECK(x.is_contiguous() && w.is_contiguous(), "rms_norm_bf16_n128: contiguous required");
   TORCH_CHECK(w.numel() == RMS_N, "rms_norm_bf16_n128: w must be [128]");
+  // Make x's device current so the output allocation, stream, and kernel launch all
+  // target x's GPU even when called with a different current device (multi-GPU process).
+  const c10::cuda::CUDAGuard device_guard(x.device());
   const long M = x.size(0);
   auto y = torch::empty_like(x);
   if (M == 0) return y;
@@ -203,6 +207,8 @@ torch::Tensor layer_norm_fp32(torch::Tensor x, torch::Tensor weight,
               "layer_norm_fp32: contiguous required");
   TORCH_CHECK(weight.numel() == LN_N && bias.numel() == LN_N,
               "layer_norm_fp32: weight/bias must be [5120]");
+  // Make x's device current (multi-GPU safety; see rms_norm_bf16_n128).
+  const c10::cuda::CUDAGuard device_guard(x.device());
   const long M = x.size(0);
   auto y = torch::empty_like(x);
   if (M == 0) return y;
