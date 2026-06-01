@@ -69,8 +69,26 @@ def build() -> None:
 
 
 def optimized_wrapper(*args: Any, **kwargs: Any) -> Any:
-    # Registry single-callable: routes to the standard LayerNorm/RMSNorm entry.
-    return norm_infer(*args, **kwargs)
+    # Registry single-callable: route to the correct wrapped entry point by callsite,
+    # preserving BOTH contracts. The two functions have distinct signatures:
+    #   triton_one_pass_rms_norm(x, w, eps=1e-6)            -> (x, w[, eps]) ; eps is a float
+    #   norm_infer(x, weight, bias, eps, is_rms_norm=False, out=None)  -> weight+bias tensors + required eps
+    if {"is_rms_norm", "bias", "weight", "out"} & set(kwargs):
+        return norm_infer(*args, **kwargs)
+    if "w" in kwargs:
+        return triton_one_pass_rms_norm(*args, **kwargs)
+    if len(args) >= 4:  # (x, weight, bias, eps, ...) -> LayerNorm/RMSNorm via norm_infer
+        return norm_infer(*args, **kwargs)
+    if len(args) == 3:
+        try:
+            import torch
+
+            if isinstance(args[2], torch.Tensor):  # (x, weight, bias) -> norm_infer (3rd arg is bias)
+                return norm_infer(*args, **kwargs)
+        except Exception:  # pragma: no cover - torch always present at call time
+            pass
+        return triton_one_pass_rms_norm(*args, **kwargs)  # (x, w, eps) -> RMSNorm (3rd arg is eps float)
+    return triton_one_pass_rms_norm(*args, **kwargs)  # (x, w) -> RMSNorm
 
 
 def register() -> dict[str, Any]:

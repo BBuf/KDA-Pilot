@@ -1,25 +1,26 @@
-# NCU + roofline report (round 3) — H200, ion-h200-8, GPU 7
+# NCU + roofline report (round 4) — H200, ion-h200-8, GPU 7
 
-Authoritative round-3 evidence. Benchmark: commit `e8e2a09208c9`, GPU 7 validated
+Authoritative round-4 evidence. Benchmark: commit `6a509a445`, GPU 7 validated
 idle BEFORE and AFTER the run (`idle_before=util0%/100MiB/procs0`,
 `idle_after=util0%/717MiB/procs1` = own CUDA context only; benchmark.py aborts
 without writing on a busy/unavailable snapshot). NCU values are from the round-1
-collection and remain valid because the kernels are unchanged since commit
-`9c11e1cc8` (rounds 2-3 changed only `benchmark.py` + docs). H200 HBM3e peak
-~4.8 TB/s; SM90, 132 SMs. Raw NCU: `reports/{rms_huge_full,ln_full,rms_huge_source,ln_source}.ncu-rep`.
+collection and remain valid because the kernels are behaviorally unchanged since
+commit `9c11e1cc8` (rounds 2-3 changed only `benchmark.py` + docs; round 4 added a
+host-side multi-GPU `CUDAGuard` + registry-callable routing, both benchmark-inert).
+H200 HBM3e peak ~4.8 TB/s; SM90, 132 SMs. Raw NCU: `reports/{rms_huge_full,ln_full,rms_huge_source,ln_source}.ncu-rep`.
 
-## Benchmark (round 3, commit e8e2a09208c9, GPU 7 idle before+after)
+## Benchmark (round 4, commit 6a509a445, GPU 7 idle before+after)
 
 | Shape | baseline median | candidate median | speedup |
 |---|---|---|---|
-| `norm_infer` LN fp32 [8640,5120] | 111.66 µs | 109.72 µs | 1.018× |
-| `triton_one_pass_rms_norm` bf16 [648720,128] | 108.02 µs | 98.08 µs | 1.101× |
-| `triton_one_pass_rms_norm` bf16 [650040,128] | 107.70 µs | 97.92 µs | 1.100× |
-| `triton_one_pass_rms_norm` bf16 [16384,128] | 32.70 µs | 15.44 µs | 2.117× |
-| `triton_one_pass_rms_norm` bf16 [4096,128] | 32.37 µs | 15.09 µs | 2.146× |
-| `triton_one_pass_rms_norm` bf16 [1320,128] | 32.47 µs | 15.18 µs | 2.139× |
+| `norm_infer` LN fp32 [8640,5120] | 111.69 µs | 109.74 µs | 1.018× |
+| `triton_one_pass_rms_norm` bf16 [648720,128] | 108.64 µs | 98.18 µs | 1.107× |
+| `triton_one_pass_rms_norm` bf16 [650040,128] | 108.61 µs | 98.06 µs | 1.108× |
+| `triton_one_pass_rms_norm` bf16 [16384,128] | 33.51 µs | 15.50 µs | 2.161× |
+| `triton_one_pass_rms_norm` bf16 [4096,128] | 33.54 µs | 15.04 µs | 2.230× |
+| `triton_one_pass_rms_norm` bf16 [1320,128] | 33.65 µs | 15.07 µs | 2.233× |
 
-**Geomean (equal-shape) = 1.513×. No per-shape regression.** Wall-clock medians use
+**Geomean (equal-shape) = 1.542×. No per-shape regression.** Wall-clock medians use
 synchronized `perf_counter` + `cudaDeviceSynchronize`, applied identically to
 baseline and candidate (includes launch + sync overhead). Kernel-only durations
 below come from NCU.
@@ -58,8 +59,8 @@ L2-resident; st = y only). See `analysis/metrics.md`.
 
 ## Conclusion
 
-All six captured shapes are non-regressing (1.018×–2.146×; equal-shape geomean
-1.513×). RMS huge-M is memory-bandwidth-bound near the attainable HBM streaming
+All six captured shapes are non-regressing (1.018×–2.233×; equal-shape geomean
+1.542×). RMS huge-M is memory-bandwidth-bound near the attainable HBM streaming
 limit (75.7% of peak); LN (double) is mixed memory/compute (62.7% DRAM / 56.7% SM),
 slower than an fp32 kernel would be but correct on adversarial rows; RMS small/mid-M
 is launch-bound but still beats the baseline ~2×.
