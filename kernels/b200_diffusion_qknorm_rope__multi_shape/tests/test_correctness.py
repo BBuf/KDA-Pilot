@@ -18,8 +18,8 @@ Semantics recovered from the SGLang baseline
 
 Case sets:
 - ``make_cases()`` — the 10 fixed production rows (used for primary benchmarking).
-- ``make_ci_grid_cases()`` — the SGLang CI grid (correctness-or-fallback);
-  ``KDA_FULL_CI_GRID=1`` expands it to the full nightly grid.
+- ``make_ci_grid_cases()`` — the SGLang CI grid (correctness-or-fallback). The full
+  grid is the default; set ``KDA_CI_GRID_SUBSET=1`` for the reduced developer subset.
 
 Inputs follow the SGLang test/benchmark convention (cos/sin cache sized to
 ``MAX_SEQ_LEN`` with randomized positions) so the comparison is fair against

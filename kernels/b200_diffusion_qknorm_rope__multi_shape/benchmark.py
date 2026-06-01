@@ -151,9 +151,14 @@ def _fused_baseline_callable():
     return fused_inplace_qknorm_rope
 
 
-def run_sglang_fused_baseline(inputs: dict, case: dict) -> None:
-    """The current SGLang fused kernel — the baseline to beat (timed)."""
-    _apply(_fused_baseline_callable(), inputs, case)
+def run_sglang_fused_baseline(baseline_fn, inputs: dict, case: dict) -> None:
+    """The current SGLang fused kernel — the baseline to beat (timed).
+
+    `baseline_fn` is resolved ONCE by the caller, so the timed closure carries no
+    per-call import/module-lookup overhead and is symmetric with the candidate
+    path (which caches its callable in src/register.py).
+    """
+    _apply(baseline_fn, inputs, case)
 
 
 def run_candidate(wrapper, inputs: dict, case: dict) -> None:
@@ -208,8 +213,9 @@ def _bench_case(correctness, case, candidate_fn, *, inner, physical_id):
     base_inputs = correctness._make_inputs(case)
     cand_inputs = correctness._make_inputs(case)
 
+    baseline_fn = _fused_baseline_callable()  # resolve ONCE, before timing (symmetry)
     idle_before = _nvidia_smi_snapshot(physical_id)
-    b = _summary(_time_cuda_events(lambda: run_sglang_fused_baseline(base_inputs, case), warmup=warmup, iters=iters, inner=inner))
+    b = _summary(_time_cuda_events(lambda: run_sglang_fused_baseline(baseline_fn, base_inputs, case), warmup=warmup, iters=iters, inner=inner))
     c = _summary(_time_cuda_events(lambda: run_candidate(candidate_fn, cand_inputs, case), warmup=warmup, iters=iters, inner=inner))
     idle_after = _nvidia_smi_snapshot(physical_id)
 
@@ -275,6 +281,8 @@ def main() -> int:
         if write_header:
             writer.writerow(CSV_COLUMNS)
         writer.writerows(rows)
+        # GEOMEAN is an aggregate over the per-shape rows above; idle_before/idle_after
+        # are captured per measured shape, so they are intentionally blank here.
         summary = {c: "" for c in CSV_COLUMNS}
         summary.update({
             "name": "GEOMEAN_production", "speedup_x": f"{geomean:.4f}",
