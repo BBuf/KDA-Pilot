@@ -87,73 +87,79 @@ constexpr int LN_N = 5120;
 constexpr int LN_THREADS = 256;
 constexpr int LN_VPT = LN_N / (LN_THREADS * 4);  // float4 chunks per thread = 5
 
-__device__ __forceinline__ float warpReduceSum(float v) {
+__device__ __forceinline__ double warpReduceSumD(double v) {
 #pragma unroll
   for (int o = 16; o > 0; o >>= 1) v += __shfl_down_sync(0xffffffffu, v, o);
   return v;
 }
 
-__device__ __forceinline__ float blockReduceSum(float v, float* smem) {
+__device__ __forceinline__ double blockReduceSumD(double v, double* smem) {
   const int lane = threadIdx.x & 31;
   const int wid = threadIdx.x >> 5;
-  v = warpReduceSum(v);
+  v = warpReduceSumD(v);
   if (lane == 0) smem[wid] = v;
   __syncthreads();
   if (wid == 0) {
-    float t = (lane < (blockDim.x >> 5)) ? smem[lane] : 0.f;
-    t = warpReduceSum(t);
+    double t = (lane < (blockDim.x >> 5)) ? smem[lane] : 0.0;
+    t = warpReduceSumD(t);
     if (lane == 0) smem[0] = t;
   }
   __syncthreads();
-  const float total = smem[0];
+  const double total = smem[0];
   __syncthreads();  // allow smem reuse for the next reduction
   return total;
 }
 
+// FP64-internal math: mean/variance reductions and the normalize are done in
+// double, casting to fp32 only at the final store. This is strictly more
+// accurate than the fp32-accumulating Triton baseline, so it meets the strict
+// 1e-5 ceiling even on ill-conditioned rows (var->0 => rstd~1/sqrt(eps)).
+// Memory traffic is unchanged (load fp32 x/w/b, store fp32 y), so the kernel
+// stays memory-bandwidth-bound.
 __global__ void layer_norm_fp32_kernel(
     const float* __restrict__ X,
     float* __restrict__ Y,
     const float* __restrict__ W,
     const float* __restrict__ B,
     float eps) {
-  __shared__ float smem[32];
+  __shared__ double smem[32];
   const long row = blockIdx.x;
   const float* xrow = X + row * LN_N;
   float* yrow = Y + row * LN_N;
 
-  // Pass 1: load this thread's float4 chunks into registers, accumulate the sum.
+  // Pass 1: load this thread's float4 chunks into registers; sum in double.
   float4 xr[LN_VPT];
-  float local_sum = 0.f;
+  double local_sum = 0.0;
 #pragma unroll
   for (int k = 0; k < LN_VPT; ++k) {
     const int idx4 = k * LN_THREADS + threadIdx.x;  // coalesced float4 index
     xr[k] = reinterpret_cast<const float4*>(xrow)[idx4];
-    local_sum += xr[k].x + xr[k].y + xr[k].z + xr[k].w;
+    local_sum += (double)xr[k].x + (double)xr[k].y + (double)xr[k].z + (double)xr[k].w;
   }
-  const float mean = blockReduceSum(local_sum, smem) / (float)LN_N;
+  const double mean = blockReduceSumD(local_sum, smem) / (double)LN_N;
 
-  // Pass 2: biased variance from retained registers (sum((x-mean)^2)/N).
-  float local_ss = 0.f;
+  // Pass 2: biased variance in double from retained registers (sum((x-mean)^2)/N).
+  double local_ss = 0.0;
 #pragma unroll
   for (int k = 0; k < LN_VPT; ++k) {
-    const float dx = xr[k].x - mean, dy = xr[k].y - mean,
-                dz = xr[k].z - mean, dw = xr[k].w - mean;
+    const double dx = (double)xr[k].x - mean, dy = (double)xr[k].y - mean,
+                 dz = (double)xr[k].z - mean, dw = (double)xr[k].w - mean;
     local_ss += dx * dx + dy * dy + dz * dz + dw * dw;
   }
-  const float var = blockReduceSum(local_ss, smem) / (float)LN_N;
-  const float rstd = 1.0f / sqrtf(var + eps);  // precise (matches Triton 1/tl.sqrt)
+  const double var = blockReduceSumD(local_ss, smem) / (double)LN_N;
+  const double rstd = 1.0 / sqrt(var + (double)eps);  // precise double rsqrt
 
-  // Pass 3: normalize + affine; reload w,b (L2-resident across rows) and store.
+  // Pass 3: normalize + affine in double; reload w,b (L2-resident) and store fp32.
 #pragma unroll
   for (int k = 0; k < LN_VPT; ++k) {
     const int idx4 = k * LN_THREADS + threadIdx.x;
     const float4 wv = reinterpret_cast<const float4*>(W)[idx4];
     const float4 bv = reinterpret_cast<const float4*>(B)[idx4];
     float4 yv;
-    yv.x = (xr[k].x - mean) * rstd * wv.x + bv.x;
-    yv.y = (xr[k].y - mean) * rstd * wv.y + bv.y;
-    yv.z = (xr[k].z - mean) * rstd * wv.z + bv.z;
-    yv.w = (xr[k].w - mean) * rstd * wv.w + bv.w;
+    yv.x = (float)(((double)xr[k].x - mean) * rstd * (double)wv.x + (double)bv.x);
+    yv.y = (float)(((double)xr[k].y - mean) * rstd * (double)wv.y + (double)bv.y);
+    yv.z = (float)(((double)xr[k].z - mean) * rstd * (double)wv.z + (double)bv.z);
+    yv.w = (float)(((double)xr[k].w - mean) * rstd * (double)wv.w + (double)bv.w);
     reinterpret_cast<float4*>(yrow)[idx4] = yv;
   }
 }

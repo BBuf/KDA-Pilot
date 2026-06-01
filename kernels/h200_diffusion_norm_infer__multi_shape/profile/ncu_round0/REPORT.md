@@ -9,9 +9,14 @@ with Nsight Compute (`--set full`; targeted metrics shown below). Raw reports:
 
 | Kernel / shape | grid | duration (kernel) | DRAM %peak | achieved BW | SM %peak | occupancy | waves/SM |
 |---|---|---|---|---|---|---|---|
-| `rms_norm_bf16_n128` [650040,128] | 4224 | 83.81 µs | 75.46% | ~3.6 TB/s | 43.1% | 90.8% | 4.0 |
-| `layer_norm_fp32` [8640,5120] | 8640 | 85.63 µs | 78.23% | ~3.75 TB/s | 24.3% | 46.9% | 16.4 |
-| `rms_norm_bf16_n128` [1320,128] | 83 | 3.26 µs | 2.16% | n/a | 3.4% | 12.2% | 0.08 |
+| `rms_norm_bf16_n128` [650040,128] | 4224 | 83.78 µs | 75.7% | ~3.6 TB/s | 43.5% | 90.7% | 4.0 |
+| `layer_norm_fp32` (double, round 1) [8640,5120] | 8640 | 107.71 µs | 62.7% | ~3.3 TB/s | 56.7% | 34.8% | 21.8 |
+| `rms_norm_bf16_n128` [1320,128] | 83 | 3.52 µs | 2.0% | n/a | 3.2% | 11.9% | 0.08 |
+
+(Round-1 numbers. The round-0 fp32-fast LN was 85.6 µs / 78.2% DRAM / 24.3% SM but
+could not meet the strict 1e-5 ceiling on adversarial rows; the double-precision
+LN below is correct but compute-influenced. See `analysis/metrics.md` for the
+round-0 vs round-1 LN comparison and source-counter ld/st sectors.)
 
 (Kernel-only durations from NCU; wall-clock medians from `benchmark.csv` are
 larger because they include launch + `cudaDeviceSynchronize` overhead.)
@@ -27,13 +32,13 @@ larger because they include launch + `cudaDeviceSynchronize` overhead.)
 - **Tail-effect**: 4 waves, even row distribution → negligible tail.
 - **Diagnosis**: at/near the attainable HBM bound (memory bandwidth). 75% of peak with 91% occupancy is a strong memory-bound result; remaining gap to 100% is the usual achievable-vs-peak HBM efficiency. **No further standalone speedup expected** beyond minor cache-policy tuning.
 
-### LN [8640,5120] (fp32, bandwidth bucket)
-- **Memory**: 78.2% of peak DRAM throughput (~3.75 TB/s) — dominant signal; DRAM-bandwidth-bound.
-- **Compute**: SM 24.3% — not compute-bound.
-- **Occupancy**: 46.9% — limited (register-resident row: 5 float4 + reduction). But since DRAM is already at 78%, raising occupancy would not materially help (memory is the wall).
-- **Latency-hiding**: 16.4 waves give ample CTAs to overlap; the single global read + single write per row is efficient.
-- **Launch-overhead / tail**: 8640 CTAs over 132 SMs, 16.4 waves → small tail.
-- **Diagnosis**: at/near the attainable HBM bound (memory bandwidth). One global read + one global write of x (no padded 8192 over-read, unlike the baseline's BLOCK_N=8192). **Near bound.**
+### LN [8640,5120] (fp32 I/O, double-internal math — round 1)
+- **Memory**: 62.7% of peak DRAM throughput (~3.3 TB/s). Still substantial, but no longer the sole bottleneck. Source counters: ld 16.59M sectors (x + w + b L1 reads; w/b re-read per row but L2-resident), st 5.53M sectors (y write only) — one global read of x + one write of y to DRAM.
+- **Compute**: SM 56.7% (up from 24.3% in the fp32-fast round-0 variant) — the double-precision mean/variance/normalize roughly doubled compute intensity, making the kernel compute-influenced.
+- **Occupancy**: 34.8% (down from 46.9%) — higher register pressure from the double temporaries lowers occupancy.
+- **Latency-hiding**: 21.8 waves; ample CTAs, but lower occupancy reduces per-SM overlap.
+- **Launch-overhead / tail**: 8640 CTAs over 132 SMs → small tail.
+- **Diagnosis**: **mixed memory/compute bound** (DRAM 62.7%, SM 56.7%). The double-precision math is required to meet the strict 1e-5 ceiling on ill-conditioned adversarial rows (the round-0 fp32-fast variant hit 78% DRAM / 85.6 µs but failed 1e-5 with ~1e-4 error). The kernel is still non-regressing (1.011×); recovering throughput while preserving 1e-5 (occupancy tuning / mixed-precision reductions) is a queued follow-up.
 
 ### RMS [1320,128] (and 4096, 16384) (small/mid-M, launch bucket)
 - **Launch-overhead / occupancy**: 0.08 waves/SM (83 CTAs on 132 SMs) — the GPU is nearly empty; this is launch/latency-bound, not bandwidth-bound (DRAM 2.2%).

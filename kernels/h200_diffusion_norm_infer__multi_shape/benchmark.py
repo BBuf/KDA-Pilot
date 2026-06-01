@@ -74,7 +74,9 @@ def main() -> int:
     host = os.environ.get("KDA_HOST", "unknown")
     gpu_id = os.environ.get("KDA_GPU_ID", os.environ.get("CUDA_VISIBLE_DEVICES", "?"))
     commit = os.environ.get("KDA_COMMIT", "uncommitted")
-    meta = f"host={host} gpu_id={gpu_id} gpu={gpu_model} kp_commit={commit} sglang={T.install_platform_shim.__module__}"
+    cmd = os.environ.get("KDA_CMD", "python benchmark.py")
+    idle = os.environ.get("KDA_GPU_IDLE", "")
+    meta = f"host={host} gpu_id={gpu_id} gpu={gpu_model} kp_commit={commit} idle={idle} cmd='{cmd}'"
 
     # Bind callables once (no per-iter module reload), warm the CUDA build.
     mod = T._load_register_module()

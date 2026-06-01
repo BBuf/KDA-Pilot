@@ -5,18 +5,26 @@ The native CUDA fast path intercepts ONLY the six captured production signatures
 Everything else falls back to the SGLang baseline. Two specialized kernels (no
 single universal kernel) because the buckets have different bounds.
 
+Round-1 measurements (commit `9c11e1cc8`, idle GPU 7):
+
 | Bucket | Signature | Kernel | baseline → candidate (median) | speedup | NCU active bound | Decision |
 |---|---|---|---|---|---|---|
-| small image (FP32 LN) | `norm_infer` fp32 [8640,5120] w+b | `layer_norm_fp32` | 112.0 → 100.1 µs | 1.119× | DRAM 78.2% peak | **promote** |
-| large video (RMS huge-M) | rms bf16 [648720,128] | `rms_norm_bf16_n128` | 108.3 → 95.9 µs | 1.129× | DRAM 75.5% peak | **promote** |
-| large video (RMS huge-M) | rms bf16 [650040,128] | `rms_norm_bf16_n128` | 108.2 → 95.7 µs | 1.130× | DRAM (memory-bound) | **promote** |
-| small video (RMS) | rms bf16 [16384,128] | `rms_norm_bf16_n128` | 33.2 → 13.2 µs | 2.506× | launch/occupancy | **promote** |
-| small image (RMS) | rms bf16 [4096,128] | `rms_norm_bf16_n128` | 32.8 → 12.7 µs | 2.584× | launch/occupancy | **promote** |
-| tiny (RMS) | rms bf16 [1320,128] | `rms_norm_bf16_n128` | 32.5 → 12.7 µs | 2.568× | launch (0.08 waves) | **promote** |
+| small image (FP32 LN) | `norm_infer` fp32 [8640,5120] w+b | `layer_norm_fp32` (double) | 111.8 → 110.5 µs | 1.011× | mixed mem/compute (DRAM 62.7% / SM 56.7%) | **promote** |
+| large video (RMS huge-M) | rms bf16 [648720,128] | `rms_norm_bf16_n128` | 108.3 → 98.9 µs | 1.095× | DRAM 75.7% peak | **promote** |
+| large video (RMS huge-M) | rms bf16 [650040,128] | `rms_norm_bf16_n128` | 108.3 → 98.5 µs | 1.100× | DRAM (memory-bound) | **promote** |
+| small video (RMS) | rms bf16 [16384,128] | `rms_norm_bf16_n128` | 32.5 → 16.0 µs | 2.023× | launch/occupancy | **promote** |
+| small image (RMS) | rms bf16 [4096,128] | `rms_norm_bf16_n128` | 32.7 → 15.5 µs | 2.111× | launch/occupancy | **promote** |
+| tiny (RMS) | rms bf16 [1320,128] | `rms_norm_bf16_n128` | 32.6 → 15.6 µs | 2.093× | launch (0.08 waves) | **promote** |
 
-Geomean (equal-shape) = **1.695×**. No per-shape regression → no evidence-backed
+Geomean (equal-shape) = **1.488×**. No per-shape regression → no evidence-backed
 no-go was required this round; both `EXPORTS` functions promoted to
 `kda_kernels/diffusion/norm_infer/_impls/h200/`.
+
+The FP32 LN kernel uses double-precision internal math (required to meet the strict
+1e-5 ceiling on adversarial rows); this costs ~26% kernel time vs the round-0
+fp32-fast variant (1.119× → 1.011×, still non-regressing) and makes it
+compute-influenced rather than purely bandwidth-bound. RMS small/mid-M wall-clock
+speedups vary run-to-run (host-side sync overhead dominates the ~3 µs kernel).
 
 Notes:
 - Huge-M RMS and FP32 LN are memory-bandwidth-bound at ~75–78% of peak HBM

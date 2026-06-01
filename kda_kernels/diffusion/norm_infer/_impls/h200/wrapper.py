@@ -108,7 +108,9 @@ def supported_norm_infer(x, weight, bias, eps, is_rms_norm) -> bool:
     if x.dim() != 2 or (int(x.size(0)), int(x.size(1))) not in _LN_CAPTURED_MN:
         return False
     n = int(x.size(1))
-    if weight.numel() != n or bias.numel() != n:
+    # Require rank-1 [N] weight/bias exactly (reject (1,N)/(N,1) reshapes that
+    # share numel but are not the captured 1-D signature).
+    if weight.dim() != 1 or weight.size(0) != n or bias.dim() != 1 or bias.size(0) != n:
         return False
     if not (x.is_contiguous() and weight.is_contiguous() and bias.is_contiguous()):
         return False
@@ -129,7 +131,7 @@ def supported_rms(x, w, eps) -> bool:
         return False
     if x.dim() != 2 or int(x.size(1)) != 128 or int(x.size(0)) not in _RMS_CAPTURED_M:
         return False
-    if w.numel() != 128:
+    if w.dim() != 1 or w.size(0) != 128:  # rank-1 [128] exactly (reject (1,128)/(128,1))
         return False
     if not (x.is_contiguous() and w.is_contiguous()):
         return False

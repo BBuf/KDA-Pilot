@@ -142,10 +142,10 @@ KDA_RUN_CORRECTNESS=1 CUDA_VISIBLE_DEVICES=<idle> \
 ```
 Latency = per-call median of (`perf_counter` delta with `cudaDeviceSynchronize`), warmup 25 / iters 100, inputs built once, CUDA extension warm-built (JIT excluded). Speedup = baseline_median / candidate_median; final claim = geometric mean of per-shape speedups.
 
-### Results (ion-h200-8, GPU 7, NVIDIA H200; idle util 0% / mem 124 MB before+after)
-- Per-shape median speedup: helios LN 1.119×; RMS 648720 1.129×; RMS 650040 1.130×; RMS 1320 2.568×; RMS 16384 2.506×; RMS 4096 2.584×.
-- **Geomean (all 6 captured shapes): 1.695×.** No per-shape regression.
-- NCU active bound: huge-M RMS DRAM 75.5% peak (~3.6 TB/s), fp32 LN DRAM 78.2% peak (~3.75 TB/s); tiny-M RMS launch-bound (0.08 waves). See `profile/ncu_round0/REPORT.md`, `benchmark.csv`, `solutions.jsonl`.
+### Results (round 1, commit `9c11e1cc8`; ion-h200-8, GPU 7, NVIDIA H200; idle util 0% / mem 114 MB before+after)
+- Per-shape median speedup: helios LN 1.011×; RMS 648720 1.095×; RMS 650040 1.100×; RMS 1320 2.093×; RMS 16384 2.023×; RMS 4096 2.111×.
+- **Geomean (all 6 captured shapes): 1.488×.** No per-shape regression.
+- NCU active bound: huge-M RMS DRAM 75.7% peak (~3.6 TB/s); fp32 LN (double) mixed memory/compute (DRAM 62.7% / SM 56.7%); tiny-M RMS launch-bound (0.08 waves). The fp32 LN uses double-precision internal math to meet the strict 1e-5 ceiling on adversarial rows (round-0 fp32-fast was 1.119× but failed adversarial 1e-5). See `profile/ncu_round0/REPORT.md` (+ `analysis/metrics.md`, source-counter reports), `benchmark.csv`, `solutions.jsonl`.
 
 ### Source lineage
 - SGLang baseline `norm.py` + `rmsnorm_onepass.py` @ `c47f0e7cd` (semantics, biased variance, FP32 accumulation, weight/bias handling).
