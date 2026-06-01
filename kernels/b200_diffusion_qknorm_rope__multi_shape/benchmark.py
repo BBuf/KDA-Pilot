@@ -5,19 +5,19 @@ Times the **current SGLang fused baseline** (`fused_inplace_qknorm_rope`, the
 kernel this task must beat) against the registered candidate, on a verified-idle
 NVIDIA B200, and appends a structured row per shape to ``benchmark.csv``.
 
-The split-path oracle (`fused_inplace_qknorm` + FlashInfer RoPE) is the
-*correctness* reference (see ``tests/test_correctness.py``); it is NOT the
-benchmark baseline. While the candidate still routes to the fused baseline (the
-fallback scaffold), every production-row speedup must measure ~1.0x.
+Three explicit, auditable callables keep the oracle and baseline distinct
+(see BL-20260601-benchmark-baseline-not-oracle):
+- ``run_oracle``                -> split-path correctness reference (NOT timed here)
+- ``run_sglang_fused_baseline`` -> the SGLang fused kernel to beat (timed)
+- ``run_candidate``             -> the registered optimized candidate (timed)
 
 Timing methodology (matches SGLang's ``run_benchmark_no_cudagraph`` intent):
-- CUDA-event timing (NOT host ``time.perf_counter``), no CUDA graph capture.
-- Inputs built ONCE per case; the in-place op is timed repeatedly (RMS-norm +
-  RoPE is magnitude-stable under repetition).
-- Reports median/mean/std/min/p10/p90 per shape (microseconds) and an
-  equal-weight geomean of per-shape median-latency speedups over the production
-  rows. ``KDA_BENCH_INNER`` (default 1) averages that many back-to-back calls per
-  recorded sample to amortize event overhead on the smallest shapes.
+CUDA-event timing (NOT host ``time.perf_counter``), no CUDA graph capture; inputs
+built once per case; the in-place op timed repeatedly (RMS-norm + RoPE is
+magnitude-stable under repetition). Per shape: median/mean/std/min/p10/p90 (us)
+and an equal-weight geomean of per-shape median speedups over production rows.
+``KDA_BENCH_INNER`` (default 1) averages that many back-to-back calls per sample.
+``nvidia-smi`` idle snapshots are captured immediately before AND after each row.
 
 Usage (inside sglang_bbuf on ion-b200):
   CUDA_VISIBLE_DEVICES=<idle> python benchmark.py            # freeze all rows
@@ -30,6 +30,7 @@ import csv
 import importlib.util
 import math
 import os
+import shlex
 import socket
 import statistics
 import subprocess
@@ -57,8 +58,8 @@ CSV_COLUMNS = [
     "cand_min_us", "cand_p10_us", "cand_p90_us",
     "speedup_x", "iters", "inner",
     "command", "git_commit", "candidate_source_version",
-    "host", "gpu_index", "gpu_name", "cuda_visible_devices",
-    "idle_before", "idle_after",
+    "host", "gpu_physical_index", "gpu_logical_index", "gpu_name", "gpu_uuid",
+    "cuda_visible_devices", "idle_before", "idle_after",
 ]
 
 
@@ -79,31 +80,86 @@ def _git(*args: str) -> str:
 
 
 def _candidate_source_version() -> str:
-    """git commit + dirty flag for src/register.py (the candidate seam)."""
     commit = _git("rev-parse", "--short", "HEAD")
     dirty = _git("status", "--porcelain", "--", "src/register.py")
     return f"{commit}{'+dirty' if dirty else ''}"
 
 
-def _nvidia_smi_snapshot() -> str:
-    """Compact per-GPU util/mem snapshot; '' if nvidia-smi is unavailable."""
+def _physical_gpu_index() -> str:
+    cvd = os.environ.get("CUDA_VISIBLE_DEVICES", "")
+    return cvd.split(",")[0].strip() if cvd else "unset"
+
+
+def _gpu_provenance() -> dict[str, str]:
+    physical = _physical_gpu_index()
+    logical = str(torch.cuda.current_device())
+    name = torch.cuda.get_device_name(torch.cuda.current_device())
+    uuid = "unavailable"
+    if physical not in ("", "unset"):
+        try:
+            uuid = subprocess.check_output(
+                ["nvidia-smi", "-i", physical, "--query-gpu=uuid", "--format=csv,noheader"],
+                stderr=subprocess.DEVNULL,
+            ).decode().strip()
+        except Exception:
+            uuid = "unavailable"
+    return {
+        "gpu_physical_index": physical,
+        "gpu_logical_index": logical,
+        "gpu_name": name,
+        "gpu_uuid": uuid,
+        "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES", "unset"),
+    }
+
+
+def _nvidia_smi_snapshot(physical_id: str | None = None) -> str:
+    """Compact util/mem snapshot for the selected GPU (or all); '' if unavailable."""
+    cmd = ["nvidia-smi", "--query-gpu=index,utilization.gpu,memory.used,memory.total",
+           "--format=csv,noheader,nounits"]
+    if physical_id and physical_id not in ("", "unset"):
+        cmd[1:1] = ["-i", physical_id]
     try:
-        out = subprocess.check_output(
-            ["nvidia-smi", "--query-gpu=index,utilization.gpu,memory.used,memory.total",
-             "--format=csv,noheader,nounits"],
-            stderr=subprocess.DEVNULL,
-        ).decode().strip()
+        out = subprocess.check_output(cmd, stderr=subprocess.DEVNULL).decode().strip()
         return " | ".join(line.strip().replace(",", " ") for line in out.splitlines())
     except Exception:
         return "unavailable"
 
 
+# --- The three distinct callables (oracle stays correctness-only) ---
+
+def _apply(fn: Callable, inputs: dict, case: dict) -> None:
+    fn(
+        inputs["q"], inputs["k"], inputs["q_weight"], inputs["k_weight"],
+        inputs["cos_sin_cache"], inputs["positions"],
+        is_neox=case["is_neox"], eps=case["eps"],
+        head_dim=case["head_dim"], rope_dim=case["rope_dim"],
+    )
+
+
+def run_oracle(correctness, inputs: dict, case: dict):
+    """Split-path correctness reference. NOT used for timing."""
+    return correctness._run_oracle(inputs, case)
+
+
+def _fused_baseline_callable():
+    from sglang.jit_kernel.diffusion.qknorm_rope import fused_inplace_qknorm_rope
+    return fused_inplace_qknorm_rope
+
+
+def run_sglang_fused_baseline(inputs: dict, case: dict) -> None:
+    """The current SGLang fused kernel — the baseline to beat (timed)."""
+    _apply(_fused_baseline_callable(), inputs, case)
+
+
+def run_candidate(wrapper, inputs: dict, case: dict) -> None:
+    """The registered optimized candidate (timed)."""
+    _apply(wrapper, inputs, case)
+
+
 def _time_cuda_events(fn: Callable[[], Any], *, warmup: int, iters: int, inner: int) -> list[float]:
-    """Per-sample latencies in microseconds using CUDA events."""
     for _ in range(warmup):
         fn()
     torch.cuda.synchronize()
-
     samples: list[float] = []
     for _ in range(iters):
         start = torch.cuda.Event(enable_timing=True)
@@ -125,12 +181,9 @@ def _summary(samples: list[float]) -> dict[str, float]:
         return ordered[index]
 
     return {
-        "median": statistics.median(ordered),
-        "mean": statistics.mean(ordered),
+        "median": statistics.median(ordered), "mean": statistics.mean(ordered),
         "std": statistics.pstdev(ordered) if len(ordered) > 1 else 0.0,
-        "min": ordered[0],
-        "p10": pct(0.10),
-        "p90": pct(0.90),
+        "min": ordered[0], "p10": pct(0.10), "p90": pct(0.90),
     }
 
 
@@ -144,33 +197,19 @@ def _geom_mean(values: list[float]) -> float:
     return math.exp(sum(math.log(v) for v in values) / len(values))
 
 
-def _fused_baseline_runner():
-    """Resolve the current SGLang fused baseline (the kernel to beat)."""
-    from sglang.jit_kernel.diffusion.qknorm_rope import fused_inplace_qknorm_rope
-    return fused_inplace_qknorm_rope
-
-
-def _make_call(fn, inputs: dict, case: dict) -> Callable[[], None]:
-    def call() -> None:
-        fn(
-            inputs["q"], inputs["k"], inputs["q_weight"], inputs["k_weight"],
-            inputs["cos_sin_cache"], inputs["positions"],
-            is_neox=case["is_neox"], eps=case["eps"],
-            head_dim=case["head_dim"], rope_dim=case["rope_dim"],
-        )
-    return call
-
-
-def _bench_case(correctness, case, baseline_fn, candidate_fn, *, inner: int) -> tuple[dict, dict, float]:
+def _bench_case(correctness, case, candidate_fn, *, inner, physical_id):
     warmup = int(case.get("warmup", 25))
     iters = int(case.get("iters", 100))
-
     base_inputs = correctness._make_inputs(case)
     cand_inputs = correctness._make_inputs(case)
-    b = _summary(_time_cuda_events(_make_call(baseline_fn, base_inputs, case), warmup=warmup, iters=iters, inner=inner))
-    c = _summary(_time_cuda_events(_make_call(candidate_fn, cand_inputs, case), warmup=warmup, iters=iters, inner=inner))
+
+    idle_before = _nvidia_smi_snapshot(physical_id)
+    b = _summary(_time_cuda_events(lambda: run_sglang_fused_baseline(base_inputs, case), warmup=warmup, iters=iters, inner=inner))
+    c = _summary(_time_cuda_events(lambda: run_candidate(candidate_fn, cand_inputs, case), warmup=warmup, iters=iters, inner=inner))
+    idle_after = _nvidia_smi_snapshot(physical_id)
+
     speedup = (b["median"] / c["median"]) if c["median"] > 0 else float("nan")
-    return b, c, speedup
+    return b, c, speedup, idle_before, idle_after
 
 
 def main() -> int:
@@ -181,31 +220,27 @@ def main() -> int:
     correctness = _load_module("tests/test_correctness.py", "kda_correctness")
     register = _load_module("src/register.py", "kda_register")
     candidate_fn = getattr(register, "optimized_wrapper")
-    baseline_fn = _fused_baseline_runner()
 
-    cases = correctness.make_cases()
-    cases = [c for c in cases if not c.get("ci_fallback")]  # production rows only for perf
+    cases = [c for c in correctness.make_cases() if not c.get("ci_fallback")]  # production only
     if not cases:
         raise SystemExit("No production benchmark cases.")
 
     inner = int(os.environ.get("KDA_BENCH_INNER", "1"))
+    physical_id = _physical_gpu_index()
 
     if sanity:
         for case in cases[:3]:
             case = {**case, "warmup": 10, "iters": 30}
-            _b, _c, sp = _bench_case(correctness, case, baseline_fn, candidate_fn, inner=inner)
+            _b, _c, sp, _ib, _ia = _bench_case(correctness, case, candidate_fn, inner=inner, physical_id=physical_id)
             print(f"[sanity] {case['name']:>44s}  candidate/fused-baseline speedup={sp:.4f}x "
                   f"(expect ~1.0x while candidate routes to baseline)")
         return 0
 
-    command = "python " + " ".join(sys.argv)
+    command = shlex.join([sys.executable, *sys.argv])
     git_commit = _git("rev-parse", "HEAD")
     cand_ver = _candidate_source_version()
     host = socket.gethostname()
-    gpu_index = os.environ.get("CUDA_VISIBLE_DEVICES", "unset")
-    gpu_name = torch.cuda.get_device_name(0)
-    cvd = os.environ.get("CUDA_VISIBLE_DEVICES", "unset")
-    idle_before = _nvidia_smi_snapshot()
+    prov = _gpu_provenance()
 
     csv_path = KERNEL_DIR / "benchmark.csv"
     write_header = (not csv_path.exists()) or csv_path.stat().st_size == 0
@@ -213,7 +248,7 @@ def main() -> int:
     speedups: list[float] = []
     rows: list[list[Any]] = []
     for case in cases:
-        b, c, speedup = _bench_case(correctness, case, baseline_fn, candidate_fn, inner=inner)
+        b, c, speedup, idle_before, idle_after = _bench_case(correctness, case, candidate_fn, inner=inner, physical_id=physical_id)
         speedups.append(speedup)
         rows.append([
             datetime.now(timezone.utc).isoformat(), case.get("preset"), case.get("bucket"), case["name"],
@@ -222,13 +257,11 @@ def main() -> int:
             f"{b['median']:.4f}", f"{b['mean']:.4f}", f"{b['std']:.4f}", f"{b['min']:.4f}", f"{b['p10']:.4f}", f"{b['p90']:.4f}",
             f"{c['median']:.4f}", f"{c['mean']:.4f}", f"{c['std']:.4f}", f"{c['min']:.4f}", f"{c['p10']:.4f}", f"{c['p90']:.4f}",
             f"{speedup:.4f}", case.get("iters", 100), inner,
-            command, git_commit, cand_ver, host, gpu_index, gpu_name, cvd, idle_before, "",  # idle_after filled below
+            command, git_commit, cand_ver, host,
+            prov["gpu_physical_index"], prov["gpu_logical_index"], prov["gpu_name"], prov["gpu_uuid"],
+            prov["cuda_visible_devices"], idle_before, idle_after,
         ])
         print(f"{case['name']:>44s}  speedup={speedup:.4f}x  fused_baseline={b['median']:.3f}us  cand={c['median']:.3f}us")
-
-    idle_after = _nvidia_smi_snapshot()
-    for r in rows:
-        r[-1] = idle_after
 
     geomean = _geom_mean(speedups)  # hard-errors if any row is invalid
 
@@ -237,18 +270,18 @@ def main() -> int:
         if write_header:
             writer.writerow(CSV_COLUMNS)
         writer.writerows(rows)
-        summary_row = [""] * len(CSV_COLUMNS)
-        summary_row[CSV_COLUMNS.index("name")] = "GEOMEAN_production"
-        summary_row[CSV_COLUMNS.index("speedup_x")] = f"{geomean:.4f}"
-        summary_row[CSV_COLUMNS.index("command")] = command
-        summary_row[CSV_COLUMNS.index("git_commit")] = git_commit
-        summary_row[CSV_COLUMNS.index("candidate_source_version")] = cand_ver
-        summary_row[CSV_COLUMNS.index("host")] = host
-        summary_row[CSV_COLUMNS.index("gpu_name")] = gpu_name
-        summary_row[CSV_COLUMNS.index("cuda_visible_devices")] = cvd
-        writer.writerow(summary_row)
+        summary = {c: "" for c in CSV_COLUMNS}
+        summary.update({
+            "name": "GEOMEAN_production", "speedup_x": f"{geomean:.4f}",
+            "command": command, "git_commit": git_commit, "candidate_source_version": cand_ver,
+            "host": host, "gpu_physical_index": prov["gpu_physical_index"],
+            "gpu_logical_index": prov["gpu_logical_index"], "gpu_name": prov["gpu_name"],
+            "gpu_uuid": prov["gpu_uuid"], "cuda_visible_devices": prov["cuda_visible_devices"],
+        })
+        writer.writerow([summary[c] for c in CSV_COLUMNS])
 
-    print(f"\nproduction geomean speedup = {geomean:.4f}x over {len(speedups)} shapes  (gpu={gpu_name} id={gpu_index})")
+    print(f"\nproduction geomean speedup = {geomean:.4f}x over {len(speedups)} shapes  "
+          f"(gpu phys={prov['gpu_physical_index']} {prov['gpu_name']})")
     return 0
 
 

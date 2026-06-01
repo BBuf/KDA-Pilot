@@ -142,9 +142,11 @@ def make_ci_grid_cases() -> list[dict[str, Any]]:
     """SGLang CI-grid correctness-or-fallback cases (AC-1.1), kept separate from
     the production rows. Honors the kernel's support gate
     (`rope_dim % (head_dim//32) == 0`; for neox, power-of-two rotary lanes).
-    ``KDA_FULL_CI_GRID=1`` expands to the full nightly grid.
+
+    The FULL grid is the default acceptance path; set ``KDA_CI_GRID_SUBSET=1`` for
+    the reduced developer-smoke subset.
     """
-    full = os.environ.get("KDA_FULL_CI_GRID") == "1"
+    full = os.environ.get("KDA_CI_GRID_SUBSET") != "1"
     bs_list, heads_list, hd_list = _ci_ranges(full)
     cases: list[dict[str, Any]] = []
     for bs in bs_list:
@@ -183,18 +185,30 @@ def make_ci_grid_cases() -> list[dict[str, Any]]:
     return cases
 
 
+# Read-only cos/sin caches memoized by (rope_dim, device): the full CI grid reuses
+# only a handful of distinct rope_dims, so this avoids rebuilding a large cache per case.
+_COS_SIN_CACHE: dict = {}
+
+
 def _create_cos_sin_cache(rope_dim: int, device: str) -> "torch.Tensor":
     """[MAX_SEQ_LEN, rope_dim] float32 cache: concat(cos, sin) halves.
 
-    Identical construction to the SGLang reference test/benchmark.
+    Identical construction to the SGLang reference test/benchmark; memoized per
+    (rope_dim, device) since it is read-only.
     """
+    key = (rope_dim, device)
+    cached = _COS_SIN_CACHE.get(key)
+    if cached is not None:
+        return cached
     inv_freq = 1.0 / (
         ROPE_BASE
         ** (torch.arange(0, rope_dim, 2, dtype=torch.float32, device=device) / rope_dim)
     )
     t = torch.arange(MAX_SEQ_LEN, dtype=torch.float32, device=device)
     freqs = torch.einsum("i,j->ij", t, inv_freq)
-    return torch.cat((freqs.cos(), freqs.sin()), dim=-1)
+    cache = torch.cat((freqs.cos(), freqs.sin()), dim=-1)
+    _COS_SIN_CACHE[key] = cache
+    return cache
 
 
 def _make_inputs(case: dict[str, Any], device: str = "cuda") -> dict[str, "torch.Tensor"]:
