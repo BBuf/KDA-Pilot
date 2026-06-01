@@ -39,19 +39,93 @@ for every wrapped entry point. It must fall back to the baseline
 implementation for any shape, dtype, layout, device, normalization type,
 or feature flag that is not part of the configured shape table.
 
-The exact public signature for each wrapped entry point should be filled
-after baseline recovery. Typical wrappers for this family accept the same
-positional and keyword arguments as the SGLang baseline (see `prompt.md`),
-plus optional `*, dispatcher_hint=` keyword for dispatcher overrides.
+## Recovered Baseline Contract
 
-## Evidence Requirements
+Recovered from the SGLang checkout at
+`/Users/bbuf/工作目录/Common/sglang` (read-only reference):
 
-Before promotion, update this file with:
+- `python/sglang/jit_kernel/diffusion/triton/norm.py` -> `norm_infer`
+- `python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py` -> `triton_one_pass_rms_norm`
 
-- final wrapper signature(s);
-- per-shape dispatch table (which underlying candidate kernel handles
-which shape bucket);
-- fallback cases;
-- PyTorch-FP32 or `_reference()` tolerance methodology used in tests;
-- benchmark command and latency formula;
-- source lineage for copied or ported helper code.
+### `norm_infer`
+
+```python
+def norm_infer(x, weight, bias, eps, is_rms_norm=False, out=None) -> Tensor
+```
+
+- Positional: `x` (2D `[M, N]`), `weight` (`[N]` or `None`), `bias` (`[N]` or `None`), `eps` (float).
+- `is_rms_norm` and `out` are keyword-or-positional; the helios capture passes
+  `eps=1e-6, is_rms_norm=False` as keywords.
+- Behavior (one program per row, all math in fp32, output cast to `x.dtype`):
+  - LayerNorm (`is_rms_norm=False`): `mean = sum(x)/N`, `var = sum((x-mean)^2)/N`,
+    `rstd = 1/sqrt(var+eps)`, `y = (x-mean)*rstd`.
+  - RMSNorm (`is_rms_norm=True`): `var = sum(x^2)/N`, `rstd = 1/sqrt(var+eps)`,
+    `y = x*rstd`.
+  - Then `y = y*weight` if `weight is not None`, `y += bias` if `bias is not None`
+    (weight defaults to 1.0, bias to 0.0 when absent).
+- Asserts: `weight.shape == (N,)` and `weight.stride(-1) == 1` (same for `bias`);
+  `x` is made contiguous internally (`x = x.contiguous()`); `out` defaults to
+  `empty_like(x)`; raises `RuntimeError` if `N * x.element_size() >= 64 KiB`.
+- Returns the output tensor (same shape/dtype as `x`).
+- helios target: `x=[8640,5120] fp32`, `weight=[5120] fp32`, `bias=[5120] fp32`,
+  `eps=1e-6`, `is_rms_norm=False`.
+
+### `triton_one_pass_rms_norm`
+
+```python
+def triton_one_pass_rms_norm(x, w, eps=1e-6) -> Tensor
+```
+
+- Positional: `x` (last dim `D`), `w` (`[D]`), `eps` (float, 3rd positional; the
+  captures pass `eps` positionally as `arg2=1e-6`).
+- RMSNorm only, **no bias**: reshape to `[S, D]`, `mean_square = sum(x^2)/D`,
+  `rstd = rsqrt(mean_square+eps)`, `y = x*rstd*w`; math in fp32, output cast to
+  `x.dtype`. `x` is made contiguous internally; returns `y` (same shape/dtype).
+- RMS targets: `x in {[648720,128],[1320,128],[650040,128],[16384,128],[4096,128]}`
+  bf16, `w=[128] bf16`, `eps=1e-6`.
+
+## Dispatch + Fallback Set
+
+The dispatcher preserves both public names and routes only the exact captured
+buckets to the native-CUDA specializations; everything else falls back to the
+SGLang baseline:
+
+- `norm_infer` -> LayerNorm-fp32 specialization only when: CUDA tensor, dtype
+  `float32`, `is_rms_norm=False`, last-dim contiguous, `N == 5120`, weight and
+  bias both present and shape `(N,)`. Otherwise fall back to baseline.
+- `triton_one_pass_rms_norm` -> RMSNorm-bf16 specialization only when: CUDA
+  tensor, dtype `bfloat16`, last-dim contiguous, `D == 128`, `w` shape `(D,)`.
+  Otherwise fall back to baseline.
+- Always fall back for: CPU/MPS/non-CUDA device, non-contiguous last dim,
+  unsupported dtype, `is_rms_norm=True` on `norm_infer`, `N != 5120` / `D != 128`,
+  missing weight/bias for the specialization. Fallback output must equal the
+  baseline output exactly (same call delegated to the SGLang baseline).
+
+## Evidence (normv5 — promoted)
+
+- **Wrapper signatures (preserved):** `triton_one_pass_rms_norm(x, w, eps=1e-6) -> Tensor`
+  and `norm_infer(x, weight, bias, eps, is_rms_norm=False, out=None) -> Tensor`
+  (`src/norm_dispatch.py`, re-exported via `src/register.py`).
+- **Dispatch table + per-bucket promote/no-go:** see `docs/dispatch.md`. RMS bf16/fp16
+  D=128 → `rms_norm_warp<128,false,DType>` (`src/rms_norm_d128.cuh`, 2-rows-per-warp
+  128-bit); LN fp32 N=5120 +weight+bias → `layer_norm_block<5120,true,false,float>`
+  (`src/layer_norm_n5120.cuh`, one-CTA-per-row exact tiling).
+- **Fallback:** any other dtype / N / D / device / layout / `is_rms_norm=True` on
+  norm_infer / missing weight|bias → SGLang baseline (output verified == baseline).
+- **Tolerance methodology:** candidate vs SGLang baseline AND vs a PyTorch FP32 reference;
+  fixed SGLang tolerances (fp32 1e-5, bf16/fp16 5e-2) + a dynamic guard
+  (candidate-vs-fp32 error ≤ 4× baseline-vs-fp32 error); explicit NaN/Inf checks.
+  Result: 201/201 cases (full regression grid incl. odd M, + select01 oracle); helios
+  LN abs err 2.86e-6 (== baseline's own error vs fp32).
+- **Benchmark command:** inside `sglang_bbuf` on an idle H200,
+  `KDA_RUN_CORRECTNESS=1 CUDA_VISIBLE_DEVICES=<idle> python benchmark.py --lock` (once),
+  then `... python benchmark.py --candidate-version <ver>`. Latency = median of warmup +
+  repeated wall-clock samples (cuda-synced), timed region excludes JIT/setup/copy; per-shape
+  speedup = baseline_median / candidate_median; final = geomean across the 6 shapes.
+  Result: **geomean 1.4223x** (helios 1.067x; huge RMS 1.041/1.046x; small RMS 1.91-1.94x),
+  ion8-h200 GPU7 (NVIDIA H200), sglang c47f0e7cd. Bound analysis: `profile/ncu_normv2/REPORT.md`.
+- **Source lineage:** kernel structure (params struct, templated `Kernel<...>::run`,
+  `TensorMatcher`/`SymbolicSize`, `LaunchKernel`, packed `cast<fp32x2_t>` vectorization,
+  `warp::reduce_sum`) mirrors `python/sglang/jit_kernel/csrc/diffusion/qknorm_rope.cuh`;
+  2-rows-per-warp 128-bit lever from KernelWiki (pytorch#150705, vllm#27931). No
+  `torch.utils.cpp_extension`; no `--use_fast_math`. Post-loop SGLang export = task12 (deferred).
