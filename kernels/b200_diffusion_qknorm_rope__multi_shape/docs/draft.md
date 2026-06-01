@@ -115,11 +115,31 @@ leaner call path (zero-overhead dispatcher, avoiding the custom-op wrapper, PDL-
 not the device kernel — and it MUST be proven on the integrated install path. Large
 shapes are near the bandwidth bound; expect a no-go there unless NCU shows otherwise.
 
+## NCU correction (Round 3) — profile, don't guess
+
+NCU (`profile/baseline_b200/REPORT.md`, commit 68a32061, GPU 4) revises the seed
+roofline above:
+
+- **Small `qwen B19`: launch/dispatch-overhead bound (confirmed).** Device kernel
+  = **7.55 µs**, end-to-end benchmark = 60.67 µs → **~53 µs (~88 %) is host dispatch**
+  (torch custom-op + JIT wrapper). Kernel also tiny-grid (114<148 SMs, 0.10 waves/SM,
+  12.7 % occupancy). The win is the call path, not the device kernel.
+- **Large `qwen-edit B8424`: memory-LATENCY bound, NOT bandwidth-bound (correction).**
+  The seed roofline guessed bandwidth; NCU shows only **12.8 % DRAM read %peak**
+  (≈1.4 TB/s of ~8 TB/s). Dominant stall `long_scoreboard` 11.9 at 88.9 % occupancy,
+  compute SOL 60 % / memory SOL 50 %, L2 hit 50 %. Headroom is limited; any gain is
+  from L2 reuse on the per-head-reread float32 cos_sin_cache or load-latency hiding —
+  not a bandwidth rewrite. Likely near-bound; confirm vs a candidate before a no-go.
+
+This is why the roofline was a *seed* and NCU is the arbiter.
+
 ## Status
 
 - Local scaffold + benchmark/correctness corrections complete and committed.
-- Remote B200: REMOTE_KDA_DIR created; correctness (production + full CI grid +
-  negatives) PASS; baseline frozen with provenance into `benchmark.csv`.
-- Next: NCU one large + one small production shape to split device-time vs
-  launch/dispatch overhead and name the active bound (AC-5); then Codex direction
-  ranking; then the first native CUDA candidate. No optimized kernel implemented yet.
+- Remote B200: REMOTE_KDA_DIR created; correctness (production + full 2400 CI grid +
+  negatives) PASS; baseline refrozen with symmetric timing + provenance
+  (`benchmark.csv`, commit 68a32061); first NCU pass done with named bounds
+  (`profile/baseline_b200/REPORT.md`).
+- Next: Codex `analyze` direction-ranking from the corrected baseline + NCU; then the
+  first native CUDA candidate (AC-2/AC-4) + PDL A/B; integrated-path validation for
+  small shapes. No optimized kernel implemented yet.

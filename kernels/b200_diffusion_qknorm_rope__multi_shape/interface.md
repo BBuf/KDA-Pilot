@@ -73,22 +73,31 @@ baseline for any shape, dtype, layout, device, or feature flag it does not suppo
 - Small-shape wins (19–195 tokens) are additionally validated on the integrated SGLang
   install path (`kda_kernels.install()` + zero-overhead dispatcher).
 
-## Frozen Baseline (Round 2, NVIDIA B200)
+## Frozen Baseline (Round 3 refreeze, symmetric timing, NVIDIA B200)
 
 - Host `innomatrix-us-adc-smb200-0003`, physical GPU 4 (NVIDIA B200, idle 0% util),
-  container `sglang_bbuf`, local commit `43a8fd164`.
-- Command: `CUDA_VISIBLE_DEVICES=4 KDA_GIT_COMMIT=43a8fd164 python benchmark.py`
+  container `sglang_bbuf`, local commit `68a32061` (resolves the asymmetric-baseline
+  timing of the Round 2 freeze: the direct fused-baseline callable is resolved once
+  before timing, symmetric with the candidate path).
+- Command: `CUDA_VISIBLE_DEVICES=4 KDA_GIT_COMMIT=68a32061 python benchmark.py`
   (correctness gate first: `CUDA_VISIBLE_DEVICES=4 KDA_RUN_CORRECTNESS=1 pytest
-  tests/test_correctness.py` — 10 production + 2400 CI-grid + 3 negative tests PASS).
+  tests/test_correctness.py` — 10 production + 2400 CI-grid + 3 negative tests PASS;
+  logs `correctness_prod.log` / `cigrid_full.log` / `sanity.log` / `benchmark.log` in
+  `REMOTE_KDA_DIR`).
 - Latency formula: per-call CUDA-event median over `iters` (warmup excluded), no CUDA graph.
-- Fused-baseline median latency (µs): joyai-edit B7904/H32 = 89.5; qwen B4096/H24 = 45.1;
-  qwen-edit B8424/H24 = 98.0; zimage B4096/H30 = 76.1; zimage B4128/H30 = 76.5;
-  qwen B19/H24 = 64.2; qwen B47/H24 = 64.0; qwen-edit B195/H24 = 64.1;
-  qwen-edit B189/H24 = 64.3; zimage B32/H30 = 64.9.
-- Candidate (routes to baseline) geomean = 1.0149x (≈1.0x, validates methodology).
-- Signal: small shapes (19–195 tok) are flat ~64µs — a fixed per-call dispatch/launch
-  floor that exceeds the 4096-tok large shape (45µs); large shapes scale with size.
-  Full per-row stats + provenance + idle snapshots are in `benchmark.csv`.
+- Fused-baseline median latency (µs): joyai-edit B7904/H32 = 89.2; qwen B4096/H24 = 59.3;
+  qwen-edit B8424/H24 = 95.6; zimage B4096/H30 = 73.6; zimage B4128/H30 = 74.0;
+  qwen B19/H24 = 60.7; qwen B47/H24 = 60.8; qwen-edit B195/H24 = 61.2;
+  qwen-edit B189/H24 = 61.2; zimage B32/H30 = 61.5.
+- Candidate (routes to baseline) geomean = 0.9957x (≈1.0x; slightly <1 reflects the
+  candidate's honest extra wrapper frame now that the baseline timing is symmetric).
+- Run-to-run variance on the shared box is real (e.g. qwen B4096 read 45µs in Round 2,
+  59µs here); treat frozen numbers as a per-run snapshot tied to the recorded commit/GPU.
+- NCU named bounds (`profile/baseline_b200/REPORT.md`): small shapes are
+  launch/dispatch-bound (device 7.55µs vs 60.7µs end-to-end, ~88% host dispatch); large
+  shapes are memory-latency-bound, NOT DRAM-bandwidth-bound (~13% DRAM peak,
+  long_scoreboard dominant, 89% occupancy). Full per-row stats + provenance + per-row
+  idle snapshots are in `benchmark.csv`.
 
 ## To Be Filled Before Promotion
 
