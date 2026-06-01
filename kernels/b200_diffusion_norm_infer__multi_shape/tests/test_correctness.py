@@ -1,15 +1,17 @@
-"""Correctness scaffold for ``b200_diffusion_norm_infer__multi_shape``.
+"""Correctness harness for ``b200_diffusion_norm_infer__multi_shape``.
 
-This file is intentionally skipped unless ``KDA_RUN_CORRECTNESS=1`` is set.
+Skipped unless ``KDA_RUN_CORRECTNESS=1`` (run on the remote B200 inside the
+``sglang_bbuf`` container). Covers:
+- the six captured production shapes verbatim (1 LayerNorm + 5 RMSNorm),
+- the canonical regression grid from ``test_qwen_image_modulation.py``
+  (LayerNorm via ``norm_infer``; CI subset by default, full grid with
+  ``KDA_FULL_REGRESSION=1``),
+- RMS one-pass cross-validation at ``D=128`` on small row counts,
+- adversarial inputs (zeros, near-constant, large-offset, mixed-sign).
 
-Required agent edits:
-- replace ``make_cases()`` with the full configured shape list from
-  ``prompt.md``;
-- implement ``baseline(case)`` by calling the wrapped SGLang baseline entry
-  points listed in ``prompt.md`` (treat that as the semantic oracle for this
-  task and cross-check against a PyTorch FP32 reference where practical);
-- keep ``candidate(case)`` compatible with ``src/register.py``;
-- use dynamic BF16/FP16-aware tolerances where applicable.
+``baseline(case)`` is the SGLang oracle; ``candidate(case)`` routes through
+``src/register.py::optimized_wrapper``. Both build the SAME seeded inputs so the
+comparison is exact. Dynamic tolerances: fp32 ``1e-5``, bf16/fp16 ``5e-2``.
 """
 
 from __future__ import annotations
@@ -33,7 +35,7 @@ KERNEL_DIR = Path(__file__).resolve().parents[1]
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("KDA_RUN_CORRECTNESS") != "1",
-    reason="Set KDA_RUN_CORRECTNESS=1 after the SGLang baseline cases are filled.",
+    reason="Set KDA_RUN_CORRECTNESS=1 (on the remote B200) to run correctness.",
 )
 
 
@@ -48,45 +50,189 @@ def _load_register_module():
     return module
 
 
+def _dtype(name: str):
+    return {"fp16": torch.float16, "bf16": torch.bfloat16, "fp32": torch.float32}[name]
+
+
+def _tol(dtype) -> tuple[float, float]:
+    # Mirrors test_qwen_image_modulation.py: fp32 strict, bf16/fp16 loose.
+    if dtype == torch.float32:
+        return 1e-5, 1e-5
+    return 5e-2, 5e-2
+
+
+def _full_regression() -> bool:
+    return os.environ.get("KDA_FULL_REGRESSION") == "1"
+
+
+# ---------------------------------------------------------------------------
+# Case construction
+# ---------------------------------------------------------------------------
 def make_cases() -> list[dict[str, Any]]:
-    """Return all configured correctness/benchmark cases.
+    cases: list[dict[str, Any]] = []
 
-    The list must cover every shape bucket recorded in ``prompt.md``. Each case
-    typically looks like::
+    # --- 1) Six captured production shapes (VERBATIM; never broadened) -------
+    # helios: norm_infer LayerNorm, fp32, [8640, 5120], weight+bias, eps=1e-6.
+    cases.append(
+        dict(
+            name="helios__fp32__M8640N5120",
+            kind="norm_infer", M=8640, N=5120, dtype="fp32",
+            eps=1e-6, is_rms_norm=False, has_weight=True, has_bias=True,
+            input_kind="randn", warmup=25, iters=100, seed=1001,
+            production=True,
+        )
+    )
+    # hunyuanvideo / zimage: triton_one_pass_rms_norm, bf16, D=128.
+    for s, seed in [(648720, 1002), (1320, 1003), (650040, 1004), (16384, 1005), (4096, 1006)]:
+        cases.append(
+            dict(
+                name=f"rms__bf16__S{s}D128",
+                kind="rms_onepass", S=s, D=128, dtype="bf16",
+                eps=1e-6, input_kind="randn", warmup=25, iters=100, seed=seed,
+                production=True,
+            )
+        )
 
-        {
-            "name": "flux__bf16__B1S4608D3072",
-            "model": "flux",
-            "args": (...),
-            "kwargs": {...},
-            "atol": 5e-2,
-            "rtol": 5e-2,
-            "warmup": 25,
-            "iters": 100,
-        }
+    # --- 2) Canonical LayerNorm regression grid (norm_infer, is_rms_norm=False)
+    if _full_regression():
+        batches, seqs, hiddens, dtypes = [1, 2, 4], [6, 33, 128, 257], [512, 1024, 1536, 3072], ["fp16", "bf16", "fp32"]
+    else:  # CI subset (test_qwen_image_modulation.py) + fp32 for the strict path
+        batches, seqs, hiddens, dtypes = [1, 2], [6, 128], [512, 3072], ["fp16", "bf16", "fp32"]
+    seed = 2000
+    for b in batches:
+        for s in seqs:
+            for h in hiddens:
+                for dt in dtypes:
+                    seed += 1
+                    cases.append(
+                        dict(
+                            name=f"reg_ln__{dt}__B{b}S{s}H{h}",
+                            kind="norm_infer", M=b * s, N=h, dtype=dt,
+                            eps=1e-6, is_rms_norm=False, has_weight=True, has_bias=True,
+                            input_kind="randn", warmup=5, iters=20, seed=seed,
+                        )
+                    )
 
-    Returning an empty list keeps the scaffold skipped.
-    """
+    # --- 3) RMS one-pass cross-validation at D=128 on small row counts -------
+    for m, seed in [(6, 3001), (128, 3002), (768, 3003)]:
+        cases.append(
+            dict(
+                name=f"reg_rms__bf16__S{m}D128",
+                kind="rms_onepass", S=m, D=128, dtype="bf16",
+                eps=1e-6, input_kind="randn", warmup=5, iters=20, seed=seed,
+            )
+        )
 
-    return []
+    # --- 4) Adversarial numerical inputs (LayerNorm path; AC-4) --------------
+    for ik, seed in [("zeros", 4001), ("const", 4002), ("offset", 4003), ("mixed", 4004)]:
+        cases.append(
+            dict(
+                name=f"adv_ln__fp32__{ik}__M128N3072",
+                kind="norm_infer", M=128, N=3072, dtype="fp32",
+                eps=1e-6, is_rms_norm=False, has_weight=True, has_bias=True,
+                input_kind=ik, warmup=2, iters=5, seed=seed,
+            )
+        )
+    # out=preallocated coverage (AC-4 / norm_infer out semantics)
+    cases.append(
+        dict(
+            name="ln_out_preallocated__fp32__M256N1024",
+            kind="norm_infer", M=256, N=1024, dtype="fp32",
+            eps=1e-6, is_rms_norm=False, has_weight=True, has_bias=True,
+            input_kind="randn", use_out=True, warmup=2, iters=5, seed=5001,
+        )
+    )
+
+    for c in cases:
+        strict = c["dtype"] == "fp32"  # torch-free (make_cases runs at collection)
+        c.setdefault("atol", 1e-5 if strict else 5e-2)
+        c.setdefault("rtol", 1e-5 if strict else 5e-2)
+    return cases
+
+
+# ---------------------------------------------------------------------------
+# Deterministic seeded inputs (shared by baseline + candidate; 1-entry cache)
+# ---------------------------------------------------------------------------
+_INPUT_CACHE: dict[str, dict[str, Any]] = {}
+
+
+def _fill(x: torch.Tensor, kind: str) -> torch.Tensor:
+    if kind == "randn":
+        return x
+    if kind == "zeros":
+        return torch.zeros_like(x)
+    if kind == "const":  # near-constant row: 1.0 + tiny noise
+        return torch.ones_like(x) + 1e-4 * x
+    if kind == "offset":  # large DC offset
+        return x + 1.0e4
+    if kind == "mixed":  # large mixed-sign magnitudes
+        return x * 1.0e3
+    raise ValueError(f"unknown input_kind {kind}")
+
+
+def _make_inputs(case: dict[str, Any]) -> dict[str, Any]:
+    name = case["name"]
+    if name in _INPUT_CACHE:
+        return _INPUT_CACHE[name]
+    _INPUT_CACHE.clear()  # bound memory to one case at a time
+    assert torch is not None and torch.cuda.is_available(), "CUDA required"
+    dev = "cuda"
+    dt = _dtype(case["dtype"])
+    torch.manual_seed(case["seed"])
+    if case["kind"] == "norm_infer":
+        M, N = case["M"], case["N"]
+        x = _fill(torch.randn(M, N, device=dev, dtype=torch.float32), case["input_kind"]).to(dt)
+        weight = torch.randn(N, device=dev, dtype=dt) if case.get("has_weight") else None
+        bias = torch.randn(N, device=dev, dtype=dt) if case.get("has_bias") else None
+        out = torch.empty_like(x) if case.get("use_out") else None
+        inp = dict(x=x, weight=weight, bias=bias, out=out)
+    elif case["kind"] == "rms_onepass":
+        S, D = case["S"], case["D"]
+        x = _fill(torch.randn(S, D, device=dev, dtype=torch.float32), case["input_kind"]).to(dt)
+        w = torch.randn(D, device=dev, dtype=dt)
+        inp = dict(x=x, w=w)
+    else:
+        raise ValueError(case["kind"])
+    _INPUT_CACHE[name] = inp
+    return inp
+
+
+def _sglang_baselines():
+    from sglang.jit_kernel.diffusion.triton.norm import norm_infer
+    from sglang.jit_kernel.diffusion.triton.rmsnorm_onepass import (
+        triton_one_pass_rms_norm,
+    )
+
+    return norm_infer, triton_one_pass_rms_norm
 
 
 def baseline(case: dict[str, Any]) -> Any:
-    """Return the SGLang baseline result for one configured case."""
-
-    raise NotImplementedError(
-        "Call the SGLang baseline entry point(s) listed in prompt.md as the oracle."
-    )
+    norm_infer, triton_one_pass_rms_norm = _sglang_baselines()
+    inp = _make_inputs(case)
+    if case["kind"] == "norm_infer":
+        return norm_infer(
+            inp["x"], inp["weight"], inp["bias"], case["eps"],
+            is_rms_norm=case["is_rms_norm"], out=inp["out"],
+        )
+    return triton_one_pass_rms_norm(inp["x"], inp["w"], case["eps"])
 
 
 def candidate(case: dict[str, Any]) -> Any:
     module = _load_register_module()
     wrapper = getattr(module, "optimized_wrapper")
-    args = case.get("args", ())
-    kwargs = case.get("kwargs", {})
-    return wrapper(*args, **kwargs)
+    inp = _make_inputs(case)
+    if case["kind"] == "norm_infer":
+        return wrapper(
+            inp["x"], inp["weight"], inp["bias"], case["eps"],
+            is_rms_norm=case["is_rms_norm"], out=inp["out"],
+            dispatcher_hint="norm_infer",
+        )
+    return wrapper(inp["x"], inp["w"], case["eps"], dispatcher_hint="rms_onepass")
 
 
+# ---------------------------------------------------------------------------
+# Validators (unchanged scaffold helpers)
+# ---------------------------------------------------------------------------
 def _assert_no_nan_inf(value: Any, *, path: str) -> None:
     if torch is not None and isinstance(value, torch.Tensor):
         assert not torch.isnan(value).any(), f"{path} contains NaN"
@@ -132,10 +278,8 @@ def test_register_metadata() -> None:
     assert callable(spec["callable"])
 
 
-def test_correctness_cases() -> None:
-    cases = make_cases()
-    assert cases, "No correctness cases recovered. Fill make_cases() before optimizing."
-    for case in cases:
-        expected = baseline(case)
-        actual = candidate(case)
-        _assert_close(actual, expected, case=case, path=case.get("name", "out"))
+@pytest.mark.parametrize("case", make_cases(), ids=lambda c: c["name"])
+def test_correctness_cases(case: dict[str, Any]) -> None:
+    expected = baseline(case)
+    actual = candidate(case)
+    _assert_close(actual, expected, case=case, path=case.get("name", "out"))
