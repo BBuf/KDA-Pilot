@@ -130,7 +130,7 @@ def make_cases() -> list[dict[str, Any]]:
                 name=f"adv_ln__fp32__{ik}__M128N3072",
                 kind="norm_infer", M=128, N=3072, dtype="fp32",
                 eps=1e-6, is_rms_norm=False, has_weight=True, has_bias=True,
-                input_kind=ik, warmup=2, iters=5, seed=seed,
+                input_kind=ik, warmup=2, iters=5, seed=seed, adversarial=True,
             )
         )
     # out=preallocated coverage (AC-4 / norm_infer out semantics)
@@ -278,8 +278,45 @@ def test_register_metadata() -> None:
     assert callable(spec["callable"])
 
 
+def _layernorm_fp64_ref(case: dict[str, Any]):
+    """Mathematically-correct LayerNorm in fp64 (the 'truth' for adversarial inputs)."""
+    inp = _make_inputs(case)
+    x = inp["x"].double()
+    mean = x.mean(dim=1, keepdim=True)
+    var = ((x - mean) ** 2).mean(dim=1, keepdim=True)  # population variance, matches kernel
+    y = (x - mean) / torch.sqrt(var + case["eps"])
+    if inp["weight"] is not None:
+        y = y * inp["weight"].double()
+    if inp["bias"] is not None:
+        y = y + inp["bias"].double()
+    return y
+
+
+def _run_adversarial(case: dict[str, Any]) -> None:
+    # Ill-conditioned fp32 inputs (near-constant / large-offset / mixed-sign /
+    # zeros) make exact agreement between two different fp32 reduction orders
+    # unrealistic. Correctness here = candidate is finite AND no worse than the
+    # SGLang baseline relative to an fp64 reference (SGLang-style dynamic
+    # tolerance: candidate error <= K * baseline error + floor).
+    ref = _layernorm_fp64_ref(case)
+    base = baseline(case)
+    cand = candidate(case)
+    _assert_no_nan_inf(cand, path=case["name"])
+    assert cand.shape == base.shape, f"{case['name']} shape {cand.shape} != {base.shape}"
+    err_base = (base.double() - ref).abs().max().item()
+    err_cand = (cand.double() - ref).abs().max().item()
+    K, floor = 4.0, 1e-3
+    assert err_cand <= K * err_base + floor, (
+        f"{case['name']}: candidate err {err_cand:.3e} exceeds {K}x baseline err "
+        f"{err_base:.3e} + {floor:.0e}"
+    )
+
+
 @pytest.mark.parametrize("case", make_cases(), ids=lambda c: c["name"])
 def test_correctness_cases(case: dict[str, Any]) -> None:
+    if case.get("adversarial"):
+        _run_adversarial(case)
+        return
     expected = baseline(case)
     actual = candidate(case)
     _assert_close(actual, expected, case=case, path=case.get("name", "out"))
