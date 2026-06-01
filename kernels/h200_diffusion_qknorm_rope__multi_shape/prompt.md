@@ -509,3 +509,39 @@ well-supported no-go explains why no defensible path remains under the
 available workspace;
 - `prompt.md`, `interface.md`, `benchmark.csv`, and `solutions.jsonl` are
 updated with the final result.
+
+## Final Result (RLCR rounds 0-3, 2026-06-01)
+
+- **Candidate**: native CUDA `fused_inplace_qknorm_rope` (2-heads-per-warp `float4` path),
+  ported from the sibling B200 impl and rebuilt for H200/sm_90. Sources in `src/`
+  (`csrc/qknorm_rope_kernel.cu`, `wrapper.py`, `register.py` with `EXPORTS`). `src=04e37d1a5221a82b`.
+- **Correctness**: 27/27 tests pass on H200 — 9 captured shapes via the native CUDA path
+  (dispatch `"cuda"`, `max_abs_err ≤ 0.0625` vs the SGLang split oracle, ATOL=8e-2/RTOL=1e-2);
+  regression-grid slice (hd64/hd256/rope64/neox → SGLang-baseline fallback, int32 → cuda);
+  positions zero/repeat/shuffled (int32+int64); wrapper-level fallback negatives — CPU, true q/k
+  split-device (both q.cuda/k.cpu and q.cpu/k.cuda), unsupported int16 positions, non-contiguous,
+  16-byte-misaligned, fp16, aliased q/k — all dispatch `"fallback"` without raising and match the
+  oracle (a device/dtype/layout-agnostic PyTorch semantic reference handles cases the CUDA baseline
+  cannot); a double-install / recursive baseline raises a clear `RuntimeError`; plus a `_supported`
+  gate test. No NaN/Inf.
+- **Performance** (idle H200 GPU 7, container `sglang_omni_bbuf_kda`, sglang
+  0.5.12.dev472@c47f0e7cd): **geomean median-latency speedup ~1.11×** over the SGLang baseline
+  across the 9 captured shapes — run-to-run ~1.09–1.13 (3 committed runs 1.0965/1.1258/1.0883).
+  The all-9 geomean is noisy because the launch-bound tiny shapes (T≤195, ~1.0–1.1×) dominate
+  it; the large shapes (≥4096 tokens) are stable at ~1.14–1.16×. End-to-end through the wrapper
+  safety gate. Evidence: `benchmark.csv` (exact command per row) + `profile/round0_ncu/gpu_state.md`
+  (per-run before/after GPU idleness).
+- **Dispatcher**: single universal 2-head kernel; 1-head is 1.20–1.22× slower on large
+  shapes and ties on tiny (`docs/dispatch.md`).
+- **Bound analysis**: large shapes are memory-latency-bound (long-scoreboard ~47%, DRAM
+  45–51% of base-clock peak, ~56–62% of HBM3e boost peak, occupancy 81–85%) and near the
+  attainable bound for this kernel class; tiny shapes are launch/underfill-bound
+  (occupancy 13%). Roofline `docs/perf_analysis.md`; NCU `profile/round0_ncu/REPORT.md`.
+  Ranked future direction (bounded upside): shared-memory cos/sin staging.
+- **Promotion**: exported into `kda_kernels/diffusion/qknorm_rope/_impls/h200/` (capability
+  (9,0)→h200), shipping the wrapper-level safe fallback (PyTorch semantic reference) + the
+  double-install raise. Overlay `KDA_COMMIT` `93ab0645a679bbb2ae4c60fc5bb605a6cbe71ea0`,
+  re-export commit `368f396b6`; `--revert` restores the SGLang baseline. Post-export H200 smoke:
+  dispatcher CUDA path + wrapper-level CPU + true q/k device-mismatch fallback all correct. See
+  `solutions.jsonl` and the overlay `KDA_STATUS.md`. (The installed dispatcher routes all-CPU
+  calls to the SGLang baseline by design — CPU is not a promoted-arch path.)

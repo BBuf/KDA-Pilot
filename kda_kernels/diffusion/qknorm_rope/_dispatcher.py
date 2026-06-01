@@ -26,11 +26,21 @@ except Exception:  # pragma: no cover - local export/verify may not have sglang
     _BASELINE_fused_inplace_qknorm_rope = None
 
 _ARCH_BY_CAPABILITY = {(10, 0): 'b200', (9, 0): 'h200'}
-_SUPPORTED_ARCHES = ('b200',)
-_IMPL_MODULES = {'fused_inplace_qknorm_rope': {'b200': 'kda_kernels.diffusion.qknorm_rope._impls.b200.wrapper'}}
+_SUPPORTED_ARCHES = ('b200', 'h200')
+_IMPL_MODULES = {'fused_inplace_qknorm_rope': {'b200': 'kda_kernels.diffusion.qknorm_rope._impls.b200.wrapper', 'h200': 'kda_kernels.diffusion.qknorm_rope._impls.h200.wrapper'}}
 _IMPL_CACHE: dict[tuple[str, str], Any] = {}
 _IMPL_IMPORT_ERRORS: dict[tuple[str, str], BaseException] = {}
 _WARNED_IMPORT_ERRORS: set[tuple[str, str]] = set()
+# Resolved-target cache: (fn_name, device_index) -> bound wrapper callable
+# (or the _USE_BASELINE sentinel). Filled on the first call per key so the
+# steady-state hot path skips capability probing, module import, and attribute
+# lookup -- the per-call dispatch tax that otherwise erases small-shape wins.
+_USE_BASELINE = object()
+_TARGET_CACHE: dict[tuple[str, Any], Any] = {}
+# KDA_FORCE_ARCH is a deploy/debug override, read once at import (not per call).
+_FORCED_ARCH = os.environ.get('KDA_FORCE_ARCH')
+if _FORCED_ARCH not in _SUPPORTED_ARCHES:
+    _FORCED_ARCH = None
 
 def _impl_dir(arch: str) -> Path:
     return Path(__file__).resolve().parent / '_impls' / arch
@@ -73,36 +83,45 @@ def _iter_tensors(value: Any):
         for item in value.values():
             yield from _iter_tensors(item)
 
-def _select_arch(args: tuple[Any, ...], kwargs: dict[str, Any]) -> str | None:
-    forced = os.environ.get('KDA_FORCE_ARCH')
-    if forced in _SUPPORTED_ARCHES:
-        return forced
-    if torch is None:
-        return None
-    for tensor in _iter_tensors(args):
-        if getattr(tensor, 'is_cuda', False):
-            try:
-                return _ARCH_BY_CAPABILITY.get(tuple(torch.cuda.get_device_capability(tensor.device)))
-            except Exception:
-                return None
-    for tensor in _iter_tensors(kwargs):
-        if getattr(tensor, 'is_cuda', False):
-            try:
-                return _ARCH_BY_CAPABILITY.get(tuple(torch.cuda.get_device_capability(tensor.device)))
-            except Exception:
-                return None
+def _first_cuda_index(args: tuple[Any, ...], kwargs: dict[str, Any]):
+    """Device index of the first CUDA tensor in the call (positional args fast
+    path, then nested containers, then kwargs), else None."""
+    for value in args:
+        if type(value) is torch.Tensor:
+            if value.is_cuda:
+                return value.device.index
+        elif isinstance(value, (tuple, list, dict)):
+            for tensor in _iter_tensors(value):
+                if getattr(tensor, 'is_cuda', False):
+                    return tensor.device.index
+    for value in kwargs.values():
+        if type(value) is torch.Tensor:
+            if value.is_cuda:
+                return value.device.index
+        elif isinstance(value, (tuple, list, dict)):
+            for tensor in _iter_tensors(value):
+                if getattr(tensor, 'is_cuda', False):
+                    return tensor.device.index
     return None
 
-def _baseline_or_raise(fn_name: str, baseline: Any, args: tuple[Any, ...], kwargs: dict[str, Any]) -> Any:
-    if baseline is None:
-        raise RuntimeError(f'No SGLang baseline available for {fn_name}')
-    return baseline(*args, **kwargs)
+def _resolve_target(fn_name: str, idx) -> Any:
+    """Resolve (fn_name, device idx) -> bound wrapper callable, or _USE_BASELINE.
 
-def _call(fn_name: str, baseline: Any, args: tuple[Any, ...], kwargs: dict[str, Any]) -> Any:
-    arch = _select_arch(args, kwargs)
+    Runs the full arch-selection / import path once per cache key; the result is
+    memoized by the caller so steady-state calls skip all of this work.
+    """
+    if _FORCED_ARCH is not None:
+        arch = _FORCED_ARCH
+    elif torch is None or idx is None:
+        arch = None
+    else:
+        try:
+            arch = _ARCH_BY_CAPABILITY.get(tuple(torch.cuda.get_device_capability(idx)))
+        except Exception:
+            arch = None
     module_name = _IMPL_MODULES.get(fn_name, {}).get(arch)
     if module_name is None:
-        return _baseline_or_raise(fn_name, baseline, args, kwargs)
+        return _USE_BASELINE
     key = (arch, module_name)
     if key in _IMPL_IMPORT_ERRORS:
         if key not in _WARNED_IMPORT_ERRORS:
@@ -111,7 +130,7 @@ def _call(fn_name: str, baseline: Any, args: tuple[Any, ...], kwargs: dict[str, 
                 f'kda_kernels falling back for {fn_name}: {module_name} '
                 f'failed to preload for {arch}: {_IMPL_IMPORT_ERRORS[key]!r}'
             )
-        return _baseline_or_raise(fn_name, baseline, args, kwargs)
+        return _USE_BASELINE
     module = _IMPL_CACHE.get(key)
     if module is None:
         # Direct kda_kernels use without install(); safe because SGLang has not
@@ -121,9 +140,19 @@ def _call(fn_name: str, baseline: Any, args: tuple[Any, ...], kwargs: dict[str, 
         except Exception as exc:  # noqa: BLE001
             _IMPL_IMPORT_ERRORS[key] = exc
             warnings.warn(f'kda_kernels falling back for {fn_name}: {exc!r}')
-            return _baseline_or_raise(fn_name, baseline, args, kwargs)
-    return getattr(module, fn_name)(*args, **kwargs)
+            return _USE_BASELINE
+    return getattr(module, fn_name)
 
 def fused_inplace_qknorm_rope(*args: Any, **kwargs: Any) -> Any:
-    return _call('fused_inplace_qknorm_rope', _BASELINE_fused_inplace_qknorm_rope, args, kwargs)
+    idx = _first_cuda_index(args, kwargs)
+    ckey = ('fused_inplace_qknorm_rope', idx)
+    target = _TARGET_CACHE.get(ckey)
+    if target is None:
+        target = _resolve_target('fused_inplace_qknorm_rope', idx)
+        _TARGET_CACHE[ckey] = target
+    if target is _USE_BASELINE:
+        if _BASELINE_fused_inplace_qknorm_rope is None:
+            raise RuntimeError('No SGLang baseline available for fused_inplace_qknorm_rope')
+        return _BASELINE_fused_inplace_qknorm_rope(*args, **kwargs)
+    return target(*args, **kwargs)
 

@@ -15,8 +15,8 @@ from kda_kernels.diffusion.qknorm_rope._dispatcher import fused_inplace_qknorm_r
 
 KDA_OPTIMIZED_fused_inplace_qknorm_rope = True
 
-KDA_ARCHES_fused_inplace_qknorm_rope = ('b200',)
-KDA_TASK_fused_inplace_qknorm_rope = 'b200_diffusion_qknorm_rope__multi_shape'
-KDA_COMMIT_fused_inplace_qknorm_rope = '68e921ceeca306093b55e776ffd0cb256e0e90ae'
-KDA_DATE_fused_inplace_qknorm_rope = '2026-06-01'
-KDA_SPEEDUP_fused_inplace_qknorm_rope = '1.1113x'
+KDA_ARCHES_fused_inplace_qknorm_rope = ('b200', 'h200')
+KDA_TASK_fused_inplace_qknorm_rope = {'b200': 'b200_diffusion_qknorm_rope__multi_shape', 'h200': 'h200_diffusion_qknorm_rope__multi_shape'}
+KDA_COMMIT_fused_inplace_qknorm_rope = {'b200': '68e921ceeca306093b55e776ffd0cb256e0e90ae', 'h200': '93ab0645a679bbb2ae4c60fc5bb605a6cbe71ea0'}
+KDA_DATE_fused_inplace_qknorm_rope = {'b200': '2026-06-01', 'h200': '2026-06-01'}
+KDA_SPEEDUP_fused_inplace_qknorm_rope = {'b200': '1.1113x', 'h200': '~1.11x'}
