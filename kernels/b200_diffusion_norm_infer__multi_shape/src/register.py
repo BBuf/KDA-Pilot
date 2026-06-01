@@ -35,6 +35,23 @@ _INCLUDE = str(_HERE / "norm_cuda")
 _KERNEL_VERSION = "v0"  # bump to force a JIT rebuild (stale-JIT guard)
 _LN_MAX_N = 8192  # LayerNorm CUDA kernel covers at most kLNThreads*kLNMaxElems cols
 
+# Configured-shape allowlists. CUDA routes ONLY these exact (M,N)/(S,D) shapes;
+# every other shape falls back to the SGLang baseline (interface.md contract).
+# Entries = the production shapes + the CI-configured correctness coverage that
+# must exercise CUDA (regression/fused grid M=B*S in {6,12,128,256} x N in
+# {512,3072}; NaN/Inf + preallocated-out shapes). Under KDA_FULL_REGRESSION the
+# extra grid shapes are not listed and correctly fall back.
+_SUPPORTED_LN = frozenset({
+    (8640, 5120),                                       # helios production
+    (6, 512), (6, 3072), (12, 512), (12, 3072),         # CI regression / fused grid
+    (128, 512), (128, 3072), (256, 512), (256, 3072),   # CI regression / fused grid
+    (64, 1024), (256, 1024),                            # NaN/Inf + preallocated-out coverage
+})
+_SUPPORTED_RMS = frozenset({
+    (648720, 128), (1320, 128), (650040, 128), (16384, 128), (4096, 128),  # production
+    (6, 128), (128, 128), (768, 128), (64, 128),        # regression-small + NaN/Inf coverage
+})
+
 _MODULE_CACHE: dict = {}
 
 
@@ -96,42 +113,50 @@ def _rms_module(dim, dtype):
     return mod
 
 
-# --- Support predicates (only these route to CUDA; everything else falls back) ---
-# Supported class (covers the six production shapes AND the correctness-regression
-# coverage; anything outside falls back to the SGLang baseline):
-#   norm_infer -> CUDA iff: fp32, 2-D, contiguous, is_rms_norm=False, weight+bias
-#                 present & contiguous, and N <= _LN_MAX_N (kernel column coverage).
-#   rms_onepass -> CUDA iff: bf16, contiguous, last dim D == 128, weight present.
-# Unsupported (fp16/bf16 LN, is_rms_norm=True, non-contiguous, non-CUDA, missing
-# weight/bias, N > 8192, D != 128, fp32 RMS, ...) all route to the baseline.
-# Verified by tests/test_correctness.py::test_fallback_routing.
+# --- Support predicates (CUDA routes ONLY configured shapes; else fall back) ---
+# norm_infer -> CUDA iff: fp32, 2-D, contiguous, is_rms_norm=False, (M,N) in
+#   _SUPPORTED_LN, and weight+bias are non-None, contiguous, shape==(N,), on the
+#   same device, same dtype as x.
+# rms_onepass -> CUDA iff: bf16, contiguous, (S,D) in _SUPPORTED_RMS, and w is
+#   non-None, contiguous, shape==(D,), same device, same dtype as x.
+# Everything else (other shapes, fp16/bf16 LN, is_rms_norm=True, non-contiguous,
+# non-CUDA, mismatched/missing weight device/dtype/shape, D!=128, fp32 RMS, ...)
+# falls back to the SGLang baseline. Verified by test_correctness.py::test_fallback_routing.
 def _is_cuda_contig_2d(t) -> bool:
     return t is not None and getattr(t, "is_cuda", False) and t.dim() == 2 and t.is_contiguous()
+
+
+def _valid_affine(t, n, x) -> bool:
+    return (
+        t is not None
+        and t.is_contiguous()
+        and tuple(t.shape) == (n,)
+        and t.device == x.device
+        and t.dtype == x.dtype
+    )
 
 
 def _norm_infer_supported(x, weight, bias, is_rms_norm) -> bool:
     import torch
 
-    # fp32 LayerNorm with weight+bias, N within the kernel's coverage (helios).
-    return (
-        _is_cuda_contig_2d(x)
-        and x.dtype == torch.float32
-        and not is_rms_norm
-        and x.shape[1] <= _LN_MAX_N
-        and weight is not None
-        and bias is not None
-        and weight.is_contiguous()
-        and bias.is_contiguous()
-    )
+    if not (_is_cuda_contig_2d(x) and x.dtype == torch.float32 and not is_rms_norm):
+        return False
+    m, n = int(x.shape[0]), int(x.shape[1])
+    if (m, n) not in _SUPPORTED_LN:
+        return False
+    return _valid_affine(weight, n, x) and _valid_affine(bias, n, x)
 
 
 def _rms_onepass_supported(x, w) -> bool:
     import torch
 
-    # bf16, last-dim D == 128 (the hunyuanvideo/zimage production family).
-    if not (x is not None and getattr(x, "is_cuda", False) and x.is_contiguous()):
+    if not (x is not None and getattr(x, "is_cuda", False) and x.is_contiguous() and x.dtype == torch.bfloat16):
         return False
-    return x.dtype == torch.bfloat16 and x.shape[-1] == 128 and w is not None and w.is_contiguous()
+    d = int(x.shape[-1])
+    s = x.numel() // d if d else 0
+    if (int(s), d) not in _SUPPORTED_RMS:
+        return False
+    return _valid_affine(w, d, x)
 
 
 # --- CUDA paths --------------------------------------------------------------

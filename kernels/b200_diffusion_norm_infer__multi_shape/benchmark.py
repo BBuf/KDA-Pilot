@@ -70,7 +70,7 @@ def _provenance() -> dict[str, str]:
     if _CUH.exists():
         src_hash = hashlib.sha256(_CUH.read_bytes()).hexdigest()[:16]
     return {
-        "candidate_id": os.environ.get("KDA_CANDIDATE_ID", "cand-0001"),
+        "candidate_id": os.environ.get("KDA_CANDIDATE_ID", "cand-0001-bench"),
         "gpu_model": gpu_model.replace(" ", "_"),
         "gpu_id": os.environ.get("CUDA_VISIBLE_DEVICES", "?"),
         "host": os.environ.get("KDA_HOST", socket.gethostname()),
@@ -166,7 +166,7 @@ def main() -> int:
 
     csv_path = KERNEL_DIR / "benchmark.csv"
     with csv_path.open("a", newline="") as f:
-        writer = csv.writer(f)
+        writer = csv.writer(f, lineterminator="\n")
         for case in cases:
             name = case.get("name", "unknown")
             warmup = int(case.get("warmup", 25))
@@ -188,7 +188,7 @@ def main() -> int:
                       f"cand={c['median_us']:.2f}us speedup={spd:.3f}x")
         for kind, _ in timers:
             geo = _geom_mean(speedups_by_kind[kind])
-            _row(writer, candidate_id="geomean", case_name="production_geomean", metric="geomean_speedup_x",
+            _row(writer, candidate_id=cid, case_name="production_geomean", metric="geomean_speedup_x",
                  baseline_us=None, candidate_us=None, speedup=geo,
                  notes=f"metric_kind={kind} n_shapes={len(cases)} {prov_note}")
             print(f"GEOMEAN [{kind}] = {geo:.4f}x over {len(cases)} production shapes")

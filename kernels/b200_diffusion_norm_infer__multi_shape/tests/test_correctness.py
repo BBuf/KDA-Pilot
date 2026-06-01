@@ -7,11 +7,16 @@ Skipped unless ``KDA_RUN_CORRECTNESS=1`` (run on the remote B200 inside the
   (LayerNorm via ``norm_infer``; CI subset by default, full grid with
   ``KDA_FULL_REGRESSION=1``),
 - RMS one-pass cross-validation at ``D=128`` on small row counts,
-- adversarial inputs (zeros, near-constant, large-offset, mixed-sign).
+- adversarial inputs (zeros, near-constant, large-offset, mixed-sign) judged
+  candidate-vs-baseline with an fp64-referenced adaptive tolerance,
+- NaN/Inf input-parity cases (candidate must match the baseline's non-finite mask),
+- ``test_fallback_routing``: unsupported shapes/dtypes/layouts/weights fall back.
 
 ``baseline(case)`` is the SGLang oracle; ``candidate(case)`` routes through
-``src/register.py::optimized_wrapper``. Both build the SAME seeded inputs so the
-comparison is exact. Dynamic tolerances: fp32 ``1e-5``, bf16/fp16 ``5e-2``.
+``src/register.py::optimized_wrapper``. Both build the SAME seeded inputs (1-entry
+cache); ``expected`` is cloned before the candidate runs so a shared/preallocated
+``out`` buffer cannot alias the comparison. Dynamic tolerances: fp32 ``1e-5``,
+bf16/fp16 ``5e-2``.
 """
 
 from __future__ import annotations
@@ -398,21 +403,30 @@ def test_correctness_cases(case: dict[str, Any]) -> None:
 
 def _fallback_cases() -> list[dict[str, Any]]:
     return [
+        # unsupported dtype / flag / layout / shape -> fall back, result == baseline
         {"name": "fb_ln_fp16", "op": "ln", "M": 8, "N": 512, "dtype": "fp16"},
         {"name": "fb_ln_rmsflag", "op": "ln", "M": 8, "N": 512, "dtype": "fp32", "is_rms_norm": True},
         {"name": "fb_ln_bigN", "op": "ln", "M": 4, "N": 16384, "dtype": "fp32"},
         {"name": "fb_ln_noncontig", "op": "ln", "M": 8, "N": 512, "dtype": "fp32", "noncontig": True},
         {"name": "fb_ln_nobias", "op": "ln", "M": 8, "N": 512, "dtype": "fp32", "no_bias": True},
+        {"name": "fb_ln_outofset", "op": "ln", "M": 7, "N": 2000, "dtype": "fp32"},  # same-dtype (M,N) not configured
         {"name": "fb_rms_d64", "op": "rms", "S": 64, "D": 64, "dtype": "bf16"},
         {"name": "fb_rms_fp32", "op": "rms", "S": 64, "D": 128, "dtype": "fp32"},
+        {"name": "fb_rms_outofset", "op": "rms", "S": 999, "D": 128, "dtype": "bf16"},  # same-dtype S not configured
+        # invalid weight device / dtype / length on an otherwise-configured shape
+        # -> must NOT route to CUDA (predicate-only; the baseline may also reject).
+        {"name": "fb_ln_cpu_weight", "op": "ln", "M": 6, "N": 512, "dtype": "fp32", "wdevice": "cpu", "predicate_only": True},
+        {"name": "fb_ln_wrong_wdtype", "op": "ln", "M": 6, "N": 512, "dtype": "fp32", "wdtype": "fp16", "predicate_only": True},
+        {"name": "fb_ln_wrong_wlen", "op": "ln", "M": 6, "N": 512, "dtype": "fp32", "wlen_delta": 1, "predicate_only": True},
     ]
 
 
 @pytest.mark.parametrize("spec", _fallback_cases(), ids=lambda s: s["name"])
 def test_fallback_routing(spec: dict[str, Any]) -> None:
-    # Unsupported (op, dtype, layout, device, norm-type, shape) must NOT route to
-    # CUDA: the support predicate is False AND the result equals the SGLang baseline.
-    mod = _load_register_module()
+    # Unsupported (op, dtype, layout, device, norm-type, shape, invalid weight)
+    # must NOT route to CUDA: the support predicate is False; when the baseline can
+    # also handle the input, the fallback result equals the SGLang baseline.
+    mod = _register_module()
     norm_infer, triton_one_pass_rms_norm = _sglang_baselines()
     dev = "cuda"
     dt = _dtype(spec["dtype"])
@@ -425,10 +439,15 @@ def test_fallback_routing(spec: dict[str, Any]) -> None:
             assert not x.is_contiguous()
         else:
             x = torch.randn(M, N, device=dev, dtype=dt)
-        weight = torch.randn(N, device=dev, dtype=dt)
-        bias = None if spec.get("no_bias") else torch.randn(N, device=dev, dtype=dt)
+        wdt = _dtype(spec["wdtype"]) if spec.get("wdtype") else dt
+        wdev = spec.get("wdevice", dev)
+        wlen = N + spec.get("wlen_delta", 0)
+        weight = torch.randn(wlen, device=wdev, dtype=wdt)
+        bias = None if spec.get("no_bias") else torch.randn(wlen, device=wdev, dtype=wdt)
         is_rms = spec.get("is_rms_norm", False)
         assert mod._norm_infer_supported(x, weight, bias, is_rms) is False
+        if spec.get("predicate_only"):
+            return
         got = mod.optimized_norm_infer(x, weight, bias, 1e-6, is_rms_norm=is_rms)
         exp = norm_infer(x, weight, bias, 1e-6, is_rms_norm=is_rms)
     else:
@@ -436,6 +455,8 @@ def test_fallback_routing(spec: dict[str, Any]) -> None:
         x = torch.randn(S, D, device=dev, dtype=dt)
         w = torch.randn(D, device=dev, dtype=dt)
         assert mod._rms_onepass_supported(x, w) is False
+        if spec.get("predicate_only"):
+            return
         got = mod.optimized_triton_one_pass_rms_norm(x, w, 1e-6)
         exp = triton_one_pass_rms_norm(x, w, 1e-6)
     torch.testing.assert_close(got.float(), exp.float(), atol=tol, rtol=tol)
