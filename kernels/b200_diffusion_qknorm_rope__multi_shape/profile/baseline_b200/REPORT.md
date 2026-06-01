@@ -23,7 +23,7 @@ small `qwen B19` baseline = 60.67µs; large `qwen-edit B8424` baseline = 95.55µ
 | memory SOL `gpu__compute_memory_throughput…elapsed` | 2.5 % | 50.2 % |
 | DRAM read %peak `dram__bytes_read.sum…elapsed` | 0.43 % | **12.8 %** |
 | DRAM write %peak | 0 % | 5.2 % |
-| DRAM bytes (read / write) | 250 B / 0 | 107.8 MB / 44.0 MB |
+| DRAM bytes (read / write) | 249.6 KB / 0 | 107.8 MB / 44.0 MB |
 | L2 hit `lts__t_sector_hit_rate.pct` | 46.5 % | 50.0 % |
 | achieved occupancy `sm__warps_active…active` | **12.7 %** | 88.9 % |
 | theoretical occupancy | 100 % | 100 % |

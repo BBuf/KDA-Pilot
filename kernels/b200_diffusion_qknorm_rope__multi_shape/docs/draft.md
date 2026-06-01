@@ -83,7 +83,15 @@ Record any PR/wiki page that influences a decision here and in `solutions.jsonl`
 - Small shapes: launch overhead vs device time split; does PDL-off reduce isolated
   latency on B200; how much of total latency is Python dispatch vs kernel?
 
-## Frozen baseline (Round 2, B200, commit 43a8fd164, GPU phys 4)
+## Frozen baseline (Round 2, B200, commit 43a8fd164, GPU phys 4) — SUPERSEDED
+
+> **SUPERSEDED by the Round 3 refreeze (commit 68a32061; see `interface.md` and
+> `solutions.jsonl` id=`baseline`).** These Round 2 numbers used an asymmetric timed
+> baseline (the fused-baseline callable was resolved inside the CUDA-event closure
+> while the candidate path was cached), inflating the baseline ~3µs/small-shape. The
+> geomean 1.0149x below is NOT trustworthy; use the Round 3 numbers
+> (small ~61µs, geomean 0.9957x). Kept for history only. The two-regime conclusion
+> still holds (NCU-confirmed below).
 
 Correctness PASS on B200: 10 production rows + 2400-case CI grid + 3 negative tests.
 Fused-baseline median latency (µs), candidate==baseline so geomean 1.0149x ≈ 1.0x:

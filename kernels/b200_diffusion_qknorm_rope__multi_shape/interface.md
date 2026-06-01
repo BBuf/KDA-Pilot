@@ -104,5 +104,7 @@ baseline for any shape, dtype, layout, device, or feature flag it does not suppo
 - final wrapper signature once the specialized kernel is wired in;
 - per-shape dispatch table (which candidate handles which bucket);
 - confirmed fallback cases;
-- frozen baseline numbers + exact benchmark command + selected GPU id/model;
 - source lineage for any ported/adapted helper code.
+
+(Frozen baseline numbers + exact command + selected GPU id/model are recorded above
+in "Frozen Baseline (Round 3 refreeze)".)
