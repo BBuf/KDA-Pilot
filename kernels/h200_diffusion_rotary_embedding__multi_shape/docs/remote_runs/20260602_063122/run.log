@@ -1,0 +1,43 @@
+=== KDA remote run provenance (Round 3) ===
+HOST=ion-h200-8
+TS=20260602_063122
+KERNEL_PILOT_HEAD=fe33f167d
+SGLANG_PATH=/home/sglang-omni/bbuf/repos/sglang/python/sglang
+SGLANG_COMMIT=c47f0e7cd
+ORACLE_NOTE=c47f0e7cd diffusion rotary/ltx2_rotary byte-identical to pinned 6965fe0ee (sha1 81fb5ff / 3408d90)
+GPU_BEFORE:
+7, NVIDIA H200, 0 %, 82 MiB, 143771 MiB
+container=sglang_bbuf  REMOTE_KDA_DIR=/home/sglang-omni/bbuf/kda_runs/h200_diffusion_rotary_embedding__multi_shape/20260602_063122
+
+=== CORRECTNESS RESULT ===
+pytest: 6 passed (build+load_jit OK; all 6 shapes CUDA route; fallback numerical; oracle pin c47f0e7cd)
+CMD=CUDA_VISIBLE_DEVICES=7 PYTHONPATH=/home/sglang-omni/bbuf/repos/sglang/python KDA_RUN_CORRECTNESS=1 KDA_SGLANG_ORACLE_COMMIT=c47f0e7cd python -m pytest tests/test_correctness.py -v -s
+  test_register_metadata           PASSED
+  test_case_manifest               PASSED   (exact 6-shape manifest)
+  test_sglang_oracle_pinned        PASSED   ([oracle-pin] override KDA_SGLANG_ORACLE_COMMIT=c47f0e7cd; imported SGLang HEAD=c47f0e7cd)
+  test_baseline_matches_reference  PASSED   (SGLang baseline == PyTorch FP32 reference within bf16 noise)
+  test_correctness_cases           PASSED   (all 6 shapes: candidate==baseline within bf16 noise; _LAST_DISPATCH==cuda asserted)
+  test_fallback_routing            PASSED   (unsupported std+ltx2 signatures fall back numerically; both APIs exact-once non-recursive)
+  => 6 passed in 19.79s
+GPU_AFTER_CORRECTNESS:
+7, 0 %, 2231 MiB
+
+=== BENCHMARK RESULT (candidate v1, naive scalar) ===
+geomean_speedup=0.217964x (candidate SLOWER than autotuned triton baseline; optimization is next)
+BENCH_CMD=CUDA_VISIBLE_DEVICES=7 PYTHONPATH=/home/sglang-omni/bbuf/repos/sglang/python python benchmark.py
+per-shape median_us (baseline -> candidate, speedup):
+  hunyuanvideo_std_B1_T27030_H24_D128 : 158.78 -> 386.36  (0.4110x)
+  ltx2_B1_S1536_half64                : 27.89  -> 163.71  (0.1703x)
+  ltx2_B1_S126_half32                 : 24.80  -> 146.74  (0.1690x)
+  ltx2_B1_S1536_half32                : 24.86  -> 152.58  (0.1629x)
+  ltx2_B1_S6144_half64                : 59.39  -> 234.83  (0.2529x)
+  ltx2_B1_S6144_half32                : 41.57  -> 189.03  (0.2199x)
+GPU_AFTER_BENCH:
+7, NVIDIA H200, 0 %, 82 MiB
+CLEANUP: removed reversible kda_rotary_embedding.cuh from shared sglang csrc after the run.
+
+NOTE: candidate v1 is a naive scalar flat kernel (single-element bf16 loads, one
+thread per pair/element, redundant per-head cos/sin reads). It is correct on all
+6 production shapes but slower than the autotuned Triton baseline. Optimization
+(vectorized LDG.128/STG.128, cos/sin reuse across heads, launch/occupancy tuning,
+NCU-guided) is the next mainline toward the HBM/launch bound.

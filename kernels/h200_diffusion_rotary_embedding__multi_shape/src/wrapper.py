@@ -100,8 +100,16 @@ def _ensure_source() -> "Path":
 _MODULE_CACHE: dict[tuple, object] = {}
 
 
+_SOURCE_HASH: "str | None" = None
+
+
 def _source_hash() -> str:
-    return hashlib.sha1(_WORKSPACE_CUH.read_bytes()).hexdigest()[:12]
+    # Computed once per process (the .cuh is stable within a process; a fresh
+    # process next round re-reads it). Avoids per-call file I/O on the hot path.
+    global _SOURCE_HASH
+    if _SOURCE_HASH is None:
+        _SOURCE_HASH = hashlib.sha1(_WORKSPACE_CUH.read_bytes()).hexdigest()[:12]
+    return _SOURCE_HASH
 
 
 def _jit_module(dtype):
