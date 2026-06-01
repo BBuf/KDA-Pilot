@@ -80,9 +80,14 @@ def _git(*args: str) -> str:
 
 
 def _candidate_source_version() -> str:
+    # On the remote box the synced tree is not a git repo, so honor an explicit
+    # KDA_GIT_COMMIT (the local commit the sync corresponds to) for exact provenance.
+    env = os.environ.get("KDA_GIT_COMMIT")
+    if env:
+        return env[:9]
     commit = _git("rev-parse", "--short", "HEAD")
     dirty = _git("status", "--porcelain", "--", "src/register.py")
-    return f"{commit}{'+dirty' if dirty else ''}"
+    return f"{commit}{'+dirty' if dirty and dirty != 'unknown' else ''}"
 
 
 def _physical_gpu_index() -> str:
@@ -237,7 +242,7 @@ def main() -> int:
         return 0
 
     command = shlex.join([sys.executable, *sys.argv])
-    git_commit = _git("rev-parse", "HEAD")
+    git_commit = os.environ.get("KDA_GIT_COMMIT") or _git("rev-parse", "HEAD")
     cand_ver = _candidate_source_version()
     host = socket.gethostname()
     prov = _gpu_provenance()
