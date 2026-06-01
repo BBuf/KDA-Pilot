@@ -32,7 +32,7 @@ _CUDA_ENABLED = True
 _HERE = Path(__file__).resolve().parent
 _CUH = str(_HERE / "norm_cuda" / "diffusion_norm_infer.cuh")
 _INCLUDE = str(_HERE / "norm_cuda")
-_KERNEL_VERSION = "v0"  # bump to force a JIT rebuild (stale-JIT guard)
+_KERNEL_VERSION = "v1"  # bump to force a JIT rebuild (stale-JIT guard); v1 = float4 LN
 _LN_MAX_N = 8192  # LayerNorm CUDA kernel covers at most kLNThreads*kLNMaxElems cols
 
 # Configured-shape allowlists. CUDA routes ONLY these exact (M,N)/(S,D) shapes;
@@ -136,7 +136,19 @@ def _valid_affine(t, n, x) -> bool:
     )
 
 
-def _norm_infer_supported(x, weight, bias, is_rms_norm) -> bool:
+def _valid_out(out, x) -> bool:
+    # `out` is part of the public norm_infer contract: accept only None or an
+    # output that exactly matches x (shape/device/dtype) and is contiguous,
+    # otherwise fall back (the CUDA launcher's TensorMatcher would reject it).
+    return out is None or (
+        tuple(out.shape) == tuple(x.shape)
+        and out.device == x.device
+        and out.dtype == x.dtype
+        and out.is_contiguous()
+    )
+
+
+def _norm_infer_supported(x, weight, bias, is_rms_norm, out=None) -> bool:
     import torch
 
     if not (_is_cuda_contig_2d(x) and x.dtype == torch.float32 and not is_rms_norm):
@@ -144,17 +156,24 @@ def _norm_infer_supported(x, weight, bias, is_rms_norm) -> bool:
     m, n = int(x.shape[0]), int(x.shape[1])
     if (m, n) not in _SUPPORTED_LN:
         return False
-    return _valid_affine(weight, n, x) and _valid_affine(bias, n, x)
+    return _valid_affine(weight, n, x) and _valid_affine(bias, n, x) and _valid_out(out, x)
 
 
 def _rms_onepass_supported(x, w) -> bool:
     import torch
 
-    if not (x is not None and getattr(x, "is_cuda", False) and x.is_contiguous() and x.dtype == torch.bfloat16):
+    # Require exactly 2-D so a flattened higher-rank tensor (e.g. (1,6,128)) is
+    # NOT treated as the configured 2-D (S,D) shape.
+    if not (
+        x is not None
+        and getattr(x, "is_cuda", False)
+        and x.dim() == 2
+        and x.is_contiguous()
+        and x.dtype == torch.bfloat16
+    ):
         return False
-    d = int(x.shape[-1])
-    s = x.numel() // d if d else 0
-    if (int(s), d) not in _SUPPORTED_RMS:
+    s, d = int(x.shape[0]), int(x.shape[1])
+    if (s, d) not in _SUPPORTED_RMS:
         return False
     return _valid_affine(w, d, x)
 
@@ -182,7 +201,7 @@ def _cuda_rms_onepass(x, w, eps=1e-6):
 
 # --- Public optimized entry points (preserve the SGLang signatures) ----------
 def optimized_norm_infer(x, weight, bias, eps, is_rms_norm: bool = False, out=None):
-    if _CUDA_ENABLED and _norm_infer_supported(x, weight, bias, is_rms_norm):
+    if _CUDA_ENABLED and _norm_infer_supported(x, weight, bias, is_rms_norm, out):
         if _require_cuda():
             return _cuda_norm_infer(x, weight, bias, eps, is_rms_norm=is_rms_norm, out=out)
         try:

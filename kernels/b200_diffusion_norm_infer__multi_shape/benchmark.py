@@ -43,6 +43,19 @@ except ImportError:  # pragma: no cover
 KERNEL_SLUG = "b200_diffusion_norm_infer__multi_shape"
 KERNEL_DIR = Path(__file__).resolve().parent
 _CUH = KERNEL_DIR / "src" / "norm_cuda" / "diffusion_norm_infer.cuh"
+# Every file that materially defines the measured candidate (kernel + dispatcher).
+_SRC_FILES = [KERNEL_DIR / "src" / "register.py", _CUH]
+
+
+def _combined_source_hash() -> str:
+    """Deterministic sha256 over the path-prefixed contents of all measured sources."""
+    h = hashlib.sha256()
+    for p in sorted(_SRC_FILES, key=lambda q: q.name):
+        h.update(p.name.encode())
+        h.update(b"\0")
+        h.update(p.read_bytes() if p.exists() else b"")
+        h.update(b"\0")
+    return h.hexdigest()[:16]
 
 
 def _load_correctness_module():
@@ -66,9 +79,7 @@ def _provenance() -> dict[str, str]:
         gpu_model = torch.cuda.get_device_name(0)
         cuda_ver = str(torch.version.cuda)
         torch_ver = str(torch.__version__)
-    src_hash = "unknown"
-    if _CUH.exists():
-        src_hash = hashlib.sha256(_CUH.read_bytes()).hexdigest()[:16]
+    src_hash = _combined_source_hash()
     return {
         "candidate_id": os.environ.get("KDA_CANDIDATE_ID", "cand-0001-bench"),
         "gpu_model": gpu_model.replace(" ", "_"),
@@ -156,6 +167,11 @@ def main() -> int:
         raise SystemExit("No production cases found.")
     prov = _provenance()
     cid = prov["candidate_id"]
+    print(
+        f"PROVENANCE candidate_id={cid} source_hash={prov['source_hash']} "
+        f"sglang_commit={prov['sglang_commit']} cuda={prov['cuda']} torch={prov['torch']} "
+        f"gpu={prov['gpu_model']}#{prov['gpu_id']} host={prov['host']} container={prov['container']}"
+    )
     prov_note = (
         f"gpu_model={prov['gpu_model']} gpu_id={prov['gpu_id']} host={prov['host']} "
         f"container={prov['container']} slug={KERNEL_SLUG} cand={cid}"

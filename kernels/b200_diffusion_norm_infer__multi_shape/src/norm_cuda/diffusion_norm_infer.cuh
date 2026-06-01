@@ -40,9 +40,30 @@ struct LayerNormInferParams {
 
 constexpr uint32_t kLNThreads = 256;
 constexpr uint32_t kLNWarps = kLNThreads / 32;
-// Supports N up to kLNThreads * kLNMaxElems = 8192 (covers helios N=5120 and
-// the regression grid; the host guard rejects anything larger -> baseline).
-constexpr uint32_t kLNMaxElems = 32;
+// float4 vectors handled per thread. Covers N <= kLNThreads*4*kLNMaxVec = 5120
+// (every configured LN shape; the host allowlist rejects anything larger).
+constexpr uint32_t kLNMaxVec = 5;
+
+// Block sum-reduction: warp-shuffle within each warp, one shared-mem round, then
+// warp 0 reduces the per-warp partials via shuffle (no serial thread-0 loop).
+// Reuses `s_warp` (size kNWarps) as both scratch and broadcast slot.
+template <uint32_t kNWarps>
+SGL_DEVICE float ln_block_reduce_sum(float v, float* s_warp) {
+  using namespace device;
+  const uint32_t lane = threadIdx.x % 32, wid = threadIdx.x / 32;
+  v = warp::reduce_sum(v);
+  if (lane == 0) s_warp[wid] = v;
+  __syncthreads();
+  if (wid == 0) {
+    float t = (lane < kNWarps) ? s_warp[lane] : 0.0f;
+    t = warp::reduce_sum(t);  // lanes >= kNWarps contribute 0
+    if (lane == 0) s_warp[0] = t;
+  }
+  __syncthreads();
+  const float total = s_warp[0];
+  __syncthreads();  // all threads must read before s_warp is reused
+  return total;
+}
 
 template <typename DType>
 __global__ void layernorm_infer_kernel(const LayerNormInferParams __grid_constant__ params) {
@@ -52,73 +73,60 @@ __global__ void layernorm_infer_kernel(const LayerNormInferParams __grid_constan
   const uint32_t row = blockIdx.x;
   if (row >= params.M) return;
   const uint32_t tid = threadIdx.x;
-  const uint32_t lane = tid % 32;
-  const uint32_t wid = tid / 32;
   const uint32_t N = params.N;
+  const uint32_t nvec = N >> 2;  // float4 count (N is a multiple of 4)
+  const float fN = static_cast<float>(N);
 
-  const float* x = static_cast<const float*>(params.x_ptr) + static_cast<int64_t>(row) * params.row_stride;
-  float* y = static_cast<float*>(params.y_ptr) + static_cast<int64_t>(row) * params.row_stride;
-  const float* w = static_cast<const float*>(params.w_ptr);
-  const float* b = static_cast<const float*>(params.b_ptr);
+  const float4* x4 = reinterpret_cast<const float4*>(
+      static_cast<const float*>(params.x_ptr) + static_cast<int64_t>(row) * params.row_stride);
+  float4* y4 = reinterpret_cast<float4*>(
+      static_cast<float*>(params.y_ptr) + static_cast<int64_t>(row) * params.row_stride);
+  const float4* w4 = reinterpret_cast<const float4*>(params.w_ptr);
+  const float4* b4 = reinterpret_cast<const float4*>(params.b_ptr);
 
-  // Read the row once into registers; accumulate the partial sum (pass 1).
-  float vals[kLNMaxElems];
+  // Pass 1: read the row once (vectorized) into registers; partial sum.
+  float4 vals[kLNMaxVec];
   float partial_sum = 0.0f;
 #pragma unroll
-  for (uint32_t i = 0; i < kLNMaxElems; ++i) {
-    const uint32_t col = tid + i * kLNThreads;
-    if (col < N) {
-      const float v = x[col];
+  for (uint32_t i = 0; i < kLNMaxVec; ++i) {
+    const uint32_t vi = tid + i * kLNThreads;
+    if (vi < nvec) {
+      const float4 v = x4[vi];
       vals[i] = v;
-      partial_sum += v;
+      partial_sum += v.x + v.y + v.z + v.w;
     }
   }
 
   __shared__ float s_warp[kLNWarps];
-  __shared__ float s_mean;
-  __shared__ float s_rstd;
-
-  // Block reduction for the mean.
-  float warp_sum = warp::reduce_sum(partial_sum);
-  if (lane == 0) s_warp[wid] = warp_sum;
-  __syncthreads();
-  if (tid == 0) {
-    float t = 0.0f;
-#pragma unroll
-    for (uint32_t i = 0; i < kLNWarps; ++i) t += s_warp[i];
-    s_mean = t / static_cast<float>(N);
-  }
-  __syncthreads();
-  const float mean = s_mean;
+  const float mean = ln_block_reduce_sum<kLNWarps>(partial_sum, s_warp) / fN;
 
   // Pass 2: variance = sum((x - mean)^2) / N (matches the Triton baseline).
   float partial_var = 0.0f;
 #pragma unroll
-  for (uint32_t i = 0; i < kLNMaxElems; ++i) {
-    const uint32_t col = tid + i * kLNThreads;
-    if (col < N) {
-      const float d = vals[i] - mean;
-      partial_var += d * d;
+  for (uint32_t i = 0; i < kLNMaxVec; ++i) {
+    const uint32_t vi = tid + i * kLNThreads;
+    if (vi < nvec) {
+      const float4 v = vals[i];
+      const float dx = v.x - mean, dy = v.y - mean, dz = v.z - mean, dw = v.w - mean;
+      partial_var += dx * dx + dy * dy + dz * dz + dw * dw;
     }
   }
-  float warp_var = warp::reduce_sum(partial_var);
-  if (lane == 0) s_warp[wid] = warp_var;
-  __syncthreads();
-  if (tid == 0) {
-    float t = 0.0f;
-#pragma unroll
-    for (uint32_t i = 0; i < kLNWarps; ++i) t += s_warp[i];
-    s_rstd = math::rsqrt(t / static_cast<float>(N) + params.eps);
-  }
-  __syncthreads();
-  const float rstd = s_rstd;
+  const float rstd = math::rsqrt(ln_block_reduce_sum<kLNWarps>(partial_var, s_warp) / fN + params.eps);
 
-  // Normalize + affine + store.
+  // Normalize + affine + store (vectorized).
 #pragma unroll
-  for (uint32_t i = 0; i < kLNMaxElems; ++i) {
-    const uint32_t col = tid + i * kLNThreads;
-    if (col < N) {
-      y[col] = (vals[i] - mean) * rstd * w[col] + b[col];
+  for (uint32_t i = 0; i < kLNMaxVec; ++i) {
+    const uint32_t vi = tid + i * kLNThreads;
+    if (vi < nvec) {
+      const float4 v = vals[i];
+      const float4 wv = w4[vi];
+      const float4 bv = b4[vi];
+      float4 o;
+      o.x = (v.x - mean) * rstd * wv.x + bv.x;
+      o.y = (v.y - mean) * rstd * wv.y + bv.y;
+      o.z = (v.z - mean) * rstd * wv.z + bv.z;
+      o.w = (v.w - mean) * rstd * wv.w + bv.w;
+      y4[vi] = o;
     }
   }
 }

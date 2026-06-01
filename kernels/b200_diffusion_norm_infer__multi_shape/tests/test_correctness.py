@@ -418,6 +418,11 @@ def _fallback_cases() -> list[dict[str, Any]]:
         {"name": "fb_ln_cpu_weight", "op": "ln", "M": 6, "N": 512, "dtype": "fp32", "wdevice": "cpu", "predicate_only": True},
         {"name": "fb_ln_wrong_wdtype", "op": "ln", "M": 6, "N": 512, "dtype": "fp32", "wdtype": "fp16", "predicate_only": True},
         {"name": "fb_ln_wrong_wlen", "op": "ln", "M": 6, "N": 512, "dtype": "fp32", "wlen_delta": 1, "predicate_only": True},
+        # higher-rank RMS must not flatten into a configured 2-D (S,D)
+        {"name": "fb_rms_3d", "op": "rms", "S": 6, "D": 128, "dtype": "bf16", "rms_xshape": (1, 6, 128)},
+        # invalid caller-provided `out` must gate before CUDA routing
+        {"name": "fb_ln_out_wrongshape", "op": "ln", "M": 6, "N": 512, "dtype": "fp32", "out_shape": (6, 256), "predicate_only": True},
+        {"name": "fb_ln_out_noncontig", "op": "ln", "M": 6, "N": 512, "dtype": "fp32", "out_noncontig": True, "predicate_only": True},
     ]
 
 
@@ -445,14 +450,21 @@ def test_fallback_routing(spec: dict[str, Any]) -> None:
         weight = torch.randn(wlen, device=wdev, dtype=wdt)
         bias = None if spec.get("no_bias") else torch.randn(wlen, device=wdev, dtype=wdt)
         is_rms = spec.get("is_rms_norm", False)
-        assert mod._norm_infer_supported(x, weight, bias, is_rms) is False
+        out = None
+        if spec.get("out_shape"):
+            out = torch.empty(*spec["out_shape"], device=dev, dtype=dt)
+        elif spec.get("out_noncontig"):
+            out = torch.empty(M, N * 2, device=dev, dtype=dt)[:, :N]  # non-contiguous
+            assert not out.is_contiguous()
+        assert mod._norm_infer_supported(x, weight, bias, is_rms, out) is False
         if spec.get("predicate_only"):
             return
-        got = mod.optimized_norm_infer(x, weight, bias, 1e-6, is_rms_norm=is_rms)
-        exp = norm_infer(x, weight, bias, 1e-6, is_rms_norm=is_rms)
+        got = mod.optimized_norm_infer(x, weight, bias, 1e-6, is_rms_norm=is_rms, out=out)
+        exp = norm_infer(x, weight, bias, 1e-6, is_rms_norm=is_rms, out=out)
     else:
         S, D = spec["S"], spec["D"]
-        x = torch.randn(S, D, device=dev, dtype=dt)
+        xshape = spec.get("rms_xshape", (S, D))
+        x = torch.randn(*xshape, device=dev, dtype=dt)
         w = torch.randn(D, device=dev, dtype=dt)
         assert mod._rms_onepass_supported(x, w) is False
         if spec.get("predicate_only"):
