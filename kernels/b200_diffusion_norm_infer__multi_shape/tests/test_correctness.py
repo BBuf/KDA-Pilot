@@ -143,6 +143,22 @@ def make_cases() -> list[dict[str, Any]]:
         )
     )
 
+    # --- 5) NaN/Inf input parity: candidate must mark the SAME elements
+    #        non-finite as the baseline (AC-4: "handled exactly as the baseline").
+    cases.append(
+        dict(
+            name="naninf_ln__fp32__M64N1024", kind="norm_infer", M=64, N=1024, dtype="fp32",
+            eps=1e-6, is_rms_norm=False, has_weight=True, has_bias=True,
+            input_kind="naninf", warmup=0, iters=1, seed=6001, nan_inf=True,
+        )
+    )
+    cases.append(
+        dict(
+            name="naninf_rms__bf16__S64D128", kind="rms_onepass", S=64, D=128, dtype="bf16",
+            eps=1e-6, input_kind="naninf", warmup=0, iters=1, seed=6002, nan_inf=True,
+        )
+    )
+
     for c in cases:
         strict = c["dtype"] == "fp32"  # torch-free (make_cases runs at collection)
         c.setdefault("atol", 1e-5 if strict else 5e-2)
@@ -167,6 +183,12 @@ def _fill(x: torch.Tensor, kind: str) -> torch.Tensor:
         return x + 1.0e4
     if kind == "mixed":  # large mixed-sign magnitudes
         return x * 1.0e3
+    if kind == "naninf":  # inject NaN / +Inf / -Inf into the first rows (col 0)
+        y = x.clone()
+        for r, val in ((0, float("nan")), (1, float("inf")), (2, float("-inf"))):
+            if y.shape[0] > r:
+                y[r, 0] = val
+        return y
     raise ValueError(f"unknown input_kind {kind}")
 
 
@@ -217,8 +239,21 @@ def baseline(case: dict[str, Any]) -> Any:
     return triton_one_pass_rms_norm(inp["x"], inp["w"], case["eps"])
 
 
+_REGISTER_MODULE = None
+
+
+def _register_module():
+    # Load src/register.py ONCE and reuse it. Re-loading per call would reset the
+    # in-process JIT module cache and re-run load_jit every time, which dominates
+    # timing (a ~ms/call artifact) and corrupts benchmark numbers.
+    global _REGISTER_MODULE
+    if _REGISTER_MODULE is None:
+        _REGISTER_MODULE = _load_register_module()
+    return _REGISTER_MODULE
+
+
 def candidate(case: dict[str, Any]) -> Any:
-    module = _load_register_module()
+    module = _register_module()
     wrapper = getattr(module, "optimized_wrapper")
     inp = _make_inputs(case)
     if case["kind"] == "norm_infer":
@@ -294,22 +329,53 @@ def _layernorm_fp64_ref(case: dict[str, Any]):
 
 def _run_adversarial(case: dict[str, Any]) -> None:
     # Ill-conditioned fp32 inputs (near-constant / large-offset / mixed-sign /
-    # zeros) make exact agreement between two different fp32 reduction orders
-    # unrealistic. Correctness here = candidate is finite AND no worse than the
-    # SGLang baseline relative to an fp64 reference (SGLang-style dynamic
-    # tolerance: candidate error <= K * baseline error + floor).
+    # zeros) make two different fp32 reduction orders disagree well beyond 1e-5,
+    # so strict baseline-equivalence is impossible. PRIMARY check: candidate vs
+    # the SGLang baseline within an adaptive tolerance scaled by the baseline's
+    # own error vs an fp64 reference. DIAGNOSTIC: candidate is no worse than the
+    # baseline vs the fp64 truth. (See BL-20260602-adversarial-fp32-norm-tolerance.)
     ref = _layernorm_fp64_ref(case)
     base = baseline(case)
+    if isinstance(base, torch.Tensor):
+        base = base.clone()
     cand = candidate(case)
     _assert_no_nan_inf(cand, path=case["name"])
     assert cand.shape == base.shape, f"{case['name']} shape {cand.shape} != {base.shape}"
     err_base = (base.double() - ref).abs().max().item()
     err_cand = (cand.double() - ref).abs().max().item()
+    diff_cb = (cand.double() - base.double()).abs().max().item()
     K, floor = 4.0, 1e-3
+    # PRIMARY: candidate vs SGLang baseline (adaptive tolerance).
+    assert diff_cb <= (K + 1.0) * err_base + floor, (
+        f"{case['name']}: |cand-base| {diff_cb:.3e} exceeds {(K + 1.0):.0f}x baseline "
+        f"fp64-err {err_base:.3e} + {floor:.0e}"
+    )
+    # DIAGNOSTIC: candidate no worse than baseline vs fp64 truth.
     assert err_cand <= K * err_base + floor, (
-        f"{case['name']}: candidate err {err_cand:.3e} exceeds {K}x baseline err "
+        f"{case['name']}: candidate err {err_cand:.3e} exceeds {K:.0f}x baseline err "
         f"{err_base:.3e} + {floor:.0e}"
     )
+
+
+def _run_nan_inf(case: dict[str, Any]) -> None:
+    # AC-4: NaN/Inf inputs must be handled exactly as the baseline handles them.
+    # Verify the candidate marks the SAME elements non-finite as the baseline and
+    # agrees on the finite elements within the case tolerance.
+    base = baseline(case)
+    if isinstance(base, torch.Tensor):
+        base = base.clone()
+    cand = candidate(case)
+    assert cand.shape == base.shape, f"{case['name']} shape {cand.shape} != {base.shape}"
+    fin_b = torch.isfinite(base)
+    fin_c = torch.isfinite(cand)
+    assert torch.equal(fin_b, fin_c), (
+        f"{case['name']}: non-finite mask mismatch (baseline finite={int(fin_b.sum())}, "
+        f"candidate finite={int(fin_c.sum())})"
+    )
+    if fin_b.any():
+        torch.testing.assert_close(
+            cand[fin_b].float(), base[fin_b].float(), atol=case["atol"], rtol=case["rtol"]
+        )
 
 
 @pytest.mark.parametrize("case", make_cases(), ids=lambda c: c["name"])
@@ -317,6 +383,59 @@ def test_correctness_cases(case: dict[str, Any]) -> None:
     if case.get("adversarial"):
         _run_adversarial(case)
         return
+    if case.get("nan_inf"):
+        _run_nan_inf(case)
+        return
     expected = baseline(case)
+    if torch is not None and isinstance(expected, torch.Tensor):
+        expected = expected.clone()  # independent of any shared/preallocated `out` buffer
     actual = candidate(case)
+    if case.get("use_out"):
+        provided_out = _make_inputs(case)["out"]  # cache hit -> the same object passed in
+        assert actual is provided_out, f"{case['name']}: candidate did not return the provided out"
     _assert_close(actual, expected, case=case, path=case.get("name", "out"))
+
+
+def _fallback_cases() -> list[dict[str, Any]]:
+    return [
+        {"name": "fb_ln_fp16", "op": "ln", "M": 8, "N": 512, "dtype": "fp16"},
+        {"name": "fb_ln_rmsflag", "op": "ln", "M": 8, "N": 512, "dtype": "fp32", "is_rms_norm": True},
+        {"name": "fb_ln_bigN", "op": "ln", "M": 4, "N": 16384, "dtype": "fp32"},
+        {"name": "fb_ln_noncontig", "op": "ln", "M": 8, "N": 512, "dtype": "fp32", "noncontig": True},
+        {"name": "fb_ln_nobias", "op": "ln", "M": 8, "N": 512, "dtype": "fp32", "no_bias": True},
+        {"name": "fb_rms_d64", "op": "rms", "S": 64, "D": 64, "dtype": "bf16"},
+        {"name": "fb_rms_fp32", "op": "rms", "S": 64, "D": 128, "dtype": "fp32"},
+    ]
+
+
+@pytest.mark.parametrize("spec", _fallback_cases(), ids=lambda s: s["name"])
+def test_fallback_routing(spec: dict[str, Any]) -> None:
+    # Unsupported (op, dtype, layout, device, norm-type, shape) must NOT route to
+    # CUDA: the support predicate is False AND the result equals the SGLang baseline.
+    mod = _load_register_module()
+    norm_infer, triton_one_pass_rms_norm = _sglang_baselines()
+    dev = "cuda"
+    dt = _dtype(spec["dtype"])
+    tol = 1e-5 if dt == torch.float32 else 5e-2
+    torch.manual_seed(7000)
+    if spec["op"] == "ln":
+        M, N = spec["M"], spec["N"]
+        if spec.get("noncontig"):
+            x = torch.randn(M, N + 8, device=dev, dtype=dt)[:, :N]  # non-contiguous view
+            assert not x.is_contiguous()
+        else:
+            x = torch.randn(M, N, device=dev, dtype=dt)
+        weight = torch.randn(N, device=dev, dtype=dt)
+        bias = None if spec.get("no_bias") else torch.randn(N, device=dev, dtype=dt)
+        is_rms = spec.get("is_rms_norm", False)
+        assert mod._norm_infer_supported(x, weight, bias, is_rms) is False
+        got = mod.optimized_norm_infer(x, weight, bias, 1e-6, is_rms_norm=is_rms)
+        exp = norm_infer(x, weight, bias, 1e-6, is_rms_norm=is_rms)
+    else:
+        S, D = spec["S"], spec["D"]
+        x = torch.randn(S, D, device=dev, dtype=dt)
+        w = torch.randn(D, device=dev, dtype=dt)
+        assert mod._rms_onepass_supported(x, w) is False
+        got = mod.optimized_triton_one_pass_rms_norm(x, w, 1e-6)
+        exp = triton_one_pass_rms_norm(x, w, 1e-6)
+    torch.testing.assert_close(got.float(), exp.float(), atol=tol, rtol=tol)

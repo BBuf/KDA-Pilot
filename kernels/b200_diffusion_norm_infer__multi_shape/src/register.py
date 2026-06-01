@@ -96,7 +96,15 @@ def _rms_module(dim, dtype):
     return mod
 
 
-# --- Support predicates (only these route to CUDA) ---------------------------
+# --- Support predicates (only these route to CUDA; everything else falls back) ---
+# Supported class (covers the six production shapes AND the correctness-regression
+# coverage; anything outside falls back to the SGLang baseline):
+#   norm_infer -> CUDA iff: fp32, 2-D, contiguous, is_rms_norm=False, weight+bias
+#                 present & contiguous, and N <= _LN_MAX_N (kernel column coverage).
+#   rms_onepass -> CUDA iff: bf16, contiguous, last dim D == 128, weight present.
+# Unsupported (fp16/bf16 LN, is_rms_norm=True, non-contiguous, non-CUDA, missing
+# weight/bias, N > 8192, D != 128, fp32 RMS, ...) all route to the baseline.
+# Verified by tests/test_correctness.py::test_fallback_routing.
 def _is_cuda_contig_2d(t) -> bool:
     return t is not None and getattr(t, "is_cuda", False) and t.dim() == 2 and t.is_contiguous()
 
