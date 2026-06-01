@@ -223,9 +223,57 @@ def _bench_case(correctness, case, candidate_fn, *, inner, physical_id):
     return b, c, speedup, idle_before, idle_after
 
 
+def _device_fair_main(correctness, register) -> int:
+    """Device-only A/B: time the baseline's direct JIT module vs the candidate's
+    direct JIT module (SYMMETRIC call paths — both bypass register_custom_op), with
+    INTERLEAVED sampling (alternate baseline/candidate per sample) to cancel
+    shared-box clock/contention drift. Isolates the device kernel change; does not
+    write benchmark.csv. Variant via KDA_CAND_VARIANT (warp|staged)."""
+    from sglang.jit_kernel.diffusion.qknorm_rope import _jit_qknorm_rope_module
+
+    variant = os.environ.get("KDA_CAND_VARIANT", "staged")
+    inner = int(os.environ.get("KDA_BENCH_INNER", "1"))
+    use_pdl = register._use_pdl()
+    loader = register._get_module_loader()
+    cases = [c for c in correctness.make_cases() if not c.get("ci_fallback")]
+    prov = _gpu_provenance()
+    print(f"[device-fair] variant={variant} pdl={use_pdl} gpu={prov['gpu_name']} phys={prov['gpu_physical_index']}")
+
+    def apply(mod, inp, case):
+        mod.qknorm_rope(inp["q"], inp["k"], inp["q_weight"], inp["k_weight"],
+                        inp["cos_sin_cache"], inp["positions"], case["eps"])
+
+    speedups = []
+    for case in cases:
+        base_mod = _jit_qknorm_rope_module(case["head_dim"], case["rope_dim"], case["is_neox"], torch.bfloat16)
+        cand_mod = loader(case["head_dim"], case["rope_dim"], case["is_neox"], use_pdl, torch.bfloat16, variant)
+        bi = correctness._make_inputs(case)
+        ci = correctness._make_inputs(case)
+        base_fn = lambda: apply(base_mod, bi, case)
+        cand_fn = lambda: apply(cand_mod, ci, case)
+        for _ in range(int(case.get("warmup", 25))):
+            base_fn(); cand_fn()
+        torch.cuda.synchronize()
+        bs, cs = [], []
+        for _ in range(int(case.get("iters", 100))):  # interleaved: cancels slow drift
+            bs.append(_time_cuda_events(base_fn, warmup=0, iters=1, inner=inner)[0])
+            cs.append(_time_cuda_events(cand_fn, warmup=0, iters=1, inner=inner)[0])
+        b, c = _summary(bs), _summary(cs)
+        sp = b["median"] / c["median"] if c["median"] > 0 else float("nan")
+        speedups.append(sp)
+        print(f"{case['name']:>44s}  device-fair speedup={sp:.4f}x  base_direct={b['median']:.3f}us  cand_direct={c['median']:.3f}us")
+    print(f"\n[device-fair] variant={variant} production geomean = {_geom_mean(speedups):.4f}x over {len(speedups)} shapes")
+    return 0
+
+
 def main() -> int:
     if torch is None or not torch.cuda.is_available():
         raise SystemExit("CUDA is required. Run inside the sglang_bbuf container on ion-b200.")
+
+    if "--device-fair" in sys.argv:
+        correctness = _load_module("tests/test_correctness.py", "kda_correctness")
+        register = _load_module("src/register.py", "kda_register")
+        return _device_fair_main(correctness, register)
 
     sanity = "--sanity" in sys.argv
     correctness = _load_module("tests/test_correctness.py", "kda_correctness")

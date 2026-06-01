@@ -8,15 +8,19 @@ returns ``None`` and mutates ``q`` and ``k`` in place).
 For the production config (head_dim=128, rope_dim=128, is_neox=False, bf16) it
 builds and calls a WORKSPACE-OWNED native CUDA kernel
 (``src/qknorm_rope_candidate.cuh``) through SGLang's own jit_kernel/tvm-ffi stack
-(``load_jit`` + ``make_cpp_args``), with compile flags matching the diffusion
-baseline (no ``--use_fast_math``; no ``torch.utils.cpp_extension``). Any other
-signature falls back to the SGLang baseline.
+(``load_jit`` + ``make_cpp_args`` + ``cache_once``), with compile flags matching
+the diffusion baseline (no ``--use_fast_math``; no ``torch.utils.cpp_extension``).
+Any other signature falls back to the SGLang baseline.
 
-``qknorm_rope_candidate.cuh`` is currently a faithful port of the SGLang baseline
-``csrc/diffusion/qknorm_rope.cuh`` (source lineage recorded in solutions.jsonl /
-interface.md); it is the validated build-path substrate for subsequent device
-optimizations. ``KDA_CAND_PDL`` (``0``/``1``) overrides the PDL template flag for
-the PDL on/off A/B (default = the baseline's ``is_arch_support_pdl()``).
+Kernel variant is chosen by ``KDA_CAND_VARIANT``:
+- ``warp`` (default): ``QKNormRopeKernel`` — warp-per-(token,head), a faithful port
+  of the SGLang baseline.
+- ``staged``: ``QKNormRopeStagedKernel`` — CTA-per-token with cos/sin staged once
+  into shared memory and reused across the token's heads (large-shape device lever).
+
+``KDA_CAND_PDL`` (``0``/``1``) overrides the PDL template flag (default = the
+baseline's ``is_arch_support_pdl()``). Call-invariant values (torch handle, PDL
+mode) are resolved once and cached to keep the per-call path lean.
 """
 
 from __future__ import annotations
@@ -33,11 +37,22 @@ OP_TYPE = "qknorm_rope_inplace"
 # workspace .cuh: pathlib resets the join on an absolute right-hand operand.
 _CANDIDATE_CUH = str(Path(__file__).resolve().parent / "qknorm_rope_candidate.cuh")
 
-# Memoize the JIT module per (head_dim, rope_dim, is_neox, use_pdl, dtype),
-# mirroring SGLang's cache_once semantics without importing sglang at module load
-# (so register()/import stays usable on a CPU-only box).
-_module_cache: dict = {}
+_KERNEL_CLASS = {"warp": "QKNormRopeKernel", "staged": "QKNormRopeStagedKernel"}
+
+# Lazily-resolved, call-invariant handles (resolved once, then reused).
+_torch = None
 _baseline_callable: Optional[Callable[..., None]] = None
+_use_pdl_cached: Optional[bool] = None
+_module_loader: Optional[Callable[..., Any]] = None
+
+
+def _torch_mod():
+    global _torch
+    if _torch is None:
+        import torch
+
+        _torch = torch
+    return _torch
 
 
 def _sglang_baseline() -> Callable[..., None]:
@@ -49,36 +64,38 @@ def _sglang_baseline() -> Callable[..., None]:
     return _baseline_callable
 
 
-def _candidate_use_pdl() -> bool:
-    env = os.environ.get("KDA_CAND_PDL")
-    if env is not None:
-        return env == "1"
-    from sglang.jit_kernel.utils import is_arch_support_pdl
+def _use_pdl() -> bool:
+    global _use_pdl_cached
+    if _use_pdl_cached is None:
+        env = os.environ.get("KDA_CAND_PDL")
+        if env is not None:
+            _use_pdl_cached = env == "1"
+        else:
+            from sglang.jit_kernel.utils import is_arch_support_pdl
 
-    return bool(is_arch_support_pdl())
-
-
-def _candidate_module(head_dim: int, rope_dim: int, is_neox: bool, use_pdl: bool, dtype: Any):
-    key = (head_dim, rope_dim, bool(is_neox), bool(use_pdl), str(dtype))
-    module = _module_cache.get(key)
-    if module is None:
-        from sglang.jit_kernel.utils import load_jit, make_cpp_args
-
-        args = make_cpp_args(head_dim, rope_dim, is_neox, use_pdl, dtype)
-        module = load_jit(
-            "qknorm_rope_cand",
-            *args,
-            cuda_files=[_CANDIDATE_CUH],
-            cuda_wrappers=[("qknorm_rope", f"QKNormRopeKernel<{args}>::run")],
-        )
-        _module_cache[key] = module
-    return module
+            _use_pdl_cached = bool(is_arch_support_pdl())
+    return _use_pdl_cached
 
 
-def _is_production_config(head_dim: int, rope_dim: int, is_neox: bool, dtype: Any) -> bool:
-    import torch
+def _get_module_loader():
+    """Return a cache_once-memoized loader (SGLang's own memoization)."""
+    global _module_loader
+    if _module_loader is None:
+        from sglang.jit_kernel.utils import cache_once, load_jit, make_cpp_args
 
-    return head_dim == 128 and rope_dim == 128 and not is_neox and dtype == torch.bfloat16
+        @cache_once
+        def _load(head_dim, rope_dim, is_neox, use_pdl, dtype, variant):
+            args = make_cpp_args(head_dim, rope_dim, is_neox, use_pdl, dtype)
+            kernel_class = _KERNEL_CLASS[variant]
+            return load_jit(
+                f"qknorm_rope_cand_{variant}",
+                *args,
+                cuda_files=[_CANDIDATE_CUH],
+                cuda_wrappers=[("qknorm_rope", f"{kernel_class}<{args}>::run")],
+            )
+
+        _module_loader = _load
+    return _module_loader
 
 
 def optimized_wrapper(
@@ -96,8 +113,9 @@ def optimized_wrapper(
 ) -> None:
     hd = head_dim or q.size(-1)
     rd = rope_dim or cos_sin_cache.size(-1)
-    if _is_production_config(hd, rd, is_neox, q.dtype):
-        module = _candidate_module(hd, rd, is_neox, _candidate_use_pdl(), q.dtype)
+    if hd == 128 and rd == 128 and not is_neox and q.dtype == _torch_mod().bfloat16:
+        variant = os.environ.get("KDA_CAND_VARIANT", "warp")
+        module = _get_module_loader()(hd, rd, is_neox, _use_pdl(), q.dtype, variant)
         return module.qknorm_rope(q, k, q_weight, k_weight, cos_sin_cache, positions, eps)
     # Unsupported signature -> SGLang baseline (correctness-or-fallback).
     return _sglang_baseline()(
