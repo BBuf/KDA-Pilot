@@ -80,14 +80,16 @@ def optimized_wrapper(*args: Any, **kwargs: Any) -> Any:
     if len(args) >= 4:  # (x, weight, bias, eps, ...) -> LayerNorm/RMSNorm via norm_infer
         return norm_infer(*args, **kwargs)
     if len(args) == 3:
-        try:
-            import torch
+        # 3 positional args are either norm_infer(x, weight, bias) -- bias is a Tensor
+        # or None -- or rms(x, w, eps) -- eps is a float. A valid 3-positional norm_infer
+        # also carries eps as a kwarg (norm_infer requires eps), so route the bias forms
+        # (None or Tensor) AND the eps-kwarg form to norm_infer; only a bare float/non-None
+        # 3rd arg with no eps kwarg is rms's positional eps.
+        import torch
 
-            if isinstance(args[2], torch.Tensor):  # (x, weight, bias) -> norm_infer (3rd arg is bias)
-                return norm_infer(*args, **kwargs)
-        except Exception:  # pragma: no cover - torch always present at call time
-            pass
-        return triton_one_pass_rms_norm(*args, **kwargs)  # (x, w, eps) -> RMSNorm (3rd arg is eps float)
+        if "eps" in kwargs or args[2] is None or isinstance(args[2], torch.Tensor):
+            return norm_infer(*args, **kwargs)  # (x, weight, bias|None[, eps kwarg]) -> norm_infer
+        return triton_one_pass_rms_norm(*args, **kwargs)  # (x, w, eps_float) -> RMSNorm
     return triton_one_pass_rms_norm(*args, **kwargs)  # (x, w) -> RMSNorm
 
 
