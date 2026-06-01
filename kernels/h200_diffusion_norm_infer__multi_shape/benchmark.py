@@ -82,21 +82,51 @@ def _require_env(name: str) -> str:
     return v
 
 
-def _gpu_idle(gpu_id: str) -> str:
-    """Snapshot the selected GPU's util/mem via nvidia-smi (recorded before+after timing)."""
+# Idleness thresholds for the selected GPU. The candidate's own CUDA context +
+# JIT extension footprint is ~0.6-1.5 GiB; a contending external workload on this
+# shared box is ~100+ GiB. MEM_MAX cleanly rejects any GB-scale external job while
+# allowing this process's own context. UTIL_MAX rejects active external compute.
+IDLE_UTIL_MAX_PCT = 5
+IDLE_MEM_MAX_MIB = 2048
+
+
+def _gpu_idle(gpu_id: str) -> dict:
+    """Structured GPU snapshot via nvidia-smi. RAISES on failure/unparsable output
+    so a missing/garbled snapshot can never be silently recorded or exported."""
+    r = subprocess.run(
+        ["nvidia-smi", "-i", str(gpu_id),
+         "--query-gpu=utilization.gpu,memory.used,memory.total",
+         "--format=csv,noheader,nounits"],
+        capture_output=True, text=True, timeout=30,
+    )
+    if r.returncode != 0:
+        raise SystemExit(f"benchmark.py: nvidia-smi -i {gpu_id} failed (rc={r.returncode}): {r.stderr.strip()}")
+    vals = [x.strip() for x in r.stdout.strip().split(",")]
+    if len(vals) < 3:
+        raise SystemExit(f"benchmark.py: unparsable nvidia-smi output: {r.stdout!r}")
     try:
-        r = subprocess.run(
-            ["nvidia-smi", "-i", str(gpu_id),
-             "--query-gpu=utilization.gpu,memory.used,memory.total",
-             "--format=csv,noheader,nounits"],
-            capture_output=True, text=True, timeout=30,
+        util, mem, total = int(vals[0]), int(vals[1]), int(vals[2])
+    except ValueError:
+        raise SystemExit(f"benchmark.py: non-integer nvidia-smi values: {vals}")
+    # Count compute processes on this GPU (informational evidence; cross-namespace
+    # PIDs are unreliable to attribute, so validation uses util/mem thresholds).
+    p = subprocess.run(
+        ["nvidia-smi", "-i", str(gpu_id), "--query-compute-apps=pid", "--format=csv,noheader"],
+        capture_output=True, text=True, timeout=30,
+    )
+    procs = len([ln for ln in p.stdout.strip().splitlines() if ln.strip()]) if p.returncode == 0 else -1
+    return {"util": util, "mem": mem, "total": total, "procs": procs,
+            "raw": f"util={util}% mem_used={mem}MiB procs={procs}"}
+
+
+def _validate_idle(label: str, d: dict) -> None:
+    """Abort (no CSV row written / no export) if the GPU is not idle for this snapshot."""
+    if d["util"] > IDLE_UTIL_MAX_PCT or d["mem"] > IDLE_MEM_MAX_MIB:
+        raise SystemExit(
+            f"benchmark.py: GPU NOT idle {label} ({d['raw']}); thresholds "
+            f"util<={IDLE_UTIL_MAX_PCT}% mem<={IDLE_MEM_MAX_MIB}MiB. Discarding run "
+            f"(no benchmark.csv row written, nothing to export). Re-run on an idle GPU."
         )
-        vals = [x.strip() for x in r.stdout.strip().split(",")]
-        if len(vals) >= 3:
-            return f"util={vals[0]}% mem_used={vals[1]}MiB mem_total={vals[2]}MiB"
-        return r.stdout.strip() or f"nvidia-smi_rc={r.returncode}"
-    except Exception as exc:  # noqa: BLE001
-        return f"unavailable({type(exc).__name__})"
 
 
 def main() -> int:
@@ -107,6 +137,7 @@ def main() -> int:
     commit = _require_env("KDA_COMMIT")
     cmd = _require_env("KDA_CMD")
     idle_before = _gpu_idle(gpu_id)  # snapshot BEFORE warm build / timing
+    _validate_idle("before", idle_before)  # abort early if another job is resident
 
     # Bind callables once (no per-iter module reload), warm the CUDA build.
     mod = T._load_register_module()
@@ -142,15 +173,18 @@ def main() -> int:
         print(f"{case['name']:42s} base={b['median']:9.3f}us cand={c['median']:9.3f}us "
               f"speedup={sp:6.3f}x  (cand p10={c['p10']:.3f} p90={c['p90']:.3f})")
 
-    # Settle so the rolling nvidia-smi util window and memory reflect the idle card
-    # (not this process's own just-finished work) before the after-snapshot.
+    # Release this process's own tensors, then settle, so the after-snapshot reflects
+    # the card (this process's residual ~ CUDA context only) rather than its own
+    # just-finished work or retained allocations.
+    inp = base_call = cand_call = base_out = cand_out = ref = None  # drop tensor refs
     _sync()
     torch.cuda.empty_cache()
     time.sleep(2.0)
-    idle_after = _gpu_idle(gpu_id)  # snapshot AFTER all timing + settle
+    idle_after = _gpu_idle(gpu_id)  # snapshot AFTER all timing + free + settle
+    _validate_idle("after", idle_after)  # abort (no CSV row) if a job is resident now
     geo = _geom(speedups)
     meta = (f"host={host} gpu_id={gpu_id} gpu={gpu_model} kp_commit={commit} "
-            f"idle_before=[{idle_before}] idle_after=[{idle_after}] cmd=\"{cmd}\"")
+            f"idle_before=[{idle_before['raw']}] idle_after=[{idle_after['raw']}] cmd=\"{cmd}\"")
     print(f"\nGEOMEAN per-shape median-latency speedup (all 6 captured shapes): {geo:.4f}x")
     print(f"meta: {meta}")
 
