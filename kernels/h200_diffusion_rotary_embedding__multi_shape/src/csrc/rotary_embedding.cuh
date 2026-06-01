@@ -33,9 +33,11 @@ constexpr uint32_t kThreadsPerBlock = 256;
 // Cap the grid; the kernels use a grid-stride loop so any total is covered.
 constexpr int64_t kMaxBlocks = 262144;
 
-template <typename T>
+// Host-side grid sizing. NOTE: do not call device::div_ceil here -- it is a
+// __device__ function and is not callable from host launcher setup.
 inline uint32_t grid_for(int64_t total) {
-  const int64_t needed = device::div_ceil(total, static_cast<int64_t>(kThreadsPerBlock));
+  const int64_t threads = static_cast<int64_t>(kThreadsPerBlock);
+  const int64_t needed = (total + threads - 1) / threads;
   return static_cast<uint32_t>(std::min<int64_t>(needed, kMaxBlocks));
 }
 
@@ -138,7 +140,7 @@ struct StandardRopeKernel {
         .half = half,
         .num_tokens = t,
     };
-    LaunchKernel(grid_for<DType>(total_pairs), kThreadsPerBlock, device.unwrap())(
+    LaunchKernel(grid_for(total_pairs), kThreadsPerBlock, device.unwrap())(
         standard_rope_kernel<DType>, params);
   }
 };
@@ -155,7 +157,10 @@ struct Ltx2RopeParams {
   int64_t x_outer;      // inner = H * D (elements between (b,s) rows of x)
   int64_t cos_stride_b;
   int64_t cos_stride_h;
-  int64_t cos_stride_s;  // cos/sin last-dim stride is 1
+  int64_t cos_stride_s;  // cos last-dim stride is 1
+  int64_t sin_stride_b;
+  int64_t sin_stride_h;
+  int64_t sin_stride_s;  // sin last-dim stride is 1 (indexed independently of cos)
   uint32_t S;
   uint32_t H;
   uint32_t half;
@@ -174,6 +179,9 @@ __global__ void ltx2_split_rope_kernel(const Ltx2RopeParams __grid_constant__ pa
   const int64_t cs_b = params.cos_stride_b;
   const int64_t cs_h = params.cos_stride_h;
   const int64_t cs_s = params.cos_stride_s;
+  const int64_t ss_b = params.sin_stride_b;
+  const int64_t ss_h = params.sin_stride_h;
+  const int64_t ss_s = params.sin_stride_s;
   const uint32_t S = params.S;
   const uint32_t H = params.H;
   const uint32_t half = params.half;
@@ -192,11 +200,13 @@ __global__ void ltx2_split_rope_kernel(const Ltx2RopeParams __grid_constant__ pa
     const int64_t x_base = (b * S + s) * x_outer + static_cast<int64_t>(h) * D;
     const int64_t cidx =
         b * cs_b + static_cast<int64_t>(h) * cs_h + static_cast<int64_t>(s) * cs_s + j;
+    const int64_t sidx =
+        b * ss_b + static_cast<int64_t>(h) * ss_h + static_cast<int64_t>(s) * ss_s + j;
 
     const float xf = cast<fp32_t>(load_as<DType>(xp, x_base + j));
     const float xs = cast<fp32_t>(load_as<DType>(xp, x_base + half + j));
     const float c = cast<fp32_t>(load_as<DType>(cosp, cidx));
-    const float sn = cast<fp32_t>(load_as<DType>(sinp, cidx));
+    const float sn = cast<fp32_t>(load_as<DType>(sinp, sidx));
 
     // Deliberate intermediate bf16 rounding of (x * cos) before the fp32 sin term.
     const float of = cast<fp32_t>(cast<DType>(xf * c)) - xs * sn;
@@ -224,17 +234,17 @@ struct Ltx2SplitRopeKernel {
     auto Sb = SymbolicSize{"cos_stride_b"};
     auto Sh = SymbolicSize{"cos_stride_h"};
     auto Ss = SymbolicSize{"cos_stride_s"};
+    auto SbS = SymbolicSize{"sin_stride_b"};
+    auto ShS = SymbolicSize{"sin_stride_h"};
+    auto SsS = SymbolicSize{"sin_stride_s"};
     auto device = SymbolicDevice{};
     device.set_options<kDLCUDA>();
 
     TensorMatcher({B, S, Inner}).with_dtype<DType>().with_device(device).verify(x).verify(out);
-    // cos/sin: (B, num_heads, S, half), last-dim stride 1 (may be non-contiguous overall).
-    TensorMatcher({B, Hh, S, Half})
-        .with_strides({Sb, Sh, Ss, 1})
-        .with_dtype<DType>()
-        .with_device(device)
-        .verify(cos)
-        .verify(sin);
+    // cos and sin: (B, num_heads, S, half), last-dim stride 1, each indexed by its OWN strides
+    // (shapes cross-checked via the shared B/Hh/S/Half symbolics; strides bound independently).
+    TensorMatcher({B, Hh, S, Half}).with_strides({Sb, Sh, Ss, 1}).with_dtype<DType>().with_device(device).verify(cos);
+    TensorMatcher({B, Hh, S, Half}).with_strides({SbS, ShS, SsS, 1}).with_dtype<DType>().with_device(device).verify(sin);
 
     const int64_t b = B.unwrap();
     const auto s = static_cast<uint32_t>(S.unwrap());
@@ -244,8 +254,9 @@ struct Ltx2SplitRopeKernel {
     const auto d = 2u * half;
     RuntimeCheck(inner == static_cast<int64_t>(hh) * d, "inner_dim must equal num_heads * 2 * half");
 
-    // Size-1 leading dim has its stride check skipped, so guard cos_stride_b.
+    // Size-1 leading dim has its stride check skipped, so guard the batch strides.
     const int64_t cs_b = Sb.has_value() ? Sb.unwrap() : 0;
+    const int64_t sn_b = SbS.has_value() ? SbS.unwrap() : 0;
 
     const int64_t total = b * s * static_cast<int64_t>(hh) * half;
     const auto params = Ltx2RopeParams{
@@ -258,12 +269,15 @@ struct Ltx2SplitRopeKernel {
         .cos_stride_b = cs_b,
         .cos_stride_h = Sh.unwrap(),
         .cos_stride_s = Ss.unwrap(),
+        .sin_stride_b = sn_b,
+        .sin_stride_h = ShS.unwrap(),
+        .sin_stride_s = SsS.unwrap(),
         .S = s,
         .H = hh,
         .half = half,
         .D = d,
     };
-    LaunchKernel(grid_for<DType>(total), kThreadsPerBlock, device.unwrap())(
+    LaunchKernel(grid_for(total), kThreadsPerBlock, device.unwrap())(
         ltx2_split_rope_kernel<DType>, params);
   }
 };

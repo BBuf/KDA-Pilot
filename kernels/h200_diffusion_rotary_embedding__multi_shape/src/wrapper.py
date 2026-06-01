@@ -139,7 +139,9 @@ def _supported_standard(x, cos, sin, interleaved) -> bool:
         return False
     if interleaved:
         return False
-    if x.dim() not in (3, 4) or not x.is_contiguous():
+    # Production standard capture is 4D (B,T,H,D); 3D input is an unsupported
+    # signature per the plan and must fall back.
+    if x.dim() != 4 or not x.is_contiguous():
         return False
     if cos.dim() != 2 or sin.dim() != 2:
         return False
@@ -176,6 +178,8 @@ def _supported_ltx2(x, cos, sin) -> bool:
     B, S, inner = int(x.shape[0]), int(x.shape[1]), int(x.shape[2])
     cb, num_heads, cs, half = (int(v) for v in cos.shape)
     if cb != B or cs != S:
+        return False
+    if num_heads != 32:  # production num_heads; others fall back
         return False
     if half not in (32, 64):  # production half_dim; others fall back
         return False

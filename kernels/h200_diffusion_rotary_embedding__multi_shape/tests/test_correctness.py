@@ -288,13 +288,24 @@ def test_case_manifest() -> None:
 
 
 def test_sglang_oracle_pinned() -> None:
-    expected = os.environ.get("KDA_SGLANG_ORACLE_COMMIT", SGLANG_ORACLE_COMMIT)
+    override = os.environ.get("KDA_SGLANG_ORACLE_COMMIT")
+    expected = override or SGLANG_ORACLE_COMMIT
     head = _sglang_git_head()
     if head is None:
-        pytest.skip("imported SGLang is not a git checkout; cannot verify the oracle pin")
+        # Provenance must NOT silently pass: only accept a non-git-checkout oracle
+        # when an override is explicitly set (and record it in the run output).
+        if override is not None:
+            print(f"[oracle-pin] imported SGLang is not a git checkout; honoring override KDA_SGLANG_ORACLE_COMMIT={override}")
+            return
+        pytest.fail(
+            f"imported SGLang is not a git checkout; cannot verify the oracle pin {SGLANG_ORACLE_COMMIT}. "
+            "Set KDA_SGLANG_ORACLE_COMMIT=<commit> to override and record it."
+        )
     assert head.startswith(expected) or expected.startswith(head), (
         f"SGLang oracle commit {head!r} != expected {expected!r}; set KDA_SGLANG_ORACLE_COMMIT to override"
     )
+    if override is not None:
+        print(f"[oracle-pin] override KDA_SGLANG_ORACLE_COMMIT={override}; imported SGLang HEAD={head}")
 
 
 def test_baseline_matches_reference() -> None:
@@ -311,12 +322,20 @@ def test_baseline_matches_reference() -> None:
 def test_correctness_cases() -> None:
     cases = make_cases()
     assert cases, "No correctness cases recovered. Fill make_cases() before optimizing."
+    wrapper = _wrapper()
     for case in cases:
         x = case["args"][0]
         x_before = x.clone()
         base = baseline(case)
         ref = reference(case)
         cand = candidate(case)
+        api = case["api"]
+        # Supported production cases MUST take the native CUDA route -- a broken kernel
+        # that silently falls back must NOT pass as correct (guards AC-2/AC-3).
+        assert wrapper._LAST_DISPATCH[api] == "cuda", (
+            f"{case['name']}: expected CUDA route, got {wrapper._LAST_DISPATCH[api]!r} "
+            "(broken native kernel must not pass via fallback)"
+        )
         # Functional contract: input not mutated; same dtype as input.
         assert torch.equal(x, x_before), f"{case['name']}: input x was mutated"
         assert cand.dtype == x.dtype, f"{case['name']}: candidate dtype {cand.dtype} != input {x.dtype}"
@@ -329,44 +348,61 @@ def test_fallback_routing() -> None:
     """Unsupported signatures must fall back non-recursively to the original baseline,
     or to the PyTorch reference if the baseline is unavailable -- never recurse."""
     wrapper = _wrapper()
-    # The captured baseline must be SGLang's original, not our wrapper.
     from sglang.jit_kernel.diffusion.triton.rotary import apply_rotary_embedding as sgl_std
+    from sglang.jit_kernel.diffusion.triton.ltx2_rotary import apply_ltx2_split_rotary_emb as sgl_ltx2
 
-    assert wrapper._BASELINES.get("standard") is sgl_std, "baseline must be the original SGLang symbol"
+    assert wrapper._BASELINES.get("standard") is sgl_std, "standard baseline must be the original SGLang symbol"
+    assert wrapper._BASELINES.get("ltx2") is sgl_ltx2, "ltx2 baseline must be the original SGLang symbol"
 
-    # fp16 standard input is unsupported -> must route to baseline (not cuda), exactly once.
-    B, T, H, D = 1, 64, 24, 128
-    x = torch.randn(B, T, H, D, device=DEVICE, dtype=torch.float16)
-    angles = torch.randn(T, D // 2, device=DEVICE, dtype=torch.float32)
-    cos, sin = torch.cos(angles), torch.sin(angles)
+    H, D = 24, 128
+    angles = torch.randn(64, D // 2, device=DEVICE, dtype=torch.float32)
+    cos2d, sin2d = torch.cos(angles), torch.sin(angles)
 
+    def assert_not_cuda(x, cos, sin, interleaved, label):
+        wrapper._LAST_DISPATCH["standard"] = None
+        out = wrapper.apply_rotary_embedding(x, cos, sin, interleaved)
+        assert wrapper._LAST_DISPATCH["standard"] != "cuda", f"{label}: must not take CUDA route"
+        assert out.dtype == x.dtype, f"{label}: dtype changed"
+
+    # Each unsupported standard signature must fall back (not CUDA):
+    assert_not_cuda(torch.randn(1, 64, H, D, device=DEVICE, dtype=torch.float16), cos2d, sin2d, False, "fp16-standard")
+    assert_not_cuda(torch.randn(1, 64, H, D, device=DEVICE, dtype=torch.bfloat16), cos2d, sin2d, True, "interleaved-true")
+    assert_not_cuda(torch.randn(64, H, D, device=DEVICE, dtype=torch.bfloat16), cos2d, sin2d, False, "3d-standard")
+    a64 = torch.randn(64, 32, device=DEVICE, dtype=torch.float32)
+    assert_not_cuda(torch.randn(1, 64, H, 64, device=DEVICE, dtype=torch.bfloat16), torch.cos(a64), torch.sin(a64), False, "head64")
+    # All-CPU (non-CUDA device) -> reference fallback, correct dtype.
+    xc = torch.randn(1, 64, H, D, dtype=torch.bfloat16)
+    wrapper._LAST_DISPATCH["standard"] = None
+    oc = wrapper.apply_rotary_embedding(xc, torch.cos(angles).cpu(), torch.sin(angles).cpu(), False)
+    assert wrapper._LAST_DISPATCH["standard"] != "cuda" and oc.dtype == xc.dtype
+
+    # Standard non-recursion: baseline reached exactly once.
     calls = {"n": 0}
     orig = wrapper._BASELINES["standard"]
-
-    def spy(*a, **k):
-        calls["n"] += 1
-        return orig(*a, **k)
-
-    wrapper._BASELINES["standard"] = spy
+    wrapper._BASELINES["standard"] = lambda *a, **k: (calls.__setitem__("n", calls["n"] + 1) or orig(*a, **k))
     try:
-        out = wrapper.apply_rotary_embedding(x, cos, sin, False)
+        wrapper._LAST_DISPATCH["standard"] = None
+        wrapper.apply_rotary_embedding(torch.randn(1, 64, H, D, device=DEVICE, dtype=torch.float16), cos2d, sin2d, False)
     finally:
         wrapper._BASELINES["standard"] = orig
-    assert wrapper._LAST_DISPATCH["standard"] in ("baseline", "reference")
     if wrapper._LAST_DISPATCH["standard"] == "baseline":
-        assert calls["n"] == 1, "baseline must be reached exactly once (no recursion)"
-    assert out.dtype == x.dtype
+        assert calls["n"] == 1, "standard baseline reached exactly once (no recursion)"
 
-    # interleaved=True is unsupported -> fallback (not cuda).
-    xb = torch.randn(B, T, H, D, device=DEVICE, dtype=torch.bfloat16)
-    wrapper.apply_rotary_embedding(xb, cos, sin, True)
-    assert wrapper._LAST_DISPATCH["standard"] != "cuda"
-
-    # non-bf16 LTX-2 -> fallback (not cuda).
+    # LTX-2 non-bf16 -> fallback; ltx2 baseline non-recursion exactly once.
     xl = torch.randn(1, 128, 32 * 64, device=DEVICE, dtype=torch.float16)
-    cl = torch.randn(1, 128, 32, 32, device=DEVICE, dtype=torch.float16).permute(0, 2, 1, 3)
-    wrapper.apply_ltx2_split_rotary_emb(xl, cl, cl)
+    al = torch.randn(1, 128, 32, 32, device=DEVICE, dtype=torch.float16)
+    cl, sl = torch.cos(al).permute(0, 2, 1, 3), torch.sin(al).permute(0, 2, 1, 3)
+    lcalls = {"n": 0}
+    lorig = wrapper._BASELINES["ltx2"]
+    wrapper._BASELINES["ltx2"] = lambda *a, **k: (lcalls.__setitem__("n", lcalls["n"] + 1) or lorig(*a, **k))
+    try:
+        wrapper._LAST_DISPATCH["ltx2"] = None
+        wrapper.apply_ltx2_split_rotary_emb(xl, cl, sl)
+    finally:
+        wrapper._BASELINES["ltx2"] = lorig
     assert wrapper._LAST_DISPATCH["ltx2"] != "cuda"
+    if wrapper._LAST_DISPATCH["ltx2"] == "baseline":
+        assert lcalls["n"] == 1, "ltx2 baseline reached exactly once (no recursion)"
 
 
 if __name__ == "__main__":
