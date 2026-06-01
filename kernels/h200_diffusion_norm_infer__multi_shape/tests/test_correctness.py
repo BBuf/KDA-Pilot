@@ -362,6 +362,29 @@ def test_select01_modulation_oracle() -> None:
             )
 
 
+def test_rms_noncontiguous_higher_rank_falls_back() -> None:
+    """A higher-rank tensor whose last dim is 128 and last-dim-contiguous but whose
+    overall layout is NOT contiguous must route to the SGLang baseline (reshape would
+    otherwise copy and the kernel would write a discarded buffer). The optimized path
+    is restricted to fully contiguous inputs; the result must match the baseline."""
+    if torch is None or not torch.cuda.is_available():
+        pytest.skip("CUDA required")
+    cand = _candidate_callable("triton_one_pass_rms_norm")
+    if cand is None:
+        pytest.skip("candidate dispatcher not implemented yet")
+
+    base = torch.randn(64, 4, 128, device=DEVICE, dtype=torch.bfloat16)
+    x = base.permute(1, 0, 2)  # [4,64,128]: stride(-1)==1 but NOT contiguous overall
+    assert x.stride(-1) == 1 and not x.is_contiguous()
+    w = torch.randn(128, device=DEVICE, dtype=torch.bfloat16)
+
+    out_cand = cand(x, w, EPS)
+    out_base = _sglang_rms_norm()(x, w, EPS)
+    _assert_no_nan_inf(out_cand, path="rms_noncontig")
+    assert out_cand.shape == out_base.shape
+    torch.testing.assert_close(out_cand.float(), out_base.float(), atol=5e-2, rtol=5e-2)
+
+
 if __name__ == "__main__":
     import sys
 

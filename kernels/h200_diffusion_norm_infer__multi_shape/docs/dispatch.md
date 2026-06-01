@@ -18,10 +18,14 @@ signature.
 | **geomean** | | | | | **1.4223x** | | |
 
 ## Routing guards (exact; else fall back to SGLang baseline)
-- `triton_one_pass_rms_norm` → `rms_norm_warp<128,false,DType>` when: CUDA, dtype in
-  {bf16, fp16}, last-dim contiguous, D==128, w is [128] same-dtype contiguous.
+- `triton_one_pass_rms_norm` → `rms_norm_warp<128,false,bf16_t>` when: CUDA, dtype
+  **bf16 only** (fp16 D=128 compiles but is outside the validated shape set → baseline),
+  `x.is_contiguous()`, D==128, w is [128] bf16 contiguous.
 - `norm_infer` → `layer_norm_block<5120,true,false,float>` when: CUDA, dtype float32,
-  `is_rms_norm=False`, last-dim contiguous, N==5120, weight & bias both [N] f32 contiguous.
+  `is_rms_norm=False`, `out is None`, `x.is_contiguous()`, N==5120, weight & bias both [N] f32 contiguous.
+- The full `x.is_contiguous()` requirement guarantees `reshape(-1,D)` and the fresh
+  `empty_like(x)` output are kernel-writable views; merely last-dim-contiguous higher-rank
+  inputs fall back to baseline (regression-tested).
 - Everything else (CPU/MPS, non-contiguous, other dtype/N/D, is_rms_norm=True on
   norm_infer, missing weight/bias) → SGLang baseline (verified: candidate output ==
   baseline output for fallback cases).

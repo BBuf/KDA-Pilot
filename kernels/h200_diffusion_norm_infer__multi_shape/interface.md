@@ -106,12 +106,13 @@ SGLang baseline:
 - **Wrapper signatures (preserved):** `triton_one_pass_rms_norm(x, w, eps=1e-6) -> Tensor`
   and `norm_infer(x, weight, bias, eps, is_rms_norm=False, out=None) -> Tensor`
   (`src/norm_dispatch.py`, re-exported via `src/register.py`).
-- **Dispatch table + per-bucket promote/no-go:** see `docs/dispatch.md`. RMS bf16/fp16
-  D=128 → `rms_norm_warp<128,false,DType>` (`src/rms_norm_d128.cuh`, 2-rows-per-warp
+- **Dispatch table + per-bucket promote/no-go:** see `docs/dispatch.md`. RMS **bf16-only**
+  D=128 → `rms_norm_warp<128,false,bf16_t>` (`src/rms_norm_d128.cuh`, 2-rows-per-warp
   128-bit); LN fp32 N=5120 +weight+bias → `layer_norm_block<5120,true,false,float>`
   (`src/layer_norm_n5120.cuh`, one-CTA-per-row exact tiling).
-- **Fallback:** any other dtype / N / D / device / layout / `is_rms_norm=True` on
-  norm_infer / missing weight|bias → SGLang baseline (output verified == baseline).
+- **Fallback:** any other dtype (incl. fp16 RMS) / N / D / device / non-contiguous layout /
+  `is_rms_norm=True` on norm_infer / `out` provided / missing weight|bias → SGLang baseline
+  (output verified == baseline; non-contiguous higher-rank fallback is regression-tested).
 - **Tolerance methodology:** candidate vs SGLang baseline AND vs a PyTorch FP32 reference;
   fixed SGLang tolerances (fp32 1e-5, bf16/fp16 5e-2) + a dynamic guard
   (candidate-vs-fp32 error ≤ 4× baseline-vs-fp32 error); explicit NaN/Inf checks.
@@ -128,4 +129,10 @@ SGLang baseline:
   `TensorMatcher`/`SymbolicSize`, `LaunchKernel`, packed `cast<fp32x2_t>` vectorization,
   `warp::reduce_sum`) mirrors `python/sglang/jit_kernel/csrc/diffusion/qknorm_rope.cuh`;
   2-rows-per-warp 128-bit lever from KernelWiki (pytorch#150705, vllm#27931). No
-  `torch.utils.cpp_extension`; no `--use_fast_math`. Post-loop SGLang export = task12 (deferred).
+  `torch.utils.cpp_extension`; no `--use_fast_math`.
+- **Export / install (task12, done):** promoted into the `kda_kernels` overlay via
+  `scripts/export_kda_kernels/export.py` (`src/register.py` `EXPORTS` + `src/wrapper.py`);
+  `kda_kernels.install(strict=True)` swaps both public SGLang symbols to the native-CUDA
+  dispatcher; the `.cuh` compile via `load_jit` from `kda_kernels/.../_impls/h200/`. Installed-path
+  correctness (6 shapes + select01 oracle + fallback) and smoke benchmark validated on ion8-h200
+  GPU7. Full detail: `docs/sglang_jit_export.md`.
