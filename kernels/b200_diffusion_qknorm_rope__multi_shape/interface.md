@@ -43,12 +43,22 @@ fused_inplace_qknorm_rope(
 src/register.py
 ```
 
-`optimized_wrapper(*args, **kwargs)` preserves the contract above. Currently it routes
-to the SGLang baseline (correct-by-construction starting point + fallback target). The
-specialized B200 kernel will be wired in behind a shape gate, falling back to the
-baseline for any shape, dtype, layout, device, or feature flag it does not support.
+`optimized_wrapper(*args, **kwargs)` preserves the contract above. For the production
+config (head_dim=128, rope_dim=128, is_neox=False, bf16) it builds and calls a
+workspace-owned native CUDA kernel `src/qknorm_rope_candidate.cuh` through SGLang
+`load_jit`/`make_cpp_args` (absolute `cuda_files` path; `cuda_wrappers`
+`QKNormRopeKernel<...>::run`; no `--use_fast_math`; no `torch.utils.cpp_extension`),
+memoized per template, with `KDA_CAND_PDL` controlling the PDL flag. Any other
+signature falls back to the SGLang baseline. `register()` returns
+`{name, op_type, callable, version, source}`.
 
-`register()` returns `{name, op_type, callable, version, source}`.
+**Round 4 candidate status (cand_faithful_port_r4):** the `.cuh` is currently a
+faithful port of the SGLang baseline, so the device kernel is identical. The workspace
+`load_jit` build path is validated on B200 and production correctness passes. The
+isolated benchmark's 1.29–1.40x is an **asymmetric-call-path artifact** (the candidate
+skips the baseline's `register_custom_op` ~6–8µs layer) plus shared-box variance — NOT
+a device win (decomposition: candidate-direct ≈ 0.79–0.95x vs baseline-direct). A real
+device comparison must use the **integrated install path** (same wrapper for both).
 
 ## Correctness Methodology
 
