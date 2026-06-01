@@ -331,7 +331,7 @@ def test_correctness_cases() -> None:
         cand = candidate(case)
         api = case["api"]
         # Supported production cases MUST take the native CUDA route -- a broken kernel
-        # that silently falls back must NOT pass as correct (guards AC-2/AC-3).
+        # that silently falls back must NOT pass as correct (guards the native-kernel contract).
         assert wrapper._LAST_DISPATCH[api] == "cuda", (
             f"{case['name']}: expected CUDA route, got {wrapper._LAST_DISPATCH[api]!r} "
             "(broken native kernel must not pass via fallback)"
@@ -344,9 +344,20 @@ def test_correctness_cases() -> None:
         assert_bf16_noise_bounded(cand, ref, mult=3.0)
 
 
+def _mk_ltx2(B, S, Hh, half, *, dtype=torch.bfloat16, contiguous=False):
+    inner = Hh * 2 * half
+    x = (torch.randn(B, S, inner, device=DEVICE, dtype=torch.float32) * 0.1).to(dtype)
+    ang = torch.randn(B, S, Hh, half, device=DEVICE, dtype=torch.float32)
+    c = torch.cos(ang).to(dtype).contiguous().permute(0, 2, 1, 3)  # (B,H,S,half) non-contiguous
+    s = torch.sin(ang).to(dtype).contiguous().permute(0, 2, 1, 3)
+    if contiguous:
+        c, s = c.contiguous(), s.contiguous()
+    return x, c, s
+
+
 def test_fallback_routing() -> None:
-    """Unsupported signatures must fall back non-recursively to the original baseline,
-    or to the PyTorch reference if the baseline is unavailable -- never recurse."""
+    """Unsupported signatures fall back non-recursively (CUDA -> baseline -> reference),
+    stay numerically correct vs baseline/reference, and never recurse."""
     wrapper = _wrapper()
     from sglang.jit_kernel.diffusion.triton.rotary import apply_rotary_embedding as sgl_std
     from sglang.jit_kernel.diffusion.triton.ltx2_rotary import apply_ltx2_split_rotary_emb as sgl_ltx2
@@ -354,55 +365,75 @@ def test_fallback_routing() -> None:
     assert wrapper._BASELINES.get("standard") is sgl_std, "standard baseline must be the original SGLang symbol"
     assert wrapper._BASELINES.get("ltx2") is sgl_ltx2, "ltx2 baseline must be the original SGLang symbol"
 
-    H, D = 24, 128
-    angles = torch.randn(64, D // 2, device=DEVICE, dtype=torch.float32)
-    cos2d, sin2d = torch.cos(angles), torch.sin(angles)
+    def expected_std(x, cos, sin, inter):
+        try:
+            return sgl_std(x, cos, sin, inter)
+        except Exception:
+            return REF.standard_rope_reference(x, cos, sin, inter)
 
-    def assert_not_cuda(x, cos, sin, interleaved, label):
+    def expected_ltx2(x, cos, sin):
+        try:
+            return sgl_ltx2(x, cos, sin)
+        except Exception:
+            return REF.ltx2_split_rope_reference(x, cos, sin)
+
+    def check_std(x, cos, sin, inter, label):
+        xb = x.clone()
         wrapper._LAST_DISPATCH["standard"] = None
-        out = wrapper.apply_rotary_embedding(x, cos, sin, interleaved)
+        out = wrapper.apply_rotary_embedding(x, cos, sin, inter)
         assert wrapper._LAST_DISPATCH["standard"] != "cuda", f"{label}: must not take CUDA route"
-        assert out.dtype == x.dtype, f"{label}: dtype changed"
+        assert out.dtype == x.dtype and out.shape == x.shape, f"{label}: dtype/shape changed"
+        assert torch.equal(x, xb), f"{label}: input mutated"
+        torch.testing.assert_close(out.float(), expected_std(x, cos, sin, inter).float(), atol=1e-2, rtol=1e-2)
 
-    # Each unsupported standard signature must fall back (not CUDA):
-    assert_not_cuda(torch.randn(1, 64, H, D, device=DEVICE, dtype=torch.float16), cos2d, sin2d, False, "fp16-standard")
-    assert_not_cuda(torch.randn(1, 64, H, D, device=DEVICE, dtype=torch.bfloat16), cos2d, sin2d, True, "interleaved-true")
-    assert_not_cuda(torch.randn(64, H, D, device=DEVICE, dtype=torch.bfloat16), cos2d, sin2d, False, "3d-standard")
-    a64 = torch.randn(64, 32, device=DEVICE, dtype=torch.float32)
-    assert_not_cuda(torch.randn(1, 64, H, 64, device=DEVICE, dtype=torch.bfloat16), torch.cos(a64), torch.sin(a64), False, "head64")
-    # All-CPU (non-CUDA device) -> reference fallback, correct dtype.
-    xc = torch.randn(1, 64, H, D, dtype=torch.bfloat16)
-    wrapper._LAST_DISPATCH["standard"] = None
-    oc = wrapper.apply_rotary_embedding(xc, torch.cos(angles).cpu(), torch.sin(angles).cpu(), False)
-    assert wrapper._LAST_DISPATCH["standard"] != "cuda" and oc.dtype == xc.dtype
-
-    # Standard non-recursion: baseline reached exactly once.
-    calls = {"n": 0}
-    orig = wrapper._BASELINES["standard"]
-    wrapper._BASELINES["standard"] = lambda *a, **k: (calls.__setitem__("n", calls["n"] + 1) or orig(*a, **k))
-    try:
-        wrapper._LAST_DISPATCH["standard"] = None
-        wrapper.apply_rotary_embedding(torch.randn(1, 64, H, D, device=DEVICE, dtype=torch.float16), cos2d, sin2d, False)
-    finally:
-        wrapper._BASELINES["standard"] = orig
-    if wrapper._LAST_DISPATCH["standard"] == "baseline":
-        assert calls["n"] == 1, "standard baseline reached exactly once (no recursion)"
-
-    # LTX-2 non-bf16 -> fallback; ltx2 baseline non-recursion exactly once.
-    xl = torch.randn(1, 128, 32 * 64, device=DEVICE, dtype=torch.float16)
-    al = torch.randn(1, 128, 32, 32, device=DEVICE, dtype=torch.float16)
-    cl, sl = torch.cos(al).permute(0, 2, 1, 3), torch.sin(al).permute(0, 2, 1, 3)
-    lcalls = {"n": 0}
-    lorig = wrapper._BASELINES["ltx2"]
-    wrapper._BASELINES["ltx2"] = lambda *a, **k: (lcalls.__setitem__("n", lcalls["n"] + 1) or lorig(*a, **k))
-    try:
+    def check_ltx2(x, cos, sin, label):
+        xb = x.clone()
         wrapper._LAST_DISPATCH["ltx2"] = None
-        wrapper.apply_ltx2_split_rotary_emb(xl, cl, sl)
-    finally:
-        wrapper._BASELINES["ltx2"] = lorig
-    assert wrapper._LAST_DISPATCH["ltx2"] != "cuda"
-    if wrapper._LAST_DISPATCH["ltx2"] == "baseline":
-        assert lcalls["n"] == 1, "ltx2 baseline reached exactly once (no recursion)"
+        out = wrapper.apply_ltx2_split_rotary_emb(x, cos, sin)
+        assert wrapper._LAST_DISPATCH["ltx2"] != "cuda", f"{label}: must not take CUDA route"
+        assert out.dtype == x.dtype and out.shape == x.shape, f"{label}: dtype/shape changed"
+        assert torch.equal(x, xb), f"{label}: input mutated"
+        torch.testing.assert_close(out.float(), expected_ltx2(x, cos, sin).float(), atol=1e-2, rtol=1e-2)
+
+    H, D = 24, 128
+    a = torch.randn(64, D // 2, device=DEVICE, dtype=torch.float32)
+    cosT, sinT = torch.cos(a), torch.sin(a)
+    # Unsupported STANDARD signatures (numerically checked):
+    check_std(torch.randn(1, 64, H, D, device=DEVICE, dtype=torch.bfloat16), cosT, sinT, False, "non-captured-token-count")
+    a16 = torch.randn(64, D // 2, device=DEVICE, dtype=torch.float32)
+    check_std(torch.randn(1, 64, 16, D, device=DEVICE, dtype=torch.bfloat16), torch.cos(a16), torch.sin(a16), False, "non-captured-head-count")
+    check_std(torch.randn(64, H, D, device=DEVICE, dtype=torch.bfloat16), cosT, sinT, False, "3d-standard")
+    check_std(torch.randn(1, 64, H, D, device=DEVICE, dtype=torch.float16), cosT, sinT, False, "fp16-standard")
+    check_std(torch.randn(1, 64, H, D, device=DEVICE, dtype=torch.bfloat16), cosT, sinT, True, "interleaved-true")
+    a64 = torch.randn(64, 32, device=DEVICE, dtype=torch.float32)
+    check_std(torch.randn(1, 64, H, 64, device=DEVICE, dtype=torch.bfloat16), torch.cos(a64), torch.sin(a64), False, "head-dim-64")
+    acpu = torch.randn(8, D // 2, dtype=torch.float32)
+    check_std(torch.randn(1, 8, H, D, dtype=torch.bfloat16), torch.cos(acpu), torch.sin(acpu), False, "all-cpu")
+
+    # Unsupported LTX-2 signatures (numerically checked):
+    check_ltx2(*_mk_ltx2(1, 1536, 32, 64, contiguous=True), "ltx2-contiguous-cossin")
+    check_ltx2(*_mk_ltx2(1, 512, 32, 64), "ltx2-non-captured-S")
+    check_ltx2(*_mk_ltx2(2, 1536, 32, 64), "ltx2-B2")
+    check_ltx2(*_mk_ltx2(1, 1536, 16, 64), "ltx2-num_heads-16")
+    check_ltx2(*_mk_ltx2(1, 1536, 32, 64, dtype=torch.float16), "ltx2-fp16")
+    check_ltx2(*_mk_ltx2(1, 1536, 32, 16), "ltx2-invalid-half")
+
+    # Exact-once / non-recursion for BOTH public APIs.
+    std_call = lambda: wrapper.apply_rotary_embedding(
+        torch.randn(1, 64, H, D, device=DEVICE, dtype=torch.float16), cosT, sinT, False
+    )
+    ltx2_call = lambda: wrapper.apply_ltx2_split_rotary_emb(*_mk_ltx2(1, 1536, 32, 64, dtype=torch.float16))
+    for api, fn_call in (("standard", std_call), ("ltx2", ltx2_call)):
+        calls = {"n": 0}
+        orig = wrapper._BASELINES[api]
+        wrapper._BASELINES[api] = lambda *a, _orig=orig, _c=calls, **k: (_c.__setitem__("n", _c["n"] + 1) or _orig(*a, **k))
+        try:
+            wrapper._LAST_DISPATCH[api] = None
+            fn_call()
+        finally:
+            wrapper._BASELINES[api] = orig
+        if wrapper._LAST_DISPATCH[api] == "baseline":
+            assert calls["n"] == 1, f"{api} baseline reached exactly once (no recursion)"
 
 
 if __name__ == "__main__":

@@ -17,6 +17,7 @@ load time (reversible, task-owned).
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import logging
 import sys
@@ -96,23 +97,30 @@ def _ensure_source() -> "Path":
     return dst
 
 
-_MODULE_CACHE: dict[str, object] = {}
+_MODULE_CACHE: dict[tuple, object] = {}
+
+
+def _source_hash() -> str:
+    return hashlib.sha1(_WORKSPACE_CUH.read_bytes()).hexdigest()[:12]
 
 
 def _jit_module(dtype):
-    key = str(dtype)
+    h = _source_hash()
+    key = (str(dtype), h)
     if key not in _MODULE_CACHE:
         from sglang.jit_kernel.utils import load_jit, make_cpp_args
 
         _ensure_source()
         args = make_cpp_args(dtype)
+        targ = f"{args}"
         _MODULE_CACHE[key] = load_jit(
             "kda_rotary_embedding",
             *args,
+            h,  # source hash -> a distinct JIT module when the .cuh changes (no stale binary)
             cuda_files=[_SGLANG_REL],
             cuda_wrappers=[
-                ("standard_rope", f"StandardRopeKernel<{args}>::run"),
-                ("ltx2_split_rope", f"Ltx2SplitRopeKernel<{args}>::run"),
+                ("standard_rope", f"StandardRopeKernel<{targ}>::run"),
+                ("ltx2_split_rope", f"Ltx2SplitRopeKernel<{targ}>::run"),
             ],
         )
     return _MODULE_CACHE[key]
@@ -121,41 +129,36 @@ def _jit_module(dtype):
 # ---------------------------------------------------------------------------
 # Dispatch gates (optimized scope: bf16 + interleaved=False, production buckets)
 # ---------------------------------------------------------------------------
-def _num_rows(x) -> int:
-    n = 1
-    for d in x.shape[:-2]:
-        n *= int(d)
-    return n
+# Captured production buckets -- the ONLY signatures routed to the CUDA candidate;
+# anything else falls back. Broadening this requires benchmark evidence and a
+# docs/dispatch.md entry first.
+_STD_X_SHAPE = (1, 27030, 24, 128)
+_STD_COS_SHAPE = (27030, 64)
+_LTX2_X_SHAPES = frozenset({
+    (1, 126, 2048),
+    (1, 1536, 2048),
+    (1, 1536, 4096),
+    (1, 6144, 2048),
+    (1, 6144, 4096),
+})
 
 
 def _supported_standard(x, cos, sin, interleaved) -> bool:
     if torch is None or not isinstance(x, torch.Tensor):
         return False
+    if interleaved:
+        return False
     if not (x.is_cuda and cos.is_cuda and sin.is_cuda):
         return False
     if not (x.device == cos.device == sin.device):
         return False
-    if x.dtype != torch.bfloat16:
+    if x.dtype != torch.bfloat16 or cos.dtype != torch.float32 or sin.dtype != torch.float32:
         return False
-    if interleaved:
+    if tuple(x.shape) != _STD_X_SHAPE or not x.is_contiguous():
         return False
-    # Production standard capture is 4D (B,T,H,D); 3D input is an unsupported
-    # signature per the plan and must fall back.
-    if x.dim() != 4 or not x.is_contiguous():
-        return False
-    if cos.dim() != 2 or sin.dim() != 2:
-        return False
-    if cos.dtype != torch.float32 or sin.dtype != torch.float32:
+    if tuple(cos.shape) != _STD_COS_SHAPE or tuple(sin.shape) != _STD_COS_SHAPE:
         return False
     if not (cos.is_contiguous() and sin.is_contiguous()):
-        return False
-    head_dim = int(x.shape[-1])
-    if head_dim != 128:  # production head_dim; others fall back
-        return False
-    if cos.shape != sin.shape or cos.shape[-1] != head_dim // 2:
-        return False
-    rows = int(cos.shape[0])
-    if rows == 0 or _num_rows(x) % rows != 0:
         return False
     return True
 
@@ -169,22 +172,23 @@ def _supported_ltx2(x, cos, sin) -> bool:
         return False
     if not (x.dtype == torch.bfloat16 and cos.dtype == torch.bfloat16 and sin.dtype == torch.bfloat16):
         return False
-    if x.dim() != 3 or not x.is_contiguous():
+    if x.dim() != 3 or tuple(x.shape) not in _LTX2_X_SHAPES or not x.is_contiguous():
         return False
     if cos.dim() != 4 or sin.dim() != 4 or cos.shape != sin.shape:
         return False
-    if cos.stride(-1) != 1 or sin.stride(-1) != 1:
-        return False
-    B, S, inner = int(x.shape[0]), int(x.shape[1]), int(x.shape[2])
+    B, S, inner = (int(v) for v in x.shape)
     cb, num_heads, cs, half = (int(v) for v in cos.shape)
-    if cb != B or cs != S:
+    if (cb, num_heads, cs) != (B, 32, S):
         return False
-    if num_heads != 32:  # production num_heads; others fall back
+    if half not in (32, 64) or inner != num_heads * 2 * half:
         return False
-    if half not in (32, 64):  # production half_dim; others fall back
-        return False
-    if inner != num_heads * 2 * half:
-        return False
+    # Captured non-contiguous (B,H,S,half) layout: last stride 1, head stride half,
+    # seq stride num_heads*half. Reject contiguous / non-captured strides.
+    for t in (cos, sin):
+        if t.is_contiguous():
+            return False
+        if t.stride(3) != 1 or t.stride(1) != half or t.stride(2) != num_heads * half:
+            return False
     return True
 
 
