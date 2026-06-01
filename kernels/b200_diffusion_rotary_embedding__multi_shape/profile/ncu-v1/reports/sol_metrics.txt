@@ -1,0 +1,25 @@
+# NCU --set full Speed-of-Light metrics (parsed from ncu --import --page details)
+# Host ion-b200 / sglang_bbuf / B200 GPU3 idle. Candidate kp_commit fb7427793.
+# Raw .ncu-rep artifacts: REMOTE_KDA_DIR=/home/sglang-omni/bbuf/kda_runs/b200_diffusion_rotary_embedding__multi_shape/2026-05-31_21-28-59/work/profile/ncu-v1/reports/{std,ltx2_large}.ncu-rep
+
+[std]  rope_std_kernel  x=[1,27030,24,128]
+  Memory Throughput        %        59.96
+  DRAM Throughput          %        49.32
+  Compute (SM) Throughput  %        52.48
+  Duration                 us       93.02   (ncu serialized single-launch; warm CUDA-event median = 75.5us)
+  Memory Throughput        TB/s     3.29
+  Achieved Occupancy       %        82.56
+  Achieved Active Warps/SM warp     52.84
+  Registers Per Thread              32
+  -> bound: memory-leaning, NOT saturated (60% SOL); headroom exists; wins 1.77x via 128-bit + cos/sin reuse.
+
+[ltx2_large]  ltx2_split_kernel<64>  x=[1,24576,4096]
+  Memory Throughput        %        85.70
+  DRAM Throughput          %        85.70
+  Compute (SM) Throughput  %        72.98
+  Duration                 us       99.65   (warm CUDA-event median = 98.7us)
+  Memory Throughput        TB/s     5.71
+  Achieved Occupancy       %        85.27
+  Achieved Active Warps/SM warp     54.57
+  Registers Per Thread              32
+  -> bound: DRAM-BANDWIDTH BOUND, near roofline (85.7% SOL); explains 1.06x ceiling; candidate near-optimal.

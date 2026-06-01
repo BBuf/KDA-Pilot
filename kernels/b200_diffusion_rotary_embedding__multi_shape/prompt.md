@@ -507,3 +507,42 @@ well-supported no-go explains why no defensible path remains under the
 available workspace;
 - `prompt.md`, `interface.md`, `benchmark.csv`, and `solutions.jsonl` are
 updated with the final result.
+
+---
+
+## Final Result (RLCR)
+
+> Appended by the Humanize RLCR loop; the original task contract above is unchanged.
+
+**Outcome: COMPLETE — both entry points optimized as native CUDA and promoted.**
+
+- **Promoted candidate**: `cuda-v1` (kp source commit `fb7427793`); kernel source
+  `src/csrc/rotary_embedding_kernel.cu`, dispatch `src/wrapper.py`, `src/register.py` `EXPORTS`.
+- **Final wrapper functions** (out-of-place, exact recovered SGLang contract):
+  - `apply_rotary_embedding(x, cos, sin, interleaved=False) -> Tensor` — standard adjacent-pair RoPE;
+    CUDA fast path for the captured `[1,27030,24,128]` bf16 / `cos,sin=[27030,64]` fp32 signature.
+  - `apply_ltx2_split_rotary_emb(x, cos, sin) -> Tensor` — LTX-2 split-half; CUDA fast path for the 10
+    captured `(B,S,half)` signatures (`H=32`, `half∈{32,64}`). All other shapes fall back to the SGLang baseline.
+- **Pinned baseline**: SGLang commit `0b65588c180a519427867d53cc4ed6e9e2610890` (`0.5.12.dev472`), container
+  `sglang_bbuf` on `ion-b200`.
+- **Correctness**: candidate-vs-baseline 17/17 — LTX-2 **bit-exact**, standard within 1 bf16 ulp; `pytest` 7/7
+  (cuda dispatch on captured signatures only, fallback on non-captured, out-of-place mutation contract, `EXPORTS`).
+- **Benchmark** (`CUDA_VISIBLE_DEVICES=<idle> python benchmark.py --warmup 50 --iters 300`; CUDA-event
+  single-call timing, hard idle-gated, B200 GPU3): **geomean 1.3676×** over the 11 unique captured signatures —
+  standard hunyuanvideo **1.79×** (134.0→75.5 µs), LTX-2 1.06–1.54×. Beats the baseline on every captured shape.
+- **Active bound (roofline + NCU `--set full`)**: see `profile/ncu-v1/REPORT.md` — LTX-2-large is DRAM-bandwidth
+  bound (85.7% memory SOL, near the roofline; explains the 1.06× ceiling), standard is memory-leaning (60% SOL,
+  residual headroom but already wins 1.79×), LTX-2-small is launch/latency bound.
+- **Oracle correction (Round 0)**: `python/sglang/jit_kernel/tests/test_rope.py` exercises a *different* function
+  (`sglang.jit_kernel.rope.apply_rope_inplace`, LLM q/k RoPE) and is style guidance only. The production correctness
+  oracle for these two diffusion entry points is the **SGLang diffusion Triton baseline itself** plus a PyTorch FP32
+  cross-check, with SGLang-style dynamic BF16-aware tolerances.
+- **Promotion**: `python3 scripts/export_kda_kernels/export.py b200_diffusion_rotary_embedding__multi_shape` promoted
+  BOTH functions into `kda_kernels/diffusion/rotary_embedding/` (`KDA_OPTIMIZED_apply_rotary_embedding = True`,
+  `KDA_OPTIMIZED_apply_ltx2_split_rotary_emb = True`, importing from the family `wrapper.py`). B200 smoke verified:
+  `install()` swaps both symbols; swapped calls route to CUDA; a non-captured shape after swap is recursion-safe
+  (hits the bound baseline); `uninstall()` restores both originals.
+- **Evidence**: `benchmark.csv` (11 baseline-vs-candidate rows + geomean, idle-gated provenance), `docs/dispatch.md`
+  (routing-gate + per-bucket decision table), `profile/ncu-v1/REPORT.md` (+ `reports/sol_metrics.txt`),
+  `solutions.jsonl` (baseline → `cuda-v1` candidate → `profile-ncu-v1`), `interface.md` (recovered contract +
+  final-result section), `kda_kernels/diffusion/rotary_embedding/KDA_STATUS.md` (promotion stamp).
