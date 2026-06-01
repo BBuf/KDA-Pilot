@@ -34,3 +34,15 @@
 4. **Tiny-shape path**: the kernel is already 4 µs; reduce per-call wrapper overhead (cache gate decision / minimize Python work) rather than the kernel. The final export removes most of it.
 
 Completion bar (DEC-4): optimize toward the active bound — for large shapes that means raising SM efficiency then approaching the HBM roof (≈72/31 µs); geomean is reported as an outcome. NCU will be re-run after each candidate to confirm the bound shifts.
+
+## Independent confirmation (Codex, task10 `analyze`)
+Codex (`gpt-5.5`, consult saved under `.humanize/skill/2026-06-02_07-02-57-*/output.md`; cited KernelWiki `pattern-memory-bound`) **confirmed** the diagnosis: large buckets are SM/instruction-throughput bound (DRAM ~23% rules out HBM as the limiter; runtime div/mod + scalarized bf16 + repeated cos/sin loads dominate), and the tiny bucket is launch/wrapper-overhead bound (kernel already ~4 µs). Ranked plan it validated for Round 5:
+1. **Eliminate runtime div/mod** with explicit grid geometry (one CTA per token over heads for standard; row/head/half tiles for LTX-2; shifts/masks for `half∈{32,64}`; shape-specialized kernels).
+2. **More elements per thread** (amortize index math, raise ILP).
+3. **128-bit vectorized bf16 loads/stores** — standard along consecutive half-pairs (`D=128` aligned), LTX-2 along the contiguous `j` dim ONLY (heads/S are non-contiguous); 16-byte alignment guard + scalar tail/fallback.
+4. **Reuse standard cos/sin across heads** (registers/shared mem) — standard only.
+5. Cache policy / unroll / register tuning — secondary.
+
+Correctness traps Codex reaffirmed: preserve LTX-2 `(x*cos)->bf16` intermediate rounding; standard keeps fp32 FMA and rounds only on the bf16 store; load both halves before writing; standard is interleaved-pair `[2i,2i+1]` (not split-half); only the `j`/half dim is safe to vectorize for LTX-2; vector paths need alignment checks.
+
+Tiny shape: do NOT build a special tiny-shape kernel — a different geometry comes "for free" from the large-shape rewrite; the ~147 µs wall-clock is wrapper/dispatch overhead (address via CUDA graphs / fewer calls / lighter wrapper, or the final direct in-SGLang call), not the 4 µs kernel.
