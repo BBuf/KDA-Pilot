@@ -1,7 +1,7 @@
 """Correctness harness for ``h200_diffusion_rotary_embedding__multi_shape``.
 
 Gated by ``KDA_RUN_CORRECTNESS=1`` (needs CUDA + an importable SGLang). Run on the
-remote H200 inside the ``sglang_bbuf`` container, e.g.::
+remote H200 inside the ``sglang_bbuf`` container::
 
     KDA_RUN_CORRECTNESS=1 pytest tests/test_correctness.py -v
 
@@ -9,24 +9,20 @@ Oracle design (the named ``test_rope.py`` exercises a *different* API --
 ``apply_rope_inplace`` / FlashInfer -- so it is not a literal oracle here):
 
 * Semantic oracle: the SGLang diffusion triton baselines pinned at SGLang
-  HEAD ``6965fe0ee``:
-    - ``sglang.jit_kernel.diffusion.triton.rotary.apply_rotary_embedding``
-    - ``sglang.jit_kernel.diffusion.triton.ltx2_rotary.apply_ltx2_split_rotary_emb``
-* Independent cross-check: a PyTorch FP32 reference that reproduces each kernel's
-  exact numerics -- standard is adjacent-pair with rounding only on the final
-  store; LTX-2 is split-half with a deliberate intermediate ``(x*cos)->bf16``
-  rounding before the FP32 ``sin`` term, indexed through the *non-contiguous*
-  4D ``(B, num_heads, S, half_dim)`` cos/sin tables.
+  HEAD ``6965fe0ee`` (``apply_rotary_embedding`` / ``apply_ltx2_split_rotary_emb``);
+  a runtime provenance check enforces the pin (override with
+  ``KDA_SGLANG_ORACLE_COMMIT`` only with justification).
+* Independent cross-check: ``src/reference.py`` PyTorch FP32 references.
 
-Workload = the 6 deduplicated production shapes (1 hunyuanvideo standard + 5
-LTX-2). The standard hunyuanvideo row appears twice in the captured table; it is
-counted once here.
+Workload = the 6 deduplicated production shapes (1 hunyuanvideo standard + 5 LTX-2),
+asserted against an exact manifest so a dropped/extra/altered case fails loudly.
 """
 
 from __future__ import annotations
 
 import importlib.util
 import os
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -42,8 +38,6 @@ KERNEL_SLUG = "h200_diffusion_rotary_embedding__multi_shape"
 OP_TYPE = "rotary_embedding"
 KERNEL_DIR = Path(__file__).resolve().parents[1]
 DEVICE = "cuda"
-
-# Oracle provenance: the SGLang checkout the baseline numerics are pinned to.
 SGLANG_ORACLE_COMMIT = "6965fe0ee"
 
 pytestmark = pytest.mark.skipif(
@@ -55,135 +49,101 @@ pytestmark = pytest.mark.skipif(
 # ---------------------------------------------------------------------------
 # Module loading
 # ---------------------------------------------------------------------------
-def _load_register_module():
-    register_py = KERNEL_DIR / "src" / "register.py"
-    spec = importlib.util.spec_from_file_location(
-        f"kda_kernel_{KERNEL_SLUG}_register", register_py
-    )
-    assert spec is not None and spec.loader is not None, register_py
+def _load_module(rel_path: str, mod_name: str):
+    path = KERNEL_DIR / rel_path
+    spec = importlib.util.spec_from_file_location(mod_name, path)
+    assert spec is not None and spec.loader is not None, path
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
 
 
+def _register():
+    return _load_module("src/register.py", f"kda_{KERNEL_SLUG}_register")
+
+
+def _reference():
+    return _load_module("src/reference.py", f"kda_{KERNEL_SLUG}_reference")
+
+
+def _wrapper():
+    # register.py inserts src/ on sys.path and imports `wrapper`.
+    _register()
+    import wrapper  # type: ignore
+
+    return wrapper
+
+
+REF = _reference()
+
+
 # ---------------------------------------------------------------------------
-# PyTorch FP32 references (mirror the exact SGLang triton numerics)
+# Exact production-case manifest (from docs/captured_shapes_h200.jsonl, deduped)
 # ---------------------------------------------------------------------------
-def std_rope_ref_fp32(x: "torch.Tensor", cos: "torch.Tensor", sin: "torch.Tensor") -> "torch.Tensor":
-    """Adjacent-pair RoPE reference for ``apply_rotary_embedding`` (interleaved=False).
-
-    ``x``: (B,T,H,D) or (T,H,D); ``cos``/``sin``: fp32 contiguous (T, D//2),
-    shared across heads/batches via ``bt % T``. Rounding to the input dtype
-    happens only on the (caller's) final store; this returns fp32.
-    """
-    orig_shape = x.shape
-    if x.dim() == 4:
-        B, T, H, D = x.shape
-    else:
-        T, H, D = x.shape
-        B = 1
-    assert D % 2 == 0, "head_size must be even"
-    assert cos.shape == sin.shape == (T, D // 2), (cos.shape, sin.shape, (T, D // 2))
-
-    xv = x.reshape(B * T, H, D).float()
-    pos = torch.arange(B * T, device=x.device) % T
-    c = cos.index_select(0, pos).float().view(B * T, 1, D // 2)
-    s = sin.index_select(0, pos).float().view(B * T, 1, D // 2)
-
-    x1 = xv[..., 0::2]
-    x2 = xv[..., 1::2]
-
-    out = torch.empty_like(xv)
-    out[..., 0::2] = x1 * c - x2 * s
-    out[..., 1::2] = x1 * s + x2 * c
-    return out.reshape(orig_shape)
-
-
-def ltx2_rope_ref_fp32(x: "torch.Tensor", cos: "torch.Tensor", sin: "torch.Tensor") -> "torch.Tensor":
-    """Split-half RoPE reference for ``apply_ltx2_split_rotary_emb``.
-
-    ``x``: (B,S,H*2*half) bf16; ``cos``/``sin``: (B,H,S,half) bf16, possibly
-    non-contiguous. Reproduces the deliberate intermediate ``(x*cos)->bf16``
-    rounding before adding the FP32 ``sin`` term. Returns fp32.
-    """
-    B, S, inner = x.shape
-    CB, H, CS, half = cos.shape
-    assert (CB, CS) == (B, S), (cos.shape, (B, S))
-    assert sin.shape == cos.shape, (sin.shape, cos.shape)
-    D = half * 2
-    assert inner == H * D, (inner, H * D)
-
-    xv = x.view(B, S, H, D)
-    x_first = xv[..., :half].float()
-    x_second = xv[..., half:].float()
-
-    c = cos.permute(0, 2, 1, 3).float()  # (B,S,H,half)
-    s = sin.permute(0, 2, 1, 3).float()
-
-    first_cos = (x_first * c).to(torch.bfloat16).float()
-    second_cos = (x_second * c).to(torch.bfloat16).float()
-
-    out = torch.empty((B, S, H, D), device=x.device, dtype=torch.float32)
-    out[..., :half] = first_cos - x_second * s
-    out[..., half:] = second_cos + x_first * s
-    return out.reshape_as(x)
+def _expected_cases():
+    bf16 = torch.bfloat16
+    f32 = torch.float32
+    return {
+        "hunyuanvideo__std__B1_T27030_H24_D128__bf16": dict(
+            api="standard", nargs=4, x_shape=(1, 27030, 24, 128), x_dtype=bf16,
+            cossin_shape=(27030, 64), cossin_dtype=f32, cossin_contig=True, interleaved=False,
+        ),
+        "ltx2__B1_S1536_H32_half64__bf16": dict(
+            api="ltx2", nargs=3, x_shape=(1, 1536, 4096), x_dtype=bf16,
+            cossin_shape=(1, 32, 1536, 64), cossin_dtype=bf16, cossin_contig=False,
+        ),
+        "ltx2__B1_S126_H32_half32__bf16": dict(
+            api="ltx2", nargs=3, x_shape=(1, 126, 2048), x_dtype=bf16,
+            cossin_shape=(1, 32, 126, 32), cossin_dtype=bf16, cossin_contig=False,
+        ),
+        "ltx2__B1_S1536_H32_half32__bf16": dict(
+            api="ltx2", nargs=3, x_shape=(1, 1536, 2048), x_dtype=bf16,
+            cossin_shape=(1, 32, 1536, 32), cossin_dtype=bf16, cossin_contig=False,
+        ),
+        "ltx2__B1_S6144_H32_half64__bf16": dict(
+            api="ltx2", nargs=3, x_shape=(1, 6144, 4096), x_dtype=bf16,
+            cossin_shape=(1, 32, 6144, 64), cossin_dtype=bf16, cossin_contig=False,
+        ),
+        "ltx2__B1_S6144_H32_half32__bf16": dict(
+            api="ltx2", nargs=3, x_shape=(1, 6144, 2048), x_dtype=bf16,
+            cossin_shape=(1, 32, 6144, 32), cossin_dtype=bf16, cossin_contig=False,
+        ),
+    }
 
 
 # ---------------------------------------------------------------------------
 # Input builders (deterministic; LTX-2 cos/sin are intentionally non-contiguous)
 # ---------------------------------------------------------------------------
-def _build_standard_inputs(B: int, T: int, H: int, D: int, dtype, *, seed: int):
+def _build_standard_inputs(B, T, H, D, dtype, *, seed):
     g = torch.Generator(device=DEVICE).manual_seed(seed)
     x = torch.randn(B, T, H, D, device=DEVICE, dtype=torch.float32, generator=g).to(dtype)
     angles = torch.randn(T, D // 2, device=DEVICE, dtype=torch.float32, generator=g)
-    cos = torch.cos(angles).contiguous()  # fp32 (T, D//2)
+    cos = torch.cos(angles).contiguous()
     sin = torch.sin(angles).contiguous()
-    return (x, cos, sin), {"interleaved": False}
+    return (x, cos, sin, False), {}
 
 
-def _build_ltx2_inputs(B: int, S: int, H: int, half: int, dtype, *, seed: int):
+def _build_ltx2_inputs(B, S, H, half, dtype, *, seed):
     g = torch.Generator(device=DEVICE).manual_seed(seed)
     D = half * 2
     x = (torch.randn(B, S, H * D, device=DEVICE, dtype=torch.float32, generator=g) * 1e-1).to(dtype)
     angles = torch.randn(B, S, H, half, device=DEVICE, dtype=torch.float32, generator=g)
-    cos_base = torch.cos(angles).to(dtype).contiguous()  # (B,S,H,half)
-    sin_base = torch.sin(angles).to(dtype).contiguous()
-    cos = cos_base.permute(0, 2, 1, 3)  # (B,H,S,half) -> non-contiguous strided view
-    sin = sin_base.permute(0, 2, 1, 3)
-    assert not cos.is_contiguous() and not sin.is_contiguous(), "LTX-2 cos/sin must be non-contiguous"
+    cos = torch.cos(angles).to(dtype).contiguous().permute(0, 2, 1, 3)  # (B,H,S,half) non-contig
+    sin = torch.sin(angles).to(dtype).contiguous().permute(0, 2, 1, 3)
+    assert not cos.is_contiguous() and not sin.is_contiguous()
     return (x, cos, sin), {}
 
 
-# ---------------------------------------------------------------------------
-# Cases: the 6 deduplicated production shapes
-# ---------------------------------------------------------------------------
 def make_cases() -> list[dict[str, Any]]:
-    """Return all configured correctness/benchmark cases (6 unique shapes).
-
-    Tensors are materialized once so ``benchmark.py`` times only the kernel call.
-    """
+    """Return the 6 deduplicated production cases (tensors materialized once)."""
     if torch is None:
         return []
-
     cases: list[dict[str, Any]] = []
-
-    # Standard apply_rotary_embedding -- hunyuanvideo (appears twice in the
-    # captured table; counted once).
     args, kwargs = _build_standard_inputs(1, 27030, 24, 128, torch.bfloat16, seed=0)
-    cases.append(
-        {
-            "name": "hunyuanvideo__std__B1_T27030_H24_D128__bf16",
-            "api": "standard",
-            "args": args,
-            "kwargs": kwargs,
-            "atol": 1e-2,
-            "rtol": 1e-2,
-            "warmup": 25,
-            "iters": 100,
-        }
-    )
-
-    # LTX-2 apply_ltx2_split_rotary_emb -- (B=1, num_heads=32).
+    cases.append(dict(
+        name="hunyuanvideo__std__B1_T27030_H24_D128__bf16", api="standard",
+        args=args, kwargs=kwargs, atol=1e-2, rtol=1e-2, warmup=25, iters=100,
+    ))
     ltx2_specs = [
         ("ltx2__B1_S1536_H32_half64__bf16", 1, 1536, 32, 64),
         ("ltx2__B1_S126_H32_half32__bf16", 1, 126, 32, 32),
@@ -193,19 +153,10 @@ def make_cases() -> list[dict[str, Any]]:
     ]
     for i, (name, B, S, H, half) in enumerate(ltx2_specs, start=1):
         args, kwargs = _build_ltx2_inputs(B, S, H, half, torch.bfloat16, seed=i)
-        cases.append(
-            {
-                "name": name,
-                "api": "ltx2",
-                "args": args,
-                "kwargs": kwargs,
-                "atol": 1e-2,
-                "rtol": 1e-2,
-                "warmup": 25,
-                "iters": 100,
-            }
-        )
-
+        cases.append(dict(
+            name=name, api="ltx2", args=args, kwargs=kwargs,
+            atol=1e-2, rtol=1e-2, warmup=25, iters=100,
+        ))
     return cases
 
 
@@ -213,38 +164,32 @@ def make_cases() -> list[dict[str, Any]]:
 # Oracle / reference / candidate
 # ---------------------------------------------------------------------------
 def baseline(case: dict[str, Any]) -> Any:
-    """SGLang diffusion triton baseline -- the semantic oracle."""
     args = case["args"]
-    kwargs = case.get("kwargs", {})
     if case["api"] == "standard":
         from sglang.jit_kernel.diffusion.triton.rotary import apply_rotary_embedding
 
-        return apply_rotary_embedding(*args, **kwargs)
+        return apply_rotary_embedding(*args)
     if case["api"] == "ltx2":
-        from sglang.jit_kernel.diffusion.triton.ltx2_rotary import (
-            apply_ltx2_split_rotary_emb,
-        )
+        from sglang.jit_kernel.diffusion.triton.ltx2_rotary import apply_ltx2_split_rotary_emb
 
-        return apply_ltx2_split_rotary_emb(*args, **kwargs)
+        return apply_ltx2_split_rotary_emb(*args)
     raise ValueError(f"unknown api {case['api']!r}")
 
 
 def reference(case: dict[str, Any]) -> Any:
-    """Independent PyTorch FP32 reference."""
-    x, cos, sin = case["args"][0], case["args"][1], case["args"][2]
+    args = case["args"]
+    x, cos, sin = args[0], args[1], args[2]
     if case["api"] == "standard":
-        return std_rope_ref_fp32(x, cos, sin)
+        interleaved = args[3] if len(args) > 3 else case.get("kwargs", {}).get("interleaved", False)
+        return REF.std_rope_ref_fp32(x, cos, sin, interleaved=interleaved)
     if case["api"] == "ltx2":
-        return ltx2_rope_ref_fp32(x, cos, sin)
+        return REF.ltx2_rope_ref_fp32(x, cos, sin)
     raise ValueError(f"unknown api {case['api']!r}")
 
 
 def candidate(case: dict[str, Any]) -> Any:
-    module = _load_register_module()
-    wrapper = getattr(module, "optimized_wrapper")
-    args = case.get("args", ())
-    kwargs = case.get("kwargs", {})
-    return wrapper(*args, **kwargs)
+    module = _register()
+    return module.optimized_wrapper(*case.get("args", ()), **case.get("kwargs", {}))
 
 
 # ---------------------------------------------------------------------------
@@ -254,66 +199,108 @@ def _assert_no_nan_inf(value: Any, *, path: str) -> None:
     if torch is not None and isinstance(value, torch.Tensor):
         assert not torch.isnan(value).any(), f"{path} contains NaN"
         assert not torch.isinf(value).any(), f"{path} contains Inf"
-    elif isinstance(value, (tuple, list)):
-        for i, item in enumerate(value):
-            _assert_no_nan_inf(item, path=f"{path}[{i}]")
-    elif isinstance(value, dict):
-        for key, item in value.items():
-            _assert_no_nan_inf(item, path=f"{path}.{key}")
 
 
-def _assert_close(actual: Any, expected: Any, *, case: dict[str, Any], path: str = "out") -> None:
+def _assert_close(actual, expected, *, case, path="out", check_dtype=True) -> None:
     atol = case.get("atol", 1e-2)
     rtol = case.get("rtol", 1e-2)
     _assert_no_nan_inf(actual, path=path)
-    assert isinstance(actual, torch.Tensor) and isinstance(expected, torch.Tensor), (
-        f"{path}: expected tensors, got {type(actual)} vs {type(expected)}"
-    )
+    assert isinstance(actual, torch.Tensor) and isinstance(expected, torch.Tensor)
     assert actual.shape == expected.shape, f"{path} shape {actual.shape} != {expected.shape}"
+    if check_dtype:
+        assert actual.dtype == expected.dtype, f"{path} dtype {actual.dtype} != {expected.dtype}"
     torch.testing.assert_close(actual.float(), expected.float(), atol=atol, rtol=rtol)
 
 
-def assert_bf16_noise_bounded(
-    actual: "torch.Tensor", ref_fp32: "torch.Tensor", *, mult: float = 3.0, floor: float = 1e-6
-) -> None:
-    """Sharp check: candidate error vs the FP32 reference must stay within a small
-    multiple of the reference's own bf16 quantization noise. Catches a candidate
-    that, e.g., skips the LTX-2 intermediate bf16 rounding."""
+def assert_bf16_noise_bounded(actual, ref_fp32, *, mult=3.0, floor=1e-6) -> None:
     a = actual.float()
     ref_bf16 = ref_fp32.to(torch.bfloat16).float()
     err = (a - ref_fp32).abs()
     noise = (ref_bf16 - ref_fp32).abs()
-
     err_rms = torch.sqrt(torch.mean(err.square()))
     noise_rms = torch.sqrt(torch.mean(noise.square()))
-
     assert err.max().item() <= mult * noise.max().clamp_min(floor).item() + floor, (
-        f"max abs error {err.max().item():.3e} exceeds {mult}x bf16 noise "
-        f"{noise.max().item():.3e}"
+        f"max abs error {err.max().item():.3e} exceeds {mult}x bf16 noise {noise.max().item():.3e}"
     )
     assert err_rms.item() <= mult * noise_rms.clamp_min(floor).item() + floor, (
         f"rms error {err_rms.item():.3e} exceeds {mult}x bf16 rms noise {noise_rms.item():.3e}"
     )
 
 
+def _sglang_git_head() -> str | None:
+    try:
+        import sglang.jit_kernel.diffusion.triton.rotary as m
+    except Exception:
+        return None
+    src = Path(m.__file__).resolve().parent
+    root = subprocess.run(
+        ["git", "-C", str(src), "rev-parse", "--show-toplevel"], capture_output=True, text=True
+    )
+    if root.returncode != 0:
+        return None
+    head = subprocess.run(
+        ["git", "-C", root.stdout.strip(), "rev-parse", "--short=9", "HEAD"],
+        capture_output=True, text=True,
+    )
+    return head.stdout.strip() if head.returncode == 0 else None
+
+
 # ---------------------------------------------------------------------------
 # Tests
 # ---------------------------------------------------------------------------
 def test_register_metadata() -> None:
-    module = _load_register_module()
-    assert hasattr(module, "register")
+    module = _register()
     spec = module.register()
     assert spec["name"] == KERNEL_SLUG
     assert spec["op_type"] == OP_TYPE
     assert callable(spec["callable"])
+    assert set(module.EXPORTS) == {"apply_rotary_embedding", "apply_ltx2_split_rotary_emb"}
+
+
+def test_case_manifest() -> None:
+    """The case set must be EXACTLY the 6 deduplicated production rows."""
+    cases = make_cases()
+    expected = _expected_cases()
+    assert len(cases) == 6, f"expected 6 cases, got {len(cases)}"
+    assert {c["name"] for c in cases} == set(expected), "case-name set drifted from the manifest"
+
+    for case in cases:
+        meta = expected[case["name"]]
+        args = case["args"]
+        assert case["api"] == meta["api"]
+        assert len(args) == meta["nargs"], f"{case['name']}: arg count {len(args)} != {meta['nargs']}"
+        x, cos, sin = args[0], args[1], args[2]
+        assert tuple(x.shape) == meta["x_shape"] and x.dtype == meta["x_dtype"]
+        assert x.is_contiguous()
+        assert tuple(cos.shape) == meta["cossin_shape"] == tuple(sin.shape)
+        assert cos.dtype == sin.dtype == meta["cossin_dtype"]
+        if meta["api"] == "standard":
+            assert args[3] is False, "standard production call is positional (x, cos, sin, False)"
+            assert cos.is_contiguous() and sin.is_contiguous()
+        else:
+            half = meta["cossin_shape"][-1]
+            num_heads = meta["cossin_shape"][1]
+            for t in (cos, sin):
+                assert not t.is_contiguous(), f"{case['name']}: LTX-2 cos/sin must be non-contiguous"
+                assert t.stride(-1) == 1, "LTX-2 cos/sin last-dim stride must be 1"
+                assert t.stride(1) == half, "LTX-2 cos/sin head stride must equal half"
+                assert t.stride(2) == num_heads * half, "LTX-2 cos/sin seq stride must equal num_heads*half"
+
+
+def test_sglang_oracle_pinned() -> None:
+    expected = os.environ.get("KDA_SGLANG_ORACLE_COMMIT", SGLANG_ORACLE_COMMIT)
+    head = _sglang_git_head()
+    if head is None:
+        pytest.skip("imported SGLang is not a git checkout; cannot verify the oracle pin")
+    assert head.startswith(expected) or expected.startswith(head), (
+        f"SGLang oracle commit {head!r} != expected {expected!r}; set KDA_SGLANG_ORACLE_COMMIT to override"
+    )
 
 
 def test_baseline_matches_reference() -> None:
-    """Validate the oracle itself: SGLang baseline must match the FP32 reference
-    within bf16 noise. Independent of the candidate (passes before the kernel
-    exists), so it locks the recovered numeric contract."""
+    """Lock the contract: SGLang baseline must match the FP32 reference within bf16 noise."""
     cases = make_cases()
-    assert cases, "No cases. Fill make_cases()."
+    assert cases
     for case in cases:
         base = baseline(case)
         ref = reference(case)
@@ -327,19 +314,59 @@ def test_correctness_cases() -> None:
     for case in cases:
         x = case["args"][0]
         x_before = x.clone()
-
         base = baseline(case)
         ref = reference(case)
         cand = candidate(case)
-
-        # Functional contract: neither baseline nor candidate mutates the input.
-        assert torch.equal(x, x_before), f"{case['name']}: input x was mutated (functional contract)"
-
+        # Functional contract: input not mutated; same dtype as input.
+        assert torch.equal(x, x_before), f"{case['name']}: input x was mutated"
+        assert cand.dtype == x.dtype, f"{case['name']}: candidate dtype {cand.dtype} != input {x.dtype}"
         _assert_no_nan_inf(cand, path=case["name"] + ":candidate")
-        # Primary oracle comparison: candidate vs SGLang baseline.
         _assert_close(cand, base, case=case, path=case["name"])
-        # Sharp cross-check: candidate within bf16 noise of the FP32 reference.
         assert_bf16_noise_bounded(cand, ref, mult=3.0)
+
+
+def test_fallback_routing() -> None:
+    """Unsupported signatures must fall back non-recursively to the original baseline,
+    or to the PyTorch reference if the baseline is unavailable -- never recurse."""
+    wrapper = _wrapper()
+    # The captured baseline must be SGLang's original, not our wrapper.
+    from sglang.jit_kernel.diffusion.triton.rotary import apply_rotary_embedding as sgl_std
+
+    assert wrapper._BASELINES.get("standard") is sgl_std, "baseline must be the original SGLang symbol"
+
+    # fp16 standard input is unsupported -> must route to baseline (not cuda), exactly once.
+    B, T, H, D = 1, 64, 24, 128
+    x = torch.randn(B, T, H, D, device=DEVICE, dtype=torch.float16)
+    angles = torch.randn(T, D // 2, device=DEVICE, dtype=torch.float32)
+    cos, sin = torch.cos(angles), torch.sin(angles)
+
+    calls = {"n": 0}
+    orig = wrapper._BASELINES["standard"]
+
+    def spy(*a, **k):
+        calls["n"] += 1
+        return orig(*a, **k)
+
+    wrapper._BASELINES["standard"] = spy
+    try:
+        out = wrapper.apply_rotary_embedding(x, cos, sin, False)
+    finally:
+        wrapper._BASELINES["standard"] = orig
+    assert wrapper._LAST_DISPATCH["standard"] in ("baseline", "reference")
+    if wrapper._LAST_DISPATCH["standard"] == "baseline":
+        assert calls["n"] == 1, "baseline must be reached exactly once (no recursion)"
+    assert out.dtype == x.dtype
+
+    # interleaved=True is unsupported -> fallback (not cuda).
+    xb = torch.randn(B, T, H, D, device=DEVICE, dtype=torch.bfloat16)
+    wrapper.apply_rotary_embedding(xb, cos, sin, True)
+    assert wrapper._LAST_DISPATCH["standard"] != "cuda"
+
+    # non-bf16 LTX-2 -> fallback (not cuda).
+    xl = torch.randn(1, 128, 32 * 64, device=DEVICE, dtype=torch.float16)
+    cl = torch.randn(1, 128, 32, 32, device=DEVICE, dtype=torch.float16).permute(0, 2, 1, 3)
+    wrapper.apply_ltx2_split_rotary_emb(xl, cl, cl)
+    assert wrapper._LAST_DISPATCH["ltx2"] != "cuda"
 
 
 if __name__ == "__main__":
