@@ -1,9 +1,12 @@
 """Validate the integrated kda_kernels install() path on the remote H200.
 
 Captures the original SGLang baselines, runs kda_kernels.install(strict=True),
-confirms both public symbols are swapped, then checks correctness (six perf
-shapes + select01 oracle), fallback (one unsupported case per entry point), and
-a smoke benchmark -- all through the installed SGLang-callable module attributes.
+confirms both public symbols are swapped, then enforces the AC-2 correctness
+contract on the installed (swapped) SGLang-callable path: shape, dtype, no NaN,
+no Inf, candidate-vs-baseline AND candidate-vs-FP32-reference within the
+SGLang-style tolerances (fp32 LayerNorm 1e-5; bf16 RMS / select01 5e-2). Also
+checks fallback (one unsupported case per entry point) and a smoke benchmark.
+Exits nonzero on any correctness failure.
 """
 import importlib
 import statistics
@@ -24,10 +27,9 @@ print("install:", results)
 
 sw_norm = importlib.import_module("sglang.jit_kernel.diffusion.triton.norm").norm_infer
 sw_rms = importlib.import_module("sglang.jit_kernel.diffusion.triton.rmsnorm_onepass").triton_one_pass_rms_norm
-swapped_norm = sw_norm is not base_norm
-swapped_rms = sw_rms is not base_rms
-print(f"norm_infer swapped={swapped_norm} -> {sw_norm.__module__}")
-print(f"triton_one_pass_rms_norm swapped={swapped_rms} -> {sw_rms.__module__}")
+ok = sw_norm is not base_norm and sw_rms is not base_rms
+print(f"norm_infer swapped={sw_norm is not base_norm} -> {sw_norm.__module__}")
+print(f"triton_one_pass_rms_norm swapped={sw_rms is not base_rms} -> {sw_rms.__module__}")
 
 
 def ref_rms(x, w):
@@ -40,21 +42,33 @@ def ref_ln(x, w, b):
     return ((xf - m) * torch.rsqrt(v + EPS) * w.float() + b.float()).to(x.dtype)
 
 
-ok = swapped_norm and swapped_rms
+def check(name, cand, base, ref, atol, rtol):
+    """Shape/dtype/NaN/Inf + candidate-vs-baseline AND candidate-vs-FP32-reference."""
+    bad = []
+    if torch.isnan(cand).any() or torch.isinf(cand).any():
+        bad.append("NaN/Inf")
+    if cand.shape != base.shape:
+        bad.append(f"shape {tuple(cand.shape)}!={tuple(base.shape)}")
+    if cand.dtype != base.dtype:
+        bad.append(f"dtype {cand.dtype}!={base.dtype}")
+    for label, other in (("base", base), ("ref", ref)):
+        try:
+            torch.testing.assert_close(cand.float(), other.float(), atol=atol, rtol=rtol)
+        except AssertionError:
+            d = (cand.float() - other.float()).abs().max().item()
+            bad.append(f"vs_{label} maxdiff={d:.3e}>atol={atol}")
+    good = not bad
+    print(f"  {name}: {'OK' if good else 'FAIL ' + '; '.join(bad)}")
+    return good
+
+
 for M, N in [(648720, 128), (1320, 128), (650040, 128), (16384, 128), (4096, 128)]:
     x = torch.randn(M, N, device=DEV, dtype=torch.bfloat16); w = torch.randn(N, device=DEV, dtype=torch.bfloat16)
-    y = sw_rms(x, w, EPS); yb = base_rms(x, w, EPS); torch.cuda.synchronize()
-    db = (y.float() - yb.float()).abs().max().item(); dr = (y.float() - ref_rms(x, w).float()).abs().max().item()
-    good = db < 5e-2 and not torch.isnan(y).any()
-    ok &= good
-    print(f"  rms {M}x{N}: vs_base={db:.2e} vs_ref={dr:.2e} {'OK' if good else 'FAIL'}")
+    ok &= check(f"rms {M}x{N}", sw_rms(x, w, EPS), base_rms(x, w, EPS), ref_rms(x, w), 5e-2, 5e-2)
 
 x = torch.randn(8640, 5120, device=DEV, dtype=torch.float32)
 w = torch.randn(5120, device=DEV, dtype=torch.float32); b = torch.randn(5120, device=DEV, dtype=torch.float32)
-y = sw_norm(x, w, b, EPS, is_rms_norm=False); yb = base_norm(x, w, b, EPS, is_rms_norm=False); torch.cuda.synchronize()
-db = (y.float() - yb.float()).abs().max().item(); good = db < 1e-4
-ok &= good
-print(f"  ln 8640x5120: vs_base={db:.2e} {'OK' if good else 'FAIL'}")
+ok &= check("ln 8640x5120", sw_norm(x, w, b, EPS, is_rms_norm=False), base_norm(x, w, b, EPS, is_rms_norm=False), ref_ln(x, w, b), 1e-5, 1e-5)
 
 # Fallback (unsupported -> baseline; must equal the original baseline exactly)
 xf16 = torch.randn(256, 128, device=DEV, dtype=torch.float16); wf16 = torch.randn(128, device=DEV, dtype=torch.float16)
@@ -64,16 +78,17 @@ fb2 = torch.equal(sw_norm(xr, wr, None, EPS, is_rms_norm=True), base_norm(xr, wr
 ok &= fb1 and fb2
 print(f"  fallback fp16-rms={fb1} rmsnorm-via-norm_infer={fb2}")
 
-# select01 modulation oracle through the installed norm_infer
+
 def modulate(fn, x, w, b, sc, sh):
     n = fn(x.view(-1, x.shape[-1]), w, b, EPS, is_rms_norm=False).view_as(x)
     return n * (1 + sc.unsqueeze(1)) + sh.unsqueeze(1)
+
+
 xx = torch.randn(2, 128, 3072, device=DEV, dtype=torch.bfloat16)
 ww = torch.randn(3072, device=DEV, dtype=torch.bfloat16); bb = torch.randn(3072, device=DEV, dtype=torch.bfloat16)
 sc = torch.randn(2, 3072, device=DEV, dtype=torch.bfloat16); sh = torch.randn(2, 3072, device=DEV, dtype=torch.bfloat16)
-od = (modulate(sw_norm, xx, ww, bb, sc, sh).float() - modulate(base_norm, xx, ww, bb, sc, sh).float()).abs().max().item()
-ok &= od < 5e-2
-print(f"  select01 oracle (installed norm_infer): vs_base={od:.2e}")
+o_cand = modulate(sw_norm, xx, ww, bb, sc, sh); o_base = modulate(base_norm, xx, ww, bb, sc, sh)
+ok &= check("select01 oracle", o_cand, o_base, o_base, 5e-2, 5e-2)
 
 
 def wall(fn, it=150):
@@ -91,3 +106,4 @@ for M, N, label in [(4096, 128, "rms small"), (648720, 128, "rms huge")]:
     print(f"  smoke {label} {M}x{N}: base={sb:.2f}us installed={si:.2f}us speedup={sb/si:.2f}x")
 
 print("VALIDATE_OK" if ok else "VALIDATE_FAIL")
+raise SystemExit(0 if ok else 1)

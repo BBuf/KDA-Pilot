@@ -385,6 +385,38 @@ def test_rms_noncontiguous_higher_rank_falls_back() -> None:
     torch.testing.assert_close(out_cand.float(), out_base.float(), atol=5e-2, rtol=5e-2)
 
 
+def test_optimized_wrapper_call_forms() -> None:
+    """The generic register()['callable'] must preserve every recovered callsite
+    form: triton_one_pass_rms_norm(x, w) with default eps (2 positional), (x, w, eps),
+    keyword w=, and norm_infer's positional/keyword forms."""
+    if torch is None or not torch.cuda.is_available():
+        pytest.skip("CUDA required")
+    mod = _load_register_module()
+    ow = getattr(mod, "optimized_wrapper", None)
+    rms = getattr(mod, "triton_one_pass_rms_norm", None)
+    ninf = getattr(mod, "norm_infer", None)
+    if ow is None or rms is None or ninf is None:
+        pytest.skip("dispatcher not implemented yet")
+
+    x = torch.randn(64, 128, device=DEVICE, dtype=torch.bfloat16)
+    w = torch.randn(128, device=DEVICE, dtype=torch.bfloat16)
+    # 2-positional RMS (default eps) -- the form the Round 1 wrapper wrongly rejected.
+    torch.testing.assert_close(ow(x, w).float(), rms(x, w).float(), atol=1e-3, rtol=1e-3)
+    torch.testing.assert_close(ow(x, w, EPS).float(), rms(x, w, EPS).float(), atol=1e-3, rtol=1e-3)
+    torch.testing.assert_close(ow(x, w=w).float(), rms(x, w=w).float(), atol=1e-3, rtol=1e-3)
+
+    xl = torch.randn(8, 512, device=DEVICE, dtype=torch.float32)
+    wl = torch.randn(512, device=DEVICE, dtype=torch.float32)
+    bl = torch.randn(512, device=DEVICE, dtype=torch.float32)
+    # norm_infer keyword + 4-positional forms route to norm_infer (N=512 -> baseline).
+    torch.testing.assert_close(
+        ow(xl, weight=wl, bias=bl, eps=EPS).float(),
+        ninf(xl, wl, bl, EPS).float(), atol=1e-5, rtol=1e-5)
+    torch.testing.assert_close(
+        ow(xl, wl, bl, EPS).float(),
+        ninf(xl, wl, bl, EPS).float(), atol=1e-5, rtol=1e-5)
+
+
 if __name__ == "__main__":
     import sys
 

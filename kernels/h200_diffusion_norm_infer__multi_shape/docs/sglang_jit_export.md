@@ -53,13 +53,18 @@ cd <repo> && CUDA_VISIBLE_DEVICES=7 PYTHONPATH=. python validate_install.py
 - `kda_kernels.install(strict=True)` → both entries **swapped**:
   - `sglang.jit_kernel.diffusion.triton.norm:norm_infer` → `kda_kernels.diffusion.norm_infer._dispatcher`
   - `sglang.jit_kernel.diffusion.triton.rmsnorm_onepass:triton_one_pass_rms_norm` → same dispatcher
-- Correctness through the installed (swapped) symbols vs the captured original baseline + a PyTorch FP32 reference:
-  - helios LN [8640,5120] f32: vs_base 2.86e-6 (within 1e-5).
-  - RMS bf16 {648720,1320,650040,16384,4096}×128: vs_base ≤ 1.56e-2, vs_ref ≤ 3.12e-2 (within 5e-2); no NaN/Inf.
-- Fallback (unsupported → baseline, exact match): fp16 RMS D=128 → baseline; `is_rms_norm=True` via `norm_infer` → baseline.
-- select01 modulation oracle through the installed `norm_infer`: matches baseline (the [*,3072] oracle shape falls back; output identical).
-- Smoke benchmark through the installed path: rms 4096×128 base 30.33us → installed 15.58us (**1.95x**); rms 648720×128 base 106.94us → installed 103.36us (**1.03x**). Matches the workspace `benchmark.csv` (geomean 1.4223x).
-- Result: `VALIDATE_OK`.
+- Correctness through the installed (swapped) symbols, **strictly gated** (Round 2): each
+  output is checked for shape, dtype, no-NaN, no-Inf, and `torch.testing.assert_close` against
+  BOTH the captured original baseline AND a PyTorch FP32 reference, at `atol=rtol=1e-5` for the
+  fp32 LayerNorm shape and `5e-2` for bf16 RMS / the select01 oracle. The script
+  `raise SystemExit(1)` on any failure (a `5e-5` fp32 LayerNorm regression would now fail, not
+  print OK). Re-run result: all six perf shapes `OK`, select01 oracle `OK`, `VALIDATE_OK`, exit 0.
+- Fallback (unsupported → baseline, exact `torch.equal`): fp16 RMS D=128 → baseline;
+  `is_rms_norm=True` via `norm_infer` → baseline.
+- Smoke benchmark through the installed path: rms 4096×128 base ~30us → installed ~15.6us (**1.92x**);
+  rms 648720×128 base ~106.6us → installed ~103.4us (**1.03x**). Matches the workspace
+  `benchmark.csv` (geomean 1.4223x).
+- Result: `VALIDATE_OK` (exit 0).
 
 ## Notes
 - `kda_kernels.install()` patches the module attributes; the dispatcher preloads the

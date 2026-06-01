@@ -91,15 +91,21 @@ buckets to the native-CUDA specializations; everything else falls back to the
 SGLang baseline:
 
 - `norm_infer` -> LayerNorm-fp32 specialization only when: CUDA tensor, dtype
-  `float32`, `is_rms_norm=False`, last-dim contiguous, `N == 5120`, weight and
-  bias both present and shape `(N,)`. Otherwise fall back to baseline.
-- `triton_one_pass_rms_norm` -> RMSNorm-bf16 specialization only when: CUDA
-  tensor, dtype `bfloat16`, last-dim contiguous, `D == 128`, `w` shape `(D,)`.
+  `float32`, `is_rms_norm=False`, `out is None`, fully contiguous (`x.is_contiguous()`),
+  `N == 5120`, weight and bias both present and shape `(N,)` and contiguous.
   Otherwise fall back to baseline.
-- Always fall back for: CPU/MPS/non-CUDA device, non-contiguous last dim,
-  unsupported dtype, `is_rms_norm=True` on `norm_infer`, `N != 5120` / `D != 128`,
-  missing weight/bias for the specialization. Fallback output must equal the
-  baseline output exactly (same call delegated to the SGLang baseline).
+- `triton_one_pass_rms_norm` -> RMSNorm-bf16 specialization only when: CUDA
+  tensor, dtype `bfloat16`, fully contiguous (`x.is_contiguous()`), `D == 128`,
+  `w` shape `(D,)` and contiguous. Otherwise fall back to baseline.
+- Full `x.is_contiguous()` (not merely a contiguous last dim) is required so the
+  internal `reshape(-1, D)` and the fresh `empty_like(x)` output are kernel-writable
+  views; any non-contiguous layout (e.g. a transposed higher-rank tensor with a
+  contiguous last dim) falls back.
+- Always fall back for: CPU/MPS/non-CUDA device, any non-contiguous layout,
+  unsupported dtype (incl. fp16 RMS), `is_rms_norm=True` on `norm_infer`, `out`
+  provided, `N != 5120` / `D != 128`, missing weight/bias for the specialization.
+  Fallback output must equal the baseline output exactly (same call delegated to
+  the SGLang baseline).
 
 ## Evidence (normv5 — promoted)
 

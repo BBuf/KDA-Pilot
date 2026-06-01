@@ -54,7 +54,11 @@ def optimized_wrapper(*args: Any, **kwargs: Any) -> Any:
     ambiguous calls rather than silently choosing one."""
     if _NORM_INFER_KW & kwargs.keys() or len(args) >= 4:
         return norm_infer(*args, **kwargs)
-    if "w" in kwargs or len(args) == 3:
+    # RMSNorm: triton_one_pass_rms_norm(x, w, eps=1e-6) -- valid with 2 or 3
+    # positional args (default eps), or explicit `w=`. Any valid norm_infer call
+    # has >=4 positional or a distinctive kwarg (handled above), so 2-3 positional
+    # with no norm_infer kwarg is unambiguously RMS.
+    if "w" in kwargs or len(args) in (2, 3):
         return triton_one_pass_rms_norm(*args, **kwargs)
     raise TypeError(
         "optimized_wrapper: ambiguous call; call the explicit entry point "
