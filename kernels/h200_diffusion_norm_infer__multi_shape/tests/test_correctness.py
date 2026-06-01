@@ -390,3 +390,21 @@ def test_registry_callable_routes_both_entry_points() -> None:
     base2 = base_norm_infer(inp2["x"], inp2["weight"], inp2["bias"], inp2["eps"], inp2["is_rms_norm"])
     _check_accuracy(ln_case, out2, base2, reference(ln_case, inp2))
     assert mod.last_dispatch("norm_infer") == "cuda", "registry callable must route norm_infer to the LN CUDA path"
+
+
+def test_registry_callable_norm_infer_optional_none_bias() -> None:
+    """register()['callable'] must route the valid norm_infer(x, weight, None, eps=...)
+    form (optional bias = None) to norm_infer (which falls back to the baseline since
+    bias=None is not a captured signature), NOT mis-route it to the RMS path."""
+    assert torch.cuda.is_available()
+    mod = _load_register_module()
+    reg_callable = mod.register()["callable"]
+    base_norm_infer, _ = get_baselines()
+    torch.manual_seed(0)
+    x = torch.randn(256, 512, device="cuda", dtype=torch.float32)  # non-captured + bias=None -> fallback
+    w = torch.randn(512, device="cuda", dtype=torch.float32)
+    out = reg_callable(x, w, None, eps=1e-6)  # (x, weight, None, eps=) must reach norm_infer
+    base = base_norm_infer(x, w, None, 1e-6, False)
+    assert mod.last_dispatch("norm_infer") == "fallback", "None-bias norm_infer must route to norm_infer (fallback)"
+    assert torch.isfinite(out).all()
+    torch.testing.assert_close(out.float(), base.float(), atol=1e-5, rtol=1e-5)
