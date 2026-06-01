@@ -83,8 +83,43 @@ Record any PR/wiki page that influences a decision here and in `solutions.jsonl`
 - Small shapes: launch overhead vs device time split; does PDL-off reduce isolated
   latency on B200; how much of total latency is Python dispatch vs kernel?
 
+## Frozen baseline (Round 2, B200, commit 43a8fd164, GPU phys 4)
+
+Correctness PASS on B200: 10 production rows + 2400-case CI grid + 3 negative tests.
+Fused-baseline median latency (µs), candidate==baseline so geomean 1.0149x ≈ 1.0x:
+
+| bucket | shape | µs |
+|--------|-------|----|
+| large | qwen B4096/H24 | 45.1 |
+| large | zimage B4096/H30 | 76.1 |
+| large | zimage B4128/H30 | 76.5 |
+| large | joyai-edit B7904/H32 | 89.5 |
+| large | qwen-edit B8424/H24 | 98.0 |
+| small | qwen B19/H24 | 64.2 |
+| small | zimage B32/H30 | 64.9 |
+| small | qwen B47/H24 | 64.0 |
+| small | qwen-edit B189/H24 | 64.3 |
+| small | qwen-edit B195/H24 | 64.1 |
+
+**Empirical confirmation of the two regimes — and a sharper read than the seed
+roofline:** small shapes are **flat ~64µs regardless of token count** (19→195) and
+are *slower than the 4096-token large shape (45µs)*. That is impossible if the cost
+were the device kernel; it is a fixed per-call **dispatch/launch overhead floor**
+(torch `register_custom_op` dispatch + JIT module lookup + launch), captured in the
+CUDA-event window because the GPU waits on the CPU between the start marker and the
+kernel. Large shapes scale 45→98µs with token count (bandwidth regime).
+
+Implication for direction ranking: the only real headroom is the **small-shape
+overhead** (a CUDA-event measurement already shows it dominates). The lever is a
+leaner call path (zero-overhead dispatcher, avoiding the custom-op wrapper, PDL-off),
+not the device kernel — and it MUST be proven on the integrated install path. Large
+shapes are near the bandwidth bound; expect a no-go there unless NCU shows otherwise.
+
 ## Status
 
-- Local scaffold authored (correctness harness, candidate wrapper → baseline,
-  CUDA-event benchmark, this note). Remote B200 validation (freeze baseline + first
-  NCU) is the next step. No optimized kernel implemented yet.
+- Local scaffold + benchmark/correctness corrections complete and committed.
+- Remote B200: REMOTE_KDA_DIR created; correctness (production + full CI grid +
+  negatives) PASS; baseline frozen with provenance into `benchmark.csv`.
+- Next: NCU one large + one small production shape to split device-time vs
+  launch/dispatch overhead and name the active bound (AC-5); then Codex direction
+  ranking; then the first native CUDA candidate. No optimized kernel implemented yet.

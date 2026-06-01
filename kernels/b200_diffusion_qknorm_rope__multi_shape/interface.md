@@ -73,6 +73,23 @@ baseline for any shape, dtype, layout, device, or feature flag it does not suppo
 - Small-shape wins (19–195 tokens) are additionally validated on the integrated SGLang
   install path (`kda_kernels.install()` + zero-overhead dispatcher).
 
+## Frozen Baseline (Round 2, NVIDIA B200)
+
+- Host `innomatrix-us-adc-smb200-0003`, physical GPU 4 (NVIDIA B200, idle 0% util),
+  container `sglang_bbuf`, local commit `43a8fd164`.
+- Command: `CUDA_VISIBLE_DEVICES=4 KDA_GIT_COMMIT=43a8fd164 python benchmark.py`
+  (correctness gate first: `CUDA_VISIBLE_DEVICES=4 KDA_RUN_CORRECTNESS=1 pytest
+  tests/test_correctness.py` — 10 production + 2400 CI-grid + 3 negative tests PASS).
+- Latency formula: per-call CUDA-event median over `iters` (warmup excluded), no CUDA graph.
+- Fused-baseline median latency (µs): joyai-edit B7904/H32 = 89.5; qwen B4096/H24 = 45.1;
+  qwen-edit B8424/H24 = 98.0; zimage B4096/H30 = 76.1; zimage B4128/H30 = 76.5;
+  qwen B19/H24 = 64.2; qwen B47/H24 = 64.0; qwen-edit B195/H24 = 64.1;
+  qwen-edit B189/H24 = 64.3; zimage B32/H30 = 64.9.
+- Candidate (routes to baseline) geomean = 1.0149x (≈1.0x, validates methodology).
+- Signal: small shapes (19–195 tok) are flat ~64µs — a fixed per-call dispatch/launch
+  floor that exceeds the 4096-tok large shape (45µs); large shapes scale with size.
+  Full per-row stats + provenance + idle snapshots are in `benchmark.csv`.
+
 ## To Be Filled Before Promotion
 
 - final wrapper signature once the specialized kernel is wired in;
