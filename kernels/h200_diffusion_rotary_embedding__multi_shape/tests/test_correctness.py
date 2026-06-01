@@ -39,6 +39,12 @@ OP_TYPE = "rotary_embedding"
 KERNEL_DIR = Path(__file__).resolve().parents[1]
 DEVICE = "cuda"
 SGLANG_ORACLE_COMMIT = "6965fe0ee"
+# sha1 of the pinned (6965fe0ee) diffusion RoPE baseline files. A non-pinned
+# KDA_SGLANG_ORACLE_COMMIT override is accepted ONLY if the imported files match.
+SGLANG_ORACLE_FILE_SHA1 = {
+    "rotary.py": "81fb5ffeaf387903c45da1b62accce5b1e275039",
+    "ltx2_rotary.py": "3408d9084b4cc9e92cbd3dbd584fa7ec5f8d5d4b",
+}
 
 pytestmark = pytest.mark.skipif(
     os.environ.get("KDA_RUN_CORRECTNESS") != "1",
@@ -287,15 +293,38 @@ def test_case_manifest() -> None:
                 assert t.stride(2) == num_heads * half, "LTX-2 cos/sin seq stride must equal num_heads*half"
 
 
+def _imported_oracle_file_sha1() -> dict:
+    import hashlib
+
+    import sglang.jit_kernel.diffusion.triton.rotary as r
+    import sglang.jit_kernel.diffusion.triton.ltx2_rotary as l
+
+    out = {}
+    for key, mod in (("rotary.py", r), ("ltx2_rotary.py", l)):
+        out[key] = hashlib.sha1(Path(mod.__file__).read_bytes()).hexdigest()
+    return out
+
+
 def test_sglang_oracle_pinned() -> None:
     override = os.environ.get("KDA_SGLANG_ORACLE_COMMIT")
     expected = override or SGLANG_ORACLE_COMMIT
+
+    # A non-pinned override is accepted ONLY if the imported diffusion RoPE baseline
+    # files are byte-identical to the pinned 6965fe0ee oracle. Record the comparison.
+    if override is not None and override != SGLANG_ORACLE_COMMIT:
+        actual = _imported_oracle_file_sha1()
+        for key, exp_sha in SGLANG_ORACLE_FILE_SHA1.items():
+            got = actual.get(key)
+            print(f"[oracle-equiv] {key}: imported={got} pinned={exp_sha}")
+            assert got == exp_sha, (
+                f"oracle override {override!r} requires {key} byte-identical to pinned "
+                f"{SGLANG_ORACLE_COMMIT}: got {got}, expected {exp_sha}"
+            )
+
     head = _sglang_git_head()
     if head is None:
-        # Provenance must NOT silently pass: only accept a non-git-checkout oracle
-        # when an override is explicitly set (and record it in the run output).
         if override is not None:
-            print(f"[oracle-pin] imported SGLang is not a git checkout; honoring override KDA_SGLANG_ORACLE_COMMIT={override}")
+            print(f"[oracle-pin] imported SGLang is not a git checkout; honoring override {override} (file-hash equivalence verified above)")
             return
         pytest.fail(
             f"imported SGLang is not a git checkout; cannot verify the oracle pin {SGLANG_ORACLE_COMMIT}. "
@@ -409,6 +438,26 @@ def test_fallback_routing() -> None:
     check_std(torch.randn(1, 64, H, 64, device=DEVICE, dtype=torch.bfloat16), torch.cos(a64), torch.sin(a64), False, "head-dim-64")
     acpu = torch.randn(8, D // 2, dtype=torch.float32)
     check_std(torch.randn(1, 8, H, D, dtype=torch.bfloat16), torch.cos(acpu), torch.sin(acpu), False, "all-cpu")
+
+    # Device mismatch (CUDA x, CPU cos/sin): the wrapper cannot produce a correct
+    # result, so it must RAISE consistently with the SGLang baseline (not silently
+    # return wrong data) and must not take the CUDA route.
+    xm = torch.randn(1, 64, H, D, device=DEVICE, dtype=torch.bfloat16)
+    cm, sm = torch.cos(a).cpu(), torch.sin(a).cpu()
+    baseline_raised = False
+    try:
+        sgl_std(xm, cm, sm, False)
+    except Exception:
+        baseline_raised = True
+    if baseline_raised:
+        wrapper._LAST_DISPATCH["standard"] = None
+        raised = False
+        try:
+            wrapper.apply_rotary_embedding(xm, cm, sm, False)
+        except Exception:
+            raised = True
+        assert raised, "device-mismatch must raise (consistent with SGLang baseline), not silently return"
+        assert wrapper._LAST_DISPATCH["standard"] != "cuda"
 
     # Unsupported LTX-2 signatures (numerically checked):
     check_ltx2(*_mk_ltx2(1, 1536, 32, 64, contiguous=True), "ltx2-contiguous-cossin")

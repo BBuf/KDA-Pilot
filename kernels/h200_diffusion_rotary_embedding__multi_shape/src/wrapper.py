@@ -20,6 +20,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import logging
+import os
 import sys
 from pathlib import Path
 
@@ -114,22 +115,27 @@ def _source_hash() -> str:
 
 def _jit_module(dtype):
     h = _source_hash()
-    key = (str(dtype), h)
+    profile = os.environ.get("KDA_PROFILE", "") in ("1", "true", "True")
+    key = (str(dtype), h, profile)
     if key not in _MODULE_CACHE:
         from sglang.jit_kernel.utils import load_jit, make_cpp_args
 
         _ensure_source()
         args = make_cpp_args(dtype)
         targ = f"{args}"
+        # Profiling build adds -lineinfo so NCU can map SASS back to source.
+        # Still NO --use_fast_math (kept consistent with the SGLang jit_kernel build).
+        extra_cuda_cflags = ["-lineinfo"] if profile else None
+        markers = [*args, h] + (["lineinfo"] if profile else [])
         _MODULE_CACHE[key] = load_jit(
             "kda_rotary_embedding",
-            *args,
-            h,  # source hash -> a distinct JIT module when the .cuh changes (no stale binary)
+            *markers,  # template args + source hash (+ lineinfo) -> rebuild on change
             cuda_files=[_SGLANG_REL],
             cuda_wrappers=[
                 ("standard_rope", f"StandardRopeKernel<{targ}>::run"),
                 ("ltx2_split_rope", f"Ltx2SplitRopeKernel<{targ}>::run"),
             ],
+            extra_cuda_cflags=extra_cuda_cflags,
         )
     return _MODULE_CACHE[key]
 
