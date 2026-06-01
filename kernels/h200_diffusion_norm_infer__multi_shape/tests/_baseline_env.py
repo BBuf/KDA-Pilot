@@ -22,7 +22,6 @@ import-time baseline binding also succeeds in this bare container.
 
 from __future__ import annotations
 
-import os
 import sys
 import types
 

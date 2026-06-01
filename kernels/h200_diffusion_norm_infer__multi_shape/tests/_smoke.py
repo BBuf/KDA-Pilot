@@ -4,7 +4,6 @@ Run inside the container with PYTHONPATH=<sglang>/python and CUDA_VISIBLE_DEVICE
 """
 
 import importlib.util
-import os
 import pathlib
 import sys
 
