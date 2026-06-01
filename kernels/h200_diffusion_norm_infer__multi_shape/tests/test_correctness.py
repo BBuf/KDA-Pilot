@@ -118,9 +118,7 @@ def make_cases() -> list[dict[str, Any]]:
                     dtype="float32", M=8640, N=5120, has_weight=True, has_bias=True,
                     is_rms_norm=False, kind="adversarial", eps=1e-6, init=adv,
                     expect_path="cuda", noncontig=False, warmup=0, iters=0)
-        case.update(_default_tol("float32"))
-        # Ill-conditioned rows: judge against the baseline (no absolute ceiling).
-        case.update(tol_mult=5.0, tol_abs=1e-3, abs_ceiling=None)
+        case.update(_default_tol("float32"))  # strict abs_ceiling=1e-5 applies to adversarial too
         cases.append(case)
 
     # Canonical regression grid (CI subset) -> NOT captured -> fallback to baseline.
@@ -353,6 +351,8 @@ def test_fallback_gate_rejects_noncaptured() -> None:
     assert mod.supported_norm_infer(t(8640, 5120, f32, contig=False), w5120, b5120, 1e-6, False) is False  # layout
     assert mod.supported_norm_infer(t(8640, 5120, f32, device="cpu"), w5120.cpu(), b5120.cpu(), 1e-6, False) is False  # device
     assert mod.supported_norm_infer(t(8640, 5120, f32), w5120, b5120, 1e-5, False) is False  # eps != captured 1e-6
+    assert mod.supported_norm_infer(t(8640, 5120, f32), w5120.reshape(1, 5120), b5120, 1e-6, False) is False  # weight rank (1,N)
+    assert mod.supported_norm_infer(t(8640, 5120, f32), w5120, b5120.reshape(5120, 1), 1e-6, False) is False  # bias rank (N,1)
 
     # rms gate: captured is (M in {1320,4096,16384,648720,650040}, 128, bf16, weight).
     w128 = torch.randn(128, device="cuda", dtype=f32).to(bf16)
@@ -363,3 +363,4 @@ def test_fallback_gate_rejects_noncaptured() -> None:
     assert mod.supported_rms(t(4096, 128, bf16, contig=False), w128, 1e-6) is False  # layout
     assert mod.supported_rms(t(4096, 128, bf16, device="cpu"), w128.cpu(), 1e-6) is False  # device
     assert mod.supported_rms(t(4096, 128, bf16), w128, 1e-5) is False  # eps != captured 1e-6
+    assert mod.supported_rms(t(4096, 128, bf16), w128.reshape(1, 128), 1e-6) is False  # weight rank (1,128)

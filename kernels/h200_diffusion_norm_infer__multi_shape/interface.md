@@ -131,7 +131,7 @@ and recorded by `last_dispatch()` (tests assert the CUDA path actually ran).
 ### Tolerance methodology (tests/test_correctness.py)
 - Oracle: the SGLang baseline (pinned `c47f0e7cd`). High-precision reference: FP64 torch.
 - Dynamic bound: `err(candidate) <= tol_mult * err(baseline) + tol_abs`, where `err(t)=max|t.double()-fp64_ref|`. `tol_mult` 3 (bf16) / 4 (fp32); `tol_abs` ≈ 1 bf16 ULP / 2e-6 fp32.
-- Additional fp32 well-conditioned hard ceiling: `err(candidate) <= 1e-5` (disabled for ill-conditioned adversarial rows, where the baseline itself exceeds 1e-5).
+- fp32 hard ceiling: `err(candidate) <= 1e-5` for ALL fp32 LayerNorm cases including adversarial (near-constant / tiny-variance). The kernel computes mean/variance/normalize in double internally, so it meets 1e-5 even on ill-conditioned rows where the fp32-accumulating baseline does not.
 - NaN/Inf checks; shape/dtype/device preserved. Result: 33/33 pass; RMS bf16 bitwise-identical to baseline; fp32 LN err 2.26e-6.
 
 ### Benchmark command and latency formula
