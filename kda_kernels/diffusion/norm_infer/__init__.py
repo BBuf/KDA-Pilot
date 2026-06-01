@@ -6,24 +6,25 @@ This package contributes the following swap functions:
   - `sglang.jit_kernel.diffusion.triton.rmsnorm_onepass:triton_one_pass_rms_norm`
 
 Stub status: each function is either re-exported from SGLang
-(`KDA_OPTIMIZED_<fn> = False`) or pulled from a promoted KDA impl
-(`KDA_OPTIMIZED_<fn> = True`). Promotion is driven by
-`scripts/export_kda_kernels/export.py <task-slug>`, which copies
-the task's CUDA `.cu` / `.cuh` sources + Python wrapper into this
-directory and rewrites this `__init__.py` to import the wrapper.
-
-After promotion the directory layout becomes::
-
-    kda_kernels/diffusion/<family>/
-        __init__.py     # this file (rewritten to import wrapper)
-        wrapper.py      # Python wrapper that JIT-compiles the CUDA
-        kernel.cu       # native CUDA source
-        kernel.cuh      # CUDA headers
-        KDA_STATUS.md   # task / commit / date / speedup stamps
+(`KDA_OPTIMIZED_<fn> = False`) or routed through the generated
+architecture dispatcher (`KDA_OPTIMIZED_<fn> = True`). Promotion is
+driven by `scripts/export_kda_kernels/export.py <task-slug>`.
 """
 
-from sglang.jit_kernel.diffusion.triton.norm import norm_infer  # noqa: F401  (sglang baseline; replaced after export)
-from sglang.jit_kernel.diffusion.triton.rmsnorm_onepass import triton_one_pass_rms_norm  # noqa: F401  (sglang baseline; replaced after export)
+from kda_kernels.diffusion.norm_infer._dispatcher import _preload_kda_impls  # noqa: F401
+from kda_kernels.diffusion.norm_infer._dispatcher import norm_infer  # noqa: F401
+from kda_kernels.diffusion.norm_infer._dispatcher import triton_one_pass_rms_norm  # noqa: F401
 
-KDA_OPTIMIZED_norm_infer = False
-KDA_OPTIMIZED_triton_one_pass_rms_norm = False
+KDA_OPTIMIZED_norm_infer = True
+KDA_OPTIMIZED_triton_one_pass_rms_norm = True
+
+KDA_ARCHES_norm_infer = ('h200',)
+KDA_TASK_norm_infer = 'h200_diffusion_norm_infer__multi_shape'
+KDA_COMMIT_norm_infer = '3123fe8ee9d9fe50f8495c48704c6f459213b7e7'
+KDA_DATE_norm_infer = '2026-06-01'
+KDA_SPEEDUP_norm_infer = '1.695300x'
+KDA_ARCHES_triton_one_pass_rms_norm = ('h200',)
+KDA_TASK_triton_one_pass_rms_norm = 'h200_diffusion_norm_infer__multi_shape'
+KDA_COMMIT_triton_one_pass_rms_norm = '3123fe8ee9d9fe50f8495c48704c6f459213b7e7'
+KDA_DATE_triton_one_pass_rms_norm = '2026-06-01'
+KDA_SPEEDUP_triton_one_pass_rms_norm = '1.695300x'
