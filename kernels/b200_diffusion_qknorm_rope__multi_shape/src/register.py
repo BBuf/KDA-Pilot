@@ -13,11 +13,24 @@ does not support.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Callable, Optional
 
 
 KERNEL_SLUG = "b200_diffusion_qknorm_rope__multi_shape"
 OP_TYPE = "qknorm_rope_inplace"
+
+# Resolved once and reused, so the fallback adds no per-call import overhead in
+# the small-shape latency path.
+_baseline_callable: Optional[Callable[..., None]] = None
+
+
+def _sglang_baseline() -> Callable[..., None]:
+    global _baseline_callable
+    if _baseline_callable is None:
+        from sglang.jit_kernel.diffusion.qknorm_rope import fused_inplace_qknorm_rope
+
+        _baseline_callable = fused_inplace_qknorm_rope
+    return _baseline_callable
 
 
 def optimized_wrapper(
@@ -33,9 +46,7 @@ def optimized_wrapper(
     head_dim: int = 0,
     rope_dim: int = 0,
 ) -> None:
-    from sglang.jit_kernel.diffusion.qknorm_rope import fused_inplace_qknorm_rope
-
-    return fused_inplace_qknorm_rope(
+    return _sglang_baseline()(
         q,
         k,
         q_weight,

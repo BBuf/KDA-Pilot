@@ -16,6 +16,11 @@ Semantics recovered from the SGLang baseline
   ``ATOL=8e-2, RTOL=1e-2`` (identical to
   ``python/sglang/jit_kernel/tests/diffusion/test_qknorm_rope.py``).
 
+Case sets:
+- ``make_cases()`` — the 10 fixed production rows (used for primary benchmarking).
+- ``make_ci_grid_cases()`` — the SGLang CI grid (correctness-or-fallback);
+  ``KDA_FULL_CI_GRID=1`` expands it to the full nightly grid.
+
 Inputs follow the SGLang test/benchmark convention (cos/sin cache sized to
 ``MAX_SEQ_LEN`` with randomized positions) so the comparison is fair against
 SGLang's own harnesses and exercises arbitrary RoPE positions rather than the
@@ -88,22 +93,12 @@ _PRODUCTION_ROWS = [
     ("zimage", "small", 32, 30, 1e-5),
 ]
 
-# --- CI-grid fallback probes (AC-1.1): the optimized kernel must either match
-# the oracle or fall back to the SGLang baseline for these. eps=1e-6 per the
-# SGLang test. Kept small/cheap; they exercise the unsupported tail. ---
-_CI_FALLBACK_ROWS = [
-    # (name_suffix, num_tokens, num_heads, head_dim, rope_dim, is_neox, position_dtype)
-    ("hd64_rd64", 257, 8, 64, 64, False, "int64"),
-    ("hd256_rd128", 257, 8, 256, 128, False, "int64"),
-    ("hd128_rd64_neox", 129, 24, 128, 64, True, "int64"),  # rotary lanes 64/4=16 (pow2)
-    ("hd128_rd128_int32pos", 129, 24, 128, 128, False, "int32"),
-    ("hd128_heads8", 257, 8, 128, 128, False, "int64"),
-]
+# rope_dim choices per head_dim, from the SGLang reference test.
+ROPE_DIM_CHOICES = {64: [64], 128: [64, 128], 256: [64, 128, 256]}
 
 
 def make_cases() -> list[dict[str, Any]]:
-    """All configured correctness/benchmark cases."""
-
+    """The 10 fixed production rows (primary correctness + benchmark set)."""
     cases: list[dict[str, Any]] = []
     for preset, bucket, num_tokens, num_heads, eps in _PRODUCTION_ROWS:
         cases.append(
@@ -126,27 +121,65 @@ def make_cases() -> list[dict[str, Any]]:
                 "iters": 100,
             }
         )
-    for suffix, num_tokens, num_heads, head_dim, rope_dim, is_neox, pos_dt in _CI_FALLBACK_ROWS:
-        cases.append(
-            {
-                "name": f"cifallback__{suffix}__B{num_tokens}_H{num_heads}",
-                "preset": "ci-grid",
-                "bucket": "ci_fallback",
-                "num_tokens": num_tokens,
-                "num_heads": num_heads,
-                "head_dim": head_dim,
-                "rope_dim": rope_dim,
-                "is_neox": is_neox,
-                "eps": 1e-6,
-                "dtype": "bfloat16",
-                "position_dtype": pos_dt,
-                "ci_fallback": True,
-                "atol": ATOL,
-                "rtol": RTOL,
-                "warmup": 10,
-                "iters": 50,
-            }
-        )
+    return cases
+
+
+def _ci_ranges(full: bool):
+    if full:
+        bs = [2 ** n for n in range(13)]  # 1 .. 4096
+        bs = sorted(set(bs + [x + 1 for x in bs] + [1, 9, 129, 257, 2049, 4097]))
+        heads = [8, 16, 24, 32]
+        head_dims = [64, 128, 256]
+    else:
+        # CI subset: enough to exercise every code path / fallback branch cheaply.
+        bs = [1, 9, 129, 257]
+        heads = [8, 24]
+        head_dims = [64, 128, 256]
+    return bs, heads, head_dims
+
+
+def make_ci_grid_cases() -> list[dict[str, Any]]:
+    """SGLang CI-grid correctness-or-fallback cases (AC-1.1), kept separate from
+    the production rows. Honors the kernel's support gate
+    (`rope_dim % (head_dim//32) == 0`; for neox, power-of-two rotary lanes).
+    ``KDA_FULL_CI_GRID=1`` expands to the full nightly grid.
+    """
+    full = os.environ.get("KDA_FULL_CI_GRID") == "1"
+    bs_list, heads_list, hd_list = _ci_ranges(full)
+    cases: list[dict[str, Any]] = []
+    for bs in bs_list:
+        for h in heads_list:
+            for hd in hd_list:
+                elems = hd // 32
+                for rd in ROPE_DIM_CHOICES[hd]:
+                    if rd % elems != 0:
+                        continue
+                    for is_neox in (False, True):
+                        if is_neox:
+                            lanes = rd // elems
+                            if lanes < 2 or (lanes & (lanes - 1)):
+                                continue
+                        for pos_dt in ("int32", "int64"):
+                            cases.append(
+                                {
+                                    "name": f"cigrid__B{bs}_H{h}_D{hd}_R{rd}_neox{int(is_neox)}_{pos_dt}",
+                                    "preset": "ci-grid",
+                                    "bucket": "ci_fallback",
+                                    "num_tokens": bs,
+                                    "num_heads": h,
+                                    "head_dim": hd,
+                                    "rope_dim": rd,
+                                    "is_neox": is_neox,
+                                    "eps": 1e-6,
+                                    "dtype": "bfloat16",
+                                    "position_dtype": pos_dt,
+                                    "ci_fallback": True,
+                                    "atol": ATOL,
+                                    "rtol": RTOL,
+                                    "warmup": 5,
+                                    "iters": 20,
+                                }
+                            )
     return cases
 
 
@@ -271,8 +304,68 @@ def test_register_metadata() -> None:
 
 def test_correctness_cases() -> None:
     cases = make_cases()
-    assert cases, "No correctness cases recovered. Fill make_cases() before optimizing."
+    assert len(cases) == 10, f"expected 10 production rows, got {len(cases)}"
     for case in cases:
         expected = baseline(case)
         actual = candidate(case)
         _assert_close(actual, expected, case=case, path=case.get("name", "out"))
+
+
+def test_ci_grid_cases() -> None:
+    """AC-1.1: every CI-grid signature either matches the oracle or falls back to
+    the SGLang baseline (the wrapper handles the fallback internally)."""
+    cases = make_ci_grid_cases()
+    assert cases, "CI grid produced no cases."
+    for case in cases:
+        expected = baseline(case)
+        actual = candidate(case)
+        _assert_close(actual, expected, case=case, path=case["name"])
+
+
+# --- Negative tests: prove the harness catches the failure modes in AC-1 ---
+
+def test_negative_no_mutation_is_caught() -> None:
+    """A candidate that does not mutate q/k must FAIL the comparison.
+
+    Guards against a harness that compares the wrapper's return value (None)
+    instead of the in-place-mutated tensors.
+    """
+    case = make_cases()[0]
+    ref = baseline(case)  # oracle on identical seeded inputs
+    untouched = _make_inputs(case)  # same seed -> raw inputs, never normed/roped
+    with pytest.raises(AssertionError):
+        _assert_close((untouched["q"], untouched["k"]), ref, case=case, path="noop")
+
+
+def test_negative_ignored_positions_is_caught() -> None:
+    """A candidate that ignores ``positions`` (uses 0 for all) must FAIL."""
+    from sglang.jit_kernel.diffusion.qknorm_rope import fused_inplace_qknorm_rope
+
+    case = make_cases()[0]
+    ref = baseline(case)
+    inputs = _make_inputs(case)
+    q, k = inputs["q"], inputs["k"]
+    fused_inplace_qknorm_rope(
+        q,
+        k,
+        inputs["q_weight"],
+        inputs["k_weight"],
+        inputs["cos_sin_cache"],
+        torch.zeros_like(inputs["positions"]),  # ignore real positions
+        is_neox=case["is_neox"],
+        eps=case["eps"],
+        head_dim=case["head_dim"],
+        rope_dim=case["rope_dim"],
+    )
+    with pytest.raises(AssertionError):
+        _assert_close((q, k), ref, case=case, path="zeropos")
+
+
+def test_negative_nan_inf_is_caught() -> None:
+    """NaN/Inf in an output must raise."""
+    nan_t = torch.full((4,), float("nan"), device="cuda")
+    with pytest.raises(AssertionError):
+        _assert_no_nan_inf(nan_t, path="nan")
+    inf_t = torch.full((4,), float("inf"), device="cuda")
+    with pytest.raises(AssertionError):
+        _assert_no_nan_inf(inf_t, path="inf")
