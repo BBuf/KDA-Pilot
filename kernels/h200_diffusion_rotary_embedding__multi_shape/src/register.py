@@ -21,7 +21,7 @@ import wrapper  # noqa: E402
 KERNEL_SLUG = "h200_diffusion_rotary_embedding__multi_shape"
 OP_TYPE = "rotary_embedding"
 
-# Public callables (preserve the exact SGLang names for the in-SGLang export step).
+# Public callables (preserve the exact SGLang names for the in-SGLang export).
 apply_rotary_embedding = wrapper.apply_rotary_embedding
 apply_ltx2_split_rotary_emb = wrapper.apply_ltx2_split_rotary_emb
 optimized_wrapper = wrapper.optimized_wrapper

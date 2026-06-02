@@ -2,7 +2,7 @@
 // built through SGLang's jit_kernel / tvm-ffi stack (NOT torch.utils.cpp_extension).
 // Mirrors the launcher/validation style of csrc/diffusion/qknorm_rope.cuh.
 //
-// v2 (Round 5) — optimized from the Round-4 NCU bound (SM/instruction-throughput,
+// v2 — optimized from the prior NCU bound diagnosis (SM/instruction-throughput,
 // ~23% DRAM): per-thread runtime div/mod removed via fixed grid geometry + power-of-2
 // shift/mask indexing; 128-bit vectorized bf16 loads/stores (AlignedVector<packed,4> =
 // 8 bf16); standard cos/sin loaded once per token into shared memory and reused across

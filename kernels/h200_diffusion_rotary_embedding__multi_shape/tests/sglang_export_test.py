@@ -1,4 +1,4 @@
-"""In-SGLang export + drop-in replacement test (AC-8). Run on the remote H200:
+"""In-SGLang export + drop-in replacement test. Run on the remote H200:
 
     CUDA_VISIBLE_DEVICES=<idle> PYTHONPATH=<sglang>/python \
         KDA_SGLANG_ORACLE_COMMIT=c47f0e7cd python tests/sglang_export_test.py

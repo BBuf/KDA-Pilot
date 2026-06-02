@@ -91,3 +91,13 @@ to the checkout and the JIT build cache; it patches no SGLang source file. The p
 symbol replacement in the test is restored in `finally`. Removing the added `.cuh`
 (and the jit cache entry) returns the checkout to pristine. The user approved this
 reversible `load_jit` placement + the final in-SGLang test.
+
+## Re-verification after workflow-marker scrub
+
+A later comment-only edit scrubbed plan-loop terminology from `src/csrc/rotary_embedding.cuh`
+(one comment line), changing its hash from `42f21a8882a6` to `e6588f9edfe7` with a
+byte-identical compiled kernel. The scrubbed source was re-synced to the remote and the
+in-SGLang export test re-run on GPU 7: `EXPORT_TEST: PASS` (6/6 CUDA-route correctness,
+fp16 fallback, smoke speedup) and the correctness gate `6 passed`. The placed
+`python/sglang/jit_kernel/csrc/diffusion/kda_rotary_embedding.cuh` now hashes to
+`e6588f9edfe7`, matching the working tree.
