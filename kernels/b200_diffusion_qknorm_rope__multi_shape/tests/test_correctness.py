@@ -139,7 +139,7 @@ def _ci_ranges(full: bool):
 
 
 def make_ci_grid_cases() -> list[dict[str, Any]]:
-    """SGLang CI-grid correctness-or-fallback cases (AC-1.1), kept separate from
+    """SGLang CI-grid correctness-or-fallback cases, kept separate from
     the production rows. Honors the kernel's support gate
     (`rope_dim % (head_dim//32) == 0`; for neox, power-of-two rotary lanes).
 
@@ -326,8 +326,8 @@ def test_correctness_cases() -> None:
 
 
 def test_ci_grid_cases() -> None:
-    """AC-1.1: every CI-grid signature either matches the oracle or falls back to
-    the SGLang baseline (the wrapper handles the fallback internally)."""
+    """Every CI-grid signature either matches the oracle or falls back to the SGLang
+    baseline (the wrapper handles the fallback internally)."""
     cases = make_ci_grid_cases()
     assert cases, "CI grid produced no cases."
     for case in cases:
@@ -336,7 +336,7 @@ def test_ci_grid_cases() -> None:
         _assert_close(actual, expected, case=case, path=case["name"])
 
 
-# --- Negative tests: prove the harness catches the failure modes in AC-1 ---
+# --- Negative tests: prove the harness catches the documented failure modes ---
 
 def test_negative_no_mutation_is_caught() -> None:
     """A candidate that does not mutate q/k must FAIL the comparison.
@@ -385,21 +385,73 @@ def test_negative_nan_inf_is_caught() -> None:
         _assert_no_nan_inf(inf_t, path="inf")
 
 
-def test_dispatch_variant_logic() -> None:
-    """The evidence-gated dispatcher routes the production config by token bucket:
-    small (<512) -> baseline (None), large (>=512) -> staged; env overrides."""
+def _adhoc_case(name: str, num_tokens: int, num_heads: int, position_dtype: str = "int64") -> dict:
+    return {
+        "name": name, "preset": "fallback", "bucket": "fallback",
+        "num_tokens": num_tokens, "num_heads": num_heads, "head_dim": 128, "rope_dim": 128,
+        "is_neox": False, "eps": 1e-6, "dtype": "bfloat16", "position_dtype": position_dtype,
+        "ci_fallback": True, "atol": ATOL, "rtol": RTOL, "warmup": 5, "iters": 10,
+    }
+
+
+def test_dispatch_routing_exact_shape() -> None:
+    """Only the 5 large captured (tokens, heads) rows select the staged kernel."""
     reg = _load_register_module()
+    for n, h in [(7904, 32), (4096, 24), (8424, 24), (4096, 30), (4128, 30)]:
+        assert reg._use_staged(n, h, 128, 128, False), (n, h)
+    for n, h in [(19, 24), (47, 24), (195, 24), (189, 24), (32, 30)]:  # small -> baseline
+        assert not reg._use_staged(n, h, 128, 128, False), (n, h)
+    assert not reg._use_staged(1000, 24, 128, 128, False)  # non-captured tokens
+    assert not reg._use_staged(4096, 16, 128, 128, False)  # non-captured head count
+    assert not reg._use_staged(4096, 24, 64, 64, False)    # non-production head/rope dim
+    assert not reg._use_staged(4096, 24, 128, 128, True)   # neox
+
+
+def test_dispatch_gate_fails_closed() -> None:
+    """The full gate rejects wrong dtype / non-contiguous / int32 positions even for a
+    captured shape (-> baseline). CPU tensors exercise the gate logic without CUDA."""
+    reg = _load_register_module()
+    n, h, d = 4096, 24, 128
+    q = torch.zeros(n, h, d, dtype=torch.bfloat16)
+    k = torch.zeros(n, h, d, dtype=torch.bfloat16)
+    qw = torch.zeros(d, dtype=torch.bfloat16)
+    kw = torch.zeros(d, dtype=torch.bfloat16)
+    cache = torch.zeros(8, 128, dtype=torch.float32)
+    pos = torch.zeros(n, dtype=torch.int64)
+    g = lambda *a: reg._should_dispatch_staged(*a, is_neox=False, hd=128, rd=128)
+    assert g(q, k, qw, kw, cache, pos)                       # captured + correct -> staged
+    assert not g(q, k, qw, kw, cache, pos.int())             # int32 positions
+    assert not g(q, k, qw, kw, cache.double(), pos)          # non-float32 cache
+    assert not g(q.half(), k.half(), qw, kw, cache, pos)     # fp16
+    qnc = torch.zeros(n, d, h, dtype=torch.bfloat16).transpose(1, 2)  # non-contiguous view
+    assert not g(qnc, k, qw, kw, cache, pos)                 # non-contiguous q
+    q2 = torch.zeros(1000, h, d, dtype=torch.bfloat16)
+    k2 = torch.zeros(1000, h, d, dtype=torch.bfloat16)
+    assert not g(q2, k2, qw, kw, cache, torch.zeros(1000, dtype=torch.int64))  # non-captured tokens
+
+
+def test_fallback_routes_to_baseline_and_matches_oracle() -> None:
+    """Non-captured / int32-position production-config shapes fall back to the SGLang
+    baseline and still match the split-path oracle."""
+    for case in [
+        _adhoc_case("fb_B1000_H24", 1000, 24),         # non-captured token count
+        _adhoc_case("fb_B4096_H16", 4096, 16),         # non-captured head count
+        _adhoc_case("fb_int32pos_B4096_H24", 4096, 24, position_dtype="int32"),
+    ]:
+        _assert_close(candidate(case), baseline(case), case=case, path=case["name"])
+
+
+def test_invalid_env_does_not_break_public_wrapper() -> None:
+    """A bad KDA_CAND_VARIANT must not affect the env-independent public wrapper."""
     import os as _os
 
-    saved = _os.environ.pop("KDA_CAND_VARIANT", None)
+    saved = _os.environ.get("KDA_CAND_VARIANT")
+    _os.environ["KDA_CAND_VARIANT"] = "garbage"
     try:
-        for n in (19, 32, 47, 189, 195):  # production small rows -> baseline
-            assert reg._dispatch_variant(n) is None, n
-        for n in (4096, 4128, 7904, 8424):  # production large rows -> staged
-            assert reg._dispatch_variant(n) == "staged", n
-        _os.environ["KDA_CAND_VARIANT"] = "warp"  # override wins for experiments
-        assert reg._dispatch_variant(8424) == "warp"
+        case = make_cases()[0]  # joyai-edit large -> staged route
+        _assert_close(candidate(case), baseline(case), case=case, path="invalid_env")
     finally:
-        _os.environ.pop("KDA_CAND_VARIANT", None)
-        if saved is not None:
+        if saved is None:
+            _os.environ.pop("KDA_CAND_VARIANT", None)
+        else:
             _os.environ["KDA_CAND_VARIANT"] = saved
