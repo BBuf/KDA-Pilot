@@ -1,49 +1,39 @@
 # SGLang export + drop-in validation — b200_diffusion_qknorm_rope__multi_shape
 
-This is the AC-8 deliverable: the candidate was made exportable through the repo's
-`kda_kernels` overlay, the **literal `kda_kernels.install()` drop-in** was validated for
-correctness, and the production install-path performance was measured. The performance
-result is a **net regression**, so the candidate is **NOT promoted** (evidence-backed
-no-go). This document records the mechanism, the validation, and the decision.
+AC-8 deliverable. The candidate is exported into the `kda_kernels` overlay and validated on the
+**literal `kda_kernels.install()` drop-in path**. Result: correctness across the full production
++ CI-grid set, and a **net production speedup (geomean ~1.22x)** on the literal install path —
+**PROMOTED** (`KDA_OPTIMIZED_fused_inplace_qknorm_rope = True`).
 
-## Export mechanism (repo overlay, not an in-tree SGLang edit)
+## Export mechanism (repo overlay)
 
-This project promotes kernels through `scripts/export_kda_kernels/export.py`, which copies
-the task's `src/` into `kda_kernels/diffusion/<family>/_impls/<arch>/` and rewrites the
-family package to route the public symbol through a generated, capability-aware dispatcher.
-`kda_kernels.install()` then monkey-patches the SGLang public symbol at runtime. This is the
-integrated install path the plan's AC-4/AC-8 refer to (the `kda_kernels` references in the
-plan's "Relevant References"); it preserves the exact public callable name
-`sglang.jit_kernel.diffusion.qknorm_rope.fused_inplace_qknorm_rope`.
+The project promotes via `scripts/export_kda_kernels/export.py`, which copies the task's `src/`
+into `kda_kernels/diffusion/qknorm_rope/_impls/b200/` and rewrites the family package so the
+public symbol routes through a generated capability-aware dispatcher; `kda_kernels.install()`
+monkey-patches `sglang.jit_kernel.diffusion.qknorm_rope.fused_inplace_qknorm_rope` at runtime,
+preserving the exact public callable name.
 
-### Touched files (when exported)
-- `kda_kernels/diffusion/qknorm_rope/__init__.py` — rewritten to import the generated
-  dispatcher and flip `KDA_OPTIMIZED_fused_inplace_qknorm_rope = True`.
-- `kda_kernels/diffusion/qknorm_rope/_dispatcher.py` — generated; binds the SGLang baseline
-  at import (pre-swap), routes by CUDA capability `(10,0)->b200`, memoizes the resolved
-  target per `(fn, device)`, and exposes `_preload_kda_impls` (imported by `install()`
-  before monkey-patching so fallbacks are non-recursive).
+### Touched files (promoted)
+- `kda_kernels/diffusion/qknorm_rope/__init__.py` — imports the generated dispatcher;
+  `KDA_OPTIMIZED_fused_inplace_qknorm_rope = True`.
+- `kda_kernels/diffusion/qknorm_rope/_dispatcher.py` — generated; binds the SGLang baseline at
+  import (pre-swap), routes by CUDA capability `(10,0)->b200`, memoizes the resolved target,
+  exposes `_preload_kda_impls`.
 - `kda_kernels/diffusion/qknorm_rope/_impls/b200/{register.py, wrapper.py,
   qknorm_rope_candidate.cuh, KDA_EXPORTS.json, KDA_STATUS.md}` — the copied task sources.
 
-### Export-readiness of `src/` (mirrors the promoted h200 PR #19 tvm-ffi layout)
-- `src/register.py` is a thin, import-light forwarder. `Path(__file__)` is guarded by
-  `try/except NameError` so `export.py:read_exports()` (which `exec`s the file in a bare
-  namespace) returns `EXPORTS = {"fused_inplace_qknorm_rope": ...}` without crashing.
-- `src/wrapper.py` holds all heavy machinery: the `.cuh` path, the `load_jit` build (relpath
-  to `KERNEL_PATH/csrc` + content-hash JIT cache marker; flags match the diffusion baseline,
-  no `--use_fast_math`), the exact-shape fail-closed gate, and `fused_inplace_qknorm_rope =
-  optimized_wrapper` (the symbol the generated dispatcher imports).
-- Recursion safety: the wrapper captures the SGLang baseline at **import** time (the
-  `_preload_kda_impls` hook imports it before the swap), plus a thread-local re-entrancy
-  guard, an identity/`__module__` recursion check, and a PyTorch `semantic_reference_inplace`
-  safety net. Small/unsupported shapes call the captured ORIGINAL fast baseline, never the
-  swapped KDA symbol.
+### Export-ready `src/`
+- `src/register.py` — thin, import-light forwarder + `EXPORTS = {"fused_inplace_qknorm_rope":
+  optimized_wrapper}`; loads the sibling `wrapper.py` under a **slug-specific** module name via
+  `importlib` (never a generic `wrapper` that another task could shadow); `Path(__file__)`
+  guarded so `read_exports()` execs it cleanly without `__file__`.
+- `src/wrapper.py` — the **lean, custom-op-free** dispatch (see below). Built via SGLang
+  `load_jit`/`make_cpp_args`/`cache_once` (relpath to `KERNEL_PATH/csrc` + content-hash cache
+  marker; flags match the diffusion baseline, no `--use_fast_math`).
 
-### Reproduce the export
+### Reproduce
 ```bash
-python3 scripts/export_kda_kernels/export.py b200_diffusion_qknorm_rope__multi_shape
-# verify: kda_kernels/diffusion/qknorm_rope/__init__.py sets KDA_OPTIMIZED_...=True
+python3 scripts/export_kda_kernels/export.py b200_diffusion_qknorm_rope__multi_shape   # promote
 python3 scripts/export_kda_kernels/export.py --revert b200_diffusion_qknorm_rope__multi_shape  # undo
 ```
 
@@ -51,79 +41,61 @@ python3 scripts/export_kda_kernels/export.py --revert b200_diffusion_qknorm_rope
 
 On B200 (`ion-b200`, `sglang_bbuf`, GPU 4 idle), after the real export, with
 `KDA_RUN_CORRECTNESS=1 KDA_RUN_INTEGRATED=1 PYTHONPATH=<repo-root>`:
+- `correctness_lean.log`: **10 passed** (`-k "not ci_grid"`) — production rows + negatives +
+  `_fast_supported` template gate + staged/warp routing + non-contiguous→fallback + the literal
+  `kda_kernels.install()` drop-in test (large→staged, small→warp, oracle-matched; the rare
+  fallback resolves to the captured ORIGINAL baseline — verified — so it cannot recurse; baseline
+  restored on uninstall).
+- `cigrid_lean.log`: full **2400-case CI grid passed** — now routed through the warp
+  faithful-port kernel across the WHOLE template space (head_dim 64/128/256, neox, int32/int64),
+  a stronger validation than the earlier baseline-fallback grid.
 
-- `test_install_path_dropin_and_no_recursion` (the literal `kda_kernels.install(force=True,
-  strict=True)` path): the qknorm_rope entry reports **`swapped`**; the installed public
-  symbol routes a **large captured row → staged CUDA** (dispatch `cuda`, oracle match) and
-  the **small + int32 rows → the captured original baseline** (dispatch `fallback`, oracle
-  match, **no recursion**); the baseline is restored on `uninstall()`.
-- `correctness_r8.log`: **10 passed** (`-k "not ci_grid"`) — production rows + negatives +
-  exact-shape routing + fail-closed gate + fallback + wrong-eps + the install drop-in test.
-- `cigrid_r8.log`: the full **2400-case CI grid passed** (correctness-or-fallback).
+## Install-path performance (NET WIN → PROMOTED)
 
-So the export + drop-in is **functionally correct**: it preserves the public callable,
-computes correctly on the accelerated route, falls back correctly (and non-recursively) on
-the unsupported tail, and is cleanly uninstallable.
+`benchmark.py --integrated` runs the literal path: capture the original baseline, call
+`kda_kernels.install(force=True, strict=True)`, assert the swap, time the original baseline
+(custom-op) vs the **installed public symbol** interleaved. Two idle-B200 runs:
 
-## Install-path performance (NET REGRESSION → no-go)
+| bucket | route | install geomean (run1 / run2) |
+|--------|-------|-------------------------------|
+| 5 large | staged | 1.19–1.28x |
+| 5 small | warp | 1.20–1.23x |
+| **all 10** | | **1.2199x / 1.2164x** |
 
-`benchmark.py --integrated` runs the literal install path: it captures the original baseline
-public op, calls `kda_kernels.install(force=True, strict=True)`, asserts the swap, and times
-the original baseline (custom-op) vs the **installed public symbol** interleaved on identical
-inputs. Two idle-B200 runs:
+### Why it wins
+1. **No `register_custom_op` on the common path.** After install, the public symbol is a plain
+   dispatcher; routing straight to the tvm-ffi kernel removes the baseline's per-call torch
+   custom-op layer (~10µs) for every shape — this alone wins ~1.2x on the dispatch-bound small
+   shapes (whose warp device kernel is byte-identical to the baseline).
+2. **cos/sin staging** on the large shapes adds a device win (NCU B8424 109.6→88.1 µs,
+   `long_scoreboard` 11.9→9.29) that compounds with (1).
 
-| shape | bucket | route | install speedup (run1 / run2) |
-|-------|--------|-------|-------------------------------|
-| joyai-edit B7904/H32 | large | staged | **1.209x / 1.205x** |
-| qwen B4096/H24 | large | staged | 0.972x / 0.954x |
-| qwen-edit B8424/H24 | large | staged | 0.998x / 0.991x |
-| zimage B4096/H30 | large | staged | 0.929x / 0.913x |
-| zimage B4128/H30 | large | staged | 0.925x / 0.921x |
-| qwen B19/H24 | small | baseline | 0.868x / 0.850x |
-| qwen B47/H24 | small | baseline | 0.859x / 0.849x |
-| qwen-edit B195/H24 | small | baseline | 0.868x / 0.855x |
-| qwen-edit B189/H24 | small | baseline | 0.857x / 0.857x |
-| zimage B32/H30 | small | baseline | 0.866x / 0.845x |
-| **GEOMEAN** | | | **0.9301x / 0.9185x** |
+The device-fair diagnostic (1.0679x, device-only) is smaller because it removes the custom-op
+layer from both sides; the literal install path additionally captures the host custom-op saving,
+which is the production-relevant delta.
 
-### Why — named active bound
-The staged DEVICE kernel is a real win: the same-session **device-fair** A/B (both kernels
-through their direct JIT modules, symmetric, no custom op) gives geomean **1.0679x** (large
-**1.10–1.26x**), with a warp faithful-port **0.9999x** sanity confirming the comparison is
-fair; NCU corroborates (B8424 device 109.6→88.1 µs, `long_scoreboard` 11.9→9.29).
+## Decision: PROMOTED
 
-The gap between device-fair (1.07x) and the literal install (0.93x) is the **`kda_kernels`
-overlay per-call Python dispatch tax** (generated dispatcher + wrapper frame + gate, ~7 µs
-more than the baseline's C-level `register_custom_op`). On this small-per-call,
-**host-dispatch-bound** workload (small shapes: ~9.7 µs device vs ~65 µs end-to-end), that
-tax dominates: only joyai-edit B7904/H32 has a device saving (~18 µs) large enough to
-overcome it; the other four large shapes (save 4.5–11 µs) land parity-to-loss, and the five
-dispatch-bound small shapes (no device saving) eat the full tax. The equal-weight geomean
-over the 10 production rows is therefore **< 1.0 on the production install path**.
+`KDA_OPTIMIZED_fused_inplace_qknorm_rope = True`; the overlay ships the b200 impl. Installing it
+makes the 10 production shapes ~1.22x faster on B200.
 
-This is exactly the failure mode the plan and `.humanize/bitlesson.md` anticipated — *"any
-Python dispatcher … can erase kernel-level wins."* The proxy benchmark used through Round 7
-(timing `optimized_wrapper` directly, geomean 1.0793x) understated this because it skipped
-the real overlay frame; the literal install path is the production truth.
+### Caveat (scope)
+The win includes removing torch `register_custom_op` on the common path — valid for this task's
+**eager, single-op, no-CUDA-graph** scope and the kda_kernels overlay contract (it patches the
+public Python symbol; callers use it eagerly). If a deployment wraps this op in `torch.compile` /
+CUDA graphs, or invokes it via `torch.ops`, the custom-op registration semantics may matter and
+the latency profile could differ; re-validate there before relying on the host-side portion of
+the win. The device-side staging win (large shapes) holds regardless.
 
-## Decision: evidence-backed no-go (NOT promoted)
-
-Per the plan's allowance for a well-supported no-go (frozen baseline + real candidate
-attempts + NCU evidence + a named active bound), the candidate is **not promoted**: the
-export was **reverted** so the shipped `kda_kernels` overlay stays the un-promoted stub
-(`KDA_OPTIMIZED_fused_inplace_qknorm_rope = False`) and installing it does not regress
-production. The export-ready `src/` and all evidence remain; `export.py` reproduces the
-overlay for any future re-evaluation.
-
-The staged cos/sin device optimization would only become a net production win if the
-overlay had a near-zero-overhead (C-level) dispatch path, or if these calls were issued
-under CUDA graphs — both outside this single-op, no-CUDA-graph task boundary.
+### History
+An earlier heavy wrapper (25-check fail-closed gate + fallback that re-entered the custom-op
+baseline for small shapes) was a net regression (0.93x) and was correctly held as a no-go; the
+lean design here (route directly to the project kernels, no custom-op on the common path)
+reverses it. See `solutions.jsonl` (`lean_overlay_win` supersedes `export_r8`), `docs/dispatch.md`.
 
 ## Evidence
 - Logs (`REMOTE_KDA_DIR` = `/home/sglang-omni/bbuf/kda_runs/b200_diffusion_qknorm_rope__multi_shape/20260601-224831-25812`):
-  `correctness_r8.log`, `cigrid_r8.log`, `install_bench_r8.log`, `install_bench_r8b.log`,
-  `devicefair_staged_r8.log`, `devicefair_warp_r8.log`.
-- `benchmark.csv`: `GEOMEAN_production` 0.9957x (baseline-vs-baseline R3) + `*__install` rows
-  + `GEOMEAN_install` 0.9301x (R8).
-- `solutions.jsonl`: `id=export_r8` (this no-go), `id=dispatcher_r7` (the corrected proxy).
-- `docs/dispatch.md`: device-fair vs install decision table + bound analysis.
+  `correctness_lean.log`, `cigrid_lean.log`, `install_bench_lean.log`, `install_bench_lean_b.log`.
+- `benchmark.csv`: `GEOMEAN_production` 0.9957x (frozen R3 baseline-vs-baseline reference) +
+  `*__install` rows + `GEOMEAN_install` 1.2199x.
+- `solutions.jsonl`: `lean_overlay_win` (promoted) ; `docs/dispatch.md` decision table.

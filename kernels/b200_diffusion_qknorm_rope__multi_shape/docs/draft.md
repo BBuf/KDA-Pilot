@@ -21,16 +21,17 @@ occupancy-capped — so the headroom story differs sharply by bucket. It is NOT 
 the large device kernel is memory-**latency** bound (only ~13% DRAM peak), not
 DRAM-bandwidth-bound.
 
-> **Final outcome (Round 8 — read first).** The candidate is an **evidence-backed no-go**;
-> it is **not promoted**. A CTA-per-token cos/sin-staging kernel is a real DEVICE win
-> (device-fair geomean **1.0679x**, large 1.10–1.26x, NCU-confirmed), but on the **literal
-> `kda_kernels.install()` production path** it is a **net regression (geomean 0.9301x /
-> 0.9185x)**: the overlay's per-call Python dispatch tax (~7µs over the baseline's C-level
-> `register_custom_op`) erases the modest device win on 9 of 10 shapes (only joyai
-> B7904/H32 wins). The active bound on the production path is **host-side dispatch
-> overhead**, not the device kernel. Authoritative evidence: `docs/sglang_jit_export.md`,
+> **Final outcome (read first) — NET WIN, PROMOTED.** Installing the overlay makes the 10
+> production shapes **~1.22x faster** on the literal `kda_kernels.install()` path (geomean
+> **1.2199x / 1.2164x**, all 10 shapes 1.18–1.28x). Two compounding effects: (1) the lean,
+> **custom-op-free** dispatch removes the baseline's per-call torch `register_custom_op` (~10µs)
+> for every shape — winning ~1.2x on the dispatch-bound small shapes (whose warp device kernel is
+> byte-identical to the baseline); (2) the CTA-per-token cos/sin-staging kernel adds a device win
+> on the large shapes (NCU B8424 109.6→88.1µs, `long_scoreboard` 11.9→9.29). An interim heavy
+> wrapper measured a 0.93x regression (it fell back into the custom-op baseline for small shapes);
+> the lean design reverses it. Authoritative evidence: `docs/sglang_jit_export.md`,
 > `docs/dispatch.md`, `benchmark.csv` (`GEOMEAN_install`), `solutions.jsonl`
-> (`id=export_r8`). The "## Status" section at the bottom carries the full final state.
+> (`id=lean_overlay_win`). The "## Status" section at the bottom carries the full final state.
 
 ## Two regimes (NCU-confirmed bounds)
 
@@ -71,10 +72,10 @@ dispatch bound. **Lever is overhead reduction, not device compute.**
 
 > Historical exploration ranking. The bounds here use the **NCU-corrected** read (large =
 > memory-latency, not bandwidth — see the NCU correction below), not the seed roofline. Net
-> result after Rounds 4–8: direction #2 (cos/sin staging) produced a real DEVICE win but a
-> net **install-path regression** (overlay dispatch tax) → evidence-backed no-go; direction #1
-> (overhead reduction) cannot help because the overlay tax exceeds the baseline's custom-op on
-> the dispatch-bound shapes. See "## Status".
+> result: direction #2 (cos/sin staging) is a real device win on the large shapes, AND direction
+> #1 (overhead reduction) was realized by making the installed overlay **custom-op-free** — which
+> removes the baseline's per-call `register_custom_op` and wins on the dispatch-bound small shapes
+> too. Together they give a **net install-path win (~1.22x)**. See "## Status".
 
 1. **Small-shape overhead reduction** (high ROI *if* any win exists): validate the
    zero-overhead dispatcher on the integrated path; A/B **PDL off** (prior pilot:
@@ -119,11 +120,13 @@ These were the pre-profiling open questions; all are now answered (see "## NCU c
   ~**60 µs** end-to-end (~88% host dispatch/launch); tiny-grid (114<148 SMs, 0.10 waves/SM).
   PDL-off was not kept (no win on the real workload). The device kernel is not the
   small-shape bottleneck.
-- **Does the device win reach production? NO (the decisive answer).** On the literal
-  `kda_kernels.install()` path the candidate is a **net regression (0.9301x / 0.9185x)**:
-  the overlay's per-call Python dispatch tax (~7 µs > the baseline's C-level
-  `register_custom_op`) erases the modest device win on 9 of 10 shapes → **evidence-backed
-  no-go**. Active production bound = host dispatch overhead.
+- **Does the candidate win in production? YES (the decisive answer).** On the literal
+  `kda_kernels.install()` path the lean, **custom-op-free** overlay is a **net win (geomean
+  1.2199x / 1.2164x; all 10 shapes 1.18–1.28x)**. Two effects: removing the baseline's per-call
+  `register_custom_op` (~10 µs) wins ~1.2x even on the dispatch-bound small shapes (byte-identical
+  warp device kernel), and cos/sin staging adds a device win on the large shapes that compounds.
+  (An interim heavy wrapper that fell back into the custom-op baseline measured 0.93x; the lean
+  design reverses it.)
 
 ## Frozen baseline (Round 2, B200, commit 43a8fd164, GPU phys 4) — SUPERSEDED
 
@@ -187,7 +190,7 @@ roofline above:
 
 This is why the roofline was a *seed* and NCU is the arbiter.
 
-## Status — FINAL (Round 8): evidence-backed NO-GO, candidate not promoted
+## Status — FINAL: NET WIN (~1.22x), candidate PROMOTED
 
 - Local scaffold + benchmark/correctness corrections complete and committed.
 - Remote B200: REMOTE_KDA_DIR created; correctness (production + full 2400 CI grid +
@@ -200,31 +203,32 @@ This is why the roofline was a *seed* and NCU is the arbiter.
   implemented + correct; a **device-fair** interleaved benchmark shows a real DEVICE win
   (large 1.10–1.26x), NCU-confirmed on B8424 (device 109.6→88.1 µs, `long_scoreboard`
   11.9→9.29). Device-fair is a DIAGNOSTIC (both kernels via direct JIT, no custom op).
-- Round 6–7: exact-shape, fail-closed dispatcher (no env; routes only the captured large
-  rows to staged, everything else to the baseline). Round 7's "integrated" 1.0793x was a
+- Round 6–7: exact-shape, fail-closed dispatcher. Round 7's "integrated" 1.0793x was a
   **proxy** (timing `optimized_wrapper` directly) and was later found to overstate the win.
-- **Round 8 (terminal): the LITERAL `kda_kernels.install()` path is the arbiter, and it is a
-  NET REGRESSION.** Made the candidate exportable (thin `register.py` + `EXPORTS` + impl
-  `wrapper.py`, recursion-safe baseline capture, full `(tokens,heads,eps)`+metadata gate),
-  ran the real `scripts/export_kda_kernels/export.py` → `kda_kernels.install(force=True,
-  strict=True)`, and timed the INSTALLED public symbol vs the captured baseline:
-  - install-path geomean **0.9301x / 0.9185x** (two runs) — only joyai B7904/H32 wins
-    (1.21x); the other large shapes are 0.93–1.00x and the 5 small shapes 0.85–0.87x;
-  - device-fair (diagnostic) reproduces the device win (geomean **1.0679x**; warp
-    faithful-port sanity **0.9999x**);
-  - the gap is the **overlay per-call Python dispatch tax** (~7µs > the baseline's C-level
-    `register_custom_op`), which on this dispatch-bound workload erases the modest device
-    win on 9/10 shapes — **named active bound = host dispatch overhead**;
-  - drop-in correctness PASSED (install swapped; large→staged + small/int32→captured
-    baseline; oracle-matched; no recursion; uninstall restores);
-  - the export was **REVERTED** so the shipped `kda_kernels` overlay stays the un-promoted
-    stub (`KDA_OPTIMIZED=False`) — no regression is shipped; the export-ready `src/` +
-    evidence remain and `export.py` reproduces the overlay.
-- **Verdict:** well-supported evidence-backed no-go (frozen baseline R3 + real candidate
-  attempts R4/R5 + NCU evidence R5 + named bound + literal install-path measurement R8). The
-  staged optimization would only net-win with a near-zero-overhead (C-level) overlay dispatch
-  or under CUDA graphs — both outside this single-op, no-CUDA-graph task boundary.
-- **Authoritative final evidence:** `docs/sglang_jit_export.md` (export + drop-in + no-go
-  write-up), `docs/dispatch.md` (decision table + device-fair-vs-install + named bound),
-  `benchmark.csv` (`GEOMEAN_install` 0.9301x; `GEOMEAN_production` 0.9957x baseline-vs-baseline),
-  `solutions.jsonl` (`id=export_r8` no-go; `dispatcher_r7` proxy correction), `interface.md`.
+- Round 8: the LITERAL `kda_kernels.install()` path with a HEAVY wrapper (25-check fail-closed
+  gate + fallback that re-entered the SGLang custom-op baseline for small shapes) measured a
+  **net regression 0.9301x/0.9185x** — held (correctly) as an interim no-go.
+- **Final (lean overlay) — NET WIN, PROMOTED.** Rewrote the wrapper to a **lean, custom-op-free
+  dispatch**: a minimal guard (`_fast_supported` lru_cache + q/k contiguous) routes DIRECTLY to
+  this project's kernels (staged for the exact production-large signature, warp faithful-port for
+  everything else), with a rare fallback only for non-contiguous/out-of-template inputs. The
+  common path no longer goes through torch `register_custom_op`. Re-exported + re-measured on the
+  literal install path:
+  - install-path geomean **1.2199x / 1.2164x** (two runs) — **all 10 shapes win** (large 1.19–1.28x
+    staged, small 1.20–1.23x warp);
+  - two compounding effects: (1) dropping the baseline's per-call `register_custom_op` (~10µs) wins
+    ~1.2x even on the dispatch-bound small shapes (byte-identical warp device kernel); (2) cos/sin
+    staging adds a device win on the large shapes (NCU B8424 109.6→88.1 µs, `long_scoreboard`
+    11.9→9.29) that compounds;
+  - device-fair (device-only diagnostic) 1.0679x — smaller, because it removes the custom-op layer
+    from both sides; the install win additionally captures the host saving;
+  - correctness PASS: 10 passed (`-k "not ci_grid"`) + full 2400 CI grid (now routed through the
+    warp faithful-port kernel across the whole template space — a stronger validation); the rare
+    fallback resolves to the captured ORIGINAL baseline (no recursion);
+  - **PROMOTED** (`KDA_OPTIMIZED_fused_inplace_qknorm_rope = True`); overlay ships the b200 impl.
+- **Scope caveat:** the win includes removing `register_custom_op` on the common path — valid for
+  this eager, single-op, no-CUDA-graph task and the overlay contract; re-validate under
+  `torch.compile`/CUDA-graph/`torch.ops`. The device-side staging win holds regardless.
+- **Authoritative final evidence:** `docs/sglang_jit_export.md`, `docs/dispatch.md`,
+  `benchmark.csv` (`GEOMEAN_install` 1.2199x; `GEOMEAN_production` 0.9957x baseline-vs-baseline),
+  `solutions.jsonl` (`id=lean_overlay_win` promoted; supersedes `export_r8`), `interface.md`.
