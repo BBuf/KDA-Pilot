@@ -14,7 +14,7 @@ Two modes:
 
 Timing: wall-clock (perf_counter + cuda sync) is the PRIMARY latency — it is the
 production-visible cost and exposes any Python dispatcher tax on the small
-shapes (AC-9). CUDA-event GPU time is also recorded for roofline bandwidth.
+launch-bound shapes. CUDA-event GPU time is also recorded for roofline bandwidth.
 
 All GPU work must run inside the ``sglang_bbuf`` container on an idle remote
 H200 with ``CUDA_VISIBLE_DEVICES`` pinned to the selected ``REMOTE_GPU_ID``.
@@ -173,7 +173,7 @@ def _ensure_header():
 
 
 def _row(**kw) -> list[Any]:
-    # AC-8: every row records the task-owned remote artifact root.
+    # Every row records the task-owned remote artifact root.
     kw.setdefault("remote_kda_dir", os.environ.get("REMOTE_KDA_DIR", ""))
     return [kw.get(c, "") for c in CSV_HEADER]
 

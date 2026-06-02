@@ -136,7 +136,7 @@ SGLang baseline:
   `warp::reduce_sum`) mirrors `python/sglang/jit_kernel/csrc/diffusion/qknorm_rope.cuh`;
   2-rows-per-warp 128-bit lever from KernelWiki (pytorch#150705, vllm#27931). No
   `torch.utils.cpp_extension`; no `--use_fast_math`.
-- **Export / install (task12, done):** promoted into the `kda_kernels` overlay via
+- **Export / install (done):** promoted into the `kda_kernels` overlay via
   `scripts/export_kda_kernels/export.py` (`src/register.py` `EXPORTS` + `src/wrapper.py`);
   `kda_kernels.install(strict=True)` swaps both public SGLang symbols to the native-CUDA
   dispatcher; the `.cuh` compile via `load_jit` from `kda_kernels/.../_impls/h200/`. Installed-path

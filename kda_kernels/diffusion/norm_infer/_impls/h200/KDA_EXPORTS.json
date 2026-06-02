@@ -5,9 +5,9 @@
     0
   ],
   "commit": "75d4a0ab8fbbaca3ca67b9ca2a979e5078cdd07f",
-  "commit_role": "export-source commit (git HEAD at export); the committed kda_kernels/diffusion/norm_infer/_impls/h200/ tree at this commit matches this package, so a consumer can reproduce the exported source from it",
-  "benchmarked_commit": "b9dcb121e",
-  "benchmarked_note": "speedup is measured on the candidate .cu/.cuh kernels (rms_norm_d128.cuh, layer_norm_n5120.cuh), which are byte-identical from 149392da2 (kernels first committed) through the export-source commit; Round 1/2/3 changed only export/wrapper/validation/metadata, not the kernels, so the geomean is unchanged",
+  "commit_role": "export-source commit (git HEAD at export). The IMPLEMENTATION files in this package (register.py, wrapper.py, norm_dispatch.py, rms_norm_d128.cuh, layer_norm_n5120.cuh) are byte-identical to this commit and reproduce from it. NOTE: the lineage-metadata files/fields in this package (this KDA_EXPORTS.json, KDA_STATUS.md, and the package __init__.py stamps) were added/refined in a later commit, so those metadata files are NOT reproduced by this commit -- only the implementation files are.",
+  "benchmarked_commit": "b9dcb121ea4c9a1eaf153442548972f5da4704f1",
+  "benchmarked_note": "geomean speedup is measured on the candidate kernels (rms_norm_d128.cuh, layer_norm_n5120.cuh), byte-identical from 149392da2 (kernels first committed) through the export-source commit; only export/wrapper/validation/metadata changed afterward, so the geomean is unchanged",
   "date": "2026-06-02",
   "exports": [
     "norm_infer",

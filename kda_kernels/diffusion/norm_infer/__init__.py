@@ -19,13 +19,16 @@ KDA_OPTIMIZED_norm_infer = True
 KDA_OPTIMIZED_triton_one_pass_rms_norm = True
 
 # Source lineage (see _impls/h200/KDA_EXPORTS.json for machine-readable detail):
-#   KDA_COMMIT_*           = export-source commit (git HEAD at export); this commit's
-#                           _impls/h200/ tree matches this package and is reproducible.
-#   KDA_BENCHMARKED_COMMIT_* = commit the geomean speedup reflects; the candidate .cu/.cuh
-#                           kernels are byte-identical from 149392da2 through the export-source
-#                           commit (only export/wrapper/validation/metadata changed afterward).
-KDA_BENCHMARKED_COMMIT_norm_infer = 'b9dcb121e'
-KDA_BENCHMARKED_COMMIT_triton_one_pass_rms_norm = 'b9dcb121e'
+#   KDA_COMMIT_*             = export-source commit (git HEAD at export). The IMPLEMENTATION
+#                             files (register.py, wrapper.py, norm_dispatch.py, *.cuh) are
+#                             byte-identical to this commit and reproduce from it. The
+#                             lineage-metadata files (KDA_EXPORTS.json, KDA_STATUS.md, the
+#                             stamps below) were added in a later commit and are NOT
+#                             reproduced by this commit.
+#   KDA_BENCHMARKED_COMMIT_* = commit the geomean reflects; the candidate kernels are
+#                             byte-identical from 149392da2 through the export-source commit.
+KDA_BENCHMARKED_COMMIT_norm_infer = 'b9dcb121ea4c9a1eaf153442548972f5da4704f1'
+KDA_BENCHMARKED_COMMIT_triton_one_pass_rms_norm = 'b9dcb121ea4c9a1eaf153442548972f5da4704f1'
 
 KDA_ARCHES_norm_infer = ('h200',)
 KDA_TASK_norm_infer = 'h200_diffusion_norm_infer__multi_shape'

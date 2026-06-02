@@ -1,7 +1,7 @@
 """Validate the integrated kda_kernels install() path on the remote H200.
 
 Captures the original SGLang baselines, runs kda_kernels.install(strict=True),
-confirms both public symbols are swapped, then enforces the AC-2 correctness
+confirms both public symbols are swapped, then enforces the strict correctness
 contract on the installed (swapped) SGLang-callable path: shape, dtype, no NaN,
 no Inf, candidate-vs-baseline AND candidate-vs-FP32-reference within the
 SGLang-style tolerances (fp32 LayerNorm 1e-5; bf16 RMS / select01 5e-2). Also

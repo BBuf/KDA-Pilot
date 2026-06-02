@@ -327,7 +327,7 @@ def test_candidate_matches_baseline(case) -> None:
 
 
 def test_select01_modulation_oracle() -> None:
-    """AC-2.3: the candidate norm_infer must be correct inside the select01
+    """The candidate norm_infer must be correct inside the select01
     dual-modulation fused path, not only in isolation. Mirrors
     test_qwen_image_modulation.py's reference decomposition, swapping the
     isolated norm_infer for the candidate dispatcher."""
