@@ -98,9 +98,6 @@ def _ensure_source() -> "Path":
     return dst
 
 
-_MODULE_CACHE: dict[tuple, object] = {}
-
-
 _SOURCE_HASH: "str | None" = None
 
 
@@ -113,31 +110,39 @@ def _source_hash() -> str:
     return _SOURCE_HASH
 
 
-def _jit_module(dtype):
-    h = _source_hash()
-    profile = os.environ.get("KDA_PROFILE", "") in ("1", "true", "True")
-    key = (str(dtype), h, profile)
-    if key not in _MODULE_CACHE:
-        from sglang.jit_kernel.utils import load_jit, make_cpp_args
+def _build_jit_module(dtype, src_hash, profile):
+    from sglang.jit_kernel.utils import load_jit, make_cpp_args
 
-        _ensure_source()
-        args = make_cpp_args(dtype)
-        targ = f"{args}"
-        # Profiling build adds -lineinfo so NCU can map SASS back to source.
-        # Still NO --use_fast_math (kept consistent with the SGLang jit_kernel build).
-        extra_cuda_cflags = ["-lineinfo"] if profile else None
-        markers = [*args, h] + (["lineinfo"] if profile else [])
-        _MODULE_CACHE[key] = load_jit(
-            "kda_rotary_embedding",
-            *markers,  # template args + source hash (+ lineinfo) -> rebuild on change
-            cuda_files=[_SGLANG_REL],
-            cuda_wrappers=[
-                ("standard_rope", f"StandardRopeKernel<{targ}>::run"),
-                ("ltx2_split_rope", f"Ltx2SplitRopeKernel<{targ}>::run"),
-            ],
-            extra_cuda_cflags=extra_cuda_cflags,
-        )
-    return _MODULE_CACHE[key]
+    _ensure_source()
+    args = make_cpp_args(dtype)
+    targ = f"{args}"
+    # Profiling build adds -lineinfo so NCU can map SASS back to source.
+    # Still NO --use_fast_math (kept consistent with the SGLang jit_kernel build).
+    extra_cuda_cflags = ["-lineinfo"] if profile else None
+    markers = [*args, src_hash] + (["lineinfo"] if profile else [])
+    return load_jit(
+        "kda_rotary_embedding",
+        *markers,  # template args + source hash (+ lineinfo) -> rebuild on change
+        cuda_files=[_SGLANG_REL],
+        cuda_wrappers=[
+            ("standard_rope", f"StandardRopeKernel<{targ}>::run"),
+            ("ltx2_split_rope", f"Ltx2SplitRopeKernel<{targ}>::run"),
+        ],
+        extra_cuda_cflags=extra_cuda_cflags,
+    )
+
+
+_jit_loader = None  # SGLang cache_once-wrapped builder, created lazily (sglang import stays lazy)
+
+
+def _jit_module(dtype):
+    global _jit_loader
+    if _jit_loader is None:
+        from sglang.jit_kernel.utils import cache_once
+
+        _jit_loader = cache_once(_build_jit_module)
+    profile = os.environ.get("KDA_PROFILE", "") in ("1", "true", "True")
+    return _jit_loader(dtype, _source_hash(), profile)  # cache_once keys on (dtype, hash, profile)
 
 
 # ---------------------------------------------------------------------------

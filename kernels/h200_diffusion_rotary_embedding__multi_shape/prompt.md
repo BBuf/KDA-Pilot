@@ -494,3 +494,16 @@ well-supported no-go explains why no defensible path remains under the
 available workspace;
 - `prompt.md`, `interface.md`, `benchmark.csv`, and `solutions.jsonl` are
 updated with the final result.
+
+---
+
+## Final Result (KDA completion — appended)
+
+Status: native CUDA candidate `native_cuda_v2_vectorized` (`src/csrc/rotary_embedding.cuh`), built through SGLang `jit_kernel` (`load_jit`/`make_cpp_args`/`cache_once`, no `--use_fast_math`), is **correct on all 6 deduplicated production shapes** and **faster than the autotuned SGLang Triton baseline on every shape**.
+
+- Hardware/oracle: NVIDIA H200 (`ion-h200-8`, GPU 7), SGLang `c47f0e7cd` whose diffusion `rotary.py`/`ltx2_rotary.py` are sha1-verified byte-identical to the pinned `6965fe0ee`.
+- Correctness: `KDA_RUN_CORRECTNESS=1 pytest tests/test_correctness.py` → 6 passed (CUDA route, dynamic bf16-noise tolerance; fallback + oracle-pin + manifest green).
+- Performance: geomean **1.296×** wall-clock (1.123×–1.492×), **1.297×** GPU-kernel (CUDA events). See `benchmark.csv`.
+- Bound: NCU `--set full`+`--set source` → active bound is **HBM memory bandwidth** (75–79% DRAM, ~80–90% of the H200 roofline) — near the attainable bound (`profile/ncu_v2_20260602_065439/REPORT.md`).
+- Dispatch: `docs/dispatch.md` (6 buckets promoted to CUDA; everything else falls back to the SGLang baseline/reference).
+- Export: in-SGLang drop-in replacement verified (`docs/sglang_jit_export.md`); `interface.md`, `benchmark.csv`, `solutions.jsonl` updated.
