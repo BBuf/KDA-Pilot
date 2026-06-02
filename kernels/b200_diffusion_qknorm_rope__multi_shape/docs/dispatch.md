@@ -1,5 +1,12 @@
 # Dispatch decision table — b200_diffusion_qknorm_rope__multi_shape
 
+> **FINAL OUTCOME (supersedes the overlay no-go below):** the kernel ships via an **in-tree
+> `.cuh` placement** in SGLang (keeping SGLang's own `register_custom_op` → **torch.compile-safe**),
+> not the `kda_kernels` overlay. In-tree device geomean **~1.07–1.12x** (large 1.10–1.33x, small
+> parity), correctness 10/10. See `docs/sglang_jit_export.md`. The sections below describe the
+> (un-promoted) overlay dispatcher and its eager install-path numbers, kept for contrast — the
+> overlay drops `register_custom_op` and is NOT torch.compile-safe.
+
 `optimized_wrapper` (in `src/wrapper.py`, forwarded by `src/register.py`) is an
 **exact-shape, fail-closed dispatcher**. It reads **no environment variables**.
 

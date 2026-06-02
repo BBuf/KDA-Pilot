@@ -168,6 +168,19 @@ __global__ void fused_qknorm_rope_warp(const QKNormRopeParams __grid_constant__ 
   PDLTriggerSecondary<kUsePDL>();
 }
 
+// Forward declaration so QKNormRopeKernel::run (below) can delegate the production-large path
+// to the CTA-per-token staged kernel, which is fully defined later in this file. The call is
+// type-dependent (templated on QKNormRopeKernel's params), so it is instantiated only after the
+// full definition is available.
+template <int64_t kHeadDim, int64_t kRopeDim, bool kIsNeox, bool kUsePDL, typename DType>
+struct QKNormRopeStagedKernel;
+
+// Token-count threshold above which the production config uses the CTA-per-token staged kernel.
+// Production small shapes are <=195 tokens; production large are >=4096; staging only helps the
+// large (memory-latency-bound) regime, so 512 cleanly separates them. Both kernels compute the
+// same result, so this is a performance heuristic, not a correctness gate.
+inline constexpr uint32_t kStagedMinTokens = 512;
+
 template <int64_t kHeadDim, int64_t kRopeDim, bool kIsNeox, bool kUsePDL, typename DType>
 struct QKNormRopeKernel {
   static_assert(kHeadDim <= 256, "Only head_dim <= 256 is supported");
@@ -236,6 +249,18 @@ struct QKNormRopeKernel {
         runtime::get_blocks_per_sm(kernel<int64_t>, kThreadsPerBlock),
     };
     const auto max_blocks = kOccupancyTable[is_int32 ? 0 : 1] * kNumSM;
+    // In-tree drop-in dispatch: for the exact production template (head_dim=128, rope_dim=128,
+    // non-neox, bf16) delegate large token counts to the CTA-per-token staged kernel (the device
+    // win). This makes a plain swap of THIS .cuh into SGLang's csrc transparently deliver the win
+    // while SGLang keeps its OWN register_custom_op wrapper (torch.compile-safe). The constexpr
+    // gate keeps every other template (CI grid: head_dim 64/256, neox, fp16) on the warp path.
+    if constexpr (kHeadDim == 128 && kRopeDim == 128 && !kIsNeox && std::is_same_v<DType, bf16_t>) {
+      if (num_tokens >= kStagedMinTokens) {
+        QKNormRopeStagedKernel<kHeadDim, kRopeDim, kIsNeox, kUsePDL, DType>::run(
+            q, k, q_weight, k_weight, cos_sin_cache, positions, eps);
+        return;
+      }
+    }
     const auto num_works = (num_qo_heads + num_kv_heads) * num_tokens;
     const auto needed_blocks = div_ceil(num_works, kWarpsPerBlock);
     const auto num_blocks = std::min(max_blocks, needed_blocks);

@@ -154,26 +154,29 @@ routes + negatives + exact-shape routing + fail-closed gate + fallback-correctne
 wrong-eps fallback + the literal `kda_kernels.install()` drop-in/no-recursion test) and the
 full 2400-case CI grid (correctness-or-fallback). `correctness_r8.log` / `cigrid_r8.log`.
 
-## Performance (final) — evidence-backed NO-GO
+## Performance (final) — torch.compile-safe device win via IN-TREE placement
 
-The staged kernel is a **real device win** but a **net regression once installed** through
-the `kda_kernels` overlay. **Not promoted.** Full write-up: `docs/sglang_jit_export.md`.
+Integrated the #19 way: a **real in-tree placement** of the candidate `.cuh` in SGLang's `csrc`,
+keeping SGLang's OWN `register_custom_op` wrapper (**torch.compile-safe**). Full write-up:
+`docs/sglang_jit_export.md`.
 
-- **Literal install path** (`kda_kernels.install()`; baseline custom-op vs the INSTALLED
-  public symbol, interleaved; Round 8, idle B200): geomean **0.9301x / 0.9185x** (two runs)
-  — a net regression. Per-shape (run 1): joyai-edit B7904/H32 **1.21x** (only winner); qwen
-  B4096 0.97x; qwen-edit B8424 1.00x; zimage B4096/B4128 0.93x; the 5 small rows 0.85–0.87x.
-  Rows in `benchmark.csv` (`*__install` + `GEOMEAN_install`).
-- Device-fair (symmetric direct JIT modules, interleaved; diagnostic): geomean **1.0679x**,
-  large 1.10–1.26x, small 0.98–1.00x; warp faithful-port sanity **0.9999x**. NCU: B8424
-  device 109.6→88.1 µs, `long_scoreboard` 11.9→9.29.
-- **Named active bound:** host-side dispatch/launch overhead. The device-fair→install gap
-  (1.07x → 0.93x) is the overlay's per-call Python dispatch tax (~7 µs > the baseline's
-  C-level `register_custom_op`); on this dispatch-bound workload it erases the modest device
-  win on 9 of 10 shapes (only joyai's ~18 µs device saving overcomes it).
-- The Round 7 `*__integrated` 1.0793x was a PROXY (timing `optimized_wrapper` directly,
-  skipping the real overlay frame); it is superseded by the literal install path above and
-  removed from `benchmark.csv` (`GEOMEAN_production` 0.9957x baseline-vs-baseline retained).
+- **In-tree (torch.compile-safe — both sides through SGLang's identical `register_custom_op`,
+  so the ratio is the pure DEVICE delta):** geomean **~1.07–1.12x** (`benchmark.csv`
+  `GEOMEAN_intree` 1.1182x, idle B200). Large shapes **1.10–1.33x** (joyai/qwen/qwen-edit/zimage);
+  small shapes **~1.0x parity** (the warp kernel is byte-identical to the baseline — no device
+  change). Correctness: **10/10 production shapes oracle_ok** through SGLang's own public op.
+- Device-fair (symmetric direct JIT modules, interleaved, noise-canceling; the conservative
+  device-delta): geomean **1.0679x**, large 1.10–1.26x, small ~1.0x; warp sanity **0.9999x**.
+  NCU: B8424 device 109.6→88.1 µs, `long_scoreboard` 11.9→9.29.
+- **Mechanism:** `src/qknorm_rope_candidate.cuh`'s `QKNormRopeKernel<...>::run` (what SGLang calls)
+  `if constexpr`-delegates the exact production template (128/128/!neox/bf16) with
+  `num_tokens>=512` to `QKNormRopeStagedKernel`; everything else uses the warp path. So dropping
+  this `.cuh` into SGLang's `csrc` transparently delivers the win with `register_custom_op` intact.
+- **NOT taken — the `kda_kernels` overlay** (`kda_kernels.install()`): its eager `GEOMEAN_install`
+  was 0.93x→1.22x depending on the wrapper, but it works by replacing the public symbol with a
+  PLAIN dispatcher (dropping `register_custom_op`) → **not torch.compile-safe**. Production requires
+  torch.compile, so the overlay is **not promoted** (`KDA_OPTIMIZED=False`). The `*__install` rows
+  remain in `benchmark.csv` for contrast only.
 
 ## Source lineage
 `src/qknorm_rope_candidate.cuh` ported from sglang `csrc/diffusion/qknorm_rope.cuh`
@@ -181,16 +184,16 @@ the `kda_kernels` overlay. **Not promoted.** Full write-up: `docs/sglang_jit_exp
 Tolerance = SGLang split-path oracle, ATOL=8e-2/RTOL=1e-2. Tooling commits:
 `e2b54594a`, `69ae5b366`, `56997201e`, `a304b8eac`.
 
-## Promotion status — NO-GO (AC-8 complete)
-- AC-8 export + drop-in is DONE and the decision is an evidence-backed **no-go**. The repo
-  export path (`scripts/export_kda_kernels/export.py` → `kda_kernels.install()`) was
-  exercised end-to-end: drop-in correctness + fallback + no-recursion all PASS, but the
-  literal install path is a net regression (0.9301x). The export was **reverted** so the
-  shipped `kda_kernels` overlay stays the un-promoted stub (`KDA_OPTIMIZED=False`); the
-  export-ready `src/` + evidence remain, and `export.py` reproduces the overlay. Details:
-  `docs/sglang_jit_export.md`.
-- (The plan's AC-8 wording referenced `python/sglang/jit_kernel/csrc/...`; this project's
-  actual integrated path is the `kda_kernels` overlay — see `docs/sglang_jit_export.md`.)
+## Promotion status — IN-TREE placement (torch.compile-safe), overlay NOT promoted
+- **Shipped integration: in-tree `.cuh` placement** in SGLang's `csrc` (the #19 / AC-8-literal
+  way), validated on B200: 10/10 production correctness through SGLang's own op + a
+  torch.compile-safe device win (`GEOMEAN_intree` ~1.07–1.12x; large 1.10–1.33x, small parity).
+  SGLang's `register_custom_op` wrapper is preserved. Apply via the documented drop-in (replace
+  `python/sglang/jit_kernel/csrc/diffusion/qknorm_rope.cuh` with this task's `.cuh`).
+  See `docs/sglang_jit_export.md` + `profile/in_sglang/validate_in_tree.py`.
+- **`kda_kernels` overlay: NOT promoted** (`KDA_OPTIMIZED_fused_inplace_qknorm_rope = False`). The
+  overlay replaces the public symbol with a plain dispatcher (drops `register_custom_op`) → not
+  torch.compile-safe, which production requires. Its eager numbers are kept only for contrast.
 
 (Frozen baseline numbers + exact command + selected GPU id/model are recorded above
 in "Frozen Baseline (Round 3 refreeze)".)

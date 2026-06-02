@@ -1,5 +1,11 @@
 # Design notes: b200_diffusion_qknorm_rope__multi_shape
 
+> **FINAL OUTCOME:** ships via an **in-tree `.cuh` placement** in SGLang (keeps SGLang's own
+> `register_custom_op` → **torch.compile-safe**), device geomean ~1.07–1.12x (large 1.10–1.33x,
+> small parity), correctness 10/10 — see `docs/sglang_jit_export.md`. The `kda_kernels` overlay is
+> NOT promoted (it drops `register_custom_op`, not torch.compile-safe). The historical sections
+> below (the overlay no-go narrative) are kept for the record.
+
 Working notes for the B200 optimization of SGLang's `fused_inplace_qknorm_rope`.
 Updated as evidence lands. See `interface.md` for the recovered contract and the
 top-level RLCR plan for acceptance criteria.
