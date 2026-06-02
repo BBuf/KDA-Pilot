@@ -120,12 +120,27 @@ integrated install-path validation.
   long_scoreboard dominant, 89% occupancy). Full per-row stats + provenance + per-row
   idle snapshots are in `benchmark.csv`.
 
+## Dispatch table (Round 6)
+
+`optimized_wrapper` is an evidence-gated dispatcher (no env var; `KDA_CAND_VARIANT`
+overrides for experiments). Full per-shape table + evidence in `docs/dispatch.md`:
+- production config (`head_dim=128, rope_dim=128, is_neox=False, bf16, contiguous`),
+  `num_tokens >= 512` → `QKNormRopeStagedKernel` (device-fair 1.10–1.26x);
+- production config, `num_tokens < 512` → SGLang baseline (small = launch/dispatch-bound,
+  staging gives no device win);
+- any non-production dtype/head_dim/rope_dim/is_neox or non-contiguous layout → SGLang
+  baseline fallback (explicit, before the C++ `TensorMatcher`).
+Correctness re-validated with the dispatcher active (6 passed: production routes +
+negatives + dispatch-logic; CI-grid correctness-or-fallback).
+
 ## To Be Filled Before Promotion
 
-- final wrapper signature once the specialized kernel is wired in;
-- per-shape dispatch table (which candidate handles which bucket);
-- confirmed fallback cases;
-- source lineage for any ported/adapted helper code.
+- final wrapper signature (stable; matches the recovered contract above);
+- tolerance methodology = SGLang split-path oracle, ATOL=8e-2/RTOL=1e-2 (see above);
+- source lineage: `src/qknorm_rope_candidate.cuh` ported from sglang
+  `csrc/diffusion/qknorm_rope.cuh` @`6965fe0ee`; staging variant added in-workspace;
+  benchmark/dispatch tooling commits `e2b54594a`, `69ae5b366`, `56997201e`;
+- integrated install-path (`kda_kernels.install`) validation + SGLang export (AC-8).
 
 (Frozen baseline numbers + exact command + selected GPU id/model are recorded above
 in "Frozen Baseline (Round 3 refreeze)".)

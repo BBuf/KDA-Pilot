@@ -275,11 +275,20 @@ def _integrated_main(correctness, register) -> int:
     from sglang.jit_kernel.diffusion.qknorm_rope import fused_inplace_qknorm_rope as baseline_op
     from sglang.srt.utils.custom_op import register_custom_op
 
-    @register_custom_op(mutates_args=["q", "k"])
-    def kda_candidate_qknorm_rope(q, k, q_weight, k_weight, cos_sin_cache, positions,
-                                  *, is_neox, eps=1e-6, head_dim=0, rope_dim=0):
+    def _kda_cand_impl(q, k, q_weight, k_weight, cos_sin_cache, positions,
+                       *, is_neox, eps=1e-6, head_dim=0, rope_dim=0):
         register.optimized_wrapper(q, k, q_weight, k_weight, cos_sin_cache, positions,
                                    is_neox=is_neox, eps=eps, head_dim=head_dim, rope_dim=rope_dim)
+
+    # `from __future__ import annotations` stringifies annotations, which
+    # torch.library.infer_schema (used by register_custom_op) cannot resolve. Set the
+    # real-type annotations explicitly before registering.
+    _kda_cand_impl.__annotations__ = {
+        "q": torch.Tensor, "k": torch.Tensor, "q_weight": torch.Tensor,
+        "k_weight": torch.Tensor, "cos_sin_cache": torch.Tensor, "positions": torch.Tensor,
+        "is_neox": bool, "eps": float, "head_dim": int, "rope_dim": int, "return": None,
+    }
+    kda_candidate_qknorm_rope = register_custom_op(mutates_args=["q", "k"])(_kda_cand_impl)
 
     inner = int(os.environ.get("KDA_BENCH_INNER", "1"))
     cases = [c for c in correctness.make_cases() if not c.get("ci_fallback")]
