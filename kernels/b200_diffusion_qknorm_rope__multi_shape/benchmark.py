@@ -54,7 +54,6 @@ except ImportError:  # pragma: no cover
     torch = None
 
 
-KERNEL_SLUG = "b200_diffusion_qknorm_rope__multi_shape"
 KERNEL_DIR = Path(__file__).resolve().parent
 
 # All candidate source files whose dirtiness must be reflected in benchmark provenance:
