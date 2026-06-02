@@ -32,7 +32,11 @@ _CUDA_ENABLED = True
 _HERE = Path(__file__).resolve().parent
 _CUH = str(_HERE / "norm_cuda" / "diffusion_norm_infer.cuh")
 _INCLUDE = str(_HERE / "norm_cuda")
-_KERNEL_VERSION = "v1"  # bump to force a JIT rebuild (stale-JIT guard); v1 = float4 LN
+_KERNEL_VERSION = "v2"  # bump to force a JIT rebuild (stale-JIT guard); v2 = per-S RMS kUnroll
+# Large-S RMS uses kUnroll>1 (memory-level parallelism hides load latency); small/mid
+# RMS keeps kUnroll=1 (one row/warp) to maximize warp count / occupancy.
+_RMS_LARGE_S = 100000
+_RMS_LARGE_UNROLL = 4
 _LN_MAX_N = 8192  # LayerNorm CUDA kernel covers at most kLNThreads*kLNMaxElems cols
 
 # Configured-shape allowlists. CUDA routes ONLY these exact (M,N)/(S,D) shapes;
@@ -47,8 +51,15 @@ _SUPPORTED_LN = frozenset({
     (128, 512), (128, 3072), (256, 512), (256, 3072),   # CI regression / fused grid
     (64, 1024), (256, 1024),                            # NaN/Inf + preallocated-out coverage
 })
+# NO-GO (round 4): the two large-S production shapes (648720, 650040) are NOT in
+# the CUDA allowlist -> they fall back to the SGLang Triton baseline (= parity).
+# Evidence: the warp-per-row kernel (incl. the kUnroll=2/4 MLP variant) measured
+# ~0.84-0.92x vs the baseline on idle B200 (interleaved); NCU showed memory-latency
+# + compute(SM)-leaning (DRAM 38% / Mem 47% / SM 63%, occ 77%), and the one-warp-
+# per-row structure cannot match the baseline's 16-row tile for this huge
+# bandwidth-streaming regime. Falling back avoids a production regression.
 _SUPPORTED_RMS = frozenset({
-    (648720, 128), (1320, 128), (650040, 128), (16384, 128), (4096, 128),  # production
+    (1320, 128), (16384, 128), (4096, 128),             # production small/mid (CUDA wins ~1.5-1.7x)
     (6, 128), (128, 128), (768, 128), (64, 128),        # regression-small + NaN/Inf coverage
 })
 
@@ -94,13 +105,13 @@ def _ln_module(dtype):
     return mod
 
 
-def _rms_module(dim, dtype):
-    key = ("rms", int(dim), str(dtype))
+def _rms_module(dim, k_unroll, dtype):
+    key = ("rms", int(dim), int(k_unroll), str(dtype))
     mod = _MODULE_CACHE.get(key)
     if mod is None:
         from sglang.jit_kernel.utils import load_jit, make_cpp_args
 
-        args = make_cpp_args(int(dim), dtype)
+        args = make_cpp_args(int(dim), int(k_unroll), dtype)
         mod = load_jit(
             "b200_diffnorm_rms",
             _KERNEL_VERSION,
@@ -195,7 +206,8 @@ def _cuda_rms_onepass(x, w, eps=1e-6):
     x2d = x.reshape(-1, shape[-1])
     out = torch.empty_like(x)
     out2d = out.reshape(-1, shape[-1])
-    _rms_module(shape[-1], x.dtype).rms_onepass(x2d, w, out2d, eps)
+    k_unroll = _RMS_LARGE_UNROLL if x2d.shape[0] >= _RMS_LARGE_S else 1
+    _rms_module(shape[-1], k_unroll, x.dtype).rms_onepass(x2d, w, out2d, eps)
     return out
 
 

@@ -181,48 +181,68 @@ struct RmsNormParams {
 
 constexpr uint32_t kRmsThreads = 256;
 
-template <int kD, typename DType>
+// One warp per row; each warp processes `kUnroll` rows per grid-stride step.
+// NCU on the S~650K bucket showed the kernel is memory-LATENCY bound (long
+// scoreboard ~56% of stalls, DRAM only ~38%), not bandwidth bound. Issuing all
+// `kUnroll` row loads before reducing creates memory-level parallelism that hides
+// that latency. kUnroll=1 reproduces the original 1-row/warp kernel (used for the
+// small/mid shapes, which want max warp count for occupancy).
+template <int kD, int kUnroll, typename DType>
 __global__ void rmsnorm_onepass_kernel(const RmsNormParams __grid_constant__ params) {
   using namespace device;
   static_assert(kD % 32 == 0, "kD must be a multiple of the warp size");
-  constexpr uint32_t kElemsPerThread = kD / 32;
-  using Vec = AlignedVector<DType, kElemsPerThread>;
+  constexpr uint32_t kEPT = kD / 32;
+  using Vec = AlignedVector<DType, kEPT>;
 
   const uint32_t lane = threadIdx.x % 32;
   const uint32_t warp = threadIdx.x / 32;
-  const uint32_t warps_per_block = blockDim.x / 32;
-  const uint32_t row = blockIdx.x * warps_per_block + warp;
-  if (row >= params.S) return;
+  const uint32_t wpb = blockDim.x / 32;
+  const uint32_t global_warp = blockIdx.x * wpb + warp;
+  const int64_t num_warps = static_cast<int64_t>(gridDim.x) * wpb;
+  const int64_t S = static_cast<int64_t>(params.S);
+  const int64_t stride = params.row_stride;
 
-  const DType* x = static_cast<const DType*>(params.x_ptr) + static_cast<int64_t>(row) * params.row_stride;
-  DType* y = static_cast<DType*>(params.y_ptr) + static_cast<int64_t>(row) * params.row_stride;
-  const DType* w = static_cast<const DType*>(params.w_ptr);
+  const DType* X = static_cast<const DType*>(params.x_ptr);
+  DType* Y = static_cast<DType*>(params.y_ptr);
 
-  Vec xv, wv;
-  xv.load(x, lane);  // lane owns elements [lane*kElemsPerThread, +kElemsPerThread)
-  wv.load(w, lane);
-
-  float elems[kElemsPerThread];
-  float ss = 0.0f;
+  // Load the per-feature weight ONCE per warp and reuse across all its rows.
+  Vec wv;
+  wv.load(static_cast<const DType*>(params.w_ptr), lane);
+  float wf[kEPT];
 #pragma unroll
-  for (uint32_t i = 0; i < kElemsPerThread; ++i) {
-    const float v = cast<fp32_t>(xv[i]);
-    elems[i] = v;
-    ss += v * v;
-  }
-  ss = warp::reduce_sum(ss);
-  const float rstd = math::rsqrt(ss / static_cast<float>(kD) + params.eps);
+  for (uint32_t i = 0; i < kEPT; ++i) wf[i] = cast<fp32_t>(wv[i]);
 
-  Vec yv;
+  for (int64_t chunk = static_cast<int64_t>(global_warp) * kUnroll; chunk < S;
+       chunk += num_warps * kUnroll) {
+    Vec xv[kUnroll];
+    bool valid[kUnroll];
 #pragma unroll
-  for (uint32_t i = 0; i < kElemsPerThread; ++i) {
-    const float ww = cast<fp32_t>(wv[i]);
-    yv[i] = cast<DType>(elems[i] * rstd * ww);
+    for (int u = 0; u < kUnroll; ++u) {
+      const int64_t r = chunk + u;
+      valid[u] = r < S;
+      if (valid[u]) xv[u].load(X + r * stride, lane);  // all loads issued -> MLP
+    }
+#pragma unroll
+    for (int u = 0; u < kUnroll; ++u) {
+      if (!valid[u]) continue;
+      float e[kEPT];
+      float ss = 0.0f;
+#pragma unroll
+      for (uint32_t i = 0; i < kEPT; ++i) {
+        e[i] = cast<fp32_t>(xv[u][i]);
+        ss += e[i] * e[i];
+      }
+      ss = warp::reduce_sum(ss);
+      const float rstd = math::rsqrt(ss / static_cast<float>(kD) + params.eps);
+      Vec yv;
+#pragma unroll
+      for (uint32_t i = 0; i < kEPT; ++i) yv[i] = cast<DType>(e[i] * rstd * wf[i]);
+      yv.store(Y + (chunk + u) * stride, lane);
+    }
   }
-  yv.store(y, lane);
 }
 
-template <int kD, typename DType>
+template <int kD, int kUnroll, typename DType>
 struct RmsNormOnepassKernel {
   static void
   run(const tvm::ffi::TensorView x,
@@ -251,8 +271,8 @@ struct RmsNormOnepassKernel {
         .S = s,
         .eps = eps,
     };
-    const auto blocks = div_ceil(s, kWarpsPB);
-    LaunchKernel(blocks, kRmsThreads, device.unwrap()).enable_pdl(false)(rmsnorm_onepass_kernel<kD, DType>, params);
+    const auto blocks = div_ceil(s, kWarpsPB * kUnroll);
+    LaunchKernel(blocks, kRmsThreads, device.unwrap()).enable_pdl(false)(rmsnorm_onepass_kernel<kD, kUnroll, DType>, params);
   }
 };
 

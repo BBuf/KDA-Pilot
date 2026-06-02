@@ -93,34 +93,35 @@ def _provenance() -> dict[str, str]:
     }
 
 
-def _time_call_wall(fn: Callable[[dict], Any], case: dict, *, warmup: int, iters: int) -> list[float]:
-    for _ in range(warmup):
-        fn(case)
-    _sync()
-    samples = []
-    for _ in range(iters):
+def _one(fn: Callable[[dict], Any], case: dict, kind: str) -> float:
+    if kind == "wall_clock":
         start = time.perf_counter()
         fn(case)
         _sync()
-        samples.append((time.perf_counter() - start) * 1e6)
-    return samples
+        return (time.perf_counter() - start) * 1e6
+    # kernel_event: GPU-only time via CUDA events (excludes Python/launch overhead)
+    e0 = torch.cuda.Event(enable_timing=True)
+    e1 = torch.cuda.Event(enable_timing=True)
+    e0.record()
+    fn(case)
+    e1.record()
+    e1.synchronize()
+    return e0.elapsed_time(e1) * 1e3  # ms -> us
 
 
-def _time_call_events(fn: Callable[[dict], Any], case: dict, *, warmup: int, iters: int) -> list[float]:
-    """Kernel-only GPU time via CUDA events (excludes Python/launch overhead)."""
+def _time_pair(fa, fb, case: dict, *, warmup: int, iters: int, kind: str):
+    """INTERLEAVE A and B per iteration so slow GPU-clock drift / throttling
+    cancels in the A/B ratio. Measuring A fully then B fully gave unstable
+    cross-block ratios (a clock change between blocks corrupts the speedup)."""
     for _ in range(warmup):
-        fn(case)
+        fa(case)
+        fb(case)
     _sync()
-    samples = []
+    sa, sb = [], []
     for _ in range(iters):
-        start_evt = torch.cuda.Event(enable_timing=True)
-        end_evt = torch.cuda.Event(enable_timing=True)
-        start_evt.record()
-        fn(case)
-        end_evt.record()
-        end_evt.synchronize()
-        samples.append(start_evt.elapsed_time(end_evt) * 1e3)  # ms -> us
-    return samples
+        sa.append(_one(fa, case, kind))
+        sb.append(_one(fb, case, kind))
+    return sa, sb
 
 
 def _summary(samples: list[float]) -> dict[str, float]:
@@ -177,8 +178,8 @@ def main() -> int:
         f"container={prov['container']} slug={KERNEL_SLUG} cand={cid}"
     )
 
-    timers = [("wall_clock", _time_call_wall), ("kernel_event", _time_call_events)]
-    speedups_by_kind: dict[str, list[float]] = {k: [] for k, _ in timers}
+    timers = ["wall_clock", "kernel_event"]
+    speedups_by_kind: dict[str, list[float]] = {k: [] for k in timers}
 
     csv_path = KERNEL_DIR / "benchmark.csv"
     with csv_path.open("a", newline="") as f:
@@ -187,26 +188,30 @@ def main() -> int:
             name = case.get("name", "unknown")
             warmup = int(case.get("warmup", 25))
             iters = int(case.get("iters", 100))
-            for kind, timer in timers:
-                b = _summary(timer(correctness.baseline, case, warmup=warmup, iters=iters))
-                c = _summary(timer(correctness.candidate, case, warmup=warmup, iters=iters))
+            for kind in timers:
+                bs, cs = _time_pair(correctness.baseline, correctness.candidate, case,
+                                    warmup=warmup, iters=iters, kind=kind)
+                b = _summary(bs)
+                c = _summary(cs)
                 spd = (b["median_us"] / c["median_us"]) if c["median_us"] > 0 else float("nan")
+                spd_min = (b["min_us"] / c["min_us"]) if c["min_us"] > 0 else float("nan")
                 speedups_by_kind[kind].append(spd)
                 notes = (
-                    f"metric_kind={kind} baseline_mean_us={b['mean_us']:.3f} "
-                    f"cand_mean_us={c['mean_us']:.3f} cand_std_us={c['std_us']:.3f} "
-                    f"cand_p10_us={c['p10_us']:.3f} cand_p90_us={c['p90_us']:.3f} "
-                    f"cand_min_us={c['min_us']:.3f} warmup={warmup} iters={iters} {prov_note}"
+                    f"metric_kind={kind} interleaved=1 baseline_mean_us={b['mean_us']:.3f} "
+                    f"baseline_min_us={b['min_us']:.3f} cand_mean_us={c['mean_us']:.3f} "
+                    f"cand_std_us={c['std_us']:.3f} cand_p10_us={c['p10_us']:.3f} "
+                    f"cand_p90_us={c['p90_us']:.3f} cand_min_us={c['min_us']:.3f} "
+                    f"speedup_min_x={spd_min:.4f} warmup={warmup} iters={iters} {prov_note}"
                 )
                 _row(writer, candidate_id=cid, case_name=name, metric="median_us",
                      baseline_us=b["median_us"], candidate_us=c["median_us"], speedup=spd, notes=notes)
                 print(f"{name:32s} [{kind:12s}] baseline={b['median_us']:.2f}us "
-                      f"cand={c['median_us']:.2f}us speedup={spd:.3f}x")
-        for kind, _ in timers:
+                      f"cand={c['median_us']:.2f}us speedup={spd:.3f}x (min {spd_min:.3f}x)")
+        for kind in timers:
             geo = _geom_mean(speedups_by_kind[kind])
             _row(writer, candidate_id=cid, case_name="production_geomean", metric="geomean_speedup_x",
                  baseline_us=None, candidate_us=None, speedup=geo,
-                 notes=f"metric_kind={kind} n_shapes={len(cases)} {prov_note}")
+                 notes=f"metric_kind={kind} interleaved=1 n_shapes={len(cases)} {prov_note}")
             print(f"GEOMEAN [{kind}] = {geo:.4f}x over {len(cases)} production shapes")
     return 0
 
