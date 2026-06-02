@@ -57,6 +57,14 @@ except ImportError:  # pragma: no cover
 KERNEL_SLUG = "b200_diffusion_qknorm_rope__multi_shape"
 KERNEL_DIR = Path(__file__).resolve().parent
 
+# All candidate source files whose dirtiness must be reflected in benchmark provenance:
+# the registration forwarder, the dispatch/wrapper logic, AND the CUDA kernel itself.
+_CANDIDATE_SRC_FILES = (
+    "src/register.py",
+    "src/wrapper.py",
+    "src/qknorm_rope_candidate.cuh",
+)
+
 CSV_COLUMNS = [
     "timestamp", "preset", "bucket", "name",
     "num_tokens", "num_heads", "head_dim", "rope_dim", "is_neox", "eps",
@@ -95,7 +103,10 @@ def _candidate_source_version() -> str:
     if env:
         return env[:9]
     commit = _git("rev-parse", "--short", "HEAD")
-    dirty = _git("status", "--porcelain", "--", "src/register.py")
+    # Flag +dirty if ANY candidate source (forwarder, dispatch wrapper, or CUDA kernel) has
+    # uncommitted edits — not just register.py — so a row can never be attributed to a clean
+    # commit while the actual dispatch/device logic was locally modified.
+    dirty = _git("status", "--porcelain", "--", *_CANDIDATE_SRC_FILES)
     return f"{commit}{'+dirty' if dirty and dirty != 'unknown' else ''}"
 
 
