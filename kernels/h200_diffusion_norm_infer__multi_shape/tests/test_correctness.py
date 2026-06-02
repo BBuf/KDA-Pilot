@@ -194,7 +194,17 @@ def regression_cases() -> list[dict[str, Any]]:
 
 
 def make_cases() -> list[dict[str, Any]]:
-    """All cases. benchmark.py uses only the perf group (it filters by group)."""
+    """All cases. benchmark.py uses only the perf group (it filters by group).
+
+    Returns an empty list when torch is unavailable: this function is evaluated at
+    pytest COLLECTION time (it feeds ``@pytest.mark.parametrize``), before the
+    module-level skip can apply, so it must not dereference ``torch`` (e.g. via
+    ``_dtype``) on a lightweight/non-CUDA machine. An empty parametrize set makes the
+    parametrized tests collect-and-skip cleanly; benchmark.py only calls this in a
+    CUDA env where torch is present.
+    """
+    if torch is None:
+        return []
     return perf_cases() + regression_cases()
 
 

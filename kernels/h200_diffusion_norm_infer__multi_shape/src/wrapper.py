@@ -10,7 +10,18 @@ exposes those names; the actual implementation lives in ``norm_dispatch.py``
 
 from __future__ import annotations
 
-from norm_dispatch import (  # noqa: F401
-    norm_infer,
-    triton_one_pass_rms_norm,
-)
+# Relative-first so the promoted module imports by normal package semantics
+# (kda_kernels.diffusion.norm_infer._impls.<arch>.wrapper) without relying on a
+# sys.path mutation and without colliding with any unrelated top-level
+# `norm_dispatch`. The absolute fallback supports loading the task `src/` dir
+# directly on sys.path (where there is no parent package).
+try:
+    from .norm_dispatch import (  # noqa: F401
+        norm_infer,
+        triton_one_pass_rms_norm,
+    )
+except ImportError:
+    from norm_dispatch import (  # noqa: F401
+        norm_infer,
+        triton_one_pass_rms_norm,
+    )
