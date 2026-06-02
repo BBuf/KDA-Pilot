@@ -15,7 +15,7 @@ One row per (candidate, shape, metric). Columns (matches `benchmark.py`'s writer
 | `baseline_us` | Baseline median latency (µs); empty for the geomean row |
 | `candidate_us` | Candidate median latency (µs); empty for the geomean row |
 | `speedup_x` | `baseline_us / candidate_us` (e.g. `1.234567x`); for the geomean row, the geometric mean of per-shape speedups |
-| `notes` | `key=value` pairs: `baseline_mean_us`, `cand_mean_us`, `cand_p10`, `cand_p90`, `iters`, `warmup`, `gpu_model`, `gpu_id`, `host`, `metric_kind` (`wall_clock` primary / `kernel_event` secondary), `slug` |
+| `notes` | `key=value` pairs. Per-shape distribution for BOTH baseline and candidate (AC-6 requires median/mean/std/min/p10/p90 for each — median is the `*_us` column above): `baseline_mean_us`, `baseline_std_us`, `baseline_min_us`, `baseline_p10_us`, `baseline_p90_us`, `cand_mean_us`, `cand_std_us`, `cand_min_us`, `cand_p10_us`, `cand_p90_us`, plus `speedup_min_x`, `interleaved`, `iters`, `warmup`, `gpu_model`, `gpu_id`, `host`, `container`, `metric_kind` (`wall_clock` primary / `kernel_event` secondary), `slug` |
 
 Rules:
 - PRIMARY promotion metric is `metric_kind=wall_clock` (wrapper-inclusive `perf_counter`+`cuda.synchronize`). Also emit `metric_kind=kernel_event` (CUDA-event kernel-only) rows for diagnosis.

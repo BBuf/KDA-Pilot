@@ -48,10 +48,13 @@ _SRC_FILES = [KERNEL_DIR / "src" / "register.py", _CUH]
 
 
 def _combined_source_hash() -> str:
-    """Deterministic sha256 over the path-prefixed contents of all measured sources."""
+    """Deterministic sha256 over the repo-relative-path-prefixed contents of all
+    measured sources. Repo-relative (not basename) so distinct files that share a
+    basename cannot collide and the fingerprint is stable across checkout dirs."""
     h = hashlib.sha256()
-    for p in sorted(_SRC_FILES, key=lambda q: q.name):
-        h.update(p.name.encode())
+    for p in sorted(_SRC_FILES, key=lambda q: q.relative_to(KERNEL_DIR).as_posix()):
+        rel = p.relative_to(KERNEL_DIR).as_posix()
+        h.update(rel.encode())
         h.update(b"\0")
         h.update(p.read_bytes() if p.exists() else b"")
         h.update(b"\0")
@@ -182,8 +185,14 @@ def main() -> int:
     speedups_by_kind: dict[str, list[float]] = {k: [] for k in timers}
 
     csv_path = KERNEL_DIR / "benchmark.csv"
+    new_file = (not csv_path.exists()) or csv_path.stat().st_size == 0
     with csv_path.open("a", newline="") as f:
         writer = csv.writer(f, lineterminator="\n")
+        if new_file:  # self-reproducing header (append-safe: only when fresh)
+            writer.writerow([
+                "timestamp_utc", "candidate_id", "case_name", "metric",
+                "baseline_us", "candidate_us", "speedup_x", "notes",
+            ])
         for case in cases:
             name = case.get("name", "unknown")
             warmup = int(case.get("warmup", 25))
@@ -198,7 +207,9 @@ def main() -> int:
                 speedups_by_kind[kind].append(spd)
                 notes = (
                     f"metric_kind={kind} interleaved=1 baseline_mean_us={b['mean_us']:.3f} "
-                    f"baseline_min_us={b['min_us']:.3f} cand_mean_us={c['mean_us']:.3f} "
+                    f"baseline_std_us={b['std_us']:.3f} baseline_min_us={b['min_us']:.3f} "
+                    f"baseline_p10_us={b['p10_us']:.3f} baseline_p90_us={b['p90_us']:.3f} "
+                    f"cand_mean_us={c['mean_us']:.3f} "
                     f"cand_std_us={c['std_us']:.3f} cand_p10_us={c['p10_us']:.3f} "
                     f"cand_p90_us={c['p90_us']:.3f} cand_min_us={c['min_us']:.3f} "
                     f"speedup_min_x={spd_min:.4f} warmup={warmup} iters={iters} {prov_note}"
