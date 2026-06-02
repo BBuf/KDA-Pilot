@@ -22,17 +22,18 @@ dispatcher imports `kda_kernels.diffusion.norm_infer._impls.h200.wrapper`).
 - `kda_kernels/diffusion/norm_infer/__init__.py` — rewritten to import `norm_infer` and
   `triton_one_pass_rms_norm` from `._dispatcher`; `KDA_OPTIMIZED_norm_infer = True`,
   `KDA_OPTIMIZED_triton_one_pass_rms_norm = True`; speedup `1.4223x`, arches `('h200',)`.
-  - Source lineage (matches the generated metadata): `KDA_COMMIT_* = 75d4a0ab8…` is the
-    **export-source commit** (git HEAD at export). The **implementation files** (`register.py`,
-    `wrapper.py`, `norm_dispatch.py`, `rms_norm_d128.cuh`, `layer_norm_n5120.cuh`) in this package
-    are byte-identical to that commit and reproduce from it; the **lineage-metadata files**
-    (`KDA_EXPORTS.json`, `KDA_STATUS.md`, the `__init__.py` stamps) were added/refined in a later
-    commit and are NOT reproduced by it. `KDA_BENCHMARKED_COMMIT_* = b9dcb121ea4c9a1eaf153442548972f5da4704f1`
-    is the commit the geomean reflects; the candidate kernels are byte-identical from `149392da2`
-    (kernels first committed) through the export-source commit — Rounds 1–4 changed only
-    export/wrapper/validation/metadata, not the kernels, so the `1.4223x` geomean is unchanged.
-    See `_impls/h200/KDA_EXPORTS.json` (`commit_role`, `benchmarked_commit`, `benchmarked_note`)
-    and `_impls/h200/KDA_STATUS.md` for the machine-readable form.
+  - Source lineage (matches the generated metadata): `KDA_COMMIT_*` is the **export-source
+    commit** — the kernel-pilot git HEAD when the export tool ran (the source tree the export was
+    generated against). The exported `src/` in this package is committed in the kernel-pilot commit
+    that introduces this package update (typically the immediate SUCCESSOR of the stamp), so the
+    stamp marks the generation point, not a commit whose tree byte-matches the package — do not
+    expect `git show <KDA_COMMIT_*>` to reproduce this exact package tree.
+    `KDA_BENCHMARKED_COMMIT_* = b9dcb121ea4c9a1eaf153442548972f5da4704f1` is the **perf
+    reproducibility anchor**: the candidate kernels (`rms_norm_d128.cuh`, `layer_norm_n5120.cuh`)
+    are byte-identical from `149392da2` onward, so the `1.4223x` geomean reproduces from any commit
+    since — only wrapper/validation/metadata changed across rounds, not the kernels. See
+    `_impls/h200/KDA_EXPORTS.json` (`commit_role`, `benchmarked_commit`, `benchmarked_note`) and
+    `_impls/h200/KDA_STATUS.md` for the machine-readable form.
 - `kda_kernels/diffusion/norm_infer/_dispatcher.py` — auto-generated arch dispatcher with a
   per-(fn, device) target cache (steady-state calls skip capability probe + import +
   attribute lookup) and non-recursive SGLang baseline fallback.

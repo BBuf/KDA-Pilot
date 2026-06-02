@@ -408,12 +408,16 @@ def test_optimized_wrapper_call_forms() -> None:
     xl = torch.randn(8, 512, device=DEVICE, dtype=torch.float32)
     wl = torch.randn(512, device=DEVICE, dtype=torch.float32)
     bl = torch.randn(512, device=DEVICE, dtype=torch.float32)
-    # norm_infer keyword + 4-positional forms route to norm_infer (N=512 -> baseline).
+    # norm_infer routes: keyword form, 4-positional, and 3-positional + keyword eps
+    # (x, weight, bias, eps=...) -- the last form must NOT be misrouted to RMS. (N=512 -> baseline.)
     torch.testing.assert_close(
         ow(xl, weight=wl, bias=bl, eps=EPS).float(),
         ninf(xl, wl, bl, EPS).float(), atol=1e-5, rtol=1e-5)
     torch.testing.assert_close(
         ow(xl, wl, bl, EPS).float(),
+        ninf(xl, wl, bl, EPS).float(), atol=1e-5, rtol=1e-5)
+    torch.testing.assert_close(
+        ow(xl, wl, bl, eps=EPS).float(),
         ninf(xl, wl, bl, EPS).float(), atol=1e-5, rtol=1e-5)
 
 

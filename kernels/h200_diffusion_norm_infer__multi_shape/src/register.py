@@ -52,12 +52,15 @@ def optimized_wrapper(*args: Any, **kwargs: Any) -> Any:
     """Generic entry that routes to the correct public function by its distinctive
     parameters. Prefer the explicit ``EXPORTS`` functions; this rejects genuinely
     ambiguous calls rather than silently choosing one."""
-    if _NORM_INFER_KW & kwargs.keys() or len(args) >= 4:
+    # norm_infer: norm_infer(x, weight, bias, eps[, is_rms_norm, out]) -- eps is required.
+    # It is selected by a distinctive kwarg (weight/bias/is_rms_norm/out), or >=4 positional
+    # (x, weight, bias, eps), or exactly 3 positional + `eps=` (x, weight, bias, eps=...) --
+    # the one-pass RMS 3-positional form passes eps POSITIONALLY (x, w, eps), never as a kwarg,
+    # so "3 positional + eps kwarg" is unambiguously norm_infer.
+    if _NORM_INFER_KW & kwargs.keys() or len(args) >= 4 or (len(args) == 3 and "eps" in kwargs):
         return norm_infer(*args, **kwargs)
-    # RMSNorm: triton_one_pass_rms_norm(x, w, eps=1e-6) -- valid with 2 or 3
-    # positional args (default eps), or explicit `w=`. Any valid norm_infer call
-    # has >=4 positional or a distinctive kwarg (handled above), so 2-3 positional
-    # with no norm_infer kwarg is unambiguously RMS.
+    # RMSNorm: triton_one_pass_rms_norm(x, w, eps=1e-6) -- valid with 2 or 3 positional args
+    # (default eps), `(x, w, eps=...)`, or explicit `w=`.
     if "w" in kwargs or len(args) in (2, 3):
         return triton_one_pass_rms_norm(*args, **kwargs)
     raise TypeError(
