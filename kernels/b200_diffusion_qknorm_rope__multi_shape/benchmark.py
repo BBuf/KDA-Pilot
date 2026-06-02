@@ -20,8 +20,17 @@ and an equal-weight geomean of per-shape median speedups over production rows.
 ``nvidia-smi`` idle snapshots are captured immediately before AND after each row.
 
 Usage (inside sglang_bbuf on ion-b200):
-  CUDA_VISIBLE_DEVICES=<idle> python benchmark.py            # freeze all rows
-  CUDA_VISIBLE_DEVICES=<idle> python benchmark.py --sanity   # quick ~1.0x check
+  CUDA_VISIBLE_DEVICES=<idle> python benchmark.py             # isolated baseline-vs-candidate rows
+  CUDA_VISIBLE_DEVICES=<idle> python benchmark.py --sanity    # quick ~1.0x check
+  CUDA_VISIBLE_DEVICES=<idle> python benchmark.py --device-fair  # device-only A/B (symmetric JIT modules)
+  CUDA_VISIBLE_DEVICES=<idle> PYTHONPATH=<repo-root> python benchmark.py --integrated  # LITERAL install path
+
+The PRODUCTION performance claim comes from ``--integrated``: it runs the real
+``kda_kernels.install()`` overlay (the public SGLang symbol replaced exactly once) and times
+the original baseline vs the INSTALLED public symbol. The plain isolated mode and
+``--device-fair`` are diagnostic — the isolated mode's candidate path bypasses the baseline's
+``register_custom_op`` layer, so its large-shape numbers carry a known call-path asymmetry
+(see BL-candidate-bypasses-custom-op-asymmetry); trust ``--integrated`` for production deltas.
 """
 
 from __future__ import annotations
@@ -223,21 +232,21 @@ def _bench_case(correctness, case, candidate_fn, *, inner, physical_id):
     return b, c, speedup, idle_before, idle_after
 
 
-def _device_fair_main(correctness, register) -> int:
+def _device_fair_main(correctness, wrapper) -> int:
     """Device-only A/B: time the baseline's direct JIT module vs the candidate's
     direct JIT module (SYMMETRIC call paths — both bypass register_custom_op), with
     INTERLEAVED sampling (alternate baseline/candidate per sample) to cancel
     shared-box clock/contention drift. Isolates the device kernel change; does not
-    write benchmark.csv. Variant via KDA_CAND_VARIANT (warp|staged)."""
+    write benchmark.csv. Variant via KDA_CAND_VARIANT (warp|staged) selects the device
+    kernel class for the fairness sanity (warp = faithful port ~1.0x; staged = the win)."""
     from sglang.jit_kernel.diffusion.qknorm_rope import _jit_qknorm_rope_module
 
     variant = os.environ.get("KDA_CAND_VARIANT", "staged")
+    kernel_class = {"warp": "QKNormRopeKernel", "staged": "QKNormRopeStagedKernel"}.get(variant, "QKNormRopeStagedKernel")
     inner = int(os.environ.get("KDA_BENCH_INNER", "1"))
-    use_pdl = register._use_pdl()
-    loader = register._get_module_loader()
     cases = [c for c in correctness.make_cases() if not c.get("ci_fallback")]
     prov = _gpu_provenance()
-    print(f"[device-fair] variant={variant} pdl={use_pdl} gpu={prov['gpu_name']} phys={prov['gpu_physical_index']}")
+    print(f"[device-fair] variant={variant} ({kernel_class}) gpu={prov['gpu_name']} phys={prov['gpu_physical_index']}")
 
     def apply(mod, inp, case):
         mod.qknorm_rope(inp["q"], inp["k"], inp["q_weight"], inp["k_weight"],
@@ -246,7 +255,7 @@ def _device_fair_main(correctness, register) -> int:
     speedups = []
     for case in cases:
         base_mod = _jit_qknorm_rope_module(case["head_dim"], case["rope_dim"], case["is_neox"], torch.bfloat16)
-        cand_mod = loader(case["head_dim"], case["rope_dim"], case["is_neox"], use_pdl, torch.bfloat16, variant)
+        cand_mod = wrapper._candidate_module(case["head_dim"], case["rope_dim"], case["is_neox"], torch.bfloat16, kernel_class)
         bi = correctness._make_inputs(case)
         ci = correctness._make_inputs(case)
         base_fn = lambda: apply(base_mod, bi, case)
@@ -266,17 +275,53 @@ def _device_fair_main(correctness, register) -> int:
     return 0
 
 
-def _integrated_main(correctness, register) -> int:
-    """Integrated install-path A/B: time the ORIGINAL SGLang baseline public op
-    (`fused_inplace_qknorm_rope`, a register_custom_op) vs the would-be-installed plain
-    dispatcher (`optimized_wrapper` — the one-layer path that `kda_kernels.install`
-    swaps in), INTERLEAVED on identical inputs. This is the production delta of installing
-    the candidate. No custom-op re-wrapping: the earlier register_custom_op attempt
-    double-wrapped the baseline-fallback route and was invalid. Appends `name__integrated`
-    rows to benchmark.csv."""
-    from sglang.jit_kernel.diffusion.qknorm_rope import fused_inplace_qknorm_rope as baseline_op
+_SGL_QKNORM_PATH = "sglang.jit_kernel.diffusion.qknorm_rope"
+_KDA_REGISTRY_KEY = f"{_SGL_QKNORM_PATH}:fused_inplace_qknorm_rope"
 
-    candidate_op = register.optimized_wrapper
+
+def _ensure_kda_kernels_importable() -> Path:
+    """Put the repo root (the dir containing the ``kda_kernels`` package) on sys.path so
+    ``import kda_kernels`` resolves. The literal install-path benchmark needs the exported
+    overlay, which lives at the repo root, not inside this kernel folder."""
+    here = KERNEL_DIR
+    for _ in range(8):
+        if (here / "kda_kernels" / "__init__.py").exists():
+            if str(here) not in sys.path:
+                sys.path.insert(0, str(here))
+            return here
+        here = here.parent
+    raise SystemExit(
+        "kda_kernels package not found above KERNEL_DIR; sync the repo root (kda_kernels/) "
+        "alongside this kernel folder before running --integrated."
+    )
+
+
+def _integrated_main(correctness) -> int:
+    """LITERAL integrated install-path A/B (AC-4) — the production delta of installing the
+    candidate. Captures the ORIGINAL SGLang baseline public op, runs
+    ``kda_kernels.install(force=True, strict=True)`` to monkey-patch the public symbol with
+    the generated KDA overlay dispatcher (exactly ONE layer — the real production path, not a
+    re-wrapped custom op), asserts the swap, then times the original baseline vs the
+    INSTALLED public symbol INTERLEAVED on identical inputs. Appends ``name__install`` rows +
+    ``GEOMEAN_install`` to benchmark.csv. Restores the baseline on exit."""
+    import importlib
+
+    qmod = importlib.import_module(_SGL_QKNORM_PATH)
+    baseline_op = qmod.fused_inplace_qknorm_rope  # captured BEFORE install (the original)
+
+    _ensure_kda_kernels_importable()
+    import kda_kernels
+
+    results = kda_kernels.install(force=True, strict=True)
+    status = next((st for (sp, _kp, st) in results if sp == _KDA_REGISTRY_KEY), None)
+    if status != "swapped":
+        raise SystemExit(f"[install] kda_kernels.install did not swap {_KDA_REGISTRY_KEY!r}: {results}")
+    installed_op = qmod.fused_inplace_qknorm_rope  # now the generated KDA overlay dispatcher
+    if installed_op is baseline_op:
+        raise SystemExit("[install] installed public symbol is still the baseline")
+    inst_mod = getattr(installed_op, "__module__", "")
+    if not inst_mod.startswith("kda_kernels"):
+        raise SystemExit(f"[install] installed symbol is not from kda_kernels: {inst_mod!r}")
 
     inner = int(os.environ.get("KDA_BENCH_INNER", "1"))
     cases = [c for c in correctness.make_cases() if not c.get("ci_fallback")]
@@ -295,33 +340,40 @@ def _integrated_main(correctness, register) -> int:
     csv_path = KERNEL_DIR / "benchmark.csv"
     write_header = (not csv_path.exists()) or csv_path.stat().st_size == 0
     speedups, rows = [], []
-    print(f"[integrated] baseline custom-op vs installed plain dispatcher; gpu={prov['gpu_name']} phys={physical_id}")
-    for case in cases:
-        bi, ci = correctness._make_inputs(case), correctness._make_inputs(case)
-        bfn, cfn = lambda: call(baseline_op, bi, case), lambda: call(candidate_op, ci, case)
-        for _ in range(int(case.get("warmup", 25))):
-            bfn(); cfn()
-        torch.cuda.synchronize()
-        idle_before = _nvidia_smi_snapshot(physical_id)
-        bs, cs = [], []
-        for _ in range(int(case.get("iters", 100))):  # interleaved
-            bs.append(_time_cuda_events(bfn, warmup=0, iters=1, inner=inner)[0])
-            cs.append(_time_cuda_events(cfn, warmup=0, iters=1, inner=inner)[0])
-        idle_after = _nvidia_smi_snapshot(physical_id)
-        b, c = _summary(bs), _summary(cs)
-        sp = b["median"] / c["median"] if c["median"] > 0 else float("nan")
-        speedups.append(sp)
-        rows.append([
-            datetime.now(timezone.utc).isoformat(), case.get("preset"), case.get("bucket"), case["name"] + "__integrated",
-            case["num_tokens"], case["num_heads"], case["head_dim"], case["rope_dim"], case["is_neox"], case["eps"],
-            case["dtype"], case["position_dtype"], case.get("ci_fallback", False),
-            f"{b['median']:.4f}", f"{b['mean']:.4f}", f"{b['std']:.4f}", f"{b['min']:.4f}", f"{b['p10']:.4f}", f"{b['p90']:.4f}",
-            f"{c['median']:.4f}", f"{c['mean']:.4f}", f"{c['std']:.4f}", f"{c['min']:.4f}", f"{c['p10']:.4f}", f"{c['p90']:.4f}",
-            f"{sp:.4f}", case.get("iters", 100), inner, command, git_commit, cand_ver + "+integrated", host,
-            prov["gpu_physical_index"], prov["gpu_logical_index"], prov["gpu_name"], prov["gpu_uuid"],
-            prov["cuda_visible_devices"], idle_before, idle_after,
-        ])
-        print(f"{case['name']:>44s}  integrated speedup={sp:.4f}x  base={b['median']:.3f}us  cand={c['median']:.3f}us")
+    print(f"[install] swapped {_KDA_REGISTRY_KEY} -> {inst_mod}.fused_inplace_qknorm_rope; "
+          f"baseline custom-op vs installed overlay dispatcher; gpu={prov['gpu_name']} phys={physical_id}")
+    try:
+        for case in cases:
+            bi, ci = correctness._make_inputs(case), correctness._make_inputs(case)
+            bfn, cfn = lambda: call(baseline_op, bi, case), lambda: call(installed_op, ci, case)
+            for _ in range(int(case.get("warmup", 25))):
+                bfn(); cfn()
+            torch.cuda.synchronize()
+            idle_before = _nvidia_smi_snapshot(physical_id)
+            bs, cs = [], []
+            for _ in range(int(case.get("iters", 100))):  # interleaved: cancels slow drift
+                bs.append(_time_cuda_events(bfn, warmup=0, iters=1, inner=inner)[0])
+                cs.append(_time_cuda_events(cfn, warmup=0, iters=1, inner=inner)[0])
+            idle_after = _nvidia_smi_snapshot(physical_id)
+            b, c = _summary(bs), _summary(cs)
+            sp = b["median"] / c["median"] if c["median"] > 0 else float("nan")
+            speedups.append(sp)
+            rows.append([
+                datetime.now(timezone.utc).isoformat(), case.get("preset"), case.get("bucket"), case["name"] + "__install",
+                case["num_tokens"], case["num_heads"], case["head_dim"], case["rope_dim"], case["is_neox"], case["eps"],
+                case["dtype"], case["position_dtype"], case.get("ci_fallback", False),
+                f"{b['median']:.4f}", f"{b['mean']:.4f}", f"{b['std']:.4f}", f"{b['min']:.4f}", f"{b['p10']:.4f}", f"{b['p90']:.4f}",
+                f"{c['median']:.4f}", f"{c['mean']:.4f}", f"{c['std']:.4f}", f"{c['min']:.4f}", f"{c['p10']:.4f}", f"{c['p90']:.4f}",
+                f"{sp:.4f}", case.get("iters", 100), inner, command, git_commit, cand_ver + "+install", host,
+                prov["gpu_physical_index"], prov["gpu_logical_index"], prov["gpu_name"], prov["gpu_uuid"],
+                prov["cuda_visible_devices"], idle_before, idle_after,
+            ])
+            print(f"{case['name']:>44s}  install speedup={sp:.4f}x  base={b['median']:.3f}us  installed={c['median']:.3f}us")
+    finally:
+        kda_kernels.uninstall()  # restore the original baseline regardless of outcome
+        restored = qmod.fused_inplace_qknorm_rope is baseline_op
+        print(f"[install] uninstalled; baseline restored={restored}")
+
     geomean = _geom_mean(speedups)
     with csv_path.open("a", newline="") as f:
         writer = csv.writer(f)
@@ -329,11 +381,11 @@ def _integrated_main(correctness, register) -> int:
             writer.writerow(CSV_COLUMNS)
         writer.writerows(rows)
         summary = {col: "" for col in CSV_COLUMNS}
-        summary.update({"name": "GEOMEAN_integrated", "speedup_x": f"{geomean:.4f}", "command": command,
-                        "git_commit": git_commit, "candidate_source_version": cand_ver + "+integrated", "host": host,
+        summary.update({"name": "GEOMEAN_install", "speedup_x": f"{geomean:.4f}", "command": command,
+                        "git_commit": git_commit, "candidate_source_version": cand_ver + "+install", "host": host,
                         "gpu_name": prov["gpu_name"], "cuda_visible_devices": prov["cuda_visible_devices"]})
         writer.writerow([summary[col] for col in CSV_COLUMNS])
-    print(f"\n[integrated] production geomean = {geomean:.4f}x over {len(speedups)} shapes")
+    print(f"\n[install] production geomean = {geomean:.4f}x over {len(speedups)} shapes (literal kda_kernels.install path)")
     return 0
 
 
@@ -343,13 +395,12 @@ def main() -> int:
 
     if "--integrated" in sys.argv:
         correctness = _load_module("tests/test_correctness.py", "kda_correctness")
-        register = _load_module("src/register.py", "kda_register")
-        return _integrated_main(correctness, register)
+        return _integrated_main(correctness)
 
     if "--device-fair" in sys.argv:
         correctness = _load_module("tests/test_correctness.py", "kda_correctness")
-        register = _load_module("src/register.py", "kda_register")
-        return _device_fair_main(correctness, register)
+        wrapper = _load_module("src/wrapper.py", "kda_wrapper")
+        return _device_fair_main(correctness, wrapper)
 
     sanity = "--sanity" in sys.argv
     correctness = _load_module("tests/test_correctness.py", "kda_correctness")

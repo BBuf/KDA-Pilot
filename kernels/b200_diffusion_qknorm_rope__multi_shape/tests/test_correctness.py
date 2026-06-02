@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import importlib.util
 import os
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -67,6 +68,17 @@ def _load_register_module():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def _load_wrapper_module():
+    """Load the impl ``wrapper`` module (holds the dispatch gate + candidate build). It is
+    the same top-level ``wrapper`` module the thin register.py forwards into."""
+    src = str(KERNEL_DIR / "src")
+    if src not in sys.path:
+        sys.path.insert(0, src)
+    import wrapper  # noqa: PLC0415
+
+    return wrapper
 
 
 def _torch_dtype(name: str):
@@ -395,39 +407,86 @@ def _adhoc_case(name: str, num_tokens: int, num_heads: int, position_dtype: str 
 
 
 def test_dispatch_routing_exact_shape() -> None:
-    """Only the 5 large captured (tokens, heads) rows select the staged kernel."""
-    reg = _load_register_module()
-    for n, h in [(7904, 32), (4096, 24), (8424, 24), (4096, 30), (4128, 30)]:
-        assert reg._use_staged(n, h, 128, 128, False), (n, h)
-    for n, h in [(19, 24), (47, 24), (195, 24), (189, 24), (32, 30)]:  # small -> baseline
-        assert not reg._use_staged(n, h, 128, 128, False), (n, h)
-    assert not reg._use_staged(1000, 24, 128, 128, False)  # non-captured tokens
-    assert not reg._use_staged(4096, 16, 128, 128, False)  # non-captured head count
-    assert not reg._use_staged(4096, 24, 64, 64, False)    # non-production head/rope dim
-    assert not reg._use_staged(4096, 24, 128, 128, True)   # neox
+    """Only the 5 large captured (tokens, heads, eps) rows are trusted for the staged kernel."""
+    w = _load_wrapper_module()
+    for n, h, eps in [(7904, 32, 1e-6), (4096, 24, 1e-6), (8424, 24, 1e-6), (4096, 30, 1e-5), (4128, 30, 1e-5)]:
+        assert w._is_captured_large(n, h, eps), (n, h, eps)
+    for n, h, eps in [(19, 24, 1e-6), (47, 24, 1e-6), (195, 24, 1e-6), (189, 24, 1e-6), (32, 30, 1e-5)]:
+        assert not w._is_captured_large(n, h, eps), (n, h, eps)  # small captured rows -> baseline
+    assert not w._is_captured_large(1000, 24, 1e-6)  # non-captured tokens
+    assert not w._is_captured_large(4096, 16, 1e-6)  # non-captured head count
+    assert not w._is_captured_large(4096, 24, 1e-5)  # captured (tokens,heads) but WRONG eps
+    assert not w._is_captured_large(4096, 30, 1e-6)  # captured (tokens,heads) but WRONG eps
+
+
+def _gate_inputs(n=4096, h=24, d=128, r=128, *, dtype=None, pos_dtype=None, device="cuda"):
+    """A fully-valid captured-large (4096,24) signature on CUDA; mutate one field per case."""
+    dtype = torch.bfloat16 if dtype is None else dtype
+    pos_dtype = torch.int64 if pos_dtype is None else pos_dtype
+    return {
+        "q": torch.zeros(n, h, d, device=device, dtype=dtype),
+        "k": torch.zeros(n, h, d, device=device, dtype=dtype),
+        "q_weight": torch.zeros(d, device=device, dtype=dtype),
+        "k_weight": torch.zeros(d, device=device, dtype=dtype),
+        "cos_sin_cache": torch.zeros(8, r, device=device, dtype=torch.float32),
+        "positions": torch.zeros(n, device=device, dtype=pos_dtype),
+    }
 
 
 def test_dispatch_gate_fails_closed() -> None:
-    """The full gate rejects wrong dtype / non-contiguous / int32 positions even for a
-    captured shape (-> baseline). CPU tensors exercise the gate logic without CUDA."""
-    reg = _load_register_module()
-    n, h, d = 4096, 24, 128
-    q = torch.zeros(n, h, d, dtype=torch.bfloat16)
-    k = torch.zeros(n, h, d, dtype=torch.bfloat16)
-    qw = torch.zeros(d, dtype=torch.bfloat16)
-    kw = torch.zeros(d, dtype=torch.bfloat16)
-    cache = torch.zeros(8, 128, dtype=torch.float32)
-    pos = torch.zeros(n, dtype=torch.int64)
-    g = lambda *a: reg._should_dispatch_staged(*a, is_neox=False, hd=128, rd=128)
-    assert g(q, k, qw, kw, cache, pos)                       # captured + correct -> staged
-    assert not g(q, k, qw, kw, cache, pos.int())             # int32 positions
-    assert not g(q, k, qw, kw, cache.double(), pos)          # non-float32 cache
-    assert not g(q.half(), k.half(), qw, kw, cache, pos)     # fp16
-    qnc = torch.zeros(n, d, h, dtype=torch.bfloat16).transpose(1, 2)  # non-contiguous view
-    assert not g(qnc, k, qw, kw, cache, pos)                 # non-contiguous q
-    q2 = torch.zeros(1000, h, d, dtype=torch.bfloat16)
-    k2 = torch.zeros(1000, h, d, dtype=torch.bfloat16)
-    assert not g(q2, k2, qw, kw, cache, torch.zeros(1000, dtype=torch.int64))  # non-captured tokens
+    """``supported()`` admits ONLY the exact captured signature with the full production
+    contract; every malformed / non-production variant fails closed (-> baseline), so it
+    can never reach the staged C++ TensorMatcher. Uses CUDA tensors (the gate requires a
+    CUDA device)."""
+    w = _load_wrapper_module()
+
+    def ok(inp, *, is_neox=False, eps=1e-6, head_dim=128, rope_dim=128):
+        return w.supported(inp["q"], inp["k"], inp["q_weight"], inp["k_weight"],
+                           inp["cos_sin_cache"], inp["positions"],
+                           is_neox=is_neox, eps=eps, head_dim=head_dim, rope_dim=rope_dim)
+
+    assert ok(_gate_inputs())                                 # exact captured + full contract -> staged
+    assert not ok(_gate_inputs(), eps=1e-5)                   # captured shape, WRONG eps
+    assert not ok(_gate_inputs(), is_neox=True)               # neox
+    assert not ok(_gate_inputs(), head_dim=64, rope_dim=64)   # non-production template
+    assert not ok(_gate_inputs(pos_dtype=torch.int32))        # int32 positions
+    assert not ok(_gate_inputs(dtype=torch.float16))          # fp16
+
+    bad_cache = _gate_inputs()
+    bad_cache["cos_sin_cache"] = torch.zeros(8, 128, device="cuda", dtype=torch.float64)
+    assert not ok(bad_cache)                                  # non-float32 cache
+
+    # Wrong q/k last dim with a misleading head_dim=128 claim -> falls back (no C++ matcher).
+    assert not ok(_gate_inputs(d=64), head_dim=128, rope_dim=128)
+
+    bad_cache_dim = _gate_inputs()
+    bad_cache_dim["cos_sin_cache"] = torch.zeros(8, 64, device="cuda", dtype=torch.float32)
+    assert not ok(bad_cache_dim)                              # cache last-dim != rope_dim
+
+    bad_w = _gate_inputs()
+    bad_w["q_weight"] = torch.zeros(64, device="cuda", dtype=torch.bfloat16)
+    assert not ok(bad_w)                                      # wrong-shaped q_weight
+
+    nc_w = _gate_inputs()
+    nc_w["q_weight"] = torch.zeros(128, 2, device="cuda", dtype=torch.bfloat16)[:, 0]  # 1-D, stride 2
+    assert not nc_w["q_weight"].is_contiguous()
+    assert not ok(nc_w)                                       # non-contiguous q_weight
+
+    bad_pos = _gate_inputs()
+    bad_pos["positions"] = torch.zeros(100, device="cuda", dtype=torch.int64)
+    assert not ok(bad_pos)                                    # positions length != num_tokens
+
+    nc_q = _gate_inputs()
+    nc_q["q"] = torch.zeros(4096, 128, 24, device="cuda", dtype=torch.bfloat16).transpose(1, 2)
+    assert not nc_q["q"].is_contiguous()
+    assert not ok(nc_q)                                       # non-contiguous q
+
+    alias = _gate_inputs()
+    alias["k"] = alias["q"]                                   # q/k aliased -> in-place order undefined
+    assert not ok(alias)
+
+    assert not ok(_gate_inputs(n=1000))                       # non-captured token count
+    assert not ok(_gate_inputs(h=16))                         # non-captured head count
 
 
 def test_fallback_routes_to_baseline_and_matches_oracle() -> None:
@@ -441,17 +500,72 @@ def test_fallback_routes_to_baseline_and_matches_oracle() -> None:
         _assert_close(candidate(case), baseline(case), case=case, path=case["name"])
 
 
-def test_invalid_env_does_not_break_public_wrapper() -> None:
-    """A bad KDA_CAND_VARIANT must not affect the env-independent public wrapper."""
-    import os as _os
+def test_wrong_eps_falls_back_and_matches_oracle() -> None:
+    """A captured (tokens, heads) shape called with a DIFFERENT eps than its production row
+    is not a captured signature: it falls back to the baseline and still matches the oracle."""
+    case = _adhoc_case("fb_wrong_eps_B4096_H24", 4096, 24)  # qwen row is eps=1e-6 ...
+    case["eps"] = 1e-5                                       # ... call it with 1e-5 instead
+    _assert_close(candidate(case), baseline(case), case=case, path=case["name"])
 
-    saved = _os.environ.get("KDA_CAND_VARIANT")
-    _os.environ["KDA_CAND_VARIANT"] = "garbage"
+
+@pytest.mark.skipif(
+    os.environ.get("KDA_RUN_INTEGRATED") != "1",
+    reason="Set KDA_RUN_INTEGRATED=1 (needs the exported kda_kernels overlay) to run.",
+)
+def test_install_path_dropin_and_no_recursion() -> None:
+    """Full AC-8 drop-in test on the LITERAL ``kda_kernels.install()`` path: after the
+    monkey-patch, the INSTALLED public symbol routes a large captured row to the staged
+    CUDA kernel and the small / int32 rows to the captured ORIGINAL baseline (NOT the
+    swapped KDA symbol → no recursion). Each route is verified by both the dispatch tag
+    and an oracle match, and the baseline is restored on exit."""
+    import importlib
+
+    root = KERNEL_DIR
+    for _ in range(8):
+        if (root / "kda_kernels" / "__init__.py").exists():
+            if str(root) not in sys.path:
+                sys.path.insert(0, str(root))
+            break
+        root = root.parent
+
+    qmod = importlib.import_module("sglang.jit_kernel.diffusion.qknorm_rope")
+    baseline_op = qmod.fused_inplace_qknorm_rope  # captured BEFORE install
+    import kda_kernels
+    import kda_kernels.diffusion.qknorm_rope as overlay
+
+    # The committed overlay is an evidence-backed no-go (the staged kernel is a real device
+    # win but a net regression on the literal install path, geomean ~0.92x — see
+    # docs/sglang_jit_export.md). It ships UN-promoted, so skip unless re-exported.
+    if not getattr(overlay, "KDA_OPTIMIZED_fused_inplace_qknorm_rope", False):
+        pytest.skip("b200 overlay is not promoted; run "
+                    "`python3 scripts/export_kda_kernels/export.py b200_diffusion_qknorm_rope__multi_shape` first.")
+
+    key = "sglang.jit_kernel.diffusion.qknorm_rope:fused_inplace_qknorm_rope"
+    results = kda_kernels.install(force=True, strict=True)
     try:
-        case = make_cases()[0]  # joyai-edit large -> staged route
-        _assert_close(candidate(case), baseline(case), case=case, path="invalid_env")
+        status = next((st for (sp, _kp, st) in results if sp == key), None)
+        assert status == "swapped", results
+        installed = qmod.fused_inplace_qknorm_rope
+        assert installed is not baseline_op, "public symbol was not swapped"
+        assert installed.__module__.startswith("kda_kernels"), installed.__module__
+        # The installed b200 impl module (whose get_last_dispatch records the route taken).
+        impl = importlib.import_module("kda_kernels.diffusion.qknorm_rope._impls.b200.wrapper")
+        # large captured -> staged CUDA; small + int32 -> captured baseline (no recursion).
+        for case, want in [
+            (_adhoc_case("install_large_B4096_H24", 4096, 24), "cuda"),
+            (_adhoc_case("install_small_B19_H24", 19, 24), "fallback"),
+            (_adhoc_case("install_int32_B4096_H24", 4096, 24, position_dtype="int32"), "fallback"),
+        ]:
+            inputs = _make_inputs(case)
+            q, k = inputs["q"], inputs["k"]
+            installed(
+                q, k, inputs["q_weight"], inputs["k_weight"],
+                inputs["cos_sin_cache"], inputs["positions"],
+                is_neox=case["is_neox"], eps=case["eps"],
+                head_dim=case["head_dim"], rope_dim=case["rope_dim"],
+            )
+            assert impl.get_last_dispatch() == want, (case["name"], impl.get_last_dispatch())
+            _assert_close((q, k), baseline(case), case=case, path=case["name"])
     finally:
-        if saved is None:
-            _os.environ.pop("KDA_CAND_VARIANT", None)
-        else:
-            _os.environ["KDA_CAND_VARIANT"] = saved
+        kda_kernels.uninstall()
+        assert qmod.fused_inplace_qknorm_rope is baseline_op, "baseline not restored"
