@@ -71,14 +71,11 @@ def _load_register_module():
 
 
 def _load_wrapper_module():
-    """Load the impl ``wrapper`` module (holds the dispatch gate + candidate build). It is
-    the same top-level ``wrapper`` module the thin register.py forwards into."""
-    src = str(KERNEL_DIR / "src")
-    if src not in sys.path:
-        sys.path.insert(0, src)
-    import wrapper  # noqa: PLC0415
-
-    return wrapper
+    """Return THIS task's impl wrapper module (the dispatch gate + candidate build), loaded via
+    register.py's slug-specific loader. Avoids a generic top-level ``import wrapper`` that could
+    resolve another task's module in a multi-kernel test process; shares the same instance the
+    registered ``optimized_wrapper`` forwards into."""
+    return _load_register_module()._load_impl()
 
 
 def _torch_dtype(name: str):
