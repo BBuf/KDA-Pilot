@@ -6,24 +6,25 @@ This package contributes the following swap functions:
   - `sglang.jit_kernel.diffusion.triton.ltx2_rotary:apply_ltx2_split_rotary_emb`
 
 Stub status: each function is either re-exported from SGLang
-(`KDA_OPTIMIZED_<fn> = False`) or pulled from a promoted KDA impl
-(`KDA_OPTIMIZED_<fn> = True`). Promotion is driven by
-`scripts/export_kda_kernels/export.py <task-slug>`, which copies
-the task's CUDA `.cu` / `.cuh` sources + Python wrapper into this
-directory and rewrites this `__init__.py` to import the wrapper.
-
-After promotion the directory layout becomes::
-
-    kda_kernels/diffusion/<family>/
-        __init__.py     # this file (rewritten to import wrapper)
-        wrapper.py      # Python wrapper that JIT-compiles the CUDA
-        kernel.cu       # native CUDA source
-        kernel.cuh      # CUDA headers
-        KDA_STATUS.md   # task / commit / date / speedup stamps
+(`KDA_OPTIMIZED_<fn> = False`) or routed through the generated
+architecture dispatcher (`KDA_OPTIMIZED_<fn> = True`). Promotion is
+driven by `scripts/export_kda_kernels/export.py <task-slug>`.
 """
 
-from sglang.jit_kernel.diffusion.triton.rotary import apply_rotary_embedding  # noqa: F401  (sglang baseline; replaced after export)
-from sglang.jit_kernel.diffusion.triton.ltx2_rotary import apply_ltx2_split_rotary_emb  # noqa: F401  (sglang baseline; replaced after export)
+from kda_kernels.diffusion.rotary_embedding._dispatcher import _preload_kda_impls  # noqa: F401
+from kda_kernels.diffusion.rotary_embedding._dispatcher import apply_rotary_embedding  # noqa: F401
+from kda_kernels.diffusion.rotary_embedding._dispatcher import apply_ltx2_split_rotary_emb  # noqa: F401
 
-KDA_OPTIMIZED_apply_rotary_embedding = False
-KDA_OPTIMIZED_apply_ltx2_split_rotary_emb = False
+KDA_OPTIMIZED_apply_rotary_embedding = True
+KDA_OPTIMIZED_apply_ltx2_split_rotary_emb = True
+
+KDA_ARCHES_apply_rotary_embedding = ('h200',)
+KDA_TASK_apply_rotary_embedding = 'h200_diffusion_rotary_embedding__multi_shape'
+KDA_COMMIT_apply_rotary_embedding = '4e4229fd7f442773bf54753a6a3845c077f2f01c'
+KDA_DATE_apply_rotary_embedding = '2026-06-02'
+KDA_SPEEDUP_apply_rotary_embedding = '1.295504x'
+KDA_ARCHES_apply_ltx2_split_rotary_emb = ('h200',)
+KDA_TASK_apply_ltx2_split_rotary_emb = 'h200_diffusion_rotary_embedding__multi_shape'
+KDA_COMMIT_apply_ltx2_split_rotary_emb = '4e4229fd7f442773bf54753a6a3845c077f2f01c'
+KDA_DATE_apply_ltx2_split_rotary_emb = '2026-06-02'
+KDA_SPEEDUP_apply_ltx2_split_rotary_emb = '1.295504x'
