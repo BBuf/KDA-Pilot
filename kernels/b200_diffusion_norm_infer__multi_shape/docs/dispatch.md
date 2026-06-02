@@ -12,16 +12,16 @@ median (wall-clock primary; kernel-event in parens). Geomean (outcome): 1.29× w
 ## Support predicates (`src/register.py`)
 - **LN → CUDA** iff: `fp32`, 2-D, contiguous, `is_rms_norm=False`, `(M,N) ∈ _SUPPORTED_LN`, and weight+bias non-None, contiguous, `shape==(N,)`, same device+dtype; `out` is None or `shape==x.shape` + same device/dtype + contiguous.
 - **RMS → CUDA** iff: `bf16`, exactly 2-D, contiguous, `(S,D) ∈ _SUPPORTED_RMS` (i.e. `D==128` and `S ∈ {1320,4096,16384}` for production + regression-small), and `w` non-None, contiguous, `shape==(D,)`, same device+dtype.
-- **Everything else → SGLang baseline fallback** (fp16/bf16 LN, `is_rms_norm=True`, N/S/D outside the table, non-contiguous, wrong device/dtype/shape, higher-rank, invalid `out`). Verified by `tests/test_correctness.py::test_fallback_routing` (12 cases).
+- **Everything else → SGLang baseline fallback** (fp16/bf16 LN, `is_rms_norm=True`, N/S/D outside the table, non-contiguous, wrong device/dtype/shape, higher-rank, invalid `out`). Verified by `tests/test_correctness.py::test_fallback_routing` (15 cases).
 
 ## Per-shape decision
 
 | Production shape | dtype | owner (kernel) | baseline µs | candidate µs | speedup (wall / kernel) | active bound | decision |
 |---|---|---|---|---|---|---|---|
-| helios `[8640,5120]` | fp32 LN | **CUDA** `LayerNormInferKernel<fp32_t>` (float4, parallel reduce) | 82.96 | 71.10 | **1.17× / 1.19×** | memory-bandwidth (~66% peak) | **PROMOTE** |
-| hunyuanvideo `[1320,128]` | bf16 RMS | **CUDA** `RmsNormOnepassKernel<128,1,bf16_t>` | 33.36 | 20.37 | **1.64× / 1.70×** | launch/occupancy | **PROMOTE** |
-| zimage `[4096,128]` | bf16 RMS | **CUDA** `RmsNormOnepassKernel<128,1,bf16_t>` | 32.87 | 20.16 | **1.63× / 1.71×** | launch/occupancy | **PROMOTE** |
-| zimage `[16384,128]` | bf16 RMS | **CUDA** `RmsNormOnepassKernel<128,1,bf16_t>` | 33.45 | 21.88 | **1.53× / 1.66×** | launch/occupancy (partial wave) | **PROMOTE** |
+| helios `[8640,5120]` | fp32 LN | **CUDA** `LayerNormInferKernel<fp32_t>` (float4, parallel reduce) | 82.96 | 71.10 | **1.17× / 1.19×** | memory-bandwidth (~66% peak; `ac_e_r5/reports/ln.ncu-rep`) | **PROMOTE** |
+| hunyuanvideo `[1320,128]` | bf16 RMS | **CUDA** `RmsNormOnepassKernel<128,1,bf16_t>` | 33.36 | 20.37 | **1.64× / 1.70×** | launch/occupancy (occ 15%; `ac_e_r5/reports/rms1320.ncu-rep`) | **PROMOTE** |
+| zimage `[4096,128]` | bf16 RMS | **CUDA** `RmsNormOnepassKernel<128,1,bf16_t>` | 32.87 | 20.16 | **1.63× / 1.71×** | launch/occupancy (occ 40%; `ac_e_r5/reports/rms4096.ncu-rep`) | **PROMOTE** |
+| zimage `[16384,128]` | bf16 RMS | **CUDA** `RmsNormOnepassKernel<128,1,bf16_t>` | 33.45 | 21.88 | **1.53× / 1.66×** | launch/occupancy (partial wave, occ 76%; `ac_e_r5/reports/rms16384.ncu-rep`) | **PROMOTE** |
 | hunyuanvideo `[648720,128]` | bf16 RMS | **SGLang baseline (fallback)** | 77.00 | 78.24 (CUDA, not used) | ~1.0× (fallback) | memory-latency + occupancy | **NO-GO → fallback** |
 | hunyuanvideo `[650040,128]` | bf16 RMS | **SGLang baseline (fallback)** | 76.72 | 78.47 (CUDA, not used) | ~1.0× (fallback) | memory-latency + occupancy | **NO-GO → fallback** |
 
