@@ -1,0 +1,26 @@
+=== ROUND 5 remote run (optimization v2) ===
+HOST=ion-h200-8  container=sglang_bbuf  GPU=7 (NVIDIA H200)  REMOTE_KDA_DIR=/home/sglang-omni/bbuf/kda_runs/h200_diffusion_rotary_embedding__multi_shape/20260602_065439
+SGLANG_COMMIT=c47f0e7cd  ORACLE_EQUIV=rotary.py 81fb5ff / ltx2_rotary.py 3408d90 == pinned 6965fe0ee (verified by test_sglang_oracle_pinned)
+kernel-pilot: be7bb20f1 (v2 kernels) + 5d85066bd (harness fairness fix);  .cuh src_hash=42f21a8882a6
+idle_before=0%/72MiB  (post-run snapshot showed 10%/62MiB transient external; the run itself was clean, std<=5us)
+
+CORRECTNESS (KDA_RUN_CORRECTNESS=1 KDA_SGLANG_ORACLE_COMMIT=c47f0e7cd pytest tests/test_correctness.py):
+  6 passed in 13.08s (after v2 kernels + harness fix; all 6 shapes CUDA route; baseline-equivalent within bf16 noise; oracle file-hash equivalence + device-mismatch + fallback all green)
+
+BENCHMARK (wall-clock, allocation-fair, register module cached) -- candidate v2 vs SGLang Triton baseline:
+  std hunyuanvideo (1,27030,24,128) : 157.68 -> 105.68 us  (1.492x)
+  ltx2 S1536 half64                 : 27.23  -> 21.57  us  (1.263x)
+  ltx2 S126  half32                 : 24.14  -> 16.97  us  (1.423x)
+  ltx2 S1536 half32                 : 24.49  -> 18.74  us  (1.306x)
+  ltx2 S6144 half64                 : 59.53  -> 53.00  us  (1.123x)
+  ltx2 S6144 half32                 : 40.94  -> 34.06  us  (1.202x)
+  geomean = 1.295504x   (candidate FASTER on all 6 shapes)
+
+GPU-time kernel-vs-kernel (CUDA events, register cached): geomean 1.2968x (std 1.374x; ltx2 1.004-1.459x).
+
+NCU --set full + --set source (v2; reports under work/profile/ncu_v2_20260602_065439/reports/):
+  std hunyuanvideo : 90.56 us, DRAM 74.95%, SM 37.52%, occ 81.35%  (v1 was 299.5us/22.9%DRAM/80.4%SM)
+  ltx2 S6144 half64: 34.62 us, DRAM 79.49%, SM 42.29%, occ 80.99%  (v1 was 120.1us/24.2%DRAM/77.0%SM)
+  => active bound shifted SM/instruction -> memory-bandwidth (~75-79% DRAM, ~80-90% of HBM roofline). Near attainable bound.
+
+NOTE: an earlier 0.21-0.25x reading was a harness artifact (candidate() re-exec'd register.py per call, ~120-150us CPU import overhead the baseline did not pay); fixed by caching the register module. The kernels were already near-bound.
