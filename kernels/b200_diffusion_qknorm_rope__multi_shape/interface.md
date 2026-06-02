@@ -60,6 +60,17 @@ skips the baseline's `register_custom_op` ~6–8µs layer) plus shared-box varia
 a device win (decomposition: candidate-direct ≈ 0.79–0.95x vs baseline-direct). A real
 device comparison must use the **integrated install path** (same wrapper for both).
 
+**Round 5 candidate (cand_staged_r5) — real large-bucket device win.** Added a second
+variant `QKNormRopeStagedKernel` (`fused_qknorm_rope_cta_token`): one CTA per token,
+cos/sin staged once into shared memory and reused across the token's heads
+(`KDA_CAND_VARIANT=staged`). Production correctness PASSES. A **device-fair interleaved**
+benchmark (both kernels timed through their direct JIT modules, symmetric) gives geomean
+**1.0787x** — large shapes **1.10–1.26x**, small ~1.0x — with the warp variant as a
+**0.9994x** fairness sanity. NCU before/after on B8424: device 109.6→88.1 µs,
+`long_scoreboard` 11.9→9.29 (`profile/staged_b200/REPORT.md`). Evidence justifies a
+per-bucket dispatcher (large → staged, small → warp/baseline); production claim pending
+integrated install-path validation.
+
 ## Correctness Methodology
 
 - Oracle: SGLang split path — `sglang.jit_kernel.norm.fused_inplace_qknorm` (with the

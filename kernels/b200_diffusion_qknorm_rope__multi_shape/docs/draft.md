@@ -148,6 +148,13 @@ This is why the roofline was a *seed* and NCU is the arbiter.
   negatives) PASS; baseline refrozen with symmetric timing + provenance
   (`benchmark.csv`, commit 68a32061); first NCU pass done with named bounds
   (`profile/baseline_b200/REPORT.md`).
-- Next: Codex `analyze` direction-ranking from the corrected baseline + NCU; then the
-  first native CUDA candidate (AC-2/AC-4) + PDL A/B; integrated-path validation for
-  small shapes. No optimized kernel implemented yet.
+- Round 4: first native CUDA candidate (faithful port) builds via load_jit + correct;
+  isolated 1.3x diagnosed as a call-path artifact (no device win).
+- Round 5: **CTA-per-token cos/sin shared-staging kernel implemented + correct**; a
+  device-fair interleaved benchmark shows **geomean 1.0787x (large 1.10–1.26x, small
+  ~1.0x; warp sanity 0.9994x)**, NCU-confirmed on B8424 (device 109.6→88.1 µs,
+  long_scoreboard 11.9→9.29). This is the first real device win (large bucket); direction
+  #2 from analysis_r4 validated.
+- Next (R6): integrated install-path validation of the large win (symmetric wrapper) +
+  evidence-gated dispatcher (large → staged, small → warp/baseline) + docs/dispatch.md;
+  then AC-7 ledger finalize and AC-8 SGLang export.

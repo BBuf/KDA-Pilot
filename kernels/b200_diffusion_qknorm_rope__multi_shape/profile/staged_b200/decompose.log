@@ -1,0 +1,13 @@
+variant=staged gpu=NVIDIA B200 CVD=4
+
+qwen__small__B19_H24_D128_R128
+  baseline custom-op      :   13.76 us
+  baseline DIRECT module  :    9.01 us
+  candidate (staged) DIRECT :   10.53 us
+  custom-op overhead      :    4.75 us   |  device-fair cand-vs-baseline: 0.8556x
+
+qwen-edit__large__B8424_H24_D128_R128
+  baseline custom-op      :   70.82 us
+  baseline DIRECT module  :   66.51 us
+  candidate (staged) DIRECT :   57.98 us
+  custom-op overhead      :    4.30 us   |  device-fair cand-vs-baseline: 1.1471x
