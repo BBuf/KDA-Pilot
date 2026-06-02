@@ -32,7 +32,6 @@ import importlib.util
 import json
 import math
 import os
-import platform
 import statistics
 import subprocess
 import time
