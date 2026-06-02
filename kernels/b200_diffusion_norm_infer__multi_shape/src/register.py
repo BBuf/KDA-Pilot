@@ -137,6 +137,22 @@ def _is_cuda_contig_2d(t) -> bool:
     return t is not None and getattr(t, "is_cuda", False) and t.dim() == 2 and t.is_contiguous()
 
 
+# Vectorized-load alignment: the LN kernel reinterprets pointers as float4* (16 B);
+# the RMS kernel loads AlignedVector<bf16,4> (8 B). A tensor can be is_contiguous()
+# yet be a VIEW with a non-zero storage offset whose data_ptr() is NOT aligned to
+# the vector width (e.g. base[1:].view(M, N)); an aligned vector load from such a
+# base faults or returns wrong data, so it must fall back to the Triton baseline.
+# Because every supported row stride is a multiple of the vector width (LN N%4==0 ->
+# N*4 B multiple of 16; RMS D=128 -> D*2=256 B multiple of 8), a vector-aligned BASE
+# pointer makes every row aligned, so checking the base data_ptr() is sufficient.
+_LN_ALIGN = 16
+_RMS_ALIGN = 8
+
+
+def _aligned(t, nbytes: int) -> bool:
+    return t is None or (t.data_ptr() % nbytes == 0)
+
+
 def _valid_affine(t, n, x) -> bool:
     return (
         t is not None
@@ -167,7 +183,18 @@ def _norm_infer_supported(x, weight, bias, is_rms_norm, out=None) -> bool:
     m, n = int(x.shape[0]), int(x.shape[1])
     if (m, n) not in _SUPPORTED_LN:
         return False
-    return _valid_affine(weight, n, x) and _valid_affine(bias, n, x) and _valid_out(out, x)
+    # float4 (16-byte) vectorized loads/stores: x, weight, bias and a caller-provided
+    # out must all be 16-byte-aligned bases, else a contiguous-but-offset view would
+    # hit misaligned vector access -> fall back. (out=None is allocated fresh -> aligned.)
+    return (
+        _valid_affine(weight, n, x)
+        and _valid_affine(bias, n, x)
+        and _valid_out(out, x)
+        and _aligned(x, _LN_ALIGN)
+        and _aligned(weight, _LN_ALIGN)
+        and _aligned(bias, _LN_ALIGN)
+        and _aligned(out, _LN_ALIGN)
+    )
 
 
 def _rms_onepass_supported(x, w) -> bool:
@@ -186,7 +213,10 @@ def _rms_onepass_supported(x, w) -> bool:
     s, d = int(x.shape[0]), int(x.shape[1])
     if (s, d) not in _SUPPORTED_RMS:
         return False
-    return _valid_affine(w, d, x)
+    # AlignedVector<bf16,4> (8-byte) vectorized loads/stores: x and w must be
+    # 8-byte-aligned bases, else a contiguous-but-offset view would hit misaligned
+    # vector access -> fall back. (The output is allocated fresh -> always aligned.)
+    return _valid_affine(w, d, x) and _aligned(x, _RMS_ALIGN) and _aligned(w, _RMS_ALIGN)
 
 
 # --- CUDA paths --------------------------------------------------------------

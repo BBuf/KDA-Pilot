@@ -77,6 +77,10 @@ __global__ void layernorm_infer_kernel(const LayerNormInferParams __grid_constan
   const uint32_t nvec = N >> 2;  // float4 count (N is a multiple of 4)
   const float fN = static_cast<float>(N);
 
+  // Precondition: x/y/w/b base pointers are 16-byte aligned and row_stride*4 is a
+  // multiple of 16 (N%4==0), so every float4 access below is aligned. The dispatcher
+  // (register.py `_aligned` gate) routes misaligned/contiguous-but-offset views to
+  // the Triton baseline, so they never reach this vectorized kernel.
   const float4* x4 = reinterpret_cast<const float4*>(
       static_cast<const float*>(params.x_ptr) + static_cast<int64_t>(row) * params.row_stride);
   float4* y4 = reinterpret_cast<float4*>(
@@ -206,6 +210,10 @@ __global__ void rmsnorm_onepass_kernel(const RmsNormParams __grid_constant__ par
   DType* Y = static_cast<DType*>(params.y_ptr);
 
   // Load the per-feature weight ONCE per warp and reuse across all its rows.
+  // Precondition: x/w/y base pointers are 8-byte aligned (AlignedVector<bf16,4>) and
+  // row_stride*sizeof(DType) is a multiple of 8 (D=128), so every vector load/store
+  // is aligned. The dispatcher (register.py `_aligned` gate) routes misaligned/
+  // contiguous-but-offset views to the Triton baseline before reaching this kernel.
   Vec wv;
   wv.load(static_cast<const DType*>(params.w_ptr), lane);
   float wf[kEPT];

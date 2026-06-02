@@ -533,3 +533,57 @@ def test_wrapper_hintless_dispatch_supported() -> None:
         mod.optimized_wrapper(x=xr, w=w),    # keyword-only (was misrouted to norm_infer)
     ):
         torch.testing.assert_close(got.float(), ref_rms.float(), atol=5e-2, rtol=5e-2)
+
+
+def test_misaligned_views_fall_back() -> None:
+    # A contiguous tensor can be a VIEW with a non-zero storage offset whose
+    # data_ptr() is NOT aligned to the kernel's vector width (16 B float4 for LN,
+    # 8 B AlignedVector<bf16,4> for RMS). Those must fall back to the baseline; a
+    # vector-aligned offset view must still route to CUDA (gate on alignment, not
+    # "is it a view"). Regression for the two Codex P2 alignment findings.
+    mod = _register_module()
+    norm_infer, triton_one_pass_rms_norm = _sglang_baselines()
+    dev = "cuda"
+    torch.manual_seed(7200)
+
+    # fp32 LayerNorm, supported (M,N)=(128,512). float4 needs a 16-byte base.
+    M, N = 128, 512
+    lbase = torch.randn(M * N + 8, device=dev, dtype=torch.float32)
+    weight = torch.randn(N, device=dev, dtype=torch.float32)  # fresh -> aligned
+    bias = torch.randn(N, device=dev, dtype=torch.float32)
+    for off in (1, 2, 3):  # 4/8/12-byte offsets -> not 16-aligned
+        x = lbase.narrow(0, off, M * N).view(M, N)
+        assert x.is_contiguous() and x.data_ptr() % 16 != 0
+        assert mod._norm_infer_supported(x, weight, bias, False, None) is False
+        got = mod.optimized_norm_infer(x, weight, bias, 1e-6)
+        exp = norm_infer(x, weight, bias, 1e-6)
+        torch.testing.assert_close(got, exp, atol=1e-5, rtol=1e-5)
+    # misaligned weight (aligned x) must also fall back.
+    x_aligned = lbase.narrow(0, 4, M * N).view(M, N)  # 16-byte offset -> aligned
+    assert x_aligned.data_ptr() % 16 == 0
+    wbase = torch.randn(N + 4, device=dev, dtype=torch.float32)
+    weight_mis = wbase.narrow(0, 1, N)
+    assert weight_mis.is_contiguous() and weight_mis.data_ptr() % 16 != 0
+    assert mod._norm_infer_supported(x_aligned, weight_mis, bias, False, None) is False
+    torch.testing.assert_close(
+        mod.optimized_norm_infer(x_aligned, weight_mis, bias, 1e-6),
+        norm_infer(x_aligned, weight_mis, bias, 1e-6), atol=1e-5, rtol=1e-5,
+    )
+    # an aligned offset view (16-byte) is STILL routed to CUDA.
+    assert mod._norm_infer_supported(x_aligned, weight, bias, False, None) is True
+
+    # bf16 one-pass RMS, supported (S,D)=(4096,128). AlignedVector<bf16,4> needs 8 B.
+    S, D = 4096, 128
+    rbase = torch.randn(S * D + 8, device=dev, dtype=torch.bfloat16)
+    w = torch.randn(D, device=dev, dtype=torch.bfloat16)  # fresh -> aligned
+    for off in (1, 2, 3):  # 2/4/6-byte offsets -> not 8-aligned
+        x = rbase.narrow(0, off, S * D).view(S, D)
+        assert x.is_contiguous() and x.data_ptr() % 8 != 0
+        assert mod._rms_onepass_supported(x, w) is False
+        got = mod.optimized_triton_one_pass_rms_norm(x, w, 1e-6)
+        exp = triton_one_pass_rms_norm(x, w, 1e-6)
+        torch.testing.assert_close(got.float(), exp.float(), atol=5e-2, rtol=5e-2)
+    # an aligned offset view (8-byte, off=4) is STILL routed to CUDA.
+    x_aligned_r = rbase.narrow(0, 4, S * D).view(S, D)
+    assert x_aligned_r.data_ptr() % 8 == 0
+    assert mod._rms_onepass_supported(x_aligned_r, w) is True

@@ -96,8 +96,9 @@ include path is the worktree's, confirming the build used the worktree `.cuh`.
 production + regression shapes, with full input validation; otherwise the
 `maybe_*` functions return `None` and the public entry point runs its Triton
 baseline. Identical predicates to `src/register.py`:
-- **LN → CUDA** iff fp32, 2-D, contiguous, `is_rms_norm=False`, `(M,N) ∈ _SUPPORTED_LN`, weight+bias contiguous `(N,)` same device/dtype, `out` None-or-matching.
-- **RMS → CUDA** iff bf16, exactly 2-D, contiguous, `(S,D) ∈ _SUPPORTED_RMS` (D=128), `w` contiguous `(D,)` same device/dtype.
+- **LN → CUDA** iff fp32, 2-D, contiguous, `is_rms_norm=False`, `(M,N) ∈ _SUPPORTED_LN`, weight+bias contiguous `(N,)` same device/dtype, `out` None-or-matching, AND `x`/`weight`/`bias`/`out` `data_ptr()` 16-byte aligned (`float4` loads).
+- **RMS → CUDA** iff bf16, exactly 2-D, contiguous, `(S,D) ∈ _SUPPORTED_RMS` (D=128), `w` contiguous `(D,)` same device/dtype, AND `x`/`w` `data_ptr()` 8-byte aligned (`AlignedVector<bf16,4>` loads).
+- **Alignment gate** (mirrors `src/register.py`): a tensor can be `is_contiguous()` yet be a view with a non-zero storage offset whose base is not vector-aligned; such views fall back to the Triton baseline (verified in `val_export.py`: misaligned LN/RMS views → baseline).
 - The two large-S RMS production shapes (648720, 650040) are deliberately **not**
   allowlisted → they fall back (documented no-go, parity).
 
