@@ -120,27 +120,40 @@ integrated install-path validation.
   long_scoreboard dominant, 89% occupancy). Full per-row stats + provenance + per-row
   idle snapshots are in `benchmark.csv`.
 
-## Dispatch table (Round 6)
+## Dispatch table (final)
 
-`optimized_wrapper` is an evidence-gated dispatcher (no env var; `KDA_CAND_VARIANT`
-overrides for experiments). Full per-shape table + evidence in `docs/dispatch.md`:
-- production config (`head_dim=128, rope_dim=128, is_neox=False, bf16, contiguous`),
-  `num_tokens >= 512` → `QKNormRopeStagedKernel` (device-fair 1.10–1.26x);
-- production config, `num_tokens < 512` → SGLang baseline (small = launch/dispatch-bound,
-  staging gives no device win);
-- any non-production dtype/head_dim/rope_dim/is_neox or non-contiguous layout → SGLang
-  baseline fallback (explicit, before the C++ `TensorMatcher`).
-Correctness re-validated with the dispatcher active (6 passed: production routes +
-negatives + dispatch-logic; CI-grid correctness-or-fallback).
+`optimized_wrapper` is an EXACT-shape, fail-closed dispatcher — it reads no environment
+variables. Full per-shape table + evidence in `docs/dispatch.md`:
+- the 5 large captured `(num_tokens, num_heads)` rows AND the full production contract
+  (`head_dim=128, rope_dim=128, is_neox=False`; q/k/weights bf16; `cos_sin_cache` float32;
+  `positions` int64; contiguous q/k) → `QKNormRopeStagedKernel`;
+- everything else — the 5 small captured rows, any non-captured `(tokens, heads)`,
+  non-production dtype/dim/flag, or non-contiguous layout → SGLang baseline fallback
+  (explicit, before the C++ `TensorMatcher`).
+Correctness re-validated with the dispatcher active: **9 passed** (production routes +
+negatives + exact-shape routing + fail-closed gate + fallback-correctness + invalid-env)
+and the full 2400-case CI grid (correctness-or-fallback).
 
-## To Be Filled Before Promotion
+## Performance (final)
 
-- final wrapper signature (stable; matches the recovered contract above);
-- tolerance methodology = SGLang split-path oracle, ATOL=8e-2/RTOL=1e-2 (see above);
-- source lineage: `src/qknorm_rope_candidate.cuh` ported from sglang
-  `csrc/diffusion/qknorm_rope.cuh` @`6965fe0ee`; staging variant added in-workspace;
-  benchmark/dispatch tooling commits `e2b54594a`, `69ae5b366`, `56997201e`;
-- integrated install-path (`kda_kernels.install`) validation + SGLang export (AC-8).
+- Device-fair (symmetric direct modules, interleaved): geomean **1.0787x**, large
+  1.10–1.26x, small ~1.0x; warp-variant sanity 0.9994x. NCU: B8424 device 109.6→88.1 µs,
+  `long_scoreboard` 11.9→9.29.
+- Integrated install-path (baseline custom-op vs the plain one-layer dispatcher,
+  interleaved, commit `a304b8eac`): geomean **1.0793x** — large 1.21–1.28x, small 0.94x
+  (honest dispatcher-frame regression on the dispatch-bound small bucket). Rows in
+  `benchmark.csv` (`GEOMEAN_production` 0.9957x baseline-vs-baseline; `*__integrated` +
+  `GEOMEAN_integrated`).
+
+## Source lineage
+`src/qknorm_rope_candidate.cuh` ported from sglang `csrc/diffusion/qknorm_rope.cuh`
+@`6965fe0ee`; `QKNormRopeStagedKernel` (CTA-per-token cos/sin staging) added in-workspace.
+Tolerance = SGLang split-path oracle, ATOL=8e-2/RTOL=1e-2. Tooling commits:
+`e2b54594a`, `69ae5b366`, `56997201e`, `a304b8eac`.
+
+## Remaining before promotion
+- AC-8: export the `.cuh` under `python/sglang/jit_kernel/csrc/...`, preserve the public
+  `fused_inplace_qknorm_rope`, run in-SGLang correctness + smoke benchmark + fallback test.
 
 (Frozen baseline numbers + exact command + selected GPU id/model are recorded above
 in "Frozen Baseline (Round 3 refreeze)".)

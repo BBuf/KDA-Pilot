@@ -44,12 +44,32 @@ bottleneck; routing small → the proven SGLang baseline is the correct, low-ris
 time 109.6 → 88.1 µs on B8424 (the float32 cos/sin row is staged once per token and
 reused across heads instead of re-read per head).
 
-## Integrated install-path note (AC-4)
-A `register_custom_op`-wrapped integrated benchmark (`benchmark.py --integrated`) is
-**confounded**: the small/baseline route re-enters the baseline's own `register_custom_op`
-inside the candidate's custom op (double wrapping → artificial ~0.72x), and the run hit a
-high-variance window. In production, `kda_kernels.install()` **replaces** the public op
-with the dispatcher (no double layer), so small → baseline = 1.0x. The clean device-win
-evidence is the device-fair comparison above. A faithful integrated validation via the
-`kda_kernels` plain-dispatcher install path is deferred to the export milestone (AC-8),
-where the export machinery provides it natively.
+## Integrated install-path result (commit a304b8eac, idle B200)
+`benchmark.py --integrated` times the original SGLang baseline (custom-op) vs the
+would-be-installed plain dispatcher (`optimized_wrapper` — the one-layer path that
+`kda_kernels.install` swaps in), interleaved on identical inputs (`benchmark.csv`
+`*__integrated` rows). **Production geomean = 1.0793x**:
+
+| bucket | route | base µs | cand µs | integrated speedup |
+|--------|-------|---------|---------|--------------------|
+| joyai-edit B7904 | staged | 90.7 | 70.8 | 1.28x |
+| qwen B4096 | staged | 56.0 | 44.9 | 1.25x |
+| qwen-edit B8424 | staged | 99.5 | 80.0 | 1.24x |
+| zimage B4096 | staged | 74.5 | 61.4 | 1.21x |
+| zimage B4128 | staged | 74.6 | 61.2 | 1.22x |
+| qwen B19 | baseline | 61.6 | 65.7 | 0.94x |
+| qwen B47 | baseline | 61.9 | 66.0 | 0.94x |
+| qwen-edit B195 | baseline | 62.4 | 66.3 | 0.94x |
+| qwen-edit B189 | baseline | 61.9 | 66.0 | 0.94x |
+| zimage B32 | baseline | 62.3 | 66.2 | 0.94x |
+
+- Large (staged): 1.21–1.28x — the device staging win plus the leaner one-layer dispatch
+  (no per-op `register_custom_op` tax).
+- Small (baseline route): ~0.94x — the dispatcher's Python frame adds ~4µs over the
+  baseline's direct custom-op call; small is dispatch-bound, so the device kernel cannot
+  recover it. This is an honest minor per-shape regression; the equal-weight geomean is a
+  net win because the large bucket gains 21–28%.
+
+(The earlier Round-6 `register_custom_op`-wrapped `--integrated` run was double-wrapped
+on the baseline route and is discarded; this run times `optimized_wrapper` directly, the
+faithful one-layer install path.)
