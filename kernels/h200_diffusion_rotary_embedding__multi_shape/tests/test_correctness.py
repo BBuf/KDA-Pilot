@@ -193,9 +193,17 @@ def reference(case: dict[str, Any]) -> Any:
     raise ValueError(f"unknown api {case['api']!r}")
 
 
+_CANDIDATE_MODULE = None
+
+
 def candidate(case: dict[str, Any]) -> Any:
-    module = _register()
-    return module.optimized_wrapper(*case.get("args", ()), **case.get("kwargs", {}))
+    # Load register.py ONCE (cache it). Re-exec'ing it per call adds heavy per-call
+    # import overhead that would unfairly penalize the candidate in benchmarks
+    # (the baseline import is likewise resolved once).
+    global _CANDIDATE_MODULE
+    if _CANDIDATE_MODULE is None:
+        _CANDIDATE_MODULE = _register()
+    return _CANDIDATE_MODULE.optimized_wrapper(*case.get("args", ()), **case.get("kwargs", {}))
 
 
 # ---------------------------------------------------------------------------
