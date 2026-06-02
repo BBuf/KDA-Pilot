@@ -266,9 +266,88 @@ def _device_fair_main(correctness, register) -> int:
     return 0
 
 
+def _integrated_main(correctness, register) -> int:
+    """Integrated install-path A/B (AC-4): wrap the dispatched candidate in
+    register_custom_op (SYMMETRIC with the baseline's own custom op), then time the
+    baseline public op vs the candidate public op INTERLEAVED. Both carry the same
+    torch custom-op overhead, so this isolates the production device win (no call-path
+    artifact). Appends rows (name suffixed `__integrated`) to benchmark.csv."""
+    from sglang.jit_kernel.diffusion.qknorm_rope import fused_inplace_qknorm_rope as baseline_op
+    from sglang.srt.utils.custom_op import register_custom_op
+
+    @register_custom_op(mutates_args=["q", "k"])
+    def kda_candidate_qknorm_rope(q, k, q_weight, k_weight, cos_sin_cache, positions,
+                                  *, is_neox, eps=1e-6, head_dim=0, rope_dim=0):
+        register.optimized_wrapper(q, k, q_weight, k_weight, cos_sin_cache, positions,
+                                   is_neox=is_neox, eps=eps, head_dim=head_dim, rope_dim=rope_dim)
+
+    inner = int(os.environ.get("KDA_BENCH_INNER", "1"))
+    cases = [c for c in correctness.make_cases() if not c.get("ci_fallback")]
+    command = shlex.join([sys.executable, *sys.argv])
+    git_commit = os.environ.get("KDA_GIT_COMMIT") or _git("rev-parse", "HEAD")
+    cand_ver = _candidate_source_version()
+    host = socket.gethostname()
+    prov = _gpu_provenance()
+    physical_id = _physical_gpu_index()
+
+    def call(fn, inp, case):
+        fn(inp["q"], inp["k"], inp["q_weight"], inp["k_weight"], inp["cos_sin_cache"],
+           inp["positions"], is_neox=case["is_neox"], eps=case["eps"],
+           head_dim=case["head_dim"], rope_dim=case["rope_dim"])
+
+    csv_path = KERNEL_DIR / "benchmark.csv"
+    write_header = (not csv_path.exists()) or csv_path.stat().st_size == 0
+    speedups, rows = [], []
+    print(f"[integrated] both via register_custom_op; gpu={prov['gpu_name']} phys={physical_id}")
+    for case in cases:
+        bi, ci = correctness._make_inputs(case), correctness._make_inputs(case)
+        bfn, cfn = lambda: call(baseline_op, bi, case), lambda: call(kda_candidate_qknorm_rope, ci, case)
+        for _ in range(int(case.get("warmup", 25))):
+            bfn(); cfn()
+        torch.cuda.synchronize()
+        idle_before = _nvidia_smi_snapshot(physical_id)
+        bs, cs = [], []
+        for _ in range(int(case.get("iters", 100))):  # interleaved
+            bs.append(_time_cuda_events(bfn, warmup=0, iters=1, inner=inner)[0])
+            cs.append(_time_cuda_events(cfn, warmup=0, iters=1, inner=inner)[0])
+        idle_after = _nvidia_smi_snapshot(physical_id)
+        b, c = _summary(bs), _summary(cs)
+        sp = b["median"] / c["median"] if c["median"] > 0 else float("nan")
+        speedups.append(sp)
+        rows.append([
+            datetime.now(timezone.utc).isoformat(), case.get("preset"), case.get("bucket"), case["name"] + "__integrated",
+            case["num_tokens"], case["num_heads"], case["head_dim"], case["rope_dim"], case["is_neox"], case["eps"],
+            case["dtype"], case["position_dtype"], case.get("ci_fallback", False),
+            f"{b['median']:.4f}", f"{b['mean']:.4f}", f"{b['std']:.4f}", f"{b['min']:.4f}", f"{b['p10']:.4f}", f"{b['p90']:.4f}",
+            f"{c['median']:.4f}", f"{c['mean']:.4f}", f"{c['std']:.4f}", f"{c['min']:.4f}", f"{c['p10']:.4f}", f"{c['p90']:.4f}",
+            f"{sp:.4f}", case.get("iters", 100), inner, command, git_commit, cand_ver + "+integrated", host,
+            prov["gpu_physical_index"], prov["gpu_logical_index"], prov["gpu_name"], prov["gpu_uuid"],
+            prov["cuda_visible_devices"], idle_before, idle_after,
+        ])
+        print(f"{case['name']:>44s}  integrated speedup={sp:.4f}x  base={b['median']:.3f}us  cand={c['median']:.3f}us")
+    geomean = _geom_mean(speedups)
+    with csv_path.open("a", newline="") as f:
+        writer = csv.writer(f)
+        if write_header:
+            writer.writerow(CSV_COLUMNS)
+        writer.writerows(rows)
+        summary = {col: "" for col in CSV_COLUMNS}
+        summary.update({"name": "GEOMEAN_integrated", "speedup_x": f"{geomean:.4f}", "command": command,
+                        "git_commit": git_commit, "candidate_source_version": cand_ver + "+integrated", "host": host,
+                        "gpu_name": prov["gpu_name"], "cuda_visible_devices": prov["cuda_visible_devices"]})
+        writer.writerow([summary[col] for col in CSV_COLUMNS])
+    print(f"\n[integrated] production geomean = {geomean:.4f}x over {len(speedups)} shapes")
+    return 0
+
+
 def main() -> int:
     if torch is None or not torch.cuda.is_available():
         raise SystemExit("CUDA is required. Run inside the sglang_bbuf container on ion-b200.")
+
+    if "--integrated" in sys.argv:
+        correctness = _load_module("tests/test_correctness.py", "kda_correctness")
+        register = _load_module("src/register.py", "kda_register")
+        return _integrated_main(correctness, register)
 
     if "--device-fair" in sys.argv:
         correctness = _load_module("tests/test_correctness.py", "kda_correctness")

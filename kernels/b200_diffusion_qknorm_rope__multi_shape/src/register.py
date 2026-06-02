@@ -98,6 +98,25 @@ def _get_module_loader():
     return _module_loader
 
 
+# Evidence-gated dispatch (Round 5 device-fair + NCU): the CTA-per-token staging kernel
+# wins on the large bucket (1.10-1.26x) but not on small shapes (tiny-grid; host-dispatch
+# bound). So route the production config by token count; small + everything non-production
+# or non-contiguous falls back to the proven SGLang baseline. Production token counts are
+# small <=195 and large >=4096, so any threshold in (195, 4096) splits the buckets.
+_LARGE_MIN_TOKENS = 512
+
+
+def _dispatch_variant(num_tokens: int) -> Optional[str]:
+    """Choose the candidate variant for the production config, or None -> baseline.
+
+    KDA_CAND_VARIANT (warp|staged) overrides the route for experiments.
+    """
+    override = os.environ.get("KDA_CAND_VARIANT")
+    if override is not None:
+        return override
+    return "staged" if num_tokens >= _LARGE_MIN_TOKENS else None
+
+
 def optimized_wrapper(
     q: Any,
     k: Any,
@@ -113,11 +132,21 @@ def optimized_wrapper(
 ) -> None:
     hd = head_dim or q.size(-1)
     rd = rope_dim or cos_sin_cache.size(-1)
-    if hd == 128 and rd == 128 and not is_neox and q.dtype == _torch_mod().bfloat16:
-        variant = os.environ.get("KDA_CAND_VARIANT", "warp")
-        module = _get_module_loader()(hd, rd, is_neox, _use_pdl(), q.dtype, variant)
-        return module.qknorm_rope(q, k, q_weight, k_weight, cos_sin_cache, positions, eps)
-    # Unsupported signature -> SGLang baseline (correctness-or-fallback).
+    is_production = (
+        hd == 128
+        and rd == 128
+        and not is_neox
+        and q.dtype == _torch_mod().bfloat16
+        and q.is_contiguous()
+        and k.is_contiguous()
+    )
+    if is_production:
+        variant = _dispatch_variant(q.size(0))
+        if variant is not None:
+            module = _get_module_loader()(hd, rd, is_neox, _use_pdl(), q.dtype, variant)
+            return module.qknorm_rope(q, k, q_weight, k_weight, cos_sin_cache, positions, eps)
+    # Non-production / unsupported layout / small bucket -> SGLang baseline fallback
+    # (explicit, before the C++ TensorMatcher).
     return _sglang_baseline()(
         q,
         k,

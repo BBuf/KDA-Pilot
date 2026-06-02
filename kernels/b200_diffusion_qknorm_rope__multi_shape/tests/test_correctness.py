@@ -383,3 +383,23 @@ def test_negative_nan_inf_is_caught() -> None:
     inf_t = torch.full((4,), float("inf"), device="cuda")
     with pytest.raises(AssertionError):
         _assert_no_nan_inf(inf_t, path="inf")
+
+
+def test_dispatch_variant_logic() -> None:
+    """The evidence-gated dispatcher routes the production config by token bucket:
+    small (<512) -> baseline (None), large (>=512) -> staged; env overrides."""
+    reg = _load_register_module()
+    import os as _os
+
+    saved = _os.environ.pop("KDA_CAND_VARIANT", None)
+    try:
+        for n in (19, 32, 47, 189, 195):  # production small rows -> baseline
+            assert reg._dispatch_variant(n) is None, n
+        for n in (4096, 4128, 7904, 8424):  # production large rows -> staged
+            assert reg._dispatch_variant(n) == "staged", n
+        _os.environ["KDA_CAND_VARIANT"] = "warp"  # override wins for experiments
+        assert reg._dispatch_variant(8424) == "warp"
+    finally:
+        _os.environ.pop("KDA_CAND_VARIANT", None)
+        if saved is not None:
+            _os.environ["KDA_CAND_VARIANT"] = saved
