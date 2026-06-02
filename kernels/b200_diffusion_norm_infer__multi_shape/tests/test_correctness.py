@@ -59,13 +59,6 @@ def _dtype(name: str):
     return {"fp16": torch.float16, "bf16": torch.bfloat16, "fp32": torch.float32}[name]
 
 
-def _tol(dtype) -> tuple[float, float]:
-    # Mirrors test_qwen_image_modulation.py: fp32 strict, bf16/fp16 loose.
-    if dtype == torch.float32:
-        return 1e-5, 1e-5
-    return 5e-2, 5e-2
-
-
 def _full_regression() -> bool:
     return os.environ.get("KDA_FULL_REGRESSION") == "1"
 
