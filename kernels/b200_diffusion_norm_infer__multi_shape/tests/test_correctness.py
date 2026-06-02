@@ -472,3 +472,64 @@ def test_fallback_routing(spec: dict[str, Any]) -> None:
         got = mod.optimized_triton_one_pass_rms_norm(x, w, 1e-6)
         exp = triton_one_pass_rms_norm(x, w, 1e-6)
     torch.testing.assert_close(got.float(), exp.float(), atol=tol, rtol=tol)
+
+
+# --- hintless dispatch routing (regression) ---------------------------------
+# optimized_wrapper must preserve BOTH public signatures even when called WITHOUT
+# a dispatcher_hint (AC-5: the registered callable preserves the public contract).
+# Both signatures take a 1-D weight tensor as the 2nd positional arg
+# (norm_infer(x, weight, ...) and rms(x, w)), so routing MUST NOT key on its shape.
+# (Regression for the Codex P2: a hintless norm_infer(x, weight, bias, eps=...) was
+# misrouted to the RMS path, and keyword-only rms(x=..., w=...) to the norm path.)
+_HINT_CASES = [
+    # (label, args, kwargs, expected_hint) -- "x"/"w"/"b"/"o" are tensor stand-ins
+    ("ln_4pos", ("x", "w", "b", 1e-6), {}, "norm_infer"),
+    ("ln_eps_kw", ("x", "w", "b"), {"eps": 1e-6}, "norm_infer"),          # was misrouted to RMS
+    ("ln_biasNone_eps_kw", ("x", "w", None), {"eps": 1e-6}, "norm_infer"),
+    ("ln_all_kw", ("x",), {"weight": "w", "bias": "b", "eps": 1e-6}, "norm_infer"),
+    ("ln_is_rms_kw", ("x", "w", "b", 1e-6), {"is_rms_norm": True}, "norm_infer"),
+    ("ln_out_kw", ("x", "w", "b", 1e-6), {"out": "o"}, "norm_infer"),
+    ("rms_2pos", ("x", "w"), {}, "rms_onepass"),
+    ("rms_3pos_eps", ("x", "w", 1e-6), {}, "rms_onepass"),
+    ("rms_eps_kw", ("x", "w"), {"eps": 1e-6}, "rms_onepass"),
+    ("rms_all_kw", (), {"x": "x", "w": "w"}, "rms_onepass"),              # keyword-only RMS
+    ("rms_w_kw", ("x",), {"w": "w"}, "rms_onepass"),
+]
+
+
+@pytest.mark.parametrize(
+    "label,args,kwargs,expected", _HINT_CASES, ids=[c[0] for c in _HINT_CASES]
+)
+def test_infer_hint_routing(label, args, kwargs, expected) -> None:
+    # Pure routing logic (no GPU/tensors needed): the call form alone must classify.
+    mod = _register_module()
+    assert mod._infer_hint(tuple(args), dict(kwargs)) == expected, label
+
+
+def test_wrapper_hintless_dispatch_supported() -> None:
+    # End-to-end: optimized_wrapper with NO dispatcher_hint must route supported
+    # calls to the right path and match the typed entry point (real CUDA tensors).
+    mod = _register_module()
+    dev = "cuda"
+    torch.manual_seed(7100)
+    # fp32 LayerNorm, a supported (M,N); weight is 1-D (N,) -- the ambiguous shape.
+    x = torch.randn(128, 512, device=dev, dtype=torch.float32)
+    weight = torch.randn(512, device=dev, dtype=torch.float32)
+    bias = torch.randn(512, device=dev, dtype=torch.float32)
+    ref_ln = mod.optimized_norm_infer(x, weight, bias, 1e-6)
+    for got in (
+        mod.optimized_wrapper(x, weight, bias, 1e-6),           # 4 positional
+        mod.optimized_wrapper(x, weight, bias, eps=1e-6),       # eps kwarg (was misrouted to RMS)
+        mod.optimized_wrapper(x, weight, bias=bias, eps=1e-6),  # bias+eps kwargs
+    ):
+        torch.testing.assert_close(got, ref_ln, atol=1e-5, rtol=1e-5)
+    # bf16 one-pass RMS, a supported (S,D); w is 1-D (D,).
+    xr = torch.randn(4096, 128, device=dev, dtype=torch.bfloat16)
+    w = torch.randn(128, device=dev, dtype=torch.bfloat16)
+    ref_rms = mod.optimized_triton_one_pass_rms_norm(xr, w, 1e-6)
+    for got in (
+        mod.optimized_wrapper(xr, w),        # 2 positional
+        mod.optimized_wrapper(xr, w, 1e-6),  # eps positional
+        mod.optimized_wrapper(x=xr, w=w),    # keyword-only (was misrouted to norm_infer)
+    ):
+        torch.testing.assert_close(got.float(), ref_rms.float(), atol=5e-2, rtol=5e-2)

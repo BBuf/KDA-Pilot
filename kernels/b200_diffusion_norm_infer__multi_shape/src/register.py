@@ -235,11 +235,30 @@ def optimized_triton_one_pass_rms_norm(x, w, eps: float = 1e-6):
 
 
 def _infer_hint(args: tuple, kwargs: dict) -> str:
-    """Infer which entry point a bare call targets when no hint is given."""
-    if "is_rms_norm" in kwargs or "bias" in kwargs or len(args) >= 4:
+    """Infer which wrapped entry point a hintless call targets, from the two
+    distinct public signatures. Both take a 1-D weight tensor as the 2nd
+    positional arg, so the 2nd arg's shape CANNOT disambiguate them:
+        norm_infer(x, weight, bias, eps, is_rms_norm=False, out=None)  # 3rd positional is `bias`
+        triton_one_pass_rms_norm(x, w, eps=1e-6)                       # 2 positional (+ float eps)
+    Disambiguate by signature-unique parameter names, positional arity, and the
+    3rd positional's type (bias tensor/None vs eps float) -- never by weight shape.
+    """
+    # 1) Parameter names unique to exactly one signature are decisive.
+    if {"weight", "bias", "is_rms_norm", "out"} & kwargs.keys():
         return "norm_infer"
-    if len(args) >= 2 and hasattr(args[1], "dim") and args[1].dim() == 1:
+    if "w" in kwargs:
         return "rms_onepass"
+    # 2) Only norm_infer takes a 4th positional (eps); a 3rd positional is `bias`
+    #    (tensor/None) for norm_infer but `eps` (a float) for the one-pass RMS.
+    if len(args) >= 4:
+        return "norm_infer"
+    if len(args) == 3:
+        return "rms_onepass" if isinstance(args[2], (int, float)) else "norm_infer"
+    # 3) Exactly two positionals with no disambiguating kwargs: norm_infer requires
+    #    bias+eps (no defaults), so a bare (x, w[, eps=...]) call is one-pass RMS.
+    if len(args) == 2:
+        return "rms_onepass"
+    # 4) Too few positionals to classify; default to the layer-norm path.
     return "norm_infer"
 
 
