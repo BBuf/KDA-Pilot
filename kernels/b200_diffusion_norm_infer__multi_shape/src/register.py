@@ -37,7 +37,7 @@ _KERNEL_VERSION = "v2"  # bump to force a JIT rebuild (stale-JIT guard); v2 = pe
 # RMS keeps kUnroll=1 (one row/warp) to maximize warp count / occupancy.
 _RMS_LARGE_S = 100000
 _RMS_LARGE_UNROLL = 4
-_LN_MAX_N = 8192  # LayerNorm CUDA kernel covers at most kLNThreads*kLNMaxElems cols
+_LN_MAX_N = 5120  # informational: float4 LN kernel covers N<=kLNThreads*4*kLNMaxVec=5120; routing is gated by the _SUPPORTED_LN allowlist below, not this constant
 
 # Configured-shape allowlists. CUDA routes ONLY these exact (M,N)/(S,D) shapes;
 # every other shape falls back to the SGLang baseline (interface.md contract).

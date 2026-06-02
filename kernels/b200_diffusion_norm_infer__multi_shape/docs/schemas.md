@@ -9,8 +9,8 @@ One row per (candidate, shape, metric). Columns (matches `benchmark.py`'s writer
 | Column | Meaning |
 |---|---|
 | `timestamp_utc` | ISO-8601 UTC of the measurement |
-| `candidate_id` | Candidate id from `solutions.jsonl` (`baseline_vs_candidate`, `geomean`, or a concrete candidate id). Joins to provenance. |
-| `case_name` | Shape/case name, e.g. `helios__fp32__M8640N5120`, `hunyuanvideo__bf16__S648720D128`, or `all_configured_shapes` for the geomean row |
+| `candidate_id` | A concrete candidate id that MUST exist in `solutions.jsonl` (including the geomean row — it uses the same candidate id, not a literal `geomean`). Joins to provenance. |
+| `case_name` | Shape/case name, e.g. `helios__fp32__M8640N5120`, `rms__bf16__S648720D128`, or `production_geomean` for the geomean row |
 | `metric` | `median_us` (primary), or `geomean_speedup_x` for the geomean row |
 | `baseline_us` | Baseline median latency (µs); empty for the geomean row |
 | `candidate_us` | Candidate median latency (µs); empty for the geomean row |
