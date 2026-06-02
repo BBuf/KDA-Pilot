@@ -1,0 +1,4 @@
+# NCU collection (KDA_PROFILE=1 -> -lineinfo build), GPU 7, container sglang_bbuf:
+ncu --set full   -k regex:"rope_kernel" -c 1 -s 8 --target-processes all -o reports/<case>_full   python profile/prof_entry.py <case>
+ncu --set source --section SourceCounters -k regex:"rope_kernel" -c 1 -s 8 --target-processes all -o reports/<case>_source python profile/prof_entry.py <case>
+# cases: hunyuanvideo__std__B1_T27030_H24_D128__bf16 ; ltx2__B1_S6144_H32_half64__bf16

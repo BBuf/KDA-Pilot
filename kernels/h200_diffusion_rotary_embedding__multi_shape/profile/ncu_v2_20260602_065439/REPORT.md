@@ -1,7 +1,8 @@
 # NCU + roofline — candidate v2 (native_cuda_v2_vectorized), near-bound + faster than baseline
 
 - Host `ion-h200-8`, GPU 7 (NVIDIA H200, HBM3e ≈ 4.8 TB/s), container `sglang_bbuf`, sglang `c47f0e7cd` (≡ pinned `6965fe0ee`). kernel-pilot `be7bb20f1`, .cuh `42f21a8882a6`.
-- NCU `--set full` + `--set source --section SourceCounters`, `KDA_PROFILE=1` (`-lineinfo`), post-warmup steady launch, `harness/` = `prof_entry.py`. Binary `*_full.ncu-rep` + `*_source.ncu-rep` kept under `REMOTE_KDA_DIR/work/profile/ncu_v2_20260602_065439/reports/` (1.2–1.3 MB / 0.18–0.23 MB; not committed). Parsed metrics: `analysis/metrics.csv`.
+- NCU `--set full` + `--set source --section SourceCounters`, `KDA_PROFILE=1` (`-lineinfo`), post-warmup steady launch. `harness/` holds `prof_entry.py` + `ncu_cmd.txt` (the exact collection commands). Binary `*_full.ncu-rep` + `*_source.ncu-rep` (1.2–1.3 MB / 0.18–0.23 MB) are committed locally under `reports/` — open them with `ncu-ui reports/<case>_full.ncu-rep`. Parsed metrics: `analysis/metrics.csv`.
+- Local layout: `harness/{prof_entry.py, ncu_cmd.txt}`, `reports/{hunyuanvideo__std__B1_T27030_H24_D128__bf16, ltx2__B1_S6144_H32_half64__bf16}_{full,source}.ncu-rep`, `analysis/metrics.csv`. Cases = the two largest/representative buckets (the standard hunyuanvideo shape and the largest LTX-2 shape); both are HBM-bound, so they bound the bandwidth analysis for the family.
 
 ## v2 optimizations (from the Round-4 SM/instruction-bound diagnosis)
 - Eliminated per-thread runtime div/mod via fixed grid geometry (one block per token / per `(b,s)`) + power-of-2 shift/mask indexing.
