@@ -305,10 +305,10 @@ def _imported_oracle_file_sha1() -> dict:
     import hashlib
 
     import sglang.jit_kernel.diffusion.triton.rotary as r
-    import sglang.jit_kernel.diffusion.triton.ltx2_rotary as l
+    import sglang.jit_kernel.diffusion.triton.ltx2_rotary as lt
 
     out = {}
-    for key, mod in (("rotary.py", r), ("ltx2_rotary.py", l)):
+    for key, mod in (("rotary.py", r), ("ltx2_rotary.py", lt)):
         out[key] = hashlib.sha1(Path(mod.__file__).read_bytes()).hexdigest()
     return out
 
