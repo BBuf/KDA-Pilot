@@ -15,20 +15,43 @@ RMS norm, multiply by weight, RoPE from a float32 `cos_sin_cache` indexed by
 use_pdl, dtype>`; q and k fused into one launch. On B200 `is_arch_support_pdl()`
 is true, so the baseline is built **PDL on**.
 
-This is a pure memory-bound elementwise kernel. It is already vectorized, fused
-across q+k, and occupancy-capped — so the headroom story differs sharply by bucket.
+This is an elementwise kernel — already vectorized, fused across q+k, and
+occupancy-capped — so the headroom story differs sharply by bucket. It is NOT simply
+"bandwidth-bound": NCU (below) shows the small shapes are host-dispatch/launch-bound and
+the large device kernel is memory-**latency** bound (only ~13% DRAM peak), not
+DRAM-bandwidth-bound.
 
-## Two regimes
+> **Final outcome (Round 8 — read first).** The candidate is an **evidence-backed no-go**;
+> it is **not promoted**. A CTA-per-token cos/sin-staging kernel is a real DEVICE win
+> (device-fair geomean **1.0679x**, large 1.10–1.26x, NCU-confirmed), but on the **literal
+> `kda_kernels.install()` production path** it is a **net regression (geomean 0.9301x /
+> 0.9185x)**: the overlay's per-call Python dispatch tax (~7µs over the baseline's C-level
+> `register_custom_op`) erases the modest device win on 9 of 10 shapes (only joyai
+> B7904/H32 wins). The active bound on the production path is **host-side dispatch
+> overhead**, not the device kernel. Authoritative evidence: `docs/sglang_jit_export.md`,
+> `docs/dispatch.md`, `benchmark.csv` (`GEOMEAN_install`), `solutions.jsonl`
+> (`id=export_r8`). The "## Status" section at the bottom carries the full final state.
 
-- **Large (4096–8424 tokens, heads 24/30/32):** bandwidth/L2-bound. Effective DRAM
-  traffic is dominated by reading q+k and writing q+k.
-- **Small (19–195 tokens):** launch / dispatch / tail-effect / low-occupancy bound.
-  The work barely fills the GPU; most wall-clock is launch + Python wrapper +
-  dispatch, not the device kernel. This is the regime where the prior H200 run lost
-  its wins to a ~5µs/call dispatcher tax — so small-shape wins are gated on the
-  integrated install path.
+## Two regimes (NCU-confirmed bounds)
 
-## Seed roofline (back-of-envelope, to confirm with NCU)
+- **Large (4096–8424 tokens, heads 24/30/32):** memory-**latency** bound / cos-sin-reuse
+  limited — **NOT DRAM-bandwidth-bound** (NCU: ~12.8% DRAM read %peak, `long_scoreboard`
+  dominant at ~89% occupancy; q+k read+write traffic is mandatory). Any device gain comes
+  from L2 reuse of the per-head-reread float32 `cos_sin_cache` (the staged kernel does
+  exactly this), not a bandwidth rewrite.
+- **Small (19–195 tokens):** launch / dispatch / tail-effect / low-occupancy bound. The
+  work barely fills the GPU; most wall-clock is launch + Python wrapper + dispatch, not the
+  device kernel (NCU: device ~7.55µs vs ~60µs end-to-end). This is the regime where the
+  prior H200 run lost its wins to a ~5µs/call dispatcher tax — and where, in Round 8, the
+  overlay dispatch tax made the whole candidate a net install-path regression.
+
+## Seed roofline (HISTORICAL, pre-NCU back-of-envelope — SUPERSEDED)
+
+> This was the pre-profiling back-of-envelope. Its "large = near the bandwidth bound" guess
+> was **WRONG** and was corrected by NCU (see "## NCU correction (Round 3)" below): the large
+> kernel is memory-**latency** bound at only ~13% DRAM peak. Kept for history / lineage; do
+> not use its bound conclusions — the NCU correction and the Round 8 install-path result are
+> authoritative.
 
 Largest shape, qwen-edit `[8424, 24, 128]` bf16:
 - q = 8424·24·128·2 B ≈ 51.7 MB; k same. Read q+k + write q+k ≈ **207 MB**.
@@ -45,6 +68,13 @@ Smallest shape, qwen `[19, 24, 128]`: 48·19 = 912 work items / 8 warps ≈ 114 
 dispatch bound. **Lever is overhead reduction, not device compute.**
 
 ## Candidate directions (ranked; attack the measured bound)
+
+> Historical exploration ranking. The bounds here use the **NCU-corrected** read (large =
+> memory-latency, not bandwidth — see the NCU correction below), not the seed roofline. Net
+> result after Rounds 4–8: direction #2 (cos/sin staging) produced a real DEVICE win but a
+> net **install-path regression** (overlay dispatch tax) → evidence-backed no-go; direction #1
+> (overhead reduction) cannot help because the overlay tax exceeds the baseline's custom-op on
+> the dispatch-bound shapes. See "## Status".
 
 1. **Small-shape overhead reduction** (high ROI *if* any win exists): validate the
    zero-overhead dispatcher on the integrated path; A/B **PDL off** (prior pilot:
@@ -115,13 +145,15 @@ are *slower than the 4096-token large shape (45µs)*. That is impossible if the 
 were the device kernel; it is a fixed per-call **dispatch/launch overhead floor**
 (torch `register_custom_op` dispatch + JIT module lookup + launch), captured in the
 CUDA-event window because the GPU waits on the CPU between the start marker and the
-kernel. Large shapes scale 45→98µs with token count (bandwidth regime).
+kernel. Large shapes scale 45→98µs with token count (device regime; NCU later showed this
+is memory-**LATENCY**-bound, NOT bandwidth — see the NCU correction below).
 
-Implication for direction ranking: the only real headroom is the **small-shape
-overhead** (a CUDA-event measurement already shows it dominates). The lever is a
-leaner call path (zero-overhead dispatcher, avoiding the custom-op wrapper, PDL-off),
-not the device kernel — and it MUST be proven on the integrated install path. Large
-shapes are near the bandwidth bound; expect a no-go there unless NCU shows otherwise.
+Implication for direction ranking (pre-NCU, since corrected): the only real headroom is the
+**small-shape overhead** (a CUDA-event measurement already shows it dominates). The lever is a
+leaner call path (zero-overhead dispatcher, avoiding the custom-op wrapper, PDL-off), not the
+device kernel — and it MUST be proven on the integrated install path. Large shapes were
+*guessed* near a bandwidth bound here; the NCU correction below revised that to
+memory-**LATENCY**-bound, and the Round 8 literal install-path result is the final arbiter.
 
 ## NCU correction (Round 3) — profile, don't guess
 
@@ -141,7 +173,7 @@ roofline above:
 
 This is why the roofline was a *seed* and NCU is the arbiter.
 
-## Status
+## Status — FINAL (Round 8): evidence-backed NO-GO, candidate not promoted
 
 - Local scaffold + benchmark/correctness corrections complete and committed.
 - Remote B200: REMOTE_KDA_DIR created; correctness (production + full 2400 CI grid +
@@ -150,11 +182,35 @@ This is why the roofline was a *seed* and NCU is the arbiter.
   (`profile/baseline_b200/REPORT.md`).
 - Round 4: first native CUDA candidate (faithful port) builds via load_jit + correct;
   isolated 1.3x diagnosed as a call-path artifact (no device win).
-- Round 5: **CTA-per-token cos/sin shared-staging kernel implemented + correct**; a
-  device-fair interleaved benchmark shows **geomean 1.0787x (large 1.10–1.26x, small
-  ~1.0x; warp sanity 0.9994x)**, NCU-confirmed on B8424 (device 109.6→88.1 µs,
-  long_scoreboard 11.9→9.29). This is the first real device win (large bucket); direction
-  #2 from analysis_r4 validated.
-- Next (R6): integrated install-path validation of the large win (symmetric wrapper) +
-  evidence-gated dispatcher (large → staged, small → warp/baseline) + docs/dispatch.md;
-  then AC-7 ledger finalize and AC-8 SGLang export.
+- Round 5: CTA-per-token cos/sin shared-staging kernel (`QKNormRopeStagedKernel`)
+  implemented + correct; a **device-fair** interleaved benchmark shows a real DEVICE win
+  (large 1.10–1.26x), NCU-confirmed on B8424 (device 109.6→88.1 µs, `long_scoreboard`
+  11.9→9.29). Device-fair is a DIAGNOSTIC (both kernels via direct JIT, no custom op).
+- Round 6–7: exact-shape, fail-closed dispatcher (no env; routes only the captured large
+  rows to staged, everything else to the baseline). Round 7's "integrated" 1.0793x was a
+  **proxy** (timing `optimized_wrapper` directly) and was later found to overstate the win.
+- **Round 8 (terminal): the LITERAL `kda_kernels.install()` path is the arbiter, and it is a
+  NET REGRESSION.** Made the candidate exportable (thin `register.py` + `EXPORTS` + impl
+  `wrapper.py`, recursion-safe baseline capture, full `(tokens,heads,eps)`+metadata gate),
+  ran the real `scripts/export_kda_kernels/export.py` → `kda_kernels.install(force=True,
+  strict=True)`, and timed the INSTALLED public symbol vs the captured baseline:
+  - install-path geomean **0.9301x / 0.9185x** (two runs) — only joyai B7904/H32 wins
+    (1.21x); the other large shapes are 0.93–1.00x and the 5 small shapes 0.85–0.87x;
+  - device-fair (diagnostic) reproduces the device win (geomean **1.0679x**; warp
+    faithful-port sanity **0.9999x**);
+  - the gap is the **overlay per-call Python dispatch tax** (~7µs > the baseline's C-level
+    `register_custom_op`), which on this dispatch-bound workload erases the modest device
+    win on 9/10 shapes — **named active bound = host dispatch overhead**;
+  - drop-in correctness PASSED (install swapped; large→staged + small/int32→captured
+    baseline; oracle-matched; no recursion; uninstall restores);
+  - the export was **REVERTED** so the shipped `kda_kernels` overlay stays the un-promoted
+    stub (`KDA_OPTIMIZED=False`) — no regression is shipped; the export-ready `src/` +
+    evidence remain and `export.py` reproduces the overlay.
+- **Verdict:** well-supported evidence-backed no-go (frozen baseline R3 + real candidate
+  attempts R4/R5 + NCU evidence R5 + named bound + literal install-path measurement R8). The
+  staged optimization would only net-win with a near-zero-overhead (C-level) overlay dispatch
+  or under CUDA graphs — both outside this single-op, no-CUDA-graph task boundary.
+- **Authoritative final evidence:** `docs/sglang_jit_export.md` (export + drop-in + no-go
+  write-up), `docs/dispatch.md` (decision table + device-fair-vs-install + named bound),
+  `benchmark.csv` (`GEOMEAN_install` 0.9301x; `GEOMEAN_production` 0.9957x baseline-vs-baseline),
+  `solutions.jsonl` (`id=export_r8` no-go; `dispatcher_r7` proxy correction), `interface.md`.
