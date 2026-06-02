@@ -40,4 +40,4 @@ Correct on all 6 shapes (CUDA route). **Geomean speedup 1.296× wall-clock (1.29
 - `load_jit`/`make_cpp_args`/`cache_once`/`is_arch_support_pdl` from `sglang.jit_kernel.utils`.
 
 ## Export path (AC-8)
-The `.cuh` is placed under the SGLang checkout at `python/sglang/jit_kernel/csrc/diffusion/kda_rotary_embedding.cuh` (copied by `src/wrapper.py:_ensure_source()` at load time; reversible). In-SGLang drop-in replacement + smoke benchmark + fallback recorded in `docs/sglang_jit_export.md`.
+The `.cuh` compiles in place from its absolute workspace path via `load_jit` (`cuda_files=[<abs path to rotary_embedding.cuh>]`); pathlib keeps the absolute path as-is so nothing is written into the SGLang checkout, and the `sgl_kernel` headers still resolve through `load_jit`'s default include dirs. The promoted `kda_kernels` overlay builds the same way from its own `_impls/<arch>/csrc/`. In-SGLang drop-in replacement + smoke benchmark + fallback recorded in `docs/sglang_jit_export.md`.

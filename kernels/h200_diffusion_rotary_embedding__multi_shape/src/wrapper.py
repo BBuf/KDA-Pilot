@@ -11,8 +11,10 @@ Routing per call (non-recursive 3-level fallback):
 
 Both functions are functional (return a new tensor; never mutate inputs). The native
 ``.cuh`` is built through SGLang ``jit_kernel`` / tvm-ffi (no ``torch.utils.cpp_extension``,
-no ``--use_fast_math``); the workspace source is copied into the SGLang ``csrc`` tree at
-load time (reversible, task-owned).
+no ``--use_fast_math``). It is compiled in place from its absolute workspace path via
+``load_jit`` (the SGLang ``csrc`` tree is NOT modified; the ``sgl_kernel`` headers still
+resolve through ``load_jit``'s default include dirs), so the promoted overlay copy builds
+the same way from its own ``_impls`` directory.
 """
 
 from __future__ import annotations
@@ -36,7 +38,6 @@ if str(_THIS_DIR) not in sys.path:
     sys.path.insert(0, str(_THIS_DIR))
 
 _WORKSPACE_CUH = _THIS_DIR / "csrc" / "rotary_embedding.cuh"
-_SGLANG_REL = "diffusion/kda_rotary_embedding.cuh"
 
 # Records the route taken by the most recent call, for test assertions.
 _LAST_DISPATCH: dict[str, str | None] = {"standard": None, "ltx2": None}
@@ -85,19 +86,6 @@ _capture_baselines()
 # ---------------------------------------------------------------------------
 # JIT module (built via SGLang load_jit / make_cpp_args)
 # ---------------------------------------------------------------------------
-def _ensure_source() -> "Path":
-    """Copy the workspace .cuh into the SGLang csrc tree so load_jit can find it."""
-    import sglang.jit_kernel as jk
-
-    csrc = Path(jk.__file__).resolve().parent / "csrc"
-    dst = csrc / _SGLANG_REL
-    dst.parent.mkdir(parents=True, exist_ok=True)
-    src_text = _WORKSPACE_CUH.read_text()
-    if (not dst.exists()) or dst.read_text() != src_text:
-        dst.write_text(src_text)
-    return dst
-
-
 _SOURCE_HASH: "str | None" = None
 
 
@@ -113,17 +101,20 @@ def _source_hash() -> str:
 def _build_jit_module(dtype, src_hash, profile):
     from sglang.jit_kernel.utils import load_jit, make_cpp_args
 
-    _ensure_source()
     args = make_cpp_args(dtype)
     targ = f"{args}"
     # Profiling build adds -lineinfo so NCU can map SASS back to source.
     # Still NO --use_fast_math (kept consistent with the SGLang jit_kernel build).
     extra_cuda_cflags = ["-lineinfo"] if profile else None
     markers = [*args, src_hash] + (["lineinfo"] if profile else [])
+    # load_jit joins cuda_files under <sglang>/jit_kernel/csrc, but pathlib keeps an
+    # absolute path as-is, so passing the workspace .cuh's absolute path compiles it
+    # in place (no write into the SGLang checkout). sgl_kernel headers it #includes
+    # still resolve via load_jit's default include dirs.
     return load_jit(
         "kda_rotary_embedding",
         *markers,  # template args + source hash (+ lineinfo) -> rebuild on change
-        cuda_files=[_SGLANG_REL],
+        cuda_files=[str(_WORKSPACE_CUH)],
         cuda_wrappers=[
             ("standard_rope", f"StandardRopeKernel<{targ}>::run"),
             ("ltx2_split_rope", f"Ltx2SplitRopeKernel<{targ}>::run"),

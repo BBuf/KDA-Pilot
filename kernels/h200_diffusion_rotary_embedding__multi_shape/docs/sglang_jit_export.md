@@ -9,13 +9,14 @@ public diffusion RoPE symbols are replaced with the candidate to prove a real dr
 
 ## How the export works
 
-1. `src/wrapper.py:_ensure_source()` copies the workspace `src/csrc/rotary_embedding.cuh`
-   into the SGLang checkout at `python/sglang/jit_kernel/csrc/diffusion/kda_rotary_embedding.cuh`
-   (created on demand, content-compared so it only writes on change — reversible, task-owned).
-2. `_build_jit_module()` calls SGLang `load_jit("kda_rotary_embedding", <make_cpp_args(dtype)>, <source-hash>,
-   cuda_files=["diffusion/kda_rotary_embedding.cuh"],
+1. `_build_jit_module()` calls SGLang `load_jit("kda_rotary_embedding", <make_cpp_args(dtype)>, <source-hash>,
+   cuda_files=[<absolute path to src/csrc/rotary_embedding.cuh>],
    cuda_wrappers=[("standard_rope","StandardRopeKernel<bf16_t>::run"),("ltx2_split_rope","Ltx2SplitRopeKernel<bf16_t>::run")])`.
-   The loader is wrapped in SGLang `cache_once`, keyed by `(dtype, source_hash, profile)`,
+   `load_jit` joins `cuda_files` under `<sglang>/jit_kernel/csrc`, but pathlib keeps an absolute
+   path as-is, so the workspace `.cuh` compiles in place and **nothing is written into the SGLang
+   checkout** (the `sgl_kernel` headers it `#include`s still resolve through `load_jit`'s default
+   include dirs). The promoted `kda_kernels` overlay builds the same way from its own `_impls/<arch>/csrc/`.
+2. The loader is wrapped in SGLang `cache_once`, keyed by `(dtype, source_hash, profile)`,
    so an edited `.cuh` (new hash) rebuilds and the hot path does no per-call file I/O.
    Compile flags match the SGLang jit build (`-DSGL_CUDA_ARCH=900 -std=c++20 -O3 --expt-relaxed-constexpr`); profiling adds only `-lineinfo`.
 3. `tests/sglang_export_test.py` captures the original baselines, asserts the captured
@@ -84,20 +85,20 @@ geomean (1.296×) because the smoke harness uses fewer iterations (50 vs 100); b
 the candidate is faster on all 6 shapes. The dedicated `benchmark.csv` remains the
 headline source.
 
-## Reversibility
+## Reversibility / non-invasiveness
 
-The export only *adds* `python/sglang/jit_kernel/csrc/diffusion/kda_rotary_embedding.cuh`
-to the checkout and the JIT build cache; it patches no SGLang source file. The public
-symbol replacement in the test is restored in `finally`. Removing the added `.cuh`
-(and the jit cache entry) returns the checkout to pristine. The user approved this
-reversible `load_jit` placement + the final in-SGLang test.
+The build writes **nothing** into the SGLang checkout: the `.cuh` compiles in place from its
+absolute workspace path (only the JIT build cache is populated). The public-symbol replacement
+in the test is restored in a `finally` block. The user approved the `load_jit` build + the final
+in-SGLang test.
 
-## Re-verification after workflow-marker scrub
+## Re-verification (marker scrub + absolute-path build)
 
-A later comment-only edit scrubbed plan-loop terminology from `src/csrc/rotary_embedding.cuh`
-(one comment line), changing its hash from `42f21a8882a6` to `e6588f9edfe7` with a
-byte-identical compiled kernel. The scrubbed source was re-synced to the remote and the
-in-SGLang export test re-run on GPU 7: `EXPORT_TEST: PASS` (6/6 CUDA-route correctness,
-fp16 fallback, smoke speedup) and the correctness gate `6 passed`. The placed
-`python/sglang/jit_kernel/csrc/diffusion/kda_rotary_embedding.cuh` now hashes to
-`e6588f9edfe7`, matching the working tree.
+Two later changes were re-validated on GPU 7, both producing a byte-identical compiled kernel:
+(1) a comment-only marker scrub changed the `.cuh` hash `42f21a8882a6` → `e6588f9edfe7`;
+(2) `wrapper.py` switched from copying the `.cuh` into the SGLang checkout to compiling it from
+its absolute path (`cuda_files=[<abs .cuh>]`). After clearing the JIT cache and **removing** the
+previously-placed checkout `.cuh`, the fresh absolute-path build passed: correctness gate `6 passed`,
+in-SGLang `EXPORT_TEST: PASS` (6/6 CUDA route, fp16 fallback, smoke geomean ≈1.27×), and the SGLang
+checkout was confirmed **not** re-created (no checkout write). This is the build path the promoted
+`kda_kernels` overlay uses.
