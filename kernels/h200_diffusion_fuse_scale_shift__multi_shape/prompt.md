@@ -231,6 +231,24 @@ full shape table, not the best-case shape alone.
   FLOP/s, and use profiler metrics to identify the active limiting resource.
   Do not continue RLCR solely to hit a fixed speedup number once the
   evidence shows the candidate is already near the attainable bound.
+- Benchmark the SHIPPING integration, symmetrically. The promotion number must
+  come from the exact path the kernel will ship in, with the candidate and the
+  baseline going through an IDENTICAL wrapper / dispatch / registration layer —
+  only the device kernel may differ. Prefer the in-SGLang drop-in (candidate
+  `.cuh` under the real, unchanged public op); never benchmark a side overlay
+  that replaces or bypasses the public op against a baseline that keeps it.
+- Preserve every production requirement of the public entry point. If the SGLang
+  op is a registered custom op (`@register_custom_op`, for torch.compile /
+  CUDA-graph compatibility), the shipped integration MUST keep that registration.
+  An integration that drops it (e.g. monkey-patching the public symbol with a
+  plain Python callable) is NOT a valid promotion arbiter — it changes the
+  production contract, so its number is not comparable to the baseline's.
+- Decompose every speedup into DEVICE vs HOST. Split the measured delta into the
+  device-kernel change (admissible) and the host/integration-layer change
+  (wrapper, dispatch, registration). A "win" that comes from removing a
+  production-required host layer (e.g. dropping custom-op registration) is a
+  FALSE ECONOMY, not a kernel improvement, and must not be claimed. Cross-check
+  with a symmetric, same-process, interleaved A/B that isolates the device kernel.
 
 ## Prior Art Research Scope
 
@@ -485,6 +503,13 @@ the optimization rounds — it is the final packaging + sanity step.
    - run a smoke benchmark inside SGLang and confirm parity-or-speedup vs the
      original SGLang kernel on the production shapes;
    - confirm unsupported signatures still fall back to the SGLang baseline.
+
+   This in-tree drop-in — candidate under SGLang's OWN, unchanged public op, so
+   any `@register_custom_op` / torch.compile registration is preserved — is THE
+   promotion arbiter. Do NOT substitute a comparison where only one side carries
+   the production wrapper/registration (e.g. an overlay that monkey-patches the
+   public symbol with a plain Python callable): that changes the production
+   contract, so its speedup is not comparable to the baseline's.
 
 Record the SGLang files touched, the preserved entry points, the template args
 / wrapper names passed to `load_jit`, and the in-SGLang correctness + benchmark

@@ -539,6 +539,27 @@ def render_prompt(family: Family, arch: dict) -> str:
           FLOP/s, and use profiler metrics to identify the active limiting resource.
           Do not continue RLCR solely to hit a fixed speedup number once the
           evidence shows the candidate is already near the attainable bound.
+        - Benchmark the SHIPPING integration, symmetrically. The promotion number
+          must come from the exact path the kernel will ship in, with the candidate
+          and the baseline going through an IDENTICAL wrapper / dispatch / registration
+          layer — only the device kernel may differ. Prefer the in-SGLang drop-in
+          (candidate `.cuh` under the real, unchanged public op); never benchmark a
+          side overlay that replaces or bypasses the public op against a baseline that
+          keeps it.
+        - Preserve every production requirement of the public entry point. If the
+          SGLang op is a registered custom op (`@register_custom_op`, for torch.compile
+          / CUDA-graph compatibility), the shipped integration MUST keep that
+          registration. An integration that drops it (e.g. monkey-patching the public
+          symbol with a plain Python callable) is NOT a valid promotion arbiter — it
+          changes the production contract, so its number is not comparable to the
+          baseline's.
+        - Decompose every speedup into DEVICE vs HOST. Split the measured delta into
+          the device-kernel change (admissible) and the host/integration-layer change
+          (wrapper, dispatch, registration). A "win" that comes from removing a
+          production-required host layer (e.g. dropping custom-op registration) is a
+          FALSE ECONOMY, not a kernel improvement, and must not be claimed. Cross-check
+          with a symmetric, same-process, interleaved A/B that isolates the device
+          kernel.
 
         ## Prior Art Research Scope
 
