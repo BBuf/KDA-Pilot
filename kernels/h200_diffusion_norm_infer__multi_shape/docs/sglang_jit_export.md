@@ -21,8 +21,15 @@ dispatcher imports `kda_kernels.diffusion.norm_infer._impls.h200.wrapper`).
 
 - `kda_kernels/diffusion/norm_infer/__init__.py` — rewritten to import `norm_infer` and
   `triton_one_pass_rms_norm` from `._dispatcher`; `KDA_OPTIMIZED_norm_infer = True`,
-  `KDA_OPTIMIZED_triton_one_pass_rms_norm = True`; stamped commit `149392da…`, date
-  2026-06-02, speedup `1.4223x`, arches `('h200',)`.
+  `KDA_OPTIMIZED_triton_one_pass_rms_norm = True`; speedup `1.4223x`, arches `('h200',)`.
+  - Source lineage (matches the generated metadata): `KDA_COMMIT_* = 75d4a0ab8…` is the
+    **export-source commit** (git HEAD at export; this commit's `_impls/h200/` tree matches the
+    package and is reproducible). `KDA_BENCHMARKED_COMMIT_* = b9dcb121e` is the commit the geomean
+    reflects; the candidate `.cu`/`.cuh` kernels are byte-identical from `149392da2` (kernels first
+    committed) through the export-source commit — Rounds 1–3 changed only export/wrapper/validation/
+    metadata, not the kernels, so the `1.4223x` geomean is unchanged. See
+    `_impls/h200/KDA_EXPORTS.json` (`commit_role`, `benchmarked_commit`, `benchmarked_note`) and
+    `_impls/h200/KDA_STATUS.md` for the machine-readable form.
 - `kda_kernels/diffusion/norm_infer/_dispatcher.py` — auto-generated arch dispatcher with a
   per-(fn, device) target cache (steady-state calls skip capability probe + import +
   attribute lookup) and non-recursive SGLang baseline fallback.

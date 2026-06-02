@@ -18,13 +18,22 @@ from kda_kernels.diffusion.norm_infer._dispatcher import triton_one_pass_rms_nor
 KDA_OPTIMIZED_norm_infer = True
 KDA_OPTIMIZED_triton_one_pass_rms_norm = True
 
+# Source lineage (see _impls/h200/KDA_EXPORTS.json for machine-readable detail):
+#   KDA_COMMIT_*           = export-source commit (git HEAD at export); this commit's
+#                           _impls/h200/ tree matches this package and is reproducible.
+#   KDA_BENCHMARKED_COMMIT_* = commit the geomean speedup reflects; the candidate .cu/.cuh
+#                           kernels are byte-identical from 149392da2 through the export-source
+#                           commit (only export/wrapper/validation/metadata changed afterward).
+KDA_BENCHMARKED_COMMIT_norm_infer = 'b9dcb121e'
+KDA_BENCHMARKED_COMMIT_triton_one_pass_rms_norm = 'b9dcb121e'
+
 KDA_ARCHES_norm_infer = ('h200',)
 KDA_TASK_norm_infer = 'h200_diffusion_norm_infer__multi_shape'
-KDA_COMMIT_norm_infer = 'b9dcb121ea4c9a1eaf153442548972f5da4704f1'
+KDA_COMMIT_norm_infer = '75d4a0ab8fbbaca3ca67b9ca2a979e5078cdd07f'
 KDA_DATE_norm_infer = '2026-06-02'
 KDA_SPEEDUP_norm_infer = '1.4223x'
 KDA_ARCHES_triton_one_pass_rms_norm = ('h200',)
 KDA_TASK_triton_one_pass_rms_norm = 'h200_diffusion_norm_infer__multi_shape'
-KDA_COMMIT_triton_one_pass_rms_norm = 'b9dcb121ea4c9a1eaf153442548972f5da4704f1'
+KDA_COMMIT_triton_one_pass_rms_norm = '75d4a0ab8fbbaca3ca67b9ca2a979e5078cdd07f'
 KDA_DATE_triton_one_pass_rms_norm = '2026-06-02'
 KDA_SPEEDUP_triton_one_pass_rms_norm = '1.4223x'

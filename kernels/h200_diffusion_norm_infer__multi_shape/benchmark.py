@@ -56,7 +56,7 @@ CSV_HEADER = [
     "median_us", "mean_us", "std_us", "min_us", "p10_us", "p90_us",
     "gpu_time_us", "achieved_gbps",
     "host", "gpu_id", "gpu_model", "sglang_commit", "candidate_version",
-    "warmup", "iters", "command", "slug", "notes",
+    "warmup", "iters", "command", "slug", "notes", "remote_kda_dir",
 ]
 
 
@@ -173,6 +173,8 @@ def _ensure_header():
 
 
 def _row(**kw) -> list[Any]:
+    # AC-8: every row records the task-owned remote artifact root.
+    kw.setdefault("remote_kda_dir", os.environ.get("REMOTE_KDA_DIR", ""))
     return [kw.get(c, "") for c in CSV_HEADER]
 
 
