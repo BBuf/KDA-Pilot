@@ -105,13 +105,25 @@ shape buckets, cross-op fusion, CUDA-graph primary timing, `--use_fast_math`.
 
 Record any PR/wiki page that influences a decision here and in `solutions.jsonl`.
 
-## Open evidence questions (resolve with NCU before editing)
+## Resolved evidence questions (ANSWERED — NCU Round 3 + Round 8 install validation)
 
-- Large shapes: achieved DRAM BW %, L2 hit rate on `cos_sin_cache`, load/store
-  instruction counts, occupancy, dominant stall — is the baseline already at the
-  bandwidth bound?
-- Small shapes: launch overhead vs device time split; does PDL-off reduce isolated
-  latency on B200; how much of total latency is Python dispatch vs kernel?
+These were the pre-profiling open questions; all are now answered (see "## NCU correction
+(Round 3)" and "## Status" below). None remain open.
+
+- **Large shapes — is the baseline at the bandwidth bound? NO.** NCU shows only **~12.8% DRAM
+  read %peak** (≈1.4 TB/s of ~8 TB/s) — the large kernel is **memory-LATENCY bound /
+  cos-sin-reuse limited**, not bandwidth-bound: dominant stall `long_scoreboard` 11.9 at
+  ~89% occupancy, L2 hit ~50% on the per-head-reread float32 `cos_sin_cache`. The staged
+  kernel attacks exactly this (device-fair 1.10–1.26x; B8424 device 109.6→88.1 µs).
+- **Small shapes — launch vs device split? Mostly host.** NCU: device ~**7.55 µs** vs
+  ~**60 µs** end-to-end (~88% host dispatch/launch); tiny-grid (114<148 SMs, 0.10 waves/SM).
+  PDL-off was not kept (no win on the real workload). The device kernel is not the
+  small-shape bottleneck.
+- **Does the device win reach production? NO (the decisive answer).** On the literal
+  `kda_kernels.install()` path the candidate is a **net regression (0.9301x / 0.9185x)**:
+  the overlay's per-call Python dispatch tax (~7 µs > the baseline's C-level
+  `register_custom_op`) erases the modest device win on 9 of 10 shapes → **evidence-backed
+  no-go**. Active production bound = host dispatch overhead.
 
 ## Frozen baseline (Round 2, B200, commit 43a8fd164, GPU phys 4) — SUPERSEDED
 
@@ -169,7 +181,9 @@ roofline above:
   (≈1.4 TB/s of ~8 TB/s). Dominant stall `long_scoreboard` 11.9 at 88.9 % occupancy,
   compute SOL 60 % / memory SOL 50 %, L2 hit 50 %. Headroom is limited; any gain is
   from L2 reuse on the per-head-reread float32 cos_sin_cache or load-latency hiding —
-  not a bandwidth rewrite. Likely near-bound; confirm vs a candidate before a no-go.
+  not a bandwidth rewrite. (RESOLVED: Round 5's CTA-per-token cos/sin-staging candidate
+  did capture a device win here — device-fair 1.10–1.26x, B8424 109.6→88.1 µs — but
+  Round 8's literal install path made it a net regression → no-go; see "## Status".)
 
 This is why the roofline was a *seed* and NCU is the arbiter.
 
