@@ -152,12 +152,15 @@ EOF
       cat <<EOF
 \`\`\`
 
-## Mandatory Humanize/KDA Constraints
+## Mandatory Humanize/KernelPilot Constraints
 
 - Use this current kernel folder as the optimization workspace.
 - Keep \`.humanize*\` untracked.
 - Use official Humanize commands installed in the agent environment. Do not use
   any vendored or repository-local Humanize implementation from KernelPilot.
+- Read \`../../docs/standalone_diffusion_benchmark.md\` if it exists for this
+  task. Its local-baseline and A/B benchmark rules are mandatory for diffusion
+  kernels.
 - Read \`${WORKTREE_ROOT}/external/KernelWiki/SKILL.md\` and
   \`${WORKTREE_ROOT}/external/ncu-report-skill/SKILL.md\` before implementation.
 - Use KernelWiki for upstream design ideas and ncu-report-skill for
@@ -168,8 +171,6 @@ EOF
   - W: workload shape set and benchmark methodology
 - Do not implement kernels, run long benchmarks, or collect NCU evidence before
   RLCR is active.
-- Create a task-owned remote workspace under the path specified by the prompt
-  and export it as \`REMOTE_KDA_DIR\` before remote builds or profiling.
 - Check GPU state before and after every benchmark/profile run, and treat
   performance data as valid only when the selected card is idle.
 - Do not fabricate benchmark, NCU, correctness, topology, source-lineage, or
@@ -177,8 +178,13 @@ EOF
 - Keep all candidate code, benchmark logs, profile artifacts, NCU reports, and
   final notes inside this kernel folder unless the user explicitly asks for a
   wider integration patch.
-- Record every candidate in \`solutions.jsonl\` and every performance result in
-  \`benchmark.csv\`.
+- Keep copied upstream baseline code under \`baseline/\`, candidate code under
+  \`solution/\`, benchmark/correctness harnesses under \`bench/\`, and
+  provenance/results under \`docs/\`.
+- For diffusion kernels, do not import, patch, monkey-patch, or install into an
+  SGLang checkout during correctness or benchmark runtime. Copy the SGLang
+  implementation into \`baseline/\` and expose it through the same low-overhead
+  local entry ABI used by the candidate.
 - Always ask before destructive operations, global machine/container changes,
   deleting another task's artifacts, changing shared production checkouts in
   place, or relaxing correctness/baseline/promotion requirements.
@@ -211,16 +217,21 @@ into the plan unless the source prompt explicitly says otherwise:
 
 ## Expected Plan Shape
 
-- Recover the baseline and exact callsite.
-- Fill \`tests/test_correctness.py\` before optimization.
-- Establish the benchmark command and immutable baseline numbers.
+- Recover the baseline source, exact callsite, and workload shape set.
+- Copy the baseline source into \`baseline/\` and record upstream URL, commit,
+  copied files, and local edits in \`docs/baseline_source.md\`.
+- Define matching baseline and candidate entry points using the same ABI,
+  argument order, stream behavior, output allocation policy, and build path.
+- Fill \`bench/correctness.py\` before optimization.
+- Establish \`bench/benchmark.py\`, frozen workloads, and immutable baseline
+  numbers.
 - Rank candidate directions by expected benefit and risk.
 - Implement bounded optimization attempts under RLCR.
 - Include a remote phase that records selected host/GPU id/model, before/after
   GPU idleness, exact commands, benchmark artifacts, and NCU artifacts.
 - Use NCU/profile evidence for non-obvious bottlenecks.
-- Update \`interface.md\`, \`benchmark.csv\`, and \`solutions.jsonl\` before final
-  completion.
+- Update \`docs/results.md\` and keep raw benchmark/profiler artifacts in this
+  kernel folder before final completion.
 EOF
     } > "$DRAFT_FILE"
   fi

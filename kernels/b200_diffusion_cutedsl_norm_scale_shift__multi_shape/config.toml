@@ -1,0 +1,26 @@
+[task]
+slug = "b200_diffusion_cutedsl_norm_scale_shift__multi_shape"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "cutedsl_norm_scale_shift"
+entry_points = [
+  "sglang.jit_kernel.diffusion.cutedsl.scale_residual_norm_scale_shift:fused_norm_scale_shift",
+  "sglang.jit_kernel.diffusion.cutedsl.scale_residual_norm_scale_shift:fused_scale_residual_norm_scale_shift",
+]
+
+[build]
+language = "cuda"
+destination_passing_style = true
+baseline_entry_point = "baseline/kernel.cu::norm_scale_shift_baseline"
+candidate_entry_point = "solution/kernel.cu::norm_scale_shift_candidate"
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+inner_iterations_min = 1
+inner_iterations_max = 4096
+target_sample_us = 1000
+timeout_seconds = 600
+use_isolated_runner = true
+required_matched_ratio = 1.0
