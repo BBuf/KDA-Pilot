@@ -26,6 +26,9 @@ Environment overrides:
   CLAUDE_BIN            Claude executable (default: claude)
   CLAUDE_MODEL          Claude model flag value (default: opus)
   CLAUDE_EFFORT         Claude effort flag value (default: max)
+  KDA_BASH_BIN          Bash used for KernelPilot launch + spawned Claude hooks.
+                        Must survive empty-array expansion under set -u
+                        (default: first usable bash from PATH, Homebrew paths).
   KDA_LAUNCHER_NAME     Friendly launcher/task-card name, normally set by
                         scripts/launch_kernels/kXX_*.sh
   KDA_TASK_LABEL        Override the friendly label used for branch/worktree names
@@ -96,6 +99,47 @@ case "$TASK_SLUG" in
     ;;
 esac
 
+bash_is_kda_safe() {
+  local candidate="$1"
+  [[ -n "$candidate" && -x "$candidate" ]] || return 1
+  "$candidate" -c 'set -euo pipefail; a=(); : "${a[@]}"; [[ ${BASH_VERSINFO[0]} -gt 3 ]]' >/dev/null 2>&1
+}
+
+find_kda_bash() {
+  local candidate
+  if [[ -n "${KDA_BASH_BIN:-}" ]]; then
+    bash_is_kda_safe "$KDA_BASH_BIN" && printf '%s\n' "$KDA_BASH_BIN"
+    return
+  fi
+
+  for candidate in "$(command -v bash 2>/dev/null || true)" /opt/homebrew/bin/bash /usr/local/bin/bash; do
+    if bash_is_kda_safe "$candidate"; then
+      printf '%s\n' "$candidate"
+      return
+    fi
+  done
+}
+
+KDA_SELECTED_BASH="$(find_kda_bash || true)"
+if [[ -z "$KDA_SELECTED_BASH" ]]; then
+  echo "error: KernelPilot requires a modern bash for Humanize hooks; /bin/bash 3.2 is not supported" >&2
+  echo "hint: install Homebrew bash and/or set KDA_BASH_BIN=/opt/homebrew/bin/bash" >&2
+  exit 127
+fi
+KDA_SELECTED_BASH_DIR="$(cd "$(dirname "$KDA_SELECTED_BASH")" && pwd)"
+KDA_LAUNCH_PATH="$KDA_SELECTED_BASH_DIR:$PATH"
+
+if ! bash_is_kda_safe "$BASH"; then
+  if [[ "${KDA_BASH_REEXECED:-}" == "1" ]]; then
+    echo "error: failed to re-exec KernelPilot with safe bash: $KDA_SELECTED_BASH" >&2
+    exit 127
+  fi
+  export KDA_BASH_REEXECED=1
+  export KDA_BASH_BIN="$KDA_SELECTED_BASH"
+  export PATH="$KDA_LAUNCH_PATH"
+  exec "$KDA_SELECTED_BASH" "$0" "$TASK_DIR" "$@"
+fi
+
 if [[ "$TASK_DIR" = /* || "$TASK_DIR" == *".."* ]]; then
   echo "error: task dir must be repo-relative and must not contain '..': $TASK_DIR" >&2
   exit 2
@@ -145,6 +189,7 @@ echo "base:      $BASE_BRANCH"
 echo "review:    $REVIEW_BASE"
 echo "branch:    $BRANCH"
 echo "worktree:  $WORKTREE_ROOT"
+echo "bash:      $KDA_SELECTED_BASH ($("$KDA_SELECTED_BASH" --version | head -1))"
 echo
 
 git -C "$REPO_ROOT" branch "$REVIEW_BASE" "$BASE_BRANCH"
@@ -188,6 +233,10 @@ EOF
   \`../../docs/diffusion_correctness_contract.md\` if they exist for this task.
   Their compile-flag, registration, correctness-grid, profiling, and completion
   rules are mandatory for diffusion kernels.
+- Do not use macOS \`/bin/bash\` or any Bash 3.x runtime for local Humanize,
+  hook, launcher, or helper scripts. The launcher exports \`KDA_BASH_BIN\` and
+  prepends its directory to \`PATH\`; preserve that environment so
+  \`#!/usr/bin/env bash\` resolves to the selected modern bash.
 - Read \`${WORKTREE_ROOT}/external/KernelWiki/SKILL.md\` and
   \`${WORKTREE_ROOT}/external/ncu-report-skill/SKILL.md\` before implementation.
 - Use KernelWiki for upstream design ideas and ncu-report-skill for
@@ -305,6 +354,9 @@ if [[ "${KDA_NO_CLAUDE:-}" == "1" ]]; then
 fi
 
 exec env \
+  PATH="$KDA_LAUNCH_PATH" \
+  SHELL="$KDA_SELECTED_BASH" \
+  KDA_BASH_BIN="$KDA_SELECTED_BASH" \
   CLAUDE_PROJECT_DIR="$PWD" \
   HUMANIZE_CODEX_BYPASS_SANDBOX="${HUMANIZE_CODEX_BYPASS_SANDBOX:-true}" \
   "$CLAUDE_BIN" \

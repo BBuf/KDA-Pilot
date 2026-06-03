@@ -97,6 +97,8 @@ Set `KDA_NO_CLAUDE=1` to prepare the worktree without launching Claude.
 Launchers default `KDA_BASE_BRANCH` to the current checkout branch, so task
 worktrees inherit the branch you are testing. Set `KDA_BASE_BRANCH=<ref>` only
 when you intentionally want to launch from another committed ref.
+Set `KDA_BASH_BIN=/opt/homebrew/bin/bash` to force the modern Bash used by the
+launcher and spawned Humanize hooks; macOS `/bin/bash` 3.2 is rejected.
 For manual parallel panes in Ghostty, use
 [`docs/ghostty_claude_code_workflow.md`](docs/ghostty_claude_code_workflow.md).
 

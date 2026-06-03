@@ -138,7 +138,13 @@ KDA_NO_CLAUDE=1
 CLAUDE_BIN=claude
 CLAUDE_MODEL=opus
 CLAUDE_EFFORT=max
-HUMANIZE_CODEX_BYPASS_SANDBOX=true
+KDA_BASH_BIN=/opt/homebrew/bin/bash                 # modern bash for launch + hooks;
+                                                   # /bin/bash 3.2 is rejected
+HUMANIZE_CODEX_BYPASS_SANDBOX=true                # default; forwarded into Claude's env
+                                                  # so Codex in the RLCR loop skips its
+                                                  # per-call sandbox/approval prompts.
+                                                  # Set anything other than true|1 to
+                                                  # re-enable the sandbox.
 ```
 
 ## Humanize Flow
