@@ -24,10 +24,11 @@ Required first milestone:
 1. Copy the relevant upstream SGLang source files for these entry points into
    `baseline/`.
 2. Record upstream URL, commit, and copied files in `docs/baseline_source.md`.
-3. Expose the copied baseline through local AKO4X-style ABI entry points.
+3. Expose the copied baseline through local low-overhead ABI entry points.
 4. Expose the candidate through the exact same ABI in `solution/`.
-5. Create `bench/workloads.json`, `bench/correctness.py`, and
-   `bench/benchmark.py`.
+5. Create `bench/workloads.json`, copy the standard template to
+   `bench/benchmark.py`, implement `bench/adapter.py`, and create
+   `bench/correctness.py`.
 
 Do not import, patch, or monkey-patch SGLang during correctness or benchmark
 runs. All benchmark code must call only files in this task directory.

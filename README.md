@@ -17,6 +17,7 @@ docs/
   ghostty_claude_code_workflow.md
   diffusion_benchmark_shape_coverage.md
   standalone_diffusion_benchmark.md
+  standalone_diffusion_benchmark_template.py
 external/
   KernelWiki/
   ncu-report-skill/
@@ -60,7 +61,7 @@ Every task prompt requires the agent to follow both documents.
 ## Benchmark Principle
 
 Baseline and candidate must be compared through matching local interfaces. The
-preferred binding follows AKO4X's CUDA pattern:
+preferred binding follows a local direct CUDA ABI:
 
 - `language = "cuda"`
 - `entry_point = "kernel.cu::<exported_symbol>"`
@@ -72,6 +73,9 @@ preferred binding follows AKO4X's CUDA pattern:
 The benchmark must use fixed workload rows, isolated per-workload execution,
 preallocated outputs, warmups, CUDA-event timing with inner-loop amplification,
 interleaved A/B sampling, strict correctness checks, and full provenance.
+Use
+[`docs/standalone_diffusion_benchmark_template.py`](docs/standalone_diffusion_benchmark_template.py)
+as the starting point for every diffusion task's `bench/benchmark.py`.
 
 ## Launch
 

@@ -186,6 +186,7 @@ bench/
   workloads.json
   correctness.py
   benchmark.py
+  adapter.py
 docs/
   baseline_source.md
   benchmark_method.md

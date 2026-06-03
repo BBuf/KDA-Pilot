@@ -13,7 +13,7 @@ the local baseline.
   copied file list in `docs/baseline_source.md`.
 - Baseline and candidate must expose matching local entry points. Any wrapper
   overhead included for one side must be included for the other side.
-- Prefer AKO4X-style CUDA direct export for both sides:
+- Prefer local direct CUDA ABI for both sides:
   `TVM_FFI_DLL_EXPORT_TYPED_FUNC`, `tvm::ffi::TensorView` arguments, output
   tensors passed last, and `destination_passing_style = true`.
 - Every CUDA launch must use PyTorch's current stream:
@@ -41,6 +41,7 @@ solution/
 bench/
   workloads.json
   benchmark.py
+  adapter.py
   correctness.py
   results.jsonl
 docs/
@@ -50,9 +51,14 @@ docs/
 config.toml
 ```
 
+`bench/benchmark.py` must start from
+[`standalone_diffusion_benchmark_template.py`](standalone_diffusion_benchmark_template.py).
+Do not invent a different timing harness unless this template has a documented
+bug and both baseline and candidate are remeasured after the fix.
+
 ## ABI Pattern
 
-For pure CUDA, use the AKO4X direct-symbol pattern:
+For pure CUDA, use the local direct-symbol CUDA pattern:
 
 ```cuda
 #include <ATen/cuda/CUDAContext.h>
@@ -121,6 +127,44 @@ target_sample_us = 1000
 timeout_seconds = 600
 use_isolated_runner = true
 ```
+
+## Standard Benchmark File
+
+Use [`standalone_diffusion_benchmark_template.py`](standalone_diffusion_benchmark_template.py)
+as the required starting point for `bench/benchmark.py`.
+
+The template fixes the benchmark policy:
+
+- each workload can run in an isolated subprocess;
+- each trial receives fresh random inputs while keeping tensor objects stable
+  inside the trial;
+- baseline and candidate outputs are preallocated outside timing;
+- correctness runs before timing and poisons output buffers;
+- baseline/candidate timing is interleaved per trial with deterministic order;
+- CUDA events provide primary GPU time, with wall-clock samples as diagnostics;
+- inner-loop amplification is calibrated per side until the event sample is
+  large enough to measure;
+- every workload emits median/mean/std/min/p10/p90 and raw samples;
+- the headline score is an equal-weight geometric mean over production
+  workloads;
+- result JSONL records command, environment, GPU state, and benchmark settings.
+
+The task-specific `bench/adapter.py` supplies only tensor construction and the
+two ABI calls:
+
+```python
+def make_case(workload, *, device, seed):
+    ...
+
+def call_baseline(workload, inputs, outputs):
+    ...
+
+def call_candidate(workload, inputs, outputs):
+    ...
+```
+
+`call_baseline` and `call_candidate` must expose identical wrapper overhead.
+They must not allocate output tensors in the timed path.
 
 ## Correctness Rules
 
