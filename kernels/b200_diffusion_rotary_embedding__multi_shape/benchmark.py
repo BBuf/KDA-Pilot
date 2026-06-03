@@ -1,16 +1,32 @@
 #!/usr/bin/env python3
-"""Isolated benchmark scaffold for ``b200_diffusion_rotary_embedding__multi_shape``.
+"""Benchmark harness for ``b200_diffusion_rotary_embedding__multi_shape``.
 
-Fill ``tests/test_correctness.py`` first. This script reuses its cases, baseline,
-and candidate callables, then appends summary rows to ``benchmark.csv``.
+Parent/worker split so the idle evidence is trustworthy:
+  * The PARENT validates GPU idleness with nvidia-smi BEFORE any CUDA work,
+    spawns a `--worker` child, and — only after that child has fully exited —
+    validates idleness AGAIN. Because the CUDA process is gone, the after-check
+    genuinely shows `n_compute_procs=0`. The parent refuses to record promotion
+    evidence unless both before and after pass the idle gate.
+  * The WORKER imports CUDA, builds the cases, times all 11 signatures with CUDA
+    events (median latency), and writes the timing rows to a temp JSON file.
+
+Run inside the sglang_bbuf container on a verified-idle B200:
+    CUDA_VISIBLE_DEVICES=<idle> python benchmark.py --warmup 50 --iters 300 --candidate cuda-v4
 """
 
 from __future__ import annotations
 
+import argparse
 import csv
 import importlib.util
+import json
 import math
+import os
+import socket
 import statistics
+import subprocess
+import sys
+import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -22,7 +38,6 @@ except ImportError:  # pragma: no cover
     torch = None
 
 
-KERNEL_SLUG = "b200_diffusion_rotary_embedding__multi_shape"
 KERNEL_DIR = Path(__file__).resolve().parent
 
 
@@ -35,22 +50,62 @@ def _load_correctness_module():
     return module
 
 
-def _sync() -> None:
-    if torch is not None and torch.cuda.is_available():
-        torch.cuda.synchronize()
+def _git_short_sha() -> str:
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"], cwd=str(KERNEL_DIR), text=True
+        ).strip()
+    except Exception:
+        return "nogit"
 
 
-def _time_call(fn: Callable[[dict[str, Any]], Any], case: dict[str, Any], *, warmup: int, iters: int) -> list[float]:
+def _candidate_version() -> str:
+    spec = importlib.util.spec_from_file_location(
+        "kda_diffrope_wrapper_ver", str(KERNEL_DIR / "src" / "wrapper.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return f"src={module._SRC_HASH} pdl={module.USE_PDL}"
+
+
+def _gpu_state(gpu_id: str) -> dict:
+    """Query nvidia-smi for the physical GPU: utilization, memory, compute procs."""
+    try:
+        u = subprocess.check_output(
+            ["nvidia-smi", "--query-gpu=utilization.gpu,memory.used", "--format=csv,noheader,nounits", "-i", str(gpu_id)],
+            text=True,
+        ).strip()
+        procs = subprocess.check_output(
+            ["nvidia-smi", "--query-compute-apps=pid,used_memory", "--format=csv,noheader,nounits", "-i", str(gpu_id)],
+            text=True,
+        ).strip()
+        util, mem = (x.strip() for x in u.split(","))
+        n = len([ln for ln in procs.splitlines() if ln.strip()])
+        return {"util_pct": int(float(util)), "mem_used_mib": int(float(mem)), "n_compute_procs": n,
+                "procs": procs.replace("\n", "|") or "none"}
+    except Exception as e:  # pragma: no cover
+        return {"error": repr(e)}
+
+
+def _is_idle(state: dict) -> bool:
+    # Idle == no compute process, <=2 GiB resident, <=10% util on the target GPU.
+    if "error" in state:
+        return False
+    return state["n_compute_procs"] == 0 and state["mem_used_mib"] <= 2048 and state["util_pct"] <= 10
+
+
+def _event_time(fn: Callable[[dict[str, Any]], Any], case: dict[str, Any], *, warmup: int, iters: int) -> list[float]:
     for _ in range(warmup):
         fn(case)
-    _sync()
-    samples = []
-    for _ in range(iters):
-        start = time.perf_counter()
+    torch.cuda.synchronize()
+    starts = [torch.cuda.Event(enable_timing=True) for _ in range(iters)]
+    ends = [torch.cuda.Event(enable_timing=True) for _ in range(iters)]
+    for i in range(iters):
+        starts[i].record()
         fn(case)
-        _sync()
-        samples.append((time.perf_counter() - start) * 1e6)
-    return samples
+        ends[i].record()
+    torch.cuda.synchronize()
+    return [starts[i].elapsed_time(ends[i]) * 1000.0 for i in range(iters)]  # ms -> us
 
 
 def _summary(samples: list[float]) -> dict[str, float]:
@@ -67,8 +122,6 @@ def _summary(samples: list[float]) -> dict[str, float]:
         "min_us": ordered[0],
         "p10_us": pct(0.10),
         "p90_us": pct(0.90),
-        "p95_us": pct(0.95),
-        "max_us": ordered[-1],
     }
 
 
@@ -79,52 +132,113 @@ def _geom_mean(values: list[float]) -> float:
     return math.exp(sum(math.log(v) for v in cleaned) / len(cleaned))
 
 
-def main() -> int:
+def _run_worker(tmp_path: str, warmup: int, iters: int) -> int:
+    """CUDA work happens in this child process; it exits before the parent's after-idle check."""
     correctness = _load_correctness_module()
     cases = correctness.make_cases()
     if not cases:
-        raise SystemExit("No benchmark cases. Fill tests/test_correctness.py first.")
-
+        json.dump({"error": "no benchmark cases (need CUDA)"}, open(tmp_path, "w"))
+        return 1
+    rows = []
     speedups = []
+    for case in cases:
+        w = int(case.get("warmup", warmup))
+        it = int(case.get("iters", iters))
+        b = _summary(_event_time(correctness.baseline, case, warmup=w, iters=it))
+        c = _summary(_event_time(correctness.candidate, case, warmup=w, iters=it))
+        sp = (b["median_us"] / c["median_us"]) if c["median_us"] > 0 else float("nan")
+        speedups.append(sp)
+        rows.append({"name": case["name"], "b": b, "c": c, "speedup": sp, "iters": it})
+    out = {
+        "rows": rows,
+        "geomean": _geom_mean(speedups),
+        "gpu_model": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "cpu",
+    }
+    json.dump(out, open(tmp_path, "w"))
+    return 0
+
+
+def _now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--warmup", type=int, default=50)
+    ap.add_argument("--iters", type=int, default=300)
+    ap.add_argument("--candidate", type=str, default="cuda-v4", help="candidate id recorded in the CSV")
+    ap.add_argument("--host", type=str, default="")
+    ap.add_argument("--allow-busy", action="store_true", help="skip the idle-gate (NOT for promotion evidence)")
+    ap.add_argument("--worker", action="store_true", help="internal: CUDA timing child process")
+    ap.add_argument("--tmp", type=str, default="", help="internal: worker results path")
+    args = ap.parse_args()
+
+    if args.worker:
+        return _run_worker(args.tmp, args.warmup, args.iters)
+
+    # -------- parent: owns idle validation + CSV; never initializes CUDA --------
+    visible = os.environ.get("CUDA_VISIBLE_DEVICES", "")
+    gpu_id = visible.split(",")[0] if visible else "0"
+
+    pre = _gpu_state(gpu_id)
+    if not args.allow_busy and not _is_idle(pre):
+        raise SystemExit(f"GPU {gpu_id} not idle BEFORE run (refusing to benchmark): {pre}")
+
+    tmp = tempfile.NamedTemporaryFile(suffix=".json", delete=False, dir=str(KERNEL_DIR))
+    tmp.close()
+    cmd = [
+        sys.executable, os.path.abspath(__file__), "--worker", "--tmp", tmp.name,
+        "--warmup", str(args.warmup), "--iters", str(args.iters), "--candidate", args.candidate,
+    ]
+    rc = subprocess.run(cmd).returncode
+    try:
+        with open(tmp.name) as fh:
+            data = json.load(fh)
+    except Exception as e:
+        data = {"error": f"could not read worker results: {e!r}"}
+    finally:
+        if os.path.exists(tmp.name):
+            os.unlink(tmp.name)
+    if rc != 0 or "rows" not in data:
+        raise SystemExit(f"worker failed (rc={rc}): {data}")
+
+    time.sleep(3)  # let the GPU settle after the CUDA worker process has exited
+    post = _gpu_state(gpu_id)
+    if not args.allow_busy and not _is_idle(post):
+        raise SystemExit(
+            f"GPU {gpu_id} not idle AFTER the worker exited (refusing to record promotion evidence): {post}"
+        )
+
+    host = args.host or socket.gethostname()
+    gpu_model = data.get("gpu_model", "?")
+    version = _candidate_version()
+    sha = _git_short_sha()
+    ver_id = f"git_sha={sha}" if sha != "nogit" else "git_sha=N/A(copied-dir); version-id=source-hash"
+    cmdstr = f"CUDA_VISIBLE_DEVICES={visible} python benchmark.py --warmup {args.warmup} --iters {args.iters} --candidate {args.candidate}"
+    prov = f"host={host} gpu_id={gpu_id} gpu={gpu_model} {ver_id} {version} cmd='{cmdstr}'"
+
     csv_path = KERNEL_DIR / "benchmark.csv"
     with csv_path.open("a", newline="") as f:
-        writer = csv.writer(f)
-        for case in cases:
-            warmup = int(case.get("warmup", 25))
-            iters = int(case.get("iters", 100))
-            baseline_samples = _time_call(correctness.baseline, case, warmup=warmup, iters=iters)
-            candidate_samples = _time_call(correctness.candidate, case, warmup=warmup, iters=iters)
-            b = _summary(baseline_samples)
-            c = _summary(candidate_samples)
-            speedup = (b["median_us"] / c["median_us"]) if c["median_us"] > 0 else float("nan")
-            speedups.append(speedup)
-            now = datetime.now(timezone.utc).isoformat()
-            case_name = case.get("name", case.get("shape", "unknown"))
-            writer.writerow([
-                now,
-                case.get("candidate", "baseline_vs_candidate"),
-                case_name,
-                "median_us",
-                f"{b['median_us']:.6f}",
-                f"{c['median_us']:.6f}",
-                f"{speedup:.6f}x" if math.isfinite(speedup) else "",
+        wr = csv.writer(f)
+        wr.writerow([_now(), args.candidate, "idle_check_before", "nvidia_smi", "", "", "", f"gpu_id={gpu_id} idle={_is_idle(pre)} {pre}"])
+        for r in data["rows"]:
+            b, c, sp = r["b"], r["c"], r["speedup"]
+            wr.writerow([
+                _now(), args.candidate, r["name"], "median_us",
+                f"{b['median_us']:.4f}", f"{c['median_us']:.4f}",
+                f"{sp:.4f}x" if math.isfinite(sp) else "",
                 (
-                    f"baseline_mean_us={b['mean_us']:.6f} cand_mean_us={c['mean_us']:.6f} "
-                    f"cand_p10={c['p10_us']:.6f} cand_p90={c['p90_us']:.6f} "
-                    f"iters={iters} slug={KERNEL_SLUG}"
+                    f"base[mean={b['mean_us']:.3f} std={b['std_us']:.3f} min={b['min_us']:.3f} "
+                    f"p10={b['p10_us']:.3f} p90={b['p90_us']:.3f}] "
+                    f"cand[mean={c['mean_us']:.3f} std={c['std_us']:.3f} min={c['min_us']:.3f} "
+                    f"p10={c['p10_us']:.3f} p90={c['p90_us']:.3f}] iters={r['iters']} {prov}"
                 ),
             ])
-            print(case_name, "speedup_x", speedup)
-        writer.writerow([
-            datetime.now(timezone.utc).isoformat(),
-            "geomean",
-            "all_configured_shapes",
-            "geomean_speedup_x",
-            "",
-            "",
-            f"{_geom_mean(speedups):.6f}x",
-            f"slug={KERNEL_SLUG}",
-        ])
+            print(f"{r['name']}: base={b['median_us']:.2f}us cand={c['median_us']:.2f}us speedup={sp:.4f}x")
+        geo = data["geomean"]
+        wr.writerow([_now(), args.candidate, "geomean_11_unique_signatures", "geomean_speedup_x", "", "", f"{geo:.4f}x", f"n={len(data['rows'])} {prov}"])
+        wr.writerow([_now(), args.candidate, "idle_check_after", "nvidia_smi", "", "", "", f"gpu_id={gpu_id} idle={_is_idle(post)} {post}"])
+    print(f"GEOMEAN {geo:.4f}x | idle_before={_is_idle(pre)} {pre} | idle_after={_is_idle(post)} {post}")
     return 0
 
 

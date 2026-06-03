@@ -30,8 +30,8 @@ except Exception:  # pragma: no cover - local export/verify may not have sglang
     _BASELINE_apply_ltx2_split_rotary_emb = None
 
 _ARCH_BY_CAPABILITY = {(10, 0): 'b200', (9, 0): 'h200'}
-_SUPPORTED_ARCHES = ('h200',)
-_IMPL_MODULES = {'apply_rotary_embedding': {'h200': 'kda_kernels.diffusion.rotary_embedding._impls.h200.wrapper'}, 'apply_ltx2_split_rotary_emb': {'h200': 'kda_kernels.diffusion.rotary_embedding._impls.h200.wrapper'}}
+_SUPPORTED_ARCHES = ('b200', 'h200')
+_IMPL_MODULES = {'apply_rotary_embedding': {'b200': 'kda_kernels.diffusion.rotary_embedding._impls.b200.wrapper', 'h200': 'kda_kernels.diffusion.rotary_embedding._impls.h200.wrapper'}, 'apply_ltx2_split_rotary_emb': {'b200': 'kda_kernels.diffusion.rotary_embedding._impls.b200.wrapper', 'h200': 'kda_kernels.diffusion.rotary_embedding._impls.h200.wrapper'}}
 _IMPL_CACHE: dict[tuple[str, str], Any] = {}
 _IMPL_IMPORT_ERRORS: dict[tuple[str, str], BaseException] = {}
 _WARNED_IMPORT_ERRORS: set[tuple[str, str]] = set()
