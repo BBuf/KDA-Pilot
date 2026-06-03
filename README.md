@@ -14,6 +14,8 @@ candidate side by side inside the task directory.
 
 ```text
 docs/
+  ghostty_claude_code_workflow.md
+  diffusion_benchmark_shape_coverage.md
   standalone_diffusion_benchmark.md
 external/
   KernelWiki/
@@ -81,6 +83,8 @@ scripts/launch_kernels/k03_b200_diffusion_qknorm_rope__multi_shape.sh
 ```
 
 Set `KDA_NO_CLAUDE=1` to prepare the worktree without launching Claude.
+For manual parallel panes in Ghostty, use
+[`docs/ghostty_claude_code_workflow.md`](docs/ghostty_claude_code_workflow.md).
 
 ## Maintenance
 
