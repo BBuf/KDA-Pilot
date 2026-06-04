@@ -115,6 +115,23 @@ Do not finalize a no-go because the first candidate loses. A no-go needs
 baseline numbers, at least one reasoned candidate attempt, correctness status,
 benchmark evidence, and a named active bound or blocker.
 
+## PR Scope
+
+After a kernel is optimized, the final PR must include only:
+
+- the kernel-related source needed for the copied baseline, optimized solution,
+  local ABI, benchmark adapter, and correctness/benchmark harness;
+- the per-shape baseline-vs-candidate performance comparison and final
+  conclusion, normally in `docs/results.md`;
+- small method/provenance notes needed to reproduce the result.
+
+Do not commit intermediate optimization artifacts such as raw NCU reports,
+Nsight traces, profiler run directories, temporary harness binaries, build
+outputs, scratch logs, failed experiment dumps, or large benchmark JSONL files
+unless the user explicitly asks for them in the PR. Keep those artifacts local
+to the task workspace or remote workspace for audit/debugging, then leave them
+unstaged before opening the PR.
+
 ## Shape Specialization
 
 Shape-specialized kernels, template variants, autotune tables, and dispatchers
@@ -153,4 +170,7 @@ A diffusion task is complete only when:
 - canonical regression correctness passes;
 - the benchmark result uses the standard standalone timing rules;
 - NCU or a clear roofline-style analysis explains the final result or blocker;
-- `docs/results.md` summarizes the final command, result, and conclusion.
+- `docs/results.md` summarizes the final command, per-shape performance
+  comparison, result, and conclusion;
+- the staged PR diff excludes raw profiling, NCU, temporary build, and scratch
+  artifacts.

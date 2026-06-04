@@ -201,6 +201,10 @@ EOF
 - Keep all candidate code, benchmark logs, profile artifacts, NCU reports, and
   final notes inside this kernel folder unless the user explicitly asks for a
   wider integration patch.
+- Keep raw profiler/NCU/build/scratch artifacts local for evidence, but do not
+  stage them for the final PR. The PR should contain only kernel-related code,
+  benchmark/correctness harnesses, small provenance notes, and per-shape
+  baseline-vs-candidate performance results.
 - Keep copied upstream baseline code under \`baseline/\`, candidate code under
   \`solution/\`, benchmark/correctness harnesses under \`bench/\`, and
   provenance/results under \`docs/\`.
@@ -262,6 +266,10 @@ into the plan unless the source prompt explicitly says otherwise:
 - Use NCU/profile evidence for non-obvious bottlenecks.
 - Update \`docs/results.md\` and keep raw benchmark/profiler artifacts in this
   kernel folder before final completion.
+- Before committing or opening a PR, inspect the staged diff and exclude raw
+  NCU reports, Nsight traces, profiler directories, temporary harness binaries,
+  build outputs, scratch logs, failed experiment dumps, and large intermediate
+  benchmark files.
 EOF
     } > "$DRAFT_FILE"
   fi
