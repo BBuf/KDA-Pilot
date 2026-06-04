@@ -395,6 +395,38 @@ def test_rms_noncontiguous_higher_rank_falls_back() -> None:
     torch.testing.assert_close(out_cand.float(), out_base.float(), atol=5e-2, rtol=5e-2)
 
 
+def test_zero_row_inputs_no_launch_error() -> None:
+    """Empty-but-valid inputs ([0,128] bf16 RMS; [0,5120] fp32 LN) pass the
+    routing guards (contiguous, supported dtype/dim) and must return an empty
+    output without a CUDA error. The tiled RMS launcher previously computed a
+    zero-block grid and issued an invalid launch; it must no-op instead, like
+    the baseline and the LayerNorm launcher (which clamps to one idle block)."""
+    if torch is None or not torch.cuda.is_available():
+        pytest.skip("CUDA required")
+    cand_rms = _candidate_callable("triton_one_pass_rms_norm")
+    cand_norm = _candidate_callable("norm_infer")
+    if cand_rms is None or cand_norm is None:
+        pytest.skip("candidate dispatcher not implemented yet")
+
+    x = torch.empty(0, 128, device=DEVICE, dtype=torch.bfloat16)
+    w = torch.randn(128, device=DEVICE, dtype=torch.bfloat16)
+    assert x.is_contiguous()
+    out_cand = cand_rms(x, w, EPS)
+    torch.cuda.synchronize()  # surface any bad launch from the empty call
+    out_base = _sglang_rms_norm()(x, w, EPS)
+    assert out_cand.shape == (0, 128) and out_cand.dtype == torch.bfloat16
+    assert out_cand.shape == out_base.shape
+
+    xl = torch.empty(0, 5120, device=DEVICE, dtype=torch.float32)
+    wl = torch.randn(5120, device=DEVICE, dtype=torch.float32)
+    bl = torch.randn(5120, device=DEVICE, dtype=torch.float32)
+    out_ln = cand_norm(xl, wl, bl, EPS, is_rms_norm=False)
+    torch.cuda.synchronize()
+    out_ln_base = _sglang_norm_infer()(xl, wl, bl, EPS, is_rms_norm=False)
+    assert out_ln.shape == (0, 5120) and out_ln.dtype == torch.float32
+    assert out_ln.shape == out_ln_base.shape
+
+
 def test_optimized_wrapper_call_forms() -> None:
     """The generic register()['callable'] must preserve every recovered callsite
     form: triton_one_pass_rms_norm(x, w) with default eps (2 positional), (x, w, eps),

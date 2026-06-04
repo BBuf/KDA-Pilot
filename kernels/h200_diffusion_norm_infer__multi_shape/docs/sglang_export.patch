@@ -178,10 +178,10 @@ index 0000000000..5689231874
 +}  // namespace
 diff --git a/python/sglang/jit_kernel/csrc/diffusion/rms_norm_d128_tile16.cuh b/python/sglang/jit_kernel/csrc/diffusion/rms_norm_d128_tile16.cuh
 new file mode 100644
-index 0000000000..409175cedd
+index 0000000000..266e197519
 --- /dev/null
 +++ b/python/sglang/jit_kernel/csrc/diffusion/rms_norm_d128_tile16.cuh
-@@ -0,0 +1,198 @@
+@@ -0,0 +1,202 @@
 +// Multi-row tiled RMSNorm forward for the diffusion one-pass RMSNorm family
 +// (D=128, bf16/fp16), targeting the huge-M streaming shapes.
 +//
@@ -361,6 +361,10 @@ index 0000000000..409175cedd
 +    TensorMatcher({D}).with_dtype<DType>().with_device(device).verify(w);
 +
 +    const auto num_rows = static_cast<uint32_t>(M.unwrap());
++    if (num_rows == 0) {
++      return;  // empty input: output is already the (valid) empty tensor; a
++               // zero-block launch would be an invalid CUDA configuration
++    }
 +    const auto params = RmsNormTileParams{
 +        .x_ptr = x.data_ptr(),
 +        .y_ptr = y.data_ptr(),

@@ -177,6 +177,10 @@ struct RmsNormTileKernel {
     TensorMatcher({D}).with_dtype<DType>().with_device(device).verify(w);
 
     const auto num_rows = static_cast<uint32_t>(M.unwrap());
+    if (num_rows == 0) {
+      return;  // empty input: output is already the (valid) empty tensor; a
+               // zero-block launch would be an invalid CUDA configuration
+    }
     const auto params = RmsNormTileParams{
         .x_ptr = x.data_ptr(),
         .y_ptr = y.data_ptr(),
