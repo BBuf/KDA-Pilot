@@ -1,86 +1,105 @@
-# SGLang jit_kernel export + drop-in replacement (kda_kernels overlay)
+# SGLang jit_kernel export — continuation round (tilev1)
 
-Final packaging step (task12), run after the RLCR optimization landed. The repo's
-integration mechanism is the **`kda_kernels` overlay + runtime `install()`**, which
-monkey-patches the two public SGLang symbols with the native-CUDA candidate. The
-CUDA `.cuh` are compiled through SGLang's own `jit_kernel` / tvm-ffi `load_jit`
-(no `torch.utils.cpp_extension`, no `--use_fast_math`).
+> **Historical note**: the previous version of this document described the
+> normv5 overlay export (`kda_kernels.install()` monkey-patch) and its
+> `1.4223x` claim. That number was measured through a plain-callable overlay
+> that bypassed the production custom-op layer — **historical overlay
+> evidence, superseded** (kernel-pilot rule change `cc17c1149`). The promotion
+> arbiter is now the in-SGLang dispatch-symmetric A/B below.
 
-## Export command (from repo root)
+## Promotion arbiter (PASS) — in-tree dispatch-symmetric env-toggle A/B
 
+- **Mechanism**: ONE patched SGLang worktree (task-owned, detached at the
+  container's commit `84e1108312`: `REMOTE_KDA_DIR/sglang_arbiter`). The
+  native fast paths are inserted INSIDE the unchanged public bodies —
+  `norm_infer` (plain function) and `_triton_one_pass_rms_norm_cuda` (the
+  `@register_custom_op(op_name="triton_one_pass_rms_norm_cuda", out_shape="x")`
+  body; decorator byte-unchanged) — gated by `SGLANG_NATIVE_NORM_INFER` /
+  `SGLANG_NATIVE_ONE_PASS_RMS_NORM` (default on) using the `qknorm_rope.py`
+  in-tree pattern (`@cache_once` + `@torch.compiler.assume_constant_result`
+  static gate, lazy `load_jit` loader, automatic fallback to the Triton path).
+  Both A/B legs run the SAME patched checkout — wrapper, registration, and the
+  inserted dispatch branch are byte-identical; only the env toggle differs.
+  Clean-vs-patched comparisons were not used.
+- **SGLang files touched** (shipping patch: `docs/sglang_export.patch`, 4 files):
+  - `python/sglang/jit_kernel/diffusion/triton/norm.py` (fast path inside
+    `norm_infer` + gate/loader)
+  - `python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py` (fast path
+    inside the registered op body + gate/loader)
+  - `python/sglang/jit_kernel/csrc/diffusion/rms_norm_d128_tile16.cuh` (new)
+  - `python/sglang/jit_kernel/csrc/diffusion/layer_norm_n5120.cuh` (new)
+- **load_jit wiring** (in-tree build path, flags match SGLang, no
+  `--use_fast_math`):
+  - LN: `load_jit("kda_layer_norm", *make_cpp_args(5120, True, False,
+    torch.float32), cuda_files=["diffusion/layer_norm_n5120.cuh"],
+    cuda_wrappers=[("layer_norm", f"LayerNormKernel<{targs}>::run")])`
+  - RMS: `load_jit("kda_rms_norm_tile", *make_cpp_args(128, 8, 128, False,
+    False, torch.bfloat16), cuda_files=["diffusion/rms_norm_d128_tile16.cuh"],
+    cuda_wrappers=[("rms_norm_tile", f"RmsNormTileKernel<{targs}>::run")])`
+- **Benchmark** (ion8-h200 GPU 0, idle-gated before/after each run; 4
+  alternated process runs off,on,off,on; pair medians within ~1%; wall =
+  per-call median, dev = stream-saturated batched rate):
+
+| shape | off wall/dev (us) | on wall/dev (us) | wall x | dev-rate x |
+|---|---|---|---|---|
+| helios fp32 [8640,5120] | 111.29 / 90.96 | 100.18 / 89.30 | 1.111 | 1.019 |
+| hunyuan bf16 [648720,128] | 108.81 / 81.87 | 95.44 / 81.13 | 1.140 | 1.009 |
+| hunyuan bf16 [1320,128] | 33.31 / 24.63 | 17.74 / 11.39 | 1.878 | 2.163 |
+| hunyuan bf16 [650040,128] | 108.73 / 82.17 | 95.70 / 81.36 | 1.136 | 1.010 |
+| zimage bf16 [16384,128] | 33.29 / 24.64 | 17.95 / 11.40 | 1.854 | 2.161 |
+| zimage bf16 [4096,128] | 32.28 / 24.39 | 17.70 / 11.36 | 1.823 | 2.148 |
+| **geomean** | | | **1.4458** | 1.485 |
+
+  Decomposition: the three bandwidth-bound shapes are device-parity-plus at
+  the HBM bound (NCU: identical 77.66us single-launch on [648720,128], 82.67%
+  vs 82.17% DRAM — `profile/ncu_tilev1/REPORT.md`); their wall delta and the
+  small-shape ~1.8-1.9x are host-side launcher wins (Triton runtime launch →
+  cached tvm-ffi call) under the byte-identical public op + registration —
+  admissible per the standing decomposition ruling, reported with the
+  device/host split in `benchmark.csv` (`mode=intree_arbiter*`).
+- **Oracle**: `python/sglang/jit_kernel/tests/diffusion/test_qwen_image_modulation.py`
+  inside the patched worktree: **288/288 with native ON** (and 288/288 with
+  OFF — the toggled-off path is upstream-identical).
+- **Fallback probes** (native ON): fp16 RMS and non-contiguous bf16 RMS —
+  guard evaluates False AND public output equals the torch fp32 reference;
+  `is_rms_norm=True` on `norm_infer` bypasses the LN fast path and matches the
+  reference.
+- **torch.compile smoke**: `torch.ops.sglang.triton_one_pass_rms_norm_cuda`
+  present; compiled callable == eager bitwise on bf16 [4096,128].
+- Raw artifacts: `arbiter_{off,on}_{1,2}.json` under
+  `REMOTE_KDA_DIR=/home/sglang-omni/bbuf/kda_runs/h200_diffusion_norm_infer__multi_shape/r20260604-rlcr184616`.
+
+## kda_kernels overlay export (secondary distribution channel, refreshed)
+
+- `python3 scripts/export_kda_kernels/export.py h200_diffusion_norm_infer__multi_shape`
+  regenerated `kda_kernels/diffusion/norm_infer/_impls/h200/` from `src/`
+  (now shipping `rms_norm_d128_tile16.cuh`; the prior `rms_norm_d128.cuh`
+  warp kernel is retained unrouted for reference). `EXPORTS` in
+  `src/register.py` stays bare-exec-safe; `src/wrapper.py` keeps the
+  relative-first import.
+- Strict validation on ion8-h200 GPU 0 (`validate_install.py`, overlay
+  install path): both symbols swapped; all six perf shapes pass the strict
+  contract (shape/dtype/NaN/Inf + vs-baseline AND vs-fp32-reference);
+  fallback cases exact; select01 oracle OK; smoke 4096x128 2.00x,
+  648720x128 1.14x; **VALIDATE_OK exit 0**.
+- Stamped metadata: `KDA_EXPORTS.json` / `KDA_STATUS.md` report the arbiter
+  geomean `1.4458x`. Commit lineage convention (unchanged from prior rounds):
+  the `commit` stamp is the **export-source commit** — kernel-pilot git HEAD
+  when the export tool ran; the continuation sources land in the SUCCESSOR
+  commit, so the stamp marks the generation point (kernel files are the
+  byte-anchor), and `git show <commit>` is not expected to reproduce the
+  package tree.
+
+## Reproduction
+
+```bash
+# arbiter (inside sglang_bbuf on ion8/ion9-h200; worktree first on PYTHONPATH)
+PYTHONPATH=$REMOTE_KDA_DIR/sglang_arbiter/python REMOTE_GPU_ID=0 CUDA_VISIBLE_DEVICES=0 \
+  python3 bench_intree_arbiter.py --toggle off --iters 200 --json off.json
+PYTHONPATH=$REMOTE_KDA_DIR/sglang_arbiter/python REMOTE_GPU_ID=0 CUDA_VISIBLE_DEVICES=0 \
+  python3 bench_intree_arbiter.py --toggle on --iters 200 --probes --json on.json
+
+# overlay validation (repo root on PYTHONPATH)
+PYTHONPATH=<repo-root> REMOTE_GPU_ID=0 CUDA_VISIBLE_DEVICES=0 \
+  python3 kernels/h200_diffusion_norm_infer__multi_shape/validate_install.py
 ```
-python3 scripts/export_kda_kernels/export.py h200_diffusion_norm_infer__multi_shape
-```
-
-Prerequisite: `src/register.py` defines
-`EXPORTS = {"norm_infer": norm_infer, "triton_one_pass_rms_norm": triton_one_pass_rms_norm}`
-(read by the export tool) and `src/wrapper.py` re-exports those names (the generated
-dispatcher imports `kda_kernels.diffusion.norm_infer._impls.h200.wrapper`).
-
-## Generated files
-
-- `kda_kernels/diffusion/norm_infer/__init__.py` — rewritten to import `norm_infer` and
-  `triton_one_pass_rms_norm` from `._dispatcher`; `KDA_OPTIMIZED_norm_infer = True`,
-  `KDA_OPTIMIZED_triton_one_pass_rms_norm = True`; speedup `1.4223x`, arches `('h200',)`.
-  - Source lineage (matches the generated metadata): `KDA_COMMIT_*` is the **export-source
-    commit** — the kernel-pilot git HEAD when the export tool ran (the source tree the export was
-    generated against). The exported `src/` in this package is committed in the kernel-pilot commit
-    that introduces this package update (typically the immediate SUCCESSOR of the stamp), so the
-    stamp marks the generation point, not a commit whose tree byte-matches the package — do not
-    expect `git show <KDA_COMMIT_*>` to reproduce this exact package tree.
-    `KDA_BENCHMARKED_COMMIT_* = b9dcb121ea4c9a1eaf153442548972f5da4704f1` is the **perf
-    reproducibility anchor**: the candidate kernels (`rms_norm_d128.cuh`, `layer_norm_n5120.cuh`)
-    are byte-identical from `149392da2` onward, so the `1.4223x` geomean reproduces from any commit
-    since — only wrapper/validation/metadata changed across rounds, not the kernels. See
-    `_impls/h200/KDA_EXPORTS.json` (`commit_role`, `benchmarked_commit`, `benchmarked_note`) and
-    `_impls/h200/KDA_STATUS.md` for the machine-readable form.
-- `kda_kernels/diffusion/norm_infer/_dispatcher.py` — auto-generated arch dispatcher with a
-  per-(fn, device) target cache (steady-state calls skip capability probe + import +
-  attribute lookup) and non-recursive SGLang baseline fallback.
-- `kda_kernels/diffusion/norm_infer/_impls/h200/` — `wrapper.py`, `norm_dispatch.py`,
-  `register.py`, `rms_norm_d128.cuh`, `layer_norm_n5120.cuh`, `KDA_EXPORTS.json`, `KDA_STATUS.md`.
-
-## Template args / wrapper names passed to load_jit
-
-- `_rms_module`: `load_jit("kda_rms_norm", *make_cpp_args(128, False, bf16_t),
-  cuda_files=[<abs>/rms_norm_d128.cuh], cuda_wrappers=[("rms_norm","RmsNormKernel<128, false, bf16_t>::run")])`.
-- `_ln_module`: `load_jit("kda_layer_norm", *make_cpp_args(5120, True, False, fp32_t),
-  cuda_files=[<abs>/layer_norm_n5120.cuh], cuda_wrappers=[("layer_norm","LayerNormKernel<5120, true, false, fp32_t>::run")])`.
-- No `--use_fast_math`; default SGLang jit target flags.
-
-## Arch / shape / dtype gates + fallback
-
-- `triton_one_pass_rms_norm` → CUDA bf16, `x.is_contiguous()`, D==128, w [128] bf16 → `rms_norm_warp`; else SGLang baseline.
-- `norm_infer` → CUDA fp32, `is_rms_norm=False`, `out is None`, `x.is_contiguous()`, N==5120, weight & bias [N] fp32 → `layer_norm_block`; else SGLang baseline.
-- Dispatcher arch gate: capability (9,0) → `h200`; other arches/None → baseline.
-
-## Install + drop-in validation (remote ion8-h200 GPU7, NVIDIA H200, idle)
-
-Command:
-```
-cd <repo> && CUDA_VISIBLE_DEVICES=7 PYTHONPATH=. python validate_install.py
-```
-
-- `kda_kernels.install(strict=True)` → both entries **swapped**:
-  - `sglang.jit_kernel.diffusion.triton.norm:norm_infer` → `kda_kernels.diffusion.norm_infer._dispatcher`
-  - `sglang.jit_kernel.diffusion.triton.rmsnorm_onepass:triton_one_pass_rms_norm` → same dispatcher
-- Correctness through the installed (swapped) symbols, **strictly gated** (Round 2): each
-  output is checked for shape, dtype, no-NaN, no-Inf, and `torch.testing.assert_close` against
-  BOTH the captured original baseline AND a PyTorch FP32 reference, at `atol=rtol=1e-5` for the
-  fp32 LayerNorm shape and `5e-2` for bf16 RMS / the select01 oracle. The script
-  `raise SystemExit(1)` on any failure (a `5e-5` fp32 LayerNorm regression would now fail, not
-  print OK). Re-run result: all six perf shapes `OK`, select01 oracle `OK`, `VALIDATE_OK`, exit 0.
-- Fallback (unsupported → baseline, exact `torch.equal`): fp16 RMS D=128 → baseline;
-  `is_rms_norm=True` via `norm_infer` → baseline.
-- Smoke benchmark through the installed path: rms 4096×128 base ~30us → installed ~15.6us (**1.92x**);
-  rms 648720×128 base ~106.6us → installed ~103.4us (**1.03x**). Matches the workspace
-  `benchmark.csv` (geomean 1.4223x).
-- Result: `VALIDATE_OK` (exit 0).
-
-## Notes
-- `kda_kernels.install()` patches the module attributes; the dispatcher preloads the
-  promoted impl and captures the original baselines first, so its fallback is non-recursive.
-- This is the repo's drop-in mechanism; it does not edit the SGLang source tree
-  (`python/sglang/jit_kernel/csrc/...`). The candidate `.cuh` is compiled in-place from
-  `kda_kernels/.../_impls/h200/` via `load_jit`. Re-run / revert:
-  `python3 scripts/export_kda_kernels/export.py --revert h200_diffusion_norm_infer__multi_shape`.

@@ -28,9 +28,18 @@ from sglang.jit_kernel.diffusion.triton.rmsnorm_onepass import (
 
 _SRC = pathlib.Path(__file__).resolve().parent
 _RMS_CUH = str(_SRC / "rms_norm_d128.cuh")
+_RMS_TILE_CUH = str(_SRC / "rms_norm_d128_tile16.cuh")
 _LN_CUH = str(_SRC / "layer_norm_n5120.cuh")
 
 _RMS_DIM = 128
+# Multi-row tile config: 8 rows x 128 cols per 128-thread CTA (16 lanes/row,
+# one 128-bit chunk each), grid = ceil(M/8) like the Triton baseline's program
+# grid. Measured on H200: device parity-plus vs the Triton kernel at M~650k
+# (where the prior persistent warp kernel regressed ~9%) AND faster than the
+# warp kernel at small M, so one kernel serves every captured RMS shape.
+_RMS_TILE_ROWS = 8
+_RMS_TILE_THREADS = 128
+_RMS_TILE_STREAM = False  # __ldcs/__stcs hints: ~0.6% device gain but ~1.6% wall loss; rejected
 _LN_N = 5120
 _USE_PDL = False  # PDL hurt isolated latency in the qknorm pilot; opt-in only.
 
@@ -40,12 +49,24 @@ _USE_PDL = False  # PDL hurt isolated latency in the qknorm pilot; opt-in only.
 # --------------------------------------------------------------------------- #
 @cache_once
 def _rms_module(dim: int, dtype: torch.dtype, use_pdl: bool):
+    """Prior persistent two-rows-per-warp kernel (kept for reference/AB use)."""
     targs = make_cpp_args(dim, use_pdl, dtype)
     return load_jit(
         "kda_rms_norm",
         *targs,
         cuda_files=[_RMS_CUH],
         cuda_wrappers=[("rms_norm", f"RmsNormKernel<{targs}>::run")],
+    )
+
+
+@cache_once
+def _rms_tile_module(dim: int, dtype: torch.dtype, use_pdl: bool):
+    targs = make_cpp_args(dim, _RMS_TILE_ROWS, _RMS_TILE_THREADS, _RMS_TILE_STREAM, use_pdl, dtype)
+    return load_jit(
+        "kda_rms_norm_tile",
+        *targs,
+        cuda_files=[_RMS_TILE_CUH],
+        cuda_wrappers=[("rms_norm_tile", f"RmsNormTileKernel<{targs}>::run")],
     )
 
 
@@ -76,7 +97,7 @@ def _ln_available() -> bool:
 @cache_once
 def _rms_available(dtype: torch.dtype) -> bool:
     try:
-        _rms_module(_RMS_DIM, dtype, _USE_PDL)
+        _rms_tile_module(_RMS_DIM, dtype, _USE_PDL)
         return True
     except Exception:
         return False
@@ -105,7 +126,7 @@ def triton_one_pass_rms_norm(x: torch.Tensor, w: torch.Tensor, eps: float = 1e-6
         and _rms_available(x.dtype)
     ):
         y = torch.empty_like(x)
-        _rms_module(_RMS_DIM, x.dtype, _USE_PDL).rms_norm(
+        _rms_tile_module(_RMS_DIM, x.dtype, _USE_PDL).rms_norm_tile(
             x.reshape(-1, _RMS_DIM), w, y.reshape(-1, _RMS_DIM), float(eps)
         )
         return y

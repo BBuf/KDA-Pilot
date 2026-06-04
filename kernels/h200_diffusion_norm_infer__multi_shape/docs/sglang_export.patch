@@ -1,0 +1,532 @@
+diff --git a/python/sglang/jit_kernel/csrc/diffusion/layer_norm_n5120.cuh b/python/sglang/jit_kernel/csrc/diffusion/layer_norm_n5120.cuh
+new file mode 100644
+index 0000000000..5689231874
+--- /dev/null
++++ b/python/sglang/jit_kernel/csrc/diffusion/layer_norm_n5120.cuh
+@@ -0,0 +1,172 @@
++// LayerNorm forward for the diffusion inference norm kernel (fp32, exact N).
++//
++// y = (x - mean) * rsqrt(var + eps) * w + b   (row-wise), all math in fp32.
++// mean = sum(x)/N ; var = sum((x-mean)^2)/N   (two-moment, matching the SGLang
++// baseline's in-register two-pass; fp32 throughout for the 1e-5 tolerance).
++//
++// One CTA normalizes one row (grid-stride over rows). N must tile exactly as
++// kThreadsPerBlock * 4 (e.g. 5120 = 256 * 20), so each thread owns 20 elements
++// loaded as five float4 with NO masked over-read (the Triton baseline pads N up
++// to next_pow2 = 8192 and masks 3072 lanes). Built through the SGLang
++// jit_kernel / tvm-ffi stack.
++
++#include <sgl_kernel/tensor.h>
++
++#include <sgl_kernel/runtime.cuh>
++#include <sgl_kernel/type.cuh>
++#include <sgl_kernel/utils.cuh>
++#include <sgl_kernel/vec.cuh>
++#include <sgl_kernel/warp.cuh>
++
++#include <dlpack/dlpack.h>
++
++#include <algorithm>
++#include <cstdint>
++#include <type_traits>
++
++namespace {
++
++struct LayerNormParams {
++  const void* __restrict__ x_ptr;
++  void* __restrict__ y_ptr;
++  const void* __restrict__ w_ptr;
++  const void* __restrict__ b_ptr;
++  int64_t x_stride_bytes;
++  int64_t y_stride_bytes;
++  uint32_t num_rows;
++  float eps;
++};
++
++constexpr uint32_t kThreadsPerBlock = 256;
++constexpr uint32_t kWarpsPerBlock = kThreadsPerBlock / device::kWarpThreads;
++
++// Block-wide sum reduction: warp-reduce, stage partials in shared memory, then
++// every thread sums the per-warp partials. Bracketed by __syncthreads so the
++// shared buffer can be reused across the two reductions and successive rows.
++template <uint32_t kWarps>
++__device__ __forceinline__ float block_reduce_sum(float val, float* smem, uint32_t lane, uint32_t warp) {
++  val = device::warp::reduce_sum(val);
++  if (lane == 0) smem[warp] = val;
++  __syncthreads();
++  float total = 0.0f;
++#pragma unroll
++  for (uint32_t i = 0; i < kWarps; ++i) total += smem[i];
++  __syncthreads();
++  return total;
++}
++
++template <int64_t kN, bool kHasBias, bool kUsePDL, typename DType>
++__global__ void layer_norm_block(const LayerNormParams __grid_constant__ params) {
++  using namespace device;
++
++  static_assert(std::is_same_v<DType, fp32_t>, "exact-N LayerNorm path is fp32-only");
++  constexpr uint32_t kVec = 4;
++  static_assert(kN % (kThreadsPerBlock * kVec) == 0, "N must tile as threads*4 exactly");
++  constexpr uint32_t kIters = kN / (kThreadsPerBlock * kVec);
++  constexpr uint32_t kElems = kIters * kVec;
++  using Vec = AlignedVector<DType, kVec>;
++
++  __shared__ float s_partial[kWarpsPerBlock];
++  const uint32_t tid = threadIdx.x;
++  const uint32_t lane = tid % kWarpThreads;
++  const uint32_t warp = tid / kWarpThreads;
++  const float inv_n = 1.0f / static_cast<float>(kN);
++
++  PDLWaitPrimary<kUsePDL>();
++
++  for (uint32_t row = blockIdx.x; row < params.num_rows; row += gridDim.x) {
++    const void* x_row = pointer::offset(params.x_ptr, row * params.x_stride_bytes);
++    void* y_row = pointer::offset(params.y_ptr, row * params.y_stride_bytes);
++
++    float xs[kElems];
++    float local_sum = 0.0f;
++#pragma unroll
++    for (uint32_t k = 0; k < kIters; ++k) {
++      const Vec v = load_as<Vec>(x_row, k * kThreadsPerBlock + tid);
++#pragma unroll
++      for (uint32_t j = 0; j < kVec; ++j) {
++        xs[k * kVec + j] = v[j];
++        local_sum += v[j];
++      }
++    }
++
++    const float mean = block_reduce_sum<kWarpsPerBlock>(local_sum, s_partial, lane, warp) * inv_n;
++
++    float local_var = 0.0f;
++#pragma unroll
++    for (uint32_t i = 0; i < kElems; ++i) {
++      const float d = xs[i] - mean;
++      local_var += d * d;
++    }
++    const float rstd = math::rsqrt(block_reduce_sum<kWarpsPerBlock>(local_var, s_partial, lane, warp) * inv_n + params.eps);
++
++#pragma unroll
++    for (uint32_t k = 0; k < kIters; ++k) {
++      const uint32_t vidx = k * kThreadsPerBlock + tid;
++      const Vec wv = load_as<Vec>(params.w_ptr, vidx);
++      Vec bv;
++      if constexpr (kHasBias) bv = load_as<Vec>(params.b_ptr, vidx);
++      Vec yv;
++#pragma unroll
++      for (uint32_t j = 0; j < kVec; ++j) {
++        const float xn = (xs[k * kVec + j] - mean) * rstd;
++        yv[j] = kHasBias ? (xn * wv[j] + bv[j]) : (xn * wv[j]);
++      }
++      store_as<Vec>(y_row, yv, vidx);
++    }
++  }
++
++  PDLTriggerSecondary<kUsePDL>();
++}
++
++template <int64_t kN, bool kHasBias, bool kUsePDL, typename DType>
++struct LayerNormKernel {
++  static constexpr auto kernel = layer_norm_block<kN, kHasBias, kUsePDL, DType>;
++
++  static void
++  run(const tvm::ffi::TensorView x,
++      const tvm::ffi::TensorView w,
++      const tvm::ffi::TensorView b,
++      const tvm::ffi::TensorView y,
++      float eps) {
++    using namespace host;
++
++    auto M = SymbolicSize{"num_rows"};
++    auto N = SymbolicSize{"dim"};
++    auto Sx = SymbolicSize{"x_row_stride"};
++    auto Sy = SymbolicSize{"y_row_stride"};
++    auto device = SymbolicDevice{};
++    N.set_value(kN);
++    device.set_options<kDLCUDA>();
++
++    TensorMatcher({M, N}).with_strides({Sx, 1}).with_dtype<DType>().with_device(device).verify(x);
++    TensorMatcher({M, N}).with_strides({Sy, 1}).with_dtype<DType>().with_device(device).verify(y);
++    TensorMatcher({N}).with_dtype<DType>().with_device(device).verify(w);
++    if constexpr (kHasBias) {
++      TensorMatcher({N}).with_dtype<DType>().with_device(device).verify(b);
++    }
++
++    const auto num_rows = static_cast<uint32_t>(M.unwrap());
++    const auto x_stride_bytes = static_cast<int64_t>(Sx.unwrap() * sizeof(DType));
++    const auto y_stride_bytes = static_cast<int64_t>(Sy.unwrap() * sizeof(DType));
++
++    const auto params = LayerNormParams{
++        .x_ptr = x.data_ptr(),
++        .y_ptr = y.data_ptr(),
++        .w_ptr = w.data_ptr(),
++        .b_ptr = kHasBias ? b.data_ptr() : nullptr,
++        .x_stride_bytes = x_stride_bytes,
++        .y_stride_bytes = y_stride_bytes,
++        .num_rows = num_rows,
++        .eps = eps,
++    };
++
++    // One CTA per row maximizes independent memory streams (NCU: the capped
++    // grid-stride hit only 74% DRAM vs the baseline's 80%); the grid-stride loop
++    // then runs a single iteration per block.
++    const uint32_t num_blocks = std::max(num_rows, 1u);
++    LaunchKernel(num_blocks, kThreadsPerBlock, device.unwrap()).enable_pdl(kUsePDL)(kernel, params);
++  }
++};
++
++}  // namespace
+diff --git a/python/sglang/jit_kernel/csrc/diffusion/rms_norm_d128_tile16.cuh b/python/sglang/jit_kernel/csrc/diffusion/rms_norm_d128_tile16.cuh
+new file mode 100644
+index 0000000000..409175cedd
+--- /dev/null
++++ b/python/sglang/jit_kernel/csrc/diffusion/rms_norm_d128_tile16.cuh
+@@ -0,0 +1,198 @@
++// Multi-row tiled RMSNorm forward for the diffusion one-pass RMSNorm family
++// (D=128, bf16/fp16), targeting the huge-M streaming shapes.
++//
++// y = x * rsqrt(mean(x^2) + eps) * w   (row-wise, no bias), fp32 accumulation.
++//
++// Mirrors the structure that makes the SGLang Triton baseline fast at
++// M ~ 650k: one CTA owns a kRowsPerCta x 128 tile and the grid is exactly
++// ceil(M / kRowsPerCta) blocks (no persistent grid-stride), exposing tens of
++// thousands of independent CTAs for deep memory-level parallelism. Within a
++// CTA, each row is reduced by kThreads/kRowsPerCta lanes using 128-bit packed
++// loads; the [D] weight is loaded once per thread and reused across rows.
++// Optional streaming cache hints (__ldcs/__stcs) mark x/y as evict-first,
++// keeping the tiny reused weight resident in L1/L2.
++//
++// Built through the SGLang jit_kernel / tvm-ffi stack; conventions mirror
++// src/rms_norm_d128.cuh (which remains the small/mid-M variant).
++
++#include <sgl_kernel/tensor.h>
++
++#include <sgl_kernel/runtime.cuh>
++#include <sgl_kernel/type.cuh>
++#include <sgl_kernel/utils.cuh>
++#include <sgl_kernel/vec.cuh>
++#include <sgl_kernel/warp.cuh>
++
++#include <dlpack/dlpack.h>
++
++#include <cstdint>
++#include <type_traits>
++
++namespace {
++
++struct RmsNormTileParams {
++  const void* __restrict__ x_ptr;
++  void* __restrict__ y_ptr;
++  const void* __restrict__ w_ptr;
++  int64_t x_stride_bytes;
++  int64_t y_stride_bytes;
++  uint32_t num_rows;
++  float eps;
++};
++
++template <typename Storage>
++__device__ __forceinline__ Storage load_vec_streaming(const void* base, uint32_t slot) {
++  static_assert(sizeof(Storage) == sizeof(float4));
++  const float4 raw = __ldcs(reinterpret_cast<const float4*>(base) + slot);
++  Storage out;
++  static_assert(sizeof(out) == sizeof(raw));
++  memcpy(&out, &raw, sizeof(raw));
++  return out;
++}
++
++template <typename Storage>
++__device__ __forceinline__ void store_vec_streaming(void* base, const Storage& v, uint32_t slot) {
++  static_assert(sizeof(Storage) == sizeof(float4));
++  float4 raw;
++  memcpy(&raw, &v, sizeof(raw));
++  __stcs(reinterpret_cast<float4*>(base) + slot, raw);
++}
++
++template <int64_t kDim, uint32_t kRowsPerCta, uint32_t kThreads, bool kStreamCache, bool kUsePDL,
++          typename DType>
++__global__ void __launch_bounds__(kThreads)
++    rms_norm_tile(const RmsNormTileParams __grid_constant__ params) {
++  using namespace device;
++
++  static_assert(std::is_same_v<DType, fp16_t> || std::is_same_v<DType, bf16_t>);
++  static_assert(kThreads % kWarpThreads == 0);
++  static_assert(kThreads % kRowsPerCta == 0);
++
++  constexpr uint32_t kLanesPerRow = kThreads / kRowsPerCta;
++  static_assert(kLanesPerRow >= 1 && kLanesPerRow <= kWarpThreads,
++                "a row must be owned by lanes within one warp");
++  static_assert(kWarpThreads % kLanesPerRow == 0);
++  constexpr uint32_t kElemsPerLane = kDim / kLanesPerRow;
++  static_assert(kDim % kLanesPerRow == 0 && kElemsPerLane % 8 == 0,
++                "each lane handles whole 128-bit chunks (8 elems)");
++  constexpr uint32_t kChunks = kElemsPerLane / 8;  // 128-bit chunks per lane
++  using Packed = packed_t<DType>;
++  using Storage = AlignedVector<Packed, 4>;  // 4 packed pairs = 8 elems = 16B
++  constexpr uint32_t kRowsPerWarp = kWarpThreads / kLanesPerRow;
++
++  const uint32_t lane_id = threadIdx.x % kWarpThreads;
++  const uint32_t warp_id = threadIdx.x / kWarpThreads;
++  const uint32_t lane_in_row = lane_id % kLanesPerRow;
++  const uint32_t row_in_warp = lane_id / kLanesPerRow;
++  const uint32_t row_in_cta = warp_id * kRowsPerWarp + row_in_warp;
++  const uint32_t row = blockIdx.x * kRowsPerCta + row_in_cta;
++
++  PDLWaitPrimary<kUsePDL>();
++
++  // Weight is identical for every row; load once and keep in registers.
++  float w_elems[kElemsPerLane];
++#pragma unroll
++  for (uint32_t c = 0; c < kChunks; ++c) {
++    const auto w_vec = load_as<Storage>(params.w_ptr, lane_in_row + c * kLanesPerRow);
++#pragma unroll
++    for (uint32_t j = 0; j < 4; ++j) {
++      const auto [w0, w1] = cast<fp32x2_t>(w_vec[j]);
++      w_elems[c * 8 + 2 * j] = w0;
++      w_elems[c * 8 + 2 * j + 1] = w1;
++    }
++  }
++
++  const bool valid = row < params.num_rows;
++  // Invalid tail lanes read row 0 so the lane group stays converged through
++  // the shuffle reduction; their result is simply not stored.
++  const uint32_t safe_row = valid ? row : 0u;
++  const void* x_row = pointer::offset(params.x_ptr, static_cast<int64_t>(safe_row) * params.x_stride_bytes);
++
++  Storage x_vec[kChunks];
++  float elems[kElemsPerLane];
++  float sum_of_squares = 0.0f;
++#pragma unroll
++  for (uint32_t c = 0; c < kChunks; ++c) {
++    x_vec[c] = kStreamCache ? load_vec_streaming<Storage>(x_row, lane_in_row + c * kLanesPerRow)
++                            : load_as<Storage>(x_row, lane_in_row + c * kLanesPerRow);
++#pragma unroll
++    for (uint32_t j = 0; j < 4; ++j) {
++      const auto [x0, x1] = cast<fp32x2_t>(x_vec[c][j]);
++      elems[c * 8 + 2 * j] = x0;
++      elems[c * 8 + 2 * j + 1] = x1;
++      sum_of_squares += x0 * x0 + x1 * x1;
++    }
++  }
++
++  sum_of_squares = warp::reduce_sum<kLanesPerRow>(sum_of_squares);
++  const float rstd = math::rsqrt(sum_of_squares / static_cast<float>(kDim) + params.eps);
++
++#pragma unroll
++  for (uint32_t c = 0; c < kChunks; ++c) {
++#pragma unroll
++    for (uint32_t j = 0; j < 4; ++j) {
++      const float y0 = elems[c * 8 + 2 * j] * rstd * w_elems[c * 8 + 2 * j];
++      const float y1 = elems[c * 8 + 2 * j + 1] * rstd * w_elems[c * 8 + 2 * j + 1];
++      x_vec[c][j] = cast<Packed, fp32x2_t>({y0, y1});
++    }
++  }
++  if (valid) {
++    void* y_row = pointer::offset(params.y_ptr, static_cast<int64_t>(row) * params.y_stride_bytes);
++#pragma unroll
++    for (uint32_t c = 0; c < kChunks; ++c) {
++      if constexpr (kStreamCache) {
++        store_vec_streaming<Storage>(y_row, x_vec[c], lane_in_row + c * kLanesPerRow);
++      } else {
++        store_as<Storage>(y_row, x_vec[c], lane_in_row + c * kLanesPerRow);
++      }
++    }
++  }
++
++  PDLTriggerSecondary<kUsePDL>();
++}
++
++template <int64_t kDim, uint32_t kRowsPerCta, uint32_t kThreads, bool kStreamCache, bool kUsePDL,
++          typename DType>
++struct RmsNormTileKernel {
++  static_assert(kDim == 128, "this family is specialized for D=128");
++  static constexpr auto kernel = rms_norm_tile<kDim, kRowsPerCta, kThreads, kStreamCache, kUsePDL, DType>;
++
++  static void
++  run(const tvm::ffi::TensorView x,
++      const tvm::ffi::TensorView w,
++      const tvm::ffi::TensorView y,
++      float eps) {
++    using namespace host;
++
++    auto M = SymbolicSize{"num_rows"};
++    auto D = SymbolicSize{"dim"};
++    auto Sx = SymbolicSize{"x_row_stride"};
++    auto Sy = SymbolicSize{"y_row_stride"};
++    auto device = SymbolicDevice{};
++    D.set_value(kDim);
++    device.set_options<kDLCUDA>();
++
++    TensorMatcher({M, D}).with_strides({Sx, 1}).with_dtype<DType>().with_device(device).verify(x);
++    TensorMatcher({M, D}).with_strides({Sy, 1}).with_dtype<DType>().with_device(device).verify(y);
++    TensorMatcher({D}).with_dtype<DType>().with_device(device).verify(w);
++
++    const auto num_rows = static_cast<uint32_t>(M.unwrap());
++    const auto params = RmsNormTileParams{
++        .x_ptr = x.data_ptr(),
++        .y_ptr = y.data_ptr(),
++        .w_ptr = w.data_ptr(),
++        .x_stride_bytes = static_cast<int64_t>(Sx.unwrap() * sizeof(DType)),
++        .y_stride_bytes = static_cast<int64_t>(Sy.unwrap() * sizeof(DType)),
++        .num_rows = num_rows,
++        .eps = eps,
++    };
++
++    // One tile per CTA, exactly like the Triton baseline's program grid: tens
++    // of thousands of small independent CTAs give the memory system its
++    // parallelism at huge M (the persistent capped grid starved it).
++    const uint32_t num_blocks = div_ceil(num_rows, kRowsPerCta);
++    LaunchKernel(num_blocks, kThreads, device.unwrap()).enable_pdl(kUsePDL)(kernel, params);
++  }
++};
++
++}  // namespace
+diff --git a/python/sglang/jit_kernel/diffusion/triton/norm.py b/python/sglang/jit_kernel/diffusion/triton/norm.py
+index 31ee451a41..4255a318b1 100644
+--- a/python/sglang/jit_kernel/diffusion/triton/norm.py
++++ b/python/sglang/jit_kernel/diffusion/triton/norm.py
+@@ -1,3 +1,4 @@
++import os
+ from typing import Optional, Tuple
+ 
+ import torch
+@@ -7,6 +8,7 @@ from torch import Tensor
+ 
+ from sglang.multimodal_gen.runtime.platforms import current_platform
+ from sglang.srt.utils.custom_op import register_custom_op
++from sglang.jit_kernel.utils import cache_once, load_jit, make_cpp_args
+ 
+ 
+ # RMSNorm-fp32
+@@ -606,6 +608,33 @@ def _norm_infer_kernel(
+     tl.store(Y + cols, y, mask=cols < N)
+ 
+ 
++@cache_once
++def _native_ln_infer_module(n: int):
++    targs = make_cpp_args(n, True, False, torch.float32)
++    return load_jit(
++        "kda_layer_norm",
++        *targs,
++        cuda_files=["diffusion/layer_norm_n5120.cuh"],
++        cuda_wrappers=[("layer_norm", f"LayerNormKernel<{targs}>::run")],
++    )
++
++
++@cache_once
++@torch.compiler.assume_constant_result
++def _can_use_native_ln_infer(n: int) -> bool:
++    """Native CUDA fast path for the inference LayerNorm (fp32, N=5120,
++    weight+bias). Gated by SGLANG_NATIVE_NORM_INFER (default on) and a
++    successful jit build; any other signature stays on the Triton path."""
++    if os.environ.get("SGLANG_NATIVE_NORM_INFER", "1") != "1":
++        return False
++    try:
++        _native_ln_infer_module(n)
++        return True
++    except Exception:
++        return False
++
++
++
+ def norm_infer(
+     x: Tensor,
+     weight: Optional[Tensor],
+@@ -614,6 +643,27 @@ def norm_infer(
+     is_rms_norm: bool = False,
+     out: Optional[Tensor] = None,
+ ):
++    if (
++        not is_rms_norm
++        and out is None
++        and x.ndim == 2
++        and x.is_cuda
++        and x.dtype == torch.float32
++        and x.shape[-1] == 5120
++        and x.is_contiguous()
++        and weight is not None
++        and bias is not None
++        and weight.dtype == x.dtype
++        and bias.dtype == x.dtype
++        and weight.numel() == 5120
++        and bias.numel() == 5120
++        and weight.is_contiguous()
++        and bias.is_contiguous()
++        and _can_use_native_ln_infer(5120)
++    ):
++        y = torch.empty_like(x)
++        _native_ln_infer_module(5120).layer_norm(x, weight, bias, y, float(eps))
++        return y
+     M, N = x.shape
+     x = x.contiguous()
+     if weight is not None:
+diff --git a/python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py b/python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py
+index 065205381c..0703e3d9b7 100644
+--- a/python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py
++++ b/python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py
+@@ -1,3 +1,5 @@
++import os
++
+ import torch
+ import triton  # type: ignore
+ import triton.language as tl  # type: ignore
+@@ -5,6 +7,7 @@ import triton.language as tl  # type: ignore
+ from sglang.kernel_api_logging import debug_kernel_api
+ from sglang.multimodal_gen.runtime.platforms import current_platform
+ from sglang.srt.utils.custom_op import register_custom_op
++from sglang.jit_kernel.utils import cache_once, load_jit, make_cpp_args
+ 
+ 
+ # Adapted from https://github.com/ModelTC/LightX2V/blob/main/lightx2v/common/ops/norm/triton_ops.py#L905-L956
+@@ -37,10 +40,52 @@ def _rms_norm_tiled_onepass(
+     tl.store(y_blk, x * rstd * w, mask=mask)
+ 
+ 
++@cache_once
++def _native_one_pass_rms_module(dim: int):
++    targs = make_cpp_args(dim, 8, 128, False, False, torch.bfloat16)
++    return load_jit(
++        "kda_rms_norm_tile",
++        *targs,
++        cuda_files=["diffusion/rms_norm_d128_tile16.cuh"],
++        cuda_wrappers=[("rms_norm_tile", f"RmsNormTileKernel<{targs}>::run")],
++    )
++
++
++@cache_once
++@torch.compiler.assume_constant_result
++def _can_use_native_one_pass_rms(dim: int) -> bool:
++    """Native CUDA fast path for the one-pass RMSNorm (bf16, D=128). Gated by
++    SGLANG_NATIVE_ONE_PASS_RMS_NORM (default on) and a successful jit build;
++    any other signature stays on the Triton path."""
++    if os.environ.get("SGLANG_NATIVE_ONE_PASS_RMS_NORM", "1") != "1":
++        return False
++    try:
++        _native_one_pass_rms_module(dim)
++        return True
++    except Exception:
++        return False
++
++
++
+ @register_custom_op(op_name="triton_one_pass_rms_norm_cuda", out_shape="x")
+ def _triton_one_pass_rms_norm_cuda(
+     x: torch.Tensor, w: torch.Tensor, eps: float = 1e-6
+ ) -> torch.Tensor:
++    if (
++        x.is_cuda
++        and x.dtype == torch.bfloat16
++        and x.shape[-1] == 128
++        and x.is_contiguous()
++        and w.dtype == x.dtype
++        and w.numel() == 128
++        and w.is_contiguous()
++        and _can_use_native_one_pass_rms(128)
++    ):
++        y = torch.empty_like(x)
++        _native_one_pass_rms_module(128).rms_norm_tile(
++            x.reshape(-1, 128), w, y.reshape(-1, 128), float(eps)
++        )
++        return y
+     shape = x.shape
+     x = x.contiguous()
+     y = torch.empty_like(x)

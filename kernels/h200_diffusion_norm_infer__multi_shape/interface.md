@@ -107,15 +107,25 @@ SGLang baseline:
   Fallback output must equal the baseline output exactly (same call delegated to
   the SGLang baseline).
 
-## Evidence (normv5 — promoted)
+## Evidence (continuation round — tilev1)
+
+> Historical: the normv5 round's **geomean 1.4223x** below was measured through
+> the `kda_kernels.install()` overlay (plain-callable monkey-patch) and is NOT
+> admissible under the shipping-integration rules added by kernel-pilot commit
+> `cc17c1149`. Superseded by the symmetric continuation table in
+> `docs/dispatch.md`: **wall geomean 1.314x / saturated device-rate geomean
+> 1.444x** vs the copied Triton baseline (conservative vs the production path),
+> with the normv5 huge-RMS device regression (0.907x) closed by the 8x128 tile
+> kernel (NCU: identical 77.66us single-launch, 82.67% vs 82.17% DRAM).
 
 - **Wrapper signatures (preserved):** `triton_one_pass_rms_norm(x, w, eps=1e-6) -> Tensor`
   and `norm_infer(x, weight, bias, eps, is_rms_norm=False, out=None) -> Tensor`
   (`src/norm_dispatch.py`, re-exported via `src/register.py`).
 - **Dispatch table + per-bucket promote/no-go:** see `docs/dispatch.md`. RMS **bf16-only**
-  D=128 → `rms_norm_warp<128,false,bf16_t>` (`src/rms_norm_d128.cuh`, 2-rows-per-warp
-  128-bit); LN fp32 N=5120 +weight+bias → `layer_norm_block<5120,true,false,float>`
-  (`src/layer_norm_n5120.cuh`, one-CTA-per-row exact tiling).
+  D=128 → `rms_norm_tile<128,8,128,false,bf16_t>` (`src/rms_norm_d128_tile16.cuh`,
+  one 8x128 tile per CTA, grid=ceil(M/8); replaces `rms_norm_warp`, retained unrouted in
+  `src/rms_norm_d128.cuh`); LN fp32 N=5120 +weight+bias → `layer_norm_block<5120,true,false,float>`
+  (`src/layer_norm_n5120.cuh`, one-CTA-per-row exact tiling, byte-unchanged).
 - **Fallback:** any other dtype (incl. fp16 RMS) / N / D / device / non-contiguous layout /
   `is_rms_norm=True` on norm_infer / `out` provided / missing weight|bias → SGLang baseline
   (output verified == baseline; non-contiguous higher-rank fallback is regression-tested).
@@ -129,8 +139,12 @@ SGLang baseline:
   then `... python benchmark.py --candidate-version <ver>`. Latency = median of warmup +
   repeated wall-clock samples (cuda-synced), timed region excludes JIT/setup/copy; per-shape
   speedup = baseline_median / candidate_median; final = geomean across the 6 shapes.
-  Result: **geomean 1.4223x** (helios 1.067x; huge RMS 1.041/1.046x; small RMS 1.91-1.94x),
-  ion8-h200 GPU7 (NVIDIA H200), sglang c47f0e7cd. Bound analysis: `profile/ncu_normv2/REPORT.md`.
+  Historical normv5 result (overlay-measured, superseded — see banner above): geomean 1.4223x,
+  ion8-h200 GPU7, sglang c47f0e7cd; bound analysis `profile/ncu_normv2/REPORT.md`.
+  Continuation result (symmetric two-pass harness `benchmark_symmetric.py`): **wall geomean
+  1.314x, saturated device-rate geomean 1.444x** (per-shape table + decomposition in
+  `docs/dispatch.md`), ion8-h200 GPU0, container sglang 84e1108312 (baseline files byte-identical
+  to c47f0e7cd); bound analysis `profile/ncu_tilev1/REPORT.md`.
 - **Source lineage:** kernel structure (params struct, templated `Kernel<...>::run`,
   `TensorMatcher`/`SymbolicSize`, `LaunchKernel`, packed `cast<fp32x2_t>` vectorization,
   `warp::reduce_sum`) mirrors `python/sglang/jit_kernel/csrc/diffusion/qknorm_rope.cuh`;

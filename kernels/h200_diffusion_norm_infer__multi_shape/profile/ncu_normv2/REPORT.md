@@ -1,3 +1,11 @@
+> **Superseded (continuation round, 2026-06-04):** the geomean and the
+> normv5 promote decision in this report were measured through the
+> kda_kernels.install() overlay and are historical evidence only — not
+> admissible under the shipping-integration rules added by kernel-pilot
+> commit cc17c1149. The huge-RMS device gap documented here (77.54% vs
+> 83.15% DRAM) was CLOSED by the 8x128 tile kernel; see
+> profile/ncu_tilev1/REPORT.md and docs/dispatch.md.
+
 # NCU + Roofline Report — normv5 candidate vs SGLang baseline
 
 - Host: `ion8-h200` (`ion-h200-8`), container `sglang_bbuf`, GPU id 7 (NVIDIA H200), idle.
