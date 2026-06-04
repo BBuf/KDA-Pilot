@@ -266,7 +266,8 @@ def _device_fair_main(correctness, wrapper) -> int:
     pdl_ab = "--pdl-ab" in sys.argv
     variant = os.environ.get("KDA_CAND_VARIANT", "staged")
     base_lane = os.environ.get("KDA_BASE_LANE", "copy")
-    kernel_class = {"warp": "QKNormRopeKernel", "staged": "QKNormRopeStagedKernel"}.get(variant, "QKNormRopeStagedKernel")
+    kernel_class = {"warp": "QKNormRopeKernel", "staged": "QKNormRopeStagedKernel",
+                    "staged2": "QKNormRopeStaged2Kernel"}.get(variant, "QKNormRopeStagedKernel")
     inner = int(os.environ.get("KDA_BENCH_INNER", "1"))
     cases = [c for c in correctness.make_cases() if not c.get("ci_fallback")]
     command = shlex.join([sys.executable, *sys.argv])
@@ -289,7 +290,8 @@ def _device_fair_main(correctness, wrapper) -> int:
             return wrapper._candidate_module(case["head_dim"], case["rope_dim"], case["is_neox"],
                                              torch.bfloat16, "QKNormRopeStagedKernel", False)
     else:
-        suffix = "__devfair" + ("_warp" if variant == "warp" else "") + ("_sglbase" if base_lane == "sglang" else "")
+        suffix = ("__devfair" + {"warp": "_warp", "staged2": "_staged2"}.get(variant, "")
+                  + ("_sglbase" if base_lane == "sglang" else ""))
         mode_desc = f"base={'sglang jit module' if base_lane == 'sglang' else 'baseline/ copy'} vs cand={variant} ({kernel_class})"
         if base_lane == "sglang":
             from sglang.jit_kernel.diffusion.qknorm_rope import _jit_qknorm_rope_module
