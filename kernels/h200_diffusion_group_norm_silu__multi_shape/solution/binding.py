@@ -53,6 +53,13 @@ CHUNK_ELEMS = 8192
 # the giant path's own CTA-task size. Both env-tunable for crossover sweeps.
 GIANT_THRESHOLD = int(os.environ.get("GNS_GIANT_THRESH", str(700_000)))
 GIANT_CHUNK_ELEMS = int(os.environ.get("GNS_GIANT_CHUNK", str(16384)))
+# Giant groups whose spatial extent has an exact vector-aligned tile divisor
+# take the clean-giant pipeline: channel-aligned tiles, hoisted-affine apply
+# with no segment handling (the class where the baseline's own hoisted-affine
+# apply previously held a 3-6% edge). Tile size is the per-shape zero-straddle
+# divisor (fixed 8192 tiles were measured slower on the largest rows: more
+# tiles -> more reduce rounds and partial traffic). Env override for sweeps.
+CLEAN_CHUNK_ELEMS = int(os.environ.get("GNS_CLEAN_CHUNK", "0"))  # 0 = per-shape divisor
 # The giant pipeline can tile its two kernels independently (the apply kernel
 # reads only mean/rstd, never the partials). Measurements across the
 # production set showed no robust win for larger stats tiles, so the default
@@ -279,6 +286,7 @@ def _kernels():
         mod["gns_candidate_small"],
         mod["gns_candidate_large"],
         mod["gns_candidate_giant"],
+        mod["gns_candidate_clean_giant"],
     )
 
 
@@ -336,7 +344,7 @@ def _fast_path_ok(x: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor) -> 
 
 def _run(x3: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor, num_groups: int,
          eps: float, y3: torch.Tensor) -> None:
-    small, large, giant = _kernels()
+    small, large, giant, clean_giant = _kernels()
     channels = x3.shape[1]
     spatial = x3.shape[2]
     group_size = (channels // num_groups) * spatial
@@ -347,12 +355,26 @@ def _run(x3: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor, num_groups:
         small(x3, weight, bias, int(num_groups), float(eps), y3)
         return
     num_rows = x3.shape[0] * num_groups
-    # The giant kernels assume a CTA tile never spans more than two channels,
-    # which holds iff chunk <= spatial; shapes violating that stay on the
-    # generic large path.
-    use_giant = group_size >= GIANT_THRESHOLD and spatial >= GIANT_CHUNK_ELEMS
+    # Clean-giant route: channel-aligned tiles, branch-free hoisted apply.
+    clean_chunk = CLEAN_CHUNK_ELEMS or _giant_chunk_for(spatial)
+    use_clean = (
+        group_size >= GIANT_THRESHOLD
+        and spatial >= clean_chunk
+        and spatial % clean_chunk == 0
+    )
+    # The generic giant kernels assume a CTA tile never spans more than two
+    # channels, which holds iff chunk <= spatial; shapes violating that stay
+    # on the generic large path.
+    use_giant = (
+        not use_clean
+        and group_size >= GIANT_THRESHOLD
+        and spatial >= GIANT_CHUNK_ELEMS
+    )
     device = x3.device
-    if use_giant:
+    if use_clean:
+        stats_chunk = apply_chunk = clean_chunk
+        total = num_rows * (group_size // clean_chunk)
+    elif use_giant:
         # Scratch is keyed by the stats tiling (the apply kernel reads only
         # mean/rstd, so its tile size is independent).
         apply_chunk = _giant_chunk_for(spatial)
@@ -367,7 +389,11 @@ def _run(x3: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor, num_groups:
     partial_sumsq = torch.empty(total, dtype=torch.float32, device=device)
     mean = torch.empty(num_rows, dtype=torch.float32, device=device)
     rstd = torch.empty(num_rows, dtype=torch.float32, device=device)
-    if use_giant:
+    if use_clean:
+        clean_giant(x3, weight, bias, partial_sum, partial_sumsq, mean, rstd,
+                    _row_counter(num_rows, device), int(num_groups), float(eps),
+                    int(clean_chunk), y3)
+    elif use_giant:
         giant(x3, weight, bias, partial_sum, partial_sumsq, mean, rstd,
               _row_counter(num_rows, device), int(num_groups), float(eps),
               int(stats_chunk), int(apply_chunk), y3)

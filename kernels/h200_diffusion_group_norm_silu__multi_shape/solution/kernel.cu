@@ -567,6 +567,131 @@ __global__ void __launch_bounds__(kBlockThreads, 8)
   }
 }
 
+// ---------------- clean-giant path: channel-aligned tiles ----------------
+// Specialization for giant groups whose per-channel spatial extent is an
+// exact multiple of the tile size (the host gates on spatial % tile == 0 and
+// group_size % tile == 0). Every CTA tile then lies inside one channel by
+// construction: the apply kernel hoists the affine once and runs a single
+// branch-free vector stream (this mirrors the structural edge the copied
+// baseline's hoisted-affine apply has on exactly this class), and the stats
+// kernel drops the tail/alignment handling. Same fused deterministic
+// last-block finalize as the generic giant path.
+
+template <typename DType>
+__global__ void __launch_bounds__(kBlockThreads, 8)
+    gns_clean_stats_kernel(const GnsLargeParams<DType> __grid_constant__ p) {
+  constexpr int kVec = 16 / static_cast<int>(sizeof(DType));
+  __shared__ float smem[2 * kWarpsPerBlock + 2];
+  const int64_t task = blockIdx.x;  // exact grid: one tile per CTA
+  float* __restrict__ psum = static_cast<float*>(p.partial_sum);
+  float* __restrict__ psumsq = static_cast<float*>(p.partial_sumsq);
+  const int64_t row = task / p.chunks_per_row;
+  const int64_t chunk = task - row * p.chunks_per_row;
+  const int64_t b = row / p.num_groups;
+  const int64_t g = row - b * p.num_groups;
+  const int64_t group_base = b * p.channels * p.spatial + g * p.group_size;
+  const DType* __restrict__ x =
+      static_cast<const DType*>(p.x) + group_base + chunk * p.chunk_elems;
+
+  float lsum = 0.0f, lsumsq = 0.0f;
+  // Tiles are whole and 16B-aligned by construction; streaming loads (no
+  // reuse inside this kernel). Two independent accumulator pairs break the
+  // FADD dependency chain.
+  const int64_t nvec = p.chunk_elems / kVec;
+  float s0 = 0.0f, q0 = 0.0f, s1 = 0.0f, q1 = 0.0f;
+  int64_t vi = threadIdx.x;
+  for (; vi + blockDim.x < nvec; vi += 2 * blockDim.x) {
+    Pack<DType, kVec> a;
+    Pack<DType, kVec> c;
+    a.load_streaming(x, vi);
+    c.load_streaming(x, vi + blockDim.x);
+#pragma unroll
+    for (int j = 0; j < kVec; ++j) {
+      const float xa = to_f32<DType>(a[j]);
+      const float xc = to_f32<DType>(c[j]);
+      s0 += xa;
+      q0 += xa * xa;
+      s1 += xc;
+      q1 += xc * xc;
+    }
+  }
+  for (; vi < nvec; vi += blockDim.x) {
+    Pack<DType, kVec> v;
+    v.load_streaming(x, vi);
+#pragma unroll
+    for (int j = 0; j < kVec; ++j) {
+      const float xf = to_f32<DType>(v[j]);
+      s0 += xf;
+      q0 += xf * xf;
+    }
+  }
+  lsum = s0 + s1;
+  lsumsq = q0 + q1;
+  block_reduce2(lsum, lsumsq, smem);
+
+  if (threadIdx.x == 0) {
+    psum[task] = lsum;
+    psumsq[task] = lsumsq;
+    __threadfence();
+    const int prev = atomicAdd(reinterpret_cast<int*>(p.row_counter) + row, 1);
+    smem[0] = (prev == p.chunks_per_row - 1) ? 1.0f : 0.0f;
+  }
+  __syncthreads();
+  if (smem[0] != 0.0f) {
+    const int64_t base = row * p.chunks_per_row;
+    float s = 0.0f, q = 0.0f;
+    for (int64_t c = threadIdx.x; c < p.chunks_per_row; c += blockDim.x) {
+      s += psum[base + c];
+      q += psumsq[base + c];
+    }
+    block_reduce2(s, q, smem);  // fixed-order tree: deterministic
+    if (threadIdx.x == 0) {
+      const float inv_n = 1.0f / static_cast<float>(p.group_size);
+      const float mu = s * inv_n;
+      const float var = fmaxf(q * inv_n - mu * mu, 0.0f);
+      static_cast<float*>(p.mean)[row] = mu;
+      static_cast<float*>(p.rstd)[row] = rsqrtf(var + p.eps);
+      reinterpret_cast<int*>(p.row_counter)[row] = 0;
+    }
+  }
+}
+
+template <typename DType>
+__global__ void __launch_bounds__(kBlockThreads, 8)
+    gns_clean_apply_kernel(const GnsLargeParams<DType> __grid_constant__ p) {
+  constexpr int kVec = 16 / static_cast<int>(sizeof(DType));
+  const int64_t task = blockIdx.x;  // exact grid: one tile per CTA
+  const int64_t row = task / p.chunks_per_row;
+  const int64_t chunk = task - row * p.chunks_per_row;
+  const int64_t b = row / p.num_groups;
+  const int64_t g = row - b * p.num_groups;
+  const int64_t group_base = b * p.channels * p.spatial + g * p.group_size;
+  const int64_t chunk_start = chunk * p.chunk_elems;
+  const DType* __restrict__ x = static_cast<const DType*>(p.x) + group_base + chunk_start;
+  DType* __restrict__ y = static_cast<DType*>(p.y) + group_base + chunk_start;
+
+  // Whole tile inside one channel by construction: hoist the affine once.
+  const int64_t c = g * p.channels_per_group + chunk_start / p.spatial;
+  const float mean = static_cast<const float*>(p.mean)[row];
+  const float rstd = static_cast<const float*>(p.rstd)[row];
+  const float w = to_f32<DType>(static_cast<const DType*>(p.weight)[c]);
+  const float bb = to_f32<DType>(static_cast<const DType*>(p.bias)[c]);
+  const float scale = rstd * w;
+  const float shift = bb - mean * scale;
+
+  const int64_t nvec = p.chunk_elems / kVec;
+  for (int64_t vi = threadIdx.x; vi < nvec; vi += blockDim.x) {
+    Pack<DType, kVec> v;
+    v.load_streaming(x, vi);
+    Pack<DType, kVec> o;
+#pragma unroll
+    for (int j = 0; j < kVec; ++j) {
+      o[j] = from_f32<DType>(siluf(to_f32<DType>(v[j]) * scale + shift));
+    }
+    o.store_streaming(y, vi);
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Host-side validation, dtype dispatch, launches.
 // ---------------------------------------------------------------------------
@@ -801,6 +926,68 @@ void run_giant_typed(const TensorView& x, const TensorView& weight, const Tensor
   launch_check("gns_giant_apply_kernel");
 }
 
+template <typename DType>
+void run_clean_giant_typed(const TensorView& x, const TensorView& weight, const TensorView& bias,
+                           const TensorView& y, const TensorView& partial_sum,
+                           const TensorView& partial_sumsq, const TensorView& mean,
+                           const TensorView& rstd, const TensorView& row_counter,
+                           int64_t num_groups, double eps, int64_t chunk_elems,
+                           const Shape3D& s) {
+  constexpr int kVec = 16 / static_cast<int>(sizeof(DType));
+  const int64_t channels_per_group = s.channels / num_groups;
+  const int64_t group_size = channels_per_group * s.spatial;
+  const int64_t num_rows = s.batch * num_groups;
+  check(chunk_elems > 0 && chunk_elems % kVec == 0,
+        "clean chunk_elems must be a positive multiple of the vector width");
+  check(s.spatial % chunk_elems == 0,
+        "clean-giant route requires spatial to be a multiple of chunk_elems");
+  const int64_t chunks_per_row = group_size / chunk_elems;  // exact by the checks above
+  const int64_t total_tasks = num_rows * chunks_per_row;
+  check(total_tasks <= 0x7fffffff, "grid too large");
+
+  const DLDataType f32{kDLFloat, 32, 1};
+  const DLDataType i32{kDLInt, 32, 1};
+  check(same_dtype(partial_sum.dtype(), f32) && same_dtype(partial_sumsq.dtype(), f32) &&
+            same_dtype(mean.dtype(), f32) && same_dtype(rstd.dtype(), f32),
+        "scratch tensors must be fp32");
+  check(same_dtype(row_counter.dtype(), i32), "row_counter must be int32");
+  check(partial_sum.ndim() == 1 && partial_sum.size(0) >= total_tasks,
+        "partial_sum scratch too small");
+  check(partial_sumsq.ndim() == 1 && partial_sumsq.size(0) >= total_tasks,
+        "partial_sumsq scratch too small");
+  check(mean.ndim() == 1 && mean.size(0) >= num_rows, "mean scratch too small");
+  check(rstd.ndim() == 1 && rstd.size(0) >= num_rows, "rstd scratch too small");
+  check(row_counter.ndim() == 1 && row_counter.size(0) >= num_rows, "row_counter too small");
+
+  const GnsLargeParams<DType> params{
+      x.data_ptr(),
+      weight.data_ptr(),
+      bias.data_ptr(),
+      y.data_ptr(),
+      partial_sum.data_ptr(),
+      partial_sumsq.data_ptr(),
+      mean.data_ptr(),
+      rstd.data_ptr(),
+      row_counter.data_ptr(),
+      s.channels,
+      s.spatial,
+      num_groups,
+      channels_per_group,
+      group_size,
+      num_rows,
+      chunk_elems,
+      chunks_per_row,
+      static_cast<float>(eps),
+  };
+  cudaStream_t stream = current_stream();
+  gns_clean_stats_kernel<DType>
+      <<<static_cast<uint32_t>(total_tasks), kBlockThreads, 0, stream>>>(params);
+  launch_check("gns_clean_stats_kernel");
+  gns_clean_apply_kernel<DType>
+      <<<static_cast<uint32_t>(total_tasks), kBlockThreads, 0, stream>>>(params);
+  launch_check("gns_clean_apply_kernel");
+}
+
 enum class Kind { kF16, kBF16, kF32 };
 
 Kind dtype_kind(const DLDataType& dt) {
@@ -874,6 +1061,28 @@ void gns_candidate_giant(TensorView x, TensorView weight, TensorView bias, Tenso
   }
 }
 
+void gns_candidate_clean_giant(TensorView x, TensorView weight, TensorView bias,
+                               TensorView partial_sum, TensorView partial_sumsq, TensorView mean,
+                               TensorView rstd, TensorView row_counter, int64_t num_groups,
+                               double eps, int64_t chunk_elems, TensorView y) {
+  const Shape3D s = validate_common(x, weight, bias, y, num_groups);
+  switch (dtype_kind(x.dtype())) {
+    case Kind::kF16:
+      run_clean_giant_typed<__half>(x, weight, bias, y, partial_sum, partial_sumsq, mean, rstd,
+                                    row_counter, num_groups, eps, chunk_elems, s);
+      break;
+    case Kind::kBF16:
+      run_clean_giant_typed<__nv_bfloat16>(x, weight, bias, y, partial_sum, partial_sumsq, mean,
+                                           rstd, row_counter, num_groups, eps, chunk_elems, s);
+      break;
+    case Kind::kF32:
+      run_clean_giant_typed<float>(x, weight, bias, y, partial_sum, partial_sumsq, mean, rstd,
+                                   row_counter, num_groups, eps, chunk_elems, s);
+      break;
+  }
+}
+
 TVM_FFI_DLL_EXPORT_TYPED_FUNC(gns_candidate_small, gns_candidate_small);
 TVM_FFI_DLL_EXPORT_TYPED_FUNC(gns_candidate_large, gns_candidate_large);
 TVM_FFI_DLL_EXPORT_TYPED_FUNC(gns_candidate_giant, gns_candidate_giant);
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(gns_candidate_clean_giant, gns_candidate_clean_giant);

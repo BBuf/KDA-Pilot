@@ -132,3 +132,30 @@ draft PR only after repairs. All work on GPU 3 (idle per provenance).
     (arith 1.5921, wall 1.2237x), 40/48 rows >= 0.97 (39 >= 1.0), 8-row
     residual = the spatial%8192==0 giant class at 0.9449-0.9696 (named bound;
     arbitration options in docs/results.md). LTX diagnostics 1.22-4.89.
+
+## 2026-06-05 (round 2) — clean-giant route + explicit AC-5 no-go record
+
+Round-1 review required a dedicated solution-owned clean-giant route for the
+spatial%8192==0 class before any completion claim. All on GPU 3 (idle).
+
+14. **Clean pipeline implemented** (review-prescribed structure): branch-free
+    hoisted-affine apply + channel-aligned tiles, exported as
+    `gns_candidate_clean_giant`, gated on gs>=700K and spatial % tile == 0;
+    correctness x3 green on all 9 class rows; regs <= 31 (cliff audit).
+    Targeted frozen-settings probes: fixed 8192 tiles (as prescribed)
+    **regressed** to 0.889-0.973 (geomean 0.938; small tiles multiply
+    reduce rounds and partial traffic on the largest rows); per-shape
+    divisor tiles 0.950-0.973 (geomean 0.961) — matching the generic route
+    with a tighter floor; shipped for the class.
+15. **Round-2 frozen run** (correctness 210/210 first): 57/57 PASSED,
+    headline **1.4787** (arith 1.5621, wall 1.2212x), 40/48 rows >= 0.97,
+    min 0.9464. Per-regime: small-256 1.64 / small-1024 1.74 / large 1.84 /
+    straddle-giant 1.10 / clean-giant 0.978 (six rows in [0.946, 0.969]).
+    Cross-run note: the round-1 run with the generic route measured 1.5010 —
+    full-run headlines vary ±1.5%; this run is the promotion record because
+    it matches the shipped code.
+16. **Explicit AC-5 no-go recorded** (docs/results.md): twelve measured
+    variants spanning every structurally distinct approach land the clean
+    class in the same 0.94-0.97 band; the immutable per-row floor is not met
+    on 6 rows. Promotion withheld; PR #42 stays draft with an AC-5 status
+    note; the AC revision decision rests with the user outside the loop.

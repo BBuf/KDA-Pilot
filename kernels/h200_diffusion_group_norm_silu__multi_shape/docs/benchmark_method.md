@@ -27,18 +27,14 @@ bottom of this file supersedes earlier ABI wording where noted).
 
 ## ABI and calling convention
 
-- Symmetric timed glue (revised per the pre-freeze review): BOTH sides
-  allocate their output per timed call and rebind it into the output
-  container. The copied baseline does so internally (its public entry returns
-  a fresh tensor — upstream behavior, unmodified); the candidate wrapper
-  mirrors it with one `torch.empty_like` per call before the
-  destination-passing FFI kernel. One caching-allocator allocation per call
-  on each side; no device-to-device copies in either timed path.
-- Poison semantics: with per-call rebinding, the template's poison fill lands
-  on replaced tensors for both sides equally; the authoritative
-  stale-output/skipped-kernel poison checks drive the candidate's
-  destination-passing ABI directly in `bench/correctness.py`
-  (`method_poison_*` cases).
+- Template contract (final): `make_case` preallocates one output tensor per
+  side; `call_baseline`/`call_candidate` write into those buffers through
+  destination-passing local ABIs and never allocate output tensors in a
+  timed path. The baseline side replicates the copied Triton launcher bodies
+  verbatim with the caller's buffer (internal scratch untouched; verified
+  bit-identical to the upstream allocate-and-return entries) and refuses the
+  upstream eager fallback. The template's output-poisoning check is fully
+  effective on both sides every trial.
 - Wrapper rows (`apply_group_norm_silu`): `torch.nn.GroupNorm`/`nn.SiLU`
   modules are constructed in `make_case` (outside timing); module-attribute
   extraction happens inside BOTH timed calls (the baseline wrapper unpacks
@@ -99,8 +95,6 @@ restored the contract exactly:
   upstream eager fallback so it can never be timed silently.
 - The template's output-poisoning check is fully effective on both sides
   every trial. No timed path allocates an output tensor.
-- The earlier ABI paragraph above ("Symmetric timed glue (revised per the
-  pre-freeze review)...") is superseded by this section.
 - A/A validation under this exact contract: geomean 0.9990 (8 spread rows,
   0.9854–1.0076).
 - The shipped candidate contains no baseline routing (round-0's DEC-6
