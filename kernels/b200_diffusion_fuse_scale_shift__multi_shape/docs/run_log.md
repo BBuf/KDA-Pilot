@@ -185,8 +185,16 @@ Bound attribution per row class:
   (candidate 73.4us vs baseline 48.9us under locked clocks, while the live
   interleaved arbiter gives candidate 45.8us vs baseline 50.1us). Consistent
   with the established B200 lesson that NCU isolation can invert pipeline-
-  kernel rankings; the steady-state interleaved A/B run remains the only
-  promotion arbiter, and NCU is used here strictly for bound attribution.
+  kernel rankings; NCU durations are therefore EXCLUDED from ranking for this
+  row — the steady-state interleaved A/B run is the only promotion arbiter,
+  and NCU is used strictly for bound attribution. The "barrier" component of
+  the EP2 attribution is partly inferred from the kernel structure (one row
+  per block, two block-wide reductions) on top of the SOL counters; explicit
+  stall-barrier counters were not separately extracted.
+- Independent review of this interpretation (Codex, gpt-5.5:high, archived in
+  the local loop state dir): ATTRIBUTION_VERDICT SOUND, INVERSION_VERDICT
+  ACCEPTABLE, STOP_DECISION AGREE ("stop decision defensible under bounded
+  attempts; gate met on every production row").
 - EP3 resgated: mixed (46% DRAM, 68.5% SM) — close to balanced; live 5.50 TB/s.
 - s19 (small class): nothing on-device is the bottleneck (0.3% DRAM, 0.8% SM,
   29 blocks) — the row is launch/host-path-bound, which is exactly where the
