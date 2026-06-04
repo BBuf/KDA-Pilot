@@ -32,11 +32,14 @@ _CUDA_ENABLED = True
 _HERE = Path(__file__).resolve().parent
 _CUH = str(_HERE / "norm_cuda" / "diffusion_norm_infer.cuh")
 _INCLUDE = str(_HERE / "norm_cuda")
-_KERNEL_VERSION = "v2"  # bump to force a JIT rebuild (stale-JIT guard); v2 = per-S RMS kUnroll
-# Large-S RMS uses kUnroll>1 (memory-level parallelism hides load latency); small/mid
-# RMS keeps kUnroll=1 (one row/warp) to maximize warp count / occupancy.
+_KERNEL_VERSION = "v3"  # bump to force a JIT rebuild (stale-JIT guard); v3 = tiled multi-row RMS family added to the shared .cuh
+# Large-S RMS routes to the tiled multi-row kernel (two row-pairs per warp with
+# both pair loads in flight + persistent whole-wave grid: hides load latency and
+# avoids the 40k-CTA launch wave); small/mid RMS keeps the one-warp-per-row
+# kernel (kUnroll=1) to maximize warp count / occupancy at low row counts.
 _RMS_LARGE_S = 100000
-_RMS_LARGE_UNROLL = 4
+_RMS_TILED_ROWS = 32
+_RMS_TILED_SCHEDULING = 1  # persistent occupancy-derived whole-wave grid
 _LN_MAX_N = 5120  # informational: float4 LN kernel covers N<=kLNThreads*4*kLNMaxVec=5120; routing is gated by the _SUPPORTED_LN allowlist below, not this constant
 
 # Configured-shape allowlists. CUDA routes ONLY these exact (M,N)/(S,D) shapes;
@@ -52,14 +55,22 @@ _SUPPORTED_LN = frozenset({
     (64, 1024), (256, 1024),                            # NaN/Inf + preallocated-out coverage
 })
 # NO-GO (round 4): the two large-S production shapes (648720, 650040) are NOT in
-# the CUDA allowlist -> they fall back to the SGLang Triton baseline (= parity).
-# Evidence: the warp-per-row kernel (incl. the kUnroll=2/4 MLP variant) measured
-# ~0.84-0.92x vs the baseline on idle B200 (interleaved); NCU showed memory-latency
-# + compute(SM)-leaning (DRAM 38% / Mem 47% / SM 63%, occ 77%), and the one-warp-
-# per-row structure cannot match the baseline's 16-row tile for this huge
-# bandwidth-streaming regime. Falling back avoids a production regression.
+# the CUDA allowlist and fell back to the SGLang Triton baseline (= parity):
+# the warp-per-row kernel (incl. the kUnroll=2/4 MLP variant) measured
+# ~0.84-0.92x vs the baseline (interleaved, idle B200) and was memory-latency
+# bound (long-scoreboard ~56%). REOPENED with the tiled multi-row kernel
+# (RmsNormTiledKernel<128,32,bf16>, persistent grid): beats the pinned Triton
+# baseline 1.10-1.11x wall / 1.14-1.16x kernel-event on BOTH huge shapes in two
+# independent interleaved runs (paired-bootstrap CI95 lower bounds > 1.09;
+# benchmark.csv cand-0010-tile-r32-persistent + -rep2). Note the measured
+# context-dependence: in cache-flushed NCU isolation the Triton baseline is
+# faster; in production-like back-to-back execution (dirty-L2 steady state,
+# which is how diffusion denoise runs this op) the tiled kernel wins — the
+# steady-state interleaved lane is the promotion arbiter (docs/dispatch.md,
+# profile/tile_r32_r2/REPORT.md).
 _SUPPORTED_RMS = frozenset({
     (1320, 128), (16384, 128), (4096, 128),             # production small/mid (CUDA wins ~1.5-1.7x)
+    (648720, 128), (650040, 128),                       # production huge-S (tiled CUDA wins ~1.10x wall / ~1.15x kernel)
     (6, 128), (128, 128), (768, 128), (64, 128),        # regression-small + NaN/Inf coverage
 })
 
@@ -124,6 +135,56 @@ def _rms_module(dim, k_unroll, dtype):
     return mod
 
 
+def _rms_tiled_module(dim, rows_per_cta, dtype):
+    key = ("rms_tiled", int(dim), int(rows_per_cta), str(dtype))
+    mod = _MODULE_CACHE.get(key)
+    if mod is None:
+        from sglang.jit_kernel.utils import load_jit, make_cpp_args
+
+        args = make_cpp_args(int(dim), int(rows_per_cta), dtype)
+        mod = load_jit(
+            "b200_diffnorm_rms_tiled",
+            _KERNEL_VERSION,
+            *args,
+            cuda_files=[_CUH],
+            cuda_wrappers=[("rms_tiled", f"RmsNormTiledKernel<{args}>::run")],
+            extra_include_paths=[_INCLUDE],
+        )
+        _MODULE_CACHE[key] = mod
+    return mod
+
+
+def tiled_rms_onepass(x, w, eps: float = 1e-6, *, rows_per_cta: int = 16, scheduling: int = 0):
+    """Direct entry to the tiled multi-row RMSNorm (D=128, bf16) for the huge-S
+    streaming bucket. Used by the validation/benchmark harnesses while this
+    kernel's evidence is being collected; ``optimized_wrapper`` does NOT route
+    here — production routing changes only together with its dispatch-table
+    evidence. ``scheduling``: 0 = one CTA per tile, 1 = persistent
+    occupancy-derived whole-wave grid.
+
+    Raises on anything outside the kernel's contract (bf16, 2-D, D=128,
+    contiguous, matching 1-D weight) instead of falling back — a broken or
+    misused build must fail loudly in the harnesses."""
+    import torch
+
+    if rows_per_cta not in (16, 32):
+        raise ValueError(f"rows_per_cta must be 16 or 32, got {rows_per_cta}")
+    if scheduling not in (0, 1):
+        raise ValueError(f"scheduling must be 0 (plain) or 1 (persistent), got {scheduling}")
+    if x.dim() != 2 or x.shape[-1] != 128:
+        raise ValueError(f"tiled RMS expects a 2-D [S, 128] input, got {tuple(x.shape)}")
+    if x.dtype != torch.bfloat16:
+        raise ValueError(f"tiled RMS is bf16-only, got {x.dtype}")
+    if not x.is_contiguous():
+        raise ValueError("tiled RMS expects a contiguous input")
+    if w.dim() != 1 or w.shape[0] != 128 or w.dtype != x.dtype or w.device != x.device or not w.is_contiguous():
+        raise ValueError("tiled RMS expects a contiguous bf16 weight of shape (128,) on the input device")
+
+    out = torch.empty_like(x)
+    _rms_tiled_module(x.shape[-1], rows_per_cta, x.dtype).rms_tiled(x, w, out, eps, scheduling)
+    return out
+
+
 # --- Support predicates (CUDA routes ONLY configured shapes; else fall back) ---
 # norm_infer -> CUDA iff: fp32, 2-D, contiguous, is_rms_norm=False, (M,N) in
 #   _SUPPORTED_LN, and weight+bias are non-None, contiguous, shape==(N,), on the
@@ -147,6 +208,7 @@ def _is_cuda_contig_2d(t) -> bool:
 # pointer makes every row aligned, so checking the base data_ptr() is sufficient.
 _LN_ALIGN = 16
 _RMS_ALIGN = 8
+_RMS_TILED_ALIGN = 16  # tiled large-S kernel loads AlignedVector<bf16,8> (16 B)
 
 
 def _aligned(t, nbytes: int) -> bool:
@@ -213,10 +275,13 @@ def _rms_onepass_supported(x, w) -> bool:
     s, d = int(x.shape[0]), int(x.shape[1])
     if (s, d) not in _SUPPORTED_RMS:
         return False
-    # AlignedVector<bf16,4> (8-byte) vectorized loads/stores: x and w must be
-    # 8-byte-aligned bases, else a contiguous-but-offset view would hit misaligned
-    # vector access -> fall back. (The output is allocated fresh -> always aligned.)
-    return _valid_affine(w, d, x) and _aligned(x, _RMS_ALIGN) and _aligned(w, _RMS_ALIGN)
+    # Vectorized loads/stores: the one-warp-per-row kernel uses AlignedVector<bf16,4>
+    # (8-byte) accesses; the tiled large-S kernel uses AlignedVector<bf16,8> (16-byte)
+    # accesses. x and w must be aligned bases for the route the shape will take, else
+    # a contiguous-but-offset view would hit misaligned vector access -> fall back.
+    # (The output is allocated fresh -> always aligned.)
+    align = _RMS_TILED_ALIGN if s >= _RMS_LARGE_S else _RMS_ALIGN
+    return _valid_affine(w, d, x) and _aligned(x, align) and _aligned(w, align)
 
 
 # --- CUDA paths --------------------------------------------------------------
@@ -236,8 +301,12 @@ def _cuda_rms_onepass(x, w, eps=1e-6):
     x2d = x.reshape(-1, shape[-1])
     out = torch.empty_like(x)
     out2d = out.reshape(-1, shape[-1])
-    k_unroll = _RMS_LARGE_UNROLL if x2d.shape[0] >= _RMS_LARGE_S else 1
-    _rms_module(shape[-1], k_unroll, x.dtype).rms_onepass(x2d, w, out2d, eps)
+    if x2d.shape[0] >= _RMS_LARGE_S:
+        _rms_tiled_module(shape[-1], _RMS_TILED_ROWS, x.dtype).rms_tiled(
+            x2d, w, out2d, eps, _RMS_TILED_SCHEDULING
+        )
+    else:
+        _rms_module(shape[-1], 1, x.dtype).rms_onepass(x2d, w, out2d, eps)
     return out
 
 

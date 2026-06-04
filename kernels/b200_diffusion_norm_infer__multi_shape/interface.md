@@ -110,3 +110,21 @@ def register() -> dict:
 - PyTorch-FP32 / `_reference()` tolerance methodology used in tests (fp32 `atol=rtol=1e-5`; bf16/fp16 `atol=rtol=5e-2`);
 - benchmark command and latency formula (PRIMARY = wrapper-inclusive wall-clock; kernel-only CUDA-event time secondary);
 - source lineage for copied or ported helper code (record in `solutions.jsonl`).
+## Round-2 routing addendum (2026-06-04)
+
+`optimized_wrapper` routing after the round-2 large-S reopen (evidence:
+`docs/dispatch.md`, `docs/results.md`):
+
+- `norm_infer` → CUDA `LayerNormInferKernel<fp32_t>` for allowlisted fp32 2-D
+  shapes (unchanged from round 1).
+- `triton_one_pass_rms_norm` → CUDA, with an in-route split:
+  - `S < 100000`: `RmsNormOnepassKernel<128,1,bf16_t>` (one warp per row);
+  - `S ≥ 100000` (allowlisted: 648720, 650040): `RmsNormTiledKernel<128,32,bf16_t>`
+    with the persistent whole-wave grid (`scheduling=1`); requires a 16-byte-aligned
+    base (the tile kernel uses 16-byte vector accesses) — 8-byte-aligned-only views
+    fall back to the baseline.
+- Everything outside the allowlists falls back to the SGLang Triton baseline
+  (semantics unchanged; 15 fallback-routing cases re-verified).
+- Direct harness entry (not routed by `optimized_wrapper`):
+  `src/register.py::tiled_rms_onepass(x, w, eps, *, rows_per_cta, scheduling)` —
+  raises on out-of-contract inputs instead of falling back.

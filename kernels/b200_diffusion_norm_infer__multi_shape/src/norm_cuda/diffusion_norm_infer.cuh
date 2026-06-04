@@ -284,4 +284,150 @@ struct RmsNormOnepassKernel {
   }
 };
 
+// =====================================================================
+// Family B2: bf16 RMSNorm, multi-row tile per CTA, kD == 128.
+//
+// Built for the huge-S streaming regime (S ~ 6.5e5) where the warp-per-row
+// kernel above is memory-latency bound (long-scoreboard dominant, DRAM well
+// under peak) and cannot match the Triton 16-row tile. Differences vs the
+// warp-per-row family:
+//   - each warp owns TWO rows per pass: lanes 0-15 stream row r, lanes 16-31
+//     stream row r+1, one 16-byte vector (8 bf16) per lane, so a full warp
+//     covers 512 contiguous bytes and a 256-thread CTA covers a 16-row tile
+//     (4 KB) per load step — same footprint as the Triton baseline tile;
+//   - per-row reduction is a 16-lane xor butterfly (offsets 8/4/2/1 never
+//     cross the half-warp boundary), fp32 accumulation, one rsqrt per row;
+//   - register-direct streaming: no shared-memory staging, no cp.async — the
+//     row working set is 256 B and is consumed immediately, so an smem
+//     round-trip only adds barriers and bank-conflict surface;
+//   - kRowsPerCta = 16 or 32 (32 = two row-pairs per warp, with both pair
+//     loads issued before either reduction for memory-level parallelism);
+//   - grid-stride over tiles: launched with one CTA per tile (plain) or with
+//     an occupancy-derived whole-wave grid (persistent) — the scheduling
+//     argument picks at launch time, the device loop is identical.
+// =====================================================================
+constexpr uint32_t kRmsTiledThreads = 256;
+
+template <int kD, int kRowsPerCta, typename DType>
+__global__ void rmsnorm_tiled_kernel(const RmsNormParams __grid_constant__ params) {
+  using namespace device;
+  static_assert(kD == 128, "tile kernel is specialized for D=128 (8 bf16 per 16B lane vector)");
+  static_assert(kRowsPerCta % 16 == 0, "one CTA pass covers 16 rows (8 warps x 2 rows)");
+  constexpr uint32_t kLanesPerRow = 16;
+  constexpr uint32_t kVecElems = kD / kLanesPerRow;  // 8 bf16 = 16 bytes
+  constexpr uint32_t kWarpsPB = kRmsTiledThreads / 32;
+  constexpr uint32_t kPairsPerWarp = kRowsPerCta / 16;  // row-pairs each warp handles per tile
+  using Vec = AlignedVector<DType, kVecElems>;
+
+  const uint32_t lane = threadIdx.x % 32;
+  const uint32_t warp = threadIdx.x / 32;
+  const uint32_t lane_in_row = lane & (kLanesPerRow - 1);
+  const uint32_t row_sel = lane >> 4;  // 0: even row of the pair, 1: odd row
+  const int64_t S = static_cast<int64_t>(params.S);
+  const int64_t stride = params.row_stride;
+
+  const DType* X = static_cast<const DType*>(params.x_ptr);
+  DType* Y = static_cast<DType*>(params.y_ptr);
+
+  // Per-lane weight chunk (lane_in_row * 8 .. +8) is column-fixed: load once,
+  // reuse for every row. Precondition (dispatcher `_aligned` gate): base
+  // pointers 16-byte aligned, row stride 256 B, so all vector ops are aligned.
+  Vec wv;
+  wv.load(static_cast<const DType*>(params.w_ptr), lane_in_row);
+  float wf[kVecElems];
+#pragma unroll
+  for (uint32_t i = 0; i < kVecElems; ++i) wf[i] = cast<fp32_t>(wv[i]);
+
+  const int64_t num_tiles = (S + kRowsPerCta - 1) / kRowsPerCta;
+  for (int64_t tile = blockIdx.x; tile < num_tiles; tile += gridDim.x) {
+    const int64_t base = tile * kRowsPerCta;
+
+    // Issue every pair load before any reduction (register pipeline).
+    Vec xv[kPairsPerWarp];
+    int64_t row[kPairsPerWarp];
+    bool valid[kPairsPerWarp];
+#pragma unroll
+    for (uint32_t p = 0; p < kPairsPerWarp; ++p) {
+      row[p] = base + static_cast<int64_t>(p) * (kWarpsPB * 2) + warp * 2 + row_sel;
+      valid[p] = row[p] < S;
+      if (valid[p]) xv[p].load(X + row[p] * stride, lane_in_row);
+    }
+
+#pragma unroll
+    for (uint32_t p = 0; p < kPairsPerWarp; ++p) {
+      if (!valid[p]) continue;
+      float e[kVecElems];
+      float ss = 0.0f;
+#pragma unroll
+      for (uint32_t i = 0; i < kVecElems; ++i) {
+        e[i] = cast<fp32_t>(xv[p][i]);
+        ss += e[i] * e[i];
+      }
+      // 16-lane segmented xor butterfly: offsets < 16 stay inside the half-warp;
+      // afterwards every lane of the half-warp holds the row's sum of squares.
+#pragma unroll
+      for (uint32_t offset = kLanesPerRow / 2; offset > 0; offset >>= 1) {
+        ss += __shfl_xor_sync(0xffffffffu, ss, offset);
+      }
+      const float rstd = math::rsqrt(ss / static_cast<float>(kD) + params.eps);
+      Vec yv;
+#pragma unroll
+      for (uint32_t i = 0; i < kVecElems; ++i) yv[i] = cast<DType>(e[i] * rstd * wf[i]);
+      yv.store(Y + row[p] * stride, lane_in_row);
+    }
+  }
+}
+
+template <int kD, int kRowsPerCta, typename DType>
+struct RmsNormTiledKernel {
+  static void
+  run(const tvm::ffi::TensorView x,
+      const tvm::ffi::TensorView w,
+      const tvm::ffi::TensorView out,
+      float eps,
+      int64_t scheduling) {
+    using namespace host;
+
+    auto S = SymbolicSize{"S"};
+    auto D = SymbolicSize{"D"};
+    auto device = SymbolicDevice{};
+    D.set_value(kD);
+    device.set_options<kDLCUDA>();
+
+    TensorMatcher({S, D}).with_strides({D, 1}).with_dtype<DType>().with_device(device).verify(x);
+    TensorMatcher({D}).with_dtype<DType>().with_device(device).verify(w);
+    TensorMatcher({S, D}).with_strides({D, 1}).with_dtype<DType>().with_device(device).verify(out);
+
+    const auto s = static_cast<uint32_t>(S.unwrap());
+    const auto params = RmsNormParams{
+        .x_ptr = x.data_ptr(),
+        .y_ptr = out.data_ptr(),
+        .w_ptr = w.data_ptr(),
+        .row_stride = static_cast<int64_t>(kD),
+        .S = s,
+        .eps = eps,
+    };
+    const auto num_tiles = div_ceil(s, static_cast<uint32_t>(kRowsPerCta));
+
+    uint32_t blocks = num_tiles;  // scheduling == 0: one CTA per tile
+    if (scheduling == 1) {
+      // Persistent whole-wave grid: resident CTAs per SM via the occupancy API,
+      // cached per template instantiation (single-device usage; the dispatcher
+      // pins one CUDA device per process in this workspace).
+      static const uint32_t blocks_per_wave = [] {
+        int dev = 0, sms = 0, per_sm = 0;
+        cudaGetDevice(&dev);
+        cudaDeviceGetAttribute(&sms, cudaDevAttrMultiProcessorCount, dev);
+        cudaOccupancyMaxActiveBlocksPerMultiprocessor(
+            &per_sm, rmsnorm_tiled_kernel<kD, kRowsPerCta, DType>, kRmsTiledThreads, 0);
+        if (sms <= 0) sms = 1;
+        if (per_sm <= 0) per_sm = 1;
+        return static_cast<uint32_t>(sms) * static_cast<uint32_t>(per_sm);
+      }();
+      blocks = num_tiles < blocks_per_wave ? num_tiles : blocks_per_wave;
+    }
+    LaunchKernel(blocks, kRmsTiledThreads, device.unwrap()).enable_pdl(false)(rmsnorm_tiled_kernel<kD, kRowsPerCta, DType>, params);
+  }
+};
+
 }  // namespace
