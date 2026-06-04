@@ -48,7 +48,17 @@ def main() -> int:
         return q, k
 
     cases = {c["name"]: c for c in t.make_cases()}
-    names = ["qwen__small__B19_H24_D128_R128", "qwen-edit__large__B8424_H24_D128_R128"]
+    # Broad-staged synthetic shape: not a captured row, but inside the in-tree delegation
+    # surface (bf16, head_dim=128, rope_dim=128, non-NeoX, num_tokens >= 512) — checks the
+    # staged path compiles/matches beyond the captured table.
+    cases["synthetic__broad__B1024_H16_D128_R128"] = {
+        "name": "synthetic__broad__B1024_H16_D128_R128", "preset": "synthetic",
+        "bucket": "broad", "num_tokens": 1024, "num_heads": 16, "head_dim": 128,
+        "rope_dim": 128, "is_neox": False, "eps": 1e-6, "dtype": "bfloat16",
+        "position_dtype": "int64", "warmup": 5, "iters": 10,
+    }
+    names = ["qwen__small__B19_H24_D128_R128", "qwen-edit__large__B8424_H24_D128_R128",
+             "synthetic__broad__B1024_H16_D128_R128"]
     failures = 0
     for name in names:
         case = cases[name]

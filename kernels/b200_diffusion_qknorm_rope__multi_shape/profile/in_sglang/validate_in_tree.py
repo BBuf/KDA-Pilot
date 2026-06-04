@@ -48,7 +48,7 @@ def _measure(out_path: str) -> int:
            inp["positions"], is_neox=case["is_neox"], eps=case["eps"],
            head_dim=case["head_dim"], rope_dim=case["rope_dim"])
 
-    def median_us(fn, warmup, iters):
+    def stats_us(fn, warmup, iters):
         for _ in range(warmup):
             fn()
         torch.cuda.synchronize()
@@ -58,9 +58,23 @@ def _measure(out_path: str) -> int:
             b = torch.cuda.Event(enable_timing=True)
             a.record(); fn(); b.record(); torch.cuda.synchronize()
             s.append(a.elapsed_time(b) * 1e3)  # ms -> us
-        return statistics.median(s)
+        s.sort()
 
-    out = {}
+        def pct(p):
+            return s[min(len(s) - 1, max(0, round((len(s) - 1) * p)))]
+
+        return {
+            "median_us": round(statistics.median(s), 4),
+            "mean_us": round(statistics.mean(s), 4),
+            "std_us": round(statistics.pstdev(s) if len(s) > 1 else 0.0, 4),
+            "min_us": round(s[0], 4),
+            "p10_us": round(pct(0.10), 4),
+            "p90_us": round(pct(0.90), 4),
+        }
+
+    import sglang as _sgl
+    print(f"[measure] sglang at {_sgl.__file__}")
+    out = {"_provenance": {"sglang_file": _sgl.__file__}}
     for case in t.make_cases():
         # correctness: SGLang's op (in place) vs the split oracle, on identical seeded inputs
         ci = t._make_inputs(case)
@@ -73,39 +87,72 @@ def _measure(out_path: str) -> int:
             and torch.allclose(k.float(), ek.float(), atol=t.ATOL, rtol=t.RTOL)
         )
         ti = t._make_inputs(case)
-        med = median_us(lambda: call(op, ti, case), int(case.get("warmup", 25)), int(case.get("iters", 100)))
-        out[case["name"]] = {"oracle_ok": bool(ok), "median_us": round(med, 4),
-                             "bucket": case["bucket"], "num_tokens": case["num_tokens"]}
-        print(f"{case['name']:>44s}  oracle_ok={bool(ok)}  median={med:.2f}us")
+        st = stats_us(lambda: call(op, ti, case), int(case.get("warmup", 25)), int(case.get("iters", 100)))
+        out[case["name"]] = {"oracle_ok": bool(ok), "bucket": case["bucket"],
+                             "num_tokens": case["num_tokens"], **st}
+        print(f"{case['name']:>44s}  oracle_ok={bool(ok)}  median={st['median_us']:.2f}us  p10={st['p10_us']:.2f}  p90={st['p90_us']:.2f}")
     Path(out_path).write_text(json.dumps(out, indent=2))
-    n_ok = sum(v["oracle_ok"] for v in out.values())
-    print(f"\n[measure] {n_ok}/{len(out)} shapes oracle_ok; wrote {out_path}")
-    return 0 if n_ok == len(out) else 1
+    shapes = {k: v for k, v in out.items() if not k.startswith("_")}
+    n_ok = sum(v["oracle_ok"] for v in shapes.values())
+    print(f"\n[measure] {n_ok}/{len(shapes)} shapes oracle_ok; wrote {out_path}")
+    return 0 if n_ok == len(shapes) else 1
 
 
-def _compare(base_path: str, cand_path: str) -> int:
-    base = json.loads(Path(base_path).read_text())
-    cand = json.loads(Path(cand_path).read_text())
-    speedups = []
+def _shapes(d: dict) -> dict:
+    return {k: v for k, v in d.items() if not k.startswith("_")}
+
+
+def _compare(base_path: str, cand_path: str, check_base: str | None = None,
+             check_cand: str | None = None, regress_pct: float = 3.0) -> int:
+    """Compare run2 (recorded) measurements; optionally cross-check against run1.
+
+    Promotion gate (DEC: parity-or-speedup, no material per-shape regression):
+    a shape regresses MATERIALLY when cand is more than ``regress_pct``%% slower than
+    base in the recorded run AND the run1 cross-check (when given) confirms a >
+    ``regress_pct``%% regression on the same shape (filters one-run shared-box
+    artifacts). Exit 1 on any material regression, failed correctness, or geomean < 1.0.
+    """
+    base = _shapes(json.loads(Path(base_path).read_text()))
+    cand = _shapes(json.loads(Path(cand_path).read_text()))
+    run1 = None
+    if check_base and check_cand:
+        b1 = _shapes(json.loads(Path(check_base).read_text()))
+        c1 = _shapes(json.loads(Path(check_cand).read_text()))
+        run1 = {n: (b1[n]["median_us"] / c1[n]["median_us"]) for n in b1 if n in c1}
+    speedups, material = [], []
     print(f"{'shape':>44s}  {'bucket':>6s}  base_us  cand_us  speedup")
     for name in base:
         b, c = base[name]["median_us"], cand[name]["median_us"]
         sp = b / c if c > 0 else float("nan")
         speedups.append(sp)
-        print(f"{name:>44s}  {base[name]['bucket']:>6s}  {b:7.2f}  {c:7.2f}  {sp:.4f}x")
-    if not all(cand[n]["oracle_ok"] for n in cand):
-        print("WARNING: some candidate shapes failed correctness!")
+        flag = ""
+        if sp < 1.0 - regress_pct / 100.0:
+            confirmed = run1 is None or run1.get(name, 1.0) < 1.0 - regress_pct / 100.0
+            if confirmed:
+                material.append(name)
+                flag = "  << MATERIAL REGRESSION" + ("" if run1 is None else " (confirmed by run1)")
+            else:
+                flag = "  (regression in run2 only — not confirmed by run1)"
+        print(f"{name:>44s}  {base[name]['bucket']:>6s}  {b:7.2f}  {c:7.2f}  {sp:.4f}x{flag}")
+    bad_corr = [n for n in cand if not cand[n]["oracle_ok"]]
+    if bad_corr:
+        print(f"FAIL: candidate correctness failed on {bad_corr}")
     geo = math.exp(sum(math.log(s) for s in speedups) / len(speedups))
     print(f"\n[compare] in-SGLang (register_custom_op preserved) device geomean = {geo:.4f}x "
-          f"over {len(speedups)} shapes")
-    return 0
+          f"over {len(speedups)} shapes; material-regression threshold = {regress_pct:.1f}%")
+    gate_ok = not material and not bad_corr and geo >= 1.0
+    print(f"[compare] PROMOTION_GATE {'PASS' if gate_ok else 'FAIL'}"
+          + (f" (material regressions: {material})" if material else ""))
+    return 0 if gate_ok else 1
 
 
 def main() -> int:
     if len(sys.argv) >= 3 and sys.argv[1] == "measure":
         return _measure(sys.argv[2])
     if len(sys.argv) >= 4 and sys.argv[1] == "compare":
-        return _compare(sys.argv[2], sys.argv[3])
+        check_base = sys.argv[4] if len(sys.argv) >= 6 else None
+        check_cand = sys.argv[5] if len(sys.argv) >= 6 else None
+        return _compare(sys.argv[2], sys.argv[3], check_base, check_cand)
     print(__doc__)
     return 2
 

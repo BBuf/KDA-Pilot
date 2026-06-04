@@ -46,9 +46,12 @@ production rows to staged — verified in source, recorded in `solutions.jsonl`)
   was implemented, validated 10/10, and **rejected**: 1.0658x vs staged's same-session
   1.0691x (parity-to-worse; inter-CTA overlap already hides intra-CTA barriers at
   waves = 1.0). `cp.async` staging and block-128 were ranked and not attempted (reasons in
-  REPORT.md §4); PDL flip measured neutral. The staged anchor is the operating point —
-  consistent with TRT-LLM's fused DiT QKNorm+RoPE kernels (KernelWiki
+  REPORT.md §4); PDL flip measured 1.0035x in OFF's favor — below the explicit materiality
+  rule (flip only on a ≥2% sign-stable geomean win), so the arch default (ON) is retained.
+  Bounded exploration is closed for promotion with the staged anchor as the best-validated
+  design — consistent with TRT-LLM's fused DiT QKNorm+RoPE kernels (KernelWiki
   `pr-TensorRT-LLM-13052`, `pr-TensorRT-LLM-11869`) and the H200 row-norm family findings.
+  Deeper prefetch/cp.async schedules remain unprobed (out of bounded budget, not disproven).
 
 ## Shipping-integration arbiter (in-SGLang in-tree drop-in)
 
