@@ -14,6 +14,8 @@ candidate side by side inside the task directory.
 
 ```text
 docs/
+  diffusion_correctness_contract.md
+  diffusion_kernel_rules.md
   ghostty_claude_code_workflow.md
   diffusion_benchmark_shape_coverage.md
   standalone_diffusion_benchmark.md
@@ -54,9 +56,13 @@ docs/           # source notes, benchmark logs, profile notes
 
 The central benchmark rules live in
 [`docs/standalone_diffusion_benchmark.md`](docs/standalone_diffusion_benchmark.md).
+Diffusion optimization guardrails live in
+[`docs/diffusion_kernel_rules.md`](docs/diffusion_kernel_rules.md).
+Canonical regression grids live in
+[`docs/diffusion_correctness_contract.md`](docs/diffusion_correctness_contract.md).
 The production preset and shape audit lives in
 [`docs/diffusion_benchmark_shape_coverage.md`](docs/diffusion_benchmark_shape_coverage.md).
-Every task prompt requires the agent to follow both documents.
+Every task prompt requires the agent to follow these documents.
 
 ## Benchmark Principle
 

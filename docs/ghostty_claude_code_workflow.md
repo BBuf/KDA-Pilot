@@ -54,9 +54,11 @@ export HF_TOKEN=hf_...
 ```
 
 Normal standalone kernel benchmarks should not import or patch SGLang at
-runtime. Read these two documents before changing any task:
+runtime. Read these documents before changing any task:
 
 - [`standalone_diffusion_benchmark.md`](standalone_diffusion_benchmark.md)
+- [`diffusion_kernel_rules.md`](diffusion_kernel_rules.md)
+- [`diffusion_correctness_contract.md`](diffusion_correctness_contract.md)
 - [`diffusion_benchmark_shape_coverage.md`](diffusion_benchmark_shape_coverage.md)
 
 ## Ghostty Shortcuts

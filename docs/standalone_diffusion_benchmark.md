@@ -13,11 +13,19 @@ the local baseline.
   copied file list in `docs/baseline_source.md`.
 - Baseline and candidate must expose matching local entry points. Any wrapper
   overhead included for one side must be included for the other side.
+- Every task must contain two local implementations: copied SGLang source in
+  `baseline/` and the optimized implementation in `solution/`.
 - Prefer local direct CUDA ABI for both sides:
   `TVM_FFI_DLL_EXPORT_TYPED_FUNC`, `tvm::ffi::TensorView` arguments, output
   tensors passed last, and `destination_passing_style = true`.
 - Every CUDA launch must use PyTorch's current stream:
   `at::cuda::getCurrentCUDAStream()`.
+- If the copied SGLang implementation is CUDA/C++ CUDA, expose the baseline and
+  candidate through the same local registration/export/build style. Do not time
+  a copied CUDA baseline through a heavier wrapper while timing the candidate
+  through a lighter direct path.
+- Do not pass `--use_fast_math` unless the copied upstream baseline already uses
+  it and the candidate uses the exact same flag.
 - If the copied SGLang implementation is Triton, CuTe DSL, or Python, keep it
   local and build a local baseline adapter with the same benchmark ABI used by
   the candidate. The benchmark must not compare a heavy Python wrapper against a
@@ -82,7 +90,8 @@ candidate must use the same choice.
 - `bench/workloads.json` must be populated from the target task family in
   `docs/diffusion_benchmark_shape_coverage.md` before tuning begins.
 - Include every production shape the task is expected to optimize and a small
-  regression grid for unsupported layouts/dtypes.
+  regression grid for edge layouts/dtypes from
+  `docs/diffusion_correctness_contract.md`.
 - If a current SGLang diffusion benchmark preset is not represented by retained
   shape rows, either add fresh live capture rows or record a live no-call proof
   in `docs/benchmark_preset_audit.md`.
@@ -176,9 +185,6 @@ They must not allocate output tensors in the timed path.
   kernel bugs are visible.
 - If CUDA graph capture is used, add zero-output replay, poison-cell, and
   varying-input checks to prove kernels actually replay.
-- Fallback behavior must be explicit and tested. If candidate falls back to the
-  copied baseline for some supported workload, that workload still counts in the
-  headline score.
 
 ## Provenance
 

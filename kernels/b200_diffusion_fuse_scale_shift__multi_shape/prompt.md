@@ -11,8 +11,11 @@ Target SGLang diffusion entry points to copy as local baseline:
 Goal: optimize diffusion scale/shift and dual-modulation kernels for the
 production diffusion shape set on B200.
 
-Before writing an optimized kernel, read
-`../../docs/standalone_diffusion_benchmark.md` and follow it exactly.
+Before writing an optimized kernel, read and follow:
+
+- `../../docs/standalone_diffusion_benchmark.md`
+- `../../docs/diffusion_kernel_rules.md`
+- `../../docs/diffusion_correctness_contract.md`
 
 Also read `../../docs/diffusion_benchmark_shape_coverage.md`. This task is not
 ready for optimization until `bench/workloads.json` covers every retained live

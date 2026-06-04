@@ -73,6 +73,21 @@ CLAUDE_BIN="${CLAUDE_BIN:-claude}"
 CLAUDE_MODEL="${CLAUDE_MODEL:-opus}"
 CLAUDE_EFFORT="${CLAUDE_EFFORT:-max}"
 
+case "$TASK_SLUG" in
+  b200_*)
+    TARGET_GPU_LABEL="B200"
+    REMOTE_HOST_HINT="ion-b200"
+    ;;
+  h200_*)
+    TARGET_GPU_LABEL="H200"
+    REMOTE_HOST_HINT="ion8-h200 or ion9-h200"
+    ;;
+  *)
+    TARGET_GPU_LABEL="target"
+    REMOTE_HOST_HINT="the task prompt's target host"
+    ;;
+esac
+
 if [[ "$TASK_DIR" = /* || "$TASK_DIR" == *".."* ]]; then
   echo "error: task dir must be repo-relative and must not contain '..': $TASK_DIR" >&2
   exit 2
@@ -161,6 +176,10 @@ EOF
 - Read \`../../docs/standalone_diffusion_benchmark.md\` if it exists for this
   task. Its local-baseline and A/B benchmark rules are mandatory for diffusion
   kernels.
+- Read \`../../docs/diffusion_kernel_rules.md\` and
+  \`../../docs/diffusion_correctness_contract.md\` if they exist for this task.
+  Their compile-flag, registration, correctness-grid, profiling, and completion
+  rules are mandatory for diffusion kernels.
 - Read \`${WORKTREE_ROOT}/external/KernelWiki/SKILL.md\` and
   \`${WORKTREE_ROOT}/external/ncu-report-skill/SKILL.md\` before implementation.
 - Use KernelWiki for upstream design ideas and ncu-report-skill for
@@ -194,15 +213,19 @@ EOF
 The plan should minimize user-choice prompts during RLCR. Bake these defaults
 into the plan unless the source prompt explicitly says otherwise:
 
-- Remote B200 validation is a normal part of the loop. After local scaffold,
-  correctness, and implementation checks are committed, proceed to the remote
-  GPU phase autonomously.
-- Before GPU work, inspect the remote GPU state and select a B200 GPU with no
-  active compute processes and no meaningful memory occupancy. Export that id
-  as \`REMOTE_GPU_ID\` and use it consistently for baseline, candidate,
-  benchmark, profiler, and NCU commands in the current run.
-- If no idle B200 GPU is available, wait or retry briefly. Ask before changing
-  the benchmark environment or running measurements on a busy GPU.
+- Remote ${TARGET_GPU_LABEL} validation is a normal part of the loop. After
+  local scaffold, correctness, and implementation checks are committed, proceed
+  to the remote GPU phase autonomously.
+- Use the matching remote host (${REMOTE_HOST_HINT}) unless the source prompt
+  provides a stricter host choice.
+- Before GPU work, inspect the remote GPU state and select a
+  ${TARGET_GPU_LABEL} GPU with no active compute processes and no meaningful
+  memory occupancy. Export that id as \`REMOTE_GPU_ID\` and use it consistently
+  for baseline, candidate, benchmark, profiler, and NCU commands in the current
+  run.
+- If no idle ${TARGET_GPU_LABEL} GPU is available, wait or retry briefly. Ask
+  before changing the benchmark environment or running measurements on a busy
+  GPU.
 - Treat minimal, reversible, task-owned setup work as approved: creating remote
   workspaces, checking out commits, building inside the task workspace,
   installing local editable packages there, collecting profiler traces, and
