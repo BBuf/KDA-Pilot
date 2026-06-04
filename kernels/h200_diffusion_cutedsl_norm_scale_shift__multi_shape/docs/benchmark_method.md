@@ -58,6 +58,31 @@ any override is recorded in `docs/run_log.md` with the exact command). Note: the
 key in `config.toml` is not a template parameter — the effective per-sample iteration count is the
 calibrated inner loop; the key is retained untouched for template provenance.
 
+### Task-local provenance extensions (timing path untouched)
+
+`bench/benchmark.py` extends the template's provenance/summary events and result rows with
+machine-auditable evidence required by this task's contract; no timing, calibration,
+interleaving, or scoring code is altered:
+
+- Provenance event: `hostname`, `device_arg`, `cuda_visible_devices`, `selected_gpu`
+  (visible index, resolved physical index, GPU UUID, model, memory), filtered environment
+  (`KDA_*`, `CUDA_VISIBLE_DEVICES`, `TVM_FFI_CUDA_ARCH_LIST`), `baseline_source_commit` (parsed
+  from `baseline/binding.py`), `candidate_src_hash` (sha1-12 of the kernel source), `run_seed`,
+  `candidate_impl`, plus UUID-keyed `gpu_inventory_before` and `compute_apps_before` snapshots.
+- Summary event: `gpu_inventory_after`, `compute_apps_after` (idle/process evidence after the run).
+- Each result row: `run_seed`, `trial_seeds` (the exact per-trial seeds), `ab_orders` (the
+  deterministic interleave order per trial), `candidate_impl`, `device_arg`, `selected_gpu`
+  (per-instance audit anchor; calibrated inner-loop values were already emitted in the per-side
+  stats as `inner_iterations`).
+
+### Baseline-vs-baseline symmetry sanity
+
+`bench/benchmark.py --candidate-impl baseline` routes the candidate side through
+`adapter.call_baseline`, measuring baseline-vs-baseline under the identical isolation, warmup,
+calibration, and interleaving policy. Expected outcome: per-row speedups ~1.0; this validates
+that the harness itself introduces no side asymmetry. The executed run and its numbers are
+recorded in `docs/run_log.md`.
+
 ## Comparison Policy
 
 - Benchmark-level: template default compare (baseline vs candidate outputs, per-workload

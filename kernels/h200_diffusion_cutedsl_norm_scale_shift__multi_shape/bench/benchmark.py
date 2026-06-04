@@ -296,14 +296,24 @@ def _run_one_workload(workload: dict[str, Any], args: argparse.Namespace) -> dic
     candidate_wall_samples: list[float] = []
     baseline_inner = args.inner_iterations_min
     candidate_inner = args.inner_iterations_min
+    trial_seeds: list[int] = []
+    ab_orders: list[str] = []
 
     compare = getattr(adapter, "compare_outputs", _default_compare)
+    # Symmetry-sanity mode: route the "candidate" side through the baseline
+    # callable so the harness measures baseline-vs-baseline (~1.0 expected).
+    candidate_call = (
+        adapter.call_baseline
+        if getattr(args, "candidate_impl", "candidate") == "baseline"
+        else adapter.call_candidate
+    )
     workload_id = str(workload.get("id") or workload.get("name") or workload.get("function"))
     if not workload_id:
         raise ValueError("each workload needs an id/name/function field")
 
     for trial in range(args.num_trials):
         seed = args.seed + trial * 1_000_003 + _stable_u16(workload_id)
+        trial_seeds.append(seed)
         random.seed(seed)
         torch.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
@@ -319,7 +329,7 @@ def _run_one_workload(workload: dict[str, Any], args: argparse.Namespace) -> dic
         baseline_fn = lambda: adapter.call_baseline(
             workload, inputs, baseline_outputs
         )
-        candidate_fn = lambda: adapter.call_candidate(
+        candidate_fn = lambda: candidate_call(
             workload, inputs, candidate_outputs
         )
 
@@ -361,6 +371,7 @@ def _run_one_workload(workload: dict[str, Any], args: argparse.Namespace) -> dic
         order = ("baseline", "candidate")
         if random.Random(seed).randint(0, 1):
             order = ("candidate", "baseline")
+        ab_orders.append("-".join(order))
 
         trial_values: dict[str, tuple[float, float]] = {}
         for side in order:
@@ -389,6 +400,13 @@ def _run_one_workload(workload: dict[str, Any], args: argparse.Namespace) -> dic
         "baseline_wall_us": baseline_wall_samples,
         "candidate_wall_us": candidate_wall_samples,
         "speedup": speedup,
+        # Per-row audit metadata (provenance extension; timing untouched).
+        "run_seed": args.seed,
+        "trial_seeds": trial_seeds,
+        "ab_orders": ab_orders,
+        "candidate_impl": getattr(args, "candidate_impl", "candidate"),
+        "device_arg": args.device,
+        "selected_gpu": _selected_gpu(device),
     }
 
 
@@ -459,17 +477,102 @@ def _nvidia_smi() -> str:
         return f"unavailable: {exc}"
 
 
+# --- Provenance extensions (task-local; the template's timing policy above is
+# untouched). Emits machine-auditable GPU identity (UUID + physical index),
+# idle/compute-app snapshots, source lineage, and seed/order metadata required
+# by this task's evidence contract. ---
+
+
+def _smi_query(query_flag: str, fields: str) -> str:
+    try:
+        return subprocess.check_output(
+            ["nvidia-smi", f"--query-{query_flag}={fields}", "--format=csv,noheader"],
+            text=True,
+            stderr=subprocess.STDOUT,
+            timeout=5,
+        ).strip()
+    except Exception as exc:
+        return f"unavailable: {exc}"
+
+
+def _gpu_inventory() -> str:
+    return _smi_query("gpu", "index,uuid,name,utilization.gpu,memory.used,memory.total")
+
+
+def _compute_apps() -> str:
+    out = _smi_query("compute-apps", "gpu_uuid,pid,used_memory")
+    return out if out else "none"
+
+
+def _selected_gpu(device: torch.device) -> dict[str, Any]:
+    """Identify the measurement GPU: visible index, UUID/model, physical index."""
+    info: dict[str, Any] = {"visible_index": device.index or 0}
+    try:
+        props = torch.cuda.get_device_properties(device)
+        info["name"] = props.name
+        info["uuid"] = str(getattr(props, "uuid", "unknown"))
+        info["total_memory_mib"] = props.total_memory // (1024 * 1024)
+    except Exception as exc:
+        info["error"] = str(exc)
+        return info
+    cvd = os.environ.get("CUDA_VISIBLE_DEVICES")
+    if cvd:
+        entries = [e.strip() for e in cvd.split(",")]
+        idx = info["visible_index"]
+        if idx < len(entries) and entries[idx].isdigit():
+            info["physical_index"] = int(entries[idx])
+    if "physical_index" not in info:
+        for line in _gpu_inventory().splitlines():
+            parts = [p.strip() for p in line.split(",")]
+            if len(parts) >= 2 and parts[1].replace("GPU-", "") in info.get("uuid", ""):
+                info["physical_index"] = int(parts[0])
+                break
+    return info
+
+
+def _source_provenance() -> dict[str, Any]:
+    """Baseline lineage + candidate source hash without importing the bindings."""
+    out: dict[str, Any] = {}
+    try:
+        binding_text = (ROOT / "baseline" / "binding.py").read_text()
+        for line in binding_text.splitlines():
+            if line.startswith("SNAPSHOT_COMMIT"):
+                out["baseline_source_commit"] = line.split('"')[1]
+                break
+    except Exception as exc:
+        out["baseline_source_commit"] = f"unavailable: {exc}"
+    try:
+        cuh = (ROOT / "solution" / "csrc" / "norm_scale_shift.cuh").read_bytes()
+        out["candidate_src_hash"] = hashlib.sha1(cuh).hexdigest()[:12]
+    except Exception as exc:
+        out["candidate_src_hash"] = f"unavailable: {exc}"
+    return out
+
+
 def _provenance(args: argparse.Namespace, workloads: list[dict[str, Any]]) -> dict[str, Any]:
     return {
         "task_dir": str(ROOT),
         "command": " ".join(sys.argv),
+        "hostname": platform.node(),
         "python": sys.version,
         "platform": platform.platform(),
         "torch": torch.__version__,
         "torch_cuda": torch.version.cuda,
         "cuda_available": torch.cuda.is_available(),
         "gpu": _gpu_name(),
+        "device_arg": args.device,
+        "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
+        "selected_gpu": _selected_gpu(torch.device(args.device)),
+        "env": {
+            k: v for k, v in os.environ.items()
+            if k.startswith("KDA_") or k in ("CUDA_VISIBLE_DEVICES", "TVM_FFI_CUDA_ARCH_LIST")
+        },
+        **_source_provenance(),
+        "run_seed": args.seed,
+        "candidate_impl": args.candidate_impl,
         "nvidia_smi_before": _nvidia_smi(),
+        "gpu_inventory_before": _gpu_inventory(),
+        "compute_apps_before": _compute_apps(),
         "workload_count": len(workloads),
         "settings": {
             "warmup_runs": args.warmup_runs,
@@ -479,6 +582,8 @@ def _provenance(args: argparse.Namespace, workloads: list[dict[str, Any]]) -> di
             "target_sample_us": args.target_sample_us,
             "timeout_seconds": args.timeout_seconds,
             "isolated": args.isolated,
+            "seed": args.seed,
+            "candidate_impl": args.candidate_impl,
         },
     }
 
@@ -528,6 +633,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--atol", type=float, default=1e-2)
     parser.add_argument("--rtol", type=float, default=1e-2)
     parser.add_argument("--no-isolated", dest="isolated", action="store_false")
+    parser.add_argument(
+        "--candidate-impl",
+        choices=["candidate", "baseline"],
+        default="candidate",
+        help="route the candidate side through call_baseline for a "
+        "baseline-vs-baseline symmetry sanity run (~1.0 expected)",
+    )
     parser.set_defaults(isolated=True)
     return parser.parse_args()
 
@@ -567,7 +679,10 @@ def main() -> int:
             "headline": _headline(results),
             "passed": sum(r.get("status") == "PASSED" for r in results),
             "total": len(results),
+            "candidate_impl": args.candidate_impl,
             "nvidia_smi_after": _nvidia_smi(),
+            "gpu_inventory_after": _gpu_inventory(),
+            "compute_apps_after": _compute_apps(),
         }
         f.write(json.dumps(summary) + "\n")
 

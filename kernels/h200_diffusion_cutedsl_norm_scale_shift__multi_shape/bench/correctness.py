@@ -387,15 +387,25 @@ def run_probes(args, device) -> list[dict]:
                                 ("oracle not order-sensitive; " if not distinct else "") +
                                 ("baseline does not match correct order" if not order_held else "")])})
 
-    # 3. NaN propagation must be detected.
-    inputs = base_inputs()
-    inputs["x"][0, 0, 0] = float("nan")
-    out = {}
-    adapter._call(adapter.baseline_binding(), {"function": NSS}, inputs, out)
-    torch.cuda.synchronize()
-    nan_detected = bool(torch.isnan(out["y"].float()).any().item())
-    results.append({"case": "probe-nan-detection", "kind": "probe",
-                    "errors": [] if nan_detected else ["NaN input did not surface in output"]})
+    # 3. NaN and Inf injection must be REJECTED BY THE CHECKER (not merely
+    # propagate): run_case on a poisoned input must report NaN/Inf errors.
+    for probe_name, bad_value in (
+        ("probe-nan-detection", float("nan")),
+        ("probe-inf-detection", float("inf")),
+    ):
+        _seed_for(probe_name, args.seed)
+        inputs = base_inputs()
+        inputs["x"][0, 0, 0] = bad_value
+        try:
+            checker_errors = run_case(NSS, inputs, 5e-2, sides=args.sides)
+            flagged = any("NaN/Inf" in e for e in checker_errors)
+            probe_errors = [] if flagged else [
+                "checker did not flag NaN/Inf on a poisoned input "
+                f"(checker errors: {checker_errors[:2] if checker_errors else 'none'})"
+            ]
+        except Exception:
+            probe_errors = [f"exception: {traceback.format_exc()}"]
+        results.append({"case": probe_name, "kind": "probe", "errors": probe_errors})
 
     if "candidate" in args.sides:
         # 4-9: behavior parity on edge inputs (candidate must fail closed like the baseline).

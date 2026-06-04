@@ -65,4 +65,32 @@ before launches and after completions; the benchmark harness additionally record
 15. Chain on GPU 2 (`logs/final_chain_gpu2.log`): idle + compute-apps snapshot ->
     benchmark session A2 (`--seed 1234`, `logs/results_final_a2.jsonl`) -> idle snapshot
     -> benchmark session B2 (`--seed 5678`, `logs/results_final_b2.jsonl`) -> idle +
-    compute-apps snapshot. Final numbers in `docs/results.md`.
+    compute-apps snapshot. A2 1.2708 / B2 1.2747 (window 0.31%); superseded as the primary
+    evidence by the GPU-3 sessions below (provenance-extended format) and retained as
+    consistency history.
+
+## 2026-06-05 — round-1 evidence hardening (review-driven), GPU 3
+
+16. Code changes (no timing-policy change): checker-based NaN + Inf injection probes in
+    `bench/correctness.py`; machine-auditable provenance extensions and a
+    `--candidate-impl baseline` symmetry mode in `bench/benchmark.py`
+    (`docs/benchmark_method.md` documents both).
+17. GPU re-selection for this chain: GPU 3 (physical index 3, UUID
+    `GPU-6b4aba65-49ad-a9b2-0fa8-d2dbcb96a34b`), verified 0% util / 4 MiB / no compute apps
+    at chain start (`logs/r1_chain.log`); GPU 2 had a 1 MiB residual at selection time.
+18. Probes re-run (`CUDA_VISIBLE_DEVICES=3 python3 bench/correctness.py --mode probes
+    --device cuda:0`): **12/12** (`logs/correctness_probes_r1.json`) — suite now includes
+    checker-based NaN AND Inf injection.
+19. Baseline-vs-baseline symmetry sanity (`--seed 4242 --candidate-impl baseline`,
+    `logs/results_bvb.jsonl`): 49/49 passed, production geomean **0.9992**
+    (min 0.9655 / max 1.0267) — harness symmetry validated.
+20. Final sessions with machine-complete provenance: A3 (`--seed 1234`,
+    `logs/results_final_a3.jsonl`) geomean **1.2795**; B3 (`--seed 5678`,
+    `logs/results_final_b3.jsonl`) geomean **1.2763**; window 0.25%. Every results JSONL now
+    embeds hostname, device mapping (visible+physical index, GPU UUID/model), per-UUID GPU
+    inventory and compute-app snapshots before/after, baseline commit, candidate source hash,
+    run seed, and per-row trial seeds / A-B orders / selected-GPU identity.
+21. Idle-evidence reading for the chain: the A3 pre-run compute-app snapshot is clean; the only
+    GPU-3 entries in any snapshot are the chain's own just-exited sequential workers (monotonic
+    PIDs 2759809 -> 2788491 -> 2804420, each <= ~730 MiB at 0% utilization, gone by the next
+    step; post-chain check shows no compute apps). No foreign workload touched GPU 3.
