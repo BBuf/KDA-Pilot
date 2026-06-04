@@ -174,14 +174,18 @@
 
 - GPU 1 before: idle (0% util, 0 MiB; in-run provenance snapshot shows GPU 1
   at 4 MiB — the benchmark's own context; GPUs 4-6 carry other users'
-  training and are untouched). After: idle (0% util, 0 MiB). Command:
+  training and are untouched). After: idle (0% util, 0 MiB). Command as
+  executed:
   `CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py --device cuda:0 --out bench/results_headline.jsonl`
   with the final candidate (all fixes + cached fallback resolver), default
-  crossovers, frozen workloads (`gen_workloads.py --check` green).
+  crossovers, frozen workloads (`gen_workloads.py --check` green). The output
+  was then copied byte-identically to the tracked evidence file
+  `bench/results.jsonl` (the contract's canonical name); the embedded
+  provenance record therefore carries the original `--out` filename.
 - Result: 172/172 PASSED; headline equal-weight geomean over the 160
   production rows = **2.2835** (arithmetic mean 2.4866). Buckets: C small
   2.4240 / C mid 3.1122 / C large 1.1320 / NC small 2.3239 / NC mid 2.2979 /
   NC large 1.5137. 158/160 rows >= 0.97; the two below-floor readings
   (0.9587/0.9665) are the characterized order-debt artifact on the routed
   identical-code rows (see Run 11 and `docs/dispatch.md`). Final table:
-  `docs/results.md`; raw: `bench/results_headline.jsonl`.
+  `docs/results.md`; raw: `bench/results.jsonl`.

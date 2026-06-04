@@ -62,8 +62,14 @@
   `-gencode=arch=compute_100,code=sm_100 -std=c++20 -O3 --expt-relaxed-constexpr -lineinfo`
   plus torch include/library paths for `at::cuda::getCurrentCUDAStream()`.
   `-lineinfo` is for NCU source attribution and does not change code
-  generation. NO `--use_fast_math` (the upstream baseline does not use it);
-  device code uses plain `expf`/`rsqrtf` without fast-math flags.
+  generation. NO `--use_fast_math` (the upstream baseline does not use it).
+  Numerics classes in device code: the fp32 generic path uses IEEE
+  `expf`/`sqrt` (double accumulation); the 16-bit production regimes use the
+  SFU exp class via an explicit per-call `__expf` (`silu_fast` in
+  `solution/kernel.cu`) — the same accuracy class the upstream Triton
+  baseline's `tl.sigmoid` lowers to (ex2.approx). This is an intrinsic
+  choice in source, not a compile flag, and is gated by the full correctness
+  suite at contract tolerances.
 - Both sides launch on PyTorch's current CUDA stream.
 - (The exact flag list and toolchain versions are re-recorded from the remote
   build log in `docs/run_log.md` at bring-up time.)

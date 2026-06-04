@@ -19,7 +19,7 @@ REPORTS = Path(__file__).resolve().parent.parent / "reports"
 ANALYSIS = Path(__file__).resolve().parent.parent / "analysis"
 
 METRICS = [
-    ("dur_us", "gpu__time_duration.sum"),
+    ("dur_ns", "gpu__time_duration.sum"),  # sm_100 reports nanoseconds
     ("sm_busy_pct", "sm__throughput.avg.pct_of_peak_sustained_elapsed"),
     ("dram_rd_gbps", "dram__bytes_read.sum.per_second"),
     ("dram_wr_gbps", "dram__bytes_write.sum.per_second"),

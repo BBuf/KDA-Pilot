@@ -9,17 +9,56 @@
   (`bench/correctness.py`, both sides, all sections) passed with 0 failing
   checks in the same configuration (Run 10, `docs/run_log.md`).
 - Command: `CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py --device cuda:0
-  --out bench/results_headline.jsonl` (workloads frozen,
+  --out bench/results.jsonl` (workloads frozen,
   `bench/gen_workloads.py --check` green, sha256
   `1255972107562ab14e9b04c3e433a9a5334b169eadf43e6b0f50f1cf7c46eeb8`).
+  As-executed the run wrote `--out bench/results_headline.jsonl` and the
+  output was copied byte-identically to the tracked canonical name
+  `bench/results.jsonl` (`docs/run_log.md` Run 12).
 - Environment: ion-b200 / container `sglang_bbuf`, NVIDIA B200 (GPU 1,
   pinned via `CUDA_VISIBLE_DEVICES=1`; idle before/after — provenance block
-  embedded in `bench/results_headline.jsonl`), Python 3.12.3,
+  embedded in `bench/results.jsonl`), Python 3.12.3,
   torch 2.11.0+cu130, CUDA 13.0, triton 3.6.0, tvm-ffi 0.1.9.
 - Baseline: copied upstream SGLang Triton implementation @ `main`
   `133254086bf1f5b887c8c99d311719102d58a7eb` (see `docs/baseline_source.md`).
-- Candidate source: `solution/kernel.cu` + `solution/binding.py` at the
-  commit carrying this document.
+- Candidate source (exact content measured): `solution/kernel.cu` sha256
+  `2c1ca71d78e0fdde45bcc1898f22ca80b84afa6c2e1a9de7fe0ec491ab28bf4b`,
+  `solution/binding.py` sha256
+  `9f85faa2dd1ed5e6c36cba3c204432773121e0256942d7bbf5a3afdb0a27b6e5`.
+
+## Provenance (contract checklist, `docs/standalone_diffusion_benchmark.md`)
+
+- Task slug / target GPU: `b200_diffusion_group_norm_silu__multi_shape` /
+  NVIDIA B200.
+- Upstream baseline commit and copied files:
+  `133254086bf1f5b887c8c99d311719102d58a7eb`,
+  `python/sglang/jit_kernel/diffusion/group_norm_silu.py` +
+  `python/sglang/jit_kernel/diffusion/triton/group_norm_silu.py`
+  (verbatim blob shasums + complete local-edit log in
+  `docs/baseline_source.md`).
+- Candidate source hashes: see above.
+- Exact command: `CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py
+  --device cuda:0 --out bench/results.jsonl` (run from the task workspace
+  root on ion-b200; the JSONL's embedded provenance record carries the
+  in-process command line, Python/torch versions, and the full
+  `nvidia-smi` snapshot).
+- Versions: CUDA 13.0 (nvcc V13.0.88), PyTorch 2.11.0+cu130, Triton 3.6.0,
+  tvm-ffi 0.1.9, Python 3.12.3 (toolchain verification in
+  `docs/run_log.md` "Environment"). Candidate compile flags in
+  `docs/benchmark_method.md` "Compile / Build Flags".
+- GPU model / id / idle state: NVIDIA B200, physical GPU 1 (pinned via
+  `CUDA_VISIBLE_DEVICES=1`, in-process `cuda:0`); idle before/after the run
+  (0% util / 0 MiB; the in-run snapshot shows only the benchmark's own
+  ~4 MiB context on GPU 1) — `docs/run_log.md` Run 12.
+- Workload count and settings: 172 workloads (160 production + 12 grid);
+  warmup 10, trials 7, inner iterations 1..4096 calibrated to >= ~1000 us,
+  isolated subprocess per workload, timeout 600 s (settings echoed in the
+  JSONL provenance record).
+- Correctness summary: standalone suite (`bench/correctness.py --side both`)
+  PASS with 0 failing checks in this configuration (Run 10) — 160 production
+  rows + 12 grid rows + wrapper fused/eager branch probes + stress rows on
+  both sides; in addition every benchmark row passed the harness's own
+  poisoned-output comparison (`required_matched_ratio = 1.0`).
 
 ## Promotion Gates
 
@@ -96,9 +135,9 @@ CUDA_VISIBLE_DEVICES=<idle B200> python3 bench/correctness.py --device cuda:0 --
 # workload freeze check
 python3 bench/gen_workloads.py --check
 # full benchmark
-CUDA_VISIBLE_DEVICES=<idle B200> python3 bench/benchmark.py --device cuda:0 --out bench/results_headline.jsonl
+CUDA_VISIBLE_DEVICES=<idle B200> python3 bench/benchmark.py --device cuda:0 --out bench/results.jsonl
 # summary / gates / table
-python3 bench/summarize_results.py bench/results_headline.jsonl --markdown
+python3 bench/summarize_results.py bench/results.jsonl --markdown
 ```
 
 ## Per-Row Results (production, definitive run)
@@ -269,4 +308,4 @@ speedup = baseline_median / candidate_median.
 | hv_triton_1x512x9x48x128_C | C | triton_group_norm_silu | 95.07/94.95/1.83/93.12/93.16/97.07 | 47.84/47.81/0.17/47.63/47.64/47.98 | 1.9872 |
 | hv_triton_1x512x9x48x40_C | C | triton_group_norm_silu | 103.25/103.77/1.76/101.05/102.18/105.86 | 22.81/22.83/0.04/22.80/22.80/22.87 | 4.5260 |
 
-Non-production regression-grid rows (12, contract shapes x dtypes) all PASSED in-benchmark correctness; their timings are tracked in `bench/results_headline.jsonl` but excluded from the headline by design.
+Non-production regression-grid rows (12, contract shapes x dtypes) all PASSED in-benchmark correctness; their timings are tracked in `bench/results.jsonl` but excluded from the headline by design.
