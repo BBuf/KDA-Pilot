@@ -36,13 +36,16 @@ _BASELINE_CUH = _BASELINE_DIR / "qknorm_rope_baseline.cuh"
 
 
 @cache_once
-def baseline_module(head_dim: int, rope_dim: int, is_neox: bool, dtype: torch.dtype):
+def baseline_module(head_dim: int, rope_dim: int, is_neox: bool, dtype: torch.dtype,
+                    use_pdl: bool | None = None):
     """Build the copied baseline .cuh via SGLang load_jit (same mechanism as the candidate).
 
     load_jit resolves cuda_files as ``(KERNEL_PATH/"csrc"/f).resolve()`` and emits
     ``#include "<resolved-path>"``, so a ``../``-relative path that resolves back to this
     task-owned copy compiles it in place; sgl_kernel headers come from DEFAULT_INCLUDE.
     The content hash in the cache marker forces a rebuild whenever the copy is re-synced.
+    ``use_pdl=None`` keeps the production arch default (PDL on for B200); an explicit
+    bool builds the PDL-on/off variant for A/B diagnostics.
     """
     from sglang.jit_kernel.utils import (
         KERNEL_PATH,
@@ -56,8 +59,10 @@ def baseline_module(head_dim: int, rope_dim: int, is_neox: bool, dtype: torch.dt
     rel = os.path.relpath(_BASELINE_CUH.resolve(), Path(KERNEL_PATH) / "csrc")
     sha = hashlib.sha256(_BASELINE_CUH.read_bytes()).hexdigest()[:12]
     lineinfo = os.environ.get("KDA_LINEINFO") == "1"
-    marker = f"qknorm_rope_kda_b200_baselinecopy_{sha}" + ("_li" if lineinfo else "")
-    args = make_cpp_args(head_dim, rope_dim, is_neox, is_arch_support_pdl(), dtype)
+    pdl = is_arch_support_pdl() if use_pdl is None else bool(use_pdl)
+    marker = (f"qknorm_rope_kda_b200_baselinecopy_{sha}"
+              + ("" if pdl else "_nopdl") + ("_li" if lineinfo else ""))
+    args = make_cpp_args(head_dim, rope_dim, is_neox, pdl, dtype)
     return load_jit(
         marker,
         *args,

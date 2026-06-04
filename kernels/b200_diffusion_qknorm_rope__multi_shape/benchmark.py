@@ -22,7 +22,8 @@ and an equal-weight geomean of per-shape median speedups over production rows.
 Usage (inside sglang_bbuf on ion-b200):
   CUDA_VISIBLE_DEVICES=<idle> python benchmark.py             # isolated baseline-vs-candidate rows
   CUDA_VISIBLE_DEVICES=<idle> python benchmark.py --sanity    # quick ~1.0x check
-  CUDA_VISIBLE_DEVICES=<idle> python benchmark.py --device-fair  # device-only A/B (symmetric JIT modules)
+  CUDA_VISIBLE_DEVICES=<idle> python benchmark.py --device-fair  # device-only A/B (symmetric JIT modules, baseline/ copy base side)
+  CUDA_VISIBLE_DEVICES=<idle> python benchmark.py --pdl-ab      # staged PDL-ON vs PDL-OFF (keep PDL only if it wins)
   CUDA_VISIBLE_DEVICES=<idle> PYTHONPATH=<repo-root> python benchmark.py --integrated  # retired overlay lane (negative control ONLY)
 
 The PRODUCTION performance claim comes from the IN-TREE drop-in lane
@@ -246,29 +247,75 @@ def _bench_case(correctness, case, candidate_fn, *, inner, physical_id):
 
 
 def _device_fair_main(correctness, wrapper) -> int:
-    """Device-only A/B: time the baseline's direct JIT module vs the candidate's
-    direct JIT module (SYMMETRIC call paths — both bypass register_custom_op), with
-    INTERLEAVED sampling (alternate baseline/candidate per sample) to cancel
-    shared-box clock/contention drift. Isolates the device kernel change; does not
-    write benchmark.csv. Variant via KDA_CAND_VARIANT (warp|staged) selects the device
-    kernel class for the fairness sanity (warp = faithful port ~1.0x; staged = the win)."""
-    from sglang.jit_kernel.diffusion.qknorm_rope import _jit_qknorm_rope_module
+    """Device-only A/B: time two direct JIT modules behind IDENTICAL thin wrappers
+    (SYMMETRIC call paths — both bypass register_custom_op), with INTERLEAVED sampling
+    (alternate per sample) to cancel shared-box clock/contention drift. Isolates the
+    device kernel change and appends full-stats ``__devfair*``/``__pdlab`` rows plus a
+    geomean row to benchmark.csv.
 
+    Pairings (env/argv selected; base side defaults to the hermetic ``baseline/`` copy,
+    sha-verified byte-identical to the SGLang checkout's kernel — see
+    ``docs/baseline_source.md``):
+    - default               : baseline/ copy (warp)  vs  candidate staged
+    - KDA_CAND_VARIANT=warp : baseline/ copy         vs  candidate warp port (~1.0x sanity)
+    - KDA_BASE_LANE=sglang  : SGLang's own jit module as the base side (copy-equivalence
+                              cross-check; read-only import, no patching)
+    - --pdl-ab              : candidate staged PDL-ON (base cols) vs PDL-OFF (cand cols);
+                              speedup_x > 1 means PDL-OFF is faster on this workload
+    """
+    pdl_ab = "--pdl-ab" in sys.argv
     variant = os.environ.get("KDA_CAND_VARIANT", "staged")
+    base_lane = os.environ.get("KDA_BASE_LANE", "copy")
     kernel_class = {"warp": "QKNormRopeKernel", "staged": "QKNormRopeStagedKernel"}.get(variant, "QKNormRopeStagedKernel")
     inner = int(os.environ.get("KDA_BENCH_INNER", "1"))
     cases = [c for c in correctness.make_cases() if not c.get("ci_fallback")]
+    command = shlex.join([sys.executable, *sys.argv])
+    git_commit = os.environ.get("KDA_GIT_COMMIT") or _git("rev-parse", "HEAD")
+    cand_ver = _candidate_source_version()
+    host = socket.gethostname()
     prov = _gpu_provenance()
-    print(f"[device-fair] variant={variant} ({kernel_class}) gpu={prov['gpu_name']} phys={prov['gpu_physical_index']}")
+    physical_id = _physical_gpu_index()
+    baseline_loader = _load_module("baseline/loader.py", "kda_baseline_loader")
+
+    if pdl_ab:
+        suffix = "__pdlab"
+        mode_desc = "staged PDL-ON (base cols) vs staged PDL-OFF (cand cols); speedup>1 -> PDL-OFF faster"
+
+        def base_mod_for(case):
+            return wrapper._candidate_module(case["head_dim"], case["rope_dim"], case["is_neox"],
+                                             torch.bfloat16, "QKNormRopeStagedKernel", True)
+
+        def cand_mod_for(case):
+            return wrapper._candidate_module(case["head_dim"], case["rope_dim"], case["is_neox"],
+                                             torch.bfloat16, "QKNormRopeStagedKernel", False)
+    else:
+        suffix = "__devfair" + ("_warp" if variant == "warp" else "") + ("_sglbase" if base_lane == "sglang" else "")
+        mode_desc = f"base={'sglang jit module' if base_lane == 'sglang' else 'baseline/ copy'} vs cand={variant} ({kernel_class})"
+        if base_lane == "sglang":
+            from sglang.jit_kernel.diffusion.qknorm_rope import _jit_qknorm_rope_module
+
+            def base_mod_for(case):
+                return _jit_qknorm_rope_module(case["head_dim"], case["rope_dim"], case["is_neox"], torch.bfloat16)
+        else:
+
+            def base_mod_for(case):
+                return baseline_loader.baseline_module(case["head_dim"], case["rope_dim"], case["is_neox"], torch.bfloat16)
+
+        def cand_mod_for(case):
+            return wrapper._candidate_module(case["head_dim"], case["rope_dim"], case["is_neox"],
+                                             torch.bfloat16, kernel_class)
+
+    print(f"[device-fair] {mode_desc}; gpu={prov['gpu_name']} phys={physical_id}")
 
     def apply(mod, inp, case):
         mod.qknorm_rope(inp["q"], inp["k"], inp["q_weight"], inp["k_weight"],
                         inp["cos_sin_cache"], inp["positions"], case["eps"])
 
-    speedups = []
+    csv_path = KERNEL_DIR / "benchmark.csv"
+    write_header = (not csv_path.exists()) or csv_path.stat().st_size == 0
+    speedups, rows = [], []
     for case in cases:
-        base_mod = _jit_qknorm_rope_module(case["head_dim"], case["rope_dim"], case["is_neox"], torch.bfloat16)
-        cand_mod = wrapper._candidate_module(case["head_dim"], case["rope_dim"], case["is_neox"], torch.bfloat16, kernel_class)
+        base_mod, cand_mod = base_mod_for(case), cand_mod_for(case)
         bi = correctness._make_inputs(case)
         ci = correctness._make_inputs(case)
         base_fn = lambda: apply(base_mod, bi, case)
@@ -276,15 +323,41 @@ def _device_fair_main(correctness, wrapper) -> int:
         for _ in range(int(case.get("warmup", 25))):
             base_fn(); cand_fn()
         torch.cuda.synchronize()
+        idle_before = _nvidia_smi_snapshot(physical_id)
         bs, cs = [], []
         for _ in range(int(case.get("iters", 100))):  # interleaved: cancels slow drift
             bs.append(_time_cuda_events(base_fn, warmup=0, iters=1, inner=inner)[0])
             cs.append(_time_cuda_events(cand_fn, warmup=0, iters=1, inner=inner)[0])
+        idle_after = _nvidia_smi_snapshot(physical_id)
         b, c = _summary(bs), _summary(cs)
         sp = b["median"] / c["median"] if c["median"] > 0 else float("nan")
         speedups.append(sp)
-        print(f"{case['name']:>44s}  device-fair speedup={sp:.4f}x  base_direct={b['median']:.3f}us  cand_direct={c['median']:.3f}us")
-    print(f"\n[device-fair] variant={variant} production geomean = {_geom_mean(speedups):.4f}x over {len(speedups)} shapes")
+        rows.append([
+            datetime.now(timezone.utc).isoformat(), case.get("preset"), case.get("bucket"), case["name"] + suffix,
+            case["num_tokens"], case["num_heads"], case["head_dim"], case["rope_dim"], case["is_neox"], case["eps"],
+            case["dtype"], case["position_dtype"], case.get("ci_fallback", False),
+            f"{b['median']:.4f}", f"{b['mean']:.4f}", f"{b['std']:.4f}", f"{b['min']:.4f}", f"{b['p10']:.4f}", f"{b['p90']:.4f}",
+            f"{c['median']:.4f}", f"{c['mean']:.4f}", f"{c['std']:.4f}", f"{c['min']:.4f}", f"{c['p10']:.4f}", f"{c['p90']:.4f}",
+            f"{sp:.4f}", case.get("iters", 100), inner, command, git_commit, cand_ver + "+" + suffix.lstrip("_"), host,
+            prov["gpu_physical_index"], prov["gpu_logical_index"], prov["gpu_name"], prov["gpu_uuid"],
+            prov["cuda_visible_devices"], idle_before, idle_after,
+        ])
+        print(f"{case['name']:>44s}  {suffix.lstrip('_')} speedup={sp:.4f}x  base={b['median']:.3f}us  cand={c['median']:.3f}us")
+
+    geomean = _geom_mean(speedups)
+    geomean_name = "GEOMEAN" + suffix.replace("__", "_", 1)
+    with csv_path.open("a", newline="") as f:
+        writer = csv.writer(f)
+        if write_header:
+            writer.writerow(CSV_COLUMNS)
+        writer.writerows(rows)
+        summary = {col: "" for col in CSV_COLUMNS}
+        summary.update({"name": geomean_name, "speedup_x": f"{geomean:.4f}", "command": command,
+                        "git_commit": git_commit, "candidate_source_version": cand_ver + "+" + suffix.lstrip("_"),
+                        "host": host, "gpu_name": prov["gpu_name"],
+                        "cuda_visible_devices": prov["cuda_visible_devices"]})
+        writer.writerow([summary[col] for col in CSV_COLUMNS])
+    print(f"\n[device-fair] {geomean_name} = {geomean:.4f}x over {len(speedups)} shapes ({mode_desc})")
     return 0
 
 
@@ -414,7 +487,7 @@ def main() -> int:
         correctness = _load_module("tests/test_correctness.py", "kda_correctness")
         return _integrated_main(correctness)
 
-    if "--device-fair" in sys.argv:
+    if "--device-fair" in sys.argv or "--pdl-ab" in sys.argv:
         correctness = _load_module("tests/test_correctness.py", "kda_correctness")
         wrapper = _load_module("src/wrapper.py", "kda_wrapper")
         return _device_fair_main(correctness, wrapper)

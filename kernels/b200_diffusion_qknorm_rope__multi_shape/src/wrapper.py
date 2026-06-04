@@ -265,7 +265,8 @@ def _resolve_fast_baseline() -> Optional[Callable[..., None]]:
 # --------------------------------------------------------------------------------------
 @cache_once
 def _candidate_module(head_dim: int, rope_dim: int, is_neox: bool, dtype: torch.dtype,
-                      kernel_class: str = "QKNormRopeStagedKernel"):
+                      kernel_class: str = "QKNormRopeStagedKernel",
+                      use_pdl: bool | None = None):
     """Build the workspace-owned .cuh through SGLang load_jit without touching the SGLang tree.
 
     load_jit resolves cuda_files as ``(KERNEL_PATH/"csrc"/f).resolve()`` and emits
@@ -274,6 +275,8 @@ def _candidate_module(head_dim: int, rope_dim: int, is_neox: bool, dtype: torch.
     Compile flags match the diffusion baseline (no ``--use_fast_math``). ``kernel_class``
     selects the device kernel: the production path uses ``QKNormRopeStagedKernel``; the
     device-fair fairness sanity may request the warp-per-(token,head) ``QKNormRopeKernel``.
+    ``use_pdl=None`` keeps the production arch default (PDL on for B200); an explicit bool
+    builds the PDL-on/off variant for A/B diagnostics only — the dispatch path never sets it.
     """
     from sglang.jit_kernel.utils import (
         KERNEL_PATH,
@@ -292,8 +295,10 @@ def _candidate_module(head_dim: int, rope_dim: int, is_neox: bool, dtype: torch.
     # as a separate cache marker so it never pollutes the timed/benchmark build.
     lineinfo = os.environ.get("KDA_LINEINFO") == "1"
     tag = {"QKNormRopeStagedKernel": "staged", "QKNormRopeKernel": "warp"}.get(kernel_class, "staged")
-    marker = f"qknorm_rope_kda_b200_{tag}_{sha}" + ("_li" if lineinfo else "")
-    args = make_cpp_args(head_dim, rope_dim, is_neox, is_arch_support_pdl(), dtype)
+    pdl = is_arch_support_pdl() if use_pdl is None else bool(use_pdl)
+    marker = (f"qknorm_rope_kda_b200_{tag}_{sha}"
+              + ("" if pdl else "_nopdl") + ("_li" if lineinfo else ""))
+    args = make_cpp_args(head_dim, rope_dim, is_neox, pdl, dtype)
     return load_jit(
         marker,
         *args,
