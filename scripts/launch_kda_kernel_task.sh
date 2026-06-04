@@ -216,6 +216,10 @@ EOF
 - Keep copied upstream baseline code under \`baseline/\`, candidate code under
   \`solution/\`, benchmark/correctness harnesses under \`bench/\`, and
   provenance/results under \`docs/\`.
+- For diffusion kernels, resolve the latest upstream SGLang \`main\` commit at
+  baseline-recovery time and copy the relevant kernel source from that exact
+  commit. Record the SGLang repository URL, branch, resolved commit SHA,
+  resolution time, and copied files in \`docs/baseline_source.md\`.
 - For diffusion kernels, do not import, patch, monkey-patch, or install into an
   SGLang checkout during correctness or benchmark runtime. Copy the SGLang
   implementation into \`baseline/\` and expose it through the same low-overhead
@@ -257,8 +261,10 @@ into the plan unless the source prompt explicitly says otherwise:
 ## Expected Plan Shape
 
 - Recover the baseline source, exact callsite, and workload shape set.
-- Copy the baseline source into \`baseline/\` and record upstream URL, commit,
-  copied files, and local edits in \`docs/baseline_source.md\`.
+- Resolve upstream SGLang \`main\` to its latest commit, copy the matching
+  baseline source into \`baseline/\`, and record upstream URL, branch, commit,
+  resolution time, copied files, and local edits in
+  \`docs/baseline_source.md\`.
 - Define matching baseline and candidate entry points using the same ABI,
   argument order, stream behavior, output allocation policy, and build path.
 - Fill \`bench/correctness.py\` before optimization.

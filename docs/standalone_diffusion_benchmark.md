@@ -9,8 +9,10 @@ the local baseline.
 - Do not patch, import, monkey-patch, or install into SGLang during correctness
   or benchmark runs.
 - Copy the relevant upstream SGLang kernel source into `baseline/` before
-  implementing the candidate. Record the upstream repository URL, commit, and
-  copied file list in `docs/baseline_source.md`.
+  implementing the candidate. Resolve the latest upstream SGLang `main` commit
+  at baseline-recovery time, copy the kernel code from that exact commit, and
+  record the upstream repository URL, branch (`main`), resolved commit,
+  resolution time, and copied file list in `docs/baseline_source.md`.
 - Baseline and candidate must expose matching local entry points. Any wrapper
   overhead included for one side must be included for the other side.
 - Every task must contain two local implementations: copied SGLang source in

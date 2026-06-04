@@ -196,6 +196,10 @@ docs/
   run_log.md
 ```
 
+`baseline_source.md` must identify the latest upstream SGLang `main` commit
+resolved at baseline-recovery time, plus the copied files and any local adapter
+edits.
+
 The benchmark is invalid if it imports SGLang at runtime, patches an SGLang
 checkout, compares different wrapper overheads, silently skips a production
 workload, changes workloads after tuning without remeasuring both sides, or

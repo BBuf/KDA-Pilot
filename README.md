@@ -6,9 +6,10 @@ the optimization and benchmark workspace does not patch, import, or monkey-patch
 SGLang at runtime.
 
 For each diffusion task, the agent must copy the relevant upstream SGLang kernel
-source into the task's `baseline/` directory, expose that copied baseline through
-the same low-overhead ABI used by the candidate, then benchmark baseline and
-candidate side by side inside the task directory.
+source from the latest upstream SGLang `main` commit into the task's `baseline/`
+directory, expose that copied baseline through the same low-overhead ABI used by
+the candidate, then benchmark baseline and candidate side by side inside the
+task directory.
 
 ## Layout
 
