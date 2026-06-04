@@ -75,6 +75,9 @@ def check_close(a, b, label):
 
 
 def run_correctness() -> None:
+    # Runs against the PATCHED checkout, so the routing module must be importable.
+    from sglang.jit_kernel.diffusion.norm_tanh_modulation import native_supported
+
     for S in SHAPES:
         t = make_inputs(S)
         y = fused_norm_tanh_mul_add(t["x"], t["w"], None, t["scale"], t["shift"], "rms", EPS)
@@ -83,13 +86,21 @@ def run_correctness() -> None:
             t["x"], t["w"], None, t["scale"], t["shift"], t["w2"], None, t["scale2"], "rms", EPS
         )
         check_close(out, reference(t, True), f"v2_S{S}")
-        # Fallback probe: mixed-dtype scale is public-valid and must keep working
-        # (routes to the CuTe path under the patch).
+        # Fallback probe: mixed-dtype scale is public-valid but native-ineligible.
+        # Verify the gate rejects it, the public op still answers through the
+        # CuTe fallback branch, and the output matches the reference within the
+        # production tolerance (not merely NaN-free).
+        scale_fp16 = t["scale"].to(torch.float16)
+        assert native_supported(
+            t["x"], t["w"], None, scale_fp16, t["shift"], None, None, None, "rms"
+        ) is False, "mixed-dtype scale must be rejected by the native gate"
         y_fb = fused_norm_tanh_mul_add(
-            t["x"], t["w"], None, t["scale"].to(torch.float16), t["shift"], "rms", EPS
+            t["x"], t["w"], None, scale_fp16, t["shift"], "rms", EPS
         )
-        assert not torch.isnan(y_fb).any()
-    print("IN_SGLANG_CORRECTNESS_PASS")
+        t_fb = dict(t)
+        t_fb["scale"] = scale_fp16
+        check_close(y_fb, reference(t_fb, False), f"fallback_mixed_dtype_S{S}")
+    print("IN_SGLANG_CORRECTNESS_PASS (incl. gate-verified fallback vs reference)")
 
 
 def run_bench(tag: str) -> None:

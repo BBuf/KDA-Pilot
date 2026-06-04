@@ -63,10 +63,30 @@ python/sglang/jit_kernel/tests/diffusion/test_fused_norm_scale_shift.py  contain
 - `external/ncu-report-skill` @ `d1887948c7d53690cfe6605f59c1329b8a1c6bb5` (submodule initialized)
 - `~/.claude/skills/ion-b200/SKILL.md` — remote host conventions (read)
 
-## Remote execution pattern (per ion-b200 skill + task prompt)
+## Remote execution pattern (per ion-b200 skill + task prompt, revised round 1)
+
+Use quoted-heredoc stdin piping so every variable expands INSIDE the container, and
+literal absolute paths for anything destructive (`BL-20260604-remote-shell-var-expansion`
+— nested host-shell expansion of in-container variables caused the round-0 incident):
 
 ```bash
-ssh ion-b200 'REMOTE_GPU_ID=0; docker exec sglang_bbuf bash -lc "CUDA_VISIBLE_DEVICES=${REMOTE_GPU_ID} <command>"'
+ssh ion-b200 'docker exec -i sglang_bbuf bash -s' <<'EOF'
+cd /home/sglang-omni/bbuf/kda_runs/b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape/<run>/workspace
+REMOTE_GPU_ID=<idle-id> CUDA_VISIBLE_DEVICES=<idle-id> <command>
+EOF
 ```
 
 No Python/pip/nvcc/build/test/benchmark/profiling directly on the `ion-b200` host.
+`benchmark.py` enforces the selection contract: it aborts unless `REMOTE_GPU_ID` is set
+and matches the first `CUDA_VISIBLE_DEVICES` entry, and unless the card passes the
+strict idle gate (no compute apps, util ≤ 5%, memory ≤ 2 GiB at start; no foreign app
+at end).
+
+## GPU selection updates during the loop
+
+- Round 0: `REMOTE_GPU_ID=0` (state table above).
+- Round 1: GPU 0 became occupied by a foreign memory-resident app (host pid 2752289,
+  ~6.6 GiB, 0% util — not ours, left untouched); the strict gate correctly refused it
+  twice. Final fixed-gate benchmark + dispatch-symmetric arbiter r4 ran on
+  **`REMOTE_GPU_ID=1`** (`GPU-709d3f1a-3fca-36e4-22a6-e4e7e1d8c33e`, fully idle:
+  0% util, 0 MiB, no compute apps).

@@ -85,10 +85,24 @@ def _load_correctness_module():
 # ---------------------------------------------------------------------------
 
 
-def _physical_gpu_index() -> str:
+def _required_remote_gpu_id() -> str:
+    """The recorded GPU selection contract: REMOTE_GPU_ID must be set and must
+    match the first CUDA_VISIBLE_DEVICES entry. Abort before any case loads."""
+
+    remote_id = os.environ.get("REMOTE_GPU_ID", "").strip()
+    if not remote_id:
+        raise SystemExit(
+            "ABORT: REMOTE_GPU_ID is not set. Select an idle GPU per the ion-b200 "
+            "skill, export REMOTE_GPU_ID, and set CUDA_VISIBLE_DEVICES to match."
+        )
     cvd = os.environ.get("CUDA_VISIBLE_DEVICES", "")
-    first = cvd.split(",")[0].strip() if cvd else "0"
-    return first or "0"
+    first = cvd.split(",")[0].strip() if cvd else ""
+    if first != remote_id:
+        raise SystemExit(
+            f"ABORT: CUDA_VISIBLE_DEVICES (first entry {first!r}) does not match "
+            f"REMOTE_GPU_ID ({remote_id!r}); refusing to record benchmark rows."
+        )
+    return remote_id
 
 
 def _nvidia_smi(query: str, gpu: str) -> str:
@@ -103,37 +117,101 @@ def _nvidia_smi(query: str, gpu: str) -> str:
         return f"ERROR:{exc!r}"
 
 
-def _foreign_compute_pids(gpu_uuid: str) -> list[str]:
-    """PIDs of compute apps on the GPU that are not this process."""
+def _query_gpu_state(gpu: str, gpu_uuid: str) -> dict:
+    """Structured snapshot of the selected GPU: utilization, memory, and the
+    compute-app rows (gpu_uuid, pid, used_memory MiB) bound to that UUID.
 
+    PID-namespace caveat: inside the container os.getpid() does not match the
+    host PIDs reported by nvidia-smi, so per-PID self-attribution is impossible;
+    classification therefore reasons about app COUNTS, not identities.
+    """
+
+    state: dict = {"uuid": gpu_uuid, "util_pct": None, "mem_used_mib": None,
+                   "compute_apps": [], "query_error": None}
+    util = _nvidia_smi("utilization.gpu", gpu)
+    mem = _nvidia_smi("memory.used", gpu)
+    try:
+        state["util_pct"] = int(util)
+        state["mem_used_mib"] = int(mem)
+    except ValueError:
+        state["query_error"] = f"unparseable util/mem: {util!r}/{mem!r}"
     try:
         out = subprocess.run(
-            ["nvidia-smi", "--query-compute-apps=gpu_uuid,pid",
-             "--format=csv,noheader"],
+            ["nvidia-smi", "--query-compute-apps=gpu_uuid,pid,used_memory",
+             "--format=csv,noheader,nounits"],
             capture_output=True, text=True, timeout=30, check=True,
         )
-    except Exception:  # noqa: BLE001
-        return ["nvidia-smi-query-failed"]
-    pids = []
-    me = str(os.getpid())
-    for line in out.stdout.strip().splitlines():
-        parts = [p.strip() for p in line.split(",")]
-        if len(parts) >= 2 and parts[0] == gpu_uuid and parts[1] != me:
-            pids.append(parts[1])
-    return pids
+        for line in out.stdout.strip().splitlines():
+            parts = [p.strip() for p in line.split(",")]
+            if len(parts) >= 3 and parts[0] == gpu_uuid:
+                state["compute_apps"].append((parts[0], parts[1], parts[2]))
+    except Exception as exc:  # noqa: BLE001
+        state["query_error"] = f"compute-apps query failed: {exc!r}"
+    return state
 
 
-def _gpu_idle_state(gpu: str, gpu_uuid: str) -> tuple[bool, str]:
-    util = _nvidia_smi("utilization.gpu", gpu)
-    foreign = _foreign_compute_pids(gpu_uuid)
-    detail = f"util={util}% foreign_pids={foreign or 'none'}"
-    try:
-        util_ok = int(util) <= 5
-    except ValueError:
-        util_ok = False
-    # Our own process may legitimately be the only compute app and drive util.
-    idle = (not foreign) and (util_ok or not foreign)
-    return idle, detail
+_START_MAX_UTIL_PCT = 5
+_START_MAX_MEM_MIB = 2048
+
+
+def _describe_state(state: dict) -> str:
+    apps = ";".join(f"pid={p} mem={m}MiB" for _, p, m in state["compute_apps"]) or "none"
+    return (f"util={state['util_pct']}% mem={state['mem_used_mib']}MiB "
+            f"apps=[{apps}]" + (f" err={state['query_error']}" if state["query_error"] else ""))
+
+
+def _classify_start_state(state: dict) -> tuple[bool, str]:
+    """Idle-at-start: queries succeeded, NO compute apps at all, utilization and
+    memory both under conservative idle thresholds. High utilization is rejected
+    even when no compute app is listed."""
+
+    detail = _describe_state(state)
+    if state["query_error"]:
+        return False, detail
+    if state["compute_apps"]:
+        return False, detail
+    if state["util_pct"] is None or state["util_pct"] > _START_MAX_UTIL_PCT:
+        return False, detail
+    if state["mem_used_mib"] is None or state["mem_used_mib"] > _START_MAX_MEM_MIB:
+        return False, detail
+    return True, detail
+
+
+def _classify_end_state(state: dict) -> tuple[bool, str]:
+    """Idle-at-end: this benchmark process is expected to be the single compute
+    app on the card (PID-namespace caveat above), so ANY additional app means a
+    foreign process joined mid-run. Utilization is not gated at end — it is this
+    process's own rolling work — but is recorded with explicit attribution."""
+
+    detail = _describe_state(state) + " (end: util attributed to this benchmark process)"
+    if state["query_error"]:
+        return False, detail
+    if len(state["compute_apps"]) > 1:
+        return False, detail + " <- foreign compute app joined"
+    return True, detail
+
+
+def _gate_selftest() -> int:
+    """Mocked-state checks for the gate logic (no GPU required)."""
+
+    clean = {"uuid": "U", "util_pct": 0, "mem_used_mib": 12, "compute_apps": [], "query_error": None}
+    busy_util = dict(clean, util_pct=99)  # the round-0 review counterexample
+    busy_mem = dict(clean, mem_used_mib=150_000)
+    foreign = dict(clean, compute_apps=[("U", "1234", "5000")])
+    errored = dict(clean, query_error="boom")
+    one_app_end = dict(clean, util_pct=50, compute_apps=[("U", "1234", "3000")])
+    two_apps_end = dict(clean, compute_apps=[("U", "1", "10"), ("U", "2", "10")])
+
+    assert _classify_start_state(clean)[0] is True
+    assert _classify_start_state(busy_util)[0] is False, "util=99 with no foreign pid must NOT be idle"
+    assert _classify_start_state(busy_mem)[0] is False
+    assert _classify_start_state(foreign)[0] is False
+    assert _classify_start_state(errored)[0] is False
+    assert _classify_end_state(one_app_end)[0] is True
+    assert _classify_end_state(two_apps_end)[0] is False
+    assert _classify_end_state(errored)[0] is False
+    print("GATE_SELFTEST_PASS")
+    return 0
 
 
 def _git_commit() -> str:
@@ -249,7 +327,15 @@ def main() -> int:
     parser.add_argument("--warmup", type=int, default=None)
     parser.add_argument("--iters", type=int, default=None)
     parser.add_argument("--notes", default="")
+    parser.add_argument("--gate-selftest", action="store_true",
+                        help="run the mocked-state idle-gate logic checks and exit")
     args = parser.parse_args()
+
+    if args.gate_selftest:
+        return _gate_selftest()
+
+    # GPU-selection contract first: abort before loading or timing anything.
+    gpu_phys = _required_remote_gpu_id()
 
     if not torch.cuda.is_available():
         raise SystemExit("CUDA device required (run inside the remote container).")
@@ -261,17 +347,16 @@ def main() -> int:
 
     register = correctness._register_module()
 
-    gpu_phys = _physical_gpu_index()
     gpu_uuid = _nvidia_smi("uuid", gpu_phys)
     gpu_name = _nvidia_smi("name", gpu_phys)
     # A just-exited CUDA process (e.g. a test run in the same session) can
     # linger in nvidia-smi for a few seconds; retry briefly before aborting.
-    idle_before, idle_before_detail = _gpu_idle_state(gpu_phys, gpu_uuid)
+    idle_before, idle_before_detail = _classify_start_state(_query_gpu_state(gpu_phys, gpu_uuid))
     for _ in range(3):
         if idle_before:
             break
         time.sleep(5)
-        idle_before, idle_before_detail = _gpu_idle_state(gpu_phys, gpu_uuid)
+        idle_before, idle_before_detail = _classify_start_state(_query_gpu_state(gpu_phys, gpu_uuid))
     if not idle_before:
         raise SystemExit(
             f"ABORT: GPU {gpu_phys} ({gpu_uuid}) not idle at start: {idle_before_detail}"
@@ -378,10 +463,10 @@ def main() -> int:
             print(f"{label}: baseline {b['median_us']:.2f}us "
                   f"(wall {b_wall['median_us']:.2f}us)")
 
-    idle_after, idle_after_detail = _gpu_idle_state(gpu_phys, gpu_uuid)
+    idle_after, idle_after_detail = _classify_end_state(_query_gpu_state(gpu_phys, gpu_uuid))
     if not idle_after:
         raise SystemExit(
-            f"ABORT: GPU {gpu_phys} busy at end ({idle_after_detail}); "
+            f"ABORT: GPU {gpu_phys} foreign activity at end ({idle_after_detail}); "
             "no rows written — rerun on an idle card."
         )
     for row in rows:

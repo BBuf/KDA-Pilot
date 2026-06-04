@@ -2,14 +2,23 @@
 
 ## FINAL VERDICT — PROMOTE
 
-**Shipping integration (the promotion arbiter — in-SGLang drop-in, identical
-custom-op wrapper/dispatch/registration both sides, only the kernel inside differs):
-geomean 1.487× over the 4 captured zimage shapes** (v1 1.595×/1.604×, v2 1.372×/1.394×;
-public-op wall medians, `docs/sglang_jit_export.md`). In-SGLang correctness PASS;
-unsupported signatures verified to fall back to the CuTe path; both entry points ship
-natively (v2 satisfies the pre-registered parity-or-better rule).
+**Shipping integration (the promotion arbiter — DISPATCH-SYMMETRIC in-SGLang drop-in:
+both routes measured in the SAME patched checkout through the identical custom-op
+wrapper + dispatch branch, native routes toggled by env, contract-clean idle GPU 1):
+geomean 1.493× over the 4 captured zimage shapes** — v1 1.596×/1.621× (geo 1.609×),
+v2 1.378×/1.393× (geo 1.385×); public-op wall medians, full stats in
+`export/arbiter_runs/*_r4.json` and `benchmark.csv` (mode
+`in-sglang-arbiter-dispatch-symmetric`); details `docs/sglang_jit_export.md`. In-SGLang
+correctness PASS including the gate-verified fallback (mixed-dtype probe asserted
+`native_supported(...) is False` AND its public-op output matched the reference within
+production tolerances). Both entry points ship natively (v1 and v2 each clear the
+pre-registered parity-or-better rule in the dispatch-symmetric arbiter). Benchmark runs
+are admitted only under the enforced GPU contract (`REMOTE_GPU_ID` matching
+`CUDA_VISIBLE_DEVICES`; strict idle gate with mocked-state self-test) — the gate twice
+refused a foreign-occupied GPU 0 before the final runs moved to idle GPU 1.
 
-Honest decomposition (Codex-reviewed framing): raw-callable wall geomean 1.400×;
+Honest decomposition (Codex-reviewed framing): raw-callable wall geomean 1.379-1.400×
+(final enforced-gate rerun on GPU 1: 1.379×);
 device-only kernel deltas v1 **+4%** (41.4 vs 43.0 µs) and v2 **−16%** (78.6 vs 66.0 µs;
 ≈267 MB/launch register-spill traffic) — the integrated win is dominated by the native
 tvm-ffi host path replacing the CuTe-DSL host path inside the unchanged public op,

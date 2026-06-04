@@ -90,10 +90,12 @@ type).
 
 ## Evidence (final)
 
-- **Promotion arbiter (in-SGLang drop-in, identical custom-op layers): geomean 1.487×**
-  — v1 1.595×/1.604×, v2 1.372×/1.394× on the 4 captured zimage shapes; in-SGLang
-  correctness PASS with fallback verified (`docs/sglang_jit_export.md`,
-  `export/sglang_drop_in.patch`).
+- **Promotion arbiter (DISPATCH-SYMMETRIC in-SGLang drop-in — both routes in one patched
+  checkout, env-toggled; contract-clean idle GPU 1): geomean 1.493×** — v1 1.596×/1.621×
+  (geo 1.609×), v2 1.378×/1.393× (geo 1.385×) on the 4 captured zimage shapes; in-SGLang
+  correctness PASS with the gate-verified fallback (`native_supported(...) is False`
+  asserted + output-vs-reference within tolerance) (`docs/sglang_jit_export.md`,
+  `export/sglang_drop_in.patch`, `export/arbiter_runs/*_r4.json`).
 - Per-shape dispatch decision: BOTH entry points ship the native fast path (v2 meets
   the pre-registered integrated parity-or-better rule); PDL off; `KDA_ROWS_PER_CTA=8`.
 - Honest decomposition: raw-callable wall geomean 1.400×; device-only v1 +4% / v2 −16%
