@@ -202,3 +202,53 @@ Bound attribution per row class:
 
 GPU state before/after the NCU session recorded in profile/ncu_v2/
 gpustate_{before,after}.txt (GPU0 idle, 0 MiB).
+
+## 2026-06-05 — Round 1: evidence-gap repair + canonical final run (ion-b200 GPU0)
+
+Review-driven scope (round-0 Codex review): (1) AC-3 — workload rows lacked
+explicit stride metadata; (2) AC-5/AC-7 — benchmark JSONL provenance was
+missing env/toolchain/source-hash fields and the canonical artifact pointer
+was ambiguous (local archived results.jsonl was the v0 run).
+
+Changes:
+
+- `bench/workloads.json`: every tensor spec now records `stride`
+  (source-tensor strides, pre-broadcast) and `storage_offset_elems` where
+  non-zero; the wan-ti2v chunk2 views record `[111476736, 6144, 1]` with
+  scale offset 3072 (shapes/dtypes/seeds/tolerances byte-identical — schema
+  enrichment only).
+- `bench/adapter.py`: `_validate_against_spec` checks every constructed input
+  tensor's shape/stride/storage offset against the frozen metadata inside
+  `make_case` (untimed); benchmarking fails fast on divergence.
+- `bench/benchmark.py`: `_provenance()` now merges `_extended_provenance()`
+  (env pinning, triton/tvm-ffi/nvcc/gcc/driver versions, upstream baseline
+  commit parsed from docs/baseline_source.md, candidate compile flags from
+  solution/build.py, sha256 of kernel.cu/baseline sources/adapter/benchmark
+  file/workloads/config). Timing policy untouched; delta documented in
+  docs/benchmark_method.md; the file's own sha256 is self-recorded per run.
+- `solution/build.py`: flags factored into `candidate_compile_flags()` (same
+  values; now recordable).
+
+Re-validation (workload-schema change -> dual remeasurement per the frozen-
+workload rule; kernels unchanged from the promoted v2 source, sha
+`9fc610cd...`):
+
+- Correctness: 898/898 PASS, 0 failures (logs/correctness_final.{log,json}),
+  now including the frozen-stride validation on every row.
+- Canonical FINAL benchmark (`bench/results.jsonl`, GPU0 idle before/after,
+  `CUDA_VISIBLE_DEVICES=0 REMOTE_GPU_ID=0`): 25/25 PASSED, production
+  geomean **2.7972x**, arithmetic mean 3.937x, min row 1.0906x
+  (qwen_edit_gated), max 9.05x (hunyuanvideo_s55). DEC-1 gate met on every
+  row. Verified the enriched provenance block in the JSONL (env, versions,
+  upstream commit 1332540, compile flags, 7 source hashes; kernel hash
+  matches the committed promoted source).
+- Artifact lineage fixed: local loop artifacts now hold results_v0.jsonl
+  (baseline-freeze run), results_v1.jsonl, results_v2.jsonl, and
+  results.jsonl = the canonical final run; docs/results.md and
+  docs/dispatch.md updated to the canonical numbers and lineage.
+
+Context refresh for this iteration: round-0 review findings + bitlesson
+KB (selector: R1-task2 NONE; R1-task10 BL-20260605-ncu-kernel-filter — no new
+NCU captures were needed since the kernels are unchanged; the round-0 NCU
+evidence remains valid for bound attribution). No new KernelWiki query needed
+(no kernel-design decision in this round).

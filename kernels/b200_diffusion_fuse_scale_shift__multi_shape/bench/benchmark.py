@@ -480,6 +480,71 @@ def _provenance(args: argparse.Namespace, workloads: list[dict[str, Any]]) -> di
             "timeout_seconds": args.timeout_seconds,
             "isolated": args.isolated,
         },
+        **_extended_provenance(args),
+    }
+
+
+def _extended_provenance(args: argparse.Namespace) -> dict[str, Any]:
+    """Task-local provenance extension (environment pinning, toolchain
+    versions, baseline commit, source hashes, candidate compile flags).
+    Additive only — the template's timing policy is untouched. Every field is
+    best-effort so provenance can never fail a benchmark run."""
+    import re
+
+    def guarded(fn: Callable[[], Any]) -> Any:
+        try:
+            return fn()
+        except Exception as exc:  # noqa: BLE001 - provenance must not raise
+            return f"unavailable: {exc}"
+
+    def cmd_out(cmd: list[str]) -> str:
+        return subprocess.check_output(cmd, text=True, stderr=subprocess.STDOUT, timeout=10).strip()
+
+    def file_sha256(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    def triton_version() -> str:
+        import triton
+        return triton.__version__
+
+    def tvm_ffi_version() -> str:
+        import tvm_ffi
+        return getattr(tvm_ffi, "__version__", "unknown")
+
+    def upstream_commit() -> str:
+        text = (ROOT / "docs" / "baseline_source.md").read_text()
+        match = re.search(r"Resolved commit SHA: `([0-9a-f]{40})`", text)
+        return match.group(1) if match else "not found in docs/baseline_source.md"
+
+    def compile_flags() -> Any:
+        if str(ROOT) not in sys.path:
+            sys.path.insert(0, str(ROOT))
+        from solution.build import candidate_compile_flags
+        return candidate_compile_flags()
+
+    return {
+        "env": {
+            "CUDA_VISIBLE_DEVICES": os.environ.get("CUDA_VISIBLE_DEVICES"),
+            "REMOTE_GPU_ID": os.environ.get("REMOTE_GPU_ID"),
+        },
+        "triton": guarded(triton_version),
+        "tvm_ffi": guarded(tvm_ffi_version),
+        "nvcc_version": guarded(lambda: cmd_out(["nvcc", "--version"]).splitlines()[-1]),
+        "gcc_version": guarded(lambda: cmd_out(["gcc", "--version"]).splitlines()[0]),
+        "driver_version": guarded(lambda: cmd_out(
+            ["nvidia-smi", "--query-gpu=driver_version", "--format=csv,noheader"]).splitlines()[0]),
+        "upstream_baseline_commit": guarded(upstream_commit),
+        "candidate_compile_flags": guarded(compile_flags),
+        "source_sha256": {
+            "solution_kernel_cu": guarded(lambda: file_sha256(ROOT / "solution" / "kernel.cu")),
+            "baseline_scale_shift_triton_py": guarded(
+                lambda: file_sha256(ROOT / "baseline" / "scale_shift_triton.py")),
+            "baseline_binding_py": guarded(lambda: file_sha256(ROOT / "baseline" / "binding.py")),
+            "bench_adapter_py": guarded(lambda: file_sha256(BENCH_DIR / "adapter.py")),
+            "bench_benchmark_py": guarded(lambda: file_sha256(Path(__file__).resolve())),
+            "workloads_json": guarded(lambda: file_sha256(Path(args.workloads).resolve())),
+            "config_toml": guarded(lambda: file_sha256(ROOT / "config.toml")),
+        },
     }
 
 

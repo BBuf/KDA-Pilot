@@ -2,13 +2,30 @@
 
 ## Harness
 
-- `bench/benchmark.py` is a byte-identical copy of
+- `bench/benchmark.py` starts from
   `../../docs/standalone_diffusion_benchmark_template.py`
-  (sha256 `6844257357c47330fc75ca8f3232f4bfe0fb598f442373261eb7efca188ff6fa`).
+  (template sha256 `6844257357c47330fc75ca8f3232f4bfe0fb598f442373261eb7efca188ff6fa`).
   The benchmark policy (isolated subprocess per workload, fresh inputs per
   trial, poisoned outputs, correctness-before-timing, deterministic interleaved
   A/B order, CUDA-event timing with inner-loop amplification, per-row
   median/mean/std/min/p10/p90, equal-weight geomean headline) is unchanged.
+- One documented, additive delta from the template: `_provenance()` merges an
+  `_extended_provenance()` block recording `CUDA_VISIBLE_DEVICES` and
+  `REMOTE_GPU_ID`, Triton/tvm-ffi versions, nvcc/gcc/driver versions, the
+  upstream baseline commit (parsed from `docs/baseline_source.md`), the
+  candidate compile flags (from `solution/build.py::candidate_compile_flags`),
+  and sha256 hashes of `solution/kernel.cu`, the copied baseline sources,
+  `bench/adapter.py`, `bench/benchmark.py` itself, the workloads file, and
+  `config.toml`. Every field is best-effort (guarded) so provenance can never
+  affect or fail a run; no timing, workload-selection, tolerance, or scoring
+  code is touched. The current file's own sha256 is recorded inside each
+  `results.jsonl` under `source_sha256.bench_benchmark_py`.
+- Workload rows are self-describing: every tensor spec in
+  `bench/workloads.json` records `shape`, `dtype`, `stride` (source-tensor
+  strides, pre-broadcast), and `storage_offset_elems` where non-zero (the
+  wan-ti2v chunk2 views). `bench/adapter.py` validates every constructed
+  input tensor against this metadata in `make_case` (untimed) and fails
+  before benchmarking on divergence.
 - Settings come from `config.toml [benchmark]`: warmup 10, 7 trials,
   inner-loop calibration to ~1000us samples (1..4096), 600s timeout,
   isolated runner on.

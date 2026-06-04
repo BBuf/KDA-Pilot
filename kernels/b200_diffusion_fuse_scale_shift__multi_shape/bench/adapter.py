@@ -60,6 +60,25 @@ def _randn(shape, dtype, device):
     return torch.randn(shape, device=device, dtype=dtype)
 
 
+def _validate_against_spec(name: str, tensor: torch.Tensor, spec: dict) -> None:
+    """Fail before benchmarking if a constructed tensor diverges from the
+    frozen workload metadata (shape/stride/storage offset self-description)."""
+    if list(tensor.shape) != list(spec["shape"]):
+        raise ValueError(
+            f"{name}: constructed shape {tuple(tensor.shape)} != frozen spec {spec['shape']}"
+        )
+    want_stride = spec.get("stride")
+    if want_stride is not None and list(tensor.stride()) != list(want_stride):
+        raise ValueError(
+            f"{name}: constructed stride {tuple(tensor.stride())} != frozen spec {want_stride}"
+        )
+    want_offset = spec.get("storage_offset_elems")
+    if want_offset is not None and tensor.storage_offset() != want_offset:
+        raise ValueError(
+            f"{name}: constructed storage offset {tensor.storage_offset()} != frozen spec {want_offset}"
+        )
+
+
 def _make_scale_shift_pair(shapes, device):
     """Build (scale, shift) per the workload's recorded layout."""
     scale_spec, shift_spec = shapes["scale"], shapes["shift"]
@@ -85,8 +104,12 @@ def make_case(workload: dict, *, device: torch.device, seed: int) -> dict:
     shapes = workload["shapes"]
     x = _randn(shapes["x"]["shape"], _DTYPES[shapes["x"]["dtype"]], device)
 
+    _validate_against_spec("x", x, shapes["x"])
+
     if fn == _EP1:
         scale, shift = _make_scale_shift_pair(shapes, device)
+        _validate_against_spec("scale", scale, shapes["scale"])
+        _validate_against_spec("shift", shift, shapes["shift"])
         inputs = {
             "x": x,
             "scale": scale,
@@ -102,15 +125,20 @@ def make_case(workload: dict, *, device: torch.device, seed: int) -> dict:
             name: _randn(shapes["mod"]["shape"], mod_dtype, device)
             for name in ("scale0", "shift0", "gate0", "scale1", "shift1", "gate1")
         }
+        for name, mod in mods.items():
+            _validate_against_spec(name, mod, shapes["mod"])
         index = torch.randint(
             0, 2, shapes["index"]["shape"],
             device=device, dtype=_DTYPES[shapes["index"]["dtype"]],
         )
+        _validate_against_spec("index", index, shapes["index"])
         weight = bias = None
         if shapes.get("weight"):
             weight = _randn(shapes["weight"]["shape"], _DTYPES[shapes["weight"]["dtype"]], device)
+            _validate_against_spec("weight", weight, shapes["weight"])
         if shapes.get("bias"):
             bias = _randn(shapes["bias"]["shape"], _DTYPES[shapes["bias"]["dtype"]], device)
+            _validate_against_spec("bias", bias, shapes["bias"])
         inputs = {
             "x": x, "weight": weight, "bias": bias, **mods,
             "index": index, "eps": float(workload["eps"]),
@@ -118,6 +146,8 @@ def make_case(workload: dict, *, device: torch.device, seed: int) -> dict:
         if fn == _EP3:
             inputs["residual"] = _randn(shapes["residual"]["shape"], _DTYPES[shapes["residual"]["dtype"]], device)
             inputs["residual_gate"] = _randn(shapes["residual_gate"]["shape"], _DTYPES[shapes["residual_gate"]["dtype"]], device)
+            _validate_against_spec("residual", inputs["residual"], shapes["residual"])
+            _validate_against_spec("residual_gate", inputs["residual_gate"], shapes["residual_gate"])
             n_out = 3
         else:
             n_out = 2
