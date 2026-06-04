@@ -118,3 +118,79 @@ Edit decisions (evidence -> design):
 - wan-ti2v chunk2 row rides the rowgrid path (contiguous last dim, doubled row
   stride passes the 16B gates); wan-t2v/i2v fp32 broadcast rows ride the
   reuse path (fp32 rows read as float4 pairs).
+
+## 2026-06-05 — v1/v2 benchmark sessions + final result (ion-b200 GPU0)
+
+- v1 benchmark (`bench/results_v1.jsonl`): 25/25 PASSED, production geomean
+  2.7289x, min row 1.011x (qwen_edit_gated). GPU0 idle before/after.
+- Iteration context refresh for v2: v1 per-row evidence shows the two gated
+  rows are the only near-parity rows; the EP2 kernel achieves 3.1 TB/s while
+  EP3 reaches 5.3 TB/s with more streams -> barrier-bound, not DRAM-bound.
+  No new KernelWiki query needed (the vectorized-loads/memory-bound pages
+  already cover the applied techniques); edit chosen: fuse the mean/variance
+  reductions into one one-pass (sum, sumsq) float2 block reduction (5
+  barriers -> 2 per row), numerically safe at the contract tolerances with
+  fp32 tree reduction (verified against the 1e-5 fp32 grid rows on-device).
+- v2 correctness: 898/898 PASS (logs/correctness_v2.{log,json}).
+- v2 FINAL benchmark (`bench/results_v2.jsonl`, canonical copy
+  `bench/results.jsonl`): 25/25 PASSED, production geomean 2.7478x,
+  arithmetic mean 3.818x, min row 1.0937x (qwen_edit_gated), max 8.99x
+  (hunyuanvideo_s55). GPU0 idle before/after
+  (logs/bench_v2_gpustate_{before,after}.txt; an unrelated 4.2 GiB allocation
+  appeared on GPU1 after the run — different card, our measurements pinned to
+  GPU0 via CUDA_VISIBLE_DEVICES=0).
+- DEC-1 promotion gate satisfied: geomean > 1.0 and every production row
+  >= 0.97x (in fact >= 1.0937x). Optimization stopped per the
+  bounded-attempts policy; remaining EP2 headroom documented as a named bound
+  in docs/dispatch.md.
+- NCU evidence session: profile/ncu_v2/ in the remote task workspace
+  (--set full, --launch-skip 2 --launch-count 2, via bench/profile_one.py)
+  over: qwen_s19 (small EP1), qwen_edit_s8424 bcast + full3d, wan-ti2v
+  chunk2 fp32, gated EP2 (candidate AND baseline), resgated EP3. First batch
+  failed (profile_one.py not yet synced — rerun after sync). Raw .ncu-rep
+  artifacts stay in the remote task workspace; extracted metrics below.
+
+## 2026-06-05 — NCU evidence (filtered rerun, profile/ncu_v2/, GPU0)
+
+Commands: `CUDA_VISIBLE_DEVICES=0 ncu --set full -k "regex:<kernel-family>"
+--launch-count 2 --target-processes all -o profile/ncu_v2/reports/<id>_<side>
+python bench/profile_one.py --id <id> --side <side> --iters 5`. Raw .ncu-rep
+files stay in the remote task workspace (not staged for the PR).
+
+Speed-of-light extraction (NCU locks clocks below live boost — durations are
+NOT comparable to the interleaved benchmark; used for bound attribution only):
+
+| kernel (workload) | dur us | DRAM% | SM% | regs | occ% |
+|---|---|---|---|---|---|
+| baseline Triton fused_layernorm_select01, EP2 s8424 | 48.9 | 29.7-30.1 | 58.3-58.9 | 63 | 45.3 |
+| cand ln_select01_vec<bf16,i32,1> 384thr, EP2 s8424 | 73.4 | 19.9-20.4 | 65.8 | 40 | 67.3 |
+| cand residual_ln_select01_vec<bf16,i32,1>, EP3 s8424 | 86.0 | 45.5-46.0 | 68.5 | 40 | 68.2 |
+| cand scale_shift_rowgrid<bf16,bf16,reuse>, bcast11 s8424 | 31.5 | 28.1-28.5 | 60.5 | 27 | 77.9 |
+| cand scale_shift_rowgrid<bf16,bf16,stream>, full3d s8424 | 39.0 | 67.8-68.8 | 48.8 | 27 | 80.6 |
+| cand scale_shift_flatvec<bf16,bf16,reuse>, s19 | 6.6 | 0.3 | 0.8 | 28 | 11.9 |
+| cand scale_shift_rowgrid<bf16,f32,stream>, wan-ti2v | 116.2 | 82.0-83.2 | 28.1 | 32 | 81.7 |
+
+Bound attribution per row class:
+
+- wan-ti2v (and the wan fp32-broadcast class): **DRAM-bandwidth-bound** —
+  82-83% DRAM utilization at 81.7% occupancy; live 6.54 TB/s. Little headroom.
+- full3d s8424: **DRAM-bound** (68-69% under NCU; live 7.60 TB/s = ~95% of
+  nominal peak). At the roof.
+- bcast11 s8424: issue/conversion-bound at base clock (28.5% DRAM, 60.5% SM);
+  live 4.99 TB/s. Some headroom in principle; gains here would not change the
+  promotion outcome (row already 1.64-1.68x).
+- EP2 gated: **not DRAM-bound on either side** (baseline 30% / candidate 20%
+  DRAM; both >58% SM throughput) — barrier/issue-limited at one row per block,
+  C=3072. NOTE the NCU-isolated durations INVERT the live ranking here
+  (candidate 73.4us vs baseline 48.9us under locked clocks, while the live
+  interleaved arbiter gives candidate 45.8us vs baseline 50.1us). Consistent
+  with the established B200 lesson that NCU isolation can invert pipeline-
+  kernel rankings; the steady-state interleaved A/B run remains the only
+  promotion arbiter, and NCU is used here strictly for bound attribution.
+- EP3 resgated: mixed (46% DRAM, 68.5% SM) — close to balanced; live 5.50 TB/s.
+- s19 (small class): nothing on-device is the bottleneck (0.3% DRAM, 0.8% SM,
+  29 blocks) — the row is launch/host-path-bound, which is exactly where the
+  candidate's lean tvm-ffi dispatch wins 7.7x.
+
+GPU state before/after the NCU session recorded in profile/ncu_v2/
+gpustate_{before,after}.txt (GPU0 idle, 0 MiB).
