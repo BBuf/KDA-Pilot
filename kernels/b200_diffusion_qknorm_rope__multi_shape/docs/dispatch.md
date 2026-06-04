@@ -1,6 +1,29 @@
 # Dispatch decision table — b200_diffusion_qknorm_rope__multi_shape
 
-> **FINAL OUTCOME (supersedes the overlay no-go below):** the kernel ships via an **in-tree
+## Continuation round r9 (2026-06-04) — fresh evidence on the jit_kernel/tvm-ffi stack
+
+The dispatch decision is **unchanged** this round, now backed by fresh same-commit evidence
+(SGLang `0b65588c1`, idle B200 GPU 1, task commits `aaf8275b6`/`355f3bf2a`):
+
+| lane (fresh, `benchmark.csv`) | geomean | per-bucket |
+|---|---|---|
+| Device-fair (baseline/ copy vs **staged**, interleaved) | **1.0648x / 1.0691x** (two runs) | large 1.08–1.25x; small 0.99–1.00x |
+| Device-fair (upstream sglang module base, cross-check) | 1.0701x | copy ≡ upstream within noise |
+| Staged PDL-ON vs PDL-OFF (`--pdl-ab`) | 1.0035x | neutral → keep arch-default PDL ON |
+| Two-token probe **staged2** vs copy | 1.0658x | parity-to-worse vs staged → **REJECTED** |
+| Isolated public-op lane (diagnostic only) | 1.0436x | small rows carry shared-box artifacts |
+
+- Per-bucket decision (unchanged): the 5 large captured rows → `QKNormRopeStagedKernel`
+  (device win, NCU-confirmed: `profile/r9_staged_b200/REPORT.md` — memory-latency-bound,
+  DRAM 15.8% peak, long_scoreboard 9.14/issue); the 5 small rows + everything else → warp
+  baseline path (host/launch-bound; device byte-identical → parity).
+- `KDA_CAND_VARIANT` now also accepts `staged2` (diagnostic-only probe kernel, rejected:
+  `solutions.jsonl: cand_staged2_r9`); the shipped in-`.cuh` delegation is untouched.
+- The promotion arbiter for this round is the **in-SGLang in-tree drop-in**
+  (`profile/in_sglang/validate_in_tree.py`); the `kda_kernels` overlay below remains a
+  retired negative control.
+
+> **FINAL OUTCOME (prior round; supersedes the overlay no-go below):** the kernel ships via an **in-tree
 > `.cuh` placement** in SGLang (keeping SGLang's own `register_custom_op` → **torch.compile-safe**),
 > not the `kda_kernels` overlay. In-tree device geomean **~1.07–1.12x** (large 1.10–1.33x, small
 > parity), correctness 10/10. See `docs/sglang_jit_export.md`. The sections below describe the

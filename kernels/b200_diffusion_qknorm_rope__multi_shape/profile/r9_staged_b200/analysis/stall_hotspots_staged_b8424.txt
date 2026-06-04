@@ -1,0 +1,116 @@
+===== Stall hotspots for staged_b8424 =====
+Total distinct (file, line) entries: 36
+
+Rank      Total File                            Line  Breakdown (stall: count)
+------------------------------------------------------------------------------------------------------------------------------------------------------
+   0       1527 qknorm_rope_candidate.cuh        336  long_scoreboard: 1515, math_pipe_throttle: 6, not_selected: 5, selected: 1
+   1        394 warp.cuh                          32  short_scoreboard: 277, wait: 66, selected: 24, not_selected: 23, dispatch_stall: 4
+   2        195 qknorm_rope_candidate.cuh        301  barrier: 109, wait: 25, short_scoreboard: 18, not_selected: 18, selected: 11, no_instructions: 5, branch_resolving: 4, math_pipe_throttle: 3, dispatch_stall: 2
+   3        160 qknorm_rope_candidate.cuh        316  long_scoreboard: 150, wait: 6, not_selected: 2, selected: 1, branch_resolving: 1
+   4        160 qknorm_rope_candidate.cuh        325  barrier: 122, wait: 29, not_selected: 7, selected: 2
+   5        128 utils.cuh                        201  wait: 38, not_selected: 26, selected: 21, branch_resolving: 21, math_pipe_throttle: 9, no_instructions: 8, dispatch_stall: 5
+   6         83 qknorm_rope_candidate.cuh        377  short_scoreboard: 57, selected: 13, not_selected: 8, dispatch_stall: 3, wait: 2
+   7         66 type.cuh                          54  wait: 30, short_scoreboard: 23, not_selected: 10, selected: 3
+   8         64 qknorm_rope_candidate.cuh        339  wait: 28, selected: 19, not_selected: 16, dispatch_stall: 1
+   9         43 qknorm_rope_candidate.cuh        329  wait: 20, not_selected: 11, dispatch_stall: 7, selected: 4, math_pipe_throttle: 1
+  10         40 qknorm_rope_candidate.cuh        323  wait: 11, not_selected: 9, selected: 8, math_pipe_throttle: 6, dispatch_stall: 5, mio_throttle: 1
+  11         27 qknorm_rope_candidate.cuh        385  not_selected: 9, wait: 7, math_pipe_throttle: 5, selected: 5, dispatch_stall: 1
+
+
+===== Per-stall-type top lines =====
+
+--- long_scoreboard ---
+      1515  qknorm_rope_candidate.cuh:336
+       150  qknorm_rope_candidate.cuh:316
+
+--- short_scoreboard ---
+       277  warp.cuh:32
+        57  qknorm_rope_candidate.cuh:377
+        23  type.cuh:54
+        18  qknorm_rope_candidate.cuh:301
+         5  qknorm_rope_candidate.cuh:315
+         1  qknorm_rope_candidate.cuh:312
+
+--- wait ---
+        66  warp.cuh:32
+        38  utils.cuh:201
+        30  type.cuh:54
+        29  qknorm_rope_candidate.cuh:325
+        28  qknorm_rope_candidate.cuh:339
+        25  qknorm_rope_candidate.cuh:301
+        20  qknorm_rope_candidate.cuh:329
+        16  qknorm_rope_candidate.cuh:389
+        14  qknorm_rope_candidate.cuh:330
+        11  qknorm_rope_candidate.cuh:323
+
+--- math_pipe_throttle ---
+         9  utils.cuh:201
+         6  qknorm_rope_candidate.cuh:336
+         6  qknorm_rope_candidate.cuh:323
+         5  qknorm_rope_candidate.cuh:385
+         3  qknorm_rope_candidate.cuh:301
+         1  qknorm_rope_candidate.cuh:306
+         1  qknorm_rope_candidate.cuh:329
+         1  qknorm_rope_candidate.cuh:343
+
+--- mio_throttle ---
+         1  qknorm_rope_candidate.cuh:315
+         1  qknorm_rope_candidate.cuh:323
+
+--- not_selected ---
+        26  utils.cuh:201
+        23  warp.cuh:32
+        18  qknorm_rope_candidate.cuh:301
+        16  qknorm_rope_candidate.cuh:339
+        11  qknorm_rope_candidate.cuh:329
+        10  type.cuh:54
+         9  qknorm_rope_candidate.cuh:323
+         9  qknorm_rope_candidate.cuh:385
+         8  qknorm_rope_candidate.cuh:377
+         8  qknorm_rope_candidate.cuh:348
+
+--- dispatch_stall ---
+         7  qknorm_rope_candidate.cuh:329
+         5  qknorm_rope_candidate.cuh:323
+         5  utils.cuh:201
+         4  warp.cuh:32
+         3  qknorm_rope_candidate.cuh:377
+         2  qknorm_rope_candidate.cuh:301
+         2  qknorm_rope_candidate.cuh:378
+         1  cuda_bf16.hpp:636
+         1  cuda_bf16.hpp:637
+         1  qknorm_rope_candidate.cuh:339
+
+--- drain ---
+         1  sm_30_intrinsics.hpp:449
+
+--- no_instructions ---
+        15  qknorm_rope_candidate.cuh:276
+         8  utils.cuh:201
+         5  qknorm_rope_candidate.cuh:301
+
+--- selected ---
+        24  warp.cuh:32
+        21  utils.cuh:201
+        19  qknorm_rope_candidate.cuh:339
+        13  qknorm_rope_candidate.cuh:377
+        13  qknorm_rope_candidate.cuh:349
+        11  qknorm_rope_candidate.cuh:301
+        10  qknorm_rope_candidate.cuh:348
+         8  qknorm_rope_candidate.cuh:323
+         7  cuda_bf16.hpp:637
+         7  cuda_bf16.hpp:597
+
+--- branch_resolving ---
+        21  utils.cuh:201
+         4  qknorm_rope_candidate.cuh:301
+         3  qknorm_rope_candidate.cuh:306
+         1  qknorm_rope_candidate.cuh:316
+         1  sm_30_intrinsics.hpp:449
+
+--- barrier ---
+       122  qknorm_rope_candidate.cuh:325
+       109  qknorm_rope_candidate.cuh:301
+
+--- misc ---
+         1  sm_30_intrinsics.hpp:449

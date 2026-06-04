@@ -37,6 +37,31 @@
   in-SGLang parity-or-speedup with no material per-shape regression. DEC-2 — revalidate the
   staged kernel first; bounded, NCU-justified exploration only.
 
+### r9 exploration record (ranked directions → outcome)
+
+Fresh NCU (`profile/r9_staged_b200/REPORT.md`): large bucket memory-latency-bound at full
+occupancy (DRAM 15.8% peak; 49% of pcsamp on the q/k load-consumption line; staging barriers
+7.5%); small bucket host-bound (unchanged). Ranked candidate directions before any edit:
+
+1. **staged2 — two-token-per-CTA** (highest rank: directly attacks the barrier share and
+   doubles independent load streams) → implemented, correctness 10/10, device-fair
+   **1.0658x vs staged's same-session 1.0691x → REJECTED** (parity-to-worse; inter-CTA
+   overlap already hides intra-CTA barriers at waves = 1.0). `solutions.jsonl:
+   cand_staged2_r9`, benchmark.csv `*__devfair_staged2`.
+2. **cp.async/TMA cos/sin staging** (not attempted): the staged row is 512 B/token — far too
+   small for async-copy latency amortization, and the cost it would hide (7.5% barrier share)
+   is already hidden by inter-CTA overlap; adds sync complexity to the shipped kernel.
+3. **Block-size 128 / `__launch_bounds__` retune** (not attempted): `occupancy_limit_warps`
+   binds (64 warps/SM either way) — scheduler-neutral by the occupancy table.
+4. **PDL off** (measured via `--pdl-ab`): geomean 1.0035x, mixed per-row signs → neutral;
+   keep arch-default PDL ON (matches SGLang jit_kernel convention).
+
+Exploration closed per DEC-2: the staged anchor is the operating point; remaining gap to the
+~26 µs bandwidth floor is latency-hiding capacity at fixed parallelism, not recoverable by
+intra-CTA restructuring (probe evidence) — matches TRT-LLM fused DiT QKNorm+RoPE designs
+(KernelWiki `pr-TensorRT-LLM-13052`, `pr-TensorRT-LLM-11869`, plus `pr-sglang-15141` on the
+LLM side) and the sibling H200 row-norm finding (13 variants lost at the shipping layer).
+
 > **FINAL OUTCOME (prior rounds):** ships via an **in-tree `.cuh` placement** in SGLang (keeps SGLang's own
 > `register_custom_op` → **torch.compile-safe**), device geomean ~1.07–1.12x (large 1.10–1.33x,
 > small parity), correctness 10/10 — see `docs/sglang_jit_export.md`. The `kda_kernels` overlay is
