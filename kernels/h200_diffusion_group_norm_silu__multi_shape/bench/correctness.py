@@ -101,9 +101,11 @@ def make_inputs(shape, dtype, device):
 
 
 def candidate_fn():
-    from solution.binding import group_norm_silu_candidate
+    # The destination-passing variant keeps the poison checks meaningful (the
+    # CUDA regimes overwrite the poisoned buffer in place).
+    from solution.binding import group_norm_silu_candidate_into
 
-    return group_norm_silu_candidate
+    return group_norm_silu_candidate_into
 
 
 def run_candidate(cand, x, weight, bias, num_groups, eps):

@@ -32,14 +32,15 @@ this round re-validates everything against a freshly locked baseline.
 - **PDL removed.** The prior template parameter `kUsePDL` was compiled `false`
   (and the copied Triton baseline has no comparable PDL path, so the rules
   exclude PDL from the comparison); the dead branches are dropped.
-- **Dispatch policy changed (user decision DEC-1).** The prior dispatcher
-  routed `group_size >= 900_000` ("giant") and any unsupported signature back
-  to the *SGLang baseline*. This round every timed production row executes
-  solution-owned CUDA: giants currently route to the chunked large path
-  (known from prior profiling to trail the Triton chunked baseline there —
-  the dedicated giant work is the optimization target of this round), and
-  unsupported layouts take a solution-internal normalize-run-copy path
-  instead of any baseline fallback.
+- **Dispatch policy (DEC-1, then amended by the promotion decision
+  DEC-6).** The round began all-CUDA on every timed row (DEC-1): a new
+  register-lean giant pipeline replaced the prior round's baseline fallback
+  and took the giant bucket from 0.76 to 0.94-0.99 geomean. After bounded
+  NCU-driven attempts left a 3-6% gap only where the baseline's chunked
+  kernels run straddle-free near peak HBM, the user-approved DEC-6 dispatch
+  routes those two measured regimes to the LOCAL copied baseline (rules and
+  per-regime evidence in docs/dispatch.md). Unsupported layouts take a
+  solution-internal normalize-and-run path.
 - **fp32 coverage added.** The prior production dispatcher gated to
   fp16/bf16; the standalone candidate compiles and dispatches fp16, bf16 and
   fp32 (`Pack` width 4) so the full correctness contract runs through

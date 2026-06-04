@@ -181,29 +181,24 @@ def call_candidate(workload: dict, inputs: dict, outputs: dict) -> None:
     if _AA_MODE:
         _call_baseline_into(workload, inputs, outputs)
         return
-    # Per-call output allocation mirrors the baseline's internal behavior
-    # (its public entry allocates and returns a fresh tensor each call), so
-    # both timed paths carry one caching-allocator allocation per invocation.
-    out = torch.empty_like(inputs["x"])
+    # Both sides use allocate-and-return entries (the candidate mirrors the
+    # upstream contract), so the timed glue is identical: call, rebind.
     if workload.get("function") == "apply_group_norm_silu":
         # Module-attribute extraction stays inside the timed call for parity
         # with the baseline wrapper, which unpacks the same attributes per call.
         norm = inputs["norm"]
-        _candidate()(
+        outputs["y"] = _candidate()(
             inputs["x"],
             norm.weight,
             norm.bias,
             int(norm.num_groups),
             float(norm.eps),
-            out,
         )
     else:
-        _candidate()(
+        outputs["y"] = _candidate()(
             inputs["x"],
             inputs["weight"],
             inputs["bias"],
             inputs["num_groups"],
             inputs["eps"],
-            out,
         )
-    outputs["y"] = out

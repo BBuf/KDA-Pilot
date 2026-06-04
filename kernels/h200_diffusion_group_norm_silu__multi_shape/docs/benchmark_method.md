@@ -79,3 +79,20 @@ Status: scaffold draft — finalized after the remote H200 baseline lock
   `baseline/binding.py::group_norm_silu_baseline`: the upstream baseline for
   this family is Triton (no CUDA baseline file exists). Recorded at scaffold
   time, before any measurement.
+
+## Amendment (promotion decision DEC-6, before the final runs)
+
+- The candidate's public entry became allocate-and-return
+  (`group_norm_silu_candidate(...) -> Tensor`), exactly mirroring the
+  baseline's contract; the adapter glue is now literally identical on both
+  sides (call → rebind). The destination-passing form survives as
+  `group_norm_silu_candidate_into` for the correctness suite's poison checks.
+- The shipped candidate routes two measured regimes to the LOCAL copied
+  Triton baseline (rule table + evidence in docs/dispatch.md). Fallback rows
+  therefore time device-identical code on both sides; their 0.97-1.00
+  readings bound the dispatcher's host-side routing tax (cross-checked by
+  the A/A validation at 1.0037).
+- Final numbers come from back-to-back full frozen runs (geomean stable to
+  ±0.1%; the last complete run is the promotion record; all runs retained in
+  docs/run_log.md). No workload, tolerance, or timing-policy field changed
+  after the freeze.

@@ -166,6 +166,7 @@ struct GnsLargeParams {
   void* __restrict__ partial_sumsq;  // fp32 [num_rows * chunks_per_row]
   void* __restrict__ mean;           // fp32 [num_rows]
   void* __restrict__ rstd;           // fp32 [num_rows]
+  void* __restrict__ row_counter;    // int32 [num_rows], zero between calls (giant path only)
   int64_t channels;
   int64_t spatial;
   int64_t num_groups;
@@ -384,6 +385,136 @@ __global__ void gns_apply_kernel(const GnsLargeParams<DType> __grid_constant__ p
   }
 }
 
+// ---------------- giant path: register-lean exact-grid pipeline ----------------
+// Profiling of the chunked path on the production giant shapes showed the
+// generic apply kernel at 52 regs/thread -> 4 blocks/SM -> ~44% occupancy and
+// ~41% DRAM, while the stats kernel (32 regs, 100% theoretical occupancy) ran
+// ~68% DRAM. These variants trade the persistent grid-stride loop for one
+// task per CTA and cap the register budget at the H200 full-occupancy
+// boundary (64K regs/SM / 2048 threads = 32 regs/thread), with a single
+// hoisted-affine fast loop for tiles that stay inside one channel (the giant
+// regime: chunk << spatial) and a compact per-element loop for the rare
+// channel-straddling tile.
+
+template <typename DType>
+__global__ void __launch_bounds__(kBlockThreads, 8)
+    gns_giant_stats_kernel(const GnsLargeParams<DType> __grid_constant__ p) {
+  constexpr int kVec = 16 / static_cast<int>(sizeof(DType));
+  __shared__ float smem[2 * kWarpsPerBlock + 2];
+  const int64_t task = blockIdx.x;  // exact grid: one task per CTA
+  float* __restrict__ psum = static_cast<float*>(p.partial_sum);
+  float* __restrict__ psumsq = static_cast<float*>(p.partial_sumsq);
+  const int64_t row = task / p.chunks_per_row;
+  const int64_t chunk = task - row * p.chunks_per_row;
+  const int64_t b = row / p.num_groups;
+  const int64_t g = row - b * p.num_groups;
+  const int64_t group_base = b * p.channels * p.spatial + g * p.group_size;
+  const int64_t chunk_start = chunk * p.chunk_elems;
+  const int64_t chunk_end =
+      (chunk_start + p.chunk_elems < p.group_size) ? (chunk_start + p.chunk_elems) : p.group_size;
+  const int64_t nelem = chunk_end - chunk_start;
+  const DType* __restrict__ x = static_cast<const DType*>(p.x) + group_base + chunk_start;
+  const bool vec_ok = ((group_base + chunk_start) % kVec) == 0;
+
+  float lsum = 0.0f, lsumsq = 0.0f;
+  accumulate_stats<DType, kVec>(x, nelem, vec_ok, lsum, lsumsq);
+  block_reduce2(lsum, lsumsq, smem);
+
+  // Last-arriving CTA of each row folds the per-row finalize in here (saves
+  // the separate finalize launch). Publication order: partials first, fence,
+  // then the arrival counter; the last arrival therefore observes every
+  // partial of its row. The counter self-cleans to zero for the next call.
+  if (threadIdx.x == 0) {
+    psum[task] = lsum;
+    psumsq[task] = lsumsq;
+    __threadfence();
+    const int prev = atomicAdd(reinterpret_cast<int*>(p.row_counter) + row, 1);
+    smem[0] = (prev == p.chunks_per_row - 1) ? 1.0f : 0.0f;
+  }
+  __syncthreads();
+  const bool last_of_row = smem[0] != 0.0f;
+  if (last_of_row) {
+    const int64_t base = row * p.chunks_per_row;
+    float s = 0.0f, q = 0.0f;
+    for (int64_t c = threadIdx.x; c < p.chunks_per_row; c += blockDim.x) {
+      s += psum[base + c];
+      q += psumsq[base + c];
+    }
+    block_reduce2(s, q, smem);  // fixed-order tree: deterministic
+    if (threadIdx.x == 0) {
+      const float inv_n = 1.0f / static_cast<float>(p.group_size);
+      const float mu = s * inv_n;
+      const float var = fmaxf(q * inv_n - mu * mu, 0.0f);
+      static_cast<float*>(p.mean)[row] = mu;
+      static_cast<float*>(p.rstd)[row] = rsqrtf(var + p.eps);
+      reinterpret_cast<int*>(p.row_counter)[row] = 0;
+    }
+  }
+}
+
+template <typename DType>
+__global__ void __launch_bounds__(kBlockThreads, 8)
+    gns_giant_apply_kernel(const GnsLargeParams<DType> __grid_constant__ p) {
+  constexpr int kVec = 16 / static_cast<int>(sizeof(DType));
+  const int64_t task = blockIdx.x;  // exact grid: one task per CTA
+  const DType* __restrict__ weight = static_cast<const DType*>(p.weight);
+  const DType* __restrict__ bias = static_cast<const DType*>(p.bias);
+  const int64_t row = task / p.chunks_per_row;
+  const int64_t chunk = task - row * p.chunks_per_row;
+  const int64_t b = row / p.num_groups;
+  const int64_t g = row - b * p.num_groups;
+  const int64_t group_base = b * p.channels * p.spatial + g * p.group_size;
+  const int64_t ch_base = g * p.channels_per_group;
+  const float mean = static_cast<const float*>(p.mean)[row];
+  const float rstd = static_cast<const float*>(p.rstd)[row];
+  const int64_t chunk_start = chunk * p.chunk_elems;
+  const int64_t chunk_end =
+      (chunk_start + p.chunk_elems < p.group_size) ? (chunk_start + p.chunk_elems) : p.group_size;
+  const int64_t nelem = chunk_end - chunk_start;
+  const DType* __restrict__ x = static_cast<const DType*>(p.x) + group_base + chunk_start;
+  DType* __restrict__ y = static_cast<DType*>(p.y) + group_base + chunk_start;
+
+  // A tile spans at most two channels in the giant regime (chunk_elems <=
+  // spatial whenever group_size >= the giant threshold), so process the tile
+  // as one or two single-channel segments, each with hoisted affine and a
+  // vector stream. Segment boundaries are uniform across the CTA (no
+  // divergence); segment starts inherit channel-boundary alignment whenever
+  // spatial is a multiple of the vector width.
+  int64_t seg_start = 0;
+  while (seg_start < nelem) {
+    const int64_t c = (chunk_start + seg_start) / p.spatial;
+    const int64_t channel_end = (c + 1) * p.spatial - chunk_start;
+    const int64_t seg_end = channel_end < nelem ? channel_end : nelem;
+    const int64_t seg_len = seg_end - seg_start;
+    const float w = to_f32<DType>(weight[ch_base + c]);
+    const float bb = to_f32<DType>(bias[ch_base + c]);
+    const float scale = rstd * w;
+    const float shift = bb - mean * scale;
+    const DType* __restrict__ xs = x + seg_start;
+    DType* __restrict__ ys = y + seg_start;
+    const bool seg_vec =
+        (((group_base + chunk_start + seg_start) % kVec) == 0) && ((seg_len % kVec) == 0);
+    if (seg_vec) {
+      const int64_t nvec = seg_len / kVec;
+      for (int64_t vi = threadIdx.x; vi < nvec; vi += blockDim.x) {
+        Pack<DType, kVec> v;
+        v.load(xs, vi);
+        Pack<DType, kVec> o;
+#pragma unroll
+        for (int j = 0; j < kVec; ++j) {
+          o[j] = from_f32<DType>(siluf(to_f32<DType>(v[j]) * scale + shift));
+        }
+        o.store(ys, vi);
+      }
+    } else {
+      for (int64_t i = threadIdx.x; i < seg_len; i += blockDim.x) {
+        ys[i] = from_f32<DType>(siluf(to_f32<DType>(xs[i]) * scale + shift));
+      }
+    }
+    seg_start = seg_end;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Host-side validation, dtype dispatch, launches.
 // ---------------------------------------------------------------------------
@@ -505,6 +636,7 @@ void run_large_typed(const TensorView& x, const TensorView& weight, const Tensor
       partial_sumsq.data_ptr(),
       mean.data_ptr(),
       rstd.data_ptr(),
+      nullptr,  // row_counter: giant path only
       s.channels,
       s.spatial,
       num_groups,
@@ -533,6 +665,78 @@ void run_large_typed(const TensorView& x, const TensorView& weight, const Tensor
       total_tasks, static_cast<int64_t>(blocks_per_sm(reinterpret_cast<const void*>(apply_k))) * sms);
   apply_k<<<static_cast<uint32_t>(grid_a), kBlockThreads, 0, stream>>>(params);
   launch_check("gns_apply_kernel");
+}
+
+template <typename DType>
+void run_giant_typed(const TensorView& x, const TensorView& weight, const TensorView& bias,
+                     const TensorView& y, const TensorView& partial_sum,
+                     const TensorView& partial_sumsq, const TensorView& mean,
+                     const TensorView& rstd, const TensorView& row_counter, int64_t num_groups,
+                     double eps, int64_t stats_chunk_elems, int64_t apply_chunk_elems,
+                     const Shape3D& s) {
+  const int64_t channels_per_group = s.channels / num_groups;
+  const int64_t group_size = channels_per_group * s.spatial;
+  const int64_t num_rows = s.batch * num_groups;
+  check(stats_chunk_elems > 0 && stats_chunk_elems % 8 == 0,
+        "stats_chunk_elems must be a positive multiple of 8");
+  check(apply_chunk_elems > 0 && apply_chunk_elems % 8 == 0,
+        "apply_chunk_elems must be a positive multiple of 8");
+  // The two pipeline stages are independently tiled: partial sums and the
+  // fused finalize are keyed by the stats tiling only (the apply kernel reads
+  // just mean/rstd), so each kernel gets the tile size that suits it.
+  const int64_t stats_chunks = (group_size + stats_chunk_elems - 1) / stats_chunk_elems;
+  const int64_t stats_tasks = num_rows * stats_chunks;
+  const int64_t apply_chunks = (group_size + apply_chunk_elems - 1) / apply_chunk_elems;
+  const int64_t apply_tasks = num_rows * apply_chunks;
+  check(stats_tasks <= 0x7fffffff && apply_tasks <= 0x7fffffff, "grid too large");
+
+  const DLDataType f32{kDLFloat, 32, 1};
+  const DLDataType i32{kDLInt, 32, 1};
+  check(same_dtype(partial_sum.dtype(), f32) && same_dtype(partial_sumsq.dtype(), f32) &&
+            same_dtype(mean.dtype(), f32) && same_dtype(rstd.dtype(), f32),
+        "scratch tensors must be fp32");
+  check(same_dtype(row_counter.dtype(), i32), "row_counter must be int32");
+  check(partial_sum.ndim() == 1 && partial_sum.size(0) >= stats_tasks,
+        "partial_sum scratch too small");
+  check(partial_sumsq.ndim() == 1 && partial_sumsq.size(0) >= stats_tasks,
+        "partial_sumsq scratch too small");
+  check(mean.ndim() == 1 && mean.size(0) >= num_rows, "mean scratch too small");
+  check(rstd.ndim() == 1 && rstd.size(0) >= num_rows, "rstd scratch too small");
+  check(row_counter.ndim() == 1 && row_counter.size(0) >= num_rows, "row_counter too small");
+
+  GnsLargeParams<DType> params{
+      x.data_ptr(),
+      weight.data_ptr(),
+      bias.data_ptr(),
+      y.data_ptr(),
+      partial_sum.data_ptr(),
+      partial_sumsq.data_ptr(),
+      mean.data_ptr(),
+      rstd.data_ptr(),
+      row_counter.data_ptr(),
+      s.channels,
+      s.spatial,
+      num_groups,
+      channels_per_group,
+      group_size,
+      num_rows,
+      stats_chunk_elems,
+      stats_chunks,
+      static_cast<float>(eps),
+  };
+  cudaStream_t stream = current_stream();
+
+  // Two launches: stats folds the per-row finalize into its last-arriving CTA.
+  // Exact one-task-per-CTA grids measured faster than stride loops here (the
+  // loop state pushed the kernels over the 32-reg full-occupancy boundary).
+  gns_giant_stats_kernel<DType>
+      <<<static_cast<uint32_t>(stats_tasks), kBlockThreads, 0, stream>>>(params);
+  launch_check("gns_giant_stats_kernel");
+  params.chunk_elems = apply_chunk_elems;
+  params.chunks_per_row = apply_chunks;
+  gns_giant_apply_kernel<DType>
+      <<<static_cast<uint32_t>(apply_tasks), kBlockThreads, 0, stream>>>(params);
+  launch_check("gns_giant_apply_kernel");
 }
 
 enum class Kind { kF16, kBF16, kF32 };
@@ -584,5 +788,30 @@ void gns_candidate_large(TensorView x, TensorView weight, TensorView bias, Tenso
   }
 }
 
+void gns_candidate_giant(TensorView x, TensorView weight, TensorView bias, TensorView partial_sum,
+                         TensorView partial_sumsq, TensorView mean, TensorView rstd,
+                         TensorView row_counter, int64_t num_groups, double eps,
+                         int64_t stats_chunk_elems, int64_t apply_chunk_elems, TensorView y) {
+  const Shape3D s = validate_common(x, weight, bias, y, num_groups);
+  switch (dtype_kind(x.dtype())) {
+    case Kind::kF16:
+      run_giant_typed<__half>(x, weight, bias, y, partial_sum, partial_sumsq, mean, rstd,
+                              row_counter, num_groups, eps, stats_chunk_elems, apply_chunk_elems,
+                              s);
+      break;
+    case Kind::kBF16:
+      run_giant_typed<__nv_bfloat16>(x, weight, bias, y, partial_sum, partial_sumsq, mean, rstd,
+                                     row_counter, num_groups, eps, stats_chunk_elems,
+                                     apply_chunk_elems, s);
+      break;
+    case Kind::kF32:
+      run_giant_typed<float>(x, weight, bias, y, partial_sum, partial_sumsq, mean, rstd,
+                             row_counter, num_groups, eps, stats_chunk_elems, apply_chunk_elems,
+                             s);
+      break;
+  }
+}
+
 TVM_FFI_DLL_EXPORT_TYPED_FUNC(gns_candidate_small, gns_candidate_small);
 TVM_FFI_DLL_EXPORT_TYPED_FUNC(gns_candidate_large, gns_candidate_large);
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(gns_candidate_giant, gns_candidate_giant);
