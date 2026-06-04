@@ -18,7 +18,7 @@ H200 HBM3e peak ~4.8 TB/s; realistic streaming ceiling ~4.3 TB/s (~90%).
 | prod08 residual | 8424x3072 | 81.0 us | 311 MB | 3.84 TB/s | memory BW, mild headroom |
 | prod09 per-token | 8424x3072 (4 tensors) | 54.0 us | 207 MB | 3.84 TB/s | memory BW, mild headroom |
 | prod12/13 wan 5120 | 37044/37800x5120 | 373/381 us | 1.14/1.16 GB | **3.05 TB/s** | memory BW, LARGE headroom |
-| prod14 wan NC | 18144x3072, fp32 NC scale | 141.5 us | 446 MB | 3.15 TB/s | memory BW, large headroom |
+| prod14 wan NC | 18144x3072, fp32 NC scale | 141.5 us | 557 MB | 3.94 TB/s | memory BW, modest headroom (correction r1: the original 446 MB figure omitted the bf16 per-token shift read) |
 
 Note on tiny rows: `device_ev` brackets the stream timeline, so for
 host-bound shapes it measures the submit gap, not kernel duration. The
