@@ -11,7 +11,8 @@ worktree, and launches Claude Code with CLAUDE_PROJECT_DIR set to the kernel
 directory so official Humanize hooks stay local to that task's .humanize state.
 
 Environment overrides:
-  KDA_BASE_BRANCH       Base branch/ref for the worktree (default: main)
+  KDA_BASE_BRANCH       Base branch/ref for the worktree
+                        (default: current checkout branch, or HEAD if detached)
   KDA_WORKTREE_BASE     Parent directory for generated worktrees
                         (default: ../kernel-pilot-worktrees next to this repo)
   KDA_RUN_ID            Run suffix (default: timestamp-pid)
@@ -54,7 +55,14 @@ shift
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-BASE_BRANCH="${KDA_BASE_BRANCH:-main}"
+if [[ -n "${KDA_BASE_BRANCH:-}" ]]; then
+  BASE_BRANCH="$KDA_BASE_BRANCH"
+else
+  BASE_BRANCH="$(
+    git -C "$REPO_ROOT" symbolic-ref --quiet --short HEAD ||
+      git -C "$REPO_ROOT" rev-parse --verify HEAD
+  )"
+fi
 DEFAULT_WORKTREE_BASE="$(cd "$REPO_ROOT/.." && pwd)/kernel-pilot-worktrees"
 WORKTREE_BASE="${KDA_WORKTREE_BASE:-$DEFAULT_WORKTREE_BASE}"
 RUN_ID="${KDA_RUN_ID:-$(date +%Y%m%d-%H%M%S)-$$}"

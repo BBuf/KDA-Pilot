@@ -130,7 +130,7 @@ Use the printed review-base branch for RLCR. Do not guess it.
 Useful launcher overrides:
 
 ```bash
-KDA_BASE_BRANCH=main
+KDA_BASE_BRANCH=<ref>   # optional; defaults to the current checkout branch
 KDA_WORKTREE_BASE=/path/to/kernel-pilot-worktrees
 KDA_RUN_ID=my-run
 KDA_BRANCH_PREFIX=kda
