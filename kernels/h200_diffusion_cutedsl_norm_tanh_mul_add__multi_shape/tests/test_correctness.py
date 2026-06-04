@@ -195,11 +195,18 @@ def make_cases() -> list[dict[str, Any]]:
     db, ds, df, dd = DEFAULT_SHAPE
 
     if exhaustive:
+        # Every accepted scale layout (x shift=BSD) AND every accepted shift
+        # layout (x scale=11D) across the full recovered axes, so each valid
+        # 3-D layout is exercised in both operand positions on every
+        # shape/dtype/norm/affine/entry combination.
+        layout_pairs = [(m, "BSD") for m in VALID_INDEX_MODES] + [
+            ("11D", m) for m in VALID_INDEX_MODES if m != "BSD"
+        ]
         for (B, S, F, D) in SHAPES:
             for dtype in DTYPES:
                 for norm_type in NORM_TYPES:
                     for affine_mode in AFFINE_MODES:
-                        for mode in VALID_INDEX_MODES:
+                        for scale_mode, shift_mode in layout_pairs:
                             for entry in ("single", "dual"):
                                 cases.append(
                                     _case(
@@ -211,8 +218,8 @@ def make_cases() -> list[dict[str, Any]]:
                                         dtype=dtype,
                                         norm_type=norm_type,
                                         affine_mode=affine_mode,
-                                        scale_mode=mode,
-                                        shift_mode="BSD",
+                                        scale_mode=scale_mode,
+                                        shift_mode=shift_mode,
                                     )
                                 )
     else:
@@ -539,6 +546,25 @@ def _assert_dynamic_tolerance(cand: Any, base: Any, ref: Any, *, path: str = "ou
     )
 
 
+def _assert_dynamic_tolerance_stage2(
+    cand_pair, base_pair, *, case: dict[str, Any], path: str = "out"
+) -> None:
+    """Dynamic bound for the dual op's second output, consistent with the
+    compositional oracle: each side's y2 is measured against the stage-2
+    reference computed from ITS OWN y, and the candidate's stage-2 noise must
+    not exceed a small multiple of the baseline's stage-2 noise."""
+
+    ref2_c, _ = reference_y2_given(case, cand_pair[0])
+    ref2_b, _ = reference_y2_given(case, base_pair[0])
+    err_c = (cand_pair[1].float() - ref2_c).abs().max().item()
+    err_b = (base_pair[1].float() - ref2_b).abs().max().item()
+    bound = 2.0 * err_b + 1e-6
+    assert err_c <= bound, (
+        f"{path}[y2]: candidate stage-2 max-err {err_c:.6e} exceeds dynamic bound "
+        f"{bound:.6e} (baseline stage-2 max-err {err_b:.6e})"
+    )
+
+
 # --- Tests ----------------------------------------------------------------------
 
 
@@ -592,13 +618,15 @@ def test_candidate_cases() -> None:
         base = baseline(case)
         cand = candidate(case)
         _check_against_oracle(cand, case)
-        # Dynamic bound vs the baseline's own quantization noise (stage-1 y;
-        # stage-2 correctness is covered by the compositional oracle above).
+        # Dynamic bound vs the baseline's own quantization noise: stage-1 y
+        # against the pure oracle; dual y2 against the stage-2 reference of
+        # each side's own y (compositional, see _assert_dynamic_tolerance_stage2).
         ref_y = reference_y(case)
         if case["entry"] == "single":
             _assert_dynamic_tolerance(cand, base, ref_y, path=case["name"])
         else:
             _assert_dynamic_tolerance(cand[0], base[0], ref_y, path=f"{case['name']}[y]")
+            _assert_dynamic_tolerance_stage2(cand, base, case=case, path=case["name"])
         _free_tensors(case)
         if i % 16 == 15:
             torch.cuda.empty_cache()
@@ -639,6 +667,26 @@ def test_out_of_domain_d_raises() -> None:
             module = _load_register_module()
             with pytest.raises(ValueError):
                 module.optimized_wrapper(x, None, None, sc, sh, "rms", EPS)
+
+
+def test_y2_dynamic_bound_detects_perturbation() -> None:
+    """Sensitivity probe for the stage-2 dynamic bound: a synthetic candidate
+    that matches the baseline's y but perturbs ONLY y2 must fail the bound.
+    Runs in baseline-only mode (no candidate implementation needed)."""
+
+    case = _case(
+        entry="dual", B=1, S=256, F=1, D=3072, dtype="bfloat16", norm_type="rms"
+    )
+    base = baseline(case)
+    ref2_b, _ = reference_y2_given(case, base[0])
+    err_b = (base[1].float() - ref2_b).abs().max().item()
+    delta = 10.0 * (2.0 * err_b + 1e-6)
+    perturbed = (base[0], base[1] + delta)  # y identical, y2 shifted
+    with pytest.raises(AssertionError, match=r"\[y2\]"):
+        _assert_dynamic_tolerance_stage2(perturbed, base, case=case, path="y2-probe")
+    # Sanity: the unperturbed pair passes its own bound.
+    _assert_dynamic_tolerance_stage2(base, base, case=case, path="y2-probe-clean")
+    _free_tensors(case)
 
 
 def test_nan_input_is_flagged() -> None:
