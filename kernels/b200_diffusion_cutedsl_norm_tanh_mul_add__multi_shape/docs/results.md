@@ -93,6 +93,18 @@ than round 1): keeping the prefetched vectors live across the reduction barriers
 the 32-register cap forces local-memory spills inside the row loop. Edit reverted; the
 **round-1 launch-bounds K=8 kernel is the final candidate** of this loop.
 
+### Round 3-4: formal NCU comparison + v2 register-budget attempt
+
+Formal `--set full` reports (`profile/final_lb_k8_full/`, parsed in `analysis/`):
+baseline v1 **43.0 µs** / v2 **66.0 µs** (zero spills, ALU 52-56% — tanh math), candidate
+v1 **41.4 µs** / v2 **78.6 µs** (ALU 29-33%, but waves/SM 0.86, `long_scoreboard` 7.7-7.9,
+and local-memory spills: v1 47 MB, v2 267 MB per launch). Device-only: v1 1.04×, v2 0.84×
+(v2's end-to-end 1.29× is host-path-carried). PDL A/B: geomean 1.384× ≈ noise-worse →
+PDL stays OFF. Round 4 tried a v2-only 3-CTA/SM register budget (regs 40, no-spill
+hypothesis): NCU 93.7 µs, occupancy 57.6% — REJECTED (concurrency loss > spill relief);
+uniform 4-CTA K=8 build is final. Full six-dimension analysis:
+`profile/final_lb_k8_full/REPORT.md`.
+
 ### Bound attribution (final-candidate state)
 
 The remaining gap to the bytes floor (v1 41.1 vs 13.5 µs; v2 78.7 vs 18.0 µs) is

@@ -264,7 +264,14 @@ def main() -> int:
     gpu_phys = _physical_gpu_index()
     gpu_uuid = _nvidia_smi("uuid", gpu_phys)
     gpu_name = _nvidia_smi("name", gpu_phys)
+    # A just-exited CUDA process (e.g. a test run in the same session) can
+    # linger in nvidia-smi for a few seconds; retry briefly before aborting.
     idle_before, idle_before_detail = _gpu_idle_state(gpu_phys, gpu_uuid)
+    for _ in range(3):
+        if idle_before:
+            break
+        time.sleep(5)
+        idle_before, idle_before_detail = _gpu_idle_state(gpu_phys, gpu_uuid)
     if not idle_before:
         raise SystemExit(
             f"ABORT: GPU {gpu_phys} ({gpu_uuid}) not idle at start: {idle_before_detail}"
