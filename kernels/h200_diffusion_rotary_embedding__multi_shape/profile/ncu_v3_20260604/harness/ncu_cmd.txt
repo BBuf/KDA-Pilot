@@ -1,0 +1,14 @@
+# NCU collection commands (run inside sglang_bbuf on ion-h200-8, CUDA_VISIBLE_DEVICES=0, KDA_PROFILE=1 for -lineinfo JIT build)
+# entry: profile/prof_entry.py <case> [candidate|baseline]  (8 warmup launches, then 1 captured)
+cd $RDIR/work && export CUDA_VISIBLE_DEVICES=0 PYTHONPATH=/home/sglang-omni/bbuf/repos/sglang/python KDA_PROFILE=1
+
+# candidate full sets
+ncu --set full --target-processes all -k standard_rope_kernel  -s 8 -c 1 -o reports/std_full -f python profile/prof_entry.py hunyuanvideo__std__B1_T27030_H24_D128__bf16 candidate
+ncu --set full --target-processes all -k ltx2_split_rope_kernel -s 8 -c 1 -o reports/l64_full -f python profile/prof_entry.py ltx2__B1_S6144_H32_half64__bf16 candidate
+ncu --set full --target-processes all -k ltx2_split_rope_kernel -s 8 -c 1 -o reports/l32_full -f python profile/prof_entry.py ltx2__B1_S6144_H32_half32__bf16 candidate
+# candidate source sets (SourceCounters)
+ncu --set source --section SourceCounters --target-processes all -k standard_rope_kernel  -s 8 -c 1 -o reports/std_source -f python profile/prof_entry.py hunyuanvideo__std__B1_T27030_H24_D128__bf16 candidate
+ncu --set source --section SourceCounters --target-processes all -k ltx2_split_rope_kernel -s 8 -c 1 -o reports/l64_source -f python profile/prof_entry.py ltx2__B1_S6144_H32_half64__bf16 candidate
+# duration-only, candidate (-s 8 -c 1) and Triton baseline (-c 64, parse LAST steady launches; autotune makes warmup launch count unknown)
+for C in <six cases>: ncu --metrics gpu__time_duration.sum --target-processes all -k <kernel> [-s 8 -c 1 | -c 64] -o reports/dur_{cand,base}_$C -f python profile/prof_entry.py $C {candidate,baseline}
+# parsing: /tmp/parse_ncu_v3.py with the ncu_report python module -> analysis/metrics_raw.csv (full dump), curated analysis/metrics.csv

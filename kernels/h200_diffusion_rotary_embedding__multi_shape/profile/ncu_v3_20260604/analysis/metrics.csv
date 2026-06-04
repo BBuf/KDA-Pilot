@@ -1,0 +1,26 @@
+# v3 (native_cuda_v3_streamcache) NCU summary (GPU 0 H200, ion-h200-8, 2026-06-04; SGLang 84e110831 == pin 6965fe0ee)
+# reports under REMOTE_KDA_DIR/work/profile/ncu_v3_20260604/reports/ (fetched to ./reports/, raw .ncu-rep kept UNSTAGED per PR hygiene)
+# full-set metrics, candidate v3 kernels (clock-controlled NCU):
+case,kernel_us_ncu_v3,dram_pct,sm_pct,l2_hit_pct,occ_pct,regs,grid,achieved_GBps,pct_of_hbm_peak,roofline_ideal_us
+hunyuanvideo__std__B1_T27030_H24_D128__bf16,89.41,74.44,38.42,48.07,81.54,29,27030,3870,~81,~72
+ltx2__B1_S6144_H32_half64__bf16,35.94,76.19,42.03,33.97,80.97,32,6144,4201,~88,~31
+ltx2__B1_S6144_H32_half32__bf16,18.72,63.24,39.34,34.51,68.10,32,6144,4032,~84,~15.7
+
+# kernel-vs-kernel, NCU duration-only (same clock-controlled method both sides; Triton steady state = last captured launches after autotune):
+case,triton_kernel_us,cand_v3_kernel_us,ncu_kernel_ratio,note
+hunyuanvideo__std__B1_T27030_H24_D128__bf16,153.5,89.41,1.717,real kernel win (std streaming hints + v2 design)
+ltx2__B1_S6144_H32_half64__bf16,35.2,35.94,0.979,kernel parity-to-slightly-slower; wall win is host-path
+ltx2__B1_S6144_H32_half32__bf16,19.5,18.72,1.042,small real kernel win
+ltx2__B1_S1536_H32_half64__bf16,10.65,11.49,0.927,Triton kernel faster; wall win is host-path
+ltx2__B1_S1536_H32_half32__bf16,6.62,7.81,0.848,Triton kernel faster; wall win is host-path
+ltx2__B1_S126_H32_half32__bf16,2.70,3.58,0.754,Triton kernel faster (grid 126 blocks < 132 SMs undersubscribed); wall win is host-path
+
+# kernel-vs-kernel, CUDA-event pipelined (--device-batch 10, free clocks; small-ltx2 baseline numbers carry launch starvation -> NCU above is the arbiter there):
+case,baseline_dev_us,cand_dev_us,event_device_speedup,wall_speedup_final
+hunyuanvideo__std__B1_T27030_H24_D128__bf16,130.81,89.49,1.4617,1.4968
+ltx2__B1_S1536_H32_half64__bf16,19.66,13.07,1.5048*,1.2412
+ltx2__B1_S126_H32_half32__bf16,19.29,12.73,1.5147*,1.3486
+ltx2__B1_S1536_H32_half32__bf16,19.37,12.99,1.4916*,1.2775
+ltx2__B1_S6144_H32_half64__bf16,40.50,39.59,1.0230,1.1681
+ltx2__B1_S6144_H32_half32__bf16,23.19,20.56,1.1281,1.2777
+# (*) starvation artifact on the baseline side: Triton kernel shorter than its per-launch host cost; see NCU table for true kernel ratios.
