@@ -370,12 +370,29 @@ __global__ void fused_ln_select01(const LNSelect01Params __grid_constant__ param
   void* gate_out_row =
       pointer::offset(params.gate_out_ptr, row * params.inner_dim * sizeof(DTypeX));
 
+  // The modulation selection depends only on index[b, l] — NOT on the
+  // reduction — so the gate copy-through is hoisted ABOVE the block-reduction
+  // barrier to overlap its load+store traffic with the LN statistics
+  // (profiling showed the barrier-then-serial-epilogue ordering left DRAM
+  // idle ~7% of the kernel). The scale/shift tiles stay post-barrier: holding
+  // them in registers across the barrier costs ~64 regs/thread and the
+  // measured occupancy loss outweighed the overlap gain.
+  const int64_t idx_off = b * params.index_stride_b + l * params.index_stride_l;
+  const bool sel = static_cast<const IdType*>(params.index_ptr)[idx_off] != IdType(0);
+  const int64_t mod_off = b * params.mod_stride_b;
+  const void* scale_row = pointer::offset(sel ? params.scale1_ptr : params.scale0_ptr,
+                                          mod_off * sizeof(DTypeX));
+  const void* shift_row = pointer::offset(sel ? params.shift1_ptr : params.shift0_ptr,
+                                          mod_off * sizeof(DTypeX));
+  const void* gate_row = pointer::offset(sel ? params.gate1_ptr : params.gate0_ptr,
+                                         mod_off * sizeof(DTypeX));
+
   // Load the row into fp32 registers (residual mode fuses the gated add) and
   // accumulate sum + sum-of-squares in ONE pass (single block reduction).
   // For standardized activations the uncentered variance E[x^2]-mean^2 stays
   // within ~1e-7 of the centered form, far inside the oracle tolerances.
-  // The tile loop is statically unrolled with a slot guard so vals[][] stays
-  // in registers (dynamic indexing would spill to local memory).
+  // Tile loops are statically unrolled with slot guards so the register
+  // arrays stay in registers (dynamic indexing would spill to local memory).
   float vals[kMaxIter][kXVec];
   float lsum = 0.0f;
   float lsumsq = 0.0f;
@@ -415,23 +432,18 @@ __global__ void fused_ln_select01(const LNSelect01Params __grid_constant__ param
       lsum += vf[i];
       lsumsq = fmaf(vf[i], vf[i], lsumsq);
     }
+
+    // Independent of the reduction: gate copy-through (native dtype, transient
+    // registers) stays in flight while the barrier resolves.
+    XVec gv;
+    gv.load(gate_row, vslot);
+    gv.store(gate_out_row, vslot);
   }
 
   block_reduce2(lsum, lsumsq, smem);
   const float mean = lsum * inv_n;
   const float var = fmaxf(lsumsq * inv_n - mean * mean, 0.0f);
   const float rstd = math::rsqrt(var + params.eps);
-
-  // Per-row modulation selection (uniform across the block).
-  const int64_t idx_off = b * params.index_stride_b + l * params.index_stride_l;
-  const bool sel = static_cast<const IdType*>(params.index_ptr)[idx_off] != IdType(0);
-  const int64_t mod_off = b * params.mod_stride_b;
-  const void* scale_row = pointer::offset(sel ? params.scale1_ptr : params.scale0_ptr,
-                                          mod_off * sizeof(DTypeX));
-  const void* shift_row = pointer::offset(sel ? params.shift1_ptr : params.shift0_ptr,
-                                          mod_off * sizeof(DTypeX));
-  const void* gate_row = pointer::offset(sel ? params.gate1_ptr : params.gate0_ptr,
-                                         mod_off * sizeof(DTypeX));
 
 #pragma unroll
   for (uint32_t it = 0; it < kMaxIter; ++it) {
@@ -471,10 +483,6 @@ __global__ void fused_ln_select01(const LNSelect01Params __grid_constant__ param
     XVec ov;
     fp32_to_packet<DTypeX, kXVec>(vf, ov);
     ov.store(out_row, vslot);
-
-    XVec gv;  // gate passes through in the native dtype, unmodulated
-    gv.load(gate_row, vslot);
-    gv.store(gate_out_row, vslot);
   }
 
   PDLTriggerSecondary<kUsePDL>();
