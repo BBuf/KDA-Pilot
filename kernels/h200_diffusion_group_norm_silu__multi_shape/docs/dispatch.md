@@ -16,9 +16,11 @@ Notes:
 
 - Rows with 700,000 <= gs < 900,000 and s % 8192 == 0 stay on the CUDA giant
   path (rule 4 precedence; measured 1.06-1.10 there — e.g. `1x512x3x128x128`).
-- Unsupported layouts (non-contiguous, misaligned base) normalize to fresh
-  aligned tensors and run the same CUDA kernels (correctness-only path; no
-  production row hits it).
+- Unsupported layouts (non-contiguous, misaligned base): the fallback rules
+  apply first (a fallback-regime shape routes to the baseline, which owns its
+  own layout handling upstream-style); CUDA-regime shapes normalize to fresh
+  aligned tensors and run the same CUDA kernels. Correctness-only paths; no
+  production row hits them.
 - fp16/bf16/fp32 all dispatch identically (kernels instantiate all three).
 - Thresholds: `GNS_SMALL_LARGE_THRESH` (65,536), `GNS_GIANT_THRESH`
   (700,000), `GNS_FALLBACK_SMALL_LO` (40,960), `GNS_FALLBACK_GIANT_LO`

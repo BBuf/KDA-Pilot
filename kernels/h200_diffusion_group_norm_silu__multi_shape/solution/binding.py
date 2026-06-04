@@ -318,6 +318,10 @@ def _giant_chunk_for(spatial: int) -> int:
 
 # Self-cleaning arrival counters for the giant stats kernel's fused finalize
 # (the last CTA of each row resets its slot to zero), cached per device.
+# Stream-ordering note: the cache assumes giant calls on a device are
+# stream-ordered (the production entry launches on the current stream, as do
+# all harness paths). Concurrent giant calls on DIFFERENT streams of one
+# device would race on these counters and would need per-stream buffers.
 _row_counters: dict = {}
 
 

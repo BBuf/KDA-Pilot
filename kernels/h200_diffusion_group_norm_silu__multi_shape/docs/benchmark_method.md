@@ -1,7 +1,8 @@
 # Benchmark Method
 
-Status: scaffold draft — finalized after the remote H200 baseline lock
-(`docs/run_log.md` carries the run-by-run evidence).
+Status: final (promotion record; `docs/run_log.md` carries the run-by-run
+evidence, `docs/results.md` the final numbers; the DEC-6 amendment at the
+bottom of this file supersedes earlier ABI wording where noted).
 
 ## Harness
 
