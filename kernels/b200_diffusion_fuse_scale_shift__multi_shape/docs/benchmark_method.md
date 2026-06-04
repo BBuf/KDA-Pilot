@@ -70,8 +70,12 @@
   is enforced by the contract tolerances (atol=rtol=5e-2 non-fp32, 1e-5 fp32)
   against both the copied baseline and an independent fp32 torch oracle in
   `bench/correctness.py`, confirmed on-device.
-- LayerNorm statistics are fp32 two-pass on both sides; the residual variant
-  normalizes the fp32 pre-downcast residual values on both sides.
+- LayerNorm statistics are fp32 on both sides. The baseline and the
+  candidate's generic/fp32 paths use the reference's centered two-pass form;
+  the candidate's vectorized bf16/fp16 production rows use shifted-data
+  one-pass moments (offset-robust, single fused reduction — see
+  `docs/dispatch.md`). The residual variant normalizes the fp32 pre-downcast
+  residual values on both sides.
 - `gate_out` is a raw-dtype pass-through on both sides (no fp32 round trip).
 - The upstream scalar-scalar all-zero fast path copies `x` through unchanged
   regardless of `scale_constant`; the candidate and the oracle reproduce this
