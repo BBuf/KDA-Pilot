@@ -408,7 +408,9 @@ def main():
     ap.add_argument("--iters", type=int, default=100)
     ap.add_argument("--seed", type=int, default=20260604)
     ap.add_argument("--gpu-id", type=int, default=int(os.environ.get("REMOTE_GPU_ID", 0)))
-    ap.add_argument("--run-id", default=datetime.now(timezone.utc).strftime("run-%Y%m%d-%H%M%S"))
+    # None by default: report mode aggregates across all runs (latest-any);
+    # a timestamped id is synthesized only for actual benchmark runs.
+    ap.add_argument("--run-id", default=None)
     ap.add_argument("--cases", default="", help="comma-separated case_id filter")
     ap.add_argument("--candidate-layer", choices=["shipping", "plain"], default="shipping",
                     help="candidate host stack: custom-op-wrapped (symmetric) or plain callable")
@@ -416,6 +418,8 @@ def main():
     args = ap.parse_args()
     if args.report:
         sys.exit(report(args))
+    if args.run_id is None:
+        args.run_id = datetime.now(timezone.utc).strftime("run-%Y%m%d-%H%M%S")
     sys.exit(run_benchmark(args))
 
 
