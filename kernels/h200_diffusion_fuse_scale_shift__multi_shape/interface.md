@@ -97,3 +97,41 @@ which shape bucket);
 - PyTorch-FP32 or `_reference()` tolerance methodology used in tests;
 - benchmark command and latency formula;
 - source lineage for copied or ported helper code.
+
+## Final Evidence (cuda-flat-v4, promoted via in-tree drop-in)
+
+- Final wrapper signatures: the three recovered baseline signatures above,
+  preserved exactly; `src/register.py` exposes them plus `optimized_wrapper`
+  (signature-binding resolution) and a bare-exec-safe `EXPORTS` dict. The
+  shipping wrapper is `intree/scale_shift_kda.py` (in-tree:
+  `python/sglang/jit_kernel/diffusion/scale_shift_kda.py`).
+- Per-shape dispatch table: `docs/dispatch.md` — 15/15 production rows native
+  (elementwise:ss for all fuse_scale_shift rows incl. mixed-dtype and the
+  non-contiguous fp32 scale; ln_select01 / ln_select01_residual for the two
+  Family B rows); full eligibility predicates listed there.
+- Fallback cases: out-of-contract device/dtype/rank/stride/alignment
+  signatures, both-scalar scale/shift (baseline zero-copy semantics kept),
+  C not divisible by the 16B vector width, B*L > 65535 (elementwise) or
+  C > 8192 bf16-equivalent (LN family) — all reach the baseline (locally the
+  vendored copy; in-tree the original Triton bodies), verified by the
+  negative-parity suite and the in-tree fallback checks.
+- Tolerance methodology: fixed oracle tolerances (atol=rtol=5e-2 fp16/bf16,
+  1e-5 fp32) candidate-vs-baseline PLUS the dynamic cross-check
+  max|cand-ref32| <= 2.0*max|base-ref32| + floor (bench/reference.py), with
+  NaN/Inf guards; comparator self-test rejects corruption and NaN.
+- Benchmark command and latency formula:
+  `python bench/benchmark.py --gpu-id <id> --tag <candidate>` — same-process
+  interleaved A/B, per-call sync-wall and CUDA-event medians over
+  auto-scaled iterations (~60 ms/side), stats median/mean/std/min/p10/p90;
+  speedup = baseline_median_us / candidate_median_us; geomean via
+  `--geomean` over the latest valid row per shape. Shipping-path validation:
+  `profile/in_sglang/validate_in_tree.py --gpu-id <id>` (ABBA blocks through
+  the unchanged public SGLang callables).
+- Source lineage: `docs/baseline_source.md` (vendored Triton baseline,
+  bit-identical 21/21 vs live SGLang at copy time); design idea sources in
+  `solutions.jsonl` (KernelWiki pr-sglang-14717, technique-vectorized-loads;
+  qknorm_rope.cuh / group_norm_silu_kda.cuh exemplars).
+- Results: local geomeans sync 1.2874x / device 1.2274x / amort 1.2951x
+  (docs/results.md); shipping-path geomeans sync **1.2513x** / stream-span
+  **1.3269x**, oracle 288/288, all rows >= 1.125x
+  (docs/sglang_jit_export.md). PERF_FALLBACK empty.

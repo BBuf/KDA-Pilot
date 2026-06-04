@@ -531,3 +531,16 @@ well-supported no-go explains why no defensible path remains under the
 available workspace;
 - `prompt.md`, `interface.md`, `benchmark.csv`, and `solutions.jsonl` are
 updated with the final result.
+
+---
+
+## Final Result (RLCR 2026-06-04)
+
+Completed. Native CUDA kernels (solution/scale_shift_kda.cuh, final candidate
+cuda-flat-v4) replace all three Triton entry points across the 15 captured
+shapes: correctness 2424/2424 local + 288/288 in-tree oracle; geometric-mean
+median-latency speedup over the SGLang baseline — local loop sync 1.2874x /
+device 1.2274x; SHIPPING PATH (in-tree drop-in, unchanged public ops,
+docs/sglang_jit_export.md) sync 1.2513x / stream-span 1.3269x, every row
+>= 1.125x, PERF_FALLBACK empty. Bound evidence: wan rows at the 4.33 TB/s
+streaming ceiling; per-bucket roofline + NCU in docs/results.md.

@@ -58,10 +58,11 @@ negative-parity suite).
 | prod13 wan-t2v 37800x5120 fp32-scale | scale_shift | elementwise:ss (mixed dtype) | 1.420x | 1.428x |
 | prod14 wan-ti2v 18144x3072 NC fp32-scale | scale_shift | elementwise:ss (strided, no copy) | 1.071x | 1.126x |
 
-DEC-1 note: the two Family B rows are 0.954x/0.982x on the DEVICE metric but
-+12-13% on the end-to-end callable; they stay native. If the post-loop
-in-SGLang drop-in shows a net loss for them under the production execution
-mode, `PERF_FALLBACK` gains those bucket keys then (route=fallback, 1.0x).
+DEC-1 note (RESOLVED by the in-tree arbiter, docs/sglang_jit_export.md): the
+two Family B rows — 0.954x/0.982x on the bare-kernel device view — win
+1.149x/1.151x sync and 1.181x/1.168x stream-span through the real SGLang
+public wrapper, as does every other row (min 1.125x). `PERF_FALLBACK` stays
+EMPTY; DEC-1 perf-fallback was never needed.
 
 ## Regression-grid routing
 

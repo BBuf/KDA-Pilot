@@ -75,10 +75,32 @@ regression) -> cuda-flat-v2 (single-pass LN stats + runtime block size) ->
 cuda-flat-v3 (REJECTED: modulation register prefetch, occupancy loss) ->
 **cuda-flat-v4 (KEPT: gate-only hoist)**.
 
-## Caveats / deferred
+## Promotion arbiter: in-tree SGLang drop-in (EXECUTED — see docs/sglang_jit_export.md)
 
-- The promotion arbiter is the post-loop in-SGLang in-tree drop-in
-  (oracle test + smoke benchmark through the unchanged public ops); these
-  local numbers are the device-fair evidence feeding it.
-- PDL untested-by-default (off); prior pilot evidence says it hurts isolated
-  launches. KDA_PDL=1 exists for a follow-up experiment.
+The candidate was placed in-tree (task-owned sglang worktree at 84e1108312b5:
+`.cuh` under `jit_kernel/csrc/diffusion/`, wrapper module via `load_jit` with
+the relative csrc path, 18 inserted lines routing the UNCHANGED public Triton
+functions through `try_native_*` with their original bodies as fallback; the
+CustomOp/torch.compile layer untouched) and validated on idle GPU 3:
+
+- Oracle: SGLang's `test_qwen_image_modulation.py` **288/288 passed** with
+  native ON under the unchanged public ops.
+- Routing 15/15 native; parity 15/15 within oracle tolerances; fp64/NC-x/CPU
+  fallback checks reach the original Triton body with identical behavior.
+- **Shipping-path geomean (identical public wrapper/dispatch/registration on
+  both sides, only the device path toggles): sync_wall 1.2513x, stream-span
+  device_ev 1.3269x — every row >= 1.125x, including the two Family B rows
+  (select01 1.149x, residual 1.151x) that were 0.954x/0.982x on the
+  bare-kernel device view.** PERF_FALLBACK stays empty (DEC-1 unused).
+
+The local-loop geomeans above (1.2874x/1.2274x/1.2951x) remain the
+device-fair RLCR evidence; the promotion claim is the shipping-path table in
+docs/sglang_jit_export.md.
+
+## Caveats
+
+- PDL off by default (prior pilot evidence says it hurts isolated launches);
+  `SGLANG_SCALE_SHIFT_KDA_PDL=1` / `KDA_PDL=1` exist for follow-up
+  experiments.
+- The in-tree harness carries per-call event records inside the timed region
+  (~15 us, identical on both sides) — absolute numbers shift, ratios do not.
