@@ -53,12 +53,36 @@ production rows to staged — verified in source, recorded in `solutions.jsonl`)
   `pr-TensorRT-LLM-13052`, `pr-TensorRT-LLM-11869`) and the H200 row-norm family findings.
   Deeper prefetch/cp.async schedules remain unprobed (out of bounded budget, not disproven).
 
-## Shipping-integration arbiter (in-SGLang in-tree drop-in)
+## Shipping-integration arbiter (in-SGLang in-tree drop-in) — **PASS**
 
-Pending in this round's final step: isolated SGLang worktree at `0b65588c1` with the
-candidate `.cuh` under `python/sglang/jit_kernel/csrc/diffusion/qknorm_rope.cuh`
-(`register_custom_op` byte-unchanged), measured by `profile/in_sglang/validate_in_tree.py`
-(discard-run1/record-run2 warm protocol) + `compile_smoke.py` (fullgraph torch.compile
-parity). Promotion gate per DEC-1: parity-or-speedup, no material per-shape regression;
-geomean reported as an outcome metric. Results land in `docs/sglang_jit_export.md` and the
-`*__intree` rows of `benchmark.csv` when run.
+Isolated SGLang worktree at `0b65588c1`, candidate `.cuh` under
+`python/sglang/jit_kernel/csrc/diffusion/qknorm_rope.cuh`, `register_custom_op`
+byte-unchanged, per-side `TVM_FFI_CACHE_DIR` isolation, alternating sides with run1
+discarded and run2 recorded (run1 = regression cross-check), enforced gate (>3% material
+threshold, geomean ≥ 1.0, correctness):
+
+| shape | bucket | base µs | cand µs | speedup |
+|---|---|---|---|---|
+| joyai-edit B7904 H32 | large | 93.02 | 76.96 | 1.2087x |
+| qwen B4096 H24 | large | 45.09 | 36.13 | 1.2480x |
+| qwen-edit B8424 H24 | large | 76.00 | 66.61 | 1.1410x |
+| zimage B4096 H30 | large | 53.30 | 42.38 | 1.2575x |
+| zimage B4128 H30 | large | 53.44 | 42.03 | 1.2714x |
+| 5 small rows (19–195 tokens) | small | 22.18–22.50 | 22.62–22.78 | 0.9733–0.9908 (≤3%, run1-confirmed-not-material) |
+| **GEOMEAN_intree_r9** | all 10 | | | **1.0970x — PROMOTION_GATE PASS** |
+
+- Correctness 10/10 through the real public op in all four measure runs.
+- torch.compile fullgraph smoke PASS on both sides (small + large captured rows + broad
+  synthetic B1024/H16); compiled ≡ eager within task tolerances.
+- Broad staged surface: SGLang's own `test_qknorm_rope.py` **full grid 1248 passed** inside
+  the candidate worktree.
+- Decomposition: public custom-op layer ≈7–8 µs/call on both sides (cancels in the ratio);
+  the in-tree path adds no Python. Absolute µs depend on the input-set/L2-residency protocol
+  (single-set arbiter runs are faster than the two-set devfair lane); same-protocol ratios
+  are the admissible evidence. Geomean is reported as an outcome metric per the round
+  decision; the gate it had to clear was parity-or-speedup with no material per-shape
+  regression — cleared.
+
+Raw evidence: `benchmark.csv` `*__intree_r9` + `GEOMEAN_intree_r9`; `profile/in_sglang/r9/`
+(4 measure JSONs with full stats, compare log, compile-smoke logs, SGLang-grid log,
+decompose log); `docs/sglang_jit_export.md` (r9 section).

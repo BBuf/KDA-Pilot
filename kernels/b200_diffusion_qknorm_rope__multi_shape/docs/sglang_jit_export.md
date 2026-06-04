@@ -1,5 +1,41 @@
 # SGLang export — in-tree placement (torch.compile-safe), the #19 way
 
+## Continuation round r9 (2026-06-04) — ARBITER PASS on the jit_kernel/tvm-ffi stack
+
+This round re-ran the full arbiter with review-hardened protocol and fresh same-commit
+evidence. **PROMOTION_GATE PASS — in-SGLang device geomean 1.0970x** (`benchmark.csv`
+`*__intree_r9` rows + `GEOMEAN_intree_r9`; raw JSONs/logs in `profile/in_sglang/r9/`).
+
+- SGLang files to patch (unchanged): ONLY `python/sglang/jit_kernel/csrc/diffusion/qknorm_rope.cuh`
+  ← this task's `src/qknorm_rope_candidate.cuh` (sha256 candidate `874b1bfa`, baseline `86db2105`).
+  Public entry `fused_inplace_qknorm_rope` and its `@register_custom_op(mutates_args=["q","k"])`
+  stay byte-unchanged; `load_jit` template args / CUDA wrapper name (`("qknorm_rope",
+  "QKNormRopeKernel<head_dim,rope_dim,is_neox,pdl,dtype>::run")`) unchanged.
+- Protocol (per pre-arbiter review): isolated SGLang worktree at `0b65588c1`
+  (`$RDIR/sglang_intree_cand`); per-side `TVM_FFI_CACHE_DIR` isolation (no module-name
+  collision possible); alternating sides, run1 discarded (warm), run2 recorded, run1 used as
+  the regression cross-check; material-regression gate (>3%, run1-confirmed) ENFORCED by
+  `validate_in_tree.py compare` (exit code); idle B200 GPU 1 (UUID `GPU-709d3f1a`), 0%/0MiB
+  before and after.
+- Results (run2): large rows 1.1410–1.2714x (joyai 1.2087, qwen 1.2480, qwen-edit 1.1410,
+  zimage 1.2575/1.2714); small rows 0.9733–0.9908 — all within the 3% threshold (and small
+  medians 22.2–22.8 µs on both sides, stable). Correctness 10/10 through the real op in all
+  four measure runs.
+- torch.compile preservation: `compile_smoke.py` fullgraph PASS on both sides over a small
+  captured row, a large captured row, and a broad-staged synthetic row (B1024/H16) —
+  compiled results match eager within task tolerances.
+- Broad staged surface (the in-tree gate covers ALL bf16/128/128 non-NeoX ≥512-token calls):
+  SGLang's own `python/sglang/jit_kernel/tests/diffusion/test_qknorm_rope.py` **full grid,
+  1248 passed** inside the candidate worktree (`profile/in_sglang/r9/sglang_own_test_cand.log`).
+- Host/device decomposition (`profile/in_sglang/r9/decompose_r9.log`): the public custom-op
+  layer costs ~7–8 µs/call on both sides (identical layers ⇒ cancels in the ratio); the
+  in-tree path adds NO Python on top of SGLang's own op. Note the single-input-set protocol
+  yields faster absolute µs than the two-set devfair lane (L2 residency of the in-place q/k);
+  same-protocol ratios are the admissible evidence.
+
+The sections below are the prior round's record (mechanism unchanged; numbers superseded by
+the r9 rows above).
+
 AC-8 deliverable, redone the way the promoted h200 qknorm_rope (PR #19, AC-13) did it: a **real
 in-tree placement** of the candidate `.cuh` inside SGLang's `csrc`, keeping SGLang's **own**
 `register_custom_op` wrapper. This is **torch.compile-safe** (the public op stays a registered

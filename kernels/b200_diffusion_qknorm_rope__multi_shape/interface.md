@@ -15,6 +15,14 @@
 > overlay) is retired and kept only as a negative control. All performance numbers below this
 > banner are the **prior-round record** — fresh same-commit numbers land in `benchmark.csv`
 > during this round. Active-round context: `docs/draft.md` (top section).
+>
+> **r9 outcome: ARBITER PASS.** In-SGLang in-tree drop-in at `0b65588c1`: device geomean
+> **1.0970x** (large 1.141–1.271x, small ≥0.973 within the 3% materiality gate,
+> run1-confirmed), correctness 10/10 ×4 runs, torch.compile fullgraph smoke PASS both sides,
+> SGLang's own full grid 1248 passed in the candidate worktree. Loop-lane device-fair
+> 1.0648–1.0691x; PDL kept at arch default (A/B sub-materiality). Evidence:
+> `benchmark.csv` (`GEOMEAN_intree_r9`), `docs/sglang_jit_export.md` (r9 section),
+> `profile/r9_staged_b200/REPORT.md`, `profile/in_sglang/r9/`.
 
 ## Recovered Callsite Contract
 

@@ -526,3 +526,27 @@ well-supported no-go explains why no defensible path remains under the
 available workspace;
 - `prompt.md`, `interface.md`, `benchmark.csv`, and `solutions.jsonl` are
 updated with the final result.
+
+## Final Result (continuation round r9, 2026-06-04)
+
+**PROMOTED — in-SGLang in-tree arbiter PASS.** The staged CTA-per-token kernel
+(`src/qknorm_rope_candidate.cuh`, in-`.cuh` delegation for the bf16/128/128 non-NeoX
+`num_tokens >= 512` production template; `register_custom_op` byte-unchanged) revalidated on
+the SGLang `jit_kernel`/tvm-ffi stack at `0b65588c1` on an idle B200:
+
+- Shipping-integration arbiter (identical public custom-op layers both sides, isolated
+  worktree + per-side build caches, run1-discard/run2-record, enforced >3% material-regression
+  gate): **device geomean 1.0970x** — large rows 1.141–1.271x, small rows 0.973–0.991
+  (within threshold, run1-confirmed); correctness 10/10 ×4 runs; torch.compile fullgraph
+  smoke PASS both sides; SGLang's own full test grid 1248 passed in the candidate worktree.
+- Loop-lane device-fair (hermetic `baseline/` copy, interleaved): 1.0648–1.0691x geomean
+  (large 1.08–1.25x, small parity); copy ≡ upstream cross-check 1.0701x.
+- Bound closure: large bucket memory-latency-bound at full occupancy on mandatory q+k traffic
+  (DRAM 15.8% peak; 49% of stall samples on the q/k load-consumption line); small bucket
+  host/launch-bound (device byte-identical → parity). Bounded exploration closed for
+  promotion: the two-token-CTA probe was correct but parity-to-worse (rejected); PDL kept at
+  arch default (A/B 1.0035x, sub-materiality, mixed signs).
+- Evidence: `benchmark.csv` (`GEOMEAN_intree_r9` 1.0970x + full per-shape stats),
+  `docs/results.md`, `docs/sglang_jit_export.md` (r9 protocol + results),
+  `profile/r9_staged_b200/REPORT.md` (NCU), `profile/in_sglang/r9/` (raw JSONs/logs),
+  `solutions.jsonl` (`r9_revalidate_staged_tvmffi` → `cand_staged2_r9` → `intree_arbiter_r9`).
