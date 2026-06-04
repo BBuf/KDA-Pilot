@@ -75,24 +75,30 @@ __global__ void standard_rotary_kernel(const StandardRotaryParams __grid_constan
 
   // 128-bit vectorized over contiguous head_dim: each thread owns kPairsPerVec
   // adjacent pairs (2*kPairsPerVec elements) loaded/stored in one transaction.
-  // cos/sin (fp32) are loaded directly per thread (vectorized); the small per-token
-  // cos/sin row is reused across heads through L2, so no shared-memory barrier is
-  // needed -- dropping __syncthreads improves memory-level parallelism.
+  // The launcher guarantees blockDim.x is a multiple of kVecPerHead, so each
+  // thread's pair-segment index (pv % kVecPerHead) is invariant across its
+  // grid-stride passes over the heads: the per-token cos/sin vectors are loaded
+  // ONCE into registers and reused for every head the thread visits. (No
+  // shared-memory staging / __syncthreads -- direct loads keep memory-level
+  // parallelism high; the row-local i0 offset below is always in bounds, so the
+  // hoisted load is safe even for threads with no loop iterations.)
   constexpr int kPairsPerVec = (kHalf % 4 == 0) ? 4 : ((kHalf % 2 == 0) ? 2 : 1);
   constexpr int kVecPerHead = kHalf / kPairsPerVec;
   using V = AVec<DType, 2 * kPairsPerVec>;
   using CV = AVec<float, kPairsPerVec>;
 
+  const uint32_t i0 =
+      (threadIdx.x % static_cast<uint32_t>(kVecPerHead)) * static_cast<uint32_t>(kPairsPerVec);
+  const CV cvec = *reinterpret_cast<const CV*>(cos_row + i0);
+  const CV svec = *reinterpret_cast<const CV*>(sin_row + i0);
+
   const uint32_t total_vec = params.num_heads * static_cast<uint32_t>(kVecPerHead);
   for (uint32_t pv = threadIdx.x; pv < total_vec; pv += blockDim.x) {
     const uint32_t h = pv / static_cast<uint32_t>(kVecPerHead);
-    const uint32_t i0 = (pv % static_cast<uint32_t>(kVecPerHead)) * kPairsPerVec;
     const DType* xh = x_row + static_cast<int64_t>(h) * kHeadDim;
     DType* oh = out_row + static_cast<int64_t>(h) * kHeadDim;
 
     const V v = *reinterpret_cast<const V*>(xh + 2 * i0);
-    const CV cvec = *reinterpret_cast<const CV*>(cos_row + i0);
-    const CV svec = *reinterpret_cast<const CV*>(sin_row + i0);
     V vo;
 #pragma unroll
     for (int k = 0; k < kPairsPerVec; ++k) {
@@ -144,8 +150,27 @@ struct StandardRotaryKernel {
         .num_tokens = static_cast<uint32_t>(T.unwrap()),
         .num_heads = static_cast<uint32_t>(H.unwrap()),
     };
+    // Block size: any multiple of kVecPerHead keeps each thread's cos/sin pair
+    // segment invariant across its grid-stride passes (required by the in-kernel
+    // register hoist). Prefer the largest size <= kThreadsPerBlock that (a) is a
+    // multiple of kVecPerHead, (b) divides the per-row vector count exactly (every
+    // pass is full -- no idle tail lanes), and (c) divides the 2048-thread SM
+    // budget (full thread-residency packing). For the captured 24-head/128-dim
+    // shape this picks 128 -- a measured B200 sweep over {64,96,128,160,192,224,
+    // 256} put the full-pass sizes at ~57.7us vs 61.9us at the old fixed 256.
+    // Fall back to the largest kVecPerHead-aligned size otherwise.
+    constexpr int kPairsPerVec = ((kHeadDim / 2) % 4 == 0) ? 4 : (((kHeadDim / 2) % 2 == 0) ? 2 : 1);
+    constexpr uint32_t kVecPerHead = static_cast<uint32_t>((kHeadDim / 2) / kPairsPerVec);
+    static_assert(kVecPerHead >= 1 && kVecPerHead <= kThreadsPerBlock, "head_dim out of supported range");
+    const uint32_t total_vec = params.num_heads * kVecPerHead;
+    uint32_t threads = (kThreadsPerBlock / kVecPerHead) * kVecPerHead;  // aligned fallback
+    for (uint32_t t = kThreadsPerBlock; t >= 64u; t -= 32u) {
+      if (t % kVecPerHead != 0u || total_vec % t != 0u || 2048u % t != 0u) continue;
+      threads = t;
+      break;
+    }
     const uint32_t num_blocks = params.num_rows;
-    LaunchKernel(num_blocks, kThreadsPerBlock, device.unwrap()).enable_pdl(kUsePDL)(kernel, params);
+    LaunchKernel(num_blocks, threads, device.unwrap()).enable_pdl(kUsePDL)(kernel, params);
   }
 };
 
@@ -287,6 +312,9 @@ struct Ltx2SplitRotaryKernel {
     // Match block size to per-row work so threads are not left idle: half32 rows
     // hold only num_heads*(half/kVec) vectors, which is < 256 -> a fixed 256-thread
     // block would idle half its warps and halve effective memory parallelism.
+    // (A two-rows-per-block variant for kHalf=32 was measured on B200 and
+    // rejected: no effect on the bandwidth-paced 24576-row shapes and a >10%
+    // regression on the launch-bound 126-row shapes from halving the grid.)
     constexpr int kVec = (kHalf % 8 == 0) ? 8 : ((kHalf % 4 == 0) ? 4 : ((kHalf % 2 == 0) ? 2 : 1));
     const uint32_t work_per_row = params.num_heads * (static_cast<uint32_t>(kHalf) / kVec);
     uint32_t threads = ((work_per_row + 31u) / 32u) * 32u;  // round up to a warp

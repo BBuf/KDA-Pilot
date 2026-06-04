@@ -1,0 +1,167 @@
+{
+  "kda_kernels_from": "/home/sglang-omni/bbuf/kda_runs/b200_diffusion_rotary_embedding__multi_shape/2026-06-04_17-45-46/repo_root/kda_kernels/__init__.py",
+  "install_status": [
+    [
+      "sglang.jit_kernel.diffusion.qknorm_rope:fused_inplace_qknorm_rope",
+      "kda_kernels.diffusion.qknorm_rope:fused_inplace_qknorm_rope",
+      "swapped"
+    ],
+    [
+      "sglang.jit_kernel.diffusion.triton.norm:norm_infer",
+      "kda_kernels.diffusion.norm_infer:norm_infer",
+      "swapped"
+    ],
+    [
+      "sglang.jit_kernel.diffusion.triton.rmsnorm_onepass:triton_one_pass_rms_norm",
+      "kda_kernels.diffusion.norm_infer:triton_one_pass_rms_norm",
+      "swapped"
+    ],
+    [
+      "sglang.jit_kernel.diffusion.triton.group_norm_silu:triton_group_norm_silu",
+      "kda_kernels.diffusion.group_norm_silu:triton_group_norm_silu",
+      "swapped"
+    ],
+    [
+      "sglang.jit_kernel.diffusion.group_norm_silu:apply_group_norm_silu",
+      "kda_kernels.diffusion.group_norm_silu:apply_group_norm_silu",
+      "swapped"
+    ],
+    [
+      "sglang.jit_kernel.diffusion.triton.rotary:apply_rotary_embedding",
+      "kda_kernels.diffusion.rotary_embedding:apply_rotary_embedding",
+      "swapped"
+    ],
+    [
+      "sglang.jit_kernel.diffusion.triton.ltx2_rotary:apply_ltx2_split_rotary_emb",
+      "kda_kernels.diffusion.rotary_embedding:apply_ltx2_split_rotary_emb",
+      "swapped"
+    ],
+    [
+      "sglang.jit_kernel.diffusion.triton.scale_shift:fuse_scale_shift_kernel",
+      "kda_kernels.diffusion.fuse_scale_shift:fuse_scale_shift_kernel",
+      "skipped: not optimized"
+    ],
+    [
+      "sglang.jit_kernel.diffusion.triton.scale_shift:fuse_layernorm_scale_shift_gate_select01_kernel",
+      "kda_kernels.diffusion.fuse_scale_shift:fuse_layernorm_scale_shift_gate_select01_kernel",
+      "skipped: not optimized"
+    ],
+    [
+      "sglang.jit_kernel.diffusion.triton.scale_shift:fuse_residual_layernorm_scale_shift_gate_select01_kernel",
+      "kda_kernels.diffusion.fuse_scale_shift:fuse_residual_layernorm_scale_shift_gate_select01_kernel",
+      "skipped: not optimized"
+    ],
+    [
+      "sglang.jit_kernel.diffusion.cutedsl.norm_tanh_mul_add_norm_scale:fused_norm_tanh_mul_add",
+      "kda_kernels.diffusion.cutedsl_norm_tanh_mul_add:fused_norm_tanh_mul_add",
+      "skipped: not optimized"
+    ],
+    [
+      "sglang.jit_kernel.diffusion.cutedsl.norm_tanh_mul_add_norm_scale:fused_norm_tanh_mul_add_norm_scale",
+      "kda_kernels.diffusion.cutedsl_norm_tanh_mul_add:fused_norm_tanh_mul_add_norm_scale",
+      "skipped: not optimized"
+    ],
+    [
+      "sglang.jit_kernel.diffusion.cutedsl.scale_residual_norm_scale_shift:fused_norm_scale_shift",
+      "kda_kernels.diffusion.cutedsl_norm_scale_shift:fused_norm_scale_shift",
+      "skipped: not optimized"
+    ],
+    [
+      "sglang.jit_kernel.diffusion.cutedsl.scale_residual_norm_scale_shift:fused_scale_residual_norm_scale_shift",
+      "kda_kernels.diffusion.cutedsl_norm_scale_shift:fused_scale_residual_norm_scale_shift",
+      "skipped: not optimized"
+    ]
+  ],
+  "swapped_rotary": true,
+  "swapped_ltx2": true,
+  "integrated_oracle": {
+    "shapes": 11,
+    "max_abs_diff": 0.0,
+    "bit_exact": true
+  },
+  "integrated_benchmark": {
+    "geomean": 3.1147,
+    "rows": [
+      {
+        "name": "hunyuanvideo__standard__1x27030x24x128",
+        "base_us": 109.01,
+        "kda_us": 57.7,
+        "speedup": 1.889
+      },
+      {
+        "name": "ltx23_ti2v__1x1536x4096__half64",
+        "base_us": 38.29,
+        "kda_us": 22.3,
+        "speedup": 1.717
+      },
+      {
+        "name": "ltx23_ti2v__1x126x2048__half32",
+        "base_us": 31.6,
+        "kda_us": 21.7,
+        "speedup": 1.456
+      },
+      {
+        "name": "ltx23_ti2v__1x1536x2048__half32",
+        "base_us": 38.21,
+        "kda_us": 21.6,
+        "speedup": 1.769
+      },
+      {
+        "name": "ltx23_ti2v__1x6144x4096__half64",
+        "base_us": 108.72,
+        "kda_us": 28.03,
+        "speedup": 3.878
+      },
+      {
+        "name": "ltx23_ti2v__1x6144x2048__half32",
+        "base_us": 106.98,
+        "kda_us": 22.06,
+        "speedup": 4.848
+      },
+      {
+        "name": "ltx23_two__2x6144x4096__half64",
+        "base_us": 209.34,
+        "kda_us": 49.54,
+        "speedup": 4.226
+      },
+      {
+        "name": "ltx23_two__2x126x2048__half32",
+        "base_us": 31.23,
+        "kda_us": 21.71,
+        "speedup": 1.438
+      },
+      {
+        "name": "ltx23_two__2x6144x2048__half32",
+        "base_us": 209.31,
+        "kda_us": 27.94,
+        "speedup": 7.493
+      },
+      {
+        "name": "ltx23_two__1x24576x4096__half64",
+        "base_us": 414.05,
+        "kda_us": 92.54,
+        "speedup": 4.474
+      },
+      {
+        "name": "ltx23_two__1x24576x2048__half32",
+        "base_us": 414.06,
+        "kda_us": 49.54,
+        "speedup": 8.359
+      }
+    ]
+  },
+  "integrated_fallback": {
+    "max_abs_diff": 0.0
+  },
+  "uninstall_status": [
+    "sglang.jit_kernel.diffusion.qknorm_rope:fused_inplace_qknorm_rope",
+    "sglang.jit_kernel.diffusion.triton.norm:norm_infer",
+    "sglang.jit_kernel.diffusion.triton.rmsnorm_onepass:triton_one_pass_rms_norm",
+    "sglang.jit_kernel.diffusion.triton.group_norm_silu:triton_group_norm_silu",
+    "sglang.jit_kernel.diffusion.group_norm_silu:apply_group_norm_silu",
+    "sglang.jit_kernel.diffusion.triton.rotary:apply_rotary_embedding",
+    "sglang.jit_kernel.diffusion.triton.ltx2_rotary:apply_ltx2_split_rotary_emb"
+  ],
+  "restored_rotary": true,
+  "restored_ltx2": true
+}
