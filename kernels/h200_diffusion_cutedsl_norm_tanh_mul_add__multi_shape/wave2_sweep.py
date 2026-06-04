@@ -56,18 +56,6 @@ def _module():
                     cuda_files=[str(CUH)], cuda_wrappers=wrappers)
 
 
-def _gpu_median_us(fn, iters=100):
-    starts = [torch.cuda.Event(enable_timing=True) for _ in range(iters)]
-    ends = [torch.cuda.Event(enable_timing=True) for _ in range(iters)]
-    torch.cuda.synchronize()
-    for i in range(iters):
-        starts[i].record()
-        fn()
-        ends[i].record()
-    torch.cuda.synchronize()
-    return statistics.median(s.elapsed_time(e) * 1e3 for s, e in zip(starts, ends))
-
-
 def _interleaved_gpu_us(fa, fb, warmup=20, iters=100):
     for _ in range(warmup):
         fa()

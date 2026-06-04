@@ -71,16 +71,6 @@ def _aligned16(t: torch.Tensor) -> bool:
     return t.data_ptr() % 16 == 0
 
 
-def _is_fast_3d(t: torch.Tensor, B: int, S: int, D: int) -> bool:
-    return (
-        t.dim() == 3
-        and t.shape[0] in (1, B)
-        and t.shape[1] in (1, S)
-        and t.shape[2] == D
-        and t.stride(-1) == 1
-    )
-
-
 def _fast_path_ok(
     x: torch.Tensor,
     weight: Optional[torch.Tensor],
@@ -120,9 +110,11 @@ def _fast_path_ok(
     if not (
         shift.is_cuda
         and shift.dtype is _FAST_DTYPE
-        and _is_fast_3d(shift, B, S, D)
+        and shift.dim() == 3
         and shift.shape[0] == B
         and shift.shape[1] == S
+        and shift.shape[2] == D
+        and shift.stride(-1) == 1
         and shift.is_contiguous()
     ):
         return False
