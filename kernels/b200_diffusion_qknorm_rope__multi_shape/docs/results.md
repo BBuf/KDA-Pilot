@@ -14,7 +14,13 @@ idle-verified before/after every run), `PYTHONPATH` pinned to the bbuf checkout 
   fail-closed gate, fallback, wrong-eps fallback.
 - Full canonical grid (default mode): **10 passed, 1 skipped**, 11.65 s warm
   (`logs/cigrid_full_r9.log`).
-- staged2 probe: 10/10 module-direct (`profile/r9_staged_b200/harness/check_staged2.py`).
+- staged2 probe: 10/10 module-direct (`check_staged2.py` at git `355f3bf2a`).
+- **Dynamic-tolerance cross-check** (round-1 review closure): per production row, the
+  candidate's max-abs error vs a pure-fp32 reference stays within
+  `max(ATOL, 3 × oracle_error + 1e-4)` for q and k separately — i.e., the candidate adds no
+  error class beyond the split oracle's own bf16 quantization noise.
+  `test_dynamic_tolerance_against_fp32_noise` PASS on ion-b200 GPU 1 with the full suite
+  (**11 passed, 1 skipped**, `logs/correctness_r1_dyntol.log`).
 
 ## Device-fair (hermetic `baseline/` copy vs candidate, interleaved, full stats in benchmark.csv)
 

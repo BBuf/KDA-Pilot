@@ -350,7 +350,7 @@ def _device_fair_main(correctness, wrapper) -> int:
     geomean = _geom_mean(speedups)
     geomean_name = "GEOMEAN" + suffix.replace("__", "_", 1)
     with csv_path.open("a", newline="") as f:
-        writer = csv.writer(f)
+        writer = csv.writer(f, lineterminator="\n")  # LF: keep git diff --check clean
         if write_header:
             writer.writerow(CSV_COLUMNS)
         writer.writerows(rows)
@@ -469,7 +469,7 @@ def _integrated_main(correctness) -> int:
 
     geomean = _geom_mean(speedups)
     with csv_path.open("a", newline="") as f:
-        writer = csv.writer(f)
+        writer = csv.writer(f, lineterminator="\n")  # LF: keep git diff --check clean
         if write_header:
             writer.writerow(CSV_COLUMNS)
         writer.writerows(rows)
@@ -545,7 +545,7 @@ def main() -> int:
     geomean = _geom_mean(speedups)  # hard-errors if any row is invalid
 
     with csv_path.open("a", newline="") as f:
-        writer = csv.writer(f)
+        writer = csv.writer(f, lineterminator="\n")  # LF: keep git diff --check clean
         if write_header:
             writer.writerow(CSV_COLUMNS)
         writer.writerows(rows)

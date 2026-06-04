@@ -259,6 +259,35 @@ def _run_oracle(inputs: dict[str, "torch.Tensor"], case: dict[str, Any]) -> tupl
     return q, k
 
 
+def _run_fp32_reference(inputs: dict[str, "torch.Tensor"], case: dict[str, Any]) -> tuple:
+    """Pure-fp32 reference (RMS norm + pairwise RoPE) computed on copies of the inputs.
+
+    Mirrors the kernel semantics for the non-NeoX production rows exactly: fp32
+    accumulation, ``rsqrt(mean(x^2) + eps)`` over ``head_dim``, weight multiply BEFORE the
+    rotation, and adjacent-element pair rotation over ``rope_dim`` with the token's fp32
+    cos/sin cache row (cos in the first half, sin in the second). Used to measure the
+    bf16 quantization noise of both the split oracle and the candidate against a common
+    higher-precision anchor.
+    """
+    assert not case["is_neox"], "fp32 reference covers the non-NeoX production rows"
+    eps, rope_dim = case["eps"], case["rope_dim"]
+    cache = inputs["cos_sin_cache"][inputs["positions"].long()]  # [num_tokens, rope_dim] fp32
+    cos = cache[:, : rope_dim // 2].unsqueeze(1)  # [num_tokens, 1, rope_dim // 2]
+    sin = cache[:, rope_dim // 2 :].unsqueeze(1)
+
+    def norm_rope(x: "torch.Tensor", w: "torch.Tensor") -> "torch.Tensor":
+        x32 = x.float()
+        inv = torch.rsqrt(x32.pow(2).mean(dim=-1, keepdim=True) + eps)
+        normed = x32 * inv * w.float()
+        out = normed.clone()
+        even, odd = normed[..., 0:rope_dim:2], normed[..., 1:rope_dim:2]
+        out[..., 0:rope_dim:2] = even * cos - odd * sin
+        out[..., 1:rope_dim:2] = odd * cos + even * sin
+        return out
+
+    return norm_rope(inputs["q"], inputs["q_weight"]), norm_rope(inputs["k"], inputs["k_weight"])
+
+
 def baseline(case: dict[str, Any]) -> Any:
     """Semantic oracle result (mutated q, k) for one configured case."""
     inputs = _make_inputs(case)
@@ -332,6 +361,29 @@ def test_correctness_cases() -> None:
         expected = baseline(case)
         actual = candidate(case)
         _assert_close(actual, expected, case=case, path=case.get("name", "out"))
+
+
+def test_dynamic_tolerance_against_fp32_noise() -> None:
+    """Dynamic tolerance: per production row, the candidate's max-abs error vs a pure-fp32
+    reference must stay within a small multiple of the split oracle's own bf16 quantization
+    noise (plus a tiny absolute floor) — so the candidate adds no error class of its own
+    beyond the reference implementation's quantization."""
+    for case in make_cases():
+        ref_q, ref_k = _run_fp32_reference(_make_inputs(case), case)
+        oracle_q, oracle_k = baseline(case)
+        cand_q, cand_k = candidate(case)
+        for tensor_name, cand, oracle, ref in (
+            ("q", cand_q, oracle_q, ref_q),
+            ("k", cand_k, oracle_k, ref_k),
+        ):
+            oracle_err = (oracle.float() - ref).abs().max().item()
+            cand_err = (cand.float() - ref).abs().max().item()
+            bound = max(ATOL, 3.0 * oracle_err + 1e-4)
+            assert cand_err <= bound, (
+                f"{case['name']}/{tensor_name}: candidate fp32-reference error "
+                f"{cand_err:.6f} exceeds dynamic bound {bound:.6f} "
+                f"(oracle quantization noise {oracle_err:.6f})"
+            )
 
 
 def test_ci_grid_cases() -> None:
