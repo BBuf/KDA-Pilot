@@ -112,14 +112,20 @@ def _compare(base_path: str, cand_path: str, check_base: str | None = None,
     ``regress_pct``%% regression on the same shape (filters one-run shared-box
     artifacts). Exit 1 on any material regression, failed correctness on EITHER side
     (a baseline-side failure means the baseline checkout/PYTHONPATH is invalid and the
-    whole comparison is inadmissible), or geomean < 1.0.
+    whole comparison is inadmissible), incomplete run1 cross-check coverage (when run1
+    files are provided they must contain every recorded-run shape — a truncated or
+    mismatched cross-check must never be able to dismiss a recorded regression), or
+    geomean < 1.0.
     """
     base = _shapes(json.loads(Path(base_path).read_text()))
     cand = _shapes(json.loads(Path(cand_path).read_text()))
     run1 = None
+    run1_missing: list[str] = []
     if check_base and check_cand:
         b1 = _shapes(json.loads(Path(check_base).read_text()))
         c1 = _shapes(json.loads(Path(check_cand).read_text()))
+        # Fail closed: the cross-check files must cover every recorded-run shape.
+        run1_missing = sorted(n for n in base if n not in b1 or n not in c1)
         run1 = {n: (b1[n]["median_us"] / c1[n]["median_us"]) for n in b1 if n in c1}
     speedups, material = [], []
     print(f"{'shape':>44s}  {'bucket':>6s}  base_us  cand_us  speedup")
@@ -129,15 +135,22 @@ def _compare(base_path: str, cand_path: str, check_base: str | None = None,
         speedups.append(sp)
         flag = ""
         if sp < 1.0 - regress_pct / 100.0:
-            confirmed = run1 is None or run1.get(name, 1.0) < 1.0 - regress_pct / 100.0
+            r1 = None if run1 is None else run1.get(name)
+            # A shape absent from the run1 files counts as CONFIRMED (fail closed) —
+            # missing cross-check coverage must never dismiss a recorded regression.
+            confirmed = run1 is None or r1 is None or r1 < 1.0 - regress_pct / 100.0
             if confirmed:
                 material.append(name)
-                flag = "  << MATERIAL REGRESSION" + ("" if run1 is None else " (confirmed by run1)")
+                flag = "  << MATERIAL REGRESSION" + (
+                    " (confirmed by run1)" if run1 is not None and r1 is not None else "")
             else:
                 flag = "  (regression in run2 only — not confirmed by run1)"
         print(f"{name:>44s}  {base[name]['bucket']:>6s}  {b:7.2f}  {c:7.2f}  {sp:.4f}x{flag}")
     bad_base = [n for n in base if not base[n]["oracle_ok"]]
     bad_corr = [n for n in cand if not cand[n]["oracle_ok"]]
+    if run1_missing:
+        print(f"FAIL: run1 cross-check files are missing shapes {run1_missing} — a "
+              f"truncated/mismatched cross-check makes this comparison inadmissible")
     if bad_base:
         print(f"FAIL: BASELINE correctness failed on {bad_base} — the baseline "
               f"checkout/PYTHONPATH is invalid and this comparison is inadmissible")
@@ -146,7 +159,7 @@ def _compare(base_path: str, cand_path: str, check_base: str | None = None,
     geo = math.exp(sum(math.log(s) for s in speedups) / len(speedups))
     print(f"\n[compare] in-SGLang (register_custom_op preserved) device geomean = {geo:.4f}x "
           f"over {len(speedups)} shapes; material-regression threshold = {regress_pct:.1f}%")
-    gate_ok = not material and not bad_base and not bad_corr and geo >= 1.0
+    gate_ok = not material and not bad_base and not bad_corr and not run1_missing and geo >= 1.0
     print(f"[compare] PROMOTION_GATE {'PASS' if gate_ok else 'FAIL'}"
           + (f" (material regressions: {material})" if material else ""))
     return 0 if gate_ok else 1
