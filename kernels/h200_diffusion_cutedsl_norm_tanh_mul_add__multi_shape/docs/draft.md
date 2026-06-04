@@ -127,3 +127,19 @@ logged in `solutions.jsonl` with parent links.
 - tvm-ffi optional-tensor pattern for `bias=None` in the candidate launcher
   (production fast path needs weight-present/bias-absent only; fallback covers
   the rest) — resolve while porting (task7).
+
+## Round-1 Status Update (2026-06-04)
+
+- Direction 1 (faithful CUDA port) LANDED as candidate-v1: geomean 1.47x
+  sequential / 1.36x alternating-interleaved vs the re-locked exact-signature
+  baseline; device-only 1.42-1.66x; candidate 2.2-2.7 TB/s vs baseline
+  1.43-1.64 TB/s. Same row-per-CTA/480-thread structure — the win comes from
+  the leaner native epilogue and lower per-call overhead under symmetric
+  custom-op layers.
+- Next ranked directions (task9): rows-per-CTA batching + smem staging of
+  weight/tanh(scale) (directions 2/4), tanh precompute (direction 3) — single
+  still at 40.8us GPU vs ~25us bandwidth-bound ideal (~1.6x residual), dual at
+  46.9-47.5us vs ~33us (~1.4x residual). NCU profile when the next edit is
+  non-obvious.
+- Harness lesson: production signature is weight-only (bias=None); the
+  bias-tensor lock overestimated baseline GPU time by ~5% (69.2 -> 65.98us).
