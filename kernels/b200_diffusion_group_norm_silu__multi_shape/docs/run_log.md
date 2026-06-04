@@ -205,14 +205,19 @@
   two-outcome no-regression gate (strict pass | explained-residual pass
   requiring `baseline_equivalent`; otherwise FAIL — fails closed on rows
   without metadata).
-- GPU 1 before: idle (0% util, 0 MiB). Commands (chained in one detached
-  session): `CUDA_VISIBLE_DEVICES=1 python3 bench/correctness.py --device
-  cuda:0 --side both` then `CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py
+- GPU 1 before: idle — the embedded provenance snapshot in
+  `bench/results.jsonl` records GPU 1 at `0 %, 4 MiB` (driver residue only,
+  no compute process). Commands (chained in one detached session):
+  `CUDA_VISIBLE_DEVICES=1 python3 bench/correctness.py --device cuda:0
+  --side both` then `CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py
   --device cuda:0 --out bench/results_r1.jsonl` (copied byte-identically to
   the tracked `bench/results.jsonl`). Freeze check
   (`bench/gen_workloads.py --check`) green locally the same day (it reads
   this repository's git history, which the remote workspace does not carry).
-- GPU 1 after: idle (0% util, 0 MiB).
+- GPU 1 after: idle — the JSONL summary snapshot records GPU 1 at
+  `2 %, 4 MiB` (momentary utilization tick while the harness tore down its
+  own context; no other compute process on the device, which stayed pinned
+  via `CUDA_VISIBLE_DEVICES=1` throughout).
 - Correctness: **PASS, 0 failing checks** (both sides, all sections).
 - Benchmark: 172/172 PASSED; headline geomean **2.2880** (arithmetic mean
   2.4944). Gate: `no row <0.97`: **PASS (strict)** — worst row

@@ -66,11 +66,76 @@ def geomean(vals):
     return math.exp(sum(math.log(v) for v in vals) / len(vals))
 
 
+def gate_outcomes(prod):
+    """Pure promotion-gate computation over production rows.
+
+    Returns (gm, below, explained, unexplained):
+      - gm: equal-weight geomean of speedups;
+      - below: rows under GATE_ROW_FLOOR;
+      - explained: below-floor rows on the baseline-equivalent path (identical
+        implementation on both sides — regression impossible by construction;
+        the reading is the characterized order-debt artifact, see
+        docs/dispatch.md);
+      - unexplained: every other below-floor row (hard FAIL).
+    """
+    gm = geomean([r["speedup"] for r in prod])
+    below = [r for r in prod if r["speedup"] < GATE_ROW_FLOOR]
+    explained = [r for r in below if r.get("matched_status") == "baseline_equivalent"]
+    unexplained = [r for r in below if r.get("matched_status") != "baseline_equivalent"]
+    return gm, below, explained, unexplained
+
+
+def _self_test() -> int:
+    """Verify the exit-code semantics of the promotion gates.
+
+    Scenarios: strict pass; explained-residual pass (below-floor row on the
+    baseline-equivalent path with geomean > 1.0); unexplained below-floor row
+    (must fail); geomean <= 1.0 (must fail); failed benchmark row (must fail).
+    Exits 0 only if every scenario produces the specified verdict.
+    """
+    def row(speed, matched="optimized"):
+        return {
+            "speedup": speed,
+            "matched_status": matched,
+            "production": True,
+            "baseline": {"median_us": 100.0},
+            "candidate": {"median_us": 100.0 / speed},
+        }
+
+    cases = [
+        ("strict_pass", [row(2.0), row(1.1)], False, True),
+        ("explained_residual_pass", [row(2.0), row(0.95, "baseline_equivalent")], False, True),
+        ("unexplained_below_floor_fail", [row(2.0), row(0.95)], False, False),
+        ("low_geomean_fail", [row(0.5)], False, False),
+        ("failed_row_fail", [row(2.0)], True, False),
+    ]
+    mismatches = 0
+    for name, prod, any_failed_rows, expect_ok in cases:
+        gm, below, explained, unexplained = gate_outcomes(prod)
+        ok = (not any_failed_rows) and gm > 1.0 and not unexplained
+        status = "ok" if ok == expect_ok else "MISMATCH"
+        if ok != expect_ok:
+            mismatches += 1
+        print(f"self-test {name}: ok={ok} expected={expect_ok} -> {status}")
+    print("self-test:", "PASS" if mismatches == 0 else f"FAIL ({mismatches} mismatches)")
+    return 0 if mismatches == 0 else 1
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("results", type=Path)
+    ap.add_argument("results", type=Path, nargs="?")
     ap.add_argument("--markdown", action="store_true", help="emit full per-row table")
+    ap.add_argument(
+        "--self-test",
+        action="store_true",
+        help="verify the promotion-gate exit-code semantics on synthetic rows",
+    )
     args = ap.parse_args()
+
+    if args.self_test:
+        return _self_test()
+    if args.results is None:
+        ap.error("results path is required unless --self-test is given")
 
     prov, rows = load(args.results)
     passed = [r for r in rows if r.get("status") == "PASSED"]
@@ -82,12 +147,7 @@ def main() -> int:
         print(f"  FAILED: {r.get('id')} -> {r.get('status')} {r.get('message','')[:120]}")
 
     sp = [r["speedup"] for r in prod]
-    gm = geomean(sp)
     am = sum(sp) / len(sp) if sp else float("nan")
-    below = [r for r in prod if r["speedup"] < GATE_ROW_FLOOR]
-    print(f"headline geomean (production, equal weight): {gm:.4f}")
-    print(f"arithmetic mean (secondary): {am:.4f}")
-    print(f"gate geomean>1.0: {'PASS' if gm > 1.0 else 'FAIL'}")
     # No-regression gate has two PASS outcomes (promotion ruling DEC-3 /
     # AC-5.2): strict (zero rows below the floor) or explained-residual
     # (every below-floor row runs the baseline-equivalent path — identical
@@ -95,8 +155,10 @@ def main() -> int:
     # reading is the characterized order-debt measurement artifact, see
     # docs/dispatch.md "Measured Residual on Routed Giant Rows"). A
     # below-floor row on an OPTIMIZED path is a hard FAIL.
-    explained = [r for r in below if r.get("matched_status") == "baseline_equivalent"]
-    unexplained = [r for r in below if r.get("matched_status") != "baseline_equivalent"]
+    gm, below, explained, unexplained = gate_outcomes(prod)
+    print(f"headline geomean (production, equal weight): {gm:.4f}")
+    print(f"arithmetic mean (secondary): {am:.4f}")
+    print(f"gate geomean>1.0: {'PASS' if gm > 1.0 else 'FAIL'}")
     if not below:
         print(f"gate no row <{GATE_ROW_FLOOR}: PASS (strict)")
     elif not unexplained:
@@ -141,7 +203,12 @@ def main() -> int:
                   f"| {r.get('candidate_path','-')} | {r.get('candidate_regime','-')} "
                   f"| {r.get('matched_status','-')} "
                   f"| {fmt('baseline')} | {fmt('candidate')} | {r['speedup']:.4f} |")
-    return 0 if not failed else 1
+
+    # Machine-enforceable verdict: the exit code IS the promotion gate.
+    status_ok = not failed
+    geomean_ok = gm > 1.0
+    row_gate_ok = not unexplained
+    return 0 if (status_ok and geomean_ok and row_gate_ok) else 1
 
 
 if __name__ == "__main__":

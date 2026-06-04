@@ -133,8 +133,13 @@ CUDA_VISIBLE_DEVICES=<idle B200> python3 bench/correctness.py --device cuda:0 --
 python3 bench/gen_workloads.py --check
 # full benchmark
 CUDA_VISIBLE_DEVICES=<idle B200> python3 bench/benchmark.py --device cuda:0 --out bench/results.jsonl
-# summary / gates / per-row table
+# summary / gates / per-row table — the EXIT CODE is the promotion verdict:
+# 0 only when no benchmark row failed AND geomean > 1.0 AND every below-floor
+# production row is baseline_equivalent (explained residual); nonzero otherwise
 python3 bench/summarize_results.py bench/results.jsonl --markdown
+# gate exit-code semantics self-check (synthetic strict-pass /
+# explained-residual / unexplained-fail / low-geomean / failed-row scenarios)
+python3 bench/summarize_results.py --self-test
 ```
 
 ## Per-Row Results (production, definitive run)
