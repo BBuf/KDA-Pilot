@@ -29,7 +29,10 @@ _BINDINGS: dict[str, object] = {}
 
 
 def _load_binding(name: str, rel_path: str):
-    module = _BINDINGS.get(name)
+    # Reuse the process-wide module first: the benchmark's non-isolated mode
+    # re-imports this adapter per workload with a fresh _BINDINGS cache, and
+    # re-executing a binding would re-register its torch.library custom ops.
+    module = _BINDINGS.get(name) or sys.modules.get(name)
     if module is None:
         path = TASK_DIR / rel_path
         spec = importlib.util.spec_from_file_location(name, path)
@@ -38,7 +41,7 @@ def _load_binding(name: str, rel_path: str):
         module = importlib.util.module_from_spec(spec)
         sys.modules[name] = module
         spec.loader.exec_module(module)
-        _BINDINGS[name] = module
+    _BINDINGS[name] = module
     return module
 
 
