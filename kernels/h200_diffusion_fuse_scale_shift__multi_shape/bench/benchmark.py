@@ -81,8 +81,16 @@ def _runtime():
 # GPU idleness
 # ---------------------------------------------------------------------------
 
-def gpu_snapshot(gpu_id: str) -> dict:
-    """Query nvidia-smi for the physical GPU; idle = no foreign compute procs."""
+def gpu_snapshot(gpu_id: str, baseline_pids: set[int] | None = None) -> dict:
+    """Query nvidia-smi for the physical GPU.
+
+    Idleness rule: before the run (baseline_pids=None) the GPU must have NO
+    compute processes at all. After the run, the only allowed NEW process vs
+    the before-snapshot is our own CUDA context. Note: inside a container,
+    nvidia-smi reports HOST pids while os.getpid() is namespace-local, so
+    self-identification must go through the before/after pid-set delta, not
+    pid equality.
+    """
     snap = {"gpu_id": gpu_id, "procs": None, "util": None, "mem_used_mib": None,
             "idle": None, "error": ""}
     try:
@@ -100,9 +108,12 @@ def gpu_snapshot(gpu_id: str) -> dict:
             capture_output=True, text=True, timeout=20, check=True,
         ).stdout.strip()
         pids = [int(p) for p in out.splitlines() if p.strip()]
-        foreign = [p for p in pids if p != os.getpid()]
         snap["procs"] = pids
-        snap["idle"] = len(foreign) == 0
+        if baseline_pids is None:
+            snap["idle"] = len(pids) == 0
+        else:
+            new_pids = set(pids) - set(baseline_pids)
+            snap["idle"] = len(new_pids) <= 1  # the single new context is ours
     except Exception as exc:  # noqa: BLE001 - report, don't crash the bench
         snap["error"] = f"{type(exc).__name__}: {exc}"
         snap["idle"] = None
@@ -326,7 +337,7 @@ def main() -> int:
               f"{m['device_ev']['cand']['median_us']:9.1f} us "
               f"({m['device_ev']['speedup_median']:.3f}x)")
 
-    snap_after = gpu_snapshot(args.gpu_id)
+    snap_after = gpu_snapshot(args.gpu_id, baseline_pids=set(snap_before.get("procs") or []))
     valid = bool(snap_before.get("idle")) and bool(snap_after.get("idle"))
 
     ts = time.strftime("%Y-%m-%d_%H-%M-%S")

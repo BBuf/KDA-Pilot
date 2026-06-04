@@ -52,4 +52,8 @@ The kernel-pilot diffusion rules forbid importing or patching a live SGLang chec
 
 ## Equivalence Check (one-time, copied baseline vs live SGLang)
 
-- Status: PENDING — runs in the first remote H200 session (recorded here when done: host, GPU id, command, result).
+- Status: DONE — **EQUIVALENT, 21/21 cases bit-identical** (all 15 production rows + 6 grid extras covering fp16/fp32, 4D, scalar, broadcastable-3D, affine select01/residual).
+- Host: `ion-h200-8`, container `sglang_bbuf`, GPU id 3 (NVIDIA H200, idle: 0% util / 0 MiB before run), torch 2.11.0+cu130, triton 3.6.0.
+- Live module: `/home/sglang-omni/bbuf/repos/sglang/python/sglang/jit_kernel/diffusion/triton/scale_shift.py` at sglang commit `84e1108312b52f8e00032845af2d85a3073d8aae` — file md5 `b4c069aca94ccb7b2bbea2d2571634a1`, byte-identical to the copy source (different checkout HEAD, same file content).
+- Command: `CUDA_VISIBLE_DEVICES=3 python bench/equivalence_check.py --sglang-python /home/sglang-omni/bbuf/repos/sglang/python --json $REMOTE_KDA_DIR/equivalence_report.json` from `$REMOTE_KDA_DIR/kernel` (REMOTE_KDA_DIR=`/home/sglang-omni/bbuf/kda_runs/h200_diffusion_fuse_scale_shift__multi_shape/20260604-rlcr-r0`).
+- Raw report: `$REMOTE_KDA_DIR/equivalence_report.json` (remote). The copy is now FROZEN; all later correctness/benchmark runs use `baseline/` only.
