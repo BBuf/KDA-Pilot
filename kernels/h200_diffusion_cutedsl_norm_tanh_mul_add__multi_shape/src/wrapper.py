@@ -60,6 +60,17 @@ def _jit_module():
     return _JIT_MODULE
 
 
+_MAX_GRID_ROWS = 2**31 - 1  # CUDA grid.x limit; also guards the uint32 cast
+
+
+def _aligned16(t: torch.Tensor) -> bool:
+    # The kernel issues 128-bit vector loads/stores from the row base; fresh
+    # torch allocations are 256B-aligned but offset VIEWS can be contiguous
+    # yet misaligned — fall back for those (the vendored baseline rejects
+    # them too via CuTe assumed_align=32, so fallback preserves its error).
+    return t.data_ptr() % 16 == 0
+
+
 def _is_fast_3d(t: torch.Tensor, B: int, S: int, D: int) -> bool:
     return (
         t.dim() == 3
@@ -85,6 +96,10 @@ def _fast_path_ok(
     if x.dim() != 3 or x.shape[-1] != PROD_D or not x.is_contiguous():
         return False
     B, S, D = x.shape
+    if B * S > _MAX_GRID_ROWS:
+        return False
+    if not (_aligned16(x) and _aligned16(weight) and _aligned16(scale) and _aligned16(shift)):
+        return False
     if not (
         weight.is_cuda
         and weight.dtype is _FAST_DTYPE
@@ -190,6 +205,8 @@ def _fast_dual_extras_ok(x: torch.Tensor, weight2, bias2, scale2) -> bool:
         and scale2.dim() == 3
         and scale2.shape == (1, 1, D)
         and scale2.stride(-1) == 1
+        and _aligned16(weight2)
+        and _aligned16(scale2)
     )
 
 

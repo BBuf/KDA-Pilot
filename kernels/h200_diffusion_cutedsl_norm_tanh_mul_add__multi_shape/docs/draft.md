@@ -143,3 +143,21 @@ logged in `solutions.jsonl` with parent links.
   non-obvious.
 - Harness lesson: production signature is weight-only (bias=None); the
   bias-tensor lock overestimated baseline GPU time by ~5% (69.2 -> 65.98us).
+
+## Round-2 Status Update (2026-06-04)
+
+- AC-3 verification closed: default-eps arities (6/9) normalized; dispatch
+  unified in dispatch_decision() with branch-contract tests; 16B-alignment +
+  grid-limit gates (task8 review); misaligned views fall back AND surface the
+  baseline's own ValueError (CuTe assumed_align=32 rejects them upstream too).
+- task8 design review integrated; reporting convention: interleaved A/B is the
+  primary local number; ab_run1 rows (jit-cache bug) invalidated.
+- Direction 2/4 wave-1 sweep REJECTED with evidence: rows-per-CTA (r2/r4),
+  fewer-threads (v3/v5), and upfront operand staging ALL lose vs the anchor
+  (best non-anchor: v1r2 at 1.18x interleaved vs anchor 1.33x). The anchor's
+  load-AFTER-reduce ordering overlaps operand loads with reduction latency;
+  pre-staging serializes them. Fewer/larger CTAs reduce memory-level
+  parallelism on 4096-row grids. Anchor re-confirmed: 1.4463x/1.3253x.
+- Next (round 3): task10 NCU on the anchor (REQUIRED before mechanism claims;
+  decides direction 3 tanh-precompute vs occupancy levers vs accept-near-bound),
+  then task11 roofline/completion docs, task12 audit, task13 export.

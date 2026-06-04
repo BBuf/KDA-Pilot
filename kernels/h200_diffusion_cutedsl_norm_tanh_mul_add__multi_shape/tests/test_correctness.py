@@ -809,6 +809,63 @@ def test_default_eps_contract() -> None:
         module.optimized_wrapper(xf, wf, None, scf, shf)
 
 
+def test_misaligned_view_falls_back() -> None:
+    """A contiguous-but-misaligned view (offset slice) must NOT take the
+    128-bit-vector fast path (task8 review required change)."""
+
+    if not _candidate_available():
+        pytest.skip("candidate not implemented yet (src/register.py stub)")
+    module = _load_register_module()
+    D = PROD_D
+    dt = _torch_dtype(PROD_DTYPE)
+    # Slice a fresh (256B-aligned) buffer at element offset 4: 4 elems * 2B =
+    # 8 bytes — contiguous but NOT 16-byte aligned for 128-bit vectors.
+    buf = torch.randn(4 + 32 * D, device="cuda", dtype=dt)
+    x_mis = buf[4 : 4 + 32 * D].view(1, 32, D)
+    assert x_mis.is_contiguous() and x_mis.data_ptr() % 16 != 0
+    w = torch.randn(D, device="cuda", dtype=dt)
+    sc = torch.randn(1, 1, D, device="cuda", dtype=dt)
+    sh = torch.randn(1, 32, D, device="cuda", dtype=dt)
+    assert module.dispatch_decision(x_mis, w, None, sc, sh, "rms", EPS) == "fallback_single"
+    # The vendored baseline itself REJECTS misaligned tensors (CuTe-DSL
+    # from_dlpack assumed_align=32), so the fallback must surface the same
+    # error rather than silently computing on the misaligned fast path.
+    with pytest.raises(Exception) as base_err:
+        _load_baseline_module().fused_norm_tanh_mul_add(x_mis, w, None, sc, sh, "rms", EPS)
+    with pytest.raises(Exception) as cand_err:
+        module.optimized_wrapper(x_mis, w, None, sc, sh, "rms", EPS)
+    assert type(cand_err.value) is type(base_err.value), (
+        f"fallback error {type(cand_err.value)} != baseline error {type(base_err.value)}"
+    )
+
+
+def test_fast_path_non_default_eps() -> None:
+    """Fast path must honor a non-default eps numerically (task8 optional)."""
+
+    if not _candidate_available():
+        pytest.skip("candidate not implemented yet (src/register.py stub)")
+    case = _case(
+        entry="dual",
+        B=1,
+        S=96,
+        F=1,
+        D=PROD_D,
+        dtype=PROD_DTYPE,
+        norm_type=PROD_NORM,
+        affine_mode="W",
+        scale_mode="11D",
+        shift_mode="BSD",
+    )
+    case["eps"] = 3e-4  # rebuilds args + oracle with the overridden eps
+    base = baseline(case)
+    cand = candidate(case)
+    _check_against_oracle(cand, case)
+    ref_y = reference_y(case)
+    _assert_dynamic_tolerance(cand[0], base[0], ref_y, path="non-default-eps[y]")
+    _assert_dynamic_tolerance_stage2(cand, base, case=case, path="non-default-eps")
+    _free_tensors(case)
+
+
 def test_fallback_equals_baseline() -> None:
     """Non-production signatures must route to the vendored baseline and
     return bitwise-identical outputs (fallback wiring guard)."""
