@@ -110,7 +110,9 @@ def _compare(base_path: str, cand_path: str, check_base: str | None = None,
     a shape regresses MATERIALLY when cand is more than ``regress_pct``%% slower than
     base in the recorded run AND the run1 cross-check (when given) confirms a >
     ``regress_pct``%% regression on the same shape (filters one-run shared-box
-    artifacts). Exit 1 on any material regression, failed correctness, or geomean < 1.0.
+    artifacts). Exit 1 on any material regression, failed correctness on EITHER side
+    (a baseline-side failure means the baseline checkout/PYTHONPATH is invalid and the
+    whole comparison is inadmissible), or geomean < 1.0.
     """
     base = _shapes(json.loads(Path(base_path).read_text()))
     cand = _shapes(json.loads(Path(cand_path).read_text()))
@@ -134,13 +136,17 @@ def _compare(base_path: str, cand_path: str, check_base: str | None = None,
             else:
                 flag = "  (regression in run2 only — not confirmed by run1)"
         print(f"{name:>44s}  {base[name]['bucket']:>6s}  {b:7.2f}  {c:7.2f}  {sp:.4f}x{flag}")
+    bad_base = [n for n in base if not base[n]["oracle_ok"]]
     bad_corr = [n for n in cand if not cand[n]["oracle_ok"]]
+    if bad_base:
+        print(f"FAIL: BASELINE correctness failed on {bad_base} — the baseline "
+              f"checkout/PYTHONPATH is invalid and this comparison is inadmissible")
     if bad_corr:
         print(f"FAIL: candidate correctness failed on {bad_corr}")
     geo = math.exp(sum(math.log(s) for s in speedups) / len(speedups))
     print(f"\n[compare] in-SGLang (register_custom_op preserved) device geomean = {geo:.4f}x "
           f"over {len(speedups)} shapes; material-regression threshold = {regress_pct:.1f}%")
-    gate_ok = not material and not bad_corr and geo >= 1.0
+    gate_ok = not material and not bad_base and not bad_corr and geo >= 1.0
     print(f"[compare] PROMOTION_GATE {'PASS' if gate_ok else 'FAIL'}"
           + (f" (material regressions: {material})" if material else ""))
     return 0 if gate_ok else 1
