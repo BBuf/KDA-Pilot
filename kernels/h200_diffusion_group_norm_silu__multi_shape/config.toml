@@ -11,7 +11,10 @@ entry_points = [
 [build]
 language = "cuda"
 destination_passing_style = true
-baseline_entry_point = "baseline/kernel.cu::group_norm_silu_baseline"
+# The upstream baseline for this family is Triton, not CUDA; the template's
+# kernel.cu placeholder is corrected to the actual local binding (deviation
+# recorded in docs/benchmark_method.md at scaffold time, before measurement).
+baseline_entry_point = "baseline/binding.py::group_norm_silu_baseline"
 candidate_entry_point = "solution/kernel.cu::group_norm_silu_candidate"
 
 [benchmark]
