@@ -245,3 +245,26 @@ All four REQUIRED items applied:
    sweep across docs/prompt.md/interface.md/solutions.jsonl/kda_kernels: zero occurrences of
    `1.49x` (outside correction notes), `ec7b6459`, or bare `1.0038x`/`1.0018x` (the only
    remaining `1.0018x` is the legitimate fresh pair-geomean citation in the verdict paragraph).
+
+## Round-2 correction (Codex round-1 RLCR review, 2026-06-04)
+
+The one remaining gap: `docs/sglang_jit_export.md`'s active "Continuation re-export" statement
+still cited the interim kp commit `ea349b784` from the first re-export pass, contradicting the
+unified b200 metadata (`afb416adff0765da3bf610826631b6d5704d5381`). Fixed: the statement now
+cites only the canonical commit.
+
+EXPANDED stale-metadata sweep (now including the superseded commit), pattern
+`1\.49x|ec7b6459|ea349b784|1\.0038x` over `docs/`, `prompt.md`, `interface.md`,
+`solutions.jsonl`, and `kda_kernels/diffusion/rotary_embedding`:
+
+- `ea349b784`: **0 occurrences** (gone from every surface).
+- `ec7b6459`: **0 occurrences**.
+- Remaining matches, all enumerated and benign (correction-note self-references or append-only
+  history; none is an active claim):
+  1. `docs/draft.md` gate-review-corrections item 2 — "corrected to ~1.46x (was ~1.49x …)".
+  2. `docs/draft.md` round-1-corrections item 3 — sentence describing the 1.49x replacement.
+  3. `docs/draft.md` round-1-corrections item 4 — the sweep-pattern documentation line itself.
+  4. `solutions.jsonl` row `evidence-correction-v5-v7` — append-only correction entry text.
+  5. `solutions.jsonl` row `evidence-refresh-round1` — append-only correction entry text.
+- Active claims everywhere read **~1.46x** with the 1.4505 × 1.0039 composition; the three b200
+  KDA metadata surfaces carry only `afb416adff0765da3bf610826631b6d5704d5381`.
