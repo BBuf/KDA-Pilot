@@ -102,3 +102,21 @@ smem staging of x (register path already minimal); persistent grid for huge R
   kVecBytes=16 (8 elems/thread, block=D/8) after candidate occupancy 41% /
   long_scoreboard 16.4 vs baseline occ 82% on the token-fp32 case; bf16-only
   combos keep kVecBytes=32. Reports: profile/r0v1-*/REPORT.md.
+- Round 0 / step 4 (evidence audit -> r4 re-validation): Codex evidence audit
+  flagged: (1) r3-final ran on a CONTAMINATED GPU0 (1576 MiB before / 58%
+  util + 2292 MiB after, visible in benchmark.csv idle columns) while
+  docs/results.md claimed clean — ACCEPTED, full re-run as r4-final on
+  verified-idle GPU1 with all-GPU before/after logs; (2) candidate_src_hash
+  bound only the .cuh so r2-v3 and r3-final shared a hash across different
+  wrapper configs — ACCEPTED, hash now spans .cuh+wrapper.py+register.py;
+  (3) bench/benchmark.py overstated "device execution only" — ACCEPTED,
+  docstring corrected to stream-span semantics; (4) dispatch.md nss_row_bf16
+  e2e range omitted the 1.09x s27030 outlier — to recompute from clean r4
+  data (the outlier itself looks like the GPU contamination); (5) tiny-row
+  kernel-time claim and final-config bound claims lacked NCU on the SHIPPED
+  build — ACCEPTED, final-config ncu round queued for huge-bf16 + token-fp32
+  + one tiny row; (6) in-SGLang drop-in still pending — running now (export/
+  run_export_test.sh: task-owned clone at the pinned commit, .cuh under
+  csrc/diffusion/, native glue module, minimal op-body patch with
+  registration untouched, official pytest grid + symmetric same-op A/B smoke
+  + rms fallback probe).

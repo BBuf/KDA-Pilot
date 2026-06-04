@@ -5,7 +5,10 @@ For every case and implementation it reports two timing modes:
 
 - ``endtoend``: per-iteration wall-clock around the public callable with a
   device synchronize per sample (host wrapper + dispatch + kernel);
-- ``device``: CUDA-event time around the same call (device execution only).
+- ``device``: CUDA-event stream-span around the same call. For
+  stream-saturated (large) cases this approximates kernel duration; for
+  host-starved (tiny) cases it includes launch-issue latency — NCU owns the
+  kernel-duration ground truth there.
 
 Baseline and candidate run interleaved in the same process on the same
 pre-allocated inputs, so clock drift and allocator state affect both sides
@@ -303,10 +306,17 @@ def run_benchmark(args) -> int:
 
 
 def _candidate_hash() -> str:
+    """Joint hash binding the FULL candidate behavior: device source plus the
+    wrapper/registration layers whose flags select the shipped configuration."""
     import hashlib
 
-    cuh = KERNEL_DIR / "src" / "csrc" / "norm_scale_shift.cuh"
-    return hashlib.sha1(cuh.read_bytes()).hexdigest()[:12] if cuh.exists() else ""
+    h = hashlib.sha1()
+    for rel in ("src/csrc/norm_scale_shift.cuh", "src/wrapper.py", "src/register.py"):
+        p = KERNEL_DIR / rel
+        if p.exists():
+            h.update(rel.encode())
+            h.update(p.read_bytes())
+    return h.hexdigest()[:12]
 
 
 def report(args) -> int:
