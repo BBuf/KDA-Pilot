@@ -1,25 +1,29 @@
 """Task adapter for bench/benchmark.py (the standard template).
 
-Calling convention (documented in docs/benchmark_method.md):
+Calling convention (documented in docs/benchmark_method.md; revised after the
+pre-freeze review to make the timed glue structurally symmetric):
 
-* Baseline side: the copied SGLang callables allocate and return their output
-  tensor per call — that is their natural production behavior. The adapter
-  therefore uses a rebind container (`{"y": None}`) for baseline outputs; each
-  call rebinds the freshly returned tensor. No device-to-device copy is added
-  to the timed path.
-* Candidate side: the solution kernel uses destination-passing style; its
-  output tensor is preallocated once per case in `make_case` and every call
-  writes into it, so the template's output-poisoning check is fully effective
-  on the candidate.
+* Both sides allocate their output tensor per timed call and rebind it into
+  the output container (`{"y": ...}`). The copied SGLang baseline does this
+  internally (its public entry returns a fresh tensor — upstream production
+  behavior, unmodified); the candidate wrapper mirrors it with one
+  `torch.empty_like` per call before its destination-passing FFI kernel. Both
+  sides therefore pay one caching-allocator allocation per call and no
+  device-to-device copies are added to either timed path.
+* Output-poisoning semantics for stale-output/skipped-kernel detection live in
+  bench/correctness.py, which drives the candidate's destination-passing ABI
+  with explicitly poisoned preallocated buffers. (With per-call rebinding the
+  template's poison fill targets replaced tensors — equally inert for both
+  sides; correctness still compares freshly produced outputs every trial.)
 * Both call paths run under `torch.no_grad()` (the template disables grad in
   the worker; `make_case` asserts it) so the baseline's grad-mode eager
   fallback can never be measured silently.
 
 Harness validation mode: setting `GNS_BENCH_CANDIDATE=baseline` wires
-`call_candidate` to the baseline callable (rebind container as well). Both
-sides then time identical code — the A/A run must report geomean ~= 1.0. This
-mode exists only to validate the harness before the baseline numbers freeze;
-real candidate runs leave the variable unset.
+`call_candidate` to the baseline callable. Both sides then time identical
+code — the A/A run must report geomean ~= 1.0. This mode exists only to
+validate the harness before the baseline numbers freeze; real candidate runs
+leave the variable unset.
 """
 
 from __future__ import annotations
@@ -131,17 +135,13 @@ def make_case(workload: dict, *, device: torch.device, seed: int) -> Case:
             f"{workload.get('id')}: shape={shape} dtype={dtype}"
         )
 
-    candidate_outputs: dict[str, Any]
-    if _AA_MODE:
-        candidate_outputs = {"y": None}
-    else:
+    if not _AA_MODE:
         _candidate()  # trigger JIT build here, outside the timed region
-        candidate_outputs = {"y": torch.empty_like(x)}
 
     return Case(
         inputs=inputs,
         baseline_outputs={"y": None},
-        candidate_outputs=candidate_outputs,
+        candidate_outputs={"y": None},
         tolerance={
             "atol": float(workload.get("atol", 3e-3)),
             "rtol": float(workload.get("rtol", 3e-3)),
@@ -172,6 +172,10 @@ def call_candidate(workload: dict, inputs: dict, outputs: dict) -> None:
     if _AA_MODE:
         _call_baseline_into(workload, inputs, outputs)
         return
+    # Per-call output allocation mirrors the baseline's internal behavior
+    # (its public entry allocates and returns a fresh tensor each call), so
+    # both timed paths carry one caching-allocator allocation per invocation.
+    out = torch.empty_like(inputs["x"])
     if workload.get("function") == "apply_group_norm_silu":
         # Module-attribute extraction stays inside the timed call for parity
         # with the baseline wrapper, which unpacks the same attributes per call.
@@ -182,7 +186,7 @@ def call_candidate(workload: dict, inputs: dict, outputs: dict) -> None:
             norm.bias,
             int(norm.num_groups),
             float(norm.eps),
-            outputs["y"],
+            out,
         )
     else:
         _candidate()(
@@ -191,5 +195,6 @@ def call_candidate(workload: dict, inputs: dict, outputs: dict) -> None:
             inputs["bias"],
             inputs["num_groups"],
             inputs["eps"],
-            outputs["y"],
+            out,
         )
+    outputs["y"] = out

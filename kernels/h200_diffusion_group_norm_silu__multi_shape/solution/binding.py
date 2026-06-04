@@ -117,14 +117,40 @@ def _find_tvm_ffi_lib() -> Path | None:
     return None
 
 
+def _dlpack_include_dirs() -> list[Path]:
+    candidates: list[Path] = []
+    for inc in _tvm_ffi_include_dirs():
+        candidates += [inc, inc / "dlpack"]
+        if (inc / "dlpack" / "dlpack.h").exists():
+            candidates.append(inc)
+    try:
+        import dlpack  # type: ignore
+
+        candidates.append(Path(dlpack.__file__).resolve().parent / "include")
+    except Exception:
+        pass
+    return _candidate_paths(candidates)
+
+
+def _torch_abi_define() -> str:
+    import torch._C
+
+    return f"-D_GLIBCXX_USE_CXX11_ABI={int(torch._C._GLIBCXX_USE_CXX11_ABI)}"
+
+
 def _build_command(out_so: Path) -> list[str]:
     from torch.utils import cpp_extension as cpp
 
     includes: list[str] = []
-    for inc in _tvm_ffi_include_dirs():
-        includes += ["-I", str(inc)]
+    seen: set[str] = set()
+    for inc in _tvm_ffi_include_dirs() + _dlpack_include_dirs():
+        if str(inc) not in seen:
+            seen.add(str(inc))
+            includes += ["-I", str(inc)]
     for inc in cpp.include_paths(device_type="cuda"):
-        includes += ["-I", str(inc)]
+        if str(inc) not in seen:
+            seen.add(str(inc))
+            includes += ["-I", str(inc)]
 
     link: list[str] = []
     torch_lib_dirs = cpp.library_paths(device_type="cuda")
@@ -144,11 +170,49 @@ def _build_command(out_so: Path) -> list[str]:
     return (
         [nvcc]
         + _NVCC_BASE_FLAGS
+        + [_torch_abi_define()]
         + ["-gencode", f"arch=compute_{_CUDA_ARCH},code=sm_{_CUDA_ARCH}"]
         + includes
         + [str(KERNEL_CU), "-o", str(out_so)]
         + link
     )
+
+
+def _try_tvm_ffi_cpp_load():
+    """Prefer tvm_ffi's own builder when present (it owns the correct include
+    set, DLPack headers, and ABI defines); fall back to the manual nvcc build
+    otherwise. Both paths compile the same kernel.cu with the same -O3/-std/
+    arch flags and no fast-math."""
+    try:
+        from tvm_ffi import cpp as tvm_cpp  # type: ignore
+    except Exception:
+        return None
+    loader = getattr(tvm_cpp, "load", None)
+    if not callable(loader):
+        return None
+    try:
+        return loader(
+            name="gns_candidate",
+            sources=[str(KERNEL_CU)],
+            extra_cuda_cflags=[
+                "-O3",
+                "-std=c++20",
+                "--expt-relaxed-constexpr",
+                "-lineinfo",
+                "-gencode",
+                f"arch=compute_{_CUDA_ARCH},code=sm_{_CUDA_ARCH}",
+            ],
+            build_directory=str(BUILD_ROOT / f"tvm_cpp_{_build_key()}"),
+        )
+    except TypeError:
+        # Signature mismatch across tvm-ffi versions: retry with the minimal
+        # call form before giving up on this path.
+        try:
+            return loader(str(KERNEL_CU))
+        except Exception:
+            return None
+    except Exception:
+        return None
 
 
 def _build_key() -> str:
@@ -161,22 +225,26 @@ def _build_key() -> str:
 def _load_module():
     import tvm_ffi
 
-    build_dir = BUILD_ROOT / _build_key()
-    out_so = build_dir / "libgns_candidate.so"
-    if not out_so.exists():
-        build_dir.mkdir(parents=True, exist_ok=True)
-        cmd = _build_command(out_so)
-        log = build_dir / "build.log"
-        with log.open("w") as fh:
-            fh.write(" ".join(cmd) + "\n\n")
-            fh.flush()
-            proc = subprocess.run(cmd, stdout=fh, stderr=subprocess.STDOUT)
-        if proc.returncode != 0:
-            raise RuntimeError(
-                f"nvcc build failed (rc={proc.returncode}); see {log}\n"
-                + log.read_text()[-4000:]
-            )
-    mod = tvm_ffi.load_module(str(out_so))
+    mod = None
+    if os.environ.get("GNS_FORCE_NVCC", "") != "1":
+        mod = _try_tvm_ffi_cpp_load()
+    if mod is None:
+        build_dir = BUILD_ROOT / _build_key()
+        out_so = build_dir / "libgns_candidate.so"
+        if not out_so.exists():
+            build_dir.mkdir(parents=True, exist_ok=True)
+            cmd = _build_command(out_so)
+            log = build_dir / "build.log"
+            with log.open("w") as fh:
+                fh.write(" ".join(cmd) + "\n\n")
+                fh.flush()
+                proc = subprocess.run(cmd, stdout=fh, stderr=subprocess.STDOUT)
+            if proc.returncode != 0:
+                raise RuntimeError(
+                    f"nvcc build failed (rc={proc.returncode}); see {log}\n"
+                    + log.read_text()[-4000:]
+                )
+        mod = tvm_ffi.load_module(str(out_so))
     leaked = sorted(m for m in sys.modules if m == "sglang" or m.startswith("sglang."))
     if leaked:
         raise ImportError(f"purity violation in solution build: {leaked[:5]}")

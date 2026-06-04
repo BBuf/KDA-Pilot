@@ -26,13 +26,18 @@ Status: scaffold draft — finalized after the remote H200 baseline lock
 
 ## ABI and calling convention
 
-- Baseline: the copied SGLang callables (`baseline/binding.py`) allocate and
-  return their output per call — upstream production behavior, kept verbatim.
-  The adapter uses a rebind container for baseline outputs; no extra
-  device-to-device copy is added to the timed path.
-- Candidate: destination-passing tvm-ffi CUDA (`solution/`), output
-  preallocated in `make_case`; the template's poison check is fully effective
-  on the candidate side.
+- Symmetric timed glue (revised per the pre-freeze review): BOTH sides
+  allocate their output per timed call and rebind it into the output
+  container. The copied baseline does so internally (its public entry returns
+  a fresh tensor — upstream behavior, unmodified); the candidate wrapper
+  mirrors it with one `torch.empty_like` per call before the
+  destination-passing FFI kernel. One caching-allocator allocation per call
+  on each side; no device-to-device copies in either timed path.
+- Poison semantics: with per-call rebinding, the template's poison fill lands
+  on replaced tensors for both sides equally; the authoritative
+  stale-output/skipped-kernel poison checks drive the candidate's
+  destination-passing ABI directly in `bench/correctness.py`
+  (`method_poison_*` cases).
 - Wrapper rows (`apply_group_norm_silu`): `torch.nn.GroupNorm`/`nn.SiLU`
   modules are constructed in `make_case` (outside timing); module-attribute
   extraction happens inside BOTH timed calls (the baseline wrapper unpacks

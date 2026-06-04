@@ -154,6 +154,14 @@ def suite_wrapper(device, cand) -> None:
         for shape in WRAPPER_CONTRACT_SHAPES
         for dtype in (torch.float16, torch.bfloat16)
     ]
+    # Every wrapper diagnostic workload row gets exact coverage, plus a spread
+    # of production shapes through the same module-based path.
+    data = json.loads((TASK_ROOT / "bench" / "workloads.json").read_text())
+    for w in data:
+        if not w.get("production") and w.get("function") == "apply_group_norm_silu":
+            dtype = {"float16": torch.float16, "bfloat16": torch.bfloat16,
+                     "float32": torch.float32}[w.get("dtype", "float16")]
+            cases.append((tuple(w["shapes"]["x"]), dtype, float(w["eps"])))
     prod = production_rows()
     for w in (prod[0], prod[len(prod) // 2], prod[-1]):
         cases.append((tuple(w["shapes"]["x"]), torch.float16, PRODUCTION_EPS))
