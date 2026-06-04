@@ -12,8 +12,19 @@ entry_points = [
 [build]
 language = "cuda"
 destination_passing_style = true
-baseline_entry_point = "baseline/kernel.cu::fuse_scale_shift_baseline"
-candidate_entry_point = "solution/kernel.cu::fuse_scale_shift_candidate"
+# Copied upstream implementation is Triton; it is exposed through local
+# destination-passing Python launchers with the same ABI as the candidate
+# (one entry per upstream public entry point, outputs passed last).
+baseline_entry_points = [
+  "baseline/binding.py::fuse_scale_shift",
+  "baseline/binding.py::fuse_layernorm_scale_shift_gate_select01",
+  "baseline/binding.py::fuse_residual_layernorm_scale_shift_gate_select01",
+]
+candidate_entry_points = [
+  "solution/kernel.cu::fuse_scale_shift",
+  "solution/kernel.cu::fuse_layernorm_scale_shift_gate_select01",
+  "solution/kernel.cu::fuse_residual_layernorm_scale_shift_gate_select01",
+]
 
 [benchmark]
 warmup_runs = 10
