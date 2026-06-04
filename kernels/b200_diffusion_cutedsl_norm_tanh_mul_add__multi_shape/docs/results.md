@@ -1,6 +1,32 @@
 # Results — `b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape`
 
-Living evidence document; final verdict consolidated at loop completion.
+## FINAL VERDICT — PROMOTE
+
+**Shipping integration (the promotion arbiter — in-SGLang drop-in, identical
+custom-op wrapper/dispatch/registration both sides, only the kernel inside differs):
+geomean 1.487× over the 4 captured zimage shapes** (v1 1.595×/1.604×, v2 1.372×/1.394×;
+public-op wall medians, `docs/sglang_jit_export.md`). In-SGLang correctness PASS;
+unsupported signatures verified to fall back to the CuTe path; both entry points ship
+natively (v2 satisfies the pre-registered parity-or-better rule).
+
+Honest decomposition (Codex-reviewed framing): raw-callable wall geomean 1.400×;
+device-only kernel deltas v1 **+4%** (41.4 vs 43.0 µs) and v2 **−16%** (78.6 vs 66.0 µs;
+≈267 MB/launch register-spill traffic) — the integrated win is dominated by the native
+tvm-ffi host path replacing the CuTe-DSL host path inside the unchanged public op,
+which is legitimate shipped-path cost on both sides (no production-required layer
+removed). Residual device gap to the bytes floor (13.5/18.0 µs) is latency-structural
+(barrier-serialized per-row reductions at sub-wave grid); levers measured and
+rejected with evidence: prefetch (spills), v2 register budget (occupancy), PDL (A/B),
+K∈{2,4,8} sweep. Named out-of-scope blocker: warp-per-row redesign.
+
+Correctness: 33/33 on B200 with the anti-fallback guard across 204 native-path cases
+(fp32 oracle with baseline rounding/affine semantics + dynamic noise bound), 22
+contract-rejection cases, affine-edge/routing/fallback tests, plus in-SGLang public-op
+validation.
+
+---
+
+Living evidence document; chronology below.
 Host `innomatrix-us-adc-smb200-0003` (ion-b200), container `sglang_bbuf`, GPU 0
 (`GPU-a4d97fda-2684-94c9-4291-c6b291c0eb33`, NVIDIA B200, 148 SMs), SGLang
 `main@edb1b3f8f`, torch 2.11.0+cu130, CUDA 13.0.

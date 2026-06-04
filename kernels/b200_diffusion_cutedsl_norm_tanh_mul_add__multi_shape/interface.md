@@ -88,13 +88,19 @@ type).
   (`-DSGL_CUDA_ARCH=1000 -std=c++20 -O3 --expt-relaxed-constexpr`, no fast-math),
   mirroring `python/sglang/jit_kernel/csrc/diffusion/qknorm_rope.cuh` idioms.
 
-## Evidence (updated through the loop)
+## Evidence (final)
 
+- **Promotion arbiter (in-SGLang drop-in, identical custom-op layers): geomean 1.487×**
+  — v1 1.595×/1.604×, v2 1.372×/1.394× on the 4 captured zimage shapes; in-SGLang
+  correctness PASS with fallback verified (`docs/sglang_jit_export.md`,
+  `export/sglang_drop_in.patch`).
+- Per-shape dispatch decision: BOTH entry points ship the native fast path (v2 meets
+  the pre-registered integrated parity-or-better rule); PDL off; `KDA_ROWS_PER_CTA=8`.
+- Honest decomposition: raw-callable wall geomean 1.400×; device-only v1 +4% / v2 −16%
+  (NCU `profile/final_lb_k8_full/REPORT.md`); residual device gap latency-structural
+  (see `docs/results.md` bound attribution).
 - Frozen baseline (B200 GPU0, commit `3957e12df`): wall-synced 82.0 / 83.4 / 111.6 /
-  112.2 µs; NCU kernel duration 43.3 µs (v1 S=4096), Compute(SM) 67-68%, DRAM 24% —
-  compute-bound, ~3.2x above the ~13.5 µs bytes floor.
+  112.2 µs; NCU baseline kernels 43.0 (v1) / 66.0 µs (v2), compute-bound on per-row tanh.
 - Benchmark command: `python benchmark.py` (A/B; `--baseline-only` for the frozen rows)
   with `CUDA_VISIBLE_DEVICES=<idle GPU>`; per-shape median/mean/std/min/p10/p90 +
-  geomean (dev + wall channels), device-only decomposition via NCU kernel durations.
-- Per-shape dispatch decisions and final numbers: `benchmark.csv`, `solutions.jsonl`,
-  `docs/results.md` (filled at loop completion).
+  geomean (dev + wall channels); full ledger in `benchmark.csv` / `solutions.jsonl`.
