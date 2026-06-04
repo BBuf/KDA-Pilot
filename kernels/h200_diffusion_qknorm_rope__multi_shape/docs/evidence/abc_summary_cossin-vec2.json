@@ -1,0 +1,160 @@
+{
+  "utc": "2026-06-04T11:40:34.450251+00:00",
+  "tag": "cossin-vec2",
+  "sha_incumbent": "4f70cda745940c96",
+  "sha_variant": "51e183ba29abd455",
+  "geomean_all": {
+    "inc_vs_sglang": 1.0907001532360205,
+    "var_vs_sglang": 1.1005234194849671,
+    "var_vs_inc": 1.0090063856870302
+  },
+  "geomean_large": {
+    "inc_vs_sglang": 1.2356387501651134,
+    "var_vs_sglang": 1.2538822344260812,
+    "var_vs_inc": 1.014764415779717
+  },
+  "per_shape": {
+    "qwen_t4096": {
+      "median_us": {
+        "A": 41.34399816393852,
+        "B": 34.04799848794937,
+        "C": 33.59999880194664
+      },
+      "ratios": {
+        "inc_vs_sglang": 1.2142857142857142,
+        "var_vs_sglang": 1.230476179705793,
+        "var_vs_inc": 1.0133333244635943
+      },
+      "tokens": 4096
+    },
+    "qwen_t19": {
+      "median_us": {
+        "A": 9.119999594986439,
+        "B": 9.279999881982803,
+        "C": 9.247999638319016
+      },
+      "ratios": {
+        "inc_vs_sglang": 0.9827585895440574,
+        "var_vs_sglang": 0.9861591643232543,
+        "var_vs_inc": 1.0034602340955112
+      },
+      "tokens": 19
+    },
+    "qwen_t47": {
+      "median_us": {
+        "A": 9.151999838650227,
+        "B": 9.247999638319016,
+        "C": 9.184000082314014
+      },
+      "ratios": {
+        "inc_vs_sglang": 0.9896193984187657,
+        "var_vs_sglang": 0.9965156529424023,
+        "var_vs_inc": 1.0069685927081216
+      },
+      "tokens": 47
+    },
+    "qwenedit_t8424": {
+      "median_us": {
+        "A": 82.75199681520462,
+        "B": 66.59200042486191,
+        "C": 65.43999910354614
+      },
+      "ratios": {
+        "inc_vs_sglang": 1.242671736653663,
+        "var_vs_sglang": 1.2645476459170726,
+        "var_vs_inc": 1.0176039324128496
+      },
+      "tokens": 8424
+    },
+    "qwenedit_t195": {
+      "median_us": {
+        "A": 9.535999968647957,
+        "B": 9.696000255644321,
+        "C": 9.631999768316746
+      },
+      "ratios": {
+        "inc_vs_sglang": 0.983498320670606,
+        "var_vs_sglang": 0.990033243150133,
+        "var_vs_inc": 1.0066445690268906
+      },
+      "tokens": 195
+    },
+    "qwenedit_t189": {
+      "median_us": {
+        "A": 9.568000212311745,
+        "B": 9.631999768316746,
+        "C": 9.600000455975533
+      },
+      "ratios": {
+        "inc_vs_sglang": 0.9933555276635783,
+        "var_vs_sglang": 0.9966666414433482,
+        "var_vs_inc": 1.0033332615438884
+      },
+      "tokens": 189
+    },
+    "zimage_t4096": {
+      "median_us": {
+        "A": 51.52000114321709,
+        "B": 41.48799926042557,
+        "C": 40.800001472234726
+      },
+      "ratios": {
+        "inc_vs_sglang": 1.2418049089284673,
+        "var_vs_sglang": 1.2627450804941158,
+        "var_vs_inc": 1.016862690278554
+      },
+      "tokens": 4096
+    },
+    "zimage_t32": {
+      "median_us": {
+        "A": 9.184000082314014,
+        "B": 9.312000125646591,
+        "C": 9.296000003814697
+      },
+      "ratios": {
+        "inc_vs_sglang": 0.9862542910647041,
+        "var_vs_sglang": 0.9879518156782785,
+        "var_vs_inc": 1.0017211835010034
+      },
+      "tokens": 32
+    },
+    "zimage_t4128": {
+      "median_us": {
+        "A": 51.791999489068985,
+        "B": 41.63200035691261,
+        "C": 41.16800054907799
+      },
+      "ratios": {
+        "inc_vs_sglang": 1.2440430208746718,
+        "var_vs_sglang": 1.2580644869387259,
+        "var_vs_inc": 1.0112708851935006
+      },
+      "tokens": 4128
+    }
+  },
+  "iters": 300,
+  "warmup_per_block": 10,
+  "blocks": [
+    [
+      "A",
+      "B",
+      "C"
+    ],
+    [
+      "C",
+      "A",
+      "B"
+    ],
+    [
+      "B",
+      "C",
+      "A"
+    ]
+  ],
+  "gpu": "NVIDIA H200",
+  "gpu_id": "7",
+  "host": "ion8-h200",
+  "command": "CUDA_VISIBLE_DEVICES=7 KDA_TAG=cossin-vec2 KDA_WARMUP=10 KDA_ITERS=300 PYTHONPATH=/home/sglang-omni/bbuf/kda_runs/h200_diffusion_qknorm_rope__multi_shape/k04-20260604-185804/sglang_pin/python python bench_abc.py  # @ REMOTE_KDA_DIR",
+  "gpu_idle_before": "util=5% mem=44MiB",
+  "gpu_idle_after": "util=2% mem=44MiB"
+}

@@ -37,3 +37,41 @@ git -C /home/sglang-omni/bbuf/repos/sglang worktree add --detach /tmp/sglang_kda
 cp <RKD>/src/csrc/qknorm_rope_kernel.cuh /tmp/sglang_kda_export/python/sglang/jit_kernel/csrc/diffusion/qknorm_rope.cuh
 CUDA_VISIBLE_DEVICES=7 bash <RKD>/run_export_real.sh <RKD>     # candidate + baseline + fallback + geomean
 ```
+
+---
+
+# Continuation round re-run (2026-06-04, candidate `cossin-vec` `6669bd218e336c9d`)
+
+Re-promotion arbiter for the continuation candidate (float4 cos/sin loads + base-alignment launcher
+guard layered on d3-final). ion8-h200 GPU 7 (externally idle util=0% mem=42MiB before AND after),
+container `sglang_bbuf` (torch 2.11.0+cu130 / nvcc 13.0 — the prior round's container no longer
+exists; toolchain delta documented in `docs/draft.md`), both legs at SGLang pin `c47f0e7cd`.
+
+## Mechanics (same contract, stricter isolation)
+- Candidate tree: detached worktree `<RKD>/sglang_arbiter` @ `c47f0e7cd`; candidate `.cuh`
+  placed as `python/sglang/jit_kernel/csrc/diffusion/qknorm_rope.cuh` and **hash-verified in-tree
+  (`6669bd218e336c9d`) before the run**. SGLang's OWN public `fused_inplace_qknorm_rope`
+  (`@register_custom_op` intact) builds it through normal `load_jit`/`make_cpp_args`/`cache_once`.
+- Baseline tree: the separate, unmodified `<RKD>/sglang_pin` worktree at the SAME commit (original
+  baseline `.cuh`), run in a separate process — distinct JIT builds, no cache collision.
+  `repos/sglang` untouched. No monkeypatch anywhere.
+
+## Results (`docs/evidence/export_cand_cossin-vec.json`, `export_base_cossin-vec.json`,
+`arbiter_run_cossin-vec.log`)
+- **Correctness inside SGLang**: all 9 captured shapes `oracle_ok=True`, no NaN.
+- **Smoke benchmark** (public fn vs public fn): per-shape 1.005–1.222× — parity-or-speedup on
+  every shape; large shapes 1.188–1.222×; **geomean 1.0945×** (prior promoted candidate measured
+  1.0452× on this same arbiter).
+- **Misaligned-cache negative (new, Codex-required)**: a contiguous `[4096, 128]` float32 cache
+  with `data_ptr() % 16 == 4` through the IN-TREE public op → the launcher's base-alignment guard
+  routes it to the scalar one-head path; output matches the split oracle (PASS). Permanent
+  regression coverage added as
+  `tests/test_correctness.py::test_misaligned_cos_sin_cache_still_oracle_correct`.
+- **Fallback preserved**: KDA `optimized_wrapper` on a CPU input → dispatch `"fallback"`, no raise.
+- **Verdict**: `VERDICT PASS`.
+
+## Reproduce (continuation)
+```
+sh <RKD>/stage_arbiter.sh        # worktree + .cuh placement + hash check
+sh <RKD>/run_arbiter.sh          # pytest -k misaligned, candidate/baseline legs, in-tree misaligned, fallback, geomean
+```

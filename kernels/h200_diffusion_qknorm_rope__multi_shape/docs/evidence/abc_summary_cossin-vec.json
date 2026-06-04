@@ -1,0 +1,160 @@
+{
+  "utc": "2026-06-04T11:23:53.399247+00:00",
+  "tag": "cossin-vec",
+  "sha_incumbent": "4f70cda745940c96",
+  "sha_variant": "6669bd218e336c9d",
+  "geomean_all": {
+    "inc_vs_sglang": 1.036432685189637,
+    "var_vs_sglang": 1.1009188484448929,
+    "var_vs_inc": 1.0622193454304816
+  },
+  "geomean_large": {
+    "inc_vs_sglang": 1.0830217909551418,
+    "var_vs_sglang": 1.2372805757972083,
+    "var_vs_inc": 1.1424336852040826
+  },
+  "per_shape": {
+    "qwen_t4096": {
+      "median_us": {
+        "A": 41.24800115823746,
+        "B": 38.495998829603195,
+        "C": 33.93600136041641
+      },
+      "ratios": {
+        "inc_vs_sglang": 1.0714880094634143,
+        "var_vs_sglang": 1.215464388988088,
+        "var_vs_inc": 1.134370499952468
+      },
+      "tokens": 4096
+    },
+    "qwen_t19": {
+      "median_us": {
+        "A": 9.119999594986439,
+        "B": 9.119999594986439,
+        "C": 9.119999594986439
+      },
+      "ratios": {
+        "inc_vs_sglang": 1.0,
+        "var_vs_sglang": 1.0,
+        "var_vs_inc": 1.0
+      },
+      "tokens": 19
+    },
+    "qwen_t47": {
+      "median_us": {
+        "A": 9.184000082314014,
+        "B": 9.216000325977802,
+        "C": 9.151999838650227
+      },
+      "ratios": {
+        "inc_vs_sglang": 0.9965277514613811,
+        "var_vs_sglang": 1.00349653018225,
+        "var_vs_inc": 1.0069930603645
+      },
+      "tokens": 47
+    },
+    "qwenedit_t8424": {
+      "median_us": {
+        "A": 82.65600353479385,
+        "B": 76.03199779987335,
+        "C": 66.56000018119812
+      },
+      "ratios": {
+        "inc_vs_sglang": 1.0871212900699492,
+        "var_vs_sglang": 1.2418269728031421,
+        "var_vs_inc": 1.1423076561431693
+      },
+      "tokens": 8424
+    },
+    "qwenedit_t195": {
+      "median_us": {
+        "A": 9.503999724984169,
+        "B": 9.40799992531538,
+        "C": 9.440000168979168
+      },
+      "ratios": {
+        "inc_vs_sglang": 1.0102040604199485,
+        "var_vs_sglang": 1.0067796138622234,
+        "var_vs_inc": 0.996610143740363
+      },
+      "tokens": 195
+    },
+    "qwenedit_t189": {
+      "median_us": {
+        "A": 9.440000168979168,
+        "B": 9.375999681651592,
+        "C": 9.40799992531538
+      },
+      "ratios": {
+        "inc_vs_sglang": 1.0068259907743835,
+        "var_vs_sglang": 1.0034013864708566,
+        "var_vs_inc": 0.9965986135291434
+      },
+      "tokens": 189
+    },
+    "zimage_t4096": {
+      "median_us": {
+        "A": 51.61599814891815,
+        "B": 47.520000487565994,
+        "C": 41.4079986512661
+      },
+      "ratios": {
+        "inc_vs_sglang": 1.0861952360969338,
+        "var_vs_sglang": 1.2465224070263037,
+        "var_vs_inc": 1.1476043768203952
+      },
+      "tokens": 4096
+    },
+    "zimage_t32": {
+      "median_us": {
+        "A": 9.151999838650227,
+        "B": 9.247999638319016,
+        "C": 9.151999838650227
+      },
+      "ratios": {
+        "inc_vs_sglang": 0.9896193984187657,
+        "var_vs_sglang": 1.0,
+        "var_vs_inc": 1.0104894887851033
+      },
+      "tokens": 32
+    },
+    "zimage_t4128": {
+      "median_us": {
+        "A": 51.77599936723709,
+        "B": 47.61600121855736,
+        "C": 41.56799986958504
+      },
+      "ratios": {
+        "inc_vs_sglang": 1.0873655502818338,
+        "var_vs_sglang": 1.2455735067763307,
+        "var_vs_inc": 1.1454965687054284
+      },
+      "tokens": 4128
+    }
+  },
+  "iters": 300,
+  "warmup_per_block": 10,
+  "blocks": [
+    [
+      "A",
+      "B",
+      "C"
+    ],
+    [
+      "C",
+      "A",
+      "B"
+    ],
+    [
+      "B",
+      "C",
+      "A"
+    ]
+  ],
+  "gpu": "NVIDIA H200",
+  "gpu_id": "7",
+  "host": "ion8-h200",
+  "command": "CUDA_VISIBLE_DEVICES=7 KDA_TAG=cossin-vec KDA_WARMUP=10 KDA_ITERS=300 PYTHONPATH=/home/sglang-omni/bbuf/kda_runs/h200_diffusion_qknorm_rope__multi_shape/k04-20260604-185804/sglang_pin/python python bench_abc.py  # @ REMOTE_KDA_DIR",
+  "gpu_idle_before": "util=0% mem=50MiB",
+  "gpu_idle_after": "util=0% mem=50MiB"
+}

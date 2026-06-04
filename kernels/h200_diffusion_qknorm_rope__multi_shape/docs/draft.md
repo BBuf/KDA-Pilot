@@ -184,3 +184,66 @@ result — win or loss — is not fully understood.
   `benchmark.csv` rows tag=continuation-audit,
   `docs/evidence/bench_summary_continuation-audit.json`,
   `docs/evidence/bench_audit_r0.log`.
+- 2026-06-04 DIRECTION 1 iteration 1 (`cossin-vec`, src sha16 `6669bd218e336c9d`):
+  replaced the warp2 rope section's eight scalar `__ldg` cos/sin loads per lane
+  with two 128-bit `__ldg(float4)` loads (per-lane quartets are consecutive:
+  half_idx = lane_in_head*4 + 0..3) + host-side 16B-alignment guard on the
+  cache base routing misaligned bases to the one-head scalar path. Correctness:
+  captured slice 72/72 BEFORE benchmark claims, full suite 225/225 BEFORE keep.
+  Interleaved A/B/C module-level (3 rotated blocks × 100 iters/leg, externally
+  idle 0%/50MiB before AND after): **var/inc all-9 geomean 1.0622×, large
+  1.1424× (1.134–1.148), tiny 0.997–1.011 (noise)**; var/sgl all-9 1.1009×,
+  large 1.2373×; inc/sgl 1.0364× (reproduces audit 1.0366× — internal
+  consistency). KEEP — clears the decided margin (≥3% one clean run) on
+  iteration 1. NCU confirmation round launched (`profile/round_cossin_vec/`):
+  confirm mechanism (long-scoreboard reduction), get nvcc-13 regs/thread for
+  both builds (direction-2 calibration), decide whether 1b (smem staging) has
+  remaining headroom or is skipped with evidence. KernelWiki context: no new
+  query needed this iteration — the edit followed the pre-logged 1a design;
+  prior-art pages pr-TensorRT-LLM-13052/11869 already recorded above.
+- 2026-06-04 NCU ROUND (`profile/round_cossin_vec/`, REPORT.md committed; reports
+  on REMOTE_KDA_DIR): mechanism CONFIRMED with a second-order surprise — the
+  float4 rewrite dropped **registers 38→32/thread**, unlocking **100%
+  theoretical / 90.4% achieved occupancy** (was 75%/72.5%) and growing the
+  occupancy-capped grid 792→1056; memory throughput 2.005→2.245 TB/s; duration
+  38.13→33.97 µs (matches A/B/C 1.1344×). Long-scoreboard attribution: 45% q/k
+  input unpack (irreducible), 34% norm chain, 14.5% positions→LEA, **only ~6%
+  cos/sin consumers → direction 1b (smem staging) SKIPPED with evidence**.
+  **Direction 2 RESOLVED-BY-DIRECTION-1**: regs already at the 32-reg/100%
+  occupancy boundary; <32 has no theoretical upside (2048 threads/SM ceiling),
+  spills risk only. No separate direction-2 iteration warranted.
+- 2026-06-04 DIRECTION 1 iteration 2 (`cossin-vec2`, src sha16
+  `51e183ba29abd455`): hoisted pos + cos/sin quartet fetches above the RMS
+  reduction (latency hides under norm math — targets the 14.5% positions→LEA
+  stall share). Slice 72/72. Interleaved A/B/C (B=cossin-vec v1, C=v2):
+  **v2/v1 large geomean 1.0148× (1.013–1.018), all-9 1.0090×, tiny parity**;
+  v1/sglang large 1.2356× here vs 1.2373× in run 1 — 0.14% cross-run delta,
+  methodology reproducible. Confirmation batch: v2 register check
+  (must stay ≤32), second interleaved run, full suite.
+- 2026-06-04 ITERATION 2 VERDICT: **REJECT `cossin-vec2`** — NCU basic set shows
+  **40 regs/thread** (v1: 32), theoretical occupancy 75% (v1: 100%), achieved
+  63.8–65.0% (v1: 90.4%): the hoist holds the quartets live across the
+  reduction. Second interleaved run shrank v2/v1 to large 1.0085× / all-9
+  1.0018× (run 1: 1.0148/1.0090) — small + unstable, and the pre-declared
+  regs≤32 rule is violated. v2 full suite 225/225 (correctness was never the
+  issue). Source restored byte-identical to v1 `6669bd218e336c9d` local+remote.
+  **DIRECTION 1 CLOSED at 2/2 iterations: FINAL = `cossin-vec` v1.**
+  **DIRECTION 2 CLOSED (resolved-by-direction-1, NCU mechanism evidence in
+  `profile/round_cossin_vec/REPORT.md`): regs already 32 = the 100%-occupancy
+  boundary; <32 has no theoretical upside.** Cumulative final-candidate
+  evidence vs incumbent d3-final: all-9 module geomean 1.0622×, large 1.1424×
+  (single clean interleaved run, externally idle); v1-vs-SGLang large geomean
+  reproduced 1.2373/1.2356/1.2367 across three interleaved runs.
+- 2026-06-04 DECISION GATE (Codex, `.humanize` skill log + verdict quoted in
+  round summary): **OUTCOME_A** — margin bar cleared (6.2% > 3% single clean
+  run); one A/B/C run sufficient given mechanism evidence + cross-run B-leg
+  reproducibility; REQUIREMENT added before accepting the arbiter: a dedicated
+  forced-misaligned cos/sin-cache negative test (contiguous [rows,128] f32,
+  `data_ptr()%16!=0`, through the public in-tree op, vs the split oracle).
+  Implemented twice: `tests/test_correctness.py::
+  test_misaligned_cos_sin_cache_still_oracle_correct` (permanent regression
+  coverage via the KDA wrapper) and `export_misaligned.py` (arbiter-side,
+  in-tree public op). Arbiter strictness honored: arbiter tree's `.cuh` hash
+  verified `6669bd218e336c9d`, `.cuh`-only placement, no monkeypatch, separate
+  processes for candidate (sglang_arbiter) vs baseline (sglang_pin), both at
+  `c47f0e7cd`.
