@@ -122,14 +122,28 @@ _OP_TO_FN = {
     OP_RESIDUAL: fuse_residual_layernorm_scale_shift_gate_select01_kernel,
 }
 
+# Most-specific first: a residual call cannot bind to the select01 signature
+# (too many args) and vice versa (missing required args), and the 3-tensor
+# elementwise call binds to neither of the larger signatures.
+_BIND_ORDER = (OP_RESIDUAL, OP_SELECT01, OP_SCALE_SHIFT)
+
+import inspect as _inspect  # noqa: E402
+
+_OP_SIGNATURES = {op: _inspect.signature(fn) for op, fn in _OP_TO_FN.items()}
+
 
 def _resolve_op(args, kwargs) -> str:
-    """Identify which public entry point a generic call targets."""
-    if "residual" in kwargs or len(args) >= 12:
-        return OP_RESIDUAL
-    if "index" in kwargs or "scale0" in kwargs or len(args) >= 10:
-        return OP_SELECT01
-    return OP_SCALE_SHIFT
+    """Identify which public entry point a generic call targets via signature binding."""
+    for op in _BIND_ORDER:
+        try:
+            _OP_SIGNATURES[op].bind(*args, **kwargs)
+            return op
+        except TypeError:
+            continue
+    raise TypeError(
+        "optimized_wrapper: arguments do not match any wrapped entry point "
+        f"(args={len(args)}, kwargs={sorted(kwargs)})"
+    )
 
 
 def optimized_wrapper(*args, **kwargs):

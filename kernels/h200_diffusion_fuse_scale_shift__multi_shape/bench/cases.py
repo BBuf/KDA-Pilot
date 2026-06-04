@@ -101,32 +101,59 @@ def _randn(shape, dtype, device, g) -> torch.Tensor:
 
 def _index(shape, dtype, device, g) -> torch.Tensor:
     t = torch.randint(0, 2, tuple(shape), generator=g, device=device, dtype=torch.int64)
+    # The select01 contract domain is values in {0, 1}; guarantee BOTH branches
+    # are exercised even on tiny shapes where randint could be constant.
+    if t.numel() >= 2:
+        flat = t.view(-1)
+        flat[0] = 0
+        flat[1] = 1
     return t.to(dtype)
+
+
+def _default_strides(shape) -> tuple[int, ...]:
+    strides = [1] * len(shape)
+    acc = 1
+    for i in range(len(shape) - 1, -1, -1):
+        strides[i] = acc
+        acc *= max(int(shape[i]), 1)
+    return tuple(strides)
 
 
 def _strided(shape, strides, dtype, device, g) -> torch.Tensor:
     """Build a tensor with EXACT shape+strides via as_strided over a base buffer."""
     needed = 1 + sum((s - 1) * st for s, st in zip(shape, strides) if s > 0)
-    base = torch.randn(int(needed), generator=g, device=device, dtype=torch.float32).to(dtype)
+    if dtype in (torch.int32, torch.int64, torch.bool):
+        base = _index((int(needed),), dtype, device, g)
+    else:
+        base = torch.randn(
+            int(needed), generator=g, device=device, dtype=torch.float32
+        ).to(dtype)
     return base.as_strided(tuple(shape), tuple(strides))
 
 
 def _build_from_spec(spec: Any, device, g):
-    """Build one argument from a captured JSONL tensor spec (or pass literals through)."""
+    """Build one argument from a captured JSONL tensor spec (or pass literals through).
+
+    Strides are reproduced EXACTLY when given — even for tensors PyTorch reports
+    as contiguous (production captures carry padded strides on size-1 dims, e.g.
+    (1,1,3072)/(18432,3072,1) slices of packed adaLN buffers), so dispatcher
+    stride predicates see the real production values.
+    """
     if spec is None or isinstance(spec, (int, float, bool, str)):
         return spec
     assert isinstance(spec, dict), spec
     dtype = _DTYPE_FROM_STR[spec["dtype"]]
     shape = spec["shape"]
     strides = spec.get("strides")
-    contiguous = spec.get("contiguous", True)
-    if dtype in (torch.int32, torch.int64, torch.bool):
+    if strides and tuple(strides) != _default_strides(shape):
+        t = _strided(shape, strides, dtype, device, g)
+    elif dtype in (torch.int32, torch.int64, torch.bool):
         t = _index(shape, dtype, device, g)
-        assert t.is_contiguous()
-        return t
-    if contiguous:
-        return _randn(shape, dtype, device, g)
-    return _strided(shape, strides, dtype, device, g)
+    else:
+        t = _randn(shape, dtype, device, g)
+    if spec.get("contiguous", True):
+        assert t.is_contiguous(), (shape, strides)
+    return t
 
 
 # ---------------------------------------------------------------------------

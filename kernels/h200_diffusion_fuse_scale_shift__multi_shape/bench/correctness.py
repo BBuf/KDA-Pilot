@@ -119,10 +119,12 @@ def run_case(case, device: torch.device) -> dict:
             base_fn(*args, **kwargs)
         except Exception as exc:  # noqa: BLE001 - parity check needs the type
             base_exc = type(exc)
+        dispatch.consume_last_route()  # clear any stale route
         try:
             cand_fn(*args, **kwargs)
         except Exception as exc:  # noqa: BLE001
             cand_exc = type(exc)
+        route = dispatch.consume_last_route()
         if base_exc is None or not issubclass(base_exc, case.expected_errors):
             raise AssertionError(
                 f"{case.case_id}: baseline raised {base_exc}, expected {case.expected_errors}"
@@ -131,7 +133,13 @@ def run_case(case, device: torch.device) -> dict:
             raise AssertionError(
                 f"{case.case_id}: error parity broken: baseline={base_exc} candidate={cand_exc}"
             )
+        # Out-of-contract signatures must never have entered a native kernel.
+        if route is None or route[0] != "fallback":
+            raise AssertionError(
+                f"{case.case_id}: out-of-contract input did not route to fallback: {route}"
+            )
         record["error_type"] = base_exc.__name__
+        record["route"] = route
         return record
 
     args, kwargs = case.build(device)
