@@ -159,3 +159,22 @@ Codex reviewed the D1-D5 ranking (full text in the loop workspace). Verdicts app
 Execution after integration: cuda-v5 = D2 (hoist + swept block size) + D1 (2-rows/CTA, kHalf=32
 only, half64 path byte-identical), evaluated per-bucket vs cuda-v4 with the noise-band gate;
 revert whichever component regresses its bucket.
+
+## Continuation outcomes per bucket (gate vs cuda-v4; full data: benchmark.csv 2026-06-04 + profile/ncu-v3/REPORT.md)
+
+| Bucket | Direction(s) tried | Outcome |
+|---|---|---|
+| standard | D2 (cuda-v6: cos/sin register hoist + full-pass 128-thr blocks; B200 sweep {64..256}); D5-class MLP probe (cuda-v7 double-buffer) | **WIN: cuda-v6 1.0709-1.0718x over cuda-v4 (3-of-3 beyond 3% band), 61.86 -> 57.7us.** v7 rejected (zero movement) -> kernel DRAM-queue-paced at ~75% of peak; D3 no-go by evidence (compute SOL 47%, not the limiter) |
+| LTX-2 large-half32 | D1 (cuda-v5 two-rows-per-CTA) | NO-GO: D1 = 1.0006x on target (Codex residency argument experimentally confirmed); fresh NCU 76.1% DRAM SOL, clean coalescing, no LSU/sector rule fired -> D5 evidence bar not met; bound = DRAM bandwidth at layout granularity |
+| LTX-2 small | (D1 side effect measured; D4 ruled gate-ineligible by Codex review) | NO-GO: launch/latency floor; v5 grid-halving regressed 1x126x2048 by 12% (hypersensitive to launch shape); device-side floor confirmed |
+| LTX-2 large-half64 | none (kernel byte-identical) | NO-GO stands (ncu-v2: 85.3% DRAM SOL, HBM ceiling) |
+
+Gate verdict: **cuda-v6 PASSES the hard no-regression gate** (3 idle-gated paired runs vs v4
+snapshot f4c8b844044f: no shape regresses beyond its noise band in any run; standard improves
+beyond band in 3-of-3). Pair geomeans 1.0038/1.0061/1.0066x. Outcome metric vs the CURRENT
+SGLang baseline (edb1b3f8f): geomean 3.1682-3.1965x — read with the BASELINE SHIFT note above
+(the ltx2 Triton baseline on this checkout lacks PR #24732 and is 2-8x slower at scale than the
+2026-06-01 pinned baseline; cuda-v6's device kernels are the same speed in both environments).
+Like-for-like vs the 2026-06-01 environment: standard 110.8/57.7 = 1.92x (was 1.80x), LTX-2
+buckets unchanged (1.00-1.67x) -> environment-adjusted geomean ~= 1.49x (prior 1.45x scaled by
+the 11-shape geomean of the per-shape v6/v4 ratios, 1.006x, applied to the standard bucket gain).
