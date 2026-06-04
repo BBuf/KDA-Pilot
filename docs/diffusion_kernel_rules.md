@@ -87,6 +87,11 @@ Use `docs/standalone_diffusion_benchmark_template.py` as the timing harness
 starting point. Do not change workloads, tolerances, score aggregation, or timing
 rules after tuning starts unless both baseline and candidate are remeasured.
 
+When NCU profiling is needed, follow `external/ncu-report-skill/SKILL.md` if it
+is available in the repository. Keep the profile harness, reports, analysis, and
+summary in a task-owned directory, and use the resulting evidence to choose the
+next edit instead of guessing.
+
 A final performance claim must report:
 
 - median, mean, std, min, p10, and p90 latency per workload;
@@ -124,10 +129,11 @@ need different implementations.
 
 ## Prior Art And Exploration
 
-Before settling on an implementation strategy, inspect relevant upstream code or
-knowledge sources when they could change the design: SGLang, CUTLASS/CuTe, CUDA
-samples, PyTorch, vLLM, TensorRT-LLM, FlashInfer, DeepGEMM, KernelWiki, and
-task-local NCU evidence.
+Before settling on an implementation strategy, read
+`external/KernelWiki/SKILL.md` if it is available in the repository, then inspect
+relevant upstream code or knowledge sources when they could change the design:
+SGLang, CUTLASS/CuTe, CUDA samples, PyTorch, vLLM, TensorRT-LLM, FlashInfer,
+DeepGEMM, KernelWiki, and task-local NCU evidence.
 
 Record kept/rejected ideas in `docs/draft.md`, `docs/results.md`, or
 `docs/research.md`. Keep optimization attempts bounded and evidence-backed.
