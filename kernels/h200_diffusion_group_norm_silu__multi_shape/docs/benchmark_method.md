@@ -81,19 +81,29 @@ bottom of this file supersedes earlier ABI wording where noted).
   this family is Triton (no CUDA baseline file exists). Recorded at scaffold
   time, before any measurement.
 
-## Amendment (promotion decision DEC-6, before the final runs)
+## Amendment (round 1 — template contract restored per the round-0 review)
 
-- The candidate's public entry became allocate-and-return
-  (`group_norm_silu_candidate(...) -> Tensor`), exactly mirroring the
-  baseline's contract; the adapter glue is now literally identical on both
-  sides (call → rebind). The destination-passing form survives as
-  `group_norm_silu_candidate_into` for the correctness suite's poison checks.
-- The shipped candidate routes two measured regimes to the LOCAL copied
-  Triton baseline (rule table + evidence in docs/dispatch.md). Fallback rows
-  therefore time device-identical code on both sides; their 0.97-1.00
-  readings bound the dispatcher's host-side routing tax (cross-checked by
-  the A/A validation at 1.0037).
-- Final numbers come from back-to-back full frozen runs (geomean stable to
-  ±0.1%; the last complete run is the promotion record; all runs retained in
-  docs/run_log.md). No workload, tolerance, or timing-policy field changed
-  after the freeze.
+The round-0 implementation timed allocate-and-return glue on both sides; the
+round-0 review correctly held that this deviates from the template contract
+("outputs preallocated; call_* must not allocate output tensors"). Round 1
+restored the contract exactly:
+
+- BOTH sides write into harness-preallocated buffers
+  (`{"y": torch.empty_like(x)}` per side in `make_case`). The candidate side
+  is `solution/binding.py::group_norm_silu_candidate_into`; the baseline side
+  is `baseline/binding.py::group_norm_silu_baseline_into` /
+  `group_norm_silu_baseline_apply_into` — destination-passing wrappers that
+  replicate the copied launchers' bodies verbatim except for the output
+  buffer (internal partials/stats scratch unchanged; verified bit-identical
+  to the allocate-and-return entries). The baseline wrapper REFUSES the
+  upstream eager fallback so it can never be timed silently.
+- The template's output-poisoning check is fully effective on both sides
+  every trial. No timed path allocates an output tensor.
+- The earlier ABI paragraph above ("Symmetric timed glue (revised per the
+  pre-freeze review)...") is superseded by this section.
+- A/A validation under this exact contract: geomean 0.9990 (8 spread rows,
+  0.9854–1.0076).
+- The shipped candidate contains no baseline routing (round-0's DEC-6
+  dispatch experiment was removed per the review; measurement record kept in
+  docs/dispatch.md history). Final numbers come from the round-1 frozen run;
+  no workload, tolerance, or timing-policy field changed after the freeze.

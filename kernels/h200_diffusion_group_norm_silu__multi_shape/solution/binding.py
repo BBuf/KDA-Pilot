@@ -1,24 +1,22 @@
 """Build, load, and dispatch for the candidate fused GroupNorm+SiLU kernels.
 
-Public callable (allocate-and-return, mirroring the upstream entry contract):
-
-    group_norm_silu_candidate(x, weight, bias, num_groups, eps) -> Tensor
-
-plus a destination-passing variant used by the correctness suite's poison
-checks:
+Primary entry (destination-passing, the benchmark ABI):
 
     group_norm_silu_candidate_into(x, weight, bias, num_groups, eps, out)
 
-The dispatcher routes by measured regime (full evidence in docs/dispatch.md):
+plus an allocate-and-return convenience entry:
 
-* one-CTA-per-group CUDA kernel for small groups;
-* chunked three-kernel CUDA pipeline for large groups;
-* register-lean exact-grid two-kernel CUDA pipeline for giant groups;
-* the LOCAL copied Triton baseline for the two regimes where it is measurably
-  at or above the CUDA kernels (sanctioned by the promotion decision DEC-6):
-  groups just under the small/large crossover, and giant groups whose
-  spatial extent is a multiple of the baseline's 8192-element chunk (where
-  the Triton chunked kernels run straddle-free near peak HBM).
+    group_norm_silu_candidate(x, weight, bias, num_groups, eps) -> Tensor
+
+Every regime runs solution-owned CUDA kernels (full evidence in
+docs/dispatch.md):
+
+* one-CTA-per-group kernel for small groups (the host launcher widens to
+  1024-thread blocks for the crossover band just under the chunked
+  threshold, where 256-thread blocks starve per-SM memory parallelism);
+* chunked three-kernel pipeline for large groups;
+* register-lean exact-grid two-kernel pipeline with streaming-hint loads/
+  stores and per-shape zero-straddle tiles for giant groups.
 
 Reduction scratch is allocated per call through torch's caching allocator —
 the candidate's natural behavior, mirroring how the copied baseline allocates
@@ -55,15 +53,6 @@ CHUNK_ELEMS = 8192
 # the giant path's own CTA-task size. Both env-tunable for crossover sweeps.
 GIANT_THRESHOLD = int(os.environ.get("GNS_GIANT_THRESH", str(700_000)))
 GIANT_CHUNK_ELEMS = int(os.environ.get("GNS_GIANT_CHUNK", str(16384)))
-# Baseline-fallback regimes (DEC-6, measured per-row evidence in
-# docs/dispatch.md): groups just under the small/large crossover starve the
-# one-CTA-per-group kernel, and giant groups whose spatial extent is a
-# multiple of the baseline's 8192-element chunk let the Triton chunked
-# kernels run straddle-free at near-peak HBM where the CUDA pipeline trails
-# by 5-10%.
-FALLBACK_SMALL_LO = int(os.environ.get("GNS_FALLBACK_SMALL_LO", str(40_960)))
-FALLBACK_GIANT_LO = int(os.environ.get("GNS_FALLBACK_GIANT_LO", str(900_000)))
-BASELINE_CHUNK = 8192  # upstream Triton _BLOCK_SIZE * _BLOCKS_PER_PROGRAM
 # The giant pipeline can tile its two kernels independently (the apply kernel
 # reads only mean/rstd, never the partials). Measurements across the
 # production set showed no robust win for larger stats tiles, so the default
@@ -352,6 +341,9 @@ def _run(x3: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor, num_groups:
     spatial = x3.shape[2]
     group_size = (channels // num_groups) * spatial
     if group_size < LARGE_THRESHOLD:
+        # The host launcher widens the block to 1024 threads for the
+        # crossover band (>= 32K elements/group) where one CTA per group
+        # otherwise starves per-SM memory parallelism.
         small(x3, weight, bias, int(num_groups), float(eps), y3)
         return
     num_rows = x3.shape[0] * num_groups
@@ -384,47 +376,30 @@ def _run(x3: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor, num_groups:
               float(eps), y3)
 
 
-# Module-level baseline import: the fallback hot path must not pay per-call
-# import machinery (the host-bound ~25 us rows make every microsecond of
-# wrapper overhead visible in the interleaved comparison).
-from baseline.binding import group_norm_silu_baseline  # noqa: E402
-
-
-@functools.lru_cache(maxsize=4096)
-def _dispatch_plan(shape: tuple, num_groups: int) -> tuple[bool, int, int]:
-    """(use_baseline_fallback, group_size, spatial) memoized per signature."""
-    spatial = 1
-    for dim in shape[2:]:
-        spatial *= dim
-    group_size = (shape[1] // num_groups) * spatial
-    fallback = (
-        FALLBACK_SMALL_LO <= group_size < LARGE_THRESHOLD
-        or (group_size >= FALLBACK_GIANT_LO and spatial % BASELINE_CHUNK == 0)
-    )
-    return fallback, group_size, spatial
-
-
-def group_norm_silu_candidate(
+def group_norm_silu_candidate_into(
     x: torch.Tensor,
     weight: torch.Tensor,
     bias: torch.Tensor,
     num_groups: int,
     eps: float,
-) -> torch.Tensor:
-    """Allocate-and-return entry (mirrors the upstream contract)."""
-    fallback, _, _ = _dispatch_plan(tuple(x.shape), num_groups)
-    if fallback:
-        return group_norm_silu_baseline(x, weight, bias, num_groups, eps)
-
-    if _fast_path_ok(x, weight, bias):
-        out = torch.empty_like(x)
+    out: torch.Tensor,
+) -> None:
+    """Destination-passing entry (the benchmark ABI): writes into the
+    caller-preallocated ``out``; never allocates an output tensor. Every
+    regime runs solution-owned CUDA kernels."""
+    if out.shape != x.shape or out.dtype != x.dtype:
+        raise ValueError("out must match x in shape and dtype")
+    if (
+        _fast_path_ok(x, weight, bias)
+        and out.is_contiguous()
+        and out.data_ptr() % 16 == 0
+    ):
         _run(_normalized_3d(x), weight, bias, num_groups, eps, _normalized_3d(out))
-        return out
-
-    # Robust path for layouts no production row exhibits (non-contiguous input,
-    # storage-offset-misaligned base): normalize to fresh contiguous
-    # 16B-aligned tensors and run the same kernels. Values stay correct; the
-    # cost is irrelevant off the production fast path.
+        return
+    # Robust path for layouts no production row exhibits (non-contiguous
+    # input, storage-offset-misaligned base, exotic out strides): normalize to
+    # fresh contiguous 16B-aligned tensors, run the same solution-owned CUDA
+    # kernels, and copy into the caller's buffer. Correctness-only path.
     xc = x.contiguous()
     if xc.data_ptr() % 16 != 0:
         xc = xc.clone()
@@ -434,35 +409,22 @@ def group_norm_silu_candidate(
     bc = bias.contiguous()
     if bc.data_ptr() % 16 != 0:
         bc = bc.clone()
-    out = torch.empty(xc.shape, dtype=xc.dtype, device=xc.device)
-    _run(_normalized_3d(xc), wc, bc, num_groups, eps, _normalized_3d(out))
-    return out.view(x.shape) if out.shape != x.shape else out
+    tmp = torch.empty(xc.shape, dtype=xc.dtype, device=xc.device)
+    _run(_normalized_3d(xc), wc, bc, num_groups, eps, _normalized_3d(tmp))
+    out.copy_(tmp.view(x.shape) if tmp.shape != x.shape else tmp)
 
 
-def group_norm_silu_candidate_into(
+def group_norm_silu_candidate(
     x: torch.Tensor,
     weight: torch.Tensor,
     bias: torch.Tensor,
     num_groups: int,
     eps: float,
-    out: torch.Tensor,
-) -> None:
-    """Destination-passing variant for the correctness suite's poison checks.
-    CUDA regimes write straight into ``out``; baseline-fallback and exotic
-    layouts copy the produced tensor in (correctness-only path)."""
-    if out.shape != x.shape or out.dtype != x.dtype:
-        raise ValueError("out must match x in shape and dtype")
-    fallback, _, _ = _dispatch_plan(tuple(x.shape), num_groups)
-    direct = (
-        not fallback
-        and _fast_path_ok(x, weight, bias)
-        and out.is_contiguous()
-        and out.data_ptr() % 16 == 0
-    )
-    if direct:
-        _run(_normalized_3d(x), weight, bias, num_groups, eps, _normalized_3d(out))
-        return
-    out.copy_(group_norm_silu_candidate(x, weight, bias, num_groups, eps))
+) -> torch.Tensor:
+    """Allocate-and-return convenience entry over the same CUDA dispatch."""
+    out = torch.empty_like(x)
+    group_norm_silu_candidate_into(x, weight, bias, num_groups, eps, out)
+    return out
 
 
 __all__ = [

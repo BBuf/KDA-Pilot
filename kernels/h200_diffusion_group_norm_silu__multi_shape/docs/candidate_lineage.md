@@ -32,14 +32,15 @@ this round re-validates everything against a freshly locked baseline.
 - **PDL removed.** The prior template parameter `kUsePDL` was compiled `false`
   (and the copied Triton baseline has no comparable PDL path, so the rules
   exclude PDL from the comparison); the dead branches are dropped.
-- **Dispatch policy (DEC-1, then amended by the promotion decision
-  DEC-6).** The round began all-CUDA on every timed row (DEC-1): a new
-  register-lean giant pipeline replaced the prior round's baseline fallback
-  and took the giant bucket from 0.76 to 0.94-0.99 geomean. After bounded
-  NCU-driven attempts left a 3-6% gap only where the baseline's chunked
-  kernels run straddle-free near peak HBM, the user-approved DEC-6 dispatch
-  routes those two measured regimes to the LOCAL copied baseline (rules and
-  per-regime evidence in docs/dispatch.md). Unsupported layouts take a
+- **Dispatch policy (all-CUDA, final).** The shipped candidate routes every
+  regime to solution-owned CUDA kernels: a new register-lean giant pipeline
+  (32-reg occupancy fix, fused last-block finalize, zero-straddle tiles,
+  streaming hints, ILP accumulators) replaced the prior round's baseline
+  fallback and took the giant bucket from 0.76 to ~1.02 geomean, and a
+  1024-thread one-pass variant lifted the small/large crossover band from
+  ~0.9 to 1.64-1.85. A mid-development dispatch-to-local-baseline experiment
+  (DEC-6) was measured and then removed per the round-0 review; its record
+  lives in docs/dispatch.md's attempt history. Unsupported layouts take a
   solution-internal normalize-and-run path.
 - **fp32 coverage added.** The prior production dispatcher gated to
   fp16/bf16; the standalone candidate compiles and dispatches fp16, bf16 and

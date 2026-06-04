@@ -78,9 +78,13 @@ __device__ __forceinline__ float from_f32<float>(float v) {
 }
 
 // 16-byte vector pack with element access, mirroring AlignedVector semantics.
+// The streaming variants use last-use/streaming cache hints for the giant
+// pipeline's read-once/write-once tensors (far beyond L2; avoids thrashing
+// resident lines that the affine params and partials want).
 template <typename T, int N>
 struct alignas(16) Pack {
   T elems[N];
+  static_assert(sizeof(T) * N == 16, "Pack must be exactly 16 bytes");
   __device__ __forceinline__ T& operator[](int i) { return elems[i]; }
   __device__ __forceinline__ const T& operator[](int i) const { return elems[i]; }
   __device__ __forceinline__ void load(const T* __restrict__ base, int64_t vec_idx) {
@@ -88,6 +92,13 @@ struct alignas(16) Pack {
   }
   __device__ __forceinline__ void store(T* __restrict__ base, int64_t vec_idx) const {
     *(reinterpret_cast<Pack*>(base) + vec_idx) = *this;
+  }
+  __device__ __forceinline__ void load_streaming(const T* __restrict__ base, int64_t vec_idx) {
+    const int4 v = __ldcs(reinterpret_cast<const int4*>(base) + vec_idx);
+    *this = *reinterpret_cast<const Pack*>(&v);
+  }
+  __device__ __forceinline__ void store_streaming(T* __restrict__ base, int64_t vec_idx) const {
+    __stcs(reinterpret_cast<int4*>(base) + vec_idx, *reinterpret_cast<const int4*>(this));
   }
 };
 
@@ -105,7 +116,8 @@ __device__ __forceinline__ float warp_reduce_sum(float v) {
 
 // Block-wide reduction of two fp32 accumulators (sum, sumsq). Deterministic
 // fixed-order tree, no atomics; result broadcast to all threads. `smem` must
-// hold >= 2*kWarpsPerBlock + 2 floats.
+// hold >= 2*kWarps + 2 floats. kWarps must be a power of two <= 32.
+template <int kWarps = kWarpsPerBlock>
 __device__ __forceinline__ void block_reduce2(float& a, float& b, float* smem) {
   a = warp_reduce_sum(a);
   b = warp_reduce_sum(b);
@@ -113,22 +125,22 @@ __device__ __forceinline__ void block_reduce2(float& a, float& b, float* smem) {
   const uint32_t warp_id = threadIdx.x >> 5;
   if (lane == 0) {
     smem[warp_id] = a;
-    smem[kWarpsPerBlock + warp_id] = b;
+    smem[kWarps + warp_id] = b;
   }
   __syncthreads();
   if (warp_id == 0) {
-    float ta = (lane < kWarpsPerBlock) ? smem[lane] : 0.0f;
-    float tb = (lane < kWarpsPerBlock) ? smem[kWarpsPerBlock + lane] : 0.0f;
-    ta = warp_reduce_sum<kWarpsPerBlock>(ta);
-    tb = warp_reduce_sum<kWarpsPerBlock>(tb);
+    float ta = (lane < kWarps) ? smem[lane] : 0.0f;
+    float tb = (lane < kWarps) ? smem[kWarps + lane] : 0.0f;
+    ta = warp_reduce_sum<kWarps>(ta);
+    tb = warp_reduce_sum<kWarps>(tb);
     if (lane == 0) {
-      smem[2 * kWarpsPerBlock] = ta;
-      smem[2 * kWarpsPerBlock + 1] = tb;
+      smem[2 * kWarps] = ta;
+      smem[2 * kWarps + 1] = tb;
     }
   }
   __syncthreads();
-  a = smem[2 * kWarpsPerBlock];
-  b = smem[2 * kWarpsPerBlock + 1];
+  a = smem[2 * kWarps];
+  b = smem[2 * kWarps + 1];
 }
 
 __device__ __forceinline__ float siluf(float z) {
@@ -179,21 +191,53 @@ struct GnsLargeParams {
 };
 
 // Reduce x[0, nelem) into (lsum, lsumsq) in fp32. `vec_aligned` enables the
-// 16-byte vector path.
-template <typename DType, int kVec>
+// 16-byte vector path; `kStream` selects streaming (last-use) loads for
+// tensors with no reuse inside this kernel. Two independent accumulator
+// pairs over a 2x-unrolled vector loop break the per-thread FADD dependency
+// chain (the add latency otherwise caps throughput well below DRAM peak).
+template <typename DType, int kVec, bool kStream = false>
 __device__ __forceinline__ void accumulate_stats(const DType* __restrict__ x, int64_t nelem,
                                                  bool vec_aligned, float& lsum, float& lsumsq) {
   const int64_t nvec = vec_aligned ? nelem / kVec : 0;
-  for (int64_t vi = threadIdx.x; vi < nvec; vi += blockDim.x) {
+  float s0 = 0.0f, q0 = 0.0f, s1 = 0.0f, q1 = 0.0f;
+  int64_t vi = threadIdx.x;
+  const int64_t stride = blockDim.x;
+  for (; vi + stride < nvec; vi += 2 * stride) {
+    Pack<DType, kVec> a;
+    Pack<DType, kVec> b;
+    if constexpr (kStream) {
+      a.load_streaming(x, vi);
+      b.load_streaming(x, vi + stride);
+    } else {
+      a.load(x, vi);
+      b.load(x, vi + stride);
+    }
+#pragma unroll
+    for (int j = 0; j < kVec; ++j) {
+      const float xa = to_f32<DType>(a[j]);
+      const float xb = to_f32<DType>(b[j]);
+      s0 += xa;
+      q0 += xa * xa;
+      s1 += xb;
+      q1 += xb * xb;
+    }
+  }
+  for (; vi < nvec; vi += stride) {
     Pack<DType, kVec> v;
-    v.load(x, vi);
+    if constexpr (kStream) {
+      v.load_streaming(x, vi);
+    } else {
+      v.load(x, vi);
+    }
 #pragma unroll
     for (int j = 0; j < kVec; ++j) {
       const float xf = to_f32<DType>(v[j]);
-      lsum += xf;
-      lsumsq += xf * xf;
+      s0 += xf;
+      q0 += xf * xf;
     }
   }
+  lsum += (s0 + s1);
+  lsumsq += (q0 + q1);
   for (int64_t i = nvec * kVec + threadIdx.x; i < nelem; i += blockDim.x) {
     const float xf = to_f32<DType>(x[i]);
     lsum += xf;
@@ -267,10 +311,14 @@ __device__ __forceinline__ void apply_affine_silu(const DType* __restrict__ x, D
 }
 
 // ---------------- small path: one CTA per (batch, group) ----------------
-template <typename DType>
+// kThreads is selectable: 256 for tiny groups (launch-bound), 1024 for the
+// crossover band just under the chunked threshold, where one CTA per group
+// otherwise starves per-SM memory parallelism (more resident loads per SM).
+template <typename DType, int kThreads = kBlockThreads>
 __global__ void gns_one_pass_kernel(const GnsParams<DType> __grid_constant__ p) {
   constexpr int kVec = 16 / static_cast<int>(sizeof(DType));  // fp16/bf16 -> 8, fp32 -> 4
-  __shared__ float smem[2 * kWarpsPerBlock + 2];
+  constexpr int kWarps = kThreads / kWarpThreads;
+  __shared__ float smem[2 * kWarps + 2];
 
   const int64_t row = blockIdx.x;  // grid == num_rows
   const int64_t b = row / p.num_groups;
@@ -288,7 +336,7 @@ __global__ void gns_one_pass_kernel(const GnsParams<DType> __grid_constant__ p) 
 
   float lsum = 0.0f, lsumsq = 0.0f;
   accumulate_stats<DType, kVec>(x, n, vec_ok, lsum, lsumsq);
-  block_reduce2(lsum, lsumsq, smem);
+  block_reduce2<kWarps>(lsum, lsumsq, smem);
 
   const float inv_n = 1.0f / static_cast<float>(n);
   const float mean = lsum * inv_n;
@@ -417,7 +465,9 @@ __global__ void __launch_bounds__(kBlockThreads, 8)
   const bool vec_ok = ((group_base + chunk_start) % kVec) == 0;
 
   float lsum = 0.0f, lsumsq = 0.0f;
-  accumulate_stats<DType, kVec>(x, nelem, vec_ok, lsum, lsumsq);
+  // x has no reuse inside this kernel (the apply kernel re-reads it from
+  // DRAM at these sizes anyway): streaming loads keep L2 for the partials.
+  accumulate_stats<DType, kVec, /*kStream=*/true>(x, nelem, vec_ok, lsum, lsumsq);
   block_reduce2(lsum, lsumsq, smem);
 
   // Last-arriving CTA of each row folds the per-row finalize in here (saves
@@ -495,16 +545,18 @@ __global__ void __launch_bounds__(kBlockThreads, 8)
     const bool seg_vec =
         (((group_base + chunk_start + seg_start) % kVec) == 0) && ((seg_len % kVec) == 0);
     if (seg_vec) {
+      // x is a last-use read here and y is written once and not re-read:
+      // streaming hints on both sides of the stream.
       const int64_t nvec = seg_len / kVec;
       for (int64_t vi = threadIdx.x; vi < nvec; vi += blockDim.x) {
         Pack<DType, kVec> v;
-        v.load(xs, vi);
+        v.load_streaming(xs, vi);
         Pack<DType, kVec> o;
 #pragma unroll
         for (int j = 0; j < kVec; ++j) {
           o[j] = from_f32<DType>(siluf(to_f32<DType>(v[j]) * scale + shift));
         }
-        o.store(ys, vi);
+        o.store_streaming(ys, vi);
       }
     } else {
       for (int64_t i = threadIdx.x; i < seg_len; i += blockDim.x) {
@@ -566,6 +618,11 @@ void launch_check(const char* what) {
   check(err == cudaSuccess, std::string(what) + " launch failed: " + cudaGetErrorString(err));
 }
 
+// Group-size boundary where the one-CTA-per-group kernel switches to wide
+// (1024-thread) blocks: with few resident CTAs, per-SM memory parallelism is
+// the limiter, and wider blocks quadruple the outstanding loads per SM.
+constexpr int64_t kSmallWideThreshold = 32768;
+
 template <typename DType>
 void run_small_typed(const TensorView& x, const TensorView& weight, const TensorView& bias,
                      const TensorView& y, int64_t num_groups, double eps, const Shape3D& s) {
@@ -583,8 +640,13 @@ void run_small_typed(const TensorView& x, const TensorView& weight, const Tensor
       s.batch * num_groups,
       static_cast<float>(eps),
   };
-  gns_one_pass_kernel<DType>
-      <<<static_cast<uint32_t>(params.num_rows), kBlockThreads, 0, current_stream()>>>(params);
+  if (params.group_size >= kSmallWideThreshold) {
+    gns_one_pass_kernel<DType, 1024>
+        <<<static_cast<uint32_t>(params.num_rows), 1024, 0, current_stream()>>>(params);
+  } else {
+    gns_one_pass_kernel<DType, kBlockThreads>
+        <<<static_cast<uint32_t>(params.num_rows), kBlockThreads, 0, current_stream()>>>(params);
+  }
   launch_check("gns_one_pass_kernel");
 }
 

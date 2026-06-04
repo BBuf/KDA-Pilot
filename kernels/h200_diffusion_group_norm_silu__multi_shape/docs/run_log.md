@@ -102,3 +102,33 @@ remote + key metrics quoted in docs/dispatch.md and docs/results.md).
     inter-process variance), C) **1.3961 / min 0.9662** (confirmation; the
     promotion record). Correctness 210/210 before every run (correctness_
     {final,dispatch,promo}.log).
+
+## 2026-06-05 (round 1) — review repairs, all-CUDA re-optimization, promotion run
+
+Round-0 Codex review (ADVANCED, not COMPLETE) required: (1) restoring the
+template's preallocated-output contract (the round-0 adapter timed
+allocate-and-return glue on both sides); (2) removing the DEC-6
+candidate-to-baseline routing and re-optimizing as all-CUDA; (3) opening the
+draft PR only after repairs. All work on GPU 3 (idle per provenance).
+
+11. **AC-3 repair**: destination-passing wrappers added to baseline/binding.py
+    (copied `_launch_one_pass`/`_launch_chunked` bodies replicated with the
+    caller's `out`; internal scratch untouched; verified bit-identical to the
+    allocate-and-return entries on every tested shape x3 calls); adapter
+    restored to preallocated `{"y": empty_like(x)}` on both sides with
+    `*_into` calls — template poison checks meaningful again. A/A under the
+    repaired contract: **geomean 0.9990** (8 rows, 0.9854-1.0076).
+12. **AC-5 repair**: all fallback machinery deleted from solution/binding.py
+    (no baseline import remains). Re-optimization within the round budget:
+    streaming hints (r1-a) lifted straddle giants to 1.04-1.14; 32K-stats
+    re-probe (r1-b) rejected; ILP accumulators (r1-c) kept regs <= 32 but the
+    straddle-free class stayed 0.94-0.97 — bound declared (10 variants
+    total). Crossover band: the 1024-thread one-pass variant (regs 48,
+    one CTA per group) took gs 40-49K rows from 0.90 to **1.64-1.85**
+    (baseline itself got ~3 us faster on tiny rows after the AC-3 repair
+    removed its timed output allocation).
+13. **Promotion run** (idle GPU 3): correctness **210/210**; full frozen
+    57-workload benchmark → 57/57 PASSED, **headline geomean 1.5010**
+    (arith 1.5921, wall 1.2237x), 40/48 rows >= 0.97 (39 >= 1.0), 8-row
+    residual = the spatial%8192==0 giant class at 0.9449-0.9696 (named bound;
+    arbitration options in docs/results.md). LTX diagnostics 1.22-4.89.
