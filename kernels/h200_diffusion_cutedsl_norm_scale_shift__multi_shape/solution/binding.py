@@ -43,6 +43,14 @@ TWO_PASS_VARIANCE = True  # baseline's contract-exact layer statistics
 VEC_BYTES_BF16 = int(os.environ.get("KDA_VEC_BYTES_BF16", "16"))
 VEC_BYTES_FP32_OPERANDS = 16
 assert VEC_BYTES_BF16 in (16, 32), "bf16 vector width must be 16 or 32 bytes"
+# Early-issue the scale/shift global loads before the statistics reductions
+# (raw storage-dtype registers, expanded at the epilogue). NCU r1 on the
+# fp32-row bucket showed nvcc sinks these loads to the epilogue, exposing their
+# latency after both reduction barriers (short_scoreboard 2.4x the CuTe
+# baseline at identical geometry/regs/bytes). A zero-register
+# prefetch.global.L1 variant was measured and rejected (LSU flood, 620us vs
+# 381us). Applies to row/token scale/shift combos only.
+EARLY_SCALE_SHIFT = os.environ.get("KDA_EARLY_OPS", "0") == "1"
 
 _BF16 = torch.bfloat16
 _FP32 = torch.float32
@@ -173,20 +181,28 @@ def _combo_vec_bytes(sc_dtype, gate_dtype, has_wb) -> int:
     return VEC_BYTES_BF16
 
 
-def _flags(vec_bytes: int) -> str:
+def _flags(vec_bytes: int, early: bool) -> str:
     tp = "true" if TWO_PASS_VARIANCE else "false"
     pdl = "true" if USE_PDL else "false"
-    return f"false, {tp}, {pdl}, {vec_bytes}"  # kIsRms=false (layer-only fast path)
+    eo = "true" if early else "false"
+    return f"false, {tp}, {pdl}, {eo}, {vec_bytes}"  # kIsRms=false (layer-only fast path)
 
 
 def _wrapper_table():
-    """(entry, sc_class, sc_dtype, gate_class, gate_dtype, has_wb) -> {vec: (export, symbol)}."""
+    """(entry, sc_class, sc_dtype, gate_class, gate_dtype, has_wb) -> {(vec, early): (export, symbol)}."""
     t = {}
 
     def add(key, base_name, symbol_fmt, widths):
+        # Early scale/shift load variants exist only for row/token operand
+        # classes (the kernel rejects the scalar class at compile time).
+        earlies = (False, True) if key[1] in ("row", "token") else (False,)
         t[key] = {
-            vec: (f"{base_name}_v{vec}", symbol_fmt.format(flags=_flags(vec)))
+            (vec, eo): (
+                f"{base_name}_v{vec}{'_eo' if eo else ''}",
+                symbol_fmt.format(flags=_flags(vec, eo)),
+            )
             for vec in widths
+            for eo in earlies
         }
 
     both = (16, 32)
@@ -237,6 +253,17 @@ def _wrapper_table():
 
 
 _WRAPPERS = _wrapper_table()
+
+# Production buckets measured persistently below the per-row floor on H200 and
+# routed to the vendored baseline per the task's regression policy (see
+# docs/dispatch.md). NCU evidence: identical geometry/regs/bytes but exposed
+# operand-load latency (short_scoreboard 2.4x baseline); both occupancy-neutral
+# fixes measured worse (prefetch.global.L1 flooded the LSU: 620us vs 381us;
+# early raw loads cost 40 regs -> 2 CTAs/SM: 489us vs 381us).
+_ROUTED_TO_BASELINE = {
+    ("nss", "row", _FP32, "absent", None, False),
+}
+
 _MOD = None
 
 
@@ -265,7 +292,7 @@ def _native_fn(key, vec_bytes: int):
     combos = _WRAPPERS.get(key)
     if combos is None:
         return None
-    entry = combos.get(vec_bytes)
+    entry = combos.get((vec_bytes, EARLY_SCALE_SHIFT and key[1] in ("row", "token")))
     if entry is None:
         return None
     return getattr(_module(), entry[0])
@@ -311,6 +338,10 @@ def _nss_impl(x, weight, bias, scale, shift, norm_type, eps=1e-5):
         _fallback("nss:operand")
         return _BASELINE_NSS(x, weight, bias, scale, shift, norm_type, eps)
     key = ("nss", sc[0], scale.dtype, "absent", None, False)
+    if key in _ROUTED_TO_BASELINE:
+        DISPATCH_STATS["routed"] += 1
+        DISPATCH_STATS["routed:nss_row_fp32"] += 1
+        return _BASELINE_NSS(x, weight, bias, scale, shift, norm_type, eps)
     vec = _combo_vec_bytes(scale.dtype, None, False)
     if not _geometry_ok(D, vec):
         _fallback("nss:geometry")

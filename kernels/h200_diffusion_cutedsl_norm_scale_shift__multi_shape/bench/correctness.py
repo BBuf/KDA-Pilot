@@ -192,13 +192,20 @@ def run_production(args, device) -> list[dict]:
     if cand is not None:
         after = dict(cand.dispatch_stats())
         fallback_delta = after.get("fallback", 0) - before.get("fallback", 0)
+        routed_delta = after.get("routed", 0) - before.get("routed", 0)
+        expected_routed = len(getattr(cand, "_ROUTED_TO_BASELINE", ()))
+        errors = []
+        if fallback_delta != 0:
+            errors.append(
+                f"{fallback_delta} production calls fell back unexpectedly "
+                f"(routed buckets are counted separately)"
+            )
         results.append({
             "case": "production-grid-native-routing",
             "kind": "production",
-            "errors": [] if fallback_delta == 0 else [
-                f"{fallback_delta} production calls fell back to baseline (expected 0; "
-                f"DEC-routed buckets must be explicitly documented)"
-            ],
+            "errors": errors,
+            "routed_calls": routed_delta,
+            "routed_buckets_declared": expected_routed,
         })
     return results
 

@@ -213,6 +213,15 @@ template <
     bool kHasWeightBias,
     bool kTwoPassVariance,
     bool kUsePDL,
+    // Issue the scale/shift global loads before the statistics reductions and
+    // hold the RAW (storage-dtype) vectors in registers until the epilogue.
+    // NCU r1 on the fp32-row bucket showed nvcc otherwise sinks these loads to
+    // the epilogue where their full latency is exposed after both reduction
+    // barriers (short_scoreboard 2.4x the CuTe baseline at identical
+    // geometry/regs/bytes). A zero-register prefetch.global.L1 variant was
+    // measured first and rejected: every thread prefetching the shared row
+    // operands flooded the LSU (620us vs 381us, barrier stalls 3x).
+    bool kEarlyScaleShiftLoad,
     int kVecBytes>
 __global__ void norm_scale_shift_kernel(const NormScaleShiftParams __grid_constant__ params) {
   using namespace device;
@@ -236,6 +245,18 @@ __global__ void norm_scale_shift_kernel(const NormScaleShiftParams __grid_consta
 
   VecArray<DType, kElems> xv;
   xv.load(static_cast<const DType*>(params.x) + base_elem);
+
+  // Early raw scale/shift loads (see kEarlyScaleShiftLoad). Held in storage
+  // dtype so the live-range cost is the raw chunk registers only; expansion to
+  // fp32 lanes happens at the epilogue.
+  static_assert(!kEarlyScaleShiftLoad || kScClass == kOpRow || kScClass == kOpToken);
+  VecArray<ParamDType, kElems> sc_raw, sh_raw;
+  if constexpr (kEarlyScaleShiftLoad) {
+    const int64_t ss_off = (kScClass == kOpToken) ? row * D + thread_elem : thread_elem;
+    sc_raw.load(static_cast<const ParamDType*>(params.scale) + ss_off);
+    sh_raw.load(static_cast<const ParamDType*>(params.shift) + ss_off);
+  }
+
   float v[kElems];
 #pragma unroll
   for (int e = 0; e < kElems; ++e) {
@@ -343,8 +364,16 @@ __global__ void norm_scale_shift_kernel(const NormScaleShiftParams __grid_consta
   }
 
   float sc[kElems], sh[kElems];
-  load_operand_f32<ParamDType, kElems, kScClass>(sc, params.scale, row, D, thread_elem);
-  load_operand_f32<ParamDType, kElems, kScClass>(sh, params.shift, row, D, thread_elem);
+  if constexpr (kEarlyScaleShiftLoad) {
+#pragma unroll
+    for (int e = 0; e < kElems; ++e) {
+      sc[e] = static_cast<float>(sc_raw.get(e));
+      sh[e] = static_cast<float>(sh_raw.get(e));
+    }
+  } else {
+    load_operand_f32<ParamDType, kElems, kScClass>(sc, params.scale, row, D, thread_elem);
+    load_operand_f32<ParamDType, kElems, kScClass>(sh, params.shift, row, D, thread_elem);
+  }
 
   VecArray<DType, kElems> yv;
 #pragma unroll
@@ -392,11 +421,13 @@ inline void verify_operand(
 
 }  // namespace detail
 
-template <typename DType, typename ParamDType, int kScClass, bool kIsRms, bool kTwoPass, bool kUsePDL, int kVecBytes>
+template <
+    typename DType, typename ParamDType, int kScClass, bool kIsRms, bool kTwoPass, bool kUsePDL,
+    bool kEarlyScaleShiftLoad, int kVecBytes>
 struct NormScaleShiftKernel {
   static constexpr auto kernel = norm_scale_shift_kernel<
       DType, ParamDType, DType, DType, kIsRms, kScClass, kOpAbsent,
-      /*kHasResidual=*/false, /*kHasWeightBias=*/false, kTwoPass, kUsePDL, kVecBytes>;
+      /*kHasResidual=*/false, /*kHasWeightBias=*/false, kTwoPass, kUsePDL, kEarlyScaleShiftLoad, kVecBytes>;
 
   static void
   run(tvm::ffi::TensorView y,
@@ -435,11 +466,11 @@ struct NormScaleShiftKernel {
 template <
     typename DType, typename GateDType, typename ParamDType,
     int kGateClass,  // kOpAbsent for the gate-free wrapper arity below
-    int kScClass, bool kIsRms, bool kTwoPass, bool kUsePDL, int kVecBytes>
+    int kScClass, bool kIsRms, bool kTwoPass, bool kUsePDL, bool kEarlyScaleShiftLoad, int kVecBytes>
 struct ScaleResidualNormScaleShiftKernel {
   static constexpr auto kernel = norm_scale_shift_kernel<
       DType, ParamDType, GateDType, DType, kIsRms, kScClass, kGateClass,
-      /*kHasResidual=*/true, /*kHasWeightBias=*/false, kTwoPass, kUsePDL, kVecBytes>;
+      /*kHasResidual=*/true, /*kHasWeightBias=*/false, kTwoPass, kUsePDL, kEarlyScaleShiftLoad, kVecBytes>;
 
   static void launch(
       tvm::ffi::TensorView y,
@@ -516,11 +547,12 @@ struct ScaleResidualNormScaleShiftKernel {
 
 template <
     typename DType, typename GateDType, typename WBDType, typename ParamDType,
-    int kGateClass, int kScClass, bool kIsRms, bool kTwoPass, bool kUsePDL, int kVecBytes>
+    int kGateClass, int kScClass, bool kIsRms, bool kTwoPass, bool kUsePDL, bool kEarlyScaleShiftLoad,
+    int kVecBytes>
 struct ScaleResidualNormScaleShiftAffineKernel {
   static constexpr auto kernel = norm_scale_shift_kernel<
       DType, ParamDType, GateDType, WBDType, kIsRms, kScClass, kGateClass,
-      /*kHasResidual=*/true, /*kHasWeightBias=*/true, kTwoPass, kUsePDL, kVecBytes>;
+      /*kHasResidual=*/true, /*kHasWeightBias=*/true, kTwoPass, kUsePDL, kEarlyScaleShiftLoad, kVecBytes>;
 
   static void
   run(tvm::ffi::TensorView y,
