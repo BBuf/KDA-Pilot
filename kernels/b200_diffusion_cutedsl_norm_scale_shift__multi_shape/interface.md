@@ -156,15 +156,15 @@ native path.
 - Benchmark command (`bench/benchmark.py`, run inside sglang_bbuf; the
   harness REJECTS the run unless the selected GPU is idle before and free of
   other compute processes after): `CUDA_VISIBLE_DEVICES=1 python
-  bench/benchmark.py --impl both --gpu-id 1 --run-id r5-final
+  bench/benchmark.py --impl both --gpu-id 1 --run-id r6-final
   --candidate-layer shipping`; latency = median of 100 per-iteration samples
   after 20 warmup iterations (endtoend: wall-clock with per-sample
   synchronize; device: CUDA-event stream-span), baseline/candidate
   interleaved per iteration on shared inputs; external pre/post-exit all-GPU
-  snapshots committed under `bench/evidence/r5-final/`. Final claim:
-  geometric mean of per-unique-signature median speedups = **1.3053x
-  endtoend / 1.2841x device** (39 signatures, `run_id=r5-final`, joint
-  source hash b91d6e1abc50; corroborated in-tree by
+  snapshots committed under `bench/evidence/r6-final/`. Final claim:
+  geometric mean of per-unique-signature median speedups = **1.3022x
+  endtoend / 1.2878x device** (39 signatures, `run_id=r6-final`, joint
+  source hash d0f645a016cb; corroborated in-tree by
   `docs/sglang_jit_export.md`).
 - Source lineage: `docs/baseline_source.md` (vendored snapshot, pinned commit
   edb1b3f8f5, parity evidence); candidate ports the baseline's tiling notion

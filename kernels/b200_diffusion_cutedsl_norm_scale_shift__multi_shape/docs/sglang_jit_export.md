@@ -74,6 +74,9 @@ change).
 Parity-or-speedup confirmed on the exact shipping integration, with the
 production custom-op contract (registration, fake impls, output allocation,
 stream behavior) preserved. The in-tree numbers corroborate the final
-kernel-folder benchmark (`benchmark.csv` **r5-final**: geomean 1.3053x
-end-to-end / 1.2841x device over 39 unique signatures, joint source hash
-b91d6e1abc50 — the same source this re-run integrated in-tree).
+kernel-folder benchmark (`benchmark.csv` **r6-final**: geomean 1.3022x
+end-to-end / 1.2878x device over 39 unique signatures, joint source hash
+d0f645a016cb). The in-tree smoke was last executed at b91d6e1abc50; the only
+delta to d0f645a016cb is the register.py arity-routing fix in the LOCAL
+registration shim, which is not part of the in-tree integration surface
+(the in-tree glue has its own dispatch module), so the smoke remains valid.

@@ -69,6 +69,47 @@ def test_register_metadata() -> None:
     }
 
 
+def test_registered_callable_routes_both_entry_points() -> None:
+    """register()["callable"] must accept BOTH wrapped signatures (arity-routed)."""
+    lib = _correctness()
+    spec = lib.candidate_register().register()
+    wrapper = spec["callable"]
+    exports = spec["exports"]
+    gen = torch.Generator(device="cuda")
+    gen.manual_seed(123)
+    mk = lambda *s: torch.randn(*s, generator=gen, device="cuda", dtype=torch.float32)
+    x = mk(1, 64, 3072).to(torch.bfloat16)
+    residual = mk(1, 64, 3072).to(torch.bfloat16)
+    gate = (mk(1, 1, 3072) * 0.5).to(torch.bfloat16)
+    sc = (mk(1, 1, 3072) * 0.5).to(torch.bfloat16)
+    sh = (mk(1, 1, 3072) * 0.5).to(torch.bfloat16)
+
+    # NSS arity (7 positional args)
+    y_w = wrapper(x, None, None, sc, sh, "layer", 1e-6)
+    y_e = exports["fused_norm_scale_shift"](x, None, None, sc, sh, "layer", 1e-6)
+    assert torch.equal(y_w, y_e) or torch.allclose(y_w.float(), y_e.float())
+
+    # SRNSS arity (9 positional args) -> must NOT raise TypeError
+    out_w = wrapper(residual, x, gate, None, None, sc, sh, "layer", 1e-6)
+    out_e = exports["fused_scale_residual_norm_scale_shift"](
+        residual, x, gate, None, None, sc, sh, "layer", 1e-6
+    )
+    for a, b in zip(out_w, out_e):
+        assert torch.equal(a, b) or torch.allclose(a.float(), b.float())
+
+    # SRNSS with 8 positional args (eps defaulted) and keyword forms
+    out8 = wrapper(residual, x, gate, None, None, sc, sh, "layer")
+    assert isinstance(out8, tuple) and len(out8) == 2
+    out_kw = wrapper(
+        residual=residual, x=x, gate=gate, weight=None, bias=None,
+        scale=sc, shift=sh, norm_type="layer", eps=1e-6,
+    )
+    assert isinstance(out_kw, tuple) and len(out_kw) == 2
+    y_kw = wrapper(x=x, weight=None, bias=None, scale=sc, shift=sh,
+                   norm_type="layer", eps=1e-6)
+    assert isinstance(y_kw, torch.Tensor)
+
+
 def _production_cases():
     lib = _correctness()
     return [(c.case_id, c) for c in lib.production_cases()]

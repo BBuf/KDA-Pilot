@@ -9,12 +9,12 @@ specialization: combos touching any fp32 operand stream run 8 elems/thread
 occupancy / long_scoreboard 16.4 on fp32 streams; bf16-only combos run 16
 elems/thread (kVecBytes=32, block=D/16).
 
-Numbers: run_id=r5-final (idle-gated harness on B200 GPU1; committed
-external before/after all-GPU snapshots in `bench/evidence/r5-final/`;
+Numbers: run_id=r6-final (idle-gated harness on B200 GPU1; committed
+external before/after all-GPU snapshots in `bench/evidence/r6-final/`;
 interleaved A/B, candidate behind the kda_nss custom-op layer = host stacks
 identical; median of 100 iters; rows carry the current joint source hash
-b91d6e1abc50). Ranges below re-verified against r5-final (per-case deltas vs
-the superseded r4-final are within run-to-run noise, <2%).
+d0f645a016cb). Ranges below re-verified against r6-final (per-case deltas vs
+the superseded r4/r5 runs are within run-to-run noise, <2%).
 
 | Export | Combo | Vec | Covered signatures | device speedup | e2e speedup | Verdict |
 |---|---|---|---|---|---|---|

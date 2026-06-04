@@ -84,7 +84,21 @@ EXPORTS = {
 
 
 def optimized_wrapper(*args: Any, **kwargs: Any) -> Any:
-    """Back-compatible single-entry wrapper (routes to fused_norm_scale_shift)."""
+    """Single-callable entry preserving BOTH wrapped entry points.
+
+    Routes by signature shape:
+    - ``fused_norm_scale_shift(x, weight, bias, scale, shift, norm_type,
+      eps=1e-5)`` — 6-7 arguments;
+    - ``fused_scale_residual_norm_scale_shift(residual, x, gate, weight,
+      bias, scale, shift, norm_type, eps=1e-5)`` — 8-9 arguments (or the
+      residual/gate keywords, which only the residual variant accepts).
+    """
+    if (
+        len(args) + len(kwargs) >= 8
+        or "residual" in kwargs
+        or "gate" in kwargs
+    ):
+        return fused_scale_residual_norm_scale_shift(*args, **kwargs)
     return fused_norm_scale_shift(*args, **kwargs)
 
 
