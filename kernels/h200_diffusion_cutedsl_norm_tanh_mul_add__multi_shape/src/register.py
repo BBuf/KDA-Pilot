@@ -37,6 +37,13 @@ def optimized_wrapper(*args: Any, **kwargs: Any) -> Any:
     return _load_impl().optimized_wrapper(*args, **kwargs)
 
 
+def dispatch_decision(*args: Any, **kwargs: Any) -> str:
+    """Expose the wrapper's routing decision (fast_single | fast_dual |
+    fallback_single | fallback_dual) for branch-contract tests."""
+
+    return _load_impl().dispatch_decision(*args, **kwargs)
+
+
 def register() -> dict[str, Any]:
     return {
         "name": KERNEL_SLUG,

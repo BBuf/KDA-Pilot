@@ -688,6 +688,127 @@ def test_out_of_domain_d_raises() -> None:
                 module.optimized_wrapper(x, None, None, sc, sh, "rms", EPS)
 
 
+def _prod_family_args(*, S: int = 128, dual: bool = False, with_eps: bool = True):
+    """Production-family tensors (bf16/rms/D=3840/weight-only/scale 11D/shift
+    full) at an arbitrary row count, as a plain args tuple."""
+
+    D = PROD_D
+    dt = _torch_dtype(PROD_DTYPE)
+    x = torch.randn(1, S, D, device="cuda", dtype=dt)
+    w = torch.randn(D, device="cuda", dtype=dt)
+    sc = torch.randn(1, 1, D, device="cuda", dtype=dt)
+    sh = torch.randn(1, S, D, device="cuda", dtype=dt)
+    args = [x, w, None, sc, sh]
+    if dual:
+        args += [torch.randn(D, device="cuda", dtype=dt), None,
+                 torch.randn(1, 1, D, device="cuda", dtype=dt)]
+    args.append(PROD_NORM)
+    if with_eps:
+        args.append(EPS)
+    return tuple(args)
+
+
+def test_dispatch_branch_contract() -> None:
+    """AC: the CUDA fast path engages for exactly the production signature
+    family; every other gate falls back. Uses the wrapper's own
+    dispatch_decision (the same predicate optimized_wrapper consumes)."""
+
+    if not _candidate_available():
+        pytest.skip("candidate not implemented yet (src/register.py stub)")
+    module = _load_register_module()
+    decide = module.dispatch_decision
+
+    # Fast dispatch: the 4 captured signatures (exact case tensors).
+    for case in [c for c in make_cases() if c["kind"] == "production"]:
+        args = _ensure_tensors(case)
+        expected = "fast_single" if case["entry"] == "single" else "fast_dual"
+        assert decide(*args) == expected, case["name"]
+        _free_tensors(case)
+    # Same-family row-count probe (any B*S is in scope per the plan).
+    assert decide(*_prod_family_args(S=128)) == "fast_single"
+    assert decide(*_prod_family_args(S=128, dual=True)) == "fast_dual"
+    # Default-eps positional arities stay on the fast path.
+    assert decide(*_prod_family_args(S=64, with_eps=False)) == "fast_single"
+    assert decide(*_prod_family_args(S=64, dual=True, with_eps=False)) == "fast_dual"
+
+    # Fallback gates: one mutation per probe.
+    D = PROD_D
+    dt = _torch_dtype(PROD_DTYPE)
+    base = _prod_family_args(S=32)
+    x, w, _b, sc, sh, _n, _e = base
+
+    def swapped(**kw):
+        d = dict(x=x, weight=w, bias=None, scale=sc, shift=sh, norm="rms", eps=EPS)
+        d.update(kw)
+        return (d["x"], d["weight"], d["bias"], d["scale"], d["shift"], d["norm"], d["eps"])
+
+    assert decide(*swapped(x=x.float(), scale=sc.float(), shift=sh.float(), weight=w.float())) == "fallback_single"  # dtype
+    assert decide(*swapped(norm="layer")) == "fallback_single"  # norm type
+    bad_d = torch.randn(1, 32, 3072, device="cuda", dtype=dt)
+    assert decide(bad_d, torch.randn(3072, device="cuda", dtype=dt), None,
+                  torch.randn(1, 1, 3072, device="cuda", dtype=dt), bad_d.clone(),
+                  "rms", EPS) == "fallback_single"  # D != 3840
+    assert decide(*swapped(bias=torch.randn(D, device="cuda", dtype=dt))) == "fallback_single"  # bias present
+    assert decide(*swapped(weight=None)) == "fallback_single"  # weight absent
+    assert decide(*swapped(scale=torch.randn(1, 32, D, device="cuda", dtype=dt))) == "fallback_single"  # scale 1SD
+    assert decide(*swapped(shift=torch.randn(1, 1, D, device="cuda", dtype=dt))) == "fallback_single"  # shift 11D
+    cpu = tuple(t.cpu() if isinstance(t, torch.Tensor) else t for t in base)
+    assert decide(*cpu) == "fallback_single"  # CPU tensors
+    # Dual-only gates.
+    dual = _prod_family_args(S=32, dual=True)
+    (dx, dw, _db, dsc, dsh, dw2, _db2, dsc2, dn, de) = dual
+    assert decide(dx, dw, None, dsc, dsh, dw2, torch.randn(D, device="cuda", dtype=dt),
+                  dsc2, dn, de) == "fallback_dual"  # bias2 present
+    assert decide(dx, dw, None, dsc, dsh, dw2, None,
+                  torch.randn(1, 32, D, device="cuda", dtype=dt), dn, de) == "fallback_dual"  # scale2 1SD
+    # Keyword-style call routes to the baseline.
+    assert decide(x, w, None, sc, sh, "rms", eps=EPS) == "fallback_single"
+
+
+def test_default_eps_contract() -> None:
+    """Blocking fix: 6-arg single and 9-arg dual calls (eps defaulting to
+    1e-5) must compute identically to their explicit-eps forms, on both the
+    fast path and the fallback path."""
+
+    if not _candidate_available():
+        pytest.skip("candidate not implemented yet (src/register.py stub)")
+    module = _load_register_module()
+    torch.manual_seed(20260604)
+
+    # Fast path: production-family single, 6 args vs 7 args.
+    args7 = _prod_family_args(S=96)
+    out_default = module.optimized_wrapper(*args7[:-1])
+    out_explicit = module.optimized_wrapper(*args7)
+    assert torch.equal(out_default, out_explicit)
+    base = _load_baseline_module().fused_norm_tanh_mul_add(*args7[:-1])
+    assert torch.isfinite(out_default.float()).all()
+    assert out_default.shape == base.shape
+
+    # Fast path: dual, 9 args vs 10 args.
+    argsd = _prod_family_args(S=96, dual=True)
+    y_d, y2_d = module.optimized_wrapper(*argsd[:-1])
+    y_e, y2_e = module.optimized_wrapper(*argsd)
+    assert torch.equal(y_d, y_e) and torch.equal(y2_d, y2_e)
+
+    # Fallback path (fp32): default-eps must route to baseline and match it.
+    D = PROD_D
+    xf = torch.randn(1, 64, D, device="cuda", dtype=torch.float32)
+    wf = torch.randn(D, device="cuda", dtype=torch.float32)
+    scf = torch.randn(1, 1, D, device="cuda", dtype=torch.float32)
+    shf = torch.randn(1, 64, D, device="cuda", dtype=torch.float32)
+    out_fb = module.optimized_wrapper(xf, wf, None, scf, shf, "rms")
+    out_bl = _load_baseline_module().fused_norm_tanh_mul_add(xf, wf, None, scf, shf, "rms")
+    assert torch.equal(out_fb, out_bl)
+
+    # Wrong arity surfaces the BASELINE's own contract error (torch custom
+    # ops raise RuntimeError for missing arguments; plain TypeError also
+    # acceptable) — the wrapper must not mask or replace it.
+    with pytest.raises((TypeError, RuntimeError)):
+        _load_baseline_module().fused_norm_tanh_mul_add(xf, wf, None, scf, shf)
+    with pytest.raises((TypeError, RuntimeError)):
+        module.optimized_wrapper(xf, wf, None, scf, shf)
+
+
 def test_fallback_equals_baseline() -> None:
     """Non-production signatures must route to the vendored baseline and
     return bitwise-identical outputs (fallback wiring guard)."""

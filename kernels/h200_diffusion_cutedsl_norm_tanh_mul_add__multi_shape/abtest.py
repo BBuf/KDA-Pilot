@@ -1,6 +1,7 @@
-"""Same-process A/B diagnostic: baseline vs candidate back-to-back per
-production shape on the same GPU, eliminating cross-process GPU-state drift.
-Diagnostic companion to benchmark.py (which writes the evidence rows)."""
+"""LOCAL DIAGNOSTIC ONLY — never citable as evidence. Sequential wall-clock
+medians without alternating order, CUDA events, idle refusal, or provenance.
+All admissible numbers come from benchmark.py (interleaved AB/BA machinery,
+CSV evidence rows)."""
 
 import importlib.util
 import pathlib

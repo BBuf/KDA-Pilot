@@ -250,7 +250,11 @@ def _gpu_state() -> str:
              "--format=csv,noheader"],
             capture_output=True, text=True, timeout=10,
         ).stdout.strip()
-        nproc = len([line for line in procs.splitlines() if line.strip()])
+        # Exclude this benchmark process itself, like _assert_gpu_idle does.
+        nproc = len([
+            line for line in procs.splitlines()
+            if line.strip() and int(line.split(",")[0].strip()) != os.getpid()
+        ])
         return f"gpu{gpu_id} util/memMiB={util} other_compute_procs={nproc}"
     except Exception as exc:  # pragma: no cover
         return f"gpu{gpu_id} state-unavailable ({exc})"

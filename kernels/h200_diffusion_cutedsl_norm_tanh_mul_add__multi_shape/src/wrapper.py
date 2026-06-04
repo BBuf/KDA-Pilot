@@ -174,49 +174,84 @@ def _fast_dual_fake(x, weight, scale, shift, weight2, scale2, eps):
     return x.new_empty(x.shape), x.new_empty(x.shape)
 
 
+def _fast_dual_extras_ok(x: torch.Tensor, weight2, bias2, scale2) -> bool:
+    D = x.shape[-1]
+    return (
+        bias2 is None
+        and weight2 is not None
+        and isinstance(weight2, torch.Tensor)
+        and weight2.is_cuda
+        and weight2.dtype is _FAST_DTYPE
+        and weight2.shape == (D,)
+        and weight2.stride(-1) == 1
+        and isinstance(scale2, torch.Tensor)
+        and scale2.is_cuda
+        and scale2.dtype is _FAST_DTYPE
+        and scale2.dim() == 3
+        and scale2.shape == (1, 1, D)
+        and scale2.stride(-1) == 1
+    )
+
+
+def _normalize_call(args: tuple, kwargs: dict) -> tuple[tuple, dict]:
+    """Mirror the baseline's ``eps: float = 1e-5`` default for positional
+    calls: a 6-arg single call or 9-arg dual call is valid public usage and
+    gets the default appended. Keyword-style calls are left untouched (the
+    baseline custom op binds its own defaults)."""
+
+    if not kwargs and len(args) in (6, 9):
+        return args + (1e-5,), kwargs
+    return args, kwargs
+
+
+def dispatch_decision(*args: Any, **kwargs: Any) -> str:
+    """Single source of truth for routing. Returns one of ``fast_single``,
+    ``fast_dual``, ``fallback_single``, ``fallback_dual`` — the exact branch
+    ``optimized_wrapper`` will take for the same call."""
+
+    args, kwargs = _normalize_call(args, kwargs)
+    if kwargs or len(args) not in (7, 10):
+        # Keyword-style or unrecognized arity: route to the baseline, which
+        # binds defaults or raises its own TypeError (contract-faithful).
+        is_dual = (
+            any(k in kwargs for k in ("weight2", "bias2", "scale2"))
+            or len(args) + len(kwargs) > 7
+        )
+        return "fallback_dual" if is_dual else "fallback_single"
+    if len(args) == 7:
+        x, weight, bias, scale, shift, norm_type, _eps = args
+        if isinstance(x, torch.Tensor) and _fast_path_ok(x, weight, bias, scale, shift, norm_type):
+            return "fast_single"
+        return "fallback_single"
+    x, weight, bias, scale, shift, weight2, bias2, scale2, norm_type, _eps = args
+    if (
+        isinstance(x, torch.Tensor)
+        and _fast_path_ok(x, weight, bias, scale, shift, norm_type)
+        and _fast_dual_extras_ok(x, weight2, bias2, scale2)
+    ):
+        return "fast_dual"
+    return "fallback_dual"
+
+
 def optimized_wrapper(*args: Any, **kwargs: Any) -> Any:
     """Public dispatch preserving the SGLang callsite contract.
 
-    7 positional args -> ``fused_norm_tanh_mul_add``; 10 -> the dual variant
-    (same as the public SGLang signatures). Unsupported signatures fall back
-    to the vendored pinned baseline.
-    """
+    Accepts the baseline arities (6/7 positional for the single op, 9/10 for
+    the dual op — ``eps`` defaults to 1e-5) and keyword-style calls. Routing
+    is decided by :func:`dispatch_decision`; unsupported signatures fall back
+    to the vendored pinned baseline (including its error behavior)."""
 
-    if kwargs:
-        # The public ops are positional in production; route any kwarg use to
-        # the baseline untouched.
-        if len(args) + len(kwargs) <= 7:
-            return _vendored_baseline.fused_norm_tanh_mul_add(*args, **kwargs)
-        return _vendored_baseline.fused_norm_tanh_mul_add_norm_scale(*args, **kwargs)
-
-    if len(args) == 7:
-        x, weight, bias, scale, shift, norm_type, eps = args
-        if _fast_path_ok(x, weight, bias, scale, shift, norm_type):
-            return _fast_single(x, weight, scale, shift, float(eps))
-        return _vendored_baseline.fused_norm_tanh_mul_add(*args)
-
-    if len(args) == 10:
-        x, weight, bias, scale, shift, weight2, bias2, scale2, norm_type, eps = args
-        if (
-            _fast_path_ok(x, weight, bias, scale, shift, norm_type)
-            and bias2 is None
-            and weight2 is not None
-            and weight2.is_cuda
-            and weight2.dtype is _FAST_DTYPE
-            and weight2.shape == (x.shape[-1],)
-            and weight2.stride(-1) == 1
-            and scale2.is_cuda
-            and scale2.dtype is _FAST_DTYPE
-            and scale2.dim() == 3
-            and scale2.shape == (1, 1, x.shape[-1])
-            and scale2.stride(-1) == 1
-        ):
-            return _fast_dual(x, weight, scale, shift, weight2, scale2, float(eps))
-        return _vendored_baseline.fused_norm_tanh_mul_add_norm_scale(*args)
-
-    raise TypeError(
-        f"optimized_wrapper expects 7 (single) or 10 (dual) positional args, got {len(args)}"
-    )
+    args, kwargs = _normalize_call(args, kwargs)
+    decision = dispatch_decision(*args, **kwargs)
+    if decision == "fast_single":
+        x, weight, _bias, scale, shift, _norm_type, eps = args
+        return _fast_single(x, weight, scale, shift, float(eps))
+    if decision == "fast_dual":
+        x, weight, _bias, scale, shift, weight2, _bias2, scale2, _norm_type, eps = args
+        return _fast_dual(x, weight, scale, shift, weight2, scale2, float(eps))
+    if decision == "fallback_single":
+        return _vendored_baseline.fused_norm_tanh_mul_add(*args, **kwargs)
+    return _vendored_baseline.fused_norm_tanh_mul_add_norm_scale(*args, **kwargs)
 
 
 EXPORTS = {
