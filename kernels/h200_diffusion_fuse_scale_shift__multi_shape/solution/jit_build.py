@@ -23,6 +23,17 @@ def _jit_utils():
     return jit_utils
 
 
+def _extra_cflags() -> list[str] | None:
+    # KDA_LINEINFO=1 adds -lineinfo for PROFILING-ONLY builds so Nsight Compute
+    # can map SASS to source. Never set for benchmarked/shipped builds (the
+    # compile-flag policy pins those to the jit_kernel defaults).
+    import os
+
+    if os.environ.get("KDA_LINEINFO", "0") == "1":
+        return ["-lineinfo"]
+    return None
+
+
 def scale_shift_module(
     dtype_x,
     dtype_scale,
@@ -46,6 +57,7 @@ def scale_shift_module(
             *args,
             cuda_files=[CUH_PATH],
             cuda_wrappers=[("fuse_scale_shift", f"FuseScaleShiftKernel<{args}>::run")],
+            extra_cuda_cflags=_extra_cflags(),
         )
         _MODULE_CACHE[key] = mod
     return mod
@@ -68,6 +80,7 @@ def ln_select01_module(
             *args,
             cuda_files=[CUH_PATH],
             cuda_wrappers=[("fuse_ln_select01", f"FuseLNSelect01Kernel<{args}>::run")],
+            extra_cuda_cflags=_extra_cflags(),
         )
         _MODULE_CACHE[key] = mod
     return mod

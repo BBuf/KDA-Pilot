@@ -131,7 +131,7 @@ __global__ void fused_scale_shift_elementwise(const FuseScaleShiftParams __grid_
 
   const int64_t row = blockIdx.y;
   const int64_t num_vecs = params.inner_dim / kXVec;
-  const int64_t vslot = static_cast<int64_t>(blockIdx.x) * kThreads + threadIdx.x;
+  const int64_t vslot = static_cast<int64_t>(blockIdx.x) * blockDim.x + threadIdx.x;
   if (row >= params.rows || vslot >= num_vecs) {
     PDLTriggerSecondary<kUsePDL>();
     return;
@@ -274,9 +274,15 @@ struct FuseScaleShiftKernel {
     };
 
     const int64_t num_vecs = inner / kXVec;
-    const uint32_t col_blocks = static_cast<uint32_t>(div_ceil(num_vecs, int64_t{kThreads}));
+    // Prefer the block size that tiles the row exactly (no half-empty blocks);
+    // short rows take one 128-thread block instead of a mostly-idle 256.
+    uint32_t threads = kThreads;
+    if (num_vecs % kThreads != 0 && (num_vecs <= 128 || num_vecs % 128 == 0)) {
+      threads = 128;
+    }
+    const uint32_t col_blocks = static_cast<uint32_t>(div_ceil(num_vecs, int64_t{threads}));
     const dim3 grid(col_blocks, static_cast<uint32_t>(rows));
-    LaunchKernel(grid, kThreads, device.unwrap()).enable_pdl(kUsePDL)(kernel, params);
+    LaunchKernel(grid, threads, device.unwrap()).enable_pdl(kUsePDL)(kernel, params);
   }
 };
 
@@ -284,28 +290,35 @@ struct FuseScaleShiftKernel {
 // Family B
 // ---------------------------------------------------------------------------
 
-// Block-wide fp32 sum, deterministic fixed-order tree reduce, broadcast to all
-// threads. `smem` must hold >= kWarpsPerBlock + 1 floats.
-SGL_DEVICE float block_reduce_sum(float v, float* smem) {
+// Block-wide reduction of two fp32 accumulators, deterministic fixed-order
+// tree reduce, results broadcast to all threads. Sized for up to
+// kWarpsPerBlock warps; works for any runtime block size <= kThreads
+// (inactive warp slots are zero-filled). `smem` >= 2*kWarpsPerBlock + 2.
+SGL_DEVICE void block_reduce2(float& a, float& b, float* smem) {
   using namespace device;
-  v = warp::reduce_sum(v);
+  a = warp::reduce_sum(a);
+  b = warp::reduce_sum(b);
   const uint32_t lane = threadIdx.x & (kWarpThreads - 1);
   const uint32_t warp_id = threadIdx.x >> 5;
+  const uint32_t num_warps = (blockDim.x + kWarpThreads - 1) / kWarpThreads;
   if (lane == 0) {
-    smem[warp_id] = v;
+    smem[warp_id] = a;
+    smem[kWarpsPerBlock + warp_id] = b;
   }
   __syncthreads();
   if (warp_id == 0) {
-    float t = (lane < kWarpsPerBlock) ? smem[lane] : 0.0f;
-    t = warp::reduce_sum<kWarpsPerBlock>(t);
+    float ta = (lane < num_warps) ? smem[lane] : 0.0f;
+    float tb = (lane < num_warps) ? smem[kWarpsPerBlock + lane] : 0.0f;
+    ta = warp::reduce_sum<kWarpsPerBlock>(ta);
+    tb = warp::reduce_sum<kWarpsPerBlock>(tb);
     if (lane == 0) {
-      smem[kWarpsPerBlock] = t;
+      smem[2 * kWarpsPerBlock] = ta;
+      smem[2 * kWarpsPerBlock + 1] = tb;
     }
   }
   __syncthreads();
-  const float out = smem[kWarpsPerBlock];
-  __syncthreads();
-  return out;
+  a = smem[2 * kWarpsPerBlock];
+  b = smem[2 * kWarpsPerBlock + 1];
 }
 
 struct LNSelect01Params {
@@ -342,7 +355,7 @@ __global__ void fused_ln_select01(const LNSelect01Params __grid_constant__ param
   constexpr uint32_t kMaxIter = 4;
   using XVec = AlignedVector<DTypeX, kXVec>;
 
-  __shared__ float smem[kWarpsPerBlock + 1];
+  __shared__ float smem[2 * kWarpsPerBlock + 2];
 
   PDLWaitPrimary<kUsePDL>();
 
@@ -357,14 +370,18 @@ __global__ void fused_ln_select01(const LNSelect01Params __grid_constant__ param
   void* gate_out_row =
       pointer::offset(params.gate_out_ptr, row * params.inner_dim * sizeof(DTypeX));
 
-  // Load the row into fp32 registers (residual mode fuses the gated add).
+  // Load the row into fp32 registers (residual mode fuses the gated add) and
+  // accumulate sum + sum-of-squares in ONE pass (single block reduction).
+  // For standardized activations the uncentered variance E[x^2]-mean^2 stays
+  // within ~1e-7 of the centered form, far inside the oracle tolerances.
   // The tile loop is statically unrolled with a slot guard so vals[][] stays
   // in registers (dynamic indexing would spill to local memory).
   float vals[kMaxIter][kXVec];
   float lsum = 0.0f;
+  float lsumsq = 0.0f;
 #pragma unroll
   for (uint32_t it = 0; it < kMaxIter; ++it) {
-    const int64_t vslot = threadIdx.x + static_cast<int64_t>(it) * kThreads;
+    const int64_t vslot = threadIdx.x + static_cast<int64_t>(it) * blockDim.x;
     if (vslot >= num_vecs) {
       continue;
     }
@@ -396,25 +413,13 @@ __global__ void fused_ln_select01(const LNSelect01Params __grid_constant__ param
 #pragma unroll
     for (uint32_t i = 0; i < kXVec; ++i) {
       lsum += vf[i];
+      lsumsq = fmaf(vf[i], vf[i], lsumsq);
     }
   }
 
-  const float mean = block_reduce_sum(lsum, smem) * inv_n;
-
-  float lsumsq = 0.0f;
-#pragma unroll
-  for (uint32_t it = 0; it < kMaxIter; ++it) {
-    const int64_t vslot = threadIdx.x + static_cast<int64_t>(it) * kThreads;
-    if (vslot >= num_vecs) {
-      continue;
-    }
-#pragma unroll
-    for (uint32_t i = 0; i < kXVec; ++i) {
-      const float d = vals[it][i] - mean;
-      lsumsq += d * d;
-    }
-  }
-  const float var = block_reduce_sum(lsumsq, smem) * inv_n;
+  block_reduce2(lsum, lsumsq, smem);
+  const float mean = lsum * inv_n;
+  const float var = fmaxf(lsumsq * inv_n - mean * mean, 0.0f);
   const float rstd = math::rsqrt(var + params.eps);
 
   // Per-row modulation selection (uniform across the block).
@@ -430,7 +435,7 @@ __global__ void fused_ln_select01(const LNSelect01Params __grid_constant__ param
 
 #pragma unroll
   for (uint32_t it = 0; it < kMaxIter; ++it) {
-    const int64_t vslot64 = threadIdx.x + static_cast<int64_t>(it) * kThreads;
+    const int64_t vslot64 = threadIdx.x + static_cast<int64_t>(it) * blockDim.x;
     if (vslot64 >= num_vecs) {
       continue;
     }
@@ -575,7 +580,12 @@ struct FuseLNSelect01Kernel {
 
     const auto selected_kernel =
         id_type.is_type<int32_t>() ? kernel<int32_t> : kernel<int64_t>;
-    LaunchKernel(static_cast<uint32_t>(rows), kThreads, device.unwrap())
+    // Pick the smallest block (>=4 warps) whose 4-iteration register tile
+    // covers the row: fewer warps -> cheaper block reduction for C=3072.
+    constexpr uint32_t kXVec = vec_elems<DTypeX>();
+    const int64_t num_vecs = C.unwrap() / kXVec;
+    const uint32_t threads = num_vecs <= int64_t{128} * 4 ? 128 : kThreads;
+    LaunchKernel(static_cast<uint32_t>(rows), threads, device.unwrap())
         .enable_pdl(kUsePDL)(selected_kernel, params);
   }
 };
