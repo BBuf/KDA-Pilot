@@ -1,0 +1,46 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0 -- /usr/bin/python
+cachedir: .pytest_cache
+rootdir: /home/sglang-omni/bbuf/kda_runs/h200_diffusion_rotary_embedding__multi_shape/20260604_095638/work
+plugins: hydra-core-1.3.2, asyncio-1.4.0, anyio-4.13.0, typeguard-4.5.1
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 6 items
+
+tests/test_correctness.py::test_register_metadata Unable to import `torchao` Tensor objects. This may affect loading checkpoints serialized with `torchao`
+PASSED
+tests/test_correctness.py::test_case_manifest PASSED
+tests/test_correctness.py::test_sglang_oracle_pinned [oracle-equiv] rotary.py: imported=81fb5ffeaf387903c45da1b62accce5b1e275039 pinned=81fb5ffeaf387903c45da1b62accce5b1e275039
+[oracle-equiv] ltx2_rotary.py: imported=3408d9084b4cc9e92cbd3dbd584fa7ec5f8d5d4b pinned=3408d9084b4cc9e92cbd3dbd584fa7ec5f8d5d4b
+[oracle-pin] override KDA_SGLANG_ORACLE_COMMIT=84e110831; imported SGLang HEAD=84e110831
+PASSED
+tests/test_correctness.py::test_baseline_matches_reference PASSED
+tests/test_correctness.py::test_correctness_cases PASSED
+tests/test_correctness.py::test_fallback_routing PASSED
+
+=============================== warnings summary ===============================
+tests/test_correctness.py::test_register_metadata
+  /usr/local/lib/python3.12/dist-packages/flashinfer/gemm/kernels/grouped_gemm_masked_blackwell.py:2060: DeprecationWarning: tcgen05.OperandMajorMode is deprecated, use cute.nvgpu.OperandMajorMode instead
+    a_major_mode: tcgen05.OperandMajorMode,
+
+tests/test_correctness.py::test_register_metadata
+  /usr/local/lib/python3.12/dist-packages/flashinfer/gemm/kernels/grouped_gemm_masked_blackwell.py:2062: DeprecationWarning: tcgen05.OperandMajorMode is deprecated, use cute.nvgpu.OperandMajorMode instead
+    b_major_mode: tcgen05.OperandMajorMode,
+
+tests/test_correctness.py::test_register_metadata
+tests/test_correctness.py::test_register_metadata
+  /usr/local/lib/python3.12/dist-packages/flashinfer/gdn_kernels/blackwell/gated_delta_net_chunked.py:99: DeprecationWarning: tcgen05.OperandMajorMode is deprecated, use cute.nvgpu.OperandMajorMode instead
+    from cutlass.cute.nvgpu.tcgen05 import OperandMajorMode
+
+tests/test_correctness.py::test_register_metadata
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyPacked has no __module__ attribute
+
+tests/test_correctness.py::test_register_metadata
+  <frozen importlib._bootstrap>:488: DeprecationWarning: builtin type SwigPyObject has no __module__ attribute
+
+tests/test_correctness.py: 14 warnings
+  /usr/local/lib/python3.12/dist-packages/torch/jit/_script.py:365: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 6 passed, 20 warnings in 35.38s ========================
+sys:1: DeprecationWarning: builtin type swigvarlink has no __module__ attribute

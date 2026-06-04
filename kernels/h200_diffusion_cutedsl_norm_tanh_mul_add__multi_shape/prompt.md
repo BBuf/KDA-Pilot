@@ -519,3 +519,29 @@ well-supported no-go explains why no defensible path remains under the
 available workspace;
 - `prompt.md`, `interface.md`, `benchmark.csv`, and `solutions.jsonl` are
 updated with the final result.
+
+---
+
+## FINAL RESULT (2026-06-04, RLCR loop 2026-06-04_16-05-34)
+
+**PROMOTED.** Native CUDA candidate (`src/norm_tanh_mul_add_candidate.cuh`, anchor
+configuration: row-per-CTA, D/8 threads, bf16x8 128-bit vectors, fp32 two-stage
+reduction, load-after-reduce operand ordering, baseline-faithful quantization
+dataflow) replaces the CuTe-DSL kernels on the captured production fast path
+(bf16 + rms + D=3840 + weight-only + scale/scale2=[1,1,D] + shift=[B,S,D]);
+all other signatures fall back to the vendored pinned baseline (0689ba84b).
+
+- Geometric-mean median-latency speedup over the locked SGLang baseline across all
+  4 configured shapes (ion8-h200 GPU0, idle, symmetric custom-op layers, 3
+  sessions): **1.3253–1.3621x interleaved (primary), 1.4463–1.4695x sequential,
+  1.38–1.66x device-only.**
+- Correctness: 14/14 H200 suite + 844-case exhaustive grid + baseline parity 6/6.
+- Bound analysis (`profile/ncu_anchor_r2/REPORT.md` + FINAL ADDENDUM): not
+  DRAM-bandwidth-bound (50–51% memory throughput) — single memory-latency-bound,
+  dual issue/barrier-bound under a 40-register occupancy cap; 13 optimization
+  variants across two waves all lose at the shipping layer, so the anchor is at
+  the practical operating point for this dataflow on H200 (no-go basis for
+  further search recorded; the candidate itself is promoted on its measured win).
+- Evidence: `docs/results.md`, `interface.md` (final contract + dispatch table),
+  `benchmark.csv`, `solutions.jsonl`, `docs/baseline_locked.json`,
+  `profile/ncu_anchor_r2/`.

@@ -71,10 +71,18 @@ __global__ void standard_rope_kernel(const StdRopeParams __grid_constant__ param
   void* orow = pointer::offset(params.out, token_base * static_cast<int64_t>(sizeof(DType)));
   const uint32_t nvec = static_cast<uint32_t>(params.hidden) / kVecBf16;
 
+  // x is read once and out written once per token (pure streaming): use
+  // streaming-cache accesses (ld/st.global.cs, evict-first) so the one-shot
+  // lines do not displace anything useful in L1/L2. cos/sin stay on the
+  // default path (already staged through shared memory above).
+  const uint4* xvec = reinterpret_cast<const uint4*>(xrow);
+  uint4* ovec = reinterpret_cast<uint4*>(orow);
+
   for (uint32_t v = threadIdx.x; v < nvec; v += blockDim.x) {
     const uint32_t e = v * kVecBf16;          // element offset within the token row
     const uint32_t i0 = (e & dmask) >> 1u;    // first pair-index of this 8-elem group
-    Vec xv = load_as<Vec>(xrow, v);
+    uint4 raw = __ldcs(xvec + v);
+    Vec xv = *reinterpret_cast<Vec*>(&raw);
 #pragma unroll
     for (uint32_t k = 0; k < kVecBf16 / 2; ++k) {
       const auto [x1, x2] = cast<fp32x2_t>(xv[k]);  // pair (2(i0+k), 2(i0+k)+1)
@@ -84,7 +92,7 @@ __global__ void standard_rope_kernel(const StdRopeParams __grid_constant__ param
       const float o2 = fmaf(x1, s, x2 * c);
       xv[k] = cast<Packed, fp32x2_t>({o1, o2});
     }
-    store_as<Vec>(orow, xv, v);
+    __stcs(ovec + v, *reinterpret_cast<const uint4*>(&xv));
   }
 }
 
@@ -186,10 +194,19 @@ __global__ void ltx2_split_rope_kernel(const Ltx2RopeParams __grid_constant__ pa
     const int64_t c_base = c_bs + static_cast<int64_t>(h) * params.cos_stride_h + j0;
     const int64_t s_base = s_bs + static_cast<int64_t>(h) * params.sin_stride_h + j0;
 
-    Vec xf = load_as<Vec>(pointer::offset(params.x, xf_base * esz), 0);
-    Vec xs = load_as<Vec>(pointer::offset(params.x, xs_base * esz), 0);
-    Vec cv = load_as<Vec>(pointer::offset(params.cos, c_base * esz), 0);
-    Vec sv = load_as<Vec>(pointer::offset(params.sin, s_base * esz), 0);
+    // Every LTX-2 global stream is read-once / written-once for this kernel
+    // (x halves, the strided cos/sin rows, and both output halves have no
+    // cross-block reuse), so all accesses use the streaming-cache policy
+    // (ld/st.global.cs, evict-first) -- same measured-win pattern as the
+    // standard kernel's x/out streams.
+    uint4 raw_xf = __ldcs(reinterpret_cast<const uint4*>(pointer::offset(params.x, xf_base * esz)));
+    uint4 raw_xs = __ldcs(reinterpret_cast<const uint4*>(pointer::offset(params.x, xs_base * esz)));
+    uint4 raw_cv = __ldcs(reinterpret_cast<const uint4*>(pointer::offset(params.cos, c_base * esz)));
+    uint4 raw_sv = __ldcs(reinterpret_cast<const uint4*>(pointer::offset(params.sin, s_base * esz)));
+    Vec xf = *reinterpret_cast<Vec*>(&raw_xf);
+    Vec xs = *reinterpret_cast<Vec*>(&raw_xs);
+    Vec cv = *reinterpret_cast<Vec*>(&raw_cv);
+    Vec sv = *reinterpret_cast<Vec*>(&raw_sv);
 #pragma unroll
     for (uint32_t k = 0; k < kVecBf16 / 2; ++k) {
       const auto [xf1, xf2] = cast<fp32x2_t>(xf[k]);  // two consecutive, independent j
@@ -204,8 +221,10 @@ __global__ void ltx2_split_rope_kernel(const Ltx2RopeParams __grid_constant__ pa
       xf[k] = cast<Packed, fp32x2_t>({of1, of2});  // reuse loaded vectors for output
       xs[k] = cast<Packed, fp32x2_t>({og1, og2});
     }
-    store_as<Vec>(pointer::offset(params.out, xf_base * esz), xf, 0);
-    store_as<Vec>(pointer::offset(params.out, xs_base * esz), xs, 0);
+    __stcs(reinterpret_cast<uint4*>(pointer::offset(params.out, xf_base * esz)),
+           *reinterpret_cast<const uint4*>(&xf));
+    __stcs(reinterpret_cast<uint4*>(pointer::offset(params.out, xs_base * esz)),
+           *reinterpret_cast<const uint4*>(&xs));
   }
 }
 

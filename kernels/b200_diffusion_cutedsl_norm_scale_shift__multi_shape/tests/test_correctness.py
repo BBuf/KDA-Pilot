@@ -1,23 +1,22 @@
-"""Correctness scaffold for ``b200_diffusion_cutedsl_norm_scale_shift__multi_shape``.
+"""Correctness tests for ``b200_diffusion_cutedsl_norm_scale_shift__multi_shape``.
 
-This file is intentionally skipped unless ``KDA_RUN_CORRECTNESS=1`` is set.
+Pytest entry point wired to ``bench/correctness.py`` (case construction,
+fp32 references, tolerance policy). Requires a CUDA device plus the vendored
+baseline's dependencies (torch, cuda-python, nvidia-cutlass-dsl, einops) —
+i.e. the ``sglang_bbuf`` container on ion-b200. Gated behind
+``KDA_RUN_CORRECTNESS=1`` so collection stays cheap elsewhere.
 
-Required agent edits:
-- replace ``make_cases()`` with the full configured shape list from
-  ``prompt.md``;
-- implement ``baseline(case)`` by calling the wrapped SGLang baseline entry
-  points listed in ``prompt.md`` (treat that as the semantic oracle for this
-  task and cross-check against a PyTorch FP32 reference where practical);
-- keep ``candidate(case)`` compatible with ``src/register.py``;
-- use dynamic BF16/FP16-aware tolerances where applicable.
+Implementation under test: ``KDA_IMPL=candidate`` (default; the public wrapper
+in ``src/register.py`` routing native-or-fallback) or ``KDA_IMPL=baseline``
+(harness self-validation against the vendored baseline only).
 """
 
 from __future__ import annotations
 
 import importlib.util
 import os
+import sys
 from pathlib import Path
-from typing import Any
 
 import pytest
 
@@ -31,111 +30,321 @@ KERNEL_SLUG = "b200_diffusion_cutedsl_norm_scale_shift__multi_shape"
 OP_TYPE = "cutedsl_norm_scale_shift"
 KERNEL_DIR = Path(__file__).resolve().parents[1]
 
-pytestmark = pytest.mark.skipif(
-    os.environ.get("KDA_RUN_CORRECTNESS") != "1",
-    reason="Set KDA_RUN_CORRECTNESS=1 after the SGLang baseline cases are filled.",
-)
+pytestmark = [
+    pytest.mark.skipif(
+        os.environ.get("KDA_RUN_CORRECTNESS") != "1",
+        reason="Set KDA_RUN_CORRECTNESS=1 inside the remote GPU container.",
+    ),
+    pytest.mark.skipif(
+        torch is None or not (torch and torch.cuda.is_available()),
+        reason="CUDA required",
+    ),
+]
+
+IMPL = os.environ.get("KDA_IMPL", "candidate")
 
 
-def _load_register_module():
-    register_py = KERNEL_DIR / "src" / "register.py"
+def _correctness():
+    name = "kda_correctness_lib"
+    if name in sys.modules:
+        return sys.modules[name]
     spec = importlib.util.spec_from_file_location(
-        f"kda_kernel_{KERNEL_SLUG}_register", register_py
+        name, KERNEL_DIR / "bench" / "correctness.py"
     )
-    assert spec is not None and spec.loader is not None, register_py
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
-def make_cases() -> list[dict[str, Any]]:
-    """Return all configured correctness/benchmark cases.
-
-    The list must cover every shape bucket recorded in ``prompt.md``. Each case
-    typically looks like::
-
-        {
-            "name": "flux__bf16__B1S4608D3072",
-            "model": "flux",
-            "args": (...),
-            "kwargs": {...},
-            "atol": 5e-2,
-            "rtol": 5e-2,
-            "warmup": 25,
-            "iters": 100,
-        }
-
-    Returning an empty list keeps the scaffold skipped.
-    """
-
-    return []
-
-
-def baseline(case: dict[str, Any]) -> Any:
-    """Return the SGLang baseline result for one configured case."""
-
-    raise NotImplementedError(
-        "Call the SGLang baseline entry point(s) listed in prompt.md as the oracle."
-    )
-
-
-def candidate(case: dict[str, Any]) -> Any:
-    module = _load_register_module()
-    wrapper = getattr(module, "optimized_wrapper")
-    args = case.get("args", ())
-    kwargs = case.get("kwargs", {})
-    return wrapper(*args, **kwargs)
-
-
-def _assert_no_nan_inf(value: Any, *, path: str) -> None:
-    if torch is not None and isinstance(value, torch.Tensor):
-        assert not torch.isnan(value).any(), f"{path} contains NaN"
-        assert not torch.isinf(value).any(), f"{path} contains Inf"
-    elif isinstance(value, (tuple, list)):
-        for i, item in enumerate(value):
-            _assert_no_nan_inf(item, path=f"{path}[{i}]")
-    elif isinstance(value, dict):
-        for key, item in value.items():
-            _assert_no_nan_inf(item, path=f"{path}.{key}")
-
-
-def _assert_close(actual: Any, expected: Any, *, case: dict[str, Any], path: str = "out") -> None:
-    atol = case.get("atol", 5e-2)
-    rtol = case.get("rtol", 5e-2)
-    _assert_no_nan_inf(actual, path=path)
-    if torch is not None and isinstance(actual, torch.Tensor):
-        assert isinstance(expected, torch.Tensor), f"{path} expected tensor, got {type(expected)}"
-        assert actual.shape == expected.shape, f"{path} shape {actual.shape} != {expected.shape}"
-        torch.testing.assert_close(actual.float(), expected.float(), atol=atol, rtol=rtol)
-        return
-    if isinstance(actual, (tuple, list)):
-        assert isinstance(expected, type(actual)), f"{path} type mismatch"
-        assert len(actual) == len(expected), f"{path} length mismatch"
-        for i, (a_item, e_item) in enumerate(zip(actual, expected)):
-            _assert_close(a_item, e_item, case=case, path=f"{path}[{i}]")
-        return
-    if isinstance(actual, dict):
-        assert isinstance(expected, dict), f"{path} expected dict"
-        assert actual.keys() == expected.keys(), f"{path} keys mismatch"
-        for key in actual:
-            _assert_close(actual[key], expected[key], case=case, path=f"{path}.{key}")
-        return
-    assert actual == expected, f"{path} value mismatch"
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[name] = mod
+    spec.loader.exec_module(mod)
+    return mod
 
 
 def test_register_metadata() -> None:
-    module = _load_register_module()
-    assert hasattr(module, "register")
-    spec = module.register()
+    lib = _correctness()
+    spec = lib.candidate_register().register()
     assert spec["name"] == KERNEL_SLUG
     assert spec["op_type"] == OP_TYPE
     assert callable(spec["callable"])
+    assert set(spec["exports"]) == {
+        "fused_norm_scale_shift",
+        "fused_scale_residual_norm_scale_shift",
+    }
 
 
-def test_correctness_cases() -> None:
-    cases = make_cases()
-    assert cases, "No correctness cases recovered. Fill make_cases() before optimizing."
-    for case in cases:
-        expected = baseline(case)
-        actual = candidate(case)
-        _assert_close(actual, expected, case=case, path=case.get("name", "out"))
+def test_registered_callable_routes_both_entry_points() -> None:
+    """register()["callable"] must accept BOTH wrapped signatures (arity-routed)."""
+    lib = _correctness()
+    spec = lib.candidate_register().register()
+    wrapper = spec["callable"]
+    exports = spec["exports"]
+    gen = torch.Generator(device="cuda")
+    gen.manual_seed(123)
+    mk = lambda *s: torch.randn(*s, generator=gen, device="cuda", dtype=torch.float32)
+    x = mk(1, 64, 3072).to(torch.bfloat16)
+    residual = mk(1, 64, 3072).to(torch.bfloat16)
+    gate = (mk(1, 1, 3072) * 0.5).to(torch.bfloat16)
+    sc = (mk(1, 1, 3072) * 0.5).to(torch.bfloat16)
+    sh = (mk(1, 1, 3072) * 0.5).to(torch.bfloat16)
+
+    # NSS arity (7 positional args)
+    y_w = wrapper(x, None, None, sc, sh, "layer", 1e-6)
+    y_e = exports["fused_norm_scale_shift"](x, None, None, sc, sh, "layer", 1e-6)
+    assert torch.equal(y_w, y_e) or torch.allclose(y_w.float(), y_e.float())
+
+    # SRNSS arity (9 positional args) -> must NOT raise TypeError
+    out_w = wrapper(residual, x, gate, None, None, sc, sh, "layer", 1e-6)
+    out_e = exports["fused_scale_residual_norm_scale_shift"](
+        residual, x, gate, None, None, sc, sh, "layer", 1e-6
+    )
+    for a, b in zip(out_w, out_e):
+        assert torch.equal(a, b) or torch.allclose(a.float(), b.float())
+
+    # SRNSS with 8 positional args (eps defaulted) and keyword forms
+    out8 = wrapper(residual, x, gate, None, None, sc, sh, "layer")
+    assert isinstance(out8, tuple) and len(out8) == 2
+    out_kw = wrapper(
+        residual=residual, x=x, gate=gate, weight=None, bias=None,
+        scale=sc, shift=sh, norm_type="layer", eps=1e-6,
+    )
+    assert isinstance(out_kw, tuple) and len(out_kw) == 2
+    y_kw = wrapper(x=x, weight=None, bias=None, scale=sc, shift=sh,
+                   norm_type="layer", eps=1e-6)
+    assert isinstance(y_kw, torch.Tensor)
+
+
+def _production_cases():
+    lib = _correctness()
+    return [(c.case_id, c) for c in lib.production_cases()]
+
+
+@pytest.mark.parametrize(
+    "case_id,case", _production_cases() if os.environ.get("KDA_RUN_CORRECTNESS") == "1" else []
+)
+def test_production_signature(case_id, case) -> None:
+    lib = _correctness()
+    lib.run_production_case(case, IMPL)
+
+
+def test_production_dispatch_all_native() -> None:
+    """Every unique captured signature must take the native path (no fallback)."""
+    if IMPL != "candidate":
+        pytest.skip("dispatch-log assertion applies to the candidate wrapper")
+    lib = _correctness()
+    reg = lib.candidate_register()
+    stats = reg.dispatch_stats()
+    stats.clear()
+    for case in lib.production_cases():
+        lib.run_production_case(case, "candidate")
+    assert stats.get("fallback", 0) == 0, f"production fallbacks: {dict(stats)}"
+    assert stats.get("native", 0) > 0
+
+
+@pytest.mark.parametrize(
+    "kw",
+    [
+        pytest.param(kw, id=f"A{i}")
+        for i, kw in enumerate(_correctness().grid_cases_shape_dtype())
+    ]
+    if os.environ.get("KDA_RUN_CORRECTNESS") == "1"
+    else [],
+)
+def test_grid_shape_dtype(kw) -> None:
+    _correctness().run_grid_case(IMPL, **kw)
+
+
+@pytest.mark.parametrize(
+    "kw",
+    [
+        pytest.param(kw, id=f"B{i}")
+        for i, kw in enumerate(_correctness().grid_cases_affine())
+    ]
+    if os.environ.get("KDA_RUN_CORRECTNESS") == "1"
+    else [],
+)
+def test_grid_affine(kw) -> None:
+    _correctness().run_grid_case(IMPL, **kw)
+
+
+@pytest.mark.parametrize(
+    "kw",
+    [
+        pytest.param(kw, id=f"C{i}-{kw['index_mode']}")
+        for i, kw in enumerate(_correctness().grid_cases_index_modes())
+    ]
+    if os.environ.get("KDA_RUN_CORRECTNESS") == "1"
+    else [],
+)
+def test_grid_index_modes(kw) -> None:
+    _correctness().run_grid_case(IMPL, **kw)
+
+
+@pytest.mark.parametrize(
+    "kw",
+    [
+        pytest.param(kw, id=f"D{i}-g{kw['gate_mode']}")
+        for i, kw in enumerate(_correctness().grid_cases_gate_modes())
+    ]
+    if os.environ.get("KDA_RUN_CORRECTNESS") == "1"
+    else [],
+)
+def test_grid_gate_modes(kw) -> None:
+    _correctness().run_grid_case(IMPL, **kw)
+
+
+@pytest.mark.parametrize(
+    "kw",
+    [
+        pytest.param(kw, id=f"E{i}")
+        for i, kw in enumerate(_correctness().grid_cases_srnss_shape_dtype())
+    ]
+    if os.environ.get("KDA_RUN_CORRECTNESS") == "1"
+    else [],
+)
+def test_grid_srnss_shape_dtype(kw) -> None:
+    _correctness().run_grid_case(IMPL, **kw)
+
+
+def test_validate_rejects_non_divisible_frames() -> None:
+    """BF1D scale with S % F != 0 must raise (mirrors the SGLang test)."""
+    lib = _correctness()
+    nss, _ = lib.implementations(IMPL)
+    B, S, F, D = 1, 1000, 7, 3072  # 1000 % 7 != 0
+    x = torch.randn(B, S, D, device="cuda", dtype=torch.bfloat16)
+    bad = torch.randn(B, F, 1, D, device="cuda", dtype=torch.bfloat16)
+    with pytest.raises(ValueError, match="divisible"):
+        nss(x, None, None, bad, bad, "layer", 1e-5)
+
+
+def test_argument_order_probe() -> None:
+    """Swapping residual/x with a non-trivial gate must mismatch the oracle."""
+    lib = _correctness()
+    _, srnss = lib.implementations(IMPL)
+    gen = torch.Generator(device="cuda")
+    gen.manual_seed(99)
+    B, S, D = 1, 64, 3072
+    mk = lambda *s: torch.randn(*s, generator=gen, device="cuda", dtype=torch.float32)
+    residual = mk(B, S, D).to(torch.bfloat16)
+    x = mk(B, S, D).to(torch.bfloat16)
+    gate = (mk(1, 1, D) * 0.5).to(torch.bfloat16)
+    scale = (mk(1, 1, D) * 0.5).to(torch.bfloat16)
+    shift = (mk(1, 1, D) * 0.5).to(torch.bfloat16)
+    ref_y, _ = lib.reference_scale_residual_norm_scale_shift(
+        residual, x, gate, None, None, scale, shift, "layer", 1e-5
+    )
+    y_swapped, _ = srnss(x, residual, gate, None, None, scale, shift, "layer", 1e-5)
+    err = (y_swapped.float() - ref_y).abs().max().item()
+    assert err > 0.1, f"swapped args unexpectedly matched oracle (err={err:.3e})"
+
+
+def test_nan_detection() -> None:
+    """NaN in any input must be caught by the harness finiteness check."""
+    lib = _correctness()
+    nss, _ = lib.implementations(IMPL)
+    x = torch.randn(1, 64, 3072, device="cuda", dtype=torch.bfloat16)
+    x[0, 3, 5] = float("nan")
+    sc = torch.zeros(1, 1, 3072, device="cuda", dtype=torch.bfloat16)
+    out = nss(x, None, None, sc, sc, "layer", 1e-5)
+    base = lib.implementations("baseline")[0](x, None, None, sc, sc, "layer", 1e-5)
+    ref = lib.reference_norm_scale_shift(x, None, None, sc, sc, "layer", 1e-5)
+    with pytest.raises(AssertionError, match="NaN/Inf"):
+        lib.assert_outputs_close("nan-probe", out, base, ref)
+
+
+def test_checker_rejects_wrong_formula() -> None:
+    """The tolerance machinery must reject a wrong-formula candidate."""
+    lib = _correctness()
+    gen = torch.Generator(device="cuda")
+    gen.manual_seed(7)
+    x = torch.randn(1, 128, 3072, generator=gen, device="cuda", dtype=torch.float32).to(
+        torch.bfloat16
+    )
+    sc = (
+        torch.randn(1, 1, 3072, generator=gen, device="cuda", dtype=torch.float32) * 0.5
+    ).to(torch.bfloat16)
+    base = lib.implementations("baseline")[0](x, None, None, sc, sc, "layer", 1e-5)
+    ref = lib.reference_norm_scale_shift(x, None, None, sc, sc, "layer", 1e-5)
+    # wrong formula: norm(x) * scale + shift (missing the "1 +")
+    normf = lib._norm_f32(x.float(), None, None, "layer", 1e-5)
+    wrong = (normf * sc.float() + sc.float()).to(torch.bfloat16)
+    with pytest.raises(AssertionError):
+        lib.assert_outputs_close("wrong-formula", wrong, base, ref)
+
+
+def test_snapshot_only_guard() -> None:
+    """No real SGLang modules may be imported during harness runs."""
+    lib = _correctness()
+    lib.snapshot_guard()
+
+
+def test_high_mean_low_variance_rows() -> None:
+    """Adversarial layer-norm statistics: large mean, small variance.
+
+    bf16 inputs cap the representable mean/std ratio (ulp(16)=0.125), but this
+    still exercises the variance path where a fused E[x^2]-mean^2 form loses
+    precision; the shipped two-pass form must track the fp32 reference within
+    the dynamic bound.
+    """
+    lib = _correctness()
+    nss, _ = lib.implementations(IMPL)
+    gen = torch.Generator(device="cuda")
+    gen.manual_seed(11)
+    x = (
+        16.0
+        + 0.5 * torch.randn(1, 256, 3072, generator=gen, device="cuda", dtype=torch.float32)
+    ).to(torch.bfloat16)
+    sc = (
+        torch.randn(1, 1, 3072, generator=gen, device="cuda", dtype=torch.float32) * 0.5
+    ).to(torch.bfloat16)
+    out = nss(x, None, None, sc, sc, "layer", 1e-6)
+    base = lib.implementations("baseline")[0](x, None, None, sc, sc, "layer", 1e-6)
+    ref = lib.reference_norm_scale_shift(x, None, None, sc, sc, "layer", 1e-6)
+    lib.assert_outputs_close("high-mean-low-var", out, base, ref)
+
+
+def test_cpu_operand_falls_back() -> None:
+    """A CPU scale/shift must never reach the native path (fail-closed)."""
+    if IMPL != "candidate":
+        pytest.skip("dispatch assertion applies to the candidate wrapper")
+    lib = _correctness()
+    reg = lib.candidate_register()
+    nss, _ = lib.implementations("candidate")
+    stats = reg.dispatch_stats()
+    before_native = stats.get("native", 0)
+    x = torch.randn(1, 64, 3072, device="cuda", dtype=torch.bfloat16)
+    sc_cpu = torch.zeros(1, 1, 3072, dtype=torch.bfloat16)  # cpu tensor
+    try:
+        nss(x, None, None, sc_cpu, sc_cpu, "layer", 1e-5)
+    except Exception:
+        pass  # whatever the baseline does with cpu operands is its contract
+    assert stats.get("native", 0) == before_native, "cpu operand took native path"
+
+
+def test_empty_rows_falls_back() -> None:
+    """S=0 activations must never reach the native path."""
+    if IMPL != "candidate":
+        pytest.skip("dispatch assertion applies to the candidate wrapper")
+    lib = _correctness()
+    reg = lib.candidate_register()
+    nss, _ = lib.implementations("candidate")
+    stats = reg.dispatch_stats()
+    before_native = stats.get("native", 0)
+    x = torch.empty(1, 0, 3072, device="cuda", dtype=torch.bfloat16)
+    sc = torch.zeros(1, 1, 3072, device="cuda", dtype=torch.bfloat16)
+    try:
+        nss(x, None, None, sc, sc, "layer", 1e-5)
+    except Exception:
+        pass  # baseline behavior for empty rows is its own contract
+    assert stats.get("native", 0) == before_native, "empty rows took native path"
+
+
+def test_non_tensor_scale_falls_back() -> None:
+    """scale=None must route to the baseline's own validation, not crash the wrapper."""
+    if IMPL != "candidate":
+        pytest.skip("dispatch assertion applies to the candidate wrapper")
+    lib = _correctness()
+    reg = lib.candidate_register()
+    _, srnss = lib.implementations("candidate")
+    stats = reg.dispatch_stats()
+    before_native = stats.get("native", 0)
+    x = torch.randn(1, 64, 3072, device="cuda", dtype=torch.bfloat16)
+    with pytest.raises(Exception):
+        srnss(x.clone(), x, None, None, None, None, None, "layer", 1e-5)
+    assert stats.get("native", 0) == before_native
