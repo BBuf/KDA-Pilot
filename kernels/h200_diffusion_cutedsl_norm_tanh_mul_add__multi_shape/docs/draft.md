@@ -161,3 +161,8 @@ logged in `solutions.jsonl` with parent links.
 - Next (round 3): task10 NCU on the anchor (REQUIRED before mechanism claims;
   decides direction 3 tanh-precompute vs occupancy levers vs accept-near-bound),
   then task11 roofline/completion docs, task12 audit, task13 export.
+- task10 NCU (profile/ncu_anchor_r2/REPORT.md): NOT DRAM-bound (50-51% mem).
+  single = memory-latency-bound (long_scoreboard 5.0/issue) + XU 38.6% (per-row
+  tanhf); dual = issue/barrier-bound under 40-reg cap (3 CTAs/SM, 70.3% max
+  warps). Wave-2 ranking (evidence-backed): (1) dual launch_bounds reg cap;
+  (2) single tanh-precompute buffer (DEC-5); (3) 2-sync block reduction.
