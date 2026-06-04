@@ -385,7 +385,7 @@ index 0000000000..266e197519
 +
 +}  // namespace
 diff --git a/python/sglang/jit_kernel/diffusion/triton/norm.py b/python/sglang/jit_kernel/diffusion/triton/norm.py
-index 31ee451a41..bb6bcb46ba 100644
+index 31ee451a41..9685144771 100644
 --- a/python/sglang/jit_kernel/diffusion/triton/norm.py
 +++ b/python/sglang/jit_kernel/diffusion/triton/norm.py
 @@ -1,3 +1,4 @@
@@ -401,7 +401,7 @@ index 31ee451a41..bb6bcb46ba 100644
  
  
  # RMSNorm-fp32
-@@ -606,6 +608,36 @@ def _norm_infer_kernel(
+@@ -606,6 +608,38 @@ def _norm_infer_kernel(
      tl.store(Y + cols, y, mask=cols < N)
  
  
@@ -418,15 +418,17 @@ index 31ee451a41..bb6bcb46ba 100644
 +
 +@cache_once
 +@torch.compiler.assume_constant_result
-+def _can_use_native_ln_infer(n: int) -> bool:
++def _can_use_native_ln_infer(n: int, device_index: int) -> bool:
 +    """Native CUDA fast path for the inference LayerNorm (fp32, N=5120,
-+    weight+bias). Gated to Hopper (CC 9.0, the only validated architecture),
-+    by SGLANG_NATIVE_NORM_INFER (default on), and by a successful jit build;
-+    any other signature or device stays on the Triton path."""
++    weight+bias). Gated per tensor device to Hopper (CC 9.0, the only
++    validated architecture), by SGLANG_NATIVE_NORM_INFER (default on), and by
++    a successful jit build; any other signature or device stays on the Triton
++    path. The cache key includes the device index, so heterogeneous multi-GPU
++    processes decide per device."""
 +    if os.environ.get("SGLANG_NATIVE_NORM_INFER", "1") != "1":
 +        return False
 +    try:
-+        if torch.cuda.get_device_capability() != (9, 0):
++        if torch.cuda.get_device_capability(device_index) != (9, 0):
 +            return False
 +        _native_ln_infer_module(n)
 +        return True
@@ -438,7 +440,7 @@ index 31ee451a41..bb6bcb46ba 100644
  def norm_infer(
      x: Tensor,
      weight: Optional[Tensor],
-@@ -614,6 +646,27 @@ def norm_infer(
+@@ -614,6 +648,27 @@ def norm_infer(
      is_rms_norm: bool = False,
      out: Optional[Tensor] = None,
  ):
@@ -458,7 +460,7 @@ index 31ee451a41..bb6bcb46ba 100644
 +        and bias.numel() == 5120
 +        and weight.is_contiguous()
 +        and bias.is_contiguous()
-+        and _can_use_native_ln_infer(5120)
++        and _can_use_native_ln_infer(5120, x.device.index)
 +    ):
 +        y = torch.empty_like(x)
 +        _native_ln_infer_module(5120).layer_norm(x, weight, bias, y, float(eps))
@@ -467,7 +469,7 @@ index 31ee451a41..bb6bcb46ba 100644
      x = x.contiguous()
      if weight is not None:
 diff --git a/python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py b/python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py
-index 065205381c..d0fd8bb8f4 100644
+index 065205381c..09fc329f5d 100644
 --- a/python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py
 +++ b/python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py
 @@ -1,3 +1,5 @@
@@ -484,7 +486,7 @@ index 065205381c..d0fd8bb8f4 100644
  
  
  # Adapted from https://github.com/ModelTC/LightX2V/blob/main/lightx2v/common/ops/norm/triton_ops.py#L905-L956
-@@ -37,10 +40,55 @@ def _rms_norm_tiled_onepass(
+@@ -37,10 +40,57 @@ def _rms_norm_tiled_onepass(
      tl.store(y_blk, x * rstd * w, mask=mask)
  
  
@@ -501,15 +503,17 @@ index 065205381c..d0fd8bb8f4 100644
 +
 +@cache_once
 +@torch.compiler.assume_constant_result
-+def _can_use_native_one_pass_rms(dim: int) -> bool:
-+    """Native CUDA fast path for the one-pass RMSNorm (bf16, D=128). Gated to
-+    Hopper (CC 9.0, the only validated architecture), by
++def _can_use_native_one_pass_rms(dim: int, device_index: int) -> bool:
++    """Native CUDA fast path for the one-pass RMSNorm (bf16, D=128). Gated per
++    tensor device to Hopper (CC 9.0, the only validated architecture), by
 +    SGLANG_NATIVE_ONE_PASS_RMS_NORM (default on), and by a successful jit
-+    build; any other signature or device stays on the Triton path."""
++    build; any other signature or device stays on the Triton path. The cache
++    key includes the device index, so heterogeneous multi-GPU processes
++    decide per device."""
 +    if os.environ.get("SGLANG_NATIVE_ONE_PASS_RMS_NORM", "1") != "1":
 +        return False
 +    try:
-+        if torch.cuda.get_device_capability() != (9, 0):
++        if torch.cuda.get_device_capability(device_index) != (9, 0):
 +            return False
 +        _native_one_pass_rms_module(dim)
 +        return True
@@ -530,7 +534,7 @@ index 065205381c..d0fd8bb8f4 100644
 +        and w.dtype == x.dtype
 +        and w.numel() == 128
 +        and w.is_contiguous()
-+        and _can_use_native_one_pass_rms(128)
++        and _can_use_native_one_pass_rms(128, x.device.index)
 +    ):
 +        y = torch.empty_like(x)
 +        _native_one_pass_rms_module(128).rms_norm_tile(

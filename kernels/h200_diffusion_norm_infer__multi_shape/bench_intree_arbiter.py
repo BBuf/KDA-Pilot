@@ -119,14 +119,17 @@ results = {"toggle": args.toggle, "shapes": {}, "gate_before": state_before}
 torch.manual_seed(0)
 
 # Confirm the gate state matches the toggle (the inserted branch must exist in
-# BOTH runs; only its enablement differs).
-gate_ln = norm_mod._can_use_native_ln_infer(5120)
-gate_rms = rms_mod._can_use_native_one_pass_rms(128)
+# BOTH runs; only its enablement differs). Gates are keyed on the tensor
+# device; the harness pins one device, so index 0 is the device under test.
+gate_dev = torch.cuda.current_device()
+gate_ln = norm_mod._can_use_native_ln_infer(5120, gate_dev)
+gate_rms = rms_mod._can_use_native_one_pass_rms(128, gate_dev)
 expected = args.toggle == "on"
 assert gate_ln == expected and gate_rms == expected, (
     f"gate mismatch: ln={gate_ln} rms={gate_rms} expected={expected}"
 )
-print(f"[gate] _can_use_native_ln_infer(5120)={gate_ln}, _can_use_native_one_pass_rms(128)={gate_rms}")
+print(f"[gate] _can_use_native_ln_infer(5120, {gate_dev})={gate_ln}, "
+      f"_can_use_native_one_pass_rms(128, {gate_dev})={gate_rms}")
 
 for name, kind, m, n, dtype in SHAPES:
     x = torch.randn(m, n, device="cuda", dtype=dtype)
@@ -174,7 +177,8 @@ if args.probes:
         return bool(
             x.is_cuda and x.dtype == torch.bfloat16 and x.shape[-1] == 128
             and x.is_contiguous() and w.dtype == x.dtype and w.numel() == 128
-            and w.is_contiguous() and rms_mod._can_use_native_one_pass_rms(128)
+            and w.is_contiguous()
+            and rms_mod._can_use_native_one_pass_rms(128, x.device.index)
         )
 
     # fp16 input: dynamic guard must be False; public output matches torch ref.

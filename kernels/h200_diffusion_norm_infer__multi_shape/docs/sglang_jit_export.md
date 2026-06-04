@@ -14,9 +14,11 @@
   native fast paths are inserted INSIDE the unchanged public bodies —
   `norm_infer` (plain function) and `_triton_one_pass_rms_norm_cuda` (the
   `@register_custom_op(op_name="triton_one_pass_rms_norm_cuda", out_shape="x")`
-  body; decorator byte-unchanged) — gated to Hopper (CC 9.0, the only
-  validated architecture: `torch.cuda.get_device_capability() == (9, 0)`),
-  by `SGLANG_NATIVE_NORM_INFER` / `SGLANG_NATIVE_ONE_PASS_RMS_NORM`
+  body; decorator byte-unchanged) — gated PER TENSOR DEVICE to Hopper
+  (CC 9.0, the only validated architecture:
+  `torch.cuda.get_device_capability(x.device.index) == (9, 0)`, cache keyed
+  on the device index so heterogeneous multi-GPU processes decide per
+  device), by `SGLANG_NATIVE_NORM_INFER` / `SGLANG_NATIVE_ONE_PASS_RMS_NORM`
   (default on), and by a successful jit build, using the `qknorm_rope.py`
   in-tree pattern (`@cache_once` + `@torch.compiler.assume_constant_result`
   static gate, lazy `load_jit` loader, automatic fallback to the Triton path).
