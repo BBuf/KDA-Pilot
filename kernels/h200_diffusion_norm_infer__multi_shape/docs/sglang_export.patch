@@ -385,7 +385,7 @@ index 0000000000..266e197519
 +
 +}  // namespace
 diff --git a/python/sglang/jit_kernel/diffusion/triton/norm.py b/python/sglang/jit_kernel/diffusion/triton/norm.py
-index 31ee451a41..9685144771 100644
+index 31ee451a41..7a9acf7991 100644
 --- a/python/sglang/jit_kernel/diffusion/triton/norm.py
 +++ b/python/sglang/jit_kernel/diffusion/triton/norm.py
 @@ -1,3 +1,4 @@
@@ -401,7 +401,7 @@ index 31ee451a41..9685144771 100644
  
  
  # RMSNorm-fp32
-@@ -606,6 +608,38 @@ def _norm_infer_kernel(
+@@ -606,6 +608,42 @@ def _norm_infer_kernel(
      tl.store(Y + cols, y, mask=cols < N)
  
  
@@ -430,7 +430,11 @@ index 31ee451a41..9685144771 100644
 +    try:
 +        if torch.cuda.get_device_capability(device_index) != (9, 0):
 +            return False
-+        _native_ln_infer_module(n)
++        # Build under the tensor's device: SGLang's JIT arch selection follows
++        # the current device, so this compiles the cubin for the device that
++        # will launch the kernel (later calls hit the jit cache).
++        with torch.cuda.device(device_index):
++            _native_ln_infer_module(n)
 +        return True
 +    except Exception:
 +        return False
@@ -440,7 +444,7 @@ index 31ee451a41..9685144771 100644
  def norm_infer(
      x: Tensor,
      weight: Optional[Tensor],
-@@ -614,6 +648,27 @@ def norm_infer(
+@@ -614,6 +652,27 @@ def norm_infer(
      is_rms_norm: bool = False,
      out: Optional[Tensor] = None,
  ):
@@ -469,7 +473,7 @@ index 31ee451a41..9685144771 100644
      x = x.contiguous()
      if weight is not None:
 diff --git a/python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py b/python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py
-index 065205381c..09fc329f5d 100644
+index 065205381c..7a73fbcc0b 100644
 --- a/python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py
 +++ b/python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py
 @@ -1,3 +1,5 @@
@@ -486,7 +490,7 @@ index 065205381c..09fc329f5d 100644
  
  
  # Adapted from https://github.com/ModelTC/LightX2V/blob/main/lightx2v/common/ops/norm/triton_ops.py#L905-L956
-@@ -37,10 +40,57 @@ def _rms_norm_tiled_onepass(
+@@ -37,10 +40,61 @@ def _rms_norm_tiled_onepass(
      tl.store(y_blk, x * rstd * w, mask=mask)
  
  
@@ -515,7 +519,11 @@ index 065205381c..09fc329f5d 100644
 +    try:
 +        if torch.cuda.get_device_capability(device_index) != (9, 0):
 +            return False
-+        _native_one_pass_rms_module(dim)
++        # Build under the tensor's device: SGLang's JIT arch selection follows
++        # the current device, so this compiles the cubin for the device that
++        # will launch the kernel (later calls hit the jit cache).
++        with torch.cuda.device(device_index):
++            _native_one_pass_rms_module(dim)
 +        return True
 +    except Exception:
 +        return False

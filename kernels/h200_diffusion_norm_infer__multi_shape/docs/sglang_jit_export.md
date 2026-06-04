@@ -19,7 +19,10 @@
   `torch.cuda.get_device_capability(x.device.index) == (9, 0)`, cache keyed
   on the device index so heterogeneous multi-GPU processes decide per
   device), by `SGLANG_NATIVE_NORM_INFER` / `SGLANG_NATIVE_ONE_PASS_RMS_NORM`
-  (default on), and by a successful jit build, using the `qknorm_rope.py`
+  (default on), and by a successful jit build performed under the tensor's
+  device context (`with torch.cuda.device(x.device.index)`, so SGLang's
+  current-device-based JIT arch selection compiles for the launching
+  device), using the `qknorm_rope.py`
   in-tree pattern (`@cache_once` + `@torch.compiler.assume_constant_result`
   static gate, lazy `load_jit` loader, automatic fallback to the Triton path).
   Both A/B legs run the SAME patched checkout — wrapper, registration, and the
