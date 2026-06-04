@@ -71,10 +71,31 @@ Driver: `export/sglang_integration/inSGLang_ab_driver.py` (public custom-op call
 | **geomean** | | | **1.487×** |
 
 Decision per the pre-registered rule (Codex-reviewed): **ship the native path for both
-entry points** — v2 is parity-or-better integrated (1.37-1.39×), so the conditional ship
-criterion is satisfied. Honest decomposition stands: device-only deltas are v1 +4% /
-v2 −16% (NCU, `profile/final_lb_k8_full/REPORT.md`); the integrated win is dominated by
-the cheaper native host path, which is legitimate shipped-path cost on both sides.
+entry points** — v2 is parity-or-better integrated, so the conditional ship criterion is
+satisfied. Honest decomposition stands: device-only deltas are v1 +4% / v2 −16% (NCU,
+`profile/final_lb_k8_full/REPORT.md`); the integrated win is dominated by the cheaper
+native host path, which is legitimate shipped-path cost on both sides.
+
+### Confirmation rerun (r2) — full stats + reproducibility proof
+
+The drop-in was re-applied from scratch via `export/apply_drop_in.sh` (sha256 manifest:
+`.cuh 56482c46…56ba0`, wrapper `cc947358…d48fc`); the produced checkout diff is
+byte-identical to the recorded `export/sglang_drop_in.patch` (`PATCH_IDENTICAL_TO_RECORDED`),
+correctness re-passed, and the benchmark was re-collected with full statistics (median /
+mean / std / min / p10 / p90; raw summaries in `export/arbiter_runs/*.json`; rows appended
+to `benchmark.csv` under mode `in-sglang-arbiter`):
+
+| Entry / shape | clean median | patched median | speedup (r2) |
+|---|---:|---:|---:|
+| v1 S=4096 | 106.00 µs | 66.02 µs | 1.606× |
+| v1 S=4128 | 108.94 µs | 65.95 µs | 1.652× |
+| v2 S=4096 | 137.16 µs | 98.29 µs | 1.395× |
+| v2 S=4128 | 136.95 µs | 97.79 µs | 1.400× |
+| **geomean (r2)** | | | **1.509×** |
+
+(r1 measured 1.487× — run-to-run agreement within ~1.5%. The clean v2 S=4096 mean/std in
+r2 carry a single first-iteration outlier; medians/percentiles are robust.) The checkout
+was restored clean after each run.
 
 ## Reproduction commands
 

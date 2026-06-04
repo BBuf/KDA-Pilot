@@ -14,6 +14,7 @@ Usage: python inSGLang_ab_driver.py {correctness|bench} <tag>
 """
 
 import json
+import os
 import statistics
 import sys
 import time
@@ -114,11 +115,23 @@ def run_bench(tag: str) -> None:
             results[f"{name}_S{S}"] = {
                 "median_us": round(statistics.median(ordered), 3),
                 "mean_us": round(statistics.mean(ordered), 3),
+                "std_us": round(statistics.pstdev(ordered), 3),
                 "p10_us": round(ordered[len(ordered) // 10], 3),
                 "p90_us": round(ordered[(len(ordered) * 9) // 10], 3),
                 "min_us": round(ordered[0], 3),
             }
-    print(json.dumps({"tag": tag, "results": results}))
+    payload = {
+        "tag": tag,
+        "warmup": WARMUP,
+        "iters": ITERS,
+        "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES", ""),
+        "results": results,
+    }
+    out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "arbiter_runs")
+    os.makedirs(out_dir, exist_ok=True)
+    with open(os.path.join(out_dir, f"{tag}.json"), "w") as f:
+        json.dump(payload, f, indent=1)
+    print(json.dumps(payload))
 
 
 if __name__ == "__main__":

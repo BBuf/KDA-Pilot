@@ -22,7 +22,17 @@ K∈{2,4,8} sweep. Named out-of-scope blocker: warp-per-row redesign.
 Correctness: 33/33 on B200 with the anti-fallback guard across 204 native-path cases
 (fp32 oracle with baseline rounding/affine semantics + dynamic noise bound), 22
 contract-rejection cases, affine-edge/routing/fallback tests, plus in-SGLang public-op
-validation.
+validation. Command (inside `sglang_bbuf`, workspace root):
+
+```bash
+CUDA_VISIBLE_DEVICES=0 KDA_RUN_CORRECTNESS=1 python -m pytest tests/test_correctness.py -q
+# => 33 passed, 4 warnings in 240.49s   (re-run after every kernel edit; identical result)
+```
+
+NCU evidence: raw `.ncu-rep` files (full set, base+cand, both variants) are retained in
+the remote run directory `REMOTE_KDA_DIR/workspace/profile/final_lb_k8_full/reports/`;
+the local `profile/final_lb_k8_full/` mirror holds the parsed summaries
+(`analysis/metrics_summary.csv`, `analysis/stall_breakdown.csv`) and `REPORT.md`.
 
 ---
 
