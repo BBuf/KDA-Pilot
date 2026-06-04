@@ -26,6 +26,14 @@ Timing methodology (per the task's benchmark requirements):
   - GPU state (utilization / memory / other compute processes) is captured
     before and after; the run REFUSES to start on a busy GPU.
 
+Admissibility ruling (Codex audit, round 1): the candidate's local fast path
+is wrapped in its own ``torch.library.custom_op`` so the local A/B compares
+like-for-like host layers (one custom op + dispatch per side). Local numbers
+guide optimization; the PROMOTION number still comes exclusively from the
+in-SGLang drop-in arbiter where both sides share the IDENTICAL public op.
+The roofline denominator is FUSED LOGICAL BYTES (see ``_bytes_moved``); a
+candidate with different actual traffic must report both conventions.
+
 All GPU work must run inside the ``sglang_bbuf`` container on an idle remote
 H200 with ``CUDA_VISIBLE_DEVICES`` pinned to the selected ``REMOTE_GPU_ID``.
 
@@ -91,25 +99,28 @@ def _mode_elems(mode: str, B: int, S: int, D: int) -> int:
 
 
 def _bytes_moved(case: dict[str, Any]) -> int:
-    """Modeled global-memory traffic per call (roofline denominator).
+    """Modeled global-memory traffic per call — FUSED LOGICAL BYTES convention:
+    the minimal traffic of a fully fused implementation (y kept in registers
+    for the second norm, no y re-read). A candidate that re-reads/spills y or
+    splits launches must report its ACTUAL traffic separately.
 
-    single: read x + read scale + read shift + read weight(+bias) + write y.
-    dual:   + read weight2(+bias2) + read scale2 + write y2 (the kernel keeps
-    y in registers for the second norm — no y re-read).
+    single: read x + read scale + read shift + read weight (+bias if present)
+    + write y. dual: + weight2 (+bias2 if present) + scale2 + write y2.
+    Affine modes: "D" = weight+bias, "W" = weight only (bias=None, the
+    captured production signature), "NAT" = neither.
     """
 
     elem = {"bfloat16": 2, "float16": 2, "float32": 4}[case["dtype"]]
     B, S, D = case["B"], case["S"], case["D"]
+    affine_elems = {"D": 2 * D, "W": D, "NAT": 0}[case["affine_mode"]]
     full = B * S * D
     total = full  # read x
     total += _mode_elems(case["scale_mode"], B, S, D)  # read scale
     total += _mode_elems(case["shift_mode"], B, S, D)  # read shift
-    if case["affine_mode"] == "D":
-        total += 2 * D  # weight + bias (bias only loaded for layer; count once)
+    total += affine_elems
     total += full  # write y
     if case["entry"] == "dual":
-        if case["affine_mode"] == "D":
-            total += 2 * D
+        total += affine_elems
         total += _mode_elems(case["scale_mode"], B, S, D)  # read scale2
         total += full  # write y2
     return total * elem
@@ -150,27 +161,41 @@ def _time_interleaved(
     *,
     warmup: int,
     iters: int,
-):
-    """Same-process interleaved A/B: A and B alternate within one loop so both
-    see identical GPU clock/thermal/allocator state. Both callables go through
+) -> dict[str, float]:
+    """Same-process interleaved A/B with ALTERNATING order (even iterations
+    run A-then-B, odd iterations run B-then-A) so neither side systematically
+    inherits the other's cache/allocator/clock state. Records BOTH wall-clock
+    and per-call CUDA-event medians for each side; both callables go through
     the identical harness path (symmetric wrappers)."""
 
     for _ in range(warmup):
         fn_a(case)
         fn_b(case)
     _sync()
-    sa: list[float] = []
-    sb: list[float] = []
-    for _ in range(iters):
+    wall: dict[str, list[float]] = {"a": [], "b": []}
+    gpu: dict[str, list[float]] = {"a": [], "b": []}
+
+    def timed(tag: str, fn) -> None:
+        ev0 = torch.cuda.Event(enable_timing=True)
+        ev1 = torch.cuda.Event(enable_timing=True)
         t0 = time.perf_counter()
-        fn_a(case)
+        ev0.record()
+        fn(case)
+        ev1.record()
         _sync()
-        sa.append((time.perf_counter() - t0) * 1e6)
-        t1 = time.perf_counter()
-        fn_b(case)
-        _sync()
-        sb.append((time.perf_counter() - t1) * 1e6)
-    return sa, sb
+        wall[tag].append((time.perf_counter() - t0) * 1e6)
+        gpu[tag].append(ev0.elapsed_time(ev1) * 1e3)  # ms -> us
+
+    for i in range(iters):
+        first, second = (("a", fn_a), ("b", fn_b)) if i % 2 == 0 else (("b", fn_b), ("a", fn_a))
+        timed(*first)
+        timed(*second)
+    return {
+        "wall_a_us": statistics.median(wall["a"]),
+        "wall_b_us": statistics.median(wall["b"]),
+        "gpu_a_us": statistics.median(gpu["a"]),
+        "gpu_b_us": statistics.median(gpu["b"]),
+    }
 
 
 def _summary(samples: list[float]) -> dict[str, float]:
@@ -232,21 +257,35 @@ def _gpu_state() -> str:
 
 
 def _assert_gpu_idle(allow_busy: bool) -> None:
-    """Refuse to benchmark on a GPU with other active compute processes."""
+    """Refuse to benchmark unless the selected GPU is verifiably idle:
+    no other compute processes, no meaningful memory occupancy, near-zero
+    utilization. An unreadable GPU state also refuses (fail closed)."""
 
+    if allow_busy:
+        return
     gpu_id = _physical_gpu_id()
     try:
         procs = subprocess.run(
             ["nvidia-smi", "-i", gpu_id, "--query-compute-apps=pid", "--format=csv,noheader"],
             capture_output=True, text=True, timeout=10,
         ).stdout.strip()
-    except Exception:
-        return  # cannot determine; proceed (state is still recorded)
-    others = [p for p in procs.splitlines() if p.strip() and int(p.strip()) != os.getpid()]
-    if others and not allow_busy:
+        state = subprocess.run(
+            ["nvidia-smi", "-i", gpu_id, "--query-gpu=utilization.gpu,memory.used",
+             "--format=csv,noheader,nounits"],
+            capture_output=True, text=True, timeout=10,
+        ).stdout.strip()
+        util_pct, mem_mib = (int(v.strip()) for v in state.split(","))
+    except Exception as exc:
         raise SystemExit(
-            f"GPU {gpu_id} has active compute processes {others}; refusing to "
-            "benchmark on a busy GPU (pass --allow-busy only with explicit approval)."
+            f"Cannot determine GPU {gpu_id} state ({exc}); refusing to benchmark "
+            "on unknown GPU state (pass --allow-busy only with explicit approval)."
+        )
+    others = [p for p in procs.splitlines() if p.strip() and int(p.strip()) != os.getpid()]
+    if others or util_pct > 5 or mem_mib > 2048:
+        raise SystemExit(
+            f"GPU {gpu_id} not idle (other_procs={others}, util={util_pct}%, "
+            f"mem={mem_mib}MiB); refusing to benchmark on a busy GPU "
+            "(pass --allow-busy only with explicit approval)."
         )
 
 
@@ -401,27 +440,51 @@ def main() -> int:
                 warmup=warmup, iters=iters, command=command,
                 notes=f"device_speedup_x={dev_speedup:.4f} (locked gpu {base_gpu:.3f}us)",
             ))
-            # Same-process interleaved A/B cross-check.
-            sa, sb = _time_interleaved(
+            # Same-run baseline sequential re-measurement (drift check vs lock).
+            walls_b = _time_walls(correctness.baseline, case, warmup=warmup, iters=iters)
+            gpu_b = _time_gpu_us(correctness.baseline, case, iters=iters)
+            sb = _summary(walls_b)
+            w.writerow(_row(
+                ts=_now(), mode="baseline_seq_rerun", shape=case["name"],
+                dtype=case["dtype"], metric="median_us",
+                baseline_us=f"{sb['median_us']:.4f}", median_us=f"{sb['median_us']:.4f}",
+                mean_us=f"{sb['mean_us']:.4f}", std_us=f"{sb['std_us']:.4f}",
+                min_us=f"{sb['min_us']:.4f}", p10_us=f"{sb['p10_us']:.4f}",
+                p90_us=f"{sb['p90_us']:.4f}", gpu_time_us=f"{gpu_b:.4f}",
+                host_overhead_us=f"{sb['median_us'] - gpu_b:.4f}",
+                host=args.host, gpu_id=gpu_id, gpu_model=gpu_model,
+                sglang_commit=sglang_commit, candidate_version="baseline(vendored-pin)",
+                warmup=warmup, iters=iters, command=command,
+                notes=f"drift_vs_locked={sb['median_us'] / base_med:.4f}",
+            ))
+            # Same-process interleaved A/B with alternating order (AB/BA),
+            # recording wall AND CUDA-event medians for both sides.
+            ab = _time_interleaved(
                 correctness.baseline, correctness.candidate, case,
                 warmup=max(5, warmup // 2), iters=iters,
             )
-            med_a, med_b = statistics.median(sa), statistics.median(sb)
-            ab_speedup = med_a / med_b if med_b > 0 else float("nan")
+            ab_speedup = ab["wall_a_us"] / ab["wall_b_us"] if ab["wall_b_us"] > 0 else float("nan")
+            ab_dev_speedup = ab["gpu_a_us"] / ab["gpu_b_us"] if ab["gpu_b_us"] > 0 else float("nan")
             ab_speedups.append(ab_speedup)
             w.writerow(_row(
                 ts=_now(), mode="interleaved_ab", shape=case["name"],
                 dtype=case["dtype"], metric="median_us",
-                baseline_us=f"{med_a:.4f}", candidate_us=f"{med_b:.4f}",
-                speedup_x=f"{ab_speedup:.4f}", host=args.host, gpu_id=gpu_id,
+                baseline_us=f"{ab['wall_a_us']:.4f}", candidate_us=f"{ab['wall_b_us']:.4f}",
+                speedup_x=f"{ab_speedup:.4f}",
+                gpu_time_us=f"{ab['gpu_b_us']:.4f}",
+                host_overhead_us=f"{ab['wall_b_us'] - ab['gpu_b_us']:.4f}",
+                host=args.host, gpu_id=gpu_id,
                 gpu_model=gpu_model, sglang_commit=sglang_commit,
                 candidate_version=args.candidate_version, warmup=max(5, warmup // 2),
                 iters=iters, command=command,
-                notes="same-process alternating; symmetric harness path",
+                notes=(
+                    f"alternating AB/BA; gpu_a={ab['gpu_a_us']:.4f}us gpu_b={ab['gpu_b_us']:.4f}us "
+                    f"device_speedup_x={ab_dev_speedup:.4f}; symmetric harness path"
+                ),
             ))
             print(f"[cand] {case['name']:48s} locked={base_med:.3f} cand={s['median_us']:.3f} "
-                  f"seq={speedup:.3f}x ab={ab_speedup:.3f}x dev={dev_speedup:.3f}x "
-                  f"gpu={gpu_us:.3f}us {gbps:.0f}GB/s")
+                  f"seq={speedup:.3f}x ab={ab_speedup:.3f}x dev(seq)={dev_speedup:.3f}x "
+                  f"dev(ab)={ab_dev_speedup:.3f}x gpu={gpu_us:.3f}us {gbps:.0f}GB/s")
         geo = _geom_mean(speedups)
         geo_ab = _geom_mean(ab_speedups)
         w.writerow(_row(

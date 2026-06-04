@@ -65,6 +65,8 @@ SHAPES = [
 DEFAULT_SHAPE = (1, 1024, 8, 3072)
 DTYPES = ["float16", "bfloat16", "float32"]
 NORM_TYPES = ["layer", "rms"]
+# "D": weight+bias tensors; "W": weight only, bias=None (the captured
+# production RMS signature); "NAT": both None.
 AFFINE_MODES = ["D", "NAT"]
 # 3-D layouts accepted by this kernel pair's validate_3d:
 VALID_INDEX_MODES = ["11D", "B1D", "1SD", "BSD"]
@@ -99,7 +101,17 @@ def _torch_dtype(name: str):
     return getattr(torch, name)
 
 
+_REGISTER_MODULE = None
+
+
 def _load_register_module():
+    """Load src/register.py ONCE per process (module-level cache), mirroring
+    the vendored baseline's sys.modules caching — otherwise the candidate
+    side pays an artificial per-call import tax in timed loops."""
+
+    global _REGISTER_MODULE
+    if _REGISTER_MODULE is not None:
+        return _REGISTER_MODULE
     register_py = KERNEL_DIR / "src" / "register.py"
     spec = importlib.util.spec_from_file_location(
         f"kda_kernel_{KERNEL_SLUG}_register", register_py
@@ -107,6 +119,7 @@ def _load_register_module():
     assert spec is not None and spec.loader is not None, register_py
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    _REGISTER_MODULE = module
     return module
 
 
@@ -171,7 +184,8 @@ def make_cases() -> list[dict[str, Any]]:
 
     cases: list[dict[str, Any]] = []
 
-    # Production: the 4 captured signatures, verbatim.
+    # Production: the 4 captured signatures, verbatim. The captured RMS calls
+    # have weight=[D] but bias=None (arg2/arg6 are None) — affine mode "W".
     for entry in ("single", "dual"):
         for seq_len in PROD_SEQ_LENS:
             cases.append(
@@ -183,7 +197,7 @@ def make_cases() -> list[dict[str, Any]]:
                     D=PROD_D,
                     dtype=PROD_DTYPE,
                     norm_type=PROD_NORM,
-                    affine_mode="D",
+                    affine_mode="W",
                     scale_mode="11D",
                     shift_mode="BSD",
                     kind="production",
@@ -313,8 +327,11 @@ def _ensure_tensors(case: dict[str, Any]) -> tuple:
         return randn(SHAPE_MAP[mode](B, S, F, D))
 
     x = by_mode("BSD")
-    if case["affine_mode"] == "NAT":
+    affine = case["affine_mode"]
+    if affine == "NAT":
         weight = bias = None
+    elif affine == "W":
+        weight, bias = randn((D,)), None
     else:
         weight = randn((D,))
         bias = randn((D,))
@@ -323,8 +340,10 @@ def _ensure_tensors(case: dict[str, Any]) -> tuple:
     if case["entry"] == "single":
         args = (x, weight, bias, scale, shift, case["norm_type"], case["eps"])
     else:
-        if case["affine_mode"] == "NAT":
+        if affine == "NAT":
             weight2 = bias2 = None
+        elif affine == "W":
+            weight2, bias2 = randn((D,)), None
         else:
             weight2 = randn((D,))
             bias2 = randn((D,))
@@ -667,6 +686,56 @@ def test_out_of_domain_d_raises() -> None:
             module = _load_register_module()
             with pytest.raises(ValueError):
                 module.optimized_wrapper(x, None, None, sc, sh, "rms", EPS)
+
+
+def test_fallback_equals_baseline() -> None:
+    """Non-production signatures must route to the vendored baseline and
+    return bitwise-identical outputs (fallback wiring guard)."""
+
+    if not _candidate_available():
+        pytest.skip("candidate not implemented yet (src/register.py stub)")
+    probes = [
+        _case(entry="single", B=1, S=64, F=1, D=3072, dtype="float32", norm_type="rms"),
+        _case(entry="single", B=1, S=64, F=1, D=3840, dtype="bfloat16", norm_type="layer"),
+        _case(entry="dual", B=2, S=64, F=1, D=3072, dtype="float16", norm_type="rms"),
+    ]
+    for case in probes:
+        base = baseline(case)
+        cand = candidate(case)
+        if case["entry"] == "single":
+            assert torch.equal(cand, base), f"{case['name']}: fallback differs from baseline"
+        else:
+            assert torch.equal(cand[0], base[0]) and torch.equal(cand[1], base[1]), (
+                f"{case['name']}: fallback differs from baseline"
+            )
+        _free_tensors(case)
+
+
+def test_inputs_not_mutated() -> None:
+    """Cached-input A/B is only valid if neither side mutates its inputs."""
+
+    case = _case(
+        entry="dual",
+        B=1,
+        S=128,
+        F=1,
+        D=PROD_D,
+        dtype=PROD_DTYPE,
+        norm_type=PROD_NORM,
+        affine_mode="W",
+        scale_mode="11D",
+        shift_mode="BSD",
+    )
+    args = _ensure_tensors(case)
+    snapshots = [a.clone() if isinstance(a, torch.Tensor) else a for a in args]
+    baseline(case)
+    if _candidate_available():
+        candidate(case)
+    torch.cuda.synchronize()
+    for got, snap in zip(args, snapshots):
+        if isinstance(got, torch.Tensor):
+            assert torch.equal(got, snap), "input tensor was mutated by a kernel call"
+    _free_tensors(case)
 
 
 def test_y2_dynamic_bound_detects_perturbation() -> None:
