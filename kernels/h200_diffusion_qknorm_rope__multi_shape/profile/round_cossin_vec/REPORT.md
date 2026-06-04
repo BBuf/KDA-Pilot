@@ -12,7 +12,9 @@ re-establish registers/thread under nvcc 13, and decide whether shared-memory co
 sets: full (both builds) + source (variant). Reports (remote, REMOTE_KDA_DIR
 `/home/sglang-omni/bbuf/kda_runs/h200_diffusion_qknorm_rope__multi_shape/k04-20260604-185804`):
 `profile/round_cossin_vec/reports/{full_variant,full_incumbent,source_variant}.ncu-rep`; parsed
-CSVs in `analysis/`.
+CSVs in `analysis/`. The two large parsed detail CSVs (`analysis/full_{variant,incumbent}_details.csv`)
+are local scratch — intentionally untracked, regenerated on demand from the remote `.ncu-rep` files
+via `ncu --import <report> --csv --page details`.
 
 ## Key metrics (median over 10 launches)
 
