@@ -72,9 +72,9 @@ NCU-side device delta −21.4% (1.27×); wall-clock interleaved device-fair on t
 
 ## 4. Bounded exploration probe (DEC-2) — result
 
-One NCU-justified direction was probed: **`staged2` two-token-per-CTA** (amortize staging barriers ~7.5% of samples; double independent q/k streams per block).
+One NCU-justified direction was probed: **`staged2` two-token-per-CTA** (amortize staging barriers ~7.5% of samples; double independent q/k streams per block). The probe kernel and its harness existed at git `355f3bf2a` and were **removed from the shipped source after rejection** so the promoted `.cuh` byte-matches the arbiter-validated content (sha `874b1bfa`).
 
-- Correctness: 10/10 captured rows (`harness/check_staged2.py`).
+- Correctness: 10/10 captured rows (`check_staged2.py` at git `355f3bf2a`).
 - Device-fair vs the same baseline lane, same session: `GEOMEAN_devfair_staged2` **1.0658×** vs staged rerun **1.0691×** (earlier staged run 1.0648×) — parity-to-slightly-worse (joyai −2.7%, qwen −2.0%, B8424 equal).
 - Why it cannot win: at waves = 1.0 with 8 resident CTAs/SM, **inter-CTA parallelism already hides intra-CTA barriers**; pairing tokens adds smem footprint and pair-tail without adding memory-level parallelism. → **REJECTED** (`solutions.jsonl: cand_staged2_r9`).
 - Not attempted, with reasons recorded: `cp.async`/TMA bulk staging (the staged row is 512 B/token — too small for async-copy latency to amortize; adds sync complexity to a 7.5%-of-samples cost already hidden by inter-CTA overlap); block-size 128 (`occupancy_limit_warps` binds — same 64 warps/SM, scheduler-neutral).

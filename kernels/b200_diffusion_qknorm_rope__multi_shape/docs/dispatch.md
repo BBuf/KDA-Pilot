@@ -17,8 +17,9 @@ The dispatch decision is **unchanged** this round, now backed by fresh same-comm
   (device win, NCU-confirmed: `profile/r9_staged_b200/REPORT.md` — memory-latency-bound,
   DRAM 15.8% peak, long_scoreboard 9.14/issue); the 5 small rows + everything else → warp
   baseline path (host/launch-bound; device byte-identical → parity).
-- `KDA_CAND_VARIANT` now also accepts `staged2` (diagnostic-only probe kernel, rejected:
-  `solutions.jsonl: cand_staged2_r9`); the shipped in-`.cuh` delegation is untouched.
+- The `staged2` probe kernel (diagnostic-only, rejected: `solutions.jsonl: cand_staged2_r9`)
+  existed at git `355f3bf2a` and was removed from the shipped source after rejection; the
+  shipped in-`.cuh` delegation is untouched and byte-matches the arbiter-validated content.
 - The promotion arbiter for this round is the **in-SGLang in-tree drop-in**
   (`profile/in_sglang/validate_in_tree.py`); the `kda_kernels` overlay below remains a
   retired negative control.

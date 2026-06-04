@@ -294,8 +294,7 @@ def _candidate_module(head_dim: int, rope_dim: int, is_neox: bool, dtype: torch.
     # Opt-in -lineinfo build (KDA_LINEINFO=1) for Nsight Compute SASS->source mapping; kept
     # as a separate cache marker so it never pollutes the timed/benchmark build.
     lineinfo = os.environ.get("KDA_LINEINFO") == "1"
-    tag = {"QKNormRopeStagedKernel": "staged", "QKNormRopeKernel": "warp",
-           "QKNormRopeStaged2Kernel": "staged2"}.get(kernel_class, "staged")
+    tag = {"QKNormRopeStagedKernel": "staged", "QKNormRopeKernel": "warp"}.get(kernel_class, "staged")
     pdl = is_arch_support_pdl() if use_pdl is None else bool(use_pdl)
     marker = (f"qknorm_rope_kda_b200_{tag}_{sha}"
               + ("" if pdl else "_nopdl") + ("_li" if lineinfo else ""))

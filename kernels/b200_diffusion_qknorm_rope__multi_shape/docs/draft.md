@@ -47,7 +47,9 @@ occupancy (DRAM 15.8% peak; 49% of pcsamp on the q/k load-consumption line; stag
    doubles independent load streams) → implemented, correctness 10/10, device-fair
    **1.0658x vs staged's same-session 1.0691x → REJECTED** (parity-to-worse; inter-CTA
    overlap already hides intra-CTA barriers at waves = 1.0). `solutions.jsonl:
-   cand_staged2_r9`, benchmark.csv `*__devfair_staged2`.
+   cand_staged2_r9`, benchmark.csv `*__devfair_staged2`. The probe kernel lived at git
+   `355f3bf2a` and was removed from the shipped source after rejection, restoring the
+   arbiter-validated bytes (sha `874b1bfa`).
 2. **cp.async/TMA cos/sin staging** (not attempted): the staged row is 512 B/token — far too
    small for async-copy latency amortization, and the cost it would hide (7.5% barrier share)
    is already hidden by inter-CTA overlap; adds sync complexity to the shipped kernel.

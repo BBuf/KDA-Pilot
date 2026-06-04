@@ -38,11 +38,11 @@ def main() -> int:
     case = {c["name"]: c for c in make_cases()}[shape]
     inp = _make_inputs(case)
 
-    if which in ("staged", "staged2"):
+    if which == "staged":
         wrapper = _load(ROOT / "src" / "wrapper.py", "kda_profile_wrapper")
         mod = wrapper._candidate_module(
             case["head_dim"], case["rope_dim"], case["is_neox"], torch.bfloat16,
-            "QKNormRopeStaged2Kernel" if which == "staged2" else "QKNormRopeStagedKernel",
+            "QKNormRopeStagedKernel",
         )
     elif which == "baseline":
         loader = _load(ROOT / "baseline" / "loader.py", "kda_profile_baseline")
