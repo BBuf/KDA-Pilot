@@ -130,3 +130,10 @@ def test_tiled_rms_rejects_unsupported_signatures():
     with pytest.raises(Exception):
         x_nc = torch.randn(64, 2 * D, device="cuda", dtype=torch.bfloat16)[:, ::2]
         reg.tiled_rms_onepass(x_nc, w, 1e-6)
+    with pytest.raises(Exception):
+        # contiguous offset view: is_contiguous() is True but the base pointer
+        # is only 8-byte aligned — the 16-byte-vector kernel must NOT launch
+        base = torch.randn(64 * D + 4, device="cuda", dtype=torch.bfloat16)
+        x_8b = base[4: 4 + 64 * D].view(64, D)
+        assert x_8b.is_contiguous() and x_8b.data_ptr() % 16 == 8
+        reg.tiled_rms_onepass(x_8b, w, 1e-6)

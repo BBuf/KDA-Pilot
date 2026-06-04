@@ -181,6 +181,15 @@ def tiled_rms_onepass(x, w, eps: float = 1e-6, *, rows_per_cta: int = 16, schedu
         raise ValueError("tiled RMS expects a contiguous input")
     if w.dim() != 1 or w.shape[0] != 128 or w.dtype != x.dtype or w.device != x.device or not w.is_contiguous():
         raise ValueError("tiled RMS expects a contiguous bf16 weight of shape (128,) on the input device")
+    # Same 16-byte base-alignment gate as the production dispatcher: the tiled
+    # kernel uses AlignedVector<bf16,8> (16 B) accesses, and a contiguous OFFSET
+    # view can be only 8-byte aligned — that must raise here, not launch.
+    if x.data_ptr() % _RMS_TILED_ALIGN != 0 or w.data_ptr() % _RMS_TILED_ALIGN != 0:
+        raise ValueError(
+            "tiled RMS requires 16-byte-aligned x and w base pointers "
+            "(a contiguous-but-offset view can violate this; route such inputs "
+            "through the dispatcher, which falls back to the baseline)"
+        )
 
     out = torch.empty_like(x)
     _rms_tiled_module(x.shape[-1], rows_per_cta, x.dtype).rms_tiled(x, w, out, eps, scheduling)
