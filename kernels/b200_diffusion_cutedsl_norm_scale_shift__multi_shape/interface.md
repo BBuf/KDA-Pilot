@@ -132,14 +132,37 @@ same validator failures) and fall back to the `baseline/` copy for any shape,
 dtype, layout, device, normalization type, or feature flag not on the verified
 native path.
 
-## Evidence Requirements
+## Evidence (final)
 
-Before promotion, update this file with:
-
-- final wrapper signature(s);
-- per-shape dispatch table (which underlying candidate kernel handles which
-  shape bucket);
-- fallback cases;
-- PyTorch-FP32 or `_reference()` tolerance methodology used in tests;
-- benchmark command and latency formula;
-- source lineage for copied or ported helper code.
+- Wrapper signatures: exactly the two recovered SGLang signatures above,
+  implemented in `src/wrapper.py` and exported via `src/register.py`
+  (`EXPORTS` maps the public callable names; `shipping_entry_points()` adds
+  the custom-op-layer variants used for symmetric benchmarking).
+- Dispatch table: `docs/dispatch.md` — 10 native template combos keyed by
+  (entry, scale/shift class+dtype, gate class+dtype, weight/bias), per-combo
+  vector width (32B bf16-only / 16B fp32-operand combos), per-bucket speedups
+  and promote verdicts.
+- Fallback cases: fp16/fp32 activations, rms, B>1 operand layouts, 4-D BF1D
+  frame mode, unmatched scalar patterns, non-contiguous/misaligned views,
+  cross-device or CPU operands, unsupported D geometry, empty tensors,
+  non-tensor scale/shift — all fail-closed to the vendored baseline
+  (`baseline/entry.py`), which raises the original validation errors.
+- Tolerance methodology (`bench/correctness.py`): static outer bound
+  candidate-vs-baseline at the SGLang test tolerance (atol=rtol=5e-2 non-fp32,
+  1e-5 fp32) + baseline-vs-fp32-reference oracle invariant + dynamic bound
+  (candidate max-abs error vs fp32 reference <= 2x baseline error + 1e-6),
+  with NaN/Inf rejection on every check; srnss reference applies the
+  contract's pre-norm cast.
+- Benchmark command (`bench/benchmark.py`, run inside sglang_bbuf on the
+  verified-idle B200): `CUDA_VISIBLE_DEVICES=1 python bench/benchmark.py
+  --impl both --gpu-id 1 --run-id r4-final --candidate-layer shipping`;
+  latency = median of 100 per-iteration samples after 20 warmup iterations
+  (endtoend: wall-clock with per-sample synchronize; device: CUDA-event
+  stream-span), baseline/candidate interleaved per iteration on shared
+  inputs. Final claim: geometric mean of per-unique-signature median
+  speedups = **1.3070x endtoend / 1.2905x device** (39 signatures,
+  `run_id=r4-final`; corroborated in-tree by `docs/sglang_jit_export.md`).
+- Source lineage: `docs/baseline_source.md` (vendored snapshot, pinned commit
+  edb1b3f8f5, parity evidence); candidate ports the baseline's tiling notion
+  (block = D / elems-per-thread) and mirrors `csrc/diffusion/qknorm_rope.cuh`
+  host patterns; full idea provenance per candidate in `solutions.jsonl`.
