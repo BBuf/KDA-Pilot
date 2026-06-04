@@ -12,6 +12,10 @@ from typing import Any
 KERNEL_SLUG = "h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape"
 OP_TYPE = "cutedsl_norm_tanh_mul_add"
 
+# Flipped to True once the native CUDA candidate is wired in. The correctness
+# harness skips candidate tests while this is False.
+CANDIDATE_READY = False
+
 
 def optimized_wrapper(*args: Any, **kwargs: Any) -> Any:
     raise NotImplementedError(
