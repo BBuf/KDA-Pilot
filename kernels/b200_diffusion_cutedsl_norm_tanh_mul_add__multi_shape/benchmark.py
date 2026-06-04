@@ -152,6 +152,11 @@ def _query_gpu_state(gpu: str, gpu_uuid: str) -> dict:
 
 _START_MAX_UTIL_PCT = 5
 _START_MAX_MEM_MIB = 2048
+# End ceiling: same conservative bound. The benchmark's own end footprint was
+# measured at ~1.1 GiB (one compute app); anything above the ceiling cannot be
+# attributed to this process alone (no PID self-attribution in the container),
+# so it is treated as contamination.
+_END_MAX_MEM_MIB = 2048
 
 
 def _describe_state(state: dict) -> str:
@@ -180,14 +185,19 @@ def _classify_start_state(state: dict) -> tuple[bool, str]:
 def _classify_end_state(state: dict) -> tuple[bool, str]:
     """Idle-at-end: this benchmark process is expected to be the single compute
     app on the card (PID-namespace caveat above), so ANY additional app means a
-    foreign process joined mid-run. Utilization is not gated at end — it is this
-    process's own rolling work — but is recorded with explicit attribution."""
+    foreign process joined mid-run. Memory is gated too: with zero apps, used
+    memory above the end ceiling is memory-only contamination; with one app,
+    memory above the ceiling cannot be proven to belong to this benchmark alone.
+    Utilization is not gated at end — it is this process's own rolling work —
+    but is recorded with explicit attribution."""
 
     detail = _describe_state(state) + " (end: util attributed to this benchmark process)"
     if state["query_error"]:
         return False, detail
     if len(state["compute_apps"]) > 1:
         return False, detail + " <- foreign compute app joined"
+    if state["mem_used_mib"] is None or state["mem_used_mib"] > _END_MAX_MEM_MIB:
+        return False, detail + " <- memory above end ceiling (foreign or unattributable)"
     return True, detail
 
 
@@ -199,17 +209,24 @@ def _gate_selftest() -> int:
     busy_mem = dict(clean, mem_used_mib=150_000)
     foreign = dict(clean, compute_apps=[("U", "1234", "5000")])
     errored = dict(clean, query_error="boom")
-    one_app_end = dict(clean, util_pct=50, compute_apps=[("U", "1234", "3000")])
+    one_app_end = dict(clean, util_pct=50, mem_used_mib=1148, compute_apps=[("U", "1234", "1100")])
     two_apps_end = dict(clean, compute_apps=[("U", "1", "10"), ("U", "2", "10")])
+    end_mem_only_contamination = dict(clean, mem_used_mib=6000)  # no apps, high memory
+    end_one_app_high_mem = dict(clean, util_pct=50, mem_used_mib=6000,
+                                compute_apps=[("U", "1234", "6000")])
 
     assert _classify_start_state(clean)[0] is True
     assert _classify_start_state(busy_util)[0] is False, "util=99 with no foreign pid must NOT be idle"
     assert _classify_start_state(busy_mem)[0] is False
     assert _classify_start_state(foreign)[0] is False
     assert _classify_start_state(errored)[0] is False
-    assert _classify_end_state(one_app_end)[0] is True
+    assert _classify_end_state(one_app_end)[0] is True, "the benchmark's own ~1.1GiB end footprint stays admissible"
     assert _classify_end_state(two_apps_end)[0] is False
     assert _classify_end_state(errored)[0] is False
+    assert _classify_end_state(end_mem_only_contamination)[0] is False, \
+        "memory-only end contamination (no apps, high mem) must be rejected"
+    assert _classify_end_state(end_one_app_high_mem)[0] is False, \
+        "one-app high-memory end must be rejected (no PID self-attribution)"
     print("GATE_SELFTEST_PASS")
     return 0
 

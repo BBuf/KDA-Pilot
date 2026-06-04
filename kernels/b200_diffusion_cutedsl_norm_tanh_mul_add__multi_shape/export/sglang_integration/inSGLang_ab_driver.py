@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 """In-SGLang drop-in driver: correctness + A/B benchmark through the PUBLIC ops.
 
-Runs inside the container against the active sglang package. Two modes:
+Runs inside the container against the active sglang package, with the drop-in
+patch APPLIED (the routing module must be importable). Two modes:
 - correctness: public custom ops vs the fp32 semantic reference on the 4
-  captured zimage signatures + fallback probe (mixed-dtype scale must still
-  produce baseline-identical results, i.e. the CuTe path).
-- bench: wall-synced timing of the public Python callables (the shipped
-  layer: custom-op registration + dispatch identical regardless of patch
-  state). Run once on the CLEAN checkout and once on the PATCHED checkout;
-  the two runs form the symmetric shipping-integration A/B.
+  captured zimage signatures, plus the gate-verified fallback probe — the
+  mixed-dtype scale case must be rejected by ``native_supported(...)`` AND its
+  public-op output (CuTe fallback branch) must match the reference within the
+  production tolerances.
+- bench: wall-synced timing of the public Python callables. The promotion
+  arbiter is DISPATCH-SYMMETRIC: run once with the native routes disabled
+  (``SGLANG_NATIVE_NORM_TANH_V1=0 SGLANG_NATIVE_NORM_TANH_V2=0`` -> CuTe route)
+  and once with them enabled (native route), both in the SAME patched checkout,
+  so wrapper, custom-op registration, and the dispatch branch are identical on
+  both sides. Full stats are also dumped to export/arbiter_runs/<tag>.json.
 
 Usage: python inSGLang_ab_driver.py {correctness|bench} <tag>
 """

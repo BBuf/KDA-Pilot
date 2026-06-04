@@ -14,8 +14,11 @@ correctness PASS including the gate-verified fallback (mixed-dtype probe asserte
 production tolerances). Both entry points ship natively (v1 and v2 each clear the
 pre-registered parity-or-better rule in the dispatch-symmetric arbiter). Benchmark runs
 are admitted only under the enforced GPU contract (`REMOTE_GPU_ID` matching
-`CUDA_VISIBLE_DEVICES`; strict idle gate with mocked-state self-test) — the gate twice
-refused a foreign-occupied GPU 0 before the final runs moved to idle GPU 1.
+`CUDA_VISIBLE_DEVICES`; strict mocked-state-self-tested gate: start = no compute apps,
+util ≤ 5%, memory ≤ 2 GiB; end = no foreign compute app AND memory ≤ 2 GiB, so
+memory-only or unattributable high-memory contamination is rejected, not just extra
+apps) — the gate twice refused a foreign-occupied GPU 0 before the final runs moved to
+idle GPU 1, whose recorded end state (one app, 1148 MiB) passes the end ceiling.
 
 Honest decomposition (Codex-reviewed framing): raw-callable wall geomean 1.379-1.400×
 (final enforced-gate rerun on GPU 1: 1.379×);

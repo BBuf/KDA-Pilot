@@ -79,8 +79,9 @@ EOF
 No Python/pip/nvcc/build/test/benchmark/profiling directly on the `ion-b200` host.
 `benchmark.py` enforces the selection contract: it aborts unless `REMOTE_GPU_ID` is set
 and matches the first `CUDA_VISIBLE_DEVICES` entry, and unless the card passes the
-strict idle gate (no compute apps, util ≤ 5%, memory ≤ 2 GiB at start; no foreign app
-at end).
+strict idle gate (start: no compute apps, util ≤ 5%, memory ≤ 2 GiB; end: no foreign
+compute app AND memory ≤ 2 GiB — memory-only or one-app-high-memory contamination is
+rejected since per-PID self-attribution is impossible in the container namespace).
 
 ## GPU selection updates during the loop
 
