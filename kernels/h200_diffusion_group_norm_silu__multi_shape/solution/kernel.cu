@@ -412,22 +412,19 @@ Shape3D validate_common(const TensorView& x, const TensorView& weight, const Ten
   const DLDataType dt = x.dtype();
   check(same_dtype(dt, y.dtype()) && same_dtype(dt, weight.dtype()) && same_dtype(dt, bias.dtype()),
         "x/weight/bias/y dtypes must match");
-  const int64_t batch = x.shape()[0];
-  const int64_t channels = x.shape()[1];
-  const int64_t spatial = x.shape()[2];
-  for (int i = 0; i < 3; ++i) check(x.shape()[i] == y.shape()[i], "x/y shapes must match");
-  check(weight.shape()[0] == channels && bias.shape()[0] == channels,
+  const int64_t batch = x.size(0);
+  const int64_t channels = x.size(1);
+  const int64_t spatial = x.size(2);
+  for (int i = 0; i < 3; ++i) check(x.size(i) == y.size(i), "x/y shapes must match");
+  check(weight.size(0) == channels && bias.size(0) == channels,
         "weight/bias must have C elements");
   check(num_groups > 0 && channels % num_groups == 0, "channels must be divisible by num_groups");
-  // Compact row-major layout required (binding normalizes inputs beforehand).
-  if (x.strides() != nullptr) {
-    check(x.strides()[2] == 1 && x.strides()[1] == spatial && x.strides()[0] == channels * spatial,
-          "x must be contiguous");
-  }
-  if (y.strides() != nullptr) {
-    check(y.strides()[2] == 1 && y.strides()[1] == spatial && y.strides()[0] == channels * spatial,
-          "y must be contiguous");
-  }
+  // Compact row-major layout required (binding normalizes inputs beforehand;
+  // torch-exported DLPack tensors always carry strides).
+  check(x.stride(2) == 1 && x.stride(1) == spatial && x.stride(0) == channels * spatial,
+        "x must be contiguous");
+  check(y.stride(2) == 1 && y.stride(1) == spatial && y.stride(0) == channels * spatial,
+        "y must be contiguous");
   return Shape3D{batch, channels, spatial};
 }
 
@@ -492,12 +489,12 @@ void run_large_typed(const TensorView& x, const TensorView& weight, const Tensor
   check(same_dtype(partial_sum.dtype(), f32) && same_dtype(partial_sumsq.dtype(), f32) &&
             same_dtype(mean.dtype(), f32) && same_dtype(rstd.dtype(), f32),
         "scratch tensors must be fp32");
-  check(partial_sum.ndim() == 1 && partial_sum.shape()[0] >= total_tasks,
+  check(partial_sum.ndim() == 1 && partial_sum.size(0) >= total_tasks,
         "partial_sum scratch too small");
-  check(partial_sumsq.ndim() == 1 && partial_sumsq.shape()[0] >= total_tasks,
+  check(partial_sumsq.ndim() == 1 && partial_sumsq.size(0) >= total_tasks,
         "partial_sumsq scratch too small");
-  check(mean.ndim() == 1 && mean.shape()[0] >= num_rows, "mean scratch too small");
-  check(rstd.ndim() == 1 && rstd.shape()[0] >= num_rows, "rstd scratch too small");
+  check(mean.ndim() == 1 && mean.size(0) >= num_rows, "mean scratch too small");
+  check(rstd.ndim() == 1 && rstd.size(0) >= num_rows, "rstd scratch too small");
 
   const GnsLargeParams<DType> params{
       x.data_ptr(),

@@ -30,7 +30,6 @@ from __future__ import annotations
 
 import os
 import sys
-from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -76,12 +75,22 @@ def _candidate():
     return _candidate_fn
 
 
-@dataclass
 class Case:
-    inputs: dict[str, Any]
-    baseline_outputs: dict[str, Any]
-    candidate_outputs: dict[str, Any]
-    tolerance: dict[str, float] = field(default_factory=dict)
+    """Plain attribute container (the template loads this module via
+    spec_from_file_location without registering it in sys.modules, which
+    breaks dataclass annotation introspection under Python 3.12)."""
+
+    def __init__(
+        self,
+        inputs: dict[str, Any],
+        baseline_outputs: dict[str, Any],
+        candidate_outputs: dict[str, Any],
+        tolerance: dict[str, float] | None = None,
+    ) -> None:
+        self.inputs = inputs
+        self.baseline_outputs = baseline_outputs
+        self.candidate_outputs = candidate_outputs
+        self.tolerance = tolerance or {}
 
 
 _DTYPES = {"float16": torch.float16, "bfloat16": torch.bfloat16, "float32": torch.float32}

@@ -61,9 +61,9 @@ Audit baseline: upstream SGLang `main` @ `133254086bf1f5b887c8c99d311719102d58a7
 | flux2 | blocked | Same gated-403 blocker as `flux` (2026-06-03). Static note as above (`autoencoder_kl_flux2.py` has no entry-point reference). |
 | hunyuan3d-shape | blocked | 2026-06-03 H200 native run failed at step 0 (`_predict_noise_with_cfg() ... 'cfg_policy'`); B200 retry reached no target rows. Static note: Hunyuan3D uses `hunyuan3d_vae.py` (no entry-point reference) — but runtime-blocked stays the verdict per the shape-coverage doc. |
 | ltx23-two-stage-cfg-parallel | blocked | 2026-06-03 H200 run OOMed loading the LTX-2.3 two-stage transformer; B200 retry lacked the model cache. Source-REACHABLE (LTX2TwoStagePipeline → upsampler), so this blocker must be re-audited when the preset becomes runnable. |
-| ltx2 | live-capture-pending | Source-REACHABLE: preset runs `LTX2TwoStagePipeline` (`Lightricks/LTX-2`, 768x512, 121 frames, 2 GPUs, cfg-parallel) → `LTX2UpsampleStage` → `latent_upsampler.py:118/249/259` `apply_group_norm_silu`. Fresh reduced-step capture scheduled (DEC-5); model snapshot may need download on ion8-h200. |
-| ltx23-ti2v-two-stage | live-capture-pending | Source-REACHABLE: `LTX2TwoStagePipeline` (`Lightricks/LTX-2.3`, 768x512, 121 frames, 2 GPUs, cfg-parallel-size 2) → upsampler. Fresh reduced-step capture scheduled (DEC-5); LTX-2.3 cached on ion8-h200 (one-stage ran 2026-06-03). |
-| ltx23-two-stage | live-capture-pending | Source-REACHABLE: `LTX2TwoStagePipeline` (`Lightricks/LTX-2.3`, 1536x1024, 121 frames, 2 GPUs) → upsampler. Fresh reduced-step capture scheduled (DEC-5); memory headroom to be checked (the cfg-parallel variant OOMed; this variant lacks the cfg duplication). |
+| ltx2 | fresh-capture-rows | **Captured live 2026-06-04 (ion8-h200, GPUs 0-1, reduced steps=4, eager)**: completed native `LTX2TwoStagePipeline` run (`Lightricks/LTX-2`, 768x512x121f, cfg-parallel; "Pixel data generated successfully"); 36 rows (18 apply + 18 triton) — upsampler signatures `[1,1024,16,8,12]` and `[1,1024,16,16,24]`, **fp32**, contiguous, ng=32, eps=1e-5. Raw JSONL: `docs/ltx_captures/cap_ltx2.jsonl`; folded into `bench/workloads.json` as `production=false` diagnostics (DEC-5). |
+| ltx23-ti2v-two-stage | fresh-capture-rows | **Captured live 2026-06-04 (ion8-h200, GPUs 0-1, reduced steps=4, eager)**: completed native run (`Lightricks/LTX-2.3`, 768x512x121f, cfg-parallel-size 2, image-conditioned); 36 rows — upsampler signatures `[1,1024,16,8,12]` and `[1,1024,16,16,24]`, **bf16**, ng=32, eps=1e-5. Raw JSONL: `docs/ltx_captures/cap_ltx23_ti2v_two_stage.jsonl`; folded as diagnostics. |
+| ltx23-two-stage | fresh-capture-rows | **Captured live 2026-06-04 (ion8-h200, GPUs 0-1, reduced steps=4, eager)**: completed native run (`Lightricks/LTX-2.3`, 1536x1024x121f; peak 127 GB, no OOM — the 2026-06-03 OOM was the cfg-parallel variant); 36 rows — upsampler signatures `[1,1024,16,16,24]` and `[1,1024,16,32,48]`, **bf16**, ng=32, eps=1e-5. Raw JSONL: `docs/ltx_captures/cap_ltx23_two_stage.jsonl`; folded as diagnostics. |
 | qwen | static-no-call | `configs/pipeline_configs/qwen_image.py` → `autoencoder_kl_qwenimage.py`; neither it nor any module in the Qwen-Image pipeline references the entry points (mechanical enumeration above). |
 | qwen-edit | static-no-call | Same Qwen-Image pipeline family/VAE as `qwen`; no calling module loaded. |
 | wan-t2v | static-no-call | `configs/pipeline_configs/wan.py` → `wanvae.py`; no entry-point reference in the Wan stack. |
@@ -73,12 +73,16 @@ Audit baseline: upstream SGLang `main` @ `133254086bf1f5b887c8c99d311719102d58a7
 | joyai-edit | static-no-call | `configs/pipeline_configs/joy_image.py`; Joy stack references neither calling module. |
 | firered-edit-1.0 | static-no-call | Same pipeline family as `firered-edit-1.1` (live no-call above); no calling module loaded. |
 
-## Round outcome (to complete before workload freeze)
+## Round outcome (completed before workload freeze)
 
-- [ ] `ltx2` capture on ion8-h200 → rows or live no-call recorded here.
-- [ ] `ltx23-ti2v-two-stage` capture on ion8-h200 → rows or live no-call recorded here.
-- [ ] `ltx23-two-stage` capture on ion8-h200 → rows or live no-call recorded here.
-- Captured LTX upsampler shapes (if any) join `bench/workloads.json` as
-  `production=false` diagnostic rows with candidate correctness coverage; the
-  production headline remains the 48 retained HunyuanVideo signatures (DEC-2,
-  DEC-5).
+- [x] `ltx2` captured on ion8-h200 → fresh capture rows (fp32 upsampler signatures).
+- [x] `ltx23-ti2v-two-stage` captured on ion8-h200 → fresh capture rows (bf16).
+- [x] `ltx23-two-stage` captured on ion8-h200 → fresh capture rows (bf16; no OOM).
+- Five unique LTX upsampler signatures joined `bench/workloads.json` as
+  `production=false` diagnostic rows (`bench/add_ltx_diagnostics.py`) with
+  automatic wrapper-path correctness coverage; the production headline remains
+  the 48 retained HunyuanVideo signatures (DEC-2, DEC-5).
+- Capture fidelity note: preset-canonical pipeline class, model snapshot,
+  resolution, frame count, and parallelization flags; only `--num-inference-steps`
+  reduced to 4 and torch.compile left off — both shape-invariant for the
+  upsampler (it runs once between stages on the packed latent).

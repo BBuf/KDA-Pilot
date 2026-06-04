@@ -1778,5 +1778,161 @@
    "size_bucket": "giant",
    "note": "wrapper-path diagnostic; same physical call as the matching prod__triton row, timed via the apply wrapper"
   }
+ },
+ {
+  "id": "diag__apply__ltx__1x1024x16x8x12__bf16__g32",
+  "function": "apply_group_norm_silu",
+  "production": false,
+  "shapes": {
+   "x": [
+    1,
+    1024,
+    16,
+    8,
+    12
+   ]
+  },
+  "dtype": "bfloat16",
+  "num_groups": 32,
+  "eps": 1e-05,
+  "contiguous": true,
+  "atol": 0.07,
+  "rtol": 0.02,
+  "capture": {
+   "source": "fresh reduced-step LTX two-stage captures (preset audit)",
+   "presets": [
+    "ltx23-ti2v-two-stage"
+   ],
+   "capture_rows": 20,
+   "entries_observed": [
+    "apply_group_norm_silu",
+    "triton_group_norm_silu"
+   ]
+  }
+ },
+ {
+  "id": "diag__apply__ltx__1x1024x16x8x12__float32__g32",
+  "function": "apply_group_norm_silu",
+  "production": false,
+  "shapes": {
+   "x": [
+    1,
+    1024,
+    16,
+    8,
+    12
+   ]
+  },
+  "dtype": "float32",
+  "num_groups": 32,
+  "eps": 1e-05,
+  "contiguous": true,
+  "atol": 0.003,
+  "rtol": 0.003,
+  "capture": {
+   "source": "fresh reduced-step LTX two-stage captures (preset audit)",
+   "presets": [
+    "ltx2"
+   ],
+   "capture_rows": 20,
+   "entries_observed": [
+    "apply_group_norm_silu",
+    "triton_group_norm_silu"
+   ]
+  }
+ },
+ {
+  "id": "diag__apply__ltx__1x1024x16x16x24__bf16__g32",
+  "function": "apply_group_norm_silu",
+  "production": false,
+  "shapes": {
+   "x": [
+    1,
+    1024,
+    16,
+    16,
+    24
+   ]
+  },
+  "dtype": "bfloat16",
+  "num_groups": 32,
+  "eps": 1e-05,
+  "contiguous": true,
+  "atol": 0.07,
+  "rtol": 0.02,
+  "capture": {
+   "source": "fresh reduced-step LTX two-stage captures (preset audit)",
+   "presets": [
+    "ltx23-ti2v-two-stage",
+    "ltx23-two-stage"
+   ],
+   "capture_rows": 36,
+   "entries_observed": [
+    "apply_group_norm_silu",
+    "triton_group_norm_silu"
+   ]
+  }
+ },
+ {
+  "id": "diag__apply__ltx__1x1024x16x16x24__float32__g32",
+  "function": "apply_group_norm_silu",
+  "production": false,
+  "shapes": {
+   "x": [
+    1,
+    1024,
+    16,
+    16,
+    24
+   ]
+  },
+  "dtype": "float32",
+  "num_groups": 32,
+  "eps": 1e-05,
+  "contiguous": true,
+  "atol": 0.003,
+  "rtol": 0.003,
+  "capture": {
+   "source": "fresh reduced-step LTX two-stage captures (preset audit)",
+   "presets": [
+    "ltx2"
+   ],
+   "capture_rows": 16,
+   "entries_observed": [
+    "apply_group_norm_silu",
+    "triton_group_norm_silu"
+   ]
+  }
+ },
+ {
+  "id": "diag__apply__ltx__1x1024x16x32x48__bf16__g32",
+  "function": "apply_group_norm_silu",
+  "production": false,
+  "shapes": {
+   "x": [
+    1,
+    1024,
+    16,
+    32,
+    48
+   ]
+  },
+  "dtype": "bfloat16",
+  "num_groups": 32,
+  "eps": 1e-05,
+  "contiguous": true,
+  "atol": 0.07,
+  "rtol": 0.02,
+  "capture": {
+   "source": "fresh reduced-step LTX two-stage captures (preset audit)",
+   "presets": [
+    "ltx23-two-stage"
+   ],
+   "capture_rows": 16,
+   "entries_observed": [
+    "apply_group_norm_silu",
+    "triton_group_norm_silu"
+   ]
+  }
  }
 ]

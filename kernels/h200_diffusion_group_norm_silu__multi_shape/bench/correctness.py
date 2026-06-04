@@ -264,9 +264,18 @@ def suite_methodology(device, cand) -> None:
         with profile(activities=[ProfilerActivity.CUDA]) as prof:
             group_norm_silu_baseline(x, weight, bias, NUM_GROUPS, PRODUCTION_EPS)
             torch.cuda.synchronize()
-        names = [e.name for e in prof.key_averages() if e.device_type.name == "CUDA"]
+        names = []
+        for e in prof.key_averages():
+            key = getattr(e, "key", None) or getattr(e, "name", "")
+            dev_time = (
+                getattr(e, "self_device_time_total", 0)
+                or getattr(e, "self_cuda_time_total", 0)
+                or 0
+            )
+            if key and dev_time > 0:
+                names.append(key)
         triton_hits = [n for n in names if "group_norm" in n and "native" not in n]
-        eager_hits = [n for n in names if "native_group_norm" in n]
+        eager_hits = [n for n in names if "native_group_norm" in n or "RowwiseMoments" in n]
         _record(
             f"method_triton_path_{label}",
             bool(triton_hits) and not eager_hits,
