@@ -81,7 +81,11 @@ def _native_fast_ok(x, weight, bias, scale, shift, norm_type) -> bool:
 
 '''
 
+# Single-op site: `y = empty_like` is followed DIRECTLY by the scale
+# broadcast (the dual op interposes `y2 = empty_like`), making this two-line
+# pattern unique to the single op.
 SINGLE_HOOK = '''        y = torch.empty_like(x)  # create output tensor
+        scale = broadcast_tensor_for_bsfd(scale, *x.shape)  # handle various shapes
 '''
 SINGLE_HOOK_NEW = '''        if _native_fast_ok(x, weight, bias, scale, shift, norm_type):
             y_native = torch.empty_like(x)
@@ -90,6 +94,7 @@ SINGLE_HOOK_NEW = '''        if _native_fast_ok(x, weight, bias, scale, shift, n
                 y_native.view(-1, D), float(eps))
             return y_native
         y = torch.empty_like(x)  # create output tensor
+        scale = broadcast_tensor_for_bsfd(scale, *x.shape)  # handle various shapes
 '''
 
 DUAL_HOOK = '''        y = torch.empty_like(x)  # create output tensor
@@ -123,14 +128,10 @@ def main() -> int:
     target = root / "python/sglang/jit_kernel/diffusion/cutedsl/norm_tanh_mul_add_norm_scale.py"
     src = target.read_text()
     assert ANCHOR in src, "anchor not found"
-    # The single-op hook line also occurs as the first line of the dual pair,
-    # so the dual (unique two-line) site is replaced FIRST; exactly one
-    # single-op site must remain afterwards.
     assert src.count(DUAL_HOOK) == 1, "dual hook site not unique"
-    assert src.count(SINGLE_HOOK) == 2, "expected single line in both op bodies"
+    assert src.count(SINGLE_HOOK) == 1, "single hook site not unique"
     src = src.replace(ANCHOR, ANCHOR + NATIVE_BLOCK, 1)
     src = src.replace(DUAL_HOOK, DUAL_HOOK_NEW, 1)
-    assert src.count(SINGLE_HOOK) == 1, "single hook site not unique after dual patch"
     src = src.replace(SINGLE_HOOK, SINGLE_HOOK_NEW, 1)
     target.write_text(src)
     print(f"patched {target}")
