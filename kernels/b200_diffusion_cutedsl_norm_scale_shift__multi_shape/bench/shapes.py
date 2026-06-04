@@ -152,8 +152,6 @@ def load_unique_cases(jsonl_path: Path = CAPTURED_JSONL):
 # Deterministic input construction (shared by parity/correctness/benchmark)
 # ---------------------------------------------------------------------------
 
-_TORCH_DTYPES = None
-
 
 def _torch_dtype(name: str):
     import torch

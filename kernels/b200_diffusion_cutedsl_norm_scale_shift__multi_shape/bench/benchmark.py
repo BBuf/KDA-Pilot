@@ -27,7 +27,6 @@ from __future__ import annotations
 import argparse
 import csv
 import importlib.util
-import json
 import math
 import os
 import statistics
@@ -176,33 +175,6 @@ def _make_call(case, fns, tensors):
     return call
 
 
-def _time_endtoend(call, warmup, iters, sync):
-    for _ in range(warmup):
-        call()
-    sync()
-    samples = []
-    for _ in range(iters):
-        t0 = time.perf_counter()
-        call()
-        sync()
-        samples.append((time.perf_counter() - t0) * 1e6)
-    return samples
-
-
-def _time_device(call, warmup, iters, torch):
-    for _ in range(warmup):
-        call()
-    torch.cuda.synchronize()
-    starts = [torch.cuda.Event(enable_timing=True) for _ in range(iters)]
-    ends = [torch.cuda.Event(enable_timing=True) for _ in range(iters)]
-    for i in range(iters):
-        starts[i].record()
-        call()
-        ends[i].record()
-    torch.cuda.synchronize()
-    return [starts[i].elapsed_time(ends[i]) * 1e3 for i in range(iters)]
-
-
 def run_benchmark(args) -> int:
     import torch
 
@@ -250,9 +222,12 @@ def run_benchmark(args) -> int:
         for mode in args.modes:
             # interleaved A/B: alternate impls inside the same mode pass
             sample_sets = {name: [] for name in impls}
+            # warmup every impl, outside the timed region below
+            for name in impls:
+                for _ in range(args.warmup):
+                    calls[name]()
+            sync()
             if mode == "endtoend":
-                for name in impls:  # warmup both first
-                    _time_endtoend(calls[name], args.warmup, 0, sync)
                 for _ in range(args.iters):
                     for name in impls:
                         t0 = time.perf_counter()
@@ -260,8 +235,6 @@ def run_benchmark(args) -> int:
                         sync()
                         sample_sets[name].append((time.perf_counter() - t0) * 1e6)
             else:  # device
-                for name in impls:
-                    _time_device(calls[name], args.warmup, 0, torch)
                 evs = {
                     name: (
                         [torch.cuda.Event(enable_timing=True) for _ in range(args.iters)],
