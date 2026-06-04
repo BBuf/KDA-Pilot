@@ -1,8 +1,8 @@
 # Benchmark Method
 
-Status: final (promotion record; `docs/run_log.md` carries the run-by-run
-evidence, `docs/results.md` the final numbers; the DEC-6 amendment at the
-bottom of this file supersedes earlier ABI wording where noted).
+Status: final (promotion record = the round-2 frozen run; `docs/run_log.md`
+carries the run-by-run evidence, `docs/results.md` the final numbers and the
+explicit AC-5 per-row-floor no-go record).
 
 ## Harness
 
@@ -99,5 +99,7 @@ restored the contract exactly:
   0.9854–1.0076).
 - The shipped candidate contains no baseline routing (round-0's DEC-6
   dispatch experiment was removed per the review; measurement record kept in
-  docs/dispatch.md history). Final numbers come from the round-1 frozen run;
-  no workload, tolerance, or timing-policy field changed after the freeze.
+  docs/dispatch.md history). Final numbers come from the round-2 frozen run
+  (the round-1 run with the generic giant route is retained in
+  docs/run_log.md for the cross-run band); no workload, tolerance, or
+  timing-policy field changed after the freeze.
