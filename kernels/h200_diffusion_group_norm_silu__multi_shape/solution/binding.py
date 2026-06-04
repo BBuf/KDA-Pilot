@@ -314,16 +314,18 @@ def _giant_chunk_for(spatial: int) -> int:
 
 
 # Self-cleaning arrival counters for the giant stats kernel's fused finalize
-# (the last CTA of each row resets its slot to zero), cached per device.
-# Stream-ordering note: the cache assumes giant calls on a device are
-# stream-ordered (the production entry launches on the current stream, as do
-# all harness paths). Concurrent giant calls on DIFFERENT streams of one
-# device would race on these counters and would need per-stream buffers.
+# (the last CTA of each row resets its slot to zero), cached per
+# (device, stream): calls on one stream are ordered, so a stream-private
+# buffer preserves the self-clean invariant, while concurrent calls on other
+# streams of the same device get their own buffers and can never count each
+# other's CTAs. The zeros-initialization launches on the same (current)
+# stream the kernels run on, so first use is ordered too.
 _row_counters: dict = {}
 
 
 def _row_counter(num_rows: int, device: torch.device) -> torch.Tensor:
-    key = (device.type, device.index)
+    stream = torch.cuda.current_stream(device)
+    key = (device.type, device.index, stream.cuda_stream)
     buf = _row_counters.get(key)
     if buf is None or buf.numel() < num_rows:
         buf = torch.zeros(max(num_rows, 64), dtype=torch.int32, device=device)
