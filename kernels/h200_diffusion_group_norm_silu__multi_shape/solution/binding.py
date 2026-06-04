@@ -344,6 +344,17 @@ def _fast_path_ok(x: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor) -> 
 
 def _run(x3: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor, num_groups: int,
          eps: float, y3: torch.Tensor) -> None:
+    # The FFI launchers run on the CURRENT device's stream
+    # (at::cuda::getCurrentCUDAStream() on the C++ side); pin the device
+    # context to the input's device so multi-GPU processes cannot launch on
+    # the wrong card (mirrors the copied baseline's own device-context
+    # behavior). Single-device callers see no behavior change.
+    with torch.cuda.device(x3.device):
+        _run_on_current_device(x3, weight, bias, num_groups, eps, y3)
+
+
+def _run_on_current_device(x3: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor,
+                           num_groups: int, eps: float, y3: torch.Tensor) -> None:
     small, large, giant, clean_giant = _kernels()
     channels = x3.shape[1]
     spatial = x3.shape[2]
@@ -415,6 +426,8 @@ def group_norm_silu_candidate_into(
     regime runs solution-owned CUDA kernels."""
     if out.shape != x.shape or out.dtype != x.dtype:
         raise ValueError("out must match x in shape and dtype")
+    if not (weight.device == x.device and bias.device == x.device and out.device == x.device):
+        raise ValueError("x/weight/bias/out must live on the same CUDA device")
     if (
         _fast_path_ok(x, weight, bias)
         and out.is_contiguous()
