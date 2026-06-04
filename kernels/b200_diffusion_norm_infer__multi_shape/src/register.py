@@ -32,7 +32,7 @@ _CUDA_ENABLED = True
 _HERE = Path(__file__).resolve().parent
 _CUH = str(_HERE / "norm_cuda" / "diffusion_norm_infer.cuh")
 _INCLUDE = str(_HERE / "norm_cuda")
-_KERNEL_VERSION = "v3"  # bump to force a JIT rebuild (stale-JIT guard); v3 = tiled multi-row RMS family added to the shared .cuh
+_KERNEL_VERSION = "v4"  # bump to force a JIT rebuild (stale-JIT guard); v4 = half-warp shuffle masks in the tiled RMS reduction (odd-tail safety)
 # Large-S RMS routes to the tiled multi-row kernel (two row-pairs per warp with
 # both pair loads in flight + persistent whole-wave grid: hides load latency and
 # avoids the 40k-CTA launch wave); small/mid RMS keeps the one-warp-per-row
@@ -155,12 +155,14 @@ def _rms_tiled_module(dim, rows_per_cta, dtype):
 
 
 def tiled_rms_onepass(x, w, eps: float = 1e-6, *, rows_per_cta: int = 16, scheduling: int = 0):
-    """Direct entry to the tiled multi-row RMSNorm (D=128, bf16) for the huge-S
-    streaming bucket. Used by the validation/benchmark harnesses while this
-    kernel's evidence is being collected; ``optimized_wrapper`` does NOT route
-    here — production routing changes only together with its dispatch-table
-    evidence. ``scheduling``: 0 = one CTA per tile, 1 = persistent
-    occupancy-derived whole-wave grid.
+    """Direct harness entry to the tiled multi-row RMSNorm (D=128, bf16).
+
+    Production traffic reaches the same kernel through ``optimized_wrapper`` →
+    ``_cuda_rms_onepass`` (allowlisted huge-S shapes route to the tiled module
+    there); THIS function is the raise-on-misuse side door used by the
+    validation/benchmark harnesses so a broken build or out-of-contract input
+    can never masquerade as a pass via fallback. ``scheduling``: 0 = one CTA
+    per tile, 1 = persistent occupancy-derived whole-wave grid.
 
     Raises on anything outside the kernel's contract (bf16, 2-D, D=128,
     contiguous, matching 1-D weight) instead of falling back — a broken or

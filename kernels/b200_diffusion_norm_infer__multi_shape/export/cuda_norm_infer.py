@@ -24,7 +24,7 @@ import torch
 
 from sglang.jit_kernel.utils import cache_once, load_jit, make_cpp_args
 
-_KERNEL_VERSION = "v3"
+_KERNEL_VERSION = "v4"  # v4 = half-warp shuffle masks in the tiled RMS reduction (odd-tail safety)
 
 
 def _disabled() -> bool:

@@ -54,7 +54,10 @@ def _register():
 
 # Production row counts verbatim + regression rows; 650040 % 16 == 8 and the
 # small rows exercise the partial-tile path (rows beyond S must be untouched).
-ROW_COUNTS = [648720, 650040, 16384, 4096, 1320, 768, 64, 6]
+# The odd counts force a half-warp-divergent tail (one row of a warp's pair
+# valid, the other not) — the regime where the segmented reduction's shuffle
+# mask must name only the executing half-warp's lanes.
+ROW_COUNTS = [648720, 650040, 16384, 4096, 1320, 768, 64, 6, 1, 7, 15, 17, 31, 33]
 D = 128
 
 

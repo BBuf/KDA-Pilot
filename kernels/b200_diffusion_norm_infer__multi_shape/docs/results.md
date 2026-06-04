@@ -8,21 +8,25 @@ torch 2.11.0+cu130, driver 580.126.20, fresh per-round `TVM_FFI_CACHE_DIR`.
 
 ## Outcome
 
-| Shape | dtype | route (round 2) | wall | kernel-event |
+| Shape | dtype | route (round 2, final v4 kernel) | wall | kernel-event |
 |---|---|---|---|---|
-| helios `[8640,5120]` | fp32 LN | CUDA float4 LN (unchanged) | 1.198× | 1.228× |
-| hunyuanvideo `[1320,128]` | bf16 RMS | CUDA warp-per-row (unchanged) | 1.638× | 1.697× |
-| zimage `[4096,128]` | bf16 RMS | CUDA warp-per-row (unchanged) | 1.654× | 1.702× |
-| zimage `[16384,128]` | bf16 RMS | CUDA warp-per-row (unchanged) | 1.645× | 1.704× |
-| hunyuanvideo `[648720,128]` | bf16 RMS | **CUDA tiled R=32 persistent (NEW)** | **1.091×** | **1.108×** |
-| hunyuanvideo `[650040,128]` | bf16 RMS | **CUDA tiled R=32 persistent (NEW)** | **1.087×** | **1.100×** |
-| **geomean (6 shapes, outcome metric)** | | | **1.360×** | **1.395×** |
+| helios `[8640,5120]` | fp32 LN | CUDA float4 LN (unchanged) | 1.200× | 1.238× |
+| hunyuanvideo `[1320,128]` | bf16 RMS | CUDA warp-per-row (unchanged) | 1.654× | 1.703× |
+| zimage `[4096,128]` | bf16 RMS | CUDA warp-per-row (unchanged) | 1.661× | 1.697× |
+| zimage `[16384,128]` | bf16 RMS | CUDA warp-per-row (unchanged) | 1.665× | 1.686× |
+| hunyuanvideo `[648720,128]` | bf16 RMS | **CUDA tiled R=32 persistent (NEW)** | **1.071×** | **1.094×** |
+| hunyuanvideo `[650040,128]` | bf16 RMS | **CUDA tiled R=32 persistent (NEW)** | **1.088×** | **1.097×** |
+| **geomean (6 shapes, outcome metric)** | | | **1.358×** | **1.389×** |
 
 vs installed SGLang baseline, interleaved per-iteration A/B, median of 100 iters
-after 25 warmup, `benchmark.csv::cand-0011-dispatch-tiled`. Round-1 geomean was
-1.29×/1.33× with the two huge shapes at fallback parity. Production-mix
-steady-state smoke through the public wrapper (S648720×2+S1320+S650040 per
-step, ×30): **1.0716×** per step.
+after 25 warmup, `benchmark.csv::cand-0013-dispatch-v4` — the final kernel state
+after the segmented reduction gained half-warp shuffle masks (odd-tail safety;
+performance-neutral on the even production shapes; the pre-fix run `cand-0011`
+measured 1.360×/1.395×). Round-1 geomean was 1.29×/1.33× with the two huge
+shapes at fallback parity. Production-mix steady-state smoke through the public
+wrapper (S648720×2+S1320+S650040 per step, ×30): **1.0716×** per step. The
+pinned-lane promote evidence is `cand-0010*` (two CI-gated runs) re-confirmed
+post-fix by `cand-0013-tile-v4-maskfix` (CI95 lower bounds 1.086–1.134).
 
 ## Roofline / bound closure per bucket
 
@@ -62,12 +66,17 @@ step, ×30): **1.0716×** per step.
 - `benchmark.csv`: `cand-0007-rebaseline` (round-2 truth), `baseline-parity-r2`
   (pinned-lane parity), `cand-0008/0009/0010(+rep2)` (bounded tile iterations
   with bootstrap CIs), `cand-0011-dispatch-tiled` + `cand-0011-mix-smoke`
-  (shipped routing).
-- `solutions.jsonl`: `cand-0007` … `cand-0011` (parent-linked into the round-1
-  DAG).
+  (pre-fix shipped routing), `cand-0013-tile-v4-maskfix` +
+  `cand-0013-dispatch-v4` (final mask-fixed kernel), plus per-candidate
+  `provenance_addendum` rows.
+- `solutions.jsonl`: `cand-0007` … `cand-0014` (parent-linked into the round-1
+  DAG; `cand-0012` superseded by `cand-0014-arbiter-rerun-v4`).
 - `profile/tile_r32_r2/`: full + source NCU of the winner, baseline comparison,
   parsed `analysis/metrics.csv`, six-dimension `REPORT.md`.
 - `docs/dispatch.md`: round-2 routing table + promote package + residual risks.
 - `docs/baseline_source.md`: pinned-copy lineage.
-- In-SGLang export refresh: `docs/sglang_jit_export.md` (round-2 section added
-  at the export step).
+- In-SGLang export refresh: `docs/sglang_jit_export.md` round-2 section —
+  arbiter re-run with the v4 kernel (`cand-0014-arbiter-rerun-v4`): oracle
+  288/288, shipping geomean 1.3722×/1.3946×; per-entry symmetry (RMS
+  custom-op-body, LN public-function — the wrapped LN entry has no custom-op
+  registration on its hot path).

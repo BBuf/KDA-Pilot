@@ -3,10 +3,14 @@ pointing at the isolated worktree; see docs/sglang_jit_export.md).
 
 Checks, in order:
 1. The edited worktree copy is the sglang being exercised (not the install).
-2. SYMMETRIC shipping A/B on the six production shapes THROUGH THE PUBLIC OPS
-   with their custom-op registration intact on both sides — the only difference
-   is the device path, toggled per iteration via SGLANG_DIFFUSION_NORM_CUDA
-   (the kill switch inside the in-tree driver). Wall-clock + CUDA-event medians.
+2. SYMMETRIC shipping A/B on the six production shapes THROUGH THE PUBLIC
+   CALLABLES — the only difference is the device path, toggled per iteration
+   via SGLANG_DIFFUSION_NORM_CUDA (the kill switch inside the in-tree driver).
+   Per entry point: triton_one_pass_rms_norm is custom-op-body symmetric (the
+   registered op runs identically on both sides); norm_infer is
+   public-function symmetric (its baseline hot path has no custom-op
+   registration — the diffusion_layer_norm_fwd_impl_cuda op belongs to the
+   separate _layer_norm_fwd helper). Wall-clock + CUDA-event medians.
 3. Output parity between the two device paths on every production shape.
 4. Fallback: unsupported signatures (fp16 LN, D!=128 RMS, non-contiguous, rank-3)
    still produce baseline-identical results through the public ops.
@@ -84,7 +88,7 @@ def main() -> int:
         e1.synchronize()
         return e0.elapsed_time(e1) * 1e3
 
-    print("\nSHIPPING A/B (public op, registration intact on both sides):")
+    print("\nSHIPPING A/B (identical public callables; RMS custom-op-body symmetric, LN public-function symmetric):")
     geo_w, geo_k = 1.0, 1.0
     for name, fn in cases:
         for _ in range(25):

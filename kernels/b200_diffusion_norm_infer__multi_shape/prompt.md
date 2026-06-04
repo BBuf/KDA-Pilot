@@ -516,3 +516,53 @@ well-supported no-go explains why no defensible path remains under the
 available workspace;
 - `prompt.md`, `interface.md`, `benchmark.csv`, and `solutions.jsonl` are
 updated with the final result.
+
+---
+
+## Round-2 Completion Addendum (2026-06-04)
+
+Status record only — every section above is the unchanged task contract; the
+workload table remains the verbatim capture evidence.
+
+**Final per-shape routing** (dispatcher `src/register.py`; details and the full
+decision tables in `docs/dispatch.md`):
+
+| Production shape | route | speedup vs installed SGLang baseline (wall / kernel-event) |
+|---|---|---|
+| helios `[8640,5120]` fp32 LN | CUDA `LayerNormInferKernel<fp32_t>` (round-1, kept) | 1.200× / 1.238× |
+| hunyuanvideo `[1320,128]` bf16 RMS | CUDA `RmsNormOnepassKernel<128,1>` (round-1, kept) | 1.654× / 1.703× |
+| zimage `[4096,128]` bf16 RMS | CUDA `RmsNormOnepassKernel<128,1>` (round-1, kept) | 1.661× / 1.697× |
+| zimage `[16384,128]` bf16 RMS | CUDA `RmsNormOnepassKernel<128,1>` (round-1, kept) | 1.665× / 1.686× |
+| hunyuanvideo `[648720,128]` bf16 RMS | **CUDA `RmsNormTiledKernel<128,32>` persistent (round-2 promotion)** | 1.071× / 1.094× |
+| hunyuanvideo `[650040,128]` bf16 RMS | **CUDA `RmsNormTiledKernel<128,32>` persistent (round-2 promotion)** | 1.088× / 1.097× |
+
+**Geomean across the six configured shapes (outcome metric, not a threshold):
+1.358× wall / 1.389× kernel-event** (`benchmark.csv::cand-0013-dispatch-v4`,
+the final kernel after the segmented-reduction shuffle-mask tail fix; round-1
+closed at 1.29×/1.33× with the two huge shapes at no-go fallback parity).
+
+**Large-S decision of record:** the round-1 no-go was reopened through its
+recorded re-open condition and PROMOTED — a tile-based multi-row-per-CTA kernel
+(two row-pairs per warp, both pair loads in flight, persistent whole-wave grid)
+beats the pinned Triton baseline on both huge shapes in two independent
+interleaved runs (paired-bootstrap CI95 lower bounds > 1.09; bounded
+exploration 3/3 recorded in `solutions.jsonl::cand-0008..0010`). NCU
+cross-check (`profile/tile_r32_r2/REPORT.md`) documents the context-dependence
+finding: the Triton baseline is faster in cache-flushed isolation, the tile
+kernel wins in the dirty-L2 back-to-back steady state that diffusion denoise
+runs — the steady-state interleaved lane is the promotion arbiter.
+
+**Export status:** the in-SGLang drop-in arbiter was re-validated for round 2
+(isolated worktree off `edb1b3f8f`, torn down after; `docs/sglang_jit_export.md`
+round-2 section): oracle `test_qwen_image_modulation.py` passes; symmetric
+device-path A/B through the unchanged public callables — `triton_one_pass_rms_norm`
+via its registered custom-op body (registration preserved on both sides),
+`norm_infer` via its public function (its baseline hot path carries no
+custom-op registration); shipping geomean 1.3722× wall / 1.3946× kernel-event (v4 arbiter re-run);
+unsupported signatures still fall back to the Triton baseline.
+
+**Residual risks (recorded in `docs/dispatch.md`):** the large-S win is
+specific to the steady-state regime (clean-cache isolation favors the Triton
+baseline); claims are scoped to the two captured huge shapes; upstream
+Triton/driver/clock changes can shift the gap; custom-op symmetry must be
+re-verified at future integrations.

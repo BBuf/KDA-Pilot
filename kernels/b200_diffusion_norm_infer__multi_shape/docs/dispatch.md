@@ -14,8 +14,11 @@ unchanged and re-verified unregressed. The LN optimization gate stayed CLOSED
 this round: round-2 achieved BW on `[8640,5120]` was ~59% of peak under host
 load (round-1: ~67%), no new NCU signal, and the LN hot path carries no
 custom-op delta (parity lane 1.00–1.01×) — protect the promoted kernel, no
-edits. Round-2 geomean (outcome): **1.360× wall / 1.395× kernel-event**
-(`cand-0011-dispatch-tiled`; 272/272 correctness with `KDA_REQUIRE_CUDA=1`).
+edits. Round-2 geomean (outcome): **1.358× wall / 1.389× kernel-event**
+(`cand-0013-dispatch-v4`, the final mask-fixed kernel; 297/297 correctness with
+`KDA_REQUIRE_CUDA=1` incl. odd-tail rows; the pre-fix run `cand-0011` measured
+1.360×/1.395× — the tail-safety fix is performance-neutral on the even
+production shapes).
 Round-1 numbers are kept below for lineage; absolute µs across rounds are NOT
 comparable (different host-load conditions; interleaved ratios remain valid).
 
@@ -96,14 +99,17 @@ ordered by the round-2 design review):
 
 | Production shape | dtype | owner (kernel) | speedup vs installed baseline (wall / kernel) | active bound | decision |
 |---|---|---|---|---|---|
-| helios `[8640,5120]` | fp32 LN | **CUDA** `LayerNormInferKernel<fp32_t>` | **1.198× / 1.228×** | memory-BW (~59% peak under load; LN gate CLOSED — no new headroom signal) | **KEEP (round-1 promote)** |
-| hunyuanvideo `[1320,128]` | bf16 RMS | **CUDA** `RmsNormOnepassKernel<128,1,bf16_t>` | **1.638× / 1.697×** | launch/occupancy | **KEEP** |
-| zimage `[4096,128]` | bf16 RMS | **CUDA** `RmsNormOnepassKernel<128,1,bf16_t>` | **1.654× / 1.702×** | launch/occupancy | **KEEP** |
-| zimage `[16384,128]` | bf16 RMS | **CUDA** `RmsNormOnepassKernel<128,1,bf16_t>` | **1.645× / 1.704×** | launch/occupancy | **KEEP** |
-| hunyuanvideo `[648720,128]` | bf16 RMS | **CUDA** `RmsNormTiledKernel<128,32,bf16_t>` sched=1 | **1.091× / 1.108×** (was ~0.98× fallback) | mixed BW/issue; robust to dirty-L2 steady state | **PROMOTE (round 2)** |
-| hunyuanvideo `[650040,128]` | bf16 RMS | **CUDA** `RmsNormTiledKernel<128,32,bf16_t>` sched=1 | **1.087× / 1.100×** (was ~0.98× fallback) | mixed BW/issue; robust to dirty-L2 steady state | **PROMOTE (round 2)** |
+| helios `[8640,5120]` | fp32 LN | **CUDA** `LayerNormInferKernel<fp32_t>` | **1.200× / 1.238×** | memory-BW (~59% peak under load; LN gate CLOSED — no new headroom signal) | **KEEP (round-1 promote)** |
+| hunyuanvideo `[1320,128]` | bf16 RMS | **CUDA** `RmsNormOnepassKernel<128,1,bf16_t>` | **1.654× / 1.703×** | launch/occupancy | **KEEP** |
+| zimage `[4096,128]` | bf16 RMS | **CUDA** `RmsNormOnepassKernel<128,1,bf16_t>` | **1.661× / 1.697×** | launch/occupancy | **KEEP** |
+| zimage `[16384,128]` | bf16 RMS | **CUDA** `RmsNormOnepassKernel<128,1,bf16_t>` | **1.665× / 1.686×** | launch/occupancy | **KEEP** |
+| hunyuanvideo `[648720,128]` | bf16 RMS | **CUDA** `RmsNormTiledKernel<128,32,bf16_t>` sched=1, half-warp masks (v4) | **1.071× / 1.094×** (was ~0.98× fallback) | mixed BW/issue; robust to dirty-L2 steady state | **PROMOTE (round 2)** |
+| hunyuanvideo `[650040,128]` | bf16 RMS | **CUDA** `RmsNormTiledKernel<128,32,bf16_t>` sched=1, half-warp masks (v4) | **1.088× / 1.097×** (was ~0.98× fallback) | mixed BW/issue; robust to dirty-L2 steady state | **PROMOTE (round 2)** |
 
 ## Summary
 6/6 production shapes better-than-baseline: **6 CUDA routes** (round-1's 4 + the
-round-2 tiled large-S pair). Round-2 geomean **1.360× wall / 1.395× kernel-event**
-reported as an outcome, not a pass/fail threshold (per the prompt).
+round-2 tiled large-S pair, v4 tail-safe). Round-2 final geomean **1.358× wall /
+1.389× kernel-event** (`cand-0013-dispatch-v4`) reported as an outcome, not a
+pass/fail threshold (per the prompt). Per-shape numbers above are the v4
+final-state run; the pinned-lane promote evidence (CI-gated, two runs) is under
+`cand-0010*` and re-confirmed post-fix under `cand-0013-tile-v4-maskfix`.

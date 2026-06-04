@@ -1,5 +1,11 @@
 # SGLang `jit_kernel` export — `b200_diffusion_norm_infer__multi_shape`
 
+> **HISTORICAL — round-1 record.** Everything from here down to the
+> "Round-2 export refresh" section describes the round-1 export (its routing
+> table predates the large-S promotion, and its `SGLANG_DIFFNORM_CUDA*` env
+> vars were round-1-only). The current shipped integration, routing, and
+> validation evidence are in the **Round-2 export refresh** section below.
+
 How the promoted candidate kernels are wired into SGLang's public diffusion-norm
 entry points through the `jit_kernel` / tvm-ffi stack, and the in-SGLang
 validation evidence (AC-G).
@@ -175,21 +181,37 @@ Both public signatures preserved exactly. Wrapper/template names: header-only
 
 ## Validation results (GPU 1, idle before/after; host loaded on other GPUs)
 
-- **Oracle**: `test_qwen_image_modulation.py` **288/288** under the worktree.
+- **Oracle**: `test_qwen_image_modulation.py` **288/288** under the worktree (re-passed on the v4 re-run).
 - **Output parity** through the public ops (CUDA vs Triton device paths): 6/6.
-- **SYMMETRIC shipping A/B** — both sides run the identical public op with its
-  `@register_custom_op` registration; only the device path differs (kill switch
-  toggled per iteration; interleaved; median of 100 after 25 warmup):
+- **SYMMETRIC shipping A/B** — both sides run the identical, unchanged public
+  callable; only the device path differs (kill switch toggled per iteration;
+  interleaved; median of 100 after 25 warmup). Symmetry is per entry point:
+  - `triton_one_pass_rms_norm`: custom-op-BODY symmetric — the CUDA branch sits
+    inside the registered `_triton_one_pass_rms_norm_cuda` body, so the
+    `@register_custom_op` registration is exercised identically on both sides
+    for every shape.
+  - `norm_infer`: public-FUNCTION symmetric — the copied active baseline shows
+    the wrapped public `norm_infer` carries NO custom-op registration on its
+    hot path (the `diffusion_layer_norm_fwd_impl_cuda` registration belongs to
+    the separate `_layer_norm_fwd` helper, which this entry point does not
+    call); both sides therefore run the same plain public function, and there
+    is no registration to preserve or bypass. (Empirical confirmation: the
+    pinned-lane parity measured the LN host-layer delta at ~1.00×.)
 
 | shape | wall | kernel-event |
 |---|---|---|
-| helios `[8640,5120]` fp32 LN | 1.2102× | 1.2397× |
-| rms `[1320,128]` | 1.6674× | 1.6809× |
-| rms `[4096,128]` | 1.6467× | 1.6755× |
-| rms `[16384,128]` | 1.6664× | 1.6810× |
-| rms `[648720,128]` | **1.1020×** | **1.1176×** |
-| rms `[650040,128]` | **1.0950×** | **1.1198×** |
-| **geomean** | **1.3724×** | **1.3942×** |
+| helios `[8640,5120]` fp32 LN | 1.2146× | 1.2479× |
+| rms `[1320,128]` | 1.6726× | 1.6937× |
+| rms `[4096,128]` | 1.6660× | 1.6880× |
+| rms `[16384,128]` | 1.6612× | 1.6824× |
+| rms `[648720,128]` | **1.0913×** | **1.1082×** |
+| rms `[650040,128]` | **1.0881×** | **1.1061×** |
+| **geomean** | **1.3722×** | **1.3946×** |
+
+(Numbers above are the v4 arbiter re-run — the kernel's segmented reduction
+gained half-warp shuffle masks after the initial round-2 run, so the arbiter
+was re-executed with the fixed `.cuh`; the superseded first-run numbers
+(geomean 1.3724×/1.3942×) are retained in `solutions.jsonl::cand-0012`.)
 
 - **Fallback**: fp16 LN, D=256 RMS, rank-3 RMS all served through the public
   ops (Triton path) with the CUDA paths enabled.

@@ -323,6 +323,12 @@ __global__ void rmsnorm_tiled_kernel(const RmsNormParams __grid_constant__ param
   const uint32_t warp = threadIdx.x / 32;
   const uint32_t lane_in_row = lane & (kLanesPerRow - 1);
   const uint32_t row_sel = lane >> 4;  // 0: even row of the pair, 1: odd row
+  // Mask for the segmented reduction: name ONLY this half-warp's lanes. On an
+  // odd row tail the two halves of a warp can diverge (one row valid, its pair
+  // row not); a full-warp mask would then name non-participating lanes, which
+  // violates the shuffle sync-mask contract. Row validity is uniform within a
+  // half (all 16 lanes share the row index), so the half mask is always exact.
+  const uint32_t half_mask = row_sel ? 0xffff0000u : 0x0000ffffu;
   const int64_t S = static_cast<int64_t>(params.S);
   const int64_t stride = params.row_stride;
 
@@ -367,7 +373,7 @@ __global__ void rmsnorm_tiled_kernel(const RmsNormParams __grid_constant__ param
       // afterwards every lane of the half-warp holds the row's sum of squares.
 #pragma unroll
       for (uint32_t offset = kLanesPerRow / 2; offset > 0; offset >>= 1) {
-        ss += __shfl_xor_sync(0xffffffffu, ss, offset);
+        ss += __shfl_xor_sync(half_mask, ss, offset);
       }
       const float rstd = math::rsqrt(ss / static_cast<float>(kD) + params.eps);
       Vec yv;
