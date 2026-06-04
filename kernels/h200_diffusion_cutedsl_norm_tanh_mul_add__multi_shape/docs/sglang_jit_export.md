@@ -1,7 +1,9 @@
 # In-SGLang Export & Drop-In Replacement Record (task13 arbiter)
 
-**Status: EXPORT ARBITER PASS** (2026-06-04, ion8-h200 GPU0 idle, log
-`logs/export_arbiter.log` in the remote task workspace).
+**Status: EXPORT ARBITER PASS** (2026-06-04, ion8-h200 GPU0 idle; final run with
+device-fallback probes: `logs/export_arbiter_run2.log`; initial run:
+`logs/export_arbiter.log` — superseded after the round-3 review caught missing
+`.is_cuda` gates in the exported predicate, fixed and re-validated in run2).
 
 ## What was exported
 
@@ -25,13 +27,22 @@ validator: `src/export/export_validate.py`.
   fast path lives inside the op bodies after the existing validation + D guard).
 - Public callable names, signatures, defaults (`eps=1e-5`), validation errors,
   output allocation (`torch.empty_like`), current-stream launch: unchanged.
-- Fallback: every non-fast-path signature (other dtypes/norm types/layouts/D,
-  bias present, misaligned views) continues through the original CuTe-DSL path —
-  verified bitwise vs the pinned baseline (fp32 probe).
-- Fast-path gates mirror the task wrapper: bf16 + rms + weight-only + D==3840
-  (production-only per DEC-1; the kernel itself supports any D%256==0 ≤ 8192 as
-  defense-in-depth) + `scale(/scale2)=[1,1,D]` + full contiguous shift +
-  16-byte alignment + `B*S ≤ 2^31-1`.
+- Fallback: every non-fast-path signature continues through the original
+  CuTe-DSL path. **Probed in the arbiter** (`export_validate.py`, run2): fp32
+  (bitwise vs pinned baseline), all-CPU single, all-CPU dual, and mixed-device
+  (CUDA x + CPU scale) — error-class parity with the pinned baseline in every
+  case (both raise the same ValueError; the native module is never entered).
+  The remaining fallback classes (D≠3840, bias-present, non-`[1,1,D]` scale,
+  non-full shift, misaligned views, kwargs) are enforced by the same predicate
+  logic and are covered exhaustively by the TASK-LOCAL suite
+  (`tests/test_correctness.py::test_dispatch_branch_contract`,
+  `test_misaligned_view_falls_back`, `test_fallback_equals_baseline`) against
+  the identical gate implementation in `src/wrapper.py`.
+- Fast-path gates mirror the task wrapper: **CUDA device on every tensor**
+  (`x/weight/scale/shift(/weight2/scale2).is_cuda`) + bf16 + rms + weight-only +
+  D==3840 (production-only per DEC-1; the kernel itself supports any
+  D%256==0 ≤ 8192 as defense-in-depth) + `scale(/scale2)=[1,1,D]` + full
+  contiguous shift + 16-byte alignment + `B*S ≤ 2^31-1`.
 
 ## load_jit wiring (inside the patched module)
 
@@ -62,12 +73,17 @@ bound vs the pinned baseline's own error):
 | dual oracle (y, y2) | OK | OK |
 | fp32 fallback → CuTe path | bitwise ≡ pinned baseline | bitwise ≡ pinned baseline |
 
-Smoke benchmark (alternating interleaved wall medians, 100 iters, warmed):
+Device-fallback probes (run2): `cpu-all single`, `mixed-device single`,
+`cpu-all dual` — all parity OK (same ValueError class as the pinned baseline,
+native module never entered).
+
+Smoke benchmark (alternating interleaved wall medians, 100 iters, warmed;
+run1 / run2 — session variance, both decisively parity-or-speedup):
 
 | entry | S=4096 | S=4128 |
 |---|---|---|
-| single: sglang-native vs pinned baseline | 70.48 vs 84.56 µs → **1.200x** | 70.64 vs 84.47 µs → **1.196x** |
-| dual | 90.86 vs 110.38 µs → **1.215x** | 91.72 vs 110.36 µs → **1.203x** |
+| single: sglang-native vs pinned baseline | **1.200x** / 1.170x | **1.196x** / 1.173x |
+| dual | **1.215x** / 1.183x | **1.203x** / 1.175x |
 
 Parity-or-speedup confirmed on every entry/shape (the in-SGLang number is lower
 than the task-wrapper geomean because the patched op runs the baseline's full

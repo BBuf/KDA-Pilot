@@ -274,10 +274,10 @@ index 0000000000..120bf42b7f
 +
 +}  // namespace
 diff --git a/python/sglang/jit_kernel/diffusion/cutedsl/norm_tanh_mul_add_norm_scale.py b/python/sglang/jit_kernel/diffusion/cutedsl/norm_tanh_mul_add_norm_scale.py
-index c5ae1c619d..98526794b1 100644
+index c5ae1c619d..a3b4ea994a 100644
 --- a/python/sglang/jit_kernel/diffusion/cutedsl/norm_tanh_mul_add_norm_scale.py
 +++ b/python/sglang/jit_kernel/diffusion/cutedsl/norm_tanh_mul_add_norm_scale.py
-@@ -14,6 +14,74 @@ from sglang.jit_kernel.diffusion.cutedsl.utils import TORCH_TO_CUTE_DTYPE, WARP_
+@@ -14,6 +14,80 @@ from sglang.jit_kernel.diffusion.cutedsl.utils import TORCH_TO_CUTE_DTYPE, WARP_
  
  _COMPILE_CACHE = {}
  
@@ -309,6 +309,7 @@ index c5ae1c619d..98526794b1 100644
 +def _native_vec_ok(t: Optional[torch.Tensor], D: int) -> bool:
 +    return (
 +        t is not None
++        and t.is_cuda
 +        and t.dtype is torch.bfloat16
 +        and t.shape == (D,)
 +        and t.stride(-1) == 1
@@ -318,6 +319,11 @@ index c5ae1c619d..98526794b1 100644
 +
 +def _native_fast_ok(x, weight, bias, scale, shift, norm_type) -> bool:
 +    if norm_type != "rms" or bias is not None:
++        return False
++    # Device gate: only CUDA tensors may enter the native launcher; CPU or
++    # device-mismatched calls continue through the original CuTe-DSL path,
++    # preserving its fallback/error behavior exactly.
++    if not (x.is_cuda and scale.is_cuda and shift.is_cuda):
 +        return False
 +    if x.dtype is not torch.bfloat16 or not x.is_contiguous():
 +        return False
@@ -352,7 +358,7 @@ index c5ae1c619d..98526794b1 100644
  
  def to_cute_arg(
      t,
-@@ -274,6 +342,12 @@ def fused_norm_tanh_mul_add(
+@@ -274,6 +348,12 @@ def fused_norm_tanh_mul_add(
              raise ValueError(
                  f"D={D} not supported, must be multiple of 256 and <= 8192"
              )
@@ -365,7 +371,7 @@ index c5ae1c619d..98526794b1 100644
          y = torch.empty_like(x)  # create output tensor
          scale = broadcast_tensor_for_bsfd(scale, *x.shape)  # handle various shapes
          shift = broadcast_tensor_for_bsfd(shift, *x.shape)  # handle various shapes
-@@ -348,6 +422,22 @@ def fused_norm_tanh_mul_add_norm_scale(
+@@ -348,6 +428,23 @@ def fused_norm_tanh_mul_add_norm_scale(
              raise ValueError(
                  f"D={D} not supported, must be multiple of 256 and <= 8192"
              )
@@ -373,6 +379,7 @@ index c5ae1c619d..98526794b1 100644
 +            _native_fast_ok(x, weight, bias, scale, shift, norm_type)
 +            and bias2 is None
 +            and _native_vec_ok(weight2, x.shape[-1])
++            and scale2.is_cuda
 +            and scale2.dtype is torch.bfloat16
 +            and scale2.shape == (1, 1, x.shape[-1])
 +            and scale2.stride(-1) == 1

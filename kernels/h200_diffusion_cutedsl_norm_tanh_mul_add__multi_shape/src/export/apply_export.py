@@ -41,6 +41,7 @@ def _native_aligned16(t: torch.Tensor) -> bool:
 def _native_vec_ok(t: Optional[torch.Tensor], D: int) -> bool:
     return (
         t is not None
+        and t.is_cuda
         and t.dtype is torch.bfloat16
         and t.shape == (D,)
         and t.stride(-1) == 1
@@ -50,6 +51,11 @@ def _native_vec_ok(t: Optional[torch.Tensor], D: int) -> bool:
 
 def _native_fast_ok(x, weight, bias, scale, shift, norm_type) -> bool:
     if norm_type != "rms" or bias is not None:
+        return False
+    # Device gate: only CUDA tensors may enter the native launcher; CPU or
+    # device-mismatched calls continue through the original CuTe-DSL path,
+    # preserving its fallback/error behavior exactly.
+    if not (x.is_cuda and scale.is_cuda and shift.is_cuda):
         return False
     if x.dtype is not torch.bfloat16 or not x.is_contiguous():
         return False
@@ -104,6 +110,7 @@ DUAL_HOOK_NEW = '''        if (
             _native_fast_ok(x, weight, bias, scale, shift, norm_type)
             and bias2 is None
             and _native_vec_ok(weight2, x.shape[-1])
+            and scale2.is_cuda
             and scale2.dtype is torch.bfloat16
             and scale2.shape == (1, 1, x.shape[-1])
             and scale2.stride(-1) == 1

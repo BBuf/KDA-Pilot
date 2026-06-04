@@ -44,11 +44,68 @@ def _check_close(a, ref32, scale_terms, atol=5e-2, rtol=5e-2):
     assert not bad.any(), f"{int(bad.sum())} elements out of tolerance (max {diff.max():.4e})"
 
 
+def _check_device_fallback_parity() -> None:
+    """Unsupported-device probes: production-shaped bf16 calls on CPU (and a
+    mixed-device variant) must NOT enter the native CUDA module — they continue
+    through the original CuTe-DSL path and behave exactly like the pinned
+    baseline (same error class, since that path requires CUDA tensors)."""
+
+    dt = torch.bfloat16
+    S = 64
+    x_cpu = torch.randn(1, S, D, dtype=dt)
+    w_cpu = torch.randn(D, dtype=dt)
+    sc_cpu = torch.randn(1, 1, D, dtype=dt)
+    sh_cpu = torch.randn(1, S, D, dtype=dt)
+
+    def probe(fn_sgl, fn_base, args, tag):
+        err_sgl = err_base = None
+        try:
+            fn_sgl(*args)
+        except Exception as e:  # noqa: BLE001 - parity check needs the class
+            err_sgl = e
+        try:
+            fn_base(*args)
+        except Exception as e:  # noqa: BLE001
+            err_base = e
+        assert (err_sgl is None) == (err_base is None), (
+            f"{tag}: patched op and pinned baseline disagree on raising "
+            f"({type(err_sgl)} vs {type(err_base)})"
+        )
+        if err_sgl is not None:
+            assert type(err_sgl) is type(err_base), (
+                f"{tag}: error-class mismatch {type(err_sgl)} vs {type(err_base)}"
+            )
+        print(f"{tag}: fallback parity OK "
+              f"({'no error' if err_sgl is None else type(err_sgl).__name__})")
+
+    # All-CPU production-shaped call.
+    probe(sgl_ops.fused_norm_tanh_mul_add, vendored.fused_norm_tanh_mul_add,
+          (x_cpu, w_cpu, None, sc_cpu, sh_cpu, "rms", EPS), "cpu-all single")
+    # Mixed-device: CUDA x, CPU scale (gate must reject before any native launch).
+    x_gpu = x_cpu.cuda()
+    sh_gpu = sh_cpu.cuda()
+    w_gpu = w_cpu.cuda()
+    probe(sgl_ops.fused_norm_tanh_mul_add, vendored.fused_norm_tanh_mul_add,
+          (x_gpu, w_gpu, None, sc_cpu, sh_gpu, "rms", EPS), "mixed-device single")
+    # Dual: all-CPU.
+    w2_cpu = torch.randn(D, dtype=dt)
+    sc2_cpu = torch.randn(1, 1, D, dtype=dt)
+    probe(sgl_ops.fused_norm_tanh_mul_add_norm_scale,
+          vendored.fused_norm_tanh_mul_add_norm_scale,
+          (x_cpu, w_cpu, None, sc_cpu, sh_cpu, w2_cpu, None, sc2_cpu, "rms", EPS),
+          "cpu-all dual")
+
+
 def main() -> int:
     print(f"sglang resolves to: {sglang.__file__}")
-    assert "sglang_export" in sglang.__file__ or "worktree" in sglang.__file__ or True
+    sglang_root = Path(sglang.__file__).resolve()
+    assert "sglang_export" in str(sglang_root), (
+        f"sglang must resolve to the isolated patched worktree, got {sglang_root}"
+    )
     torch.manual_seed(20260604)
     dt = torch.bfloat16
+
+    _check_device_fallback_parity()
 
     for S in SEQ_LENS:
         x = torch.randn(1, S, D, device="cuda", dtype=dt)
