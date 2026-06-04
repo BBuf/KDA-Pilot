@@ -16,7 +16,7 @@
 
 ## Native CUDA candidate
 - `src/csrc/rotary_embedding.cuh`: `StandardRopeKernel<DType>::run(out,x,cos,sin)` + `Ltx2SplitRopeKernel<DType>::run(out,x,cos,sin)` (templated `XxxKernel<...>::run(tvm::ffi::TensorView...)` launchers).
-- Built through SGLang `jit_kernel`: `src/wrapper.py` drives `load_jit` + `make_cpp_args` + `cache_once` (`cuda_files=["diffusion/kda_rotary_embedding.cuh"]`, `cuda_wrappers=[("standard_rope", "StandardRopeKernel<bf16_t>::run"), ("ltx2_split_rope", "Ltx2SplitRopeKernel<bf16_t>::run")]`). Compile flags match the SGLang jit build (`-DSGL_CUDA_ARCH=900 -std=c++20 -O3 --expt-relaxed-constexpr`); **no `--use_fast_math`**. Profiling builds add `-lineinfo` only (`KDA_PROFILE=1`).
+- Built through SGLang `jit_kernel`: `src/wrapper.py` drives `load_jit` + `make_cpp_args` + `cache_once` (`cuda_files=[str(_WORKSPACE_CUH)]` — the absolute path to `src/csrc/rotary_embedding.cuh`, compiled in place so nothing is written into the SGLang checkout; `cuda_wrappers=[("standard_rope", "StandardRopeKernel<bf16_t>::run"), ("ltx2_split_rope", "Ltx2SplitRopeKernel<bf16_t>::run")]`). Compile flags match the SGLang jit build (`-DSGL_CUDA_ARCH=900 -std=c++20 -O3 --expt-relaxed-constexpr`); **no `--use_fast_math`**. Profiling builds add `-lineinfo` only (`KDA_PROFILE=1`).
 - Design: one block per token (standard) / per `(b,s)` (LTX-2); power-of-2 shift/mask indexing (no runtime div/mod); 128-bit vectorized bf16 loads/stores; standard cos/sin reused per token via shared memory; v3 adds streaming-cache accesses (`__ldcs`/`__stcs`, evict-first) on every read-once/write-once global stream (pattern: KernelWiki `technique-vectorized-loads`).
 
 ## Per-shape dispatch table
