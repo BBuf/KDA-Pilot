@@ -138,3 +138,57 @@ At the captured production shapes the anchor candidate is **not DRAM-bandwidth-b
 with secondary ALU/XU pipe pressure; dual is issue/barrier-bound under a 40-register
 occupancy cap. Headroom toward the ~25/33 µs bandwidth-ideal exists but is gated on
 latency hiding and instruction-stream slimming, not on bytes.
+
+---
+
+# FINAL ADDENDUM — this profile is the FINAL-CANDIDATE evidence (AC-5)
+
+**Status:** After this profile, all NCU-ranked wave-2 levers were implemented and
+measured (`logs/wave2_sweep.log`, `logs/wave2_dtp_pipeline.log`): the dual
+`__launch_bounds__` register cap was performance-neutral on device (0.999x), the
+2-sync reduction was neutral-to-negative (0.996x), and the tanh-precompute buffer —
+the only device-level winner (+2.2 % dual) — LOST at the shipping wrapper layer
+(interleaved geomean 1.3122x vs the same-session anchor control 1.3314x; the
+per-call fp32 buffer allocation + extra launch exceed the ~1 µs device gain).
+Combined with the wave-1 tiling rejections, the search is exhausted within the
+plan's bounded-iteration policy and **the anchor profiled in this report IS the
+final promoted candidate** (`solutions.jsonl: final-candidate-decision`). Per the
+round-3 review instruction, this addendum upgrades the report to final AC-5
+evidence rather than re-profiling an identical kernel.
+
+## Final roofline table (captured production buckets)
+
+Conventions: *modeled logical* = fused-logical bytes (`benchmark.py:_bytes_moved`);
+*actual* = NCU `dram__bytes_read + dram__bytes_write` (L2 retains part of the
+working set; H200 L2 = 50 MB). Kernel times are NCU steady-state medians; the
+S=4128 bucket scales bytes by +0.78 % with event-level times within 1 % of S=4096
+(`benchmark.csv`), so its roofline position is identical.
+
+| bucket | modeled logical bytes | actual DRAM bytes | NCU kernel time | BW (actual) | BW (logical) | % of 4.8 TB/s peak (actual) | locked baseline GPU | device speedup (events) | active bound |
+|---|---|---|---|---|---|---|---|---|---|
+| single S=4096 | 94.40 MB | 81.6 MB | 33.9 µs | 2.41 TB/s | 2.79 TB/s | 50 % | 65.98 µs | 1.57–1.62x | memory latency (long_scoreboard 5.0/issue) + ALU 52 %/XU 38.6 % |
+| single S=4128 | 95.14 MB | ≈82 MB | ≈34 µs (events ±1 %) | ≈2.41 TB/s | ≈2.79 TB/s | 50 % | 65.98 µs | 1.58–1.61x | same |
+| dual S=4096 | 125.86 MB | 106.1 MB | 50.1 µs | 2.12 TB/s | 2.51 TB/s | 44 % | 77.79 µs | 1.60–1.64x | issue/barrier under 40-reg occupancy cap (3 CTAs/SM, 70.3 % max warps) |
+| dual S=4128 | 126.84 MB | ≈107 MB | ≈50 µs (events ±1 %) | ≈2.12 TB/s | ≈2.51 TB/s | 44 % | 77.66 µs | 1.61–1.63x | same |
+
+Locked CuTe-DSL baseline reference points (same convention, from
+`docs/baseline_locked.json`): single 65.98 µs GPU → 1.43 TB/s logical; dual
+77.7 µs → 1.62 TB/s logical. The candidate moves both entries from ~30–40 % to
+~52–58 % of peak logical bandwidth.
+
+## Promotion reasoning (completion bar)
+
+1. **Correctness**: 14/14 H200 suite (oracle + dynamic bounds + dispatch contract +
+   fallback bitwise equality), 844-case exhaustive grid, baseline parity.
+2. **Performance**: interleaved geomean over all 4 captured shapes 1.3253–1.3621x
+   (3 independent sessions: ab_run2, run10, r3-anchor-control), sequential
+   1.4463–1.4695x, device-only 1.38–1.66x — symmetric custom-op layers throughout.
+3. **Near-bound evidence**: the remaining gap to the bandwidth ideal (~25/33 µs) is
+   attributable to memory latency + issue structure, NOT unexploited bandwidth;
+   13 variants across two waves (tiling, occupancy, XU-elimination, barrier
+   reduction) all fail to beat the anchor at the shipping layer — the anchor sits
+   at the practical operating point for this dataflow on H200 within the plan's
+   bounded search. Further pursuit of the latency bound (e.g. async-copy double
+   buffering across rows) would change the dataflow class and is out of the
+   bounded-iteration budget; recorded as the no-go basis for further search,
+   while the candidate itself is promoted on its measured win.
