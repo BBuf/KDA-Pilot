@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """One-time equivalence check: vendored baseline/ vs the LIVE SGLang Triton module.
 
-This is the single sanctioned live-SGLang import (plan AC-2): it certifies that
-the copy in baseline/ behaves identically to sglang.jit_kernel.diffusion.triton
-.scale_shift, then the copy is frozen and all later runs use baseline/ only.
+This is the single sanctioned live-SGLang import in the harness suite: it
+certifies that the copy in baseline/ behaves identically to
+sglang.jit_kernel.diffusion.triton.scale_shift, then the copy is frozen and
+all later runs use baseline/ only.
 
 Expectation: bit-identical outputs (same Triton source compiled in the same
 process). The elementwise kernels are reduction-free, and the LN kernels use a

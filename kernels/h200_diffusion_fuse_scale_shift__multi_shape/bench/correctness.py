@@ -6,7 +6,7 @@ regression grid), negative (out-of-contract parity). Every comparison applies
 NaN/Inf guards, the oracle's fixed tolerances, and the dynamic
 quantization-noise cross-check (bench/reference.py).
 
-Routing contract enforced per plan decisions:
+Routing contract enforced:
 - While an op has no native kernel (native_status False), fallback is expected.
 - Once native exists: grid cases MUST route native; production cases route
   native unless their bucket is a recorded perf-fallback decision.

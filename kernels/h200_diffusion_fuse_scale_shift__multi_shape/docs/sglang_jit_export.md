@@ -89,7 +89,43 @@ SGLang files touched (full in-tree diff: 18 inserted lines + 2 new files):
 | prod13 wan-t2v 37800x5120 | 420.6→297.7 (1.413) | 405.6→283.2 (1.432) |
 | prod14 wan-ti2v NC | 180.2→159.3 (1.131) | 165.8→145.1 (1.143) |
 
-**Geomean (shipping path, all 15 rows): sync_wall 1.2513x, device_ev 1.3269x.**
+Direct-public-function geomean (all 15 rows): sync_wall 1.2513x, device_ev
+1.3269x (run r1, `bench/reports/remote_r0/in_tree_validation_r1.json`).
+
+## Registered-CustomOp-layer coverage (the production callsite for select01)
+
+The two select01 production rows are called in production through the
+registered layer in `multimodal_gen/runtime/layers/fused_scale_shift_gate.py`
+(`CustomOp.register("fuse_layernorm_scale_shift_gate_select01")` /
+`...residual...`), which adds nn.Module dispatch + its own contiguity
+handling above the public functions. Validation run r2 resolves those classes
+from `CustomOp.op_registry`, instantiates them, and runs parity + ABBA timing
+through `op(*args, **kwargs)` with the same native toggle:
+
+- CustomOp-layer parity: **2/2 rows** within oracle tolerances, outputs finite.
+- CustomOp-layer timing (the layer adds ~4 us symmetrically to both sides;
+  ratios match the direct path):
+
+| row | path | sync_wall base→cand (x) | device_ev base→cand (x) |
+|---|---|---|---|
+| prod07 select01 | customop | 95.6→83.9 (**1.139**) | 81.1→69.9 (1.161) |
+| prod08 residual | customop | 139.3→122.0 (**1.143**) | 124.8→107.6 (1.160) |
+
+**FINAL promotion geomeans (all 15 rows; the two registered rows counted via
+the CustomOp layer, the other 13 via the direct public functions):
+sync_wall 1.2496x, device_ev 1.3233x** (run r2, valid=True, idle before/after;
+raw: `bench/reports/remote_r0/in_tree_validation_r2.json`, remote original at
+`$REMOTE_KDA_DIR/in_tree_validation_r2.json`).
+
+Command: `PYTHONPATH=$WT/python CUDA_VISIBLE_DEVICES=3 python
+profile/in_sglang/validate_in_tree.py --gpu-id 3 --json
+$REMOTE_KDA_DIR/in_tree_validation_r2.json`.
+
+Coverage note: the in-tree ORACLE (288/288) exercises the direct public
+functions (that is what SGLang's own test calls); the CustomOp layer is
+covered by the r2 parity + timing above. `fuse_scale_shift_kernel` has no
+custom-op wrapper in production (called directly from the layernorm /
+elementwise layers), so the direct path IS its production callsite.
 
 Notes: (a) the in-tree `device_ev` brackets the whole public call on the
 stream, so for host-bound rows it includes wrapper submit gaps on BOTH sides
@@ -101,16 +137,17 @@ ratios are unaffected.
 
 ## Perf-fallback re-adjudication (DEC-1)
 
-Every production row wins BOTH shipping-path metrics (min 1.125x sync,
-1.137x device_ev), including the two Family B rows that were 0.954x/0.982x
-on the bare-kernel device view. `PERF_FALLBACK` therefore remains EMPTY; no
-row is routed back to Triton for performance.
+Every production row wins BOTH shipping-path metrics through its REAL
+production callsite (min 1.125x sync incl. the CustomOp-layer rows at
+1.139x/1.143x), versus 0.954x/0.982x on the bare-kernel device view for the
+two Family B rows. `PERF_FALLBACK` therefore remains EMPTY; no row is routed
+back to Triton for performance.
 
 ## Promotion verdict
 
-**PROMOTE.** Correctness: 288/288 in-tree oracle + 15/15 parity + fallback
-checks, on top of the local 2424/2424. Performance through the exact
-shipping path (identical wrapper/dispatch/registration, only the device path
-differs): geomean **1.2513x** end-to-end / **1.3269x** stream-span, all 15
-rows positive. Raw report: `bench/reports/remote_r0/in_tree_validation_r1.json`
-(remote original at `$REMOTE_KDA_DIR/in_tree_validation_r1.json`).
+**PROMOTE.** Correctness: 288/288 in-tree oracle + 15/15 direct parity + 2/2
+CustomOp-layer parity + fallback checks, on top of the local 2424/2424.
+Performance through the exact shipping path (identical wrapper/dispatch/
+registration on both sides — incl. the registered CustomOp layer for the two
+select01 rows — only the device path differs): **final geomean 1.2496x
+end-to-end / 1.3233x stream-span, all 15 rows positive.**

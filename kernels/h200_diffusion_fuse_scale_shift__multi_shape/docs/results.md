@@ -87,11 +87,14 @@ CustomOp/torch.compile layer untouched) and validated on idle GPU 3:
   native ON under the unchanged public ops.
 - Routing 15/15 native; parity 15/15 within oracle tolerances; fp64/NC-x/CPU
   fallback checks reach the original Triton body with identical behavior.
-- **Shipping-path geomean (identical public wrapper/dispatch/registration on
-  both sides, only the device path toggles): sync_wall 1.2513x, stream-span
-  device_ev 1.3269x — every row >= 1.125x, including the two Family B rows
-  (select01 1.149x, residual 1.151x) that were 0.954x/0.982x on the
-  bare-kernel device view.** PERF_FALLBACK stays empty (DEC-1 unused).
+- **FINAL shipping-path geomean (identical public wrapper/dispatch/
+  registration on both sides, only the device path toggles; the two
+  registered select01 rows measured THROUGH the CustomOp layer — their
+  production callsite): sync_wall 1.2496x, stream-span device_ev 1.3233x —
+  every row >= 1.125x, with the CustomOp-layer rows at 1.139x/1.143x sync
+  (they were 0.954x/0.982x on the bare-kernel device view).** PERF_FALLBACK
+  stays empty (DEC-1 unused). Direct-public-function geomeans (r1 run):
+  1.2513x/1.3269x; CustomOp-layer parity 2/2.
 
 The local-loop geomeans above (1.2874x/1.2274x/1.2951x) remain the
 device-fair RLCR evidence; the promotion claim is the shipping-path table in

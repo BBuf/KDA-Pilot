@@ -60,9 +60,10 @@ negative-parity suite).
 
 DEC-1 note (RESOLVED by the in-tree arbiter, docs/sglang_jit_export.md): the
 two Family B rows — 0.954x/0.982x on the bare-kernel device view — win
-1.149x/1.151x sync and 1.181x/1.168x stream-span through the real SGLang
-public wrapper, as does every other row (min 1.125x). `PERF_FALLBACK` stays
-EMPTY; DEC-1 perf-fallback was never needed.
+1.139x/1.143x sync and 1.161x/1.160x stream-span through their REAL
+production callsite (the registered CustomOp layer, validation run r2), as
+does every other row through its direct public function (min 1.125x).
+`PERF_FALLBACK` stays EMPTY; DEC-1 perf-fallback was never needed.
 
 ## Regression-grid routing
 
