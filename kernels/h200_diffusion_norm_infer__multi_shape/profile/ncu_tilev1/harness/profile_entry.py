@@ -6,7 +6,6 @@ Usage: profile_entry.py <kind> <M> <N>
 Run under ncu with `-k regex:"rms_norm_warp|layer_norm_block|rms_norm|norm_infer"`
 and `--launch-skip 4 --launch-count 1` to profile the post-warmup launch.
 """
-import importlib.util
 import pathlib
 import sys
 
