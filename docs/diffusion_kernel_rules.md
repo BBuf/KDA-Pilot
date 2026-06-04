@@ -87,10 +87,15 @@ Use `docs/standalone_diffusion_benchmark_template.py` as the timing harness
 starting point. Do not change workloads, tolerances, score aggregation, or timing
 rules after tuning starts unless both baseline and candidate are remeasured.
 
-When NCU profiling is needed, follow `external/ncu-report-skill/SKILL.md` if it
-is available in the repository. Keep the profile harness, reports, analysis, and
-summary in a task-owned directory, and use the resulting evidence to choose the
-next edit instead of guessing.
+Every RLCR iteration must refresh its kernel-optimization context before
+choosing the next edit, benchmark run, profiling run, or no-go conclusion. That
+refresh includes this document, the task prompt, current benchmark evidence,
+`external/KernelWiki/SKILL.md`, and `external/ncu-report-skill/SKILL.md` when
+those files are available.
+
+When NCU profiling is needed, follow `external/ncu-report-skill/SKILL.md`. Keep
+the profile harness, reports, analysis, and summary in a task-owned directory,
+and use the resulting evidence to choose the next edit instead of guessing.
 
 A final performance claim must report:
 
@@ -129,11 +134,11 @@ need different implementations.
 
 ## Prior Art And Exploration
 
-Before settling on an implementation strategy, read
-`external/KernelWiki/SKILL.md` if it is available in the repository, then inspect
-relevant upstream code or knowledge sources when they could change the design:
-SGLang, CUTLASS/CuTe, CUDA samples, PyTorch, vLLM, TensorRT-LLM, FlashInfer,
-DeepGEMM, KernelWiki, and task-local NCU evidence.
+Before settling on an implementation strategy in any RLCR iteration, read or
+query `external/KernelWiki/SKILL.md` when it is available, then inspect relevant
+upstream code or knowledge sources when they could change the design: SGLang,
+CUTLASS/CuTe, CUDA samples, PyTorch, vLLM, TensorRT-LLM, FlashInfer, DeepGEMM,
+KernelWiki, and task-local NCU evidence.
 
 Record kept/rejected ideas in `docs/draft.md`, `docs/results.md`, or
 `docs/research.md`. Keep optimization attempts bounded and evidence-backed.

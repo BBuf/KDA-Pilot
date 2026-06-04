@@ -184,6 +184,10 @@ EOF
   \`${WORKTREE_ROOT}/external/ncu-report-skill/SKILL.md\` before implementation.
 - Use KernelWiki for upstream design ideas and ncu-report-skill for
   evidence-backed kernel diagnosis when profiling would change the next edit.
+- In every RLCR iteration, refresh the context from the source prompt,
+  diffusion rules, current benchmark/profile evidence, KernelWiki, and
+  ncu-report-skill before choosing the next edit, profiling command, benchmark
+  command, or no-go conclusion.
 - Recover K/R/W from the source prompt before implementation:
   - K: kernel semantics and callsite contract
   - R: correctness oracle and baseline path
@@ -250,6 +254,9 @@ into the plan unless the source prompt explicitly says otherwise:
   numbers.
 - Rank candidate directions by expected benefit and risk.
 - Implement bounded optimization attempts under RLCR.
+- At the start of every RLCR iteration, record the refreshed KernelWiki and
+  ncu-report-skill context that affects the next edit or explain why no new
+  query/profile is needed for that iteration.
 - Include a remote phase that records selected host/GPU id/model, before/after
   GPU idleness, exact commands, benchmark artifacts, and NCU artifacts.
 - Use NCU/profile evidence for non-obvious bottlenecks.
