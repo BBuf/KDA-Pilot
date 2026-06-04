@@ -1,4 +1,4 @@
-# Results: h200_diffusion_fuse_scale_shift__multi_shape (final candidate cuda-flat-v4)
+# Results: h200_diffusion_fuse_scale_shift__multi_shape (final candidate cuda-flat-v5)
 
 Environment: ion-h200-8, container `sglang_bbuf`, GPU 3 (NVIDIA H200, idle
 verified before AND after every run; all quoted rows `valid=True`), torch
@@ -9,23 +9,25 @@ bit-identical to live SGLang (21/21 cases; docs/baseline_source.md).
 
 ## Correctness (gates the numbers below)
 
-- Full grid: **2424/2424 pass** (15 production rows verbatim + canonical
-  regression grid + negative parity), routes 2415 native / 9 fallback (the 9 =
-  negative suite). CI subset 296/296. Fixed oracle tolerances AND the dynamic
+- Full grid: **2428/2428 pass** (15 production rows verbatim + canonical
+  regression grid incl. large-offset LayerNorm cases that reject
+  uncentered-variance failures + negative parity incl. the
+  fp32-x/bf16-modulation decline), routes 2418 native / 10 fallback (the 10 =
+  negative suite). CI subset 300/300. Fixed oracle tolerances AND the dynamic
   quantization-noise cross-check, NaN/Inf guards. Reports:
-  `bench/reports/remote_r0/correctness_full_native_r4.json`.
+  `bench/reports/remote_r0/correctness_full_native_r5.json`.
 
 ## Headline (geometric mean of per-shape median-latency speedups, ALL 15 rows)
 
 | metric | geomean | meaning |
 |---|---|---|
-| sync_wall | **1.2874x** | end-to-end callable latency (host submit + device + sync) |
-| device_ev | **1.2274x** | CUDA-event device-side view |
-| amort_wall | **1.2951x** | back-to-back submission (host overhead view) |
+| sync_wall | **1.2878x** | end-to-end callable latency (host submit + device + sync) |
+| device_ev | **1.2238x** | CUDA-event device-side view |
+| amort_wall | **1.2911x** | back-to-back submission (host overhead view) |
 
 Per the plan decisions these are OUTCOME metrics (no pass/fail multiplier);
 the per-bucket bound analysis below is the completion evidence. Per-shape
-table: docs/dispatch.md; raw rows: benchmark.csv (tag `cuda-flat-v4`,
+table: docs/dispatch.md; raw rows: benchmark.csv (tag `cuda-flat-v5`,
 evidence JSON under bench/reports/remote_r0/).
 
 ## Device-vs-host decomposition (plan-mandated, per claimed win)
@@ -40,8 +42,9 @@ evidence JSON under bench/reports/remote_r0/).
   NOT a device win; no production-required layer is dropped (the dispatcher
   sits under the same public callable, and the post-loop in-tree test keeps
   SGLang's own registration).
-- Family B rows: device 0.954x/0.982x vs sync 1.122x/1.131x — host saving
-  exceeds the small device deficit (see bound analysis).
+- Family B rows: device 0.933x/0.979x vs sync 1.114x/1.138x (v5,
+  centered-variance build) — host saving exceeds the small device deficit
+  (see bound analysis).
 
 ## Roofline / bound analysis per bucket
 
@@ -55,8 +58,8 @@ H200 HBM3e peak 4.8 TB/s; realistic streaming ceiling ~4.3-4.4 TB/s (~90%).
 | NC fp32-scale (wan-ti2v) | prod14 | 557 MB (x 111.5 + fp32 NC scale 223 + bf16 shift 111.5 reads, y 111.5 write) | 3.94 | **4.22** | memory bandwidth; candidate within ~2% of the ~4.3 TB/s streaming ceiling — target-complete (the strided fp32 scale rows, 12 KB reads at 73.7 KB strides, cost nothing material) |
 | mid (qwen 4096x3072) | prod04 | 75.5 MB | 1.96 | 2.89 | launch tail dominates at this size; candidate halves it (1.48x device) — accepted |
 | tiny (19..195 tokens) | prod02/05/06/10/11 | 0.3..3.6 MB | n/a | n/a | HOST submit floor (Triton ~31 us vs ~21 us); device ~us both sides — bound is the host path, decided finally by the in-tree test |
-| LN select01 | prod07 | 155 MB | 3.44 | 3.28 | memory bandwidth throttled by the row reduction barrier (NCU: DRAM active cycles IDENTICAL ~84.0k both kernels; the residual gap is un-overlapped latency). Candidate at 95% of Triton device after the gate-copy hoist (v2 0.895 -> v4 0.954); 3 bounded iterations spent (v3 register-prefetch variant REGRESSED to 0.685x and was rejected — occupancy loss > overlap gain). Known 5% device gap, +12% end-to-end — documented tradeoff, kept native (DEC-1 fallback reserved pending the in-tree verdict) |
-| LN residual | prod08 | 311 MB | 3.85 | 3.79 | same family; 0.982x device (~parity), +13% end-to-end — accepted |
+| LN select01 | prod07 | 155 MB | 3.44 | 3.21 | memory bandwidth throttled by the row reduction barriers (NCU: DRAM active cycles IDENTICAL ~84.0k both kernels; the gap is un-overlapped latency). v5 carries the review-mandated CENTERED two-pass variance (the single-pass form catastrophically cancels on large-offset rows), costing one extra block reduction: device 0.933x vs Triton (v4's single-pass build measured 0.954x); end-to-end +11% and the shipping path absorbs the cost entirely (1.139x sync via the CustomOp callsite). Iteration history: v2 0.895 -> v3 0.685 (register prefetch, rejected on occupancy evidence) -> v4 gate-copy hoist -> v5 centered numerics. Known ~7% bare-device gap, documented tradeoff for baseline-faithful numerics; kept native on shipping-path evidence |
+| LN residual | prod08 | 311 MB | 3.85 | 3.77 | same family; 0.979x device (~parity), +14% end-to-end — accepted |
 
 NCU evidence: `profile/select01_v2/REPORT.md` (full side-by-side: duration
 43.5 vs 48.9 us at v2, DRAM SOL 61.8% vs 54.9%, IPC 2.60 vs 2.07, identical
@@ -73,7 +76,9 @@ baseline-triton (frozen, bit-identical) -> baseline-frozen-r0 (15-row
 baseline) -> cuda-flat-v1 (first native: Family A wins everywhere, Family B
 regression) -> cuda-flat-v2 (single-pass LN stats + runtime block size) ->
 cuda-flat-v3 (REJECTED: modulation register prefetch, occupancy loss) ->
-**cuda-flat-v4 (KEPT: gate-only hoist)**.
+cuda-flat-v4 (gate-only hoist) -> **cuda-flat-v5 (KEPT: review-mandated
+centered two-pass variance — baseline-faithful numerics on ill-conditioned
+rows — plus the dtype-width dispatch gate)**.
 
 ## Promotion arbiter: in-tree SGLang drop-in (EXECUTED — see docs/sglang_jit_export.md)
 
@@ -90,11 +95,13 @@ CustomOp/torch.compile layer untouched) and validated on idle GPU 3:
 - **FINAL shipping-path geomean (identical public wrapper/dispatch/
   registration on both sides, only the device path toggles; the two
   registered select01 rows measured THROUGH the CustomOp layer — their
-  production callsite): sync_wall 1.2496x, stream-span device_ev 1.3233x —
-  all rows positive (min 1.1243x), CustomOp-layer rows at 1.139x/1.143x sync
-  (they were 0.954x/0.982x on the bare-kernel device view).** PERF_FALLBACK
-  stays empty (DEC-1 unused). Direct-public-function geomeans (r1 run):
-  1.2513x/1.3269x; CustomOp-layer parity 2/2.
+  production callsite; run r3 with the centered-variance build):
+  sync_wall 1.2643x, stream-span device_ev 1.3433x — all rows positive
+  (min 1.1258x), CustomOp-layer rows at 1.139x/1.154x sync (they are
+  0.933x/0.979x on the bare-kernel device view).** PERF_FALLBACK stays empty
+  (DEC-1 unused). Oracle 288/288 with the centered build; CustomOp-layer
+  parity 2/2. Earlier runs for lineage: r1 (direct-only) 1.2513x/1.3269x,
+  r2 (CustomOp-inclusive, single-pass build) 1.2496x/1.3233x.
 
 The local-loop geomeans above (1.2874x/1.2274x/1.2951x) remain the
 device-fair RLCR evidence; the promotion claim is the shipping-path table in

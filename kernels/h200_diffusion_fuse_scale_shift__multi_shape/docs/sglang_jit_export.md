@@ -16,7 +16,8 @@ otherwise.
 SGLang files touched (full in-tree diff: 18 inserted lines + 2 new files):
 
 1. `python/sglang/jit_kernel/csrc/diffusion/scale_shift_kda.cuh` — NEW; exact
-   copy of `solution/scale_shift_kda.cuh` (final candidate cuda-flat-v4).
+   copy of `solution/scale_shift_kda.cuh` (final candidate cuda-flat-v5,
+   centered-variance build).
 2. `python/sglang/jit_kernel/diffusion/scale_shift_kda.py` — NEW wrapper
    (source: `intree/scale_shift_kda.py`): `load_jit` with the RELATIVE
    `cuda_files=["diffusion/scale_shift_kda.cuh"]`, `make_cpp_args`,
@@ -108,18 +109,30 @@ through `op(*args, **kwargs)` with the same native toggle:
 
 | row | path | sync_wall base→cand (x) | device_ev base→cand (x) |
 |---|---|---|---|
-| prod07 select01 | customop | 95.6→83.9 (**1.139**) | 81.1→69.9 (1.161) |
-| prod08 residual | customop | 139.3→122.0 (**1.143**) | 124.8→107.6 (1.160) |
+| prod07 select01 | customop | 95.8→84.1 (**1.139**) | 81.7→70.3 (1.162) |
+| prod08 residual | customop | 140.1→121.4 (**1.154**) | 125.8→107.6 (1.169) |
+
+(values from run r3, the centered-variance build; the direct-path table above
+is the r1 run kept for lineage — per-row r3 direct values live in the raw
+`in_tree_validation_r3.json`.)
 
 **FINAL promotion geomeans (all 15 rows; the two registered rows counted via
-the CustomOp layer, the other 13 via the direct public functions):
-sync_wall 1.2496x, device_ev 1.3233x** (run r2, valid=True, idle before/after;
-raw: `bench/reports/remote_r0/in_tree_validation_r2.json`, remote original at
-`$REMOTE_KDA_DIR/in_tree_validation_r2.json`).
+the CustomOp layer, the other 13 via the direct public functions; run r3 with
+the centered-variance build cuda-flat-v5): sync_wall 1.2643x, device_ev
+1.3433x; all rows positive, min 1.1258x sync; CustomOp rows 1.139x/1.154x
+sync, 1.162x/1.169x stream** (valid=True, idle before/after; raw:
+`bench/reports/remote_r0/in_tree_validation_r3.json`, remote original at
+`$REMOTE_KDA_DIR/in_tree_validation_r3.json`). Run r3 re-validated everything
+after the code-review fix that restored the baseline-faithful CENTERED
+LayerNorm variance (oracle re-passed 288/288; direct parity 15/15; CustomOp
+parity 2/2; fallback checks 3/3). Historical runs: r1 (direct-only)
+1.2513x/1.3269x; r2 (CustomOp-inclusive, single-pass-variance build)
+1.2496x/1.3233x.
 
 Command: `PYTHONPATH=$WT/python CUDA_VISIBLE_DEVICES=3 python
 profile/in_sglang/validate_in_tree.py --gpu-id 3 --json
-$REMOTE_KDA_DIR/in_tree_validation_r2.json`.
+$REMOTE_KDA_DIR/in_tree_validation_r3.json` (after re-applying
+`intree/apply_patch.py` to the refreshed worktree).
 
 Coverage note: the in-tree ORACLE (288/288) exercises the direct public
 functions (that is what SGLang's own test calls); the CustomOp layer is
@@ -138,11 +151,11 @@ ratios are unaffected.
 ## Perf-fallback re-adjudication (DEC-1)
 
 Every production row wins BOTH shipping-path metrics through its REAL
-production callsite (all rows positive, min 1.1243x sync, incl. the
-CustomOp-layer rows at 1.139x/1.143x), versus 0.954x/0.982x on the
-bare-kernel device view for the
-two Family B rows. `PERF_FALLBACK` therefore remains EMPTY; no row is routed
-back to Triton for performance.
+production callsite (all rows positive, min 1.1258x sync, incl. the
+CustomOp-layer rows at 1.139x/1.154x), versus 0.933x/0.979x on the
+bare-kernel device view for the two Family B rows (centered-variance build).
+`PERF_FALLBACK` therefore remains EMPTY; no row is routed back to Triton for
+performance.
 
 ## Promotion verdict
 
@@ -150,5 +163,6 @@ back to Triton for performance.
 CustomOp-layer parity + fallback checks, on top of the local 2424/2424.
 Performance through the exact shipping path (identical wrapper/dispatch/
 registration on both sides — incl. the registered CustomOp layer for the two
-select01 rows — only the device path differs): **final geomean 1.2496x
-end-to-end / 1.3233x stream-span, all 15 rows positive.**
+select01 rows — only the device path differs): **final geomean 1.2643x
+end-to-end / 1.3433x stream-span, all 15 rows positive (run r3,
+centered-variance build).**

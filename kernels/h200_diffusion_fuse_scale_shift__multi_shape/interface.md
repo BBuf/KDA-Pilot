@@ -98,7 +98,7 @@ which shape bucket);
 - benchmark command and latency formula;
 - source lineage for copied or ported helper code.
 
-## Final Evidence (cuda-flat-v4, promoted via in-tree drop-in)
+## Final Evidence (cuda-flat-v5, promoted via in-tree drop-in)
 
 - Final wrapper signatures: the three recovered baseline signatures above,
   preserved exactly; `src/register.py` exposes them plus `optimized_wrapper`
@@ -131,8 +131,9 @@ which shape bucket);
   bit-identical 21/21 vs live SGLang at copy time); design idea sources in
   `solutions.jsonl` (KernelWiki pr-sglang-14717, technique-vectorized-loads;
   qknorm_rope.cuh / group_norm_silu_kda.cuh exemplars).
-- Results: local geomeans sync 1.2874x / device 1.2274x / amort 1.2951x
-  (docs/results.md); FINAL shipping-path geomeans sync **1.2496x** /
-  stream-span **1.3233x** (the two registered select01 rows measured through
-  their CustomOp production callsite), oracle 288/288, all rows positive
-  (min 1.1243x) (docs/sglang_jit_export.md). PERF_FALLBACK empty.
+- Results (cuda-flat-v5, centered-variance build): local geomeans sync
+  1.2878x / device 1.2238x / amort 1.2911x (docs/results.md); FINAL
+  shipping-path geomeans sync **1.2643x** / stream-span **1.3433x** (the two
+  registered select01 rows measured through their CustomOp production
+  callsite; run r3), oracle 288/288, all rows positive (min 1.1258x)
+  (docs/sglang_jit_export.md). PERF_FALLBACK empty.
