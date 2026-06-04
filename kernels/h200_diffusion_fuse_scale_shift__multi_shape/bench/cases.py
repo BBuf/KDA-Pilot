@@ -82,6 +82,12 @@ class Case:
     expected_errors: tuple = ()
     notes: str = ""
     meta: dict = field(default_factory=dict)
+    # Optional (atol, rtol) replacing the dtype default for the fixed
+    # candidate-vs-baseline check. Used by ill-conditioned cases where two
+    # CORRECT implementations legitimately diverge beyond the default (the
+    # dynamic cross-check stays primary and scales with the baseline's own
+    # conditioning error).
+    tol_override: tuple | None = None
 
 
 def _seed_for(case_id: str) -> int:
@@ -335,6 +341,56 @@ def _make_sel_grid_case(op, dtype, B, L, C, with_affine) -> Case:
     )
 
 
+def _make_sel_offset_case(op, dtype, B, L, C, offset: float) -> Case:
+    """LayerNorm rows whose input carries a large constant offset relative to
+    its spread — exposes uncentered-variance cancellation in fp32."""
+    cid = f"grid_{op}_{_DTYPE_SHORT[dtype]}_B{B}L{L}C{C}_offset{int(offset)}_noaff"
+
+    def build(device, _cid=cid, _op=op, _dt=dtype, _B=B, _L=L, _C=C, _off=offset):
+        g = _gen(device, _seed_for(_cid))
+        narrow = (_randn((_B, _L, _C), torch.float32, device, g) * 0.1)
+        if _op == OP_RESIDUAL:
+            # The offset reaches the normalized tensor via residual + gate*x.
+            x = narrow.to(_dt)
+            residual = (narrow + _off).to(_dt)
+            residual_gate = _randn((_B, _L, _C), _dt, device, g)
+        else:
+            x = (narrow + _off).to(_dt)
+        kwargs = {
+            "weight": None,
+            "bias": None,
+            "scale0": _randn((_B, _C), _dt, device, g),
+            "shift0": _randn((_B, _C), _dt, device, g),
+            "gate0": _randn((_B, _C), _dt, device, g),
+            "scale1": _randn((_B, _C), _dt, device, g),
+            "shift1": _randn((_B, _C), _dt, device, g),
+            "gate1": _randn((_B, _C), _dt, device, g),
+            "index": _index((_B, _L), torch.int32, device, g),
+            "eps": EPS,
+        }
+        if _op == OP_RESIDUAL:
+            kwargs = {"residual": residual, "residual_gate": residual_gate, **kwargs}
+        return [x], kwargs
+
+    # At offset/spread ~1e4 the mean dominates fp32 rounding: two CORRECT
+    # centered implementations differ by ~1e-2 in normalized units purely
+    # from reduction order, so the fixed check is relaxed; the dynamic
+    # cross-check (budgeted by the baseline's own error vs the fp32
+    # reference) is what rejects uncentered-variance failures here.
+    return Case(case_id=cid, op=op, suite="grid", build=build, x_dtype=dtype,
+                notes=f"constant offset {offset} vs spread 0.1",
+                tol_override=(5e-2, 5e-2))
+
+
+def _offset_cases() -> list[Case]:
+    B, L, C = 2, 128, 1024
+    return [
+        _make_sel_offset_case(OP_SELECT01, torch.float32, B, L, C, 1000.0),
+        _make_sel_offset_case(OP_RESIDUAL, torch.float32, B, L, C, 1000.0),
+        _make_sel_offset_case(OP_SELECT01, torch.bfloat16, B, L, C, 1000.0),
+    ]
+
+
 def grid_cases() -> list[Case]:
     dtypes, batches, seqs, hiddens = _grid_axes()
     cases: list[Case] = []
@@ -353,6 +409,7 @@ def grid_cases() -> list[Case]:
                     for op in (OP_SELECT01, OP_RESIDUAL):
                         for aff in (False, True):
                             cases.append(_make_sel_grid_case(op, dt, B, L, C, aff))
+    cases.extend(_offset_cases())
     return cases
 
 
@@ -377,6 +434,15 @@ def negative_cases() -> list[Case]:
         x = torch.randn((B, L, C), generator=g, device=device, dtype=torch.float64)
         s = torch.randn((B, C), generator=g, device=device, dtype=torch.float64)
         sh = torch.randn((B, C), generator=g, device=device, dtype=torch.float64)
+        return [x, s, sh], {"scale_constant": 0}
+
+    def b_fp32x_narrow_scale(device):
+        # Baseline promotes mixed dtypes fine; the native packet loader cannot
+        # widen a narrower modulation dtype, so the route must decline.
+        g = _gen(device, 10)
+        x = _randn((B, L, C), torch.float32, device, g)
+        s = _randn((B, C), torch.bfloat16, device, g)
+        sh = _randn((B, C), torch.bfloat16, device, g)
         return [x, s, sh], {"scale_constant": 0}
 
     def b_noncontig_x(device):
@@ -457,6 +523,10 @@ def negative_cases() -> list[Case]:
     return [
         _neg("neg_ss_fp64", OP_SCALE_SHIFT, b_fp64, "fallback_parity",
              notes="fp64 in-contract for baseline; native must decline", x_dtype=torch.float64),
+        _neg("neg_ss_fp32x_bf16scale", OP_SCALE_SHIFT, b_fp32x_narrow_scale,
+             "fallback_parity",
+             notes="fp32 x with narrower bf16 modulation; native must decline",
+             x_dtype=torch.float32),
         _neg("neg_ss_noncontig_x", OP_SCALE_SHIFT, b_noncontig_x, "error_parity",
              (AssertionError,), "baseline asserts x contiguous"),
         _neg("neg_ss_scale_5d", OP_SCALE_SHIFT, b_scale_5d, "error_parity",

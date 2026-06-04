@@ -158,6 +158,7 @@ def check_outputs(
     baseline: torch.Tensor,
     ref32: torch.Tensor,
     dtype: torch.dtype,
+    tol_override: tuple | None = None,
 ) -> dict:
     """All-in-one validator for one output tensor.
 
@@ -179,7 +180,7 @@ def check_outputs(
             f"baseline={tuple(baseline.shape)}/{baseline.dtype}"
         )
 
-    atol, rtol = fixed_tol(dtype)
+    atol, rtol = tol_override if tol_override is not None else fixed_tol(dtype)
     try:
         torch.testing.assert_close(candidate, baseline, atol=atol, rtol=rtol)
     except AssertionError as exc:

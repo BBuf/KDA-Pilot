@@ -167,7 +167,8 @@ def run_case(case, device: torch.device) -> dict:
     ref_out = _as_tuple(_REF_FNS[case.op](*args, **kwargs))
     metrics = []
     for name, c, b, r in zip(_OUTPUT_NAMES[case.op], cand_out, base_out, ref_out):
-        metrics.append(ref_mod.check_outputs(name, c, b, r, case.x_dtype))
+        metrics.append(ref_mod.check_outputs(
+            name, c, b, r, case.x_dtype, tol_override=case.tol_override))
     record["metrics"] = metrics
     return record
 

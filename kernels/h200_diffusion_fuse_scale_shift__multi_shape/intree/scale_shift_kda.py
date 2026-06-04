@@ -94,6 +94,12 @@ def _plan_scale_shift(x, scale, shift):
         return None
     if scale.dtype not in _FLOAT_DTYPES or shift.dtype not in _FLOAT_DTYPES:
         return None
+    # The 16-byte packet loader converts whole scale/shift packets per x
+    # packet, which requires the modulation dtype to be at least as wide as
+    # the x dtype (e.g. fp32 x with bf16 scale would need a fractional packet).
+    if (scale.element_size() < x.element_size()
+            or shift.element_size() < x.element_size()):
+        return None
     if not (scale.is_cuda and shift.is_cuda):
         return None
     B, L, C = x.shape

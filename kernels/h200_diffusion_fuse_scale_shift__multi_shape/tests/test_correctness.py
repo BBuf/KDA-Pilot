@@ -68,7 +68,9 @@ def _all_cases():
 
 @pytest.mark.parametrize(
     "case", _all_cases() if os.environ.get("KDA_RUN_CORRECTNESS") == "1" else [],
-    ids=lambda c: c.case_id,
+    # pytest invokes the ids callback on its internal sentinel when the
+    # parameter list is empty, so the id function must not assume a Case.
+    ids=lambda c: getattr(c, "case_id", str(c)),
 )
 def test_case(case) -> None:
     import torch

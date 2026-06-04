@@ -290,35 +290,32 @@ struct FuseScaleShiftKernel {
 // Family B
 // ---------------------------------------------------------------------------
 
-// Block-wide reduction of two fp32 accumulators, deterministic fixed-order
-// tree reduce, results broadcast to all threads. Sized for up to
-// kWarpsPerBlock warps; works for any runtime block size <= kThreads
-// (inactive warp slots are zero-filled). `smem` >= 2*kWarpsPerBlock + 2.
-SGL_DEVICE void block_reduce2(float& a, float& b, float* smem) {
+// Block-wide fp32 sum, deterministic fixed-order tree reduce, result
+// broadcast to all threads. Sized for up to kWarpsPerBlock warps; works for
+// any runtime block size <= kThreads (inactive warp slots are zero-filled).
+// `smem` must hold >= kWarpsPerBlock + 1 floats. The trailing barrier makes
+// back-to-back reductions over the same buffer safe.
+SGL_DEVICE float block_reduce_sum(float v, float* smem) {
   using namespace device;
-  a = warp::reduce_sum(a);
-  b = warp::reduce_sum(b);
+  v = warp::reduce_sum(v);
   const uint32_t lane = threadIdx.x & (kWarpThreads - 1);
   const uint32_t warp_id = threadIdx.x >> 5;
   const uint32_t num_warps = (blockDim.x + kWarpThreads - 1) / kWarpThreads;
   if (lane == 0) {
-    smem[warp_id] = a;
-    smem[kWarpsPerBlock + warp_id] = b;
+    smem[warp_id] = v;
   }
   __syncthreads();
   if (warp_id == 0) {
-    float ta = (lane < num_warps) ? smem[lane] : 0.0f;
-    float tb = (lane < num_warps) ? smem[kWarpsPerBlock + lane] : 0.0f;
-    ta = warp::reduce_sum<kWarpsPerBlock>(ta);
-    tb = warp::reduce_sum<kWarpsPerBlock>(tb);
+    float t = (lane < num_warps) ? smem[lane] : 0.0f;
+    t = warp::reduce_sum<kWarpsPerBlock>(t);
     if (lane == 0) {
-      smem[2 * kWarpsPerBlock] = ta;
-      smem[2 * kWarpsPerBlock + 1] = tb;
+      smem[kWarpsPerBlock] = t;
     }
   }
   __syncthreads();
-  a = smem[2 * kWarpsPerBlock];
-  b = smem[2 * kWarpsPerBlock + 1];
+  const float out = smem[kWarpsPerBlock];
+  __syncthreads();
+  return out;
 }
 
 struct LNSelect01Params {
@@ -355,7 +352,7 @@ __global__ void fused_ln_select01(const LNSelect01Params __grid_constant__ param
   constexpr uint32_t kMaxIter = 4;
   using XVec = AlignedVector<DTypeX, kXVec>;
 
-  __shared__ float smem[2 * kWarpsPerBlock + 2];
+  __shared__ float smem[kWarpsPerBlock + 1];
 
   PDLWaitPrimary<kUsePDL>();
 
@@ -388,14 +385,15 @@ __global__ void fused_ln_select01(const LNSelect01Params __grid_constant__ param
                                          mod_off * sizeof(DTypeX));
 
   // Load the row into fp32 registers (residual mode fuses the gated add) and
-  // accumulate sum + sum-of-squares in ONE pass (single block reduction).
-  // For standardized activations the uncentered variance E[x^2]-mean^2 stays
-  // within ~1e-7 of the centered form, far inside the oracle tolerances.
+  // accumulate the sum. The variance is computed in a second, register-only
+  // pass as the CENTERED sum of (x - mean)^2, matching the baseline formula:
+  // the single-pass E[x^2] - mean^2 form catastrophically cancels in fp32
+  // when a row's offset is large relative to its spread (e.g. mean ~1e3,
+  // std ~0.1 collapses to var ~ 0).
   // Tile loops are statically unrolled with slot guards so the register
   // arrays stay in registers (dynamic indexing would spill to local memory).
   float vals[kMaxIter][kXVec];
   float lsum = 0.0f;
-  float lsumsq = 0.0f;
 #pragma unroll
   for (uint32_t it = 0; it < kMaxIter; ++it) {
     const int64_t vslot = threadIdx.x + static_cast<int64_t>(it) * blockDim.x;
@@ -430,7 +428,6 @@ __global__ void fused_ln_select01(const LNSelect01Params __grid_constant__ param
 #pragma unroll
     for (uint32_t i = 0; i < kXVec; ++i) {
       lsum += vf[i];
-      lsumsq = fmaf(vf[i], vf[i], lsumsq);
     }
 
     // Independent of the reduction: gate copy-through (native dtype, transient
@@ -440,9 +437,22 @@ __global__ void fused_ln_select01(const LNSelect01Params __grid_constant__ param
     gv.store(gate_out_row, vslot);
   }
 
-  block_reduce2(lsum, lsumsq, smem);
-  const float mean = lsum * inv_n;
-  const float var = fmaxf(lsumsq * inv_n - mean * mean, 0.0f);
+  const float mean = block_reduce_sum(lsum, smem) * inv_n;
+
+  float lsumsq = 0.0f;
+#pragma unroll
+  for (uint32_t it = 0; it < kMaxIter; ++it) {
+    const int64_t vslot = threadIdx.x + static_cast<int64_t>(it) * blockDim.x;
+    if (vslot >= num_vecs) {
+      continue;
+    }
+#pragma unroll
+    for (uint32_t i = 0; i < kXVec; ++i) {
+      const float d = vals[it][i] - mean;
+      lsumsq = fmaf(d, d, lsumsq);
+    }
+  }
+  const float var = block_reduce_sum(lsumsq, smem) * inv_n;
   const float rstd = math::rsqrt(var + params.eps);
 
 #pragma unroll
