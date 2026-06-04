@@ -78,3 +78,34 @@ which shape bucket);
 **Export validated (in-tree, AC-9)**: `.cuh` physically placed at `python/sglang/jit_kernel/csrc/diffusion/rotary_embedding.cuh` in a task-owned worktree; `cache_once` + relative-path `load_jit` loader; in-SGLang oracle bit-exact 11/11, smoke parity-or-speedup, fp16 fallback, originals restored, worktree removed (no shared-checkout mutation). See `docs/sglang_jit_export.md`.
 
 **Dispatch gates (AC-4)**: only the exact captured signatures take CUDA; non-captured dtype/shape/layout (incl. contiguous LTX-2 cos/sin) fall back. Tight gating is also a safety requirement — the 128-bit vectorized loads assume the 16-byte alignment that only the captured shapes/strides guarantee.
+
+## Continuation Result (cuda-v6; k09 run, 2026-06-04)
+
+Signatures, dispatch table, fallback behavior, and tolerance methodology are UNCHANGED from the
+cuda-v4 section above. Continuation deltas only:
+
+- **Standard kernel improved** (`src/csrc/rotary_embedding.cuh`, src hash `317e2fab7ade`): the
+  per-token cos/sin vectors are hoisted into registers (each thread's pair segment is invariant
+  across its grid-stride passes; the launcher enforces `blockDim % kVecPerHead == 0`) and the
+  block size is chosen as the largest full-pass divisor that also divides the 2048-thread SM
+  budget (128 threads for the captured 24-head/128-dim shape; measured sweep in `docs/draft.md`).
+  Captured standard shape: 61.86 → **57.7 µs** = **1.0709–1.0718× vs cuda-v4** (3 idle-gated
+  paired runs, 3-of-3 beyond the 3% noise band). Still **bit-exact**: `pair_diff = 0.000e+00` on
+  all 11 signatures (raw log: `docs/logs/correctness_cuda_v6_20260604.log`).
+- **LTX-2 kernel functionally unchanged** (comment-only source delta vs the v4 snapshot
+  `f4c8b844044f`; diff: `docs/logs/v4_to_v6_rotary_cuh.diff`). Paired deltas within ≤0.6% on the
+  large shapes (24576-row shapes exact parity at displayed precision); worst small-shape paired
+  delta +1.198%, within its ~8% cross-run band.
+- **Paired benchmark mode**: `CUDA_VISIBLE_DEVICES=<idle> python benchmark.py --warmup 50
+  --iters 300 --candidate cuda-v6 --compare-src <v4-src-snapshot> --compare-label cuda-v4` —
+  times baseline, v4-snapshot, and candidate in the SAME worker process through the identical
+  wrapper ABI; rows `cuda-v6_vs_cuda-v4` in `benchmark.csv`. Pair geomeans 1.0038/1.0061/1.0066×.
+- **Environment note (mandatory with any geomean claim)**: the 2026-06-04 container baseline is
+  SGLang `edb1b3f8f`, whose LTX-2 Triton kernel lacks PR #24732 and is 2–8× slower at scale than
+  the 2026-06-01 pinned baseline — geomean vs the CURRENT baseline is **3.1682–3.1965×** but is
+  environment-inflated; the like-for-like estimate vs the 2026-06-01 environment is **~1.46×**
+  (= 1.4505 × paired 1.0038–1.0066; see `docs/draft.md` BASELINE SHIFT + corrections).
+- **Active bounds refreshed** (`profile/ncu-v3/REPORT.md`): standard now memory-paced (DRAM 69.8%,
+  compute 47.1%, ~75% effective of peak; MLP probe cuda-v7 zero movement → at bound; bf16-packed
+  math no-go by evidence); LTX-2 large-half32 76.1% DRAM SOL clean-access no-go; small shapes
+  launch-floor no-go (grid-halving experiment regressed 12%); large-half64 no-go stands (ncu-v2).
