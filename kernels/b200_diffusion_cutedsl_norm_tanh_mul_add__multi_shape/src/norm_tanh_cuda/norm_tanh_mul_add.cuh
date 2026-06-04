@@ -89,9 +89,16 @@ SGL_DEVICE float cta_reduce_sum_f32(float value, float* smem) {
   return smem[kNumWarps];
 }
 
+// Cap registers so several CTAs fit per SM: at 48 regs/thread the 480-thread
+// production block dropped to 2 CTAs/SM (40% occupancy) and went latency-bound
+// (NCU evidence, round 0). 4 CTAs x 512 threads = 2048 = SM thread limit.
+template <uint32_t kThreads>
+inline constexpr uint32_t kMinBlocksPerSmHint = kThreads <= 512 ? 4 : (kThreads <= 1024 ? 2 : 1);
+
 template <int64_t kD, int32_t kRowsPerCta, bool kIsRms, bool kHasAffine, bool kSecondNorm, bool kUsePDL,
           typename DType>
-__global__ void norm_tanh_modulation_kernel(const NormTanhModulationParams __grid_constant__ params) {
+__global__ void __launch_bounds__(kD / kVecElems, kMinBlocksPerSmHint<kD / kVecElems>)
+    norm_tanh_modulation_kernel(const NormTanhModulationParams __grid_constant__ params) {
   using namespace device;
 
   constexpr uint32_t kThreads = kD / kVecElems;
