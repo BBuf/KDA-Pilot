@@ -154,7 +154,7 @@ def parse_production():
             parts.append(_tag(sp["weight"], "w"))
         parts.append(_tag(sp["scale"], "s"))
         parts.append(_tag(sp["shift"], "s"))
-        parts.append(f"eps{entry['eps']:g}".replace("e-0", "e-0"))
+        parts.append(f"eps{entry['eps']:g}")
         workload_id = "-".join(p for p in parts if p)
         atol, rtol = _tolerance(
             sp["x"]["dtype"],

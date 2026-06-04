@@ -23,8 +23,8 @@ runs ``--mode probes`` as its own process.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
-import math
 import sys
 import traceback
 from pathlib import Path
@@ -159,7 +159,7 @@ def run_case(function: str, inputs: dict, tol: float, *, sides=("baseline", "can
 
 
 def _seed_for(case_id: str, seed: int) -> None:
-    component = int.from_bytes(__import__("hashlib").sha256(case_id.encode()).digest()[:2], "little")
+    component = int.from_bytes(hashlib.sha256(case_id.encode()).digest()[:2], "little")
     torch.manual_seed(seed + component)
     torch.cuda.manual_seed_all(seed + component)
 
