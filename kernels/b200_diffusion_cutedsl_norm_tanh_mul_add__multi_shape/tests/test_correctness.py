@@ -167,6 +167,32 @@ def make_cases() -> list[dict[str, Any]]:
                                     "iters": 20,
                                 }
                             )
+    # Independent scale/shift layout combinations (modes intentionally untied).
+    B, S, _F, D = _GRID_SHAPES[1]
+    for variant in ("v1", "v2"):
+        for mode_scale, mode_shift in (
+            ("11D", "BSD"), ("B1D", "1SD"), ("1SD", "11D"), ("BSD", "B1D"),
+        ):
+            cases.append(
+                {
+                    "name": f"mix__{variant}__B{B}_S{S}_D{D}__bf16_rms_{mode_scale}sc_{mode_shift}sh",
+                    "variant": variant,
+                    "B": B,
+                    "S": S,
+                    "D": D,
+                    "dtype": "bfloat16",
+                    "norm_type": "rms",
+                    "affine": "weighted",
+                    "mode_scale": mode_scale,
+                    "mode_shift": mode_shift,
+                    "eps": _EPS,
+                    "atol": 5e-2,
+                    "rtol": 5e-2,
+                    "bench": False,
+                    "warmup": 5,
+                    "iters": 20,
+                }
+            )
     return cases
 
 
@@ -280,16 +306,17 @@ def candidate(case: dict[str, Any]) -> Any:
 def _norm_f32(xf, weight, bias, norm_type: str, eps: float):
     if norm_type == "rms":
         n = xf * torch.rsqrt(xf.pow(2).mean(dim=-1, keepdim=True) + eps)
+        # Baseline rms applies weight only; a provided bias is IGNORED.
         if weight is not None:
             n = n * weight.float()
         return n
     mean = xf.mean(dim=-1, keepdim=True)
     var = (xf - mean).pow(2).mean(dim=-1, keepdim=True)
     n = (xf - mean) * torch.rsqrt(var + eps)
-    if weight is not None:
-        n = n * weight.float()
-        if bias is not None:
-            n = n + bias.float()
+    # Baseline layer norm applies affine only when BOTH weight and bias are
+    # tensors; one-sided affine degrades to plain normalization.
+    if weight is not None and bias is not None:
+        n = n * weight.float() + bias.float()
     return n
 
 
@@ -402,10 +429,17 @@ def test_baseline_matches_reference() -> None:
     assert not failures, "baseline-vs-reference failures:\n" + "\n".join(failures[:20])
 
 
-def test_candidate_matches_baseline_and_reference() -> None:
+def test_candidate_matches_baseline_and_reference(monkeypatch) -> None:
     """Candidate wrapper vs baseline copy and fp32 oracle, with the dynamic
-    quantization-noise bound, on every configured case."""
+    quantization-noise bound, on every configured case.
 
+    When the native module is available, ``KDA_REQUIRE_CANDIDATE=1`` is forced
+    for the whole run: every configured case is native-eligible by design, so
+    the native path itself is what gets validated — a silent fallback cannot
+    make this test pass."""
+
+    if _register_module().native_available():
+        monkeypatch.setenv("KDA_REQUIRE_CANDIDATE", "1")
     cases = make_cases()
     failures = []
     for case in cases:
@@ -585,7 +619,149 @@ def test_wrong_eps_probe_detects_mismatch() -> None:
     _release(case)
 
 
-def test_correctness_cases() -> None:
+def _edge_tensors(B=1, S=64, D=1024, dtype=torch.bfloat16, seed=123):
+    gen = torch.Generator(device="cuda")
+    gen.manual_seed(seed)
+
+    def rand(shape, offset=0.0, sc=1.0):
+        t = torch.randn(shape, generator=gen, device="cuda", dtype=torch.float32)
+        return (t * sc + offset).to(dtype).contiguous()
+
+    return {
+        "x": rand((B, S, D)),
+        "w": rand((D,), offset=1.0, sc=0.2),
+        "b": rand((D,), sc=0.2),
+        "w2": rand((D,), offset=1.0, sc=0.2),
+        "scale": rand((1, 1, D)),
+        "shift": rand((1, S, D)),
+        "scale2": rand((1, 1, D)),
+    }
+
+
+def test_affine_edge_semantics() -> None:
+    """Baseline applies layer affine only when BOTH weight and bias are
+    tensors, and rms ignores bias entirely. Candidate must reproduce this for
+    one-sided / extraneous affine arguments."""
+
+    t = _edge_tensors()
+    base_mod = _baseline_module()
+    reg = _register_module()
+    edge_cases = [
+        ("layer_weight_only_degrades_to_plain", "layer", t["w"], None),
+        ("layer_bias_only_degrades_to_plain", "layer", None, t["b"]),
+        ("rms_bias_is_ignored", "rms", t["w"], t["b"]),
+    ]
+    for name, norm_type, w, b in edge_cases:
+        ref_n = _norm_f32(t["x"].float(), w, b, norm_type, _EPS)
+        ref_n = ref_n.to(t["x"].dtype).float()
+        ref = (ref_n * torch.tanh(t["scale"].float()) + t["shift"].float()).to(t["x"].dtype)
+        out_base = base_mod.fused_norm_tanh_mul_add(
+            t["x"], w, b, t["scale"], t["shift"], norm_type, _EPS
+        )
+        out_cand = reg.optimized_wrapper(
+            t["x"], w, b, t["scale"], t["shift"], norm_type, _EPS
+        )
+        torch.testing.assert_close(
+            out_base.float(), ref.float(), atol=5e-2, rtol=5e-2,
+            msg=lambda m, n=name: f"{n} baseline-vs-ref: {m}",
+        )
+        torch.testing.assert_close(
+            out_cand.float(), out_base.float(), atol=5e-2, rtol=5e-2,
+            msg=lambda m, n=name: f"{n} candidate-vs-baseline: {m}",
+        )
+
+
+def test_second_norm_affine_pattern_routing(monkeypatch) -> None:
+    """v2 with MATCHING effective affine patterns is native-eligible; a
+    differing pattern (public-valid) must fall back to the baseline without
+    the guard and raise under KDA_REQUIRE_CANDIDATE=1."""
+
+    t = _edge_tensors()
+    base_mod = _baseline_module()
+    reg = _register_module()
+
+    args_match = (
+        t["x"], t["w"], None, t["scale"], t["shift"], t["w2"], None, t["scale2"], "rms", _EPS,
+    )
+    out_base = base_mod.fused_norm_tanh_mul_add_norm_scale(*args_match)
+    out_cand = reg.optimized_wrapper(*args_match)
+    for i, (c, b) in enumerate(zip(out_cand, out_base)):
+        torch.testing.assert_close(
+            c.float(), b.float(), atol=5e-2, rtol=5e-2,
+            msg=lambda m, j=i: f"match-pattern out[{j}]: {m}",
+        )
+
+    # weight present for norm1, absent for norm2: effective patterns differ.
+    args_diff = (
+        t["x"], t["w"], None, t["scale"], t["shift"], None, None, t["scale2"], "rms", _EPS,
+    )
+    out_base2 = base_mod.fused_norm_tanh_mul_add_norm_scale(*args_diff)
+    out_cand2 = reg.optimized_wrapper(*args_diff)  # falls back, must match
+    for i, (c, b) in enumerate(zip(out_cand2, out_base2)):
+        torch.testing.assert_close(
+            c.float(), b.float(), atol=5e-2, rtol=5e-2,
+            msg=lambda m, j=i: f"diff-pattern out[{j}]: {m}",
+        )
+    monkeypatch.setenv("KDA_REQUIRE_CANDIDATE", "1")
+    with pytest.raises(RuntimeError, match="KDA_REQUIRE_CANDIDATE"):
+        reg.optimized_wrapper(*args_diff)
+
+
+def test_fallback_valid_signatures(monkeypatch) -> None:
+    """Public-valid but native-ineligible inputs: without the guard the
+    candidate must behave exactly like the baseline (same outputs or the same
+    exception type); with the guard it must raise RuntimeError."""
+
+    B, S, D = 1, 32, 512
+    t = _edge_tensors(B=B, S=S, D=D)
+    base_mod = _baseline_module()
+    reg = _register_module()
+
+    arr = torch.randn(B * S * D + 4, device="cuda", dtype=torch.bfloat16)
+    x_misaligned = arr[4:4 + B * S * D].view(B, S, D)  # base offset 8 bytes
+
+    wide = torch.randn(1, S, D + 4, device="cuda", dtype=torch.bfloat16)
+    scale_odd_stride = wide[:, :, :D]  # [1, S, D], seq stride D+4 (not 8-aligned)
+
+    fallback_args = {
+        "mixed_dtype_scale": (
+            t["x"], t["w"], None, t["scale"].to(torch.float16), t["shift"], "rms", _EPS,
+        ),
+        "misaligned_x_base": (
+            x_misaligned, t["w"], None, t["scale"], t["shift"], "rms", _EPS,
+        ),
+        "scale_outer_stride_unaligned": (
+            t["x"], t["w"], None, scale_odd_stride, t["shift"], "rms", _EPS,
+        ),
+    }
+    for name, args in fallback_args.items():
+        base_exc, cand_exc = None, None
+        out_base = out_cand = None
+        try:
+            out_base = base_mod.fused_norm_tanh_mul_add(*args)
+        except Exception as exc:  # noqa: BLE001 - behavior comparison
+            base_exc = type(exc)
+        try:
+            out_cand = reg.optimized_wrapper(*args)
+        except Exception as exc:  # noqa: BLE001
+            cand_exc = type(exc)
+        assert (base_exc is None) == (cand_exc is None), (
+            f"{name}: baseline {base_exc} vs candidate {cand_exc}"
+        )
+        if base_exc is not None:
+            assert cand_exc is base_exc, f"{name}: exception type mismatch"
+        else:
+            torch.testing.assert_close(
+                out_cand.float(), out_base.float(), atol=5e-2, rtol=5e-2,
+                msg=lambda m, n=name: f"{n}: {m}",
+            )
+        monkeypatch.setenv("KDA_REQUIRE_CANDIDATE", "1")
+        with pytest.raises(RuntimeError, match="KDA_REQUIRE_CANDIDATE"):
+            reg.optimized_wrapper(*args)
+        monkeypatch.delenv("KDA_REQUIRE_CANDIDATE")
+
+
+def test_correctness_cases(monkeypatch) -> None:
     """Scaffold-compat entry point: candidate vs baseline on all cases."""
 
-    test_candidate_matches_baseline_and_reference()
+    test_candidate_matches_baseline_and_reference(monkeypatch)

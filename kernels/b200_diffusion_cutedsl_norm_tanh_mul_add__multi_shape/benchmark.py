@@ -6,9 +6,13 @@ candidate dispatcher (``src/register.py``) on the captured production shapes
 (cases with ``bench=True`` in ``tests/test_correctness.py``).
 
 Methodology (per the task contract):
-- CUDA-event timing (device timeline) PLUS wall-clock timing with per-call
-  synchronization; ``host_overhead ~= wall_median - device_median`` gives the
-  device-vs-host decomposition for every claim.
+- Wall-clock timing with per-call synchronization is the END-TO-END channel
+  (raw-callable layer, host cost included on both sides).
+- CUDA-event bracket timing is a DIAGNOSTIC channel only: the CuTe-DSL
+  baseline's tvm-ffi host path serializes inside the bracket, so its event
+  numbers overstate device time (baseline-pessimistic). The authoritative
+  device-only decomposition comes from NCU kernel durations collected with
+  identical launch-skip/count discipline (see profile/ and solutions.jsonl).
 - Same-process, interleaved A/B: baseline and candidate alternate within one
   loop, alternating call order every iteration, identical allocation policy
   (both allocate outputs internally via ``torch.empty_like``).

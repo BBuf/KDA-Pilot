@@ -35,7 +35,7 @@ if str(_KERNEL_DIR) not in sys.path:
 
 _SUPPORTED_DTYPES = ("torch.float16", "torch.bfloat16", "torch.float32")
 _NORM_TYPES = ("layer", "rms")
-_VECTOR_ALIGN_BYTES = 16  # 128-bit vectorized load/store requirement
+_VECTOR_ELEMS = 8  # one thread owns 8 elements; row starts must stay vector-aligned
 
 _fast_path_hit_count = 0
 _fallback_hit_count = 0
@@ -143,6 +143,15 @@ def _is_weight_like(t, D: int) -> bool:
     return t is None or (t.ndim == 1 and t.shape == (D,) and t.stride(-1) == 1)
 
 
+def _effective_affine(weight, bias, norm_type: str) -> bool:
+    """Baseline affine semantics: rms uses weight only (bias ignored); layer
+    applies affine only when BOTH weight and bias are tensors."""
+
+    if norm_type == "rms":
+        return weight is not None
+    return weight is not None and bias is not None
+
+
 def _fast_path_reject_reason(p: dict) -> Optional[str]:
     """Return None when the native fast path can handle this call."""
 
@@ -162,8 +171,9 @@ def _fast_path_reject_reason(p: dict) -> Optional[str]:
     B, S, D = x.shape
     if D % 256 != 0 or D > 8192:
         return f"D={D} outside contract (D % 256 == 0 and D <= 8192)"
-    if x.stride(-1) != 1:
-        return "x last dim not contiguous"
+    if not x.is_contiguous():
+        return "x is not contiguous"
+    vec_bytes = _VECTOR_ELEMS * x.element_size()
     tensor_keys = ["scale", "shift"] + (["scale2"] if p["variant"] == "v2" else [])
     weight_keys = ["weight", "bias"] + (
         ["weight2", "bias2"] if p["variant"] == "v2" else []
@@ -178,6 +188,10 @@ def _fast_path_reject_reason(p: dict) -> Optional[str]:
             return f"{key} dtype {t.dtype} != x dtype {x.dtype}"
         if not t.is_cuda or t.device != x.device:
             return f"{key} not on {x.device}"
+        # Rows accessed via effective strides must stay vector-aligned.
+        for dim in (0, 1):
+            if t.shape[dim] != 1 and t.stride(dim) % _VECTOR_ELEMS != 0:
+                return f"{key} stride({dim})={t.stride(dim)} not a multiple of {_VECTOR_ELEMS}"
     for key in weight_keys:
         t = p[key]
         if t is None:
@@ -188,10 +202,14 @@ def _fast_path_reject_reason(p: dict) -> Optional[str]:
             return f"{key} dtype {t.dtype} != x dtype {x.dtype}"
         if not t.is_cuda or t.device != x.device:
             return f"{key} not on {x.device}"
+    if p["variant"] == "v2" and _effective_affine(
+        p["weight2"], p["bias2"], p["norm_type"]
+    ) != _effective_affine(p["weight"], p["bias"], p["norm_type"]):
+        return "second-norm effective affine pattern differs from the first norm"
     for key in ["x"] + tensor_keys + weight_keys:
         t = p[key]
-        if t is not None and t.data_ptr() % _VECTOR_ALIGN_BYTES != 0:
-            return f"{key} base pointer not {_VECTOR_ALIGN_BYTES}-byte aligned"
+        if t is not None and t.data_ptr() % vec_bytes != 0:
+            return f"{key} base pointer not {vec_bytes}-byte aligned"
     if not native_available():
         return native_load_error() or "native module unavailable"
     return None

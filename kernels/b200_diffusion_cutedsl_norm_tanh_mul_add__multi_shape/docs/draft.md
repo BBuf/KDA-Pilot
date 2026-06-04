@@ -66,3 +66,20 @@ CUDA device + dtype ∈ {bf16, fp16, fp32} + `norm_type` ∈ {layer, rms} + x/sc
 `D % 256 == 0 && D <= 8192` + 16-byte-aligned base pointers (128-bit path). Non-3-D
 scale/shift layouts (modes `1, D, 1D, BD, BF1D`) are REJECTED by the public contract
 (`validate_3d` upstream) — candidate reproduces the same ValueError behavior.
+
+## Addendum (post-baseline-freeze evidence, round 0)
+
+Frozen baseline (CUDA-event interleaved, B200 GPU0, commit 3957e12df): v1 73.1/72.0 µs,
+v2 86.4/88.4 µs (S=4096/4128); wall-synced 82-112 µs. NCU `--set basic` on v1 S=4096
+(profile/baseline_r0_sol/): duration **43.3 µs**, Compute(SM) **67-68%**, DRAM **24%**,
+grid 4096 × 480 thr, 32 regs, occupancy 80.6%.
+
+Evidence-driven re-ranking:
+1. The baseline is COMPUTE-bound (not memory-bound as assumed a priori): R1 (hoist
+   row-invariant `tanh(scale)`) is now the top lever, expected to flip the kernel to
+   memory-bound; combined with R2 (multi-row CTA) the device floor ~13.5/18 µs becomes
+   reachable (potential ~2.5-3x device win).
+2. Timing-methodology caveat: event-bracketed baseline time (73 µs) > NCU kernel time
+   (43 µs) — the CuTe tvm-ffi host path serializes inside the event bracket. Device-only
+   claims use NCU kernel durations; end-to-end claims use the wall-synced numbers; both
+   are reported and decomposed.
