@@ -23,8 +23,8 @@ the second norm). The frozen CuTe-DSL baseline lives in ``baseline/``.
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
-import math
 import os
 import sys
 from pathlib import Path
@@ -213,7 +213,9 @@ def _materialize(case: dict[str, Any]) -> dict[str, Any]:
     B, S, D = case["B"], case["S"], case["D"]
     dtype = _torch_dtype(case["dtype"])
     gen = torch.Generator(device="cuda")
-    gen.manual_seed(abs(hash(case["name"])) % (2**31))
+    # Stable digest-derived seed: identical tensor data across processes/runs
+    # (Python's hash() is process-randomized and would break exact replay).
+    gen.manual_seed(int.from_bytes(hashlib.sha256(case["name"].encode()).digest()[:4], "little"))
 
     def rand(shape, *, offset=0.0, scale_=1.0):
         t = torch.randn(shape, generator=gen, device="cuda", dtype=torch.float32)
