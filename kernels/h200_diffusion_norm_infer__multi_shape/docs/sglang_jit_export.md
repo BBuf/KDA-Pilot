@@ -7,7 +7,36 @@
 > evidence, superseded** (kernel-pilot rule change `cc17c1149`). The promotion
 > arbiter is now the in-SGLang dispatch-symmetric A/B below.
 
-## Promotion arbiter (PASS) — in-tree dispatch-symmetric env-toggle A/B
+## PR-facing benchmark — vs sglang MAIN (`8933ec8772`)
+
+Per the standing ruling (PR baseline = sglang main, never a container pin),
+the promotion numbers below were re-anchored against an origin/main worktree
+(`git fetch origin main` → task-owned detached worktree → everything resolved
+with the worktree first on `PYTHONPATH`). The baseline slice has ZERO drift
+between the loop's container pin `84e1108312` and main `8933ec8772`
+(`norm.py`, `rmsnorm_onepass.py`, `custom_op.py` byte-identical; only
+`jit_kernel/utils.py` gained a JIT source-hash cache improvement), so the
+4-file shipping patch is byte-identical against either tree.
+
+| shape | main wall/dev (us) | native wall/dev (us) | wall x | dev-rate x |
+|---|---|---|---|---|
+| helios fp32 [8640,5120] | 111.19 / 90.92 | 100.09 / 89.18 | 1.111 | 1.020 |
+| hunyuan bf16 [648720,128] | 108.48 / 81.83 | 95.28 / 81.02 | 1.139 | 1.010 |
+| hunyuan bf16 [1320,128] | 32.61 / 24.87 | 17.45 / 11.28 | 1.869 | 2.205 |
+| hunyuan bf16 [650040,128] | 108.76 / 82.28 | 95.51 / 81.25 | 1.139 | 1.013 |
+| zimage bf16 [16384,128] | 32.67 / 24.76 | 17.72 / 11.26 | 1.844 | 2.199 |
+| zimage bf16 [4096,128] | 32.23 / 24.89 | 17.39 / 11.35 | 1.853 | 2.194 |
+| **geomean** | | | **1.4475** | 1.493 |
+
+Same methodology as the pin-anchored arbiter below (2 alternated off/on
+process pairs, idle-gated, wall = per-call median, dev = stream-saturated
+batched rate). On the main worktree: oracle **288/288** with native ON (and
+OFF), all fallback/compile probes pass, and the workspace regression suite is
+**405/405** with `PYTHONPATH` resolving sglang from main. Raw artifacts:
+`arbiter_main_{off,on}_{1,2}.json` under `REMOTE_KDA_DIR`; ledger rows:
+`benchmark.csv` `mode=intree_arbiter_vs_main*`.
+
+## Promotion arbiter (PASS) — in-tree dispatch-symmetric env-toggle A/B (loop evidence vs container pin `84e1108312`)
 
 - **Mechanism**: ONE patched SGLang worktree (task-owned, detached at the
   container's commit `84e1108312`: `REMOTE_KDA_DIR/sglang_arbiter`). The

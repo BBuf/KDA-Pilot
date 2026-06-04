@@ -114,6 +114,13 @@ SGLang baseline:
 > admissible under the shipping-integration rules added by kernel-pilot commit
 > `cc17c1149`.
 >
+> **PR-facing result (vs sglang MAIN `8933ec8772`, per the baseline=main
+> ruling)**: dispatch-symmetric env-toggle A/B on an origin/main worktree:
+> **wall geomean 1.4475x** (device-rate 1.493x); oracle 288/288 ON+OFF;
+> workspace suite 405/405 with sglang resolved from main. The baseline slice
+> is byte-identical between the loop's container pin and main, so the
+> shipping patch and the loop evidence below carry over unchanged.
+>
 > **Final continuation result (promotion arbiter)**: in-SGLang
 > dispatch-symmetric env-toggle A/B in ONE patched worktree @ sglang
 > `84e1108312` (native fast paths inside the byte-unchanged public op /
