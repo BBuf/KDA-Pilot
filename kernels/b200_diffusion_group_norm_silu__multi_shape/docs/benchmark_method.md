@@ -81,6 +81,29 @@
 - Correctness (`bench/correctness.py`) must be green on the selected GPU
   before any benchmark number is treated as valid.
 
+## fp32 Stress Rows (task-local hardening additions)
+
+The offset / low-variance / zero-variance stress rows in
+`bench/correctness.py` are task-local additions beyond the contract grid. On
+their fp32 variants, measured on B200 (GPU 1, 2026-06-04):
+
+- The copied upstream baseline cannot meet the fp32 contract tolerance by
+  design: `E[x^2]-E[x]^2` fp32 cancellation gives output max_abs ~9e-5 on the
+  offset row and ~2.4 on the low-variance row (variance overestimated 100x;
+  NaN possible since upstream does not clamp negative variance), and its
+  sigmoid implementation class differs from the torch oracle by ~3e-5 on the
+  zero-variance row. Baseline results on these three fp32 rows are therefore
+  recorded as INFO (known upstream limitation), not suite failures.
+- The candidate IS strictly gated on all stress rows. Its generic fp32 path
+  accumulates in double (production 16-bit paths keep fp32 accumulation, the
+  same numerics class as the baseline). Two fp32 rows carry documented atol
+  overrides because no fp32 implementation pair can do better: low-variance
+  atol 2e-3 (1-ulp fp32 mean disagreement amplified by rstd ~1e3; candidate
+  measured 4.95e-4 vs baseline 2.4) and zero-variance atol 1e-4 (pure fp32
+  silu-implementation-class difference, candidate measured ~3e-5).
+- Production rows (fp16) and the canonical contract grid are gated at
+  unmodified contract tolerances on BOTH sides.
+
 ## Cache-State Policy
 
 - Within a trial the same tensors are reused back-to-back (steady-state,
