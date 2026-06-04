@@ -67,6 +67,38 @@ smem staging of x (register path already minimal); persistent grid for huge R
 
 ## Round log
 
-- Round 0: baseline recovered (commit edb1b3f8f5, parity check vs snapshot),
-  39 unique signatures mapped, directions ranked. Next: harnesses → candidate
-  v1 (D1+D2) → benchmark → ncu on surprises.
+- Round 0 / step 1: baseline recovered (commit edb1b3f8f5, parity 39/39
+  bitwise), 39 unique signatures mapped, directions ranked.
+- Round 0 / step 2 (D1+D2 implemented): candidate v1 = row-per-CTA, 256-bit
+  vectors (16xbf16/thread, block=D/16), fp32 single-pass fused sum+sumsq with
+  clamp (two-pass behind a flag), operand classes scalar/row/per-token, fp32
+  [D] affine path, fused residual+gate, fail-closed dispatcher. Correctness:
+  117 passed candidate-mode, zero fallbacks on production. Benchmark r0-v1:
+  geomean over 39 unique signatures **1.7037x endtoend / 1.5985x
+  device-events**. Real device wins on stream-saturated huge rows (mova
+  176400x5120: 1061->733us ≈ 4.9 TB/s vs baseline 3.4); tiny rows are
+  host-issue-bound (95->39us end-to-end dominated by wrapper path, device-event
+  numbers there measure stream-span incl. issue starvation, not kernel time).
+  Surprises queued for ncu: (a) per-token fp32 scale/shift rows
+  (helios 11040x5120: candidate device-events 113.1 vs baseline 104.8us);
+  (b) huge-row bandwidth at ~61% of peak — what limits?
+  Context refresh: no new KernelWiki query needed (direction list unchanged);
+  ncu round 1 launched per the skill workflow (profile/r0v1-*).
+- Round 0 / step 3 (Codex audit + ncu round 1 -> v2): Codex audit verdicts and
+  dispositions — (1) single-pass variance contract deviation: ACCEPTED, flipped
+  TWO_PASS_VARIANCE=True (contract-exact; fused form kept as documented A/B
+  lever only); (2) missing is_cuda/device guards in operand classification:
+  ACCEPTED, added same-device checks; (3) S=0 reaching native: ACCEPTED, added
+  numel()>0; (4) srnss scale=None AttributeError: ACCEPTED, non-tensor
+  scale/shift now falls back so the baseline raises its own validation error;
+  (5) custom-op registration "not preserved": CLARIFIED — the in-tree export
+  (the promotion arbiter) keeps SGLang's own registration; ADDITIONALLY added a
+  local `kda_nss::*` custom-op layer (shipping_entry_points) so the local A/B
+  compares candidate and baseline through IDENTICAL host stacks (the benchmark
+  now defaults to it); (6) srnss reference missing pre-norm cast: ACCEPTED,
+  reference now contract-exact; (7) adversarial high-mean + cpu-operand +
+  empty-rows + scale-None probes: ADDED (correctness v2: 121 passed).
+  NCU round 1 findings -> v2 edit: fp32-operand combos now build with
+  kVecBytes=16 (8 elems/thread, block=D/8) after candidate occupancy 41% /
+  long_scoreboard 16.4 vs baseline occ 82% on the token-fp32 case; bf16-only
+  combos keep kVecBytes=32. Reports: profile/r0v1-*/REPORT.md.

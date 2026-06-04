@@ -231,3 +231,79 @@ def test_snapshot_only_guard() -> None:
     """No real SGLang modules may be imported during harness runs."""
     lib = _correctness()
     lib.snapshot_guard()
+
+
+def test_high_mean_low_variance_rows() -> None:
+    """Adversarial layer-norm statistics: large mean, small variance.
+
+    bf16 inputs cap the representable mean/std ratio (ulp(16)=0.125), but this
+    still exercises the variance path where a fused E[x^2]-mean^2 form loses
+    precision; the shipped two-pass form must track the fp32 reference within
+    the dynamic bound.
+    """
+    lib = _correctness()
+    nss, _ = lib.implementations(IMPL)
+    gen = torch.Generator(device="cuda")
+    gen.manual_seed(11)
+    x = (
+        16.0
+        + 0.5 * torch.randn(1, 256, 3072, generator=gen, device="cuda", dtype=torch.float32)
+    ).to(torch.bfloat16)
+    sc = (
+        torch.randn(1, 1, 3072, generator=gen, device="cuda", dtype=torch.float32) * 0.5
+    ).to(torch.bfloat16)
+    out = nss(x, None, None, sc, sc, "layer", 1e-6)
+    base = lib.implementations("baseline")[0](x, None, None, sc, sc, "layer", 1e-6)
+    ref = lib.reference_norm_scale_shift(x, None, None, sc, sc, "layer", 1e-6)
+    lib.assert_outputs_close("high-mean-low-var", out, base, ref)
+
+
+def test_cpu_operand_falls_back() -> None:
+    """A CPU scale/shift must never reach the native path (fail-closed)."""
+    if IMPL != "candidate":
+        pytest.skip("dispatch assertion applies to the candidate wrapper")
+    lib = _correctness()
+    reg = lib.candidate_register()
+    nss, _ = lib.implementations("candidate")
+    stats = reg.dispatch_stats()
+    before_native = stats.get("native", 0)
+    x = torch.randn(1, 64, 3072, device="cuda", dtype=torch.bfloat16)
+    sc_cpu = torch.zeros(1, 1, 3072, dtype=torch.bfloat16)  # cpu tensor
+    try:
+        nss(x, None, None, sc_cpu, sc_cpu, "layer", 1e-5)
+    except Exception:
+        pass  # whatever the baseline does with cpu operands is its contract
+    assert stats.get("native", 0) == before_native, "cpu operand took native path"
+
+
+def test_empty_rows_falls_back() -> None:
+    """S=0 activations must never reach the native path."""
+    if IMPL != "candidate":
+        pytest.skip("dispatch assertion applies to the candidate wrapper")
+    lib = _correctness()
+    reg = lib.candidate_register()
+    nss, _ = lib.implementations("candidate")
+    stats = reg.dispatch_stats()
+    before_native = stats.get("native", 0)
+    x = torch.empty(1, 0, 3072, device="cuda", dtype=torch.bfloat16)
+    sc = torch.zeros(1, 1, 3072, device="cuda", dtype=torch.bfloat16)
+    try:
+        nss(x, None, None, sc, sc, "layer", 1e-5)
+    except Exception:
+        pass  # baseline behavior for empty rows is its own contract
+    assert stats.get("native", 0) == before_native, "empty rows took native path"
+
+
+def test_non_tensor_scale_falls_back() -> None:
+    """scale=None must route to the baseline's own validation, not crash the wrapper."""
+    if IMPL != "candidate":
+        pytest.skip("dispatch assertion applies to the candidate wrapper")
+    lib = _correctness()
+    reg = lib.candidate_register()
+    _, srnss = lib.implementations("candidate")
+    stats = reg.dispatch_stats()
+    before_native = stats.get("native", 0)
+    x = torch.randn(1, 64, 3072, device="cuda", dtype=torch.bfloat16)
+    with pytest.raises(Exception):
+        srnss(x.clone(), x, None, None, None, None, None, "layer", 1e-5)
+    assert stats.get("native", 0) == before_native

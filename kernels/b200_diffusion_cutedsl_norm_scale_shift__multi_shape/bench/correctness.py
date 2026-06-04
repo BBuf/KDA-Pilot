@@ -125,8 +125,11 @@ def reference_scale_residual_norm_scale_shift(
         else:
             xf = gf * xf
     res_out = residual.float() + xf
-    y = _norm_f32(res_out, weight, bias, norm_type, eps)
-    return _apply_scale_shift_f32(y, scale, shift), res_out
+    # Contract-exact: the baseline rounds the pre-norm value to x.dtype before
+    # normalization (res_out stores the rounded value; the norm consumes it).
+    norm_input = res_out.to(x.dtype).float()
+    y = _norm_f32(norm_input, weight, bias, norm_type, eps)
+    return _apply_scale_shift_f32(y, scale, shift), norm_input
 
 
 # ---------------------------------------------------------------------------

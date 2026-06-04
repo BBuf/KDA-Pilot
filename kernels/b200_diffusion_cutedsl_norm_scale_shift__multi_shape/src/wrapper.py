@@ -21,7 +21,7 @@ import importlib.util
 import sys
 from collections import Counter
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Tuple
 
 import torch
 
@@ -31,8 +31,22 @@ _CUH = _THIS_DIR / "csrc" / "norm_scale_shift.cuh"
 
 # Tuning levers (benchmark/profile-driven; see docs/draft.md direction table).
 USE_PDL = False          # validated separately; pilot evidence says default off
-TWO_PASS_VARIANCE = False  # single-pass fused stats by default
-VEC_BYTES = 32           # 256-bit vectors on Blackwell
+# Layer-norm statistics algorithm. True = two-pass mean-then-variance (the
+# baseline's exact, contract-mandated form) — SHIPPED CONFIG. False = the
+# single-round Welford/Chan merge: numerically robust, but benchmark run
+# r2-v3 measured it SLOWER than two-pass (geomean 1.16x vs 1.31x; the 3-float
+# merge with a division in the dependent shuffle chain outweighs the saved
+# reduction round), so it stays available only as a documented rejected lever.
+TWO_PASS_VARIANCE = True
+# Per-combo vector width (bytes of activation data per thread):
+# - bf16-only operand combos: 32B (16 elems/thread, block = D/16);
+# - combos with any fp32 operand stream (per-token/broadcast scale/shift,
+#   fp32 gate, fp32 weight/bias): 16B (8 elems/thread, block = D/8). NCU round
+#   r0v1 showed fp32 streams at 16 elems/thread cost 52 regs -> 41% occupancy
+#   and long_scoreboard 16% (vs CuTe baseline 82% occ); halving the per-thread
+#   footprint restores latency hiding.
+VEC_BYTES_BF16 = 32
+VEC_BYTES_FP32_OPERANDS = 16
 
 _BF16 = torch.bfloat16
 _FP32 = torch.float32
@@ -87,7 +101,9 @@ def _aligned(t: torch.Tensor) -> bool:
     return t.data_ptr() % _ALIGN == 0
 
 
-def _classify_operand(t: Optional[torch.Tensor], B: int, S: int, D: int):
+def _classify_operand(
+    t: Optional[torch.Tensor], B: int, S: int, D: int, device: torch.device
+):
     """Return (class_name, canonical_view) or None if not natively supported.
 
     Classes: "absent" (None), "scalar" ([1]), "row" ([D] broadcast across all
@@ -97,6 +113,8 @@ def _classify_operand(t: Optional[torch.Tensor], B: int, S: int, D: int):
     if t is None:
         return "absent", None
     if not isinstance(t, torch.Tensor) or t.dtype not in (_BF16, _FP32):
+        return None
+    if not t.is_cuda or t.device != device:
         return None
     if t.ndim >= 1 and t.stride(-1) != 1:
         return None
@@ -133,19 +151,19 @@ def _activation_ok(t: torch.Tensor, D: int) -> bool:
         and t.is_cuda
         and t.dtype == _BF16
         and t.ndim == 3
+        and t.numel() > 0
         and t.is_contiguous()
         and _aligned(t)
         and t.shape[-1] == D
     )
 
 
-def _geometry_ok(D: int) -> bool:
-    elems = VEC_BYTES // 2  # bf16 activations
-    block = D // elems
+def _geometry_ok(D: int, vec_bytes: int) -> bool:
+    elems = vec_bytes // 2  # bf16 activations
+    block = D // elems if D % elems == 0 else 0
     return (
         D % 256 == 0
         and D <= 8192
-        and D % elems == 0
         and block % 32 == 0
         and 32 <= block <= 1024
     )
@@ -160,49 +178,63 @@ _CLS = {"absent": 0, "scalar": 1, "row": 2, "token": 3}
 _CPP_DT = {_BF16: "bf16_t", _FP32: "fp32_t"}
 
 
-def _flags() -> str:
+def _combo_vec_bytes(sc_dtype, gate_dtype, has_wb) -> int:
+    """Any fp32 operand stream halves the per-thread footprint (see above)."""
+    if sc_dtype == _FP32 or gate_dtype == _FP32 or has_wb:
+        return VEC_BYTES_FP32_OPERANDS
+    return VEC_BYTES_BF16
+
+
+def _flags(vec_bytes: int) -> str:
     tp = "true" if TWO_PASS_VARIANCE else "false"
     pdl = "true" if USE_PDL else "false"
-    return f"false, {tp}, {pdl}, {VEC_BYTES}"  # kIsRms=false (layer-only v1)
+    return f"false, {tp}, {pdl}, {vec_bytes}"  # kIsRms=false (layer-only v1)
 
 
 def _wrapper_table():
-    f = _flags()
     t = {}
+
+    def flags(key):
+        return _flags(_combo_vec_bytes(key[2], key[4], key[5]))
+
     # (entry, sc_class, sc_dtype, gate_class, gate_dtype, has_wb) -> (export, symbol)
     for sc_class in ("row", "token"):
         for sc_dt in (_BF16, _FP32):
+            key = ("nss", sc_class, sc_dt, "absent", None, False)
             name = f"nss_{sc_class}_{_CPP_DT[sc_dt][:-2]}"
             sym = (
                 f"{_NS}::NormScaleShiftKernel<bf16_t, {_CPP_DT[sc_dt]}, "
-                f"{_CLS[sc_class]}, {f}>::run"
+                f"{_CLS[sc_class]}, {flags(key)}>::run"
             )
-            t[("nss", sc_class, sc_dt, "absent", None, False)] = (name, sym)
+            t[key] = (name, sym)
     # srnss, no weight/bias
-    t[("srnss", "row", _BF16, "row", _BF16, False)] = (
+    key = ("srnss", "row", _BF16, "row", _BF16, False)
+    t[key] = (
         "srnss_grow_bf16_row_bf16",
         f"{_NS}::ScaleResidualNormScaleShiftKernel<bf16_t, bf16_t, bf16_t, "
-        f"{_CLS['row']}, {_CLS['row']}, {f}>::run",
+        f"{_CLS['row']}, {_CLS['row']}, {flags(key)}>::run",
     )
     for sc_class, sc_dt, export in (
         ("row", _BF16, "srnss_gnone_row_bf16"),
         ("row", _FP32, "srnss_gnone_row_fp32"),
         ("token", _FP32, "srnss_gnone_token_fp32"),
     ):
-        t[("srnss", sc_class, sc_dt, "absent", None, False)] = (
+        key = ("srnss", sc_class, sc_dt, "absent", None, False)
+        t[key] = (
             export,
             f"{_NS}::ScaleResidualNormScaleShiftKernel<bf16_t, bf16_t, "
-            f"{_CPP_DT[sc_dt]}, {_CLS['absent']}, {_CLS[sc_class]}, {f}>::run_nogate",
+            f"{_CPP_DT[sc_dt]}, {_CLS['absent']}, {_CLS[sc_class]}, {flags(key)}>::run_nogate",
         )
     # srnss with fp32 [D] weight/bias (wan family): scalar bf16 scale/shift
     for gate_class, export in (
         ("row", "srnss_grow_fp32_wb_scalar_bf16"),
         ("token", "srnss_gtoken_fp32_wb_scalar_bf16"),
     ):
-        t[("srnss", "scalar", _BF16, gate_class, _FP32, True)] = (
+        key = ("srnss", "scalar", _BF16, gate_class, _FP32, True)
+        t[key] = (
             export,
             f"{_NS}::ScaleResidualNormScaleShiftAffineKernel<bf16_t, fp32_t, "
-            f"fp32_t, bf16_t, {_CLS[gate_class]}, {_CLS['scalar']}, {f}>::run",
+            f"fp32_t, bf16_t, {_CLS[gate_class]}, {_CLS['scalar']}, {flags(key)}>::run",
         )
     return t
 
@@ -214,13 +246,22 @@ _MOD = None
 def _module():
     global _MOD
     if _MOD is None:
+        import os
+
         from sglang.jit_kernel.utils import load_jit  # snapshot's build stack
 
+        # Profiling-only hook (e.g. KDA_EXTRA_CUDA_CFLAGS=-lineinfo for ncu
+        # SASS->source mapping). Shipped builds never set it; the module name
+        # encodes the extra flags so profiling builds cannot shadow clean ones.
+        extra = os.environ.get("KDA_EXTRA_CUDA_CFLAGS", "").split()
+        tag = f"x{abs(hash(tuple(extra))) % 10**8}" if extra else "clean"
         _MOD = load_jit(
             "kda_nss",
             _SRC_HASH,
+            tag,
             cuda_files=[str(_CUH)],
             cuda_wrappers=sorted(set(_WRAPPERS.values())),
+            extra_cuda_cflags=extra,
             extra_include_paths=[str(_THIS_DIR / "csrc")],
         )
     return _MOD
@@ -255,11 +296,14 @@ def fused_norm_scale_shift(x, weight, bias, scale, shift, norm_type, eps=1e-5):
         _fallback("nss:contract")
         return _BASELINE_NSS(x, weight, bias, scale, shift, norm_type, eps)
     B, S, D = x.shape
-    if not (_activation_ok(x, D) and _geometry_ok(D)):
+    if not _activation_ok(x, D):
         _fallback("nss:activation")
         return _BASELINE_NSS(x, weight, bias, scale, shift, norm_type, eps)
-    sc = _classify_operand(scale, B, S, D)
-    sh = _classify_operand(shift, B, S, D)
+    if not (isinstance(scale, torch.Tensor) and isinstance(shift, torch.Tensor)):
+        _fallback("nss:operand")  # baseline raises its own validation error
+        return _BASELINE_NSS(x, weight, bias, scale, shift, norm_type, eps)
+    sc = _classify_operand(scale, B, S, D, x.device)
+    sh = _classify_operand(shift, B, S, D, x.device)
     if (
         sc is None
         or sh is None
@@ -269,7 +313,11 @@ def fused_norm_scale_shift(x, weight, bias, scale, shift, norm_type, eps=1e-5):
     ):
         _fallback("nss:operand")
         return _BASELINE_NSS(x, weight, bias, scale, shift, norm_type, eps)
-    fn = _native_fn(("nss", sc[0], scale.dtype, "absent", None, False))
+    key = ("nss", sc[0], scale.dtype, "absent", None, False)
+    if not _geometry_ok(D, _combo_vec_bytes(scale.dtype, None, False)):
+        _fallback("nss:geometry")
+        return _BASELINE_NSS(x, weight, bias, scale, shift, norm_type, eps)
+    fn = _native_fn(key)
     if fn is None:
         _fallback("nss:combo")
         return _BASELINE_NSS(x, weight, bias, scale, shift, norm_type, eps)
@@ -296,11 +344,7 @@ def fused_scale_residual_norm_scale_shift(
             residual, x, gate, weight, bias, scale, shift, norm_type, eps
         )
     B, S, D = x.shape
-    if not (
-        _activation_ok(x, D)
-        and _activation_ok(residual, D)
-        and _geometry_ok(D)
-    ):
+    if not (_activation_ok(x, D) and _activation_ok(residual, D)):
         _fallback("srnss:activation")
         return _BASELINE_SRNSS(
             residual, x, gate, weight, bias, scale, shift, norm_type, eps
@@ -325,16 +369,26 @@ def fused_scale_residual_norm_scale_shift(
             return _BASELINE_SRNSS(
                 residual, x, gate, weight, bias, scale, shift, norm_type, eps
             )
+        if not (weight.is_cuda and weight.device == x.device and bias.device == x.device):
+            _fallback("srnss:weight_bias")
+            return _BASELINE_SRNSS(
+                residual, x, gate, weight, bias, scale, shift, norm_type, eps
+            )
 
-    g = _classify_operand(gate, B, S, D)
-    sc = _classify_operand(scale, B, S, D)
-    sh = _classify_operand(shift, B, S, D)
+    if not (isinstance(scale, torch.Tensor) and isinstance(shift, torch.Tensor)):
+        _fallback("srnss:operand")  # baseline raises its own validation error
+        return _BASELINE_SRNSS(
+            residual, x, gate, weight, bias, scale, shift, norm_type, eps
+        )
+    g = _classify_operand(gate, B, S, D, x.device)
+    sc = _classify_operand(scale, B, S, D, x.device)
+    sh = _classify_operand(shift, B, S, D, x.device)
     if (
         g is None
         or sc is None
         or sh is None
         or sc[0] != sh[0]
-        or (scale is not None and shift is not None and scale.dtype != shift.dtype)
+        or scale.dtype != shift.dtype
     ):
         _fallback("srnss:operand")
         return _BASELINE_SRNSS(
@@ -342,6 +396,11 @@ def fused_scale_residual_norm_scale_shift(
         )
     gate_dtype = gate.dtype if isinstance(gate, torch.Tensor) else None
     key = ("srnss", sc[0], scale.dtype, g[0], gate_dtype, has_wb)
+    if not _geometry_ok(D, _combo_vec_bytes(scale.dtype, gate_dtype, has_wb)):
+        _fallback("srnss:geometry")
+        return _BASELINE_SRNSS(
+            residual, x, gate, weight, bias, scale, shift, norm_type, eps
+        )
     fn = _native_fn(key)
     if fn is None:
         _fallback("srnss:combo")
@@ -361,3 +420,65 @@ def fused_scale_residual_norm_scale_shift(
     else:
         fn(y2, ro2, r2, x2, g[1], sc[1], sh[1], e)
     return y, res_out
+
+
+# ---------------------------------------------------------------------------
+# Shipping-shaped entry points: the same callables wrapped in a
+# `torch.library.custom_op` layer mirroring the SGLang baseline registration
+# (`mutates_args=()` + `register_fake`). The in-tree export keeps SGLang's own
+# registration; this local layer exists so benchmarks compare candidate and
+# baseline through IDENTICAL host stacks (custom-op dispatch on both sides).
+# ---------------------------------------------------------------------------
+
+_SHIPPING_OPS = None
+
+
+def shipping_entry_points():
+    """Return (nss_op, srnss_op) wrapped as registered torch custom ops."""
+    global _SHIPPING_OPS
+    if _SHIPPING_OPS is None:
+        # NOTE: this module uses `from __future__ import annotations`, so
+        # torch.library's schema inference sees the annotation STRINGS — they
+        # must be spelled exactly as `Optional[...]`/`Tuple[...]` (resolvable
+        # names), mirroring the baseline's own custom-op signatures.
+
+        @torch.library.custom_op("kda_nss::fused_norm_scale_shift", mutates_args=())
+        def _nss_op(
+            x: torch.Tensor,
+            weight: Optional[torch.Tensor],
+            bias: Optional[torch.Tensor],
+            scale: torch.Tensor,
+            shift: torch.Tensor,
+            norm_type: str,
+            eps: float = 1e-5,
+        ) -> torch.Tensor:
+            return fused_norm_scale_shift(x, weight, bias, scale, shift, norm_type, eps)
+
+        @_nss_op.register_fake
+        def _nss_fake(x, weight, bias, scale, shift, norm_type, eps=1e-5):
+            return x.new_empty(x.shape)
+
+        @torch.library.custom_op(
+            "kda_nss::fused_scale_residual_norm_scale_shift", mutates_args=()
+        )
+        def _srnss_op(
+            residual: torch.Tensor,
+            x: torch.Tensor,
+            gate: Optional[torch.Tensor],
+            weight: Optional[torch.Tensor],
+            bias: Optional[torch.Tensor],
+            scale: torch.Tensor,
+            shift: torch.Tensor,
+            norm_type: str,
+            eps: float = 1e-5,
+        ) -> Tuple[torch.Tensor, torch.Tensor]:
+            return fused_scale_residual_norm_scale_shift(
+                residual, x, gate, weight, bias, scale, shift, norm_type, eps
+            )
+
+        @_srnss_op.register_fake
+        def _srnss_fake(residual, x, gate, weight, bias, scale, shift, norm_type, eps=1e-5):
+            return x.new_empty(x.shape), x.new_empty(x.shape)
+
+        _SHIPPING_OPS = (_nss_op, _srnss_op)
+    return _SHIPPING_OPS

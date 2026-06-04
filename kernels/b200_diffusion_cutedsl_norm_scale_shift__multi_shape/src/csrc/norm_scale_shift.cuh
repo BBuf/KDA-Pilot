@@ -122,6 +122,62 @@ SGL_DEVICE void load_operand_f32(
   }
 }
 
+// Streaming mean/variance statistics combined with Chan's parallel merge:
+// numerically robust (no E[x^2]-mean^2 cancellation) in a SINGLE reduction
+// round. Counts are carried as floats; zero-count partners pass through.
+struct WelfordStat {
+  float n;
+  float mean;
+  float m2;
+
+  SGL_DEVICE static WelfordStat merge(const WelfordStat& a, const WelfordStat& b) {
+    if (b.n == 0.0f) return a;
+    if (a.n == 0.0f) return b;
+    const float n = a.n + b.n;
+    const float delta = b.mean - a.mean;
+    const float ratio = b.n / n;
+    return WelfordStat{n, a.mean + delta * ratio, a.m2 + b.m2 + delta * delta * a.n * ratio};
+  }
+};
+
+SGL_DEVICE WelfordStat warp_reduce_welford(WelfordStat s) {
+#pragma unroll
+  for (int mask = int(kWarpThreads) / 2; mask > 0; mask >>= 1) {
+    const WelfordStat other{
+        __shfl_xor_sync(device::kFullMask, s.n, mask, 32),
+        __shfl_xor_sync(device::kFullMask, s.mean, mask, 32),
+        __shfl_xor_sync(device::kFullMask, s.m2, mask, 32),
+    };
+    s = WelfordStat::merge(s, other);
+  }
+  return s;
+}
+
+// CTA-wide Welford merge; result broadcast to all threads via scratch rows
+// (uses three scratch arrays of kMaxWarpsPerCta+1 floats).
+SGL_DEVICE WelfordStat cta_reduce_welford(
+    WelfordStat s, int warp, int lane, int num_warps, float* sn, float* smean, float* sm2) {
+  s = warp_reduce_welford(s);
+  if (lane == 0) {
+    sn[warp] = s.n;
+    smean[warp] = s.mean;
+    sm2[warp] = s.m2;
+  }
+  __syncthreads();
+  if (warp == 0) {
+    WelfordStat acc = (lane < num_warps) ? WelfordStat{sn[lane], smean[lane], sm2[lane]}
+                                         : WelfordStat{0.0f, 0.0f, 0.0f};
+    acc = warp_reduce_welford(acc);
+    if (lane == 0) {
+      sn[kMaxWarpsPerCta] = acc.n;
+      smean[kMaxWarpsPerCta] = acc.mean;
+      sm2[kMaxWarpsPerCta] = acc.m2;
+    }
+  }
+  __syncthreads();
+  return WelfordStat{sn[kMaxWarpsPerCta], smean[kMaxWarpsPerCta], sm2[kMaxWarpsPerCta]};
+}
+
 // CTA-wide sum reduction of one fp32 value per thread; result broadcast.
 // `slot` selects an independent shared-memory scratch row (0 or 1).
 SGL_DEVICE float cta_reduce_sum(float v, int warp, int lane, int num_warps, float* scratch) {
@@ -170,6 +226,7 @@ __global__ void norm_scale_shift_kernel(const NormScaleShiftParams __grid_consta
 
   __shared__ float s_scratch_a[kMaxWarpsPerCta + 1];
   __shared__ float s_scratch_b[kMaxWarpsPerCta + 1];
+  __shared__ float s_scratch_c[kMaxWarpsPerCta + 1];
 
   PDLWaitPrimary<kUsePDL>();
 
@@ -229,34 +286,26 @@ __global__ void norm_scale_shift_kernel(const NormScaleShiftParams __grid_consta
     const float var = cta_reduce_sum(acc, warp, lane, num_warps, s_scratch_b) * params.inv_d;
     factor = math::rsqrt(var + params.eps);
   } else {
-    float sum = 0.0f, sumsq = 0.0f;
+    // Single-round robust statistics: thread-local mean + M2 over the kElems
+    // register values, then a Chan/Welford parallel merge across the CTA.
+    // Matches two-pass numerical quality without the second reduction round.
+    float sum = 0.0f;
 #pragma unroll
     for (int e = 0; e < kElems; ++e) {
       sum += v[e];
-      sumsq += v[e] * v[e];
     }
-    // One round trip for both accumulators (independent scratch rows).
-    sum = device::warp::reduce_sum(sum);
-    sumsq = device::warp::reduce_sum(sumsq);
-    if (lane == 0) {
-      s_scratch_a[warp] = sum;
-      s_scratch_b[warp] = sumsq;
+    const float local_mean = sum * (1.0f / float(kElems));
+    float local_m2 = 0.0f;
+#pragma unroll
+    for (int e = 0; e < kElems; ++e) {
+      const float d = v[e] - local_mean;
+      local_m2 += d * d;
     }
-    __syncthreads();
-    if (warp == 0) {
-      float a = (lane < num_warps) ? s_scratch_a[lane] : 0.0f;
-      float b = (lane < num_warps) ? s_scratch_b[lane] : 0.0f;
-      a = device::warp::reduce_sum(a);
-      b = device::warp::reduce_sum(b);
-      if (lane == 0) {
-        s_scratch_a[kMaxWarpsPerCta] = a;
-        s_scratch_b[kMaxWarpsPerCta] = b;
-      }
-    }
-    __syncthreads();
-    mean = s_scratch_a[kMaxWarpsPerCta] * params.inv_d;
-    float var = s_scratch_b[kMaxWarpsPerCta] * params.inv_d - mean * mean;
-    var = var < 0.0f ? 0.0f : var;  // guard fused-form cancellation
+    const WelfordStat stat = cta_reduce_welford(
+        WelfordStat{float(kElems), local_mean, local_m2},
+        warp, lane, num_warps, s_scratch_a, s_scratch_b, s_scratch_c);
+    mean = stat.mean;
+    const float var = stat.m2 * params.inv_d;
     factor = math::rsqrt(var + params.eps);
   }
 

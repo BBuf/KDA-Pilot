@@ -190,6 +190,10 @@ def run_benchmark(args) -> int:
     fns = {name: lib.implementations(name) for name in impls}
     if "candidate" in impls:
         reg = lib.candidate_register()
+        if args.candidate_layer == "shipping":
+            # Symmetric host stacks: candidate behind the same custom-op layer
+            # shape as the baseline's registered public op.
+            fns["candidate"] = reg.shipping_entry_points()
         reg.dispatch_stats().clear()
 
     util_b, mem_b, gpu_name, gpu_uuid = _gpu_state(args.gpu_id)
@@ -344,6 +348,8 @@ def main():
     ap.add_argument("--gpu-id", type=int, default=int(os.environ.get("REMOTE_GPU_ID", 0)))
     ap.add_argument("--run-id", default=datetime.now(timezone.utc).strftime("run-%Y%m%d-%H%M%S"))
     ap.add_argument("--cases", default="", help="comma-separated case_id filter")
+    ap.add_argument("--candidate-layer", choices=["shipping", "plain"], default="shipping",
+                    help="candidate host stack: custom-op-wrapped (symmetric) or plain callable")
     ap.add_argument("--report", action="store_true", help="aggregate csv instead of running")
     args = ap.parse_args()
     if args.report:

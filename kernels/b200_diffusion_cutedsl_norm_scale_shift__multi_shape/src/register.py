@@ -58,6 +58,9 @@ if _wrapper is not None:
     def dispatch_stats():
         return _wrapper.dispatch_stats()
 
+    def shipping_entry_points():
+        return _wrapper.shipping_entry_points()
+
 else:
 
     def fused_norm_scale_shift(*args: Any, **kwargs: Any) -> Any:
@@ -68,6 +71,9 @@ else:
 
     def dispatch_stats():
         return _resolve("dispatch_stats")()
+
+    def shipping_entry_points():
+        return _resolve("shipping_entry_points")()
 
 
 # Map preserved SGLang public callable names -> optimized implementations.
