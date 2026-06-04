@@ -1,8 +1,11 @@
 # baseline/ — vendored SGLang baseline (runtime-isolated)
 
-- `upstream_jit_kernel/jit_kernel/**`: verbatim snapshot of
-  `python/sglang/jit_kernel` at SGLang commit
-  `edb1b3f8f5ab066af1e9b6ee8e8738fadcfa77e7` (no local edits; lineage in
+- `upstream_jit_kernel/jit_kernel/**`: byte-identical subset (17 files) of
+  the `python/sglang/jit_kernel` tree at SGLang commit
+  `edb1b3f8f5ab066af1e9b6ee8e8738fadcfa77e7` — the baseline CuTe-DSL module
+  + helpers, the `load_jit` build stack, the core `sgl_kernel` headers, and
+  the upstream oracle test. No file is edited; unrelated kernels were
+  pruned before the PR (full provenance + prune rationale in
   `../docs/baseline_source.md`).
 - `loader.py`: registers the snapshot as `sglang.jit_kernel` in `sys.modules`
   so the snapshot's absolute imports resolve without an installed SGLang.

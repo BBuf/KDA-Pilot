@@ -30,10 +30,28 @@
 
 ## Copied files
 
-- `baseline/upstream_jit_kernel/jit_kernel/**` — verbatim snapshot of
-  `/sgl-workspace/sglang/python/sglang/jit_kernel` at the pinned commit
-  (272 files, `__pycache__` excluded), fetched via
-  `docker exec ... tar | tar -x`.
+- `baseline/upstream_jit_kernel/jit_kernel/**` — snapshot of
+  `/sgl-workspace/sglang/python/sglang/jit_kernel` at the pinned commit,
+  fetched verbatim via `docker exec ... tar | tar -x` (272 files,
+  `__pycache__` excluded) and later **pruned to a 17-file functional
+  subtree** before the PR, per the task's PR-content rule ("only
+  kernel-related code, harnesses, small provenance notes, per-shape
+  results"). Every retained file is byte-identical to the verbatim fetch
+  (key module sha256 below unchanged); the pruned set is exactly what the
+  harness needs: the baseline module + its CuTe-DSL helpers
+  (`diffusion/cutedsl/**`), the jit_kernel build stack (`utils.py`), the
+  core `include/sgl_kernel/` headers our candidate compiles against, the
+  upstream oracle test, the (empty) package `__init__.py`, and
+  `csrc/diffusion/qknorm_rope.cuh` — kept both as the documented host-API
+  pattern source AND because `utils.py::_resolve_kernel_path` requires a
+  `csrc/` directory beside `include/` to resolve the package root. Dropped:
+  unrelated kernels/csrc/benchmarks and the self-contained
+  `include/sgl_kernel/{deepseek_v4,distributed}` plus six headers
+  referenced by nothing retained (`tile/cta/atomic/impl-norm/scalar_type/
+  ffi`). The one-time parity run (below) was executed against the full
+  verbatim snapshot; pruning removes only files that run never imported,
+  and the full correctness suite was re-run against the pruned tree with a
+  cleared JIT cache to prove the retained include set builds.
 - Key files for this task within the snapshot:
   - `jit_kernel/diffusion/cutedsl/scale_residual_norm_scale_shift.py`
     (sha256 `d6818e5da8d3c5ace3950313e996a22b4c051edc29ab7026eb8cb9d79e414df9`)
