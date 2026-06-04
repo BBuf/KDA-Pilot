@@ -9,10 +9,14 @@
 - Every unique signature >= 1.096x end-to-end (max 1.489x); device-mode range
   0.98x (per-token fp32, at the operand-stream bound — see below) to 1.63x.
 - Environment: ion-b200 (innomatrix-us-adc-smb200-0003), container
-  sglang_bbuf, **GPU 1** (0% util / 0 MiB before AND after the run; full
-  all-GPU snapshots in `REMOTE_KDA_DIR/logs/r4_allgpu_{before,after}.txt` —
-  GPUs 2-7 carried unrelated jobs, GPU 0 had 1576 MiB parked), torch
-  2.11.0+cu130, CUDA 13.0, SGLang baseline commit edb1b3f8f5.
+  sglang_bbuf, **GPU 1**: the external all-GPU snapshots taken before and
+  after the benchmark process (`REMOTE_KDA_DIR/logs/r4_allgpu_{before,after}.txt`)
+  show GPU 1 at 0% util / 0 MiB both times (GPUs 2-7 carried unrelated jobs,
+  GPU 0 had 1576 MiB parked). The CSV rows' own `idle_after` columns read
+  ~34% / 720 MiB because that sample is taken from INSIDE the still-running
+  benchmark process (its own CUDA context and tail activity); the external
+  post-exit snapshot is the authoritative idle proof. torch 2.11.0+cu130,
+  CUDA 13.0, SGLang baseline commit edb1b3f8f5.
 - Method: candidate and baseline interleaved in one process on identical
   pre-built inputs; candidate behind the kda_nss custom-op layer so both
   sides carry the same host registration/dispatch stack (AC-5.4);
@@ -68,6 +72,19 @@ numbers on the true shipping path; rms fallback probe bitwise-identical.
 3. cand-0003 (Welford single-round): REJECTED on r2-v3 (1.16x geomean).
 4. cand-0004 (shipped): r4-final 1.3070x e2e / 1.2905x device on clean GPU 1
    + in-SGLang drop-in arbiter (147 upstream tests, 1.11-1.45x same-op A/B).
+
+## Caveats (recorded at final audit)
+
+- Native coverage is intentionally production-first (DEC-2): the 10 verified
+  combos cover every captured signature; all other layouts/dtypes/norm types
+  rely on the fail-closed fallback to the baseline path (tested, including
+  inside the in-tree integration).
+- The benchmark CSV's per-row `idle_after` columns sample from inside the
+  running process; the external post-exit all-GPU snapshots are the idle
+  authority (see Environment above).
+- An upstream SGLang PR should land the integration as a normal reviewed
+  diff (the hash-guarded body-insertion script is an arbiter mechanism, not
+  the PR format).
 
 ## Completion statement
 

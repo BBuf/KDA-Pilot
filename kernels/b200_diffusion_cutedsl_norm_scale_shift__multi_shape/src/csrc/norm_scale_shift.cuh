@@ -11,8 +11,11 @@
 //   - statistics accumulate in fp32; the normalized value is rounded to the
 //     activation dtype before the (1 + scale) * y + shift epilogue;
 //   - rms ignores bias; layer applies weight and bias when present.
-// The variance is computed in a single fused pass (sum + sum-of-squares) by
-// default; kTwoPassVariance switches to the reference two-pass form.
+// Layer variance uses the two-pass mean-then-variance form by default
+// (kTwoPassVariance=true, matching the baseline contract); a single-round
+// Welford/Chan path exists behind kTwoPassVariance=false but measured slower
+// and is retained only as a documented rejected lever (solutions.jsonl
+// cand-0003).
 //
 // One CTA per row; each thread owns one aligned vector of kVecBytes bytes
 // (256-bit on Blackwell), so blockDim.x = D / (kVecBytes / sizeof(DType)).
