@@ -5,11 +5,13 @@ All GPU work: host `ion8-h200` (hostname `ion-h200-8`), Docker container `sglang
 tvm-ffi, Nsight Compute 2025.3.1.0), task workspace
 `/home/sglang-omni/bbuf/kda/k16_h200_nss/{task,logs,sglang_pin}`.
 
-Selected GPU: `REMOTE_GPU_ID=0` (NVIDIA H200, 143771 MiB). Selection evidence at first use:
-GPUs 0-3 at 0% util / 0 MiB with no compute apps; GPUs 4-6 occupied by other users' jobs
-(123-143 GiB); GPU 7 had 42 MiB residual. Every measurement below was pinned with
-`CUDA_VISIBLE_DEVICES=0`; idle state (0% util / 0-4 MiB, no compute apps) was checked before
-launches and after completions; the benchmark harness additionally records full
+Selected GPUs: `REMOTE_GPU_ID=0` for the scaffold validation, v1 anchor, NCU rounds, sweep, and
+correctness runs (selection evidence at first use: GPUs 0-3 at 0% util / 0 MiB with no compute
+apps; GPUs 4-6 occupied by other users' jobs at 123-143 GiB; GPU 7 had 42 MiB residual), then
+`REMOTE_GPU_ID=2` for the FINAL promotion benchmark sessions after a foreign job landed on GPU 0
+mid-chain (items 13-15 below). Each measurement was pinned with `CUDA_VISIBLE_DEVICES=<id>` and
+used one consistent GPU per run; idle state (0% util / 0-4 MiB, no compute apps) was checked
+before launches and after completions; the benchmark harness additionally records full
 `nvidia-smi` before/after snapshots inside each results JSONL.
 
 ## 2026-06-04 (UTC+8 evening) — scaffold validation and v1 anchor

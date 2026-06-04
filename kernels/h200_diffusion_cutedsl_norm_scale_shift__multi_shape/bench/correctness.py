@@ -193,19 +193,32 @@ def run_production(args, device) -> list[dict]:
         after = dict(cand.dispatch_stats())
         fallback_delta = after.get("fallback", 0) - before.get("fallback", 0)
         routed_delta = after.get("routed", 0) - before.get("routed", 0)
-        expected_routed = len(getattr(cand, "_ROUTED_TO_BASELINE", ()))
+        # Production rows expected on the routed path: nss with row-class
+        # (D/1D/11D) fp32 scale/shift, mirroring _ROUTED_TO_BASELINE.
+        expected_routed = sum(
+            1
+            for _, row in production_cases(args.workloads)
+            if row["function"] == NSS
+            and row["shapes"]["scale"]["layout"] in ("D", "1D", "11D")
+            and row["shapes"]["scale"]["dtype"] == "float32"
+        )
         errors = []
         if fallback_delta != 0:
             errors.append(
                 f"{fallback_delta} production calls fell back unexpectedly "
                 f"(routed buckets are counted separately)"
             )
+        if routed_delta != expected_routed:
+            errors.append(
+                f"routed-call count {routed_delta} != expected {expected_routed} "
+                f"(declared routed bucket: nss row-class fp32 scale/shift)"
+            )
         results.append({
             "case": "production-grid-native-routing",
             "kind": "production",
             "errors": errors,
             "routed_calls": routed_delta,
-            "routed_buckets_declared": expected_routed,
+            "routed_calls_expected": expected_routed,
         })
     return results
 

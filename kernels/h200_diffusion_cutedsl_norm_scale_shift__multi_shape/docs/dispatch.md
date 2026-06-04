@@ -4,10 +4,11 @@ The candidate exposes the two public entry points as `kda_nss::` custom ops and 
 by operand classification (`solution/binding.py::_classify_operand`): activation must be bf16
 `[1, S, D]` contiguous/aligned with `D % 256 == 0`, `D <= 8192`; scale/shift/gate classify as
 `scalar [1]`, `row` (`[D]`/`[1,D]`/`[1,1,D]` views), or `token` (`[1,S,D]`); weight/bias must be
-fp32 `[D]` when present. Anything else — fp16/fp32 activations, rms norm, B>1, 4-D BF1D frames,
-CPU/cross-device operands, misaligned or non-contiguous storage, zero rows, affine
-`fused_norm_scale_shift`, unknown combos — falls closed to the vendored CuTeDSL baseline
-(`fallback` dispatch counters). Shipped kernel config: 16-byte per-thread vectors (one 128-bit
+fp32 `[D]` when present. Anything else — fp16/fp32 activations, rms norm, B>1 activations (the
+contract check requires `x.shape[0] == 1`; only captured-production batch geometry is verified
+native), 4-D BF1D frames, CPU/cross-device operands, misaligned or non-contiguous storage, zero
+rows, affine `fused_norm_scale_shift`, unknown combos — falls closed to the vendored CuTeDSL
+baseline (`fallback` dispatch counters). Shipped kernel config: 16-byte per-thread vectors (one 128-bit
 transaction), two-pass layer variance, no PDL, no fast-math.
 
 Latency/speedup columns: final sessions A2/B2 medians on idle H200 GPU 2

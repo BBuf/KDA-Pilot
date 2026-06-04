@@ -313,6 +313,7 @@ def _nss_impl(x, weight, bias, scale, shift, norm_type, eps=1e-5):
         isinstance(x, torch.Tensor)
         and x.is_cuda
         and x.ndim == 3
+        and x.shape[0] == 1  # only captured-production batch geometry is verified native
         and norm_type == "layer"
         and weight is None
         and bias is None
@@ -362,6 +363,7 @@ def _srnss_impl(residual, x, gate, weight, bias, scale, shift, norm_type, eps=1e
         and isinstance(residual, torch.Tensor)
         and x.is_cuda
         and x.ndim == 3
+        and x.shape[0] == 1  # only captured-production batch geometry is verified native
         and norm_type == "layer"
         and residual.shape == x.shape
         and residual.dtype == x.dtype

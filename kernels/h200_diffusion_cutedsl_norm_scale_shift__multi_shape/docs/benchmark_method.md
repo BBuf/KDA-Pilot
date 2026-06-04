@@ -63,12 +63,16 @@ calibrated inner loop; the key is retained untouched for template provenance.
 - Benchmark-level: template default compare (baseline vs candidate outputs, per-workload
   `atol`/`rtol` from `bench/workloads.json`: 5e-2 for non-fp32 rows, 1e-5 for fp32 rows), NaN/Inf
   rejection on candidate outputs.
-- Correctness-level (`bench/correctness.py`): fp32 oracle `norm(x) * (1 + scale) + shift`
-  (residual variant: `res_out = residual + gate * x` with storage-dtype rounding, then norm), with
-  contract-exact rounding boundaries (norm output rounds to the activation dtype before the
-  epilogue, matching the vendored kernel), static tolerances per the correctness contract, dynamic
-  bound (candidate error <= 2x baseline error + 1e-6), poisoned outputs, NaN/Inf rejection,
-  canonical regression grid, and the negative-probe suite.
+- Correctness-level (`bench/correctness.py`): the upstream-canonical plain-fp32 oracle (all
+  operands floated, layer/rms norm and `norm * (1 + scale) + shift` in fp32, one final round to
+  the activation dtype; `res_out` = the fp32 pre-norm value rounded once — mirroring the
+  reference functions in the vendored canonical test). Intermediate rounding boundaries are not
+  modeled by the oracle; the candidate KERNEL implements upstream's rounding contract (pre-norm
+  and post-norm values rounded to the activation dtype), and that agreement is enforced by the
+  candidate-vs-baseline static-tolerance check plus the dynamic bound (candidate error <= 2x
+  baseline error + 1e-6 vs the unrounded fp32 reference) on every checked output. Outputs
+  poisoned where the allocation-return ABI allows, NaN/Inf rejection, canonical regression grid,
+  and the negative-probe suite.
 
 ## GPU Discipline
 
