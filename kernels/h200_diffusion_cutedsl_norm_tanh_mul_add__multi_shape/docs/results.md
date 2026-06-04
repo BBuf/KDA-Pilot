@@ -66,7 +66,9 @@ python benchmark.py --host <host> --candidate-version <git-sha>
 ```
 
 All evidence files: `benchmark.csv` (every row carries host/GPU id/model, commits,
-exact command), `solutions.jsonl` (16 parent-linked entries), `docs/baseline_locked.json`,
+exact command; the round-1 `ab_run1` rows are marked INVALIDATED at row level —
+jit-cache bug; wave-2 sweep rows are labeled SELECTION-ONLY device-level evidence),
+`solutions.jsonl` (parent-linked entries), `docs/baseline_locked.json`,
 `profile/ncu_anchor_r2/`, remote logs under
 `ion8-h200:/home/sglang-omni/bbuf/kda_runs/h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape/2026-06-04_16-05-34/logs/`.
 

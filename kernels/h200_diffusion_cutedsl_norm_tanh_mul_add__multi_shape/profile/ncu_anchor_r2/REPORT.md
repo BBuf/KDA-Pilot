@@ -160,7 +160,11 @@ evidence rather than re-profiling an identical kernel.
 
 Conventions: *modeled logical* = fused-logical bytes (`benchmark.py:_bytes_moved`);
 *actual* = NCU `dram__bytes_read + dram__bytes_write` (L2 retains part of the
-working set; H200 L2 = 50 MB). Kernel times are NCU steady-state medians; the
+working set; H200 L2 = 50 MB). TWO timing conventions appear side by side and are
+NOT interchangeable: "NCU kernel time" = clock-controlled kernel-only duration from
+the profiler; "device speedup (events)" = CUDA-event medians around the public
+custom-op call from `benchmark.py` (includes launch overhead within the event
+window) — the speedup column compares like-with-like (events vs events). The
 S=4128 bucket scales bytes by +0.78 % with event-level times within 1 % of S=4096
 (`benchmark.csv`), so its roofline position is identical.
 
