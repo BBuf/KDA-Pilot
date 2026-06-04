@@ -73,7 +73,10 @@
 - A/A gate (before tuning): run the harness with
   `GNS_CANDIDATE_ALIAS_BASELINE=1` (candidate aliased to the baseline
   implementation) on a representative workload subset; the headline geomean
-  must land in 0.98–1.02. Result recorded here after the remote run.
+  must land in 0.98–1.02. **Result: PASS — geomean 1.0005, per-row
+  0.9956–1.0127 over 8 rows (4 contiguous + 4 channels-last spanning
+  min/33%/66%/max group sizes, both entry points); raw in
+  `bench/results_aa.jsonl`, log in `docs/run_log.md` Run 3.**
 - GPU discipline: host `ion-b200`, idle B200 selected via `nvidia-smi`
   (no active compute processes, no meaningful memory occupancy), id exported
   as `REMOTE_GPU_ID` and used consistently; `nvidia-smi` checked before and

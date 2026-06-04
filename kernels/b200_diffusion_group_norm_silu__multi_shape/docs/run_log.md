@@ -142,10 +142,46 @@
 - Correctness re-gated green after EVERY kernel edit (corr_v3/v4/v5/v6 all
   PASS, candidate side, 0 failing checks).
 
-## Run 10 — final full validation (2026-06-05)
+## Run 10 — full validation after dispatch floor (2026-06-05)
 
-- GPU 1 before: idle. Commands (chained):
+- GPU 1 before/after: idle. Commands (chained):
   `CUDA_VISIBLE_DEVICES=1 python3 bench/correctness.py --device cuda:0 --side both`
   then `CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py --device cuda:0 --out bench/results_final.jsonl`
   (defaults: GNS_SMALL_MAX=65536, GNS_CHUNK=16384, GNS_CONT_FALLBACK_MIN=2000000).
-- Result: (recorded when the run completes)
+- Correctness: **PASS, 0 failing checks** (both sides, all sections).
+- Benchmark: 172/172 PASSED; headline geomean **2.2934** (arithmetic mean
+  2.4974). Buckets: C small 2.40 / C mid 3.11 / C large 1.15 / NC small 2.39
+  / NC mid 2.29 / NC large 1.51. Three routed rows read 0.946-0.961 — traced
+  to per-call Python overhead in the fallback resolver (import + sys.path on
+  EVERY call, ~3-6 us) plus the order-debt artifact below.
+
+## Run 11 — routed-row diagnostics (2026-06-05)
+
+- Fix: fallback resolver cached once per process (lru_cache).
+- 9-row routed re-run: 7/9 rows >= 0.974; `hv_*_1x512x9x128x128_C` pair read
+  0.927/0.954 with twin disagreement.
+- Direct steady-state interleaved probe on that shape (300 calls x 3 reps):
+  baseline 95.6 us vs candidate 96.0 us — delta 0.21-0.37 us (~0.4%), true
+  ratio ~0.997; `select_path` costs 3.05 us pure-Python but overlaps GPU work.
+- 21-trial order-balanced run on the 6 marginal rows: five read 0.981-0.997;
+  one (`hv_apply_1x512x9x128x128_C`) read 0.9594 while its identical-code
+  twin read 0.9810 — the dirty-L2 writeback order-debt artifact on
+  ~75-150 MB-output rows (median follows the majority order draw). Full
+  characterization in `docs/dispatch.md` ("Measured Residual on Routed Giant
+  Rows"). Raw: `bench/results_routed.jsonl`, `bench/results_marginal21.jsonl`.
+
+## Run 12 — definitive headline run (2026-06-05)
+
+- GPU 1 before: idle (0% util, 0 MiB; in-run provenance snapshot shows GPU 1
+  at 4 MiB — the benchmark's own context; GPUs 4-6 carry other users'
+  training and are untouched). After: idle (0% util, 0 MiB). Command:
+  `CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py --device cuda:0 --out bench/results_headline.jsonl`
+  with the final candidate (all fixes + cached fallback resolver), default
+  crossovers, frozen workloads (`gen_workloads.py --check` green).
+- Result: 172/172 PASSED; headline equal-weight geomean over the 160
+  production rows = **2.2835** (arithmetic mean 2.4866). Buckets: C small
+  2.4240 / C mid 3.1122 / C large 1.1320 / NC small 2.3239 / NC mid 2.2979 /
+  NC large 1.5137. 158/160 rows >= 0.97; the two below-floor readings
+  (0.9587/0.9665) are the characterized order-debt artifact on the routed
+  identical-code rows (see Run 11 and `docs/dispatch.md`). Final table:
+  `docs/results.md`; raw: `bench/results_headline.jsonl`.

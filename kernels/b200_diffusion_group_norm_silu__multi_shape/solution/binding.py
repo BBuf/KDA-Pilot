@@ -85,7 +85,10 @@ def _kernel_fn():
     return fn
 
 
+@functools.lru_cache(maxsize=1)
 def _baseline_fallback():
+    # Resolved once per process: routed rows must not pay per-call import /
+    # sys.path overhead (measured ~3-6 us, i.e. 4-5% on ~100 us rows).
     if str(TASK_DIR) not in sys.path:
         sys.path.insert(0, str(TASK_DIR))
     from baseline import group_norm_silu_baseline

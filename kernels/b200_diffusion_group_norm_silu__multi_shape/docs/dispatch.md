@@ -57,4 +57,33 @@ the per-row results table like every other row.
 
 Deferred (would need new evidence to justify): cluster/DSMEM cooperative
 single-kernel stats+apply, PDL — NCU shows the bucket is bandwidth-bound, not
-launch/sync-bound, so neither addresses the active bound.
+launch/sync-bound, so neither addresses the active bound. A one-read-pass
+algorithm is information-theoretically excluded here: the affine+silu output
+cannot be produced before the group statistics are known, and a giant group
+(4.7+ MB per group) cannot be cached on-chip, so both sides are forced into
+the same 2-read+1-write pattern.
+
+## Measured Residual on Routed Giant Rows (order-debt artifact)
+
+Routed rows execute the IDENTICAL implementation on both benchmark sides (the
+candidate resolves to the copied baseline callable), so a real regression is
+impossible by construction; the residual sub-1.0 readings on this row class
+are a measurement artifact, characterized as follows (2026-06-05, GPU 1):
+
+- Direct steady-state interleaved probe on `(1,512,9,128,128)` fp16
+  (300 back-to-back calls per side, repeated 3x): baseline 95.6 us vs
+  candidate 96.0 us — delta 0.21-0.37 us (~0.4%), i.e. true ratio ~0.997.
+  The candidate's Python dispatch (~3 us `select_path`) fully overlaps with
+  GPU execution in the pipelined regime.
+- In-harness, rows with ~75-150 MB outputs (vs ~126 MB L2) show ~3-8% debt on
+  whichever side runs SECOND within a trial (dirty-L2 writeback from the
+  first side's output). The template randomizes the A/B order per trial with
+  a per-workload-id seed; the MEDIAN therefore jumps between the two order
+  classes with the majority draw. Evidence: twin rows with identical tensors
+  and identical code read 0.9594 vs 0.9810 in the same 21-trial run
+  (`bench/results_marginal21.jsonl`); the same id flips between ~0.93 and
+  ~0.96 across runs while its twin reads ~0.98-1.00.
+- Per the no-regression ruling (DEC-3 / AC-5.2: residual regressions must be
+  explained with evidence), these readings are reported as-is in the per-row
+  table and explained by this section; the controlled interleaved probe and
+  the identical-code-path argument bound the true per-row ratio at ~0.997.
