@@ -395,11 +395,16 @@ def candidate(case: dict[str, Any]) -> Any:
 
 
 def _candidate_available() -> bool:
-    try:
-        module = _load_register_module()
-        return bool(getattr(module, "CANDIDATE_READY", False))
-    except Exception:
-        return False
+    """True when the promoted candidate is wired in.
+
+    Only the INTENTIONAL stub state (``CANDIDATE_READY = False`` in
+    ``src/register.py``) may skip the candidate tests. Import/JIT/registration
+    errors while loading a READY candidate must PROPAGATE and fail the suite —
+    swallowing them here would report a broken promoted fast path as harmless
+    skips (review finding, round 5)."""
+
+    module = _load_register_module()
+    return bool(getattr(module, "CANDIDATE_READY", False))
 
 
 # --- FP32 reference oracle ------------------------------------------------------
