@@ -153,15 +153,19 @@ native path.
   (candidate max-abs error vs fp32 reference <= 2x baseline error + 1e-6),
   with NaN/Inf rejection on every check; srnss reference applies the
   contract's pre-norm cast.
-- Benchmark command (`bench/benchmark.py`, run inside sglang_bbuf on the
-  verified-idle B200): `CUDA_VISIBLE_DEVICES=1 python bench/benchmark.py
-  --impl both --gpu-id 1 --run-id r4-final --candidate-layer shipping`;
-  latency = median of 100 per-iteration samples after 20 warmup iterations
-  (endtoend: wall-clock with per-sample synchronize; device: CUDA-event
-  stream-span), baseline/candidate interleaved per iteration on shared
-  inputs. Final claim: geometric mean of per-unique-signature median
-  speedups = **1.3070x endtoend / 1.2905x device** (39 signatures,
-  `run_id=r4-final`; corroborated in-tree by `docs/sglang_jit_export.md`).
+- Benchmark command (`bench/benchmark.py`, run inside sglang_bbuf; the
+  harness REJECTS the run unless the selected GPU is idle before and free of
+  other compute processes after): `CUDA_VISIBLE_DEVICES=1 python
+  bench/benchmark.py --impl both --gpu-id 1 --run-id r5-final
+  --candidate-layer shipping`; latency = median of 100 per-iteration samples
+  after 20 warmup iterations (endtoend: wall-clock with per-sample
+  synchronize; device: CUDA-event stream-span), baseline/candidate
+  interleaved per iteration on shared inputs; external pre/post-exit all-GPU
+  snapshots committed under `bench/evidence/r5-final/`. Final claim:
+  geometric mean of per-unique-signature median speedups = **1.3053x
+  endtoend / 1.2841x device** (39 signatures, `run_id=r5-final`, joint
+  source hash b91d6e1abc50; corroborated in-tree by
+  `docs/sglang_jit_export.md`).
 - Source lineage: `docs/baseline_source.md` (vendored snapshot, pinned commit
   edb1b3f8f5, parity evidence); candidate ports the baseline's tiling notion
   (block = D / elems-per-thread) and mirrors `csrc/diffusion/qknorm_rope.cuh`

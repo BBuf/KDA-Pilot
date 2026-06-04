@@ -90,6 +90,33 @@ def _gpu_state(gpu_id: int):
     return -1, -1, "?", "?"
 
 
+def _other_compute_apps(gpu_uuid: str):
+    """Compute processes on the selected GPU excluding this benchmark process.
+
+    The post-run device memory necessarily includes this process's own CUDA
+    context, so run validity is gated on (a) device utilization reading 0
+    after a settle period and (b) NO other process holding the GPU — not on
+    the raw memory number. The external pre/post all-GPU snapshots taken by
+    the orchestration script (after process exit) are the 0-util/0-mem proof.
+    """
+    apps = []
+    try:
+        out = subprocess.run(
+            ["nvidia-smi", "--query-compute-apps=gpu_uuid,pid,used_memory",
+             "--format=csv,noheader,nounits"],
+            capture_output=True, text=True, timeout=20,
+        ).stdout
+        for line in out.strip().splitlines():
+            if not line.strip():
+                continue
+            uuid, pid, mem = [p.strip() for p in line.split(",")]
+            if uuid == gpu_uuid and int(pid) != os.getpid():
+                apps.append((int(pid), int(mem)))
+    except Exception:
+        apps.append((-1, -1))  # fail closed: unknown state counts as dirty
+    return apps
+
+
 def _summary(samples_us):
     ordered = sorted(samples_us)
     n = len(ordered)
@@ -200,6 +227,13 @@ def run_benchmark(args) -> int:
         reg.dispatch_stats().clear()
 
     util_b, mem_b, gpu_name, gpu_uuid = _gpu_state(args.gpu_id)
+    apps_b = _other_compute_apps(gpu_uuid)
+    if util_b != 0 or mem_b != 0 or apps_b:
+        print(
+            f"RUN REJECTED (idle gate, before): gpu{args.gpu_id} util={util_b}% "
+            f"mem={mem_b}MiB other_procs={apps_b}"
+        )
+        return 2
     host = os.uname().nodename
     command = " ".join(sys.argv)
     rows = []
@@ -281,7 +315,13 @@ def run_benchmark(args) -> int:
         del tensors, calls
         torch.cuda.empty_cache()
 
+    # Settle so the utilization sampling window clears our own tail activity,
+    # then gate on util==0 and no OTHER compute process (the remaining device
+    # memory is this process's own CUDA context; see _other_compute_apps).
+    torch.cuda.empty_cache()
+    time.sleep(3)
     util_a, mem_a, _, _ = _gpu_state(args.gpu_id)
+    apps_a = _other_compute_apps(gpu_uuid)
     for row in rows:
         row["idle_before_util"] = util_b
         row["idle_before_mem_mib"] = mem_b
@@ -302,6 +342,18 @@ def run_benchmark(args) -> int:
         if counts.get("fallback", 0) > 0:
             print("WARNING: candidate fell back on some production cases!")
             return 1
+    if util_a != 0 or apps_a:
+        print(
+            f"RUN REJECTED (idle gate, after): gpu{args.gpu_id} util={util_a}% "
+            f"other_procs={apps_a} (rows were appended for the record; do NOT "
+            f"use this run_id as promotion evidence)"
+        )
+        return 2
+    print(
+        f"idle gate PASS: gpu{args.gpu_id} before util/mem 0/0, no other procs; "
+        f"after util 0, no other procs (own-context mem {mem_a} MiB; external "
+        f"post-exit snapshot is the 0/0 proof)"
+    )
     return 0
 
 
