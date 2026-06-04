@@ -252,3 +252,44 @@ KB (selector: R1-task2 NONE; R1-task10 BL-20260605-ncu-kernel-filter — no new
 NCU captures were needed since the kernels are unchanged; the round-0 NCU
 evidence remains valid for bound attribution). No new KernelWiki query needed
 (no kernel-design decision in this round).
+
+## 2026-06-05 — Round 2 (review phase): numerics + ABI fixes, canonical re-run
+
+Code review findings fixed (both classified blocking):
+
+1. Vectorized gated kernels' one-pass variance E[x^2]-mean^2 was vulnerable to
+   catastrophic fp32 cancellation at large common offsets. Fix evolution,
+   recorded honestly:
+   - Added offset-stress correctness rows (EP2/EP3, fp32 offset 16384, bf16
+     offset 64). First run showed the fp32 rows at 1e-5 tolerance fail for
+     BOTH sides (baseline max_abs 1.6e-2, candidate 9.4e-3): at offset 16384
+     the fp32 input ulp (~1e-3) dominates every implementation — tolerance
+     re-set to 5e-2 with the rationale in the test comment (the cancellation
+     failure mode this row targets produces O(1)-O(1e3) errors and is still
+     caught decisively).
+   - Pure shifted-data one-pass (K = row's first element) then left two
+     regular fp32 EP3 grid rows marginally over 1e-5 (5.2e-5/3.1e-5): the
+     shift sample can land a few sigma from the mean, amplifying rounding by
+     (1+z0^2). Final form: statistics by dtype — fp32 rows use the
+     reference's centered two-pass from the register cache (1e-5 class);
+     bf16/fp16 rows (all production) use the shifted one-pass (offset-robust,
+     single fused reduction, two barriers).
+2. Strided 1-D weight/bias views are now accepted like the reference: the
+   generic gated kernels index by stride; the vectorized fast path requires
+   unit stride and falls back automatically; the contiguity rejection was
+   removed (benchmark_method.md deviation note updated). New strided-affine
+   positive tests pass on both sides.
+
+Re-validation (kernel source changed -> full dual remeasurement):
+
+- Correctness: 902/902 PASS, 0 failures (898 prior rows + 4 offset-stress
+  rows + strided-affine tests; logs/correctness_r2.{log,json}).
+- Canonical FINAL benchmark (bench/results.jsonl, GPU0 idle 0 MiB
+  before/after, logs/bench_r2_gpustate_{before,after}.txt): 25/25 PASSED,
+  production geomean 2.7570x, arithmetic 3.895x, min row 1.0391x
+  (qwen_edit_gated), max 8.99x. DEC-1 met on every row. The robustness fix
+  costs the two gated rows ~5-12% vs the rejected raw form (EP2 1.09->1.04,
+  EP3 1.19->1.05) — accepted: correctness class beats the marginal speed of
+  a cancellation-prone form. New candidate kernel sha256
+  23e6ee015982ed98a4b227c47a544066eb2bbc6aee792ad1e37e3168086d1117 (recorded
+  in the run provenance; docs updated).

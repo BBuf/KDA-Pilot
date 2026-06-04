@@ -93,8 +93,8 @@
 - `scale`/`shift` must share one dtype (upstream Triton would accept mixed
   dtypes via promotion; no production or contract row uses mixed scale/shift
   dtypes).
-- `weight`/`bias`, when present, must be contiguous 1D `[C]` (upstream calls
-  `.contiguous()`, copying if needed, inside the timed call; the candidate
-  rejects instead of copying — all production and contract rows are
-  contiguous).
+- `weight`/`bias` accept any strided 1-D `[C]` view (matching the reference,
+  which normalizes them with `.contiguous()`): the candidate reads them
+  strided through its generic path; only the vectorized fast path requires
+  unit stride and falls back automatically otherwise.
 - `index` must be int32/int64 (the dtypes the contract and coverage rows use).

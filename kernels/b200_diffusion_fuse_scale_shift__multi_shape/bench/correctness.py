@@ -233,6 +233,21 @@ def build_grid_rows(quick: bool) -> list[dict]:
             rows.append(_gated_spec(
                 f"grid_{tag}_b{B}_l{L}_c{C}_{dt}_{'aff' if affine else 'noaff'}_{idx_dt}",
                 fn, B, L, C, dt, affine=affine, index_dtype=idx_dt))
+    # offset-stress rows: a large common offset on the normalized values
+    # targets the catastrophic-cancellation failure mode of a raw
+    # E[x^2]-mean^2 variance (which blows the output up by O(1)..O(1e3) at
+    # offset 16384). Tolerance note: at that offset the fp32 input ulp is
+    # ~1e-3, so even the reference's centered two-pass form differs from the
+    # oracle by ~1e-2 (measured: baseline 1.6e-2) — input-magnitude error,
+    # common to every fp32 implementation. The rows therefore use the 5e-2
+    # tolerance, which still rejects the cancellation failure mode decisively
+    # while accepting the unavoidable magnitude-scaled rounding.
+    for fn, tag in ((_EP2, "ep2"), (_EP3, "ep3")):
+        for dt, off in (("float32", 16384.0), ("bfloat16", 64.0)):
+            spec = _gated_spec(f"grid_{tag}_offset_{dt}", fn, 1, 128, 3072, dt, affine=False)
+            spec["offset"] = off
+            spec["atol"] = spec["rtol"] = 5e-2
+            rows.append(spec)
     # scalar scale/shift rows (upstream fast-path semantics, incl. the
     # scale_constant=0 copy quirk) per dtype
     for dt in _GRID_DT:
@@ -273,6 +288,13 @@ def _build_case(spec: dict, device: torch.device, seed: int) -> dict:
         val = 0.0 if spec["scalar"]["zero"] else 0.75
         case["inputs"]["scale"] = torch.full((1,), val, device=device, dtype=dt)
         case["inputs"]["shift"] = torch.full((1,), val, device=device, dtype=dt)
+    offset = spec.get("offset")
+    if offset is not None:
+        # Common offset on the values the LayerNorm normalizes: x for the
+        # plain gated entry point, the residual stream for the residual one
+        # (r = residual + residual_gate * x inherits the offset additively).
+        target = "residual" if spec["function"] == _EP3 else "x"
+        case["inputs"][target] += offset
     return case
 
 
@@ -357,6 +379,40 @@ def run_rejection_tests(device: torch.device, impl: str) -> list[str]:
     return failures
 
 
+def run_strided_affine_tests(device: torch.device, impl: str) -> list[str]:
+    """Strided 1-D weight/bias views must be accepted and correct on both
+    sides (the reference normalizes them with .contiguous(); the candidate
+    reads them strided through its generic path)."""
+    failures = []
+    B, L, C = 2, 33, 3072
+    torch.manual_seed(7321)
+    for fn, tag in ((_EP2, "ep2"), (_EP3, "ep3")):
+        spec = _gated_spec(f"strided_affine_{tag}", fn, B, L, C, "bfloat16", affine=False)
+        case = _build_case(spec, device, 7321)
+        inputs = case["inputs"]
+        # length-C views with stride 2 over a 2C-length base
+        inputs["weight"] = torch.randn(2 * C, device=device, dtype=torch.bfloat16)[::2]
+        inputs["bias"] = torch.randn(2 * C, device=device, dtype=torch.bfloat16)[1::2]
+        assert inputs["weight"].stride(0) == 2 and inputs["bias"].stride(0) == 2
+        oracle = _ORACLES[fn](inputs)
+        tol = case["tolerance"]
+        sides = []
+        if impl in ("both", "baseline"):
+            sides.append(("baseline", adapter.call_baseline, case["baseline_outputs"]))
+        if impl in ("both", "candidate"):
+            sides.append(("candidate", adapter.call_candidate, case["candidate_outputs"]))
+        for name, call, outputs in sides:
+            _poison(outputs)
+            try:
+                call(spec, inputs, outputs)
+                torch.cuda.synchronize()
+            except Exception as exc:  # noqa: BLE001
+                failures.append(f"strided_affine_{tag}: {name} rejected strided weight/bias: {exc}")
+                continue
+            failures += _compare(f"strided_affine_{tag}:{name}-vs-oracle", oracle, outputs, tol)
+    return failures
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--device", default="cuda:0")
@@ -380,6 +436,7 @@ def main() -> int:
     failures: list[str] = []
     failures += run_self_test(device)
     failures += run_rejection_tests(device, args.impl)
+    failures += run_strided_affine_tests(device, args.impl)
 
     ran = 0
     for i, spec in enumerate(rows):

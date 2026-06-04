@@ -14,9 +14,12 @@
 //
 // Math notes kept aligned with the reference:
 //  - scale/shift arithmetic runs in fp32 and stores back in x's dtype.
-//  - LayerNorm statistics are fp32 two-pass (mean, then centered variance),
-//    matching the reference's compute order class; the vectorized row kernels
-//    keep the loaded values in registers between the passes.
+//  - LayerNorm statistics are fp32. The generic kernels use the reference's
+//    centered two-pass form. The vectorized row kernels read the row once
+//    into registers and pick the statistics form by dtype: fp32 rows use the
+//    reference's centered two-pass form (canonical 1e-5 tolerance class);
+//    bf16/fp16 rows use shifted-data one-pass moments about the row's first
+//    element — robust to large common offsets, single fused block reduction.
 //  - The residual variant normalizes the fp32 pre-downcast residual values;
 //    residual_out stores their downcast copies.
 //  - gate_out is a raw-dtype pass-through of the selected gate row (no fp32
@@ -46,6 +49,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <type_traits>
 #include <cstring>
 #include <sstream>
 #include <stdexcept>
@@ -563,7 +567,8 @@ __global__ void ln_select01_kernel(
     const IT* __restrict__ index,
     XT* __restrict__ out, XT* __restrict__ gate_out,
     float eps, int64_t seq_len, int64_t channels,
-    ModStrides m0, ModStrides m1, int64_t idx_sb, int64_t idx_sl) {
+    ModStrides m0, ModStrides m1, int64_t idx_sb, int64_t idx_sl,
+    int64_t w_stride, int64_t b_stride) {
   __shared__ float red[32];
   const int64_t row = blockIdx.x;
   const int64_t b = row / seq_len;
@@ -592,8 +597,8 @@ __global__ void ln_select01_kernel(
   XT* gr = gate_out + row * channels;
   for (int64_t c = threadIdx.x; c < channels; c += blockDim.x) {
     float xh = (to_f(xr[c]) - mean) * rstd;
-    if (weight != nullptr) xh *= to_f(weight[c]);
-    if (bias != nullptr) xh += to_f(bias[c]);
+    if (weight != nullptr) xh *= to_f(weight[c * w_stride]);
+    if (bias != nullptr) xh += to_f(bias[c * b_stride]);
     const float sv = to_f(s[b * m.s_sb + c * m.s_sc]);
     const float hv = to_f(h[b * m.h_sb + c * m.h_sc]);
     outr[c] = from_f<XT>(fmaf(xh, 1.0f + sv, hv));
@@ -610,7 +615,8 @@ __global__ void residual_ln_select01_kernel(
     const IT* __restrict__ index,
     XT* __restrict__ out, XT* __restrict__ residual_out, XT* __restrict__ gate_out,
     float eps, int64_t seq_len, int64_t channels,
-    ModStrides m0, ModStrides m1, int64_t idx_sb, int64_t idx_sl) {
+    ModStrides m0, ModStrides m1, int64_t idx_sb, int64_t idx_sl,
+    int64_t w_stride, int64_t b_stride) {
   __shared__ float red[32];
   const int64_t row = blockIdx.x;
   const int64_t b = row / seq_len;
@@ -651,8 +657,8 @@ __global__ void residual_ln_select01_kernel(
   for (int64_t c = threadIdx.x; c < channels; c += blockDim.x) {
     const float r = fmaf(to_f(rgr[c]), to_f(xr[c]), to_f(rr[c]));
     float xh = (r - mean) * rstd;
-    if (weight != nullptr) xh *= to_f(weight[c]);
-    if (bias != nullptr) xh += to_f(bias[c]);
+    if (weight != nullptr) xh *= to_f(weight[c * w_stride]);
+    if (bias != nullptr) xh += to_f(bias[c * b_stride]);
     const float sv = to_f(s[b * m.s_sb + c * m.s_sc]);
     const float hv = to_f(h[b * m.h_sb + c * m.h_sc]);
     outr[c] = from_f<XT>(fmaf(xh, 1.0f + sv, hv));
@@ -683,26 +689,70 @@ __global__ void ln_select01_vec_kernel(
   const int64_t l = row - b * seq_len;
   const XT* xr = x + row * channels;
 
+  // Statistics policy by dtype, both reading x exactly once into registers:
+  //  - fp32 rows (canonical tolerance 1e-5): the reference's centered
+  //    two-pass form, mean first, then sum((x - mean)^2) from the register
+  //    cache. Bit-class identical accuracy to the baseline.
+  //  - bf16/fp16 rows (tolerance 5e-2; all production rows): shifted-data
+  //    one-pass moments about K = the row's first element. One fused
+  //    reduction (two barriers); robust to large common offsets, unlike the
+  //    raw E[x^2] - mean^2 form, because sum((x-K)^2) stays O(C * sigma^2).
   float xf[kRounds][kVX];
-  float2 acc = make_float2(0.0f, 0.0f);
+  float mean, rstd;
+  if constexpr (std::is_same<XT, float>::value) {
+    float sum = 0.0f;
 #pragma unroll
-  for (int r = 0; r < kRounds; ++r) {
-    const int j = r * blockDim.x + threadIdx.x;
-    if (j < vec_per_row) {
-      Vec16<XT> v;
-      v.raw = __ldcs(reinterpret_cast<const uint4*>(xr) + j);
+    for (int r = 0; r < kRounds; ++r) {
+      const int j = r * blockDim.x + threadIdx.x;
+      if (j < vec_per_row) {
+        Vec16<XT> v;
+        v.raw = __ldcs(reinterpret_cast<const uint4*>(xr) + j);
 #pragma unroll
-      for (int k = 0; k < kVX; ++k) {
-        xf[r][k] = to_f(v.elems[k]);
-        acc.x += xf[r][k];
-        acc.y = fmaf(xf[r][k], xf[r][k], acc.y);
+        for (int k = 0; k < kVX; ++k) {
+          xf[r][k] = to_f(v.elems[k]);
+          sum += xf[r][k];
+        }
       }
     }
+    mean = block_reduce_sum(sum, red) / channels;
+    float vsum = 0.0f;
+#pragma unroll
+    for (int r = 0; r < kRounds; ++r) {
+      const int j = r * blockDim.x + threadIdx.x;
+      if (j < vec_per_row) {
+#pragma unroll
+        for (int k = 0; k < kVX; ++k) {
+          const float d = xf[r][k] - mean;
+          vsum += d * d;
+        }
+      }
+    }
+    const float var = block_reduce_sum(vsum, red) / channels;
+    rstd = rsqrtf(var + eps);
+  } else {
+    const float shift_k = to_f(__ldg(xr));
+    float2 acc = make_float2(0.0f, 0.0f);
+#pragma unroll
+    for (int r = 0; r < kRounds; ++r) {
+      const int j = r * blockDim.x + threadIdx.x;
+      if (j < vec_per_row) {
+        Vec16<XT> v;
+        v.raw = __ldcs(reinterpret_cast<const uint4*>(xr) + j);
+#pragma unroll
+        for (int k = 0; k < kVX; ++k) {
+          xf[r][k] = to_f(v.elems[k]);
+          const float d = xf[r][k] - shift_k;
+          acc.x += d;
+          acc.y = fmaf(d, d, acc.y);
+        }
+      }
+    }
+    const float2 tot = block_reduce_sum2(acc, red);
+    const float dmean = tot.x / channels;
+    mean = shift_k + dmean;
+    const float var = fmaxf(tot.y / channels - dmean * dmean, 0.0f);
+    rstd = rsqrtf(var + eps);
   }
-  const float2 tot = block_reduce_sum2(acc, red);
-  const float mean = tot.x / channels;
-  const float var = fmaxf(tot.y / channels - mean * mean, 0.0f);
-  const float rstd = rsqrtf(var + eps);
 
   const bool sel = index[b * idx_sb + l * idx_sl] != IT(0);
   const XT* srow = (sel ? scale1 + b * s1_sb : scale0 + b * s0_sb);
@@ -759,32 +809,76 @@ __global__ void residual_ln_select01_vec_kernel(
   XT* ror = residual_out + row * channels;
 
   // r = residual + residual_gate * x in fp32, held in registers as the
-  // LayerNorm input; residual_out stores the downcast copies.
+  // LayerNorm input; residual_out stores the downcast copies. Statistics
+  // policy by dtype as in the non-residual kernel: fp32 rows use the
+  // reference's centered two-pass form from the register cache; half rows
+  // use shifted-data one-pass moments about the row's first residual value.
   float rf[kRounds][kVX];
-  float2 acc = make_float2(0.0f, 0.0f);
+  float mean, rstd;
+  if constexpr (std::is_same<XT, float>::value) {
+    float sum = 0.0f;
 #pragma unroll
-  for (int r = 0; r < kRounds; ++r) {
-    const int j = r * blockDim.x + threadIdx.x;
-    if (j < vec_per_row) {
-      Vec16<XT> xv, rv, gv;
-      xv.raw = __ldcs(reinterpret_cast<const uint4*>(xr) + j);
-      rv.raw = __ldcs(reinterpret_cast<const uint4*>(rr) + j);
-      gv.raw = __ldcs(reinterpret_cast<const uint4*>(rgr) + j);
-      Vec16<XT> rov;
+    for (int r = 0; r < kRounds; ++r) {
+      const int j = r * blockDim.x + threadIdx.x;
+      if (j < vec_per_row) {
+        Vec16<XT> xv, rv, gv;
+        xv.raw = __ldcs(reinterpret_cast<const uint4*>(xr) + j);
+        rv.raw = __ldcs(reinterpret_cast<const uint4*>(rr) + j);
+        gv.raw = __ldcs(reinterpret_cast<const uint4*>(rgr) + j);
+        Vec16<XT> rov;
 #pragma unroll
-      for (int k = 0; k < kVX; ++k) {
-        rf[r][k] = fmaf(to_f(gv.elems[k]), to_f(xv.elems[k]), to_f(rv.elems[k]));
-        rov.elems[k] = from_f<XT>(rf[r][k]);
-        acc.x += rf[r][k];
-        acc.y = fmaf(rf[r][k], rf[r][k], acc.y);
+        for (int k = 0; k < kVX; ++k) {
+          rf[r][k] = fmaf(to_f(gv.elems[k]), to_f(xv.elems[k]), to_f(rv.elems[k]));
+          rov.elems[k] = from_f<XT>(rf[r][k]);
+          sum += rf[r][k];
+        }
+        __stcs(reinterpret_cast<uint4*>(ror) + j, rov.raw);
       }
-      __stcs(reinterpret_cast<uint4*>(ror) + j, rov.raw);
     }
+    mean = block_reduce_sum(sum, red) / channels;
+    float vsum = 0.0f;
+#pragma unroll
+    for (int r = 0; r < kRounds; ++r) {
+      const int j = r * blockDim.x + threadIdx.x;
+      if (j < vec_per_row) {
+#pragma unroll
+        for (int k = 0; k < kVX; ++k) {
+          const float d = rf[r][k] - mean;
+          vsum += d * d;
+        }
+      }
+    }
+    const float var = block_reduce_sum(vsum, red) / channels;
+    rstd = rsqrtf(var + eps);
+  } else {
+    const float shift_k = fmaf(to_f(__ldg(rgr)), to_f(__ldg(xr)), to_f(__ldg(rr)));
+    float2 acc = make_float2(0.0f, 0.0f);
+#pragma unroll
+    for (int r = 0; r < kRounds; ++r) {
+      const int j = r * blockDim.x + threadIdx.x;
+      if (j < vec_per_row) {
+        Vec16<XT> xv, rv, gv;
+        xv.raw = __ldcs(reinterpret_cast<const uint4*>(xr) + j);
+        rv.raw = __ldcs(reinterpret_cast<const uint4*>(rr) + j);
+        gv.raw = __ldcs(reinterpret_cast<const uint4*>(rgr) + j);
+        Vec16<XT> rov;
+#pragma unroll
+        for (int k = 0; k < kVX; ++k) {
+          rf[r][k] = fmaf(to_f(gv.elems[k]), to_f(xv.elems[k]), to_f(rv.elems[k]));
+          rov.elems[k] = from_f<XT>(rf[r][k]);
+          const float d = rf[r][k] - shift_k;
+          acc.x += d;
+          acc.y = fmaf(d, d, acc.y);
+        }
+        __stcs(reinterpret_cast<uint4*>(ror) + j, rov.raw);
+      }
+    }
+    const float2 tot = block_reduce_sum2(acc, red);
+    const float dmean = tot.x / channels;
+    mean = shift_k + dmean;
+    const float var = fmaxf(tot.y / channels - dmean * dmean, 0.0f);
+    rstd = rsqrtf(var + eps);
   }
-  const float2 tot = block_reduce_sum2(acc, red);
-  const float mean = tot.x / channels;
-  const float var = fmaxf(tot.y / channels - mean * mean, 0.0f);
-  const float rstd = rsqrtf(var + eps);
 
   const bool sel = index[b * idx_sb + l * idx_sl] != IT(0);
   const XT* srow = (sel ? scale1 + b * s1_sb : scale0 + b * s0_sb);
@@ -822,6 +916,7 @@ struct GatedArgs {
   int64_t B, L, C;
   const void* weight = nullptr;
   const void* bias = nullptr;
+  int64_t w_stride = 1, b_stride = 1;
   ModStrides m0, m1;
   int64_t idx_sb, idx_sl;
 };
@@ -859,15 +954,15 @@ inline GatedArgs validate_gated_common(
     const TensorView& w = weight.value();
     CAND_CHECK(w.ndim() == 1 && w.size(0) == a.C, "weight must be 1D [C]");
     CAND_CHECK(same_dtype(w.dtype(), xt), "weight dtype must match x");
-    CAND_CHECK(tensor_is_contiguous(w), "weight must be contiguous");
     a.weight = data_of(w);
+    a.w_stride = (w.size(0) == 1) ? 0 : w.stride(0);  // strided views accepted like the reference
   }
   if (bias.has_value()) {
     const TensorView& bv = bias.value();
     CAND_CHECK(bv.ndim() == 1 && bv.size(0) == a.C, "bias must be 1D [C]");
     CAND_CHECK(same_dtype(bv.dtype(), xt), "bias dtype must match x");
-    CAND_CHECK(tensor_is_contiguous(bv), "bias must be contiguous");
     a.bias = data_of(bv);
+    a.b_stride = (bv.size(0) == 1) ? 0 : bv.stride(0);
   }
   a.m0 = ModStrides{scale0.stride(0), scale0.stride(1), shift0.stride(0), shift0.stride(1),
                     gate0.stride(0), gate0.stride(1)};
@@ -904,8 +999,8 @@ inline bool gated_vec_ok(const GatedArgs& a,
       !row_ok(shift1) || !row_ok(gate1)) {
     return false;
   }
-  if (a.weight != nullptr && !aligned16(a.weight)) return false;
-  if (a.bias != nullptr && !aligned16(a.bias)) return false;
+  if (a.weight != nullptr && (!aligned16(a.weight) || a.w_stride != 1)) return false;
+  if (a.bias != nullptr && (!aligned16(a.bias) || a.b_stride != 1)) return false;
   return true;
 }
 
@@ -959,7 +1054,8 @@ void fuse_layernorm_scale_shift_gate_select01(
       data_of<XT>(scale1), data_of<XT>(shift1),                                            \
       data_of<XT>(gate1), data_of<IT>(index),                                              \
       mutable_data_of<XT>(output), mutable_data_of<XT>(gate_out),                          \
-      static_cast<float>(eps), a.L, a.C, a.m0, a.m1, a.idx_sb, a.idx_sl)
+      static_cast<float>(eps), a.L, a.C, a.m0, a.m1, a.idx_sb, a.idx_sl,                   \
+      a.w_stride, a.b_stride)
 
 #define LN_BODY(XT)                                                                        \
   do {                                                                                     \
@@ -1053,7 +1149,7 @@ void fuse_residual_layernorm_scale_shift_gate_select01(
       data_of<XT>(gate1), data_of<IT>(index),                                               \
       mutable_data_of<XT>(output), mutable_data_of<XT>(residual_out),                       \
       mutable_data_of<XT>(gate_out), static_cast<float>(eps), a.L, a.C, a.m0, a.m1,         \
-      a.idx_sb, a.idx_sl)
+      a.idx_sb, a.idx_sl, a.w_stride, a.b_stride)
 
 #define RLN_BODY(XT)                                                                        \
   do {                                                                                      \
