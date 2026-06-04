@@ -91,3 +91,30 @@ GPU state: no GPU work yet (local scaffold only; macOS host has no CUDA).
   EP1 kernels (streaming __ldcs/__stcs for x/out, __ldg for reused modulation
   rows), flat-vec small-row variant, exact-C register-cached EP2/EP3 row
   kernels (ROUNDS-templated), generic v0 kernels kept as fallback paths.
+
+## 2026-06-04 — Optimization iteration 1 (v1 kernels)
+
+Context refresh: frozen per-row evidence (bench/results.jsonl v0 run) +
+KernelWiki technique-vectorized-loads / pattern-memory-bound (already queried
+this round; no new query needed — the v0 per-row table directly identifies the
+bound per bucket: host-launch-bound small rows already won, streaming rows lose
+on scalar per-element div/mod kernels).
+
+Edit decisions (evidence -> design):
+- EP1 large rows (v0 0.20-0.51x): one block per token row eliminates
+  per-element div/mod; 16B vectors (8x bf16 / 4x fp32) with __ldcs/__stcs
+  evict-first hints for x/out and full-shape scale/shift; __ldg read-only
+  cache for modulation rows reused across tokens (sl==0). Runtime gates:
+  C % vec == 0, 16B base alignment, unit channel stride, 16B-multiple row
+  strides; generic v0 strided kernel kept as fallback (scalar/4D/odd-C).
+- EP1 small rows (v0 already 4-8.9x): flat vectorized grid (32-bit indexing)
+  below 512 rows so S=19..195 rows still cover the SMs.
+- EP2/EP3 8424-rows (v0 0.61x/0.56x): exact-C single-block-per-row vectorized
+  kernels, fp32 register cache of the loaded row between mean and variance
+  passes (single global read of x / of the fp32 residual expression),
+  modulation rows via __ldg, gate_out stored as raw 16B vectors (no fp32
+  round trip), kRounds templated (1..4) so register usage matches C; threads
+  picked per-C (C=3072 bf16 -> 384 threads, 1 round).
+- wan-ti2v chunk2 row rides the rowgrid path (contiguous last dim, doubled row
+  stride passes the 16B gates); wan-t2v/i2v fp32 broadcast rows ride the
+  reuse path (fp32 rows read as float4 pairs).
