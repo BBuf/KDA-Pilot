@@ -7,7 +7,6 @@ result must still match the split oracle from the same checkout.
 """
 
 import os
-import statistics  # noqa: F401  (kept for parity with export_real.py imports)
 
 import torch
 

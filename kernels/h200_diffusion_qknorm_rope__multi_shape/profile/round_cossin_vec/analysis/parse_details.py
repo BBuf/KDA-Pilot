@@ -1,4 +1,4 @@
-import csv, statistics, sys
+import csv, statistics
 
 WANT = ["Duration", "Registers Per Thread", "Achieved Occupancy", "Theoretical Occupancy",
         "DRAM Throughput", "Compute (SM) Throughput", "Memory Throughput", "L2 Hit Rate",
