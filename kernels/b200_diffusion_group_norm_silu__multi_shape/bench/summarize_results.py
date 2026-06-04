@@ -137,7 +137,7 @@ def main() -> int:
     if args.results is None:
         ap.error("results path is required unless --self-test is given")
 
-    prov, rows = load(args.results)
+    _prov, rows = load(args.results)
     passed = [r for r in rows if r.get("status") == "PASSED"]
     failed = [r for r in rows if r.get("status") != "PASSED"]
     prod = [r for r in passed if r.get("production", True)]

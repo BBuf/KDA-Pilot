@@ -78,7 +78,7 @@ def contiguous_strides(shape: tuple[int, ...]) -> tuple[int, ...]:
 
 
 def channels_last_3d_strides(shape: tuple[int, ...]) -> tuple[int, ...]:
-    n, c, d, h, w = shape
+    _n, c, d, h, w = shape
     return (c * d * h * w, 1, h * w * c, w * c, c)
 
 

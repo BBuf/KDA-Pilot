@@ -44,12 +44,8 @@ from baseline import apply_group_norm_silu, group_norm_silu_baseline  # noqa: E4
 
 _DTYPES = adapter._DTYPES
 
-GRID_SHAPES = [
-    ("image_2d", (2, 64, 32, 32)),
-    ("video_3d", (1, 64, 4, 16, 16)),
-    ("token_2d", (4, 128)),
-    ("large_tile", (1, 128, 20, 256, 256)),
-]
+# The canonical regression-grid SHAPES run through bench/workloads.json rows
+# (production: false); this module only needs the per-dtype tolerances.
 GRID_TOL = {
     torch.float16: (3e-3, 3e-3),
     torch.bfloat16: (7e-2, 2e-2),
