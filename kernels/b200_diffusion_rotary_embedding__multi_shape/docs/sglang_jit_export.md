@@ -69,3 +69,10 @@ Performed in a **task-owned git worktree** of SGLang (`git worktree add --detach
   `docs/logs/kda_install_validate_v6_20260604.json` (replaces an earlier non-idle-gated capture
   during which a co-resident process had appeared; the superseded capture's correctness facts
   were identical).
+
+- **Official baseline comparison (post-loop, per user direction)**: sglang MAIN
+  (`8933ec877235e24fd994246c6f8db225a4cb2823`, includes PR #24732's fast LTX-2 Triton kernel),
+  measured via a task-owned `git worktree` + `benchmark.py --sglang-path ../sglang_main/python`
+  (the recorded command pins the baseline source). **Geomean 1.4660×** over the 11 captured
+  signatures (3 idle-gated sessions: 1.4325/1.4640/1.4740×); standard 1.917×; correctness vs the
+  main baseline bit-exact 11/11. KDA metadata surfaces updated to this measured value.

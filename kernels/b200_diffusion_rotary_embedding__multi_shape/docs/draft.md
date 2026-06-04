@@ -290,3 +290,42 @@ All scope-B matches are, by construction, one of: (i) correction-log prose descr
 corrected (the round-0/round-1 notes in this file), (ii) the single command line above (the two
 commit short-hashes self-match), or (iii) the two append-only `solutions.jsonl` correction rows,
 which the evidence policy forbids rewriting. None is an active claim.
+
+## OFFICIAL BASELINE: sglang main (post-loop re-measurement, 2026-06-04)
+
+Per user direction, the PR-facing performance comparison uses **sglang MAIN as the baseline**,
+not the container's rolled-back checkout. Method: task-owned worktree of sglang at
+`origin/main` = `8933ec877235e24fd994246c6f8db225a4cb2823` (which CONTAINS PR #24732's fast
+BLOCK_HEADS LTX-2 Triton kernel); `benchmark.py --sglang-path ../sglang_main/python` resolves
+`import sglang` (baseline kernels + jit build stack) from that worktree, so the recorded command
+alone pins the baseline source. Correctness re-run against the main baseline first: 4 passed
+(11/11 signatures, bit-exact pair_diff=0; main's kernel math is identical, only its launch
+blocking differs from the rolled-back checkout).
+
+Three idle-gated sessions (idle_before/idle_after true; benchmark.csv rows with
+`--sglang-path` in the cmd field; GPU 1, B200):
+
+| shape | main base (med of 3) | cuda-v6 (med of 3) | speedup |
+|---|---|---|---|
+| standard 1x27030x24x128 | 110.69 | 57.73 | 1.917x |
+| ltx2 1x1536x4096 h64 | 36.02 | 21.63 | 1.665x |
+| ltx2 1x126x2048 h32 | 35.49 | 21.50 | 1.650x |
+| ltx2 1x1536x2048 h32 | 35.58 | 21.41 | 1.662x |
+| ltx2 1x6144x4096 h64 | 42.45 | 28.03 | 1.514x |
+| ltx2 1x6144x2048 h32 | 36.24 | 21.66 | 1.673x |
+| ltx2 2x6144x4096 h64 | 49.57 | 49.54 | 1.001x |
+| ltx2 2x126x2048 h32 | 35.30 | 21.38 | 1.651x |
+| ltx2 2x6144x2048 h32 | 42.38 | 27.90 | 1.519x |
+| ltx2 1x24576x4096 h64 | 92.54 | 92.54 | 1.000x |
+| ltx2 1x24576x2048 h32 | 59.81 | 49.54 | 1.207x |
+
+**Geomean vs sglang main: 1.4660x** (per-shape medians; session geomeans 1.4325/1.4640/1.4740x).
+This MEASURES what the round-1 like-for-like composition estimated (~1.46x) and supersedes both
+the estimate and the container-baseline geomean (3.1x, kept only as documented context for the
+BASELINE SHIFT note above). The main baseline's per-shape numbers match the 2026-06-01 pinned
+environment closely (e.g. 24576-h32 59.81 vs 59.6us), confirming main == the fast baseline.
+
+v4-pair legs inside these sessions: standard 1.0709-1.0721x (consistent with the gate set);
+one launch-bound outlier in session 1 (126-row h32 pair ratio 0.79, 1-of-3 sessions, the v6/v4
+code paths are byte-identical there -> environmental noise; the authoritative gate evidence
+remains the dedicated provenance-complete set, where the 2-of-3 rule holds on every shape).

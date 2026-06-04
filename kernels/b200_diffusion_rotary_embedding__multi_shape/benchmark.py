@@ -146,8 +146,14 @@ def _load_compare_exports(src_dir: str):
     return module
 
 
-def _run_worker(tmp_path: str, warmup: int, iters: int, compare_src: str = "") -> int:
+def _run_worker(tmp_path: str, warmup: int, iters: int, compare_src: str = "", sglang_path: str = "") -> int:
     """CUDA work happens in this child process; it exits before the parent's after-idle check."""
+    if sglang_path:
+        # Resolve `import sglang` (baseline kernels AND the jit build stack) from an
+        # explicit checkout -- e.g. a task-owned worktree of sglang MAIN -- so the
+        # recorded command alone pins the baseline source, independent of whatever
+        # the container's default checkout happens to be.
+        sys.path.insert(0, os.path.abspath(sglang_path))
     correctness = _load_correctness_module()
     cases = correctness.make_cases()
     if not cases:
@@ -204,12 +210,15 @@ def main() -> int:
                          "adds a third timing leg through the identical wrapper ABI in the same process")
     ap.add_argument("--compare-label", type=str, default="compare",
                     help="id recorded for the --compare-src leg (e.g. cuda-v4)")
+    ap.add_argument("--sglang-path", type=str, default="",
+                    help="python/ dir of an explicit sglang checkout (e.g. a task-owned worktree "
+                         "of sglang MAIN) used for the baseline kernels and the jit build stack")
     ap.add_argument("--worker", action="store_true", help="internal: CUDA timing child process")
     ap.add_argument("--tmp", type=str, default="", help="internal: worker results path")
     args = ap.parse_args()
 
     if args.worker:
-        return _run_worker(args.tmp, args.warmup, args.iters, compare_src=args.compare_src)
+        return _run_worker(args.tmp, args.warmup, args.iters, compare_src=args.compare_src, sglang_path=args.sglang_path)
 
     # -------- parent: owns idle validation + CSV; never initializes CUDA --------
     visible = os.environ.get("CUDA_VISIBLE_DEVICES", "")
@@ -227,6 +236,8 @@ def main() -> int:
     ]
     if args.compare_src:
         cmd += ["--compare-src", args.compare_src]
+    if args.sglang_path:
+        cmd += ["--sglang-path", args.sglang_path]
     rc = subprocess.run(cmd).returncode
     try:
         with open(tmp.name) as fh:
@@ -255,6 +266,8 @@ def main() -> int:
     if args.compare_src:
         # exact-command provenance: the paired rows must be reproducible verbatim
         cmdstr += f" --compare-src {args.compare_src} --compare-label {args.compare_label}"
+    if args.sglang_path:
+        cmdstr += f" --sglang-path {args.sglang_path}"
     prov = f"host={host} gpu_id={gpu_id} gpu={gpu_model} {ver_id} {version} cmd='{cmdstr}'"
 
     csv_path = KERNEL_DIR / "benchmark.csv"

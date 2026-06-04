@@ -104,12 +104,15 @@ cuda-v4 section above. Continuation deltas only:
   times baseline, v4-snapshot, and candidate in the SAME worker process through the identical
   wrapper ABI; rows `cuda-v6_vs_cuda-v4` in `benchmark.csv` with the full compare command in
   the provenance field. Fresh pair geomeans 1.0049/1.0050/1.0018×.
-- **Environment note (mandatory with any geomean claim)**: the 2026-06-04 container baseline is
-  SGLang `edb1b3f8f`, whose LTX-2 Triton kernel lacks PR #24732 and is 2–8× slower at scale than
-  the 2026-06-01 pinned baseline — geomean vs the CURRENT baseline is **3.10–3.20×** across the
-  six paired sessions but is environment-inflated; the like-for-like estimate vs the 2026-06-01
-  environment is **~1.46×** (= 1.4505 × geomean(fresh pair geomeans) = 1.4505 × 1.0039 = 1.456;
-  see `docs/draft.md` BASELINE SHIFT + corrections).
+- **OFFICIAL baseline comparison — sglang MAIN** (`8933ec877`, contains PR #24732's fast LTX-2
+  Triton kernel; measured via a task-owned worktree + `benchmark.py --sglang-path`, 3 idle-gated
+  sessions): **geomean 1.4660×** over the 11 captured signatures (sessions
+  1.4325/1.4640/1.4740×) — standard 110.69→57.73 µs = **1.917×**, LTX-2 small/medium
+  1.51–1.67×, 24576-h32 1.207×, half64-large parity (HBM ceiling). Correctness vs the main
+  baseline: 4 passed, bit-exact 11/11. Context: the 2026-06-04 container checkout (`edb1b3f8f`)
+  is rolled back and lacks PR #24732, making its LTX-2 baseline 2–8× slower at scale — numbers
+  measured against it (geomean ~3.1×) are environment-inflated and kept only as documented
+  context (`docs/draft.md` BASELINE SHIFT note).
 - **Install-path validation (idle-gated)**: `kda_install_validate.py` parent/worker idle gate
   (`idle_gated: true`, before/after states in the JSON): `install()` swaps both symbols, the
   integrated public API is bit-exact 11/11, non-captured falls back, `uninstall()` restores, and

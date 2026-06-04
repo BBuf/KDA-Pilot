@@ -603,10 +603,13 @@ decisions DEC-1..DEC-6; hard per-shape no-regression gate vs `cuda-v4`).
   shapes literal 1.0000× in all 3 sessions); fresh pair geomeans 1.0049/1.0050/1.0018×.
 - **Correctness**: 4/4 pytest on the final source — **bit-exact 11/11** (`pair_diff = 0.000e+00`
   every signature; raw log `docs/logs/correctness_cuda_v6_20260604.log`).
-- **Headline numbers**: vs the CURRENT container baseline, geomean 3.10–3.20× across the six
-  paired sessions (environment-inflated — must carry the BASELINE SHIFT note); **like-for-like
-  vs the 2026-06-01 environment ≈1.46×** (= 1.4505 × geomean(fresh pair geomeans) = 1.4505 ×
-  1.0039 = 1.456), standard bucket 1.80× → **1.92×** (idle-gated install path: 110.88/57.71).
+- **Headline numbers (OFFICIAL baseline = sglang MAIN `8933ec877`, measured)**: geomean
+  **1.4660×** over the 11 captured signatures (3 idle-gated sessions via a task-owned main
+  worktree + `benchmark.py --sglang-path`: 1.4325/1.4640/1.4740×); standard 110.69→57.73 µs =
+  **1.917×**; LTX-2 small/medium 1.51–1.67×; 24576-h32 1.207×; half64-large parity (HBM
+  ceiling); correctness vs main bit-exact 11/11. The container-checkout numbers (geomean ~3.1×,
+  rolled-back baseline missing PR #24732) are environment-inflated context only — see the
+  BASELINE SHIFT note. Idle-gated install path: standard 110.88/57.71 = 1.921×.
 - **Active bounds** (`profile/ncu-v3/REPORT.md` + `ncu-v2`): standard memory-paced at ~75%
   effective DRAM (hoist moved it from compute/BW-balanced; MLP probe `cuda-v7` rejected with zero
   movement; bf16-packed math no-go — compute SOL 47%, not the limiter); LTX-2 large-half32 76.1%
