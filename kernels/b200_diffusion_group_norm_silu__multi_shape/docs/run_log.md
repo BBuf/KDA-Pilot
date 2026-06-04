@@ -229,3 +229,41 @@
   24 cont_small) + 12 baseline_fallback (all `baseline_equivalent`).
 - Final table + verbatim gate output: `docs/results.md`; raw:
   `bench/results.jsonl`.
+- Superseded by Run 14: the review phase found three P2 correctness hazards
+  in the kernel's general-ABI paths; fixing them changes the hash-bound
+  kernel source, so the definitive evidence was regenerated.
+
+## Run 14 — definitive evidence after review-phase kernel fixes (2026-06-05)
+
+- Kernel changes since Run 13 (general-ABI safety; no production-path
+  behavior change): (1) channels-last regime gate tightened from
+  `cpg >= 4` to `cpg % 4 == 0` — the stats kernel's fixed 4/4 vector-half
+  split is only correct when every group boundary lands at offset 0/4 of an
+  8-aligned channel window (cpg 5/6/7/10... now route to the generic
+  kernel; production cpg 16/8/4 unaffected); (2) launches now run under a
+  device guard taken from `x`'s CUDA device with that device's current
+  stream (parity with the upstream `with torch.cuda.device(x.device)`), plus
+  same-device checks for weight/bias/out; (3) the scratch arena is keyed per
+  (device, stream) under a mutex so concurrent streams or alternating
+  devices can never share in-flight partials/stats/counters.
+- New correctness regression rows: `stress_cl3d_cpg6_float16` (C=192, G=32
+  channels-last — would corrupt under the old gate) and
+  `stress_side_stream_float16` (non-default stream) — both PASS on both
+  sides.
+- GPU 1 before: idle (provenance snapshot `0 %, 4 MiB` driver residue).
+  Commands (chained, detached): correctness `--side both` then
+  `CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py --device cuda:0 --out
+  bench/results_r3.jsonl` (copied byte-identically to the tracked
+  `bench/results.jsonl`). Freeze check green locally. GPU 1 after: idle.
+- Correctness: **PASS, 0 failing checks** (all sections incl. new rows).
+- Benchmark: 172/172 PASSED; headline geomean **2.2794** (arithmetic
+  2.4815). Gate (exit 0): **PASS (explained residual)** — this run drew the
+  unlucky order pattern on the routed `(1,512,9,128,128)` pair
+  (0.9166/0.9570, both `baseline_fallback`/`baseline_equivalent`, identical
+  code both sides; same pair read 0.9724/0.9779 in Run 13 and 0.997 in the
+  steady-state probe — the characterized order-debt artifact, Run 11).
+  Buckets: C small 2.4004 / C mid 3.1166 / C large 1.1306 / NC small 2.3395
+  / NC mid 2.2796 / NC large 1.5103.
+- Final table + verbatim gate output: `docs/results.md`; raw:
+  `bench/results.jsonl`. Re-recorded kernel sha256
+  `2fd730bfebb1d6df0928b48570e05540aec8a2583ab53c2b3ad17bc0ccab5e89`.

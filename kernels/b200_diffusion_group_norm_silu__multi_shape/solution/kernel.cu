@@ -32,15 +32,18 @@
 
 #include <ATen/cuda/CUDAContext.h>
 #include <c10/cuda/CUDAException.h>
+#include <c10/cuda/CUDAGuard.h>
 #include <cuda_bf16.h>
 #include <cuda_fp16.h>
 #include <tvm/ffi/container/tensor.h>
 #include <tvm/ffi/error.h>
 #include <tvm/ffi/function.h>
 
-#include <atomic>
 #include <cstdint>
 #include <cstdlib>
+#include <map>
+#include <mutex>
+#include <utility>
 
 namespace {
 
@@ -729,9 +732,18 @@ struct ScratchArena {
   }
 };
 
-ScratchArena& scratch_arena() {
-  static ScratchArena arena;
-  return arena;
+// Scratch is keyed per (device, stream): concurrent streams (or alternating
+// devices) must never share partials/stats/counters while kernels are in
+// flight — reuse within one key is safe because it is stream-ordered. The
+// global mutex covers the whole acquire (steady state is a compare + return;
+// growth, which synchronizes, is rare and cold).
+void* acquire_scratch(size_t bytes, uint64_t sig, cudaStream_t stream) {
+  static std::mutex arenas_mutex;
+  static std::map<std::pair<int, cudaStream_t>, ScratchArena> arenas;
+  int device = -1;
+  C10_CUDA_CHECK(cudaGetDevice(&device));
+  std::lock_guard<std::mutex> lock(arenas_mutex);
+  return arenas[{device, stream}].acquire(bytes, sig, stream);
 }
 
 struct Geometry {
@@ -792,14 +804,18 @@ Geometry analyze(
 int64_t select_regime_impl(const Geometry& g, const DLDataType& dt) {
   const bool is16 = (dt.bits == 16) && (dt.code == kDLFloat || dt.code == kDLBfloat);
   const int64_t small_max = env_int("GNS_SMALL_MAX", 65536);
-  // nchw_last needs an 8-channel vector to span at most TWO groups (the
-  // stats kernel accumulates lo/hi vector halves separately), i.e. cpg >= 4,
-  // and at most 32 groups (the per-CTA group accumulator and the finalize
-  // segmentation are sized for 32).
+  // nchw_last accumulates each 8-channel vector as two FIXED 4-channel
+  // halves, so every group boundary must land at offset 0 or 4 of an
+  // 8-aligned channel window. That holds exactly when cpg % 4 == 0 (cpg 4:
+  // halves are whole groups; cpg 8k: vectors never cross; cpg 12, 20, ...:
+  // boundaries are multiples of 4). cpg values like 5/6/7/10 would split a
+  // group mid-half and corrupt the statistics — they route to the generic
+  // kernel instead. Also at most 32 groups (the per-CTA group accumulator
+  // and the finalize segmentation are sized for 32).
   if (is16 && g.x_channels_last && !g.x_contiguous && g.aligned16 &&
       (g.channels % kVecHalves) == 0 && (g.channels / kVecHalves) <= kBlockThreads &&
       (g.spatial % kVecHalves) == 0 && g.channels <= 1024 &&
-      g.channels_per_group >= 4 &&
+      (g.channels_per_group % 4) == 0 &&
       (g.channels / g.channels_per_group) <= 32) {
     return 3;
   }
@@ -888,7 +904,7 @@ void launch_cont_split(
   const size_t counter_bytes = static_cast<size_t>(rows) * sizeof(unsigned int);
   const uint64_t sig = (0x2ULL << 60) ^ (static_cast<uint64_t>(rows) << 40) ^
                        (static_cast<uint64_t>(chunks) << 8);
-  float* scratch = static_cast<float*>(scratch_arena().acquire(
+  float* scratch = static_cast<float*>(acquire_scratch(
       partial_bytes + stats_bytes + counter_bytes, sig, stream));
   float* partials = scratch;
   float* stats = scratch + rows * chunks * 2;
@@ -941,7 +957,7 @@ void launch_nc(
   const uint64_t sig = (0x3ULL << 60) ^ (static_cast<uint64_t>(g.batch) << 40) ^
                        (static_cast<uint64_t>(tiles) << 8) ^
                        static_cast<uint64_t>(num_groups);
-  float* scratch = static_cast<float*>(scratch_arena().acquire(
+  float* scratch = static_cast<float*>(acquire_scratch(
       partial_bytes + stats_bytes + counter_bytes, sig, stream));
   float* partials = scratch;
   float* stats = scratch + g.batch * tiles * num_groups * 2;
@@ -1020,11 +1036,26 @@ void group_norm_silu(
   check(x.dtype() == weight.dtype() && x.dtype() == bias.dtype() &&
             x.dtype() == out.dtype(),
         "dtype mismatch");
+  const DLDevice xdev = x.device();
+  check(xdev.device_type == kDLCUDA, "x must be a CUDA tensor");
+  check(weight.device().device_type == kDLCUDA &&
+            weight.device().device_id == xdev.device_id &&
+            bias.device().device_type == kDLCUDA &&
+            bias.device().device_id == xdev.device_id &&
+            out.device().device_type == kDLCUDA &&
+            out.device().device_id == xdev.device_id,
+        "x/weight/bias/out must be on the same CUDA device");
   if (numel == 0) {
     return;
   }
 
-  cudaStream_t stream = at::cuda::getCurrentCUDAStream();
+  // Launch on the stream of x's device (parity with the upstream baseline's
+  // `with torch.cuda.device(x.device)`): if the caller's current device
+  // differs from x's, the current-device stream would be the wrong one and
+  // the launches would touch pointers from another device.
+  const auto device_index = static_cast<c10::DeviceIndex>(xdev.device_id);
+  c10::cuda::CUDAGuard device_guard(device_index);
+  cudaStream_t stream = at::cuda::getCurrentCUDAStream(device_index);
   const Geometry g = analyze(x, out, num_groups);
   const DLDataType dt = x.dtype();
   const int64_t regime = select_regime_impl(g, dt);

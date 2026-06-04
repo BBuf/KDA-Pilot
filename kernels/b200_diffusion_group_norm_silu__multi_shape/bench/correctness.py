@@ -303,6 +303,28 @@ def section_stress(fails: Failures, device, sides) -> None:
         for eps in (1e-5, 1e-6):
             run_one(fails, f"stress_eps{eps:g}_{sfx}", x, w, b, NUM_GROUPS, eps, atol, rtol, sides)
 
+    # Fixed-hazard regressions (review round 3):
+    # (a) channels-last with cpg NOT a multiple of 4 (C=192, G=32 -> cpg=6)
+    # must produce correct results — the vectorized channels-last regime's
+    # fixed 4/4 half split would corrupt group statistics here, so dispatch
+    # must route such inputs to the generic kernel.
+    c6 = 192
+    w6 = torch.randn(c6, device=device, dtype=torch.float32).to(torch.float16)
+    b6 = torch.randn(c6, device=device, dtype=torch.float32).to(torch.float16)
+    x6 = make_tensor((1, c6, 4, 16, 16), torch.float16, device, layout="channels_last_3d")
+    run_one(fails, "stress_cl3d_cpg6_float16", x6, w6, b6, NUM_GROUPS, 1e-6, 3e-3, 3e-3, sides)
+
+    # (b) non-default-stream smoke: launches must follow the caller's current
+    # stream on the tensor's device (a kernel pinned to the default stream
+    # would race the comparison or serialize incorrectly).
+    side_stream = torch.cuda.Stream(device=device)
+    xs = make_tensor((1, 64, 4, 16, 16), torch.float16, device, layout="channels_last_3d")
+    ws = torch.randn(64, device=device, dtype=torch.float32).to(torch.float16)
+    bs = torch.randn(64, device=device, dtype=torch.float32).to(torch.float16)
+    with torch.cuda.stream(side_stream):
+        run_one(fails, "stress_side_stream_float16", xs, ws, bs, NUM_GROUPS, 1e-6, 3e-3, 3e-3, sides)
+    torch.cuda.synchronize()
+
 
 def section_negative_control(fails: Failures, device) -> None:
     """The poison detector itself must catch a skipped launch."""
