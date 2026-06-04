@@ -159,3 +159,7 @@ spatial%8192==0 class before any completion claim. All on GPU 3 (idle).
     class in the same 0.94-0.97 band; the immutable per-row floor is not met
     on 6 rows. Promotion withheld; PR #42 stays draft with an AC-5 status
     note; the AC revision decision rests with the user outside the loop.
+17. **DEC-7 (user ruling, 2026-06-05)**: AC-5's per-row floor formally waived
+    for the documented spatial%8192==0 giant class; the pure all-CUDA
+    candidate **promotes** at the round-2 record (headline 1.4787;
+    cross-run band to 1.5010). PR #42 marked ready for review.

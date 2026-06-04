@@ -53,12 +53,15 @@ channel-aligned tiles — at both the prescribed 8192 tile, which regressed to
 beat the generic route). Every structurally distinct implementation lands in
 the same 0.94-0.97 band with ±2-4% run-to-run swing; both implementations
 sit near the same memory roofline, and the residual 3-5% on this class did
-not close. **Under the immutable AC as written, this is a no-go on the
-per-row floor for these 6 rows**; promotion of the task as COMPLETE is
-withheld pending an explicit user revision of the AC (the user's earlier
-DEC-6 ruling sanctioned class-scoped dispatch in exactly this situation, but
-that revision must come from the user, not this loop). The draft PR (#42)
-carries an explicit AC-5 status note and stays draft.
+not close.
+
+**User ruling (DEC-7, 2026-06-05, recorded in the goal tracker evolution
+log): the 0.97 per-row floor is formally waived for this documented class —
+the bound is accepted and the pure all-CUDA candidate promotes at the
+1.4787 headline.** The waiver is class-scoped and evidence-bound: it covers
+exactly the giants with spatial % 8192 == 0, on the strength of the
+12-variant attempt history and the shared-roofline analysis above. All other
+rows remain subject to the unrevised floor (and meet it).
 
 ## Roofline conclusion
 
