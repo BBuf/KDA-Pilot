@@ -11,3 +11,8 @@ exports `*_session.txt` alongside the raw reports.
 
 - `full.ncu-rep` — sha256 `60096d2337ca643c6933102a92d7c2807085bc72d88a461b5e48a267659bc6b1`
   command: `CUDA_VISIBLE_DEVICES=1 KDA_EXTRA_CUDA_CFLAGS=-lineinfo ncu --set full --target-processes all -k regex:norm_scale_shift_kernel --launch-skip 10 --launch-count 3 -f -o reports/full python bench/profile_case.py --case nss-b1-s11040-d5120-bf16-s1SD.fp32-s1SD.fp32-eps1e-06 --impl candidate --iters 25`
+
+- `source.ncu-rep` — sha256 `(missing)`
+  command: `CUDA_VISIBLE_DEVICES=1 KDA_EXTRA_CUDA_CFLAGS=-lineinfo ncu --set source --section SourceCounters -k regex:norm_scale_shift_kernel --launch-skip 10 --launch-count 1 -f -o reports/source python bench/profile_case.py --case nss-b1-s11040-d5120-bf16-s1SD.fp32-s1SD.fp32-eps1e-06 --impl candidate --iters 15`
+  Collected at the current shipped config (joint src hash b91d6e1abc50; full-set captured at 842788d039bd — comment-only delta).
+  Session export: `source_session.txt`.

@@ -1,11 +1,18 @@
 # In-SGLang Export & Drop-in Replacement Test (promotion arbiter)
 
-Run 2026-06-04 on ion-b200 / sglang_bbuf / GPU 1 (idle), task-owned editable
-checkout `$REMOTE_KDA_DIR/sglang_export` (git clone --shared of
+Run twice on 2026-06-04 on ion-b200 / sglang_bbuf / GPU 1 (idle), task-owned
+editable checkout `$REMOTE_KDA_DIR/sglang_export` (git clone --shared of
 `/sgl-workspace/sglang`, detached at the pinned baseline commit
 `edb1b3f8f5ab066af1e9b6ee8e8738fadcfa77e7`). The shared production checkout
-was never modified. Driver script: `export/run_export_test.sh`; full logs
-under `$REMOTE_KDA_DIR/logs/export_*`.
+was never modified. Driver script: `export/run_export_test.sh`; logs under
+`$REMOTE_KDA_DIR/logs/export_*` and `$REMOTE_KDA_DIR/logs/export_rerun_r2.log`.
+
+The numbers below are from the SECOND run, executed at the CURRENT candidate
+source (joint src hash `b91d6e1abc50`, i.e. including the final-audit
+comment-only `.cuh` header fix): the current `.cuh` was re-copied in-tree and
+the official grid + smoke + fallback probe re-executed. Results are
+statistically identical to the first run (the source delta carried no code
+change).
 
 ## SGLang files touched (exact shipping shape)
 
@@ -45,16 +52,17 @@ under `$REMOTE_KDA_DIR/logs/export_*`.
    drop-in is correct through the real public ops for both native-routed and
    fallback-routed cases.
 2. **Symmetric same-op A/B smoke** (identical public op, in-body toggle;
-   median of 50 interleaved iterations; `export/smoke_bench.py`):
+   median of 50 interleaved iterations; `export/smoke_bench.py`; re-run at
+   the current source):
 
    | Case (bucket) | original us | native us | speedup |
    |---|---|---|---|
-   | nss 176400x5120 bf16 bcast (huge video) | 1127.7 | 837.6 | 1.346x |
-   | nss 11040x5120 per-token fp32 (parity bucket) | 167.8 | 151.5 | 1.108x |
-   | nss 47x3072 bf16 (tiny) | 94.2 | 65.1 | 1.448x |
-   | srnss 8424x3072 gated bf16 (mid) | 118.6 | 93.3 | 1.272x |
-   | srnss 37800x5120 wan affine | 424.6 | 323.8 | 1.311x |
-   | srnss 44100x5120 gnone bf16 (huge) | 389.9 | 326.9 | 1.193x |
+   | nss 176400x5120 bf16 bcast (huge video) | 1127.5 | 836.1 | 1.348x |
+   | nss 11040x5120 per-token fp32 (parity bucket) | 168.7 | 151.2 | 1.116x |
+   | nss 47x3072 bf16 (tiny) | 94.6 | 64.7 | 1.463x |
+   | srnss 8424x3072 gated bf16 (mid) | 118.1 | 93.0 | 1.270x |
+   | srnss 37800x5120 wan affine | 423.6 | 323.4 | 1.310x |
+   | srnss 44100x5120 gnone bf16 (huge) | 389.5 | 326.8 | 1.192x |
 
    Native outputs matched the original CuTe outputs within the SGLang test
    tolerance on every smoke case before timing (correctness echo).
@@ -65,5 +73,7 @@ under `$REMOTE_KDA_DIR/logs/export_*`.
 
 Parity-or-speedup confirmed on the exact shipping integration, with the
 production custom-op contract (registration, fake impls, output allocation,
-stream behavior) preserved. The in-tree numbers corroborate the
-kernel-folder benchmark (`benchmark.csv` r4-final).
+stream behavior) preserved. The in-tree numbers corroborate the final
+kernel-folder benchmark (`benchmark.csv` **r5-final**: geomean 1.3053x
+end-to-end / 1.2841x device over 39 unique signatures, joint source hash
+b91d6e1abc50 — the same source this re-run integrated in-tree).

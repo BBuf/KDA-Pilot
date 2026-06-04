@@ -13,3 +13,8 @@ exports `*_session.txt` alongside the raw reports.
   command: `CUDA_VISIBLE_DEVICES=0 KDA_EXTRA_CUDA_CFLAGS=-lineinfo ncu --set full --target-processes all -k regex:norm_scale_shift_kernel --launch-skip 10 --launch-count 3 -f -o reports/full_candidate python bench/profile_case.py --case nss-b1-s11040-d5120-bf16-s1SD.fp32-s1SD.fp32-eps1e-06 --impl candidate --iters 25`
 - `full_baseline.ncu-rep` — sha256 `3609c335e1a2db8a85237d5b7bd5156913b1aec8f3f5760232fefc3b704c9cf9`
   command: `CUDA_VISIBLE_DEVICES=0 ncu --set full --target-processes all --launch-skip 28 --launch-count 2 -f -o reports/full_baseline python bench/profile_case.py --case nss-b1-s11040-d5120-bf16-s1SD.fp32-s1SD.fp32-eps1e-06 --impl baseline --iters 30`
+
+- `source.ncu-rep` — sha256 `(missing)`
+  command: `CUDA_VISIBLE_DEVICES=1 KDA_EXTRA_CUDA_CFLAGS=-lineinfo ncu --set source --section SourceCounters -k regex:norm_scale_shift_kernel --launch-skip 10 --launch-count 1 -f -o reports/source python bench/profile_case.py --case nss-b1-s11040-d5120-bf16-s1SD.fp32-s1SD.fp32-eps1e-06 --impl candidate --iters 15`
+  POST-HOC NOTE: this source-set was collected at the CURRENT shipped config (joint src hash b91d6e1abc50, vec16 fp32-operand build) because the round-0 v1 build it originally diagnosed is superseded; the full-set reports above remain the v1-era diagnosis artifacts, and the final bound claims rest on the r4f directories.
+  Session export: `source_session.txt`.
