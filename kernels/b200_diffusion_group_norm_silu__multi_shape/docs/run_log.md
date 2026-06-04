@@ -73,6 +73,79 @@
 
 - Command: `GNS_CANDIDATE_ALIAS_BASELINE=1 CUDA_VISIBLE_DEVICES=1 python3
   bench/benchmark.py --device cuda:0 --out bench/results_aa.jsonl --only
-  <8 representative rows: 4 contiguous + 4 channels-last spanning min/33%/66%/max
-  group sizes, both entry points>`
+  hv_apply_1x512x2x12x10_C hv_triton_1x512x5x24x64_C hv_triton_1x128x17x96x80_C
+  hv_triton_1x256x17x256x256_C hv_apply_1x512x2x12x10_NC hv_triton_1x256x3x48x40_NC
+  hv_apply_1x256x9x128x40_NC hv_triton_1x128x17x256x256_NC`
+- Result: **PASS** — geomean 1.0005 (band 0.98–1.02), per-row speedups
+  0.9956–1.0127. Harness validity gate satisfied before tuning.
+- GPU 1 before/after: idle (0% util, 0 MiB).
+
+## Run 4 — first full A/B, candidate v1+v2 regimes (2026-06-04)
+
+- GPU 1 before: idle. Command:
+  `CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py --device cuda:0 --out bench/results_v1.jsonl`
+  (default crossovers: GNS_SMALL_MAX=65536, GNS_CHUNK=16384).
+- Result: 172/172 rows PASSED correctness-in-benchmark; headline equal-weight
+  geomean over 160 production rows = **1.6236** (arithmetic mean 1.8525).
+  Gate `no row < 0.97x`: FAIL — 27 rows below floor. Per-bucket geomeans:
+  C small 2.5320 / C mid 2.4380 / C large 0.9010 (min 0.5836);
+  NC small 1.4820 / NC mid 1.1248 (min 0.2920!) / NC large 0.8203.
+- Reading: split-CTA fixes the contiguous underfill emphatically (2.4–2.5x);
+  the channels-last path wins small rows but LOSES mid/large NC rows
+  (worst `hv_triton_1x128x17x96x80_NC` at 0.292 — candidate ~157 GB/s
+  effective, structural), and the contiguous split path loses to the
+  baseline's chunked pipeline on >=1M-element groups (0.90 geomean).
+- Action: bottleneck non-obvious → NCU on two representative losers before
+  the next edit (Run 5). Raw artifacts: `bench/results_v1.jsonl` (local copy
+  pulled), `bench_v1.log` (remote workspace).
+
+## Run 5 — NCU on loser rows (2026-06-04)
+
+- Profile run dir: `profile/r1_losers/` (harness/reports/analysis per
+  ncu-report-skill conventions). Rows: `hv_triton_1x128x17x96x80_NC` (0.292)
+  and `hv_apply_1x256x17x256x256_C` (0.584), both sides in one replay window
+  each; `ncu --profile-from-start off --set full`.
+- Findings (`analysis/metrics.csv`): `gns_nc_stats` SM busy 6.1%/DRAM 3.4% —
+  the last-CTA finalize ran a serial 1020-tile loop on 32 threads (critical-
+  path tail); `gns_nc_apply` 7.84M shared-store bank conflicts (the [C][P]
+  stage row stride was a multiple of the bank count); `gns_split_apply` SM
+  84%/DRAM 14% with occupancy 95% — instruction-throughput-bound on a
+  per-vector int64 division (the upstream scalar-affine apply variant is
+  division-free). `gns_split_stats` already beat baseline stats (123.8 vs
+  173.6+9.5 us, 60% DRAM read).
+
+## Runs 6-9 — iteration fixes and re-measurement (2026-06-04/05, GPU 1 idle before/after each)
+
+- Iteration-1 edits: chunk-constant affine in split apply; 8-threads-per-group
+  segmented finalize in nc stats; position-major padded [P][C+4] staging with
+  8-byte stores in nc apply; regime gates hardened (cpg >= 4, G <= 32). One
+  introduced defect (stage smem byte size not updated for the padded layout →
+  illegal memory access) was caught by the correctness suite and fixed.
+- Run 6 (subset, 27 v1 losers + 4 controls): geomean 0.983 BUT twin rows with
+  identical configs split e.g. 1.12 vs 0.23 and baseline medians swung 40% —
+  diagnosed as cudaMallocAsync default-pool trimming at every event sync
+  (release threshold 0) → real cudaMalloc on the timed path, bimodal.
+- Iteration-2 edit: process-lifetime grow-only scratch + generation counters
+  (no per-call alloc/memset/free). Run 7 (same subset): geomean 1.3057, twin
+  agreement restored; 9 contiguous-large rows remain 0.87-0.91.
+- Iteration-3 edit: baseline-class exp (`__expf`, the SFU exp2 class the
+  upstream tl.sigmoid lowers to; per-call intrinsic, NOT a fast-math flag) in
+  the 16-bit regimes. Fresh NCU (`c_large_iter1`): split apply 471 us still
+  instruction-bound vs baseline 332 us. Run 8 (same subset): geomean 1.3556,
+  band 0.91-0.97. GNS_CHUNK sweep on the 9 losers: 8192→0.845, 32768→0.863,
+  65536→0.809, 131072→0.754 (16384 locally optimal).
+- Run 9 (same subset after scratch-arena fix landed everywhere): geomean
+  1.3946; remaining below-floor rows = 9 contiguous-large (0.93-0.96).
+- Decision per DEC-3: contiguous group_size > 2,000,000 routes to the
+  baseline-equivalent path (`GNS_CONT_FALLBACK_MIN`); see `docs/dispatch.md`
+  for the full bounded-attempt evidence trail.
+- Correctness re-gated green after EVERY kernel edit (corr_v3/v4/v5/v6 all
+  PASS, candidate side, 0 failing checks).
+
+## Run 10 — final full validation (2026-06-05)
+
+- GPU 1 before: idle. Commands (chained):
+  `CUDA_VISIBLE_DEVICES=1 python3 bench/correctness.py --device cuda:0 --side both`
+  then `CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py --device cuda:0 --out bench/results_final.jsonl`
+  (defaults: GNS_SMALL_MAX=65536, GNS_CHUNK=16384, GNS_CONT_FALLBACK_MIN=2000000).
 - Result: (recorded when the run completes)

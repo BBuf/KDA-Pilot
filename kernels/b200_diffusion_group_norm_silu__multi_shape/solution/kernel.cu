@@ -25,8 +25,10 @@
 //                   baseline's x.contiguous() materialization entirely.
 //
 // Inputs may be contiguous or arbitrarily strided; strided inputs are never
-// materialized. No fast-math compile flags (contract); device code uses plain
-// expf/rsqrtf.
+// materialized. No fast-math compile flags (contract). The fp32 generic path
+// uses IEEE expf; the 16-bit production regimes use the SFU exp class
+// (__expf) matching what the upstream Triton baseline's tl.sigmoid lowers to
+// (see silu_fast below).
 
 #include <ATen/cuda/CUDAContext.h>
 #include <c10/cuda/CUDAException.h>
@@ -36,6 +38,7 @@
 #include <tvm/ffi/error.h>
 #include <tvm/ffi/function.h>
 
+#include <atomic>
 #include <cstdint>
 #include <cstdlib>
 
@@ -80,6 +83,16 @@ __device__ __forceinline__ float from_float<float>(float v) {
 }
 
 __device__ __forceinline__ float silu(float t) { return t / (1.0f + expf(-t)); }
+
+// The 16-bit production regimes use the same exp accuracy class as the
+// upstream Triton baseline, whose tl.sigmoid lowers to the SFU exp2 path
+// (ex2.approx) — NCU showed the IEEE expf sequence made the apply kernels
+// instruction-throughput-bound (SM ~83% busy, DRAM ~15%). This is a per-call
+// intrinsic choice, NOT a fast-math compile flag; the fp32 generic path keeps
+// the IEEE form for the strict fp32 oracle gate.
+__device__ __forceinline__ float silu_fast(float t) {
+  return t / (1.0f + __expf(-t));
+}
 
 template <typename A>
 __device__ __forceinline__ A warp_reduce_sum(A v) {
@@ -285,7 +298,7 @@ __global__ void gns_cont_small_kernel(
     Vec8<T> o;
 #pragma unroll
     for (int k = 0; k < kVecHalves; ++k) {
-      o.elems[k] = from_float<T>(silu((to_float<T>(v.elems[k]) - mean) * rstd * w + b));
+      o.elems[k] = from_float<T>(silu_fast((to_float<T>(v.elems[k]) - mean) * rstd * w + b));
     }
     ov[i] = o.raw;
   }
@@ -337,8 +350,12 @@ __global__ void gns_split_stats_kernel(
     partials[(row * chunks + chunk) * 2 + 0] = tot.sum;
     partials[(row * chunks + chunk) * 2 + 1] = tot.sumsq;
     __threadfence();
+    // Generation counting: the counter is never reset between same-layout
+    // calls; each call advances it by exactly `chunks`, so the last finisher
+    // of THIS call sees old % chunks == chunks - 1.
     const unsigned int done = atomicAdd(&counters[row], 1u);
-    is_last = (done == static_cast<unsigned int>(chunks - 1));
+    is_last = (done % static_cast<unsigned int>(chunks)) ==
+              static_cast<unsigned int>(chunks - 1);
   }
   __syncthreads();
   if (!is_last) return;
@@ -387,6 +404,29 @@ __global__ void gns_split_apply_kernel(
   const int64_t weight_base = group * channels_per_group;
   const int64_t spatial_vec = spatial / kVecHalves;
 
+  // NCU (profile/r1_losers): the per-vector int64 division made this kernel
+  // instruction-throughput-bound (SM 84% busy, DRAM 14%) while the upstream
+  // scalar-affine variant runs division-free. Most chunks lie entirely inside
+  // one channel (spatial >> chunk for the large rows), so hoist the affine
+  // load to a chunk constant and keep the dividing loop only for the rare
+  // channel-crossing chunks.
+  const int64_t ch_first = v0 / spatial_vec;
+  const int64_t ch_last = (v1 - 1) / spatial_vec;
+  if (ch_first == ch_last) {
+    const float w = to_float<T>(weight[weight_base + ch_first]);
+    const float b = to_float<T>(bias[weight_base + ch_first]);
+    for (int64_t i = v0 + threadIdx.x; i < v1; i += blockDim.x) {
+      Vec8<T> v;
+      v.raw = xv[i];
+      Vec8<T> o;
+#pragma unroll
+      for (int k = 0; k < kVecHalves; ++k) {
+        o.elems[k] = from_float<T>(silu_fast((to_float<T>(v.elems[k]) - mean) * rstd * w + b));
+      }
+      ov[i] = o.raw;
+    }
+    return;
+  }
   for (int64_t i = v0 + threadIdx.x; i < v1; i += blockDim.x) {
     Vec8<T> v;
     v.raw = xv[i];
@@ -396,7 +436,7 @@ __global__ void gns_split_apply_kernel(
     Vec8<T> o;
 #pragma unroll
     for (int k = 0; k < kVecHalves; ++k) {
-      o.elems[k] = from_float<T>(silu((to_float<T>(v.elems[k]) - mean) * rstd * w + b));
+      o.elems[k] = from_float<T>(silu_fast((to_float<T>(v.elems[k]) - mean) * rstd * w + b));
     }
     ov[i] = o.raw;
   }
@@ -497,28 +537,51 @@ __global__ void gns_nc_stats_kernel(
   __threadfence();
   __syncthreads();
   if (threadIdx.x == 0) {
+    // Generation counting; see gns_split_stats_kernel.
     const unsigned int done = atomicAdd(&counters[batch], 1u);
-    is_last = (done == static_cast<unsigned int>(tiles_per_batch - 1));
+    is_last = (done % static_cast<unsigned int>(tiles_per_batch)) ==
+              static_cast<unsigned int>(tiles_per_batch - 1);
   }
   __syncthreads();
   if (!is_last) return;
 
-  // Deterministic ordered reduction over tiles for every group of this batch.
-  for (int64_t g = threadIdx.x; g < num_groups; g += blockDim.x) {
+  // Cross-tile reduction for every group of this batch. NCU
+  // (profile/r1_losers): the previous one-thread-per-group serial loop over
+  // all tiles put a long scalar tail on the kernel's critical path (SM busy
+  // 6%). Use eight threads per group with a strided deterministic
+  // accumulation order, then a segmented shuffle combine.
+  constexpr int kSub = 8;  // threads per group; segments stay inside a warp
+  const int g = threadIdx.x / kSub;
+  const int sub = threadIdx.x % kSub;
+  if (g < num_groups) {
     float s = 0.0f, q = 0.0f;
     const float* base = partials + batch * tiles_per_batch * num_groups * 2;
-    for (int64_t t = 0; t < tiles_per_batch; ++t) {
+    for (int64_t t = sub; t < tiles_per_batch; t += kSub) {
       s += base[(t * num_groups + g) * 2 + 0];
       q += base[(t * num_groups + g) * 2 + 1];
     }
-    const float inv = 1.0f / static_cast<float>(group_size);
-    const float mean = s * inv;
-    float var = q * inv - mean * mean;
-    var = var < 0.0f ? 0.0f : var;
-    stats[(batch * num_groups + g) * 2 + 0] = mean;
-    stats[(batch * num_groups + g) * 2 + 1] = rsqrtf(var + eps);
+#pragma unroll
+    for (int off = kSub / 2; off > 0; off >>= 1) {
+      s += __shfl_down_sync(0xffffffffu, s, off);
+      q += __shfl_down_sync(0xffffffffu, q, off);
+    }
+    if (sub == 0) {
+      const float inv = 1.0f / static_cast<float>(group_size);
+      const float mean = s * inv;
+      float var = q * inv - mean * mean;
+      var = var < 0.0f ? 0.0f : var;
+      stats[(batch * num_groups + g) * 2 + 0] = mean;
+      stats[(batch * num_groups + g) * 2 + 1] = rsqrtf(var + eps);
+    }
   }
 }
+
+// Staging pad: position-major rows of (C + kStagePad) 16-bit elements. The
+// +4 keeps 8-byte alignment for paired-element stores while making the row
+// stride a non-multiple of 32 banks. NCU (profile/r1_losers): the previous
+// channel-major [C][P] layout serialized on ~7.8M shared-store bank
+// conflicts (row stride was a multiple of the bank count).
+constexpr int kStagePad = 4;
 
 template <typename T>
 __global__ void gns_nc_apply_kernel(
@@ -533,7 +596,8 @@ __global__ void gns_nc_apply_kernel(
     int64_t spatial,
     int64_t tile_positions) {
   extern __shared__ unsigned char smem_raw[];
-  T* stage = reinterpret_cast<T*>(smem_raw);  // [C][tile_positions]
+  T* stage = reinterpret_cast<T*>(smem_raw);  // [tile_positions][C + kStagePad]
+  const int64_t stage_stride = channels + kStagePad;
 
   const int64_t batch = blockIdx.z;
   const int64_t tile = blockIdx.x;
@@ -564,22 +628,27 @@ __global__ void gns_nc_apply_kernel(
     for (int64_t p = prow; p < pcount; p += prows) {
       Vec8<T> v;
       v.raw = xv[(p0 + p) * lanes + lane];
+      Vec8<T> o;
 #pragma unroll
       for (int k = 0; k < kVecHalves; ++k) {
         const float f = to_float<T>(v.elems[k]);
-        stage[(ch0 + k) * tile_positions + p] =
-            from_float<T>(silu((f - mean[k]) * rstd[k] * w[k] + b[k]));
+        o.elems[k] = from_float<T>(silu_fast((f - mean[k]) * rstd[k] * w[k] + b[k]));
       }
+      // Two 8-byte stores into the position-major stage row (8B-aligned:
+      // ch0 % 8 == 0 and the row stride is a multiple of 4 elements).
+      uint2* dst = reinterpret_cast<uint2*>(stage + p * stage_stride + ch0);
+      const uint2* src = reinterpret_cast<const uint2*>(o.elems);
+      dst[0] = src[0];
+      dst[1] = src[1];
     }
   }
   __syncthreads();
 
-  // Flush: channel-major contiguous runs of pcount elements per channel.
+  // Flush: gather strided stage reads per channel (conflict-light: the row
+  // stride in words is not a multiple of the bank count) and write the
+  // contiguous NC... output with one 16-byte store per 8 positions.
   T* ob = out + batch * channels * spatial;
-  const int64_t total = channels * pcount;
   if (pcount == tile_positions && (tile_positions % kVecHalves) == 0) {
-    // Full tile: vectorized stores (out base + c*spatial + p0 is 16B aligned
-    // because spatial % 8 == 0 and p0 % tile_positions == 0).
     const int64_t vec_per_ch = tile_positions / kVecHalves;
     for (int64_t i = threadIdx.x; i < channels * vec_per_ch; i += blockDim.x) {
       const int64_t c = i / vec_per_ch;
@@ -587,15 +656,16 @@ __global__ void gns_nc_apply_kernel(
       Vec8<T> o;
 #pragma unroll
       for (int k = 0; k < kVecHalves; ++k) {
-        o.elems[k] = stage[c * tile_positions + vp * kVecHalves + k];
+        o.elems[k] = stage[(vp * kVecHalves + k) * stage_stride + c];
       }
       reinterpret_cast<uint4*>(ob + c * spatial + p0)[vp] = o.raw;
     }
   } else {
+    const int64_t total = channels * pcount;
     for (int64_t i = threadIdx.x; i < total; i += blockDim.x) {
       const int64_t c = i / pcount;
       const int64_t p = i % pcount;
-      ob[c * spatial + p0 + p] = stage[c * tile_positions + p];
+      ob[c * spatial + p0 + p] = stage[p * stage_stride + c];
     }
   }
 }
@@ -614,6 +684,54 @@ int64_t env_int(const char* name, int64_t fallback) {
   const char* v = std::getenv(name);
   if (v == nullptr || *v == '\0') return fallback;
   return std::atoll(v);
+}
+
+// The split and channels-last regimes need small per-call scratch (fp32
+// partial sums, per-row stats, completion counters). Two measured hazards
+// drove this design:
+//   1. cudaMallocAsync with the default pool (release threshold 0) trims the
+//      pool at every stream sync — the benchmark's CUDA-event waits — so
+//      allocations periodically pay a REAL cudaMalloc (bimodal multi-hundred-
+//      microsecond swings between identical rows).
+//   2. Even pooled alloc/free + a counter memset cost a few microseconds per
+//      call, visible on ~100 us rows.
+// Use a process-lifetime grow-only scratch buffer instead. Completion
+// counters are NEVER reset between same-layout calls: the last-CTA test uses
+// modular arithmetic on a monotonically growing counter ("generation"
+// counting), so the counter region only needs zeroing when the scratch
+// layout changes (tracked by a signature) or the buffer is (re)grown.
+struct ScratchArena {
+  void* buf = nullptr;
+  size_t capacity = 0;
+  uint64_t signature = 0;  // layout signature of the most recent user
+
+  // Returns a buffer of at least `bytes`; zeroes the whole buffer (on the
+  // stream) when grown or when the layout signature changes.
+  void* acquire(size_t bytes, uint64_t sig, cudaStream_t stream) {
+    if (capacity < bytes) {
+      if (buf != nullptr) {
+        // Growth is rare (signature-stable steady state never grows); a full
+        // device sync makes freeing the in-flight buffer safe.
+        C10_CUDA_CHECK(cudaDeviceSynchronize());
+        C10_CUDA_CHECK(cudaFree(buf));
+        buf = nullptr;
+        capacity = 0;
+      }
+      C10_CUDA_CHECK(cudaMalloc(&buf, bytes));
+      capacity = bytes;
+      signature = 0;  // force re-zero below
+    }
+    if (signature != sig) {
+      C10_CUDA_CHECK(cudaMemsetAsync(buf, 0, capacity, stream));
+      signature = sig;
+    }
+    return buf;
+  }
+};
+
+ScratchArena& scratch_arena() {
+  static ScratchArena arena;
+  return arena;
 }
 
 struct Geometry {
@@ -675,11 +793,14 @@ int64_t select_regime_impl(const Geometry& g, const DLDataType& dt) {
   const bool is16 = (dt.bits == 16) && (dt.code == kDLFloat || dt.code == kDLBfloat);
   const int64_t small_max = env_int("GNS_SMALL_MAX", 65536);
   // nchw_last needs an 8-channel vector to span at most TWO groups (the
-  // stats kernel accumulates lo/hi vector halves separately), i.e. cpg >= 4.
+  // stats kernel accumulates lo/hi vector halves separately), i.e. cpg >= 4,
+  // and at most 32 groups (the per-CTA group accumulator and the finalize
+  // segmentation are sized for 32).
   if (is16 && g.x_channels_last && !g.x_contiguous && g.aligned16 &&
       (g.channels % kVecHalves) == 0 && (g.channels / kVecHalves) <= kBlockThreads &&
       (g.spatial % kVecHalves) == 0 && g.channels <= 1024 &&
-      g.channels_per_group >= 4) {
+      g.channels_per_group >= 4 &&
+      (g.channels / g.channels_per_group) <= 32) {
     return 3;
   }
   if (is16 && g.x_contiguous && g.aligned16 && (g.group_size % kVecHalves) == 0 &&
@@ -762,17 +883,16 @@ void launch_cont_split(
   const int64_t nvec = g.group_size / kVecHalves;
   const int64_t chunks = (nvec + chunk_vecs - 1) / chunk_vecs;
 
-  float* scratch = nullptr;
   const size_t partial_bytes = static_cast<size_t>(rows * chunks * 2) * sizeof(float);
   const size_t stats_bytes = static_cast<size_t>(rows * 2) * sizeof(float);
   const size_t counter_bytes = static_cast<size_t>(rows) * sizeof(unsigned int);
-  C10_CUDA_CHECK(cudaMallocAsync(
-      reinterpret_cast<void**>(&scratch),
-      partial_bytes + stats_bytes + counter_bytes, stream));
+  const uint64_t sig = (0x2ULL << 60) ^ (static_cast<uint64_t>(rows) << 40) ^
+                       (static_cast<uint64_t>(chunks) << 8);
+  float* scratch = static_cast<float*>(scratch_arena().acquire(
+      partial_bytes + stats_bytes + counter_bytes, sig, stream));
   float* partials = scratch;
   float* stats = scratch + rows * chunks * 2;
   unsigned int* counters = reinterpret_cast<unsigned int*>(stats + rows * 2);
-  C10_CUDA_CHECK(cudaMemsetAsync(counters, 0, counter_bytes, stream));
 
   const dim3 grid1(static_cast<unsigned>(rows), static_cast<unsigned>(chunks));
   gns_split_stats_kernel<T><<<grid1, kBlockThreads, 0, stream>>>(
@@ -789,8 +909,6 @@ void launch_cont_split(
       stats, num_groups, g.channels_per_group, g.spatial, chunk_vecs,
       g.group_size);
   C10_CUDA_KERNEL_LAUNCH_CHECK();
-
-  C10_CUDA_CHECK(cudaFreeAsync(scratch, stream));
 }
 
 template <typename T>
@@ -803,8 +921,10 @@ void launch_nc(
     int64_t num_groups,
     double eps,
     cudaStream_t stream) {
-  // Tile positions sized so the staging buffer [C][P] fits the smem budget.
-  int64_t tile_positions = kNcSmemBytes / (g.channels * static_cast<int64_t>(sizeof(T)));
+  // Tile positions sized so the padded position-major staging buffer
+  // [P][C + kStagePad] fits the smem budget.
+  int64_t tile_positions =
+      kNcSmemBytes / ((g.channels + kStagePad) * static_cast<int64_t>(sizeof(T)));
   tile_positions = (tile_positions / kVecHalves) * kVecHalves;
   if (tile_positions > g.spatial) {
     tile_positions = ((g.spatial + kVecHalves - 1) / kVecHalves) * kVecHalves;
@@ -813,19 +933,19 @@ void launch_nc(
   const int64_t tiles = (g.spatial + tile_positions - 1) / tile_positions;
   const int64_t batch_stride = x.stride(0);
 
-  float* scratch = nullptr;
   const size_t partial_bytes =
       static_cast<size_t>(g.batch * tiles * num_groups * 2) * sizeof(float);
   const size_t stats_bytes =
       static_cast<size_t>(g.batch * num_groups * 2) * sizeof(float);
   const size_t counter_bytes = static_cast<size_t>(g.batch) * sizeof(unsigned int);
-  C10_CUDA_CHECK(cudaMallocAsync(
-      reinterpret_cast<void**>(&scratch),
-      partial_bytes + stats_bytes + counter_bytes, stream));
+  const uint64_t sig = (0x3ULL << 60) ^ (static_cast<uint64_t>(g.batch) << 40) ^
+                       (static_cast<uint64_t>(tiles) << 8) ^
+                       static_cast<uint64_t>(num_groups);
+  float* scratch = static_cast<float*>(scratch_arena().acquire(
+      partial_bytes + stats_bytes + counter_bytes, sig, stream));
   float* partials = scratch;
   float* stats = scratch + g.batch * tiles * num_groups * 2;
   unsigned int* counters = reinterpret_cast<unsigned int*>(stats + g.batch * num_groups * 2);
-  C10_CUDA_CHECK(cudaMemsetAsync(counters, 0, counter_bytes, stream));
 
   const dim3 grid(static_cast<unsigned>(tiles), 1u, static_cast<unsigned>(g.batch));
   gns_nc_stats_kernel<T><<<grid, kBlockThreads, 0, stream>>>(
@@ -835,7 +955,7 @@ void launch_nc(
   C10_CUDA_KERNEL_LAUNCH_CHECK();
 
   const size_t stage_bytes =
-      static_cast<size_t>(g.channels * tile_positions) * sizeof(T);
+      static_cast<size_t>((g.channels + kStagePad) * tile_positions) * sizeof(T);
   gns_nc_apply_kernel<T><<<grid, kBlockThreads, stage_bytes, stream>>>(
       static_cast<const T*>(x.data_ptr()),
       static_cast<const T*>(weight.data_ptr()),
@@ -843,8 +963,6 @@ void launch_nc(
       static_cast<T*>(out.data_ptr()),
       stats, batch_stride, g.channels, num_groups, g.spatial, tile_positions);
   C10_CUDA_KERNEL_LAUNCH_CHECK();
-
-  C10_CUDA_CHECK(cudaFreeAsync(scratch, stream));
 }
 
 template <typename T>

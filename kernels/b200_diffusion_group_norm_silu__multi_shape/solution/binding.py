@@ -15,6 +15,7 @@ correct; the dispatch decision is exposed via ``select_path`` for reporting.
 from __future__ import annotations
 
 import functools
+import os
 import sys
 from pathlib import Path
 
@@ -25,6 +26,16 @@ TASK_DIR = SOLUTION_DIR.parent
 BUILD_DIR = SOLUTION_DIR / ".build"
 
 _SUPPORTED_DTYPES = (torch.float16, torch.bfloat16, torch.float32)
+
+# Contiguous rows with group_size above this floor route to the
+# baseline-equivalent path. Evidence (docs/dispatch.md): after three
+# NCU-driven optimization rounds (chunk-constant affine, baseline-class exp,
+# persistent scratch + generation counters) and a GNS_CHUNK sweep
+# (8K/16K/32K/64K/128K), the split path still measured 0.93-0.96x against the
+# upstream chunked pipeline on contiguous groups >= ~2.4M elements, while
+# contiguous groups <= ~1.7M win 1.1-4.2x. The no-regression promotion gate
+# (no production row < 0.97x) routes the losing bucket per user ruling DEC-3.
+_CONT_FALLBACK_MIN = int(os.environ.get("GNS_CONT_FALLBACK_MIN", 2_000_000))
 
 
 def _torch_build_flags() -> tuple[list[str], list[str]]:
@@ -105,7 +116,13 @@ def select_path(
         and bias.dim() == 1
         and weight.shape == bias.shape == (x.shape[1],)
     ):
-        return "cuda_generic"
+        spatial = 1
+        for s in x.shape[2:]:
+            spatial *= int(s)
+        group_size = (int(x.shape[1]) // int(num_groups)) * spatial
+        if x.is_contiguous() and group_size > _CONT_FALLBACK_MIN:
+            return "baseline_fallback"
+        return "cuda_kernel"
     return "baseline_fallback"
 
 
@@ -117,7 +134,7 @@ def group_norm_silu_candidate(
     eps: float,
     out: torch.Tensor,
 ) -> torch.Tensor:
-    if select_path(x, weight, bias, num_groups) == "cuda_generic":
+    if select_path(x, weight, bias, num_groups) == "cuda_kernel":
         _kernel_fn()(x, weight, bias, int(num_groups), float(eps), out)
         return out
     return _baseline_fallback()(x, weight, bias, num_groups, eps, out)
