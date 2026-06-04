@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """Benchmark runner: same-process interleaved A/B (vendored baseline vs candidate).
 
-Both sides are called through the identical thin local entry ABI (plain Python
-function call into either baseline/ or solution/dispatch); only the device
-kernel may differ. Three timing views per shape:
+Both sides are called through the identical thin local entry ABI (a plain
+Python function call into baseline/ or solution/dispatch). Below that ABI the
+HOST LAUNCH STACKS legitimately differ (Triton Python wrapper + JIT dispatch
+vs dispatcher gate + tvm-ffi call) — that difference is measured and reported
+SEPARATELY from device time (see the three views below); the in-SGLang
+in-tree drop-in remains the final arbiter for integration-path claims.
+Three timing views per shape:
 
 - sync_wall:  per-call wall time with a device synchronize after each call
               (end-to-end latency view: host submit + device + sync).
@@ -280,13 +284,17 @@ def geomean_report(csv_path: Path, metric: str, candidate_id: str | None) -> dic
         latest[row["shape_id"]] = row
     if not latest:
         return {"error": "no matching rows"}
-    speedups = {k: float(v["speedup_median"]) for k, v in latest.items()}
+    invalid = [k for k, v in latest.items() if v["valid"] != "True"]
+    valid_latest = {k: v for k, v in latest.items() if v["valid"] == "True"}
+    if not valid_latest:
+        return {"error": "all latest rows are invalid", "invalid_rows": invalid}
+    speedups = {k: float(v["speedup_median"]) for k, v in valid_latest.items()}
     gm = math.exp(sum(math.log(s) for s in speedups.values()) / len(speedups))
     return {
         "metric": metric, "candidate_id": candidate_id, "n_shapes": len(speedups),
         "geomean_speedup": round(gm, 4),
         "per_shape": {k: round(v, 4) for k, v in sorted(speedups.items())},
-        "invalid_rows": [k for k, v in latest.items() if v["valid"] != "True"],
+        "invalid_rows": invalid,  # excluded from the geomean above
     }
 
 
@@ -344,7 +352,12 @@ def main() -> int:
     report_dir = Path(os.environ.get("REMOTE_KDA_DIR", KERNEL_DIR / "bench" / "reports"))
     report_dir = report_dir / "bench_logs" if "REMOTE_KDA_DIR" in os.environ else report_dir
     report_dir.mkdir(parents=True, exist_ok=True)
-    evidence_path = report_dir / f"bench_{args.tag}_{ts}.json"
+    evidence_name = f"bench_{args.tag}_{ts}.json"
+    evidence_path = report_dir / evidence_name
+    # CSV rows carry the repo-relative mirror path (remote logs are synced back
+    # under bench/reports/remote_r0/); the raw write location is in the JSON.
+    evidence_rel = f"bench/reports/remote_r0/{evidence_name}" \
+        if "REMOTE_KDA_DIR" in os.environ else str(evidence_path)
 
     env = {
         "ts": ts, "host": socket.gethostname(), "gpu_id": args.gpu_id,
@@ -353,7 +366,7 @@ def main() -> int:
     }
     command = "python " + " ".join(shlex.quote(a) for a in sys.argv)
     for r in results:
-        append_csv_rows(r, env=env, command=command, evidence_path=str(evidence_path))
+        append_csv_rows(r, env=env, command=command, evidence_path=evidence_rel)
 
     evidence_path.write_text(json.dumps(
         {"env": env, "snap_before": snap_before, "snap_after": snap_after,

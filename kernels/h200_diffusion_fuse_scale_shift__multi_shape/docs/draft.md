@@ -87,3 +87,19 @@ the regression grid. No perf iterations.
   D1 unambiguous as the first edit; NCU deferred until the first candidate
   measurement is in (profile only when a result is not understood or would
   change the next edit).
+- iter v1 (D1+D2 first cut): no new KernelWiki query (direction fixed by the
+  r0 ranking); result — Family A wins everywhere (wan 1.42x at the ceiling),
+  Family B device regression 0.771x/0.887x. Cause hypothesis from code
+  reading (idle half-block + double reduction) -> v2 without profiling.
+- iter v2: no new query; single-pass stats + 128-thread blocks recovered to
+  0.895x/0.991x but the residual select01 gap was NOT explained by code
+  reading -> mandatory NCU trigger. Profile run profile/select01_v2 (full
+  set, baseline + candidate side-by-side).
+- iter v3: edit driven by the NCU diagnosis (latency bubbles, identical DRAM
+  active cycles). Register-prefetch variant REGRESSED (occupancy) — rejected
+  with evidence; lesson recorded in .humanize/bitlesson.md.
+- iter v4 (final): gate-only hoist per the occupancy lesson; 0.954x/0.982x
+  device, +12-13% end-to-end; bounded-iteration budget for D2 (3 focused
+  iterations) spent — closure per the stop rule. No further KernelWiki query
+  needed: the NCU evidence fully localized the remaining 5% (reduction-barrier
+  latency inherent to the LN family at this shape).
