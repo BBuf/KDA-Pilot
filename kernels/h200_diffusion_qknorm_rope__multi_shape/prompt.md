@@ -527,7 +527,14 @@ available workspace;
 - `prompt.md`, `interface.md`, `benchmark.csv`, and `solutions.jsonl` are
 updated with the final result.
 
-## Final Result (RLCR rounds 0-3, 2026-06-01)
+## Final Result (RLCR rounds 0-3, 2026-06-01) — SUPERSEDED HISTORY
+
+> **SUPERSEDED twice.** This section describes the torch-extension/EXPORTS-era run, whose overlay
+> promotion (#17) was reset by `35bc2c6b4`. The jit_kernel/tvm-ffi re-run that replaced it is
+> recorded in `docs/final_result.md` (d3-final `4f70cda745940c96`, PR #19), and the 2026-06-04
+> continuation round replaced that candidate again. Current ground truth: the
+> **Final Result (continuation round, 2026-06-04)** section at the bottom of this file plus
+> `docs/final_result.md`.
 
 - **Candidate**: native CUDA `fused_inplace_qknorm_rope` (2-heads-per-warp `float4` path),
   ported from the sibling B200 impl and rebuilt for H200/sm_90. Sources in `src/`
@@ -562,3 +569,47 @@ updated with the final result.
   dispatcher CUDA path + wrapper-level CPU + true q/k device-mismatch fallback all correct. See
   `solutions.jsonl` and the overlay `KDA_STATUS.md`. (The installed dispatcher routes all-CPU
   calls to the SGLang baseline by design — CPU is not a promoted-arch path.)
+
+## Final Result (continuation round, 2026-06-04)
+
+- **Final candidate**: native CUDA `fused_inplace_qknorm_rope`, candidate **`cossin-vec`**
+  (`src/csrc/qknorm_rope_kernel.cuh`, src sha16 **`6669bd218e336c9d`**), superseding the promoted
+  incumbent `d3-final-corrected` (`4f70cda745940c96`, PR #19). One warp2-path edit: each lane's
+  eight scalar `__ldg` cos/sin loads → two 128-bit `__ldg(float4)` quartet loads, plus a launcher
+  guard routing a non-16B-aligned cos/sin cache base to the scalar one-head path. Built through
+  SGLang `load_jit`/`make_cpp_args`/`cache_once` at pin `c47f0e7cd`; no `--use_fast_math`.
+- **Correctness**: full suite **226/226** on ion8-h200 GPU 7 (captured shapes × position kinds ×
+  position dtypes, regression grid, fallback negatives, double-install guard, and the NEW
+  forced-misaligned-cache negative `test_misaligned_cos_sin_cache_still_oracle_correct`);
+  in-tree misaligned-cache check through SGLang's own public op PASS. No NaN/Inf.
+- **Performance** (module level, same-process interleaved A/B/C, externally idle before AND after;
+  container `sglang_bbuf`, torch 2.11.0+cu130/nvcc 13.0): **vs incumbent all-9 geomean 1.0622×,
+  large (T≥4096) 1.1424×** (1.134–1.148), tiny within noise; vs SGLang baseline all-9 1.1009×,
+  large 1.2373× (reproduced ×3). Wrapper-level numbers are environment-labeled documentation
+  (committed 1.0723× on torch 2.9.1/cu129; 1.0236× on the current stack — host-layer shift, kernel
+  signal reproduces).
+- **Mechanism** (NCU, `profile/round_cossin_vec/REPORT.md`): registers 38→32/thread = the H200
+  100%-theoretical-occupancy boundary; achieved occupancy 72.5→90.4%; memory throughput
+  2.005→2.245 TB/s; duration 38.13→33.97 µs (qwen_t4096). Long-scoreboard now 45% q/k input unpack
+  (irreducible) / 34% norm chain / 14.5% positions LEA / ~6% cos/sin. Bounded follow-ups
+  adjudicated: load hoist REJECTED (regs 40>32, occupancy lost, unstable gain); smem cos/sin
+  staging SKIPPED with evidence (~6% residual); register direction RESOLVED-BY-DIRECTION-1.
+  Roofline: ~3.03 TB/s effective ≈ 63% of HBM3e boost peak, latency-bound — at the attainable
+  bound for this kernel class. Tiny shapes remain launch-bound (kernel no-go stands).
+- **In-SGLang in-tree drop-in arbiter (re-promotion gate)**: candidate `.cuh` (hash-verified)
+  under SGLang's OWN unchanged public op (`@register_custom_op` intact, no monkeypatch) at
+  `c47f0e7cd` vs the unmodified pin tree in separate processes: all 9 shapes `oracle_ok=True`,
+  **geomean 1.0945×** (prior promoted candidate: 1.0452×), per-shape 1.005–1.222× —
+  parity-or-speedup everywhere; CPU fallback preserved. `docs/sglang_jit_export.md` (continuation
+  section).
+- **Audit trail**: the incumbent's committed evidence was reproduced on the new stack before any
+  exploration (module geomean 1.0366× vs committed 1.0268×, inside the ±3% window); evidence in
+  `benchmark.csv` (tags continuation-audit, cossin-vec, cossin-vec2, cossin-vec2-r2),
+  `solutions.jsonl` (cossin-vec KEEP → cossin-vec2 REJECT → export-cossin-vec-in-sglang PASS),
+  `docs/draft.md` (provenance + iteration log), `docs/final_result.md` /
+  `docs/perf_analysis.md` / `docs/dispatch.md` continuation addenda.
+- **kda_kernels promotion (round 1)**: `_impls/h200` refreshed to `6669bd218e336c9d` via the
+  established export flow; installed-path smoke PASS (install() swap verified, all 9 shapes route
+  to the h200 impl, oracle-close, fp16 fallback OK; **install() geomean 1.0677× / large 1.1536×**;
+  `KDA_SPEEDUP` stamped with the literal install()-path number). See
+  `docs/sglang_jit_export.md` and `docs/evidence/overlay_smoke_cossin-vec.log`.

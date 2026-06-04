@@ -1,0 +1,51 @@
+=== gpu idle before ===
+7, 0, 42
+=== [0] candidate source hash strictness ===
+6669bd218e336c9d
+=== [1] new misaligned-cache pytest (KDA wrapper path) ===
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1 passed, 225 deselected, 4 warnings in 35.06s
+=== [2] candidate leg: arbiter-tree public fn (in-tree .cuh, normal load_jit) ===
+zimage_t32 {'oracle_ok': True, 'nan': False, 'median_us': 16.767999157309532}
+zimage_t4128 {'oracle_ok': True, 'nan': False, 'median_us': 48.448000103235245}
+candidate WROTE /home/sglang-omni/bbuf/kda_runs/h200_diffusion_qknorm_rope__multi_shape/k04-20260604-185804/export_cand.json
+=== [3] baseline leg: pin-tree public fn (original .cuh) ===
+zimage_t32 {'median_us': 17.184000462293625}
+zimage_t4128 {'median_us': 58.70399996638298}
+baseline WROTE /home/sglang-omni/bbuf/kda_runs/h200_diffusion_qknorm_rope__multi_shape/k04-20260604-185804/export_base.json
+=== [4] misaligned cache through the IN-TREE public op (candidate tree) ===
+MISALIGNED_CACHE PASS (sglang=/home/sglang-omni/bbuf/kda_runs/h200_diffusion_qknorm_rope__multi_shape/k04-20260604-185804/sglang_arbiter/python/sglang, base_mod16=4)
+=== [5] CPU fallback (KDA wrapper) ===
+Traceback (most recent call last):
+  File "/home/sglang-omni/bbuf/kda_runs/h200_diffusion_qknorm_rope__multi_shape/k04-20260604-185804/export_fallback.py", line 2, in <module>
+    RKD = os.environ["RKD"]
+          ~~~~~~~~~~^^^^^^^
+  File "<frozen os>", line 685, in __getitem__
+KeyError: 'RKD'
+=== [6] in-SGLang geomean (candidate vs baseline) ===
+Traceback (most recent call last):
+  File "/home/sglang-omni/bbuf/kda_runs/h200_diffusion_qknorm_rope__multi_shape/k04-20260604-185804/export_geomean.py", line 2, in <module>
+    RKD = os.environ["RKD"]
+          ~~~~~~~~~~^^^^^^^
+  File "<frozen os>", line 685, in __getitem__
+KeyError: 'RKD'
+=== gpu idle after ===
+7, 0, 42
+ARBITER_DONE
+=== [5retry] CPU fallback (KDA wrapper) ===
+CPU_FALLBACK_dispatch fallback raised False
+CPU_FALLBACK PASS
+=== [6retry] in-SGLang geomean ===
+candidate_sglang: /home/sglang-omni/bbuf/kda_runs/h200_diffusion_qknorm_rope__multi_shape/k04-20260604-185804/sglang_arbiter/python/sglang/__init__.py
+baseline_sglang : /home/sglang-omni/bbuf/kda_runs/h200_diffusion_qknorm_rope__multi_shape/k04-20260604-185804/sglang_pin/python/sglang/__init__.py
+qwen_t4096       base=  47.90us cand=  40.34us sp=1.188 oracle_ok=True nan=False
+qwen_t19         base=  16.77us cand=  16.66us sp=1.007 oracle_ok=True nan=False
+qwen_t47         base=  17.06us cand=  16.74us sp=1.019 oracle_ok=True nan=False
+qwenedit_t8424   base=  88.85us cand=  72.74us sp=1.222 oracle_ok=True nan=False
+qwenedit_t195    base=  16.93us cand=  16.77us sp=1.010 oracle_ok=True nan=False
+qwenedit_t189    base=  16.98us cand=  16.90us sp=1.005 oracle_ok=True nan=False
+zimage_t4096     base=  58.18us cand=  48.40us sp=1.202 oracle_ok=True nan=False
+zimage_t32       base=  17.18us cand=  16.77us sp=1.025 oracle_ok=True nan=False
+zimage_t4128     base=  58.70us cand=  48.45us sp=1.212 oracle_ok=True nan=False
+IN_SGLANG_GEOMEAN=1.0945x oracle_all_ok=True nan_any=False
+VERDICT PASS

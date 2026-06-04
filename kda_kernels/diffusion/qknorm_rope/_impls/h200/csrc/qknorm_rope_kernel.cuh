@@ -63,6 +63,17 @@ SGL_DEVICE float load_cache_value(const float* ptr, int64_t idx) {
 #endif
 }
 
+// 128-bit read-only fetch of four consecutive cache floats. Callers guarantee 16-byte alignment
+// (the host launcher guards the cos/sin tensor base; rows keep alignment because the row stride is
+// rope_dim * sizeof(float), a multiple of 16 for the path that uses this).
+SGL_DEVICE float4 load_cache_float4(const float* ptr) {
+#ifdef USE_ROCM
+  return *reinterpret_cast<const float4*>(ptr);
+#else
+  return __ldg(reinterpret_cast<const float4*>(ptr));
+#endif
+}
+
 template <int64_t kHeadDim, int64_t kRopeDim, bool kIsNeox, bool kUsePDL, typename DType, typename IdType>
 __global__ void fused_qknorm_rope_warp(const QKNormRopeParams __grid_constant__ params) {
   using namespace device;
@@ -260,13 +271,23 @@ __global__ void fused_qknorm_rope_warp2(const QKNormRopeParams __grid_constant__
     const auto pos = static_cast<int64_t>(static_cast<const IdType*>(positions)[token_id]);
     const auto cos_ptr = static_cast<const float*>(pointer::offset(cos_sin_cache_ptr, pos * kCosSinStrideBytes));
     const auto sin_ptr = cos_ptr + kRopeDim / 2;
+    // A lane's four rotation pairs read four CONSECUTIVE cos floats (half_idx = lane_in_head*4 +
+    // {0..3}) and the matching four sin floats. Fetch each quartet with one 128-bit load instead of
+    // eight scalar loads, shortening the dependent-load chain behind the long-scoreboard stalls
+    // that dominate the large shapes. Alignment: rows are 16B-aligned (row stride kRopeDim*4B =
+    // 512B) and the host launcher guards the tensor base, falling back to the one-head path when
+    // the base is not 16B-aligned.
+    static_assert(kVecSize == 4, "float4 cos/sin fetch assumes four rotation pairs per lane");
+    const float4 cos_quad = load_cache_float4(cos_ptr + lane_in_head * kVecSize);
+    const float4 sin_quad = load_cache_float4(sin_ptr + lane_in_head * kVecSize);
+    const float cos_lane[4] = {cos_quad.x, cos_quad.y, cos_quad.z, cos_quad.w};
+    const float sin_lane[4] = {sin_quad.x, sin_quad.y, sin_quad.z, sin_quad.w};
 #pragma unroll
     for (uint32_t i = 0; i < kElemsPerThread; i += 2) {
       const float x = elems[i];
       const float y = elems[i + 1];
-      const int half_idx = static_cast<int>(lane_in_head * kElemsPerThread + i) / 2;
-      const float cos = load_cache_value(cos_ptr, half_idx);
-      const float sin = load_cache_value(sin_ptr, half_idx);
+      const float cos = cos_lane[i / 2];
+      const float sin = sin_lane[i / 2];
       elems[i] = x * cos - y * sin;
       elems[i + 1] = y * cos + x * sin;
     }
@@ -350,19 +371,27 @@ struct QKNormRopeKernel {
     const auto num_works = (num_qo_heads + num_kv_heads) * num_tokens;
 
     if constexpr (kUseWarp2) {
-      constexpr auto k32 = fused_qknorm_rope_warp2<kHeadDim, kRopeDim, kIsNeox, kUsePDL, DType, int32_t>;
-      constexpr auto k64 = fused_qknorm_rope_warp2<kHeadDim, kRopeDim, kIsNeox, kUsePDL, DType, int64_t>;
-      const auto selected_kernel = is_int32 ? k32 : k64;
-      static const uint32_t kOccupancyTable[2] = {
-          runtime::get_blocks_per_sm(k32, kThreadsPerBlock),
-          runtime::get_blocks_per_sm(k64, kThreadsPerBlock),
-      };
-      const auto max_blocks = kOccupancyTable[is_int32 ? 0 : 1] * kNumSM;
-      const auto packed_works = div_ceil(num_works, 2u);  // two work items per warp
-      const auto needed_blocks = div_ceil(packed_works, kWarpsPerBlock);
-      const auto num_blocks = std::min(max_blocks, needed_blocks);
-      LaunchKernel(num_blocks, kThreadsPerBlock, device.unwrap()).enable_pdl(kUsePDL)(selected_kernel, params);
-    } else {
+      // The warp2 path fetches cos/sin as float4; that needs a 16B-aligned cache base (rows then
+      // stay aligned because the row stride is 512B). PyTorch CUDA allocations satisfy this; a
+      // pathological sub-16B storage offset routes to the scalar-load one-head path below instead.
+      const bool cos_sin_base_aligned = (reinterpret_cast<uintptr_t>(cos_sin_cache.data_ptr()) & 0xf) == 0;
+      if (cos_sin_base_aligned) {
+        constexpr auto k32 = fused_qknorm_rope_warp2<kHeadDim, kRopeDim, kIsNeox, kUsePDL, DType, int32_t>;
+        constexpr auto k64 = fused_qknorm_rope_warp2<kHeadDim, kRopeDim, kIsNeox, kUsePDL, DType, int64_t>;
+        const auto selected_kernel = is_int32 ? k32 : k64;
+        static const uint32_t kOccupancyTable[2] = {
+            runtime::get_blocks_per_sm(k32, kThreadsPerBlock),
+            runtime::get_blocks_per_sm(k64, kThreadsPerBlock),
+        };
+        const auto max_blocks = kOccupancyTable[is_int32 ? 0 : 1] * kNumSM;
+        const auto packed_works = div_ceil(num_works, 2u);  // two work items per warp
+        const auto needed_blocks = div_ceil(packed_works, kWarpsPerBlock);
+        const auto num_blocks = std::min(max_blocks, needed_blocks);
+        LaunchKernel(num_blocks, kThreadsPerBlock, device.unwrap()).enable_pdl(kUsePDL)(selected_kernel, params);
+        return;
+      }
+    }
+    {
       const auto selected_kernel = is_int32 ? kernel<int32_t> : kernel<int64_t>;
       static const uint32_t kOccupancyTable[2] = {
           runtime::get_blocks_per_sm(kernel<int32_t>, kThreadsPerBlock),

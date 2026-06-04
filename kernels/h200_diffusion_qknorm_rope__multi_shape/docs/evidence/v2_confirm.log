@@ -1,0 +1,23 @@
+== [1/3] v2 register check (ncu basic, 3 launches) ==
+==PROF== Report: /home/sglang-omni/bbuf/kda_runs/h200_diffusion_qknorm_rope__multi_shape/k04-20260604-185804/profile/round_cossin_vec/reports/basic_v2.ncu-rep
+  Achieved Occupancy: 63.84",
+  Achieved Occupancy: 64.77",
+  Achieved Occupancy: 65.03",
+  Duration: 33.28",
+  Duration: 33.66",
+  Duration: 33.79",
+  Registers Per Thread: 40",
+  Theoretical Occupancy: 75",
+== [2/3] second interleaved A/B/C (v2 vs v1) ==
+idle before: util=0% mem=42MiB
+zimage_t32       A=   9.12 B=   9.15 C=   9.09 | var/inc=1.0070 var/sgl=1.0035 inc/sgl=0.9965
+zimage_t4128     A=  51.79 B=  41.74 C=  41.17 | var/inc=1.0140 var/sgl=1.2581 inc/sgl=1.2407
+GEOMEAN all-9: var/inc=1.0018 var/sgl=1.1040 inc/sgl=1.1020
+GEOMEAN large(T>=4096): var/inc=1.0085 var/sgl=1.2472 inc/sgl=1.2367
+shas: incumbent=4f70cda745940c96 variant=51e183ba29abd455
+GPU idle before=util=0% mem=42MiB after=PENDING_EXTERNAL
+idle after: util=2% mem=42MiB
+== [3/3] full suite on v2 ==
+PYTEST_EXIT=0
+225 passed, 4 warnings in 121.22s (0:02:01)
+V2_CONFIRM_DONE

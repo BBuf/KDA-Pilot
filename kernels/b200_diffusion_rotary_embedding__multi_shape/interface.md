@@ -78,3 +78,47 @@ which shape bucket);
 **Export validated (in-tree, AC-9)**: `.cuh` physically placed at `python/sglang/jit_kernel/csrc/diffusion/rotary_embedding.cuh` in a task-owned worktree; `cache_once` + relative-path `load_jit` loader; in-SGLang oracle bit-exact 11/11, smoke parity-or-speedup, fp16 fallback, originals restored, worktree removed (no shared-checkout mutation). See `docs/sglang_jit_export.md`.
 
 **Dispatch gates (AC-4)**: only the exact captured signatures take CUDA; non-captured dtype/shape/layout (incl. contiguous LTX-2 cos/sin) fall back. Tight gating is also a safety requirement — the 128-bit vectorized loads assume the 16-byte alignment that only the captured shapes/strides guarantee.
+
+## Continuation Result (cuda-v6; k09 run, 2026-06-04)
+
+Signatures, dispatch table, fallback behavior, and tolerance methodology are UNCHANGED from the
+cuda-v4 section above. Continuation deltas only:
+
+- **Standard kernel improved** (`src/csrc/rotary_embedding.cuh`, src hash `317e2fab7ade`): the
+  per-token cos/sin vectors are hoisted into registers (each thread's pair segment is invariant
+  across its grid-stride passes; the launcher enforces `blockDim % kVecPerHead == 0`) and the
+  block size is chosen as the largest full-pass divisor that also divides the 2048-thread SM
+  budget (128 threads for the captured 24-head/128-dim shape; measured sweep in `docs/draft.md`).
+  Captured standard shape: 61.86 → **57.7 µs** = **1.0703–1.0709× vs cuda-v4** (authoritative
+  gate evidence: the 3 idle-gated paired sessions of 2026-06-04 ~11:0x–11:17 UTC whose CSV `cmd`
+  field carries the literal `--compare-src/--compare-label` arguments; 3-of-3 beyond the 3%
+  noise band; an earlier same-verdict session set predating the command-provenance fix remains
+  in the CSV as corroborating history only). Still **bit-exact**: `pair_diff = 0.000e+00` on
+  all 11 signatures (raw log: `docs/logs/correctness_cuda_v6_20260604.log`).
+- **LTX-2 kernel functionally unchanged** (comment-only source delta vs the v4 snapshot
+  `f4c8b844044f`; diff: `docs/logs/v4_to_v6_rotary_cuh.diff`). Fresh paired sessions: the
+  24576-row and `2x6144x4096` shapes are literal 1.0000× in all 3 sessions; worst single-run
+  delta −2.77% (`1x6144x4096 h64`, one session only, within its ~7.6% band).
+- **Paired benchmark mode**: `CUDA_VISIBLE_DEVICES=<idle> python benchmark.py --warmup 50
+  --iters 300 --candidate cuda-v6 --compare-src <v4-src-snapshot> --compare-label cuda-v4` —
+  times baseline, v4-snapshot, and candidate in the SAME worker process through the identical
+  wrapper ABI; rows `cuda-v6_vs_cuda-v4` in `benchmark.csv` with the full compare command in
+  the provenance field. Fresh pair geomeans 1.0049/1.0050/1.0018×.
+- **OFFICIAL baseline comparison — sglang MAIN** (`8933ec877`, contains PR #24732's fast LTX-2
+  Triton kernel; measured via a task-owned worktree + `benchmark.py --sglang-path`, 3 idle-gated
+  sessions): **geomean 1.4660×** over the 11 captured signatures (sessions
+  1.4325/1.4640/1.4740×) — standard 110.69→57.73 µs = **1.917×**, LTX-2 small/medium
+  1.51–1.67×, 24576-h32 1.207×, half64-large parity (HBM ceiling). Correctness vs the main
+  baseline: 4 passed, bit-exact 11/11. Context: the 2026-06-04 container checkout (`edb1b3f8f`)
+  is rolled back and lacks PR #24732, making its LTX-2 baseline 2–8× slower at scale — numbers
+  measured against it (geomean ~3.1×) are environment-inflated and kept only as documented
+  context (`docs/draft.md` BASELINE SHIFT note).
+- **Install-path validation (idle-gated)**: `kda_install_validate.py` parent/worker idle gate
+  (`idle_gated: true`, before/after states in the JSON): `install()` swaps both symbols, the
+  integrated public API is bit-exact 11/11, non-captured falls back, `uninstall()` restores, and
+  the standard shape runs **57.71 µs through the installed path** (= the direct wrapper median →
+  no dispatcher/host tax). Evidence: `docs/logs/kda_install_validate_v6_20260604.json`.
+- **Active bounds refreshed** (`profile/ncu-v3/REPORT.md`): standard now memory-paced (DRAM 69.8%,
+  compute 47.1%, ~75% effective of peak; MLP probe cuda-v7 zero movement → at bound; bf16-packed
+  math no-go by evidence); LTX-2 large-half32 76.1% DRAM SOL clean-access no-go; small shapes
+  launch-floor no-go (grid-halving experiment regressed 12%); large-half64 no-go stands (ncu-v2).

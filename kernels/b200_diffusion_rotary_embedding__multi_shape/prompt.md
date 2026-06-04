@@ -571,3 +571,52 @@ updated with the final result.
   (+ `reports/*.ncu-rep`), `solutions.jsonl` (baseline → cuda-v1..v4 → profile → export-intree → promote),
   `interface.md` (recovered contract + final result), `docs/sglang_jit_export.md`, `kda_install_validate.py`,
   `kda_kernels/diffusion/rotary_embedding/_impls/b200/KDA_STATUS.md`.
+
+---
+
+## Continuation Result (k09 RLCR, 2026-06-04)
+
+> Appended by the k09 continuation loop; the original contract and the 2026-06-01 Final Result
+> above are unchanged.
+
+**Outcome: IMPROVED — `cuda-v6` replaces `cuda-v4` (standard bucket +7.1%; all other buckets
+confirmed at bound).** Plan: `.humanize/kernel-agent/refined-plan.md` (continuation per user
+decisions DEC-1..DEC-6; hard per-shape no-regression gate vs `cuda-v4`).
+
+- **Promoted candidate**: `cuda-v6` (src hash `317e2fab7ade`), kernel source
+  `src/csrc/rotary_embedding.cuh`. Standard kernel: per-token cos/sin vectors hoisted into
+  registers (pair-segment invariant across grid-stride passes) + full-pass block sizing (128
+  threads for the captured shape; measured sweep {64..256}). LTX-2 kernel functionally unchanged
+  vs `cuda-v4` (comment-only delta; `docs/logs/v4_to_v6_rotary_cuh.diff`).
+- **Environment re-pin (and BASELINE SHIFT)**: container SGLang `edb1b3f8f` (checkout rewound vs
+  the 2026-06-01 pin `0b65588c`; upstream PR #24732's fast LTX-2 Triton kernel is ABSENT, making
+  the current ltx2 baseline 2–8× slower at scale). All claims therefore gate on `cuda-v4`, not on
+  the inflated current-baseline geomean. torch 2.11.0+cu130, triton 3.6.0, nvcc 13.0, tvm_ffi
+  0.1.9, driver 580.126.20, GPU 1 (idle-gated before/after every run).
+- **Gate evidence** (3 idle-gated paired sessions, same process, identical wrapper ABI, v4
+  snapshot `f4c8b844044f`; authoritative set = the provenance-complete sessions of 2026-06-04
+  ~11:0x–11:17 UTC whose CSV `cmd` field carries the literal `--compare-src/--compare-label`
+  arguments — an earlier same-verdict set predating the command-provenance fix remains in the
+  CSV as history): standard `61.86 → 57.7 µs` = 1.0703/1.0709/1.0709× (3-of-3 beyond the 3%
+  band); no shape regresses beyond its noise band in 2-of-3 runs (worst single-run −2.77% on
+  `1x6144x4096 h64`, one session only, within its ~7.6% band; 24576-row and `2x6144x4096`
+  shapes literal 1.0000× in all 3 sessions); fresh pair geomeans 1.0049/1.0050/1.0018×.
+- **Correctness**: 4/4 pytest on the final source — **bit-exact 11/11** (`pair_diff = 0.000e+00`
+  every signature; raw log `docs/logs/correctness_cuda_v6_20260604.log`).
+- **Headline numbers (OFFICIAL baseline = sglang MAIN `8933ec877`, measured)**: geomean
+  **1.4660×** over the 11 captured signatures (3 idle-gated sessions via a task-owned main
+  worktree + `benchmark.py --sglang-path`: 1.4325/1.4640/1.4740×); standard 110.69→57.73 µs =
+  **1.917×**; LTX-2 small/medium 1.51–1.67×; 24576-h32 1.207×; half64-large parity (HBM
+  ceiling); correctness vs main bit-exact 11/11. The container-checkout numbers (geomean ~3.1×,
+  rolled-back baseline missing PR #24732) are environment-inflated context only — see the
+  BASELINE SHIFT note. Idle-gated install path: standard 110.88/57.71 = 1.921×.
+- **Active bounds** (`profile/ncu-v3/REPORT.md` + `ncu-v2`): standard memory-paced at ~75%
+  effective DRAM (hoist moved it from compute/BW-balanced; MLP probe `cuda-v7` rejected with zero
+  movement; bf16-packed math no-go — compute SOL 47%, not the limiter); LTX-2 large-half32 76.1%
+  SOL, clean access, no addressable lever (two-rows-per-CTA `cuda-v5` measured 1.0006× on target
+  and −12% on the launch-bound 126-row shape → rejected); LTX-2 small at the launch floor;
+  LTX-2 large-half64 no-go stands (85.3% SOL, HBM ceiling).
+- **Evidence chain**: `benchmark.csv` (2026-06-04 rows: 3× cuda-v4 revalidation, 3× cuda-v6 +
+  cuda-v6_vs_cuda-v4, idle gates), `solutions.jsonl` (cuda-v5 rejected → cuda-v6 PROMOTE →
+  cuda-v7 rejected → evidence-correction row), `docs/draft.md` (continuation sections incl.
+  Codex triage + gate reviews), `profile/ncu-v3/`.

@@ -1,0 +1,24 @@
+Unable to import `torchao` Tensor objects. This may affect loading checkpoints serialized with `torchao`
+device=NVIDIA H200 capability=(9, 0)
+baseline.__module__=torch._ops.sglang
+install result for qknorm_rope: [('sglang.jit_kernel.diffusion.qknorm_rope:fused_inplace_qknorm_rope', 'kda_kernels.diffusion.qknorm_rope:fused_inplace_qknorm_rope', 'swapped')]
+swapped.__module__=kda_kernels.diffusion.qknorm_rope._dispatcher
+
+shape                    ret_none path     close  nan      maxd_q    maxd_k   base_us   swap_us   speedup
+qwen__T4096_H24          True     cuda     True   False    0.0625    0.0625     45.90     39.87   1.1513x
+qwen__T19_H24            True     cuda     True   False    0.0625    0.0625     17.12     17.01   1.0066x
+qwen__T47_H24            True     cuda     True   False    0.0625    0.0625     16.99     16.90   1.0057x
+qwen_edit__T8424_H24     True     cuda     True   False    0.0625    0.0625     83.62     70.72   1.1824x
+qwen_edit__T195_H24      True     cuda     True   False    0.0625    0.0625     17.14     17.31   0.9898x
+qwen_edit__T189_H24      True     cuda     True   False    0.0625    0.0625     17.06     17.28   0.9870x
+zimage__T4096_H30        True     cuda     True   False    0.0625    0.0625     54.18     47.42   1.1424x
+zimage__T32_H30          True     cuda     True   False    0.0625    0.0625     17.36     16.86   1.0294x
+zimage__T4128_H30        True     cuda     True   False    0.0625    0.0625     54.66     47.98   1.1390x
+
+fallback(fp16 CUDA): path=fallback ret_none=True nan=False -> OK
+
+GEOMEAN speedup (integrated install() overlay vs SGLang baseline) = 1.0677x over 9 shapes
+  large-shape (tokens>=4096) geomean = 1.1536x over 4 shapes
+CORRECTNESS: PASS
+OVERALL: PASS
+RESULT_JSON {"device": "NVIDIA H200", "capability": [9, 0], "geomean": 1.0677088799591699, "large_geomean": 1.1536390274742363, "fails": 0, "fallback_ok": true, "rows": [{"shape": "qwen__T4096_H24", "tokens": 4096, "heads": 24, "base_us": 45.903999358415604, "swap_us": 39.872001856565475, "speedup": 1.1512840394507775, "path": "cuda", "close": true, "nan": false, "ret_none": true}, {"shape": "qwen__T19_H24", "tokens": 19, "heads": 24, "base_us": 17.11999997496605, "swap_us": 17.008000053465366, "speedup": 1.0065851317702614, "path": "cuda", "close": true, "nan": false, "ret_none": true}, {"shape": "qwen__T47_H24", "tokens": 47, "heads": 24, "base_us": 16.992000862956047, "swap_us": 16.896000131964684, "speedup": 1.0056818614016074, "path": "cuda", "close": true, "nan": false, "ret_none": true}, {"shape": "qwen_edit__T8424_H24", "tokens": 8424, "heads": 24, "base_us": 83.61600339412689, "swap_us": 70.72000205516815, "speedup": 1.182352954810418, "path": "cuda", "close": true, "nan": false, "ret_none": true}, {"shape": "qwen_edit__T195_H24", "tokens": 195, "heads": 24, "base_us": 17.136000096797943, "swap_us": 17.311999574303627, "speedup": 0.989833671335868, "path": "cuda", "close": true, "nan": false, "ret_none": true}, {"shape": "qwen_edit__T189_H24", "tokens": 189, "heads": 24, "base_us": 17.055999487638474, "swap_us": 17.27999933063984, "speedup": 0.9870370456204716, "path": "cuda", "close": true, "nan": false, "ret_none": true}, {"shape": "zimage__T4096_H30", "tokens": 4096, "heads": 30, "base_us": 54.17599901556969, "swap_us": 47.42399975657463, "speedup": 1.1423751537966595, "path": "cuda", "close": true, "nan": false, "ret_none": true}, {"shape": "zimage__T32_H30", "tokens": 32, "heads": 30, "base_us": 17.35999993979931, "swap_us": 16.863999888300896, "speedup": 1.0294117679544403, "path": "cuda", "close": true, "nan": false, "ret_none": true}, {"shape": "zimage__T4128_H30", "tokens": 4128, "heads": 30, "base_us": 54.655998945236206, "swap_us": 47.98400029540062, "speedup": 1.1390463197891216, "path": "cuda", "close": true, "nan": false, "ret_none": true}]}

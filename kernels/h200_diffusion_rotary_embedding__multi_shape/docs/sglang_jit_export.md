@@ -92,6 +92,31 @@ absolute workspace path (only the JIT build cache is populated). The public-symb
 in the test is restored in a `finally` block. The user approved the `load_jit` build + the final
 in-SGLang test.
 
+## Re-verification (v3 continuation round, 2026-06-04)
+
+The kernel source changed in this round (`native_cuda_v3_streamcache`: v2 +
+`__ldcs`/`__stcs` streaming-cache accesses; `.cuh` sha1 prefix `e6588f9edfe7` →
+`dbd9e1e798fe`), so the reversible in-SGLang drop-in test was re-run on `ion-h200-8`
+GPU 0 (idle 0%/0MiB), SGLang `84e110831` (rotary files sha1 ≡ pinned `6965fe0ee`),
+torch 2.11.0+cu130 / triton 3.6.0:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 PYTHONPATH=<sglang>/python \
+  KDA_SGLANG_ORACLE_COMMIT=84e110831 python tests/sglang_export_test.py
+#   -> EXPORT_TEST: PASS
+```
+
+- Correctness via the public symbols: all 6 production shapes `route=cuda`, candidate ==
+  original baseline within `1e-2`. ✅
+- Fallback via the public symbol: fp16 standard → `baseline` route. ✅
+- Smoke benchmark (median µs, warmup 20 / iters 50): std 158.59→102.97 (1.54×),
+  S1536h64 27.41→25.52 (1.07×), S126h32 23.56→17.08 (1.38×), S1536h32 24.46→20.98
+  (1.17×), S6144h64 59.18→56.50 (1.05×), S6144h32 41.18→33.45 (1.23×) — **smoke geomean
+  1.228×**, all 6 parity-or-faster. The dedicated `benchmark.csv` interleaved blocks
+  remain the headline source (wall geomean 1.2977×).
+- Reversibility unchanged: absolute-path `.cuh` build, nothing written into the SGLang
+  checkout, symbols restored in `finally`. Log: `docs/remote_runs/20260604_095638/sglang_export_v3c.log`.
+
 ## Re-verification (marker scrub + absolute-path build)
 
 Two later changes were re-validated on GPU 7, both producing a byte-identical compiled kernel:

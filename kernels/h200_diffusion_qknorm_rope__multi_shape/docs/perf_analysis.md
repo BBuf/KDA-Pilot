@@ -72,3 +72,50 @@ further RLCR iteration is warranted on the kernel — the remaining gap on large
 (not throughput), and tiny shapes are launch-bound. (The NCU bound figures above were collected on the
 byte-identical warp2 rope_dim=128 machine code; round-0 d2 reported 1.0992×/1.0285× with an lru_cache
 wrapper — superseded.)
+
+---
+
+# Continuation addendum (2026-06-04) — `cossin-vec` (`6669bd218e336c9d`)
+
+Environment: torch 2.11.0+cu130 / nvcc 13.0, container `sglang_bbuf`, SGLang pin `c47f0e7cd`
+(worktree), GPU 7 externally idle per batch. Full NCU report: `profile/round_cossin_vec/REPORT.md`.
+
+## What changed in the bound picture
+The prior "near the attainable bound" verdict had a hidden lever: under the current toolchain the
+incumbent compiles to 38 registers/thread, capping theoretical occupancy at 75%. Replacing the
+warp2 path's eight scalar cos/sin `__ldg` loads with two 128-bit quartet loads (static unrolled
+indexing) freed 6 registers → **32/thread, exactly the H200 100%-theoretical-occupancy boundary**
+(64K regs/SM ÷ 2048 threads):
+
+| qwen_t4096 (module) | incumbent | cossin-vec |
+|---|---|---|
+| Duration | 38.13 µs | **33.97 µs** |
+| Theoretical / achieved occupancy | 75% / 72.5% | **100% / 90.4%** |
+| Occupancy-capped grid | 792 | 1056 |
+| Memory throughput | 2.005 TB/s (41.7% DRAM peak) | **2.245 TB/s (46.8%)** |
+| Long-scoreboard | 10.6 cyc/issued inst | 11.8 (amortized over 57.8 vs 46.4 warps/SM) |
+
+Roofline (irreducible-traffic model, ~103 MB per qwen_t4096 call): effective application-level
+bandwidth 103 MB / 33.97 µs ≈ **3.03 TB/s ≈ 63% of HBM3e boost peak** (was ≈2.70 TB/s / 56%).
+DRAM-level throughput 46.8% of peak — the kernel remains memory-LATENCY-bound, not
+bandwidth-saturated.
+
+## Remaining headroom (why the round stops here)
+Post-change long-scoreboard attribution (source counters): 45% q/k input unpack (the irreducible
+read of the tensor being normalized), 34% norm-apply chain, 14.5% positions→row-address LEA, ~6%
+cos/sin consumers. The two bounded follow-ups were adjudicated:
+- Load hoist above the reduction (attacking the LEA share): REJECTED — extends quartet live ranges,
+  registers 32→40, theoretical occupancy back to 75% (achieved 63.8–65%), measured gain small and
+  shrinking across runs (large 1.0148×→1.0085×).
+- Shared-memory cos/sin staging: SKIPPED with evidence — ~6% residual cos/sin stalls cannot pay for
+  block-wide synchronization at 90% occupancy in a 34 µs kernel.
+With occupancy at 90.4% achieved / 100% theoretical, waves/SM=1, and the dominant stalls on
+irreducible input traffic, the candidate is at the attainable bound for this kernel class on H200.
+Tiny shapes (T≤195) remain launch/underfill-bound — kernel no-go stands (module-level parity
+0.997–1.011 across all continuation measurements).
+
+## Outcome metrics (module level, interleaved A/B/C, externally idle)
+- vs incumbent d3-final: **all-9 geomean 1.0622×, large 1.1424×** (1.134–1.148 per shape).
+- vs SGLang baseline: all-9 1.1009×, large 1.2373× (B-leg reproduced 1.2356/1.2367 in two more runs).
+- In-SGLang in-tree arbiter (shipping integration, both legs through the identical public op):
+  **geomean 1.0945×**, large 1.188–1.222×, parity-or-speedup on every shape.

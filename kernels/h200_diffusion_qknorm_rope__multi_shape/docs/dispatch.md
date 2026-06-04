@@ -52,3 +52,19 @@ Bound (NCU, `profile/round_warp2/REPORT.md`): large = memory-latency-bound (long
 40% of peak, occ 73%) near the attainable bound; tiny = launch/underfill-bound (occ 12%, 0.07 waves/SM)
 → kernel no-go, carried by lean dispatch. No 1-head-vs-2-head per-bucket split is needed: the universal
 warp2 path wins or ties everywhere on head_dim=128, and head_dim 64/256 + neox keep the baseline path.
+
+---
+
+## Continuation round (2026-06-04): dispatch unchanged, one new in-launcher route
+
+The compile-time dispatch is untouched (`kUseWarp2 = head_dim==128 && rope_dim==128 && !is_neox`;
+everything else keeps the rope_dim-aware one-head path). The final candidate `cossin-vec`
+(`6669bd218e336c9d`) adds one RUNTIME route inside the launcher: when the cos/sin cache base is not
+16-byte aligned (`data_ptr() % 16 != 0`, only reachable via pathological sub-16B storage offsets —
+PyTorch CUDA allocations are always aligned and rows keep alignment via the 512 B row stride), the
+warp2 configuration falls back to the scalar-load one-head kernel instead of the float4 path.
+Covered by `tests/test_correctness.py::test_misaligned_cos_sin_cache_still_oracle_correct` and the
+arbiter-side in-tree check (`docs/sglang_jit_export.md`, continuation section). Per-bucket numbers
+for the new candidate: `docs/perf_analysis.md` continuation addendum (large module 1.134–1.148× vs
+the incumbent, tiny at parity — still launch-bound, still carried by dispatch, no per-bucket split
+needed).

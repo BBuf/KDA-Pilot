@@ -132,28 +132,64 @@ def _geom_mean(values: list[float]) -> float:
     return math.exp(sum(math.log(v) for v in cleaned) / len(cleaned))
 
 
-def _run_worker(tmp_path: str, warmup: int, iters: int) -> int:
+def _load_compare_exports(src_dir: str):
+    """Load a second wrapper module (e.g. a snapshot of the promoted candidate's
+    src/) so two candidate generations can be timed in the SAME process through
+    the identical wrapper/dispatch ABI. The wrapper resolves its csrc/ next to
+    its own file, and its jit module name embeds that source hash, so the two
+    builds never collide."""
+    wrapper_py = Path(src_dir).resolve() / "wrapper.py"
+    spec = importlib.util.spec_from_file_location("kda_diffrope_compare_wrapper", wrapper_py)
+    assert spec is not None and spec.loader is not None, wrapper_py
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _run_worker(tmp_path: str, warmup: int, iters: int, compare_src: str = "", sglang_path: str = "") -> int:
     """CUDA work happens in this child process; it exits before the parent's after-idle check."""
+    if sglang_path:
+        # Resolve `import sglang` (baseline kernels AND the jit build stack) from an
+        # explicit checkout -- e.g. a task-owned worktree of sglang MAIN -- so the
+        # recorded command alone pins the baseline source, independent of whatever
+        # the container's default checkout happens to be.
+        sys.path.insert(0, os.path.abspath(sglang_path))
     correctness = _load_correctness_module()
     cases = correctness.make_cases()
     if not cases:
         json.dump({"error": "no benchmark cases (need CUDA)"}, open(tmp_path, "w"))
         return 1
+    compare_mod = _load_compare_exports(compare_src) if compare_src else None
+
+    def compare_fn(case):
+        return compare_mod.EXPORTS[case["entry"]](*case["args"])
+
     rows = []
     speedups = []
+    cmp_speedups = []
     for case in cases:
         w = int(case.get("warmup", warmup))
         it = int(case.get("iters", iters))
         b = _summary(_event_time(correctness.baseline, case, warmup=w, iters=it))
+        a = _summary(_event_time(compare_fn, case, warmup=w, iters=it)) if compare_mod else None
         c = _summary(_event_time(correctness.candidate, case, warmup=w, iters=it))
         sp = (b["median_us"] / c["median_us"]) if c["median_us"] > 0 else float("nan")
         speedups.append(sp)
-        rows.append({"name": case["name"], "b": b, "c": c, "speedup": sp, "iters": it})
+        row = {"name": case["name"], "b": b, "c": c, "speedup": sp, "iters": it}
+        if a is not None:
+            csp = (a["median_us"] / c["median_us"]) if c["median_us"] > 0 else float("nan")
+            cmp_speedups.append(csp)
+            row["a"] = a
+            row["speedup_vs_compare"] = csp
+        rows.append(row)
     out = {
         "rows": rows,
         "geomean": _geom_mean(speedups),
         "gpu_model": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "cpu",
     }
+    if compare_mod is not None:
+        out["geomean_vs_compare"] = _geom_mean(cmp_speedups)
+        out["compare_version"] = f"src={compare_mod._SRC_HASH} pdl={compare_mod.USE_PDL}"
     json.dump(out, open(tmp_path, "w"))
     return 0
 
@@ -169,12 +205,20 @@ def main() -> int:
     ap.add_argument("--candidate", type=str, default="cuda-v4", help="candidate id recorded in the CSV")
     ap.add_argument("--host", type=str, default="")
     ap.add_argument("--allow-busy", action="store_true", help="skip the idle-gate (NOT for promotion evidence)")
+    ap.add_argument("--compare-src", type=str, default="",
+                    help="path to an alternate src/ dir (e.g. a snapshot of the promoted candidate); "
+                         "adds a third timing leg through the identical wrapper ABI in the same process")
+    ap.add_argument("--compare-label", type=str, default="compare",
+                    help="id recorded for the --compare-src leg (e.g. cuda-v4)")
+    ap.add_argument("--sglang-path", type=str, default="",
+                    help="python/ dir of an explicit sglang checkout (e.g. a task-owned worktree "
+                         "of sglang MAIN) used for the baseline kernels and the jit build stack")
     ap.add_argument("--worker", action="store_true", help="internal: CUDA timing child process")
     ap.add_argument("--tmp", type=str, default="", help="internal: worker results path")
     args = ap.parse_args()
 
     if args.worker:
-        return _run_worker(args.tmp, args.warmup, args.iters)
+        return _run_worker(args.tmp, args.warmup, args.iters, compare_src=args.compare_src, sglang_path=args.sglang_path)
 
     # -------- parent: owns idle validation + CSV; never initializes CUDA --------
     visible = os.environ.get("CUDA_VISIBLE_DEVICES", "")
@@ -190,6 +234,10 @@ def main() -> int:
         sys.executable, os.path.abspath(__file__), "--worker", "--tmp", tmp.name,
         "--warmup", str(args.warmup), "--iters", str(args.iters), "--candidate", args.candidate,
     ]
+    if args.compare_src:
+        cmd += ["--compare-src", args.compare_src]
+    if args.sglang_path:
+        cmd += ["--sglang-path", args.sglang_path]
     rc = subprocess.run(cmd).returncode
     try:
         with open(tmp.name) as fh:
@@ -215,6 +263,11 @@ def main() -> int:
     sha = _git_short_sha()
     ver_id = f"git_sha={sha}" if sha != "nogit" else "git_sha=N/A(copied-dir); version-id=source-hash"
     cmdstr = f"CUDA_VISIBLE_DEVICES={visible} python benchmark.py --warmup {args.warmup} --iters {args.iters} --candidate {args.candidate}"
+    if args.compare_src:
+        # exact-command provenance: the paired rows must be reproducible verbatim
+        cmdstr += f" --compare-src {args.compare_src} --compare-label {args.compare_label}"
+    if args.sglang_path:
+        cmdstr += f" --sglang-path {args.sglang_path}"
     prov = f"host={host} gpu_id={gpu_id} gpu={gpu_model} {ver_id} {version} cmd='{cmdstr}'"
 
     csv_path = KERNEL_DIR / "benchmark.csv"
@@ -237,6 +290,31 @@ def main() -> int:
             print(f"{r['name']}: base={b['median_us']:.2f}us cand={c['median_us']:.2f}us speedup={sp:.4f}x")
         geo = data["geomean"]
         wr.writerow([_now(), args.candidate, "geomean_11_unique_signatures", "geomean_speedup_x", "", "", f"{geo:.4f}x", f"n={len(data['rows'])} {prov}"])
+        # Paired-comparison rows: base columns carry the --compare-src leg (e.g. the
+        # promoted cuda-v4 snapshot), cand columns the current candidate. Same
+        # process, same case tensors, identical wrapper ABI on both legs.
+        if args.compare_src and any("a" in r for r in data["rows"]):
+            cmp_prov = f"compare[{data.get('compare_version', '?')} dir={args.compare_src}] {prov}"
+            pair_label = f"{args.candidate}_vs_{args.compare_label}"
+            for r in data["rows"]:
+                if "a" not in r:
+                    continue
+                a, c, csp = r["a"], r["c"], r["speedup_vs_compare"]
+                wr.writerow([
+                    _now(), pair_label, r["name"], "median_us",
+                    f"{a['median_us']:.4f}", f"{c['median_us']:.4f}",
+                    f"{csp:.4f}x" if math.isfinite(csp) else "",
+                    (
+                        f"cmp[mean={a['mean_us']:.3f} std={a['std_us']:.3f} min={a['min_us']:.3f} "
+                        f"p10={a['p10_us']:.3f} p90={a['p90_us']:.3f}] "
+                        f"cand[mean={c['mean_us']:.3f} std={c['std_us']:.3f} min={c['min_us']:.3f} "
+                        f"p10={c['p10_us']:.3f} p90={c['p90_us']:.3f}] iters={r['iters']} {cmp_prov}"
+                    ),
+                ])
+                print(f"{r['name']}: {args.compare_label}={a['median_us']:.2f}us cand={c['median_us']:.2f}us vs_compare={csp:.4f}x")
+            cgeo = data.get("geomean_vs_compare", float("nan"))
+            wr.writerow([_now(), pair_label, "geomean_11_unique_signatures", "geomean_speedup_x", "", "", f"{cgeo:.4f}x", f"n={len(data['rows'])} {cmp_prov}"])
+            print(f"GEOMEAN_VS_{args.compare_label.upper()} {cgeo:.4f}x")
         wr.writerow([_now(), args.candidate, "idle_check_after", "nvidia_smi", "", "", "", f"gpu_id={gpu_id} idle={_is_idle(post)} {post}"])
     print(f"GEOMEAN {geo:.4f}x | idle_before={_is_idle(pre)} {pre} | idle_after={_is_idle(post)} {post}")
     return 0

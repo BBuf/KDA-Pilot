@@ -44,3 +44,35 @@ Performed in a **task-owned git worktree** of SGLang (`git worktree add --detach
 ## Files / scope
 - Export validated in a **task-owned worktree** (not the shared checkout). To promote permanently, the same copy of `src/csrc/rotary_embedding.cuh` → `python/sglang/jit_kernel/csrc/diffusion/rotary_embedding.cuh` is applied in the chosen editable SGLang checkout and the public-name resolution registered (install/uninstall). The KDA-workspace dispatcher (`src/wrapper.py`) and the in-tree `cache_once` loader (`export_intree.py`) build the identical kernel.
 - Pinned baseline: SGLang `0b65588c180a519427867d53cc4ed6e9e2610890` (`0.5.12.dev472+g3f7e538b2`), container `sglang_bbuf` on `ion-b200`.
+
+---
+
+# Continuation re-export (cuda-v6, 2026-06-04, k09 run)
+
+- `src/` (kernel src hash `317e2fab7ade`; standard kernel improved, LTX-2 functionally unchanged)
+  re-exported via `python3 scripts/export_kda_kernels/export.py b200_diffusion_rotary_embedding__multi_shape`;
+  dispatcher + `__init__` regenerated; `KDA_STATUS.md` / `KDA_EXPORTS.json` / family `__init__.py`
+  unified on kp commit `afb416adff0765da3bf610826631b6d5704d5381` with one canonical annotated
+  like-for-like ~1.46x speedup string (baseline-shift context included; round-1 metadata
+  unification; the interim stamp from the first re-export pass is superseded).
+- **In-tree drop-in revalidated** (`export_intree.py`, task-owned worktree of `/sgl-workspace/sglang`
+  @ `edb1b3f8f`, candidate `.cuh` at `python/sglang/jit_kernel/csrc/diffusion/rotary_embedding.cuh`,
+  relative-path `cache_once` loader): in-SGLang oracle bit-exact 11/11 (max_abs_diff 0.0), fp16
+  fallback exact, symbols restored, worktree removed.
+- **Install-path validated, IDLE-GATED** (`kda_install_validate.py` with parent/worker
+  `nvidia-smi` gating; `idle_gated: true` with before/after GPU states embedded in the JSON;
+  PYTHONPATH=repo_root overlay): `install()` swaps both rotary symbols (plus the other promoted
+  families), integrated oracle bit-exact 11/11 through the public API, non-captured falls back
+  (diff 0.0), `uninstall()` restores both. **Standard shape through the installed path:
+  57.71 µs — identical to the direct wrapper median (57.7 µs) → no dispatcher/host tax**
+  (installed-path standard speedup vs current baseline 110.88/57.71 = 1.921×). Full JSON:
+  `docs/logs/kda_install_validate_v6_20260604.json` (replaces an earlier non-idle-gated capture
+  during which a co-resident process had appeared; the superseded capture's correctness facts
+  were identical).
+
+- **Official baseline comparison (post-loop, per user direction)**: sglang MAIN
+  (`8933ec877235e24fd994246c6f8db225a4cb2823`, includes PR #24732's fast LTX-2 Triton kernel),
+  measured via a task-owned `git worktree` + `benchmark.py --sglang-path ../sglang_main/python`
+  (the recorded command pins the baseline source). **Geomean 1.4660×** over the 11 captured
+  signatures (3 idle-gated sessions: 1.4325/1.4640/1.4740×); standard 1.917×; correctness vs the
+  main baseline bit-exact 11/11. KDA metadata surfaces updated to this measured value.

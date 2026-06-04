@@ -380,6 +380,35 @@ def test_captured_shapes(name, tokens, num_heads, eps, pos_kind, pos_dt):
 
 
 @requires_cuda
+def test_misaligned_cos_sin_cache_still_oracle_correct():
+    """A cos/sin cache whose BASE pointer is not 16-byte aligned must still be oracle-correct on
+    the native CUDA dispatch: the kernel launcher guards the base alignment and routes such
+    inputs to the scalar-load one-head path instead of the float4 fast path."""
+    w = _wrapper()
+    tokens, num_heads, head_dim, rope_dim, eps = 4096, 24, 128, 128, 1e-6
+    b = _build_inputs(tokens, num_heads, head_dim, rope_dim, "cuda", seed=77)
+    cache = b["cos_sin_cache"]
+    rows = cache.shape[0]
+    # Same cache values on a deliberately 4-byte-offset base: contiguous [rows, rope_dim] float32
+    # view with data_ptr() % 16 == 4.
+    backing = torch.empty(rows * rope_dim + 4, device="cuda", dtype=torch.float32)
+    mis = backing[1 : 1 + rows * rope_dim].view(rows, rope_dim)
+    mis.copy_(cache)
+    assert mis.is_contiguous()
+    assert mis.data_ptr() % 16 != 0, "test setup must produce a misaligned base"
+    pos = _make_positions("shuffle", tokens, rows, "cuda", torch.int64)
+    q_o, k_o = b["q"].clone(), b["k"].clone()
+    q_c, k_c = b["q"].clone(), b["k"].clone()
+    split_oracle(q_o, k_o, b["q_weight"], b["k_weight"], cache, pos, False, eps)
+    w.optimized_wrapper(q_c, k_c, b["q_weight"], b["k_weight"], mis, pos,
+                        is_neox=False, eps=eps, rope_dim=rope_dim)
+    assert w.get_last_dispatch() == "cuda", "misaligned cache stays on the native dispatch"
+    _assert_no_nan_inf(q_c, "q"); _assert_no_nan_inf(k_c, "k")
+    torch.testing.assert_close(q_c.float(), q_o.float(), atol=ATOL, rtol=RTOL)
+    torch.testing.assert_close(k_c.float(), k_o.float(), atol=ATOL, rtol=RTOL)
+
+
+@requires_cuda
 @pytest.mark.parametrize("batch_size", GRID_BS)
 @pytest.mark.parametrize("num_heads", GRID_HEADS)
 @pytest.mark.parametrize("head_dim", GRID_HEAD_DIM)

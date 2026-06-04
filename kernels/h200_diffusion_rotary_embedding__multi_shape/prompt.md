@@ -532,3 +532,34 @@ Status: native CUDA candidate `native_cuda_v2_vectorized` (`src/csrc/rotary_embe
 - Bound: NCU `--set full`+`--set source` → active bound is **HBM memory bandwidth** (75–79% DRAM, ~80–90% of the H200 roofline) — near the attainable bound (`profile/ncu_v2_20260602_065439/REPORT.md`).
 - Dispatch: `docs/dispatch.md` (6 buckets promoted to CUDA; everything else falls back to the SGLang baseline/reference).
 - Export: in-SGLang drop-in replacement verified (`docs/sglang_jit_export.md`); `interface.md`, `benchmark.csv`, `solutions.jsonl` updated.
+
+### Continuation round result (2026-06-04 — appended)
+
+Status: continuation round on the result above, under the tightened shipping-benchmark
+rules (symmetric integration, same-process interleaved A/B, DEVICE-vs-HOST
+decomposition). Candidate advanced to `native_cuda_v3_streamcache` (v2 + `__ldcs`/`__stcs`
+streaming-cache accesses on all read-once/write-once global streams).
+
+- Hardware/oracle: NVIDIA H200 (`ion-h200-8`, GPU 0, idle 0%/0MiB), SGLang `84e110831`
+  whose diffusion `rotary.py`/`ltx2_rotary.py` remain sha1-identical to the pinned
+  `6965fe0ee` (no oracle drift; no re-pin needed).
+- Correctness: `KDA_RUN_CORRECTNESS=1 pytest tests/test_correctness.py` → 6 passed after
+  every kept attempt (CUDA route asserted; manifest/oracle-pin/fallback green).
+- Performance (shipping outcome): interleaved wall geomean **1.2977×**
+  (legacy-mode 1.2775×; per-shape wall 1.168×–1.497×). Decomposed: std = real kernel win
+  (NCU 153.5→89.4µs, 1.72×); `ltx2 S6144 h64` = kernel parity (0.98× NCU; wall win is
+  host-path, kept per the re-measure rule, labeled host); `S6144 h32` = small kernel win
+  (1.04×) + host; small LTX-2 buckets = host-path wall wins (Triton kernels faster
+  kernel-only there; queued: small-S grid undersubscription).
+- Bound: NCU full/source/duration sets both sides → **HBM memory bandwidth**, 74–76%
+  DRAM, 81–88% of the analytical roofline (`profile/ncu_v3_20260604/REPORT.md`) — near
+  the attainable bound; remaining kernel levers ≲5% each (384-thread launch variant
+  measurably regressed and was rejected; gather rewrite unjustified at ~4.2 TB/s
+  achieved; PDL skipped on negative prior evidence).
+- Dispatch: `docs/dispatch.md` refreshed with the per-bucket wall/device decomposition;
+  all 6 buckets stay CUDA-routed (wall-fair faster under the symmetric harness with the
+  full public contract preserved — the entry points are plain functions, no custom-op
+  registration exists to drop).
+- Export: in-SGLang drop-in re-verified for the changed kernel (`EXPORT_TEST: PASS`,
+  smoke geomean 1.228×); `interface.md`, `benchmark.csv`, `solutions.jsonl` (s5–s7)
+  updated.
