@@ -112,11 +112,21 @@ SGLang baseline:
 > Historical: the normv5 round's **geomean 1.4223x** below was measured through
 > the `kda_kernels.install()` overlay (plain-callable monkey-patch) and is NOT
 > admissible under the shipping-integration rules added by kernel-pilot commit
-> `cc17c1149`. Superseded by the symmetric continuation table in
-> `docs/dispatch.md`: **wall geomean 1.314x / saturated device-rate geomean
-> 1.444x** vs the copied Triton baseline (conservative vs the production path),
-> with the normv5 huge-RMS device regression (0.907x) closed by the 8x128 tile
-> kernel (NCU: identical 77.66us single-launch, 82.67% vs 82.17% DRAM).
+> `cc17c1149`.
+>
+> **Final continuation result (promotion arbiter)**: in-SGLang
+> dispatch-symmetric env-toggle A/B in ONE patched worktree @ sglang
+> `84e1108312` (native fast paths inside the byte-unchanged public op /
+> custom-op bodies): **wall geomean 1.4458x** (saturated device-rate 1.478x)
+> across the six captured shapes; oracle `test_qwen_image_modulation.py`
+> 288/288 with native ON (and OFF); fallback probes (guard False + ref-equal)
+> and torch.compile smoke (registered op present, compiled == eager bitwise)
+> pass; overlay `validate_install.py` strict VALIDATE_OK. Full grid 404/404
+> with the tile kernel. Loop-iteration view (conservative, copied-baseline
+> legs): wall 1.314x / device-rate 1.444x (`docs/dispatch.md`). The normv5
+> huge-RMS device regression (0.907x) is closed by the 8x128 tile kernel
+> (NCU: identical 77.66us single-launch, 82.67% vs 82.17% DRAM). Details:
+> `docs/sglang_jit_export.md`, `docs/dispatch.md`.
 
 - **Wrapper signatures (preserved):** `triton_one_pass_rms_norm(x, w, eps=1e-6) -> Tensor`
   and `norm_infer(x, weight, bias, eps, is_rms_norm=False, out=None) -> Tensor`
@@ -132,8 +142,10 @@ SGLang baseline:
 - **Tolerance methodology:** candidate vs SGLang baseline AND vs a PyTorch FP32 reference;
   fixed SGLang tolerances (fp32 1e-5, bf16/fp16 5e-2) + a dynamic guard
   (candidate-vs-fp32 error ≤ 4× baseline-vs-fp32 error); explicit NaN/Inf checks.
-  Result: 201/201 cases (full regression grid incl. odd M, + select01 oracle); helios
-  LN abs err 2.86e-6 (== baseline's own error vs fp32).
+  Result: 201/201 cases in the normv5 round; the continuation's expanded grid
+  (non-contiguous fallback + call-form routing tests) passes **404/404** with the
+  tile kernel on ion8-h200 GPU0; helios LN abs err 2.86e-6 (== baseline's own
+  error vs fp32).
 - **Benchmark command:** inside `sglang_bbuf` on an idle H200,
   `KDA_RUN_CORRECTNESS=1 CUDA_VISIBLE_DEVICES=<idle> python benchmark.py --lock` (once),
   then `... python benchmark.py --candidate-version <ver>`. Latency = median of warmup +
@@ -155,4 +167,6 @@ SGLang baseline:
   `kda_kernels.install(strict=True)` swaps both public SGLang symbols to the native-CUDA
   dispatcher; the `.cuh` compile via `load_jit` from `kda_kernels/.../_impls/h200/`. Installed-path
   correctness (6 shapes + select01 oracle + fallback) and smoke benchmark validated on ion8-h200
-  GPU7. Full detail: `docs/sglang_jit_export.md`.
+  (normv5 round: GPU7; continuation refresh with the tile kernel: GPU0, strict VALIDATE_OK).
+  The overlay is the secondary channel; the promotion arbiter is the in-tree dispatch-symmetric
+  A/B. Full detail: `docs/sglang_jit_export.md`.

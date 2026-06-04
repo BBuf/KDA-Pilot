@@ -115,7 +115,7 @@ the speedup denominator and legitimately includes dispatch cost).
 - rms_v1: 64-bit warp-per-row RMS + lean dispatch. Correct; geomean 1.39x (helios fell back). Superseded.
 - normv2: + exact-N=5120 fp32 LN (capped grid-stride). Correct (LN 2.86e-6). geomean 1.392x. NCU: LN 74% / huge-RMS 70.6% DRAM (both capped → bandwidth starved).
 - grid_experiments (normv3/v4): uncapping helped LN (one-CTA-per-row → 79.8% DRAM, 1.067x) but hurt huge-RMS (added launch/tail). Kept LN uncapped + RMS capped (normv4, all shapes ≥1.02x, 1.408x).
-- normv5 (PROMOTE): RMS → 2-rows-per-warp 128-bit (prior-art lever). huge-RMS DRAM 70.6%→77.5%; all shapes ≥1.04x; geomean **1.4223x**. 201/201 full-grid correctness. NCU bounds in profile/ncu_normv2/REPORT.md.
+- normv5 (PROMOTE — historical overlay round, superseded by tilev1; see section 8): RMS → 2-rows-per-warp 128-bit (prior-art lever). huge-RMS DRAM 70.6%→77.5%; all shapes ≥1.04x; geomean **1.4223x**. 201/201 full-grid correctness. NCU bounds in profile/ncu_normv2/REPORT.md.
 
 Active bound per bucket (normv5): LN at HBM bound (79.8% ≈ baseline); huge-RMS near bound (77.5%, ~93% of baseline's 83%, wall parity+); small-RMS launch/dispatch-bound (win = lean tvm-ffi dispatch, AC-9 14.93us vs 31.5us).
 
@@ -144,8 +144,9 @@ Plan: `.humanize/kernel-agent/refined-plan.md`. Lineage:
 `../../docs/standalone_diffusion_benchmark.md`, `../../docs/diffusion_kernel_rules.md`,
 and `../../docs/diffusion_correctness_contract.md` do **not** exist in this worktree.
 Binding repo-level rules: `../../docs/sglang_jit_kernel_export.md` and
-`../../docs/tvm_ffi_benchmark_status.md` (currently lists this task as
-"Blocked: no optimized tvm-ffi candidate is present in the SGLang checkout").
+`../../docs/tvm_ffi_benchmark_status.md` (listed this task as "Blocked: no
+optimized tvm-ffi candidate is present in the SGLang checkout" at round start;
+updated to Done by this round's in-tree arbiter).
 
 ### User decisions baked in (do not re-ask mid-loop)
 
@@ -218,3 +219,31 @@ enqueue rate vs ~3.3us kernel); tvm-ffi enqueues at 9.7us/call → dev-rate x1.9
 + wall x1.49-1.59, admissible per DEC-2 (host delta, decomposed). Copied-baseline
 leg is leaner than the production path (no custom-op shim, ~5us at small shapes),
 so these speedups are conservative vs production.
+
+### r0 outcome (round closed: PROMOTE tilev1)
+
+- **tilev1 kernel** (`src/rms_norm_d128_tile16.cuh`): one 8x128 tile per
+  128-thread CTA, 16 lanes/row, 128-bit loads, fp32 reduce, grid=ceil(M/8) —
+  CUDA port of the Triton tile structure (prior-art D1). Sweep: tile8x128 beat
+  tile16x128/16x256/32x256 and the normv5 warp kernel at EVERY captured M;
+  streaming hints rejected (-0.6% device, +1.6% wall); PDL skipped (prior-art
+  REJECT + qknorm pilot regression). Dispatcher routes ALL supported RMS
+  shapes to it; LN kernel byte-unchanged.
+- **NCU** (`profile/ncu_tilev1/REPORT.md`): tile vs Triton baseline on
+  [648720,128] — IDENTICAL 77,664ns single-launch, 82.67% vs 82.17% DRAM
+  (both at the practical HBM bound; normv5's 77.5% gap closed; diagnosis =
+  CTA-count/memory-level parallelism, confirmed by the fix).
+- **Correctness**: full regression grid 404/404 on ion8-h200 GPU0
+  (KDA_RUN_CORRECTNESS=1 KDA_FULL_CORRECTNESS=1).
+- **Promotion arbiter (in-SGLang, dispatch-symmetric env-toggle, PASS)**:
+  ONE patched worktree @ 84e1108312; native paths inside the unchanged public
+  bodies; 4 alternated off/on runs → **wall geomean 1.4458x** (dev-rate
+  1.478x); oracle 288/288 with native ON and OFF; fallback probes (gate False
+  + ref-equal) and torch.compile smoke (registered op present, bitwise) pass.
+  Shipping patch: `docs/sglang_export.patch`.
+- **Export**: kda_kernels `_impls/h200` refreshed (tile kernel);
+  `validate_install.py` strict VALIDATE_OK (smoke 2.00x small / 1.14x huge);
+  lineage stamps: export-source `76cd0a0de`, benchmarked anchor `b4f9b43aa`.
+- Decision table + roofline: `docs/dispatch.md`. Evidence ledger:
+  `benchmark.csv` (symmetric_* + intree_arbiter* + GEOMEAN row),
+  `solutions.jsonl` (continuation lineage through `intree_arbiter_tilev1`).

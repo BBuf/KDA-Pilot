@@ -48,7 +48,7 @@
 | hunyuan bf16 [650040,128] | 108.73 / 82.17 | 95.70 / 81.36 | 1.136 | 1.010 |
 | zimage bf16 [16384,128] | 33.29 / 24.64 | 17.95 / 11.40 | 1.854 | 2.161 |
 | zimage bf16 [4096,128] | 32.28 / 24.39 | 17.70 / 11.36 | 1.823 | 2.148 |
-| **geomean** | | | **1.4458** | 1.485 |
+| **geomean** | | | **1.4458** | 1.478 |
 
   Decomposition: the three bandwidth-bound shapes are device-parity-plus at
   the HBM bound (NCU: identical 77.66us single-launch on [648720,128], 82.67%
