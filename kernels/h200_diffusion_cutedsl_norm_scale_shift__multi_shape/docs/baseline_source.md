@@ -43,6 +43,7 @@ All copied verbatim from `python/sglang/jit_kernel/<path>` at commit `1332540`:
 | `include/sgl_kernel/warp.cuh` | `3254a491733811043f923423ea7eefec2d2697311bb520a0553ef3cdb177db57` |
 | `include/sgl_kernel/utils.h` | `d0e4bf235e004b2cc61924b377f57e876ae6988bfadc61c6f0422306f4f17aac` |
 | `include/sgl_kernel/type.cuh` | `f70277be81e61c2737875067a0d91f7ca2c7e2f806be1353319273c55a93e6a5` |
+| `include/sgl_kernel/source_location.h` | `cd43da52aa20deafdffb0973bed1b101f634c728362aeef06959f0f5700f4973` |
 
 Selection rationale: the two entry points live in `scale_residual_norm_scale_shift.py`, which imports
 `common/norm_fusion.py` (statistics + BSFD broadcast/slicing), `common/reduce.py` (warp/CTA
@@ -50,8 +51,9 @@ reductions), and `diffusion/cutedsl/utils.py` (dtype map). `jit_kernel/utils.py`
 `load_jit` tvm-ffi build stack used to build the candidate through the same snapshot loader
 (equivalent-builder rule). The eight `include/sgl_kernel` headers are the transitive include closure
 needed by a native CUDA candidate built through that loader (`tensor.h`, `math.cuh`, `runtime.cuh`,
-`utils.cuh`, `vec.cuh`, `warp.cuh` plus their internal includes `utils.h`, `type.cuh`). The canonical
-test file is vendored as the correctness-grid reference.
+`utils.cuh`, `vec.cuh`, `warp.cuh` plus their internal includes `utils.h`, `type.cuh`, and
+`source_location.h` — the latter pulled in by `utils.h` via a quoted relative include). The
+canonical test file is vendored as the correctness-grid reference.
 
 ## Local Additions / Edits
 
