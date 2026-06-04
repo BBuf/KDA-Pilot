@@ -28,23 +28,35 @@
 
 #include <dlpack/dlpack.h>
 #include <tvm/ffi/container/tensor.h>
-#include <tvm/ffi/error.h>
+#if __has_include(<tvm/ffi/function.h>)
 #include <tvm/ffi/function.h>
-#include <tvm/ffi/optional.h>
+#endif
 
 #include <algorithm>
 #include <cstdint>
+#include <cstring>
+#include <sstream>
+#include <stdexcept>
 
 namespace {
 
 using tvm::ffi::Optional;
 using tvm::ffi::TensorView;
 
-#define CAND_CHECK(cond, ...)                       \
-  do {                                              \
-    if (!(cond)) {                                  \
-      TVM_FFI_THROW(RuntimeError) << __VA_ARGS__;   \
-    }                                               \
+// Host-side failures throw a C++ exception; the tvm-ffi boundary converts it
+// into a Python error (same pattern as the production jit kernels).
+template <typename... Args>
+[[noreturn]] void cand_fail(Args&&... args) {
+  std::ostringstream oss;
+  (oss << ... << args);
+  throw std::runtime_error(oss.str());
+}
+
+#define CAND_CHECK(cond, ...)  \
+  do {                         \
+    if (!(cond)) {             \
+      cand_fail(__VA_ARGS__);  \
+    }                          \
   } while (0)
 
 // ---------------------------------------------------------------------------
@@ -146,7 +158,7 @@ inline Blc normalize_blc(const TensorView& t, int64_t B, int64_t L, int64_t C, c
     r.sc = st[2];
     return r;
   }
-  TVM_FFI_THROW(RuntimeError) << name << " must be 0D/1D(1)/2D/3D or 4D";
+  cand_fail(name, " must be 0D/1D(1)/2D/3D or 4D");
   return r;  // unreachable
 }
 
@@ -174,7 +186,7 @@ inline float read_scalar_as_float(const void* ptr, DLDataType dtype, cudaStream_
     memcpy(&h, bytes, 2);
     return __half2float(h);
   }
-  TVM_FFI_THROW(RuntimeError) << "unsupported scalar dtype";
+  cand_fail("unsupported scalar dtype");
   return 0.0f;
 }
 
@@ -307,7 +319,7 @@ void fuse_scale_shift(TensorView x, TensorView scale, TensorView shift, double s
   } else if (is_f32(xt) && is_f32(st)) {
     launch_fuse_scale_shift<float, float>(x, scale, shift, scale_constant, output, stream);
   } else {
-    TVM_FFI_THROW(RuntimeError) << "unsupported dtype combination for fuse_scale_shift";
+    cand_fail("unsupported dtype combination for fuse_scale_shift");
   }
 }
 
@@ -541,7 +553,7 @@ void fuse_layernorm_scale_shift_gate_select01(
   } else if (is_f32(xt)) {
     idx64 ? LN_LAUNCH(float, int64_t) : LN_LAUNCH(float, int32_t);
   } else {
-    TVM_FFI_THROW(RuntimeError) << "unsupported x dtype";
+    cand_fail("unsupported x dtype");
   }
 #undef LN_LAUNCH
 }
@@ -597,7 +609,7 @@ void fuse_residual_layernorm_scale_shift_gate_select01(
   } else if (is_f32(xt)) {
     idx64 ? RLN_LAUNCH(float, int64_t) : RLN_LAUNCH(float, int32_t);
   } else {
-    TVM_FFI_THROW(RuntimeError) << "unsupported x dtype";
+    cand_fail("unsupported x dtype");
   }
 #undef RLN_LAUNCH
 }

@@ -60,6 +60,17 @@
   regardless of `scale_constant`; the candidate and the oracle reproduce this
   reference behavior exactly (correctness-only class).
 
+## Run protocol on the remote host
+
+- Every GPU command (correctness, benchmark, profiling, NCU) pins the selected
+  idle device with `CUDA_VISIBLE_DEVICES=$REMOTE_GPU_ID`, so `cuda:0` inside
+  the process is always the pinned card. This also makes the candidate's
+  build-time gencode detection (`torch.cuda.get_device_capability()` at module
+  load) read the pinned device. ion-b200 is homogeneous (8x B200), so the
+  flag is `sm_100` regardless.
+- `nvidia-smi` state is captured before and after every measurement; data
+  collected while the pinned card had other compute processes is discarded.
+
 ## Restrictions the candidate host validation adds (documented deviations)
 
 - `scale`/`shift` must share one dtype (upstream Triton would accept mixed

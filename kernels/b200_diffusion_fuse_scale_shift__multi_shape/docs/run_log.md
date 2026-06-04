@@ -39,3 +39,22 @@ Actions:
   `bench/workloads.json` parses (25 rows, 19 production).
 
 GPU state: no GPU work yet (local scaffold only; macOS host has no CUDA).
+
+## 2026-06-04 — Pre-GPU contract review (Codex, gpt-5.5:high)
+
+- Verdict: READY_FOR_GPU, no P0 blockers. Response archived under the local
+  loop state directory.
+- P1 fixes applied: dropped the speculative `tvm/ffi/optional.h`/`tvm/ffi/error.h`
+  includes (Optional comes transitively with `tvm/ffi/container/tensor.h`;
+  `tvm/ffi/function.h` now guarded by `__has_include`); host failures now throw
+  `std::runtime_error` via a fold-expression `cand_fail` (also fixes the
+  CAND_CHECK comma-operator diagnostics bug); added `<cstring>`.
+- P1 consciously accepted (documented in benchmark_method.md): build-time
+  gencode detection reads the current device — covered by the
+  `CUDA_VISIBLE_DEVICES=$REMOTE_GPU_ID` pinning protocol on the homogeneous
+  ion-b200 host.
+- P1 consciously accepted: no NaN/Inf *input* injection rows — the contract
+  grid does not include them; poison-detection covers stale/skipped-launch
+  outputs, and outputs are NaN/Inf-checked on every row.
+- P2 noted: baseline keeps upstream `.contiguous()` calls inside the timed
+  launcher (no-ops for every frozen row; faithful upstream cost otherwise).
