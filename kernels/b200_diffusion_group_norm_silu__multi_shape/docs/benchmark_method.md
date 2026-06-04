@@ -2,13 +2,19 @@
 
 ## Harness
 
-- `bench/benchmark.py` is a verbatim copy of
+- `bench/benchmark.py` starts from
   `../../docs/standalone_diffusion_benchmark_template.py`
-  (sha1 `84a260f8ab799b85cdf8e3a6478bcccb719548d0` at copy time); the timing
+  (sha1 `84a260f8ab799b85cdf8e3a6478bcccb719548d0` at copy time). The timing
   policy, per-trial interleaved A/B order (deterministic seeded
   randomization), CUDA-event timing, inner-loop amplification, stats, and
-  geomean aggregation are unmodified. Task-specific behavior lives only in
-  `bench/adapter.py`.
+  geomean aggregation are unmodified. The ONLY task-glue delta vs the
+  template is an optional, untimed reporting hook: if `bench/adapter.py`
+  defines `describe_paths(workload, inputs, outputs)`, its returned per-row
+  dispatch metadata (`candidate_path` / `candidate_regime` /
+  `matched_status`, captured from the same tensors used for timing) is merged
+  into each result record — required by the per-row evidence table
+  (dispatch path and matched/fallback status). All other task-specific
+  behavior lives in `bench/adapter.py`.
 - Benchmark settings come from `config.toml`: warmup 10, iterations 200,
   trials 7, inner iterations 1..4096 calibrated to >= ~1000 us samples,
   isolated subprocess per workload, timeout 600 s,

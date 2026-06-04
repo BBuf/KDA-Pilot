@@ -298,6 +298,11 @@ def _run_one_workload(workload: dict[str, Any], args: argparse.Namespace) -> dic
     candidate_inner = args.inner_iterations_min
 
     compare = getattr(adapter, "compare_outputs", _default_compare)
+    # Optional adapter reporting hook (task glue, untimed): per-row dispatch
+    # metadata captured from the same tensors used for timing. Timing policy,
+    # ordering, stats, and aggregation below are unmodified template code.
+    describe_paths = getattr(adapter, "describe_paths", None)
+    path_metadata: dict[str, Any] = {}
     workload_id = str(workload.get("id") or workload.get("name") or workload.get("function"))
     if not workload_id:
         raise ValueError("each workload needs an id/name/function field")
@@ -338,6 +343,11 @@ def _run_one_workload(workload: dict[str, Any], args: argparse.Namespace) -> dic
                 "workload": workload,
                 "correctness": correctness,
             }
+
+        if trial == 0 and describe_paths is not None:
+            path_metadata = dict(
+                describe_paths(workload, inputs, candidate_outputs)
+            )
 
         for _ in range(args.warmup_runs):
             baseline_fn()
@@ -384,6 +394,7 @@ def _run_one_workload(workload: dict[str, Any], args: argparse.Namespace) -> dic
         "status": "PASSED",
         "production": bool(workload.get("production", True)),
         "workload": workload,
+        **path_metadata,
         "baseline": _stats_dict(baseline),
         "candidate": _stats_dict(candidate),
         "baseline_wall_us": baseline_wall_samples,

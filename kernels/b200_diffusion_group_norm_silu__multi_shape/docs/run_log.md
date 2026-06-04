@@ -187,5 +187,40 @@
   2.4240 / C mid 3.1122 / C large 1.1320 / NC small 2.3239 / NC mid 2.2979 /
   NC large 1.5137. 158/160 rows >= 0.97; the two below-floor readings
   (0.9587/0.9665) are the characterized order-debt artifact on the routed
-  identical-code rows (see Run 11 and `docs/dispatch.md`). Final table:
-  `docs/results.md`; raw: `bench/results.jsonl`.
+  identical-code rows (see Run 11 and `docs/dispatch.md`).
+- Superseded by Run 13: the Round-0 review required per-row dispatch metadata
+  in the result records and a gate script that machine-checks the
+  explained-residual outcome, so the definitive evidence was regenerated.
+
+## Run 13 — definitive evidence regeneration with dispatch metadata (2026-06-05)
+
+- Changes since Run 12 (reporting only, no kernel changes):
+  `solution/binding.py` gained `describe_dispatch` (Python routing +
+  the kernel's exported `group_norm_silu_regime` as the single source of
+  truth) and a once-per-process cached fallback resolver; `bench/adapter.py`
+  gained the optional `describe_paths` hook; `bench/benchmark.py` gained the
+  one task-glue delta that merges the hook's metadata into each result record
+  (timing policy/order/stats/aggregation unmodified);
+  `bench/summarize_results.py` gained the metadata columns and the
+  two-outcome no-regression gate (strict pass | explained-residual pass
+  requiring `baseline_equivalent`; otherwise FAIL — fails closed on rows
+  without metadata).
+- GPU 1 before: idle (0% util, 0 MiB). Commands (chained in one detached
+  session): `CUDA_VISIBLE_DEVICES=1 python3 bench/correctness.py --device
+  cuda:0 --side both` then `CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py
+  --device cuda:0 --out bench/results_r1.jsonl` (copied byte-identically to
+  the tracked `bench/results.jsonl`). Freeze check
+  (`bench/gen_workloads.py --check`) green locally the same day (it reads
+  this repository's git history, which the remote workspace does not carry).
+- GPU 1 after: idle (0% util, 0 MiB).
+- Correctness: **PASS, 0 failing checks** (both sides, all sections).
+- Benchmark: 172/172 PASSED; headline geomean **2.2880** (arithmetic mean
+  2.4944). Gate: `no row <0.97`: **PASS (strict)** — worst row
+  `hv_triton_1x512x9x128x128_C` at 0.9724 (a routed `baseline_fallback` row;
+  consistent with the Run-11 artifact characterization, this draw landed
+  above the floor). Buckets: C small 2.4061 / C mid 3.1375 / C large 1.1493 /
+  NC small 2.3233 / NC mid 2.2820 / NC large 1.5118. Dispatch metadata on all
+  172 rows: production = 148 cuda_kernel (64 nchw_last, 60 cont_split,
+  24 cont_small) + 12 baseline_fallback (all `baseline_equivalent`).
+- Final table + verbatim gate output: `docs/results.md`; raw:
+  `bench/results.jsonl`.

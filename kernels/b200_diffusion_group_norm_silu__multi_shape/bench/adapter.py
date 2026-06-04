@@ -91,3 +91,18 @@ def call_baseline(workload: dict, inputs, outputs) -> None:
 def call_candidate(workload: dict, inputs, outputs) -> None:
     x, weight, bias, num_groups, eps = inputs
     group_norm_silu_candidate(x, weight, bias, num_groups, eps, outputs[0])
+
+
+def describe_paths(workload: dict, inputs, outputs) -> dict:
+    """Optional reporting hook: per-row dispatch metadata for the result
+    record (untimed; called with the same tensors used for timing)."""
+    x, weight, bias, num_groups, _eps = inputs
+    if _ALIAS_BASELINE:
+        return {
+            "candidate_path": "baseline_alias",
+            "candidate_regime": "baseline_alias",
+            "matched_status": "baseline_equivalent",
+        }
+    from solution.binding import describe_dispatch
+
+    return describe_dispatch(x, weight, bias, num_groups, outputs[0])

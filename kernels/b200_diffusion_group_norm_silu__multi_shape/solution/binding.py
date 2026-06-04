@@ -143,4 +143,40 @@ def group_norm_silu_candidate(
     return _baseline_fallback()(x, weight, bias, num_groups, eps, out)
 
 
-__all__ = ["group_norm_silu_candidate", "select_path"]
+_REGIME_NAMES = {0: "generic", 1: "cont_small", 2: "cont_split", 3: "nchw_last"}
+
+
+def describe_dispatch(
+    x: torch.Tensor,
+    weight: torch.Tensor,
+    bias: torch.Tensor,
+    num_groups: int,
+    out: torch.Tensor,
+) -> dict:
+    """Per-row reporting metadata (untimed).
+
+    Single source of truth: ``select_path`` for the Python-level routing and
+    the kernel's exported ``group_norm_silu_regime`` helper (the exact C++
+    ``select_regime_impl`` the timed call uses) for the CUDA regime. ``out``
+    must be the same preallocated output tensor used for timing — the regime
+    decision inspects both tensors' geometry/alignment.
+    """
+    if select_path(x, weight, bias, num_groups) == "baseline_fallback":
+        return {
+            "candidate_path": "baseline_fallback",
+            "candidate_regime": "baseline_fallback",
+            "matched_status": "baseline_equivalent",
+        }
+    mod = _module()
+    regime_fn = getattr(mod, "group_norm_silu_regime", None)
+    if regime_fn is None:
+        regime_fn = mod["group_norm_silu_regime"]
+    regime = int(regime_fn(x, weight, bias, int(num_groups), out))
+    return {
+        "candidate_path": "cuda_kernel",
+        "candidate_regime": _REGIME_NAMES.get(regime, f"regime_{regime}"),
+        "matched_status": "optimized",
+    }
+
+
+__all__ = ["group_norm_silu_candidate", "select_path", "describe_dispatch"]

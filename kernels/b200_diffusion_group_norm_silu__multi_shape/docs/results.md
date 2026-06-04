@@ -3,28 +3,57 @@
 ## Headline (frozen harness, definitive run 2026-06-05)
 
 - Equal-weight geometric mean speedup over all **160 production rows**:
-  **2.2835x** (arithmetic mean 2.4866x, secondary metric).
+  **2.2880x** (arithmetic mean 2.4944x, secondary metric).
 - 172/172 workloads PASSED in-benchmark correctness
   (`required_matched_ratio = 1.0`); the standalone correctness suite
-  (`bench/correctness.py`, both sides, all sections) passed with 0 failing
-  checks in the same configuration (Run 10, `docs/run_log.md`).
-- Command: `CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py --device cuda:0
-  --out bench/results.jsonl` (workloads frozen,
-  `bench/gen_workloads.py --check` green, sha256
+  (`bench/correctness.py --side both`, all sections) passed with 0 failing
+  checks immediately before this run in the same configuration
+  (`docs/run_log.md` Run 13).
+- Command as executed (chained after correctness in the same detached remote
+  session): `CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py --device
+  cuda:0 --out bench/results_r1.jsonl`; the output was copied byte-identically
+  to the tracked canonical evidence file `bench/results.jsonl`. Workloads
+  frozen (`bench/gen_workloads.py --check` green the same day, sha256
   `1255972107562ab14e9b04c3e433a9a5334b169eadf43e6b0f50f1cf7c46eeb8`).
-  As-executed the run wrote `--out bench/results_headline.jsonl` and the
-  output was copied byte-identically to the tracked canonical name
-  `bench/results.jsonl` (`docs/run_log.md` Run 12).
-- Environment: ion-b200 / container `sglang_bbuf`, NVIDIA B200 (GPU 1,
-  pinned via `CUDA_VISIBLE_DEVICES=1`; idle before/after — provenance block
-  embedded in `bench/results.jsonl`), Python 3.12.3,
-  torch 2.11.0+cu130, CUDA 13.0, triton 3.6.0, tvm-ffi 0.1.9.
+- Environment: ion-b200 / container `sglang_bbuf`, NVIDIA B200 (GPU 1, pinned
+  via `CUDA_VISIBLE_DEVICES=1`; idle before/after — embedded provenance block
+  in `bench/results.jsonl`), Python 3.12.3, torch 2.11.0+cu130, CUDA 13.0,
+  triton 3.6.0, tvm-ffi 0.1.9.
 - Baseline: copied upstream SGLang Triton implementation @ `main`
   `133254086bf1f5b887c8c99d311719102d58a7eb` (see `docs/baseline_source.md`).
 - Candidate source (exact content measured): `solution/kernel.cu` sha256
   `2c1ca71d78e0fdde45bcc1898f22ca80b84afa6c2e1a9de7fe0ec491ab28bf4b`,
   `solution/binding.py` sha256
-  `9f85faa2dd1ed5e6c36cba3c204432773121e0256942d7bbf5a3afdb0a27b6e5`.
+  `4c5587507d622fea57c31a8314d120cbeb9df7b768895a4bee32ddacab0a458a`.
+
+## Promotion Gates (verbatim from `python3 bench/summarize_results.py bench/results.jsonl`)
+
+```
+headline geomean (production, equal weight): 2.2880
+arithmetic mean (secondary): 2.4944
+gate geomean>1.0: PASS
+gate no row <0.97: PASS (strict)
+```
+
+- Strict pass this run: zero production rows below the 0.97 floor (worst row
+  `hv_triton_1x512x9x128x128_C` at 0.9724, dispatch path
+  `baseline_fallback`).
+- The gate tooling also supports a second, machine-checked outcome for runs
+  where the characterized order-debt measurement artifact pushes a ROUTED row
+  below the floor: `PASS (explained residual)` is reported only when every
+  below-floor row carries `matched_status = baseline_equivalent` (identical
+  implementation on both sides — regression impossible by construction); a
+  below-floor row on an optimized path is a hard FAIL. Artifact
+  characterization and raw evidence: `docs/dispatch.md` ("Measured Residual
+  on Routed Giant Rows"), `bench/results_marginal21.jsonl`,
+  `bench/results_routed.jsonl`.
+
+## Dispatch Distribution (production rows, from per-row metadata)
+
+- candidate_path: 148 cuda_kernel / 12 baseline_fallback
+- candidate_regime: 64 nchw_last, 60 cont_split, 24 cont_small, 12 baseline_fallback
+- Every routed (`baseline_fallback`) row is `matched_status =
+  baseline_equivalent` and is counted in the geomean like every other row.
 
 ## Provenance (contract checklist, `docs/standalone_diffusion_benchmark.md`)
 
@@ -37,275 +66,245 @@
   (verbatim blob shasums + complete local-edit log in
   `docs/baseline_source.md`).
 - Candidate source hashes: see above.
-- Exact command: `CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py
-  --device cuda:0 --out bench/results.jsonl` (run from the task workspace
-  root on ion-b200; the JSONL's embedded provenance record carries the
-  in-process command line, Python/torch versions, and the full
-  `nvidia-smi` snapshot).
+- Exact command: see "Command as executed" above; the JSONL's embedded
+  provenance record carries the in-process command line, Python/torch
+  versions, and the full `nvidia-smi` snapshot.
 - Versions: CUDA 13.0 (nvcc V13.0.88), PyTorch 2.11.0+cu130, Triton 3.6.0,
-  tvm-ffi 0.1.9, Python 3.12.3 (toolchain verification in
-  `docs/run_log.md` "Environment"). Candidate compile flags in
-  `docs/benchmark_method.md` "Compile / Build Flags".
+  tvm-ffi 0.1.9, Python 3.12.3 (toolchain verification in `docs/run_log.md`
+  "Environment"). Candidate compile flags in `docs/benchmark_method.md`
+  "Compile / Build Flags".
 - GPU model / id / idle state: NVIDIA B200, physical GPU 1 (pinned via
-  `CUDA_VISIBLE_DEVICES=1`, in-process `cuda:0`); idle before/after the run
-  (0% util / 0 MiB; the in-run snapshot shows only the benchmark's own
-  ~4 MiB context on GPU 1) — `docs/run_log.md` Run 12.
+  `CUDA_VISIBLE_DEVICES=1`, in-process `cuda:0`); idle before/after
+  (`docs/run_log.md` Run 13).
 - Workload count and settings: 172 workloads (160 production + 12 grid);
   warmup 10, trials 7, inner iterations 1..4096 calibrated to >= ~1000 us,
   isolated subprocess per workload, timeout 600 s (settings echoed in the
   JSONL provenance record).
-- Correctness summary: standalone suite (`bench/correctness.py --side both`)
-  PASS with 0 failing checks in this configuration (Run 10) — 160 production
-  rows + 12 grid rows + wrapper fused/eager branch probes + stress rows on
-  both sides; in addition every benchmark row passed the harness's own
-  poisoned-output comparison (`required_matched_ratio = 1.0`).
-
-## Promotion Gates
-
-- `geomean > 1.0`: **PASS** (2.2835).
-- `no production row < 0.97x`: 158/160 rows pass directly. The two readings
-  below the floor are `hv_apply_1x512x9x128x128_C` (0.9587) and
-  `hv_triton_1x512x9x128x128_C` (0.9665) — both in the ROUTED bucket where
-  the candidate resolves to the *identical* baseline callable, so a real
-  regression is impossible by construction. The readings are the
-  characterized dirty-L2 order-debt measurement artifact on ~75-150 MB-output
-  rows: the direct steady-state interleaved probe on this exact shape
-  measures the candidate path at 0.997 of baseline (delta 0.21-0.37 us /call),
-  and the identical-code twin read 0.9810 in the 21-trial order-balanced run.
-  Full characterization with raw evidence: `docs/dispatch.md` ("Measured
-  Residual on Routed Giant Rows"), `bench/results_marginal21.jsonl`,
-  `bench/results_routed.jsonl`. Reported as explained residuals per the
-  no-regression ruling (DEC-3 / AC-5.2 language: residuals must be explained
-  with evidence).
+- Correctness summary: standalone suite PASS, 0 failing checks (Run 13,
+  immediately before the benchmark in the same session); every benchmark row
+  passed the harness's poisoned-output comparison.
 
 ## Per-Bucket Geomeans (production rows)
 
 | Layout | Size bucket | n | geomean | min | max |
 |---|---|---|---|---|---|
-| C | small | 24 | 2.4240 | 1.4027 | 3.8218 |
-| C | mid | 52 | 3.1122 | 1.6834 | 4.9335 |
-| C | large | 20 | 1.1320 | 0.9587 | 1.6249 |
-| NC | small | 24 | 2.3239 | 1.8680 | 3.0692 |
-| NC | mid | 30 | 2.2979 | 1.4468 | 3.1573 |
-| NC | large | 10 | 1.5137 | 1.1544 | 3.6131 |
+| C | small | 24 | 2.4061 | 1.4514 | 3.8497 |
+| C | mid | 52 | 3.1375 | 1.6724 | 4.9614 |
+| C | large | 20 | 1.1493 | 0.9724 | 1.6290 |
+| NC | small | 24 | 2.3233 | 1.8274 | 2.7171 |
+| NC | mid | 30 | 2.2820 | 1.3983 | 3.1706 |
+| NC | large | 10 | 1.5118 | 1.1502 | 3.6047 |
 
 ## Where the Speedup Comes From (roofline-style accounting)
 
-- **Contiguous mid (64K-1M elems, n=52, 3.11x)**: the upstream one-pass
+- **Contiguous mid (64K-2M elems, geomean 3.14x)**: the upstream one-pass
   Triton path launches only `B*G = 32` CTAs at `B=1` — under 22% of B200's
   148 SMs. The candidate splits each group across CTAs (vectorized stats with
   a deterministic last-CTA finalize + a division-free apply), filling the
-  machine. This is an occupancy/latency win, not a traffic win: both sides
-  move 2 reads + 1 write.
-- **Contiguous small (<64K, n=24, 2.42x)**: same underfill effect at smaller
-  sizes plus 16-byte vectorization; one CTA per group remains optimal below
+  machine. Occupancy/latency win; both sides move 2 reads + 1 write.
+- **Contiguous small (<64K, 2.41x)**: same underfill effect plus 16-byte
+  vectorization; one CTA per group remains optimal below
   `GNS_SMALL_MAX = 65536` (re-derived on B200).
-- **Channels-last rows (n=64, 1.51-2.32x)**: the baseline materializes
+- **Channels-last rows (1.51-2.32x per bucket)**: the baseline materializes
   `x.contiguous()` before its kernel — on the NCU probe row the copy alone
-  was 121.6 us of the 186 us baseline (NC->C transpose copy, ~3.6% DRAM
-  utilization). The candidate reads the channels-last layout natively
-  (position-major 16B vectors), computes all 32 groups' statistics in one
-  sweep, and writes the contiguous output through padded shared-memory tiles
-  (2-way max bank conflicts) — 3 passes instead of 5, plus better access
-  patterns on both remaining passes.
-- **Contiguous giant (>2M elems)**: the baseline chunked pipeline already
-  runs this 2R+1W pattern near the achievable bandwidth (~5 TB/s-class
-  effective); after three NCU-backed optimization rounds the split path
-  still measured 0.93-0.96x, so the bucket routes to the baseline-equivalent
-  path (`GNS_CONT_FALLBACK_MIN = 2,000,000`), giving ~1.00x by construction.
-  A one-read-pass algorithm is excluded: affine+silu cannot be applied before
-  the group statistics exist, and giant groups cannot be cached on-chip.
-  Bounded-attempt evidence trail: `docs/dispatch.md`.
+  was 121.6 us of the 186 us baseline (uncoalesced NC->C transpose copy at
+  ~3.6% DRAM utilization). The candidate reads the channels-last layout
+  natively (position-major 16B vectors), computes all 32 groups' statistics
+  in one sweep, and writes the contiguous output through padded
+  shared-memory tiles — 3 passes instead of 5.
+- **Contiguous giant (>2M elems, routed)**: the baseline chunked pipeline
+  already runs this forced 2R+1W pattern near achievable bandwidth
+  (~5 TB/s-class effective); after three NCU-backed optimization rounds and a
+  5-point chunk sweep the split path still measured 0.93-0.96x, so the bucket
+  routes to the baseline-equivalent path (`GNS_CONT_FALLBACK_MIN =
+  2,000,000`) — `docs/dispatch.md` documents the bounded-attempt trail and
+  the active bound (bandwidth-bound; a 1-read-pass algorithm is excluded
+  because affine+silu needs the group statistics and giant groups cannot be
+  cached on-chip).
 - fp32 rows exist only in the correctness grid (never production) and run
   the generic strided kernel with double accumulation.
-
-## Dispatch Summary
-
-See `docs/dispatch.md` for bucket conditions, per-bucket evidence, env knobs
-(`GNS_SMALL_MAX`, `GNS_CHUNK`, `GNS_CONT_FALLBACK_MIN`), the
-NCU-evidence-backed bounded attempts on the giant-contiguous bucket, and the
-order-debt residual characterization. Routed rows are counted in the geomean
-like every other row.
 
 ## Reproduction
 
 ```bash
 # correctness (both sides, all sections)
 CUDA_VISIBLE_DEVICES=<idle B200> python3 bench/correctness.py --device cuda:0 --side both
-# workload freeze check
+# workload freeze check (requires this repository's git history; run locally)
 python3 bench/gen_workloads.py --check
 # full benchmark
 CUDA_VISIBLE_DEVICES=<idle B200> python3 bench/benchmark.py --device cuda:0 --out bench/results.jsonl
-# summary / gates / table
+# summary / gates / per-row table
 python3 bench/summarize_results.py bench/results.jsonl --markdown
 ```
 
 ## Per-Row Results (production, definitive run)
 
-Columns: per-side stats are median/mean/std/min/p10/p90 in microseconds;
-speedup = baseline_median / candidate_median.
+Columns: path/regime/matched from the per-row dispatch metadata (captured by
+the adapter reporting hook from the same tensors used for timing); per-side
+stats are median/mean/std/min/p10/p90 in microseconds; speedup =
+baseline_median / candidate_median.
 
-| id | layout | function | baseline (us) | candidate (us) | speedup |
-|---|---|---|---|---|---|
-| hv_apply_1x128x17x256x256_C | C | apply_group_norm_silu | 171.98/172.34/0.95/171.13/171.47/173.42 | 173.08/173.30/0.83/172.39/172.39/174.28 | 0.9937 |
-| hv_apply_1x128x17x256x256_NC | NC | apply_group_norm_silu | 2751.74/2751.20/3.26/2746.88/2747.23/2754.41 | 761.60/761.37/2.37/757.44/758.42/763.53 | 3.6131 |
-| hv_apply_1x128x17x256x80_C | C | apply_group_norm_silu | 96.50/96.79/1.22/95.27/95.48/98.10 | 71.01/70.95/0.32/70.40/70.57/71.26 | 1.3590 |
-| hv_apply_1x128x17x256x80_NC | NC | apply_group_norm_silu | 273.98/273.66/0.93/272.25/272.71/274.59 | 212.07/212.21/0.76/211.07/211.36/213.06 | 1.2920 |
-| hv_apply_1x128x17x96x256_C | C | apply_group_norm_silu | 94.15/94.74/2.62/92.03/92.48/97.29 | 82.38/82.30/0.44/81.67/81.78/82.72 | 1.1428 |
-| hv_apply_1x128x17x96x256_NC | NC | apply_group_norm_silu | 302.97/303.04/0.64/302.23/302.43/303.75 | 262.44/263.89/2.12/262.14/262.21/266.29 | 1.1544 |
-| hv_apply_1x128x17x96x80_C | C | apply_group_norm_silu | 95.77/95.56/1.53/93.81/94.01/97.04 | 28.96/28.95/0.04/28.87/28.90/28.98 | 3.3074 |
-| hv_apply_1x128x17x96x80_NC | NC | apply_group_norm_silu | 113.94/113.23/1.69/110.31/111.47/114.66 | 78.30/78.05/0.61/76.85/77.46/78.52 | 1.4550 |
-| hv_apply_1x128x5x256x256_C | C | apply_group_norm_silu | 97.28/96.76/1.28/94.86/95.34/98.01 | 67.71/67.79/0.44/67.15/67.38/68.35 | 1.4368 |
-| hv_apply_1x128x5x256x256_NC | NC | apply_group_norm_silu | 238.83/238.77/0.27/238.33/238.44/239.03 | 201.91/201.86/0.35/201.32/201.51/202.17 | 1.1828 |
-| hv_apply_1x128x5x256x80_C | C | apply_group_norm_silu | 95.19/95.03/1.37/92.43/93.87/96.11 | 26.87/26.87/0.03/26.82/26.84/26.91 | 3.5429 |
-| hv_apply_1x128x5x256x80_NC | NC | apply_group_norm_silu | 108.46/108.26/1.56/106.15/106.64/109.89 | 64.65/64.47/0.35/64.02/64.05/64.78 | 1.6778 |
-| hv_apply_1x128x5x96x256_C | C | apply_group_norm_silu | 93.11/93.03/1.87/90.05/90.78/94.99 | 28.93/28.93/0.03/28.90/28.90/28.96 | 3.2183 |
-| hv_apply_1x128x5x96x256_NC | NC | apply_group_norm_silu | 108.01/107.99/2.10/105.22/105.63/110.56 | 74.65/74.55/0.30/74.11/74.18/74.84 | 1.4468 |
-| hv_apply_1x128x5x96x80_C | C | apply_group_norm_silu | 70.67/70.63/0.18/70.40/70.44/70.85 | 16.65/16.65/0.03/16.59/16.61/16.67 | 4.2433 |
-| hv_apply_1x128x5x96x80_NC | NC | apply_group_norm_silu | 100.89/100.93/0.18/100.75/100.78/101.16 | 35.05/35.08/0.05/35.03/35.03/35.14 | 2.8783 |
-| hv_apply_1x256x17x256x256_C | C | apply_group_norm_silu | 330.22/330.32/4.51/325.42/326.24/335.50 | 331.10/330.59/2.80/327.48/327.50/333.58 | 0.9973 |
-| hv_apply_1x256x17x256x80_C | C | apply_group_norm_silu | 154.19/154.50/0.68/153.88/153.88/155.32 | 155.66/155.58/0.75/154.60/154.68/156.30 | 0.9906 |
-| hv_apply_1x256x17x96x256_C | C | apply_group_norm_silu | 136.65/136.92/0.88/135.76/136.01/137.89 | 137.07/137.65/1.20/136.46/136.75/138.93 | 0.9969 |
-| hv_apply_1x256x17x96x80_C | C | apply_group_norm_silu | 93.88/94.10/1.84/91.52/92.12/96.16 | 55.77/55.79/0.04/55.75/55.75/55.84 | 1.6834 |
-| hv_apply_1x256x3x128x128_C | C | apply_group_norm_silu | 96.96/96.78/1.91/94.36/94.56/98.75 | 26.89/26.88/0.02/26.84/26.86/26.90 | 3.6056 |
-| hv_apply_1x256x3x128x128_NC | NC | apply_group_norm_silu | 109.79/110.19/1.24/108.42/109.14/111.82 | 56.54/56.47/0.20/56.07/56.26/56.62 | 1.9417 |
-| hv_apply_1x256x3x128x40_C | C | apply_group_norm_silu | 54.79/54.81/0.20/54.63/54.66/54.98 | 16.66/16.81/0.40/16.61/16.62/17.12 | 3.2881 |
-| hv_apply_1x256x3x128x40_NC | NC | apply_group_norm_silu | 81.67/81.72/1.00/80.79/80.83/82.73 | 25.95/25.96/0.07/25.88/25.88/26.03 | 3.1474 |
-| hv_apply_1x256x3x48x128_C | C | apply_group_norm_silu | 66.57/66.61/0.24/66.37/66.40/66.84 | 16.66/16.66/0.02/16.63/16.63/16.68 | 3.9959 |
-| hv_apply_1x256x3x48x128_NC | NC | apply_group_norm_silu | 94.97/94.98/0.57/94.31/94.50/95.61 | 30.08/30.09/0.04/30.03/30.05/30.14 | 3.1573 |
-| hv_apply_1x256x3x48x40_C | C | apply_group_norm_silu | 34.42/34.51/0.48/33.76/34.07/35.09 | 22.70/22.65/0.11/22.46/22.52/22.75 | 1.5163 |
-| hv_apply_1x256x3x48x40_NC | NC | apply_group_norm_silu | 46.37/46.75/1.69/44.93/45.25/48.93 | 23.78/23.76/0.10/23.53/23.67/23.82 | 1.9502 |
-| hv_apply_1x256x5x256x256_C | C | apply_group_norm_silu | 108.34/108.41/0.37/108.14/108.15/108.74 | 108.70/109.57/1.64/108.17/108.18/111.78 | 0.9967 |
-| hv_apply_1x256x5x256x80_C | C | apply_group_norm_silu | 96.00/97.19/2.71/95.03/95.17/100.13 | 43.59/43.60/0.14/43.45/43.46/43.73 | 2.2022 |
-| hv_apply_1x256x5x96x256_C | C | apply_group_norm_silu | 93.59/93.23/1.20/91.13/91.95/94.33 | 52.73/52.74/0.35/52.31/52.33/53.10 | 1.7748 |
-| hv_apply_1x256x5x96x80_C | C | apply_group_norm_silu | 94.06/94.28/2.24/91.36/91.88/96.88 | 24.83/24.82/0.04/24.75/24.78/24.86 | 3.7887 |
-| hv_apply_1x256x9x128x128_C | C | apply_group_norm_silu | 97.22/97.92/1.70/95.86/96.28/99.91 | 60.86/60.98/0.56/60.26/60.53/61.66 | 1.5974 |
-| hv_apply_1x256x9x128x128_NC | NC | apply_group_norm_silu | 212.33/212.22/0.34/211.62/211.85/212.54 | 169.25/169.21/0.95/168.17/168.21/170.27 | 1.2545 |
-| hv_apply_1x256x9x128x40_C | C | apply_group_norm_silu | 93.11/93.04/1.59/90.73/91.35/94.65 | 24.85/24.86/0.04/24.82/24.82/24.91 | 3.7472 |
-| hv_apply_1x256x9x128x40_NC | NC | apply_group_norm_silu | 111.11/110.78/2.05/108.71/108.72/113.12 | 56.46/56.49/0.13/56.35/56.38/56.64 | 1.9680 |
-| hv_apply_1x256x9x48x128_C | C | apply_group_norm_silu | 97.58/97.38/1.50/95.32/95.65/98.96 | 26.92/26.92/0.03/26.89/26.90/26.95 | 3.6250 |
-| hv_apply_1x256x9x48x128_NC | NC | apply_group_norm_silu | 106.84/106.37/1.00/104.70/105.14/107.26 | 61.92/62.03/0.36/61.49/61.69/62.39 | 1.7255 |
-| hv_apply_1x256x9x48x40_C | C | apply_group_norm_silu | 62.82/62.86/0.41/62.37/62.48/63.33 | 16.63/16.64/0.03/16.59/16.61/16.68 | 3.7780 |
-| hv_apply_1x256x9x48x40_NC | NC | apply_group_norm_silu | 90.69/90.79/0.32/90.38/90.46/91.16 | 28.94/28.94/0.03/28.90/28.90/28.97 | 3.1339 |
-| hv_apply_1x512x2x12x10_C | C | apply_group_norm_silu | 33.72/34.00/0.61/33.36/33.46/34.78 | 9.48/9.44/0.20/9.19/9.22/9.68 | 3.5566 |
-| hv_apply_1x512x2x12x10_NC | NC | apply_group_norm_silu | 44.72/44.43/0.69/43.39/43.45/44.96 | 16.61/16.62/0.03/16.59/16.59/16.65 | 2.6922 |
-| hv_apply_1x512x2x12x32_C | C | apply_group_norm_silu | 32.86/33.11/0.49/32.68/32.74/33.74 | 9.31/9.34/0.21/9.06/9.12/9.61 | 3.5280 |
-| hv_apply_1x512x2x12x32_NC | NC | apply_group_norm_silu | 54.57/58.47/10.53/46.73/48.44/71.00 | 17.78/17.76/0.06/17.67/17.69/17.84 | 3.0692 |
-| hv_apply_1x512x2x24x20_C | C | apply_group_norm_silu | 44.86/46.43/9.53/34.16/36.52/58.45 | 11.74/12.44/2.00/10.31/10.32/14.75 | 3.8218 |
-| hv_apply_1x512x2x24x20_NC | NC | apply_group_norm_silu | 44.85/44.88/0.86/43.89/43.98/45.98 | 17.67/17.68/0.02/17.65/17.66/17.70 | 2.5380 |
-| hv_apply_1x512x2x24x64_C | C | apply_group_norm_silu | 31.95/32.19/0.45/31.76/31.77/32.75 | 22.78/22.77/0.02/22.75/22.75/22.80 | 1.4027 |
-| hv_apply_1x512x2x24x64_NC | NC | apply_group_norm_silu | 44.04/44.42/1.41/43.13/43.20/46.16 | 20.73/20.72/0.04/20.67/20.67/20.76 | 2.1241 |
-| hv_apply_1x512x2x32x10_C | C | apply_group_norm_silu | 32.94/33.02/0.63/32.42/32.43/33.74 | 8.84/8.90/0.15/8.73/8.73/9.09 | 3.7274 |
-| hv_apply_1x512x2x32x10_NC | NC | apply_group_norm_silu | 44.40/44.49/1.04/43.09/43.29/45.68 | 20.62/20.60/0.07/20.47/20.52/20.65 | 2.1533 |
-| hv_apply_1x512x2x32x32_C | C | apply_group_norm_silu | 33.21/32.98/0.40/32.16/32.56/33.24 | 16.59/16.61/0.05/16.57/16.57/16.66 | 2.0019 |
-| hv_apply_1x512x2x32x32_NC | NC | apply_group_norm_silu | 43.39/43.46/0.74/42.12/42.72/44.13 | 18.70/18.69/0.04/18.64/18.65/18.72 | 2.3206 |
-| hv_apply_1x512x2x64x20_C | C | apply_group_norm_silu | 33.25/33.49/0.53/33.01/33.08/34.11 | 19.04/19.04/0.08/18.95/18.95/19.12 | 1.7462 |
-| hv_apply_1x512x2x64x20_NC | NC | apply_group_norm_silu | 44.06/43.82/1.12/42.27/42.72/44.92 | 21.73/21.75/0.02/21.73/21.73/21.77 | 2.0272 |
-| hv_apply_1x512x2x64x64_C | C | apply_group_norm_silu | 58.88/58.89/0.10/58.78/58.79/58.98 | 16.65/16.66/0.04/16.64/16.64/16.70 | 3.5357 |
-| hv_apply_1x512x2x64x64_NC | NC | apply_group_norm_silu | 85.82/85.77/0.31/85.40/85.43/86.10 | 27.32/27.34/0.09/27.20/27.25/27.45 | 3.1411 |
-| hv_apply_1x512x3x128x128_C | C | apply_group_norm_silu | 94.92/94.69/1.02/92.92/93.64/95.59 | 41.59/41.55/0.10/41.42/41.43/41.65 | 2.2820 |
-| hv_apply_1x512x3x128x40_C | C | apply_group_norm_silu | 107.45/107.45/0.18/107.23/107.27/107.67 | 21.80/21.79/0.03/21.72/21.76/21.82 | 4.9286 |
-| hv_apply_1x512x3x48x128_C | C | apply_group_norm_silu | 95.90/95.57/1.16/93.11/94.46/96.42 | 22.37/22.43/0.16/22.19/22.29/22.61 | 4.2860 |
-| hv_apply_1x512x3x48x40_C | C | apply_group_norm_silu | 40.81/40.77/0.21/40.45/40.54/41.01 | 16.64/16.64/0.03/16.60/16.60/16.66 | 2.4522 |
-| hv_apply_1x512x5x12x10_C | C | apply_group_norm_silu | 32.59/34.23/2.42/32.15/32.33/37.47 | 9.40/9.48/0.33/9.20/9.20/9.83 | 3.4660 |
-| hv_apply_1x512x5x12x10_NC | NC | apply_group_norm_silu | 45.71/46.50/2.68/44.45/44.76/48.80 | 17.98/17.94/0.11/17.77/17.82/18.05 | 2.5420 |
-| hv_apply_1x512x5x12x32_C | C | apply_group_norm_silu | 32.65/33.06/0.72/32.41/32.41/33.87 | 16.64/16.64/0.02/16.61/16.62/16.67 | 1.9623 |
-| hv_apply_1x512x5x12x32_NC | NC | apply_group_norm_silu | 44.29/44.29/0.66/43.40/43.43/44.92 | 18.67/18.67/0.02/18.63/18.65/18.70 | 2.3725 |
-| hv_apply_1x512x5x24x20_C | C | apply_group_norm_silu | 34.11/34.06/0.23/33.72/33.76/34.27 | 18.69/18.68/0.03/18.63/18.64/18.71 | 1.8249 |
-| hv_apply_1x512x5x24x20_NC | NC | apply_group_norm_silu | 44.82/44.89/1.17/43.25/43.78/46.21 | 18.72/18.73/0.03/18.69/18.70/18.75 | 2.3941 |
-| hv_apply_1x512x5x24x64_C | C | apply_group_norm_silu | 54.82/54.90/0.23/54.69/54.73/55.12 | 16.64/16.65/0.04/16.60/16.61/16.70 | 3.2937 |
-| hv_apply_1x512x5x24x64_NC | NC | apply_group_norm_silu | 80.95/80.74/0.45/80.01/80.21/81.14 | 26.88/26.88/0.03/26.84/26.84/26.92 | 3.0109 |
-| hv_apply_1x512x5x32x10_C | C | apply_group_norm_silu | 33.61/33.53/0.48/32.80/32.92/34.04 | 14.44/14.85/1.06/14.43/14.44/15.58 | 2.3272 |
-| hv_apply_1x512x5x32x10_NC | NC | apply_group_norm_silu | 44.21/44.61/1.35/43.40/43.55/46.06 | 20.73/20.72/0.05/20.67/20.67/20.78 | 2.1325 |
-| hv_apply_1x512x5x32x32_C | C | apply_group_norm_silu | 36.50/36.54/0.33/36.10/36.22/36.92 | 16.64/16.63/0.04/16.56/16.59/16.68 | 2.1942 |
-| hv_apply_1x512x5x32x32_NC | NC | apply_group_norm_silu | 53.09/54.63/3.64/52.86/52.87/57.84 | 24.83/24.83/0.03/24.79/24.80/24.86 | 2.1377 |
-| hv_apply_1x512x5x64x20_C | C | apply_group_norm_silu | 44.70/44.71/0.20/44.45/44.50/44.95 | 16.65/16.64/0.04/16.58/16.60/16.69 | 2.6843 |
-| hv_apply_1x512x5x64x20_NC | NC | apply_group_norm_silu | 68.15/68.28/0.26/68.01/68.04/68.60 | 26.09/26.14/0.16/25.97/26.01/26.31 | 2.6116 |
-| hv_apply_1x512x5x64x64_C | C | apply_group_norm_silu | 97.06/95.99/3.02/92.41/92.47/98.83 | 25.09/25.11/0.10/24.99/25.01/25.23 | 3.8686 |
-| hv_apply_1x512x5x64x64_NC | NC | apply_group_norm_silu | 105.79/105.10/2.27/101.81/101.95/107.16 | 51.67/51.65/0.08/51.51/51.55/51.73 | 2.0476 |
-| hv_apply_1x512x9x128x128_C | C | apply_group_norm_silu | 99.96/99.92/0.36/99.49/99.53/100.34 | 104.27/104.08/2.18/100.66/102.00/106.27 | 0.9587 |
-| hv_apply_1x512x9x128x40_C | C | apply_group_norm_silu | 101.16/102.86/8.08/97.55/98.00/109.37 | 39.64/39.54/0.13/39.38/39.40/39.65 | 2.5521 |
-| hv_apply_1x512x9x48x128_C | C | apply_group_norm_silu | 95.06/94.74/1.20/92.87/93.11/95.86 | 47.75/47.79/0.19/47.57/47.59/48.00 | 1.9907 |
-| hv_apply_1x512x9x48x40_C | C | apply_group_norm_silu | 93.11/94.37/2.72/91.87/92.07/98.17 | 22.77/22.78/0.06/22.70/22.72/22.83 | 4.0900 |
-| hv_triton_1x128x17x256x256_C | C | triton_group_norm_silu | 172.56/172.44/0.49/171.68/171.87/172.92 | 172.41/172.83/1.03/171.98/172.02/173.99 | 1.0009 |
-| hv_triton_1x128x17x256x256_NC | NC | triton_group_norm_silu | 2749.09/2748.88/3.90/2744.77/2745.31/2753.50 | 767.46/764.96/4.63/757.58/759.98/769.17 | 3.5821 |
-| hv_triton_1x128x17x256x80_C | C | triton_group_norm_silu | 96.69/96.54/0.66/95.52/95.75/97.14 | 71.01/71.01/0.29/70.47/70.75/71.26 | 1.3617 |
-| hv_triton_1x128x17x256x80_NC | NC | triton_group_norm_silu | 273.56/273.33/0.88/271.48/272.41/273.95 | 212.35/212.54/0.83/211.44/211.61/213.38 | 1.2883 |
-| hv_triton_1x128x17x96x256_C | C | triton_group_norm_silu | 99.41/100.40/2.82/97.83/97.84/103.13 | 82.20/82.26/0.34/81.90/81.90/82.72 | 1.2093 |
-| hv_triton_1x128x17x96x256_NC | NC | triton_group_norm_silu | 302.54/302.46/0.55/301.57/301.79/303.00 | 261.66/261.94/1.53/259.51/260.37/263.57 | 1.1562 |
-| hv_triton_1x128x17x96x80_C | C | triton_group_norm_silu | 93.91/93.82/1.49/91.64/92.10/95.41 | 28.96/28.97/0.04/28.91/28.93/29.01 | 3.2426 |
-| hv_triton_1x128x17x96x80_NC | NC | triton_group_norm_silu | 123.93/123.00/3.91/117.12/118.49/126.21 | 78.10/78.13/0.56/77.09/77.67/78.73 | 1.5868 |
-| hv_triton_1x128x5x256x256_C | C | triton_group_norm_silu | 96.03/96.88/2.14/94.05/94.94/99.50 | 67.58/67.61/0.38/67.14/67.18/67.99 | 1.4209 |
-| hv_triton_1x128x5x256x256_NC | NC | triton_group_norm_silu | 239.33/239.32/0.42/238.66/238.94/239.69 | 202.30/201.99/0.75/200.88/200.97/202.62 | 1.1831 |
-| hv_triton_1x128x5x256x80_C | C | triton_group_norm_silu | 94.40/95.73/2.40/93.58/93.60/98.35 | 26.88/26.89/0.01/26.87/26.87/26.90 | 3.5117 |
-| hv_triton_1x128x5x256x80_NC | NC | triton_group_norm_silu | 107.11/107.45/0.98/106.34/106.53/108.43 | 64.47/64.45/0.19/64.15/64.23/64.66 | 1.6613 |
-| hv_triton_1x128x5x96x256_C | C | triton_group_norm_silu | 96.68/97.19/2.97/94.73/95.23/99.80 | 28.95/28.95/0.03/28.92/28.93/28.98 | 3.3397 |
-| hv_triton_1x128x5x96x256_NC | NC | triton_group_norm_silu | 109.32/109.59/1.67/106.95/108.22/111.10 | 74.17/74.11/0.37/73.41/73.75/74.45 | 1.4740 |
-| hv_triton_1x128x5x96x80_C | C | triton_group_norm_silu | 70.54/70.58/0.16/70.38/70.44/70.79 | 16.63/16.65/0.03/16.61/16.62/16.68 | 4.2410 |
-| hv_triton_1x128x5x96x80_NC | NC | triton_group_norm_silu | 100.66/100.75/0.23/100.53/100.56/101.05 | 34.99/35.03/0.13/34.82/34.91/35.15 | 2.8768 |
-| hv_triton_1x256x17x256x256_C | C | triton_group_norm_silu | 329.15/329.35/3.53/326.04/326.07/333.10 | 332.02/331.76/3.03/327.58/328.28/334.92 | 0.9914 |
-| hv_triton_1x256x17x256x80_C | C | triton_group_norm_silu | 155.72/155.53/0.62/154.35/154.80/156.00 | 156.01/156.55/1.25/155.28/155.59/157.99 | 0.9981 |
-| hv_triton_1x256x17x96x256_C | C | triton_group_norm_silu | 136.78/136.87/0.74/135.53/136.13/137.60 | 137.59/137.67/0.67/136.74/136.90/138.47 | 0.9941 |
-| hv_triton_1x256x17x96x80_C | C | triton_group_norm_silu | 96.75/96.52/1.89/94.10/94.47/98.63 | 55.77/55.80/0.07/55.73/55.75/55.88 | 1.7347 |
-| hv_triton_1x256x3x128x128_C | C | triton_group_norm_silu | 93.94/94.25/2.15/91.73/92.27/96.38 | 26.88/26.87/0.03/26.82/26.83/26.89 | 3.4950 |
-| hv_triton_1x256x3x128x128_NC | NC | triton_group_norm_silu | 106.02/107.11/2.31/105.11/105.13/109.70 | 56.59/56.53/0.13/56.28/56.36/56.62 | 1.8735 |
-| hv_triton_1x256x3x128x40_C | C | triton_group_norm_silu | 55.14/55.34/0.63/54.62/54.72/55.99 | 16.80/17.24/1.03/16.64/16.67/18.23 | 3.2813 |
-| hv_triton_1x256x3x128x40_NC | NC | triton_group_norm_silu | 81.12/80.96/0.42/80.39/80.41/81.38 | 25.91/25.91/0.05/25.85/25.85/25.96 | 3.1303 |
-| hv_triton_1x256x3x48x128_C | C | triton_group_norm_silu | 66.73/66.69/0.10/66.54/66.58/66.79 | 16.65/16.66/0.02/16.63/16.63/16.68 | 4.0080 |
-| hv_triton_1x256x3x48x128_NC | NC | triton_group_norm_silu | 94.56/94.63/0.28/94.40/94.42/94.96 | 30.16/30.15/0.04/30.08/30.12/30.19 | 3.1359 |
-| hv_triton_1x256x3x48x40_C | C | triton_group_norm_silu | 34.29/36.06/4.65/33.11/33.60/40.05 | 22.71/22.62/0.17/22.37/22.37/22.74 | 1.5099 |
-| hv_triton_1x256x3x48x40_NC | NC | triton_group_norm_silu | 44.43/44.49/0.62/43.64/43.87/45.20 | 23.78/23.76/0.10/23.55/23.65/23.84 | 1.8680 |
-| hv_triton_1x256x5x256x256_C | C | triton_group_norm_silu | 108.40/108.63/0.46/108.10/108.19/109.19 | 109.55/110.81/2.65/108.18/108.56/113.76 | 0.9896 |
-| hv_triton_1x256x5x256x80_C | C | triton_group_norm_silu | 95.48/95.87/1.11/94.42/94.76/97.19 | 43.68/43.66/0.10/43.52/43.55/43.77 | 2.1860 |
-| hv_triton_1x256x5x96x256_C | C | triton_group_norm_silu | 102.40/101.98/4.29/94.46/97.24/106.27 | 52.65/52.75/0.26/52.42/52.50/53.01 | 1.9449 |
-| hv_triton_1x256x5x96x80_C | C | triton_group_norm_silu | 94.78/96.61/2.79/94.17/94.22/99.95 | 24.84/24.84/0.05/24.78/24.79/24.89 | 3.8155 |
-| hv_triton_1x256x9x128x128_C | C | triton_group_norm_silu | 99.04/99.12/2.00/96.01/96.98/101.38 | 60.95/60.95/0.33/60.45/60.58/61.34 | 1.6249 |
-| hv_triton_1x256x9x128x128_NC | NC | triton_group_norm_silu | 211.73/211.89/0.65/211.20/211.24/212.67 | 169.28/169.05/0.71/167.77/168.30/169.66 | 1.2508 |
-| hv_triton_1x256x9x128x40_C | C | triton_group_norm_silu | 96.23/96.19/1.71/93.34/94.09/97.81 | 24.87/24.88/0.07/24.80/24.82/24.97 | 3.8696 |
-| hv_triton_1x256x9x128x40_NC | NC | triton_group_norm_silu | 108.83/109.14/1.55/106.82/107.92/110.70 | 56.52/56.53/0.16/56.32/56.35/56.72 | 1.9256 |
-| hv_triton_1x256x9x48x128_C | C | triton_group_norm_silu | 97.27/96.50/2.19/93.83/94.04/98.63 | 26.91/26.90/0.04/26.82/26.86/26.94 | 3.6152 |
-| hv_triton_1x256x9x48x128_NC | NC | triton_group_norm_silu | 109.04/109.16/1.92/106.20/107.32/111.41 | 61.87/61.91/0.20/61.68/61.72/62.13 | 1.7624 |
-| hv_triton_1x256x9x48x40_C | C | triton_group_norm_silu | 63.38/63.25/0.41/62.78/62.78/63.68 | 16.66/16.66/0.04/16.62/16.62/16.71 | 3.8049 |
-| hv_triton_1x256x9x48x40_NC | NC | triton_group_norm_silu | 90.54/90.65/0.37/90.27/90.29/91.13 | 28.93/28.93/0.04/28.85/28.88/28.96 | 3.1293 |
-| hv_triton_1x512x2x12x10_C | C | triton_group_norm_silu | 33.64/33.77/0.36/33.26/33.44/34.21 | 9.36/9.44/0.20/9.22/9.25/9.70 | 3.5939 |
-| hv_triton_1x512x2x12x10_NC | NC | triton_group_norm_silu | 44.77/44.97/0.45/44.56/44.63/45.50 | 16.62/16.63/0.05/16.58/16.58/16.68 | 2.6944 |
-| hv_triton_1x512x2x12x32_C | C | triton_group_norm_silu | 32.43/32.49/0.44/31.99/32.06/32.98 | 8.72/8.72/0.11/8.63/8.63/8.84 | 3.7198 |
-| hv_triton_1x512x2x12x32_NC | NC | triton_group_norm_silu | 45.79/46.06/0.68/45.12/45.42/46.81 | 17.68/17.68/0.02/17.66/17.66/17.71 | 2.5900 |
-| hv_triton_1x512x2x24x20_C | C | triton_group_norm_silu | 35.83/35.87/0.65/35.04/35.18/36.59 | 10.40/10.49/0.19/10.33/10.34/10.77 | 3.4461 |
-| hv_triton_1x512x2x24x20_NC | NC | triton_group_norm_silu | 43.63/43.61/0.77/42.70/42.87/44.34 | 17.68/17.68/0.02/17.66/17.66/17.69 | 2.4678 |
-| hv_triton_1x512x2x24x64_C | C | triton_group_norm_silu | 33.01/33.00/0.78/31.94/32.01/33.89 | 22.77/22.77/0.02/22.73/22.75/22.79 | 1.4496 |
-| hv_triton_1x512x2x24x64_NC | NC | triton_group_norm_silu | 44.50/44.50/1.01/42.73/43.43/45.55 | 20.71/20.71/0.03/20.67/20.68/20.74 | 2.1487 |
-| hv_triton_1x512x2x32x10_C | C | triton_group_norm_silu | 32.06/32.10/0.34/31.72/31.74/32.52 | 8.60/8.64/0.13/8.50/8.52/8.79 | 3.7296 |
-| hv_triton_1x512x2x32x10_NC | NC | triton_group_norm_silu | 44.62/44.70/0.91/43.66/43.77/45.66 | 20.66/20.64/0.05/20.56/20.58/20.69 | 2.1592 |
-| hv_triton_1x512x2x32x32_C | C | triton_group_norm_silu | 33.34/33.63/0.58/33.23/33.28/34.18 | 16.63/16.62/0.02/16.59/16.60/16.64 | 2.0044 |
-| hv_triton_1x512x2x32x32_NC | NC | triton_group_norm_silu | 44.11/44.03/0.71/42.95/43.10/44.66 | 18.67/18.68/0.05/18.63/18.63/18.74 | 2.3627 |
-| hv_triton_1x512x2x64x20_C | C | triton_group_norm_silu | 35.83/35.26/1.50/33.12/33.22/36.59 | 19.14/19.17/0.08/19.06/19.09/19.27 | 1.8720 |
-| hv_triton_1x512x2x64x20_NC | NC | triton_group_norm_silu | 45.94/45.58/0.79/44.64/44.73/46.38 | 21.80/21.79/0.02/21.76/21.78/21.81 | 2.1076 |
-| hv_triton_1x512x2x64x64_C | C | triton_group_norm_silu | 58.80/58.84/0.11/58.73/58.76/58.95 | 16.63/16.63/0.04/16.58/16.59/16.67 | 3.5362 |
-| hv_triton_1x512x2x64x64_NC | NC | triton_group_norm_silu | 86.04/85.91/0.31/85.47/85.58/86.19 | 27.41/27.43/0.13/27.29/27.30/27.56 | 3.1394 |
-| hv_triton_1x512x3x128x128_C | C | triton_group_norm_silu | 94.58/95.79/2.87/92.65/93.37/98.88 | 41.58/41.54/0.07/41.43/41.46/41.60 | 2.2747 |
-| hv_triton_1x512x3x128x40_C | C | triton_group_norm_silu | 107.54/107.70/0.56/107.30/107.31/108.22 | 21.80/21.78/0.04/21.71/21.73/21.81 | 4.9335 |
-| hv_triton_1x512x3x48x128_C | C | triton_group_norm_silu | 94.24/94.94/1.58/93.41/93.69/96.84 | 22.51/22.47/0.14/22.25/22.28/22.58 | 4.1860 |
-| hv_triton_1x512x3x48x40_C | C | triton_group_norm_silu | 40.97/41.01/0.30/40.66/40.68/41.32 | 16.63/16.64/0.03/16.58/16.61/16.67 | 2.4631 |
-| hv_triton_1x512x5x12x10_C | C | triton_group_norm_silu | 33.40/33.35/0.49/32.79/32.84/33.83 | 9.54/9.55/0.17/9.34/9.37/9.77 | 3.5020 |
-| hv_triton_1x512x5x12x10_NC | NC | triton_group_norm_silu | 44.67/44.78/1.02/43.57/43.84/46.09 | 17.96/17.96/0.11/17.76/17.86/18.07 | 2.4874 |
-| hv_triton_1x512x5x12x32_C | C | triton_group_norm_silu | 33.11/33.21/0.53/32.54/32.63/33.74 | 16.62/16.62/0.04/16.56/16.58/16.66 | 1.9915 |
-| hv_triton_1x512x5x12x32_NC | NC | triton_group_norm_silu | 45.00/45.04/0.56/44.29/44.49/45.73 | 18.70/18.69/0.02/18.65/18.66/18.71 | 2.4062 |
-| hv_triton_1x512x5x24x20_C | C | triton_group_norm_silu | 33.01/33.22/0.75/32.32/32.44/34.11 | 18.69/18.69/0.02/18.65/18.66/18.71 | 1.7661 |
-| hv_triton_1x512x5x24x20_NC | NC | triton_group_norm_silu | 44.32/44.10/0.70/43.01/43.19/44.78 | 18.70/18.70/0.03/18.65/18.67/18.72 | 2.3700 |
-| hv_triton_1x512x5x24x64_C | C | triton_group_norm_silu | 55.51/55.59/0.79/54.63/54.80/56.50 | 16.77/17.44/1.13/16.63/16.65/18.97 | 3.3108 |
-| hv_triton_1x512x5x24x64_NC | NC | triton_group_norm_silu | 80.50/80.68/0.63/80.09/80.13/81.42 | 26.86/26.85/0.03/26.80/26.83/26.88 | 2.9966 |
-| hv_triton_1x512x5x32x10_C | C | triton_group_norm_silu | 36.69/36.52/0.34/36.06/36.15/36.83 | 14.46/14.46/0.01/14.45/14.45/14.48 | 2.5371 |
-| hv_triton_1x512x5x32x10_NC | NC | triton_group_norm_silu | 44.66/44.80/1.00/43.52/43.59/45.83 | 20.72/20.72/0.05/20.66/20.67/20.78 | 2.1549 |
-| hv_triton_1x512x5x32x32_C | C | triton_group_norm_silu | 36.40/36.55/0.38/36.24/36.25/37.06 | 16.60/16.61/0.04/16.56/16.57/16.65 | 2.1929 |
-| hv_triton_1x512x5x32x32_NC | NC | triton_group_norm_silu | 60.13/64.66/10.33/54.09/56.84/77.66 | 24.89/24.91/0.06/24.82/24.85/24.98 | 2.4154 |
-| hv_triton_1x512x5x64x20_C | C | triton_group_norm_silu | 44.99/45.24/0.65/44.61/44.71/46.13 | 16.68/16.69/0.06/16.62/16.63/16.75 | 2.6971 |
-| hv_triton_1x512x5x64x20_NC | NC | triton_group_norm_silu | 68.44/68.41/0.40/67.86/68.01/68.87 | 26.17/26.21/0.13/26.05/26.09/26.36 | 2.6155 |
-| hv_triton_1x512x5x64x64_C | C | triton_group_norm_silu | 91.71/92.87/2.98/89.60/90.43/95.96 | 25.16/25.17/0.11/25.04/25.05/25.30 | 3.6456 |
-| hv_triton_1x512x5x64x64_NC | NC | triton_group_norm_silu | 122.34/131.92/25.22/108.74/109.89/166.57 | 51.77/51.84/0.14/51.68/51.73/52.02 | 2.3631 |
-| hv_triton_1x512x9x128x128_C | C | triton_group_norm_silu | 100.14/100.51/0.95/99.95/99.98/101.31 | 103.62/103.67/1.38/101.72/102.17/105.23 | 0.9665 |
-| hv_triton_1x512x9x128x40_C | C | triton_group_norm_silu | 93.44/93.79/1.01/92.64/93.00/94.88 | 39.48/39.47/0.09/39.31/39.35/39.55 | 2.3667 |
-| hv_triton_1x512x9x48x128_C | C | triton_group_norm_silu | 95.07/94.95/1.83/93.12/93.16/97.07 | 47.84/47.81/0.17/47.63/47.64/47.98 | 1.9872 |
-| hv_triton_1x512x9x48x40_C | C | triton_group_norm_silu | 103.25/103.77/1.76/101.05/102.18/105.86 | 22.81/22.83/0.04/22.80/22.80/22.87 | 4.5260 |
+| id | layout | function | path | regime | matched | baseline (us) | candidate (us) | speedup |
+|---|---|---|---|---|---|---|---|---|
+| hv_apply_1x128x17x256x256_C | C | apply_group_norm_silu | baseline_fallback | baseline_fallback | baseline_equivalent | 172.06/172.15/1.44/170.82/171.03/173.50 | 172.55/172.89/0.81/171.95/172.14/173.88 | 0.9971 |
+| hv_apply_1x128x17x256x256_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 2760.93/2762.91/11.55/2747.17/2752.97/2778.25 | 765.92/765.23/4.18/758.43/760.96/769.94 | 3.6047 |
+| hv_apply_1x128x17x256x80_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 98.72/99.41/1.86/97.38/97.74/101.52 | 70.92/70.86/0.22/70.41/70.64/71.03 | 1.3919 |
+| hv_apply_1x128x17x256x80_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 272.58/272.66/0.71/271.66/271.94/273.56 | 212.68/212.59/0.72/211.68/211.82/213.33 | 1.2816 |
+| hv_apply_1x128x17x96x256_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 93.62/93.89/2.11/91.08/91.80/96.14 | 82.25/82.16/0.23/81.86/81.87/82.37 | 1.1383 |
+| hv_apply_1x128x17x96x256_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 301.40/301.33/0.49/300.72/300.83/301.91 | 262.05/262.13/1.75/259.08/260.16/263.77 | 1.1502 |
+| hv_apply_1x128x17x96x80_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 97.43/98.50/4.11/95.24/96.15/101.83 | 28.95/28.95/0.03/28.92/28.92/28.98 | 3.3658 |
+| hv_apply_1x128x17x96x80_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 111.72/111.38/0.92/110.28/110.41/112.26 | 78.22/78.07/0.51/76.94/77.64/78.40 | 1.4284 |
+| hv_apply_1x128x5x256x256_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 93.68/93.74/1.05/91.85/92.82/94.94 | 67.55/67.37/0.31/66.94/66.96/67.63 | 1.3868 |
+| hv_apply_1x128x5x256x256_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 239.26/239.07/0.37/238.46/238.59/239.38 | 202.21/202.38/0.58/201.73/201.83/203.07 | 1.1832 |
+| hv_apply_1x128x5x256x80_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 96.96/96.84/3.19/93.26/93.60/99.77 | 26.89/26.89/0.03/26.83/26.85/26.91 | 3.6056 |
+| hv_apply_1x128x5x256x80_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 126.54/127.69/14.83/109.80/109.90/144.21 | 64.63/64.65/0.35/64.16/64.28/65.04 | 1.9580 |
+| hv_apply_1x128x5x96x256_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 113.05/122.65/24.53/102.22/104.91/152.73 | 28.98/28.99/0.06/28.91/28.94/29.07 | 3.9006 |
+| hv_apply_1x128x5x96x256_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 109.34/110.10/1.95/108.41/108.61/112.29 | 74.48/74.53/0.22/74.25/74.30/74.80 | 1.4680 |
+| hv_apply_1x128x5x96x80_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 71.08/71.30/0.79/70.52/70.64/72.06 | 16.75/16.82/0.21/16.62/16.64/17.10 | 4.2437 |
+| hv_apply_1x128x5x96x80_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 100.92/102.44/3.59/100.28/100.40/105.80 | 35.24/35.79/1.58/35.06/35.10/36.94 | 2.8639 |
+| hv_apply_1x256x17x256x256_C | C | apply_group_norm_silu | baseline_fallback | baseline_fallback | baseline_equivalent | 331.54/329.60/3.26/325.42/325.57/332.53 | 329.58/330.10/2.86/326.94/327.03/333.19 | 1.0059 |
+| hv_apply_1x256x17x256x80_C | C | apply_group_norm_silu | baseline_fallback | baseline_fallback | baseline_equivalent | 154.32/154.67/1.17/153.25/153.57/156.09 | 156.12/156.14/1.04/154.73/155.09/157.33 | 0.9885 |
+| hv_apply_1x256x17x96x256_C | C | apply_group_norm_silu | baseline_fallback | baseline_fallback | baseline_equivalent | 137.92/138.43/1.72/136.59/136.91/140.55 | 137.94/138.39/1.75/136.59/136.83/140.55 | 0.9999 |
+| hv_apply_1x256x17x96x80_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 95.96/96.25/1.46/94.95/95.11/97.61 | 55.84/55.83/0.07/55.74/55.75/55.90 | 1.7184 |
+| hv_apply_1x256x3x128x128_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 93.17/94.18/1.84/92.23/92.59/96.52 | 26.87/26.87/0.01/26.85/26.86/26.89 | 3.4672 |
+| hv_apply_1x256x3x128x128_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 110.38/109.39/3.09/103.83/105.87/112.43 | 56.46/56.49/0.31/56.07/56.18/56.84 | 1.9550 |
+| hv_apply_1x256x3x128x40_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 54.73/54.77/0.17/54.55/54.63/54.98 | 16.65/16.65/0.02/16.62/16.62/16.67 | 3.2873 |
+| hv_apply_1x256x3x128x40_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 81.27/81.55/0.84/80.53/80.74/82.62 | 25.95/25.97/0.06/25.93/25.93/26.03 | 3.1322 |
+| hv_apply_1x256x3x48x128_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 66.60/66.65/0.26/66.45/66.46/66.91 | 16.68/16.67/0.03/16.62/16.64/16.70 | 3.9932 |
+| hv_apply_1x256x3x48x128_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 95.52/95.90/1.28/94.73/94.77/97.20 | 30.13/30.16/0.12/30.01/30.06/30.28 | 3.1706 |
+| hv_apply_1x256x3x48x40_C | C | apply_group_norm_silu | cuda_kernel | cont_small | optimized | 33.31/33.31/0.70/32.31/32.53/34.11 | 22.72/22.67/0.13/22.41/22.51/22.77 | 1.4660 |
+| hv_apply_1x256x3x48x40_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 43.47/43.82/1.14/42.70/43.02/45.03 | 23.79/23.73/0.13/23.46/23.60/23.81 | 1.8274 |
+| hv_apply_1x256x5x256x256_C | C | apply_group_norm_silu | baseline_fallback | baseline_fallback | baseline_equivalent | 108.63/108.67/0.75/108.03/108.07/109.37 | 110.30/110.19/1.36/108.22/108.40/111.60 | 0.9849 |
+| hv_apply_1x256x5x256x80_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 94.95/96.10/1.97/94.05/94.25/98.35 | 43.65/43.64/0.05/43.58/43.58/43.70 | 2.1754 |
+| hv_apply_1x256x5x96x256_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 94.70/95.22/2.46/92.37/93.40/97.68 | 52.60/52.65/0.30/52.21/52.31/52.99 | 1.8002 |
+| hv_apply_1x256x5x96x80_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 94.44/94.50/2.21/91.38/91.94/97.09 | 24.84/24.83/0.05/24.73/24.78/24.87 | 3.8023 |
+| hv_apply_1x256x9x128x128_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 99.04/98.79/2.87/95.39/95.85/102.05 | 60.80/60.88/0.52/60.31/60.33/61.54 | 1.6290 |
+| hv_apply_1x256x9x128x128_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 211.79/211.93/0.57/211.19/211.28/212.58 | 169.11/168.90/1.08/167.65/167.79/170.15 | 1.2524 |
+| hv_apply_1x256x9x128x40_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 97.43/97.71/1.82/95.57/95.91/99.72 | 24.86/24.86/0.03/24.82/24.84/24.89 | 3.9192 |
+| hv_apply_1x256x9x128x40_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 106.64/107.18/1.10/106.10/106.12/108.43 | 56.43/56.43/0.07/56.35/56.36/56.51 | 1.8898 |
+| hv_apply_1x256x9x48x128_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 94.81/98.29/5.40/93.36/93.63/104.38 | 26.91/26.90/0.04/26.85/26.86/26.94 | 3.5228 |
+| hv_apply_1x256x9x48x128_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 105.36/105.40/1.51/104.07/104.12/106.68 | 62.02/62.04/0.26/61.72/61.77/62.33 | 1.6988 |
+| hv_apply_1x256x9x48x40_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 62.71/63.04/0.77/62.40/62.47/63.93 | 16.64/16.63/0.04/16.56/16.59/16.66 | 3.7689 |
+| hv_apply_1x256x9x48x40_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 90.62/90.56/0.27/90.23/90.25/90.87 | 28.91/28.91/0.02/28.88/28.89/28.93 | 3.1340 |
+| hv_apply_1x512x2x12x10_C | C | apply_group_norm_silu | cuda_kernel | cont_small | optimized | 33.29/33.48/0.40/33.10/33.11/33.99 | 9.39/9.47/0.27/9.11/9.23/9.77 | 3.5442 |
+| hv_apply_1x512x2x12x10_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 44.75/45.09/1.13/43.37/44.00/46.28 | 16.64/16.63/0.02/16.59/16.60/16.65 | 2.6895 |
+| hv_apply_1x512x2x12x32_C | C | apply_group_norm_silu | cuda_kernel | cont_small | optimized | 32.89/33.21/0.88/32.09/32.48/34.12 | 9.12/9.22/0.23/9.02/9.05/9.54 | 3.6051 |
+| hv_apply_1x512x2x12x32_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 43.84/44.19/0.90/43.15/43.33/45.38 | 17.69/17.69/0.02/17.65/17.66/17.71 | 2.4779 |
+| hv_apply_1x512x2x24x20_C | C | apply_group_norm_silu | cuda_kernel | cont_small | optimized | 33.85/33.74/0.47/33.06/33.20/34.21 | 10.34/10.35/0.03/10.31/10.32/10.38 | 3.2723 |
+| hv_apply_1x512x2x24x20_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 43.23/43.02/0.73/42.02/42.27/43.71 | 17.69/17.67/0.03/17.62/17.64/17.69 | 2.4441 |
+| hv_apply_1x512x2x24x64_C | C | apply_group_norm_silu | cuda_kernel | cont_small | optimized | 33.76/33.77/0.86/32.12/32.98/34.61 | 22.78/22.78/0.02/22.74/22.75/22.80 | 1.4819 |
+| hv_apply_1x512x2x24x64_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 44.06/47.57/10.18/42.46/42.85/55.13 | 20.73/20.77/0.10/20.64/20.69/20.89 | 2.1251 |
+| hv_apply_1x512x2x32x10_C | C | apply_group_norm_silu | cuda_kernel | cont_small | optimized | 32.19/32.09/0.54/31.44/31.49/32.61 | 8.61/8.62/0.15/8.47/8.48/8.78 | 3.7384 |
+| hv_apply_1x512x2x32x10_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 42.79/43.19/0.72/42.31/42.53/43.96 | 20.55/20.53/0.06/20.43/20.47/20.60 | 2.0824 |
+| hv_apply_1x512x2x32x32_C | C | apply_group_norm_silu | cuda_kernel | cont_small | optimized | 33.28/33.27/0.23/32.87/33.01/33.47 | 16.61/16.61/0.03/16.58/16.58/16.64 | 2.0031 |
+| hv_apply_1x512x2x32x32_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 44.31/44.32/0.65/43.55/43.61/45.02 | 18.70/18.70/0.03/18.67/18.67/18.73 | 2.3690 |
+| hv_apply_1x512x2x64x20_C | C | apply_group_norm_silu | cuda_kernel | cont_small | optimized | 33.88/33.59/0.65/32.60/32.76/34.15 | 19.07/19.08/0.05/19.01/19.03/19.15 | 1.7768 |
+| hv_apply_1x512x2x64x20_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 47.44/47.49/0.70/46.30/46.76/48.18 | 21.77/21.77/0.03/21.73/21.74/21.80 | 2.1793 |
+| hv_apply_1x512x2x64x64_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 58.87/58.85/0.08/58.75/58.76/58.93 | 16.66/16.65/0.04/16.60/16.61/16.69 | 3.5345 |
+| hv_apply_1x512x2x64x64_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 86.39/86.32/0.34/85.86/85.90/86.71 | 27.27/27.30/0.05/27.24/27.25/27.37 | 3.1679 |
+| hv_apply_1x512x3x128x128_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 93.75/94.21/1.35/92.88/92.93/95.89 | 41.54/41.54/0.09/41.43/41.44/41.65 | 2.2572 |
+| hv_apply_1x512x3x128x40_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 108.03/108.02/0.63/107.40/107.41/108.69 | 21.77/21.78/0.03/21.75/21.76/21.81 | 4.9614 |
+| hv_apply_1x512x3x48x128_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 95.74/97.12/2.70/93.82/94.46/99.98 | 22.49/22.43/0.14/22.21/22.25/22.54 | 4.2573 |
+| hv_apply_1x512x3x48x40_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 41.03/41.01/0.32/40.66/40.69/41.37 | 16.64/16.65/0.03/16.62/16.63/16.70 | 2.4665 |
+| hv_apply_1x512x5x12x10_C | C | apply_group_norm_silu | cuda_kernel | cont_small | optimized | 32.72/32.71/0.41/32.15/32.33/33.13 | 8.50/8.56/0.14/8.45/8.45/8.75 | 3.8497 |
+| hv_apply_1x512x5x12x10_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 44.62/44.50/0.64/43.67/43.71/45.23 | 18.10/18.11/0.08/18.00/18.03/18.22 | 2.4654 |
+| hv_apply_1x512x5x12x32_C | C | apply_group_norm_silu | cuda_kernel | cont_small | optimized | 32.15/32.50/0.83/31.64/31.89/33.65 | 16.61/16.60/0.01/16.59/16.59/16.62 | 1.9358 |
+| hv_apply_1x512x5x12x32_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 44.42/44.44/0.52/43.69/43.88/45.04 | 18.68/18.68/0.03/18.63/18.64/18.71 | 2.3782 |
+| hv_apply_1x512x5x24x20_C | C | apply_group_norm_silu | cuda_kernel | cont_small | optimized | 33.31/33.35/0.63/32.32/32.81/34.09 | 18.69/18.69/0.04/18.64/18.65/18.73 | 1.7825 |
+| hv_apply_1x512x5x24x20_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 46.31/45.92/1.10/44.53/44.71/47.12 | 18.72/18.72/0.02/18.68/18.69/18.74 | 2.4737 |
+| hv_apply_1x512x5x24x64_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 55.16/55.21/0.52/54.59/54.70/55.81 | 16.67/16.73/0.14/16.58/16.60/16.89 | 3.3083 |
+| hv_apply_1x512x5x24x64_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 81.06/81.35/1.11/80.24/80.45/82.59 | 26.88/26.91/0.05/26.84/26.85/26.97 | 3.0152 |
+| hv_apply_1x512x5x32x10_C | C | apply_group_norm_silu | cuda_kernel | cont_small | optimized | 34.04/34.03/0.54/33.47/33.48/34.60 | 14.45/14.45/0.01/14.44/14.44/14.46 | 2.3560 |
+| hv_apply_1x512x5x32x10_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 43.55/43.87/1.03/42.86/42.91/45.05 | 20.71/20.72/0.03/20.68/20.69/20.75 | 2.1024 |
+| hv_apply_1x512x5x32x32_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 36.48/36.54/0.32/36.24/36.24/36.92 | 16.61/16.64/0.07/16.54/16.57/16.71 | 2.1958 |
+| hv_apply_1x512x5x32x32_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 52.89/52.92/0.32/52.59/52.64/53.33 | 24.81/24.80/0.03/24.73/24.77/24.83 | 2.1319 |
+| hv_apply_1x512x5x64x20_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 44.59/44.61/0.09/44.48/44.51/44.71 | 16.64/16.65/0.06/16.57/16.60/16.70 | 2.6792 |
+| hv_apply_1x512x5x64x20_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 68.21/68.27/0.21/68.09/68.09/68.49 | 26.32/26.27/0.15/26.03/26.10/26.42 | 2.5913 |
+| hv_apply_1x512x5x64x64_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 98.94/99.02/1.98/96.01/96.95/101.00 | 25.16/25.12/0.07/24.98/25.03/25.17 | 3.9331 |
+| hv_apply_1x512x5x64x64_NC | NC | apply_group_norm_silu | cuda_kernel | nchw_last | optimized | 109.37/109.73/2.92/105.58/107.08/113.25 | 51.78/51.75/0.09/51.57/51.67/51.82 | 2.1125 |
+| hv_apply_1x512x9x128x128_C | C | apply_group_norm_silu | baseline_fallback | baseline_fallback | baseline_equivalent | 99.76/99.77/0.32/99.37/99.42/100.17 | 102.01/102.37/1.76/100.28/100.59/104.55 | 0.9779 |
+| hv_apply_1x512x9x128x40_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 96.74/96.85/1.10/95.08/95.63/98.05 | 39.44/39.49/0.09/39.39/39.41/39.60 | 2.4531 |
+| hv_apply_1x512x9x48x128_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 97.73/98.59/2.21/96.21/96.32/101.30 | 47.86/47.87/0.16/47.68/47.69/48.05 | 2.0419 |
+| hv_apply_1x512x9x48x40_C | C | apply_group_norm_silu | cuda_kernel | cont_split | optimized | 95.19/95.05/1.44/92.92/93.36/96.45 | 22.79/22.78/0.04/22.73/22.74/22.82 | 4.1774 |
+| hv_triton_1x128x17x256x256_C | C | triton_group_norm_silu | baseline_fallback | baseline_fallback | baseline_equivalent | 172.41/173.15/2.67/171.07/171.22/175.48 | 172.66/172.73/0.83/171.68/171.82/173.60 | 0.9986 |
+| hv_triton_1x128x17x256x256_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 2745.38/2747.43/5.64/2741.54/2742.19/2754.90 | 763.06/761.02/6.63/750.93/754.22/768.44 | 3.5979 |
+| hv_triton_1x128x17x256x80_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 96.01/96.24/0.71/95.24/95.52/97.04 | 70.83/70.77/0.23/70.34/70.50/70.96 | 1.3554 |
+| hv_triton_1x128x17x256x80_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 273.67/273.32/0.71/272.24/272.47/273.94 | 212.43/212.48/0.56/211.75/211.96/213.11 | 1.2883 |
+| hv_triton_1x128x17x96x256_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 134.59/139.42/24.71/110.32/113.86/164.98 | 82.62/82.60/0.45/81.80/82.10/83.04 | 1.6290 |
+| hv_triton_1x128x17x96x256_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 302.06/302.39/0.90/301.50/301.51/303.43 | 262.52/262.28/1.13/260.78/261.09/263.58 | 1.1506 |
+| hv_triton_1x128x17x96x80_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 96.83/96.95/1.30/95.00/95.61/98.50 | 29.01/29.00/0.04/28.94/28.95/29.04 | 3.3381 |
+| hv_triton_1x128x17x96x80_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 108.94/109.27/1.12/108.01/108.24/110.67 | 77.91/77.85/0.58/76.80/77.18/78.36 | 1.3983 |
+| hv_triton_1x128x5x256x256_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 95.45/96.28/1.70/94.98/95.07/98.69 | 67.61/67.50/0.30/66.97/67.14/67.78 | 1.4117 |
+| hv_triton_1x128x5x256x256_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 240.16/240.01/0.52/239.19/239.32/240.42 | 202.58/202.53/0.70/201.49/201.75/203.16 | 1.1856 |
+| hv_triton_1x128x5x256x80_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 97.52/98.34/5.38/92.60/93.03/103.40 | 26.90/26.91/0.04/26.86/26.86/26.95 | 3.6251 |
+| hv_triton_1x128x5x256x80_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 113.80/114.94/3.58/111.39/112.01/119.78 | 64.72/64.62/0.19/64.30/64.38/64.77 | 1.7584 |
+| hv_triton_1x128x5x96x256_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 95.83/95.32/1.55/92.49/93.69/96.68 | 28.92/28.94/0.04/28.89/28.90/28.98 | 3.3131 |
+| hv_triton_1x128x5x96x256_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 115.04/114.79/1.27/113.10/113.46/116.25 | 73.97/74.00/0.43/73.57/73.63/74.53 | 1.5553 |
+| hv_triton_1x128x5x96x80_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 70.69/70.79/0.31/70.41/70.52/71.14 | 16.64/16.66/0.03/16.62/16.62/16.70 | 4.2473 |
+| hv_triton_1x128x5x96x80_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 100.93/101.02/0.51/100.36/100.47/101.63 | 35.14/35.12/0.12/34.95/34.97/35.24 | 2.8722 |
+| hv_triton_1x256x17x256x256_C | C | triton_group_norm_silu | baseline_fallback | baseline_fallback | baseline_equivalent | 328.87/328.72/3.03/324.86/325.31/332.35 | 329.14/330.16/2.74/327.42/327.58/333.76 | 0.9992 |
+| hv_triton_1x256x17x256x80_C | C | triton_group_norm_silu | baseline_fallback | baseline_fallback | baseline_equivalent | 154.28/154.55/1.17/153.44/153.44/155.72 | 155.36/155.70/0.92/154.79/154.85/156.85 | 0.9930 |
+| hv_triton_1x256x17x96x256_C | C | triton_group_norm_silu | baseline_fallback | baseline_fallback | baseline_equivalent | 136.96/136.93/0.24/136.54/136.65/137.18 | 137.24/137.04/0.32/136.60/136.69/137.33 | 0.9979 |
+| hv_triton_1x256x17x96x80_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 93.32/93.52/1.97/91.57/91.84/95.73 | 55.80/55.78/0.05/55.70/55.72/55.82 | 1.6724 |
+| hv_triton_1x256x3x128x128_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 94.35/94.22/2.47/90.38/91.25/96.94 | 26.87/26.87/0.02/26.84/26.85/26.89 | 3.5110 |
+| hv_triton_1x256x3x128x128_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 104.78/104.95/1.44/102.75/103.60/106.58 | 56.45/56.53/0.24/56.30/56.32/56.84 | 1.8561 |
+| hv_triton_1x256x3x128x40_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 54.74/54.76/0.10/54.60/54.67/54.88 | 16.68/16.69/0.02/16.66/16.67/16.71 | 3.2814 |
+| hv_triton_1x256x3x128x40_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 80.46/80.62/0.26/80.33/80.39/80.94 | 25.89/25.90/0.03/25.87/25.88/25.94 | 3.1074 |
+| hv_triton_1x256x3x48x128_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 66.69/66.71/0.27/66.44/66.46/67.02 | 16.66/16.66/0.03/16.62/16.63/16.69 | 4.0040 |
+| hv_triton_1x256x3x48x128_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 94.47/94.74/0.59/94.39/94.39/95.33 | 30.07/30.06/0.10/29.90/29.94/30.16 | 3.1412 |
+| hv_triton_1x256x3x48x40_C | C | triton_group_norm_silu | cuda_kernel | cont_small | optimized | 32.95/32.70/0.72/31.84/31.93/33.39 | 22.70/22.66/0.14/22.42/22.49/22.79 | 1.4514 |
+| hv_triton_1x256x3x48x40_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 45.76/45.89/1.05/44.41/44.78/47.01 | 23.81/23.78/0.09/23.59/23.69/23.85 | 1.9220 |
+| hv_triton_1x256x5x256x256_C | C | triton_group_norm_silu | baseline_fallback | baseline_fallback | baseline_equivalent | 108.21/108.16/0.33/107.84/107.86/108.51 | 108.76/109.27/1.55/108.05/108.22/110.86 | 0.9950 |
+| hv_triton_1x256x5x256x80_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 96.56/96.28/2.47/92.84/93.18/99.02 | 43.70/43.68/0.10/43.49/43.59/43.77 | 2.2097 |
+| hv_triton_1x256x5x96x256_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 97.98/98.28/2.00/94.97/96.41/100.26 | 52.89/52.74/0.23/52.44/52.45/52.93 | 1.8524 |
+| hv_triton_1x256x5x96x80_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 92.65/93.36/2.82/90.17/90.27/96.96 | 24.84/24.84/0.03/24.77/24.80/24.86 | 3.7293 |
+| hv_triton_1x256x9x128x128_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 96.77/97.42/2.31/94.83/95.82/99.46 | 60.94/60.94/0.52/60.16/60.34/61.54 | 1.5878 |
+| hv_triton_1x256x9x128x128_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 211.40/211.50/0.20/211.23/211.29/211.71 | 168.73/168.69/1.06/167.24/167.30/169.68 | 1.2529 |
+| hv_triton_1x256x9x128x40_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 102.11/102.07/2.02/98.61/99.73/103.92 | 24.87/24.89/0.05/24.82/24.84/24.94 | 4.1051 |
+| hv_triton_1x256x9x128x40_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 108.23/108.08/2.23/106.10/106.10/110.24 | 56.40/56.45/0.19/56.18/56.28/56.69 | 1.9191 |
+| hv_triton_1x256x9x48x128_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 100.57/100.27/2.20/97.14/98.04/102.96 | 26.90/26.90/0.04/26.86/26.87/26.94 | 3.7387 |
+| hv_triton_1x256x9x48x128_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 106.96/106.98/1.93/104.55/104.75/108.82 | 61.93/61.88/0.19/61.59/61.64/62.05 | 1.7270 |
+| hv_triton_1x256x9x48x40_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 62.67/62.71/0.32/62.41/62.44/63.12 | 16.66/16.66/0.03/16.62/16.63/16.69 | 3.7618 |
+| hv_triton_1x256x9x48x40_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 90.69/90.89/0.49/90.38/90.43/91.52 | 28.93/28.94/0.04/28.89/28.91/28.97 | 3.1345 |
+| hv_triton_1x512x2x12x10_C | C | triton_group_norm_silu | cuda_kernel | cont_small | optimized | 34.09/33.86/1.06/32.51/32.68/35.03 | 9.26/9.35/0.21/9.15/9.15/9.62 | 3.6799 |
+| hv_triton_1x512x2x12x10_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 45.23/45.14/1.05/43.97/44.06/46.29 | 16.65/16.67/0.10/16.55/16.59/16.77 | 2.7171 |
+| hv_triton_1x512x2x12x32_C | C | triton_group_norm_silu | cuda_kernel | cont_small | optimized | 32.69/32.94/0.61/32.18/32.42/33.59 | 8.78/8.80/0.13/8.67/8.68/8.97 | 3.7236 |
+| hv_triton_1x512x2x12x32_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 44.85/44.70/0.87/43.41/43.58/45.51 | 17.70/17.71/0.04/17.66/17.68/17.74 | 2.5335 |
+| hv_triton_1x512x2x24x20_C | C | triton_group_norm_silu | cuda_kernel | cont_small | optimized | 33.85/33.86/0.90/32.32/32.92/34.87 | 10.35/10.35/0.03/10.31/10.32/10.38 | 3.2694 |
+| hv_triton_1x512x2x24x20_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 46.36/46.26/1.25/44.75/44.95/47.70 | 17.70/17.72/0.08/17.66/17.66/17.79 | 2.6192 |
+| hv_triton_1x512x2x24x64_C | C | triton_group_norm_silu | cuda_kernel | cont_small | optimized | 33.49/33.83/0.94/32.94/32.99/35.04 | 22.78/22.78/0.02/22.73/22.76/22.80 | 1.4700 |
+| hv_triton_1x512x2x24x64_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 53.37/62.81/15.40/49.04/49.11/79.75 | 21.00/21.55/1.56/20.72/20.74/22.83 | 2.5417 |
+| hv_triton_1x512x2x32x10_C | C | triton_group_norm_silu | cuda_kernel | cont_small | optimized | 32.22/32.27/0.47/31.77/31.85/32.86 | 8.41/8.42/0.15/8.29/8.29/8.62 | 3.8317 |
+| hv_triton_1x512x2x32x10_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 45.65/45.77/0.93/44.59/45.02/46.60 | 20.60/20.60/0.15/20.31/20.44/20.73 | 2.2161 |
+| hv_triton_1x512x2x32x32_C | C | triton_group_norm_silu | cuda_kernel | cont_small | optimized | 31.71/32.07/0.71/31.25/31.43/32.83 | 16.62/16.62/0.04/16.57/16.58/16.65 | 1.9079 |
+| hv_triton_1x512x2x32x32_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 45.14/45.78/0.99/45.01/45.03/47.01 | 18.69/18.70/0.04/18.66/18.67/18.74 | 2.4159 |
+| hv_triton_1x512x2x64x20_C | C | triton_group_norm_silu | cuda_kernel | cont_small | optimized | 33.14/33.11/0.23/32.81/32.82/33.34 | 19.03/19.05/0.05/19.02/19.02/19.10 | 1.7411 |
+| hv_triton_1x512x2x64x20_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 43.46/43.76/0.57/43.18/43.23/44.47 | 21.77/21.76/0.01/21.74/21.75/21.77 | 1.9966 |
+| hv_triton_1x512x2x64x64_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 58.79/58.82/0.07/58.75/58.76/58.90 | 16.64/16.66/0.06/16.58/16.61/16.73 | 3.5319 |
+| hv_triton_1x512x2x64x64_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 86.22/86.11/0.39/85.54/85.66/86.51 | 27.37/27.38/0.07/27.30/27.31/27.45 | 3.1498 |
+| hv_triton_1x512x3x128x128_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 95.29/94.98/1.33/93.25/93.33/96.34 | 41.51/41.51/0.05/41.44/41.46/41.57 | 2.2957 |
+| hv_triton_1x512x3x128x40_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 107.63/107.84/0.63/107.26/107.31/108.57 | 21.78/21.79/0.04/21.72/21.75/21.82 | 4.9408 |
+| hv_triton_1x512x3x48x128_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 103.48/103.24/5.14/96.06/98.22/107.72 | 22.50/22.50/0.06/22.39/22.44/22.55 | 4.5981 |
+| hv_triton_1x512x3x48x40_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 40.93/41.16/0.52/40.55/40.63/41.73 | 16.67/16.88/0.60/16.56/16.60/17.33 | 2.4549 |
+| hv_triton_1x512x5x12x10_C | C | triton_group_norm_silu | cuda_kernel | cont_small | optimized | 32.67/32.87/1.16/31.41/31.67/34.35 | 8.62/8.60/0.11/8.43/8.47/8.71 | 3.7895 |
+| hv_triton_1x512x5x12x10_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 42.80/42.96/0.83/42.06/42.13/43.99 | 18.12/18.12/0.16/17.85/17.93/18.29 | 2.3616 |
+| hv_triton_1x512x5x12x32_C | C | triton_group_norm_silu | cuda_kernel | cont_small | optimized | 33.14/33.09/0.33/32.45/32.77/33.37 | 16.60/16.60/0.02/16.57/16.58/16.61 | 1.9967 |
+| hv_triton_1x512x5x12x32_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 45.31/45.09/1.29/43.43/43.64/46.48 | 18.67/18.68/0.03/18.64/18.64/18.72 | 2.4263 |
+| hv_triton_1x512x5x24x20_C | C | triton_group_norm_silu | cuda_kernel | cont_small | optimized | 32.24/32.45/0.67/31.65/31.76/33.23 | 18.69/18.68/0.03/18.65/18.65/18.71 | 1.7252 |
+| hv_triton_1x512x5x24x20_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 46.82/47.13/1.85/45.19/45.32/49.30 | 18.72/18.71/0.04/18.65/18.67/18.75 | 2.5010 |
+| hv_triton_1x512x5x24x64_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 54.83/54.79/0.10/54.69/54.70/54.90 | 16.65/16.65/0.04/16.59/16.61/16.69 | 3.2926 |
+| hv_triton_1x512x5x24x64_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 80.35/80.74/0.63/80.15/80.15/81.42 | 26.88/26.87/0.03/26.80/26.84/26.90 | 2.9893 |
+| hv_triton_1x512x5x32x10_C | C | triton_group_norm_silu | cuda_kernel | cont_small | optimized | 34.06/33.90/0.64/32.98/33.12/34.57 | 14.44/14.45/0.02/14.42/14.43/14.47 | 2.3588 |
+| hv_triton_1x512x5x32x10_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 45.28/45.66/1.06/44.28/44.82/46.74 | 20.72/20.71/0.04/20.63/20.66/20.76 | 2.1856 |
+| hv_triton_1x512x5x32x32_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 36.55/36.66/0.22/36.44/36.45/36.90 | 16.60/16.62/0.04/16.57/16.59/16.65 | 2.2018 |
+| hv_triton_1x512x5x32x32_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 52.96/53.14/0.30/52.83/52.86/53.47 | 24.82/24.82/0.02/24.79/24.80/24.84 | 2.1336 |
+| hv_triton_1x512x5x64x20_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 44.74/44.76/0.18/44.58/44.59/44.99 | 16.68/16.66/0.05/16.57/16.59/16.71 | 2.6825 |
+| hv_triton_1x512x5x64x20_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 68.32/68.32/0.21/68.00/68.12/68.53 | 26.26/26.25/0.10/26.05/26.16/26.35 | 2.6019 |
+| hv_triton_1x512x5x64x64_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 96.75/96.55/2.03/93.64/94.11/98.44 | 25.27/25.26/0.08/25.14/25.16/25.33 | 3.8287 |
+| hv_triton_1x512x5x64x64_NC | NC | triton_group_norm_silu | cuda_kernel | nchw_last | optimized | 104.91/105.17/2.06/102.98/103.08/107.33 | 51.70/51.67/0.10/51.47/51.58/51.74 | 2.0294 |
+| hv_triton_1x512x9x128x128_C | C | triton_group_norm_silu | baseline_fallback | baseline_fallback | baseline_equivalent | 99.86/100.64/1.67/99.32/99.51/102.46 | 102.70/103.69/1.61/102.34/102.50/105.96 | 0.9724 |
+| hv_triton_1x512x9x128x40_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 94.52/94.28/1.00/92.25/93.19/95.05 | 39.49/39.50/0.09/39.33/39.41/39.58 | 2.3937 |
+| hv_triton_1x512x9x48x128_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 97.07/96.72/1.42/94.32/94.97/98.16 | 47.99/47.93/0.18/47.71/47.73/48.11 | 2.0226 |
+| hv_triton_1x512x9x48x40_C | C | triton_group_norm_silu | cuda_kernel | cont_split | optimized | 99.29/100.53/3.14/97.19/97.61/104.70 | 22.85/22.85/0.06/22.75/22.78/22.91 | 4.3447 |
 
-Non-production regression-grid rows (12, contract shapes x dtypes) all PASSED in-benchmark correctness; their timings are tracked in `bench/results.jsonl` but excluded from the headline by design.
+Non-production regression-grid rows (12, contract shapes x dtypes) all PASSED in-benchmark correctness; their timings and dispatch metadata are in `bench/results.jsonl` but excluded from the headline by design.

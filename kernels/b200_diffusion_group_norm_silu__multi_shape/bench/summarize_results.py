@@ -88,9 +88,29 @@ def main() -> int:
     print(f"headline geomean (production, equal weight): {gm:.4f}")
     print(f"arithmetic mean (secondary): {am:.4f}")
     print(f"gate geomean>1.0: {'PASS' if gm > 1.0 else 'FAIL'}")
-    print(f"gate no row <{GATE_ROW_FLOOR}: {'PASS' if not below else f'FAIL ({len(below)} rows)'}")
-    for r in sorted(below, key=lambda r: r["speedup"])[:20]:
-        print(f"  below-floor: {r['id']} speedup={r['speedup']:.4f} "
+    # No-regression gate has two PASS outcomes (promotion ruling DEC-3 /
+    # AC-5.2): strict (zero rows below the floor) or explained-residual
+    # (every below-floor row runs the baseline-equivalent path — identical
+    # implementation on both sides, so a real regression is impossible; the
+    # reading is the characterized order-debt measurement artifact, see
+    # docs/dispatch.md "Measured Residual on Routed Giant Rows"). A
+    # below-floor row on an OPTIMIZED path is a hard FAIL.
+    explained = [r for r in below if r.get("matched_status") == "baseline_equivalent"]
+    unexplained = [r for r in below if r.get("matched_status") != "baseline_equivalent"]
+    if not below:
+        print(f"gate no row <{GATE_ROW_FLOOR}: PASS (strict)")
+    elif not unexplained:
+        print(f"gate no row <{GATE_ROW_FLOOR}: PASS (explained residual: "
+              f"{len(explained)} baseline-equivalent row(s) below floor)")
+        for r in sorted(explained, key=lambda r: r["speedup"]):
+            print(f"  explained-residual: {r['id']} speedup={r['speedup']:.4f} "
+                  f"path={r.get('candidate_path')} regime={r.get('candidate_regime')} "
+                  f"(identical code both sides; see docs/dispatch.md)")
+    else:
+        print(f"gate no row <{GATE_ROW_FLOOR}: FAIL ({len(unexplained)} unexplained rows)")
+    for r in sorted(unexplained, key=lambda r: r["speedup"])[:20]:
+        print(f"  below-floor (UNEXPLAINED): {r['id']} speedup={r['speedup']:.4f} "
+              f"path={r.get('candidate_path')} regime={r.get('candidate_regime')} "
               f"base={r['baseline']['median_us']:.1f}us cand={r['candidate']['median_us']:.1f}us")
 
     print("\nper-bucket geomeans:")
@@ -107,8 +127,8 @@ def main() -> int:
         print(f"  {r['id']:<40} {r['speedup']:.4f} base={r['baseline']['median_us']:.1f}us")
 
     if args.markdown:
-        print("\n| id | layout | function | baseline med/mean/std/min/p10/p90 (us) | candidate med/mean/std/min/p10/p90 (us) | speedup |")
-        print("|---|---|---|---|---|---|")
+        print("\n| id | layout | function | path | regime | matched | baseline med/mean/std/min/p10/p90 (us) | candidate med/mean/std/min/p10/p90 (us) | speedup |")
+        print("|---|---|---|---|---|---|---|---|---|")
         for r in sorted(prod, key=lambda r: r["id"]):
             wl = r.get("workload", {})
             shapes = wl.get("shapes", {})
@@ -117,7 +137,10 @@ def main() -> int:
                 s = r[side]
                 return (f"{s['median_us']:.2f}/{s['mean_us']:.2f}/{s['std_us']:.2f}/"
                         f"{s['min_us']:.2f}/{s['p10_us']:.2f}/{s['p90_us']:.2f}")
-            print(f"| {r['id']} | {layout} | {wl.get('function','')} | {fmt('baseline')} | {fmt('candidate')} | {r['speedup']:.4f} |")
+            print(f"| {r['id']} | {layout} | {wl.get('function','')} "
+                  f"| {r.get('candidate_path','-')} | {r.get('candidate_regime','-')} "
+                  f"| {r.get('matched_status','-')} "
+                  f"| {fmt('baseline')} | {fmt('candidate')} | {r['speedup']:.4f} |")
     return 0 if not failed else 1
 
 
