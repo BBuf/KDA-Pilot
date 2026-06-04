@@ -17,6 +17,6 @@ KDA_OPTIMIZED_fused_inplace_qknorm_rope = True
 
 KDA_ARCHES_fused_inplace_qknorm_rope = ('h200',)
 KDA_TASK_fused_inplace_qknorm_rope = 'h200_diffusion_qknorm_rope__multi_shape'
-KDA_COMMIT_fused_inplace_qknorm_rope = '673217af69ce03f4c92237e37fd8aa70acaa2797'
-KDA_DATE_fused_inplace_qknorm_rope = '2026-06-02'
-KDA_SPEEDUP_fused_inplace_qknorm_rope = '1.015x'
+KDA_COMMIT_fused_inplace_qknorm_rope = '72fdfaa3b9a8f68db29ca26cfc135af832f7158f'
+KDA_DATE_fused_inplace_qknorm_rope = '2026-06-04'
+KDA_SPEEDUP_fused_inplace_qknorm_rope = '1.0677x'

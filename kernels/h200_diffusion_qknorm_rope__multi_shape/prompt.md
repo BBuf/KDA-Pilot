@@ -608,3 +608,8 @@ updated with the final result.
   `solutions.jsonl` (cossin-vec KEEP → cossin-vec2 REJECT → export-cossin-vec-in-sglang PASS),
   `docs/draft.md` (provenance + iteration log), `docs/final_result.md` /
   `docs/perf_analysis.md` / `docs/dispatch.md` continuation addenda.
+- **kda_kernels promotion (round 1)**: `_impls/h200` refreshed to `6669bd218e336c9d` via the
+  established export flow; installed-path smoke PASS (install() swap verified, all 9 shapes route
+  to the h200 impl, oracle-close, fp16 fallback OK; **install() geomean 1.0677× / large 1.1536×**;
+  `KDA_SPEEDUP` stamped with the literal install()-path number). See
+  `docs/sglang_jit_export.md` and `docs/evidence/overlay_smoke_cossin-vec.log`.

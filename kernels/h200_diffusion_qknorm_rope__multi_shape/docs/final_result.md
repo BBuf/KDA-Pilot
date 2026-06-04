@@ -108,9 +108,20 @@ vs the unmodified pin tree, separate processes: all 9 shapes `oracle_ok=True`, *
 fallback preserved. See `docs/sglang_jit_export.md` (continuation section) and
 `docs/evidence/export_cand_cossin-vec.json` / `export_base_cossin-vec.json`.
 
+## kda_kernels promotion (round 1)
+`kda_kernels/diffusion/qknorm_rope/_impls/h200/` refreshed to `6669bd218e336c9d` via
+`scripts/export_kda_kernels/export.py`; `KDA_SPEEDUP` stamped **1.0677x** — the LITERAL
+install()-path geomean through `kda_kernels.install()` (large 1.1536×; tiny 0.987–1.029
+launch-bound parity + dispatcher overhead). Installed-path smoke on idle GPU 7: swap verified,
+all 9 shapes route to the h200 impl, oracle-close, no NaN, fp16 dispatcher-fallback OK
+(`docs/evidence/overlay_smoke_cossin-vec.log`). The in-tree arbiter number (1.0945×) and the
+install() number are different integrations and are reported separately by design.
+
 ## Workspace
 `solutions.jsonl` (… → d3-final-corrected → **cossin-vec** [FINAL, `6669bd218e336c9d`] →
-cossin-vec2 [REJECTED, history] → **export-cossin-vec-in-sglang** [PASS]), `benchmark.csv`
-(tags continuation-audit, cossin-vec, cossin-vec2, cossin-vec2-r2), `docs/draft.md` (continuation
+cossin-vec2 [REJECTED, history] → **export-cossin-vec-in-sglang** [PASS] →
+**export-cossin-vec-kda-kernels** [PASS]), `benchmark.csv`
+(tags continuation-audit, cossin-vec, cossin-vec2, cossin-vec2-r2, export-cossin-vec,
+export-cossin-vec-overlay), `docs/draft.md` (continuation
 provenance + iteration log), `profile/round_cossin_vec/REPORT.md`. Remote artifacts under
 `REMOTE_KDA_DIR=/home/sglang-omni/bbuf/kda_runs/h200_diffusion_qknorm_rope__multi_shape/k04-20260604-185804`.

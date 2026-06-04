@@ -75,3 +75,20 @@ exists; toolchain delta documented in `docs/draft.md`), both legs at SGLang pin 
 sh <RKD>/stage_arbiter.sh        # worktree + .cuh placement + hash check
 sh <RKD>/run_arbiter.sh          # pytest -k misaligned, candidate/baseline legs, in-tree misaligned, fallback, geomean
 ```
+
+## kda_kernels re-export (round 1, closing the review gap)
+
+`scripts/export_kda_kernels/export.py h200_diffusion_qknorm_rope__multi_shape` refreshed
+`kda_kernels/diffusion/qknorm_rope/_impls/h200/` from the stale incumbent to the continuation
+candidate — copied `.cuh` sha verified `6669bd218e336c9d`; family `__init__.py`/`_dispatcher.py`
+regenerated; `KDA_EXPORTS.json`/`KDA_STATUS.md` stamped with commit `72fdfaa3b` and
+**`KDA_SPEEDUP = 1.0677x`** — deliberately the LITERAL install()-path geomean (not the 1.0945×
+in-tree arbiter number), per the project rule that the overlay package reports its own shipping
+number. Smoke through the INSTALLED path (`profile/integration/validate_overlay.py`, idle GPU 7,
+pin `c47f0e7cd`): `kda_kernels.install()` swaps the public symbol → generated dispatcher →
+`_impls/h200`; all 9 captured shapes route `path=cuda`, oracle-close, no NaN, in-place; fp16 CUDA →
+dispatcher fallback, no raise; **install() geomean 1.0677× all-9 / 1.1536× large** (prior promoted
+candidate measured 1.0118–1.0181× / 1.055–1.063× on this same validator); tiny 0.987–1.029
+(launch-bound parity + dispatcher overhead — same honest production behavior as the prior round).
+Evidence: `docs/evidence/overlay_smoke_cossin-vec.log`, `benchmark.csv` rows tagged
+`export-cossin-vec` / `export-cossin-vec-overlay`.
