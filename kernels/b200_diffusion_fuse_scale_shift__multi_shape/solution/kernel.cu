@@ -511,6 +511,44 @@ __device__ __forceinline__ float block_reduce_sum(float v, float* shared) {
   return out;
 }
 
+// Single-call fused reduction of (sum, sum_of_squares): two barriers per row
+// instead of the five a two-round scalar reduce chain costs. No trailing
+// barrier: the vectorized row kernels call it exactly once. The one-pass
+// variance var = E[x^2] - mean^2 (clamped at 0) is tree-reduced fp32; with
+// the contract tolerances this stays well inside both the oracle and the
+// two-pass reference comparisons.
+__device__ __forceinline__ float2 block_reduce_sum2(float2 v, float* shared /* >= 64 */) {
+  const unsigned full = 0xffffffffu;  // blockDim.x is a multiple of 32
+#pragma unroll
+  for (int off = 16; off > 0; off >>= 1) {
+    v.x += __shfl_down_sync(full, v.x, off);
+    v.y += __shfl_down_sync(full, v.y, off);
+  }
+  const int lane = threadIdx.x & 31;
+  const int warp = threadIdx.x >> 5;
+  if (lane == 0) {
+    shared[warp] = v.x;
+    shared[32 + warp] = v.y;
+  }
+  __syncthreads();
+  const int nwarp = blockDim.x >> 5;
+  v.x = (threadIdx.x < nwarp) ? shared[threadIdx.x] : 0.0f;
+  v.y = (threadIdx.x < nwarp) ? shared[32 + threadIdx.x] : 0.0f;
+  if (warp == 0) {
+#pragma unroll
+    for (int off = 16; off > 0; off >>= 1) {
+      v.x += __shfl_down_sync(full, v.x, off);
+      v.y += __shfl_down_sync(full, v.y, off);
+    }
+    if (lane == 0) {
+      shared[0] = v.x;
+      shared[32] = v.y;
+    }
+  }
+  __syncthreads();
+  return make_float2(shared[0], shared[32]);
+}
+
 struct ModStrides {
   int64_t s_sb, s_sc, h_sb, h_sc, g_sb, g_sc;
 };
@@ -639,14 +677,14 @@ __global__ void ln_select01_vec_kernel(
     int64_t s1_sb, int64_t h1_sb, int64_t g1_sb,
     int64_t idx_sb, int64_t idx_sl, int vec_per_row) {
   constexpr int kVX = Vec16<XT>::kElems;
-  __shared__ float red[32];
+  __shared__ float red[64];
   const int64_t row = blockIdx.x;
   const int64_t b = row / seq_len;
   const int64_t l = row - b * seq_len;
   const XT* xr = x + row * channels;
 
   float xf[kRounds][kVX];
-  float sum = 0.0f;
+  float2 acc = make_float2(0.0f, 0.0f);
 #pragma unroll
   for (int r = 0; r < kRounds; ++r) {
     const int j = r * blockDim.x + threadIdx.x;
@@ -656,25 +694,14 @@ __global__ void ln_select01_vec_kernel(
 #pragma unroll
       for (int k = 0; k < kVX; ++k) {
         xf[r][k] = to_f(v.elems[k]);
-        sum += xf[r][k];
+        acc.x += xf[r][k];
+        acc.y = fmaf(xf[r][k], xf[r][k], acc.y);
       }
     }
   }
-  const float mean = block_reduce_sum(sum, red) / channels;
-
-  float vsum = 0.0f;
-#pragma unroll
-  for (int r = 0; r < kRounds; ++r) {
-    const int j = r * blockDim.x + threadIdx.x;
-    if (j < vec_per_row) {
-#pragma unroll
-      for (int k = 0; k < kVX; ++k) {
-        const float d = xf[r][k] - mean;
-        vsum += d * d;
-      }
-    }
-  }
-  const float var = block_reduce_sum(vsum, red) / channels;
+  const float2 tot = block_reduce_sum2(acc, red);
+  const float mean = tot.x / channels;
+  const float var = fmaxf(tot.y / channels - mean * mean, 0.0f);
   const float rstd = rsqrtf(var + eps);
 
   const bool sel = index[b * idx_sb + l * idx_sl] != IT(0);
@@ -722,7 +749,7 @@ __global__ void residual_ln_select01_vec_kernel(
     int64_t s1_sb, int64_t h1_sb, int64_t g1_sb,
     int64_t idx_sb, int64_t idx_sl, int vec_per_row) {
   constexpr int kVX = Vec16<XT>::kElems;
-  __shared__ float red[32];
+  __shared__ float red[64];
   const int64_t row = blockIdx.x;
   const int64_t b = row / seq_len;
   const int64_t l = row - b * seq_len;
@@ -734,7 +761,7 @@ __global__ void residual_ln_select01_vec_kernel(
   // r = residual + residual_gate * x in fp32, held in registers as the
   // LayerNorm input; residual_out stores the downcast copies.
   float rf[kRounds][kVX];
-  float sum = 0.0f;
+  float2 acc = make_float2(0.0f, 0.0f);
 #pragma unroll
   for (int r = 0; r < kRounds; ++r) {
     const int j = r * blockDim.x + threadIdx.x;
@@ -748,26 +775,15 @@ __global__ void residual_ln_select01_vec_kernel(
       for (int k = 0; k < kVX; ++k) {
         rf[r][k] = fmaf(to_f(gv.elems[k]), to_f(xv.elems[k]), to_f(rv.elems[k]));
         rov.elems[k] = from_f<XT>(rf[r][k]);
-        sum += rf[r][k];
+        acc.x += rf[r][k];
+        acc.y = fmaf(rf[r][k], rf[r][k], acc.y);
       }
       __stcs(reinterpret_cast<uint4*>(ror) + j, rov.raw);
     }
   }
-  const float mean = block_reduce_sum(sum, red) / channels;
-
-  float vsum = 0.0f;
-#pragma unroll
-  for (int r = 0; r < kRounds; ++r) {
-    const int j = r * blockDim.x + threadIdx.x;
-    if (j < vec_per_row) {
-#pragma unroll
-      for (int k = 0; k < kVX; ++k) {
-        const float d = rf[r][k] - mean;
-        vsum += d * d;
-      }
-    }
-  }
-  const float var = block_reduce_sum(vsum, red) / channels;
+  const float2 tot = block_reduce_sum2(acc, red);
+  const float mean = tot.x / channels;
+  const float var = fmaxf(tot.y / channels - mean * mean, 0.0f);
   const float rstd = rsqrtf(var + eps);
 
   const bool sel = index[b * idx_sb + l * idx_sl] != IT(0);
