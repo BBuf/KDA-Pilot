@@ -242,7 +242,7 @@ def _select_cases(correctness, only: list[str]) -> list[dict[str, Any]]:
     return cases
 
 
-def _run_legacy(writer, f, correctness, cases, candidate_id, *, warmup_override, iters_override):
+def _run_legacy(writer, correctness, cases, candidate_id, *, warmup_override, iters_override):
     speedups = []
     header = (
         ["ts", "candidate", "case"]
@@ -277,7 +277,7 @@ def _run_legacy(writer, f, correctness, cases, candidate_id, *, warmup_override,
 
 
 def _run_interleaved(
-    writer, f, correctness, cases, candidate_id, *, warmup_override, iters_override, device_batch=10
+    writer, correctness, cases, candidate_id, *, warmup_override, iters_override, device_batch=10
 ):
     wall_speedups: list[float] = []
     dev_speedups: list[float] = []
@@ -392,12 +392,12 @@ def main() -> int:
         f.write(_provenance(correctness) + "\n")
         if args.mode in ("legacy", "both"):
             _run_legacy(
-                writer, f, correctness, cases, candidate_id,
+                writer, correctness, cases, candidate_id,
                 warmup_override=args.warmup, iters_override=args.iters,
             )
         if args.mode in ("interleaved", "both"):
             _run_interleaved(
-                writer, f, correctness, cases, candidate_id,
+                writer, correctness, cases, candidate_id,
                 warmup_override=args.warmup, iters_override=args.iters,
                 device_batch=args.device_batch,
             )
