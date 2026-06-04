@@ -132,6 +132,7 @@ which shape bucket);
   `solutions.jsonl` (KernelWiki pr-sglang-14717, technique-vectorized-loads;
   qknorm_rope.cuh / group_norm_silu_kda.cuh exemplars).
 - Results: local geomeans sync 1.2874x / device 1.2274x / amort 1.2951x
-  (docs/results.md); shipping-path geomeans sync **1.2513x** / stream-span
-  **1.3269x**, oracle 288/288, all rows >= 1.125x
-  (docs/sglang_jit_export.md). PERF_FALLBACK empty.
+  (docs/results.md); FINAL shipping-path geomeans sync **1.2496x** /
+  stream-span **1.3233x** (the two registered select01 rows measured through
+  their CustomOp production callsite), oracle 288/288, all rows positive
+  (min 1.1243x) (docs/sglang_jit_export.md). PERF_FALLBACK empty.

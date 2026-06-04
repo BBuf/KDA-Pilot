@@ -18,7 +18,7 @@ Checks:
    wall + device events, idle-GPU checks via the container-safe pid-delta rule
 5. registered-op  — the two select01 rows additionally validated and timed
    THROUGH the registered CustomOp layer (the production callsite), and the
-   final verdict uses those timings for them
+   promotion geomean uses those timings for them
 
 Usage:
   CUDA_VISIBLE_DEVICES=<id> PYTHONPATH=<worktree>/python python \
@@ -276,8 +276,8 @@ def main() -> int:
     report["bench_customop"] = customop_rows
 
     # Promotion table: the production callsite for the two registered select01
-    # rows is the CustomOp layer, so the final verdict uses those timings for
-    # them and the direct public functions for the other 13 rows.
+    # rows is the CustomOp layer, so the promotion geomean uses those timings
+    # for them and the direct public functions for the other 13 rows.
     customop_by_id = {r["case_id"]: r for r in customop_rows}
     final_rows = [customop_by_id.get(r["case_id"], r) for r in rows]
     report["bench_final"] = final_rows

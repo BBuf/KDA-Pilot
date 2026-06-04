@@ -91,7 +91,7 @@ CustomOp/torch.compile layer untouched) and validated on idle GPU 3:
   registration on both sides, only the device path toggles; the two
   registered select01 rows measured THROUGH the CustomOp layer — their
   production callsite): sync_wall 1.2496x, stream-span device_ev 1.3233x —
-  every row >= 1.125x, with the CustomOp-layer rows at 1.139x/1.143x sync
+  all rows positive (min 1.1243x), CustomOp-layer rows at 1.139x/1.143x sync
   (they were 0.954x/0.982x on the bare-kernel device view).** PERF_FALLBACK
   stays empty (DEC-1 unused). Direct-public-function geomeans (r1 run):
   1.2513x/1.3269x; CustomOp-layer parity 2/2.

@@ -138,8 +138,9 @@ ratios are unaffected.
 ## Perf-fallback re-adjudication (DEC-1)
 
 Every production row wins BOTH shipping-path metrics through its REAL
-production callsite (min 1.125x sync incl. the CustomOp-layer rows at
-1.139x/1.143x), versus 0.954x/0.982x on the bare-kernel device view for the
+production callsite (all rows positive, min 1.1243x sync, incl. the
+CustomOp-layer rows at 1.139x/1.143x), versus 0.954x/0.982x on the
+bare-kernel device view for the
 two Family B rows. `PERF_FALLBACK` therefore remains EMPTY; no row is routed
 back to Triton for performance.
 

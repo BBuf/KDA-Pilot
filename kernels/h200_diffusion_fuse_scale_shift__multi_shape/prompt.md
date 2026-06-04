@@ -541,6 +541,7 @@ cuda-flat-v4) replace all three Triton entry points across the 15 captured
 shapes: correctness 2424/2424 local + 288/288 in-tree oracle; geometric-mean
 median-latency speedup over the SGLang baseline — local loop sync 1.2874x /
 device 1.2274x; SHIPPING PATH (in-tree drop-in, unchanged public ops,
-docs/sglang_jit_export.md) sync 1.2513x / stream-span 1.3269x, every row
->= 1.125x, PERF_FALLBACK empty. Bound evidence: wan rows at the 4.33 TB/s
-streaming ceiling; per-bucket roofline + NCU in docs/results.md.
+docs/sglang_jit_export.md; the two registered select01 rows measured through
+their CustomOp production callsite) sync 1.2496x / stream-span 1.3233x, all
+rows positive (min 1.1243x), PERF_FALLBACK empty. Bound evidence: wan rows at
+the 4.33 TB/s streaming ceiling; per-bucket roofline + NCU in docs/results.md.
