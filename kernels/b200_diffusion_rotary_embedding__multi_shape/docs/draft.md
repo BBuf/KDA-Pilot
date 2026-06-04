@@ -178,3 +178,46 @@ SGLang baseline (edb1b3f8f): geomean 3.1682-3.1965x — read with the BASELINE S
 Like-for-like vs the 2026-06-01 environment: standard 110.8/57.7 = 1.92x (was 1.80x), LTX-2
 buckets unchanged (1.00-1.67x) -> environment-adjusted geomean ~= 1.49x (prior 1.45x scaled by
 the 11-shape geomean of the per-shape v6/v4 ratios, 1.006x, applied to the standard bucket gain).
+
+## Gate-review corrections (Codex independent review, 2026-06-04)
+
+Codex verified the gate verdict and bound conclusions, and required five corrections — all applied:
+
+1. **cuda-v5 / cuda-v7 evidence provenance.** The cuda-v5 paired-run CSV rows were LOST: the
+   full-folder re-sync that uploaded the v6 sources recreated the remote workspace and overwrote
+   the remote `benchmark.csv` before those rows were pulled back. cuda-v7 was timed only by the
+   sweep harness (by design, no CSV rows). Their `solutions.jsonl` evidence pointers are corrected
+   by an appended correction entry; the v5 paired-run log (as printed by `benchmark.py`) is
+   preserved verbatim below. The v5/v7 rows are REJECTED candidates — no promotion claim rests on
+   them; the shipping evidence (cuda-v4 revalidation + cuda-v6 gate runs) is fully CSV-backed.
+
+   cuda-v5 paired run log (run 1 of 1, idle-gated true/true, GPU 1, 2026-06-04):
+   `standard 61.86->57.78us 1.0706x | 1x1536x4096h64 0.9930x | 1x126x2048h32 23.33->26.45us 0.8820x |
+   1x1536x2048h32 1.0000x | 1x6144x4096h64 0.9989x | 1x6144x2048h32 0.9923x | 2x6144x4096h64 1.0000x |
+   2x126x2048h32 0.9943x | 2x6144x2048h32 1.0017x | 1x24576x4096h64 0.9997x | 1x24576x2048h32 1.0006x |
+   GEOMEAN_VS_CUDA-V4 0.9930x`
+   cuda-v7 sweep log: `57.73/57.74/57.76us` (3 runs, 300 iters each) vs cuda-v6 57.7us. Correctness
+   4/4 passed for both v5 and v7 before their rejection (pytest run per iteration; v6's final raw
+   log is in `docs/logs/correctness_cuda_v6_20260604.log`).
+
+2. **Like-for-like estimate corrected to ~1.46x** (was ~1.49x, bad composition). Arithmetic:
+   environment-adjusted geomean = old-environment geomean x paired geomean(v6/v4) =
+   1.4505 x (1.0038..1.0066) = **1.456-1.460**; using the old-run spread (1.4417-1.4633) the
+   cross-run combination range is ~1.447-1.473. Headline like-for-like: **~1.46x**.
+
+3. **Large-shape parity phrasing**: "large shapes remain within <=0.6% paired delta; the
+   24576-row shapes are exact parity to the displayed precision" (worst observed paired slowdown
+   across ALL shapes/runs: +1.198% on 1x1536x4096 half64, within its ~8% band).
+
+4. **LTX-2 "byte-identical" -> "functionally unchanged"**, now diff-backed:
+   `docs/logs/v4_to_v6_rotary_cuh.diff` (78-line diff vs the v4 snapshot `f4c8b844044f`) shows all
+   code deltas live in the standard kernel/launcher; the only LTX-2 delta is a 3-line comment
+   (no kernel-body or launch-config change). Paired runs confirm behavioral parity.
+
+5. **Final correctness re-run recorded raw**: `docs/logs/correctness_cuda_v6_20260604.log` —
+   4 passed; per-shape `pair_diff=0.000e+00` on 11/11 (cuda-v6 BIT-EXACT vs the SGLang baseline;
+   `cand_err == base_err` exactly on every signature).
+
+Queued (non-blocking, next cycle): stale `static_assert` message in `StandardRotaryKernel`
+mentions a removed "shared cos/sin cache" — comment-only cleanup deferred to avoid churning the
+gate-evidence source hash (`317e2fab7ade`).

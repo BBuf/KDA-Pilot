@@ -1,0 +1,35 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0 -- /usr/bin/python
+cachedir: .pytest_cache
+rootdir: /home/sglang-omni/bbuf/kda_runs/b200_diffusion_rotary_embedding__multi_shape/2026-06-04_17-45-46/kernel
+plugins: anyio-4.13.0, typeguard-4.5.1
+collecting ... collected 4 items
+tests/test_correctness.py::test_register_metadata Unable to import `torchao` Tensor objects. This may affect loading checkpoints serialized with `torchao`
+PASSED
+tests/test_correctness.py::test_correctness_cases hunyuanvideo__standard__1x27030x24x128: base_err=5.825e-02 cand_err=5.825e-02 pair_diff=0.000e+00
+ltx23_ti2v__1x1536x4096__half64: base_err=6.102e-02 cand_err=6.102e-02 pair_diff=0.000e+00
+ltx23_ti2v__1x126x2048__half32: base_err=5.545e-02 cand_err=5.545e-02 pair_diff=0.000e+00
+ltx23_ti2v__1x1536x2048__half32: base_err=5.969e-02 cand_err=5.969e-02 pair_diff=0.000e+00
+ltx23_ti2v__1x6144x4096__half64: base_err=6.201e-02 cand_err=6.201e-02 pair_diff=0.000e+00
+ltx23_ti2v__1x6144x2048__half32: base_err=6.183e-02 cand_err=6.183e-02 pair_diff=0.000e+00
+ltx23_two__2x6144x4096__half64: base_err=6.212e-02 cand_err=6.212e-02 pair_diff=0.000e+00
+ltx23_two__2x126x2048__half32: base_err=5.786e-02 cand_err=5.786e-02 pair_diff=0.000e+00
+ltx23_two__2x6144x2048__half32: base_err=6.207e-02 cand_err=6.207e-02 pair_diff=0.000e+00
+ltx23_two__1x24576x4096__half64: base_err=8.911e-02 cand_err=8.911e-02 pair_diff=0.000e+00
+ltx23_two__1x24576x2048__half32: base_err=6.195e-02 cand_err=6.195e-02 pair_diff=0.000e+00
+PASSED
+tests/test_correctness.py::test_fallback_non_captured PASSED
+tests/test_correctness.py::test_dispatch_predicates PASSED
+=============================== warnings summary ===============================
+tests/test_correctness.py::test_register_metadata
+    a_major_mode: tcgen05.OperandMajorMode,
+tests/test_correctness.py::test_register_metadata
+    b_major_mode: tcgen05.OperandMajorMode,
+tests/test_correctness.py::test_register_metadata
+tests/test_correctness.py::test_register_metadata
+    from cutlass.cute.nvgpu.tcgen05 import OperandMajorMode
+tests/test_correctness.py::test_register_metadata
+tests/test_correctness.py::test_register_metadata
+tests/test_correctness.py: 14 warnings
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 4 passed, 20 warnings in 16.54s ========================
