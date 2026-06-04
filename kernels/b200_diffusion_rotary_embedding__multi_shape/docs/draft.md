@@ -134,3 +134,28 @@ Execution: cuda-v5 = D1 + D2 (disjoint kernels: ltx2<32> launcher + standard ker
 cuda-v6 = D3 (only if post-v5 NCU still shows compute/issue pressure on standard).
 cuda-v7 = D4 (single bounded attempt, decomposition required). D5 only on D1 underperformance.
 PDL re-trial: WAIVED this round — prior A/B showed PDL hurting isolated-launch latency on this exact task (docs above); no new evidence to revisit.
+
+## Codex triage review integration (2026-06-04, gpt-5.5:high)
+
+Codex reviewed the D1-D5 ranking (full text in the loop workspace). Verdicts applied:
+- **D1 re-ranked: bounded experiment, uncertain payoff** (was: top win). Codex: half32 already
+  runs 86% achieved occupancy; 2 rows/CTA keeps the same resident-thread count (2048/SM either
+  way), so the half64-SOL analogy does not justify a 10-12% claim. The 74.9%->85% SOL projection
+  is withdrawn; D1 is attempted because it halves block-scheduling events and improves tail
+  behavior at zero numeric risk, with revert-on-regression per bucket.
+- **D1 exact mapping (per Codex)**: `num_blocks=(total_rows+1)/2`, `local_row=threadIdx.x/tpr`,
+  `lane=threadIdx.x%tpr`, per-thread row guard (odd tail), per-row recompute of b/s/cos/sin bases.
+- **D2 confirmed correct** (pass-invariance holds for any blockDim multiple of kVecPerHead=16);
+  extended with a {128,192,256} block-size sweep (hoisted cos/sin) before any D3 work.
+- **D3 tightened**: MEDIUM-HIGH risk; only after post-D2 NCU still shows compute/issue pressure;
+  fp32 cos/sin loads remain, so the gain estimate is reduced.
+- **D4 DROPPED from the gate-eligible ranking**: predicate memoization is host-layer work; any
+  win must be decomposed against a memoized-cuda-v4 control and cannot satisfy the "targeted
+  bucket kernel win" gate. Parked as queued host-integration follow-up, out of this round's gate.
+- **D5 unchanged** (conditional on NCU LSU/L1-pressure evidence; 256-bit vectors may reduce lane
+  count and hurt parallelism).
+- PDL waiver and half64 no-go endorsed.
+
+Execution after integration: cuda-v5 = D2 (hoist + swept block size) + D1 (2-rows/CTA, kHalf=32
+only, half64 path byte-identical), evaluated per-bucket vs cuda-v4 with the noise-band gate;
+revert whichever component regresses its bucket.
