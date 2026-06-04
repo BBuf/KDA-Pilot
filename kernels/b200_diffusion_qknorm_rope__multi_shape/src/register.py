@@ -12,10 +12,12 @@ The sibling is loaded under a SLUG-SPECIFIC module name (``_kda_impl_<slug>_wrap
 files are loaded in one process, this task never resolves another task's top-level ``wrapper``
 out of ``sys.modules``.
 
-``EXPORTS`` is read by ``scripts/export_kda_kernels/export.py`` (keys only) to decide which
-functions to promote into ``kda_kernels``. The wrapper is imported lazily (only when called) so
-this file ``exec``s cleanly even where ``__file__``/torch/sglang are absent — the export tool
-``exec``s this module in a bare namespace and only needs the ``EXPORTS`` keys.
+``EXPORTS`` names the public callables this task provides (part of the task interface
+contract). Historical consumer: ``scripts/export_kda_kernels/export.py`` read the keys to
+build the now-retired ``kda_kernels`` overlay; this task's active promotion path is the
+in-tree SGLang ``jit_kernel`` placement instead (see ``docs/sglang_jit_export.md``). The
+wrapper is imported lazily (only when called) so this file still ``exec``s cleanly even
+where ``__file__``/torch/sglang are absent.
 """
 
 from __future__ import annotations
@@ -84,9 +86,9 @@ def register() -> dict[str, Any]:
     }
 
 
-# Only the keys matter to the export tool; the value is the promoted callable. The wrapper
-# module also exposes ``fused_inplace_qknorm_rope`` directly, which is what the generated
-# kda_kernels dispatcher imports.
+# Public-callable map per the task interface contract (the value is the callable; harnesses
+# and any export tooling read the keys). The wrapper module also exposes
+# ``fused_inplace_qknorm_rope`` directly for ABI parity with the SGLang public op.
 EXPORTS = {
     "fused_inplace_qknorm_rope": optimized_wrapper,
 }

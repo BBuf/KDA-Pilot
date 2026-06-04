@@ -23,14 +23,17 @@ Usage (inside sglang_bbuf on ion-b200):
   CUDA_VISIBLE_DEVICES=<idle> python benchmark.py             # isolated baseline-vs-candidate rows
   CUDA_VISIBLE_DEVICES=<idle> python benchmark.py --sanity    # quick ~1.0x check
   CUDA_VISIBLE_DEVICES=<idle> python benchmark.py --device-fair  # device-only A/B (symmetric JIT modules)
-  CUDA_VISIBLE_DEVICES=<idle> PYTHONPATH=<repo-root> python benchmark.py --integrated  # LITERAL install path
+  CUDA_VISIBLE_DEVICES=<idle> PYTHONPATH=<repo-root> python benchmark.py --integrated  # retired overlay lane (negative control ONLY)
 
-The PRODUCTION performance claim comes from ``--integrated``: it runs the real
-``kda_kernels.install()`` overlay (the public SGLang symbol replaced exactly once) and times
-the original baseline vs the INSTALLED public symbol. The plain isolated mode and
+The PRODUCTION performance claim comes from the IN-TREE drop-in lane
+(``profile/in_sglang/validate_in_tree.py``): candidate ``.cuh`` placed under SGLang's own
+``csrc/diffusion/qknorm_rope.cuh`` so BOTH sides go through SGLang's identical
+``register_custom_op`` public op. ``--integrated`` is the RETIRED ``kda_kernels.install()``
+overlay lane, kept only as a negative control (it replaces the public symbol with a plain
+dispatcher — measured net regression, never promotion evidence). The plain isolated mode and
 ``--device-fair`` are diagnostic — the isolated mode's candidate path bypasses the baseline's
 ``register_custom_op`` layer, so its large-shape numbers carry a known call-path asymmetry
-(see BL-candidate-bypasses-custom-op-asymmetry); trust ``--integrated`` for production deltas.
+(see BL-candidate-bypasses-custom-op-asymmetry); trust the in-tree lane for production deltas.
 """
 
 from __future__ import annotations
@@ -307,13 +310,17 @@ def _ensure_kda_kernels_importable() -> Path:
 
 
 def _integrated_main(correctness) -> int:
-    """LITERAL integrated install-path A/B (AC-4) — the production delta of installing the
-    candidate. Captures the ORIGINAL SGLang baseline public op, runs
+    """RETIRED overlay install-path A/B — negative control only, never promotion evidence.
+
+    Historical lane: captures the ORIGINAL SGLang baseline public op, runs
     ``kda_kernels.install(force=True, strict=True)`` to monkey-patch the public symbol with
-    the generated KDA overlay dispatcher (exactly ONE layer — the real production path, not a
-    re-wrapped custom op), asserts the swap, then times the original baseline vs the
-    INSTALLED public symbol INTERLEAVED on identical inputs. Appends ``name__install`` rows +
-    ``GEOMEAN_install`` to benchmark.csv. Restores the baseline on exit."""
+    the generated KDA overlay dispatcher, asserts the swap, then times the original baseline
+    vs the INSTALLED public symbol INTERLEAVED on identical inputs. Appends ``name__install``
+    rows + ``GEOMEAN_install`` to benchmark.csv. Restores the baseline on exit.
+
+    The overlay drops the baseline's ``register_custom_op`` (not torch.compile-safe) and its
+    per-call Python dispatch tax was measured as a net regression — the promotion arbiter is
+    the in-tree drop-in lane (``profile/in_sglang/validate_in_tree.py``) instead."""
     import importlib
 
     qmod = importlib.import_module(_SGL_QKNORM_PATH)

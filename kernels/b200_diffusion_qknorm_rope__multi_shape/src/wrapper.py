@@ -12,17 +12,21 @@ other signature — the small captured rows, any non-captured shape, any non-pro
 dtype/dim/flag/layout — falls back to the SGLang baseline BEFORE the C++ matcher.
 
 This module owns all heavy machinery (``Path(__file__)``, torch, ``load_jit``) so the
-sibling ``register.py`` stays import-light and ``exec``-safe under the export tool. It is
-copied verbatim into ``kda_kernels/diffusion/qknorm_rope/_impls/b200/`` by
-``scripts/export_kda_kernels/export.py``; the generated overlay dispatcher imports the
-``fused_inplace_qknorm_rope`` alias defined at the bottom of this file.
+sibling ``register.py`` stays import-light and ``exec``-safe. It is the TASK-LOCAL loop
+lane only: candidate iteration, correctness, and device-fair A/B run through it. The
+SHIPPING integration is the in-tree ``.cuh`` placement inside SGLang's own
+``python/sglang/jit_kernel/csrc/diffusion/qknorm_rope.cuh`` (public op and its
+``register_custom_op`` byte-unchanged) — see ``docs/sglang_jit_export.md``. The historical
+``kda_kernels`` overlay export of this wrapper was measured as a net regression
+(host dispatch tax) and is retired for this task; the export tool still exists in the
+repo but is no longer this task's promotion path.
 
-Recursion safety on the installed path: the SGLang baseline is captured at *import* time
-(``install()`` calls ``_preload_kda_impls`` to import this module BEFORE monkey-patching
-the public symbol), so the small/fallback route calls the original fast baseline rather
-than the swapped KDA symbol. A thread-local re-entrancy guard, an identity/``__module__``
-recursion check, and a never-recursing PyTorch ``semantic_reference_inplace`` safety net
-defend against any double-install ordering surprise.
+Recursion safety (kept as defense-in-depth from the overlay era, and still useful if any
+caller rebinds the public symbol): the SGLang baseline is captured at *import* time, so
+the small/fallback route calls the original fast baseline rather than a possibly-swapped
+public symbol. A thread-local re-entrancy guard, an identity/``__module__`` recursion
+check, and a never-recursing PyTorch ``semantic_reference_inplace`` safety net defend
+against any rebinding/ordering surprise.
 """
 
 from __future__ import annotations
@@ -44,8 +48,9 @@ except Exception:  # pragma: no cover - sglang not importable in CPU-only enviro
         return functools.lru_cache(maxsize=None)(fn)
 
 
-# SGLang baseline captured at IMPORT time. install() preloads this module before swapping
-# the public symbol, so this is the ORIGINAL fast CUDA baseline, not the KDA dispatcher.
+# SGLang baseline captured at IMPORT time, so the fallback route always holds the ORIGINAL
+# fast CUDA baseline even if some caller later rebinds the public symbol (defense-in-depth
+# retained from the retired overlay era).
 try:
     from sglang.jit_kernel.diffusion.qknorm_rope import (
         fused_inplace_qknorm_rope as _SGLANG_BASELINE_AT_IMPORT,
@@ -73,7 +78,7 @@ _tls = threading.local()
 
 # Optional explicit fallback delegate. Left None by default (the fallback then uses the
 # captured fast SGLang baseline, or the PyTorch semantic reference if none is available).
-# The in-overlay double-install test may point this at a callable to exercise the guard.
+# Tests may point this at a callable to exercise the recursion guard.
 BASELINE_DELEGATE: Optional[Callable[..., None]] = None
 
 
@@ -352,8 +357,8 @@ def optimized_wrapper(
         _tls.in_call = False
 
 
-# Public alias under SGLang's callable name. The generated kda_kernels overlay dispatcher
-# imports this symbol by name (``getattr(<wrapper module>, "fused_inplace_qknorm_rope")``);
+# Public alias under SGLang's callable name, kept for ABI parity with the public op:
+# task harnesses and tests import this module's ``fused_inplace_qknorm_rope`` by name.
 # ``optimized_wrapper`` already mirrors the exact SGLang signature, so this is a straight
 # alias (same in-place contract, same re-entrancy guard, same dispatch/fallback behavior).
 fused_inplace_qknorm_rope = optimized_wrapper
