@@ -593,15 +593,20 @@ decisions DEC-1..DEC-6; hard per-shape no-regression gate vs `cuda-v4`).
   the current ltx2 baseline 2–8× slower at scale). All claims therefore gate on `cuda-v4`, not on
   the inflated current-baseline geomean. torch 2.11.0+cu130, triton 3.6.0, nvcc 13.0, tvm_ffi
   0.1.9, driver 580.126.20, GPU 1 (idle-gated before/after every run).
-- **Gate evidence** (3 idle-gated paired runs, same process, identical wrapper ABI, v4 snapshot
-  `f4c8b844044f`): standard `61.86 → 57.7 µs` = 1.0709/1.0715/1.0718× (3-of-3 beyond the 3%
-  band); no other shape regresses beyond its noise band in any run (large ≤0.6% delta, 24576-row
-  shapes exact parity at displayed precision); pair geomeans 1.0038/1.0061/1.0066×.
+- **Gate evidence** (3 idle-gated paired sessions, same process, identical wrapper ABI, v4
+  snapshot `f4c8b844044f`; authoritative set = the provenance-complete sessions of 2026-06-04
+  ~11:0x–11:17 UTC whose CSV `cmd` field carries the literal `--compare-src/--compare-label`
+  arguments — an earlier same-verdict set predating the command-provenance fix remains in the
+  CSV as history): standard `61.86 → 57.7 µs` = 1.0703/1.0709/1.0709× (3-of-3 beyond the 3%
+  band); no shape regresses beyond its noise band in 2-of-3 runs (worst single-run −2.77% on
+  `1x6144x4096 h64`, one session only, within its ~7.6% band; 24576-row and `2x6144x4096`
+  shapes literal 1.0000× in all 3 sessions); fresh pair geomeans 1.0049/1.0050/1.0018×.
 - **Correctness**: 4/4 pytest on the final source — **bit-exact 11/11** (`pair_diff = 0.000e+00`
   every signature; raw log `docs/logs/correctness_cuda_v6_20260604.log`).
-- **Headline numbers**: vs the CURRENT container baseline, geomean 3.1682–3.1965× (environment-
-  inflated — must carry the BASELINE SHIFT note); **like-for-like vs the 2026-06-01 environment
-  ≈1.46×** (= 1.4505 × paired 1.0038–1.0066), standard bucket 1.80× → **1.92×**.
+- **Headline numbers**: vs the CURRENT container baseline, geomean 3.10–3.20× across the six
+  paired sessions (environment-inflated — must carry the BASELINE SHIFT note); **like-for-like
+  vs the 2026-06-01 environment ≈1.46×** (= 1.4505 × geomean(fresh pair geomeans) = 1.4505 ×
+  1.0039 = 1.456), standard bucket 1.80× → **1.92×** (idle-gated install path: 110.88/57.71).
 - **Active bounds** (`profile/ncu-v3/REPORT.md` + `ncu-v2`): standard memory-paced at ~75%
   effective DRAM (hoist moved it from compute/BW-balanced; MLP probe `cuda-v7` rejected with zero
   movement; bf16-packed math no-go — compute SOL 47%, not the limiter); LTX-2 large-half32 76.1%

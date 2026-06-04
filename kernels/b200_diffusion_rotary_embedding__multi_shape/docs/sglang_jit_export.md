@@ -57,11 +57,13 @@ Performed in a **task-owned git worktree** of SGLang (`git worktree add --detach
   @ `edb1b3f8f`, candidate `.cuh` at `python/sglang/jit_kernel/csrc/diffusion/rotary_embedding.cuh`,
   relative-path `cache_once` loader): in-SGLang oracle bit-exact 11/11 (max_abs_diff 0.0), fp16
   fallback exact, symbols restored, worktree removed.
-- **Install-path validated** (`kda_install_validate.py`, PYTHONPATH=repo_root overlay):
-  `install()` swaps both rotary symbols (plus the other promoted families), integrated oracle
-  bit-exact 11/11 through the public API, non-captured falls back (diff 0.0), `uninstall()`
-  restores both. **Standard shape through the installed path: 57.7 µs — identical to the direct
-  wrapper median → no dispatcher/host tax.** Full JSON: `docs/logs/kda_install_validate_v6_20260604.json`.
-  Caveat recorded: a co-resident process appeared on GPU 1 during the final JSON capture; the
-  timing rows match the clean idle-gated `benchmark.csv` runs exactly, and all correctness facts
-  are timing-independent. The promotion latency numbers remain the idle-gated `benchmark.csv` rows.
+- **Install-path validated, IDLE-GATED** (`kda_install_validate.py` with parent/worker
+  `nvidia-smi` gating; `idle_gated: true` with before/after GPU states embedded in the JSON;
+  PYTHONPATH=repo_root overlay): `install()` swaps both rotary symbols (plus the other promoted
+  families), integrated oracle bit-exact 11/11 through the public API, non-captured falls back
+  (diff 0.0), `uninstall()` restores both. **Standard shape through the installed path:
+  57.71 µs — identical to the direct wrapper median (57.7 µs) → no dispatcher/host tax**
+  (installed-path standard speedup vs current baseline 110.88/57.71 = 1.921×). Full JSON:
+  `docs/logs/kda_install_validate_v6_20260604.json` (replaces an earlier non-idle-gated capture
+  during which a co-resident process had appeared; the superseded capture's correctness facts
+  were identical).

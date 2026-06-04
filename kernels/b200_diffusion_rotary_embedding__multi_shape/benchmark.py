@@ -252,6 +252,9 @@ def main() -> int:
     sha = _git_short_sha()
     ver_id = f"git_sha={sha}" if sha != "nogit" else "git_sha=N/A(copied-dir); version-id=source-hash"
     cmdstr = f"CUDA_VISIBLE_DEVICES={visible} python benchmark.py --warmup {args.warmup} --iters {args.iters} --candidate {args.candidate}"
+    if args.compare_src:
+        # exact-command provenance: the paired rows must be reproducible verbatim
+        cmdstr += f" --compare-src {args.compare_src} --compare-label {args.compare_label}"
     prov = f"host={host} gpu_id={gpu_id} gpu={gpu_model} {ver_id} {version} cmd='{cmdstr}'"
 
     csv_path = KERNEL_DIR / "benchmark.csv"

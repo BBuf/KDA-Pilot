@@ -169,15 +169,22 @@ revert whichever component regresses its bucket.
 | LTX-2 small | (D1 side effect measured; D4 ruled gate-ineligible by Codex review) | NO-GO: launch/latency floor; v5 grid-halving regressed 1x126x2048 by 12% (hypersensitive to launch shape); device-side floor confirmed |
 | LTX-2 large-half64 | none (kernel byte-identical) | NO-GO stands (ncu-v2: 85.3% DRAM SOL, HBM ceiling) |
 
-Gate verdict: **cuda-v6 PASSES the hard no-regression gate** (3 idle-gated paired runs vs v4
-snapshot f4c8b844044f: no shape regresses beyond its noise band in any run; standard improves
-beyond band in 3-of-3). Pair geomeans 1.0038/1.0061/1.0066x. Outcome metric vs the CURRENT
-SGLang baseline (edb1b3f8f): geomean 3.1682-3.1965x — read with the BASELINE SHIFT note above
-(the ltx2 Triton baseline on this checkout lacks PR #24732 and is 2-8x slower at scale than the
-2026-06-01 pinned baseline; cuda-v6's device kernels are the same speed in both environments).
-Like-for-like vs the 2026-06-01 environment: standard 110.8/57.7 = 1.92x (was 1.80x), LTX-2
-buckets unchanged (1.00-1.67x) -> environment-adjusted geomean ~= 1.49x (prior 1.45x scaled by
-the 11-shape geomean of the per-shape v6/v4 ratios, 1.006x, applied to the standard bucket gain).
+Gate verdict: **cuda-v6 PASSES the hard no-regression gate.** Authoritative gate evidence = the
+THREE provenance-complete idle-gated paired sessions of 2026-06-04 ~11:0x-11:17 UTC
+(`benchmark.csv` rows `cuda-v6_vs_cuda-v4` whose `cmd='…'` includes the literal
+`--compare-src ../v4_src --compare-label cuda-v4`; v4 snapshot `f4c8b844044f`):
+standard 1.0703/1.0709/1.0709x (3-of-3 beyond the 3% band); no shape regresses beyond its noise
+band in 2-of-3 runs (worst single-run ratio 0.9723 on `1x6144x4096 h64`, one run only, within
+its ~7.6% band; the 24576-row and `2x6144x4096` shapes are literal 1.0000x in all 3 sessions).
+Fresh pair geomeans 1.0049/1.0050/1.0018x. (An earlier 3-session set with the same verdict —
+1.0038/1.0061/1.0066x — predates the command-provenance fix in `benchmark.py` and remains in
+the CSV as corroborating history only.) Outcome metric vs the CURRENT SGLang baseline
+(edb1b3f8f): geomean 3.1043-3.1965x across all six sessions — read with the BASELINE SHIFT note
+above (the ltx2 Triton baseline on this checkout lacks PR #24732 and is 2-8x slower at scale
+than the 2026-06-01 pinned baseline; cuda-v6's device kernels are the same speed in both
+environments). Like-for-like vs the 2026-06-01 environment: standard 110.8/57.7 = 1.92x (was
+1.80x), LTX-2 buckets unchanged -> environment-adjusted geomean = old geomean x geomean(fresh
+pair geomeans) = 1.4505 x 1.0039 = **1.456 -> headline ~1.46x**.
 
 ## Gate-review corrections (Codex independent review, 2026-06-04)
 
@@ -221,3 +228,20 @@ Codex verified the gate verdict and bound conclusions, and required five correct
 Queued (non-blocking, next cycle): stale `static_assert` message in `StandardRotaryKernel`
 mentions a removed "shared cos/sin cache" — comment-only cleanup deferred to avoid churning the
 gate-evidence source hash (`317e2fab7ade`).
+
+## Round-1 corrections (Codex round-0 RLCR review, 2026-06-04)
+
+All four REQUIRED items applied:
+1. `benchmark.py` `cmdstr` now records `--compare-src/--compare-label`; the hard-gate evidence was
+   re-collected as three fresh idle-gated paired sessions (rows of 2026-06-04 ~11:0x-11:17 UTC,
+   full command provenance) — gate verdict unchanged (see the updated verdict paragraph above).
+2. `kda_install_validate.py` gained parent/worker `nvidia-smi` idle gating with before/after
+   states embedded in the JSON; the replacement run shows `idle_gated: true`, installed-path
+   standard 57.71us == direct wrapper (no host tax), oracle bit-exact 11/11.
+3. The stale `~1.49x` like-for-like paragraph was replaced in place with the corrected
+   composition (1.4505 x 1.0039 = 1.456 -> ~1.46x).
+4. b200 KDA metadata unified: `__init__.py` / `KDA_EXPORTS.json` / `KDA_STATUS.md` all carry the
+   same kp commit and the same annotated speedup string (verified by script + grep). Stale-string
+   sweep across docs/prompt.md/interface.md/solutions.jsonl/kda_kernels: zero occurrences of
+   `1.49x` (outside correction notes), `ec7b6459`, or bare `1.0038x`/`1.0018x` (the only
+   remaining `1.0018x` is the legitimate fresh pair-geomean citation in the verdict paragraph).

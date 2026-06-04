@@ -5,9 +5,9 @@
 | Task slug | `b200_diffusion_rotary_embedding__multi_shape` |
 | Arch | `b200` |
 | CUDA capability | `(10, 0)` |
-| Commit (kernel-pilot) | `ea349b784543ccc7e3af20743a386c8d289dd9d9` |
+| Commit (kernel-pilot) | `afb416adff0765da3bf610826631b6d5704d5381` |
 | Promotion date | 2026-06-04 |
-| Reported geomean speedup | ~1.46x like-for-like (geomean over 11 captured signatures vs the 2026-06-01 baseline env; 3.17x vs the current container baseline whose LTX-2 Triton lacks PR #24732; replacement gate vs prior promoted cuda-v4: 1.0038-1.0066x, standard bucket 1.071x) |
+| Reported geomean speedup | ~1.46x like-for-like (env-shift annotated; gate vs prior promoted cuda-v4: fresh pair geomeans 1.0018-1.0050x, standard bucket 1.071x) |
 | Promoted functions | apply_ltx2_split_rotary_emb, apply_rotary_embedding |
 
 ## Files

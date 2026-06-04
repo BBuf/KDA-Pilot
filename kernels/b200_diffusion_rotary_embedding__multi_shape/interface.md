@@ -89,22 +89,32 @@ cuda-v4 section above. Continuation deltas only:
   across its grid-stride passes; the launcher enforces `blockDim % kVecPerHead == 0`) and the
   block size is chosen as the largest full-pass divisor that also divides the 2048-thread SM
   budget (128 threads for the captured 24-head/128-dim shape; measured sweep in `docs/draft.md`).
-  Captured standard shape: 61.86 → **57.7 µs** = **1.0709–1.0718× vs cuda-v4** (3 idle-gated
-  paired runs, 3-of-3 beyond the 3% noise band). Still **bit-exact**: `pair_diff = 0.000e+00` on
+  Captured standard shape: 61.86 → **57.7 µs** = **1.0703–1.0709× vs cuda-v4** (authoritative
+  gate evidence: the 3 idle-gated paired sessions of 2026-06-04 ~11:0x–11:17 UTC whose CSV `cmd`
+  field carries the literal `--compare-src/--compare-label` arguments; 3-of-3 beyond the 3%
+  noise band; an earlier same-verdict session set predating the command-provenance fix remains
+  in the CSV as corroborating history only). Still **bit-exact**: `pair_diff = 0.000e+00` on
   all 11 signatures (raw log: `docs/logs/correctness_cuda_v6_20260604.log`).
 - **LTX-2 kernel functionally unchanged** (comment-only source delta vs the v4 snapshot
-  `f4c8b844044f`; diff: `docs/logs/v4_to_v6_rotary_cuh.diff`). Paired deltas within ≤0.6% on the
-  large shapes (24576-row shapes exact parity at displayed precision); worst small-shape paired
-  delta +1.198%, within its ~8% cross-run band.
+  `f4c8b844044f`; diff: `docs/logs/v4_to_v6_rotary_cuh.diff`). Fresh paired sessions: the
+  24576-row and `2x6144x4096` shapes are literal 1.0000× in all 3 sessions; worst single-run
+  delta −2.77% (`1x6144x4096 h64`, one session only, within its ~7.6% band).
 - **Paired benchmark mode**: `CUDA_VISIBLE_DEVICES=<idle> python benchmark.py --warmup 50
   --iters 300 --candidate cuda-v6 --compare-src <v4-src-snapshot> --compare-label cuda-v4` —
   times baseline, v4-snapshot, and candidate in the SAME worker process through the identical
-  wrapper ABI; rows `cuda-v6_vs_cuda-v4` in `benchmark.csv`. Pair geomeans 1.0038/1.0061/1.0066×.
+  wrapper ABI; rows `cuda-v6_vs_cuda-v4` in `benchmark.csv` with the full compare command in
+  the provenance field. Fresh pair geomeans 1.0049/1.0050/1.0018×.
 - **Environment note (mandatory with any geomean claim)**: the 2026-06-04 container baseline is
   SGLang `edb1b3f8f`, whose LTX-2 Triton kernel lacks PR #24732 and is 2–8× slower at scale than
-  the 2026-06-01 pinned baseline — geomean vs the CURRENT baseline is **3.1682–3.1965×** but is
-  environment-inflated; the like-for-like estimate vs the 2026-06-01 environment is **~1.46×**
-  (= 1.4505 × paired 1.0038–1.0066; see `docs/draft.md` BASELINE SHIFT + corrections).
+  the 2026-06-01 pinned baseline — geomean vs the CURRENT baseline is **3.10–3.20×** across the
+  six paired sessions but is environment-inflated; the like-for-like estimate vs the 2026-06-01
+  environment is **~1.46×** (= 1.4505 × geomean(fresh pair geomeans) = 1.4505 × 1.0039 = 1.456;
+  see `docs/draft.md` BASELINE SHIFT + corrections).
+- **Install-path validation (idle-gated)**: `kda_install_validate.py` parent/worker idle gate
+  (`idle_gated: true`, before/after states in the JSON): `install()` swaps both symbols, the
+  integrated public API is bit-exact 11/11, non-captured falls back, `uninstall()` restores, and
+  the standard shape runs **57.71 µs through the installed path** (= the direct wrapper median →
+  no dispatcher/host tax). Evidence: `docs/logs/kda_install_validate_v6_20260604.json`.
 - **Active bounds refreshed** (`profile/ncu-v3/REPORT.md`): standard now memory-paced (DRAM 69.8%,
   compute 47.1%, ~75% effective of peak; MLP probe cuda-v7 zero movement → at bound; bf16-packed
   math no-go by evidence); LTX-2 large-half32 76.1% DRAM SOL clean-access no-go; small shapes
