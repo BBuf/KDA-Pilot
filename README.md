@@ -164,6 +164,30 @@ long-running goal across model switches, resume the session:
 claude --resume <session-uuid>
 ```
 
+**Ultracode mode** — the maximum-thoroughness setting (the "Effort (Ultracode –
+xhigh + workflows)" entry in the Claude Code effort menu, paired with Auto mode).
+Ultracode is *not* a launch-flag effort value: `claude --effort ultracode` warns
+(`Unknown --effort value 'ultracode'`) and falls back to the default — the valid
+`--effort` flag levels are `low, medium, high, xhigh, max`. Ultracode is a
+composite of **xhigh effort + dynamic workflows enabled**, so the agent reasons
+at xhigh and authors multi-agent workflows on substantive tasks. Enable dynamic
+workflows once — the **Dynamic workflows** toggle in `/config` (settings key
+`enableWorkflows`) — then launch at xhigh:
+
+```bash
+claude --permission-mode bypassPermissions --model opus --effort xhigh
+```
+
+Or do it in one self-contained command:
+
+```bash
+claude --permission-mode bypassPermissions --model opus --effort xhigh --settings '{"enableWorkflows": true}'
+```
+
+With workflows enabled, the in-session `/effort` menu shows "Ultracode" and
+selecting it pins xhigh. To opt a single prompt in instead of the whole session,
+include the keyword `ultracode` in that message.
+
 **Codex** — full-access, no approval prompts:
 
 ```bash
