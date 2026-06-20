@@ -15,6 +15,23 @@ FusedMoe = **22.4µs/call avg, 36.5% of decode** (profiler), FP4 experts. Key fi
 (../../../TileRT_讨论材料.md §17): bf16 grouped GEMM = 157µs/58% HBM at M=1 (too slow);
 **must use fused FP4 + M=1-specialized kernel** (deep_gemm fp8_fp4_mega_moe) to hit 22µs.
 This is the single op that decides whether the engine reaches TileRT-class tok/s.
+## Design levers to exploit (see ../../docs/tilert_design_levers.md)
+- **L5 FP4 bandwidth** (§16/§20): MXFP4 expert up/gate weights → ~4× less HBM. A bf16
+  grouped GEMM caps ~58% HBM at 157µs (M=1); FP4 + M=1-specialized kernel is the only path to 22µs.
+- **L3 weight-read-once + occupancy=1 persistent grid** (§4): stream the 8 selected
+  experts' FP4 weights once via TMA into the resident CTA.
+- **L2 no-GMEM intermediates** (§13.3): keep up/gate products on-chip through SiLU and the down-proj.
+- **L1 tile overlap** (§4/§13): Prefetcher TMA + Consumer HMMA + mbarrier double-buffer.
+
+## Shapes (decode + MTP)
+FusedMoe SASS kSeqLen = {1,2,4}, KeComputeType = 5(fp4)/7(fp8). Workloads
+`bench/workloads.json` cover N∈{1,2,4} × {fp4,fp8}. The compute core (up/gate/silu,
+routing) is validated standalone via `harness/tilert_oracle.py` cases
+`rmsnorm_up_gate_silu` (3.4e-2 fp8) + `rmsnorm_expert_proj` (1e-7); the full 256-expert
+FP4 pack is not a 1-call standalone module (see ORACLE_RESULTS.md).
+
 ## Goal
-CUDA MoE-decode kernel matching the baseline output and ≤ ~22µs. Lever: FP4 block-scaled
-MMA + fused up/gate/silu/down + M=1 decode specialization (not generic grouped GEMM).
+CUDA MoE-decode kernel matching the baseline output and ≤ ~22µs on N∈{1,2,4}. Lever:
+FP4 block-scaled MMA + fused up/gate/silu/down + M=1 decode specialization (not generic
+grouped GEMM). TileRT target latency = in-graph profiler 22.4µs (the fused full-MoE op
+is not isolatable per-call; see docs/benchmark_method.md).

@@ -1,0 +1,30 @@
+[task]
+slug = "b200_tilert_qkv_rope"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "qkv_rope"
+tilert_op = "tilert::qkv_rope_op"
+tilert_kernel = "QkvRopeExecutorImpl<DefaultSchedule, 4, ., 1, ., .>"
+decode_share_pct = 0.0
+standalone_measurable = "yes"
+
+[build]
+language = "cuda"
+baseline_entry_point = "baseline/qkv_rope.py::qkv_rope_baseline"
+candidate_entry_point = "solution/kernel.cu::qkv_rope_candidate"
+
+[reference]
+# ≥3× isolated ncu medians (gpu__time_duration.avg) on idle B200.
+# Per-seq (median us / HBM%): 1=6.66us/0.02%HBM, 2=6.82us/0.03%HBM, 4=6.82us/0.04%HBM. See ../../docs/tilert_reference.md.
+tilert_latency_us = 6.66
+tilert_hbm_pct = 0.02
+measurement = "isolated_ncu_median_n3"
+measured = true
+seqlens = [1, 2, 4, 8, 16]
+compute_types = [3]   # 0=none 3=bf16 5/6/8=fp4 7=fp8
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+required_matched_ratio = 1.0

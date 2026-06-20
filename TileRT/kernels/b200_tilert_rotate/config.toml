@@ -1,0 +1,30 @@
+[task]
+slug = "b200_tilert_rotate"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "rotate"
+tilert_op = "tilert::rotate_op"
+tilert_kernel = "RotateExecutorImpl<DefaultSchedule, 4, ., 1, ., .>"
+decode_share_pct = 0.0
+standalone_measurable = "yes"
+
+[build]
+language = "cuda"
+baseline_entry_point = "baseline/rotate.py::rotate_baseline"
+candidate_entry_point = "solution/kernel.cu::rotate_candidate"
+
+[reference]
+# ≥3× isolated ncu medians (gpu__time_duration.avg) on idle B200.
+# Per-seq (median us / HBM%): 1=7.23us/0.05%HBM, 2=7.23us/0.08%HBM, 4=6.85us/0.15%HBM. See ../../docs/tilert_reference.md.
+tilert_latency_us = 7.23
+tilert_hbm_pct = 0.05
+measurement = "isolated_ncu_median_n3"
+measured = true
+seqlens = [1, 2, 4, 8, 16]
+compute_types = [3]   # 0=none 3=bf16 5/6/8=fp4 7=fp8
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+required_matched_ratio = 1.0

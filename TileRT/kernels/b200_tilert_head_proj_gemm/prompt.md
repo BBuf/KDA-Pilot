@@ -40,8 +40,17 @@ warpgroup HMMA. A generic tiled GEMM caps ~58% HBM here (see
 `../../../TileRT_讨论材料.md` §17); reaching 78% needs the dedicated
 vectorized/warp-spec GEMV.
 
+## Design levers to exploit (see ../../docs/tilert_design_levers.md)
+- **L1 tile overlap** (§4/§13): Prefetcher TMA-streams the weight while Consumer warps
+  run warpgroup HMMA; mbarrier double-buffer overlaps tile t+1 load with tile t MMA.
+- **L2 no-GMEM intermediates** (§13.3): normalized hidden stays on-chip.
+- **L3 weight-read-once + occupancy=1 persistent grid** (§4): 148 CTAs × 384 thr,
+  1 CTA/SM (~168 reg), weight streamed once. Generic tiled GEMM caps ~58% HBM at
+  decode M≈1 (§17); reaching 78% needs the vectorized warp-spec GEMV over the 16×1024 swizzle.
+
 ## Milestone
-1. `baseline/head_proj.py` — correct PyTorch reference (provided).
+1. `baseline/head_proj.py` — correct PyTorch reference (validated by
+   `../../harness/tilert_oracle.py case_head_proj`, rel ~5e-3 vs the real op).
 2. `solution/kernel.cu` — candidate CUDA kernel, same ABI.
-3. `bench/` — workloads.json (seq 1/2/4), benchmark.py, correctness.py, adapter.py.
-4. Match TileRT latency; record in `docs/results.md`.
+3. `bench/` — workloads.json (decode 1/2/4 + prefill 8/16), correctness.py, adapter.py.
+4. Match TileRT latency (≥3× ncu median, see config.toml `[reference]`); record in `docs/results.md`.

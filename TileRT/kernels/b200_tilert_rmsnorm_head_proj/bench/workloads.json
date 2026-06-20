@@ -1,0 +1,50 @@
+[
+ {
+  "id": "s1_bf16",
+  "production": true,
+  "function": "rmsnorm_head_proj",
+  "shapes": {
+   "seq": 1,
+   "ct": 3,
+   "ct_name": "bf16"
+  },
+  "rtol": 0.02,
+  "source": {
+   "op": "tilert::rmsnorm_head_proj_op",
+   "arch": "b200",
+   "executor": "RMSNormHeadProj"
+  }
+ },
+ {
+  "id": "s2_bf16",
+  "production": true,
+  "function": "rmsnorm_head_proj",
+  "shapes": {
+   "seq": 2,
+   "ct": 3,
+   "ct_name": "bf16"
+  },
+  "rtol": 0.02,
+  "source": {
+   "op": "tilert::rmsnorm_head_proj_op",
+   "arch": "b200",
+   "executor": "RMSNormHeadProj"
+  }
+ },
+ {
+  "id": "s4_bf16",
+  "production": true,
+  "function": "rmsnorm_head_proj",
+  "shapes": {
+   "seq": 4,
+   "ct": 3,
+   "ct_name": "bf16"
+  },
+  "rtol": 0.02,
+  "source": {
+   "op": "tilert::rmsnorm_head_proj_op",
+   "arch": "b200",
+   "executor": "RMSNormHeadProj"
+  }
+ }
+]

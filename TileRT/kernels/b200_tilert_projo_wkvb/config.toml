@@ -1,0 +1,30 @@
+[task]
+slug = "b200_tilert_projo_wkvb"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "projo_wkvb"
+tilert_op = "tilert::projo_wkvb_op"
+tilert_kernel = "ProjOWkvbDevBHMMAExecutorImpl<DefaultSchedule, 4, ., 1, ., .>"
+decode_share_pct = 0.0
+standalone_measurable = "yes"
+
+[build]
+language = "cuda"
+baseline_entry_point = "baseline/projo_wkvb.py::projo_wkvb_baseline"
+candidate_entry_point = "solution/kernel.cu::projo_wkvb_candidate"
+
+[reference]
+# ≥3× isolated ncu medians (gpu__time_duration.avg) on idle B200.
+# Per-seq (median us / HBM%): 1=6.14us/2.88%HBM, 2=6.59us/2.74%HBM, 4=7.9us/2.35%HBM. See ../../docs/tilert_reference.md.
+tilert_latency_us = 6.14
+tilert_hbm_pct = 2.88
+measurement = "isolated_ncu_median_n3"
+measured = true
+seqlens = [1, 2, 4, 8, 16]
+compute_types = [6,7]   # 0=none 3=bf16 5/6/8=fp4 7=fp8
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+required_matched_ratio = 1.0

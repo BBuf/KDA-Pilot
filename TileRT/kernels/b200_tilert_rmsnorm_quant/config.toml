@@ -10,8 +10,14 @@ language = "cuda"
 baseline_entry_point = "baseline/rmsnorm_quant.py::rmsnorm_quant_baseline"
 candidate_entry_point = "solution/kernel.cu::rmsnorm_quant_candidate"
 [reference]
-tilert_latency_us = 7.2
-tilert_hbm_pct = 0.13   # launch-bound (1 token, 7168 elems): the target is matching the launch/fixed cost
+# ≥3× isolated ncu median (RMSNormQuantExecutorImpl, gpu__time_duration.avg), idle B200.
+# Per-seq median us / HBM%: s1=8.74/0.11  s2=8.96/0.12  s4=9.02/0.16 (disp ≤3.9%).
+# launch/fixed-cost bound (1 token, 7168 elems). See ../../docs/tilert_reference.md.
+tilert_latency_us = 8.74
+tilert_hbm_pct = 0.11
+measurement = "isolated_ncu_median_n3"
+measured = true
+prior_single_run_us = 7.2   # earlier single ncu run; superseded by the n=3 median above
 grid = "148x1x1"
 block = "384x1x1"
 [benchmark]

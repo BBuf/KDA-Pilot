@@ -1,0 +1,30 @@
+[task]
+slug = "b200_tilert_rmsnorm_up_gate_silu"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "rmsnorm_up_gate_silu"
+tilert_op = "tilert::rmsnorm_up_gate_silu_op"
+tilert_kernel = "RMSNormUpGateSiLUDSv32ExecutorImpl<DefaultSchedule, 4, ., 1, ., .>"
+decode_share_pct = 0.0
+standalone_measurable = "yes"
+
+[build]
+language = "cuda"
+baseline_entry_point = "baseline/rmsnorm_up_gate_silu.py::rmsnorm_up_gate_silu_baseline"
+candidate_entry_point = "solution/kernel.cu::rmsnorm_up_gate_silu_candidate"
+
+[reference]
+# ≥3× isolated ncu medians (gpu__time_duration.avg) on idle B200.
+# Per-seq (median us / HBM%): 1=12.13us/35.79%HBM, 2=14.72us/29.54%HBM, 4=20.58us/21.13%HBM. See ../../docs/tilert_reference.md.
+tilert_latency_us = 12.13
+tilert_hbm_pct = 35.79
+measurement = "isolated_ncu_median_n3"
+measured = true
+seqlens = [1, 2, 4]
+compute_types = [5,6,7]   # 0=none 3=bf16 5/6/8=fp4 7=fp8
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+required_matched_ratio = 1.0

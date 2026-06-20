@@ -10,9 +10,16 @@ language = "cuda"
 baseline_entry_point = "baseline/mla_decode.py::mla_decode_baseline"
 candidate_entry_point = "solution/kernel.cu::mla_decode_candidate"
 [reference]
-tilert_latency_us = 35.2   # profiler avg per call; 52.8% of total decode CUDA time
+# ≥3× isolated ncu median (PureMlaDsv32, gpu__time_duration.avg) on idle B200.
+# Per-seq median us / HBM%: s1=11.68/2.72  s2=12.45/2.56  s4=12.48/2.59 (disp ≤2.8%).
+# (seq=3 lives in flash_sparse_mla = 12.29us.) See ../../docs/tilert_reference.md.
+tilert_latency_us = 11.68
+tilert_hbm_pct = 2.72
+measurement = "isolated_ncu_median_n3"
+measured = true
+ingraph_latency_us = 35.2   # in-graph profiler avg per call (52.8% of decode)
 decode_share_pct = 52.8
-note = "isolated ncu pending; flashinfer MLA on same shape = 25.5us (faster) as a reference point"
+note = "isolated single-launch = 11.68us; in-graph per-call = 35.2us (folds in dependent waits). flashinfer MLA same shape = 25.5us."
 [benchmark]
 warmup_runs = 10
 iterations = 200

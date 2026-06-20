@@ -1,0 +1,82 @@
+[
+ {
+  "id": "s1_bf16",
+  "production": true,
+  "function": "rmsnorm_kv",
+  "shapes": {
+   "seq": 1,
+   "ct": 3,
+   "ct_name": "bf16"
+  },
+  "rtol": 0.02,
+  "source": {
+   "op": "tilert::rmsnorm_kv_op",
+   "arch": "b200",
+   "executor": "RmsnormKv"
+  }
+ },
+ {
+  "id": "s2_bf16",
+  "production": true,
+  "function": "rmsnorm_kv",
+  "shapes": {
+   "seq": 2,
+   "ct": 3,
+   "ct_name": "bf16"
+  },
+  "rtol": 0.02,
+  "source": {
+   "op": "tilert::rmsnorm_kv_op",
+   "arch": "b200",
+   "executor": "RmsnormKv"
+  }
+ },
+ {
+  "id": "s4_bf16",
+  "production": true,
+  "function": "rmsnorm_kv",
+  "shapes": {
+   "seq": 4,
+   "ct": 3,
+   "ct_name": "bf16"
+  },
+  "rtol": 0.02,
+  "source": {
+   "op": "tilert::rmsnorm_kv_op",
+   "arch": "b200",
+   "executor": "RmsnormKv"
+  }
+ },
+ {
+  "id": "s8_bf16",
+  "production": false,
+  "function": "rmsnorm_kv",
+  "shapes": {
+   "seq": 8,
+   "ct": 3,
+   "ct_name": "bf16"
+  },
+  "rtol": 0.02,
+  "source": {
+   "op": "tilert::rmsnorm_kv_op",
+   "arch": "b200",
+   "executor": "RmsnormKv"
+  }
+ },
+ {
+  "id": "s16_bf16",
+  "production": false,
+  "function": "rmsnorm_kv",
+  "shapes": {
+   "seq": 16,
+   "ct": 3,
+   "ct_name": "bf16"
+  },
+  "rtol": 0.02,
+  "source": {
+   "op": "tilert::rmsnorm_kv_op",
+   "arch": "b200",
+   "executor": "RmsnormKv"
+  }
+ }
+]

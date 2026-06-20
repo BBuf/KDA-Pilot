@@ -1,0 +1,50 @@
+[
+ {
+  "id": "s1_bf16",
+  "production": true,
+  "function": "sparse_select_mla",
+  "shapes": {
+   "seq": 1,
+   "ct": 3,
+   "ct_name": "bf16"
+  },
+  "rtol": 0.02,
+  "source": {
+   "op": "tilert::flash_sparse_mla_op",
+   "arch": "b200",
+   "executor": "SparseSelectMlaDsv32"
+  }
+ },
+ {
+  "id": "s2_bf16",
+  "production": true,
+  "function": "sparse_select_mla",
+  "shapes": {
+   "seq": 2,
+   "ct": 3,
+   "ct_name": "bf16"
+  },
+  "rtol": 0.02,
+  "source": {
+   "op": "tilert::flash_sparse_mla_op",
+   "arch": "b200",
+   "executor": "SparseSelectMlaDsv32"
+  }
+ },
+ {
+  "id": "s4_bf16",
+  "production": true,
+  "function": "sparse_select_mla",
+  "shapes": {
+   "seq": 4,
+   "ct": 3,
+   "ct_name": "bf16"
+  },
+  "rtol": 0.02,
+  "source": {
+   "op": "tilert::flash_sparse_mla_op",
+   "arch": "b200",
+   "executor": "SparseSelectMlaDsv32"
+  }
+ }
+]

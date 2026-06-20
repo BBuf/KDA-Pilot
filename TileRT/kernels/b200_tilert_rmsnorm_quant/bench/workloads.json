@@ -1,5 +1,7 @@
 [
- {"id":"decode_s1","function":"rmsnorm_quant","shapes":{"seq":1,"D":7168,"block":128,"dtype":"bfloat16"},"rtol":0.05,"source":{"op":"tilert::rmsnorm_quant_op","tilert_us":7.2}},
- {"id":"decode_s2","function":"rmsnorm_quant","shapes":{"seq":2,"D":7168,"block":128,"dtype":"bfloat16"},"rtol":0.05},
- {"id":"decode_s4","function":"rmsnorm_quant","shapes":{"seq":4,"D":7168,"block":128,"dtype":"bfloat16"},"rtol":0.05}
+ {"id":"decode_s1","production":true,"function":"rmsnorm_quant","shapes":{"seq":1,"D":7168,"block":128,"dtype":"bfloat16"},"rtol":0.05,"source":{"op":"tilert::rmsnorm_quant_op","executor":"RMSNormQuant","tilert_us":7.2}},
+ {"id":"decode_s2","production":true,"function":"rmsnorm_quant","shapes":{"seq":2,"D":7168,"block":128,"dtype":"bfloat16"},"rtol":0.05,"source":{"op":"tilert::rmsnorm_quant_op","executor":"RMSNormQuant"}},
+ {"id":"mtp_s4","production":true,"function":"rmsnorm_quant","shapes":{"seq":4,"D":7168,"block":128,"dtype":"bfloat16"},"rtol":0.05,"source":{"op":"tilert::rmsnorm_quant_op","executor":"RMSNormQuant","note":"MTP verify q_len=4"}},
+ {"id":"prefill_s8","production":false,"function":"rmsnorm_quant","shapes":{"seq":8,"D":7168,"block":128,"dtype":"bfloat16"},"rtol":0.05,"source":{"op":"tilert::rmsnorm_quant_op","executor":"RMSNormQuant"}},
+ {"id":"prefill_s16","production":false,"function":"rmsnorm_quant","shapes":{"seq":16,"D":7168,"block":128,"dtype":"bfloat16"},"rtol":0.05,"source":{"op":"tilert::rmsnorm_quant_op","executor":"RMSNormQuant"}}
 ]

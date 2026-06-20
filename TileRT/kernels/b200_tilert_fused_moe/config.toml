@@ -10,7 +10,13 @@ language = "cuda"
 baseline_entry_point = "baseline/fused_moe.py::fused_moe_baseline"
 candidate_entry_point = "solution/kernel.cu::fused_moe_candidate"
 [reference]
-tilert_latency_us = 22.4   # profiler avg per call; 36.5% of total decode CUDA time
+# In-graph profiler target (the full 256-expert FP4 op is NOT isolatable as a single
+# standalone launch — needs the full expert weight pack + router scores; see
+# ../../harness/ORACLE_RESULTS.md). Compute core covered by the rmsnorm_up_gate_silu
+# (12.1us isolated) + rmsnorm_expert_proj (8.2us isolated) oracle cases.
+tilert_latency_us = 22.4
+measurement = "in_graph_profiler"
+measured = true
 decode_share_pct = 36.5
 note = "FP4 experts (MXFP4); the make-or-break lever. deep_gemm m_grouped_fp8_fp4_gemm_nt_masked / fp8_fp4_mega_moe"
 [benchmark]

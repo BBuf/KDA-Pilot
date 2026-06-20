@@ -1,0 +1,30 @@
+[task]
+slug = "b200_tilert_rmsnorm_kv"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "rmsnorm_kv"
+tilert_op = "tilert::rmsnorm_kv_op"
+tilert_kernel = "RmsnormKvExecutorImpl<DefaultSchedule, 4, ., 1, ., .>"
+decode_share_pct = 0.0
+standalone_measurable = "yes"
+
+[build]
+language = "cuda"
+baseline_entry_point = "baseline/rmsnorm_kv.py::rmsnorm_kv_baseline"
+candidate_entry_point = "solution/kernel.cu::rmsnorm_kv_candidate"
+
+[reference]
+# ≥3× isolated ncu medians (gpu__time_duration.avg) on idle B200.
+# Per-seq (median us / HBM%): 1=6.08us/0.03%HBM, 2=6.66us/0.03%HBM, 4=6.88us/0.04%HBM. See ../../docs/tilert_reference.md.
+tilert_latency_us = 6.08
+tilert_hbm_pct = 0.03
+measurement = "isolated_ncu_median_n3"
+measured = true
+seqlens = [1, 2, 4, 8, 16]
+compute_types = [3]   # 0=none 3=bf16 5/6/8=fp4 7=fp8
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+required_matched_ratio = 1.0

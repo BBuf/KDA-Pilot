@@ -1,0 +1,28 @@
+[task]
+slug = "b200_tilert_sparse_index"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "sparse_index"
+tilert_op = "tilert::sparse_index_topk_dsv32_op"
+tilert_kernel = "SparseIndexFusedDsv32ExecutorImpl<DefaultSchedule, 4, ., 1, ., .>"
+decode_share_pct = 7.6
+standalone_measurable = "yes"
+
+[build]
+language = "cuda"
+baseline_entry_point = "baseline/sparse_index.py::sparse_index_baseline"
+candidate_entry_point = "solution/kernel.cu::sparse_index_candidate"
+
+[reference]
+# Not isolatable as a single launch — in-graph profiler target (§16).
+tilert_latency_us = 35.4
+measurement = "in_graph_profiler"
+measured = true
+seqlens = [1, 2, 4]
+compute_types = [0]   # 0=none 3=bf16 5/6/8=fp4 7=fp8
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+required_matched_ratio = 1.0
