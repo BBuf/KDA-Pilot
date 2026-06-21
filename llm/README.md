@@ -34,6 +34,10 @@ ncu/            optional Nsight Compute reports
 tests/          task-local correctness tests
 ```
 
+Task directory names are the full Python kernel interface slugified with dots
+and symbols converted to underscores, for example
+`sgl_kernel_build_tree_kernel_efficient`.
+
 The important rule is symmetry: copy the relevant upstream SGLang implementation
 into `baseline/`, expose baseline and candidate through matching local
 interfaces, and benchmark only task-local code. The live SGLang server is used

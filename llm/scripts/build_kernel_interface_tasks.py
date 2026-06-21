@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
 from collections import Counter, defaultdict
@@ -31,7 +30,9 @@ EXCLUDED_GENERIC_INTERFACES = {
 }
 
 
-def slugify(value: str, max_len: int = 80) -> str:
+def slugify(value: str, max_len: int = 160) -> str:
+    value = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", value)
+    value = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", value)
     out = re.sub(r"[^a-zA-Z0-9]+", "_", value.lower()).strip("_")
     out = re.sub(r"_+", "_", out)
     return (out[:max_len].strip("_") or "kernel")
@@ -71,17 +72,8 @@ def category_for(function: str) -> str:
     return "other"
 
 
-def function_alias(function: str) -> str:
-    name = function.split(".")[-1]
-    if name in {"default", ""} and "." in function:
-        name = function.split(".")[-2]
-    return slugify(name, 48)
-
-
 def task_id_for(function: str) -> str:
-    category = category_for(function)
-    digest = hashlib.sha1(function.encode("utf-8")).hexdigest()[:10]
-    return f"{slugify(category, 24)}__{function_alias(function)}__{digest}"
+    return slugify(function)
 
 
 def should_keep_interface(function: str) -> bool:
