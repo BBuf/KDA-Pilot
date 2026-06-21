@@ -1,0 +1,221 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "ncclDevKernel_AllReduce_Sum_bf16_RING_LL(ncclDevKernelArgsStorage<4096ul>)",
+  "labels": [
+    "random_mid",
+    "random_high",
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 11.709495256336899,
+  "model": "poolside/Laguna-M.1-NVFP4",
+  "model_slug": "laguna_m1",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::to",
+      "kernel_dur_us": 2588.542,
+      "provenance": "external_id=12227",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "6",
+          "False",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [
+            17
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "float",
+          "",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 2678.785,
+      "provenance": "external_id=28070",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[2774, 1, 128]",
+          "[1280, 128, 1]",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            2816,
+            1,
+            128
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1280,
+            128,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::detach_",
+      "kernel_dur_us": 731.071,
+      "provenance": "external_id=44327",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          [
+            15
+          ]
+        ],
+        "Input Strides": [
+          [
+            1
+          ]
+        ],
+        "Input type": [
+          "float"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::_to_copy",
+      "kernel_dur_us": 528.415,
+      "provenance": "external_id=47112",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "29",
+          "0",
+          "",
+          "",
+          "True",
+          ""
+        ],
+        "Input Dims": [
+          [
+            16
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long unsigned int",
+          "Scalar",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "laguna_m1/b200/docs/kernel_shapes_random_mid.json",
+    "laguna_m1/b200/docs/kernel_shapes_random_high.json",
+    "laguna_m1/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "comm__nccldevkernel_allreduce_sum_bf16_ring_ll__05a3ee6241",
+  "total_calls": 5640,
+  "workload_count": 3,
+  "workloads": [
+    {
+      "calls": 1128,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 274.600225177305,
+      "pct_of_gpu": 8.176394249710379,
+      "top_cpu_ops": [
+        "sglang::unified_attention_with_output",
+        "aten::slice",
+        "aten::to",
+        "aten::copy_"
+      ],
+      "total_us": 309749.054
+    },
+    {
+      "calls": 1128,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 124.4082304964539,
+      "pct_of_gpu": 5.292585376859556,
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "sglang::unified_attention_with_output",
+        "aten::reshape"
+      ],
+      "total_us": 140332.484
+    },
+    {
+      "calls": 3384,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 177.12565514184396,
+      "pct_of_gpu": 11.709495256336899,
+      "top_cpu_ops": [
+        "sglang::unified_attention_with_output",
+        "aten::detach_",
+        "aten::_to_copy"
+      ],
+      "total_us": 599393.217
+    }
+  ]
+}

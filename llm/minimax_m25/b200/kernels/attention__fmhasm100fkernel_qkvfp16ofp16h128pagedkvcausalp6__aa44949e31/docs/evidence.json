@@ -1,0 +1,76 @@
+{
+  "category": "attention",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "fmhaSm100fKernel_QkvFp16OFp16H128PagedKvCausalP64MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 3.982417695808583,
+  "model": "MiniMaxAI/MiniMax-M2.5",
+  "model_slug": "minimax_m25",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::_index_put_impl_",
+      "kernel_dur_us": 9.216,
+      "provenance": "external_id=4339",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "False",
+          "False"
+        ],
+        "Input Dims": [
+          [
+            4097
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "",
+          "long int",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "minimax_m25/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "attention__fmhasm100fkernel_qkvfp16ofp16h128pagedkvcausalp6__aa44949e31",
+  "total_calls": 3968,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 3968,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 7.3524317036290325,
+      "pct_of_gpu": 3.982417695808583,
+      "top_cpu_ops": [
+        "c10d::broadcast_",
+        "gloo:broadcast",
+        "aten::_index_put_impl_",
+        "aten::resolve_neg"
+      ],
+      "total_us": 29174.449
+    }
+  ]
+}

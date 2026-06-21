@@ -1,0 +1,25 @@
+# Kernel Shape Inventory — random_mid
+
+- Model: `nvidia/Qwen3.5-397B-A17B-NVFP4`
+- Dataset: `random`
+- Concurrency: `mid`
+- Threshold: GPU kernel name share `> 2.0%`
+- Total GPU kernel time: `1717.1 ms`
+- Trace files: `4`
+
+| % GPU | Calls | Category | Shape | SGLang relevant | Kernel | Shape provenance |
+|---:|---:|---|---|---|---|---|
+| 13.54 | 3808 | comm | ok | True | `void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 4, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)` | external_id=22295: `aten::mm` {"Concrete Inputs": ["", ""], "Input Dims": [[38, 4096], [4096, 4608]], "Input Strides": [[4096, 1], [1, 4096]], "Input type": ["c10::BFloat16", "c10::BFloat16"]} |
+| 5.49 | 1020 | quant_gemm | ok | True | `nvjet_sm100_tst_128x256_64x6_2x1_2cta_v_bz_TNT` | external_id=35033: `aten::matmul` {"Concrete Inputs": ["", ""], "Input Dims": [[17070, 4096], [4096, 512]], "Input Strides": [[4096, 1], [1, 4096]], "Input type": ["c10::BFloat16", "c10::BFloat16"]} |
+| 5.42 | 480 | quant_gemm | ok | True | `nvjet_sm100_tst_64x8_64x16_1x4_h_bz_TNT` | external_id=22313: `aten::copy_` {"Concrete Inputs": ["", "", "False"], "Input Dims": [[38, 8, 256], [38, 8, 256], []], "Input Strides": [[2048, 256, 1], [4608, 512, 1], []], "Input type": ["c10::BFloat16", "c1... |
+| 4.97 | 240 | quant_gemm | ok | True | `bmm_Bfloat16_E2m1E2m1_Fp32_Ab16_Bb16tokFp32_t128x128x256_s6_et128x128_m256x128x64_c2x1x1_rM_TN_transOut_schPd2x1x2x3_biasFp32M_bN_rgTma_clmp_dynB_sm100f` | nearest_preceding_shape_cpu_op: `aten::empty` {"Concrete Inputs": ["[32]", "4", "", "", "False", ""], "Input Dims": [[], [], [], [], [], []], "Input Strides": [[], [], [], [], [], []], "Input type": ["ScalarList", "Scalar",... |
+| 4.72 | 180 | quant_gemm | ok | True | `nvjet_sm100_tst_256x128_64x5_2x2_2cta_h_bz_TNT` | external_id=28529: `aten::linear` {"Concrete Inputs": ["", "", ""], "Input Dims": [[17070, 4096], [1, 4096], []], "Input Strides": [[4096, 1], [4096, 1], []], "Input type": ["c10::BFloat16", "c10::BFloat16", ""]} |
+| 4.18 | 240 | moe | ok | True | `void moe::dev::finalize::finalizeKernelVecLoad<moe::dev::finalize::KernelParams<cutlass::bfloat16_t, cutlass::bfloat16_t, 2, true> >(moe::dev::finalize::KernelParams<cutlass::bfloat16_t, cutlass::bfloat16_t, 2, true>)` | nearest_preceding_shape_cpu_op: `aten::empty_strided` {"Concrete Inputs": ["[17070, 16]", "[16, 1]", "15", "0", "", "False"], "Input Dims": [[], [], [], [], [], []], "Input Strides": [[], [], [], [], [], []], "Input type": ["Scalar... |
+| 3.90 | 180 | quant_gemm | ok | True | `nvjet_sm100_tst_128x24_64x11_4x2_h_bz_TNT` | external_id=22924: `aten::transpose` {"Concrete Inputs": ["", "0", "1"], "Input Dims": [[512, 4096], [], []], "Input Strides": [[4096, 1], [], []], "Input type": ["c10::BFloat16", "Scalar", "Scalar"]} |
+| 3.76 | 240 | quant_gemm | ok | True | `bmm_E2m1_E2m1E2m1_Fp32_Ab16_Bb16_Cb16_t128x128x512u2_s3x3x3x3x1x3_et128x32_m256x128x64_c2x1x1_rM_TN_transOut_schPd2x1x2x3_biasFp32M_fCp_bN_ldgsts_ldgstsSf_rgTma_clmp_swiGlu_lbW4_lsfbW4_dynB_sm100f` | timestamp_enclosure: `aten::matmul` {"Concrete Inputs": ["", ""], "Input Dims": [[17070, 4096], [4096, 1]], "Input Strides": [[4096, 1], [1, 4096]], "Input type": ["c10::BFloat16", "c10::BFloat16"]} |
+| 2.52 | 512 | gemm | ok | True | `kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_at__tensorptrbf16gmemalign128o409640961_tensorptrbf16gmemalign128o409640961_tensorptrbf16gmemalign_0` | timestamp_enclosure: `gloo:broadcast` {"Concrete Inputs": [""], "Input Dims": [[1]], "Input Strides": [[1]], "Input type": ["long int"]} |
+| 2.42 | 960 | quant_gemm | ok | True | `bmm_E2m1_E2m1E2m1_Fp32_Ab16_Bb16_Cb16_t128x8x512u2_s5_et128x8_m128x8x64_c1x1x1_rM_TN_transOut_schPd2x1x2x3_biasFp32M_bN_ldgsts_ldgstsSf_rgTma_clmp_swiGlu_dynB_sm100f` | nearest_preceding_shape_cpu_op: `aten::copy_` {"Concrete Inputs": ["", "", "True"], "Input Dims": [[3, 32], [3, 32], []], "Input Strides": [[32, 1], [32, 1], []], "Input type": ["long int", "long int", "Scalar"]} |
+| 2.41 | 1440 | quant_gemm | ok | True | `bmm_Bfloat16_E2m1E2m1_Fp32_Ab16_Bb16_t128x8x256_s9_et128x8_m128x8x64_c1x1x1_rM_TN_transOut_schPd2x1x2x3_biasFp32M_bN_rgTma_clmp_dynB_sm100f` | timestamp_enclosure: `aten::sub` {"Concrete Inputs": ["", "", "1"], "Input Dims": [[32], [], []], "Input Strides": [[1], [], []], "Input type": ["long int", "long int", "Scalar"]} |
+| 2.41 | 960 | quant_gemm | ok | True | `bmm_E2m1_E2m1E2m1_Fp32_Ab16_Bb16_Cb16_t128x8x512_s5_et128x8_m128x8x64_c1x1x1_rM_TN_transOut_schPd2x1x2x3_biasFp32M_bN_ldgsts_ldgstsSf_rgTma_clmp_swiGlu_dynB_sm100f` | nearest_preceding_shape_cpu_op: `aten::copy_` {"Concrete Inputs": ["", "", "False"], "Input Dims": [[33], [33], []], "Input Strides": [[1], [1], []], "Input type": ["int", "int", "Scalar"]} |
+
+The CSV/JSON siblings contain full sample metadata and trace paths.

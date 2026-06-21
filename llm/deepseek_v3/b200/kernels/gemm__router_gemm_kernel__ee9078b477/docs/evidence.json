@@ -1,0 +1,179 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void flashinfer::trtllm_dsv3_router_gemm::router_gemm_kernel<__nv_bfloat16, float, 128, 8, 16, 256, 7168>(float*, __nv_bfloat16 const*, __nv_bfloat16 const*)",
+  "labels": [
+    "sharegpt_low",
+    "sharegpt_mid",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 14.120989179321842,
+  "model": "deepseek-ai/DeepSeek-V3",
+  "model_slug": "deepseek_v3",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::flashinfer_dsv3_router_gemm",
+      "kernel_dur_us": 1528.42,
+      "provenance": "external_id=98716",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            16,
+            256
+          ],
+          [
+            16,
+            7168
+          ],
+          [
+            256,
+            7168
+          ]
+        ],
+        "Input Strides": [
+          [
+            256,
+            1
+          ],
+          [
+            7168,
+            1
+          ],
+          [
+            7168,
+            1
+          ]
+        ],
+        "Input type": [
+          "float",
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty",
+      "kernel_dur_us": 1507.811,
+      "provenance": "external_id=115350",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[16, 2112]",
+          "15",
+          "0",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::reshape",
+      "kernel_dur_us": 1433.41,
+      "provenance": "external_id=164356",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1, 129280]"
+        ],
+        "Input Dims": [
+          [
+            1,
+            8,
+            16160
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            16160,
+            16160,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "deepseek_v3/b200/docs/kernel_shapes_sharegpt_low.json",
+    "deepseek_v3/b200/docs/kernel_shapes_sharegpt_mid.json",
+    "deepseek_v3/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "gemm__router_gemm_kernel__ee9078b477",
+  "total_calls": 1416,
+  "workload_count": 3,
+  "workloads": [
+    {
+      "calls": 472,
+      "concurrency": "low",
+      "dataset": "sharegpt",
+      "label": "sharegpt_low",
+      "mean_us": 799.6280105932203,
+      "pct_of_gpu": 14.120989179321842,
+      "top_cpu_ops": [
+        "sglang::flashinfer_dsv3_router_gemm"
+      ],
+      "total_us": 377424.421
+    },
+    {
+      "calls": 472,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 908.9696398305084,
+      "pct_of_gpu": 5.604548288566493,
+      "top_cpu_ops": [
+        "sglang::flashinfer_dsv3_router_gemm",
+        "aten::empty"
+      ],
+      "total_us": 429033.67
+    },
+    {
+      "calls": 472,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 952.0991165254237,
+      "pct_of_gpu": 4.413946527052685,
+      "top_cpu_ops": [
+        "sglang::flashinfer_dsv3_router_gemm",
+        "aten::reshape"
+      ],
+      "total_us": 449390.783
+    }
+  ]
+}

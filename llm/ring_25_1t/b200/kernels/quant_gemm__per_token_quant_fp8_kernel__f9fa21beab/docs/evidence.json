@@ -1,0 +1,418 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void per_token_quant_fp8_kernel<__nv_bfloat16, __nv_fp8_e4m3, 8, 16, false>(__nv_bfloat16 const*, __nv_fp8_e4m3*, float*, long, long)",
+  "labels": [
+    "random_mid",
+    "random_high",
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 4.371505510162899,
+  "model": "inclusionAI/Ring-2.5-1T",
+  "model_slug": "ring_25_1t",
+  "shape_samples": [
+    {
+      "cpu_op": "sgl_kernel::sgl_per_token_quant_fp8",
+      "kernel_dur_us": 76.32,
+      "provenance": "external_id=46909",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            9780,
+            8192
+          ],
+          [
+            9780,
+            8192
+          ],
+          [
+            9780,
+            1
+          ]
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          [
+            8192,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::Float8_e4m3fn",
+          "float"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::reshape",
+      "kernel_dur_us": 74.496,
+      "provenance": "external_id=41111",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[22]"
+        ],
+        "Input Dims": [
+          [
+            22
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sgl_kernel::sgl_per_token_quant_fp8",
+      "kernel_dur_us": 111.392,
+      "provenance": "external_id=84919",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            16384,
+            8192
+          ],
+          [
+            16384,
+            8192
+          ],
+          [
+            16384,
+            1
+          ]
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          [
+            8192,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::Float8_e4m3fn",
+          "float"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty",
+      "kernel_dur_us": 110.88,
+      "provenance": "external_id=84619",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[16384, 1]",
+          "6",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "sgl_kernel::sgl_per_token_quant_fp8",
+      "kernel_dur_us": 110.592,
+      "provenance": "external_id=107336",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            16250,
+            8192
+          ],
+          [
+            16250,
+            8192
+          ],
+          [
+            16250,
+            1
+          ]
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          [
+            8192,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::Float8_e4m3fn",
+          "float"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty",
+      "kernel_dur_us": 110.56,
+      "provenance": "external_id=80286",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[16384, 1024]",
+          "24",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty",
+      "kernel_dur_us": 110.529,
+      "provenance": "external_id=80701",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[131072, 256]",
+          "24",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "sgl_kernel::sgl_per_token_quant_fp8",
+      "kernel_dur_us": 101.025,
+      "provenance": "external_id=161657",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            14375,
+            8192
+          ],
+          [
+            14375,
+            8192
+          ],
+          [
+            14375,
+            1
+          ]
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          [
+            8192,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::Float8_e4m3fn",
+          "float"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 99.777,
+      "provenance": "external_id=166180",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[14375, 1024]"
+        ],
+        "Input Dims": [
+          [
+            14375,
+            1024
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1024,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "ring_25_1t/b200/docs/kernel_shapes_random_mid.json",
+    "ring_25_1t/b200/docs/kernel_shapes_random_high.json",
+    "ring_25_1t/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "quant_gemm__per_token_quant_fp8_kernel__f9fa21beab",
+  "total_calls": 18272,
+  "workload_count": 3,
+  "workloads": [
+    {
+      "calls": 4416,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 44.074111639492756,
+      "pct_of_gpu": 2.67022553494588,
+      "top_cpu_ops": [
+        "sgl_kernel::sgl_per_token_quant_fp8",
+        "aten::reshape"
+      ],
+      "total_us": 194631.277
+    },
+    {
+      "calls": 9440,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 63.89876144067796,
+      "pct_of_gpu": 4.371505510162899,
+      "top_cpu_ops": [
+        "sgl_kernel::sgl_per_token_quant_fp8",
+        "aten::empty"
+      ],
+      "total_us": 603204.308
+    },
+    {
+      "calls": 4416,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 60.558234148550724,
+      "pct_of_gpu": 3.2303288051620407,
+      "top_cpu_ops": [
+        "sgl_kernel::sgl_per_token_quant_fp8",
+        "aten::view"
+      ],
+      "total_us": 267425.162
+    }
+  ]
+}

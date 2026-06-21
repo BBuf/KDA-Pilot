@@ -1,0 +1,166 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_at__tensorptrbf16gmemalign128o819281921_tensorptrbf16gmemalign128o819281921_tensorptrbf16gmemalign_0",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 4.321649109564213,
+  "model": "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4",
+  "model_slug": "nemotron3_ultra",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 131.425,
+      "provenance": "external_id=12562",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1, 64, 64, 128]"
+        ],
+        "Input Dims": [
+          [
+            1,
+            64,
+            8192
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            524288,
+            8192,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "float",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::reshape",
+      "kernel_dur_us": 124.64,
+      "provenance": "external_id=8450",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[38, 128]"
+        ],
+        "Input Dims": [
+          [
+            38,
+            1,
+            128
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            2304,
+            128,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::unsqueeze",
+      "kernel_dur_us": 117.44,
+      "provenance": "external_id=14544",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "1"
+        ],
+        "Input Dims": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty",
+      "kernel_dur_us": 108.479,
+      "provenance": "external_id=6320",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[552]",
+          "3",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "Scalar",
+          "",
+          "",
+          "",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "nemotron3_ultra/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "gemm__kernel_cutlass_kernel_flashinfernormkernelsfused__b25a796c5c",
+  "total_calls": 3988,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 3988,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 6.883051654964895,
+      "pct_of_gpu": 4.321649109564213,
+      "top_cpu_ops": [
+        "aten::view",
+        "sglang::outplace_all_reduce",
+        "aten::reshape",
+        "aten::unsqueeze",
+        "aten::empty"
+      ],
+      "total_us": 27449.61
+    }
+  ]
+}

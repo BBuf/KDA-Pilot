@@ -1,0 +1,73 @@
+{
+  "category": "moe",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void moe_align_block_size_small_batch_expert_kernel<int, 256>(int const*, int*, int*, int*, int, int, unsigned long, bool, int)",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 3.0766449686620603,
+  "model": "MiniMaxAI/MiniMax-M2.5",
+  "model_slug": "minimax_m25",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 8.128,
+      "provenance": "external_id=253",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[39, 1, 128]",
+          "[1024, 128, 1]",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            48,
+            1,
+            128
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1024,
+            128,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::Half",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "minimax_m25/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "moe__moe_align_block_size_small_batch_expert_kernel__2c9f928b16",
+  "total_calls": 4464,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 4464,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 5.049042786738351,
+      "pct_of_gpu": 3.0766449686620603,
+      "top_cpu_ops": [
+        "aten::as_strided"
+      ],
+      "total_us": 22538.927
+    }
+  ]
+}

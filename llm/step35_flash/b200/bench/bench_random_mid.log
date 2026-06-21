@@ -1,0 +1,45 @@
+benchmark_args=Namespace(backend='sglang', base_url=None, host='127.0.0.1', port=30000, dataset_name='random', dataset_path='', model='stepfun-ai/Step-3.5-Flash', served_model_name=None, tokenizer=None, num_prompts=300, sharegpt_output_len=None, sharegpt_context_len=None, random_input_len=1000, random_output_len=1000, random_range_ratio=0.0, image_count=1, image_resolution='1080p', random_image_count=False, image_format='jpeg', image_content='random', request_rate=inf, use_trace_timestamps=False, max_concurrency=32, output_file='/data/bbuf/kda-pilot/llm/step35_flash/b200/bench/random_mid.jsonl', output_details=False, print_requests=False, disable_tqdm=True, disable_stream=False, return_logprob=False, return_routed_experts=False, seed=1, disable_ignore_eos=False, extra_request_body=None, apply_chat_template=False, profile=False, plot_throughput=False, profile_activities=['CPU', 'GPU'], profile_num_steps=None, profile_by_stage=False, profile_stages=None, lora_name=None, lora_request_distribution='uniform', lora_zipf_alpha=1.5, prompt_suffix='', pd_separated=False, profile_prefill_url=None, profile_decode_url=None, flush_cache=False, warmup_requests=1, tokenize_prompt=False, gsp_num_groups=64, gsp_prompts_per_group=16, gsp_system_prompt_len=2048, gsp_question_len=128, gsp_output_len=256, gsp_range_ratio=1.0, gsp_fast_prepare=False, gsp_send_routing_key=False, gsp_num_turns=1, gsp_ordered=False, mooncake_slowdown_factor=1.0, mooncake_num_rounds=1, mooncake_workload='conversation', tag=None, header=None)
+Namespace(backend='sglang', base_url=None, host='127.0.0.1', port=30000, dataset_name='random', dataset_path='', model='stepfun-ai/Step-3.5-Flash', served_model_name=None, tokenizer=None, num_prompts=300, sharegpt_output_len=None, sharegpt_context_len=None, random_input_len=1000, random_output_len=1000, random_range_ratio=0.0, image_count=1, image_resolution='1080p', random_image_count=False, image_format='jpeg', image_content='random', request_rate=inf, use_trace_timestamps=False, max_concurrency=32, output_file='/data/bbuf/kda-pilot/llm/step35_flash/b200/bench/random_mid.jsonl', output_details=False, print_requests=False, disable_tqdm=True, disable_stream=False, return_logprob=False, return_routed_experts=False, seed=1, disable_ignore_eos=False, extra_request_body=None, apply_chat_template=False, profile=False, plot_throughput=False, profile_activities=['CPU', 'GPU'], profile_num_steps=None, profile_by_stage=False, profile_stages=None, lora_name=None, lora_request_distribution='uniform', lora_zipf_alpha=1.5, prompt_suffix='', pd_separated=False, profile_prefill_url=None, profile_decode_url=None, flush_cache=False, warmup_requests=1, tokenize_prompt=False, gsp_num_groups=64, gsp_prompts_per_group=16, gsp_system_prompt_len=2048, gsp_question_len=128, gsp_output_len=256, gsp_range_ratio=1.0, gsp_fast_prepare=False, gsp_send_routing_key=False, gsp_num_turns=1, gsp_ordered=False, mooncake_slowdown_factor=1.0, mooncake_num_rounds=1, mooncake_workload='conversation', tag=None, header=None)
+
+#Input tokens: 148174
+#Output tokens: 155289
+Starting warmup with 1 sequences...
+Warmup completed with 1 sequences. Starting main benchmark run...
+
+============ Serving Benchmark Result ============
+Backend:                                 sglang    
+Traffic request rate:                    inf       
+Max request concurrency:                 32        
+Successful requests:                     300       
+Benchmark duration (s):                  106.05    
+Total input tokens:                      148174    
+Total input text tokens:                 148174    
+Total generated tokens:                  155289    
+Total generated tokens (retokenized):    154610    
+Request throughput (req/s):              2.83      
+Input token throughput (tok/s):          1397.21   
+Output token throughput (tok/s):         1464.30   
+Peak output token throughput (tok/s):    1856.00   
+Peak concurrent requests:                39        
+Total token throughput (tok/s):          2861.51   
+Concurrency:                             30.16     
+----------------End-to-End Latency----------------
+Mean E2E Latency (ms):                   10662.48  
+Median E2E Latency (ms):                 10650.65  
+P90 E2E Latency (ms):                    18066.16  
+P99 E2E Latency (ms):                    20765.82  
+---------------Time to First Token----------------
+Mean TTFT (ms):                          328.04    
+Median TTFT (ms):                        76.61     
+P99 TTFT (ms):                           2315.56   
+-----Time per Output Token (excl. 1st token)------
+Mean TPOT (ms):                          20.17     
+Median TPOT (ms):                        20.02     
+P99 TPOT (ms):                           24.61     
+---------------Inter-Token Latency----------------
+Mean ITL (ms):                           20.00     
+Median ITL (ms):                         17.42     
+P95 ITL (ms):                            53.22     
+P99 ITL (ms):                            64.31     
+Max ITL (ms):                            643.93    
+==================================================

@@ -1,0 +1,1553 @@
+{
+  "audit": {
+    "empty_shape_row_count": 0,
+    "row_count": 54,
+    "strong_row_count": 7,
+    "strong_task_count": 7,
+    "weak_or_empty_only_labels": [
+      "random_mid",
+      "random_high",
+      "sharegpt_low",
+      "sharegpt_mid",
+      "sharegpt_high"
+    ],
+    "weak_row_count": 47,
+    "zero_row_labels": []
+  },
+  "model": "inclusionAI/LLaDA2.1-mini",
+  "model_dir": "llm/llada_21_mini/b200",
+  "model_slug": "llada_21_mini",
+  "platform": "b200",
+  "skipped_rows": [
+    {
+      "category": "attention",
+      "kernel": "void flashinfer::BatchPrefillWithPagedKVCacheKernel<flashinfer::KernelTraits<(flashinfer::MaskMode)0, 128u, 2u, 4u, 8u, 8u, 4u, 1u, (flashinfer::PosEncodingMode)0, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, float, int, flashinfer::DefaultAttention<false, false, false, false> >, PagedParams>(PagedParams)",
+      "label": "random_low",
+      "pct_of_gpu": 5.805926528609849,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x8_64x16_1x4_h_bz_TNT",
+      "label": "random_low",
+      "pct_of_gpu": 4.064160779111734,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::as_strided"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "random_mid",
+      "pct_of_gpu": 32.18943486003587,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_tn_align1>(cutlass_80_simt_sgemm_64x64_8x5_tn_align1::Params)",
+      "label": "random_mid",
+      "pct_of_gpu": 12.287441005368608,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::select"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void cutlass::device_kernel<cutlass::fmha::kernel::Sm100FmhaFwdKernelTmaWarpspecialized<cute::tuple<cutlass::fmha::collective::VariableLength, cutlass::fmha::collective::VariableLength, int, cute::tuple<cute::tuple<int, int>, int> >, cutlass::fmha::collective::Sm100FmhaFwdMainloopTmaWarpspecialized<cutlass::bfloat16_t, float, float, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<int, cute::C<1>, cute::tuple<int, int> >, cute::tuple<int, cute::C<1>, cute::tuple<cute::C<0>, int> >, cute::tuple<cute::C<1>, int, cute::tuple<cute::C<0>, int> >, cutlass::fmha::collective::ResidualMask, cute::tuple<cute::C<2>, cute::C<1>, cute::C<1> > >, cutlass::fmha::collective::Sm100FmhaFwdEpilogueTmaWarpspecialized<cutlass::bfloat16_t, float, cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> > >, cutlass::fmha::kernel::HostPrecomputedTileScheduler, cutlass::fmha::kernel::Sm100FmhaCtxKernelWarpspecializedSchedule> >(cutlass::fmha::kernel::Sm100FmhaFwdKernelTmaWarpspecialized<cute::tuple<cutlass::fmha::collective::VariableLength, cutlass::fmha::collective::VariableLength, int, cute::tuple<cute::tuple<int, int>, int> >, cutlass::fmha::collective::Sm100FmhaFwdMainloopTmaWarpspecialized<cutlass::bfloat16_t, float, float, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<int, cute::C<1>, cute::tuple<int, int> >, cute::tuple<int, cute::C<1>, cute::tuple<cute::C<0>, int> >, cute::tuple<cute::C<1>, int, cute::tuple<cute::C<0>, int> >, cutlass::fmha::collective::ResidualMask, cute::tuple<cute::C<2>, cute::C<1>, cute::C<1> > >, cutlass::fmha::collective::Sm100FmhaFwdEpilogueTmaWarpspecialized<cutlass::bfloat16_t, float, cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> > >, cutlass::fmha::kernel::HostPrecomputedTileScheduler, cutlass::fmha::kernel::Sm100FmhaCtxKernelWarpspecializedSchedule>::Params)",
+      "label": "random_mid",
+      "pct_of_gpu": 7.321769337775267,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::slice",
+        "aten::copy_"
+      ]
+    },
+    {
+      "category": "attention",
+      "kernel": "void flashinfer::BatchPrefillWithPagedKVCacheKernel<flashinfer::KernelTraits<(flashinfer::MaskMode)0, 128u, 2u, 4u, 8u, 8u, 4u, 1u, (flashinfer::PosEncodingMode)0, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, float, int, flashinfer::DefaultAttention<false, false, false, false> >, PagedParams>(PagedParams)",
+      "label": "random_mid",
+      "pct_of_gpu": 6.039815352782706,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x8_64x16_1x4_h_bz_TNT",
+      "label": "random_mid",
+      "pct_of_gpu": 3.9581401478065983,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::as_strided"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_at__tensorptrbf16gmemalign128o204820481_tensorptrbf16gmemalign128o204820481_tensorptrbf16gmemalign_0",
+      "label": "random_mid",
+      "pct_of_gpu": 3.3357072334997406,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::as_strided"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_8x64_64x16_4x1_v_bz_TNN",
+      "label": "random_mid",
+      "pct_of_gpu": 2.83848408458785,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_2x2_2cta_h_bz_TNT",
+      "label": "random_mid",
+      "pct_of_gpu": 2.6656410812861293,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::_local_scalar_dense",
+        "aten::is_nonzero",
+        "aten::item"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_384x32_64x4_2x1_2cta_v_bz_TNT",
+      "label": "random_mid",
+      "pct_of_gpu": 2.4207705922382377,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "random_high",
+      "pct_of_gpu": 33.63017173764089,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_tn_align1>(cutlass_80_simt_sgemm_64x64_8x5_tn_align1::Params)",
+      "label": "random_high",
+      "pct_of_gpu": 12.040228751309517,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void cutlass::device_kernel<cutlass::fmha::kernel::Sm100FmhaFwdKernelTmaWarpspecialized<cute::tuple<cutlass::fmha::collective::VariableLength, cutlass::fmha::collective::VariableLength, int, cute::tuple<cute::tuple<int, int>, int> >, cutlass::fmha::collective::Sm100FmhaFwdMainloopTmaWarpspecialized<cutlass::bfloat16_t, float, float, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<int, cute::C<1>, cute::tuple<int, int> >, cute::tuple<int, cute::C<1>, cute::tuple<cute::C<0>, int> >, cute::tuple<cute::C<1>, int, cute::tuple<cute::C<0>, int> >, cutlass::fmha::collective::ResidualMask, cute::tuple<cute::C<2>, cute::C<1>, cute::C<1> > >, cutlass::fmha::collective::Sm100FmhaFwdEpilogueTmaWarpspecialized<cutlass::bfloat16_t, float, cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> > >, cutlass::fmha::kernel::HostPrecomputedTileScheduler, cutlass::fmha::kernel::Sm100FmhaCtxKernelWarpspecializedSchedule> >(cutlass::fmha::kernel::Sm100FmhaFwdKernelTmaWarpspecialized<cute::tuple<cutlass::fmha::collective::VariableLength, cutlass::fmha::collective::VariableLength, int, cute::tuple<cute::tuple<int, int>, int> >, cutlass::fmha::collective::Sm100FmhaFwdMainloopTmaWarpspecialized<cutlass::bfloat16_t, float, float, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<int, cute::C<1>, cute::tuple<int, int> >, cute::tuple<int, cute::C<1>, cute::tuple<cute::C<0>, int> >, cute::tuple<cute::C<1>, int, cute::tuple<cute::C<0>, int> >, cutlass::fmha::collective::ResidualMask, cute::tuple<cute::C<2>, cute::C<1>, cute::C<1> > >, cutlass::fmha::collective::Sm100FmhaFwdEpilogueTmaWarpspecialized<cutlass::bfloat16_t, float, cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> > >, cutlass::fmha::kernel::HostPrecomputedTileScheduler, cutlass::fmha::kernel::Sm100FmhaCtxKernelWarpspecializedSchedule>::Params)",
+      "label": "random_high",
+      "pct_of_gpu": 7.176010233510629,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::slice"
+      ]
+    },
+    {
+      "category": "attention",
+      "kernel": "void flashinfer::BatchPrefillWithPagedKVCacheKernel<flashinfer::KernelTraits<(flashinfer::MaskMode)0, 128u, 2u, 4u, 8u, 8u, 4u, 1u, (flashinfer::PosEncodingMode)0, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, float, int, flashinfer::DefaultAttention<false, false, false, false> >, PagedParams>(PagedParams)",
+      "label": "random_high",
+      "pct_of_gpu": 5.844932731132805,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x8_64x16_1x4_h_bz_TNT",
+      "label": "random_high",
+      "pct_of_gpu": 3.8824004368809586,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::as_strided"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_at__tensorptrbf16gmemalign128o204820481_tensorptrbf16gmemalign128o204820481_tensorptrbf16gmemalign_0",
+      "label": "random_high",
+      "pct_of_gpu": 3.2733138360506007,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::as_strided"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_8x64_64x16_4x1_v_bz_TNN",
+      "label": "random_high",
+      "pct_of_gpu": 2.783789803103806,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_2x2_2cta_h_bz_TNT",
+      "label": "random_high",
+      "pct_of_gpu": 2.608826072561435,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::select"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_384x32_64x4_2x1_2cta_v_bz_TNT",
+      "label": "random_high",
+      "pct_of_gpu": 2.3731042171717758,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 32.614030600118475,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_tn_align1>(cutlass_80_simt_sgemm_64x64_8x5_tn_align1::Params)",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 12.314763965352759,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void cutlass::device_kernel<cutlass::fmha::kernel::Sm100FmhaFwdKernelTmaWarpspecialized<cute::tuple<cutlass::fmha::collective::VariableLength, cutlass::fmha::collective::VariableLength, int, cute::tuple<cute::tuple<int, int>, int> >, cutlass::fmha::collective::Sm100FmhaFwdMainloopTmaWarpspecialized<cutlass::bfloat16_t, float, float, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<int, cute::C<1>, cute::tuple<int, int> >, cute::tuple<int, cute::C<1>, cute::tuple<cute::C<0>, int> >, cute::tuple<cute::C<1>, int, cute::tuple<cute::C<0>, int> >, cutlass::fmha::collective::ResidualMask, cute::tuple<cute::C<2>, cute::C<1>, cute::C<1> > >, cutlass::fmha::collective::Sm100FmhaFwdEpilogueTmaWarpspecialized<cutlass::bfloat16_t, float, cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> > >, cutlass::fmha::kernel::HostPrecomputedTileScheduler, cutlass::fmha::kernel::Sm100FmhaCtxKernelWarpspecializedSchedule> >(cutlass::fmha::kernel::Sm100FmhaFwdKernelTmaWarpspecialized<cute::tuple<cutlass::fmha::collective::VariableLength, cutlass::fmha::collective::VariableLength, int, cute::tuple<cute::tuple<int, int>, int> >, cutlass::fmha::collective::Sm100FmhaFwdMainloopTmaWarpspecialized<cutlass::bfloat16_t, float, float, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<int, cute::C<1>, cute::tuple<int, int> >, cute::tuple<int, cute::C<1>, cute::tuple<cute::C<0>, int> >, cute::tuple<cute::C<1>, int, cute::tuple<cute::C<0>, int> >, cutlass::fmha::collective::ResidualMask, cute::tuple<cute::C<2>, cute::C<1>, cute::C<1> > >, cutlass::fmha::collective::Sm100FmhaFwdEpilogueTmaWarpspecialized<cutlass::bfloat16_t, float, cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> > >, cutlass::fmha::kernel::HostPrecomputedTileScheduler, cutlass::fmha::kernel::Sm100FmhaCtxKernelWarpspecializedSchedule>::Params)",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 7.337101051069341,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::slice",
+        "aten::as_strided"
+      ]
+    },
+    {
+      "category": "attention",
+      "kernel": "void flashinfer::BatchPrefillWithPagedKVCacheKernel<flashinfer::KernelTraits<(flashinfer::MaskMode)0, 128u, 2u, 4u, 8u, 8u, 4u, 1u, (flashinfer::PosEncodingMode)0, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, float, int, flashinfer::DefaultAttention<false, false, false, false> >, PagedParams>(PagedParams)",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 5.64733783929124,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x8_64x16_1x4_h_bz_TNT",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 3.969857321229251,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::as_strided"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_at__tensorptrbf16gmemalign128o204820481_tensorptrbf16gmemalign128o204820481_tensorptrbf16gmemalign_0",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 3.3474676380920805,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::as_strided"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_8x64_64x16_4x1_v_bz_TNN",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 2.8458400638395807,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_2x2_2cta_h_bz_TNT",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 2.672624843071365,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::as_strided",
+        "aten::select"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_384x32_64x4_2x1_2cta_v_bz_TNT",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 2.4271400931552876,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "sharegpt_mid",
+      "pct_of_gpu": 32.62881319175734,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_tn_align1>(cutlass_80_simt_sgemm_64x64_8x5_tn_align1::Params)",
+      "label": "sharegpt_mid",
+      "pct_of_gpu": 12.316225039543548,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void cutlass::device_kernel<cutlass::fmha::kernel::Sm100FmhaFwdKernelTmaWarpspecialized<cute::tuple<cutlass::fmha::collective::VariableLength, cutlass::fmha::collective::VariableLength, int, cute::tuple<cute::tuple<int, int>, int> >, cutlass::fmha::collective::Sm100FmhaFwdMainloopTmaWarpspecialized<cutlass::bfloat16_t, float, float, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<int, cute::C<1>, cute::tuple<int, int> >, cute::tuple<int, cute::C<1>, cute::tuple<cute::C<0>, int> >, cute::tuple<cute::C<1>, int, cute::tuple<cute::C<0>, int> >, cutlass::fmha::collective::ResidualMask, cute::tuple<cute::C<2>, cute::C<1>, cute::C<1> > >, cutlass::fmha::collective::Sm100FmhaFwdEpilogueTmaWarpspecialized<cutlass::bfloat16_t, float, cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> > >, cutlass::fmha::kernel::HostPrecomputedTileScheduler, cutlass::fmha::kernel::Sm100FmhaCtxKernelWarpspecializedSchedule> >(cutlass::fmha::kernel::Sm100FmhaFwdKernelTmaWarpspecialized<cute::tuple<cutlass::fmha::collective::VariableLength, cutlass::fmha::collective::VariableLength, int, cute::tuple<cute::tuple<int, int>, int> >, cutlass::fmha::collective::Sm100FmhaFwdMainloopTmaWarpspecialized<cutlass::bfloat16_t, float, float, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<int, cute::C<1>, cute::tuple<int, int> >, cute::tuple<int, cute::C<1>, cute::tuple<cute::C<0>, int> >, cute::tuple<cute::C<1>, int, cute::tuple<cute::C<0>, int> >, cutlass::fmha::collective::ResidualMask, cute::tuple<cute::C<2>, cute::C<1>, cute::C<1> > >, cutlass::fmha::collective::Sm100FmhaFwdEpilogueTmaWarpspecialized<cutlass::bfloat16_t, float, cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> > >, cutlass::fmha::kernel::HostPrecomputedTileScheduler, cutlass::fmha::kernel::Sm100FmhaCtxKernelWarpspecializedSchedule>::Params)",
+      "label": "sharegpt_mid",
+      "pct_of_gpu": 7.338517310765194,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::slice",
+        "aten::copy_"
+      ]
+    },
+    {
+      "category": "attention",
+      "kernel": "void flashinfer::BatchPrefillWithPagedKVCacheKernel<flashinfer::KernelTraits<(flashinfer::MaskMode)0, 128u, 2u, 4u, 8u, 8u, 4u, 1u, (flashinfer::PosEncodingMode)0, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, float, int, flashinfer::DefaultAttention<false, false, false, false> >, PagedParams>(PagedParams)",
+      "label": "sharegpt_mid",
+      "pct_of_gpu": 5.647577385580972,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x8_64x16_1x4_h_bz_TNT",
+      "label": "sharegpt_mid",
+      "pct_of_gpu": 3.966489163142491,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_at__tensorptrbf16gmemalign128o204820481_tensorptrbf16gmemalign128o204820481_tensorptrbf16gmemalign_0",
+      "label": "sharegpt_mid",
+      "pct_of_gpu": 3.3466801679105447,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::as_strided"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_8x64_64x16_4x1_v_bz_TNN",
+      "label": "sharegpt_mid",
+      "pct_of_gpu": 2.844932713722706,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_2x2_2cta_h_bz_TNT",
+      "label": "sharegpt_mid",
+      "pct_of_gpu": 2.6713830981493274,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::select",
+        "aten::copy_",
+        "aten::as_strided"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_384x32_64x4_2x1_2cta_v_bz_TNT",
+      "label": "sharegpt_mid",
+      "pct_of_gpu": 2.4269756511199065,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "sharegpt_high",
+      "pct_of_gpu": 32.619983086189535,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_tn_align1>(cutlass_80_simt_sgemm_64x64_8x5_tn_align1::Params)",
+      "label": "sharegpt_high",
+      "pct_of_gpu": 12.310382904253942,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void cutlass::device_kernel<cutlass::fmha::kernel::Sm100FmhaFwdKernelTmaWarpspecialized<cute::tuple<cutlass::fmha::collective::VariableLength, cutlass::fmha::collective::VariableLength, int, cute::tuple<cute::tuple<int, int>, int> >, cutlass::fmha::collective::Sm100FmhaFwdMainloopTmaWarpspecialized<cutlass::bfloat16_t, float, float, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<int, cute::C<1>, cute::tuple<int, int> >, cute::tuple<int, cute::C<1>, cute::tuple<cute::C<0>, int> >, cute::tuple<cute::C<1>, int, cute::tuple<cute::C<0>, int> >, cutlass::fmha::collective::ResidualMask, cute::tuple<cute::C<2>, cute::C<1>, cute::C<1> > >, cutlass::fmha::collective::Sm100FmhaFwdEpilogueTmaWarpspecialized<cutlass::bfloat16_t, float, cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> > >, cutlass::fmha::kernel::HostPrecomputedTileScheduler, cutlass::fmha::kernel::Sm100FmhaCtxKernelWarpspecializedSchedule> >(cutlass::fmha::kernel::Sm100FmhaFwdKernelTmaWarpspecialized<cute::tuple<cutlass::fmha::collective::VariableLength, cutlass::fmha::collective::VariableLength, int, cute::tuple<cute::tuple<int, int>, int> >, cutlass::fmha::collective::Sm100FmhaFwdMainloopTmaWarpspecialized<cutlass::bfloat16_t, float, float, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<int, cute::C<1>, cute::tuple<int, int> >, cute::tuple<int, cute::C<1>, cute::tuple<cute::C<0>, int> >, cute::tuple<cute::C<1>, int, cute::tuple<cute::C<0>, int> >, cutlass::fmha::collective::ResidualMask, cute::tuple<cute::C<2>, cute::C<1>, cute::C<1> > >, cutlass::fmha::collective::Sm100FmhaFwdEpilogueTmaWarpspecialized<cutlass::bfloat16_t, float, cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> > >, cutlass::fmha::kernel::HostPrecomputedTileScheduler, cutlass::fmha::kernel::Sm100FmhaCtxKernelWarpspecializedSchedule>::Params)",
+      "label": "sharegpt_high",
+      "pct_of_gpu": 7.335169519950362,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::item",
+        "aten::as_strided",
+        "aten::copy_"
+      ]
+    },
+    {
+      "category": "attention",
+      "kernel": "void flashinfer::BatchPrefillWithPagedKVCacheKernel<flashinfer::KernelTraits<(flashinfer::MaskMode)0, 128u, 2u, 4u, 8u, 8u, 4u, 1u, (flashinfer::PosEncodingMode)0, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, float, int, flashinfer::DefaultAttention<false, false, false, false> >, PagedParams>(PagedParams)",
+      "label": "sharegpt_high",
+      "pct_of_gpu": 5.6472183839245895,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x8_64x16_1x4_h_bz_TNT",
+      "label": "sharegpt_high",
+      "pct_of_gpu": 3.9675022153534663,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::as_strided",
+        "aten::copy_"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_at__tensorptrbf16gmemalign128o204820481_tensorptrbf16gmemalign128o204820481_tensorptrbf16gmemalign_0",
+      "label": "sharegpt_high",
+      "pct_of_gpu": 3.3474926993970664,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::copy_",
+        "aten::as_strided"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_8x64_64x16_4x1_v_bz_TNN",
+      "label": "sharegpt_high",
+      "pct_of_gpu": 2.8451076448246266,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_2x2_2cta_h_bz_TNT",
+      "label": "sharegpt_high",
+      "pct_of_gpu": 2.672721903676841,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::as_strided"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_384x32_64x4_2x1_2cta_v_bz_TNT",
+      "label": "sharegpt_high",
+      "pct_of_gpu": 2.4261203417606674,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense"
+      ]
+    }
+  ],
+  "task_candidates": [
+    {
+      "category": "moe",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "fused_moe_kernel",
+      "labels": [
+        "random_low"
+      ],
+      "max_pct_of_gpu": 32.836231968411866,
+      "model": "inclusionAI/LLaDA2.1-mini",
+      "model_slug": "llada_21_mini",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::slice",
+          "kernel_dur_us": 93.888,
+          "provenance": "external_id=10331",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "1",
+              "2",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                2
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::clamp",
+          "kernel_dur_us": 92.704,
+          "provenance": "external_id=9374",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::view_as",
+          "kernel_dur_us": 91.968,
+          "provenance": "external_id=7460",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "bool",
+              "bool"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::item",
+          "kernel_dur_us": 91.68,
+          "provenance": "external_id=8417",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              []
+            ],
+            "Input Strides": [
+              []
+            ],
+            "Input type": [
+              "bool"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::unbind",
+          "kernel_dur_us": 91.616,
+          "provenance": "external_id=6546",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                1
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::view",
+          "kernel_dur_us": 90.815,
+          "provenance": "external_id=5589",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[2]"
+            ],
+            "Input Dims": [
+              [
+                2
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "ScalarList"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "llada_21_mini/b200/docs/kernel_shapes_random_low.json"
+      ],
+      "task_id": "moe__fused_moe_kernel__c581b7d47d",
+      "total_calls": 4256,
+      "workload_count": 1,
+      "workloads": [
+        {
+          "calls": 4256,
+          "concurrency": "low",
+          "dataset": "random",
+          "label": "random_low",
+          "mean_us": 37.473415413533836,
+          "pct_of_gpu": 32.836231968411866,
+          "top_cpu_ops": [
+            "aten::_local_scalar_dense",
+            "aten::slice",
+            "aten::clamp",
+            "aten::view_as",
+            "aten::item"
+          ],
+          "total_us": 159486.856
+        }
+      ]
+    },
+    {
+      "category": "gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_tn_align1>(cutlass_80_simt_sgemm_64x64_8x5_tn_align1::Params)",
+      "labels": [
+        "random_low"
+      ],
+      "max_pct_of_gpu": 12.388038316925977,
+      "model": "inclusionAI/LLaDA2.1-mini",
+      "model_slug": "llada_21_mini",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::view_as",
+          "kernel_dur_us": 28.705,
+          "provenance": "external_id=7460",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "bool",
+              "bool"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::slice",
+          "kernel_dur_us": 28.704,
+          "provenance": "external_id=10331",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "1",
+              "2",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                2
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::slice",
+          "kernel_dur_us": 28.704,
+          "provenance": "external_id=12673",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "0",
+              "1",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "llada_21_mini/b200/docs/kernel_shapes_random_low.json"
+      ],
+      "task_id": "gemm__kernel2__57e9da75e7",
+      "total_calls": 2128,
+      "workload_count": 1,
+      "workloads": [
+        {
+          "calls": 2128,
+          "concurrency": "low",
+          "dataset": "random",
+          "label": "random_low",
+          "mean_us": 28.274992481203007,
+          "pct_of_gpu": 12.388038316925977,
+          "top_cpu_ops": [
+            "aten::_local_scalar_dense",
+            "aten::slice",
+            "aten::view_as"
+          ],
+          "total_us": 60169.184
+        }
+      ]
+    },
+    {
+      "category": "gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "void cutlass::device_kernel<cutlass::fmha::kernel::Sm100FmhaFwdKernelTmaWarpspecialized<cute::tuple<cutlass::fmha::collective::VariableLength, cutlass::fmha::collective::VariableLength, int, cute::tuple<cute::tuple<int, int>, int> >, cutlass::fmha::collective::Sm100FmhaFwdMainloopTmaWarpspecialized<cutlass::bfloat16_t, float, float, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<int, cute::C<1>, cute::tuple<int, int> >, cute::tuple<int, cute::C<1>, cute::tuple<cute::C<0>, int> >, cute::tuple<cute::C<1>, int, cute::tuple<cute::C<0>, int> >, cutlass::fmha::collective::ResidualMask, cute::tuple<cute::C<2>, cute::C<1>, cute::C<1> > >, cutlass::fmha::collective::Sm100FmhaFwdEpilogueTmaWarpspecialized<cutlass::bfloat16_t, float, cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> > >, cutlass::fmha::kernel::HostPrecomputedTileScheduler, cutlass::fmha::kernel::Sm100FmhaCtxKernelWarpspecializedSchedule> >(cutlass::fmha::kernel::Sm100FmhaFwdKernelTmaWarpspecialized<cute::tuple<cutlass::fmha::collective::VariableLength, cutlass::fmha::collective::VariableLength, int, cute::tuple<cute::tuple<int, int>, int> >, cutlass::fmha::collective::Sm100FmhaFwdMainloopTmaWarpspecialized<cutlass::bfloat16_t, float, float, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<int, cute::C<1>, cute::tuple<int, int> >, cute::tuple<int, cute::C<1>, cute::tuple<cute::C<0>, int> >, cute::tuple<cute::C<1>, int, cute::tuple<cute::C<0>, int> >, cutlass::fmha::collective::ResidualMask, cute::tuple<cute::C<2>, cute::C<1>, cute::C<1> > >, cutlass::fmha::collective::Sm100FmhaFwdEpilogueTmaWarpspecialized<cutlass::bfloat16_t, float, cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> > >, cutlass::fmha::kernel::HostPrecomputedTileScheduler, cutlass::fmha::kernel::Sm100FmhaCtxKernelWarpspecializedSchedule>::Params)",
+      "labels": [
+        "random_low"
+      ],
+      "max_pct_of_gpu": 7.384183602070801,
+      "model": "inclusionAI/LLaDA2.1-mini",
+      "model_slug": "llada_21_mini",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::slice",
+          "kernel_dur_us": 16.992,
+          "provenance": "external_id=10331",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "1",
+              "2",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                2
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::slice",
+          "kernel_dur_us": 16.96,
+          "provenance": "external_id=20071",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "0",
+              "32",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                32,
+                157184
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                157184,
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "float",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::slice",
+          "kernel_dur_us": 16.928,
+          "provenance": "external_id=4675",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "0",
+              "1",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "llada_21_mini/b200/docs/kernel_shapes_random_low.json"
+      ],
+      "task_id": "gemm__device_kernel__5603f3ec20",
+      "total_calls": 2240,
+      "workload_count": 1,
+      "workloads": [
+        {
+          "calls": 2240,
+          "concurrency": "low",
+          "dataset": "random",
+          "label": "random_low",
+          "mean_us": 16.011279910714286,
+          "pct_of_gpu": 7.384183602070801,
+          "top_cpu_ops": [
+            "aten::slice",
+            "aten::as_strided"
+          ],
+          "total_us": 35865.267
+        }
+      ]
+    },
+    {
+      "category": "gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_at__tensorptrbf16gmemalign128o204820481_tensorptrbf16gmemalign128o204820481_tensorptrbf16gmemalign_0",
+      "labels": [
+        "random_low"
+      ],
+      "max_pct_of_gpu": 3.2275491966926597,
+      "model": "inclusionAI/LLaDA2.1-mini",
+      "model_slug": "llada_21_mini",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::_local_scalar_dense",
+          "kernel_dur_us": 4.16,
+          "provenance": "external_id=19157",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              []
+            ],
+            "Input Strides": [
+              []
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 4.064,
+          "provenance": "external_id=16372",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::clamp",
+          "kernel_dur_us": 3.936,
+          "provenance": "external_id=9374",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar",
+              ""
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "llada_21_mini/b200/docs/kernel_shapes_random_low.json"
+      ],
+      "task_id": "gemm__kernel_cutlass_kernel_flashinfernormkernelsfused__e2b3243700",
+      "total_calls": 4480,
+      "workload_count": 1,
+      "workloads": [
+        {
+          "calls": 4480,
+          "concurrency": "low",
+          "dataset": "random",
+          "label": "random_low",
+          "mean_us": 3.49918125,
+          "pct_of_gpu": 3.2275491966926597,
+          "top_cpu_ops": [
+            "aten::_local_scalar_dense",
+            "aten::copy_",
+            "aten::clamp"
+          ],
+          "total_us": 15676.332
+        }
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "nvjet_sm100_tst_8x64_64x16_4x1_v_bz_TNN",
+      "labels": [
+        "random_low"
+      ],
+      "max_pct_of_gpu": 2.813261388538601,
+      "model": "inclusionAI/LLaDA2.1-mini",
+      "model_slug": "llada_21_mini",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 6.945,
+          "provenance": "external_id=11759",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                2
+              ],
+              [
+                2
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "int",
+              "int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::_local_scalar_dense",
+          "kernel_dur_us": 6.849,
+          "provenance": "external_id=19157",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              []
+            ],
+            "Input Strides": [
+              []
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::clamp",
+          "kernel_dur_us": 6.848,
+          "provenance": "external_id=9374",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar",
+              ""
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "llada_21_mini/b200/docs/kernel_shapes_random_low.json"
+      ],
+      "task_id": "quant_gemm__nvjet_sm100_tst_8x64_64x16_4x1_v_bz_tnn__3decc0e67f",
+      "total_calls": 2128,
+      "workload_count": 1,
+      "workloads": [
+        {
+          "calls": 2128,
+          "concurrency": "low",
+          "dataset": "random",
+          "label": "random_low",
+          "mean_us": 6.421109022556391,
+          "pct_of_gpu": 2.813261388538601,
+          "top_cpu_ops": [
+            "aten::_local_scalar_dense",
+            "aten::copy_",
+            "aten::clamp"
+          ],
+          "total_us": 13664.12
+        }
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_2x2_2cta_h_bz_TNT",
+      "labels": [
+        "random_low"
+      ],
+      "max_pct_of_gpu": 2.697466145473943,
+      "model": "inclusionAI/LLaDA2.1-mini",
+      "model_slug": "llada_21_mini",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::view_as",
+          "kernel_dur_us": 7.296,
+          "provenance": "external_id=7460",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "bool",
+              "bool"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 7.232,
+          "provenance": "external_id=933",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[1]",
+              "[0]",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "bool",
+              "ScalarList",
+              "ScalarList",
+              ""
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "llada_21_mini/b200/docs/kernel_shapes_random_low.json"
+      ],
+      "task_id": "quant_gemm__nvjet_sm100_tst_64x16_64x16_2x2_2cta_h_bz_tnt__fcf149f0b2",
+      "total_calls": 2240,
+      "workload_count": 1,
+      "workloads": [
+        {
+          "calls": 2240,
+          "concurrency": "low",
+          "dataset": "random",
+          "label": "random_low",
+          "mean_us": 5.848972321428572,
+          "pct_of_gpu": 2.697466145473943,
+          "top_cpu_ops": [
+            "aten::_local_scalar_dense",
+            "aten::as_strided",
+            "aten::view_as"
+          ],
+          "total_us": 13101.698
+        }
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "nvjet_sm100_tst_384x32_64x4_2x1_2cta_v_bz_TNT",
+      "labels": [
+        "random_low"
+      ],
+      "max_pct_of_gpu": 2.439606567697038,
+      "model": "inclusionAI/LLaDA2.1-mini",
+      "model_slug": "llada_21_mini",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 107.168,
+          "provenance": "external_id=11759",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                2
+              ],
+              [
+                2
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "int",
+              "int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 106.977,
+          "provenance": "external_id=28598",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 106.656,
+          "provenance": "external_id=16372",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "llada_21_mini/b200/docs/kernel_shapes_random_low.json"
+      ],
+      "task_id": "quant_gemm__nvjet_sm100_tst_384x32_64x4_2x1_2cta_v_bz_tnt__42776567a6",
+      "total_calls": 112,
+      "workload_count": 1,
+      "workloads": [
+        {
+          "calls": 112,
+          "concurrency": "low",
+          "dataset": "random",
+          "label": "random_low",
+          "mean_us": 105.797,
+          "pct_of_gpu": 2.439606567697038,
+          "top_cpu_ops": [
+            "aten::_local_scalar_dense",
+            "aten::copy_"
+          ],
+          "total_us": 11849.264
+        }
+      ]
+    }
+  ],
+  "workload_summary": {
+    "random_high": {
+      "concurrency": "high",
+      "dataset": "random",
+      "empty_shape_rows": 0,
+      "row_count": 9,
+      "strong_rows": 0,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 695916.803,
+      "weak_rows": 9
+    },
+    "random_low": {
+      "concurrency": "low",
+      "dataset": "random",
+      "empty_shape_rows": 0,
+      "row_count": 9,
+      "strong_rows": 7,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 485703.89,
+      "weak_rows": 2
+    },
+    "random_mid": {
+      "concurrency": "mid",
+      "dataset": "random",
+      "empty_shape_rows": 0,
+      "row_count": 9,
+      "strong_rows": 0,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 883179.516,
+      "weak_rows": 9
+    },
+    "sharegpt_high": {
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "empty_shape_rows": 0,
+      "row_count": 9,
+      "strong_rows": 0,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 741739.422,
+      "weak_rows": 9
+    },
+    "sharegpt_low": {
+      "concurrency": "low",
+      "dataset": "sharegpt",
+      "empty_shape_rows": 0,
+      "row_count": 9,
+      "strong_rows": 0,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 741466.018,
+      "weak_rows": 9
+    },
+    "sharegpt_mid": {
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "empty_shape_rows": 0,
+      "row_count": 9,
+      "strong_rows": 0,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 741384.529,
+      "weak_rows": 9
+    }
+  }
+}

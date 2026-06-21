@@ -1,0 +1,219 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "ncclDevKernel_AllReduce_Sum_bf16_RING_LL(ncclDevKernelArgsStorage<4096ul>)",
+  "labels": [
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 14.654458914010783,
+  "model": "nvidia/GLM-5-NVFP4",
+  "model_slug": "glm_5",
+  "shape_samples": [
+    {
+      "cpu_op": "record_param_comms",
+      "kernel_dur_us": 41586.61,
+      "provenance": "external_id=124329",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "3",
+          "",
+          "[]",
+          "[]",
+          "0",
+          "1",
+          "4"
+        ],
+        "Input Dims": [
+          [
+            [
+              9962,
+              6144
+            ]
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            [
+              6144,
+              1
+            ]
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "TensorList",
+          "",
+          "",
+          "Scalar",
+          "",
+          "ScalarList",
+          "ScalarList",
+          "Scalar",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty_strided",
+      "kernel_dur_us": 35826.533,
+      "provenance": "external_id=123779",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[318784]",
+          "[1]",
+          "6",
+          "0",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "ScalarList",
+          "Scalar",
+          "Scalar",
+          "",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::resize_",
+      "kernel_dur_us": 2748.766,
+      "provenance": "external_id=118600",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[231]",
+          ""
+        ],
+        "Input Dims": [
+          [
+            0
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "int",
+          "ScalarList",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "triton_poi_fused_mul_unsqueeze_0",
+      "kernel_dur_us": 1008.416,
+      "provenance": "external_id=124040",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "0.088388347648318447",
+          "318784"
+        ],
+        "Input Dims": [
+          [
+            9962,
+            32,
+            1
+          ],
+          [
+            9962,
+            32,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            32,
+            1,
+            1
+          ],
+          [
+            32,
+            1,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "float",
+          "float",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "glm_5/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "comm__nccldevkernel_allreduce_sum_bf16_ring_ll__05a3ee6241",
+  "total_calls": 628,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 628,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 548.4542818471338,
+      "pct_of_gpu": 14.654458914010783,
+      "top_cpu_ops": [
+        "record_param_comms",
+        "aten::empty_strided",
+        "aten::resize_",
+        "triton_poi_fused_mul_unsqueeze_0"
+      ],
+      "total_us": 344429.289
+    }
+  ]
+}

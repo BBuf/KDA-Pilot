@@ -1,0 +1,173 @@
+{
+  "category": "other",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "bmm_Bfloat16_E4m3E4m3_Fp32_t128x64x128_s8_et128x64_m256x64x32_c2x1x1_rM_TN_transOut_schPd2x1x2x3_bN_rgTma_clmp_dynB_sm100f",
+  "labels": [
+    "random_high"
+  ],
+  "max_pct_of_gpu": 3.015828949727112,
+  "model": "mistralai/Mistral-Small-4-119B-2603",
+  "model_slug": "mistral_small4",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::trtllm_fp8_per_tensor_scale_moe_wrapper",
+      "kernel_dur_us": 190.977,
+      "provenance": "external_id=32264",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "128",
+          "4",
+          "1",
+          "1",
+          "2048",
+          "0",
+          "128",
+          "1.",
+          "False",
+          "1",
+          "",
+          "2048",
+          "3"
+        ],
+        "Input Dims": [
+          [
+            1738,
+            128
+          ],
+          [],
+          [
+            1738,
+            4096
+          ],
+          [
+            128,
+            4096,
+            4096
+          ],
+          [
+            128
+          ],
+          [
+            128
+          ],
+          [
+            128,
+            4096,
+            2048
+          ],
+          [
+            128
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            128,
+            1
+          ],
+          [],
+          [
+            4096,
+            1
+          ],
+          [
+            16777216,
+            4096,
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            8388608,
+            2048,
+            1
+          ],
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "",
+          "c10::Float8_e4m3fn",
+          "c10::Float8_e4m3fn",
+          "float",
+          "float",
+          "c10::Float8_e4m3fn",
+          "float",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "mistral_small4/b200/docs/kernel_shapes_random_high.json"
+  ],
+  "task_id": "other__bmm_bfloat16_e4m3e4m3_fp32_t128x64x128_s8_et128x__f5292701d4",
+  "total_calls": 36,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 36,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 180.58397222222223,
+      "pct_of_gpu": 3.015828949727112,
+      "top_cpu_ops": [
+        "sglang::trtllm_fp8_per_tensor_scale_moe_wrapper"
+      ],
+      "total_us": 6501.023
+    }
+  ]
+}

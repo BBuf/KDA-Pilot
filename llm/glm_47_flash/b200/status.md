@@ -1,0 +1,16 @@
+- 2026-06-19 21:53:30 UTC: server_start - CUDA_VISIBLE_DEVICES=0; command=python3 -m sglang.launch_server --model-path zai-org/GLM-4.7-Flash --tp 1 --attention-backend triton --host 0.0.0.0 --port 30000
+- 2026-06-19 21:57:15 UTC: server_ready - pid=1320, port=30000
+- 2026-06-19 21:57:15 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
+- 2026-06-19 21:57:57 UTC: extract - random_low: extracting >2% kernel shapes/meta
+- 2026-06-19 21:57:57 UTC: benchmark - random_mid: dataset=random, num_prompts=300, max_concurrency=32
+- 2026-06-19 21:59:46 UTC: extract - random_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 21:59:46 UTC: benchmark - random_high: dataset=random, num_prompts=500, max_concurrency=100
+- 2026-06-19 22:01:27 UTC: extract - random_high: extracting >2% kernel shapes/meta
+- 2026-06-19 22:01:28 UTC: benchmark - sharegpt_low: dataset=sharegpt, num_prompts=10, max_concurrency=1
+- 2026-06-19 22:02:12 UTC: extract - sharegpt_low: extracting >2% kernel shapes/meta
+- 2026-06-19 22:02:13 UTC: benchmark - sharegpt_mid: dataset=sharegpt, num_prompts=300, max_concurrency=32
+- 2026-06-19 22:03:13 UTC: extract - sharegpt_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 22:03:14 UTC: benchmark - sharegpt_high: dataset=sharegpt, num_prompts=500, max_concurrency=100
+- 2026-06-19 22:04:25 UTC: extract - sharegpt_high: extracting >2% kernel shapes/meta
+- 2026-06-19 22:04:25 UTC: completed - GLM-4.7-Flash BF16 benchmark/profile/shape extraction complete
+- 2026-06-19 22:04:32 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--zai-org--GLM-4.7-Flash: deleted after completed run, size_before=59G; lock=/root/.cache/huggingface/hub/.locks/models--zai-org--GLM-4.7-Flash

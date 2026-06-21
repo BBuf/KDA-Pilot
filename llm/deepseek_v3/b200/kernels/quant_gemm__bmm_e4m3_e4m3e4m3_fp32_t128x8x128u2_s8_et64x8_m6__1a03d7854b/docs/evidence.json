@@ -1,0 +1,229 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "bmm_E4m3_E4m3E4m3_Fp32_t128x8x128u2_s8_et64x8_m64x8x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_schedS_bN_tma_tmaSf_rgTma_clmp_lbW2_dynB_sm100f",
+  "labels": [
+    "sharegpt_low"
+  ],
+  "max_pct_of_gpu": 2.002095044313584,
+  "model": "deepseek-ai/DeepSeek-V3",
+  "model_slug": "deepseek_v3",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::trtllm_fp8_block_scale_moe_wrapper",
+      "kernel_dur_us": 67.456,
+      "provenance": "external_id=87818",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "256",
+          "8",
+          "8",
+          "4",
+          "256",
+          "0",
+          "256",
+          "2.5",
+          "2",
+          "False",
+          "0",
+          "",
+          "16",
+          "1",
+          "3"
+        ],
+        "Input Dims": [
+          [
+            16,
+            256
+          ],
+          [
+            256
+          ],
+          [
+            16,
+            7168
+          ],
+          [
+            56,
+            16
+          ],
+          [
+            256,
+            512,
+            7168
+          ],
+          [
+            256,
+            4,
+            56
+          ],
+          [
+            256,
+            7168,
+            256
+          ],
+          [
+            256,
+            56,
+            2
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            256,
+            1
+          ],
+          [
+            1
+          ],
+          [
+            7168,
+            1
+          ],
+          [
+            16,
+            1
+          ],
+          [
+            3670016,
+            7168,
+            1
+          ],
+          [
+            224,
+            56,
+            1
+          ],
+          [
+            1835008,
+            256,
+            1
+          ],
+          [
+            112,
+            2,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "float",
+          "c10::BFloat16",
+          "c10::Float8_e4m3fn",
+          "float",
+          "c10::Float8_e4m3fn",
+          "float",
+          "c10::Float8_e4m3fn",
+          "float",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::transpose",
+      "kernel_dur_us": 66.784,
+      "provenance": "external_id=87810",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0",
+          "1"
+        ],
+        "Input Dims": [
+          [
+            16,
+            56
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            56,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "float",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "deepseek_v3/b200/docs/kernel_shapes_sharegpt_low.json"
+  ],
+  "task_id": "quant_gemm__bmm_e4m3_e4m3e4m3_fp32_t128x8x128u2_s8_et64x8_m6__1a03d7854b",
+  "total_calls": 2183,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 2183,
+      "concurrency": "low",
+      "dataset": "sharegpt",
+      "label": "sharegpt_low",
+      "mean_us": 24.5129642693541,
+      "pct_of_gpu": 2.002095044313584,
+      "top_cpu_ops": [
+        "sglang::trtllm_fp8_block_scale_moe_wrapper",
+        "aten::transpose"
+      ],
+      "total_us": 53511.801
+    }
+  ]
+}

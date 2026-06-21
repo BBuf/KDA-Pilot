@@ -1,0 +1,104 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_24x64_64x16_4x1_v_bz_TNN",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 2.6551680818202645,
+  "model": "openai/gpt-oss-120b",
+  "model_slug": "gpt_oss_120b",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::empty_strided",
+      "kernel_dur_us": 4.48,
+      "provenance": "external_id=3368",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[1]",
+          "[1]",
+          "4",
+          "0",
+          "",
+          "False"
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "ScalarList",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::sum",
+      "kernel_dur_us": 4.384,
+      "provenance": "external_id=4009",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "long int",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "gpt_oss_120b/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_24x64_64x16_4x1_v_bz_tnn__b371524b5a",
+  "total_calls": 2016,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 2016,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 3.888852182539683,
+      "pct_of_gpu": 2.6551680818202645,
+      "top_cpu_ops": [
+        "aten::empty_strided",
+        "aten::as_strided",
+        "aten::copy_",
+        "c10d::broadcast_",
+        "aten::sum"
+      ],
+      "total_us": 7839.926
+    }
+  ]
+}

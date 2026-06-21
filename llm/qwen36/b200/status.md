@@ -1,0 +1,19 @@
+- 2026-06-19 09:25:40 UTC: server_start - CUDA_VISIBLE_DEVICES=0; command=sglang serve --model-path Qwen/Qwen3.6-35B-A3B-FP8 --reasoning-parser qwen3 --tool-call-parser qwen3_coder --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1 --speculative-num-draft-tokens 4 --mem-fraction-static 0.8 --host 0.0.0.0 --port 30000
+- 2026-06-19 09:25:54 UTC: failed_or_interrupted - exit_code=1; cleaning partial weights
+- 2026-06-19 09:25:54 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--Qwen--Qwen3.6-35B-A3B-FP8: deleted after failed/interrupted Qwen3.6 run, size_before=76K; lock=/root/.cache/huggingface/hub/.locks/models--Qwen--Qwen3.6-35B-A3B-FP8
+- 2026-06-19 09:26:52 UTC: server_start - CUDA_VISIBLE_DEVICES=0; command=sglang serve --model-path Qwen/Qwen3.6-35B-A3B-FP8 --reasoning-parser qwen3 --tool-call-parser qwen3_coder --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1 --speculative-num-draft-tokens 4 --mamba-scheduler-strategy extra_buffer --mem-fraction-static 0.8 --host 0.0.0.0 --port 30000
+- 2026-06-19 09:30:36 UTC: server_ready - pid=1636, port=30000
+- 2026-06-19 09:30:36 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
+- 2026-06-19 09:31:01 UTC: extract - random_low: extracting >2% kernel shapes/meta
+- 2026-06-19 09:31:01 UTC: benchmark - random_mid: dataset=random, num_prompts=300, max_concurrency=32
+- 2026-06-19 09:32:24 UTC: extract - random_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 09:32:25 UTC: benchmark - random_high: dataset=random, num_prompts=500, max_concurrency=100
+- 2026-06-19 09:34:06 UTC: extract - random_high: extracting >2% kernel shapes/meta
+- 2026-06-19 09:34:08 UTC: benchmark - sharegpt_low: dataset=sharegpt, num_prompts=10, max_concurrency=1
+- 2026-06-19 09:34:31 UTC: extract - sharegpt_low: extracting >2% kernel shapes/meta
+- 2026-06-19 09:34:31 UTC: benchmark - sharegpt_mid: dataset=sharegpt, num_prompts=300, max_concurrency=32
+- 2026-06-19 09:35:30 UTC: extract - sharegpt_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 09:35:31 UTC: benchmark - sharegpt_high: dataset=sharegpt, num_prompts=500, max_concurrency=100
+- 2026-06-19 09:36:37 UTC: extract - sharegpt_high: extracting >2% kernel shapes/meta
+- 2026-06-19 09:36:39 UTC: completed - Qwen3.6 benchmark/profile/shape extraction complete
+- 2026-06-19 09:36:44 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--Qwen--Qwen3.6-35B-A3B-FP8: deleted after completed run, size_before=35G; lock=/root/.cache/huggingface/hub/.locks/models--Qwen--Qwen3.6-35B-A3B-FP8

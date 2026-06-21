@@ -1,0 +1,193 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void (anonymous namespace)::all_reduce_two_shot_kernel<__nv_bfloat16, 8u, true>(host::distributed::AllReduceData const*, (anonymous namespace)::AllReduceParams, device::distributed::PullController)",
+  "labels": [
+    "random_mid",
+    "sharegpt_mid",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 9.0869064143168,
+  "model": "inclusionAI/Ring-2.6-1T",
+  "model_slug": "inclusion_ring26",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::outplace_all_reduce",
+      "kernel_dur_us": 1933.966,
+      "provenance": "external_id=51094",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            685,
+            8192
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 1540.293,
+      "provenance": "external_id=189772",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[-1, 8, 192]"
+        ],
+        "Input Dims": [
+          [
+            266,
+            8,
+            192
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1536,
+            192,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::outplace_all_reduce",
+      "kernel_dur_us": 1539.974,
+      "provenance": "external_id=190832",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            266,
+            8192
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::outplace_all_reduce",
+      "kernel_dur_us": 1788.25,
+      "provenance": "external_id=266519",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            159,
+            8192
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "inclusion_ring26/b200/docs/kernel_shapes_random_mid.json",
+    "inclusion_ring26/b200/docs/kernel_shapes_sharegpt_mid.json",
+    "inclusion_ring26/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "comm__comm__c330990d60",
+  "total_calls": 9016,
+  "workload_count": 3,
+  "workloads": [
+    {
+      "calls": 1288,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 457.3181133540373,
+      "pct_of_gpu": 5.8910706241559065,
+      "top_cpu_ops": [
+        "sglang::outplace_all_reduce"
+      ],
+      "total_us": 589025.73
+    },
+    {
+      "calls": 1288,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 613.5870295031057,
+      "pct_of_gpu": 9.0869064143168,
+      "top_cpu_ops": [
+        "sglang::outplace_all_reduce",
+        "aten::view"
+      ],
+      "total_us": 790300.094
+    },
+    {
+      "calls": 6440,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 149.2139397515528,
+      "pct_of_gpu": 5.66425073984189,
+      "top_cpu_ops": [
+        "sglang::outplace_all_reduce"
+      ],
+      "total_us": 960937.772
+    }
+  ]
+}

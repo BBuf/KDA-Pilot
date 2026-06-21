@@ -1,0 +1,121 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_8x64_64x16_4x1_v_bz_TNN",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 2.813261388538601,
+  "model": "inclusionAI/LLaDA2.1-mini",
+  "model_slug": "llada_21_mini",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::copy_",
+      "kernel_dur_us": 6.945,
+      "provenance": "external_id=11759",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "True"
+        ],
+        "Input Dims": [
+          [
+            2
+          ],
+          [
+            2
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "int",
+          "int",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::_local_scalar_dense",
+      "kernel_dur_us": 6.849,
+      "provenance": "external_id=19157",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          []
+        ],
+        "Input Strides": [
+          []
+        ],
+        "Input type": [
+          "long int"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::clamp",
+      "kernel_dur_us": 6.848,
+      "provenance": "external_id=9374",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0",
+          ""
+        ],
+        "Input Dims": [
+          [
+            1
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "int",
+          "Scalar",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "llada_21_mini/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_8x64_64x16_4x1_v_bz_tnn__3decc0e67f",
+  "total_calls": 2128,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 2128,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 6.421109022556391,
+      "pct_of_gpu": 2.813261388538601,
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::copy_",
+        "aten::clamp"
+      ],
+      "total_us": 13664.12
+    }
+  ]
+}

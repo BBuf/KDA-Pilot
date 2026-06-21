@@ -1,0 +1,104 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_128x256_64x6_2x1_2cta_v_bz_TNT",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 2.25214471935071,
+  "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8",
+  "model_slug": "nemotron3_nano",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 291.328,
+      "provenance": "external_id=9884",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            9152,
+            2688
+          ],
+          [
+            2688,
+            10304
+          ]
+        ],
+        "Input Strides": [
+          [
+            2688,
+            1
+          ],
+          [
+            1,
+            2688
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 251.2,
+      "provenance": "external_id=16041",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            7915,
+            2688
+          ],
+          [
+            2688,
+            10304
+          ]
+        ],
+        "Input Strides": [
+          [
+            2688,
+            1
+          ],
+          [
+            1,
+            2688
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "nemotron3_nano/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_128x256_64x6_2x1_2cta_v_bz_tnt__73699af3d3",
+  "total_calls": 30,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 30,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 178.85856666666666,
+      "pct_of_gpu": 2.25214471935071,
+      "top_cpu_ops": [
+        "aten::mm"
+      ],
+      "total_us": 5365.757
+    }
+  ]
+}

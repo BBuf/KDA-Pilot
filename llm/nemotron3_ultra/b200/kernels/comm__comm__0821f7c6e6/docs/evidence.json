@@ -1,0 +1,231 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void (anonymous namespace)::all_reduce_one_shot_push_kernel<__nv_bfloat16, 4u, true>((anonymous namespace)::AllReducePushData, device::distributed::PushController)",
+  "labels": [
+    "sharegpt_low",
+    "sharegpt_mid",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 14.660736883001187,
+  "model": "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4",
+  "model_slug": "nemotron3_ultra",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::outplace_all_reduce",
+      "kernel_dur_us": 326.369,
+      "provenance": "external_id=125094",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            18,
+            8192
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty",
+      "kernel_dur_us": 284.32,
+      "provenance": "external_id=124566",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[3168]",
+          "3",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "Scalar",
+          "",
+          "",
+          "",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::reshape",
+      "kernel_dur_us": 425.313,
+      "provenance": "external_id=145112",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[-1, 128]"
+        ],
+        "Input Dims": [
+          [
+            2304
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "unsigned char",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::outplace_all_reduce",
+      "kernel_dur_us": 480.672,
+      "provenance": "external_id=228145",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            9,
+            8192
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::outplace_all_reduce",
+      "kernel_dur_us": 427.68,
+      "provenance": "external_id=242448",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            27,
+            8192
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "nemotron3_ultra/b200/docs/kernel_shapes_sharegpt_low.json",
+    "nemotron3_ultra/b200/docs/kernel_shapes_sharegpt_mid.json",
+    "nemotron3_ultra/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "comm__comm__0821f7c6e6",
+  "total_calls": 8968,
+  "workload_count": 3,
+  "workloads": [
+    {
+      "calls": 4224,
+      "concurrency": "low",
+      "dataset": "sharegpt",
+      "label": "sharegpt_low",
+      "mean_us": 21.169322916666665,
+      "pct_of_gpu": 14.660736883001187,
+      "top_cpu_ops": [
+        "aten::copy_",
+        "sglang::outplace_all_reduce",
+        "aten::empty"
+      ],
+      "total_us": 89419.22
+    },
+    {
+      "calls": 3280,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 49.01779603658537,
+      "pct_of_gpu": 5.14707547101079,
+      "top_cpu_ops": [
+        "sglang::outplace_all_reduce",
+        "aten::copy_",
+        "aten::reshape"
+      ],
+      "total_us": 160778.371
+    },
+    {
+      "calls": 1464,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 140.7940655737705,
+      "pct_of_gpu": 6.011735645776374,
+      "top_cpu_ops": [
+        "sglang::outplace_all_reduce"
+      ],
+      "total_us": 206122.512
+    }
+  ]
+}

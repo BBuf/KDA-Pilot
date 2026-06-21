@@ -1,0 +1,156 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_twoshot_sync<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 4, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>, std::array<int, 4>, std::array<int, 4>)",
+  "labels": [
+    "random_high",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 7.2041710317668795,
+  "model": "nvidia/DeepSeek-V3.2-NVFP4",
+  "model_slug": "deepseek_v32",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::_to_copy",
+      "kernel_dur_us": 1530.18,
+      "provenance": "external_id=44405",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "6",
+          "",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [
+            31
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "float",
+          "Scalar",
+          "",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "detach_",
+      "kernel_dur_us": 1265.987,
+      "provenance": "external_id=132757",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          [
+            34
+          ]
+        ],
+        "Input Strides": [
+          [
+            1
+          ]
+        ],
+        "Input type": [
+          "int"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 1157.314,
+      "provenance": "external_id=140515",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[]",
+          "[]",
+          "16"
+        ],
+        "Input Dims": [
+          [
+            65
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "deepseek_v32/b200/docs/kernel_shapes_random_high.json",
+    "deepseek_v32/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "comm__allreduce_fusion_kernel_twoshot_sync__022bef8d42",
+  "total_calls": 1452,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 484,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 83.84583057851235,
+      "pct_of_gpu": 2.3073603222405894,
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2",
+        "aten::_to_copy"
+      ],
+      "total_us": 40581.381999999976
+    },
+    {
+      "calls": 968,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 108.6691714876032,
+      "pct_of_gpu": 7.2041710317668795,
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1",
+        "detach_",
+        "aten::as_strided"
+      ],
+      "total_us": 105191.75799999989
+    }
+  ]
+}

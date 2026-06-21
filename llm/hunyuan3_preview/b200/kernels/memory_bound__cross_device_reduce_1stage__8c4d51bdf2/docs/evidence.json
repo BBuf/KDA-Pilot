@@ -1,0 +1,222 @@
+{
+  "category": "memory_bound",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void sglang::cross_device_reduce_1stage<__half, 8>(sglang::RankData*, sglang::RankSignals, sglang::Signal*, __half*, int, int)",
+  "labels": [
+    "sharegpt_mid",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 44.456412324279825,
+  "model": "tencent/Hy3-preview",
+  "model_slug": "hunyuan3_preview",
+  "shape_samples": [
+    {
+      "cpu_op": "sgl_kernel::all_reduce",
+      "kernel_dur_us": 1937.761,
+      "provenance": "external_id=136597",
+      "shape_args": {
+        "Concrete Inputs": [
+          "434645568",
+          "",
+          "",
+          "139898115850240",
+          "8388608"
+        ],
+        "Input Dims": [
+          [],
+          [
+            6,
+            4096
+          ],
+          [
+            6,
+            4096
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [
+            4096,
+            1
+          ],
+          [
+            4096,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "Scalar",
+          "c10::Half",
+          "c10::Half",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty",
+      "kernel_dur_us": 1934.881,
+      "provenance": "external_id=135451",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[768]",
+          "3",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::linear",
+      "kernel_dur_us": 3512.248,
+      "provenance": "external_id=185392",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            31,
+            1024
+          ],
+          [
+            4096,
+            1024
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1024,
+            1
+          ],
+          [
+            1024,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::Half",
+          "c10::Half",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "sgl_kernel::all_reduce",
+      "kernel_dur_us": 3510.271,
+      "provenance": "external_id=187218",
+      "shape_args": {
+        "Concrete Inputs": [
+          "623900928",
+          "",
+          "",
+          "139661288669184",
+          "8388608"
+        ],
+        "Input Dims": [
+          [],
+          [
+            31,
+            4096
+          ],
+          [
+            31,
+            4096
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [
+            4096,
+            1
+          ],
+          [
+            4096,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "Scalar",
+          "c10::Half",
+          "c10::Half",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "hunyuan3_preview/b200/docs/kernel_shapes_sharegpt_mid.json",
+    "hunyuan3_preview/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "memory_bound__cross_device_reduce_1stage__8c4d51bdf2",
+  "total_calls": 6552,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 3936,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 599.3632108739837,
+      "pct_of_gpu": 44.456412324279825,
+      "top_cpu_ops": [
+        "sgl_kernel::all_reduce",
+        "aten::empty"
+      ],
+      "total_us": 2359093.5979999998
+    },
+    {
+      "calls": 2616,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 650.6771724006117,
+      "pct_of_gpu": 30.747213228945707,
+      "top_cpu_ops": [
+        "sgl_kernel::all_reduce",
+        "aten::linear"
+      ],
+      "total_us": 1702171.483
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 4, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 3.0221439926162312,
+  "model": "nvidia/DeepSeek-V3.2-NVFP4",
+  "model_slug": "deepseek_v32",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::item",
+      "kernel_dur_us": 567.905,
+      "provenance": "external_id=10432",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          []
+        ],
+        "Input Strides": [
+          []
+        ],
+        "Input type": [
+          "long int"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "deepseek_v32/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "comm__allreduce_fusion_kernel_oneshot_lamport__3a58812ac0",
+  "total_calls": 3872,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 3872,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 27.035913997933843,
+      "pct_of_gpu": 3.0221439926162312,
+      "top_cpu_ops": [
+        "aten::item",
+        "Torch-Compiled Region: 4/2"
+      ],
+      "total_us": 104683.05899999983
+    }
+  ]
+}

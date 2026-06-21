@@ -1,0 +1,133 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void fused_a_gemm_kernel<1, 2112, 7168, 16, 16, 256, 12>(__nv_bfloat16*, __nv_bfloat16 const*, __nv_bfloat16 const*, int)",
+  "labels": [
+    "sharegpt_low",
+    "sharegpt_mid",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 19.273013379972987,
+  "model": "moonshotai/Kimi-K2.6",
+  "model_slug": "kimi_k26",
+  "shape_samples": [
+    {
+      "cpu_op": "sgl_kernel::dsv3_fused_a_gemm",
+      "kernel_dur_us": 1196.064,
+      "provenance": "external_id=67615",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            15,
+            2112
+          ],
+          [
+            15,
+            7168
+          ],
+          [
+            7168,
+            2112
+          ]
+        ],
+        "Input Strides": [
+          [
+            2112,
+            1
+          ],
+          [
+            7168,
+            1
+          ],
+          [
+            1,
+            7168
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::numpy_T",
+      "kernel_dur_us": 1107.137,
+      "provenance": "external_id=66571",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          [
+            2112,
+            7168
+          ]
+        ],
+        "Input Strides": [
+          [
+            7168,
+            1
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "kimi_k26/b200/docs/kernel_shapes_sharegpt_low.json",
+    "kimi_k26/b200/docs/kernel_shapes_sharegpt_mid.json",
+    "kimi_k26/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "gemm__fused_a_gemm_kernel__23e7519307",
+  "total_calls": 1464,
+  "workload_count": 3,
+  "workloads": [
+    {
+      "calls": 488,
+      "concurrency": "low",
+      "dataset": "sharegpt",
+      "label": "sharegpt_low",
+      "mean_us": 824.4631495901639,
+      "pct_of_gpu": 19.273013379972987,
+      "top_cpu_ops": [
+        "sgl_kernel::dsv3_fused_a_gemm",
+        "aten::numpy_T"
+      ],
+      "total_us": 402338.017
+    },
+    {
+      "calls": 488,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 763.7981946721311,
+      "pct_of_gpu": 7.202531470297765,
+      "top_cpu_ops": [
+        "sgl_kernel::dsv3_fused_a_gemm"
+      ],
+      "total_us": 372733.519
+    },
+    {
+      "calls": 488,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 584.5122438524589,
+      "pct_of_gpu": 3.404643244322174,
+      "top_cpu_ops": [
+        "sgl_kernel::dsv3_fused_a_gemm"
+      ],
+      "total_us": 285241.975
+    }
+  ]
+}

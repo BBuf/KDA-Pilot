@@ -1,0 +1,218 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_256x128_64x5_2x2_2cta_h_bz_TNT",
+  "labels": [
+    "random_mid",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 4.720630869199877,
+  "model": "nvidia/Qwen3.5-397B-A17B-NVFP4",
+  "model_slug": "qwen35",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::linear",
+      "kernel_dur_us": 460.448,
+      "provenance": "external_id=28529",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            17070,
+            4096
+          ],
+          [
+            1,
+            4096
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [
+            4096,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::arange",
+      "kernel_dur_us": 458.143,
+      "provenance": "external_id=28169",
+      "shape_args": {
+        "Concrete Inputs": [
+          "0",
+          "10",
+          "1",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [
+            0
+          ]
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [
+            1
+          ]
+        ],
+        "Input type": [
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "long int"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 557.698,
+      "provenance": "external_id=159589",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[-1, 128]"
+        ],
+        "Input Dims": [
+          [
+            1,
+            20968,
+            16,
+            128
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            42942464,
+            2048,
+            128,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::t",
+      "kernel_dur_us": 556.801,
+      "provenance": "external_id=157219",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          [
+            4096,
+            2048
+          ]
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 556.577,
+      "provenance": "external_id=161929",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            20968,
+            4096
+          ],
+          [
+            4096,
+            5120
+          ]
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [
+            1,
+            4096
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen35/b200/docs/kernel_shapes_random_mid.json",
+    "qwen35/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_256x128_64x5_2x2_2cta_h_bz_tnt__d6cc26eceb",
+  "total_calls": 420,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 180,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 450.3097277777778,
+      "pct_of_gpu": 4.720630869199877,
+      "top_cpu_ops": [
+        "aten::linear",
+        "aten::arange"
+      ],
+      "total_us": 81055.751
+    },
+    {
+      "calls": 240,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 493.8530166666667,
+      "pct_of_gpu": 2.030413991205919,
+      "top_cpu_ops": [
+        "aten::view",
+        "aten::mm",
+        "aten::t"
+      ],
+      "total_us": 118524.724
+    }
+  ]
+}

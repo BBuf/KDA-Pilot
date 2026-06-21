@@ -1,0 +1,328 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_128x256_64x6_2x1_2cta_v_bz_TNT",
+  "labels": [
+    "random_mid",
+    "random_high",
+    "sharegpt_mid",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 11.810606386942869,
+  "model": "nvidia/Qwen3.5-397B-A17B-NVFP4",
+  "model_slug": "qwen35",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::matmul",
+      "kernel_dur_us": 379.073,
+      "provenance": "external_id=35033",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            17070,
+            4096
+          ],
+          [
+            4096,
+            512
+          ]
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [
+            1,
+            4096
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 761.153,
+      "provenance": "external_id=59274",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            30758,
+            4096
+          ],
+          [
+            4096,
+            5120
+          ]
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [
+            1,
+            4096
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 268.256,
+      "provenance": "external_id=122502",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            10501,
+            4096
+          ],
+          [
+            4096,
+            5120
+          ]
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [
+            1,
+            4096
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty",
+      "kernel_dur_us": 266.336,
+      "provenance": "external_id=121868",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[1, 183, 16, 128, 128]",
+          "15",
+          "0",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty_like",
+      "kernel_dur_us": 461.601,
+      "provenance": "external_id=166951",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "15",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [
+            20968,
+            8,
+            256
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            2048,
+            256,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::Float8_e4m3fn",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::unsqueeze",
+      "kernel_dur_us": 460.738,
+      "provenance": "external_id=167635",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0"
+        ],
+        "Input Dims": [
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 459.489,
+      "provenance": "external_id=163471",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            20968,
+            4096
+          ],
+          [
+            4096,
+            4608
+          ]
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [
+            1,
+            4096
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen35/b200/docs/kernel_shapes_random_mid.json",
+    "qwen35/b200/docs/kernel_shapes_random_high.json",
+    "qwen35/b200/docs/kernel_shapes_sharegpt_mid.json",
+    "qwen35/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_128x256_64x6_2x1_2cta_v_bz_tnt__73699af3d3",
+  "total_calls": 4140,
+  "workload_count": 4,
+  "workloads": [
+    {
+      "calls": 1020,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 92.34869019607844,
+      "pct_of_gpu": 5.4858903129918515,
+      "top_cpu_ops": [
+        "aten::matmul"
+      ],
+      "total_us": 94195.664
+    },
+    {
+      "calls": 1680,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 255.99551904761904,
+      "pct_of_gpu": 11.810606386942869,
+      "top_cpu_ops": [
+        "aten::mm"
+      ],
+      "total_us": 430072.472
+    },
+    {
+      "calls": 240,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 256.698475,
+      "pct_of_gpu": 2.987219364364062,
+      "top_cpu_ops": [
+        "aten::mm",
+        "aten::empty"
+      ],
+      "total_us": 61607.634
+    },
+    {
+      "calls": 1200,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 153.54551750000002,
+      "pct_of_gpu": 3.1564145251478837,
+      "top_cpu_ops": [
+        "aten::empty_like",
+        "aten::unsqueeze",
+        "aten::mm"
+      ],
+      "total_us": 184254.621
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "category": "moe",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void moe_sum_reduce_kernel_warp_token_topk<c10::Half, 8, 4>(c10::Half const*, c10::Half*, long, long, long, long, long, at::OpMathType<c10::Half>::type)",
+  "labels": [
+    "random_mid",
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 3.342082884189119,
+  "model": "MiniMaxAI/MiniMax-M2.5",
+  "model_slug": "minimax_m25",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 140.799,
+      "provenance": "external_id=11701",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[8943, 1, 128]",
+          "[1024, 128, 1]",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            9216,
+            1,
+            128
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1024,
+            128,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::Half",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 87.168,
+      "provenance": "external_id=54662",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[5524, 768]",
+          "[768, 1]",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            5632,
+            768
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            768,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::Half",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "minimax_m25/b200/docs/kernel_shapes_random_mid.json",
+    "minimax_m25/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "moe__moe_sum_reduce_kernel_warp_token_topk__43207a7c49",
+  "total_calls": 2480,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 992,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 76.30211592741936,
+      "pct_of_gpu": 3.342082884189119,
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "Torch-Compiled Region: 5/1"
+      ],
+      "total_us": 75691.69900000001
+    },
+    {
+      "calls": 1488,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 47.44826612903226,
+      "pct_of_gpu": 3.2060720414341817,
+      "top_cpu_ops": [
+        "aten::as_strided"
+      ],
+      "total_us": 70603.02
+    }
+  ]
+}

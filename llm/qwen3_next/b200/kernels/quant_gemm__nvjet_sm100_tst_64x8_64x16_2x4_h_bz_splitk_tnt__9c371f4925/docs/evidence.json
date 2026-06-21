@@ -1,0 +1,362 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_64x8_64x16_2x4_h_bz_splitK_TNT",
+  "labels": [
+    "random_low",
+    "random_mid",
+    "random_high",
+    "sharegpt_low",
+    "sharegpt_mid",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 25.369137201567387,
+  "model": "Qwen/Qwen3-Next-80B-A3B-Instruct",
+  "model_slug": "qwen3_next",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 4114.071,
+      "provenance": "external_id=2468",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            38,
+            2048
+          ],
+          [
+            2048,
+            128
+          ]
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          [
+            1,
+            2048
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 3662.56,
+      "provenance": "external_id=2458",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[-1]"
+        ],
+        "Input Dims": [
+          [
+            38,
+            2048
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::matmul",
+      "kernel_dur_us": 430146.364,
+      "provenance": "external_id=41066",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            38,
+            512
+          ],
+          [
+            512,
+            2048
+          ]
+        ],
+        "Input Strides": [
+          [
+            512,
+            1
+          ],
+          [
+            1,
+            512
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 17941.051,
+      "provenance": "external_id=87651",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            17,
+            2048
+          ],
+          [
+            2048,
+            128
+          ]
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          [
+            1,
+            2048
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::t",
+      "kernel_dur_us": 17938.578,
+      "provenance": "external_id=87657",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          [
+            2048,
+            64
+          ]
+        ],
+        "Input Strides": [
+          [
+            64,
+            1
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 3615.46,
+      "provenance": "external_id=92125",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            46,
+            2048
+          ],
+          [
+            2048,
+            128
+          ]
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          [
+            1,
+            2048
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 3503.005,
+      "provenance": "external_id=92117",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[-1]"
+        ],
+        "Input Dims": [
+          [
+            46,
+            2048
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 10006.298,
+      "provenance": "external_id=123593",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[-1]"
+        ],
+        "Input Dims": [
+          [
+            17,
+            2048
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen3_next/b200/docs/kernel_shapes_random_low.json",
+    "qwen3_next/b200/docs/kernel_shapes_random_mid.json",
+    "qwen3_next/b200/docs/kernel_shapes_random_high.json",
+    "qwen3_next/b200/docs/kernel_shapes_sharegpt_low.json",
+    "qwen3_next/b200/docs/kernel_shapes_sharegpt_mid.json",
+    "qwen3_next/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_64x8_64x16_2x4_h_bz_splitk_tnt__9c371f4925",
+  "total_calls": 2304,
+  "workload_count": 6,
+  "workloads": [
+    {
+      "calls": 384,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 815.6253723958333,
+      "pct_of_gpu": 18.662905149125475,
+      "top_cpu_ops": [
+        "aten::mm",
+        "aten::view"
+      ],
+      "total_us": 313200.143
+    },
+    {
+      "calls": 384,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 856.0298750000001,
+      "pct_of_gpu": 7.727402740469122,
+      "top_cpu_ops": [
+        "aten::mm",
+        "aten::view"
+      ],
+      "total_us": 328715.472
+    },
+    {
+      "calls": 384,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 5604.1163046875,
+      "pct_of_gpu": 25.369137201567387,
+      "top_cpu_ops": [
+        "aten::mm",
+        "aten::matmul"
+      ],
+      "total_us": 2151980.661
+    },
+    {
+      "calls": 384,
+      "concurrency": "low",
+      "dataset": "sharegpt",
+      "label": "sharegpt_low",
+      "mean_us": 1749.4729739583333,
+      "pct_of_gpu": 23.78073866398972,
+      "top_cpu_ops": [
+        "aten::t",
+        "aten::mm"
+      ],
+      "total_us": 671797.622
+    },
+    {
+      "calls": 384,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 940.2352890625001,
+      "pct_of_gpu": 7.945873127561853,
+      "top_cpu_ops": [
+        "aten::mm",
+        "aten::view"
+      ],
+      "total_us": 361050.351
+    },
+    {
+      "calls": 384,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 1394.374192708333,
+      "pct_of_gpu": 6.415539054028055,
+      "top_cpu_ops": [
+        "aten::mm",
+        "aten::view"
+      ],
+      "total_us": 535439.69
+    }
+  ]
+}

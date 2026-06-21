@@ -1,0 +1,66 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_128x64x16_1x1x1_3_tnn_align1_bias_f32_relu",
+  "labels": [
+    "random_high"
+  ],
+  "max_pct_of_gpu": 3.2708110289527137,
+  "model": "poolside/Laguna-XS.2-FP8",
+  "model_slug": "poolside_laguna_xs2",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::cat",
+      "kernel_dur_us": 86.88,
+      "provenance": "external_id=21160",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            [
+              704
+            ]
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            [
+              1
+            ]
+          ],
+          []
+        ],
+        "Input type": [
+          "TensorList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "poolside_laguna_xs2/b200/docs/kernel_shapes_random_high.json"
+  ],
+  "task_id": "gemm__cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_1__b4f87b5018",
+  "total_calls": 156,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 156,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 85.70664102564103,
+      "pct_of_gpu": 3.2708110289527137,
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/2",
+        "aten::cat"
+      ],
+      "total_us": 13370.236
+    }
+  ]
+}

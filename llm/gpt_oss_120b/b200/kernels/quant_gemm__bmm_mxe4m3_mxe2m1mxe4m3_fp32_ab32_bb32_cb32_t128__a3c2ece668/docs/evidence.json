@@ -1,0 +1,76 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "bmm_MxE4m3_MxE2m1MxE4m3_Fp32_Ab32_Bb32_Cb32_t128x16x256u2_s6_et128x16_m256x16x32_c2x1x1_rM_TN_transOut_schedS_biasFp32M_bN_tma_ldgstsSf_rgTma_clmp_swiGlu_dynB_sm100f",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 2.9378340509839482,
+  "model": "openai/gpt-oss-120b",
+  "model_slug": "gpt_oss_120b",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::empty_strided",
+      "kernel_dur_us": 8.096,
+      "provenance": "external_id=3368",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[1]",
+          "[1]",
+          "4",
+          "0",
+          "",
+          "False"
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "ScalarList",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "gpt_oss_120b/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "quant_gemm__bmm_mxe4m3_mxe2m1mxe4m3_fp32_ab32_bb32_cb32_t128__a3c2ece668",
+  "total_calls": 1152,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 1152,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 7.529995659722222,
+      "pct_of_gpu": 2.9378340509839482,
+      "top_cpu_ops": [
+        "aten::argmax",
+        "aten::copy_",
+        "aten::resolve_neg",
+        "aten::empty_strided"
+      ],
+      "total_us": 8674.555
+    }
+  ]
+}

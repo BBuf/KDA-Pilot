@@ -1,0 +1,46 @@
+server exited early
+/usr/local/lib/python3.12/dist-packages/torchao/quantization/quant_api.py:1731: SyntaxWarning: invalid escape sequence '\.'
+  """Configuration class for applying different quantization configs to modules or parameters based on their fully qualified names (FQNs).
+/sgl-workspace/sglang/python/sglang/launch_server.py:54: UserWarning: 'python -m sglang.launch_server' is still supported, but 'sglang serve' is the recommended entrypoint.
+  Example: sglang serve --model-path <model> [options]
+  warnings.warn(
+[2026-06-19 23:48:59] The tool_call_parser 'qwen25' is deprecated. Please use 'qwen' instead.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[2026-06-19 23:49:01] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/sgl-workspace/sglang/python/sglang/launch_server.py", line 66, in <module>
+    server_args = prepare_server_args(sys.argv[1:])
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/srt/server_args.py", line 8377, in prepare_server_args
+    return ServerArgs.from_cli_args(raw_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/srt/server_args.py", line 7651, in from_cli_args
+    return cls(**{attr: getattr(args, attr) for attr in attrs})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 406, in __init__
+  File "/sgl-workspace/sglang/python/sglang/srt/server_args.py", line 984, in __post_init__
+    self._handle_cuda_graph_config()
+  File "/sgl-workspace/sglang/python/sglang/srt/server_args.py", line 1393, in _handle_cuda_graph_config
+    self._apply_cuda_graph_compatibility()
+  File "/sgl-workspace/sglang/python/sglang/srt/server_args.py", line 1469, in _apply_cuda_graph_compatibility
+    self._disable_tc_piecewise_cudagraph_if_incompatible()
+  File "/sgl-workspace/sglang/python/sglang/srt/server_args.py", line 1528, in _disable_tc_piecewise_cudagraph_if_incompatible
+    if predicate():
+       ^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/srt/server_args.py", line 1481, in <lambda>
+    lambda: self.get_model_config().is_piecewise_cuda_graph_disabled_model,
+            ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/srt/server_args.py", line 7701, in get_model_config
+    self.model_config = ModelConfig.from_server_args(self)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/srt/configs/model_config.py", line 395, in from_server_args
+    return ModelConfig(
+           ^^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/srt/configs/model_config.py", line 342, in __init__
+    self._derive_context_length(context_length)
+  File "/sgl-workspace/sglang/python/sglang/srt/configs/model_config.py", line 585, in _derive_context_length
+    raise ValueError(
+ValueError: Warning: User-specified context_length (262144) is greater than the derived context_length (131072). This may lead to incorrect model outputs or CUDA errors. Note that the derived context_length may differ from max_position_embeddings in the model's config. To allow overriding this maximum, set the env var SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1
+

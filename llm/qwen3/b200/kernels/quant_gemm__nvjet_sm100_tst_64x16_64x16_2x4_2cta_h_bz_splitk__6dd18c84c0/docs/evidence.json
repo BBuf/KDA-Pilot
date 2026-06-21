@@ -1,0 +1,75 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitK_TNT",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 2.1865015705333364,
+  "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+  "model_slug": "qwen3",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::slice",
+      "kernel_dur_us": 320.58,
+      "provenance": "external_id=271",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0",
+          "1",
+          "2",
+          "1"
+        ],
+        "Input Dims": [
+          [
+            2
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "int",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen3/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitk__6dd18c84c0",
+  "total_calls": 752,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 752,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 20.24771675531915,
+      "pct_of_gpu": 2.1865015705333364,
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::slice",
+        "sglang::unified_attention_with_output"
+      ],
+      "total_us": 15226.283
+    }
+  ]
+}

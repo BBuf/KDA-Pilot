@@ -1,0 +1,21 @@
+# Kernel Shape Inventory — random_mid
+
+- Model: `MiniMaxAI/MiniMax-M2`
+- Dataset: `random`
+- Concurrency: `mid`
+- Threshold: GPU kernel name share `> 2.0%`
+- Total GPU kernel time: `1336.2 ms`
+- Trace files: `4`
+
+| % GPU | Calls | Category | Shape | SGLang relevant | Kernel | Shape provenance |
+|---:|---:|---|---|---|---|---|
+| 43.66 | 4464 | moe | ok | True | `fused_moe_kernel` | external_id=11100: `aten::view` {"Concrete Inputs": ["", "[-1, 256]"], "Input Dims": [[9468, 2, 128], []], "Input Strides": [[256, 128, 1], []], "Input type": ["c10::Half", "ScalarList"]} |
+| 11.57 | 4464 | quant_gemm | ok | True | `_w8a8_block_fp8_matmul` | external_id=11100: `aten::view` {"Concrete Inputs": ["", "[-1, 256]"], "Input Dims": [[9468, 2, 128], []], "Input Strides": [[256, 128, 1], []], "Input type": ["c10::Half", "ScalarList"]} |
+| 6.38 | 248 | gemm | ok | True | `cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_64x64x16_1x1x1_3_tnn_align1_bias_f32_relu` | external_id=11100: `aten::view` {"Concrete Inputs": ["", "[-1, 256]"], "Input Dims": [[9468, 2, 128], []], "Input Strides": [[256, 128, 1], []], "Input type": ["c10::Half", "ScalarList"]} |
+| 4.42 | 1984 | gemm | ok | True | `void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_tn_align1>(cutlass_80_simt_sgemm_64x64_8x5_tn_align1::Params)` | external_id=8626: `aten::slice` {"Concrete Inputs": ["", "0", "0", "253", "1"], "Input Dims": [[256, 2, 128], [], [], [], []], "Input Strides": [[2048, 128, 1], [], [], [], []], "Input type": ["c10::Half", "Sc... |
+| 3.12 | 4000 | comm | ok | True | `void (anonymous namespace)::all_reduce_one_shot_push_kernel<__half, 4u, true>((anonymous namespace)::AllReducePushData, device::distributed::PushController)` | nearest_preceding_shape_cpu_op: `aten::copy_` {"Concrete Inputs": ["", "", "False"], "Input Dims": [[32], [32], []], "Input Strides": [[1], [1], []], "Input type": ["int", "int", "Scalar"]} |
+| 2.83 | 496 | moe | ok | True | `void moe_sum_reduce_kernel_warp_token_topk<c10::Half, 8, 4>(c10::Half const*, c10::Half*, long, long, long, long, long, at::OpMathType<c10::Half>::type)` | external_id=10994: `Torch-Compiled Region: 5/1` {} |
+| 2.76 | 1488 | norm | ok | True | `void flashinfer::norm::FusedAddRMSNormKernel<8u, __half>(__half*, __half*, __half*, unsigned int, unsigned int, unsigned int, float, float)` | external_id=8626: `aten::slice` {"Concrete Inputs": ["", "0", "0", "253", "1"], "Input Dims": [[256, 2, 128], [], [], [], []], "Input Strides": [[2048, 128, 1], [], [], [], []], "Input type": ["c10::Half", "Sc... |
+| 2.21 | 8928 | quant_gemm | ok | True | `void (anonymous namespace)::per_token_group_quant_8bit_v2_kernel<(anonymous namespace)::NaiveScheduler, 128, 8, __half, __nv_fp8_e4m3, false, false, false, true, float>(__half const*, __nv_fp8_e4m3*, float*, int const*, int, int, int, int, int)` | external_id=11100: `aten::view` {"Concrete Inputs": ["", "[-1, 256]"], "Input Dims": [[9468, 2, 128], []], "Input Strides": [[256, 128, 1], []], "Input type": ["c10::Half", "ScalarList"]} |
+
+The CSV/JSON siblings contain full sample metadata and trace paths.

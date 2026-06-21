@@ -1,0 +1,249 @@
+{
+  "category": "moe",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void moe_sum_reduce_warp_per_token_vec_kernel<8>(c10::BFloat16 const*, c10::BFloat16*, long, long, long, long, long, long, float)",
+  "labels": [
+    "random_high",
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 3.2532408825464505,
+  "model": "inclusionAI/Ring-2.5-1T",
+  "model_slug": "ring_25_1t",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::empty",
+      "kernel_dur_us": 410.528,
+      "provenance": "external_id=115334",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[258]",
+          "3",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "sgl_kernel::moe_sum_reduce",
+      "kernel_dur_us": 351.807,
+      "provenance": "external_id=80705",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "2.5"
+        ],
+        "Input Dims": [
+          [
+            16384,
+            8,
+            8192
+          ],
+          [
+            16384,
+            8192
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            65536,
+            8192,
+            1
+          ],
+          [
+            8192,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty",
+      "kernel_dur_us": 350.528,
+      "provenance": "external_id=81293",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[131072, 512]",
+          "15",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "sgl_kernel::moe_sum_reduce",
+      "kernel_dur_us": 308.931,
+      "provenance": "external_id=174342",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "2.5"
+        ],
+        "Input Dims": [
+          [
+            14375,
+            8,
+            8192
+          ],
+          [
+            14375,
+            8192
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            65536,
+            8192,
+            1
+          ],
+          [
+            8192,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::copy_",
+      "kernel_dur_us": 308.804,
+      "provenance": "external_id=162252",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "False"
+        ],
+        "Input Dims": [
+          [
+            14375,
+            256
+          ],
+          [
+            14375,
+            256
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            256,
+            1
+          ],
+          [
+            256,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "float",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "ring_25_1t/b200/docs/kernel_shapes_random_high.json",
+    "ring_25_1t/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "moe__moe_sum_reduce_warp_per_token_vec_kernel__3fc4b40863",
+  "total_calls": 2432,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 1824,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 246.10746765350876,
+      "pct_of_gpu": 3.2532408825464505,
+      "top_cpu_ops": [
+        "sgl_kernel::moe_sum_reduce",
+        "aten::empty"
+      ],
+      "total_us": 448900.021
+    },
+    {
+      "calls": 608,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 307.4885493421053,
+      "pct_of_gpu": 2.258275845651179,
+      "top_cpu_ops": [
+        "sgl_kernel::moe_sum_reduce",
+        "aten::copy_"
+      ],
+      "total_us": 186953.038
+    }
+  ]
+}

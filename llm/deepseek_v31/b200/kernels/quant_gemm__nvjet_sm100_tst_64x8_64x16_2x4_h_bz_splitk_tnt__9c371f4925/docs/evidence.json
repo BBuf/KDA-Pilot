@@ -1,0 +1,104 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_64x8_64x16_2x4_h_bz_splitK_TNT",
+  "labels": [
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 11.954914656005656,
+  "model": "deepseek-ai/DeepSeek-V3.1",
+  "model_slug": "deepseek_v31",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 2488.243,
+      "provenance": "external_id=215909",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            49,
+            7168
+          ],
+          [
+            7168,
+            256
+          ]
+        ],
+        "Input Strides": [
+          [
+            7168,
+            1
+          ],
+          [
+            1,
+            7168
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 2484.435,
+      "provenance": "external_id=199618",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            28,
+            7168
+          ],
+          [
+            7168,
+            256
+          ]
+        ],
+        "Input Strides": [
+          [
+            7168,
+            1
+          ],
+          [
+            1,
+            7168
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "deepseek_v31/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_64x8_64x16_2x4_h_bz_splitk_tnt__9c371f4925",
+  "total_calls": 944,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 944,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 1170.1306885593222,
+      "pct_of_gpu": 11.954914656005656,
+      "top_cpu_ops": [
+        "aten::mm"
+      ],
+      "total_us": 1104603.37
+    }
+  ]
+}

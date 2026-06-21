@@ -1,0 +1,104 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "ncclDevKernel_AllReduce_Sum_bf16_RING_LL(ncclDevKernelArgsStorage<4096ul>)",
+  "labels": [
+    "random_mid",
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 17.77373023466011,
+  "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+  "model_slug": "qwen3",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::floor_divide",
+      "kernel_dur_us": 2665.728,
+      "provenance": "external_id=13394",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            20
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "long int"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::lift_fresh",
+      "kernel_dur_us": 904.137,
+      "provenance": "external_id=47523",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          [
+            14
+          ]
+        ],
+        "Input Strides": [
+          [
+            1
+          ]
+        ],
+        "Input type": [
+          "int"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen3/b200/docs/kernel_shapes_random_mid.json",
+    "qwen3/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "comm__nccldevkernel_allreduce_sum_bf16_ring_ll__05a3ee6241",
+  "total_calls": 4536,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 1512,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 304.7541342592593,
+      "pct_of_gpu": 17.77373023466011,
+      "top_cpu_ops": [
+        "sglang::unified_attention_with_output",
+        "aten::floor_divide",
+        "aten::reshape",
+        "aten::permute",
+        "aten::view"
+      ],
+      "total_us": 460788.251
+    },
+    {
+      "calls": 3024,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 107.2250558862434,
+      "pct_of_gpu": 17.209015623615446,
+      "top_cpu_ops": [
+        "sglang::unified_attention_with_output",
+        "aten::empty",
+        "aten::lift_fresh"
+      ],
+      "total_us": 324248.569
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 128u, 128u, 0u, 0u, 0u, 224u, 128u, 128u, 1u, 128u, 128u, 128u, 6u, 128u, 128u, 2u, true, 148u, true, (deep_gemm::GemmType)0, false, cutlass::float_e4m3_t, cutlass::float_e4m3_t, cutlass::bfloat16_t, deep_gemm::epilogue::transform::EpilogueIdentity>(int*, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 3.7942237006054254,
+  "model": "moonshotai/Kimi-K2-Instruct",
+  "model_slug": "kimi_k2",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::deep_gemm_fp8_fp8_bf16_nt",
+      "kernel_dur_us": 171.967,
+      "provenance": "external_id=8683",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            8084,
+            7168
+          ],
+          [
+            8084,
+            14
+          ],
+          [
+            4608,
+            7168
+          ],
+          [
+            4608,
+            14
+          ],
+          [
+            8084,
+            4608
+          ]
+        ],
+        "Input Strides": [
+          [
+            7168,
+            1
+          ],
+          [
+            1,
+            8084
+          ],
+          [
+            7168,
+            1
+          ],
+          [
+            1,
+            4608
+          ],
+          [
+            4608,
+            1
+          ]
+        ],
+        "Input type": [
+          "c10::Float8_e4m3fn",
+          "int",
+          "c10::Float8_e4m3fn",
+          "int",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "kimi_k2/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "quant_gemm__sm100_fp8_fp4_gemm_1d1d_impl__b219c86d5b",
+  "total_calls": 11216,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 11216,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 23.6601378388017,
+      "pct_of_gpu": 3.7942237006054254,
+      "top_cpu_ops": [
+        "sglang::deep_gemm_fp8_fp8_bf16_nt"
+      ],
+      "total_us": 265372.10599999985
+    }
+  ]
+}

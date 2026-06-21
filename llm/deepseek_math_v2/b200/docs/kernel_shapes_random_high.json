@@ -1,0 +1,2267 @@
+{
+  "concurrency": "high",
+  "dataset": "random",
+  "label": "random_high",
+  "model": "deepseek-ai/DeepSeek-Math-V2",
+  "rows": [
+    {
+      "calls": 1936,
+      "category": "comm",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_twoshot_sync<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>, std::array<int, 8>, std::array<int, 8>)",
+      "label": "random_high",
+      "mean_us": 220.95297882231407,
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "pct_of_gpu": 12.56797705647353,
+      "samples": [
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 21441.648,
+          "kernel_external_id": "1059449",
+          "provenance": "external_id=1059449",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 21031.674,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 20391.099,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 18324.243,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 17985.227,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 17722.745,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 17409.601,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 587.839,
+          "kernel_external_id": "51058",
+          "provenance": "external_id=51058",
+          "shape_args": {}
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "missing",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ],
+      "total_us": 427764.967,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-3-EP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-2-EP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-1-EP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-7-EP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-5-EP-5.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-4-EP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-6-EP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-0-EP-0.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 2784,
+      "category": "quant_gemm",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "bmm_E4m3_E4m3E4m3_Fp32_t128x16x128u2_s6_et64x16_m64x16x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_schPd4x2x2x3_bN_tma_tmaSf_rgTma_clmp_lbW2_dynB_sm100f",
+      "label": "random_high",
+      "mean_us": 137.5787658045977,
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "pct_of_gpu": 11.253323541801212,
+      "samples": [
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 165.76,
+          "kernel_external_id": "15477019",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[163844]",
+              "[1]",
+              "62424564"
+            ],
+            "Input Dims": [
+              [
+                4097,
+                163844
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                163844,
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::add",
+          "kernel_dur_us": 164.608,
+          "kernel_external_id": "15483725",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::add",
+          "kernel_dur_us": 163.104,
+          "kernel_external_id": "15483592",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 162.401,
+          "kernel_external_id": "15483028",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [
+                100
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 161.791,
+          "kernel_external_id": "15477185",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [
+                100
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 161.632,
+          "kernel_external_id": "15481580",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[100]",
+              "4",
+              "",
+              "",
+              "False",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "Scalar",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 161.536,
+          "kernel_external_id": "15477397",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[21]",
+              "[1]",
+              "576"
+            ],
+            "Input Dims": [
+              [
+                597
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 161.44,
+          "kernel_external_id": "18494915",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                104,
+                16
+              ],
+              [
+                104,
+                16
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                2560,
+                1
+              ],
+              [
+                16,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "int",
+              "int",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::as_strided",
+        "aten::add",
+        "aten::empty"
+      ],
+      "total_us": 383019.284,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-3-EP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-2-EP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-1-EP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-7-EP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-5-EP-5.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-4-EP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-6-EP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-0-EP-0.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 6776,
+      "category": "comm",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "random_high",
+      "mean_us": 52.754534533648176,
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "pct_of_gpu": 10.502516151273785,
+      "samples": [
+        {
+          "cpu_op": "Torch-Compiled Region: 4/2",
+          "kernel_dur_us": 556.575,
+          "kernel_external_id": "36465",
+          "provenance": "external_id=36465",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/2",
+          "kernel_dur_us": 554.559,
+          "kernel_external_id": "36465",
+          "provenance": "external_id=36465",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/2",
+          "kernel_dur_us": 541.918,
+          "kernel_external_id": "36465",
+          "provenance": "external_id=36465",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/2",
+          "kernel_dur_us": 526.015,
+          "kernel_external_id": "36465",
+          "provenance": "external_id=36465",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/2",
+          "kernel_dur_us": 482.88,
+          "kernel_external_id": "36465",
+          "provenance": "external_id=36465",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/2",
+          "kernel_dur_us": 478.815,
+          "kernel_external_id": "1052057",
+          "provenance": "external_id=1052057",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/2",
+          "kernel_dur_us": 477.088,
+          "kernel_external_id": "36465",
+          "provenance": "external_id=36465",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/2",
+          "kernel_dur_us": 476.418,
+          "kernel_external_id": "36465",
+          "provenance": "external_id=36465",
+          "shape_args": {}
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "missing",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ],
+      "total_us": 357464.726,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-3-EP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-2-EP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-1-EP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-7-EP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-5-EP-5.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-4-EP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-6-EP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-0-EP-0.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 2784,
+      "category": "quant_gemm",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "bmm_Bfloat16_E4m3E4m3_Fp32_t128x16x128u2_s6_et64x16_m64x16x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_schPd4x2x2x3_bN_rgTma_clmp_dynB_sm100f",
+      "label": "random_high",
+      "mean_us": 68.39616702586207,
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "pct_of_gpu": 5.59449848281296,
+      "samples": [
+        {
+          "cpu_op": "aten::add",
+          "kernel_dur_us": 84.961,
+          "kernel_external_id": "15483725",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::to",
+          "kernel_dur_us": 83.808,
+          "kernel_external_id": "15477019",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "4",
+              "False",
+              "True",
+              ""
+            ],
+            "Input Dims": [
+              [
+                768
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 83.392,
+          "kernel_external_id": "15482076",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [
+                100
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::view",
+          "kernel_dur_us": 83.072,
+          "kernel_external_id": "15481146",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[100]"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "ScalarList"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::add",
+          "kernel_dur_us": 83.04,
+          "kernel_external_id": "15483725",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "gloo:broadcast",
+          "kernel_dur_us": 82.624,
+          "kernel_external_id": "15477397",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::add",
+          "kernel_dur_us": 81.632,
+          "kernel_external_id": "15483683",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 81.151,
+          "kernel_external_id": "15482953",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [
+                100
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::add",
+        "aten::copy_",
+        "aten::to",
+        "aten::view",
+        "gloo:broadcast"
+      ],
+      "total_us": 190414.929,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-3-EP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-2-EP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-1-EP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-7-EP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-5-EP-5.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-4-EP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-6-EP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-0-EP-0.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 928,
+      "category": "quant_gemm",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "bmm_E4m3_E4m3E4m3_Fp32_t128x64x128u2_s6_et64x64_m64x64x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_schPd4x2x2x3_bN_tma_tmaSf_rgTma_clmp_lbW4_dynB_sm100f",
+      "label": "random_high",
+      "mean_us": 195.6023739224138,
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "pct_of_gpu": 5.333131137449949,
+      "samples": [
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 303.872,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 284.833,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 275.616,
+          "kernel_external_id": "51058",
+          "provenance": "external_id=51058",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 271.265,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 264.097,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 257.855,
+          "kernel_external_id": "51058",
+          "provenance": "external_id=51058",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 257.537,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 257.312,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "missing",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ],
+      "total_us": 181519.003,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-3-EP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-2-EP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-1-EP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-7-EP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-5-EP-5.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-4-EP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-6-EP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-0-EP-0.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 3904,
+      "category": "attention",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "fmhaSm100fKernel_QkvE4m3OBfloat16HQk576HV512PagedKvDenseStaticTokenSparseP1VarSeqQ16Kv128PersistentSwapsAbForGen",
+      "label": "random_high",
+      "mean_us": 40.05401895491803,
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "pct_of_gpu": 4.594265331270912,
+      "samples": [
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 119.647,
+          "kernel_external_id": "43908",
+          "provenance": "external_id=43908",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "True",
+              "0",
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1792,
+                16,
+                512
+              ],
+              [
+                1792,
+                1,
+                512
+              ],
+              [
+                1792,
+                1,
+                512
+              ],
+              [
+                1792,
+                8192
+              ],
+              [],
+              [],
+              [
+                1792,
+                16,
+                64
+              ],
+              [
+                1792,
+                1,
+                64
+              ],
+              [],
+              [
+                164096,
+                64
+              ],
+              [],
+              [],
+              [
+                1792,
+                2048
+              ]
+            ],
+            "Input Strides": [
+              [
+                512,
+                917504,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                8192,
+                1
+              ],
+              [],
+              [],
+              [
+                3072,
+                192,
+                1
+              ],
+              [
+                2112,
+                64,
+                1
+              ],
+              [],
+              [
+                64,
+                1
+              ],
+              [],
+              [],
+              [
+                2048,
+                1
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "",
+              "float",
+              "Scalar",
+              "",
+              "int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 118.048,
+          "kernel_external_id": "43908",
+          "provenance": "external_id=43908",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "True",
+              "0",
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1792,
+                16,
+                512
+              ],
+              [
+                1792,
+                1,
+                512
+              ],
+              [
+                1792,
+                1,
+                512
+              ],
+              [
+                1792,
+                8192
+              ],
+              [],
+              [],
+              [
+                1792,
+                16,
+                64
+              ],
+              [
+                1792,
+                1,
+                64
+              ],
+              [],
+              [
+                164096,
+                64
+              ],
+              [],
+              [],
+              [
+                1792,
+                2048
+              ]
+            ],
+            "Input Strides": [
+              [
+                512,
+                917504,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                8192,
+                1
+              ],
+              [],
+              [],
+              [
+                3072,
+                192,
+                1
+              ],
+              [
+                2112,
+                64,
+                1
+              ],
+              [],
+              [
+                64,
+                1
+              ],
+              [],
+              [],
+              [
+                2048,
+                1
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "",
+              "float",
+              "Scalar",
+              "",
+              "int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 117.856,
+          "kernel_external_id": "43908",
+          "provenance": "external_id=43908",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "True",
+              "0",
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1792,
+                16,
+                512
+              ],
+              [
+                1792,
+                1,
+                512
+              ],
+              [
+                1792,
+                1,
+                512
+              ],
+              [
+                1792,
+                8192
+              ],
+              [],
+              [],
+              [
+                1792,
+                16,
+                64
+              ],
+              [
+                1792,
+                1,
+                64
+              ],
+              [],
+              [
+                164096,
+                64
+              ],
+              [],
+              [],
+              [
+                1792,
+                2048
+              ]
+            ],
+            "Input Strides": [
+              [
+                512,
+                917504,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                8192,
+                1
+              ],
+              [],
+              [],
+              [
+                3072,
+                192,
+                1
+              ],
+              [
+                2112,
+                64,
+                1
+              ],
+              [],
+              [
+                64,
+                1
+              ],
+              [],
+              [],
+              [
+                2048,
+                1
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "",
+              "float",
+              "Scalar",
+              "",
+              "int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 117.76,
+          "kernel_external_id": "43908",
+          "provenance": "external_id=43908",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "True",
+              "0",
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1792,
+                16,
+                512
+              ],
+              [
+                1792,
+                1,
+                512
+              ],
+              [
+                1792,
+                1,
+                512
+              ],
+              [
+                1792,
+                8192
+              ],
+              [],
+              [],
+              [
+                1792,
+                16,
+                64
+              ],
+              [
+                1792,
+                1,
+                64
+              ],
+              [],
+              [
+                164096,
+                64
+              ],
+              [],
+              [],
+              [
+                1792,
+                2048
+              ]
+            ],
+            "Input Strides": [
+              [
+                512,
+                917504,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                8192,
+                1
+              ],
+              [],
+              [],
+              [
+                3072,
+                192,
+                1
+              ],
+              [
+                2112,
+                64,
+                1
+              ],
+              [],
+              [
+                64,
+                1
+              ],
+              [],
+              [],
+              [
+                2048,
+                1
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "",
+              "float",
+              "Scalar",
+              "",
+              "int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 117.119,
+          "kernel_external_id": "49209",
+          "provenance": "external_id=49209",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "True",
+              "57",
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1792,
+                16,
+                512
+              ],
+              [
+                1792,
+                1,
+                512
+              ],
+              [
+                1792,
+                1,
+                512
+              ],
+              [
+                1792,
+                8192
+              ],
+              [],
+              [],
+              [
+                1792,
+                16,
+                64
+              ],
+              [
+                1792,
+                1,
+                64
+              ],
+              [],
+              [
+                164096,
+                64
+              ],
+              [],
+              [],
+              [
+                1792,
+                2048
+              ]
+            ],
+            "Input Strides": [
+              [
+                512,
+                917504,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                8192,
+                1
+              ],
+              [],
+              [],
+              [
+                3072,
+                192,
+                1
+              ],
+              [
+                2112,
+                64,
+                1
+              ],
+              [],
+              [
+                64,
+                1
+              ],
+              [],
+              [],
+              [
+                2048,
+                1
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "",
+              "float",
+              "Scalar",
+              "",
+              "int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 116.48,
+          "kernel_external_id": "48093",
+          "provenance": "external_id=48093",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "True",
+              "45",
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1792,
+                16,
+                512
+              ],
+              [
+                1792,
+                1,
+                512
+              ],
+              [
+                1792,
+                1,
+                512
+              ],
+              [
+                1792,
+                8192
+              ],
+              [],
+              [],
+              [
+                1792,
+                16,
+                64
+              ],
+              [
+                1792,
+                1,
+                64
+              ],
+              [],
+              [
+                164096,
+                64
+              ],
+              [],
+              [],
+              [
+                1792,
+                2048
+              ]
+            ],
+            "Input Strides": [
+              [
+                512,
+                917504,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                8192,
+                1
+              ],
+              [],
+              [],
+              [
+                3072,
+                192,
+                1
+              ],
+              [
+                2112,
+                64,
+                1
+              ],
+              [],
+              [
+                64,
+                1
+              ],
+              [],
+              [],
+              [
+                2048,
+                1
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "",
+              "float",
+              "Scalar",
+              "",
+              "int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 116.096,
+          "kernel_external_id": "48744",
+          "provenance": "external_id=48744",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "True",
+              "52",
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1792,
+                16,
+                512
+              ],
+              [
+                1792,
+                1,
+                512
+              ],
+              [
+                1792,
+                1,
+                512
+              ],
+              [
+                1792,
+                8192
+              ],
+              [],
+              [],
+              [
+                1792,
+                16,
+                64
+              ],
+              [
+                1792,
+                1,
+                64
+              ],
+              [],
+              [
+                164096,
+                64
+              ],
+              [],
+              [],
+              [
+                1792,
+                2048
+              ]
+            ],
+            "Input Strides": [
+              [
+                512,
+                917504,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                8192,
+                1
+              ],
+              [],
+              [],
+              [
+                3072,
+                192,
+                1
+              ],
+              [
+                2112,
+                64,
+                1
+              ],
+              [],
+              [
+                64,
+                1
+              ],
+              [],
+              [],
+              [
+                2048,
+                1
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "",
+              "float",
+              "Scalar",
+              "",
+              "int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 115.999,
+          "kernel_external_id": "48837",
+          "provenance": "external_id=48837",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "True",
+              "53",
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1792,
+                16,
+                512
+              ],
+              [
+                1792,
+                1,
+                512
+              ],
+              [
+                1792,
+                1,
+                512
+              ],
+              [
+                1792,
+                8192
+              ],
+              [],
+              [],
+              [
+                1792,
+                16,
+                64
+              ],
+              [
+                1792,
+                1,
+                64
+              ],
+              [],
+              [
+                164096,
+                64
+              ],
+              [],
+              [],
+              [
+                1792,
+                2048
+              ]
+            ],
+            "Input Strides": [
+              [
+                512,
+                917504,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                8192,
+                1
+              ],
+              [],
+              [],
+              [
+                3072,
+                192,
+                1
+              ],
+              [
+                2112,
+                64,
+                1
+              ],
+              [],
+              [
+                64,
+                1
+              ],
+              [],
+              [],
+              [
+                2048,
+                1
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "",
+              "float",
+              "Scalar",
+              "",
+              "int"
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "sglang::unified_attention_with_output"
+      ],
+      "total_us": 156370.88999999998,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-3-EP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-2-EP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-1-EP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-7-EP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-5-EP-5.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-4-EP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-6-EP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-0-EP-0.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 464,
+      "category": "quant_gemm",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitK_TNT",
+      "label": "random_high",
+      "mean_us": 302.1457650862069,
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "pct_of_gpu": 4.119027176196356,
+      "samples": [
+        {
+          "cpu_op": "Torch-Compiled Region: 4/2",
+          "kernel_dur_us": 559.166,
+          "kernel_external_id": "36465",
+          "provenance": "external_id=36465",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/2",
+          "kernel_dur_us": 485.664,
+          "kernel_external_id": "36465",
+          "provenance": "external_id=36465",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/2",
+          "kernel_dur_us": 481.088,
+          "kernel_external_id": "1052057",
+          "provenance": "external_id=1052057",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/2",
+          "kernel_dur_us": 479.328,
+          "kernel_external_id": "36465",
+          "provenance": "external_id=36465",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/2",
+          "kernel_dur_us": 478.658,
+          "kernel_external_id": "36465",
+          "provenance": "external_id=36465",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/2",
+          "kernel_dur_us": 475.488,
+          "kernel_external_id": "36465",
+          "provenance": "external_id=36465",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/2",
+          "kernel_dur_us": 458.591,
+          "kernel_external_id": "1052057",
+          "provenance": "external_id=1052057",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/2",
+          "kernel_dur_us": 458.337,
+          "kernel_external_id": "36465",
+          "provenance": "external_id=36465",
+          "shape_args": {}
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "missing",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ],
+      "total_us": 140195.635,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-3-EP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-2-EP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-1-EP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-7-EP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-5-EP-5.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-4-EP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-6-EP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-0-EP-0.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 4176,
+      "category": "moe",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "void moe::dev::activation::activationDeepSeekKernel<moe::dev::activation::KernelParams<cutlass::float_e4m3_t, 4, true> >(moe::dev::activation::KernelParams<cutlass::float_e4m3_t, 4, true>)",
+      "label": "random_high",
+      "mean_us": 28.201799329501917,
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "pct_of_gpu": 3.4601702936475065,
+      "samples": [
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 101.504,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 99.521,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 99.008,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 98.88,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 98.048,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 97.664,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 97.6,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 97.568,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "missing",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ],
+      "total_us": 117770.714,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-3-EP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-2-EP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-1-EP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-7-EP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-5-EP-5.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-4-EP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-6-EP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-0-EP-0.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 870,
+      "category": "quant_gemm",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "bmm_Bfloat16_E4m3E4m3_Fp32_t128x64x128u2_s6_et64x64_m64x64x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_schPd4x2x2x3_bN_rgTma_clmp_dynB_sm100f",
+      "label": "random_high",
+      "mean_us": 97.01474137931034,
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "pct_of_gpu": 2.4798028121399445,
+      "samples": [
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 147.424,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 139.648,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 133.6,
+          "kernel_external_id": "51058",
+          "provenance": "external_id=51058",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 131.745,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 130.016,
+          "kernel_external_id": "51058",
+          "provenance": "external_id=51058",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 127.744,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 127.68,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 127.169,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "missing",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ],
+      "total_us": 84402.825,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-3-EP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-2-EP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-1-EP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-7-EP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-5-EP-5.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-4-EP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-6-EP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-0-EP-0.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 8784,
+      "category": "other",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "void (anonymous namespace)::fast_hadamard_transform_kernel<(anonymous namespace)::FastHadamardKernelTraits<16, 7, __nv_bfloat16> >(HadamardParamsBase)",
+      "label": "random_high",
+      "mean_us": 8.6586802140255,
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "pct_of_gpu": 2.234622631125316,
+      "samples": [
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 60.768,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 60.737,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 60.737,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 60.737,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 60.736,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 60.736,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 60.736,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 4/1",
+          "kernel_dur_us": 60.736,
+          "kernel_external_id": "43863",
+          "provenance": "external_id=43863",
+          "shape_args": {}
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "missing",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ],
+      "total_us": 76057.847,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-3-EP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-2-EP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-1-EP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-7-EP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-5-EP-5.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-4-EP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-6-EP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-0-EP-0.trace.json.gz"
+      ]
+    }
+  ],
+  "threshold_strictly_greater_than_pct": 2.0,
+  "total_gpu_us": 3403610.343,
+  "trace_files": [
+    "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-3-EP-3.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-2-EP-2.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-1-EP-1.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-7-EP-7.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-5-EP-5.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-4-EP-4.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-6-EP-6.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/deepseek_math_v2/b200/profile/random_high/1781895537.761538/random_high-1781895537.7626534-TP-0-EP-0.trace.json.gz"
+  ]
+}

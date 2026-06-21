@@ -1,0 +1,107 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void flashinfer::trtllm_dsv3_router_gemm::router_gemm_kernel<__nv_bfloat16, float, 128, 8, 6, 256, 7168>(float*, __nv_bfloat16 const*, __nv_bfloat16 const*)",
+  "labels": [
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 6.911585883791943,
+  "model": "nvidia/DeepSeek-R1-0528-FP4-v2",
+  "model_slug": "deepseek_r1_fp4",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::copy_",
+      "kernel_dur_us": 1973.255,
+      "provenance": "external_id=144139",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "False"
+        ],
+        "Input Dims": [
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "int",
+          "long int",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::flashinfer_dsv3_router_gemm",
+      "kernel_dur_us": 1971.563,
+      "provenance": "external_id=144251",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            6,
+            256
+          ],
+          [
+            6,
+            7168
+          ],
+          [
+            256,
+            7168
+          ]
+        ],
+        "Input Strides": [
+          [
+            256,
+            1
+          ],
+          [
+            7168,
+            1
+          ],
+          [
+            7168,
+            1
+          ]
+        ],
+        "Input type": [
+          "float",
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "gemm__router_gemm_kernel__11c0c72e30",
+  "total_calls": 472,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 472,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 1078.08406779661,
+      "pct_of_gpu": 6.911585883791943,
+      "top_cpu_ops": [
+        "sglang::flashinfer_dsv3_router_gemm",
+        "aten::copy_"
+      ],
+      "total_us": 508855.68
+    }
+  ]
+}

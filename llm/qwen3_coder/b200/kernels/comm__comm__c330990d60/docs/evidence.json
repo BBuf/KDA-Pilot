@@ -1,0 +1,107 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void (anonymous namespace)::all_reduce_two_shot_kernel<__nv_bfloat16, 8u, true>(host::distributed::AllReduceData const*, (anonymous namespace)::AllReduceParams, device::distributed::PullController)",
+  "labels": [
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 2.2391665749552807,
+  "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+  "model_slug": "qwen3_coder",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 4099.5,
+      "provenance": "external_id=63749",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[705]",
+          "[1]",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            768
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 1004.615,
+      "provenance": "external_id=61174",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[553, 1536]",
+          "[1792, 1]",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            576,
+            1536
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1792,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen3_coder/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "comm__comm__c330990d60",
+  "total_calls": 128,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 128,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 303.6231328125,
+      "pct_of_gpu": 2.2391665749552807,
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "sglang::unified_attention_with_output"
+      ],
+      "total_us": 38863.761
+    }
+  ]
+}

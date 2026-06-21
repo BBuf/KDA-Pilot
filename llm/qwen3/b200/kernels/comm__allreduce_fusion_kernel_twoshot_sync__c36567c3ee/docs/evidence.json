@@ -1,0 +1,107 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_twoshot_sync<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>, std::array<int, 8>, std::array<int, 8>)",
+  "labels": [
+    "random_mid",
+    "random_high"
+  ],
+  "max_pct_of_gpu": 5.5412663589642985,
+  "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+  "model_slug": "qwen3",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::floor_divide",
+      "kernel_dur_us": 378.66,
+      "provenance": "external_id=10266",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            11
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "long int"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 327.62,
+      "provenance": "external_id=26552",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[409, 1024]"
+        ],
+        "Input Dims": [
+          [
+            409,
+            1024
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1024,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen3/b200/docs/kernel_shapes_random_mid.json",
+    "qwen3/b200/docs/kernel_shapes_random_high.json"
+  ],
+  "task_id": "comm__allreduce_fusion_kernel_twoshot_sync__c36567c3ee",
+  "total_calls": 2992,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 1496,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 70.51650601604278,
+      "pct_of_gpu": 4.069111274084584,
+      "top_cpu_ops": [
+        "sglang::unified_attention_with_output",
+        "aten::copy_",
+        "aten::floor_divide"
+      ],
+      "total_us": 105492.693
+    },
+    {
+      "calls": 1496,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 76.1754344919786,
+      "pct_of_gpu": 5.5412663589642985,
+      "top_cpu_ops": [
+        "aten::view",
+        "aten::copy_"
+      ],
+      "total_us": 113958.45
+    }
+  ]
+}

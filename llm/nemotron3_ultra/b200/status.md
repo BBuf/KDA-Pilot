@@ -1,0 +1,19 @@
+- 2026-06-19 12:08:06 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3; command=python3 -m sglang.launch_server --model-path nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4 --trust-remote-code --tp 4 --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1 --speculative-num-draft-tokens 4 --reasoning-parser nemotron_3 --tool-call-parser qwen3_coder --mamba-scheduler-strategy extra_buffer --attention-backend trtllm_mha --host 0.0.0.0 --port 30000
+- 2026-06-19 12:08:18 UTC: failed_or_interrupted - exit_code=1; cleaning partial weights
+- 2026-06-19 12:08:18 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--nvidia--NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4: deleted after failed/interrupted Nemotron3-Ultra 550B-A55B NVFP4 run, size_before=absent; lock=/root/.cache/huggingface/hub/.locks/models--nvidia--NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4
+- 2026-06-19 12:12:35 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3; command=python3 -m sglang.launch_server --model-path nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4 --trust-remote-code --tp 4 --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1 --speculative-num-draft-tokens 4 --reasoning-parser nemotron_3 --tool-call-parser qwen3_coder --mamba-scheduler-strategy extra_buffer --attention-backend trtllm_mha --host 0.0.0.0 --port 30000
+- 2026-06-19 12:29:21 UTC: server_ready - pid=1322, port=30000
+- 2026-06-19 12:29:21 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
+- 2026-06-19 12:30:00 UTC: extract - random_low: extracting >2% kernel shapes/meta
+- 2026-06-19 12:30:03 UTC: benchmark - random_mid: dataset=random, num_prompts=300, max_concurrency=32
+- 2026-06-19 12:32:11 UTC: extract - random_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 12:32:16 UTC: benchmark - random_high: dataset=random, num_prompts=500, max_concurrency=100
+- 2026-06-19 12:35:15 UTC: extract - random_high: extracting >2% kernel shapes/meta
+- 2026-06-19 12:35:22 UTC: benchmark - sharegpt_low: dataset=sharegpt, num_prompts=10, max_concurrency=1
+- 2026-06-19 12:36:03 UTC: extract - sharegpt_low: extracting >2% kernel shapes/meta
+- 2026-06-19 12:36:05 UTC: benchmark - sharegpt_mid: dataset=sharegpt, num_prompts=300, max_concurrency=32
+- 2026-06-19 12:37:42 UTC: extract - sharegpt_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 12:37:49 UTC: benchmark - sharegpt_high: dataset=sharegpt, num_prompts=500, max_concurrency=100
+- 2026-06-19 12:40:01 UTC: extract - sharegpt_high: extracting >2% kernel shapes/meta
+- 2026-06-19 12:40:10 UTC: completed - Nemotron3-Ultra 550B-A55B NVFP4 benchmark/profile/shape extraction complete
+- 2026-06-19 12:40:31 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--nvidia--NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4: deleted after completed run, size_before=329G; lock=/root/.cache/huggingface/hub/.locks/models--nvidia--NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4

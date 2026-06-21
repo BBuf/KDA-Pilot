@@ -1,0 +1,69 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_64x24_64x16_1x2_h_bz_TNT",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 3.836196679961874,
+  "model": "Qwen/Qwen3-Coder-Next",
+  "model_slug": "qwen3_coder_next",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 1043.423,
+      "provenance": "external_id=2515",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            38,
+            2048
+          ],
+          [
+            2048,
+            4608
+          ]
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          [
+            1,
+            2048
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen3_coder_next/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_64x24_64x16_1x2_h_bz_tnt__232ed8d6b8",
+  "total_calls": 24,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 24,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 454.2462083333333,
+      "pct_of_gpu": 3.836196679961874,
+      "top_cpu_ops": [
+        "aten::mm"
+      ],
+      "total_us": 10901.909
+    }
+  ]
+}

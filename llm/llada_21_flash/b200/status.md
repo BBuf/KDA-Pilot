@@ -1,0 +1,16 @@
+- 2026-06-20 12:17:59 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1; command=python3 -m sglang.launch_server --model-path inclusionAI/LLaDA2.1-flash --dllm-algorithm JointThreshold --tp 2 --trust-remote-code --mem-fraction-static 0.8 --max-running-requests 1 --attention-backend flashinfer --host 0.0.0.0 --port 30000
+- 2026-06-20 12:27:22 UTC: server_ready - pid=1142, port=30000
+- 2026-06-20 12:27:22 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
+- 2026-06-20 12:28:01 UTC: extract - random_low: extracting >2% kernel shapes/meta
+- 2026-06-20 12:28:05 UTC: benchmark - random_mid: dataset=random, num_prompts=300, max_concurrency=32
+- 2026-06-20 12:37:35 UTC: extract - random_mid: extracting >2% kernel shapes/meta
+- 2026-06-20 12:37:43 UTC: benchmark - random_high: dataset=random, num_prompts=500, max_concurrency=100
+- 2026-06-20 12:52:01 UTC: extract - random_high: extracting >2% kernel shapes/meta
+- 2026-06-20 12:52:06 UTC: benchmark - sharegpt_low: dataset=sharegpt, num_prompts=10, max_concurrency=1
+- 2026-06-20 12:52:44 UTC: extract - sharegpt_low: extracting >2% kernel shapes/meta
+- 2026-06-20 12:52:51 UTC: benchmark - sharegpt_mid: dataset=sharegpt, num_prompts=300, max_concurrency=32
+- 2026-06-20 12:58:31 UTC: extract - sharegpt_mid: extracting >2% kernel shapes/meta
+- 2026-06-20 12:58:40 UTC: benchmark - sharegpt_high: dataset=sharegpt, num_prompts=500, max_concurrency=100
+- 2026-06-20 13:07:32 UTC: extract - sharegpt_high: extracting >2% kernel shapes/meta
+- 2026-06-20 13:07:40 UTC: completed - LLaDA2.1-flash benchmark/profile/shape extraction complete
+- 2026-06-20 13:07:50 UTC: weights_cleanup - primary: /root/.cache/huggingface/hub/models--inclusionAI--LLaDA2.1-flash: deleted after completed run, size_before=192G; lock=/root/.cache/huggingface/hub/.locks/models--inclusionAI--LLaDA2.1-flash

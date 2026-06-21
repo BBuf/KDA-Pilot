@@ -1,0 +1,129 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void flashinfer::trtllm_dsv3_router_gemm::router_gemm_kernel<__nv_bfloat16, float, 128, 8, 6, 256, 7168>(float*, __nv_bfloat16 const*, __nv_bfloat16 const*)",
+  "labels": [
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 7.282045783546997,
+  "model": "deepseek-ai/DeepSeek-V3",
+  "model_slug": "deepseek_v3",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::_to_copy",
+      "kernel_dur_us": 2449.796,
+      "provenance": "external_id=148860",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "4",
+          "",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [
+            1,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "int",
+          "Scalar",
+          "",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::flashinfer_dsv3_router_gemm",
+      "kernel_dur_us": 2448.192,
+      "provenance": "external_id=148972",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            6,
+            256
+          ],
+          [
+            6,
+            7168
+          ],
+          [
+            256,
+            7168
+          ]
+        ],
+        "Input Strides": [
+          [
+            256,
+            1
+          ],
+          [
+            7168,
+            1
+          ],
+          [
+            7168,
+            1
+          ]
+        ],
+        "Input type": [
+          "float",
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "deepseek_v3/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "gemm__router_gemm_kernel__11c0c72e30",
+  "total_calls": 472,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 472,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 1181.0333665254236,
+      "pct_of_gpu": 7.282045783546997,
+      "top_cpu_ops": [
+        "sglang::flashinfer_dsv3_router_gemm",
+        "aten::_to_copy"
+      ],
+      "total_us": 557447.749
+    }
+  ]
+}

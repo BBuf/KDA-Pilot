@@ -1,0 +1,111 @@
+{
+  "category": "moe",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void moe_sum_reduce_kernel_warp_token_topk<c10::Half, 8, 4>(c10::Half const*, c10::Half*, long, long, long, long, long, at::OpMathType<c10::Half>::type)",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 2.781514466686688,
+  "model": "tencent/Hy3-preview",
+  "model_slug": "hunyuan3_preview",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::matmul",
+      "kernel_dur_us": 251.487,
+      "provenance": "external_id=37644",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            11225,
+            4096
+          ],
+          [
+            4096,
+            192
+          ]
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [
+            1,
+            4096
+          ]
+        ],
+        "Input type": [
+          "float",
+          "float"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sgl_kernel::moe_sum_reduce",
+      "kernel_dur_us": 225.663,
+      "provenance": "external_id=34810",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "1."
+        ],
+        "Input Dims": [
+          [
+            11225,
+            8,
+            4096
+          ],
+          [
+            11225,
+            4096
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            32768,
+            4096,
+            1
+          ],
+          [
+            4096,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::Half",
+          "c10::Half",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "hunyuan3_preview/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "moe__moe_sum_reduce_kernel_warp_token_topk__43207a7c49",
+  "total_calls": 640,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 640,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 224.7635359375,
+      "pct_of_gpu": 2.781514466686688,
+      "top_cpu_ops": [
+        "aten::matmul",
+        "sgl_kernel::moe_sum_reduce"
+      ],
+      "total_us": 143848.663
+    }
+  ]
+}

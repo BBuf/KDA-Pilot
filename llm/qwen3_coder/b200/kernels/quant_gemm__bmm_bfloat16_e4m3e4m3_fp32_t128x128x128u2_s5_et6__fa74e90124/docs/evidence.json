@@ -1,0 +1,137 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "bmm_Bfloat16_E4m3E4m3_Fp32_t128x128x128u2_s5_et64x128_m64x128x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_schPd4x2x2x3_bN_rgTma_clmp_dynB_sm100f",
+  "labels": [
+    "random_high",
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 2.5082685785687984,
+  "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+  "model_slug": "qwen3_coder",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 106.016,
+      "provenance": "external_id=28954",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1]",
+          "[1]",
+          "447"
+        ],
+        "Input Dims": [
+          [
+            448
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::to",
+      "kernel_dur_us": 121.92,
+      "provenance": "external_id=45901",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "4",
+          "0",
+          "",
+          "",
+          "True",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [
+            1950
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "Scalar",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          "Scalar",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen3_coder/b200/docs/kernel_shapes_random_high.json",
+    "qwen3_coder/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "quant_gemm__bmm_bfloat16_e4m3e4m3_fp32_t128x128x128u2_s5_et6__fa74e90124",
+  "total_calls": 1054,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 496,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 78.58203830645161,
+      "pct_of_gpu": 2.1974423582006497,
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::empty"
+      ],
+      "total_us": 38976.691
+    },
+    {
+      "calls": 558,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 85.71916845878137,
+      "pct_of_gpu": 2.5082685785687984,
+      "top_cpu_ops": [
+        "aten::to",
+        "aten::copy_",
+        "sglang::unified_attention_with_output"
+      ],
+      "total_us": 47831.296
+    }
+  ]
+}

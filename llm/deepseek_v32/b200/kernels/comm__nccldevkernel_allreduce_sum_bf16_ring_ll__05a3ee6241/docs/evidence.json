@@ -1,0 +1,336 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "ncclDevKernel_AllReduce_Sum_bf16_RING_LL(ncclDevKernelArgsStorage<4096ul>)",
+  "labels": [
+    "random_mid",
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 57.12952522766991,
+  "model": "nvidia/DeepSeek-V3.2-NVFP4",
+  "model_slug": "deepseek_v32",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::fill_",
+      "kernel_dur_us": 282401.625,
+      "provenance": "external_id=18471",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            11136,
+            4096
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::hadamard_transform",
+      "kernel_dur_us": 264729.415,
+      "provenance": "external_id=17701",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0.088388347648318447"
+        ],
+        "Input Dims": [
+          [
+            11134,
+            128
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            128,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "record_param_comms",
+      "kernel_dur_us": 226221.164,
+      "provenance": "external_id=17659",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "0",
+          "",
+          "[]",
+          "[]",
+          "0",
+          "1",
+          "4"
+        ],
+        "Input Dims": [
+          [
+            [
+              11134,
+              7168
+            ]
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            [
+              7168,
+              1
+            ]
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "TensorList",
+          "",
+          "",
+          "Scalar",
+          "",
+          "ScalarList",
+          "ScalarList",
+          "Scalar",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::clone",
+      "kernel_dur_us": 38802.753,
+      "provenance": "external_id=95057",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            552320
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "float",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "record_param_comms",
+      "kernel_dur_us": 38595.627,
+      "provenance": "external_id=95665",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "1",
+          "",
+          "[]",
+          "[]",
+          "0",
+          "1",
+          "4"
+        ],
+        "Input Dims": [
+          [
+            [
+              8630,
+              7168
+            ]
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            [
+              7168,
+              1
+            ]
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "TensorList",
+          "",
+          "",
+          "Scalar",
+          "",
+          "ScalarList",
+          "ScalarList",
+          "Scalar",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::arange",
+      "kernel_dur_us": 2570.212,
+      "provenance": "external_id=89853",
+      "shape_args": {
+        "Concrete Inputs": [
+          "1",
+          "243",
+          "3",
+          "",
+          "",
+          "False"
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "",
+          "",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::hadamard_transform",
+      "kernel_dur_us": 989.537,
+      "provenance": "external_id=105857",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0.088388347648318447"
+        ],
+        "Input Dims": [
+          [
+            8630,
+            128
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            128,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "deepseek_v32/b200/docs/kernel_shapes_random_mid.json",
+    "deepseek_v32/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "comm__nccldevkernel_allreduce_sum_bf16_ring_ll__05a3ee6241",
+  "total_calls": 984,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 492,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 4022.1361199186977,
+      "pct_of_gpu": 57.12952522766991,
+      "top_cpu_ops": [
+        "aten::fill_",
+        "record_param_comms",
+        "sglang::hadamard_transform"
+      ],
+      "total_us": 1978890.9709999992
+    },
+    {
+      "calls": 492,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 609.7617296747967,
+      "pct_of_gpu": 14.998774471456702,
+      "top_cpu_ops": [
+        "record_param_comms",
+        "aten::clone",
+        "aten::arange",
+        "sglang::hadamard_transform"
+      ],
+      "total_us": 300002.77099999995
+    }
+  ]
+}

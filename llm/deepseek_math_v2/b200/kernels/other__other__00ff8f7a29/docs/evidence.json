@@ -1,0 +1,65 @@
+{
+  "category": "other",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void (anonymous namespace)::fast_hadamard_transform_kernel<(anonymous namespace)::FastHadamardKernelTraits<16, 7, __nv_bfloat16> >(HadamardParamsBase)",
+  "labels": [
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 3.7968905352202507,
+  "model": "deepseek-ai/DeepSeek-Math-V2",
+  "model_slug": "deepseek_math_v2",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::hadamard_transform",
+      "kernel_dur_us": 289.665,
+      "provenance": "external_id=93831",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0.088388347648318447"
+        ],
+        "Input Dims": [
+          [
+            8661,
+            64,
+            128
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            8192,
+            128,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "deepseek_math_v2/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "other__other__00ff8f7a29",
+  "total_calls": 8784,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 8784,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 18.481409266848814,
+      "pct_of_gpu": 3.7968905352202507,
+      "top_cpu_ops": [
+        "sglang::hadamard_transform"
+      ],
+      "total_us": 162340.699
+    }
+  ]
+}

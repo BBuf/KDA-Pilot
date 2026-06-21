@@ -1,0 +1,97 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_64x64x16_1x1x1_3_tnn_align1_bias_f32_relu",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 7.572158932500385,
+  "model": "inclusionAI/Ring-2.5-1T",
+  "model_slug": "ring_25_1t",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 932.894,
+      "provenance": "external_id=40385",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            9780,
+            8192
+          ],
+          [
+            8192,
+            256
+          ]
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          [
+            1,
+            8192
+          ]
+        ],
+        "Input type": [
+          "float",
+          "float"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::reshape",
+      "kernel_dur_us": 924.321,
+      "provenance": "external_id=40317",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[22, 1, 1, 1]"
+        ],
+        "Input Dims": [
+          [
+            22
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "ring_25_1t/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "gemm__cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_6__d89eb792f0",
+  "total_calls": 608,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 608,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 907.7804572368422,
+      "pct_of_gpu": 7.572158932500385,
+      "top_cpu_ops": [
+        "aten::mm",
+        "aten::reshape"
+      ],
+      "total_us": 551930.518
+    }
+  ]
+}

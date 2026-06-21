@@ -1,0 +1,196 @@
+{
+  "category": "memory_bound",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul>, 4, TrivialOffsetCalculator<1, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<1>, at::native::memory::StoreWithCast<1> >(int, at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul>, TrivialOffsetCalculator<1, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<1>, at::native::memory::StoreWithCast<1>)",
+  "labels": [
+    "random_high",
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 4.959656321822545,
+  "model": "inclusionAI/Ring-2.5-1T",
+  "model_slug": "ring_25_1t",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::copy_",
+      "kernel_dur_us": 357.472,
+      "provenance": "external_id=80667",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "False"
+        ],
+        "Input Dims": [
+          [
+            16384,
+            8192
+          ],
+          [
+            16384,
+            8192
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          [
+            8192,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "float",
+          "c10::BFloat16",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::_run_activation_inplace",
+      "kernel_dur_us": 356.225,
+      "provenance": "external_id=80653",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [
+            16384,
+            512
+          ],
+          [
+            16384,
+            256
+          ]
+        ],
+        "Input Strides": [
+          [],
+          [
+            512,
+            1
+          ],
+          [
+            256,
+            1
+          ]
+        ],
+        "Input type": [
+          "",
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::copy_",
+      "kernel_dur_us": 310.405,
+      "provenance": "external_id=163062",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "False"
+        ],
+        "Input Dims": [
+          [
+            14375,
+            8192
+          ],
+          [
+            14375,
+            8192
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          [
+            8192,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "float",
+          "c10::BFloat16",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::inplace_all_reduce",
+      "kernel_dur_us": 310.084,
+      "provenance": "external_id=176352",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            14375,
+            8192
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "ring_25_1t/b200/docs/kernel_shapes_random_high.json",
+    "ring_25_1t/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "memory_bound__unrolled_elementwise_kernel__64bf90af3d",
+  "total_calls": 32112,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 16056,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 42.62335469606378,
+      "pct_of_gpu": 4.959656321822545,
+      "top_cpu_ops": [
+        "aten::copy_",
+        "sglang::_run_activation_inplace"
+      ],
+      "total_us": 684360.583
+    },
+    {
+      "calls": 16056,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 20.687053251121075,
+      "pct_of_gpu": 4.012180421829178,
+      "top_cpu_ops": [
+        "aten::copy_",
+        "sglang::inplace_all_reduce"
+      ],
+      "total_us": 332151.327
+    }
+  ]
+}

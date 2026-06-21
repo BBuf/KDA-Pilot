@@ -1,0 +1,88 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_256x8_64x6_2x1_v_bz_TNT",
+  "labels": [
+    "random_low",
+    "sharegpt_low"
+  ],
+  "max_pct_of_gpu": 4.899886401025993,
+  "model": "google/gemma-4-26B-A4B-it",
+  "model_slug": "gemma4",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 222.464,
+      "provenance": "external_id=3293",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            1,
+            2816
+          ],
+          [
+            2816,
+            262144
+          ]
+        ],
+        "Input Strides": [
+          [
+            2816,
+            1
+          ],
+          [
+            1,
+            2816
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "gemma4/b200/docs/kernel_shapes_random_low.json",
+    "gemma4/b200/docs/kernel_shapes_sharegpt_low.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_256x8_64x6_2x1_v_bz_tnt__7f588c1fef",
+  "total_calls": 18,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 9,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 220.00666666666666,
+      "pct_of_gpu": 4.822755232567401,
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::mm",
+        "aten::add",
+        "aten::as_strided"
+      ],
+      "total_us": 1980.06
+    },
+    {
+      "calls": 9,
+      "concurrency": "low",
+      "dataset": "sharegpt",
+      "label": "sharegpt_low",
+      "mean_us": 219.88822222222223,
+      "pct_of_gpu": 4.899886401025993,
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::mm",
+        "aten::add"
+      ],
+      "total_us": 1978.9940000000001
+    }
+  ]
+}

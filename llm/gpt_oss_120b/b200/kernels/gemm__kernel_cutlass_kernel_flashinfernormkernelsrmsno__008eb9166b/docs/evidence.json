@@ -1,0 +1,174 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "kernel_cutlass_kernel_flashinfernormkernelsrmsnormRMSNormKernel_object_at__tensorptrbf16gmemalign128o288028801_tensorptrbf16gmemalign16o28801_tensorptrbf16gmemalign128o288028801___True_4__0",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 2.4631180294787534,
+  "model": "openai/gpt-oss-120b",
+  "model_slug": "gpt_oss_120b",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 679.274,
+      "provenance": "external_id=4008",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1]"
+        ],
+        "Input Dims": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty_like",
+      "kernel_dur_us": 629.864,
+      "provenance": "external_id=4015",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::sum",
+      "kernel_dur_us": 597.509,
+      "provenance": "external_id=4009",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "long int",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty_strided",
+      "kernel_dur_us": 551.463,
+      "provenance": "external_id=4016",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[1]",
+          "[1]",
+          "4",
+          "0",
+          "",
+          "False"
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "ScalarList",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "gpt_oss_120b/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "gemm__kernel_cutlass_kernel_flashinfernormkernelsrmsno__008eb9166b",
+  "total_calls": 64,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 64,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 113.638421875,
+      "pct_of_gpu": 2.4631180294787534,
+      "top_cpu_ops": [
+        "aten::view",
+        "aten::empty_like",
+        "aten::sum",
+        "aten::empty_strided",
+        "aten::copy_"
+      ],
+      "total_us": 7272.859
+    }
+  ]
+}

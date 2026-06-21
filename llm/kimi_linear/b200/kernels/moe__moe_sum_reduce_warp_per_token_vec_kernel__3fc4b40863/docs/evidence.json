@@ -1,0 +1,496 @@
+{
+  "category": "moe",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void moe_sum_reduce_warp_per_token_vec_kernel<8>(c10::BFloat16 const*, c10::BFloat16*, long, long, long, long, long, long, float)",
+  "labels": [
+    "random_high",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 2.470378627273819,
+  "model": "moonshotai/Kimi-Linear-48B-A3B-Instruct",
+  "model_slug": "kimi_linear",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 112.448,
+      "provenance": "external_id=101865",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[]",
+          "[]",
+          "9"
+        ],
+        "Input Dims": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 109.28,
+      "provenance": "external_id=102167",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1]",
+          "[1]",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList",
+          "ScalarList",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 108.16,
+      "provenance": "external_id=95373",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[4864]",
+          "[1]",
+          "13"
+        ],
+        "Input Dims": [
+          [
+            4865
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 107.616,
+      "provenance": "external_id=96837",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[16384, 8, 128]"
+        ],
+        "Input Dims": [
+          [
+            16384,
+            1024
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1024,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sgl_kernel::moe_sum_reduce",
+      "kernel_dur_us": 107.456,
+      "provenance": "external_id=97583",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "2.4460000000000002"
+        ],
+        "Input Dims": [
+          [
+            16384,
+            8,
+            2304
+          ],
+          [
+            16384,
+            2304
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            18432,
+            2304,
+            1
+          ],
+          [
+            2304,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::linear",
+      "kernel_dur_us": 107.392,
+      "provenance": "external_id=103703",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            16384,
+            256
+          ],
+          [
+            2304,
+            256
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            256,
+            1
+          ],
+          [
+            256,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 107.392,
+      "provenance": "external_id=95834",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[33]",
+          "[0]",
+          ""
+        ],
+        "Input Dims": [
+          [
+            3577
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "int",
+          "ScalarList",
+          "ScalarList",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::to",
+      "kernel_dur_us": 107.712,
+      "provenance": "external_id=149323",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "4",
+          "False",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [
+            54
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 107.552,
+      "provenance": "external_id=147787",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1024, 4]",
+          "[4, 1]",
+          "4096"
+        ],
+        "Input Dims": [
+          [
+            3072,
+            4
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            4,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "float",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty_like",
+      "kernel_dur_us": 107.488,
+      "provenance": "external_id=145479",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [
+            131072,
+            128
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            128,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 107.328,
+      "provenance": "external_id=144126",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1024, 2304]",
+          "[1, 1024]",
+          ""
+        ],
+        "Input Dims": [
+          [
+            2304,
+            1024
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1024,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList",
+          "ScalarList",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 107.296,
+      "provenance": "external_id=147346",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[]",
+          "[]",
+          "40"
+        ],
+        "Input Dims": [
+          [
+            55
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "kimi_linear/b200/docs/kernel_shapes_random_high.json",
+    "kimi_linear/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "moe__moe_sum_reduce_warp_per_token_vec_kernel__3fc4b40863",
+  "total_calls": 832,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 416,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 82.16174038461538,
+      "pct_of_gpu": 2.470378627273819,
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::view",
+        "sgl_kernel::moe_sum_reduce",
+        "aten::linear"
+      ],
+      "total_us": 34179.284
+    },
+    {
+      "calls": 416,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 58.173274038461535,
+      "pct_of_gpu": 2.3511688834873974,
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::empty_like",
+        "sgl_kernel::moe_sum_reduce",
+        "aten::to"
+      ],
+      "total_us": 24200.082
+    }
+  ]
+}

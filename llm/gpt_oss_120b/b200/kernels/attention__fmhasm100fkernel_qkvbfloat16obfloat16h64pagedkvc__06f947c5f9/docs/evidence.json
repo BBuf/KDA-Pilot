@@ -1,0 +1,205 @@
+{
+  "category": "attention",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "fmhaSm100fKernel_QkvBfloat16OBfloat16H64PagedKvCausalP64VarSeqQ128Kv128PersistentContext",
+  "labels": [
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 2.5506563740309303,
+  "model": "openai/gpt-oss-120b",
+  "model_slug": "gpt_oss_120b",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 54.465,
+      "provenance": "external_id=43902",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[-1, 64]"
+        ],
+        "Input Dims": [
+          [
+            2373,
+            1,
+            64
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            640,
+            64,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::unified_attention_with_output",
+      "kernel_dur_us": 53.409,
+      "provenance": "external_id=43362",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "True",
+          "1",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            2560,
+            512
+          ],
+          [
+            2560,
+            1,
+            64
+          ],
+          [
+            2560,
+            1,
+            64
+          ],
+          [
+            2560,
+            512
+          ],
+          [],
+          [],
+          [],
+          [],
+          [
+            8
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            640,
+            1
+          ],
+          [
+            640,
+            64,
+            1
+          ],
+          [
+            640,
+            64,
+            1
+          ],
+          [
+            512,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "Scalar",
+          "Scalar",
+          "",
+          "",
+          "float",
+          "",
+          "",
+          "",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::index_put_",
+      "kernel_dur_us": 53.249,
+      "provenance": "external_id=44562",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "False"
+        ],
+        "Input Dims": [
+          [
+            4097
+          ],
+          [],
+          [
+            81
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "",
+          "long int",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "gpt_oss_120b/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "attention__fmhasm100fkernel_qkvbfloat16obfloat16h64pagedkvc__06f947c5f9",
+  "total_calls": 576,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 576,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 29.675819444444446,
+      "pct_of_gpu": 2.5506563740309303,
+      "top_cpu_ops": [
+        "aten::view",
+        "sglang::unified_attention_with_output",
+        "aten::index_put_"
+      ],
+      "total_us": 17093.272
+    }
+  ]
+}

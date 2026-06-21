@@ -1,0 +1,73 @@
+{
+  "category": "moe_comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void deep_ep::intranode::notify_dispatch<8>(int const*, int*, int const*, int*, int, int, int, bool const*, int*, int*, int, int, void**, int**, int)",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 32.85627627896235,
+  "model": "zai-org/GLM-5.2-FP8",
+  "model_slug": "glm_52",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 2224.759,
+      "provenance": "external_id=1083",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[7]",
+          "[1]",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            8,
+            7
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            7,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "glm_52/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "moe_comm__notify_dispatch__4a6d3ee17e",
+  "total_calls": 608,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 608,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 1315.9216825657886,
+      "pct_of_gpu": 32.85627627896235,
+      "top_cpu_ops": [
+        "aten::empty",
+        "aten::record_stream",
+        "aten::as_strided"
+      ],
+      "total_us": 800080.3829999994
+    }
+  ]
+}

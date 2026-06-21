@@ -1,0 +1,129 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void fused_a_gemm_kernel<1, 2112, 7168, 16, 16, 256, 12>(__nv_bfloat16*, __nv_bfloat16 const*, __nv_bfloat16 const*, int)",
+  "labels": [
+    "sharegpt_low",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 47.74105753858844,
+  "model": "moonshotai/Kimi-K2.7-Code",
+  "model_slug": "kimi_k27_code",
+  "shape_samples": [
+    {
+      "cpu_op": "sgl_kernel::dsv3_fused_a_gemm",
+      "kernel_dur_us": 1491692.608,
+      "provenance": "external_id=70011",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            15,
+            2112
+          ],
+          [
+            15,
+            7168
+          ],
+          [
+            7168,
+            2112
+          ]
+        ],
+        "Input Strides": [
+          [
+            2112,
+            1
+          ],
+          [
+            7168,
+            1
+          ],
+          [
+            1,
+            7168
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::copy_",
+      "kernel_dur_us": 742.67,
+      "provenance": "external_id=108391",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "True"
+        ],
+        "Input Dims": [
+          [
+            1
+          ],
+          [
+            1
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "int",
+          "int",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "kimi_k27_code/b200/docs/kernel_shapes_sharegpt_low.json",
+    "kimi_k27_code/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "gemm__fused_a_gemm_kernel__23e7519307",
+  "total_calls": 976,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 488,
+      "concurrency": "low",
+      "dataset": "sharegpt",
+      "label": "sharegpt_low",
+      "mean_us": 21816.50727868853,
+      "pct_of_gpu": 47.74105753858844,
+      "top_cpu_ops": [
+        "sgl_kernel::dsv3_fused_a_gemm"
+      ],
+      "total_us": 10646455.552000001
+    },
+    {
+      "calls": 488,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 371.8916659836065,
+      "pct_of_gpu": 3.3524149994754393,
+      "top_cpu_ops": [
+        "sgl_kernel::dsv3_fused_a_gemm",
+        "aten::copy_"
+      ],
+      "total_us": 181483.13299999997
+    }
+  ]
+}

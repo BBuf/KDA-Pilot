@@ -1,0 +1,640 @@
+{
+  "concurrency": "low",
+  "dataset": "random",
+  "label": "random_low",
+  "model": "deepseek-ai/DeepSeek-V4-Flash",
+  "rows": [
+    {
+      "calls": 3432,
+      "category": "comm",
+      "concurrency": "low",
+      "dataset": "random",
+      "kernel": "void (anonymous namespace)::all_reduce_one_shot_push_kernel<__nv_bfloat16, 4u, true>((anonymous namespace)::AllReducePushData, device::distributed::PushController)",
+      "label": "random_low",
+      "mean_us": 124.14199737762239,
+      "model": "deepseek-ai/DeepSeek-V4-Flash",
+      "pct_of_gpu": 34.97873649489578,
+      "samples": [
+        {
+          "cpu_op": "sglang::outplace_all_reduce",
+          "kernel_dur_us": 3550.241,
+          "kernel_external_id": "12013",
+          "provenance": "external_id=12013",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                38,
+                4096
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                4096,
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::outplace_all_reduce",
+          "kernel_dur_us": 3548.741,
+          "kernel_external_id": "12013",
+          "provenance": "external_id=12013",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                38,
+                4096
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                4096,
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::outplace_all_reduce",
+          "kernel_dur_us": 2745.477,
+          "kernel_external_id": "6721",
+          "provenance": "external_id=6721",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                38,
+                4096
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                4096,
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::outplace_all_reduce",
+          "kernel_dur_us": 2744.64,
+          "kernel_external_id": "6721",
+          "provenance": "external_id=6721",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                38,
+                4096
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                4096,
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::fill_",
+          "kernel_dur_us": 2698.212,
+          "kernel_external_id": "50028",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                4
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::transpose",
+          "kernel_dur_us": 2285.503,
+          "kernel_external_id": "14006",
+          "provenance": "external_id=14006",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "-1",
+              "-2"
+            ],
+            "Input Dims": [
+              [
+                4,
+                40
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                40,
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::outplace_all_reduce",
+          "kernel_dur_us": 2283.076,
+          "kernel_external_id": "14016",
+          "provenance": "external_id=14016",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                38,
+                4096
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                4096,
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::outplace_all_reduce",
+          "kernel_dur_us": 2278.721,
+          "kernel_external_id": "14016",
+          "provenance": "external_id=14016",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                38,
+                4096
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                4096,
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "",
+              ""
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "sglang::outplace_all_reduce",
+        "aten::fill_",
+        "aten::transpose"
+      ],
+      "total_us": 426055.335,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/deepseek_v4/b200/profile/random_low/1781883447.6602595/random_low-1781883447.661948-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_v4/b200/profile/random_low/1781883447.6602595/random_low-1781883447.661948-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_v4/b200/profile/random_low/1781883447.6602595/random_low-1781883447.661948-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_v4/b200/profile/random_low/1781883447.6602595/random_low-1781883447.661948-TP-1.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 8932,
+      "category": "quant_gemm",
+      "concurrency": "low",
+      "dataset": "random",
+      "kernel": "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 128u, 128u, 0u, 0u, 0u, 16u, 128u, 128u, 1u, 128u, 128u, 128u, 12u, 128u, 128u, 2u, true, 148u, true, (deep_gemm::GemmType)0, false, cutlass::float_e4m3_t, cutlass::float_e4m3_t, cutlass::bfloat16_t, deep_gemm::epilogue::transform::EpilogueIdentity>(int*, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+      "label": "random_low",
+      "mean_us": 6.870129646215853,
+      "model": "deepseek-ai/DeepSeek-V4-Flash",
+      "pct_of_gpu": 5.037925687083138,
+      "samples": [
+        {
+          "cpu_op": "aten::resolve_neg",
+          "kernel_dur_us": 13.504,
+          "kernel_external_id": "65892",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::view",
+          "kernel_dur_us": 13.248,
+          "kernel_external_id": "53205",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[4, 16384]"
+            ],
+            "Input Dims": [
+              [
+                4,
+                4,
+                4096
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                16384,
+                4096,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::add",
+          "kernel_dur_us": 13.087,
+          "kernel_external_id": "56390",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                4,
+                1,
+                4096
+              ],
+              [
+                4,
+                4,
+                4096
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                4096,
+                4096,
+                1
+              ],
+              [
+                16384,
+                4096,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::add",
+          "kernel_dur_us": 13.024,
+          "kernel_external_id": "53219",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                4,
+                1,
+                4096
+              ],
+              [
+                4,
+                4,
+                4096
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                4096,
+                4096,
+                1
+              ],
+              [
+                16384,
+                4096,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 12.992,
+          "kernel_external_id": "72228",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[1]",
+              "3",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty_strided",
+          "kernel_dur_us": 12.992,
+          "kernel_external_id": "56400",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[1]",
+              "[1]",
+              "3",
+              "0",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "ScalarList",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 12.96,
+          "kernel_external_id": "59568",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[1]",
+              "3",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 12.96,
+          "kernel_external_id": "65882",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[4, 4]",
+              "[4, 1]",
+              ""
+            ],
+            "Input Dims": [
+              [
+                4,
+                4
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                4,
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "float",
+              "ScalarList",
+              "ScalarList",
+              ""
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::add",
+        "aten::empty",
+        "aten::resolve_neg",
+        "aten::view",
+        "aten::empty_strided"
+      ],
+      "total_us": 61363.998,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/deepseek_v4/b200/profile/random_low/1781883447.6602595/random_low-1781883447.661948-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_v4/b200/profile/random_low/1781883447.6602595/random_low-1781883447.661948-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_v4/b200/profile/random_low/1781883447.6602595/random_low-1781883447.661948-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/deepseek_v4/b200/profile/random_low/1781883447.6602595/random_low-1781883447.661948-TP-1.trace.json.gz"
+      ]
+    }
+  ],
+  "threshold_strictly_greater_than_pct": 2.0,
+  "total_gpu_us": 1218040.952,
+  "trace_files": [
+    "/data/bbuf/kda-pilot/llm/deepseek_v4/b200/profile/random_low/1781883447.6602595/random_low-1781883447.661948-TP-3.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/deepseek_v4/b200/profile/random_low/1781883447.6602595/random_low-1781883447.661948-TP-0.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/deepseek_v4/b200/profile/random_low/1781883447.6602595/random_low-1781883447.661948-TP-2.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/deepseek_v4/b200/profile/random_low/1781883447.6602595/random_low-1781883447.661948-TP-1.trace.json.gz"
+  ]
+}

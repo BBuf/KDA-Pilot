@@ -1,0 +1,77 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "bmm_E4m3_E4m3E4m3_Fp32_t128x64x128u2_s6_et64x64_m64x64x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_schedS_bN_tma_tmaSf_rgTma_clmp_lbW4_dynB_sm100f",
+  "labels": [
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 2.0472764707554467,
+  "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+  "model_slug": "qwen3_coder",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 127.329,
+      "provenance": "external_id=56415",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[88285, 1, 32, 128]",
+          "[4096, 128, 128, 1]",
+          ""
+        ],
+        "Input Dims": [
+          [
+            88285,
+            32,
+            1,
+            128
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            4096,
+            128,
+            128,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList",
+          "ScalarList",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen3_coder/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "quant_gemm__bmm_e4m3_e4m3e4m3_fp32_t128x64x128u2_s6_et64x64__584406dfb2",
+  "total_calls": 310,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 310,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 114.62338387096776,
+      "pct_of_gpu": 2.0472764707554467,
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::copy_",
+        "sglang::unified_attention_with_output"
+      ],
+      "total_us": 35533.249
+    }
+  ]
+}

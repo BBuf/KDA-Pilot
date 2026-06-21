@@ -1,0 +1,326 @@
+{
+  "category": "moe",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void moe::dev::finalize::finalizeKernel<moe::dev::finalize::KernelParams<cutlass::bfloat16_t, cutlass::bfloat16_t, 4, true> >(moe::dev::finalize::KernelParams<cutlass::bfloat16_t, cutlass::bfloat16_t, 4, true>)",
+  "labels": [
+    "random_low",
+    "sharegpt_low"
+  ],
+  "max_pct_of_gpu": 2.471361986463544,
+  "model": "mistralai/Mistral-Small-4-119B-2603",
+  "model_slug": "mistral_small4",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::trtllm_fp8_per_tensor_scale_moe_wrapper",
+      "kernel_dur_us": 5.6,
+      "provenance": "external_id=1859",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "128",
+          "4",
+          "1",
+          "1",
+          "2048",
+          "0",
+          "128",
+          "1.",
+          "False",
+          "1",
+          "",
+          "64",
+          "3"
+        ],
+        "Input Dims": [
+          [
+            38,
+            128
+          ],
+          [],
+          [
+            38,
+            4096
+          ],
+          [
+            128,
+            4096,
+            4096
+          ],
+          [
+            128
+          ],
+          [
+            128
+          ],
+          [
+            128,
+            4096,
+            2048
+          ],
+          [
+            128
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            128,
+            1
+          ],
+          [],
+          [
+            4096,
+            1
+          ],
+          [
+            16777216,
+            4096,
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            8388608,
+            2048,
+            1
+          ],
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "",
+          "c10::Float8_e4m3fn",
+          "c10::Float8_e4m3fn",
+          "float",
+          "float",
+          "c10::Float8_e4m3fn",
+          "float",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::trtllm_fp8_per_tensor_scale_moe_wrapper",
+      "kernel_dur_us": 5.28,
+      "provenance": "external_id=45493",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "128",
+          "4",
+          "1",
+          "1",
+          "2048",
+          "0",
+          "128",
+          "1.",
+          "False",
+          "1",
+          "",
+          "32",
+          "3"
+        ],
+        "Input Dims": [
+          [
+            18,
+            128
+          ],
+          [],
+          [
+            18,
+            4096
+          ],
+          [
+            128,
+            4096,
+            4096
+          ],
+          [
+            128
+          ],
+          [
+            128
+          ],
+          [
+            128,
+            4096,
+            2048
+          ],
+          [
+            128
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            128,
+            1
+          ],
+          [],
+          [
+            4096,
+            1
+          ],
+          [
+            16777216,
+            4096,
+            1
+          ],
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            8388608,
+            2048,
+            1
+          ],
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "",
+          "c10::Float8_e4m3fn",
+          "c10::Float8_e4m3fn",
+          "float",
+          "float",
+          "c10::Float8_e4m3fn",
+          "float",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "mistral_small4/b200/docs/kernel_shapes_random_low.json",
+    "mistral_small4/b200/docs/kernel_shapes_sharegpt_low.json"
+  ],
+  "task_id": "moe__finalizekernel__6a7a068b8f",
+  "total_calls": 648,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 324,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 3.7971358024691355,
+      "pct_of_gpu": 2.4002438264647625,
+      "top_cpu_ops": [
+        "sglang::trtllm_fp8_per_tensor_scale_moe_wrapper"
+      ],
+      "total_us": 1230.272
+    },
+    {
+      "calls": 324,
+      "concurrency": "low",
+      "dataset": "sharegpt",
+      "label": "sharegpt_low",
+      "mean_us": 3.7743024691358027,
+      "pct_of_gpu": 2.471361986463544,
+      "top_cpu_ops": [
+        "sglang::trtllm_fp8_per_tensor_scale_moe_wrapper"
+      ],
+      "total_us": 1222.874
+    }
+  ]
+}

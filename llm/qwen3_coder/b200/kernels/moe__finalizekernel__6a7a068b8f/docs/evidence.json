@@ -1,0 +1,129 @@
+{
+  "category": "moe",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void moe::dev::finalize::finalizeKernel<moe::dev::finalize::KernelParams<cutlass::bfloat16_t, cutlass::bfloat16_t, 4, true> >(moe::dev::finalize::KernelParams<cutlass::bfloat16_t, cutlass::bfloat16_t, 4, true>)",
+  "labels": [
+    "random_low",
+    "sharegpt_low"
+  ],
+  "max_pct_of_gpu": 2.56631652240817,
+  "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+  "model_slug": "qwen3_coder",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 8.257,
+      "provenance": "external_id=300",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1, 38]",
+          "[0, 1]",
+          ""
+        ],
+        "Input Dims": [
+          [
+            4097,
+            38
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            8196,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "int",
+          "ScalarList",
+          "ScalarList",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty",
+      "kernel_dur_us": 8.896,
+      "provenance": "external_id=35578",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[0]",
+          "4",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen3_coder/b200/docs/kernel_shapes_random_low.json",
+    "qwen3_coder/b200/docs/kernel_shapes_sharegpt_low.json"
+  ],
+  "task_id": "moe__finalizekernel__6a7a068b8f",
+  "total_calls": 8928,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 4464,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 3.537935035842294,
+      "pct_of_gpu": 2.4399371448847686,
+      "top_cpu_ops": [
+        "sglang::unified_attention_with_output",
+        "aten::copy_",
+        "aten::empty_strided",
+        "aten::as_strided"
+      ],
+      "total_us": 15793.342
+    },
+    {
+      "calls": 4464,
+      "concurrency": "low",
+      "dataset": "sharegpt",
+      "label": "sharegpt_low",
+      "mean_us": 3.6762175179211467,
+      "pct_of_gpu": 2.56631652240817,
+      "top_cpu_ops": [
+        "aten::empty",
+        "nccl:_all_gather_base",
+        "sglang::unified_attention_with_output"
+      ],
+      "total_us": 16410.635
+    }
+  ]
+}

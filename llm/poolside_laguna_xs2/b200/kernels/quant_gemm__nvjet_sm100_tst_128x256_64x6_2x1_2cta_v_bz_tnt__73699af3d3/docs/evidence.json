@@ -1,0 +1,114 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_128x256_64x6_2x1_2cta_v_bz_TNT",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 3.1607718440027472,
+  "model": "poolside/Laguna-XS.2-FP8",
+  "model_slug": "poolside_laguna_xs2",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::unified_attention_with_output",
+      "kernel_dur_us": 64.193,
+      "provenance": "external_id=10066",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "True",
+          "4",
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            11264,
+            1536
+          ],
+          [
+            11264,
+            2,
+            128
+          ],
+          [
+            11264,
+            2,
+            128
+          ],
+          [
+            11264,
+            1536
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          [
+            2048,
+            128,
+            1
+          ],
+          [
+            2048,
+            128,
+            1
+          ],
+          [
+            1536,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "Scalar",
+          "Scalar",
+          "",
+          "",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "poolside_laguna_xs2/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_128x256_64x6_2x1_2cta_v_bz_tnt__73699af3d3",
+  "total_calls": 320,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 320,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 55.30324375,
+      "pct_of_gpu": 3.1607718440027472,
+      "top_cpu_ops": [
+        "sglang::unified_attention_with_output",
+        "Torch-Compiled Region: 5/1"
+      ],
+      "total_us": 17697.038
+    }
+  ]
+}

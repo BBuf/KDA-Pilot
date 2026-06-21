@@ -1,0 +1,19 @@
+- 2026-06-19 10:39:01 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; command=sglang serve --model-path tencent/Hy3-preview --tp 8 --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1 --speculative-num-draft-tokens 4 --reasoning-parser hunyuan --tool-call-parser hunyuan --trust-remote-code --mem-fraction-static 0.85 --attention-backend trtllm_mha --host 0.0.0.0 --port 30000
+- 2026-06-19 10:39:01 UTC: failed_or_interrupted - exit_code=1; cleaning partial weights
+- 2026-06-19 10:39:01 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--tencent--Hy3-preview: deleted after failed/interrupted Hunyuan3 Preview BF16 + MTP run, size_before=absent; lock=/root/.cache/huggingface/hub/.locks/models--tencent--Hy3-preview
+- 2026-06-19 10:41:57 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; command=python3 -m sglang.launch_server --model-path tencent/Hy3-preview --tp 8 --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1 --speculative-num-draft-tokens 4 --reasoning-parser hunyuan --tool-call-parser hunyuan --trust-remote-code --mem-fraction-static 0.85 --attention-backend trtllm_mha --host 0.0.0.0 --port 30000
+- 2026-06-19 11:11:37 UTC: server_ready - pid=1464, port=30000
+- 2026-06-19 11:11:37 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
+- 2026-06-19 11:12:11 UTC: extract - random_low: extracting >2% kernel shapes/meta
+- 2026-06-19 11:12:18 UTC: benchmark - random_mid: dataset=random, num_prompts=300, max_concurrency=32
+- 2026-06-19 11:13:50 UTC: extract - random_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 11:13:59 UTC: benchmark - random_high: dataset=random, num_prompts=500, max_concurrency=100
+- 2026-06-19 11:15:56 UTC: extract - random_high: extracting >2% kernel shapes/meta
+- 2026-06-19 11:16:08 UTC: benchmark - sharegpt_low: dataset=sharegpt, num_prompts=10, max_concurrency=1
+- 2026-06-19 11:16:40 UTC: extract - sharegpt_low: extracting >2% kernel shapes/meta
+- 2026-06-19 11:16:46 UTC: benchmark - sharegpt_mid: dataset=sharegpt, num_prompts=300, max_concurrency=32
+- 2026-06-19 11:17:53 UTC: extract - sharegpt_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 11:18:08 UTC: benchmark - sharegpt_high: dataset=sharegpt, num_prompts=500, max_concurrency=100
+- 2026-06-19 11:19:28 UTC: extract - sharegpt_high: extracting >2% kernel shapes/meta
+- 2026-06-19 11:19:46 UTC: completed - Hunyuan3 Preview BF16 + MTP benchmark/profile/shape extraction complete
+- 2026-06-19 11:20:34 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--tencent--Hy3-preview: deleted after completed run, size_before=557G; lock=/root/.cache/huggingface/hub/.locks/models--tencent--Hy3-preview

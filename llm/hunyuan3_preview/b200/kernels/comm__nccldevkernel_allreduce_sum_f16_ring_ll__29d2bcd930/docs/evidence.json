@@ -1,0 +1,103 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "ncclDevKernel_AllReduce_Sum_f16_RING_LL(ncclDevKernelArgsStorage<4096ul>)",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 9.780514682480266,
+  "model": "tencent/Hy3-preview",
+  "model_slug": "hunyuan3_preview",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::inplace_all_reduce",
+      "kernel_dur_us": 12970.835,
+      "provenance": "external_id=29293",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            11225,
+            4096
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::Half",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty",
+      "kernel_dur_us": 2882.046,
+      "provenance": "external_id=29489",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[11225, 8]",
+          "3",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "hunyuan3_preview/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "comm__nccldevkernel_allreduce_sum_f16_ring_ll__29d2bcd930",
+  "total_calls": 1312,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 1312,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 385.5248536585366,
+      "pct_of_gpu": 9.780514682480266,
+      "top_cpu_ops": [
+        "sglang::inplace_all_reduce",
+        "aten::empty"
+      ],
+      "total_us": 505808.608
+    }
+  ]
+}

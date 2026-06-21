@@ -1,0 +1,71 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "bmm_E4m3_E4m3E4m3_Fp32_t128x16x128u2_s6_et64x16_m64x16x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_schedS_bN_tma_tmaSf_rgTma_clmp_lbW2_dynB_sm100f",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 4.499519144424078,
+  "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+  "model_slug": "qwen3_coder",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 34.752,
+      "provenance": "external_id=4440",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1]",
+          "[1]",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            512
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen3_coder/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "quant_gemm__bmm_e4m3_e4m3e4m3_fp32_t128x16x128u2_s6_et64x16__ce0096e802",
+  "total_calls": 2480,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 2480,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 11.74383185483871,
+      "pct_of_gpu": 4.499519144424078,
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::add",
+        "aten::as_strided"
+      ],
+      "total_us": 29124.703
+    }
+  ]
+}

@@ -1,0 +1,392 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_64x8_64x16_2x2_h_bz_splitK_TNT",
+  "labels": [
+    "random_low",
+    "random_mid",
+    "random_high",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 12.899145861294492,
+  "model": "moonshotai/Kimi-K2.5",
+  "model_slug": "kimi_k25",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 749.95,
+      "provenance": "external_id=3106",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            38,
+            7168
+          ],
+          [
+            7168,
+            384
+          ]
+        ],
+        "Input Strides": [
+          [
+            7168,
+            1
+          ],
+          [
+            1,
+            7168
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 759.553,
+      "provenance": "external_id=20038",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[38, 8, 128]",
+          "[2048, 256, 1]",
+          "128"
+        ],
+        "Input Dims": [
+          [
+            38,
+            8,
+            256
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            2048,
+            256,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 817.151,
+      "provenance": "external_id=56398",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[512, 2048]",
+          "[1, 512]",
+          ""
+        ],
+        "Input Dims": [
+          [
+            2048,
+            512
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            512,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList",
+          "ScalarList",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty",
+      "kernel_dur_us": 813.119,
+      "provenance": "external_id=51706",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[304]",
+          "3",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "Scalar",
+          "",
+          "",
+          "",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 1060.132,
+      "provenance": "external_id=183910",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            65,
+            7168
+          ],
+          [
+            7168,
+            384
+          ]
+        ],
+        "Input Strides": [
+          [
+            7168,
+            1
+          ],
+          [
+            1,
+            7168
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sgl_kernel::merge_state_v2",
+      "kernel_dur_us": 1053.889,
+      "provenance": "external_id=180062",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            65,
+            8,
+            128
+          ],
+          [
+            65,
+            8
+          ],
+          [
+            65,
+            8,
+            128
+          ],
+          [
+            65,
+            8
+          ],
+          [
+            65,
+            8,
+            128
+          ],
+          [
+            65,
+            8
+          ]
+        ],
+        "Input Strides": [
+          [
+            1024,
+            128,
+            1
+          ],
+          [
+            8,
+            1
+          ],
+          [
+            1024,
+            128,
+            1
+          ],
+          [
+            8,
+            1
+          ],
+          [
+            1024,
+            128,
+            1
+          ],
+          [
+            8,
+            1
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "float",
+          "c10::BFloat16",
+          "float",
+          "c10::BFloat16",
+          "float"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty_like",
+      "kernel_dur_us": 1025.09,
+      "provenance": "external_id=171872",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [
+            55,
+            7168
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            7168,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "kimi_k25/b200/docs/kernel_shapes_random_low.json",
+    "kimi_k25/b200/docs/kernel_shapes_random_mid.json",
+    "kimi_k25/b200/docs/kernel_shapes_random_high.json",
+    "kimi_k25/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_64x8_64x16_2x2_h_bz_splitk_tnt__03c74298a8",
+  "total_calls": 1920,
+  "workload_count": 4,
+  "workloads": [
+    {
+      "calls": 480,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 473.1853875,
+      "pct_of_gpu": 12.899145861294492,
+      "top_cpu_ops": [
+        "aten::mm"
+      ],
+      "total_us": 227128.986
+    },
+    {
+      "calls": 480,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 505.34376041666667,
+      "pct_of_gpu": 3.785329755359167,
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::mm"
+      ],
+      "total_us": 242565.005
+    },
+    {
+      "calls": 480,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 596.5958208333334,
+      "pct_of_gpu": 6.327003726419153,
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::mm",
+        "aten::empty"
+      ],
+      "total_us": 286365.994
+    },
+    {
+      "calls": 480,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 772.8057666666666,
+      "pct_of_gpu": 4.074131544128366,
+      "top_cpu_ops": [
+        "aten::mm",
+        "sgl_kernel::merge_state_v2",
+        "aten::empty_like"
+      ],
+      "total_us": 370946.768
+    }
+  ]
+}

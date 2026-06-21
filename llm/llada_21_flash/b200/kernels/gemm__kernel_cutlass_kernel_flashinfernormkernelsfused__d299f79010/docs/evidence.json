@@ -1,0 +1,105 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_at__tensorptrbf16gmemalign128o409640961_tensorptrbf16gmemalign128o409640961_tensorptrbf16gmemalign_0",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 3.7907148846358876,
+  "model": "inclusionAI/LLaDA2.1-flash",
+  "model_slug": "llada_21_flash",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::_local_scalar_dense",
+      "kernel_dur_us": 21.312,
+      "provenance": "external_id=22680",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          []
+        ],
+        "Input Strides": [
+          []
+        ],
+        "Input type": [
+          "int"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::to",
+      "kernel_dur_us": 19.807,
+      "provenance": "external_id=14325",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "3",
+          "0",
+          "",
+          "",
+          "False",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [
+            2
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "int",
+          "Scalar",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          "Scalar",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "llada_21_flash/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "gemm__kernel_cutlass_kernel_flashinfernormkernelsfused__d299f79010",
+  "total_calls": 14208,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 14208,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 5.797654842342342,
+      "pct_of_gpu": 3.7907148846358876,
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::to"
+      ],
+      "total_us": 82373.08
+    }
+  ]
+}

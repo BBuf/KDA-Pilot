@@ -1,0 +1,143 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_128x128x16_1x1x1_3_tnn_align1_bias_f32_relu",
+  "labels": [
+    "random_mid",
+    "random_high",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 8.740040712068412,
+  "model": "inclusionAI/Ring-2.6-1T",
+  "model_slug": "inclusion_ring26",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 1234.882,
+      "provenance": "external_id=33685",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            16384,
+            8192
+          ],
+          [
+            8192,
+            256
+          ]
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          [
+            1,
+            8192
+          ]
+        ],
+        "Input type": [
+          "float",
+          "float"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sgl_kernel::sgl_per_token_quant_fp8",
+      "kernel_dur_us": 1225.605,
+      "provenance": "external_id=33091",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            16384,
+            8192
+          ],
+          [
+            16384,
+            8192
+          ],
+          [
+            16384,
+            1
+          ]
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          [
+            8192,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::Float8_e4m3fn",
+          "float"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "inclusion_ring26/b200/docs/kernel_shapes_random_mid.json",
+    "inclusion_ring26/b200/docs/kernel_shapes_random_high.json",
+    "inclusion_ring26/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "gemm__cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_1__f50cc3eb45",
+  "total_calls": 3040,
+  "workload_count": 3,
+  "workloads": [
+    {
+      "calls": 608,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 1219.384771381579,
+      "pct_of_gpu": 7.414883112469949,
+      "top_cpu_ops": [
+        "aten::mm",
+        "sgl_kernel::sgl_per_token_quant_fp8"
+      ],
+      "total_us": 741385.941
+    },
+    {
+      "calls": 1216,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 1219.0694185855264,
+      "pct_of_gpu": 8.077590392050178,
+      "top_cpu_ops": [
+        "aten::mm"
+      ],
+      "total_us": 1482388.413
+    },
+    {
+      "calls": 1216,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 1219.362052631579,
+      "pct_of_gpu": 8.740040712068412,
+      "top_cpu_ops": [
+        "aten::mm"
+      ],
+      "total_us": 1482744.256
+    }
+  ]
+}

@@ -1,0 +1,362 @@
+{
+  "category": "moe",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "fused_moe_kernel",
+  "labels": [
+    "random_mid",
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 30.393630823494977,
+  "model": "zai-org/GLM-4.7-Flash",
+  "model_slug": "glm_47_flash",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::inplace_fused_experts",
+      "kernel_dur_us": 717.63,
+      "provenance": "external_id=16135",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "True",
+          "False",
+          "False",
+          "False",
+          "False",
+          "False",
+          "False",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "1.8",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [
+            5102,
+            2048
+          ],
+          [
+            65,
+            3072,
+            2048
+          ],
+          [
+            65,
+            2048,
+            1536
+          ],
+          [
+            5102,
+            5
+          ],
+          [
+            5102,
+            5
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          [
+            6291456,
+            2048,
+            1
+          ],
+          [
+            3145728,
+            1536,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "float",
+          "int",
+          "",
+          "",
+          "",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::inplace_fused_experts",
+      "kernel_dur_us": 771.68,
+      "provenance": "external_id=55392",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "True",
+          "False",
+          "False",
+          "False",
+          "False",
+          "False",
+          "False",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "1.8",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [
+            5528,
+            2048
+          ],
+          [
+            65,
+            3072,
+            2048
+          ],
+          [
+            65,
+            2048,
+            1536
+          ],
+          [
+            5528,
+            5
+          ],
+          [
+            5528,
+            5
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          [
+            6291456,
+            2048,
+            1
+          ],
+          [
+            3145728,
+            1536,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [
+            5,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "float",
+          "int",
+          "",
+          "",
+          "",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "glm_47_flash/b200/docs/kernel_shapes_random_mid.json",
+    "glm_47_flash/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "moe__fused_moe_kernel__c581b7d47d",
+  "total_calls": 1656,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 828,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 169.9858031400966,
+      "pct_of_gpu": 30.393630823494977,
+      "top_cpu_ops": [
+        "sglang::inplace_fused_experts"
+      ],
+      "total_us": 140748.245
+    },
+    {
+      "calls": 828,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 152.24248792270532,
+      "pct_of_gpu": 12.165241396218203,
+      "top_cpu_ops": [
+        "sglang::inplace_fused_experts"
+      ],
+      "total_us": 126056.78
+    }
+  ]
+}

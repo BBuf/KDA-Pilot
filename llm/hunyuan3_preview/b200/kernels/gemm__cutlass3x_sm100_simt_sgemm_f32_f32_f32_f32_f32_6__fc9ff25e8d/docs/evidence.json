@@ -1,0 +1,240 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_64x128x16_1x1x1_3_tnn_align1_bias_f32_relu",
+  "labels": [
+    "random_mid",
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 4.084122463621448,
+  "model": "tencent/Hy3-preview",
+  "model_slug": "hunyuan3_preview",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::empty_like",
+      "kernel_dur_us": 364.989,
+      "provenance": "external_id=36159",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [
+            11225,
+            128
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1280,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::Half",
+          "",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 348.542,
+      "provenance": "external_id=37165",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            11225,
+            4096
+          ],
+          [
+            4096,
+            192
+          ]
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [
+            1,
+            4096
+          ]
+        ],
+        "Input type": [
+          "float",
+          "float"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::inplace_all_reduce",
+      "kernel_dur_us": 171.359,
+      "provenance": "external_id=124920",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            5067,
+            4096
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::Half",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 171.296,
+      "provenance": "external_id=126054",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            5067,
+            4096
+          ],
+          [
+            4096,
+            192
+          ]
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [
+            1,
+            4096
+          ]
+        ],
+        "Input type": [
+          "float",
+          "float"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty_like",
+      "kernel_dur_us": 171.007,
+      "provenance": "external_id=114920",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [
+            15,
+            128
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1280,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::Half",
+          "",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "hunyuan3_preview/b200/docs/kernel_shapes_random_mid.json",
+    "hunyuan3_preview/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "gemm__cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_6__fc9ff25e8d",
+  "total_calls": 1280,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 640,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 330.0223015625,
+      "pct_of_gpu": 4.084122463621448,
+      "top_cpu_ops": [
+        "aten::empty_like",
+        "aten::mm"
+      ],
+      "total_us": 211214.273
+    },
+    {
+      "calls": 640,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 167.62236875000002,
+      "pct_of_gpu": 2.021627736005745,
+      "top_cpu_ops": [
+        "aten::mm",
+        "sglang::inplace_all_reduce",
+        "aten::empty_like"
+      ],
+      "total_us": 107278.316
+    }
+  ]
+}

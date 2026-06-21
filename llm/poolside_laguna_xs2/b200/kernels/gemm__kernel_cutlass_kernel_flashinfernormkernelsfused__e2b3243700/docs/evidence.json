@@ -1,0 +1,74 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_at__tensorptrbf16gmemalign128o204820481_tensorptrbf16gmemalign128o204820481_tensorptrbf16gmemalign_0",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 5.852166331222371,
+  "model": "poolside/Laguna-XS.2-FP8",
+  "model_slug": "poolside_laguna_xs2",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 11.2,
+      "provenance": "external_id=3616",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1, 1]",
+          "[0, 0]",
+          ""
+        ],
+        "Input Dims": [
+          [
+            4097,
+            262148
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            262148,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "int",
+          "ScalarList",
+          "ScalarList",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "poolside_laguna_xs2/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "gemm__kernel_cutlass_kernel_flashinfernormkernelsfused__e2b3243700",
+  "total_calls": 2560,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 2560,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 5.0078355468749995,
+      "pct_of_gpu": 5.852166331222371,
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::neg",
+        "aten::copy_",
+        "aten::add"
+      ],
+      "total_us": 12820.059
+    }
+  ]
+}

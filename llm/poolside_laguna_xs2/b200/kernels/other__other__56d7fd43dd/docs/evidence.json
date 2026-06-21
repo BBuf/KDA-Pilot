@@ -1,0 +1,114 @@
+{
+  "category": "other",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void (anonymous namespace)::act_and_mul_kernel<__nv_bfloat16, ((anonymous namespace)::ActivationKind)0, true, false>((anonymous namespace)::ActivationParams)",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 2.277130382751681,
+  "model": "poolside/Laguna-XS.2-FP8",
+  "model_slug": "poolside_laguna_xs2",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::unified_attention_with_output",
+      "kernel_dur_us": 40.064,
+      "provenance": "external_id=10066",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "True",
+          "4",
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            11264,
+            1536
+          ],
+          [
+            11264,
+            2,
+            128
+          ],
+          [
+            11264,
+            2,
+            128
+          ],
+          [
+            11264,
+            1536
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          [
+            2048,
+            128,
+            1
+          ],
+          [
+            2048,
+            128,
+            1
+          ],
+          [
+            1536,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "Scalar",
+          "Scalar",
+          "",
+          "",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "poolside_laguna_xs2/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "other__other__56d7fd43dd",
+  "total_calls": 2844,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 2844,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 4.48296905766526,
+      "pct_of_gpu": 2.277130382751681,
+      "top_cpu_ops": [
+        "sglang::unified_attention_with_output",
+        "Torch-Compiled Region: 5/1"
+      ],
+      "total_us": 12749.564
+    }
+  ]
+}

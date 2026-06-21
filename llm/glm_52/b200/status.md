@@ -1,0 +1,17 @@
+- 2026-06-19 05:56:48 UTC: dataset_download - downloading ShareGPT dataset to /mnt/local_disk/bbuf/kda-pilot/llm/sharegpt/ShareGPT_V3_unfiltered_cleaned_split.json
+- 2026-06-19 05:56:56 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; command=sglang serve --model-path zai-org/GLM-5.2-FP8 --tp 8 --dp 8 --enable-dp-attention --moe-a2a-backend deepep --speculative-algorithm EAGLE --speculative-num-steps 1 --speculative-eagle-topk 1 --speculative-num-draft-tokens 2 --mem-fraction-static 0.85 --cuda-graph-max-bs 128 --chunked-prefill-size 32768 --max-running-requests 80 --host 0.0.0.0 --port 30000
+- 2026-06-19 06:34:04 UTC: server_ready - pid=228, port=30000
+- 2026-06-19 06:34:04 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
+- 2026-06-19 06:35:10 UTC: extract - random_low: extracting >2% kernel shapes/meta
+- 2026-06-19 06:35:22 UTC: benchmark - random_mid: dataset=random, num_prompts=300, max_concurrency=32
+- 2026-06-19 06:37:39 UTC: extract - random_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 06:37:59 UTC: benchmark - random_high: dataset=random, num_prompts=500, max_concurrency=100
+- 2026-06-19 06:40:07 UTC: extract - random_high: extracting >2% kernel shapes/meta
+- 2026-06-19 06:40:46 UTC: benchmark - sharegpt_low: dataset=sharegpt, num_prompts=10, max_concurrency=1
+- 2026-06-19 06:41:30 UTC: extract - sharegpt_low: extracting >2% kernel shapes/meta
+- 2026-06-19 06:41:43 UTC: benchmark - sharegpt_mid: dataset=sharegpt, num_prompts=300, max_concurrency=32
+- 2026-06-19 06:43:12 UTC: extract - sharegpt_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 06:43:32 UTC: benchmark - sharegpt_high: dataset=sharegpt, num_prompts=500, max_concurrency=100
+- 2026-06-19 06:45:03 UTC: extract - sharegpt_high: extracting >2% kernel shapes/meta
+- 2026-06-19 06:45:50 UTC: completed - GLM-5.2 FP8 benchmark/profile/shape extraction complete
+- 2026-06-19 06:46:13 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--zai-org--GLM-5.2-FP8: deleted after completed run, size_before=704G; lock=/root/.cache/huggingface/hub/.locks/models--zai-org--GLM-5.2-FP8

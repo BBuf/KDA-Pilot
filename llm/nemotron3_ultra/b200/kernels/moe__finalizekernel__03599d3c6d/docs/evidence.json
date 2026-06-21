@@ -1,0 +1,77 @@
+{
+  "category": "moe",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void moe::dev::finalize::finalizeKernel<moe::dev::finalize::KernelParams<cutlass::bfloat16_t, cutlass::bfloat16_t, 2, true> >(moe::dev::finalize::KernelParams<cutlass::bfloat16_t, cutlass::bfloat16_t, 2, true>)",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 2.376035504667123,
+  "model": "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4",
+  "model_slug": "nemotron3_ultra",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::copy_",
+      "kernel_dur_us": 10.048,
+      "provenance": "external_id=6233",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "False"
+        ],
+        "Input Dims": [
+          [
+            38,
+            4096
+          ],
+          [
+            38,
+            4096
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [
+            4096,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "float",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "nemotron3_ultra/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "moe__finalizekernel__03599d3c6d",
+  "total_calls": 1828,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 1828,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 8.255880743982495,
+      "pct_of_gpu": 2.376035504667123,
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::neg",
+        "aten::empty_strided",
+        "aten::mul_",
+        "aten::sub"
+      ],
+      "total_us": 15091.75
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_64x16_64x16_1x2_h_bz_TNT",
+  "labels": [
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 6.982269141532553,
+  "model": "Qwen/Qwen3-Coder-Next",
+  "model_slug": "qwen3_coder_next",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::reshape",
+      "kernel_dur_us": 1234.207,
+      "provenance": "external_id=117461",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[262, -1]"
+        ],
+        "Input Dims": [
+          [
+            262,
+            16,
+            128
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            2048,
+            128,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen3_coder_next/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_64x16_64x16_1x2_h_bz_tnt__966d42b281",
+  "total_calls": 360,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 360,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 137.42021666666668,
+      "pct_of_gpu": 6.982269141532553,
+      "top_cpu_ops": [
+        "aten::reshape"
+      ],
+      "total_us": 49471.278
+    }
+  ]
+}

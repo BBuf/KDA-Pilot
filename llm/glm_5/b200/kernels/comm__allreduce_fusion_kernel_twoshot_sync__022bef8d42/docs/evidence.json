@@ -1,0 +1,62 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_twoshot_sync<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 4, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>, std::array<int, 4>, std::array<int, 4>)",
+  "labels": [
+    "random_high"
+  ],
+  "max_pct_of_gpu": 2.0239917409592234,
+  "model": "nvidia/GLM-5-NVFP4",
+  "model_slug": "glm_5",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::fill_",
+      "kernel_dur_us": 1054.719,
+      "provenance": "external_id=40959",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0."
+        ],
+        "Input Dims": [
+          [
+            2
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "int",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "glm_5/b200/docs/kernel_shapes_random_high.json"
+  ],
+  "task_id": "comm__allreduce_fusion_kernel_twoshot_sync__022bef8d42",
+  "total_calls": 1240,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 1240,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 86.05386129032259,
+      "pct_of_gpu": 2.0239917409592234,
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2",
+        "aten::fill_"
+      ],
+      "total_us": 106706.788
+    }
+  ]
+}

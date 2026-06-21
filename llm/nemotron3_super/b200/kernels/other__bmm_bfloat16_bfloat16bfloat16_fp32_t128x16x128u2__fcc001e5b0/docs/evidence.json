@@ -1,0 +1,67 @@
+{
+  "category": "other",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "bmm_Bfloat16_Bfloat16Bfloat16_Fp32_t128x16x128u2_s4_et128x16_m128x16x16_c1x1x1_rM_BN_transOut_schPd2x1x2x3_bN_rgTma_clmp_dynB_sm100f",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 2.9940413417038183,
+  "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",
+  "model_slug": "nemotron3_super",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::expand",
+      "kernel_dur_us": 76.8,
+      "provenance": "external_id=389",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[38]",
+          "False"
+        ],
+        "Input Dims": [
+          [
+            38
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "int",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "nemotron3_super/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "other__bmm_bfloat16_bfloat16bfloat16_fp32_t128x16x128u2__fcc001e5b0",
+  "total_calls": 720,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 720,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 15.413147222222223,
+      "pct_of_gpu": 2.9940413417038183,
+      "top_cpu_ops": [
+        "aten::expand",
+        "sglang::nemotron_mamba2_with_output",
+        "aten::mm"
+      ],
+      "total_us": 11097.466
+    }
+  ]
+}

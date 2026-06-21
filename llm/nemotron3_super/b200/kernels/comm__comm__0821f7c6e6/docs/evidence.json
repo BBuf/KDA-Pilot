@@ -1,0 +1,367 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void (anonymous namespace)::all_reduce_one_shot_push_kernel<__nv_bfloat16, 4u, true>((anonymous namespace)::AllReducePushData, device::distributed::PushController)",
+  "labels": [
+    "random_low",
+    "random_mid",
+    "random_high",
+    "sharegpt_low",
+    "sharegpt_mid",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 35.58888356858178,
+  "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",
+  "model_slug": "nemotron3_super",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::outplace_all_reduce",
+      "kernel_dur_us": 791.231,
+      "provenance": "external_id=4704",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            38,
+            4096
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::reshape",
+      "kernel_dur_us": 774.24,
+      "provenance": "external_id=5281",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[38, 2048]"
+        ],
+        "Input Dims": [
+          [
+            38,
+            2048
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 812.48,
+      "provenance": "external_id=13380",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[38, 32]",
+          "[4640, 1]",
+          "4608"
+        ],
+        "Input Dims": [
+          [
+            38,
+            32
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            4640,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 802.208,
+      "provenance": "external_id=14075",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[4, 1, 32768]"
+        ],
+        "Input Dims": [
+          [
+            4,
+            32768
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            32768,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::split_with_sizes",
+      "kernel_dur_us": 841.12,
+      "provenance": "external_id=34334",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[2048, 2560, 32]",
+          "-1"
+        ],
+        "Input Dims": [
+          [
+            38,
+            4640
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            4640,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::outplace_all_reduce",
+      "kernel_dur_us": 1090.593,
+      "provenance": "external_id=73196",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            18,
+            4096
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::reshape",
+      "kernel_dur_us": 814.113,
+      "provenance": "external_id=75865",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1, 1, 32, 64, 128]"
+        ],
+        "Input Dims": [
+          [
+            1,
+            1,
+            32,
+            8192
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            262144,
+            262144,
+            8192,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "float",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 551.777,
+      "provenance": "external_id=109810",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1, 18, -1, 64]"
+        ],
+        "Input Dims": [
+          [
+            18,
+            2048
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "nemotron3_super/b200/docs/kernel_shapes_random_low.json",
+    "nemotron3_super/b200/docs/kernel_shapes_random_mid.json",
+    "nemotron3_super/b200/docs/kernel_shapes_random_high.json",
+    "nemotron3_super/b200/docs/kernel_shapes_sharegpt_low.json",
+    "nemotron3_super/b200/docs/kernel_shapes_sharegpt_mid.json",
+    "nemotron3_super/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "comm__comm__0821f7c6e6",
+  "total_calls": 14596,
+  "workload_count": 6,
+  "workloads": [
+    {
+      "calls": 3204,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 37.14188171036204,
+      "pct_of_gpu": 32.10630888491012,
+      "top_cpu_ops": [
+        "sglang::outplace_all_reduce",
+        "aten::reshape"
+      ],
+      "total_us": 119002.58899999999
+    },
+    {
+      "calls": 2492,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 52.36268378812199,
+      "pct_of_gpu": 7.621581603798188,
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "sglang::outplace_all_reduce",
+        "aten::view"
+      ],
+      "total_us": 130487.808
+    },
+    {
+      "calls": 1780,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 76.38307921348314,
+      "pct_of_gpu": 3.5391153542863933,
+      "top_cpu_ops": [
+        "sglang::outplace_all_reduce",
+        "aten::_local_scalar_dense",
+        "aten::split_with_sizes"
+      ],
+      "total_us": 135961.881
+    },
+    {
+      "calls": 3204,
+      "concurrency": "low",
+      "dataset": "sharegpt",
+      "label": "sharegpt_low",
+      "mean_us": 42.68261579275905,
+      "pct_of_gpu": 35.58888356858178,
+      "top_cpu_ops": [
+        "sglang::outplace_all_reduce",
+        "aten::reshape",
+        "sglang::nemotron_mamba2_with_output"
+      ],
+      "total_us": 136755.101
+    },
+    {
+      "calls": 2492,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 43.354188603531306,
+      "pct_of_gpu": 7.795374305395361,
+      "top_cpu_ops": [
+        "sglang::outplace_all_reduce"
+      ],
+      "total_us": 108038.638
+    },
+    {
+      "calls": 1424,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 45.6373356741573,
+      "pct_of_gpu": 2.0472579230065184,
+      "top_cpu_ops": [
+        "aten::view"
+      ],
+      "total_us": 64987.566
+    }
+  ]
+}

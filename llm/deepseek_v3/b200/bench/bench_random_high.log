@@ -1,0 +1,52 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+benchmark_args=Namespace(backend='sglang', base_url=None, host='127.0.0.1', port=30000, ready_check_timeout_sec=60, dataset_name='random', dataset_path='', speed_bench_category=None, speed_bench_output_len=512, model='deepseek-ai/DeepSeek-V3', served_model_name=None, tokenizer=None, num_prompts=500, sharegpt_output_len=None, sharegpt_context_len=None, random_input_len=1000, random_output_len=1000, random_range_ratio=0.0, image_count=1, image_resolution='1080p', random_image_count=False, image_format='jpeg', image_content='random', request_rate=inf, use_trace_timestamps=False, max_concurrency=100, output_file='/data/bbuf/kda-pilot/llm/deepseek_v3/b200/bench/random_high.jsonl', output_details=False, print_requests=False, disable_tqdm=True, disable_stream=False, return_logprob=False, top_logprobs_num=0, token_ids_logprob=None, logprob_start_len=-1, return_routed_experts=False, seed=1, disable_ignore_eos=False, temperature=0.0, top_p=1.0, extra_request_body=None, apply_chat_template=False, profile=True, plot_throughput=False, profile_activities=['CPU', 'GPU'], profile_start_step=None, profile_steps=10, profile_num_steps=None, profile_by_stage=False, profile_stages=None, profile_output_dir='/data/bbuf/kda-pilot/llm/deepseek_v3/b200/profile/random_high', profile_prefix='random_high', lora_name=None, lora_request_distribution='uniform', lora_zipf_alpha=1.5, prompt_suffix='', pd_separated=False, profile_prefill_url=None, profile_decode_url=None, flush_cache=False, warmup_requests=1, tokenize_prompt=False, gsp_num_groups=64, gsp_prompts_per_group=16, gsp_system_prompt_len=2048, gsp_question_len=128, gsp_output_len=256, gsp_range_ratio=1.0, gsp_fast_prepare=False, gsp_send_routing_key=False, gsp_num_turns=1, gsp_ordered=False, gsp_group_distribution='uniform', gsp_zipf_alpha=None, mooncake_slowdown_factor=1.0, mooncake_num_rounds=1, mooncake_workload='conversation', fake_prefill=False, tag=None, header=None)
+Waiting up to 60s for http://127.0.0.1:30000/v1/models to become ready...
+Server ready in 0.0s.
+Namespace(backend='sglang', base_url=None, host='127.0.0.1', port=30000, ready_check_timeout_sec=60, dataset_name='random', dataset_path='', speed_bench_category=None, speed_bench_output_len=512, model='deepseek-ai/DeepSeek-V3', served_model_name=None, tokenizer=None, num_prompts=500, sharegpt_output_len=None, sharegpt_context_len=None, random_input_len=1000, random_output_len=1000, random_range_ratio=0.0, image_count=1, image_resolution='1080p', random_image_count=False, image_format='jpeg', image_content='random', request_rate=inf, use_trace_timestamps=False, max_concurrency=100, output_file='/data/bbuf/kda-pilot/llm/deepseek_v3/b200/bench/random_high.jsonl', output_details=False, print_requests=False, disable_tqdm=True, disable_stream=False, return_logprob=False, top_logprobs_num=0, token_ids_logprob=None, logprob_start_len=-1, return_routed_experts=False, seed=1, disable_ignore_eos=False, temperature=0.0, top_p=1.0, extra_request_body=None, apply_chat_template=False, profile=True, plot_throughput=False, profile_activities=['CPU', 'GPU'], profile_start_step=None, profile_steps=10, profile_num_steps=None, profile_by_stage=False, profile_stages=None, profile_output_dir='/data/bbuf/kda-pilot/llm/deepseek_v3/b200/profile/random_high', profile_prefix='random_high', lora_name=None, lora_request_distribution='uniform', lora_zipf_alpha=1.5, prompt_suffix='', pd_separated=False, profile_prefill_url=None, profile_decode_url=None, flush_cache=False, warmup_requests=1, tokenize_prompt=False, gsp_num_groups=64, gsp_prompts_per_group=16, gsp_system_prompt_len=2048, gsp_question_len=128, gsp_output_len=256, gsp_range_ratio=1.0, gsp_fast_prepare=False, gsp_send_routing_key=False, gsp_num_turns=1, gsp_ordered=False, gsp_group_distribution='uniform', gsp_zipf_alpha=None, mooncake_slowdown_factor=1.0, mooncake_num_rounds=1, mooncake_workload='conversation', fake_prefill=False, tag=None, header=None)
+
+#Input tokens: 249831
+#Output tokens: 252662
+Starting warmup with 1 sequences...
+Warmup completed with 1 sequences. Starting main benchmark run...
+Starting profiler...
+async_request_profile api_url='http://127.0.0.1:30000/start_profile' body={'activities': ['CPU', 'GPU'], 'num_steps': None, 'profile_by_stage': False, 'profile_stages': None, 'output_dir': '/data/bbuf/kda-pilot/llm/deepseek_v3/b200/profile/random_high/1781891665.4437125', 'profile_prefix': 'random_high'}
+Profiler started
+
+============ Serving Benchmark Result ============
+Backend:                                 sglang    
+Traffic request rate:                    inf       
+Max request concurrency:                 100       
+Successful requests:                     500       
+Benchmark duration (s):                  121.39    
+Total input tokens:                      249831    
+Total input text tokens:                 249831    
+Total generated tokens:                  252662    
+Total generated tokens (retokenized):    252138    
+Request throughput (req/s):              4.12      
+Input token throughput (tok/s):          2058.01   
+Output token throughput (tok/s):         2081.33   
+Peak output token throughput (tok/s):    3910.00   
+Peak concurrent requests:                107       
+Total token throughput (tok/s):          4139.34   
+Concurrency:                             93.99     
+Accept length:                           2.99      
+----------------End-to-End Latency----------------
+Mean E2E Latency (ms):                   22819.47  
+Median E2E Latency (ms):                 22082.32  
+P90 E2E Latency (ms):                    33512.91  
+P99 E2E Latency (ms):                    39707.90  
+---------------Time to First Token----------------
+Mean TTFT (ms):                          11715.36  
+Median TTFT (ms):                        12586.96  
+P99 TTFT (ms):                           17428.11  
+-----Time per Output Token (excl. 1st token)------
+Mean TPOT (ms):                          22.22     
+Median TPOT (ms):                        22.07     
+P99 TPOT (ms):                           35.47     
+---------------Inter-Token Latency----------------
+Mean ITL (ms):                           22.02     
+Median ITL (ms):                         10.37     
+P95 ITL (ms):                            65.74     
+P99 ITL (ms):                            95.66     
+Max ITL (ms):                            1759.57   
+==================================================

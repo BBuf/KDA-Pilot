@@ -1,0 +1,168 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_128x256_64x6_2x1_2cta_v_bz_TNT",
+  "labels": [
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 3.023146676274896,
+  "model": "inclusionAI/Ling-2.6-flash",
+  "model_slug": "ling_26",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 271.84,
+      "provenance": "external_id=63939",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            12199,
+            4096
+          ],
+          [
+            4096,
+            4608
+          ]
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [
+            1,
+            4096
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::detach_",
+      "kernel_dur_us": 268.032,
+      "provenance": "external_id=63411",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          [
+            31
+          ]
+        ],
+        "Input Strides": [
+          [
+            1
+          ]
+        ],
+        "Input type": [
+          "float"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 184.961,
+      "provenance": "external_id=64161",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            12199,
+            4096
+          ],
+          [
+            4096,
+            3072
+          ]
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [
+            1,
+            4096
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty_strided",
+      "kernel_dur_us": 182.977,
+      "provenance": "external_id=63633",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[31]",
+          "[1]",
+          "4",
+          "0",
+          "",
+          "False"
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "ScalarList",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "ling_26/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_128x256_64x6_2x1_2cta_v_bz_tnt__73699af3d3",
+  "total_calls": 280,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 280,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 115.91748214285714,
+      "pct_of_gpu": 3.023146676274896,
+      "top_cpu_ops": [
+        "aten::mm",
+        "aten::detach_",
+        "aten::empty_strided"
+      ],
+      "total_us": 32456.895
+    }
+  ]
+}

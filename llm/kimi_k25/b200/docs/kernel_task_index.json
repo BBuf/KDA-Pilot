@@ -1,0 +1,2437 @@
+{
+  "audit": {
+    "empty_shape_row_count": 0,
+    "row_count": 46,
+    "strong_row_count": 20,
+    "strong_task_count": 8,
+    "weak_or_empty_only_labels": [],
+    "weak_row_count": 26,
+    "zero_row_labels": []
+  },
+  "model": "moonshotai/Kimi-K2.5",
+  "model_dir": "llm/kimi_k25/b200",
+  "model_slug": "kimi_k25",
+  "platform": "b200",
+  "skipped_rows": [
+    {
+      "category": "attention",
+      "kernel": "fmhaSm100fKernel_QkvBfloat16OBfloat16HQk576HV512HVPerCta256PagedKvDenseP64MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen",
+      "label": "random_low",
+      "pct_of_gpu": 2.9846385707226877,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "detach_",
+        "aten::cat",
+        "gloo:broadcast",
+        "aten::lift_fresh",
+        "aten::copy_"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x8_64x16_4x1_v_bz_TNT",
+      "label": "random_low",
+      "pct_of_gpu": 2.717661576697096,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "gloo:broadcast",
+        "c10d::broadcast_",
+        "aten::as_strided",
+        "aten::cat"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x16x256_s3_et128x16_m256x16x16_c2x1x1_rM_BN_transOut_schPd2x1x2x3_biasBfloat16Mn_bN_tma_tmaSf_rgTma_clmp_swiGlu_dynB_sm100f",
+      "label": "random_low",
+      "pct_of_gpu": 2.6613139850801804,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "gloo:broadcast",
+        "aten::copy_",
+        "aten::add"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_splitK_TNN",
+      "label": "random_low",
+      "pct_of_gpu": 2.654824288090488,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "gloo:broadcast",
+        "aten::add"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void fused_a_gemm_kernel<1, 2112, 7168, 16, 8, 256, 16>(__nv_bfloat16*, __nv_bfloat16 const*, __nv_bfloat16 const*, int)",
+      "label": "random_low",
+      "pct_of_gpu": 2.5629551309201535,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "gloo:broadcast",
+        "aten::argmax",
+        "aten::as_strided",
+        "aten::_to_copy"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x16x256u2_s3_et128x16_m256x16x16_c2x1x1_rM_BN_transOut_schPd2x1x2x3_bN_tma_tmaSf_rgTma_clmp_swiGlu_dynB_sm100f",
+      "label": "random_low",
+      "pct_of_gpu": 2.001183490699952,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "gloo:broadcast",
+        "aten::add",
+        "aten::copy_"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x64x256u2_s3_et128x64_m128x64x16_c1x1x1_rM_BN_transOut_schPd2x1x2x3_bN_tma_tmaSf_rgTma_clmp_swiGlu_dynB_sm100f",
+      "label": "random_mid",
+      "pct_of_gpu": 7.4555121430345475,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::empty",
+        "nccl:all_reduce"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x16x256u2_s3_et128x16_m256x16x16_c2x1x1_rM_BN_transOut_schPd2x1x2x3_biasBfloat16Mn_bN_tma_tmaSf_rgTma_clmp_swiGlu_dynB_sm100f",
+      "label": "random_mid",
+      "pct_of_gpu": 4.522430954027703,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::empty",
+        "aten::copy_",
+        "aten::empty_strided",
+        "aten::_local_scalar_dense",
+        "aten::index"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x64x256_s3_et128x64_m128x64x16_c1x1x1_rM_BN_transOut_schPd2x1x2x3_bN_rgTma_clmp_dynB_sm100f",
+      "label": "random_mid",
+      "pct_of_gpu": 4.167421071877339,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::mm",
+        "aten::empty",
+        "nccl:all_reduce",
+        "c10d::allreduce_",
+        "aten::as_strided"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x16x256_s3_et128x16_m256x16x16_c2x1x1_rM_BN_transOut_schPd2x1x2x3_bN_rgTma_clmp_dynB_sm100f",
+      "label": "random_mid",
+      "pct_of_gpu": 2.646456303615809,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::add",
+        "aten::empty",
+        "aten::remainder",
+        "aten::_index_put_impl_"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x32x256u2_s3_et128x32_m256x32x16_c2x1x1_rM_BN_transOut_schPd2x1x2x3_bN_tma_tmaSf_rgTma_clmp_swiGlu_dynB_sm100f",
+      "label": "random_high",
+      "pct_of_gpu": 11.771888327526845,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "gloo:broadcast",
+        "aten::add",
+        "aten::_index_put_impl_",
+        "aten::resolve_neg"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x32x256_s3_et128x32_m256x32x16_c2x1x1_rM_BN_transOut_schPd2x1x2x3_bN_rgTma_clmp_dynB_sm100f",
+      "label": "random_high",
+      "pct_of_gpu": 7.7171180768517145,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::cat",
+        "aten::view",
+        "aten::add"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x32x256u2_s3_et128x32_m128x32x16_c1x1x1_rM_BN_transOut_schPd2x1x2x3_bN_tma_tmaSf_rgTma_clmp_swiGlu_dynB_sm100f",
+      "label": "random_high",
+      "pct_of_gpu": 5.675186936195906,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::empty",
+        "nccl:all_reduce",
+        "sglang::inplace_all_reduce"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x32x256_s3_et128x32_m128x32x16_c1x1x1_rM_BN_transOut_schPd2x1x2x3_bN_rgTma_clmp_dynB_sm100f",
+      "label": "random_high",
+      "pct_of_gpu": 3.2319759500766025,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "nccl:all_reduce"
+      ]
+    },
+    {
+      "category": "attention",
+      "kernel": "fmhaSm100fKernel_QkvBfloat16OBfloat16HQk576HV512PagedKvDenseP64VarSeqQ8Kv128PersistentSwapsAbForGen",
+      "label": "random_high",
+      "pct_of_gpu": 2.500729462122891,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::slice"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_96x64_64x15_2x2_2cta_h_bz_splitK_TNN",
+      "label": "random_high",
+      "pct_of_gpu": 2.394255792103357,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::floor_divide",
+        "aten::empty_strided",
+        "aten::copy_",
+        "aten::select"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_1x4_h_bz_splitK_TNT",
+      "label": "random_high",
+      "pct_of_gpu": 2.240773441854362,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::cat",
+        "aten::select",
+        "aten::slice",
+        "aten::_to_copy"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x16x256_s3_et128x16_m256x16x16_c2x1x1_rM_BN_transOut_schPd2x1x2x3_biasBfloat16Mn_bN_tma_tmaSf_rgTma_clmp_swiGlu_dynB_sm100f",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 3.153084095061782,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "gloo:broadcast",
+        "aten::empty",
+        "aten::copy_",
+        "aten::mm"
+      ]
+    },
+    {
+      "category": "attention",
+      "kernel": "fmhaSm100fKernel_QkvBfloat16OBfloat16HQk576HV512HVPerCta256PagedKvDenseP64MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 2.462819455322915,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::resolve_neg",
+        "detach_",
+        "gloo:broadcast",
+        "aten::argmax",
+        "aten::as_strided"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x8_64x16_4x1_v_bz_TNT",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 2.253849895784891,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "gloo:broadcast",
+        "c10d::broadcast_"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_splitK_TNN",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 2.2017267234862374,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "gloo:broadcast",
+        "aten::as_strided",
+        "aten::_to_copy",
+        "aten::copy_",
+        "aten::view"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void fused_a_gemm_kernel<1, 2112, 7168, 16, 8, 256, 16>(__nv_bfloat16*, __nv_bfloat16 const*, __nv_bfloat16 const*, int)",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 2.121406625196334,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "gloo:broadcast",
+        "aten::argmax",
+        "aten::_index_put_impl_",
+        "aten::copy_"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x16x256_s3_et128x16_m128x16x16_c1x1x1_rM_BN_transOut_schPd2x1x2x3_bN_rgTma_clmp_dynB_sm100f",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 2.0776150213506144,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::empty",
+        "gloo:broadcast",
+        "aten::copy_"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x32x256u2_s3_et128x32_m256x32x16_c2x1x1_rM_BN_transOut_schPd2x1x2x3_bN_tma_tmaSf_rgTma_clmp_swiGlu_dynB_sm100f",
+      "label": "sharegpt_high",
+      "pct_of_gpu": 3.4044608667900857,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "gloo:broadcast"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x32x256u2_s3_et128x32_m128x32x16_c1x1x1_rM_BN_transOut_schPd2x1x2x3_bN_tma_tmaSf_rgTma_clmp_swiGlu_dynB_sm100f",
+      "label": "sharegpt_high",
+      "pct_of_gpu": 2.6516612124346195,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::empty"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x32x256_s3_et128x32_m256x32x16_c2x1x1_rM_BN_transOut_schPd2x1x2x3_bN_rgTma_clmp_dynB_sm100f",
+      "label": "sharegpt_high",
+      "pct_of_gpu": 2.25564402657947,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "gloo:broadcast",
+        "aten::copy_",
+        "detach_"
+      ]
+    }
+  ],
+  "task_candidates": [
+    {
+      "category": "comm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "labels": [
+        "random_low",
+        "random_mid",
+        "random_high",
+        "sharegpt_low",
+        "sharegpt_mid",
+        "sharegpt_high"
+      ],
+      "max_pct_of_gpu": 41.235199711717286,
+      "model": "moonshotai/Kimi-K2.5",
+      "model_slug": "kimi_k25",
+      "shape_samples": [
+        {
+          "cpu_op": "sglang::flashinfer_allreduce_residual_rmsnorm",
+          "kernel_dur_us": 2708.824,
+          "provenance": "external_id=8946",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "1.0000000000000001e-05",
+              "2048",
+              "",
+              "False",
+              "False",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                38,
+                7168
+              ],
+              [
+                38,
+                7168
+              ],
+              [
+                7168
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::view",
+          "kernel_dur_us": 1080.575,
+          "provenance": "external_id=8938",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[-1, 256]"
+            ],
+            "Input Dims": [
+              [
+                38,
+                256
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                256,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 1446.624,
+          "provenance": "external_id=19944",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[38, 8]",
+              "3",
+              "",
+              "",
+              "False",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "Scalar",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::transpose",
+          "kernel_dur_us": 1178.182,
+          "provenance": "external_id=51750",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                2112,
+                7168
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::cat",
+          "kernel_dur_us": 1083.263,
+          "provenance": "external_id=55200",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                [
+                  192
+                ]
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                [
+                  1
+                ]
+              ],
+              []
+            ],
+            "Input type": [
+              "TensorList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::flashinfer_allreduce_residual_rmsnorm",
+          "kernel_dur_us": 3976.037,
+          "provenance": "external_id=74069",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "1.0000000000000001e-05",
+              "2048",
+              "",
+              "False",
+              "False",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                15,
+                7168
+              ],
+              [
+                15,
+                7168
+              ],
+              [
+                7168
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty_strided",
+          "kernel_dur_us": 3088.139,
+          "provenance": "external_id=77661",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[15, 7168]",
+              "[7168, 1]",
+              "15",
+              "0",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "ScalarList",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::flashinfer_allreduce_residual_rmsnorm",
+          "kernel_dur_us": 483501.79,
+          "provenance": "external_id=116798",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "1.0000000000000001e-05",
+              "2048",
+              "",
+              "False",
+              "False",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                1,
+                7168
+              ],
+              [
+                1,
+                7168
+              ],
+              [
+                7168
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::flashinfer_allreduce_residual_rmsnorm",
+          "kernel_dur_us": 1745.319,
+          "provenance": "external_id=116918",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "1.0000000000000001e-05",
+              "2048",
+              "",
+              "False",
+              "False",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                1,
+                7168
+              ],
+              [
+                1,
+                7168
+              ],
+              [
+                7168
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::flashinfer_allreduce_residual_rmsnorm",
+          "kernel_dur_us": 1891.134,
+          "provenance": "external_id=152818",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "1.0000000000000001e-05",
+              "2048",
+              "",
+              "False",
+              "False",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                51,
+                7168
+              ],
+              [
+                51,
+                7168
+              ],
+              [
+                7168
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::flashinfer_allreduce_residual_rmsnorm",
+          "kernel_dur_us": 1473.125,
+          "provenance": "external_id=152697",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "1.0000000000000001e-05",
+              "2048",
+              "",
+              "False",
+              "False",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                51,
+                7168
+              ],
+              [
+                51,
+                7168
+              ],
+              [
+                7168
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 1466.722,
+          "provenance": "external_id=148861",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                0
+              ],
+              [
+                0
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "kimi_k25/b200/docs/kernel_shapes_random_low.json",
+        "kimi_k25/b200/docs/kernel_shapes_random_mid.json",
+        "kimi_k25/b200/docs/kernel_shapes_random_high.json",
+        "kimi_k25/b200/docs/kernel_shapes_sharegpt_low.json",
+        "kimi_k25/b200/docs/kernel_shapes_sharegpt_mid.json",
+        "kimi_k25/b200/docs/kernel_shapes_sharegpt_high.json"
+      ],
+      "task_id": "comm__allreduce_fusion_kernel_oneshot_lamport__b9d8384154",
+      "total_calls": 48400,
+      "workload_count": 6,
+      "workloads": [
+        {
+          "calls": 8712,
+          "concurrency": "low",
+          "dataset": "random",
+          "label": "random_low",
+          "mean_us": 71.2072541322314,
+          "pct_of_gpu": 35.23144836636699,
+          "top_cpu_ops": [
+            "sglang::flashinfer_allreduce_residual_rmsnorm",
+            "aten::view"
+          ],
+          "total_us": 620357.598
+        },
+        {
+          "calls": 7744,
+          "concurrency": "mid",
+          "dataset": "random",
+          "label": "random_mid",
+          "mean_us": 90.9953729338843,
+          "pct_of_gpu": 10.99664555480636,
+          "top_cpu_ops": [
+            "aten::empty",
+            "sglang::flashinfer_allreduce_residual_rmsnorm"
+          ],
+          "total_us": 704668.168
+        },
+        {
+          "calls": 7744,
+          "concurrency": "high",
+          "dataset": "random",
+          "label": "random_high",
+          "mean_us": 111.80833561466943,
+          "pct_of_gpu": 19.13005298762442,
+          "top_cpu_ops": [
+            "aten::transpose",
+            "sglang::flashinfer_allreduce_residual_rmsnorm",
+            "aten::cat"
+          ],
+          "total_us": 865843.751
+        },
+        {
+          "calls": 8712,
+          "concurrency": "low",
+          "dataset": "sharegpt",
+          "label": "sharegpt_low",
+          "mean_us": 91.51908585858585,
+          "pct_of_gpu": 37.563281229294894,
+          "top_cpu_ops": [
+            "aten::empty_strided",
+            "sglang::flashinfer_allreduce_residual_rmsnorm"
+          ],
+          "total_us": 797314.276
+        },
+        {
+          "calls": 7744,
+          "concurrency": "mid",
+          "dataset": "sharegpt",
+          "label": "sharegpt_mid",
+          "mean_us": 645.8810839359504,
+          "pct_of_gpu": 41.235199711717286,
+          "top_cpu_ops": [
+            "sglang::flashinfer_allreduce_residual_rmsnorm"
+          ],
+          "total_us": 5001703.114
+        },
+        {
+          "calls": 7744,
+          "concurrency": "high",
+          "dataset": "sharegpt",
+          "label": "sharegpt_high",
+          "mean_us": 405.45088752582643,
+          "pct_of_gpu": 34.484747902135,
+          "top_cpu_ops": [
+            "sglang::flashinfer_allreduce_residual_rmsnorm",
+            "aten::copy_"
+          ],
+          "total_us": 3139811.673
+        }
+      ]
+    },
+    {
+      "category": "gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "void fused_a_gemm_kernel<1, 2112, 7168, 16, 8, 256, 16>(__nv_bfloat16*, __nv_bfloat16 const*, __nv_bfloat16 const*, int)",
+      "labels": [
+        "sharegpt_mid"
+      ],
+      "max_pct_of_gpu": 31.312789782922646,
+      "model": "moonshotai/Kimi-K2.5",
+      "model_slug": "kimi_k25",
+      "shape_samples": [
+        {
+          "cpu_op": "sgl_kernel::dsv3_fused_a_gemm",
+          "kernel_dur_us": 483505.662,
+          "provenance": "external_id=116814",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1,
+                2112
+              ],
+              [
+                1,
+                7168
+              ],
+              [
+                7168,
+                2112
+              ]
+            ],
+            "Input Strides": [
+              [
+                2112,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "kimi_k25/b200/docs/kernel_shapes_sharegpt_mid.json"
+      ],
+      "task_id": "gemm__fused_a_gemm_kernel__bda001cd80",
+      "total_calls": 488,
+      "workload_count": 1,
+      "workloads": [
+        {
+          "calls": 488,
+          "concurrency": "mid",
+          "dataset": "sharegpt",
+          "label": "sharegpt_mid",
+          "mean_us": 7783.0845409836065,
+          "pct_of_gpu": 31.312789782922646,
+          "top_cpu_ops": [
+            "sgl_kernel::dsv3_fused_a_gemm"
+          ],
+          "total_us": 3798145.256
+        }
+      ]
+    },
+    {
+      "category": "gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "void fused_a_gemm_kernel<1, 2112, 7168, 16, 16, 256, 12>(__nv_bfloat16*, __nv_bfloat16 const*, __nv_bfloat16 const*, int)",
+      "labels": [
+        "sharegpt_low",
+        "sharegpt_mid",
+        "sharegpt_high"
+      ],
+      "max_pct_of_gpu": 19.698401377305576,
+      "model": "moonshotai/Kimi-K2.5",
+      "model_slug": "kimi_k25",
+      "shape_samples": [
+        {
+          "cpu_op": "sgl_kernel::dsv3_fused_a_gemm",
+          "kernel_dur_us": 3980.837,
+          "provenance": "external_id=74085",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                15,
+                2112
+              ],
+              [
+                15,
+                7168
+              ],
+              [
+                7168,
+                2112
+              ]
+            ],
+            "Input Strides": [
+              [
+                2112,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 3018.602,
+          "provenance": "external_id=77677",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[384]",
+              "3",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 1508.257,
+          "provenance": "external_id=86793",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[0]",
+              "1",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 1157.6,
+          "provenance": "external_id=122169",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[120]",
+              "3",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "kimi_k25/b200/docs/kernel_shapes_sharegpt_low.json",
+        "kimi_k25/b200/docs/kernel_shapes_sharegpt_mid.json",
+        "kimi_k25/b200/docs/kernel_shapes_sharegpt_high.json"
+      ],
+      "task_id": "gemm__fused_a_gemm_kernel__23e7519307",
+      "total_calls": 1464,
+      "workload_count": 3,
+      "workloads": [
+        {
+          "calls": 488,
+          "concurrency": "low",
+          "dataset": "sharegpt",
+          "label": "sharegpt_low",
+          "mean_us": 856.7955040983607,
+          "pct_of_gpu": 19.698401377305576,
+          "top_cpu_ops": [
+            "aten::empty",
+            "sgl_kernel::dsv3_fused_a_gemm"
+          ],
+          "total_us": 418116.206
+        },
+        {
+          "calls": 488,
+          "concurrency": "mid",
+          "dataset": "sharegpt",
+          "label": "sharegpt_mid",
+          "mean_us": 815.1835266393442,
+          "pct_of_gpu": 3.279634220821844,
+          "top_cpu_ops": [
+            "sgl_kernel::dsv3_fused_a_gemm",
+            "aten::empty"
+          ],
+          "total_us": 397809.561
+        },
+        {
+          "calls": 488,
+          "concurrency": "high",
+          "dataset": "sharegpt",
+          "label": "sharegpt_high",
+          "mean_us": 839.0629057377049,
+          "pct_of_gpu": 4.497154411291991,
+          "top_cpu_ops": [
+            "sgl_kernel::dsv3_fused_a_gemm",
+            "aten::empty"
+          ],
+          "total_us": 409462.698
+        }
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "nvjet_sm100_tst_64x24_64x16_1x2_h_bz_splitK_TNT",
+      "labels": [
+        "random_low",
+        "random_mid",
+        "random_high"
+      ],
+      "max_pct_of_gpu": 16.853338551669655,
+      "model": "moonshotai/Kimi-K2.5",
+      "model_slug": "kimi_k25",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::mm",
+          "kernel_dur_us": 2715.161,
+          "provenance": "external_id=8963",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                38,
+                7168
+              ],
+              [
+                7168,
+                2112
+              ]
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::linear",
+          "kernel_dur_us": 1452.48,
+          "provenance": "external_id=19961",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                38,
+                7168
+              ],
+              [
+                512,
+                7168
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 1184.549,
+          "provenance": "external_id=51767",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[38, 8, 128]",
+              "[1536, 192, 1]",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                38,
+                8,
+                192
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1536,
+                192,
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::narrow",
+          "kernel_dur_us": 1089.055,
+          "provenance": "external_id=55217",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "0",
+              "448"
+            ],
+            "Input Dims": [
+              [
+                448
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "kimi_k25/b200/docs/kernel_shapes_random_low.json",
+        "kimi_k25/b200/docs/kernel_shapes_random_mid.json",
+        "kimi_k25/b200/docs/kernel_shapes_random_high.json"
+      ],
+      "task_id": "quant_gemm__nvjet_sm100_tst_64x24_64x16_1x2_h_bz_splitk_tnt__a2d138c1c3",
+      "total_calls": 1464,
+      "workload_count": 3,
+      "workloads": [
+        {
+          "calls": 488,
+          "concurrency": "low",
+          "dataset": "random",
+          "label": "random_low",
+          "mean_us": 608.1038196721312,
+          "pct_of_gpu": 16.853338551669655,
+          "top_cpu_ops": [
+            "aten::mm"
+          ],
+          "total_us": 296754.664
+        },
+        {
+          "calls": 488,
+          "concurrency": "mid",
+          "dataset": "random",
+          "label": "random_mid",
+          "mean_us": 696.5774631147541,
+          "pct_of_gpu": 5.304748697133579,
+          "top_cpu_ops": [
+            "aten::linear",
+            "aten::mm"
+          ],
+          "total_us": 339929.802
+        },
+        {
+          "calls": 488,
+          "concurrency": "high",
+          "dataset": "random",
+          "label": "random_high",
+          "mean_us": 814.134469262295,
+          "pct_of_gpu": 8.777940053051356,
+          "top_cpu_ops": [
+            "aten::as_strided",
+            "aten::mm",
+            "aten::narrow"
+          ],
+          "total_us": 397297.621
+        }
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "nvjet_sm100_tst_64x8_64x16_2x2_h_bz_splitK_TNT",
+      "labels": [
+        "random_low",
+        "random_mid",
+        "random_high",
+        "sharegpt_high"
+      ],
+      "max_pct_of_gpu": 12.899145861294492,
+      "model": "moonshotai/Kimi-K2.5",
+      "model_slug": "kimi_k25",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::mm",
+          "kernel_dur_us": 749.95,
+          "provenance": "external_id=3106",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                38,
+                7168
+              ],
+              [
+                7168,
+                384
+              ]
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 759.553,
+          "provenance": "external_id=20038",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[38, 8, 128]",
+              "[2048, 256, 1]",
+              "128"
+            ],
+            "Input Dims": [
+              [
+                38,
+                8,
+                256
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                2048,
+                256,
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 817.151,
+          "provenance": "external_id=56398",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[512, 2048]",
+              "[1, 512]",
+              ""
+            ],
+            "Input Dims": [
+              [
+                2048,
+                512
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                512,
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList",
+              "ScalarList",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 813.119,
+          "provenance": "external_id=51706",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[304]",
+              "3",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::mm",
+          "kernel_dur_us": 1060.132,
+          "provenance": "external_id=183910",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                65,
+                7168
+              ],
+              [
+                7168,
+                384
+              ]
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sgl_kernel::merge_state_v2",
+          "kernel_dur_us": 1053.889,
+          "provenance": "external_id=180062",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                65,
+                8,
+                128
+              ],
+              [
+                65,
+                8
+              ],
+              [
+                65,
+                8,
+                128
+              ],
+              [
+                65,
+                8
+              ],
+              [
+                65,
+                8,
+                128
+              ],
+              [
+                65,
+                8
+              ]
+            ],
+            "Input Strides": [
+              [
+                1024,
+                128,
+                1
+              ],
+              [
+                8,
+                1
+              ],
+              [
+                1024,
+                128,
+                1
+              ],
+              [
+                8,
+                1
+              ],
+              [
+                1024,
+                128,
+                1
+              ],
+              [
+                8,
+                1
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "float",
+              "c10::BFloat16",
+              "float",
+              "c10::BFloat16",
+              "float"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty_like",
+          "kernel_dur_us": 1025.09,
+          "provenance": "external_id=171872",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              ""
+            ],
+            "Input Dims": [
+              [
+                55,
+                7168
+              ],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "",
+              "",
+              "",
+              "Scalar",
+              ""
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "kimi_k25/b200/docs/kernel_shapes_random_low.json",
+        "kimi_k25/b200/docs/kernel_shapes_random_mid.json",
+        "kimi_k25/b200/docs/kernel_shapes_random_high.json",
+        "kimi_k25/b200/docs/kernel_shapes_sharegpt_high.json"
+      ],
+      "task_id": "quant_gemm__nvjet_sm100_tst_64x8_64x16_2x2_h_bz_splitk_tnt__03c74298a8",
+      "total_calls": 1920,
+      "workload_count": 4,
+      "workloads": [
+        {
+          "calls": 480,
+          "concurrency": "low",
+          "dataset": "random",
+          "label": "random_low",
+          "mean_us": 473.1853875,
+          "pct_of_gpu": 12.899145861294492,
+          "top_cpu_ops": [
+            "aten::mm"
+          ],
+          "total_us": 227128.986
+        },
+        {
+          "calls": 480,
+          "concurrency": "mid",
+          "dataset": "random",
+          "label": "random_mid",
+          "mean_us": 505.34376041666667,
+          "pct_of_gpu": 3.785329755359167,
+          "top_cpu_ops": [
+            "aten::as_strided",
+            "aten::mm"
+          ],
+          "total_us": 242565.005
+        },
+        {
+          "calls": 480,
+          "concurrency": "high",
+          "dataset": "random",
+          "label": "random_high",
+          "mean_us": 596.5958208333334,
+          "pct_of_gpu": 6.327003726419153,
+          "top_cpu_ops": [
+            "aten::as_strided",
+            "aten::mm",
+            "aten::empty"
+          ],
+          "total_us": 286365.994
+        },
+        {
+          "calls": 480,
+          "concurrency": "high",
+          "dataset": "sharegpt",
+          "label": "sharegpt_high",
+          "mean_us": 772.8057666666666,
+          "pct_of_gpu": 4.074131544128366,
+          "top_cpu_ops": [
+            "aten::mm",
+            "sgl_kernel::merge_state_v2",
+            "aten::empty_like"
+          ],
+          "total_us": 370946.768
+        }
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitK_TNT",
+      "labels": [
+        "sharegpt_high"
+      ],
+      "max_pct_of_gpu": 8.781978634640572,
+      "model": "moonshotai/Kimi-K2.5",
+      "model_slug": "kimi_k25",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::mm",
+          "kernel_dur_us": 1893.949,
+          "provenance": "external_id=152835",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                51,
+                7168
+              ],
+              [
+                7168,
+                384
+              ]
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty_like",
+          "kernel_dur_us": 1142.273,
+          "provenance": "external_id=153913",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              ""
+            ],
+            "Input Dims": [
+              [
+                51,
+                7168
+              ],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "",
+              "",
+              "",
+              "Scalar",
+              ""
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "kimi_k25/b200/docs/kernel_shapes_sharegpt_high.json"
+      ],
+      "task_id": "quant_gemm__nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitk__6dd18c84c0",
+      "total_calls": 960,
+      "workload_count": 1,
+      "workloads": [
+        {
+          "calls": 960,
+          "concurrency": "high",
+          "dataset": "sharegpt",
+          "label": "sharegpt_high",
+          "mean_us": 832.9092541666666,
+          "pct_of_gpu": 8.781978634640572,
+          "top_cpu_ops": [
+            "aten::mm",
+            "aten::empty_like"
+          ],
+          "total_us": 799592.884
+        }
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "nvjet_sm100_tst_64x32_64x16_2x1_2cta_v_bz_splitK_TNT",
+      "labels": [
+        "sharegpt_high"
+      ],
+      "max_pct_of_gpu": 8.402525126183866,
+      "model": "moonshotai/Kimi-K2.5",
+      "model_slug": "kimi_k25",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::mm",
+          "kernel_dur_us": 1479.365,
+          "provenance": "external_id=152714",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                51,
+                7168
+              ],
+              [
+                7168,
+                2112
+              ]
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::slice",
+          "kernel_dur_us": 1473.538,
+          "provenance": "external_id=148878",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "0",
+              "128",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                128
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::mm",
+          "kernel_dur_us": 1068.676,
+          "provenance": "external_id=163332",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                55,
+                7168
+              ],
+              [
+                7168,
+                2112
+              ]
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::slice",
+          "kernel_dur_us": 1065.218,
+          "provenance": "external_id=159490",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "2",
+              "128",
+              "9223372036854775807",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                51,
+                8,
+                256
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                2048,
+                256,
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "kimi_k25/b200/docs/kernel_shapes_sharegpt_high.json"
+      ],
+      "task_id": "quant_gemm__nvjet_sm100_tst_64x32_64x16_2x1_2cta_v_bz_splitk__643e7d423b",
+      "total_calls": 976,
+      "workload_count": 1,
+      "workloads": [
+        {
+          "calls": 976,
+          "concurrency": "high",
+          "dataset": "sharegpt",
+          "label": "sharegpt_high",
+          "mean_us": 783.8564682377048,
+          "pct_of_gpu": 8.402525126183866,
+          "top_cpu_ops": [
+            "aten::mm",
+            "aten::slice"
+          ],
+          "total_us": 765043.913
+        }
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "nvjet_sm100_tst_64x40_64x16_1x2_h_bz_splitK_TNT",
+      "labels": [
+        "sharegpt_high"
+      ],
+      "max_pct_of_gpu": 4.079156723570201,
+      "model": "moonshotai/Kimi-K2.5",
+      "model_slug": "kimi_k25",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::view",
+          "kernel_dur_us": 1386.69,
+          "provenance": "external_id=177393",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[-1, 512]"
+            ],
+            "Input Dims": [
+              [
+                65,
+                512
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                512,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::mm",
+          "kernel_dur_us": 1384.933,
+          "provenance": "external_id=181241",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                65,
+                7168
+              ],
+              [
+                7168,
+                2112
+              ]
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "kimi_k25/b200/docs/kernel_shapes_sharegpt_high.json"
+      ],
+      "task_id": "quant_gemm__nvjet_sm100_tst_64x40_64x16_1x2_h_bz_splitk_tnt__45f40efe12",
+      "total_calls": 488,
+      "workload_count": 1,
+      "workloads": [
+        {
+          "calls": 488,
+          "concurrency": "high",
+          "dataset": "sharegpt",
+          "label": "sharegpt_high",
+          "mean_us": 761.0743995901639,
+          "pct_of_gpu": 4.079156723570201,
+          "top_cpu_ops": [
+            "aten::mm",
+            "aten::view"
+          ],
+          "total_us": 371404.307
+        }
+      ]
+    }
+  ],
+  "workload_summary": {
+    "random_high": {
+      "concurrency": "high",
+      "dataset": "random",
+      "empty_shape_rows": 0,
+      "row_count": 10,
+      "strong_rows": 3,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 4526091.755,
+      "weak_rows": 7
+    },
+    "random_low": {
+      "concurrency": "low",
+      "dataset": "random",
+      "empty_shape_rows": 0,
+      "row_count": 9,
+      "strong_rows": 3,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 1760806.401,
+      "weak_rows": 6
+    },
+    "random_mid": {
+      "concurrency": "mid",
+      "dataset": "random",
+      "empty_shape_rows": 0,
+      "row_count": 7,
+      "strong_rows": 3,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 6408028.38,
+      "weak_rows": 4
+    },
+    "sharegpt_high": {
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "empty_shape_rows": 0,
+      "row_count": 9,
+      "strong_rows": 6,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 9104928.596,
+      "weak_rows": 3
+    },
+    "sharegpt_low": {
+      "concurrency": "low",
+      "dataset": "sharegpt",
+      "empty_shape_rows": 0,
+      "row_count": 8,
+      "strong_rows": 2,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 2122589.534,
+      "weak_rows": 6
+    },
+    "sharegpt_mid": {
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "empty_shape_rows": 0,
+      "row_count": 3,
+      "strong_rows": 3,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 12129692.954,
+      "weak_rows": 0
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitK_TNT",
+  "labels": [
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 9.318382449190658,
+  "model": "moonshotai/Kimi-K2.6",
+  "model_slug": "kimi_k26",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 1237.637,
+      "provenance": "external_id=143209",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            51,
+            7168
+          ],
+          [
+            7168,
+            384
+          ]
+        ],
+        "Input Strides": [
+          [
+            7168,
+            1
+          ],
+          [
+            1,
+            7168
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "kimi_k26/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitk__6dd18c84c0",
+  "total_calls": 960,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 960,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 813.22575,
+      "pct_of_gpu": 9.318382449190658,
+      "top_cpu_ops": [
+        "aten::mm"
+      ],
+      "total_us": 780696.72
+    }
+  ]
+}

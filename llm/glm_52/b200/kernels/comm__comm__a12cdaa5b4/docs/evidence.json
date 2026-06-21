@@ -1,0 +1,139 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void (anonymous namespace)::all_reduce_one_shot_push_kernel<__nv_bfloat16, 8u, true>((anonymous namespace)::AllReducePushData, device::distributed::PushController)",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 2.3858758725334073,
+  "model": "zai-org/GLM-5.2-FP8",
+  "model_slug": "glm_52",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::select",
+      "kernel_dur_us": 4427.601,
+      "provenance": "external_id=493",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            8
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::outplace_all_reduce",
+      "kernel_dur_us": 4266.599,
+      "provenance": "external_id=496",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            38,
+            6144
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            6144,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::add_",
+      "kernel_dur_us": 1301.804,
+      "provenance": "external_id=1555",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "1"
+        ],
+        "Input Dims": [
+          [
+            0,
+            6144
+          ],
+          [
+            0,
+            6144
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            6144,
+            1
+          ],
+          [
+            6144,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "glm_52/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "comm__comm__a12cdaa5b4",
+  "total_calls": 192,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 192,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 302.59510416666666,
+      "pct_of_gpu": 2.3858758725334073,
+      "top_cpu_ops": [
+        "aten::select",
+        "sglang::outplace_all_reduce",
+        "aten::add_"
+      ],
+      "total_us": 58098.259999999995
+    }
+  ]
+}

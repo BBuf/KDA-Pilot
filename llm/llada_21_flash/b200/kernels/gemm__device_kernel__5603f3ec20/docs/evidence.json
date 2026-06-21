@@ -1,0 +1,111 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void cutlass::device_kernel<cutlass::fmha::kernel::Sm100FmhaFwdKernelTmaWarpspecialized<cute::tuple<cutlass::fmha::collective::VariableLength, cutlass::fmha::collective::VariableLength, int, cute::tuple<cute::tuple<int, int>, int> >, cutlass::fmha::collective::Sm100FmhaFwdMainloopTmaWarpspecialized<cutlass::bfloat16_t, float, float, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<int, cute::C<1>, cute::tuple<int, int> >, cute::tuple<int, cute::C<1>, cute::tuple<cute::C<0>, int> >, cute::tuple<cute::C<1>, int, cute::tuple<cute::C<0>, int> >, cutlass::fmha::collective::ResidualMask, cute::tuple<cute::C<2>, cute::C<1>, cute::C<1> > >, cutlass::fmha::collective::Sm100FmhaFwdEpilogueTmaWarpspecialized<cutlass::bfloat16_t, float, cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> > >, cutlass::fmha::kernel::HostPrecomputedTileScheduler, cutlass::fmha::kernel::Sm100FmhaCtxKernelWarpspecializedSchedule> >(cutlass::fmha::kernel::Sm100FmhaFwdKernelTmaWarpspecialized<cute::tuple<cutlass::fmha::collective::VariableLength, cutlass::fmha::collective::VariableLength, int, cute::tuple<cute::tuple<int, int>, int> >, cutlass::fmha::collective::Sm100FmhaFwdMainloopTmaWarpspecialized<cutlass::bfloat16_t, float, float, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<cute::C<256>, cute::C<128>, cute::C<128> >, cute::tuple<int, cute::C<1>, cute::tuple<int, int> >, cute::tuple<int, cute::C<1>, cute::tuple<cute::C<0>, int> >, cute::tuple<cute::C<1>, int, cute::tuple<cute::C<0>, int> >, cutlass::fmha::collective::ResidualMask, cute::tuple<cute::C<2>, cute::C<1>, cute::C<1> > >, cutlass::fmha::collective::Sm100FmhaFwdEpilogueTmaWarpspecialized<cutlass::bfloat16_t, float, cute::tuple<cute::C<128>, cute::C<128>, cute::C<128> > >, cutlass::fmha::kernel::HostPrecomputedTileScheduler, cutlass::fmha::kernel::Sm100FmhaCtxKernelWarpspecializedSchedule>::Params)",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 5.224368368724882,
+  "model": "inclusionAI/LLaDA2.1-flash",
+  "model_slug": "llada_21_flash",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 17.087,
+      "provenance": "external_id=8798",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1]",
+          "[1]",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "int",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty_strided",
+      "kernel_dur_us": 16.928,
+      "provenance": "external_id=7841",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[32]",
+          "[1]",
+          "11",
+          "0",
+          "",
+          "False"
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "ScalarList",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "llada_21_flash/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "gemm__device_kernel__5603f3ec20",
+  "total_calls": 7104,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 7104,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 15.980671452702703,
+      "pct_of_gpu": 5.224368368724882,
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::_local_scalar_dense",
+        "aten::copy_",
+        "aten::empty_strided"
+      ],
+      "total_us": 113526.69
+    }
+  ]
+}

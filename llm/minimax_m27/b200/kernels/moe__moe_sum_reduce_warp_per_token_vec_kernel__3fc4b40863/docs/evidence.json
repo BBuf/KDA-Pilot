@@ -1,0 +1,58 @@
+{
+  "category": "moe",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void moe_sum_reduce_warp_per_token_vec_kernel<8>(c10::BFloat16 const*, c10::BFloat16*, long, long, long, long, long, long, float)",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 2.0556801874711197,
+  "model": "MiniMaxAI/MiniMax-M2.7",
+  "model_slug": "minimax_m27",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::lift_fresh",
+      "kernel_dur_us": 78.336,
+      "provenance": "external_id=11681",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          [
+            19
+          ]
+        ],
+        "Input Strides": [
+          [
+            1
+          ]
+        ],
+        "Input type": [
+          "float"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "minimax_m27/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "moe__moe_sum_reduce_warp_per_token_vec_kernel__3fc4b40863",
+  "total_calls": 992,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 992,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 42.37691633064516,
+      "pct_of_gpu": 2.0556801874711197,
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/1",
+        "aten::lift_fresh"
+      ],
+      "total_us": 42037.901
+    }
+  ]
+}

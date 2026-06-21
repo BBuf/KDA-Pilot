@@ -1,0 +1,148 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_32x32x16_1x1x1_3_tnn_align1_bias_f32_relu",
+  "labels": [
+    "sharegpt_mid",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 4.88143987119747,
+  "model": "poolside/Laguna-XS.2-FP8",
+  "model_slug": "poolside_laguna_xs2",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 47.393,
+      "provenance": "external_id=40156",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[31]",
+          "[0]",
+          ""
+        ],
+        "Input Dims": [
+          [
+            32
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList",
+          "ScalarList",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 47.328,
+      "provenance": "external_id=42220",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[31]"
+        ],
+        "Input Dims": [
+          [
+            31
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::narrow",
+      "kernel_dur_us": 47.744,
+      "provenance": "external_id=51125",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0",
+          "320",
+          "41"
+        ],
+        "Input Dims": [
+          [
+            361
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "Scalar",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "poolside_laguna_xs2/b200/docs/kernel_shapes_sharegpt_mid.json",
+    "poolside_laguna_xs2/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "gemm__cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_3__05d58acae0",
+  "total_calls": 936,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 468,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 46.28144658119658,
+      "pct_of_gpu": 4.252539873422498,
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3",
+        "aten::as_strided",
+        "aten::view"
+      ],
+      "total_us": 21659.717
+    },
+    {
+      "calls": 468,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 46.471628205128205,
+      "pct_of_gpu": 4.88143987119747,
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3",
+        "aten::narrow"
+      ],
+      "total_us": 21748.722
+    }
+  ]
+}

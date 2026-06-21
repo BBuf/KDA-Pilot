@@ -1,0 +1,74 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitK_TNT",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 11.704640274945517,
+  "model": "deepseek-ai/DeepSeek-Math-V2",
+  "model_slug": "deepseek_math_v2",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::empty_strided",
+      "kernel_dur_us": 499.841,
+      "provenance": "external_id=297",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[1]",
+          "[1]",
+          "4",
+          "0",
+          "",
+          "False"
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "ScalarList",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "deepseek_math_v2/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitk__6dd18c84c0",
+  "total_calls": 464,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 464,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 362.6905646551724,
+      "pct_of_gpu": 11.704640274945517,
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2",
+        "aten::empty_strided"
+      ],
+      "total_us": 168288.422
+    }
+  ]
+}

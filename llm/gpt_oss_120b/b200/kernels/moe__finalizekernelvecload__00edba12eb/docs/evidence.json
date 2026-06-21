@@ -1,0 +1,71 @@
+{
+  "category": "moe",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void moe::dev::finalize::finalizeKernelVecLoad<moe::dev::finalize::KernelParams<cutlass::bfloat16_t, cutlass::bfloat16_t, 4, true> >(moe::dev::finalize::KernelParams<cutlass::bfloat16_t, cutlass::bfloat16_t, 4, true>)",
+  "labels": [
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 2.179098817856956,
+  "model": "openai/gpt-oss-120b",
+  "model_slug": "gpt_oss_120b",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 20.096,
+      "provenance": "external_id=43867",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[2373, 512]",
+          "[512, 1]",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            2560,
+            512
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            512,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "gpt_oss_120b/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "moe__finalizekernelvecload__00edba12eb",
+  "total_calls": 2304,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 2304,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 6.338225694444445,
+      "pct_of_gpu": 2.179098817856956,
+      "top_cpu_ops": [
+        "aten::as_strided"
+      ],
+      "total_us": 14603.272
+    }
+  ]
+}

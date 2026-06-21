@@ -1,0 +1,113 @@
+{
+  "category": "moe",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "fused_moe_kernel",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 44.62819582303911,
+  "model": "inclusionAI/LLaDA2.1-flash",
+  "model_slug": "llada_21_flash",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::_local_scalar_dense",
+      "kernel_dur_us": 186.688,
+      "provenance": "external_id=4589",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          []
+        ],
+        "Input Strides": [
+          []
+        ],
+        "Input type": [
+          "long int"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::is_nonzero",
+      "kernel_dur_us": 185.952,
+      "provenance": "external_id=3675",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          []
+        ],
+        "Input Strides": [
+          []
+        ],
+        "Input type": [
+          "bool"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::slice",
+      "kernel_dur_us": 178.976,
+      "provenance": "external_id=2761",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0",
+          "0",
+          "1",
+          "1"
+        ],
+        "Input Dims": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "llada_21_flash/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "moe__fused_moe_kernel__c581b7d47d",
+  "total_calls": 13764,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 13764,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 70.45776300494043,
+      "pct_of_gpu": 44.62819582303911,
+      "top_cpu_ops": [
+        "aten::_local_scalar_dense",
+        "aten::is_nonzero",
+        "aten::slice"
+      ],
+      "total_us": 969780.65
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+- 2026-06-19 15:26:12 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3; command=python3 -m sglang.launch_server --trust-remote-code --model-path deepseek-ai/DeepSeek-V4-Flash --tp 4 --moe-runner-backend flashinfer_mxfp4 --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1 --speculative-num-draft-tokens 4 --chunked-prefill-size 4096 --disable-flashinfer-autotune --swa-full-tokens-ratio 0.1 --host 0.0.0.0 --port 30000
+- 2026-06-19 15:37:15 UTC: server_ready - pid=1148, port=30000
+- 2026-06-19 15:37:15 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
+- 2026-06-19 15:37:49 UTC: extract - random_low: extracting >2% kernel shapes/meta
+- 2026-06-19 15:37:52 UTC: benchmark - random_mid: dataset=random, num_prompts=300, max_concurrency=32
+- 2026-06-19 15:40:30 UTC: extract - random_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 15:40:49 UTC: benchmark - random_high: dataset=random, num_prompts=500, max_concurrency=100
+- 2026-06-19 15:42:43 UTC: extract - random_high: extracting >2% kernel shapes/meta
+- 2026-06-19 15:43:00 UTC: benchmark - sharegpt_low: dataset=sharegpt, num_prompts=10, max_concurrency=1
+- 2026-06-19 15:43:31 UTC: extract - sharegpt_low: extracting >2% kernel shapes/meta
+- 2026-06-19 15:43:34 UTC: benchmark - sharegpt_mid: dataset=sharegpt, num_prompts=300, max_concurrency=32
+- 2026-06-19 15:44:44 UTC: extract - sharegpt_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 15:44:53 UTC: benchmark - sharegpt_high: dataset=sharegpt, num_prompts=500, max_concurrency=100
+- 2026-06-19 15:46:00 UTC: extract - sharegpt_high: extracting >2% kernel shapes/meta
+- 2026-06-19 15:46:17 UTC: completed - DeepSeek-V4-Flash FP4 benchmark/profile/shape extraction complete
+- 2026-06-19 15:46:31 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--deepseek-ai--DeepSeek-V4-Flash: deleted after completed run, size_before=149G; lock=/root/.cache/huggingface/hub/.locks/models--deepseek-ai--DeepSeek-V4-Flash

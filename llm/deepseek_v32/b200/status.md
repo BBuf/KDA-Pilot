@@ -1,0 +1,17 @@
+- 2026-06-19 05:23:01 UTC: dataset_download - downloading ShareGPT dataset to /data/bbuf/kda-pilot/llm/sharegpt/ShareGPT_V3_unfiltered_cleaned_split.json
+- 2026-06-19 05:23:04 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3; command=python3 -m sglang.launch_server --model nvidia/DeepSeek-V3.2-NVFP4 --tp 4 --quantization modelopt_fp4 --moe-runner-backend flashinfer_trtllm --tool-call-parser deepseekv32 --reasoning-parser deepseek-v3 --host 0.0.0.0 --port 30180
+- 2026-06-19 05:56:26 UTC: server_ready - pid=1625, port=30180
+- 2026-06-19 05:56:26 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
+- 2026-06-19 05:57:15 UTC: extract - random_low: extracting >2% kernel shapes/meta
+- 2026-06-19 05:57:17 UTC: benchmark - random_mid: dataset=random, num_prompts=300, max_concurrency=32
+- 2026-06-19 05:59:16 UTC: extract - random_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 05:59:19 UTC: benchmark - random_high: dataset=random, num_prompts=500, max_concurrency=100
+- 2026-06-19 06:00:55 UTC: extract - random_high: extracting >2% kernel shapes/meta
+- 2026-06-19 06:00:59 UTC: benchmark - sharegpt_low: dataset=sharegpt, num_prompts=10, max_concurrency=1
+- 2026-06-19 06:01:38 UTC: extract - sharegpt_low: extracting >2% kernel shapes/meta
+- 2026-06-19 06:01:39 UTC: benchmark - sharegpt_mid: dataset=sharegpt, num_prompts=300, max_concurrency=32
+- 2026-06-19 06:02:47 UTC: extract - sharegpt_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 06:02:52 UTC: benchmark - sharegpt_high: dataset=sharegpt, num_prompts=500, max_concurrency=100
+- 2026-06-19 06:03:56 UTC: extract - sharegpt_high: extracting >2% kernel shapes/meta
+- 2026-06-19 06:04:00 UTC: completed - DeepSeek-V3.2 NVFP4 benchmark/profile/shape extraction complete
+- 2026-06-19 06:04:18 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--nvidia--DeepSeek-V3.2-NVFP4: deleted after completed run, size_before=387G; lock=/root/.cache/huggingface/hub/.locks/models--nvidia--DeepSeek-V3.2-NVFP4

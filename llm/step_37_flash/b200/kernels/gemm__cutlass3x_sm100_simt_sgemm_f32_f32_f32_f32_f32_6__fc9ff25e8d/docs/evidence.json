@@ -1,0 +1,99 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_64x128x16_1x1x1_3_tnn_align1_bias_f32_relu",
+  "labels": [
+    "random_high"
+  ],
+  "max_pct_of_gpu": 2.8508590399677334,
+  "model": "stepfun-ai/Step-3.7-Flash-NVFP4",
+  "model_slug": "step_37_flash",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 176.928,
+      "provenance": "external_id=41799",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            2977,
+            4096
+          ],
+          [
+            4096,
+            288
+          ]
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [
+            1,
+            4096
+          ]
+        ],
+        "Input type": [
+          "float",
+          "float"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 176.256,
+      "provenance": "external_id=41677",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[-1, 1408]"
+        ],
+        "Input Dims": [
+          [
+            2977,
+            1408
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1408,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "step_37_flash/b200/docs/kernel_shapes_random_high.json"
+  ],
+  "task_id": "gemm__cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_6__fc9ff25e8d",
+  "total_calls": 336,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 336,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 173.0144761904762,
+      "pct_of_gpu": 2.8508590399677334,
+      "top_cpu_ops": [
+        "aten::mm",
+        "aten::view"
+      ],
+      "total_us": 58132.864
+    }
+  ]
+}

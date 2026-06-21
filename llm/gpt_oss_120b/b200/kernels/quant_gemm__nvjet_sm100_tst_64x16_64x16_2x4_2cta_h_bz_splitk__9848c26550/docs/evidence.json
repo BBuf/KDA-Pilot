@@ -1,0 +1,100 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitK_bias_TNT",
+  "labels": [
+    "random_low",
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 9.459277638042593,
+  "model": "openai/gpt-oss-120b",
+  "model_slug": "gpt_oss_120b",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 173.922,
+      "provenance": "external_id=304",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[38]"
+        ],
+        "Input Dims": [
+          [
+            38
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::zero_",
+      "kernel_dur_us": 263.363,
+      "provenance": "external_id=5110",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          [
+            10
+          ]
+        ],
+        "Input Strides": [
+          [
+            1
+          ]
+        ],
+        "Input type": [
+          "long int"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "gpt_oss_120b/b200/docs/kernel_shapes_random_low.json",
+    "gpt_oss_120b/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitk__9848c26550",
+  "total_calls": 576,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 288,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 96.98072569444444,
+      "pct_of_gpu": 9.459277638042593,
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/3",
+        "aten::view"
+      ],
+      "total_us": 27930.449
+    },
+    {
+      "calls": 288,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 122.18430208333332,
+      "pct_of_gpu": 4.410459150590515,
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/3",
+        "aten::zero_"
+      ],
+      "total_us": 35189.079
+    }
+  ]
+}

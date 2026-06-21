@@ -1,0 +1,70 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_128x8_64x12_2x1_v_bz_TNT",
+  "labels": [
+    "sharegpt_low"
+  ],
+  "max_pct_of_gpu": 3.4367746040688054,
+  "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8",
+  "model_slug": "nemotron3_nano",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 105.92,
+      "provenance": "external_id=52928",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            1,
+            2688
+          ],
+          [
+            2688,
+            131072
+          ]
+        ],
+        "Input Strides": [
+          [
+            2688,
+            1
+          ],
+          [
+            1,
+            2688
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "nemotron3_nano/b200/docs/kernel_shapes_sharegpt_low.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_128x8_64x12_2x1_v_bz_tnt__da4bd0e0be",
+  "total_calls": 9,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 9,
+      "concurrency": "low",
+      "dataset": "sharegpt",
+      "label": "sharegpt_low",
+      "mean_us": 105.202,
+      "pct_of_gpu": 3.4367746040688054,
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::mm"
+      ],
+      "total_us": 946.818
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitK_TNT",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 2.0002525506642654,
+  "model": "nvidia/DeepSeek-V3.2-NVFP4",
+  "model_slug": "deepseek_v32",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::item",
+      "kernel_dur_us": 570.177,
+      "provenance": "external_id=10432",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          []
+        ],
+        "Input Strides": [
+          []
+        ],
+        "Input type": [
+          "long int"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "deepseek_v32/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitk__6dd18c84c0",
+  "total_calls": 476,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 476,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 145.55902310924367,
+      "pct_of_gpu": 2.0002525506642654,
+      "top_cpu_ops": [
+        "aten::item",
+        "Torch-Compiled Region: 4/2"
+      ],
+      "total_us": 69286.09499999999
+    }
+  ]
+}

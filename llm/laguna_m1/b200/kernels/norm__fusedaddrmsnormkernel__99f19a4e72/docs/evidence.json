@@ -1,0 +1,145 @@
+{
+  "category": "norm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloat16*, __nv_bfloat16*, unsigned int, unsigned int, unsigned int, float, float)",
+  "labels": [
+    "random_mid",
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 2.732083239455339,
+  "model": "poolside/Laguna-M.1-NVFP4",
+  "model_slug": "laguna_m1",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::to",
+      "kernel_dur_us": 236.672,
+      "provenance": "external_id=6722",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "6",
+          "0",
+          "",
+          "",
+          "True",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "float",
+          "Scalar",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty_strided",
+      "kernel_dur_us": 395.775,
+      "provenance": "external_id=41589",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[1]",
+          "[1]",
+          "6",
+          "0",
+          "",
+          "False"
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "ScalarList",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "laguna_m1/b200/docs/kernel_shapes_random_mid.json",
+    "laguna_m1/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "norm__fusedaddrmsnormkernel__99f19a4e72",
+  "total_calls": 7840,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 3360,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 26.582235416666666,
+      "pct_of_gpu": 2.3576678031298974,
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::copy_",
+        "aten::view",
+        "aten::slice",
+        "aten::to"
+      ],
+      "total_us": 89316.311
+    },
+    {
+      "calls": 4480,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 31.21688482142857,
+      "pct_of_gpu": 2.732083239455339,
+      "top_cpu_ops": [
+        "sglang::unified_attention_with_output",
+        "aten::empty_strided",
+        "sglang::store_cache",
+        "aten::slice"
+      ],
+      "total_us": 139851.644
+    }
+  ]
+}

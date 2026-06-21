@@ -1,0 +1,16 @@
+- 2026-06-20 02:11:50 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; command=python3 -m sglang.launch_server --model-path MiniMaxAI/MiniMax-M2.5 --tp 8 --ep 8 --reasoning-parser minimax-append-think --trust-remote-code --mem-fraction-static 0.85 --tool-call-parser minimax-m2 --host 0.0.0.0 --port 30000
+- 2026-06-20 02:22:39 UTC: server_ready - pid=1146, port=30000
+- 2026-06-20 02:22:39 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
+- 2026-06-20 02:23:25 UTC: extract - random_low: extracting >2% kernel shapes/meta
+- 2026-06-20 02:23:27 UTC: benchmark - random_mid: dataset=random, num_prompts=300, max_concurrency=32
+- 2026-06-20 02:25:02 UTC: extract - random_mid: extracting >2% kernel shapes/meta
+- 2026-06-20 02:25:05 UTC: benchmark - random_high: dataset=random, num_prompts=500, max_concurrency=100
+- 2026-06-20 02:26:23 UTC: extract - random_high: extracting >2% kernel shapes/meta
+- 2026-06-20 02:26:28 UTC: benchmark - sharegpt_low: dataset=sharegpt, num_prompts=10, max_concurrency=1
+- 2026-06-20 02:27:17 UTC: extract - sharegpt_low: extracting >2% kernel shapes/meta
+- 2026-06-20 02:27:18 UTC: benchmark - sharegpt_mid: dataset=sharegpt, num_prompts=300, max_concurrency=32
+- 2026-06-20 02:28:12 UTC: extract - sharegpt_mid: extracting >2% kernel shapes/meta
+- 2026-06-20 02:28:16 UTC: benchmark - sharegpt_high: dataset=sharegpt, num_prompts=500, max_concurrency=100
+- 2026-06-20 02:29:06 UTC: extract - sharegpt_high: extracting >2% kernel shapes/meta
+- 2026-06-20 02:29:12 UTC: completed - MiniMax-M2.5 FP8 benchmark/profile/shape extraction complete
+- 2026-06-20 02:29:33 UTC: weights_cleanup - primary: /root/.cache/huggingface/hub/models--MiniMaxAI--MiniMax-M2.5: deleted after completed run, size_before=215G; lock=/root/.cache/huggingface/hub/.locks/models--MiniMaxAI--MiniMax-M2.5

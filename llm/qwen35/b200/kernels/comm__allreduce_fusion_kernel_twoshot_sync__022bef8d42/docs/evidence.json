@@ -1,0 +1,87 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_twoshot_sync<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 4, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>, std::array<int, 4>, std::array<int, 4>)",
+  "labels": [
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 5.72497852245263,
+  "model": "nvidia/Qwen3.5-397B-A17B-NVFP4",
+  "model_slug": "qwen35",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::reshape",
+      "kernel_dur_us": 1210.147,
+      "provenance": "external_id=193973",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1110, 2048]"
+        ],
+        "Input Dims": [
+          [
+            1110,
+            2048
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "unsigned char",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "detach_",
+      "kernel_dur_us": 1181.765,
+      "provenance": "external_id=195397",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          [
+            1
+          ]
+        ],
+        "Input Strides": [
+          [
+            1
+          ]
+        ],
+        "Input type": [
+          "int"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen35/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "comm__allreduce_fusion_kernel_twoshot_sync__022bef8d42",
+  "total_calls": 476,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 476,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 702.0875378151261,
+      "pct_of_gpu": 5.72497852245263,
+      "top_cpu_ops": [
+        "aten::reshape",
+        "detach_"
+      ],
+      "total_us": 334193.668
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 32u, 32u, 0u, 768u, 6144u, 128u, 128u, 128u, 129u, 128u, 128u, 128u, 8u, 128u, 128u, 2u, true, 148u, true, (deep_gemm::GemmType)2, false, cutlass::float_e4m3_t, cutlass::float_e4m3_t, cutlass::bfloat16_t, deep_gemm::epilogue::transform::EpilogueIdentity>(int*, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+  "labels": [
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 12.004255540325662,
+  "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+  "model_slug": "minimax_m3",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 156.255,
+      "provenance": "external_id=301830",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1]",
+          "[1]",
+          "1"
+        ],
+        "Input Dims": [
+          [
+            2
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "int",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "minimax_m3/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "quant_gemm__sm100_fp8_fp4_gemm_1d1d_impl__a5fefd5915",
+  "total_calls": 4104,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 4104,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 98.97723099415208,
+      "pct_of_gpu": 12.004255540325662,
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/2",
+        "aten::as_strided"
+      ],
+      "total_us": 406202.55600000016
+    }
+  ]
+}

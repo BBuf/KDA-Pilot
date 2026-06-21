@@ -1,0 +1,69 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_256x128_64x5_2x2_2cta_h_bz_TNT",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 2.401762669581968,
+  "model": "nvidia/GLM-5-NVFP4",
+  "model_slug": "glm_5",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 192.511,
+      "provenance": "external_id=34008",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            16873,
+            2048
+          ],
+          [
+            2048,
+            4096
+          ]
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          [
+            1,
+            2048
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "glm_5/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_256x128_64x5_2x2_2cta_h_bz_tnt__d6cc26eceb",
+  "total_calls": 312,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 312,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 187.05736217948717,
+      "pct_of_gpu": 2.401762669581968,
+      "top_cpu_ops": [
+        "aten::mm"
+      ],
+      "total_us": 58361.897
+    }
+  ]
+}

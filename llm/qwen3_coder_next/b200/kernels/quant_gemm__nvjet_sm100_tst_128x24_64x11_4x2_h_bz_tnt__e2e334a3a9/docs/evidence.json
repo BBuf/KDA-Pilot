@@ -1,0 +1,150 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_128x24_64x11_4x2_h_bz_TNT",
+  "labels": [
+    "random_low",
+    "random_mid",
+    "random_high"
+  ],
+  "max_pct_of_gpu": 10.3995522274475,
+  "model": "Qwen/Qwen3-Coder-Next",
+  "model_slug": "qwen3_coder_next",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 1015.935,
+      "provenance": "external_id=7735",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            38,
+            2048
+          ],
+          [
+            2048,
+            6144
+          ]
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          [
+            1,
+            2048
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::alias",
+      "kernel_dur_us": 740.862,
+      "provenance": "external_id=17753",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          [
+            38,
+            2048
+          ]
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::gt",
+      "kernel_dur_us": 2818.365,
+      "provenance": "external_id=47823",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "int",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen3_coder_next/b200/docs/kernel_shapes_random_low.json",
+    "qwen3_coder_next/b200/docs/kernel_shapes_random_mid.json",
+    "qwen3_coder_next/b200/docs/kernel_shapes_random_high.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_128x24_64x11_4x2_h_bz_tnt__e2e334a3a9",
+  "total_calls": 216,
+  "workload_count": 3,
+  "workloads": [
+    {
+      "calls": 72,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 410.4722777777778,
+      "pct_of_gpu": 10.3995522274475,
+      "top_cpu_ops": [
+        "aten::mm"
+      ],
+      "total_us": 29554.004
+    },
+    {
+      "calls": 72,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 247.99818055555554,
+      "pct_of_gpu": 3.0283050264842446,
+      "top_cpu_ops": [
+        "aten::alias"
+      ],
+      "total_us": 17855.869
+    },
+    {
+      "calls": 72,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 699.8714583333334,
+      "pct_of_gpu": 3.5170855693632714,
+      "top_cpu_ops": [
+        "aten::gt",
+        "aten::mm"
+      ],
+      "total_us": 50390.745
+    }
+  ]
+}

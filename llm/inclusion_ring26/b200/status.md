@@ -1,0 +1,16 @@
+- 2026-06-19 13:23:49 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; command=python3 -m sglang.launch_server --model-path inclusionAI/Ring-2.6-1T --tp-size 8 --trust-remote-code --host 0.0.0.0 --port 30000 --mem-fraction-static 0.8 --model-loader-extra-config {"enable_multithread_load":"true","num_threads":64} --tool-call-parser glm --reasoning-parser deepseek-r1
+- 2026-06-19 14:12:00 UTC: server_ready - pid=1292, port=30000
+- 2026-06-19 14:12:00 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
+- 2026-06-19 14:13:26 UTC: extract - random_low: extracting >2% kernel shapes/meta
+- 2026-06-19 14:13:31 UTC: benchmark - random_mid: dataset=random, num_prompts=300, max_concurrency=32
+- 2026-06-19 14:17:48 UTC: extract - random_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 14:18:04 UTC: benchmark - random_high: dataset=random, num_prompts=500, max_concurrency=100
+- 2026-06-19 14:21:53 UTC: extract - random_high: extracting >2% kernel shapes/meta
+- 2026-06-19 14:22:13 UTC: benchmark - sharegpt_low: dataset=sharegpt, num_prompts=10, max_concurrency=1
+- 2026-06-19 14:23:12 UTC: extract - sharegpt_low: extracting >2% kernel shapes/meta
+- 2026-06-19 14:23:17 UTC: benchmark - sharegpt_mid: dataset=sharegpt, num_prompts=300, max_concurrency=32
+- 2026-06-19 14:25:39 UTC: extract - sharegpt_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 14:25:55 UTC: benchmark - sharegpt_high: dataset=sharegpt, num_prompts=500, max_concurrency=100
+- 2026-06-19 14:28:11 UTC: extract - sharegpt_high: extracting >2% kernel shapes/meta
+- 2026-06-19 14:28:34 UTC: completed - InclusionAI Ring-2.6-1T FP8 benchmark/profile/shape extraction complete
+- 2026-06-19 14:29:16 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--inclusionAI--Ring-2.6-1T: deleted after completed run, size_before=971G; lock=/root/.cache/huggingface/hub/.locks/models--inclusionAI--Ring-2.6-1T

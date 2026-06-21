@@ -1,0 +1,95 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_at__tensorptrbf16gmemalign128o819281921_tensorptrbf16gmemalign128o819281921_tensorptrbf16gmemalign_0",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 27.793286830169436,
+  "model": "inclusionAI/Ring-2.5-1T",
+  "model_slug": "ring_25_1t",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 1469.214,
+      "provenance": "external_id=1627",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[-1, 1024]"
+        ],
+        "Input Dims": [
+          [
+            39,
+            8,
+            128
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1024,
+            128,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "float",
+          "ScalarList"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 1413.505,
+      "provenance": "external_id=1629",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[39, -1, 128]"
+        ],
+        "Input Dims": [
+          [
+            39,
+            1024
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1024,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "float",
+          "ScalarList"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "ring_25_1t/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "gemm__kernel_cutlass_kernel_flashinfernormkernelsfused__b25a796c5c",
+  "total_calls": 11520,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 11520,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 59.94338324652778,
+      "pct_of_gpu": 27.793286830169436,
+      "top_cpu_ops": [
+        "aten::view",
+        "sglang::outplace_all_reduce"
+      ],
+      "total_us": 690547.775
+    }
+  ]
+}

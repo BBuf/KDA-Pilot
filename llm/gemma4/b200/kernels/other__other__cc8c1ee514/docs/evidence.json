@@ -1,0 +1,73 @@
+{
+  "category": "other",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void (anonymous namespace)::act_and_mul_kernel<__nv_bfloat16, ((anonymous namespace)::ActivationKind)1, true, false>((anonymous namespace)::ActivationParams)",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 2.1550525038905763,
+  "model": "google/gemma-4-26B-A4B-it",
+  "model_slug": "gemma4",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::_run_activation_inplace",
+      "kernel_dur_us": 99.328,
+      "provenance": "external_id=11396",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [
+            90032,
+            1408
+          ],
+          [
+            90032,
+            704
+          ]
+        ],
+        "Input Strides": [
+          [],
+          [
+            1408,
+            1
+          ],
+          [
+            704,
+            1
+          ]
+        ],
+        "Input type": [
+          "",
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "gemma4/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "other__other__cc8c1ee514",
+  "total_calls": 270,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 270,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 13.286392592592593,
+      "pct_of_gpu": 2.1550525038905763,
+      "top_cpu_ops": [
+        "sglang::_run_activation_inplace"
+      ],
+      "total_us": 3587.326
+    }
+  ]
+}

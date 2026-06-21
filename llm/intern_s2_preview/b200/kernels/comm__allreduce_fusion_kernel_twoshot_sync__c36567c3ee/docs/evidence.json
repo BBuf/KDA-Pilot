@@ -1,0 +1,193 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_twoshot_sync<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>, std::array<int, 8>, std::array<int, 8>)",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 17.168366203667475,
+  "model": "internLM/Intern-S2-Preview",
+  "model_slug": "intern_s2_preview",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::flashinfer_allreduce_residual_rmsnorm",
+      "kernel_dur_us": 3406.528,
+      "provenance": "external_id=26443",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "9.9999999999999995e-07",
+          "2048",
+          "",
+          "False",
+          "False",
+          "True"
+        ],
+        "Input Dims": [
+          [
+            1542,
+            2048
+          ],
+          [
+            1542,
+            2048
+          ],
+          [
+            2048
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          [
+            2048,
+            1
+          ],
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::eq",
+      "kernel_dur_us": 1814.586,
+      "provenance": "external_id=26353",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            26
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::fill_",
+      "kernel_dur_us": 1765.755,
+      "provenance": "external_id=26417",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            1,
+            1542,
+            4,
+            128
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            789504,
+            512,
+            128,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 1343.867,
+      "provenance": "external_id=28885",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[-1]"
+        ],
+        "Input Dims": [
+          [
+            1542,
+            2048
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "intern_s2_preview/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "comm__allreduce_fusion_kernel_twoshot_sync__c36567c3ee",
+  "total_calls": 632,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 632,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 751.7410205696202,
+      "pct_of_gpu": 17.168366203667475,
+      "top_cpu_ops": [
+        "sglang::flashinfer_allreduce_residual_rmsnorm",
+        "aten::eq",
+        "aten::fill_",
+        "aten::view"
+      ],
+      "total_us": 475100.325
+    }
+  ]
+}

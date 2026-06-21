@@ -1,0 +1,16 @@
+- 2026-06-20 15:42:47 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3; command=sglang serve --model-path stepfun-ai/Step-3.5-Flash --tp 4 --trust-remote-code --reasoning-parser step3p5 --host 0.0.0.0 --port 30000
+- 2026-06-20 15:50:45 UTC: server_ready - pid=1133, port=30000
+- 2026-06-20 15:50:45 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
+- 2026-06-20 15:51:41 UTC: extract - random_low: extracting >2% kernel shapes/meta
+- 2026-06-20 15:52:41 UTC: benchmark - random_mid: dataset=random, num_prompts=300, max_concurrency=32
+- 2026-06-20 15:54:45 UTC: extract - random_mid: extracting >2% kernel shapes/meta
+- 2026-06-20 15:55:37 UTC: benchmark - random_high: dataset=random, num_prompts=500, max_concurrency=100
+- 2026-06-20 15:57:16 UTC: extract - random_high: extracting >2% kernel shapes/meta
+- 2026-06-20 15:57:21 UTC: benchmark - sharegpt_low: dataset=sharegpt, num_prompts=10, max_concurrency=1
+- 2026-06-20 15:57:56 UTC: extract - sharegpt_low: extracting >2% kernel shapes/meta
+- 2026-06-20 15:57:59 UTC: benchmark - sharegpt_mid: dataset=sharegpt, num_prompts=300, max_concurrency=32
+- 2026-06-20 15:59:00 UTC: extract - sharegpt_mid: extracting >2% kernel shapes/meta
+- 2026-06-20 15:59:03 UTC: benchmark - sharegpt_high: dataset=sharegpt, num_prompts=500, max_concurrency=100
+- 2026-06-20 16:00:02 UTC: extract - sharegpt_high: extracting >2% kernel shapes/meta
+- 2026-06-20 16:00:04 UTC: completed - Step-3.5-Flash BF16 benchmark/profile/shape extraction complete
+- 2026-06-20 16:00:36 UTC: weights_cleanup - primary: /root/.cache/huggingface/hub/models--stepfun-ai--Step-3.5-Flash: deleted after completed run, size_before=372G; lock=/root/.cache/huggingface/hub/.locks/models--stepfun-ai--Step-3.5-Flash

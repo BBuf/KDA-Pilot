@@ -1,0 +1,99 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_64x64_64x16_2x1_2cta_v_bz_TNT",
+  "labels": [
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 3.815906700750895,
+  "model": "Qwen/Qwen3-Coder-Next",
+  "model_slug": "qwen3_coder_next",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::matmul",
+      "kernel_dur_us": 1765.856,
+      "provenance": "external_id=176457",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            118,
+            2048
+          ],
+          [
+            2048,
+            512
+          ]
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          [
+            1,
+            2048
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 1295.264,
+      "provenance": "external_id=164750",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[-1, 128]"
+        ],
+        "Input Dims": [
+          [
+            17184,
+            128
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            128,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen3_coder_next/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_64x64_64x16_2x1_2cta_v_bz_tnt__754283498e",
+  "total_calls": 288,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 288,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 179.44739930555556,
+      "pct_of_gpu": 3.815906700750895,
+      "top_cpu_ops": [
+        "aten::view",
+        "aten::matmul"
+      ],
+      "total_us": 51680.851
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void fused_a_gemm_kernel<1, 2112, 7168, 16, 8, 256, 16>(__nv_bfloat16*, __nv_bfloat16 const*, __nv_bfloat16 const*, int)",
+  "labels": [
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 7.725724383923018,
+  "model": "moonshotai/Kimi-K2.6",
+  "model_slug": "kimi_k26",
+  "shape_samples": [
+    {
+      "cpu_op": "sgl_kernel::dsv3_fused_a_gemm",
+      "kernel_dur_us": 1485.312,
+      "provenance": "external_id=107260",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            1,
+            2112
+          ],
+          [
+            1,
+            7168
+          ],
+          [
+            7168,
+            2112
+          ]
+        ],
+        "Input Strides": [
+          [
+            2112,
+            1
+          ],
+          [
+            7168,
+            1
+          ],
+          [
+            1,
+            7168
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "kimi_k26/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "gemm__fused_a_gemm_kernel__bda001cd80",
+  "total_calls": 488,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 488,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 819.2806045081967,
+      "pct_of_gpu": 7.725724383923018,
+      "top_cpu_ops": [
+        "sgl_kernel::dsv3_fused_a_gemm"
+      ],
+      "total_us": 399808.935
+    }
+  ]
+}

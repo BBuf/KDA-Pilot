@@ -1,0 +1,112 @@
+{
+  "category": "moe",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "compute_expert_blockscale_offsets(int const*, int*, int*, int*, long)",
+  "labels": [
+    "random_low",
+    "random_high"
+  ],
+  "max_pct_of_gpu": 5.731009804352923,
+  "model": "poolside/Laguna-M.1-NVFP4",
+  "model_slug": "laguna_m1",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::_local_scalar_dense",
+      "kernel_dur_us": 15.648,
+      "provenance": "external_id=4675",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          []
+        ],
+        "Input Strides": [
+          []
+        ],
+        "Input type": [
+          "int"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 15.264,
+      "provenance": "external_id=28070",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[2774, 1, 128]",
+          "[1280, 128, 1]",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            2816,
+            1,
+            128
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1280,
+            128,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "laguna_m1/b200/docs/kernel_shapes_random_low.json",
+    "laguna_m1/b200/docs/kernel_shapes_random_high.json"
+  ],
+  "task_id": "moe__compute_expert_blockscale_offsets__80d447739f",
+  "total_calls": 9648,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 4824,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 12.185295190713102,
+      "pct_of_gpu": 5.731009804352923,
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::_local_scalar_dense",
+        "aten::index",
+        "aten::empty"
+      ],
+      "total_us": 58781.864
+    },
+    {
+      "calls": 4824,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 12.192864635157546,
+      "pct_of_gpu": 2.218312422845613,
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::as_strided",
+        "aten::add",
+        "aten::cat"
+      ],
+      "total_us": 58818.379
+    }
+  ]
+}

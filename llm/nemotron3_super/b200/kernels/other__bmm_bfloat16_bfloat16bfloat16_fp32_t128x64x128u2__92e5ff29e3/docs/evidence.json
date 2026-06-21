@@ -1,0 +1,204 @@
+{
+  "category": "other",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "bmm_Bfloat16_Bfloat16Bfloat16_Fp32_t128x64x128u2_s5_et128x64_m256x64x16_c2x1x1_rM_BN_transOut_schPd2x1x2x3_bN_rgTma_clmp_dynB_sm100f",
+  "labels": [
+    "random_mid",
+    "random_high",
+    "sharegpt_mid",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 7.5412463793224145,
+  "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",
+  "model_slug": "nemotron3_super",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::empty",
+      "kernel_dur_us": 656.129,
+      "provenance": "external_id=16016",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[1, 128, 2, 128, 128]",
+          "6",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 651.553,
+      "provenance": "external_id=57208",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[5]",
+          "[1]",
+          "94"
+        ],
+        "Input Dims": [
+          [
+            165
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "int",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::item",
+      "kernel_dur_us": 647.233,
+      "provenance": "external_id=46226",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          []
+        ],
+        "Input Strides": [
+          []
+        ],
+        "Input type": [
+          "long int"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::remainder",
+      "kernel_dur_us": 426.304,
+      "provenance": "external_id=89733",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "128"
+        ],
+        "Input Dims": [
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          []
+        ],
+        "Input type": [
+          "int",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "nemotron3_super/b200/docs/kernel_shapes_random_mid.json",
+    "nemotron3_super/b200/docs/kernel_shapes_random_high.json",
+    "nemotron3_super/b200/docs/kernel_shapes_sharegpt_mid.json",
+    "nemotron3_super/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "other__bmm_bfloat16_bfloat16bfloat16_fp32_t128x64x128u2__92e5ff29e3",
+  "total_calls": 1280,
+  "workload_count": 4,
+  "workloads": [
+    {
+      "calls": 160,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 618.38223125,
+      "pct_of_gpu": 5.778992793332144,
+      "top_cpu_ops": [
+        "aten::empty",
+        "sglang::outplace_all_reduce"
+      ],
+      "total_us": 98941.157
+    },
+    {
+      "calls": 480,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 603.5654041666666,
+      "pct_of_gpu": 7.5412463793224145,
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::slice",
+        "aten::mm",
+        "aten::as_strided",
+        "sglang::nemotron_mamba2_with_output"
+      ],
+      "total_us": 289711.394
+    },
+    {
+      "calls": 160,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 409.794275,
+      "pct_of_gpu": 4.73089971657454,
+      "top_cpu_ops": [
+        "aten::fill_",
+        "aten::copy_",
+        "sglang::nemotron_mamba2_with_output",
+        "aten::remainder",
+        "sglang::outplace_all_reduce"
+      ],
+      "total_us": 65567.084
+    },
+    {
+      "calls": 480,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 444.09174791666663,
+      "pct_of_gpu": 6.715157907942275,
+      "top_cpu_ops": [
+        "aten::copy_",
+        "sglang::nemotron_mamba2_with_output",
+        "aten::empty_strided",
+        "aten::item"
+      ],
+      "total_us": 213164.039
+    }
+  ]
+}

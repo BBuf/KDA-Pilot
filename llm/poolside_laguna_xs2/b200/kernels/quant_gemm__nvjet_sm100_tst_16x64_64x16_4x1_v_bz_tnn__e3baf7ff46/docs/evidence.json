@@ -1,0 +1,104 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_16x64_64x16_4x1_v_bz_TNN",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 5.796602960894949,
+  "model": "poolside/Laguna-XS.2-FP8",
+  "model_slug": "poolside_laguna_xs2",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 8.129,
+      "provenance": "external_id=3616",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1, 1]",
+          "[0, 0]",
+          ""
+        ],
+        "Input Dims": [
+          [
+            4097,
+            262148
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            262148,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "int",
+          "ScalarList",
+          "ScalarList",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::view",
+      "kernel_dur_us": 8.128,
+      "provenance": "external_id=4236",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[-1]"
+        ],
+        "Input Dims": [
+          [
+            1,
+            1
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1,
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "int",
+          "ScalarList"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "poolside_laguna_xs2/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_16x64_64x16_4x1_v_bz_tnn__e3baf7ff46",
+  "total_calls": 1800,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 1800,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 7.054632777777778,
+      "pct_of_gpu": 5.796602960894949,
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::view",
+        "aten::neg",
+        "aten::resolve_neg",
+        "aten::empty"
+      ],
+      "total_us": 12698.339
+    }
+  ]
+}

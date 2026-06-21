@@ -1,0 +1,148 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void (anonymous namespace)::all_reduce_two_shot_kernel<__nv_bfloat16, 4u, true>(host::distributed::AllReduceData const*, (anonymous namespace)::AllReduceParams, device::distributed::PullController)",
+  "labels": [
+    "random_high",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 12.597293767325109,
+  "model": "poolside/Laguna-XS.2-FP8",
+  "model_slug": "poolside_laguna_xs2",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::cat",
+      "kernel_dur_us": 2796.871,
+      "provenance": "external_id=21160",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            [
+              704
+            ]
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            [
+              1
+            ]
+          ],
+          []
+        ],
+        "Input type": [
+          "TensorList",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::narrow",
+      "kernel_dur_us": 32921.731,
+      "provenance": "external_id=51125",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0",
+          "320",
+          "41"
+        ],
+        "Input Dims": [
+          [
+            361
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "Scalar",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::cat",
+      "kernel_dur_us": 1901.124,
+      "provenance": "external_id=55830",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            [
+              512
+            ]
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            [
+              1
+            ]
+          ],
+          []
+        ],
+        "Input type": [
+          "TensorList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "poolside_laguna_xs2/b200/docs/kernel_shapes_random_high.json",
+    "poolside_laguna_xs2/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "comm__comm__9dd2e02622",
+  "total_calls": 972,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 324,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 52.41634259259259,
+      "pct_of_gpu": 4.154589363235315,
+      "top_cpu_ops": [
+        "aten::cat",
+        "Torch-Compiled Region: 5/2"
+      ],
+      "total_us": 16982.895
+    },
+    {
+      "calls": 648,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 86.61399074074075,
+      "pct_of_gpu": 12.597293767325109,
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3",
+        "aten::narrow",
+        "aten::cat"
+      ],
+      "total_us": 56125.866
+    }
+  ]
+}

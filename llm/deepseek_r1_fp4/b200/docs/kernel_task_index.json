@@ -1,0 +1,2794 @@
+{
+  "audit": {
+    "empty_shape_row_count": 0,
+    "row_count": 52,
+    "strong_row_count": 26,
+    "strong_task_count": 11,
+    "weak_or_empty_only_labels": [],
+    "weak_row_count": 26,
+    "zero_row_labels": []
+  },
+  "model": "nvidia/DeepSeek-R1-0528-FP4-v2",
+  "model_dir": "llm/deepseek_r1_fp4/b200",
+  "model_slug": "deepseek_r1_fp4",
+  "platform": "b200",
+  "skipped_rows": [
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi8ELi8ELi2ENS6_IJiiNS5_1CILi1EEEEEENS_4arch5Sm100EEENS6_IJNSC_ILi256EEENSC_ILi64EEESI_EEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSD_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEEST_EEEiEEENS6_IJSD_iEEEEEENS6_IJSY_NS6_IJNS6_IJSO_SD_EEENSC_ILi512EEEEEENS6_IJSO_iEEEEEEEEEEESN_S18_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_23SM100_MMA_MXF4_2x1SM_SSISL_SL_fSM_Li256ELi64ELi16ELNS5_4UMMA5MajorE0ELS1D_0ELNS1C_7ScaleInE0ELS1E_0EEEEEENSR_INS6_IJSD_SD_SD_EEENS6_IJSO_SO_SO_EEEEENS6_IJNS5_10UnderscoreES1K_S1K_EEEEENS6_IJNS5_28SM100_TMA_2SM_LOAD_MULTICASTES1N_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSR_INS6_IJNSC_ILi8EEESI_EEENS6_IJSI_SD_EEEEEEENSR_INS6_IJNS6_IJNS6_IJSU_SD_EEESX_EEESD_NS6_IJSD_ST_EEEEEENS6_IJNS6_IJNS6_IJSX_S12_EEES11_EEESO_NS6_IJST_S12_EEEEEEEEEEEvNS5_8identityES1O_S28_vS29_EENS_8epilogue10collective18CollectiveEpilogueINS2B_31Sm100PtrArrayTmaWarpSpecializedILi2ELi2ELi32ELb0ELb0EEEJNS6_IJNSC_ILi128EEESJ_SI_EEENS6_IJNSR_IS2G_SD_EENSR_ISS_SD_EEEEEvPNS6_IJSD_lSO_EEEvS2M_NS2B_6fusion15FusionCallbacksIS2F_NS2N_37ScaledAccPerRowBiasPerColScaleScatterINS_6layout11ColumnMajorENS_10bfloat16_tEfS2S_ffLi8ELi8ELNS_15FloatRoundStyleE2EEES2H_S2K_JNS1P_IS1R_NS1S_ILi16EEENSR_INS6_IJSJ_S1U_EEENS6_IJSD_SJ_EEEEEEENS5_17SM90_U16x8_STSM_TEEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_16dp256b4xENS5_13SM90_TMA_LOADES2Z_NS5_17SM75_U16x8_LDSM_TENS5_14SM90_TMA_STOREES2Z_S30_NS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEEEEEvvEEEEvNT_6ParamsE",
+      "label": "random_low",
+      "pct_of_gpu": 7.522482697749162,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "sglang::flashinfer_allreduce_residual_rmsnorm",
+        "sglang::fp4_gemm",
+        "sglang::fused_topk_deepseek",
+        "aten::as_strided",
+        "aten::narrow"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi8ELi8ELi2ENS6_IJNS5_1CILi2EEENSC_ILi1EEESE_EEENS_4arch5Sm100EEENS6_IJNSC_ILi256EEENSC_ILi64EEESJ_EEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSE_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEESU_EEEiEEENS6_IJSE_iEEEEEENS6_IJSZ_NS6_IJNS6_IJSP_SE_EEENSC_ILi512EEEEEENS6_IJSP_iEEEEEEEEEEESO_S19_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_23SM100_MMA_MXF4_2x1SM_SSISM_SM_fSN_Li256ELi64ELi16ELNS5_4UMMA5MajorE0ELS1E_0ELNS1D_7ScaleInE0ELS1F_0EEEEEENSS_INS6_IJSE_SE_SE_EEENS6_IJSP_SP_SP_EEEEENS6_IJNS5_10UnderscoreES1L_S1L_EEEEENS6_IJNS5_18SM100_TMA_2SM_LOADES1O_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSS_INS6_IJNSC_ILi8EEESJ_EEENS6_IJSJ_SE_EEEEEEENSS_INS6_IJNS6_IJNS6_IJSV_SE_EEESY_EEESE_NS6_IJSE_SU_EEEEEENS6_IJNS6_IJNS6_IJSY_S13_EEES12_EEESP_NS6_IJSU_S13_EEEEEEEEEEEvNS5_8identityENS6_IJS1O_NS5_28SM100_TMA_2SM_LOAD_MULTICASTEEEES29_vS2A_EENS_8epilogue10collective18CollectiveEpilogueINS2E_31Sm100PtrArrayTmaWarpSpecializedILi2ELi2ELi32ELb0ELb0EEEJNS6_IJNSC_ILi128EEESK_SJ_EEENS6_IJNSS_IS2J_SE_EENSS_IST_SE_EEEEEvPNS6_IJSE_lSP_EEENS_10bfloat16_tES2P_NS2E_6fusion15FusionCallbacksIS2I_NS2R_17LinearCombinationIS2Q_fvfLNS_15FloatRoundStyleE2EEES2K_S2N_JEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_16dp256b4xENS5_13SM90_TMA_LOADENS1Q_IS1S_NS1T_ILi16EEENSS_INS6_IJSK_S1V_EEENS6_IJSE_SK_EEEEEEENS5_17SM75_U16x8_LDSM_TENS5_14SM90_TMA_STOREES36_NS5_17SM90_U16x8_STSM_TENS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEEEEEvvEEEEvNT_6ParamsE",
+      "label": "random_low",
+      "pct_of_gpu": 3.610653993668121,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "sglang::outplace_all_reduce",
+        "aten::empty",
+        "sglang::fused_topk_deepseek",
+        "aten::_to_copy",
+        "aten::add"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void (anonymous namespace)::all_reduce_one_shot_push_kernel<__nv_bfloat16, 8u, true>((anonymous namespace)::AllReducePushData, device::distributed::PushController)",
+      "label": "random_low",
+      "pct_of_gpu": 2.316861438467921,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "gloo:broadcast",
+        "aten::copy_",
+        "aten::empty_strided",
+        "aten::sub",
+        "aten::mul"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi7ELi8ELi2ENS6_IJiiNS5_1CILi1EEEEEENS_4arch5Sm100EEENS6_IJNSC_ILi128EEENSC_ILi64EEENSC_ILi256EEEEEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSD_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEESU_EEEiEEENS6_IJSD_iEEEEEENS6_IJSZ_NS6_IJNS6_IJSP_SD_EEENSC_ILi512EEEEEENS6_IJSP_iEEEEEEEEEEESO_S19_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_17SM100_MMA_MXF4_SSISM_SM_fSN_Li128ELi64ELi16ELNS5_4UMMA5MajorE0ELS1E_0ELNS1D_7ScaleInE0ELS1F_0EEEEEENSS_INS6_IJSD_SD_SD_EEENS6_IJSP_SP_SP_EEEEENS6_IJNS5_10UnderscoreES1L_S1L_EEEEENS6_IJNS5_23SM90_TMA_LOAD_MULTICASTES1O_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSS_INS6_IJNSC_ILi8EEESK_EEENS6_IJSK_SD_EEEEEEENSS_INS6_IJNS6_IJNS6_IJSV_SD_EEESY_EEESD_NS6_IJSD_SU_EEEEEENS6_IJNS6_IJNS6_IJSY_S13_EEES12_EEESP_NS6_IJSU_S13_EEEEEEEEEEEvNS5_8identityES1P_S29_vS2A_EENS_8epilogue10collective18CollectiveEpilogueINS2C_31Sm100PtrArrayTmaWarpSpecializedILi2ELi2ELi32ELb0ELb0EEEJSL_NS6_IJNSS_ISI_SD_EENSS_IST_SD_EEEEEvSR_NS_10bfloat16_tESR_NS2C_6fusion15FusionCallbacksIS2G_NS2L_17LinearCombinationIS2K_fvfLNS_15FloatRoundStyleE2EEESL_S2J_JEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_32dp32b32xENS5_13SM90_TMA_LOADENS1Q_INS1R_ILi2ELi4ELi3EEENS1T_ILi16EEENSS_INS6_IJS1V_ST_EEENS6_IJST_SD_EEEEEEENS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEENS5_14SM90_TMA_STOREES31_S33_S33_EEEvvEEEEvNT_6ParamsE",
+      "label": "random_mid",
+      "pct_of_gpu": 4.169915549835108,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "nccl:all_reduce",
+        "aten::mm",
+        "aten::copy_"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi3ELi8ELi1ENS6_IJNS5_1CILi1EEESD_SD_EEENS_4arch5Sm100EEENS6_IJNSC_ILi128EEENSC_ILi256EEESJ_EEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSD_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEEST_EEEiEEENS6_IJSD_iEEEEEENS6_IJSY_NS6_IJNS6_IJSO_SD_EEENSC_ILi512EEEEEENS6_IJSO_iEEEEEEEEEEESN_S18_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_17SM100_MMA_MXF4_SSISL_SL_fSM_Li128ELi256ELi16ELNS5_4UMMA5MajorE0ELS1D_0ELNS1C_7ScaleInE0ELS1E_0EEEEEENSR_ISE_NS6_IJSO_SO_SO_EEEEENS6_IJNS5_10UnderscoreES1J_S1J_EEEEENS6_IJNS5_13SM90_TMA_LOADES1M_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSR_INS6_IJNSC_ILi8EEESJ_EEENS6_IJSJ_SD_EEEEEEENSR_INS6_IJNS6_IJNS6_IJSU_SD_EEESX_EEESD_NS6_IJSD_ST_EEEEEENS6_IJNS6_IJNS6_IJSX_S12_EEES11_EEESO_NS6_IJST_S12_EEEEEEEEEEEvNS5_8identityES1N_NS6_IJS1X_NSR_INS6_IJNS6_IJNS6_IJSU_NSC_ILi2EEEEEESX_EEESD_S20_EEENS6_IJS23_SO_NS6_IJST_NSC_ILi1024EEEEEEEEEEEEEEvS28_EENS_8epilogue10collective18CollectiveEpilogueINS2J_31Sm100PtrArrayTmaWarpSpecializedILi4ELi2ELi64ELb0ELb0EEEJSK_NS6_IJSI_NSC_ILi64EEEEEEvPNS6_IJSD_lSO_EEENS_10bfloat16_tES2R_NS2J_6fusion15FusionCallbacksIS2N_NS2T_17LinearCombinationIS2S_fvfLNS_15FloatRoundStyleE2EEESK_S2P_JEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_16dp256b8xES1M_NS1O_IS1Q_NS1R_ILi16EEENSR_INS6_IJS2O_S1T_EEENS6_IJSD_S2O_EEEEEEENS5_17SM75_U16x8_LDSM_TENS5_14SM90_TMA_STOREES37_NS5_17SM90_U16x8_STSM_TENS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEEEEEvvEEEEvNT_6ParamsE",
+      "label": "random_mid",
+      "pct_of_gpu": 3.7050308463859087,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::empty",
+        "aten::to",
+        "aten::copy_",
+        "aten::as_strided",
+        "aten::slice"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "void tensorrt_llm::kernels::cutlass_kernels::expandInputRowsKernel<__nv_bfloat16, __nv_fp4_e2m1, (tensorrt_llm::kernels::cutlass_kernels::TmaWarpSpecializedGroupedGemmInput::FpXBlockScalingType)1, false, false, std::integral_constant<bool, false> >(__nv_bfloat16 const*, __nv_fp4_e2m1*, float const*, float*, int const*, long, long, long, float const*, bool, long const*, unsigned char*, unsigned char const*, bool, long, __nv_bfloat16 const*)",
+      "label": "random_mid",
+      "pct_of_gpu": 3.1371213982710286,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::mm",
+        "aten::empty",
+        "aten::view",
+        "aten::_to_copy"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "void tensorrt_llm::kernels::cutlass_kernels::finalizeMoeRoutingKernel<__nv_bfloat16, __nv_bfloat16, __nv_bfloat16, (tensorrt_llm::kernels::cutlass_kernels::ScaleMode)1>(__nv_bfloat16 const*, __nv_bfloat16*, __nv_bfloat16 const*, float const*, int const*, int const*, long, long, long, int, int)",
+      "label": "random_mid",
+      "pct_of_gpu": 2.8633529883892628,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "nccl:all_reduce",
+        "gloo:broadcast",
+        "aten::mm",
+        "aten::cat"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi3ELi8ELi1ENS6_IJiiNS5_1CILi1EEEEEENS_4arch5Sm100EEENS6_IJNSC_ILi128EEENSC_ILi256EEESJ_EEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSD_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEEST_EEEiEEENS6_IJSD_iEEEEEENS6_IJSY_NS6_IJNS6_IJSO_SD_EEENSC_ILi512EEEEEENS6_IJSO_iEEEEEEEEEEESN_S18_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_17SM100_MMA_MXF4_SSISL_SL_fSM_Li128ELi256ELi16ELNS5_4UMMA5MajorE0ELS1D_0ELNS1C_7ScaleInE0ELS1E_0EEEEEENSR_INS6_IJSD_SD_SD_EEENS6_IJSO_SO_SO_EEEEENS6_IJNS5_10UnderscoreES1K_S1K_EEEEENS6_IJNS5_23SM90_TMA_LOAD_MULTICASTES1N_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSR_INS6_IJNSC_ILi8EEESJ_EEENS6_IJSJ_SD_EEEEEEENSR_INS6_IJNS6_IJNS6_IJSU_SD_EEESX_EEESD_NS6_IJSD_ST_EEEEEENS6_IJNS6_IJNS6_IJSX_S12_EEES11_EEESO_NS6_IJST_S12_EEEEEEEEEEEvNS5_8identityES1O_NS6_IJS1Y_NSR_INS6_IJNS6_IJNS6_IJSU_NSC_ILi2EEEEEESX_EEESD_S21_EEENS6_IJS24_SO_NS6_IJST_NSC_ILi1024EEEEEEEEEEEEEEvS29_EENS_8epilogue10collective18CollectiveEpilogueINS2K_31Sm100PtrArrayTmaWarpSpecializedILi4ELi2ELi64ELb0ELb0EEEJSK_NS6_IJSI_NSC_ILi64EEEEEEvPNS6_IJSD_lSO_EEENS_10bfloat16_tES2S_NS2K_6fusion15FusionCallbacksIS2O_NS2U_17LinearCombinationIS2T_fvfLNS_15FloatRoundStyleE2EEESK_S2Q_JEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_16dp256b8xENS5_13SM90_TMA_LOADENS1P_IS1R_NS1S_ILi16EEENSR_INS6_IJS2P_S1U_EEENS6_IJSD_S2P_EEEEEEENS5_17SM75_U16x8_LDSM_TENS5_14SM90_TMA_STOREES39_NS5_17SM90_U16x8_STSM_TENS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEEEEEvvEEEEvNT_6ParamsE",
+      "label": "random_mid",
+      "pct_of_gpu": 2.259952791146794,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::resize_",
+        "gloo:broadcast",
+        "aten::_index_put_impl_",
+        "aten::resolve_neg",
+        "aten::copy_"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi3ELi8ELi1ENS6_IJNS5_1CILi1EEESD_SD_EEENS_4arch5Sm100EEENS6_IJNSC_ILi128EEENSC_ILi256EEESJ_EEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSD_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEEST_EEEiEEENS6_IJSD_iEEEEEENS6_IJSY_NS6_IJNS6_IJSO_SD_EEENSC_ILi512EEEEEENS6_IJSO_iEEEEEEEEEEESN_S18_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_17SM100_MMA_MXF4_SSISL_SL_fSM_Li128ELi256ELi16ELNS5_4UMMA5MajorE0ELS1D_0ELNS1C_7ScaleInE0ELS1E_0EEEEEENSR_ISE_NS6_IJSO_SO_SO_EEEEENS6_IJNS5_10UnderscoreES1J_S1J_EEEEENS6_IJNS5_13SM90_TMA_LOADES1M_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSR_INS6_IJNSC_ILi8EEESJ_EEENS6_IJSJ_SD_EEEEEEENSR_INS6_IJNS6_IJNS6_IJSU_SD_EEESX_EEESD_NS6_IJSD_ST_EEEEEENS6_IJNS6_IJNS6_IJSX_S12_EEES11_EEESO_NS6_IJST_S12_EEEEEEEEEEEvNS5_8identityES1N_NS6_IJS1X_NSR_INS6_IJNS6_IJNS6_IJSU_NSC_ILi2EEEEEESX_EEESD_S20_EEENS6_IJS23_SO_NS6_IJST_NSC_ILi1024EEEEEEEEEEEEEEvS28_EENS_8epilogue10collective18CollectiveEpilogueINS2J_31Sm100PtrArrayTmaWarpSpecializedILi4ELi2ELi64ELb0ELb0EEEJSK_NS6_IJSI_NSC_ILi64EEEEEEvPNS6_IJSD_lSO_EEENS_10bfloat16_tES2R_NS2J_6fusion15FusionCallbacksIS2N_NS2T_17LinearCombinationIS2S_fvfLNS_15FloatRoundStyleE2EEESK_S2P_JEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_16dp256b8xES1M_NS1O_IS1Q_NS1R_ILi16EEENSR_INS6_IJS2O_S1T_EEENS6_IJSD_S2O_EEEEEEENS5_17SM75_U16x8_LDSM_TENS5_14SM90_TMA_STOREES37_NS5_17SM90_U16x8_STSM_TENS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEEEEEvvEEEEvNT_6ParamsE",
+      "label": "random_high",
+      "pct_of_gpu": 14.888166798845853,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::copy_",
+        "aten::to",
+        "aten::_index_put_impl_"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi7ELi8ELi2ENS6_IJiiNS5_1CILi1EEEEEENS_4arch5Sm100EEENS6_IJNSC_ILi128EEENSC_ILi64EEENSC_ILi256EEEEEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSD_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEESU_EEEiEEENS6_IJSD_iEEEEEENS6_IJSZ_NS6_IJNS6_IJSP_SD_EEENSC_ILi512EEEEEENS6_IJSP_iEEEEEEEEEEESO_S19_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_17SM100_MMA_MXF4_SSISM_SM_fSN_Li128ELi64ELi16ELNS5_4UMMA5MajorE0ELS1E_0ELNS1D_7ScaleInE0ELS1F_0EEEEEENSS_INS6_IJSD_SD_SD_EEENS6_IJSP_SP_SP_EEEEENS6_IJNS5_10UnderscoreES1L_S1L_EEEEENS6_IJNS5_23SM90_TMA_LOAD_MULTICASTES1O_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSS_INS6_IJNSC_ILi8EEESK_EEENS6_IJSK_SD_EEEEEEENSS_INS6_IJNS6_IJNS6_IJSV_SD_EEESY_EEESD_NS6_IJSD_SU_EEEEEENS6_IJNS6_IJNS6_IJSY_S13_EEES12_EEESP_NS6_IJSU_S13_EEEEEEEEEEEvNS5_8identityES1P_S29_vS2A_EENS_8epilogue10collective18CollectiveEpilogueINS2C_31Sm100PtrArrayTmaWarpSpecializedILi2ELi2ELi32ELb0ELb0EEEJSL_NS6_IJNSS_ISI_SD_EENSS_IST_SD_EEEEEvSR_NS_10bfloat16_tESR_NS2C_6fusion15FusionCallbacksIS2G_NS2L_17LinearCombinationIS2K_fvfLNS_15FloatRoundStyleE2EEESL_S2J_JEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_32dp32b32xENS5_13SM90_TMA_LOADENS1Q_INS1R_ILi2ELi4ELi3EEENS1T_ILi16EEENSS_INS6_IJS1V_ST_EEENS6_IJST_SD_EEEEEEENS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEENS5_14SM90_TMA_STOREES31_S33_S33_EEEvvEEEEvNT_6ParamsE",
+      "label": "random_high",
+      "pct_of_gpu": 3.6628593145566466,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::empty",
+        "sglang::flashinfer_allreduce_residual_rmsnorm",
+        "aten::view",
+        "aten::select"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi8ELi8ELi2ENS6_IJNS5_1CILi2EEENSC_ILi1EEESE_EEENS_4arch5Sm100EEENS6_IJNSC_ILi256EEENSC_ILi64EEESJ_EEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSE_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEESU_EEEiEEENS6_IJSE_iEEEEEENS6_IJSZ_NS6_IJNS6_IJSP_SE_EEENSC_ILi512EEEEEENS6_IJSP_iEEEEEEEEEEESO_S19_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_23SM100_MMA_MXF4_2x1SM_SSISM_SM_fSN_Li256ELi64ELi16ELNS5_4UMMA5MajorE0ELS1E_0ELNS1D_7ScaleInE0ELS1F_0EEEEEENSS_INS6_IJSE_SE_SE_EEENS6_IJSP_SP_SP_EEEEENS6_IJNS5_10UnderscoreES1L_S1L_EEEEENS6_IJNS5_18SM100_TMA_2SM_LOADES1O_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSS_INS6_IJNSC_ILi8EEESJ_EEENS6_IJSJ_SE_EEEEEEENSS_INS6_IJNS6_IJNS6_IJSV_SE_EEESY_EEESE_NS6_IJSE_SU_EEEEEENS6_IJNS6_IJNS6_IJSY_S13_EEES12_EEESP_NS6_IJSU_S13_EEEEEEEEEEEvNS5_8identityENS6_IJS1O_NS5_28SM100_TMA_2SM_LOAD_MULTICASTEEEES29_vS2A_EENS_8epilogue10collective18CollectiveEpilogueINS2E_31Sm100PtrArrayTmaWarpSpecializedILi2ELi2ELi32ELb0ELb0EEEJNS6_IJNSC_ILi128EEESK_SJ_EEENS6_IJNSS_IS2J_SE_EENSS_IST_SE_EEEEEvPNS6_IJSE_lSP_EEENS_10bfloat16_tES2P_NS2E_6fusion15FusionCallbacksIS2I_NS2R_17LinearCombinationIS2Q_fvfLNS_15FloatRoundStyleE2EEES2K_S2N_JEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_16dp256b4xENS5_13SM90_TMA_LOADENS1Q_IS1S_NS1T_ILi16EEENSS_INS6_IJSK_S1V_EEENS6_IJSE_SK_EEEEEEENS5_17SM75_U16x8_LDSM_TENS5_14SM90_TMA_STOREES36_NS5_17SM90_U16x8_STSM_TENS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEEEEEvvEEEEvNT_6ParamsE",
+      "label": "random_high",
+      "pct_of_gpu": 3.179772007177493,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::empty",
+        "aten::copy_",
+        "gloo:broadcast"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "void tensorrt_llm::kernels::cutlass_kernels::finalizeMoeRoutingKernel<__nv_bfloat16, __nv_bfloat16, __nv_bfloat16, (tensorrt_llm::kernels::cutlass_kernels::ScaleMode)1>(__nv_bfloat16 const*, __nv_bfloat16*, __nv_bfloat16 const*, float const*, int const*, int const*, long, long, long, int, int)",
+      "label": "random_high",
+      "pct_of_gpu": 2.926082082557144,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "gloo:broadcast",
+        "c10d::_allgather_base_",
+        "aten::mm",
+        "aten::empty_strided"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x64_64x16_2x1_2cta_v_bz_TNT",
+      "label": "random_high",
+      "pct_of_gpu": 2.5630925341509787,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "gloo:broadcast"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi7ELi8ELi2ENS6_IJNS5_1CILi1EEESD_SD_EEENS_4arch5Sm100EEENS6_IJNSC_ILi128EEENSC_ILi64EEENSC_ILi256EEEEEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSD_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEESU_EEEiEEENS6_IJSD_iEEEEEENS6_IJSZ_NS6_IJNS6_IJSP_SD_EEENSC_ILi512EEEEEENS6_IJSP_iEEEEEEEEEEESO_S19_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_17SM100_MMA_MXF4_SSISM_SM_fSN_Li128ELi64ELi16ELNS5_4UMMA5MajorE0ELS1E_0ELNS1D_7ScaleInE0ELS1F_0EEEEEENSS_ISE_NS6_IJSP_SP_SP_EEEEENS6_IJNS5_10UnderscoreES1K_S1K_EEEEENS6_IJNS5_13SM90_TMA_LOADES1N_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSS_INS6_IJNSC_ILi8EEESK_EEENS6_IJSK_SD_EEEEEEENSS_INS6_IJNS6_IJNS6_IJSV_SD_EEESY_EEESD_NS6_IJSD_SU_EEEEEENS6_IJNS6_IJNS6_IJSY_S13_EEES12_EEESP_NS6_IJSU_S13_EEEEEEEEEEEvNS5_8identityES1O_S28_vS29_EENS_8epilogue10collective18CollectiveEpilogueINS2B_31Sm100PtrArrayTmaWarpSpecializedILi2ELi2ELi32ELb0ELb0EEEJSL_NS6_IJNSS_ISI_SD_EENSS_IST_SD_EEEEEvPNS6_IJSD_lSP_EEENS_10bfloat16_tES2K_NS2B_6fusion15FusionCallbacksIS2F_NS2M_17LinearCombinationIS2L_fvfLNS_15FloatRoundStyleE2EEESL_S2I_JEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_16dp256b4xES1N_NS1P_IS1R_NS1S_ILi16EEENSS_INS6_IJSJ_S1U_EEENS6_IJSD_SJ_EEEEEEENS5_17SM75_U16x8_LDSM_TENS5_14SM90_TMA_STOREES30_NS5_17SM90_U16x8_STSM_TENS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEEEEEvvEEEEvNT_6ParamsE",
+      "label": "random_high",
+      "pct_of_gpu": 2.431478274437273,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::empty",
+        "aten::copy_",
+        "aten::resolve_neg",
+        "aten::as_strided"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi8ELi8ELi2ENS6_IJiiNS5_1CILi1EEEEEENS_4arch5Sm100EEENS6_IJNSC_ILi256EEENSC_ILi64EEESI_EEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSD_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEEST_EEEiEEENS6_IJSD_iEEEEEENS6_IJSY_NS6_IJNS6_IJSO_SD_EEENSC_ILi512EEEEEENS6_IJSO_iEEEEEEEEEEESN_S18_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_23SM100_MMA_MXF4_2x1SM_SSISL_SL_fSM_Li256ELi64ELi16ELNS5_4UMMA5MajorE0ELS1D_0ELNS1C_7ScaleInE0ELS1E_0EEEEEENSR_INS6_IJSD_SD_SD_EEENS6_IJSO_SO_SO_EEEEENS6_IJNS5_10UnderscoreES1K_S1K_EEEEENS6_IJNS5_28SM100_TMA_2SM_LOAD_MULTICASTES1N_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSR_INS6_IJNSC_ILi8EEESI_EEENS6_IJSI_SD_EEEEEEENSR_INS6_IJNS6_IJNS6_IJSU_SD_EEESX_EEESD_NS6_IJSD_ST_EEEEEENS6_IJNS6_IJNS6_IJSX_S12_EEES11_EEESO_NS6_IJST_S12_EEEEEEEEEEEvNS5_8identityES1O_S28_vS29_EENS_8epilogue10collective18CollectiveEpilogueINS2B_31Sm100PtrArrayTmaWarpSpecializedILi2ELi2ELi32ELb0ELb0EEEJNS6_IJNSC_ILi128EEESJ_SI_EEENS6_IJNSR_IS2G_SD_EENSR_ISS_SD_EEEEEvPNS6_IJSD_lSO_EEEvS2M_NS2B_6fusion15FusionCallbacksIS2F_NS2N_37ScaledAccPerRowBiasPerColScaleScatterINS_6layout11ColumnMajorENS_10bfloat16_tEfS2S_ffLi8ELi8ELNS_15FloatRoundStyleE2EEES2H_S2K_JNS1P_IS1R_NS1S_ILi16EEENSR_INS6_IJSJ_S1U_EEENS6_IJSD_SJ_EEEEEEENS5_17SM90_U16x8_STSM_TEEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_16dp256b4xENS5_13SM90_TMA_LOADES2Z_NS5_17SM75_U16x8_LDSM_TENS5_14SM90_TMA_STOREES2Z_S30_NS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEEEEEvvEEEEvNT_6ParamsE",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 6.255087973105945,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::empty_strided",
+        "aten::add",
+        "aten::copy_",
+        "aten::sum",
+        "aten::sub"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi8ELi8ELi2ENS6_IJNS5_1CILi2EEENSC_ILi1EEESE_EEENS_4arch5Sm100EEENS6_IJNSC_ILi256EEENSC_ILi64EEESJ_EEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSE_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEESU_EEEiEEENS6_IJSE_iEEEEEENS6_IJSZ_NS6_IJNS6_IJSP_SE_EEENSC_ILi512EEEEEENS6_IJSP_iEEEEEEEEEEESO_S19_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_23SM100_MMA_MXF4_2x1SM_SSISM_SM_fSN_Li256ELi64ELi16ELNS5_4UMMA5MajorE0ELS1E_0ELNS1D_7ScaleInE0ELS1F_0EEEEEENSS_INS6_IJSE_SE_SE_EEENS6_IJSP_SP_SP_EEEEENS6_IJNS5_10UnderscoreES1L_S1L_EEEEENS6_IJNS5_18SM100_TMA_2SM_LOADES1O_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSS_INS6_IJNSC_ILi8EEESJ_EEENS6_IJSJ_SE_EEEEEEENSS_INS6_IJNS6_IJNS6_IJSV_SE_EEESY_EEESE_NS6_IJSE_SU_EEEEEENS6_IJNS6_IJNS6_IJSY_S13_EEES12_EEESP_NS6_IJSU_S13_EEEEEEEEEEEvNS5_8identityENS6_IJS1O_NS5_28SM100_TMA_2SM_LOAD_MULTICASTEEEES29_vS2A_EENS_8epilogue10collective18CollectiveEpilogueINS2E_31Sm100PtrArrayTmaWarpSpecializedILi2ELi2ELi32ELb0ELb0EEEJNS6_IJNSC_ILi128EEESK_SJ_EEENS6_IJNSS_IS2J_SE_EENSS_IST_SE_EEEEEvPNS6_IJSE_lSP_EEENS_10bfloat16_tES2P_NS2E_6fusion15FusionCallbacksIS2I_NS2R_17LinearCombinationIS2Q_fvfLNS_15FloatRoundStyleE2EEES2K_S2N_JEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_16dp256b4xENS5_13SM90_TMA_LOADENS1Q_IS1S_NS1T_ILi16EEENSS_INS6_IJSK_S1V_EEENS6_IJSE_SK_EEEEEEENS5_17SM75_U16x8_LDSM_TENS5_14SM90_TMA_STOREES36_NS5_17SM90_U16x8_STSM_TENS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEEEEEvvEEEEvNT_6ParamsE",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 3.115724314162519,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::empty",
+        "aten::resolve_neg",
+        "aten::copy_",
+        "aten::as_strided",
+        "aten::empty_strided"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void fused_a_gemm_kernel<1, 2112, 7168, 16, 8, 256, 16>(__nv_bfloat16*, __nv_bfloat16 const*, __nv_bfloat16 const*, int)",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 2.30126370050749,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::as_strided",
+        "aten::empty",
+        "aten::empty_strided"
+      ]
+    },
+    {
+      "category": "attention",
+      "kernel": "fmhaSm100fKernel_QkvE4m3OBfloat16HQk576HV512HVPerCta256PagedKvDenseP64MultiCtasKvVarSeqQ16Kv128StaticSwapsAbForGen",
+      "label": "sharegpt_low",
+      "pct_of_gpu": 2.039298552040977,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::cat",
+        "aten::slice",
+        "aten::fill_"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi3ELi8ELi1ENS6_IJNS5_1CILi1EEESD_SD_EEENS_4arch5Sm100EEENS6_IJNSC_ILi128EEENSC_ILi256EEESJ_EEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSD_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEEST_EEEiEEENS6_IJSD_iEEEEEENS6_IJSY_NS6_IJNS6_IJSO_SD_EEENSC_ILi512EEEEEENS6_IJSO_iEEEEEEEEEEESN_S18_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_17SM100_MMA_MXF4_SSISL_SL_fSM_Li128ELi256ELi16ELNS5_4UMMA5MajorE0ELS1D_0ELNS1C_7ScaleInE0ELS1E_0EEEEEENSR_ISE_NS6_IJSO_SO_SO_EEEEENS6_IJNS5_10UnderscoreES1J_S1J_EEEEENS6_IJNS5_13SM90_TMA_LOADES1M_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSR_INS6_IJNSC_ILi8EEESJ_EEENS6_IJSJ_SD_EEEEEEENSR_INS6_IJNS6_IJNS6_IJSU_SD_EEESX_EEESD_NS6_IJSD_ST_EEEEEENS6_IJNS6_IJNS6_IJSX_S12_EEES11_EEESO_NS6_IJST_S12_EEEEEEEEEEEvNS5_8identityES1N_NS6_IJS1X_NSR_INS6_IJNS6_IJNS6_IJSU_NSC_ILi2EEEEEESX_EEESD_S20_EEENS6_IJS23_SO_NS6_IJST_NSC_ILi1024EEEEEEEEEEEEEEvS28_EENS_8epilogue10collective18CollectiveEpilogueINS2J_31Sm100PtrArrayTmaWarpSpecializedILi4ELi2ELi64ELb0ELb0EEEJSK_NS6_IJSI_NSC_ILi64EEEEEEvPNS6_IJSD_lSO_EEENS_10bfloat16_tES2R_NS2J_6fusion15FusionCallbacksIS2N_NS2T_17LinearCombinationIS2S_fvfLNS_15FloatRoundStyleE2EEESK_S2P_JEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_16dp256b8xES1M_NS1O_IS1Q_NS1R_ILi16EEENSR_INS6_IJS2O_S1T_EEENS6_IJSD_S2O_EEEEEEENS5_17SM75_U16x8_LDSM_TENS5_14SM90_TMA_STOREES37_NS5_17SM90_U16x8_STSM_TENS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEEEEEvvEEEEvNT_6ParamsE",
+      "label": "sharegpt_mid",
+      "pct_of_gpu": 5.218483076528406,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::empty",
+        "aten::as_strided",
+        "aten::argmax",
+        "aten::copy_",
+        "aten::sub"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi7ELi8ELi2ENS6_IJiiNS5_1CILi1EEEEEENS_4arch5Sm100EEENS6_IJNSC_ILi128EEENSC_ILi64EEENSC_ILi256EEEEEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSD_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEESU_EEEiEEENS6_IJSD_iEEEEEENS6_IJSZ_NS6_IJNS6_IJSP_SD_EEENSC_ILi512EEEEEENS6_IJSP_iEEEEEEEEEEESO_S19_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_17SM100_MMA_MXF4_SSISM_SM_fSN_Li128ELi64ELi16ELNS5_4UMMA5MajorE0ELS1E_0ELNS1D_7ScaleInE0ELS1F_0EEEEEENSS_INS6_IJSD_SD_SD_EEENS6_IJSP_SP_SP_EEEEENS6_IJNS5_10UnderscoreES1L_S1L_EEEEENS6_IJNS5_23SM90_TMA_LOAD_MULTICASTES1O_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSS_INS6_IJNSC_ILi8EEESK_EEENS6_IJSK_SD_EEEEEEENSS_INS6_IJNS6_IJNS6_IJSV_SD_EEESY_EEESD_NS6_IJSD_SU_EEEEEENS6_IJNS6_IJNS6_IJSY_S13_EEES12_EEESP_NS6_IJSU_S13_EEEEEEEEEEEvNS5_8identityES1P_S29_vS2A_EENS_8epilogue10collective18CollectiveEpilogueINS2C_31Sm100PtrArrayTmaWarpSpecializedILi2ELi2ELi32ELb0ELb0EEEJSL_NS6_IJNSS_ISI_SD_EENSS_IST_SD_EEEEEvSR_NS_10bfloat16_tESR_NS2C_6fusion15FusionCallbacksIS2G_NS2L_17LinearCombinationIS2K_fvfLNS_15FloatRoundStyleE2EEESL_S2J_JEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_32dp32b32xENS5_13SM90_TMA_LOADENS1Q_INS1R_ILi2ELi4ELi3EEENS1T_ILi16EEENSS_INS6_IJS1V_ST_EEENS6_IJST_SD_EEEEEEENS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEENS5_14SM90_TMA_STOREES31_S33_S33_EEEvvEEEEvNT_6ParamsE",
+      "label": "sharegpt_mid",
+      "pct_of_gpu": 3.9629358870201545,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "nccl:all_reduce",
+        "sglang::fp4_gemm",
+        "aten::mm",
+        "aten::sum"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi3ELi8ELi1ENS6_IJiiNS5_1CILi1EEEEEENS_4arch5Sm100EEENS6_IJNSC_ILi128EEENSC_ILi256EEESJ_EEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSD_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEEST_EEEiEEENS6_IJSD_iEEEEEENS6_IJSY_NS6_IJNS6_IJSO_SD_EEENSC_ILi512EEEEEENS6_IJSO_iEEEEEEEEEEESN_S18_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_17SM100_MMA_MXF4_SSISL_SL_fSM_Li128ELi256ELi16ELNS5_4UMMA5MajorE0ELS1D_0ELNS1C_7ScaleInE0ELS1E_0EEEEEENSR_INS6_IJSD_SD_SD_EEENS6_IJSO_SO_SO_EEEEENS6_IJNS5_10UnderscoreES1K_S1K_EEEEENS6_IJNS5_23SM90_TMA_LOAD_MULTICASTES1N_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSR_INS6_IJNSC_ILi8EEESJ_EEENS6_IJSJ_SD_EEEEEEENSR_INS6_IJNS6_IJNS6_IJSU_SD_EEESX_EEESD_NS6_IJSD_ST_EEEEEENS6_IJNS6_IJNS6_IJSX_S12_EEES11_EEESO_NS6_IJST_S12_EEEEEEEEEEEvNS5_8identityES1O_NS6_IJS1Y_NSR_INS6_IJNS6_IJNS6_IJSU_NSC_ILi2EEEEEESX_EEESD_S21_EEENS6_IJS24_SO_NS6_IJST_NSC_ILi1024EEEEEEEEEEEEEEvS29_EENS_8epilogue10collective18CollectiveEpilogueINS2K_31Sm100PtrArrayTmaWarpSpecializedILi4ELi2ELi64ELb0ELb0EEEJSK_NS6_IJSI_NSC_ILi64EEEEEEvPNS6_IJSD_lSO_EEENS_10bfloat16_tES2S_NS2K_6fusion15FusionCallbacksIS2O_NS2U_17LinearCombinationIS2T_fvfLNS_15FloatRoundStyleE2EEESK_S2Q_JEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_16dp256b8xENS5_13SM90_TMA_LOADENS1P_IS1R_NS1S_ILi16EEENSR_INS6_IJS2P_S1U_EEENS6_IJSD_S2P_EEEEEEENS5_17SM75_U16x8_LDSM_TENS5_14SM90_TMA_STOREES39_NS5_17SM90_U16x8_STSM_TENS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEEEEEvvEEEEvNT_6ParamsE",
+      "label": "sharegpt_mid",
+      "pct_of_gpu": 2.9683558443590528,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::_to_copy",
+        "aten::slice",
+        "aten::argmax",
+        "aten::empty"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "void tensorrt_llm::kernels::cutlass_kernels::finalizeMoeRoutingKernel<__nv_bfloat16, __nv_bfloat16, __nv_bfloat16, (tensorrt_llm::kernels::cutlass_kernels::ScaleMode)1>(__nv_bfloat16 const*, __nv_bfloat16*, __nv_bfloat16 const*, float const*, int const*, int const*, long, long, long, int, int)",
+      "label": "sharegpt_mid",
+      "pct_of_gpu": 2.912542555584434,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::resolve_neg",
+        "aten::linear",
+        "aten::copy_",
+        "gloo:broadcast",
+        "aten::empty"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "void tensorrt_llm::kernels::cutlass_kernels::expandInputRowsKernel<__nv_bfloat16, __nv_fp4_e2m1, (tensorrt_llm::kernels::cutlass_kernels::TmaWarpSpecializedGroupedGemmInput::FpXBlockScalingType)1, false, false, std::integral_constant<bool, false> >(__nv_bfloat16 const*, __nv_fp4_e2m1*, float const*, float*, int const*, long, long, long, float const*, bool, long const*, unsigned char*, unsigned char const*, bool, long, __nv_bfloat16 const*)",
+      "label": "sharegpt_mid",
+      "pct_of_gpu": 2.4386513360370503,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::empty",
+        "nccl:all_reduce",
+        "aten::copy_"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi8ELi8ELi2ENS6_IJNS5_1CILi2EEENSC_ILi1EEESE_EEENS_4arch5Sm100EEENS6_IJNSC_ILi256EEENSC_ILi64EEESJ_EEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSE_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEESU_EEEiEEENS6_IJSE_iEEEEEENS6_IJSZ_NS6_IJNS6_IJSP_SE_EEENSC_ILi512EEEEEENS6_IJSP_iEEEEEEEEEEESO_S19_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_23SM100_MMA_MXF4_2x1SM_SSISM_SM_fSN_Li256ELi64ELi16ELNS5_4UMMA5MajorE0ELS1E_0ELNS1D_7ScaleInE0ELS1F_0EEEEEENSS_INS6_IJSE_SE_SE_EEENS6_IJSP_SP_SP_EEEEENS6_IJNS5_10UnderscoreES1L_S1L_EEEEENS6_IJNS5_18SM100_TMA_2SM_LOADES1O_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSS_INS6_IJNSC_ILi8EEESJ_EEENS6_IJSJ_SE_EEEEEEENSS_INS6_IJNS6_IJNS6_IJSV_SE_EEESY_EEESE_NS6_IJSE_SU_EEEEEENS6_IJNS6_IJNS6_IJSY_S13_EEES12_EEESP_NS6_IJSU_S13_EEEEEEEEEEEvNS5_8identityENS6_IJS1O_NS5_28SM100_TMA_2SM_LOAD_MULTICASTEEEES29_vS2A_EENS_8epilogue10collective18CollectiveEpilogueINS2E_31Sm100PtrArrayTmaWarpSpecializedILi2ELi2ELi32ELb0ELb0EEEJNS6_IJNSC_ILi128EEESK_SJ_EEENS6_IJNSS_IS2J_SE_EENSS_IST_SE_EEEEEvPNS6_IJSE_lSP_EEENS_10bfloat16_tES2P_NS2E_6fusion15FusionCallbacksIS2I_NS2R_17LinearCombinationIS2Q_fvfLNS_15FloatRoundStyleE2EEES2K_S2N_JEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_16dp256b4xENS5_13SM90_TMA_LOADENS1Q_IS1S_NS1T_ILi16EEENSS_INS6_IJSK_S1V_EEENS6_IJSE_SK_EEEEEEENS5_17SM75_U16x8_LDSM_TENS5_14SM90_TMA_STOREES36_NS5_17SM90_U16x8_STSM_TENS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEEEEEvvEEEEvNT_6ParamsE",
+      "label": "sharegpt_mid",
+      "pct_of_gpu": 2.068292765177787,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::empty",
+        "gloo:broadcast",
+        "aten::_index_put_impl_",
+        "aten::empty_strided"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi3ELi8ELi1ENS6_IJNS5_1CILi1EEESD_SD_EEENS_4arch5Sm100EEENS6_IJNSC_ILi128EEENSC_ILi256EEESJ_EEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSD_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEEST_EEEiEEENS6_IJSD_iEEEEEENS6_IJSY_NS6_IJNS6_IJSO_SD_EEENSC_ILi512EEEEEENS6_IJSO_iEEEEEEEEEEESN_S18_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_17SM100_MMA_MXF4_SSISL_SL_fSM_Li128ELi256ELi16ELNS5_4UMMA5MajorE0ELS1D_0ELNS1C_7ScaleInE0ELS1E_0EEEEEENSR_ISE_NS6_IJSO_SO_SO_EEEEENS6_IJNS5_10UnderscoreES1J_S1J_EEEEENS6_IJNS5_13SM90_TMA_LOADES1M_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSR_INS6_IJNSC_ILi8EEESJ_EEENS6_IJSJ_SD_EEEEEEENSR_INS6_IJNS6_IJNS6_IJSU_SD_EEESX_EEESD_NS6_IJSD_ST_EEEEEENS6_IJNS6_IJNS6_IJSX_S12_EEES11_EEESO_NS6_IJST_S12_EEEEEEEEEEEvNS5_8identityES1N_NS6_IJS1X_NSR_INS6_IJNS6_IJNS6_IJSU_NSC_ILi2EEEEEESX_EEESD_S20_EEENS6_IJS23_SO_NS6_IJST_NSC_ILi1024EEEEEEEEEEEEEEvS28_EENS_8epilogue10collective18CollectiveEpilogueINS2J_31Sm100PtrArrayTmaWarpSpecializedILi4ELi2ELi64ELb0ELb0EEEJSK_NS6_IJSI_NSC_ILi64EEEEEEvPNS6_IJSD_lSO_EEENS_10bfloat16_tES2R_NS2J_6fusion15FusionCallbacksIS2N_NS2T_17LinearCombinationIS2S_fvfLNS_15FloatRoundStyleE2EEESK_S2P_JEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_16dp256b8xES1M_NS1O_IS1Q_NS1R_ILi16EEENSR_INS6_IJS2O_S1T_EEENS6_IJSD_S2O_EEEEEEENS5_17SM75_U16x8_LDSM_TENS5_14SM90_TMA_STOREES37_NS5_17SM90_U16x8_STSM_TENS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEEEEEvvEEEEvNT_6ParamsE",
+      "label": "sharegpt_high",
+      "pct_of_gpu": 8.014005287773564,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "gloo:broadcast",
+        "aten::_index_put_impl_",
+        "aten::as_strided",
+        "aten::slice"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5tupleIJlllEEEEENS1_10collective13CollectiveMmaINS1_51MainloopSm100ArrayTmaUmmaWarpSpecializedBlockScaledILi7ELi8ELi2ENS6_IJiiNS5_1CILi1EEEEEENS_4arch5Sm100EEENS6_IJNSC_ILi128EEENSC_ILi64EEENSC_ILi256EEEEEENS6_IJNS_12float_e2m1_tENS_13float_ue4m3_tEEEENS6_IJPNS6_IJlSD_NSC_ILi0EEEEEEPNS5_6LayoutINS6_IJNS6_IJNS6_IJNSC_ILi32EEENSC_ILi4EEEEEEiEEENS6_IJNS6_IJNSC_ILi16EEESU_EEEiEEENS6_IJSD_iEEEEEENS6_IJSZ_NS6_IJNS6_IJSP_SD_EEENSC_ILi512EEEEEENS6_IJSP_iEEEEEEEEEEESO_S19_NS5_8TiledMMAINS5_8MMA_AtomIJNS5_17SM100_MMA_MXF4_SSISM_SM_fSN_Li128ELi64ELi16ELNS5_4UMMA5MajorE0ELS1E_0ELNS1D_7ScaleInE0ELS1F_0EEEEEENSS_INS6_IJSD_SD_SD_EEENS6_IJSP_SP_SP_EEEEENS6_IJNS5_10UnderscoreES1L_S1L_EEEEENS6_IJNS5_23SM90_TMA_LOAD_MULTICASTES1O_EEENS6_IJNS5_14ComposedLayoutINS5_7SwizzleILi3ELi4ELi3EEENS5_18smem_ptr_flag_bitsILi4EEENSS_INS6_IJNSC_ILi8EEESK_EEENS6_IJSK_SD_EEEEEEENSS_INS6_IJNS6_IJNS6_IJSV_SD_EEESY_EEESD_NS6_IJSD_SU_EEEEEENS6_IJNS6_IJNS6_IJSY_S13_EEES12_EEESP_NS6_IJSU_S13_EEEEEEEEEEEvNS5_8identityES1P_S29_vS2A_EENS_8epilogue10collective18CollectiveEpilogueINS2C_31Sm100PtrArrayTmaWarpSpecializedILi2ELi2ELi32ELb0ELb0EEEJSL_NS6_IJNSS_ISI_SD_EENSS_IST_SD_EEEEEvSR_NS_10bfloat16_tESR_NS2C_6fusion15FusionCallbacksIS2G_NS2L_17LinearCombinationIS2K_fvfLNS_15FloatRoundStyleE2EEESL_S2J_JEEENS5_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_32dp32b32xENS5_13SM90_TMA_LOADENS1Q_INS1R_ILi2ELi4ELi3EEENS1T_ILi16EEENSS_INS6_IJS1V_ST_EEENS6_IJST_SD_EEEEEEENS5_39AutoVectorizingCopyWithAssumedAlignmentILi128EEENS5_14SM90_TMA_STOREES31_S33_S33_EEEvvEEEEvNT_6ParamsE",
+      "label": "sharegpt_high",
+      "pct_of_gpu": 2.579118479933172,
+      "reason": "weak_timestamp_shape",
+      "top_cpu_ops": [
+        "sglang::fp4_gemm",
+        "aten::copy_",
+        "aten::view",
+        "aten::empty",
+        "aten::cumsum"
+      ]
+    }
+  ],
+  "task_candidates": [
+    {
+      "category": "comm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "labels": [
+        "random_low",
+        "random_mid",
+        "random_high",
+        "sharegpt_low",
+        "sharegpt_mid",
+        "sharegpt_high"
+      ],
+      "max_pct_of_gpu": 34.500406774463634,
+      "model": "nvidia/DeepSeek-R1-0528-FP4-v2",
+      "model_slug": "deepseek_r1_fp4",
+      "shape_samples": [
+        {
+          "cpu_op": "sglang::flashinfer_allreduce_residual_rmsnorm",
+          "kernel_dur_us": 1353.701,
+          "provenance": "external_id=3533",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "9.9999999999999995e-07",
+              "2048",
+              "",
+              "False",
+              "False",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                39,
+                7168
+              ],
+              [
+                39,
+                7168
+              ],
+              [
+                7168
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::permute",
+          "kernel_dur_us": 1290.405,
+          "provenance": "external_id=5305",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[1, 0]"
+            ],
+            "Input Dims": [
+              [
+                1024,
+                7168
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1,
+                1024
+              ],
+              []
+            ],
+            "Input type": [
+              "unsigned char",
+              "ScalarList"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::slice",
+          "kernel_dur_us": 1251.303,
+          "provenance": "external_id=19077",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "2",
+              "128",
+              "9223372036854775807",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                39,
+                16,
+                192
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                3072,
+                192,
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::flashinfer_allreduce_residual_rmsnorm",
+          "kernel_dur_us": 1312.552,
+          "provenance": "external_id=86076",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "9.9999999999999995e-07",
+              "2048",
+              "",
+              "False",
+              "False",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                16,
+                7168
+              ],
+              [
+                16,
+                7168
+              ],
+              [
+                7168
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::flashinfer_allreduce_residual_rmsnorm",
+          "kernel_dur_us": 1972.361,
+          "provenance": "external_id=159485",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "9.9999999999999995e-07",
+              "2048",
+              "",
+              "False",
+              "False",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                65,
+                7168
+              ],
+              [
+                65,
+                7168
+              ],
+              [
+                7168
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::to",
+          "kernel_dur_us": 1971.975,
+          "provenance": "external_id=144126",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "4",
+              "False",
+              "False",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1,
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1,
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::flashinfer_allreduce_residual_rmsnorm",
+          "kernel_dur_us": 1970.443,
+          "provenance": "external_id=144238",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "9.9999999999999995e-07",
+              "2048",
+              "",
+              "False",
+              "False",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                6,
+                7168
+              ],
+              [
+                6,
+                7168
+              ],
+              [
+                7168
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::squeeze_",
+          "kernel_dur_us": 1968.968,
+          "provenance": "external_id=159367",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                1,
+                1
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::flashinfer_allreduce_residual_rmsnorm",
+          "kernel_dur_us": 2081.348,
+          "provenance": "external_id=223857",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "9.9999999999999995e-07",
+              "2048",
+              "",
+              "False",
+              "False",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                68,
+                7168
+              ],
+              [
+                68,
+                7168
+              ],
+              [
+                7168
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 2080.552,
+          "provenance": "external_id=223619",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[68, 512]",
+              "[2112, 1]",
+              "1536"
+            ],
+            "Input Dims": [
+              [
+                68,
+                576
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                2112,
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::flashinfer_allreduce_residual_rmsnorm",
+          "kernel_dur_us": 1989.925,
+          "provenance": "external_id=207854",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "9.9999999999999995e-07",
+              "2048",
+              "",
+              "False",
+              "False",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                28,
+                7168
+              ],
+              [
+                28,
+                7168
+              ],
+              [
+                7168
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_random_low.json",
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_random_mid.json",
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_random_high.json",
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_low.json",
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_mid.json",
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_high.json"
+      ],
+      "task_id": "comm__allreduce_fusion_kernel_oneshot_lamport__b9d8384154",
+      "total_calls": 49440,
+      "workload_count": 6,
+      "workloads": [
+        {
+          "calls": 8912,
+          "concurrency": "low",
+          "dataset": "random",
+          "label": "random_low",
+          "mean_us": 93.83438442549371,
+          "pct_of_gpu": 33.20672469590665,
+          "top_cpu_ops": [
+            "sglang::flashinfer_allreduce_residual_rmsnorm",
+            "aten::permute"
+          ],
+          "total_us": 836252.034
+        },
+        {
+          "calls": 7920,
+          "concurrency": "mid",
+          "dataset": "random",
+          "label": "random_mid",
+          "mean_us": 115.35792462121212,
+          "pct_of_gpu": 8.101751213086445,
+          "top_cpu_ops": [
+            "aten::slice",
+            "sglang::flashinfer_allreduce_residual_rmsnorm"
+          ],
+          "total_us": 913634.763
+        },
+        {
+          "calls": 7920,
+          "concurrency": "high",
+          "dataset": "random",
+          "label": "random_high",
+          "mean_us": 129.60578813131312,
+          "pct_of_gpu": 20.450006189134225,
+          "top_cpu_ops": [
+            "sglang::flashinfer_allreduce_residual_rmsnorm"
+          ],
+          "total_us": 1026477.842
+        },
+        {
+          "calls": 8912,
+          "concurrency": "low",
+          "dataset": "sharegpt",
+          "label": "sharegpt_low",
+          "mean_us": 78.56374124775584,
+          "pct_of_gpu": 32.392223959009776,
+          "top_cpu_ops": [
+            "sglang::flashinfer_allreduce_residual_rmsnorm"
+          ],
+          "total_us": 700160.062
+        },
+        {
+          "calls": 7888,
+          "concurrency": "mid",
+          "dataset": "sharegpt",
+          "label": "sharegpt_mid",
+          "mean_us": 300.1492553245436,
+          "pct_of_gpu": 32.15786846511662,
+          "top_cpu_ops": [
+            "sglang::flashinfer_allreduce_residual_rmsnorm",
+            "aten::to",
+            "aten::squeeze_"
+          ],
+          "total_us": 2367577.326
+        },
+        {
+          "calls": 7888,
+          "concurrency": "high",
+          "dataset": "sharegpt",
+          "label": "sharegpt_high",
+          "mean_us": 329.8199703346856,
+          "pct_of_gpu": 34.500406774463634,
+          "top_cpu_ops": [
+            "sglang::flashinfer_allreduce_residual_rmsnorm",
+            "aten::as_strided"
+          ],
+          "total_us": 2601619.926
+        }
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "nvjet_sm100_tst_64x8_64x16_1x4_h_bz_splitK_TNT",
+      "labels": [
+        "random_low",
+        "random_mid",
+        "random_high"
+      ],
+      "max_pct_of_gpu": 18.412960245340635,
+      "model": "nvidia/DeepSeek-R1-0528-FP4-v2",
+      "model_slug": "deepseek_r1_fp4",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::mm",
+          "kernel_dur_us": 1356.23,
+          "provenance": "external_id=3550",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                39,
+                7168
+              ],
+              [
+                7168,
+                256
+              ]
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::view",
+          "kernel_dur_us": 1293.221,
+          "provenance": "external_id=5322",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[-1]"
+            ],
+            "Input Dims": [
+              [
+                39,
+                7168
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::transpose",
+          "kernel_dur_us": 1216.421,
+          "provenance": "external_id=24968",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                4096,
+                512
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                512,
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_random_low.json",
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_random_mid.json",
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_random_high.json"
+      ],
+      "task_id": "quant_gemm__nvjet_sm100_tst_64x8_64x16_1x4_h_bz_splitk_tnt__5a2ad7d133",
+      "total_calls": 1416,
+      "workload_count": 3,
+      "workloads": [
+        {
+          "calls": 472,
+          "concurrency": "low",
+          "dataset": "random",
+          "label": "random_low",
+          "mean_us": 982.4099724576271,
+          "pct_of_gpu": 18.412960245340635,
+          "top_cpu_ops": [
+            "aten::mm",
+            "aten::view"
+          ],
+          "total_us": 463697.507
+        },
+        {
+          "calls": 472,
+          "concurrency": "mid",
+          "dataset": "random",
+          "label": "random_mid",
+          "mean_us": 825.8493749999999,
+          "pct_of_gpu": 3.4566000362947484,
+          "top_cpu_ops": [
+            "aten::transpose",
+            "aten::mm"
+          ],
+          "total_us": 389800.90499999997
+        },
+        {
+          "calls": 472,
+          "concurrency": "high",
+          "dataset": "random",
+          "label": "random_high",
+          "mean_us": 879.7484872881356,
+          "pct_of_gpu": 8.272645079350925,
+          "top_cpu_ops": [
+            "aten::mm"
+          ],
+          "total_us": 415241.286
+        }
+      ]
+    },
+    {
+      "category": "gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "void flashinfer::trtllm_dsv3_router_gemm::router_gemm_kernel<__nv_bfloat16, float, 128, 8, 16, 256, 7168>(float*, __nv_bfloat16 const*, __nv_bfloat16 const*)",
+      "labels": [
+        "sharegpt_low",
+        "sharegpt_mid",
+        "sharegpt_high"
+      ],
+      "max_pct_of_gpu": 17.092456265956088,
+      "model": "nvidia/DeepSeek-R1-0528-FP4-v2",
+      "model_slug": "deepseek_r1_fp4",
+      "shape_samples": [
+        {
+          "cpu_op": "sglang::flashinfer_dsv3_router_gemm",
+          "kernel_dur_us": 1321.288,
+          "provenance": "external_id=86089",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                16,
+                256
+              ],
+              [
+                16,
+                7168
+              ],
+              [
+                256,
+                7168
+              ]
+            ],
+            "Input Strides": [
+              [
+                256,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ]
+            ],
+            "Input type": [
+              "float",
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::slice",
+          "kernel_dur_us": 1216.133,
+          "provenance": "external_id=109644",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "2",
+              "512",
+              "9223372036854775807",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                16,
+                1,
+                576
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                2112,
+                576,
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty_strided",
+          "kernel_dur_us": 1242.597,
+          "provenance": "external_id=171629",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[16, 16, 128]",
+              "[2048, 128, 1]",
+              "24",
+              "0",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "ScalarList",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_low.json",
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_mid.json",
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_high.json"
+      ],
+      "task_id": "gemm__router_gemm_kernel__ee9078b477",
+      "total_calls": 1416,
+      "workload_count": 3,
+      "workloads": [
+        {
+          "calls": 472,
+          "concurrency": "low",
+          "dataset": "sharegpt",
+          "label": "sharegpt_low",
+          "mean_us": 782.7427372881356,
+          "pct_of_gpu": 17.092456265956088,
+          "top_cpu_ops": [
+            "sglang::flashinfer_dsv3_router_gemm"
+          ],
+          "total_us": 369454.572
+        },
+        {
+          "calls": 472,
+          "concurrency": "mid",
+          "dataset": "sharegpt",
+          "label": "sharegpt_mid",
+          "mean_us": 800.3382224576271,
+          "pct_of_gpu": 5.130960122528085,
+          "top_cpu_ops": [
+            "sglang::flashinfer_dsv3_router_gemm",
+            "aten::slice"
+          ],
+          "total_us": 377759.641
+        },
+        {
+          "calls": 472,
+          "concurrency": "high",
+          "dataset": "sharegpt",
+          "label": "sharegpt_high",
+          "mean_us": 910.5082563559322,
+          "pct_of_gpu": 5.69909967004596,
+          "top_cpu_ops": [
+            "sglang::flashinfer_dsv3_router_gemm",
+            "aten::empty_strided"
+          ],
+          "total_us": 429759.897
+        }
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "nvjet_sm100_tst_64x24_64x16_1x2_h_bz_splitK_TNT",
+      "labels": [
+        "random_low",
+        "random_mid",
+        "random_high"
+      ],
+      "max_pct_of_gpu": 11.106149905041963,
+      "model": "nvidia/DeepSeek-R1-0528-FP4-v2",
+      "model_slug": "deepseek_r1_fp4",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::mm",
+          "kernel_dur_us": 820.518,
+          "provenance": "external_id=4321",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                39,
+                7168
+              ],
+              [
+                7168,
+                2112
+              ]
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty_strided",
+          "kernel_dur_us": 704.548,
+          "provenance": "external_id=22001",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[39, 7168]",
+              "[7168, 1]",
+              "15",
+              "0",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "ScalarList",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_random_low.json",
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_random_mid.json",
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_random_high.json"
+      ],
+      "task_id": "quant_gemm__nvjet_sm100_tst_64x24_64x16_1x2_h_bz_splitk_tnt__a2d138c1c3",
+      "total_calls": 1488,
+      "workload_count": 3,
+      "workloads": [
+        {
+          "calls": 496,
+          "concurrency": "low",
+          "dataset": "random",
+          "label": "random_low",
+          "mean_us": 563.888191532258,
+          "pct_of_gpu": 11.106149905041963,
+          "top_cpu_ops": [
+            "aten::mm"
+          ],
+          "total_us": 279688.543
+        },
+        {
+          "calls": 496,
+          "concurrency": "mid",
+          "dataset": "random",
+          "label": "random_mid",
+          "mean_us": 478.07386693548386,
+          "pct_of_gpu": 2.102727371341478,
+          "top_cpu_ops": [
+            "aten::empty_strided",
+            "aten::mm"
+          ],
+          "total_us": 237124.638
+        },
+        {
+          "calls": 496,
+          "concurrency": "high",
+          "dataset": "random",
+          "label": "random_high",
+          "mean_us": 456.1594133064516,
+          "pct_of_gpu": 4.5075669167469385,
+          "top_cpu_ops": [
+            "aten::mm"
+          ],
+          "total_us": 226255.069
+        }
+      ]
+    },
+    {
+      "category": "gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "void fused_a_gemm_kernel<1, 2112, 7168, 16, 16, 256, 12>(__nv_bfloat16*, __nv_bfloat16 const*, __nv_bfloat16 const*, int)",
+      "labels": [
+        "sharegpt_low",
+        "sharegpt_mid",
+        "sharegpt_high"
+      ],
+      "max_pct_of_gpu": 10.776001466865743,
+      "model": "nvidia/DeepSeek-R1-0528-FP4-v2",
+      "model_slug": "deepseek_r1_fp4",
+      "shape_samples": [
+        {
+          "cpu_op": "sgl_kernel::dsv3_fused_a_gemm",
+          "kernel_dur_us": 666.53,
+          "provenance": "external_id=90299",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                16,
+                2112
+              ],
+              [
+                16,
+                7168
+              ],
+              [
+                7168,
+                2112
+              ]
+            ],
+            "Input Strides": [
+              [
+                2112,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 686.114,
+          "provenance": "external_id=110048",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[16, 1024]",
+              "0",
+              "",
+              "",
+              "False",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "Scalar",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 717.891,
+          "provenance": "external_id=171860",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                16,
+                8
+              ],
+              [
+                16,
+                8
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                9,
+                1
+              ],
+              [
+                8,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "int",
+              "int",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_low.json",
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_mid.json",
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_high.json"
+      ],
+      "task_id": "gemm__fused_a_gemm_kernel__23e7519307",
+      "total_calls": 1488,
+      "workload_count": 3,
+      "workloads": [
+        {
+          "calls": 496,
+          "concurrency": "low",
+          "dataset": "sharegpt",
+          "label": "sharegpt_low",
+          "mean_us": 469.6048064516129,
+          "pct_of_gpu": 10.776001466865743,
+          "top_cpu_ops": [
+            "sgl_kernel::dsv3_fused_a_gemm"
+          ],
+          "total_us": 232923.984
+        },
+        {
+          "calls": 496,
+          "concurrency": "mid",
+          "dataset": "sharegpt",
+          "label": "sharegpt_mid",
+          "mean_us": 471.3068931451613,
+          "pct_of_gpu": 3.1751814630812096,
+          "top_cpu_ops": [
+            "sgl_kernel::dsv3_fused_a_gemm",
+            "aten::empty"
+          ],
+          "total_us": 233768.219
+        },
+        {
+          "calls": 496,
+          "concurrency": "high",
+          "dataset": "sharegpt",
+          "label": "sharegpt_high",
+          "mean_us": 520.0755423387097,
+          "pct_of_gpu": 3.4208062146473175,
+          "top_cpu_ops": [
+            "sgl_kernel::dsv3_fused_a_gemm",
+            "aten::copy_"
+          ],
+          "total_us": 257957.469
+        }
+      ]
+    },
+    {
+      "category": "comm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_twoshot_sync<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>, std::array<int, 8>, std::array<int, 8>)",
+      "labels": [
+        "random_high",
+        "sharegpt_high"
+      ],
+      "max_pct_of_gpu": 10.163087128060702,
+      "model": "nvidia/DeepSeek-R1-0528-FP4-v2",
+      "model_slug": "deepseek_r1_fp4",
+      "shape_samples": [
+        {
+          "cpu_op": "sglang::flashinfer_allreduce_residual_rmsnorm",
+          "kernel_dur_us": 2175.147,
+          "provenance": "external_id=62348",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "9.9999999999999995e-07",
+              "2048",
+              "",
+              "False",
+              "False",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                1427,
+                7168
+              ],
+              [
+                1427,
+                7168
+              ],
+              [
+                7168
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 2043.337,
+          "provenance": "external_id=62130",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[0]",
+              "3",
+              "",
+              "",
+              "False",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "Scalar",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 1628.455,
+          "provenance": "external_id=77602",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                1427,
+                1,
+                64
+              ],
+              [
+                1427,
+                1,
+                64
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                64,
+                64,
+                1
+              ],
+              [
+                2112,
+                576,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::Float8_e4m3fn",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::flashinfer_allreduce_residual_rmsnorm",
+          "kernel_dur_us": 3060.626,
+          "provenance": "external_id=189619",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "9.9999999999999995e-07",
+              "2048",
+              "",
+              "False",
+              "False",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                1502,
+                7168
+              ],
+              [
+                1502,
+                7168
+              ],
+              [
+                7168
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 3044.684,
+          "provenance": "external_id=189397",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                1502,
+                1,
+                512
+              ],
+              [
+                1502,
+                1,
+                512
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                512,
+                512,
+                1
+              ],
+              [
+                512,
+                512,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::Float8_e4m3fn",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 1723.559,
+          "provenance": "external_id=173937",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[1502, 16, 128]",
+              "[4096, 256, 1]",
+              "128"
+            ],
+            "Input Dims": [
+              [
+                1502,
+                16,
+                256
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                4096,
+                256,
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_random_high.json",
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_high.json"
+      ],
+      "task_id": "comm__allreduce_fusion_kernel_twoshot_sync__c36567c3ee",
+      "total_calls": 1952,
+      "workload_count": 2,
+      "workloads": [
+        {
+          "calls": 976,
+          "concurrency": "high",
+          "dataset": "random",
+          "label": "random_high",
+          "mean_us": 522.6752868852459,
+          "pct_of_gpu": 10.163087128060702,
+          "top_cpu_ops": [
+            "sglang::flashinfer_allreduce_residual_rmsnorm",
+            "aten::empty",
+            "aten::copy_"
+          ],
+          "total_us": 510131.08
+        },
+        {
+          "calls": 976,
+          "concurrency": "high",
+          "dataset": "sharegpt",
+          "label": "sharegpt_high",
+          "mean_us": 635.8814723360656,
+          "pct_of_gpu": 8.230123537651814,
+          "top_cpu_ops": [
+            "sglang::flashinfer_allreduce_residual_rmsnorm",
+            "aten::copy_",
+            "aten::as_strided"
+          ],
+          "total_us": 620620.317
+        }
+      ]
+    },
+    {
+      "category": "gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "void flashinfer::trtllm_dsv3_router_gemm::router_gemm_kernel<__nv_bfloat16, float, 128, 8, 6, 256, 7168>(float*, __nv_bfloat16 const*, __nv_bfloat16 const*)",
+      "labels": [
+        "sharegpt_mid"
+      ],
+      "max_pct_of_gpu": 6.911585883791943,
+      "model": "nvidia/DeepSeek-R1-0528-FP4-v2",
+      "model_slug": "deepseek_r1_fp4",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 1973.255,
+          "provenance": "external_id=144139",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::flashinfer_dsv3_router_gemm",
+          "kernel_dur_us": 1971.563,
+          "provenance": "external_id=144251",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                6,
+                256
+              ],
+              [
+                6,
+                7168
+              ],
+              [
+                256,
+                7168
+              ]
+            ],
+            "Input Strides": [
+              [
+                256,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                7168,
+                1
+              ]
+            ],
+            "Input type": [
+              "float",
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_mid.json"
+      ],
+      "task_id": "gemm__router_gemm_kernel__11c0c72e30",
+      "total_calls": 472,
+      "workload_count": 1,
+      "workloads": [
+        {
+          "calls": 472,
+          "concurrency": "mid",
+          "dataset": "sharegpt",
+          "label": "sharegpt_mid",
+          "mean_us": 1078.08406779661,
+          "pct_of_gpu": 6.911585883791943,
+          "top_cpu_ops": [
+            "sglang::flashinfer_dsv3_router_gemm",
+            "aten::copy_"
+          ],
+          "total_us": 508855.68
+        }
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "nvjet_sm100_tst_64x8_64x16_2x4_h_bz_splitK_TNT",
+      "labels": [
+        "sharegpt_high"
+      ],
+      "max_pct_of_gpu": 5.175771495523165,
+      "model": "nvidia/DeepSeek-R1-0528-FP4-v2",
+      "model_slug": "deepseek_r1_fp4",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::mm",
+          "kernel_dur_us": 1991.621,
+          "provenance": "external_id=207871",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                28,
+                7168
+              ],
+              [
+                7168,
+                256
+              ]
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::_to_copy",
+          "kernel_dur_us": 1987.399,
+          "provenance": "external_id=207637",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "24",
+              "",
+              "",
+              "",
+              "False",
+              ""
+            ],
+            "Input Dims": [
+              [
+                28,
+                1,
+                64
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                2112,
+                576,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "Scalar",
+              "",
+              "",
+              "",
+              "Scalar",
+              ""
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_high.json"
+      ],
+      "task_id": "quant_gemm__nvjet_sm100_tst_64x8_64x16_2x4_h_bz_splitk_tnt__9c371f4925",
+      "total_calls": 472,
+      "workload_count": 1,
+      "workloads": [
+        {
+          "calls": 472,
+          "concurrency": "high",
+          "dataset": "sharegpt",
+          "label": "sharegpt_high",
+          "mean_us": 826.899502118644,
+          "pct_of_gpu": 5.175771495523165,
+          "top_cpu_ops": [
+            "aten::mm",
+            "aten::_to_copy"
+          ],
+          "total_us": 390296.565
+        }
+      ]
+    },
+    {
+      "category": "gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "void fused_a_gemm_kernel<1, 2112, 7168, 16, 8, 256, 16>(__nv_bfloat16*, __nv_bfloat16 const*, __nv_bfloat16 const*, int)",
+      "labels": [
+        "sharegpt_mid"
+      ],
+      "max_pct_of_gpu": 3.497449366344397,
+      "model": "nvidia/DeepSeek-R1-0528-FP4-v2",
+      "model_slug": "deepseek_r1_fp4",
+      "shape_samples": [
+        {
+          "cpu_op": "sgl_kernel::dsv3_fused_a_gemm",
+          "kernel_dur_us": 716.806,
+          "provenance": "external_id=142013",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                6,
+                2112
+              ],
+              [
+                6,
+                7168
+              ],
+              [
+                7168,
+                2112
+              ]
+            ],
+            "Input Strides": [
+              [
+                2112,
+                1
+              ],
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 712.579,
+          "provenance": "external_id=141901",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                256,
+                16,
+                192
+              ],
+              [
+                256,
+                16,
+                192
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                3072,
+                192,
+                1
+              ],
+              [
+                3072,
+                192,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::Float8_e4m3fn",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_mid.json"
+      ],
+      "task_id": "gemm__fused_a_gemm_kernel__bda001cd80",
+      "total_calls": 496,
+      "workload_count": 1,
+      "workloads": [
+        {
+          "calls": 496,
+          "concurrency": "mid",
+          "dataset": "sharegpt",
+          "label": "sharegpt_mid",
+          "mean_us": 519.1426108870968,
+          "pct_of_gpu": 3.497449366344397,
+          "top_cpu_ops": [
+            "sgl_kernel::dsv3_fused_a_gemm",
+            "aten::copy_"
+          ],
+          "total_us": 257494.735
+        }
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_1x2_h_bz_splitK_TNT",
+      "labels": [
+        "sharegpt_high"
+      ],
+      "max_pct_of_gpu": 3.443707063410777,
+      "model": "nvidia/DeepSeek-R1-0528-FP4-v2",
+      "model_slug": "deepseek_r1_fp4",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::split_with_sizes",
+          "kernel_dur_us": 745.539,
+          "provenance": "external_id=205114",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[1536, 576]",
+              "-1"
+            ],
+            "Input Dims": [
+              [
+                28,
+                2112
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                2112,
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::mm",
+          "kernel_dur_us": 744.002,
+          "provenance": "external_id=196653",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                28,
+                7168
+              ],
+              [
+                7168,
+                2112
+              ]
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_high.json"
+      ],
+      "task_id": "quant_gemm__nvjet_sm100_tst_64x16_64x16_1x2_h_bz_splitk_tnt__9b5d3e2ac1",
+      "total_calls": 496,
+      "workload_count": 1,
+      "workloads": [
+        {
+          "calls": 496,
+          "concurrency": "high",
+          "dataset": "sharegpt",
+          "label": "sharegpt_high",
+          "mean_us": 523.5572278225807,
+          "pct_of_gpu": 3.443707063410777,
+          "top_cpu_ops": [
+            "aten::mm",
+            "aten::split_with_sizes"
+          ],
+          "total_us": 259684.385
+        }
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+      "hardware": "b200",
+      "kernel": "nvjet_sm100_tst_64x40_64x16_1x2_h_bz_splitK_TNT",
+      "labels": [
+        "sharegpt_mid",
+        "sharegpt_high"
+      ],
+      "max_pct_of_gpu": 3.309385858686052,
+      "model": "nvidia/DeepSeek-R1-0528-FP4-v2",
+      "model_slug": "deepseek_r1_fp4",
+      "shape_samples": [
+        {
+          "cpu_op": "aten::mm",
+          "kernel_dur_us": 627.586,
+          "provenance": "external_id=148519",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                65,
+                7168
+              ],
+              [
+                7168,
+                2112
+              ]
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty_strided",
+          "kernel_dur_us": 625.922,
+          "provenance": "external_id=157096",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[192, 16, 192]",
+              "[3072, 192, 1]",
+              "24",
+              "0",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "ScalarList",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::mm",
+          "kernel_dur_us": 680.226,
+          "provenance": "external_id=213957",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                68,
+                7168
+              ],
+              [
+                7168,
+                2112
+              ]
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::matmul",
+          "kernel_dur_us": 670.978,
+          "provenance": "external_id=213719",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                68,
+                7168
+              ],
+              [
+                7168,
+                2112
+              ]
+            ],
+            "Input Strides": [
+              [
+                7168,
+                1
+              ],
+              [
+                1,
+                7168
+              ]
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16"
+            ]
+          }
+        }
+      ],
+      "source_json": [
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_mid.json",
+        "deepseek_r1_fp4/b200/docs/kernel_shapes_sharegpt_high.json"
+      ],
+      "task_id": "quant_gemm__nvjet_sm100_tst_64x40_64x16_1x2_h_bz_splitk_tnt__45f40efe12",
+      "total_calls": 992,
+      "workload_count": 2,
+      "workloads": [
+        {
+          "calls": 496,
+          "concurrency": "mid",
+          "dataset": "sharegpt",
+          "label": "sharegpt_mid",
+          "mean_us": 479.43397177419354,
+          "pct_of_gpu": 3.229933366325618,
+          "top_cpu_ops": [
+            "aten::mm",
+            "aten::empty_strided"
+          ],
+          "total_us": 237799.25
+        },
+        {
+          "calls": 496,
+          "concurrency": "high",
+          "dataset": "sharegpt",
+          "label": "sharegpt_high",
+          "mean_us": 503.1359677419355,
+          "pct_of_gpu": 3.309385858686052,
+          "top_cpu_ops": [
+            "aten::mm",
+            "aten::matmul"
+          ],
+          "total_us": 249555.44
+        }
+      ]
+    }
+  ],
+  "workload_summary": {
+    "random_high": {
+      "concurrency": "high",
+      "dataset": "random",
+      "empty_shape_rows": 0,
+      "row_count": 10,
+      "strong_rows": 4,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 5019450.031,
+      "weak_rows": 6
+    },
+    "random_low": {
+      "concurrency": "low",
+      "dataset": "random",
+      "empty_shape_rows": 0,
+      "row_count": 6,
+      "strong_rows": 3,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 2518321.339,
+      "weak_rows": 3
+    },
+    "random_mid": {
+      "concurrency": "mid",
+      "dataset": "random",
+      "empty_shape_rows": 0,
+      "row_count": 8,
+      "strong_rows": 3,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 11277003.44,
+      "weak_rows": 5
+    },
+    "sharegpt_high": {
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "empty_shape_rows": 0,
+      "row_count": 9,
+      "strong_rows": 7,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 7540838.411,
+      "weak_rows": 2
+    },
+    "sharegpt_low": {
+      "concurrency": "low",
+      "dataset": "sharegpt",
+      "empty_shape_rows": 0,
+      "row_count": 7,
+      "strong_rows": 3,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 2161506.61,
+      "weak_rows": 4
+    },
+    "sharegpt_mid": {
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "empty_shape_rows": 0,
+      "row_count": 12,
+      "strong_rows": 6,
+      "threshold_strictly_greater_than_pct": 2.0,
+      "total_gpu_us": 7362357.765,
+      "weak_rows": 6
+    }
+  }
+}

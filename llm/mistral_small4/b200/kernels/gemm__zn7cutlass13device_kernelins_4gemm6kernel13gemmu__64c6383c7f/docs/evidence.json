@@ -1,0 +1,174 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalIN4cute5tupleIJiiiiEEENS1_10collective13CollectiveMmaINS1_35MainloopSm100TmaUmmaWarpSpecializedILi13ELi2ELi4ENS5_IJNS4_1CILi1EEESB_SB_EEEEENS5_IJNSA_ILi64EEESE_NSA_ILi128EEEEEENS_12float_e4m3_tENS5_IJlSB_lEEESH_SI_NS4_8TiledMMAINS4_8MMA_AtomIJNS4_10MMA_TraitsINS4_19SM100_MMA_F8F6F4_SSEJSH_SH_fSE_SE_NS4_17integral_constantINS4_4UMMA5MajorELSP_0EEESQ_NSN_INSO_7ScaleInELSR_0EEESS_EEEEEENS4_6LayoutISC_NS5_IJNSA_ILi0EEESW_SW_EEEEENS5_IJNS4_10UnderscoreESZ_SZ_EEEEENS4_13SM90_TMA_LOADENS4_14ComposedLayoutINS4_7SwizzleILi3ELi4ELi3EEENS4_18smem_ptr_flag_bitsILi8EEENSV_INS5_IJNSA_ILi8EEESF_EEENS5_IJSF_SB_EEEEEEEvNS4_8identityES12_S1C_vS1D_EENS_8epilogue10collective18CollectiveEpilogueINS1F_23Sm100TmaWarpSpecializedILi1ELi1ELi32ELb0ELb1EEEJSG_NS5_IJNSV_ISE_SB_EES1K_EEEvSI_NS_10bfloat16_tESI_NS1F_6fusion15Sm90TreeVisitorINS1N_11Sm90ComputeINS_10multipliesES1M_fLNS_15FloatRoundStyleE2EvEEJNS1N_16Sm90ColBroadcastILi0ESG_ffNS5_IJSB_SW_SW_EEELi4ELb1EEENS1O_INS1P_IS1Q_ffLS1R_2EvEEJNS1N_16Sm90RowBroadcastILi0ESG_ffNS5_IJSW_SB_SW_EEELi4ELb1EEENS1N_12Sm90AccFetchEEEEEEENS4_5SM1004TMEM4LOAD26SM100_TMEM_LOAD_16dp256b8xES12_NS13_IS15_NS16_ILi16EEENSV_INS5_IJS18_SE_EEENS5_IJSE_SB_EEEEEEENS4_17SM75_U32x4_LDSM_NENS4_14SM90_TMA_STOREES2B_NS4_17SM90_U32x4_STSM_NENS4_39AutoVectorizingCopyWithAssumedAlignmentILi128EEEEEEvvEEEEvNT_6ParamsE",
+  "labels": [
+    "random_low",
+    "sharegpt_low"
+  ],
+  "max_pct_of_gpu": 2.70677993339933,
+  "model": "mistralai/Mistral-Small-4-119B-2603",
+  "model_slug": "mistral_small4",
+  "shape_samples": [
+    {
+      "cpu_op": "sgl_kernel::fp8_scaled_mm",
+      "kernel_dur_us": 7.2,
+      "provenance": "external_id=2492",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "15",
+          ""
+        ],
+        "Input Dims": [
+          [
+            38,
+            4096
+          ],
+          [
+            4096,
+            4096
+          ],
+          [
+            38,
+            1
+          ],
+          [
+            4096,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [
+            1,
+            4096
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::Float8_e4m3fn",
+          "c10::Float8_e4m3fn",
+          "float",
+          "float",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "sgl_kernel::fp8_scaled_mm",
+      "kernel_dur_us": 9.152,
+      "provenance": "external_id=45260",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "15",
+          ""
+        ],
+        "Input Dims": [
+          [
+            18,
+            4096
+          ],
+          [
+            4096,
+            4096
+          ],
+          [
+            18,
+            1
+          ],
+          [
+            4096,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [
+            1,
+            4096
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::Float8_e4m3fn",
+          "c10::Float8_e4m3fn",
+          "float",
+          "float",
+          "Scalar",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "mistral_small4/b200/docs/kernel_shapes_random_low.json",
+    "mistral_small4/b200/docs/kernel_shapes_sharegpt_low.json"
+  ],
+  "task_id": "gemm__zn7cutlass13device_kernelins_4gemm6kernel13gemmu__64c6383c7f",
+  "total_calls": 432,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 216,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 5.447870370370371,
+      "pct_of_gpu": 2.2958036274532336,
+      "top_cpu_ops": [
+        "sgl_kernel::fp8_scaled_mm"
+      ],
+      "total_us": 1176.74
+    },
+    {
+      "calls": 216,
+      "concurrency": "low",
+      "dataset": "sharegpt",
+      "label": "sharegpt_low",
+      "mean_us": 6.20075462962963,
+      "pct_of_gpu": 2.70677993339933,
+      "top_cpu_ops": [
+        "sgl_kernel::fp8_scaled_mm"
+      ],
+      "total_us": 1339.363
+    }
+  ]
+}

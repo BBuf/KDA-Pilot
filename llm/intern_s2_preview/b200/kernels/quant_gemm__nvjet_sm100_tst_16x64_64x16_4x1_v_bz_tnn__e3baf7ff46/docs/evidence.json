@@ -1,0 +1,83 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_16x64_64x16_4x1_v_bz_TNN",
+  "labels": [
+    "random_low",
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 21.25586248169694,
+  "model": "internLM/Intern-S2-Preview",
+  "model_slug": "intern_s2_preview",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 1174.752,
+      "provenance": "external_id=3018",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            38,
+            2048
+          ],
+          [
+            2048,
+            1536
+          ]
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          [
+            1,
+            2048
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "intern_s2_preview/b200/docs/kernel_shapes_random_low.json",
+    "intern_s2_preview/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_16x64_64x16_4x1_v_bz_tnn__e3baf7ff46",
+  "total_calls": 11520,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 8640,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 31.14849444444445,
+      "pct_of_gpu": 21.25586248169694,
+      "top_cpu_ops": [
+        "aten::mm"
+      ],
+      "total_us": 269122.992
+    },
+    {
+      "calls": 2880,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 86.42721145833333,
+      "pct_of_gpu": 8.994698892032964,
+      "top_cpu_ops": [
+        "aten::mm"
+      ],
+      "total_us": 248910.369
+    }
+  ]
+}

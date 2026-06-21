@@ -1,0 +1,71 @@
+{
+  "category": "other",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void (anonymous namespace)::act_and_mul_kernel<__nv_bfloat16, ((anonymous namespace)::ActivationKind)0, true, false>((anonymous namespace)::ActivationParams)",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 3.3694945463971346,
+  "model": "moonshotai/Kimi-Linear-48B-A3B-Instruct",
+  "model_slug": "kimi_linear",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::copy_",
+      "kernel_dur_us": 5.344,
+      "provenance": "external_id=300",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "False"
+        ],
+        "Input Dims": [
+          [
+            1
+          ],
+          [
+            1
+          ],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [
+            1
+          ],
+          []
+        ],
+        "Input type": [
+          "int",
+          "int",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "kimi_linear/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "other__other__56d7fd43dd",
+  "total_calls": 1908,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 1908,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 2.7521346960167716,
+      "pct_of_gpu": 3.3694945463971346,
+      "top_cpu_ops": [
+        "aten::copy_",
+        "sglang::unified_linear_attention_with_output",
+        "gloo:broadcast"
+      ],
+      "total_us": 5251.073
+    }
+  ]
+}

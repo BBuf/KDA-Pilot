@@ -1,0 +1,186 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 128u, 128u, 0u, 0u, 0u, 16u, 128u, 128u, 1u, 128u, 128u, 128u, 12u, 128u, 128u, 2u, true, 148u, true, (deep_gemm::GemmType)0, false, cutlass::float_e4m3_t, cutlass::float_e4m3_t, cutlass::bfloat16_t, deep_gemm::epilogue::transform::EpilogueIdentity>(int*, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+  "labels": [
+    "random_low",
+    "sharegpt_low"
+  ],
+  "max_pct_of_gpu": 3.873174962059667,
+  "model": "zai-org/GLM-5.1-FP8",
+  "model_slug": "glm_51",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::deep_gemm_fp8_fp8_bf16_nt",
+      "kernel_dur_us": 11.425,
+      "provenance": "external_id=503",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            38,
+            6144
+          ],
+          [
+            38,
+            12
+          ],
+          [
+            3072,
+            6144
+          ],
+          [
+            3072,
+            12
+          ],
+          [
+            38,
+            3072
+          ]
+        ],
+        "Input Strides": [
+          [
+            6144,
+            1
+          ],
+          [
+            1,
+            40
+          ],
+          [
+            6144,
+            1
+          ],
+          [
+            1,
+            3072
+          ],
+          [
+            3072,
+            1
+          ]
+        ],
+        "Input type": [
+          "c10::Float8_e4m3fn",
+          "int",
+          "c10::Float8_e4m3fn",
+          "int",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::deep_gemm_fp8_fp8_bf16_nt",
+      "kernel_dur_us": 11.648,
+      "provenance": "external_id=137934",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            16,
+            6144
+          ],
+          [
+            16,
+            12
+          ],
+          [
+            3072,
+            6144
+          ],
+          [
+            3072,
+            12
+          ],
+          [
+            16,
+            3072
+          ]
+        ],
+        "Input Strides": [
+          [
+            6144,
+            1
+          ],
+          [
+            1,
+            16
+          ],
+          [
+            6144,
+            1
+          ],
+          [
+            1,
+            3072
+          ],
+          [
+            3072,
+            1
+          ]
+        ],
+        "Input type": [
+          "c10::Float8_e4m3fn",
+          "int",
+          "c10::Float8_e4m3fn",
+          "int",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "glm_51/b200/docs/kernel_shapes_random_low.json",
+    "glm_51/b200/docs/kernel_shapes_sharegpt_low.json"
+  ],
+  "task_id": "quant_gemm__sm100_fp8_fp4_gemm_1d1d_impl__1b5539080f",
+  "total_calls": 47920,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 23960,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 6.6981889816360605,
+      "pct_of_gpu": 3.873174962059667,
+      "top_cpu_ops": [
+        "aten::copy_",
+        "sglang::deep_gemm_fp8_fp8_bf16_nt",
+        "aten::cat",
+        "aten::mm",
+        "aten::view"
+      ],
+      "total_us": 160488.608
+    },
+    {
+      "calls": 23960,
+      "concurrency": "low",
+      "dataset": "sharegpt",
+      "label": "sharegpt_low",
+      "mean_us": 6.724881302170283,
+      "pct_of_gpu": 3.60661241653966,
+      "top_cpu_ops": [
+        "sglang::deep_gemm_fp8_fp8_bf16_nt",
+        "aten::copy_",
+        "sglang::outplace_all_reduce",
+        "aten::empty_strided",
+        "aten::sub"
+      ],
+      "total_us": 161128.156
+    }
+  ]
+}

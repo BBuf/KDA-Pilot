@@ -1,0 +1,16 @@
+- 2026-06-20 03:47:03 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; command=python3 -m sglang.launch_server --model-path moonshotai/Kimi-K2.6 --tp 8 --context-length 128000 --reasoning-parser kimi_k2 --tool-call-parser kimi_k2 --trust-remote-code --host 0.0.0.0 --port 30000
+- 2026-06-20 04:37:12 UTC: server_ready - pid=1150, port=30000
+- 2026-06-20 04:37:12 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
+- 2026-06-20 04:37:55 UTC: extract - random_low: extracting >2% kernel shapes/meta
+- 2026-06-20 04:37:57 UTC: benchmark - random_mid: dataset=random, num_prompts=300, max_concurrency=32
+- 2026-06-20 04:40:09 UTC: extract - random_mid: extracting >2% kernel shapes/meta
+- 2026-06-20 04:40:14 UTC: benchmark - random_high: dataset=random, num_prompts=500, max_concurrency=100
+- 2026-06-20 04:42:25 UTC: extract - random_high: extracting >2% kernel shapes/meta
+- 2026-06-20 04:42:33 UTC: benchmark - sharegpt_low: dataset=sharegpt, num_prompts=10, max_concurrency=1
+- 2026-06-20 04:43:08 UTC: extract - sharegpt_low: extracting >2% kernel shapes/meta
+- 2026-06-20 04:43:10 UTC: benchmark - sharegpt_mid: dataset=sharegpt, num_prompts=300, max_concurrency=32
+- 2026-06-20 04:44:31 UTC: extract - sharegpt_mid: extracting >2% kernel shapes/meta
+- 2026-06-20 04:44:39 UTC: benchmark - sharegpt_high: dataset=sharegpt, num_prompts=500, max_concurrency=100
+- 2026-06-20 04:46:12 UTC: extract - sharegpt_high: extracting >2% kernel shapes/meta
+- 2026-06-20 04:46:28 UTC: completed - Kimi-K2.6 INT4 benchmark/profile/shape extraction complete
+- 2026-06-20 04:47:08 UTC: weights_cleanup - primary: /root/.cache/huggingface/hub/models--moonshotai--Kimi-K2.6: deleted after completed run, size_before=555G; lock=/root/.cache/huggingface/hub/.locks/models--moonshotai--Kimi-K2.6

@@ -1,0 +1,5991 @@
+{
+  "concurrency": "high",
+  "dataset": "sharegpt",
+  "label": "sharegpt_high",
+  "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+  "rows": [
+    {
+      "calls": 5984,
+      "category": "comm",
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_twoshot_sync<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>, std::array<int, 8>, std::array<int, 8>)",
+      "label": "sharegpt_high",
+      "mean_us": 73.93052840909091,
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "pct_of_gpu": 20.90568547115526,
+      "samples": [
+        {
+          "cpu_op": "aten::slice",
+          "kernel_dur_us": 331.459,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "0",
+              "1232",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                1280,
+                1,
+                128
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                128,
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 331.045,
+          "kernel_external_id": "70836",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                1232,
+                1024
+              ],
+              [
+                1232,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 328.643,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[1232, 1024]",
+              "[1024, 1]",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                1280,
+                1024
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 327.779,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "79",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1280,
+                1024
+              ],
+              [
+                1280,
+                1,
+                128
+              ],
+              [
+                1280,
+                1,
+                128
+              ],
+              [
+                1280,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 327.299,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "34",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1280,
+                1024
+              ],
+              [
+                1280,
+                1,
+                128
+              ],
+              [
+                1280,
+                1,
+                128
+              ],
+              [
+                1280,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 325.797,
+          "kernel_external_id": "64006",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                324,
+                1024
+              ],
+              [
+                324,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 325.668,
+          "kernel_external_id": "64006",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "2",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                352,
+                1024
+              ],
+              [
+                352,
+                1,
+                128
+              ],
+              [
+                352,
+                1,
+                128
+              ],
+              [
+                352,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 324.643,
+          "kernel_external_id": "64006",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "2",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                352,
+                1024
+              ],
+              [
+                352,
+                1,
+                128
+              ],
+              [
+                352,
+                1,
+                128
+              ],
+              [
+                352,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "sglang::unified_attention_with_output",
+        "aten::copy_",
+        "aten::slice",
+        "aten::as_strided"
+      ],
+      "total_us": 442400.282,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-5.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 7480,
+      "category": "comm",
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "sharegpt_high",
+      "mean_us": 19.560067245989305,
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "pct_of_gpu": 6.913866004321291,
+      "samples": [
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 300.227,
+          "kernel_external_id": "60987",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[26751, 1, 64, 128]",
+              "[8192, 8192, 128, 1]",
+              ""
+            ],
+            "Input Dims": [
+              [
+                26751,
+                1,
+                64,
+                128
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                8192,
+                128,
+                128,
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList",
+              "ScalarList",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 300.162,
+          "kernel_external_id": "60987",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                17,
+                1024
+              ],
+              [
+                17,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 299.171,
+          "kernel_external_id": "60257",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                17,
+                1024
+              ],
+              [
+                17,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 230.34,
+          "kernel_external_id": "60987",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                17,
+                1024
+              ],
+              [
+                17,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 172.513,
+          "kernel_external_id": "60987",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                17,
+                1024
+              ],
+              [
+                17,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 136.705,
+          "kernel_external_id": "60987",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                17,
+                1024
+              ],
+              [
+                17,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 118.529,
+          "kernel_external_id": "60987",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                17,
+                1024
+              ],
+              [
+                17,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::permute",
+          "kernel_dur_us": 73.248,
+          "kernel_external_id": "60257",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[0, 2, 1, 3]"
+            ],
+            "Input Dims": [
+              [
+                26751,
+                64,
+                1,
+                128
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                8192,
+                128,
+                128,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList"
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::as_strided",
+        "aten::permute"
+      ],
+      "total_us": 146309.303,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-5.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 3760,
+      "category": "attention",
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "kernel": "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP64VarSeqQ128Kv128PersistentContext",
+      "label": "sharegpt_high",
+      "mean_us": 29.398427127659573,
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "pct_of_gpu": 5.223492281814392,
+      "samples": [
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 45.696,
+          "kernel_external_id": "75810",
+          "provenance": "external_id=75810",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "49",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                576,
+                1024
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 43.36,
+          "kernel_external_id": "76006",
+          "provenance": "external_id=76006",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "56",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                576,
+                1024
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 43.328,
+          "kernel_external_id": "75642",
+          "provenance": "external_id=75642",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "43",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                576,
+                1024
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 43.265,
+          "kernel_external_id": "75754",
+          "provenance": "external_id=75754",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "47",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                576,
+                1024
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 43.232,
+          "kernel_external_id": "75754",
+          "provenance": "external_id=75754",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "47",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                576,
+                1024
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 42.112,
+          "kernel_external_id": "74438",
+          "provenance": "external_id=74438",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "0",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                576,
+                1024
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 41.952,
+          "kernel_external_id": "74578",
+          "provenance": "external_id=74578",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "5",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                576,
+                1024
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 41.92,
+          "kernel_external_id": "74438",
+          "provenance": "external_id=74438",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "0",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                576,
+                1024
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "sglang::unified_attention_with_output"
+      ],
+      "total_us": 110538.086,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-5.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 128,
+      "category": "comm",
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "kernel": "void (anonymous namespace)::all_reduce_two_shot_kernel<__nv_bfloat16, 8u, true>(host::distributed::AllReduceData const*, (anonymous namespace)::AllReduceParams, device::distributed::PullController)",
+      "label": "sharegpt_high",
+      "mean_us": 736.66284375,
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "pct_of_gpu": 4.455821162529705,
+      "samples": [
+        {
+          "cpu_op": "aten::slice",
+          "kernel_dur_us": 34490.703,
+          "kernel_external_id": "70088",
+          "provenance": "external_id=70088",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "0",
+              "2176",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                2215
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 12562.071,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[1232, 1024]",
+              "[1280, 1]",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                1280,
+                1024
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 10268.31,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[1232, 1024]",
+              "[1280, 1]",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                1280,
+                1024
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 9004.124,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "0",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1280,
+                1024
+              ],
+              [
+                1280,
+                1,
+                128
+              ],
+              [
+                1280,
+                1,
+                128
+              ],
+              [
+                1280,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 5558.825,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "0",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1280,
+                1024
+              ],
+              [
+                1280,
+                1,
+                128
+              ],
+              [
+                1280,
+                1,
+                128
+              ],
+              [
+                1280,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 5489.192,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "0",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1280,
+                1024
+              ],
+              [
+                1280,
+                1,
+                128
+              ],
+              [
+                1280,
+                1,
+                128
+              ],
+              [
+                1280,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 5197.065,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "0",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                1280,
+                1024
+              ],
+              [
+                1280,
+                1,
+                128
+              ],
+              [
+                1280,
+                1,
+                128
+              ],
+              [
+                1280,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::view",
+          "kernel_dur_us": 999.882,
+          "kernel_external_id": "63270",
+          "provenance": "external_id=63270",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[-1, 64, 1, 128]"
+            ],
+            "Input Dims": [
+              [
+                1712064,
+                1,
+                128
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                128,
+                128,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList"
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "sglang::unified_attention_with_output",
+        "aten::as_strided",
+        "aten::slice",
+        "aten::view"
+      ],
+      "total_us": 94292.844,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-5.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 3760,
+      "category": "quant_gemm",
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "kernel": "nvjet_sm100_tst_64x8_64x16_2x4_h_bz_splitK_TNT",
+      "label": "sharegpt_high",
+      "mean_us": 24.425279787234043,
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "pct_of_gpu": 4.3398668879715405,
+      "samples": [
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 300.962,
+          "kernel_external_id": "60987",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                17,
+                1024
+              ],
+              [
+                17,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 300.899,
+          "kernel_external_id": "60987",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "2",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                20,
+                1024
+              ],
+              [
+                20,
+                1,
+                128
+              ],
+              [
+                20,
+                1,
+                128
+              ],
+              [
+                20,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 299.779,
+          "kernel_external_id": "60257",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                17,
+                1024
+              ],
+              [
+                17,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 230.852,
+          "kernel_external_id": "60987",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                17,
+                1024
+              ],
+              [
+                17,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 173.474,
+          "kernel_external_id": "60987",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                17,
+                1024
+              ],
+              [
+                17,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 137.377,
+          "kernel_external_id": "60987",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                17,
+                1024
+              ],
+              [
+                17,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 119.233,
+          "kernel_external_id": "60987",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                17,
+                1024
+              ],
+              [
+                17,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::view",
+          "kernel_dur_us": 74.209,
+          "kernel_external_id": "60257",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[-1, 64, 1, 128]"
+            ],
+            "Input Dims": [
+              [
+                1712064,
+                1,
+                128
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                128,
+                128,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "ScalarList"
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "sglang::unified_attention_with_output",
+        "aten::view"
+      ],
+      "total_us": 91839.052,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-5.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 1034,
+      "category": "other",
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "kernel": "bmm_Bfloat16_Bfloat16Bfloat16_Fp32_t128x64x128u2_s5_et128x64_m256x64x16_c2x1x1_rM_BN_transOut_schPd2x1x2x3_bN_tma_tmaSf_rgTma_clmp_swiGlu_dynB_sm100f",
+      "label": "sharegpt_high",
+      "mean_us": 88.5235909090909,
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "pct_of_gpu": 4.325422930371559,
+      "samples": [
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 95.201,
+          "kernel_external_id": "74436",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[27]",
+              "[1]",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                27
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 94.401,
+          "kernel_external_id": "67092",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                484,
+                1024
+              ],
+              [
+                484,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 93.825,
+          "kernel_external_id": "67092",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                484,
+                1024
+              ],
+              [
+                484,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 93.601,
+          "kernel_external_id": "74436",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                104,
+                46
+              ],
+              [
+                104,
+                46
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                4096,
+                1
+              ],
+              [
+                46,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "int",
+              "int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::cat",
+          "kernel_dur_us": 93.601,
+          "kernel_external_id": "74436",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                [
+                  256
+                ],
+                [
+                  33
+                ]
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                [
+                  1
+                ],
+                [
+                  1
+                ]
+              ],
+              []
+            ],
+            "Input type": [
+              "TensorList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 93.473,
+          "kernel_external_id": "74436",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "60",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                576,
+                1024
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 93.409,
+          "kernel_external_id": "74436",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "15",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                576,
+                1024
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1,
+                128
+              ],
+              [
+                576,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 93.281,
+          "kernel_external_id": "74436",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[0]",
+              "[1]",
+              "309072620"
+            ],
+            "Input Dims": [
+              [
+                157
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::as_strided",
+        "sglang::unified_attention_with_output",
+        "aten::cat"
+      ],
+      "total_us": 91533.393,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-5.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 1034,
+      "category": "other",
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "kernel": "bmm_Bfloat16_Bfloat16Bfloat16_Fp32_t128x64x128_s5_et128x64_m256x64x16_c2x1x1_rM_BN_transOut_schPd2x1x2x3_bN_tma_tmaSf_rgTma_clmp_swiGlu_dynB_sm100f",
+      "label": "sharegpt_high",
+      "mean_us": 88.09044777562863,
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "pct_of_gpu": 4.3042587726326955,
+      "samples": [
+        {
+          "cpu_op": "aten::slice",
+          "kernel_dur_us": 95.233,
+          "kernel_external_id": "74436",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "256",
+              "9223372036854775807",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                256
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 94.401,
+          "kernel_external_id": "74436",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                0
+              ],
+              [
+                0
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::cat",
+          "kernel_dur_us": 94.305,
+          "kernel_external_id": "74436",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                [
+                  0
+                ],
+                [
+                  19
+                ]
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                [
+                  1
+                ],
+                [
+                  1
+                ]
+              ],
+              []
+            ],
+            "Input type": [
+              "TensorList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::cat",
+          "kernel_dur_us": 94.145,
+          "kernel_external_id": "74436",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                [
+                  256
+                ],
+                [
+                  64
+                ],
+                [
+                  448
+                ]
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                [
+                  1
+                ],
+                [
+                  1
+                ],
+                [
+                  1
+                ]
+              ],
+              []
+            ],
+            "Input type": [
+              "TensorList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 94.081,
+          "kernel_external_id": "74436",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                550,
+                1024
+              ],
+              [
+                550,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 94.049,
+          "kernel_external_id": "67092",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                484,
+                1024
+              ],
+              [
+                484,
+                1024
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1024,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 94.017,
+          "kernel_external_id": "74436",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                320
+              ],
+              [
+                320
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::unified_attention_with_output",
+          "kernel_dur_us": 93.888,
+          "kernel_external_id": "67092",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "",
+              "",
+              "False",
+              "10",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                512,
+                1024
+              ],
+              [
+                512,
+                1,
+                128
+              ],
+              [
+                512,
+                1,
+                128
+              ],
+              [
+                512,
+                1024
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1280,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1280,
+                128,
+                1
+              ],
+              [
+                1024,
+                1
+              ],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "c10::BFloat16",
+              "Scalar",
+              "Scalar",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::cat",
+        "aten::slice",
+        "sglang::unified_attention_with_output"
+      ],
+      "total_us": 91085.523,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-5.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 1128,
+      "category": "other",
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "kernel": "bmm_Bfloat16_Bfloat16Bfloat16_Fp32_t128x8x128_s4_et128x8_m128x8x16_c1x1x1_rM_BN_transOut_schPd2x1x2x3_bN_ldgsts_ldgstsSf_rgTma_clmp_swiGlu_dynB_sm100f",
+      "label": "sharegpt_high",
+      "mean_us": 72.81078191489362,
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "pct_of_gpu": 3.8810908731319844,
+      "samples": [
+        {
+          "cpu_op": "aten::resolve_neg",
+          "kernel_dur_us": 88.385,
+          "kernel_external_id": "19885674",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                100
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::resolve_neg",
+          "kernel_dur_us": 87.649,
+          "kernel_external_id": "19884607",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                100
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::resolve_neg",
+          "kernel_dur_us": 86.977,
+          "kernel_external_id": "19884697",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                100
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 86.977,
+          "kernel_external_id": "19886042",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[8]",
+              "[1]",
+              "304616232"
+            ],
+            "Input Dims": [
+              [
+                264
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 86.657,
+          "kernel_external_id": "19885952",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[8]",
+              "[1]",
+              "304616232"
+            ],
+            "Input Dims": [
+              [
+                264
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 86.561,
+          "kernel_external_id": "19885199",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[51]",
+              "[1]",
+              "300421608"
+            ],
+            "Input Dims": [
+              [
+                51
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 86.273,
+          "kernel_external_id": "19886176",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[51]",
+              "[1]",
+              "300421608"
+            ],
+            "Input Dims": [
+              [
+                51
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 85.921,
+          "kernel_external_id": "19887005",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[8]",
+              "[1]",
+              "304616232"
+            ],
+            "Input Dims": [
+              [
+                264
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::resolve_neg"
+      ],
+      "total_us": 82130.562,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-5.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 752,
+      "category": "other",
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "kernel": "bmm_Bfloat16_Bfloat16Bfloat16_Fp32_t128x128x64u2_s6_et128x128_m256x128x16_c2x1x1_rM_BN_transOut_schPd2x1x2x3_bN_tma_tmaSf_rgTma_clmp_swiGlu_dynB_sm100f",
+      "label": "sharegpt_high",
+      "mean_us": 106.63950930851063,
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "pct_of_gpu": 3.789526911699271,
+      "samples": [
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 112.321,
+          "kernel_external_id": "70836",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                47
+              ],
+              [
+                47
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 110.881,
+          "kernel_external_id": "70836",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[2112]",
+              "[1]",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                2112
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 110.657,
+          "kernel_external_id": "70836",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[48]",
+              "[1]",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                48
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 110.145,
+          "kernel_external_id": "70836",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[192]",
+              "[1]",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                192
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 110.114,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::cat",
+          "kernel_dur_us": 110.113,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                [
+                  0
+                ],
+                [
+                  24
+                ]
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                [
+                  1
+                ],
+                [
+                  1
+                ]
+              ],
+              []
+            ],
+            "Input type": [
+              "TensorList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 110.017,
+          "kernel_external_id": "70836",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[448]",
+              "[1]",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                448
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "gloo:broadcast",
+          "kernel_dur_us": 109.921,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::copy_",
+        "aten::cat",
+        "gloo:broadcast"
+      ],
+      "total_us": 80192.911,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-5.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 3008,
+      "category": "quant_gemm",
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_2x1_2cta_v_bz_TNT",
+      "label": "sharegpt_high",
+      "mean_us": 22.522953789893617,
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "pct_of_gpu": 3.201490332099616,
+      "samples": [
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 34.432,
+          "kernel_external_id": "19882830",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [
+                100
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 33.345,
+          "kernel_external_id": "19882830",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[29]",
+              "[1]",
+              "384"
+            ],
+            "Input Dims": [
+              [
+                413
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 32.545,
+          "kernel_external_id": "19882820",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [
+                100
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 32.481,
+          "kernel_external_id": "19882820",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [
+                100
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 32.0,
+          "kernel_external_id": "19882820",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[29]",
+              "[1]",
+              "384"
+            ],
+            "Input Dims": [
+              [
+                413
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::cat",
+          "kernel_dur_us": 32.0,
+          "kernel_external_id": "19882820",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                [
+                  512
+                ],
+                [
+                  56
+                ]
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                [
+                  1
+                ],
+                [
+                  1
+                ]
+              ],
+              []
+            ],
+            "Input type": [
+              "TensorList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 31.968,
+          "kernel_external_id": "19882820",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[0]",
+              "[1]",
+              "317461804"
+            ],
+            "Input Dims": [
+              [
+                582
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::_foreach_copy_",
+          "kernel_dur_us": 31.424,
+          "kernel_external_id": "19882820",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                [
+                  100
+                ],
+                [
+                  100
+                ],
+                [
+                  100
+                ],
+                [
+                  100
+                ]
+              ],
+              [
+                [
+                  100
+                ],
+                [
+                  100
+                ],
+                [
+                  100
+                ],
+                [
+                  100
+                ]
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                [
+                  1
+                ],
+                [
+                  1
+                ],
+                [
+                  1
+                ],
+                [
+                  1
+                ]
+              ],
+              [
+                [
+                  1
+                ],
+                [
+                  1
+                ],
+                [
+                  1
+                ],
+                [
+                  1
+                ]
+              ],
+              []
+            ],
+            "Input type": [
+              "TensorList",
+              "TensorList",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::as_strided",
+        "aten::cat",
+        "aten::_foreach_copy_"
+      ],
+      "total_us": 67749.045,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-5.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 1410,
+      "category": "other",
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "kernel": "bmm_Bfloat16_Bfloat16Bfloat16_Fp32_t128x64x128_s5_et128x64_m256x64x16_c2x1x1_rM_BN_transOut_schPd2x1x2x3_bN_rgTma_clmp_dynB_sm100f",
+      "label": "sharegpt_high",
+      "mean_us": 44.27532482269503,
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "pct_of_gpu": 2.9500534562856777,
+      "samples": [
+        {
+          "cpu_op": "aten::empty_strided",
+          "kernel_dur_us": 48.033,
+          "kernel_external_id": "74436",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[0]",
+              "[1]",
+              "4",
+              "0",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "ScalarList",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::slice",
+          "kernel_dur_us": 47.841,
+          "kernel_external_id": "74436",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "0",
+              "0",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                0
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 47.617,
+          "kernel_external_id": "74436",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [
+                100
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 47.617,
+          "kernel_external_id": "74436",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [
+                100
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 47.521,
+          "kernel_external_id": "74436",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [
+                100
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 47.457,
+          "kernel_external_id": "74436",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [
+                100
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 47.425,
+          "kernel_external_id": "67092",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                320
+              ],
+              [
+                320
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::cat",
+          "kernel_dur_us": 47.424,
+          "kernel_external_id": "74436",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                [
+                  256
+                ]
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                [
+                  1
+                ]
+              ],
+              []
+            ],
+            "Input type": [
+              "TensorList",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::empty_strided",
+        "aten::slice",
+        "aten::cat"
+      ],
+      "total_us": 62428.208,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-5.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 6016,
+      "category": "moe",
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "kernel": "void moe::dev::finalize::finalizeKernelVecLoad<moe::dev::finalize::KernelParams<cutlass::bfloat16_t, cutlass::bfloat16_t, 4, true> >(moe::dev::finalize::KernelParams<cutlass::bfloat16_t, cutlass::bfloat16_t, 4, true>)",
+      "label": "sharegpt_high",
+      "mean_us": 9.468508311170213,
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "pct_of_gpu": 2.691772855407477,
+      "samples": [
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 22.817,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 22.816,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 22.72,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 22.593,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 22.592,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "gloo:broadcast",
+          "kernel_dur_us": 22.56,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "gloo:broadcast",
+          "kernel_dur_us": 22.56,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "gloo:broadcast",
+          "kernel_dur_us": 22.56,
+          "kernel_external_id": "70836",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "gloo:broadcast"
+      ],
+      "total_us": 56962.546,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-5.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 3008,
+      "category": "attention",
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "kernel": "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP64VarSeqQ8Kv128PersistentSwapsAbForGen",
+      "label": "sharegpt_high",
+      "mean_us": 18.305338763297872,
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "pct_of_gpu": 2.601983985901668,
+      "samples": [
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 21.504,
+          "kernel_external_id": "19882820",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[384]",
+              "[1]",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                384
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 21.089,
+          "kernel_external_id": "19886012",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[8]",
+              "[1]",
+              "304616232"
+            ],
+            "Input Dims": [
+              [
+                264
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::_unique2",
+          "kernel_dur_us": 20.864,
+          "kernel_external_id": "19885199",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "True",
+              "False",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                62
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::resolve_neg",
+          "kernel_dur_us": 20.416,
+          "kernel_external_id": "19884674",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                100
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::cat",
+          "kernel_dur_us": 20.192,
+          "kernel_external_id": "19882753",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                [
+                  0
+                ],
+                [
+                  5
+                ]
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                [
+                  1
+                ],
+                [
+                  1
+                ]
+              ],
+              []
+            ],
+            "Input type": [
+              "TensorList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 20.16,
+          "kernel_external_id": "19882843",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[0]",
+              "[1]",
+              "319034500"
+            ],
+            "Input Dims": [
+              [
+                409
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::slice",
+          "kernel_dur_us": 20.032,
+          "kernel_external_id": "19882753",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "0",
+              "128",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                128
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "Scalar",
+              "Scalar",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::resolve_neg",
+          "kernel_dur_us": 20.001,
+          "kernel_external_id": "19884684",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                100
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::resolve_neg",
+        "aten::_unique2",
+        "aten::cat",
+        "aten::slice"
+      ],
+      "total_us": 55062.458999999995,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-5.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 752,
+      "category": "other",
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "kernel": "bmm_Bfloat16_Bfloat16Bfloat16_Fp32_t128x8x128u2_s4_et128x8_m128x8x16_c1x1x1_rM_BN_transOut_schPd2x1x2x3_biasBfloat16Mn_bN_ldgsts_ldgstsSf_rgTma_clmp_swiGlu_dynB_sm100f",
+      "label": "sharegpt_high",
+      "mean_us": 72.31957180851063,
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "pct_of_gpu": 2.5699383407519782,
+      "samples": [
+        {
+          "cpu_op": "aten::resolve_neg",
+          "kernel_dur_us": 87.201,
+          "kernel_external_id": "19884639",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                100
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 87.072,
+          "kernel_external_id": "19885141",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[51]",
+              "[1]",
+              "300421608"
+            ],
+            "Input Dims": [
+              [
+                51
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::resolve_neg",
+          "kernel_dur_us": 86.305,
+          "kernel_external_id": "19884681",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                100
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 86.017,
+          "kernel_external_id": "19886012",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[8]",
+              "[1]",
+              "304616232"
+            ],
+            "Input Dims": [
+              [
+                264
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 85.76,
+          "kernel_external_id": "19885970",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[8]",
+              "[1]",
+              "304616232"
+            ],
+            "Input Dims": [
+              [
+                264
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 85.6,
+          "kernel_external_id": "19885183",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[51]",
+              "[1]",
+              "300421608"
+            ],
+            "Input Dims": [
+              [
+                51
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 80.033,
+          "kernel_external_id": "19885970",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                2
+              ],
+              [
+                2
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long unsigned int",
+              "long unsigned int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 79.905,
+          "kernel_external_id": "19885141",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[11]",
+              "[1]",
+              "316150872"
+            ],
+            "Input Dims": [
+              [
+                395
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::as_strided",
+        "aten::resolve_neg",
+        "aten::copy_"
+      ],
+      "total_us": 54384.318,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-5.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 1504,
+      "category": "other",
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "kernel": "bmm_Bfloat16_Bfloat16Bfloat16_Fp32_t128x8x128u2_s5_et128x8_m128x8x16_c1x1x1_rM_BN_transOut_schPd2x1x2x3_bN_rgTma_clmp_dynB_sm100f",
+      "label": "sharegpt_high",
+      "mean_us": 34.92618550531915,
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "pct_of_gpu": 2.482264233090298,
+      "samples": [
+        {
+          "cpu_op": "aten::cat",
+          "kernel_dur_us": 42.464,
+          "kernel_external_id": "19885952",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                [
+                  8
+                ]
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                [
+                  1
+                ]
+              ],
+              []
+            ],
+            "Input type": [
+              "TensorList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::resolve_neg",
+          "kernel_dur_us": 40.48,
+          "kernel_external_id": "19885674",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                100
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::resolve_neg",
+          "kernel_dur_us": 40.417,
+          "kernel_external_id": "19884681",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                100
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::resolve_neg",
+          "kernel_dur_us": 40.16,
+          "kernel_external_id": "19884639",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                100
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 39.777,
+          "kernel_external_id": "19887005",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                2
+              ],
+              [
+                2
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long unsigned int",
+              "long unsigned int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 39.776,
+          "kernel_external_id": "19885970",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [
+                2
+              ],
+              [
+                2
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long unsigned int",
+              "long unsigned int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 39.745,
+          "kernel_external_id": "19885952",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[8]",
+              "[1]",
+              "304616232"
+            ],
+            "Input Dims": [
+              [
+                264
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::resolve_neg",
+          "kernel_dur_us": 39.713,
+          "kernel_external_id": "19884607",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                100
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::resolve_neg",
+        "aten::copy_",
+        "aten::cat",
+        "aten::as_strided"
+      ],
+      "total_us": 52528.983,
+      "trace_files": [
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-7.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-0.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-1.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-4.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-6.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-3.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-2.trace.json.gz",
+        "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-5.trace.json.gz"
+      ]
+    }
+  ],
+  "threshold_strictly_greater_than_pct": 2.0,
+  "total_gpu_us": 2116172.094,
+  "trace_files": [
+    "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-7.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-0.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-1.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-4.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-6.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-3.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-2.trace.json.gz",
+    "/data/bbuf/kda-pilot/llm/qwen3/b200/profile/sharegpt_high/1781951243.646643/sharegpt_high-1781951243.6476035-TP-5.trace.json.gz"
+  ]
+}

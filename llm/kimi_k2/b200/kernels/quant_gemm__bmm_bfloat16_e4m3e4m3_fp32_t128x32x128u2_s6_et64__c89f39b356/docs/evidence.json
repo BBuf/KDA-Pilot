@@ -1,0 +1,195 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "bmm_Bfloat16_E4m3E4m3_Fp32_t128x32x128u2_s6_et64x32_m64x32x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_schPd4x2x2x3_bN_rgTma_clmp_dynB_sm100f",
+  "labels": [
+    "random_high"
+  ],
+  "max_pct_of_gpu": 6.402730681284891,
+  "model": "moonshotai/Kimi-K2-Instruct",
+  "model_slug": "kimi_k2",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::trtllm_fp8_block_scale_moe_wrapper",
+      "kernel_dur_us": 269.761,
+      "provenance": "external_id=43285",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "384",
+          "8",
+          "1",
+          "1",
+          "256",
+          "0",
+          "384",
+          "2.827",
+          "2",
+          "False",
+          "0",
+          "",
+          "4096",
+          "1",
+          "3"
+        ],
+        "Input Dims": [
+          [
+            2555,
+            384
+          ],
+          [
+            384
+          ],
+          [
+            2555,
+            7168
+          ],
+          [
+            56,
+            2555
+          ],
+          [
+            384,
+            512,
+            7168
+          ],
+          [
+            384,
+            4,
+            56
+          ],
+          [
+            384,
+            7168,
+            256
+          ],
+          [
+            384,
+            56,
+            2
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            384,
+            1
+          ],
+          [
+            1
+          ],
+          [
+            7168,
+            1
+          ],
+          [
+            2555,
+            1
+          ],
+          [
+            3670016,
+            7168,
+            1
+          ],
+          [
+            224,
+            56,
+            1
+          ],
+          [
+            1835008,
+            256,
+            1
+          ],
+          [
+            112,
+            2,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::Float8_e4m3fn",
+          "float",
+          "c10::Float8_e4m3fn",
+          "float",
+          "c10::Float8_e4m3fn",
+          "float",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "kimi_k2/b200/docs/kernel_shapes_random_high.json"
+  ],
+  "task_id": "quant_gemm__bmm_bfloat16_e4m3e4m3_fp32_t128x32x128u2_s6_et64__c89f39b356",
+  "total_calls": 1560,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 1560,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 149.75254935897445,
+      "pct_of_gpu": 6.402730681284891,
+      "top_cpu_ops": [
+        "sglang::trtllm_fp8_block_scale_moe_wrapper"
+      ],
+      "total_us": 233613.97700000013
+    }
+  ]
+}

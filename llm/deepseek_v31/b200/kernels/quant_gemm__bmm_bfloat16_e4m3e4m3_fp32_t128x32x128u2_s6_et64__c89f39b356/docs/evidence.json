@@ -1,0 +1,370 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "bmm_Bfloat16_E4m3E4m3_Fp32_t128x32x128u2_s6_et64x32_m64x32x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_schPd4x2x2x3_bN_rgTma_clmp_dynB_sm100f",
+  "labels": [
+    "random_high",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 6.732829308922456,
+  "model": "deepseek-ai/DeepSeek-V3.1",
+  "model_slug": "deepseek_v31",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::trtllm_fp8_block_scale_moe_wrapper",
+      "kernel_dur_us": 159.394,
+      "provenance": "external_id=77821",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "256",
+          "8",
+          "8",
+          "4",
+          "256",
+          "0",
+          "256",
+          "2.5",
+          "2",
+          "False",
+          "0",
+          "",
+          "2048",
+          "1",
+          "3"
+        ],
+        "Input Dims": [
+          [
+            1427,
+            256
+          ],
+          [
+            256
+          ],
+          [
+            1427,
+            7168
+          ],
+          [
+            56,
+            1427
+          ],
+          [
+            256,
+            512,
+            7168
+          ],
+          [
+            256,
+            4,
+            56
+          ],
+          [
+            256,
+            7168,
+            256
+          ],
+          [
+            256,
+            56,
+            2
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            256,
+            1
+          ],
+          [
+            1
+          ],
+          [
+            7168,
+            1
+          ],
+          [
+            1427,
+            1
+          ],
+          [
+            3670016,
+            7168,
+            1
+          ],
+          [
+            224,
+            56,
+            1
+          ],
+          [
+            1835008,
+            256,
+            1
+          ],
+          [
+            112,
+            2,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::Float8_e4m3fn",
+          "float",
+          "c10::Float8_e4m3fn",
+          "float",
+          "c10::Float8_e4m3fn",
+          "float",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "sglang::trtllm_fp8_block_scale_moe_wrapper",
+      "kernel_dur_us": 165.63,
+      "provenance": "external_id=167202",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "256",
+          "8",
+          "8",
+          "4",
+          "256",
+          "0",
+          "256",
+          "2.5",
+          "2",
+          "False",
+          "0",
+          "",
+          "2048",
+          "1",
+          "3"
+        ],
+        "Input Dims": [
+          [
+            1502,
+            256
+          ],
+          [
+            256
+          ],
+          [
+            1502,
+            7168
+          ],
+          [
+            56,
+            1502
+          ],
+          [
+            256,
+            512,
+            7168
+          ],
+          [
+            256,
+            4,
+            56
+          ],
+          [
+            256,
+            7168,
+            256
+          ],
+          [
+            256,
+            56,
+            2
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            256,
+            1
+          ],
+          [
+            1
+          ],
+          [
+            7168,
+            1
+          ],
+          [
+            1502,
+            1
+          ],
+          [
+            3670016,
+            7168,
+            1
+          ],
+          [
+            224,
+            56,
+            1
+          ],
+          [
+            1835008,
+            256,
+            1
+          ],
+          [
+            112,
+            2,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::Float8_e4m3fn",
+          "float",
+          "c10::Float8_e4m3fn",
+          "float",
+          "c10::Float8_e4m3fn",
+          "float",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "deepseek_v31/b200/docs/kernel_shapes_random_high.json",
+    "deepseek_v31/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "quant_gemm__bmm_bfloat16_e4m3e4m3_fp32_t128x32x128u2_s6_et64__c89f39b356",
+  "total_calls": 6608,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 3776,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 91.65691260593219,
+      "pct_of_gpu": 6.732829308922456,
+      "top_cpu_ops": [
+        "sglang::trtllm_fp8_block_scale_moe_wrapper"
+      ],
+      "total_us": 346096.502
+    },
+    {
+      "calls": 2832,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 95.12146115819209,
+      "pct_of_gpu": 2.915492161394823,
+      "top_cpu_ops": [
+        "sglang::trtllm_fp8_block_scale_moe_wrapper"
+      ],
+      "total_us": 269383.978
+    }
+  ]
+}

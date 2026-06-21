@@ -1,0 +1,158 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_twoshot_sync<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>, std::array<int, 8>, std::array<int, 8>)",
+  "labels": [
+    "random_high",
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 9.213010447422393,
+  "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+  "model_slug": "qwen3_coder",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 333.185,
+      "provenance": "external_id=28954",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1]",
+          "[1]",
+          "447"
+        ],
+        "Input Dims": [
+          [
+            448
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 288.61,
+      "provenance": "external_id=61174",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[553, 1536]",
+          "[1792, 1]",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            576,
+            1536
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1792,
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 283.04,
+      "provenance": "external_id=63749",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[705]",
+          "[1]",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            768
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen3_coder/b200/docs/kernel_shapes_random_high.json",
+    "qwen3_coder/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "comm__allreduce_fusion_kernel_twoshot_sync__c36567c3ee",
+  "total_calls": 2952,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 984,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 127.03762093495935,
+      "pct_of_gpu": 7.047579378615723,
+      "top_cpu_ops": [
+        "aten::copy_",
+        "sglang::unified_attention_with_output",
+        "aten::as_strided",
+        "aten::empty"
+      ],
+      "total_us": 125005.019
+    },
+    {
+      "calls": 1968,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 81.25215599593496,
+      "pct_of_gpu": 9.213010447422393,
+      "top_cpu_ops": [
+        "aten::as_strided"
+      ],
+      "total_us": 159904.243
+    }
+  ]
+}

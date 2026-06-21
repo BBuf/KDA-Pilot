@@ -1,0 +1,70 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "bmm_E2m1_E2m1E2m1_Fp32_Ab16_Bb16_Cb16_t128x128x512_s3x3x3x3x1x3_et128x32_m256x128x64_c2x1x1_rM_TN_transOut_schPd2x1x2x3_biasFp32M_fCp_bN_ldgsts_ldgstsSf_rgTma_clmp_swiGlu_lbW4_lsfbW4_dynB_sm100f",
+  "labels": [
+    "sharegpt_high"
+  ],
+  "max_pct_of_gpu": 4.4052521702658956,
+  "model": "nvidia/DeepSeek-V3.2-NVFP4",
+  "model_slug": "deepseek_v32",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 189.472,
+      "provenance": "external_id=140515",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[]",
+          "[]",
+          "16"
+        ],
+        "Input Dims": [
+          [
+            65
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "deepseek_v32/b200/docs/kernel_shapes_sharegpt_high.json"
+  ],
+  "task_id": "quant_gemm__bmm_e2m1_e2m1e2m1_fp32_ab16_bb16_cb16_t128x128x5__4ad8ff352d",
+  "total_calls": 348,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 348,
+      "concurrency": "high",
+      "dataset": "sharegpt",
+      "label": "sharegpt_high",
+      "mean_us": 184.83713505747127,
+      "pct_of_gpu": 4.4052521702658956,
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1",
+        "aten::as_strided"
+      ],
+      "total_us": 64323.323000000004
+    }
+  ]
+}

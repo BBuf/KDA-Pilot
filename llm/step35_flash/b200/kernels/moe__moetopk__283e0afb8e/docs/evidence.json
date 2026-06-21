@@ -1,0 +1,288 @@
+{
+  "category": "moe",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void moeTopK<256>(float const*, bool const*, float*, int*, int, int, int, int, bool, float const*)",
+  "labels": [
+    "random_low",
+    "random_high"
+  ],
+  "max_pct_of_gpu": 2.8491273428791293,
+  "model": "stepfun-ai/Step-3.5-Flash",
+  "model_slug": "step35_flash",
+  "shape_samples": [
+    {
+      "cpu_op": "c10d::broadcast_",
+      "kernel_dur_us": 11.233,
+      "provenance": "external_id=21726",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "0",
+          "0",
+          "False",
+          "-1"
+        ],
+        "Input Dims": [
+          [
+            [
+              1
+            ]
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            [
+              1
+            ]
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "TensorList",
+          "",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::detach_",
+      "kernel_dur_us": 10.816,
+      "provenance": "external_id=25244",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          [
+            1
+          ]
+        ],
+        "Input Strides": [
+          [
+            1
+          ]
+        ],
+        "Input type": [
+          "long int"
+        ]
+      }
+    },
+    {
+      "cpu_op": "gloo:broadcast",
+      "kernel_dur_us": 10.496,
+      "provenance": "external_id=22263",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          [
+            1
+          ]
+        ],
+        "Input Strides": [
+          [
+            1
+          ]
+        ],
+        "Input type": [
+          "long int"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::empty",
+      "kernel_dur_us": 10.111,
+      "provenance": "external_id=23753",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[1]",
+          "4",
+          "0",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "Scalar",
+          "Scalar",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::to",
+      "kernel_dur_us": 9.951,
+      "provenance": "external_id=23256",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "4",
+          "False",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "",
+          "Scalar",
+          "Scalar",
+          "Scalar",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "sgl_kernel::topk_sigmoid",
+      "kernel_dur_us": 9.856,
+      "provenance": "external_id=998150",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "True",
+          ""
+        ],
+        "Input Dims": [
+          [
+            38,
+            8
+          ],
+          [
+            38,
+            8
+          ],
+          [
+            38,
+            288
+          ],
+          [],
+          [
+            288
+          ]
+        ],
+        "Input Strides": [
+          [
+            8,
+            1
+          ],
+          [
+            8,
+            1
+          ],
+          [
+            288,
+            1
+          ],
+          [],
+          [
+            1
+          ]
+        ],
+        "Input type": [
+          "float",
+          "int",
+          "float",
+          "Scalar",
+          "float"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "step35_flash/b200/docs/kernel_shapes_random_low.json",
+    "step35_flash/b200/docs/kernel_shapes_random_high.json"
+  ],
+  "task_id": "moe__moetopk__283e0afb8e",
+  "total_calls": 3024,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 1512,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 9.294176587301587,
+      "pct_of_gpu": 2.7916477638849355,
+      "top_cpu_ops": [
+        "gloo:broadcast",
+        "c10d::broadcast_",
+        "aten::detach_",
+        "aten::empty",
+        "aten::to"
+      ],
+      "total_us": 14052.795
+    },
+    {
+      "calls": 1512,
+      "concurrency": "high",
+      "dataset": "random",
+      "label": "random_high",
+      "mean_us": 9.295421957671957,
+      "pct_of_gpu": 2.8491273428791293,
+      "top_cpu_ops": [
+        "aten::empty",
+        "sgl_kernel::topk_sigmoid",
+        "aten::cat",
+        "aten::neg",
+        "aten::copy_"
+      ],
+      "total_us": 14054.678
+    }
+  ]
+}

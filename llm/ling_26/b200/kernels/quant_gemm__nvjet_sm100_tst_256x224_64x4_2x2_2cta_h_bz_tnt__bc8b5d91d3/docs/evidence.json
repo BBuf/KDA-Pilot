@@ -1,0 +1,139 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_256x224_64x4_2x2_2cta_h_bz_TNT",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 2.1446235318275284,
+  "model": "inclusionAI/Ling-2.6-flash",
+  "model_slug": "ling_26",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 167.712,
+      "provenance": "external_id=18962",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            9780,
+            4096
+          ],
+          [
+            4096,
+            3072
+          ]
+        ],
+        "Input Strides": [
+          [
+            4096,
+            1
+          ],
+          [
+            1,
+            4096
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 166.464,
+      "provenance": "external_id=18890",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[22]",
+          "[0]",
+          ""
+        ],
+        "Input Dims": [
+          [
+            22
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList",
+          "ScalarList",
+          ""
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::transpose",
+      "kernel_dur_us": 165.44,
+      "provenance": "external_id=19255",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0",
+          "1"
+        ],
+        "Input Dims": [
+          [
+            4096,
+            1024
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1024,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "ling_26/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_256x224_64x4_2x2_2cta_h_bz_tnt__bc8b5d91d3",
+  "total_calls": 128,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 128,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 143.2340546875,
+      "pct_of_gpu": 2.1446235318275284,
+      "top_cpu_ops": [
+        "aten::mm",
+        "aten::as_strided",
+        "aten::transpose"
+      ],
+      "total_us": 18333.959
+    }
+  ]
+}

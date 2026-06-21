@@ -1,0 +1,74 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "kernel_cutlass_kernel_flashinferquantizationkernelsnvfp4_quantizeNVFP4QuantizeSwizzledKernel_object_at__tensorptrbf16gmemalign16o614461441_tensorptri8gmemalign16o307230721_tensorptri8gmem_0",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 2.9792246865668424,
+  "model": "nvidia/GLM-5-NVFP4",
+  "model_slug": "glm_5",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::empty",
+      "kernel_dur_us": 185.375,
+      "provenance": "external_id=307",
+      "shape_args": {
+        "Concrete Inputs": [
+          "[0]",
+          "3",
+          "",
+          "",
+          "False",
+          ""
+        ],
+        "Input Dims": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "ScalarList",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "glm_5/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "quant_gemm__kernel_cutlass_kernel_flashinferquantizationkern__71028ab958",
+  "total_calls": 2808,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 2808,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 7.834067307692308,
+      "pct_of_gpu": 2.9792246865668424,
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2",
+        "aten::empty"
+      ],
+      "total_us": 21998.061
+    }
+  ]
+}

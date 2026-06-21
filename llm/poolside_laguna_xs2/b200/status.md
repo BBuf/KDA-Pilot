@@ -1,0 +1,19 @@
+- 2026-06-19 12:54:35 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; command=python3 -m sglang.launch_server --model-path poolside/Laguna-XS.2-FP8 --tp 8 --trust-remote-code --reasoning-parser poolside_v1 --tool-call-parser poolside_v1 --host 0.0.0.0 --port 30000
+- 2026-06-19 12:55:55 UTC: failed_or_interrupted - exit_code=1; cleaning partial weights
+- 2026-06-19 12:55:55 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--poolside--Laguna-XS.2-FP8: deleted after failed/interrupted Poolside Laguna-XS.2 FP8 run, size_before=7.1M; lock=/root/.cache/huggingface/hub/.locks/models--poolside--Laguna-XS.2-FP8
+- 2026-06-19 13:03:17 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3; command=python3 -m sglang.launch_server --model-path poolside/Laguna-XS.2-FP8 --tp 4 --trust-remote-code --reasoning-parser poolside_v1 --tool-call-parser poolside_v1 --host 0.0.0.0 --port 30000
+- 2026-06-19 13:07:56 UTC: server_ready - pid=3160, port=30000
+- 2026-06-19 13:07:56 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
+- 2026-06-19 13:08:32 UTC: extract - random_low: extracting >2% kernel shapes/meta
+- 2026-06-19 13:08:33 UTC: benchmark - random_mid: dataset=random, num_prompts=300, max_concurrency=32
+- 2026-06-19 13:09:28 UTC: extract - random_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 13:09:29 UTC: benchmark - random_high: dataset=random, num_prompts=500, max_concurrency=100
+- 2026-06-19 13:10:10 UTC: extract - random_high: extracting >2% kernel shapes/meta
+- 2026-06-19 13:10:11 UTC: benchmark - sharegpt_low: dataset=sharegpt, num_prompts=10, max_concurrency=1
+- 2026-06-19 13:10:40 UTC: extract - sharegpt_low: extracting >2% kernel shapes/meta
+- 2026-06-19 13:10:41 UTC: benchmark - sharegpt_mid: dataset=sharegpt, num_prompts=300, max_concurrency=32
+- 2026-06-19 13:11:17 UTC: extract - sharegpt_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 13:11:18 UTC: benchmark - sharegpt_high: dataset=sharegpt, num_prompts=500, max_concurrency=100
+- 2026-06-19 13:11:50 UTC: extract - sharegpt_high: extracting >2% kernel shapes/meta
+- 2026-06-19 13:11:52 UTC: completed - Poolside Laguna-XS.2 FP8 benchmark/profile/shape extraction complete
+- 2026-06-19 13:11:55 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--poolside--Laguna-XS.2-FP8: deleted after completed run, size_before=33G; lock=/root/.cache/huggingface/hub/.locks/models--poolside--Laguna-XS.2-FP8

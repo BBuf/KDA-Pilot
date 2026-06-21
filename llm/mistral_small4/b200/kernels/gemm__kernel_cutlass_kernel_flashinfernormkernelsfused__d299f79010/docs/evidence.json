@@ -1,0 +1,71 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_at__tensorptrbf16gmemalign128o409640961_tensorptrbf16gmemalign128o409640961_tensorptrbf16gmemalign_0",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 3.668732201883537,
+  "model": "mistralai/Mistral-Small-4-119B-2603",
+  "model_slug": "mistral_small4",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::split_with_sizes",
+      "kernel_dur_us": 3.456,
+      "provenance": "external_id=2318",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[256, 64]",
+          "-1"
+        ],
+        "Input Dims": [
+          [
+            38,
+            320
+          ],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1344,
+            1
+          ],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "mistral_small4/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "gemm__kernel_cutlass_kernel_flashinfernormkernelsfused__d299f79010",
+  "total_calls": 648,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 648,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 2.901929012345679,
+      "pct_of_gpu": 3.668732201883537,
+      "top_cpu_ops": [
+        "aten::add_",
+        "aten::slice",
+        "aten::view",
+        "aten::sub",
+        "aten::add"
+      ],
+      "total_us": 1880.45
+    }
+  ]
+}

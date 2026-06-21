@@ -1,0 +1,16 @@
+- 2026-06-19 12:14:05 UTC: server_start - CUDA_VISIBLE_DEVICES=0; command=python3 -m sglang.launch_server --model-path baidu/ERNIE-4.5-21B-A3B-PT --tp 1 --host 0.0.0.0 --port 30000
+- 2026-06-19 12:36:23 UTC: server_ready - pid=673, port=30000
+- 2026-06-19 12:36:23 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
+- 2026-06-19 12:36:47 UTC: extract - random_low: extracting >2% kernel shapes/meta
+- 2026-06-19 12:36:48 UTC: benchmark - random_mid: dataset=random, num_prompts=300, max_concurrency=32
+- 2026-06-19 12:37:47 UTC: extract - random_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 12:37:47 UTC: benchmark - random_high: dataset=random, num_prompts=500, max_concurrency=100
+- 2026-06-19 12:38:32 UTC: extract - random_high: extracting >2% kernel shapes/meta
+- 2026-06-19 12:38:32 UTC: benchmark - sharegpt_low: dataset=sharegpt, num_prompts=10, max_concurrency=1
+- 2026-06-19 12:38:54 UTC: extract - sharegpt_low: extracting >2% kernel shapes/meta
+- 2026-06-19 12:38:55 UTC: benchmark - sharegpt_mid: dataset=sharegpt, num_prompts=300, max_concurrency=32
+- 2026-06-19 12:39:33 UTC: extract - sharegpt_mid: extracting >2% kernel shapes/meta
+- 2026-06-19 12:39:33 UTC: benchmark - sharegpt_high: dataset=sharegpt, num_prompts=500, max_concurrency=100
+- 2026-06-19 12:40:07 UTC: extract - sharegpt_high: extracting >2% kernel shapes/meta
+- 2026-06-19 12:40:07 UTC: completed - ERNIE-4.5 21B-A3B benchmark/profile/shape extraction complete
+- 2026-06-19 12:40:11 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--baidu--ERNIE-4.5-21B-A3B-PT: deleted after completed run, size_before=41G; lock=/root/.cache/huggingface/hub/.locks/models--baidu--ERNIE-4.5-21B-A3B-PT

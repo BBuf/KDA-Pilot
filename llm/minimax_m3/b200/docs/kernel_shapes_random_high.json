@@ -1,0 +1,1399 @@
+{
+  "concurrency": "high",
+  "dataset": "random",
+  "label": "random_high",
+  "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+  "rows": [
+    {
+      "calls": 1936,
+      "category": "comm",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "ncclDevKernel_AllReduce_Sum_bf16_RING_LL(ncclDevKernelArgsStorage<4096ul>)",
+      "label": "random_high",
+      "mean_us": 256.6005077479336,
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "pct_of_gpu": 15.992800193241791,
+      "samples": [
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 3234.938,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "sglang::outplace_all_reduce",
+          "kernel_dur_us": 3122.651,
+          "kernel_external_id": "115481",
+          "provenance": "external_id=115481",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                4096,
+                6144
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                6144,
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 3079.575,
+          "kernel_external_id": "114589",
+          "provenance": "external_id=114589",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[1]",
+              "[1]",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                5
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::select",
+          "kernel_dur_us": 3064.183,
+          "kernel_external_id": "114594",
+          "provenance": "external_id=114594",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                1,
+                1
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1,
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "sglang::outplace_all_reduce",
+          "kernel_dur_us": 1336.028,
+          "kernel_external_id": "115481",
+          "provenance": "external_id=115481",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              ""
+            ],
+            "Input Dims": [
+              [
+                4096,
+                6144
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                6144,
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "c10::BFloat16",
+              "",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 1178.332,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 1001.883,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 970.686,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/2",
+        "sglang::outplace_all_reduce",
+        "aten::as_strided",
+        "aten::select"
+      ],
+      "total_us": 496778.5829999994,
+      "trace_files": [
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-3.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-6.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-0.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-5.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-2.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-1.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-4.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-7.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 4104,
+      "category": "quant_gemm",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 32u, 32u, 0u, 768u, 6144u, 128u, 128u, 128u, 129u, 128u, 128u, 128u, 8u, 128u, 128u, 2u, true, 148u, true, (deep_gemm::GemmType)2, false, cutlass::float_e4m3_t, cutlass::float_e4m3_t, cutlass::bfloat16_t, deep_gemm::epilogue::transform::EpilogueIdentity>(int*, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+      "label": "random_high",
+      "mean_us": 111.08383869395716,
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "pct_of_gpu": 14.676411438541908,
+      "samples": [
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 166.72,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 166.464,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 166.048,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 166.015,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 165.727,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 165.695,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 165.664,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 165.664,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "missing",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/2"
+      ],
+      "total_us": 455888.0740000002,
+      "trace_files": [
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-3.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-6.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-0.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-5.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-2.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-1.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-4.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-7.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 2880,
+      "category": "norm",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloat16*, __nv_bfloat16*, unsigned int, unsigned int, unsigned int, float, float)",
+      "label": "random_high",
+      "mean_us": 119.4626961805559,
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "pct_of_gpu": 11.076089260509358,
+      "samples": [
+        {
+          "cpu_op": "aten::lift_fresh",
+          "kernel_dur_us": 914.333,
+          "kernel_external_id": "96400",
+          "provenance": "external_id=96400",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/4",
+          "kernel_dur_us": 905.119,
+          "kernel_external_id": "97286",
+          "provenance": "external_id=97286",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "aten::lift_fresh",
+          "kernel_dur_us": 876.893,
+          "kernel_external_id": "96400",
+          "provenance": "external_id=96400",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/4",
+          "kernel_dur_us": 868.031,
+          "kernel_external_id": "97286",
+          "provenance": "external_id=97286",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/4",
+          "kernel_dur_us": 866.526,
+          "kernel_external_id": "97286",
+          "provenance": "external_id=97286",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/4",
+          "kernel_dur_us": 859.422,
+          "kernel_external_id": "97286",
+          "provenance": "external_id=97286",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/4",
+          "kernel_dur_us": 858.974,
+          "kernel_external_id": "97286",
+          "provenance": "external_id=97286",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/4",
+          "kernel_dur_us": 855.804,
+          "kernel_external_id": "97286",
+          "provenance": "external_id=97286",
+          "shape_args": {}
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/4",
+        "aten::lift_fresh"
+      ],
+      "total_us": 344052.565000001,
+      "trace_files": [
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-3.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-6.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-0.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-5.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-2.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-1.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-4.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-7.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 4104,
+      "category": "quant_gemm",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 32u, 32u, 0u, 6144u, 384u, 128u, 128u, 128u, 129u, 128u, 128u, 128u, 8u, 128u, 128u, 2u, true, 148u, true, (deep_gemm::GemmType)2, false, cutlass::float_e4m3_t, cutlass::float_e4m3_t, cutlass::bfloat16_t, deep_gemm::epilogue::transform::EpilogueIdentity>(int*, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+      "label": "random_high",
+      "mean_us": 80.55367373294345,
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "pct_of_gpu": 10.642762011924033,
+      "samples": [
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 151.263,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 151.04,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 150.976,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 150.88,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 150.719,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 150.496,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 150.431,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 150.399,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "missing",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/2"
+      ],
+      "total_us": 330592.27699999994,
+      "trace_files": [
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-3.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-6.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-0.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-5.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-2.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-1.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-4.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-7.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 968,
+      "category": "comm",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "void (anonymous namespace)::all_reduce_one_shot_push_kernel<__nv_bfloat16, 8u, true>((anonymous namespace)::AllReducePushData, device::distributed::PushController)",
+      "label": "random_high",
+      "mean_us": 281.3439194214877,
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "pct_of_gpu": 8.76747503031316,
+      "samples": [
+        {
+          "cpu_op": "aten::lift_fresh",
+          "kernel_dur_us": 913.117,
+          "kernel_external_id": "96400",
+          "provenance": "external_id=96400",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/4",
+          "kernel_dur_us": 904.574,
+          "kernel_external_id": "97286",
+          "provenance": "external_id=97286",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "aten::lift_fresh",
+          "kernel_dur_us": 875.837,
+          "kernel_external_id": "96400",
+          "provenance": "external_id=96400",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/4",
+          "kernel_dur_us": 867.359,
+          "kernel_external_id": "97286",
+          "provenance": "external_id=97286",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/4",
+          "kernel_dur_us": 865.982,
+          "kernel_external_id": "97286",
+          "provenance": "external_id=97286",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/4",
+          "kernel_dur_us": 858.75,
+          "kernel_external_id": "97286",
+          "provenance": "external_id=97286",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/4",
+          "kernel_dur_us": 858.302,
+          "kernel_external_id": "97286",
+          "provenance": "external_id=97286",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/4",
+          "kernel_dur_us": 854.941,
+          "kernel_external_id": "97286",
+          "provenance": "external_id=97286",
+          "shape_args": {}
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/4",
+        "aten::lift_fresh"
+      ],
+      "total_us": 272340.9140000001,
+      "trace_files": [
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-3.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-6.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-0.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-5.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-2.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-1.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-4.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-7.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 9072,
+      "category": "quant_gemm",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "_mxfp8_block_scaled_matmul_kernel",
+      "label": "random_high",
+      "mean_us": 19.847641093474472,
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "pct_of_gpu": 5.796603390679389,
+      "samples": [
+        {
+          "cpu_op": "aten::select",
+          "kernel_dur_us": 69.823,
+          "kernel_external_id": "114594",
+          "provenance": "external_id=114594",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "0",
+              "0"
+            ],
+            "Input Dims": [
+              [
+                1,
+                1
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1,
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "Scalar",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 69.6,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 69.536,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 69.376,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 69.248,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 69.215,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 69.184,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        },
+        {
+          "cpu_op": "Torch-Compiled Region: 5/2",
+          "kernel_dur_us": 69.183,
+          "kernel_external_id": "115486",
+          "provenance": "external_id=115486",
+          "shape_args": {}
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/2",
+        "aten::select"
+      ],
+      "total_us": 180057.80000000042,
+      "trace_files": [
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-3.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-6.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-0.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-5.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-2.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-1.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-4.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-7.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 5808,
+      "category": "comm",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "void (anonymous namespace)::all_reduce_two_shot_kernel<__nv_bfloat16, 8u, true>(host::distributed::AllReduceData const*, (anonymous namespace)::AllReduceParams, device::distributed::PullController)",
+      "label": "random_high",
+      "mean_us": 19.711978305785166,
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "pct_of_gpu": 3.685687139414607,
+      "samples": [
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 3713.876,
+          "kernel_external_id": "26835168",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[0]",
+              "3",
+              "",
+              "",
+              "False",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "Scalar",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 3156.857,
+          "kernel_external_id": "26832190",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[0]",
+              "3",
+              "",
+              "",
+              "False",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "Scalar",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 3095.677,
+          "kernel_external_id": "26834980",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[0]",
+              "3",
+              "",
+              "",
+              "False",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "Scalar",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 3073.148,
+          "kernel_external_id": "26832208",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[0]",
+              "3",
+              "",
+              "",
+              "False",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "Scalar",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 2479.003,
+          "kernel_external_id": "26832171",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[0]",
+              "3",
+              "",
+              "",
+              "False",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "Scalar",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 2070.65,
+          "kernel_external_id": "26832403",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[0]",
+              "3",
+              "",
+              "",
+              "False",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "Scalar",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 1732.188,
+          "kernel_external_id": "26832098",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[0]",
+              "3",
+              "",
+              "",
+              "False",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "Scalar",
+              ""
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty",
+          "kernel_dur_us": 1721.437,
+          "kernel_external_id": "26834968",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[0]",
+              "3",
+              "",
+              "",
+              "False",
+              ""
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "Scalar",
+              "",
+              "",
+              "Scalar",
+              ""
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::empty"
+      ],
+      "total_us": 114487.17000000025,
+      "trace_files": [
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-3.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-6.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-0.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-5.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-2.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-1.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-4.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-7.trace.json.gz"
+      ]
+    },
+    {
+      "calls": 2736,
+      "category": "attention",
+      "concurrency": "high",
+      "dataset": "random",
+      "kernel": "_gqa_share_sparse_decode_kernel",
+      "label": "random_high",
+      "mean_us": 38.328230263157955,
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "pct_of_gpu": 3.3759538961262066,
+      "samples": [
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 42.528,
+          "kernel_external_id": "26832171",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[42]",
+              "[1]",
+              "256"
+            ],
+            "Input Dims": [
+              [
+                298
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::as_strided",
+          "kernel_dur_us": 39.392,
+          "kernel_external_id": "26832196",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "[0]",
+              "[1]",
+              "435160956"
+            ],
+            "Input Dims": [
+              [
+                314
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "ScalarList",
+              "ScalarList",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::empty_strided",
+          "kernel_dur_us": 39.264,
+          "kernel_external_id": "26832098",
+          "provenance": "timestamp_enclosure",
+          "shape_args": {
+            "Concrete Inputs": [
+              "[384]",
+              "[1]",
+              "4",
+              "0",
+              "",
+              "False"
+            ],
+            "Input Dims": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [],
+              [],
+              [],
+              [],
+              [],
+              []
+            ],
+            "Input type": [
+              "ScalarList",
+              "ScalarList",
+              "Scalar",
+              "Scalar",
+              "",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 39.232,
+          "kernel_external_id": "26834870",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [
+                100
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::_local_scalar_dense",
+          "kernel_dur_us": 39.2,
+          "kernel_external_id": "26832098",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              ""
+            ],
+            "Input Dims": [
+              [
+                1
+              ]
+            ],
+            "Input Strides": [
+              [
+                1
+              ]
+            ],
+            "Input type": [
+              "long int"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 39.168,
+          "kernel_external_id": "26836375",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [
+                100
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::add",
+          "kernel_dur_us": 39.168,
+          "kernel_external_id": "26836853",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "1"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [],
+              []
+            ],
+            "Input type": [
+              "int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        },
+        {
+          "cpu_op": "aten::copy_",
+          "kernel_dur_us": 39.136,
+          "kernel_external_id": "26836575",
+          "provenance": "nearest_preceding_shape_cpu_op",
+          "shape_args": {
+            "Concrete Inputs": [
+              "",
+              "",
+              "True"
+            ],
+            "Input Dims": [
+              [
+                100
+              ],
+              [
+                100
+              ],
+              []
+            ],
+            "Input Strides": [
+              [
+                1
+              ],
+              [
+                1
+              ],
+              []
+            ],
+            "Input type": [
+              "long int",
+              "long int",
+              "Scalar"
+            ]
+          }
+        }
+      ],
+      "sglang_relevant": true,
+      "shape_status": "ok",
+      "top_cpu_ops": [
+        "aten::copy_",
+        "aten::as_strided",
+        "aten::empty_strided",
+        "aten::_local_scalar_dense",
+        "aten::add"
+      ],
+      "total_us": 104866.03800000018,
+      "trace_files": [
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-3.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-6.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-0.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-5.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-2.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-1.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-4.trace.json.gz",
+        "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-7.trace.json.gz"
+      ]
+    }
+  ],
+  "threshold_strictly_greater_than_pct": 2.0,
+  "total_gpu_us": 3106263.9249999956,
+  "trace_files": [
+    "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-3.trace.json.gz",
+    "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-6.trace.json.gz",
+    "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-0.trace.json.gz",
+    "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-5.trace.json.gz",
+    "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-2.trace.json.gz",
+    "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-1.trace.json.gz",
+    "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-4.trace.json.gz",
+    "llm/minimax_m3/b200/profile/random_high/1781857797.44943/random_high-1781857797.4507098-TP-7.trace.json.gz"
+  ]
+}

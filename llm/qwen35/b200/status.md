@@ -1,0 +1,16 @@
+- 2026-06-20 08:18:13 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3; command=python3 -m sglang.launch_server --model-path nvidia/Qwen3.5-397B-A17B-NVFP4 --tp 4 --reasoning-parser qwen3 --tool-call-parser qwen3_coder --mem-fraction-static 0.85 --attention-backend trtllm_mha --quantization modelopt_fp4 --fp4-gemm-backend flashinfer_cutlass --kv-cache-dtype fp8_e4m3 --moe-runner-backend flashinfer_trtllm --chunked-prefill-size 32768 --max-prefill-tokens 32768 --host 0.0.0.0 --port 30000
+- 2026-06-20 08:30:56 UTC: server_ready - pid=1155, port=30000
+- 2026-06-20 08:30:56 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
+- 2026-06-20 08:31:38 UTC: extract - random_low: extracting >2% kernel shapes/meta
+- 2026-06-20 08:31:39 UTC: benchmark - random_mid: dataset=random, num_prompts=300, max_concurrency=32
+- 2026-06-20 08:33:46 UTC: extract - random_mid: extracting >2% kernel shapes/meta
+- 2026-06-20 08:33:49 UTC: benchmark - random_high: dataset=random, num_prompts=500, max_concurrency=100
+- 2026-06-20 08:36:02 UTC: extract - random_high: extracting >2% kernel shapes/meta
+- 2026-06-20 08:36:07 UTC: benchmark - sharegpt_low: dataset=sharegpt, num_prompts=10, max_concurrency=1
+- 2026-06-20 08:36:40 UTC: extract - sharegpt_low: extracting >2% kernel shapes/meta
+- 2026-06-20 08:36:41 UTC: benchmark - sharegpt_mid: dataset=sharegpt, num_prompts=300, max_concurrency=32
+- 2026-06-20 08:38:04 UTC: extract - sharegpt_mid: extracting >2% kernel shapes/meta
+- 2026-06-20 08:38:08 UTC: benchmark - sharegpt_high: dataset=sharegpt, num_prompts=500, max_concurrency=100
+- 2026-06-20 08:39:36 UTC: extract - sharegpt_high: extracting >2% kernel shapes/meta
+- 2026-06-20 08:39:43 UTC: completed - Qwen3.5 397B-A17B NVFP4 benchmark/profile/shape extraction complete
+- 2026-06-20 08:40:01 UTC: weights_cleanup - primary: /root/.cache/huggingface/hub/models--nvidia--Qwen3.5-397B-A17B-NVFP4: deleted after completed run, size_before=234G; lock=/root/.cache/huggingface/hub/.locks/models--nvidia--Qwen3.5-397B-A17B-NVFP4

@@ -1,0 +1,72 @@
+{
+  "category": "comm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 11.106526116428705,
+  "model": "moonshotai/Kimi-K2-Instruct",
+  "model_slug": "kimi_k2",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::narrow",
+      "kernel_dur_us": 415.968,
+      "provenance": "external_id=252",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "0",
+          "1",
+          "1"
+        ],
+        "Input Dims": [
+          [
+            2
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "Scalar",
+          "Scalar",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "kimi_k2/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "comm__allreduce_fusion_kernel_oneshot_lamport__b9d8384154",
+  "total_calls": 8712,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 8712,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 10.453040748392997,
+      "pct_of_gpu": 11.106526116428705,
+      "top_cpu_ops": [
+        "sglang::unified_attention_with_output",
+        "aten::copy_",
+        "aten::slice",
+        "aten::narrow"
+      ],
+      "total_us": 91066.89099999978
+    }
+  ]
+}

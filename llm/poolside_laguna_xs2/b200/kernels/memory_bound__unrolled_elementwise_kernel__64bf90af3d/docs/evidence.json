@@ -1,0 +1,114 @@
+{
+  "category": "memory_bound",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul>, 4, TrivialOffsetCalculator<1, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<1>, at::native::memory::StoreWithCast<1> >(int, at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#7}::operator()() const::{lambda(float)#1}, std::array<char*, 2ul>, TrivialOffsetCalculator<1, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<1>, at::native::memory::StoreWithCast<1>)",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 3.376392745703238,
+  "model": "poolside/Laguna-XS.2-FP8",
+  "model_slug": "poolside_laguna_xs2",
+  "shape_samples": [
+    {
+      "cpu_op": "sglang::unified_attention_with_output",
+      "kernel_dur_us": 63.296,
+      "provenance": "external_id=10066",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "",
+          "",
+          "",
+          "True",
+          "4",
+          "",
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            11264,
+            1536
+          ],
+          [
+            11264,
+            2,
+            128
+          ],
+          [
+            11264,
+            2,
+            128
+          ],
+          [
+            11264,
+            1536
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            2048,
+            1
+          ],
+          [
+            2048,
+            128,
+            1
+          ],
+          [
+            2048,
+            128,
+            1
+          ],
+          [
+            1536,
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "c10::BFloat16",
+          "Scalar",
+          "Scalar",
+          "",
+          "",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "poolside_laguna_xs2/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "memory_bound__unrolled_elementwise_kernel__64bf90af3d",
+  "total_calls": 2880,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 2880,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 6.563989930555556,
+      "pct_of_gpu": 3.376392745703238,
+      "top_cpu_ops": [
+        "sglang::unified_attention_with_output",
+        "Torch-Compiled Region: 5/1"
+      ],
+      "total_us": 18904.291
+    }
+  ]
+}

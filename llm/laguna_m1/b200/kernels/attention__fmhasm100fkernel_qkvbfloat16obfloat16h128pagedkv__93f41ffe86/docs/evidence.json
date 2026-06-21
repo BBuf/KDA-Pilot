@@ -1,0 +1,57 @@
+{
+  "category": "attention",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP64MultiCtasKvVarSeqQ8Kv128StaticSwapsAbForGen",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 3.1825951877283174,
+  "model": "poolside/Laguna-M.1-NVFP4",
+  "model_slug": "laguna_m1",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::_local_scalar_dense",
+      "kernel_dur_us": 8.48,
+      "provenance": "external_id=4675",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          []
+        ],
+        "Input Strides": [
+          []
+        ],
+        "Input type": [
+          "int"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "laguna_m1/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "attention__fmhasm100fkernel_qkvbfloat16obfloat16h128pagedkv__93f41ffe86",
+  "total_calls": 4480,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 4480,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 7.286443303571429,
+      "pct_of_gpu": 3.1825951877283174,
+      "top_cpu_ops": [
+        "detach_",
+        "aten::resolve_neg",
+        "aten::_local_scalar_dense",
+        "c10d::broadcast_",
+        "aten::empty"
+      ],
+      "total_us": 32643.266
+    }
+  ]
+}

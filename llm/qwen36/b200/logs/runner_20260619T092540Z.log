@@ -1,0 +1,31 @@
+server exited early
+Unable to import `torchao` Tensor objects. This may affect loading checkpoints serialized with `torchao`
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[2026-06-19 09:25:52] DeepGemm is enabled but the scale_fmt of checkpoint is not ue8m0. This might cause accuracy degradation on Blackwell.
+[2026-06-19 09:25:52] Use flashinfer_trtllm as MoE runner backend on sm100 for Qwen3_5MoeForConditionalGeneration
+[2026-06-19 09:25:52] Use trtllm_mha as attention backend on sm100 for Qwen3_5MoeForConditionalGeneration
+[2026-06-19 09:25:52] kill_process_tree called: parent_pid=1446, include_parent=False, pid=1446
+Traceback (most recent call last):
+  File "/usr/local/bin/sglang", line 6, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/cli/main.py", line 40, in main
+    serve(args, extra_argv)
+  File "/sgl-workspace/sglang/python/sglang/cli/serve.py", line 126, in serve
+    server_args = prepare_server_args(dispatch_argv)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/srt/server_args.py", line 8009, in prepare_server_args
+    return ServerArgs.from_cli_args(raw_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/srt/server_args.py", line 7284, in from_cli_args
+    return cls(**{attr: getattr(args, attr) for attr in attrs})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 399, in __init__
+  File "/sgl-workspace/sglang/python/sglang/srt/server_args.py", line 970, in __post_init__
+    self._handle_model_specific_adjustments()
+  File "/sgl-workspace/sglang/python/sglang/srt/server_args.py", line 2530, in _handle_model_specific_adjustments
+    self._handle_mamba_radix_cache(
+  File "/sgl-workspace/sglang/python/sglang/srt/server_args.py", line 2754, in _handle_mamba_radix_cache
+    raise ValueError(
+ValueError: Speculative decoding for Qwen3_5MoeForConditionalGeneration is not compatible with radix cache when using --mamba-scheduler-strategy no_buffer.To use radix cache with speculative decoding, please use --mamba-scheduler-strategy extra_buffer and set SGLANG_ENABLE_SPEC_V2=1.
+

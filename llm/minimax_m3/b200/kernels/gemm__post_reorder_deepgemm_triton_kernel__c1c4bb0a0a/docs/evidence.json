@@ -1,0 +1,58 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "post_reorder_deepgemm_triton_kernel",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 2.7762320891133934,
+  "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+  "model_slug": "minimax_m3",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::fill_",
+      "kernel_dur_us": 98.88,
+      "provenance": "external_id=39996",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "971"
+        ],
+        "Input Dims": [
+          [],
+          []
+        ],
+        "Input Strides": [
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "minimax_m3/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "gemm__post_reorder_deepgemm_triton_kernel__c1c4bb0a0a",
+  "total_calls": 4104,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 4104,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 22.661683479532066,
+      "pct_of_gpu": 2.7762320891133934,
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/2",
+        "aten::fill_"
+      ],
+      "total_us": 93003.54899999959
+    }
+  ]
+}

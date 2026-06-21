@@ -1,0 +1,55 @@
+{
+  "category": "gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "kernel_cutlass_kernel_flashinfergemmkernelsdense_blockscaled_gemm_sm100Sm100BlockScaledPersistentDenseGemmKernel_object_at__TiledMMA_ThrLayoutVMNK11110000_PermutationMNK____MMAAtom_ThrID1_0",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 4.7784744216666315,
+  "model": "poolside/Laguna-M.1-NVFP4",
+  "model_slug": "laguna_m1",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::_local_scalar_dense",
+      "kernel_dur_us": 7.168,
+      "provenance": "external_id=4675",
+      "shape_args": {
+        "Concrete Inputs": [
+          ""
+        ],
+        "Input Dims": [
+          []
+        ],
+        "Input Strides": [
+          []
+        ],
+        "Input type": [
+          "int"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "laguna_m1/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "gemm__kernel_cutlass_kernel_flashinfergemmkernelsdense__e9481e7b7d",
+  "total_calls": 10080,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 10080,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 4.862290873015873,
+      "pct_of_gpu": 4.7784744216666315,
+      "top_cpu_ops": [
+        "gloo:broadcast",
+        "aten::_local_scalar_dense",
+        "sglang::unified_attention_with_output"
+      ],
+      "total_us": 49011.892
+    }
+  ]
+}

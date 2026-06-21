@@ -1,0 +1,82 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "bmm_MxE4m3_MxE2m1MxE4m3_Fp32_Ab32_Bb32_Cb32_t128x128x256u2_s4_et128x32_m256x128x32_c2x1x1_rM_TN_transOut_schPd2x1x2x3_biasFp32M_bN_tma_ldgstsSf_rgTma_clmp_swiGlu_lbW8_lsfbW4_dynB_sm100f",
+  "labels": [
+    "random_mid"
+  ],
+  "max_pct_of_gpu": 5.220093750591821,
+  "model": "openai/gpt-oss-120b",
+  "model_slug": "gpt_oss_120b",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::_to_copy",
+      "kernel_dur_us": 149.602,
+      "provenance": "external_id=9480",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "3",
+          "0",
+          "",
+          "",
+          "True",
+          ""
+        ],
+        "Input Dims": [
+          [
+            21
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "int",
+          "Scalar",
+          "Scalar",
+          "",
+          "",
+          "Scalar",
+          ""
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "gpt_oss_120b/b200/docs/kernel_shapes_random_mid.json"
+  ],
+  "task_id": "quant_gemm__bmm_mxe4m3_mxe2m1mxe4m3_fp32_ab32_bb32_cb32_t128__b812b12ca9",
+  "total_calls": 288,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 288,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 144.61385763888887,
+      "pct_of_gpu": 5.220093750591821,
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/1",
+        "aten::_to_copy"
+      ],
+      "total_us": 41648.791
+    }
+  ]
+}

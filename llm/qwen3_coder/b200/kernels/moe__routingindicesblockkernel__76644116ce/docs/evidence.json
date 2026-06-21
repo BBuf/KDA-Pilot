@@ -1,0 +1,71 @@
+{
+  "category": "moe",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "void moe::dev::routing::routingCustom::routingIndicesBlockKernel<moe::dev::routing::routingCustom::KernelParams<__nv_bfloat16, __nv_bfloat16, 160, 8, moe::dev::routing::TopKExpertSelect<moe::dev::routing::NoOpPreprocess, moe::dev::routing::SoftmaxPostprocess> > >(moe::dev::routing::routingCustom::KernelParams<__nv_bfloat16, __nv_bfloat16, 160, 8, moe::dev::routing::TopKExpertSelect<moe::dev::routing::NoOpPreprocess, moe::dev::routing::SoftmaxPostprocess> >)",
+  "labels": [
+    "random_low"
+  ],
+  "max_pct_of_gpu": 2.1705787373291727,
+  "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+  "model_slug": "qwen3_coder",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::as_strided",
+      "kernel_dur_us": 4.096,
+      "provenance": "external_id=4440",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          "[1]",
+          "[1]",
+          "0"
+        ],
+        "Input Dims": [
+          [
+            512
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input Strides": [
+          [
+            1
+          ],
+          [],
+          [],
+          []
+        ],
+        "Input type": [
+          "long int",
+          "ScalarList",
+          "ScalarList",
+          "Scalar"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "qwen3_coder/b200/docs/kernel_shapes_random_low.json"
+  ],
+  "task_id": "moe__routingindicesblockkernel__76644116ce",
+  "total_calls": 3968,
+  "workload_count": 1,
+  "workloads": [
+    {
+      "calls": 3968,
+      "concurrency": "low",
+      "dataset": "random",
+      "label": "random_low",
+      "mean_us": 3.5407827620967742,
+      "pct_of_gpu": 2.1705787373291727,
+      "top_cpu_ops": [
+        "gloo:broadcast",
+        "aten::copy_",
+        "aten::as_strided"
+      ],
+      "total_us": 14049.826000000001
+    }
+  ]
+}

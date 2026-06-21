@@ -1,0 +1,153 @@
+{
+  "category": "quant_gemm",
+  "evidence_policy": "promoted only from external_id-bound torch-profiler shape samples",
+  "hardware": "b200",
+  "kernel": "nvjet_sm100_tst_128x192_64x7_2x1_2cta_v_bz_TNT",
+  "labels": [
+    "random_mid",
+    "sharegpt_mid"
+  ],
+  "max_pct_of_gpu": 7.539782763766493,
+  "model": "google/gemma-4-26B-A4B-it",
+  "model_slug": "gemma4",
+  "shape_samples": [
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 330.463,
+      "provenance": "external_id=11413",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            11254,
+            2816
+          ],
+          [
+            2816,
+            8192
+          ]
+        ],
+        "Input Strides": [
+          [
+            2816,
+            1
+          ],
+          [
+            1,
+            2816
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 204.641,
+      "provenance": "external_id=44356",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            7081,
+            8192
+          ],
+          [
+            8192,
+            2816
+          ]
+        ],
+        "Input Strides": [
+          [
+            8192,
+            1
+          ],
+          [
+            1,
+            8192
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    },
+    {
+      "cpu_op": "aten::mm",
+      "kernel_dur_us": 195.585,
+      "provenance": "external_id=42007",
+      "shape_args": {
+        "Concrete Inputs": [
+          "",
+          ""
+        ],
+        "Input Dims": [
+          [
+            7081,
+            2816
+          ],
+          [
+            2816,
+            8192
+          ]
+        ],
+        "Input Strides": [
+          [
+            2816,
+            1
+          ],
+          [
+            1,
+            2816
+          ]
+        ],
+        "Input type": [
+          "c10::BFloat16",
+          "c10::BFloat16"
+        ]
+      }
+    }
+  ],
+  "source_json": [
+    "gemma4/b200/docs/kernel_shapes_random_mid.json",
+    "gemma4/b200/docs/kernel_shapes_sharegpt_mid.json"
+  ],
+  "task_id": "quant_gemm__nvjet_sm100_tst_128x192_64x7_2x1_2cta_v_bz_tnt__9c046ec28d",
+  "total_calls": 110,
+  "workload_count": 2,
+  "workloads": [
+    {
+      "calls": 25,
+      "concurrency": "mid",
+      "dataset": "random",
+      "label": "random_mid",
+      "mean_us": 310.65292,
+      "pct_of_gpu": 4.665545820807191,
+      "top_cpu_ops": [
+        "aten::mm"
+      ],
+      "total_us": 7766.323
+    },
+    {
+      "calls": 85,
+      "concurrency": "mid",
+      "dataset": "sharegpt",
+      "label": "sharegpt_mid",
+      "mean_us": 113.63761176470588,
+      "pct_of_gpu": 7.539782763766493,
+      "top_cpu_ops": [
+        "aten::mm"
+      ],
+      "total_us": 9659.197
+    }
+  ]
+}
