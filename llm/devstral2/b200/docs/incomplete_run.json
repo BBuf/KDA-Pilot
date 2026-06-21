@@ -1,0 +1,32 @@
+{
+  "completion_class": "runtime_blocked",
+  "folder": "devstral2",
+  "local_artifact_count": 7,
+  "local_artifact_files": [
+    "llm/devstral2/b200/logs/manual_quant_fp8.log",
+    "llm/devstral2/b200/logs/runner.log",
+    "llm/devstral2/b200/logs/server.log",
+    "llm/devstral2/b200/profile_config.sh",
+    "llm/devstral2/b200/run_log.md",
+    "llm/devstral2/b200/status.json",
+    "llm/devstral2/b200/status.md"
+  ],
+  "local_run_dir": "llm/devstral2/b200",
+  "resume_hint": "Fix runtime kernel/server failure first; no promoted shape rows were captured.",
+  "resume_scope": "attempted_text_llm",
+  "series": "Mistral",
+  "shape_json_count": 0,
+  "source_progress_file": "llm/docs/cookbook_intro_remaining.md",
+  "source_progress_line": 79,
+  "status_json": {
+    "detail": "primary: /root/.cache/huggingface/hub/models--mistralai--Devstral-2-123B-Instruct-2512: deleted after failed/interrupted Devstral 2 123B FP8 run, size_before=17M; lock=/root/.cache/huggingface/hub/.locks/models--mistralai--Devstral-2-123B-Instruct-2512",
+    "model": "mistralai/Devstral-2-123B-Instruct-2512",
+    "run_dir": "/data/bbuf/kda-pilot/llm/devstral2/b200",
+    "stage": "weights_cleanup",
+    "updated_at": "2026-06-20 03:37:02 UTC"
+  },
+  "status_summary": "blocked + cleaned; live cookbook B200 large config uses TP2 and requires recent transformers; `lmsysorg/sglang:latest` has `transformers 5.8.1` plus valid torch profiler GPU `kernel` events, but launch fails before weight download with `AttributeError: 'str' object has no attribute 'get_quant_method'` in the Ministral3 FP8 path; explicit `--quantization fp8` probe fails the same way; no Devstral-specific `lmsysorg/sglang` image tags found; partial HF cache cleaned `17M`",
+  "target_cookbook_page": "Mistral/Devstral-2.md",
+  "target_model": "mistralai/Devstral-2-123B-Instruct-2512",
+  "weights_cleanup_observed": true
+}

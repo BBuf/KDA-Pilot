@@ -1,0 +1,1579 @@
+{
+  "by_category": {
+    "comm": 25,
+    "gemm": 11,
+    "moe": 20,
+    "norm": 10,
+    "other": 3,
+    "quant_gemm": 47,
+    "rope": 3
+  },
+  "by_model": {
+    "deepseek_math_v2": 22,
+    "deepseek_v32": 16,
+    "ernie45": 11,
+    "glm_47_flash": 3,
+    "glm_5": 11,
+    "gpt_oss_120b": 20,
+    "minimax_m25": 9,
+    "minimax_m27": 5,
+    "minimax_m3": 18,
+    "poolside_laguna_xs2": 4
+  },
+  "generated_at": "2026-06-21T01:28:45Z",
+  "policy": "empty-shape rows are not promoted to task cards because torch profiler exposed no non-empty shape_args sample",
+  "row_count": 119,
+  "rows": [
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "random_low",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 22.467683869559288,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_E4m3_E4m3E4m3_Fp32_t128x8x128u2_s8_et64x8_m64x8x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_schPd4x2x2x3_bN_tma_tmaSf_rgTma_clmp_lbW2_dynB_sm100f",
+      "label": "random_low",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 2.494924673913934,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_E4m3E4m3_Fp32_t128x8x128u2_s8_et64x8_m64x8x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_schPd4x2x2x3_bN_rgTma_clmp_dynB_sm100f",
+      "label": "random_low",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 2.2146997157543638,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_twoshot_sync<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>, std::array<int, 8>, std::array<int, 8>)",
+      "label": "random_high",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 12.56797705647353,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "random_high",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 10.502516151273785,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_E4m3_E4m3E4m3_Fp32_t128x64x128u2_s6_et64x64_m64x64x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_schPd4x2x2x3_bN_tma_tmaSf_rgTma_clmp_lbW4_dynB_sm100f",
+      "label": "random_high",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 5.333131137449949,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitK_TNT",
+      "label": "random_high",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 4.119027176196356,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "void moe::dev::activation::activationDeepSeekKernel<moe::dev::activation::KernelParams<cutlass::float_e4m3_t, 4, true> >(moe::dev::activation::KernelParams<cutlass::float_e4m3_t, 4, true>)",
+      "label": "random_high",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 3.4601702936475065,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_E4m3E4m3_Fp32_t128x64x128u2_s6_et64x64_m64x64x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_schPd4x2x2x3_bN_rgTma_clmp_dynB_sm100f",
+      "label": "random_high",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 2.4798028121399445,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "other",
+      "kernel": "void (anonymous namespace)::fast_hadamard_transform_kernel<(anonymous namespace)::FastHadamardKernelTraits<16, 7, __nv_bfloat16> >(HadamardParamsBase)",
+      "label": "random_high",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 2.234622631125316,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "sharegpt_low",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 22.206217130751142,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void flashinfer::trtllm_dsv3_router_gemm::router_gemm_kernel<__nv_bfloat16, float, 128, 8, 16, 256, 7168>(float*, __nv_bfloat16 const*, __nv_bfloat16 const*)",
+      "label": "sharegpt_low",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 11.772834991221883,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "sharegpt_mid",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 7.221069899388435,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void flashinfer::trtllm_dsv3_router_gemm::router_gemm_kernel<__nv_bfloat16, float, 128, 8, 16, 256, 7168>(float*, __nv_bfloat16 const*, __nv_bfloat16 const*)",
+      "label": "sharegpt_mid",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 3.184597421580255,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_twoshot_sync<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>, std::array<int, 8>, std::array<int, 8>)",
+      "label": "sharegpt_mid",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 2.846137404912482,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "sharegpt_high",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 14.02460525716401,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3",
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_twoshot_sync<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>, std::array<int, 8>, std::array<int, 8>)",
+      "label": "sharegpt_high",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 10.344432962329298,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1",
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_E4m3_E4m3E4m3_Fp32_t128x64x128u2_s6_et64x64_m64x64x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_schPd4x2x2x3_bN_tma_tmaSf_rgTma_clmp_lbW4_dynB_sm100f",
+      "label": "sharegpt_high",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 7.845862932365579,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2",
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void flashinfer::trtllm_dsv3_router_gemm::router_gemm_kernel<__nv_bfloat16, float, 128, 8, 16, 256, 7168>(float*, __nv_bfloat16 const*, __nv_bfloat16 const*)",
+      "label": "sharegpt_high",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 4.647154224043029,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_E4m3E4m3_Fp32_t128x64x128u2_s6_et64x64_m64x64x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_schPd4x2x2x3_bN_rgTma_clmp_dynB_sm100f",
+      "label": "sharegpt_high",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 3.4954842120371716,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "void moe::dev::activation::activationDeepSeekKernel<moe::dev::activation::KernelParams<cutlass::float_e4m3_t, 4, true> >(moe::dev::activation::KernelParams<cutlass::float_e4m3_t, 4, true>)",
+      "label": "sharegpt_high",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 3.2716772700970895,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "other",
+      "kernel": "void (anonymous namespace)::fast_hadamard_transform_kernel<(anonymous namespace)::FastHadamardKernelTraits<16, 7, __nv_bfloat16> >(HadamardParamsBase)",
+      "label": "sharegpt_high",
+      "model": "deepseek-ai/DeepSeek-Math-V2",
+      "model_slug": "deepseek_math_v2",
+      "pct_of_gpu": 2.1697311418791085,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_math_v2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 4, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "random_low",
+      "model": "nvidia/DeepSeek-V3.2-NVFP4",
+      "model_slug": "deepseek_v32",
+      "pct_of_gpu": 17.65772138426131,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_v32/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitK_TNT",
+      "label": "random_low",
+      "model": "nvidia/DeepSeek-V3.2-NVFP4",
+      "model_slug": "deepseek_v32",
+      "pct_of_gpu": 11.600674124161698,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_v32/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "kernel_cutlass_kernel_flashinfergemmkernelsdense_blockscaled_gemm_sm100Sm100BlockScaledPersistentDenseGemmKernel_object_at__TiledMMA_ThrLayoutVMNK11110000_PermutationMNK____MMAAtom_ThrID1_0",
+      "label": "random_low",
+      "model": "nvidia/DeepSeek-V3.2-NVFP4",
+      "model_slug": "deepseek_v32",
+      "pct_of_gpu": 8.03623359471083,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_v32/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_E2m1E2m1_Fp32_Ab16_Bb16tokFp32_t128x8x512_s5_et128x8_m128x8x64_c1x1x1_rM_TN_transOut_schPd2x1x2x3_biasFp32M_bN_rgTma_clmp_dynB_sm100f",
+      "label": "random_low",
+      "model": "nvidia/DeepSeek-V3.2-NVFP4",
+      "model_slug": "deepseek_v32",
+      "pct_of_gpu": 2.62290065279343,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_v32/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 4, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "random_high",
+      "model": "nvidia/DeepSeek-V3.2-NVFP4",
+      "model_slug": "deepseek_v32",
+      "pct_of_gpu": 6.873258077618968,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_v32/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitK_TNT",
+      "label": "random_high",
+      "model": "nvidia/DeepSeek-V3.2-NVFP4",
+      "model_slug": "deepseek_v32",
+      "pct_of_gpu": 4.282084474881635,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_v32/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 4, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "sharegpt_low",
+      "model": "nvidia/DeepSeek-V3.2-NVFP4",
+      "model_slug": "deepseek_v32",
+      "pct_of_gpu": 19.256544432252035,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_v32/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void flashinfer::trtllm_dsv3_router_gemm::router_gemm_kernel<__nv_bfloat16, float, 128, 8, 16, 256, 7168>(float*, __nv_bfloat16 const*, __nv_bfloat16 const*)",
+      "label": "sharegpt_low",
+      "model": "nvidia/DeepSeek-V3.2-NVFP4",
+      "model_slug": "deepseek_v32",
+      "pct_of_gpu": 13.238018197014123,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_v32/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "kernel_cutlass_kernel_flashinferquantizationkernelsnvfp4_quantizeNVFP4QuantizeSwizzledKernel_object_at__tensorptrbf16gmemalign16o716871681_tensorptri8gmemalign16o358435841_tensorptri8gmem_0",
+      "label": "sharegpt_low",
+      "model": "nvidia/DeepSeek-V3.2-NVFP4",
+      "model_slug": "deepseek_v32",
+      "pct_of_gpu": 3.3419618970252833,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_v32/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_E2m1E2m1_Fp32_Ab16_Bb16tokFp32_t128x8x512_s5_et128x8_m128x8x64_c1x1x1_rM_TN_transOut_schPd2x1x2x3_biasFp32M_bN_rgTma_clmp_dynB_sm100f",
+      "label": "sharegpt_low",
+      "model": "nvidia/DeepSeek-V3.2-NVFP4",
+      "model_slug": "deepseek_v32",
+      "pct_of_gpu": 2.691640268814307,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_v32/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 4, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "sharegpt_mid",
+      "model": "nvidia/DeepSeek-V3.2-NVFP4",
+      "model_slug": "deepseek_v32",
+      "pct_of_gpu": 7.451656151679539,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_v32/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void flashinfer::trtllm_dsv3_router_gemm::router_gemm_kernel<__nv_bfloat16, float, 128, 8, 16, 256, 7168>(float*, __nv_bfloat16 const*, __nv_bfloat16 const*)",
+      "label": "sharegpt_mid",
+      "model": "nvidia/DeepSeek-V3.2-NVFP4",
+      "model_slug": "deepseek_v32",
+      "pct_of_gpu": 3.583270265902346,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_v32/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 4, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "sharegpt_high",
+      "model": "nvidia/DeepSeek-V3.2-NVFP4",
+      "model_slug": "deepseek_v32",
+      "pct_of_gpu": 12.322228228215709,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_v32/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2",
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void flashinfer::trtllm_dsv3_router_gemm::router_gemm_kernel<__nv_bfloat16, float, 128, 8, 16, 256, 7168>(float*, __nv_bfloat16 const*, __nv_bfloat16 const*)",
+      "label": "sharegpt_high",
+      "model": "nvidia/DeepSeek-V3.2-NVFP4",
+      "model_slug": "deepseek_v32",
+      "pct_of_gpu": 5.3157893814443975,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_v32/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_E2m1_E2m1E2m1_Fp32_Ab16_Bb16_Cb16_t128x32x512u2_s4_et128x32_m128x32x64_c1x1x1_rM_TN_transOut_schPd2x1x2x3_biasFp32M_bN_ldgsts_ldgstsSf_rgTma_clmp_swiGlu_dynB_sm100f",
+      "label": "sharegpt_high",
+      "model": "nvidia/DeepSeek-V3.2-NVFP4",
+      "model_slug": "deepseek_v32",
+      "pct_of_gpu": 4.265978606391379,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_v32/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "other",
+      "kernel": "void (anonymous namespace)::fast_hadamard_transform_kernel<(anonymous namespace)::FastHadamardKernelTraits<16, 7, __nv_bfloat16> >(HadamardParamsBase)",
+      "label": "sharegpt_high",
+      "model": "nvidia/DeepSeek-V3.2-NVFP4",
+      "model_slug": "deepseek_v32",
+      "pct_of_gpu": 2.466457917308856,
+      "reason": "empty_shape",
+      "source_model_index": "llm/deepseek_v32/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "random_low",
+      "model": "baidu/ERNIE-4.5-21B-A3B-PT",
+      "model_slug": "ernie45",
+      "pct_of_gpu": 36.996682673991714,
+      "reason": "empty_shape",
+      "source_model_index": "llm/ernie45/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "rope",
+      "kernel": "void (anonymous namespace)::fused_rope_kernel<false, 128l, true, __nv_bfloat16, long, 16u>((anonymous namespace)::FusedRopeParams)",
+      "label": "random_low",
+      "model": "baidu/ERNIE-4.5-21B-A3B-PT",
+      "model_slug": "ernie45",
+      "pct_of_gpu": 2.3318028338312757,
+      "reason": "empty_shape",
+      "source_model_index": "llm/ernie45/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "random_mid",
+      "model": "baidu/ERNIE-4.5-21B-A3B-PT",
+      "model_slug": "ernie45",
+      "pct_of_gpu": 63.37947881421683,
+      "reason": "empty_shape",
+      "source_model_index": "llm/ernie45/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_128x256_64x6_2x1_2cta_v_bz_TNT",
+      "label": "random_mid",
+      "model": "baidu/ERNIE-4.5-21B-A3B-PT",
+      "model_slug": "ernie45",
+      "pct_of_gpu": 6.743088196271162,
+      "reason": "empty_shape",
+      "source_model_index": "llm/ernie45/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_128x256_64x6_2x2_2cta_h_bz_TNT",
+      "label": "random_mid",
+      "model": "baidu/ERNIE-4.5-21B-A3B-PT",
+      "model_slug": "ernie45",
+      "pct_of_gpu": 4.194776155174581,
+      "reason": "empty_shape",
+      "source_model_index": "llm/ernie45/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "norm",
+      "kernel": "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloat16*, __nv_bfloat16*, unsigned int, unsigned int, unsigned int, float, float)",
+      "label": "random_mid",
+      "model": "baidu/ERNIE-4.5-21B-A3B-PT",
+      "model_slug": "ernie45",
+      "pct_of_gpu": 2.1614907721553926,
+      "reason": "empty_shape",
+      "source_model_index": "llm/ernie45/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "random_high",
+      "model": "baidu/ERNIE-4.5-21B-A3B-PT",
+      "model_slug": "ernie45",
+      "pct_of_gpu": 64.95902397536794,
+      "reason": "empty_shape",
+      "source_model_index": "llm/ernie45/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "sharegpt_low",
+      "model": "baidu/ERNIE-4.5-21B-A3B-PT",
+      "model_slug": "ernie45",
+      "pct_of_gpu": 35.858186515930335,
+      "reason": "empty_shape",
+      "source_model_index": "llm/ernie45/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "sharegpt_mid",
+      "model": "baidu/ERNIE-4.5-21B-A3B-PT",
+      "model_slug": "ernie45",
+      "pct_of_gpu": 62.860745033213895,
+      "reason": "empty_shape",
+      "source_model_index": "llm/ernie45/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_128x256_64x6_2x1_2cta_v_bz_TNT",
+      "label": "sharegpt_mid",
+      "model": "baidu/ERNIE-4.5-21B-A3B-PT",
+      "model_slug": "ernie45",
+      "pct_of_gpu": 6.6349965221611145,
+      "reason": "empty_shape",
+      "source_model_index": "llm/ernie45/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "sharegpt_high",
+      "model": "baidu/ERNIE-4.5-21B-A3B-PT",
+      "model_slug": "ernie45",
+      "pct_of_gpu": 64.81742223295616,
+      "reason": "empty_shape",
+      "source_model_index": "llm/ernie45/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/1"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "random_low",
+      "model": "zai-org/GLM-4.7-Flash",
+      "model_slug": "glm_47_flash",
+      "pct_of_gpu": 21.802968189971306,
+      "reason": "empty_shape",
+      "source_model_index": "llm/glm_47_flash/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/1"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "random_high",
+      "model": "zai-org/GLM-4.7-Flash",
+      "model_slug": "glm_47_flash",
+      "pct_of_gpu": 27.343409235035747,
+      "reason": "empty_shape",
+      "source_model_index": "llm/glm_47_flash/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/0"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "sharegpt_low",
+      "model": "zai-org/GLM-4.7-Flash",
+      "model_slug": "glm_47_flash",
+      "pct_of_gpu": 20.227212637012144,
+      "reason": "empty_shape",
+      "source_model_index": "llm/glm_47_flash/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/1"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 4, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "random_low",
+      "model": "nvidia/GLM-5-NVFP4",
+      "model_slug": "glm_5",
+      "pct_of_gpu": 17.243166601093794,
+      "reason": "empty_shape",
+      "source_model_index": "llm/glm_5/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitK_TNT",
+      "label": "random_low",
+      "model": "nvidia/GLM-5-NVFP4",
+      "model_slug": "glm_5",
+      "pct_of_gpu": 11.220468782968407,
+      "reason": "empty_shape",
+      "source_model_index": "llm/glm_5/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 4, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "random_mid",
+      "model": "nvidia/GLM-5-NVFP4",
+      "model_slug": "glm_5",
+      "pct_of_gpu": 4.763353501577178,
+      "reason": "empty_shape",
+      "source_model_index": "llm/glm_5/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_E2m1_E2m1E2m1_Fp32_Ab16_Bb16_Cb16_t128x16x512u2_s5_et128x16_m128x16x64_c1x1x1_rM_TN_transOut_schPd2x1x2x3_biasFp32M_bN_ldgsts_ldgstsSf_rgTma_clmp_swiGlu_dynB_sm100f",
+      "label": "random_mid",
+      "model": "nvidia/GLM-5-NVFP4",
+      "model_slug": "glm_5",
+      "pct_of_gpu": 3.838435131054863,
+      "reason": "empty_shape",
+      "source_model_index": "llm/glm_5/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/2"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 4, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "sharegpt_low",
+      "model": "nvidia/GLM-5-NVFP4",
+      "model_slug": "glm_5",
+      "pct_of_gpu": 19.377759290017803,
+      "reason": "empty_shape",
+      "source_model_index": "llm/glm_5/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_splitK_TNN",
+      "label": "sharegpt_low",
+      "model": "nvidia/GLM-5-NVFP4",
+      "model_slug": "glm_5",
+      "pct_of_gpu": 18.0137277408684,
+      "reason": "empty_shape",
+      "source_model_index": "llm/glm_5/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "kernel_cutlass_kernel_flashinferquantizationkernelsnvfp4_quantizeNVFP4QuantizeSwizzledKernel_object_at__tensorptrbf16gmemalign16o614461441_tensorptri8gmemalign16o307230721_tensorptri8gmem_0",
+      "label": "sharegpt_low",
+      "model": "nvidia/GLM-5-NVFP4",
+      "model_slug": "glm_5",
+      "pct_of_gpu": 2.7857031077618726,
+      "reason": "empty_shape",
+      "source_model_index": "llm/glm_5/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 4, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "sharegpt_mid",
+      "model": "nvidia/GLM-5-NVFP4",
+      "model_slug": "glm_5",
+      "pct_of_gpu": 6.671944526415166,
+      "reason": "empty_shape",
+      "source_model_index": "llm/glm_5/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_splitK_TNN",
+      "label": "sharegpt_mid",
+      "model": "nvidia/GLM-5-NVFP4",
+      "model_slug": "glm_5",
+      "pct_of_gpu": 5.955643664724397,
+      "reason": "empty_shape",
+      "source_model_index": "llm/glm_5/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 4, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "sharegpt_high",
+      "model": "nvidia/GLM-5-NVFP4",
+      "model_slug": "glm_5",
+      "pct_of_gpu": 3.5716297627263214,
+      "reason": "empty_shape",
+      "source_model_index": "llm/glm_5/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_splitK_TNN",
+      "label": "sharegpt_high",
+      "model": "nvidia/GLM-5-NVFP4",
+      "model_slug": "glm_5",
+      "pct_of_gpu": 2.512127690495004,
+      "reason": "empty_shape",
+      "source_model_index": "llm/glm_5/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 4/3"
+      ]
+    },
+    {
+      "category": "rope",
+      "kernel": "void (anonymous namespace)::fused_rope_kernel<true, 64l, true, __nv_bfloat16, long, 8u>((anonymous namespace)::FusedRopeParams)",
+      "label": "random_low",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 2.31398863242726,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/3"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxE2m1MxE4m3_Fp32_Ab32_Bb32_t128x128x256u2_s4_et128x64_m256x128x32_c2x1x1_rM_TN_transOut_schPd2x1x2x3_biasFp32M_bN_rgTma_clmp_dynB_sm100f",
+      "label": "random_mid",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 4.281898108257058,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/1"
+      ]
+    },
+    {
+      "category": "norm",
+      "kernel": "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloat16*, __nv_bfloat16*, unsigned int, unsigned int, unsigned int, float, float)",
+      "label": "random_mid",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 3.798973029229877,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/1"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "void moe::dev::finalize::finalizeKernelVecLoad<moe::dev::finalize::KernelParams<cutlass::bfloat16_t, cutlass::bfloat16_t, 4, true> >(moe::dev::finalize::KernelParams<cutlass::bfloat16_t, cutlass::bfloat16_t, 4, true>)",
+      "label": "random_mid",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 2.8067110621058404,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/1"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "random_high",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 27.687823089476,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/3"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitK_bias_TNT",
+      "label": "random_high",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 8.012688387483061,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/3"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_splitK_bias_TNN",
+      "label": "sharegpt_low",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 27.11160814600135,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/3"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "sharegpt_low",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 24.0007684006458,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/3"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "void tensorrt_llm::kernels::quantize_with_block_size<(tensorrt_llm::BlockScaleQuantizationType)2, __nv_bfloat16, 32, true, false, false, false, std::integral_constant<bool, false> >(int, int, int, int, __nv_bfloat16 const*, float const*, void*, unsigned int*, flashinfer::QuantizationSFLayout)",
+      "label": "sharegpt_low",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 3.080117941314763,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/3"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "void moe::dev::finalize::finalizeKernel<moe::dev::finalize::KernelParams<cutlass::bfloat16_t, cutlass::bfloat16_t, 4, true> >(moe::dev::finalize::KernelParams<cutlass::bfloat16_t, cutlass::bfloat16_t, 4, true>)",
+      "label": "sharegpt_low",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 2.9883449959314743,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/3"
+      ]
+    },
+    {
+      "category": "rope",
+      "kernel": "void (anonymous namespace)::fused_rope_kernel<true, 64l, true, __nv_bfloat16, long, 8u>((anonymous namespace)::FusedRopeParams)",
+      "label": "sharegpt_low",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 2.411477691151267,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/3"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void flashinfer::trtllm_allreduce_fusion::allreduce_fusion_kernel_oneshot_lamport<(flashinfer::trtllm_allreduce_fusion::AllReduceFusionPattern)1, __nv_bfloat16, 8, false, false>(flashinfer::trtllm_allreduce_fusion::AllReduceFusionParams<__nv_bfloat16>)",
+      "label": "sharegpt_mid",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 16.99721481789408,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/3"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_splitK_bias_TNN",
+      "label": "sharegpt_mid",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 12.45241030045455,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/3"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void (anonymous namespace)::all_reduce_two_shot_kernel<__nv_bfloat16, 8u, true>(host::distributed::AllReduceData const*, (anonymous namespace)::AllReduceParams, device::distributed::PullController)",
+      "label": "sharegpt_mid",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 11.89191985133817,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitK_bias_TNT",
+      "label": "sharegpt_mid",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 5.0636181313821504,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/3"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_Bfloat16_MxE2m1MxE4m3_Fp32_Ab32_Bb32_t128x128x128_s7_et128x64_m256x128x32_c2x1x1_rM_TN_transOut_schPd2x1x2x3_biasFp32M_bN_rgTma_clmp_dynB_sm100f",
+      "label": "sharegpt_mid",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 2.9119712801426454,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "void tensorrt_llm::kernels::quantize_with_block_size<(tensorrt_llm::BlockScaleQuantizationType)2, __nv_bfloat16, 32, true, false, false, false, std::integral_constant<bool, false> >(int, int, int, int, __nv_bfloat16 const*, float const*, void*, unsigned int*, flashinfer::QuantizationSFLayout)",
+      "label": "sharegpt_mid",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 2.2924471108259064,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "bmm_MxE4m3_MxE2m1MxE4m3_Fp32_Ab32_Bb32_Cb32_t128x128x256u2_s4x4x4x4x1x4_et128x32_m256x128x32_c2x1x1_rM_TN_transOut_schPd2x1x2x3_biasFp32M_fCp_bN_ldgsts_ldgstsSf_rgTma_clmp_swiGlu_lbW4_lsfbW4_dynB_sm100f",
+      "label": "sharegpt_mid",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 2.2910141034309324,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/2"
+      ]
+    },
+    {
+      "category": "norm",
+      "kernel": "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloat16*, __nv_bfloat16*, unsigned int, unsigned int, unsigned int, float, float)",
+      "label": "sharegpt_mid",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 2.242872378677326,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_splitK_bias_TNN",
+      "label": "sharegpt_high",
+      "model": "openai/gpt-oss-120b",
+      "model_slug": "gpt_oss_120b",
+      "pct_of_gpu": 5.647302997848426,
+      "reason": "empty_shape",
+      "source_model_index": "llm/gpt_oss_120b/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 1/3"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_32x32x16_1x1x1_3_tnn_align1_bias_f32_relu",
+      "label": "random_high",
+      "model": "MiniMaxAI/MiniMax-M2.5",
+      "model_slug": "minimax_m25",
+      "pct_of_gpu": 6.040724146164645,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m25/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_tn_align1>(cutlass_80_simt_sgemm_64x64_8x5_tn_align1::Params)",
+      "label": "random_high",
+      "model": "MiniMaxAI/MiniMax-M2.5",
+      "model_slug": "minimax_m25",
+      "pct_of_gpu": 4.192475943076599,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m25/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "void (anonymous namespace)::per_token_group_quant_8bit_v2_kernel<(anonymous namespace)::NaiveScheduler, 128, 8, __half, __nv_fp8_e4m3, false, false, false, true, float>(__half const*, __nv_fp8_e4m3*, float*, int const*, int, int, int, int, int)",
+      "label": "random_high",
+      "model": "MiniMaxAI/MiniMax-M2.5",
+      "model_slug": "minimax_m25",
+      "pct_of_gpu": 2.6270406215016537,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m25/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3"
+      ]
+    },
+    {
+      "category": "norm",
+      "kernel": "void flashinfer::norm::FusedAddRMSNormKernel<8u, __half>(__half*, __half*, __half*, unsigned int, unsigned int, unsigned int, float, float)",
+      "label": "random_high",
+      "model": "MiniMaxAI/MiniMax-M2.5",
+      "model_slug": "minimax_m25",
+      "pct_of_gpu": 2.542200790313295,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m25/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "sharegpt_low",
+      "model": "MiniMaxAI/MiniMax-M2.5",
+      "model_slug": "minimax_m25",
+      "pct_of_gpu": 15.769948461795673,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m25/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void (anonymous namespace)::all_reduce_one_shot_push_kernel<__half, 8u, true>((anonymous namespace)::AllReducePushData, device::distributed::PushController)",
+      "label": "sharegpt_low",
+      "model": "MiniMaxAI/MiniMax-M2.5",
+      "model_slug": "minimax_m25",
+      "pct_of_gpu": 13.29707658951995,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m25/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "void moe_align_block_size_small_batch_expert_kernel<int, 256>(int const*, int*, int*, int*, int, int, unsigned long, bool, int)",
+      "label": "sharegpt_low",
+      "model": "MiniMaxAI/MiniMax-M2.5",
+      "model_slug": "minimax_m25",
+      "pct_of_gpu": 3.1308034142171057,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m25/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3"
+      ]
+    },
+    {
+      "category": "norm",
+      "kernel": "void flashinfer::norm::FusedAddRMSNormKernel<8u, __half>(__half*, __half*, __half*, unsigned int, unsigned int, unsigned int, float, float)",
+      "label": "sharegpt_low",
+      "model": "MiniMaxAI/MiniMax-M2.5",
+      "model_slug": "minimax_m25",
+      "pct_of_gpu": 2.068955460353197,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m25/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_tn_align1>(cutlass_80_simt_sgemm_64x64_8x5_tn_align1::Params)",
+      "label": "sharegpt_low",
+      "model": "MiniMaxAI/MiniMax-M2.5",
+      "model_slug": "minimax_m25",
+      "pct_of_gpu": 2.027303880781894,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m25/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "void moe_align_block_size_small_batch_expert_kernel<int, 256>(int const*, int*, int*, int*, int, int, unsigned long, bool, int)",
+      "label": "random_low",
+      "model": "MiniMaxAI/MiniMax-M2.7",
+      "model_slug": "minimax_m27",
+      "pct_of_gpu": 3.3882955989795036,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m27/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3"
+      ]
+    },
+    {
+      "category": "gemm",
+      "kernel": "void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_tn_align1>(cutlass_80_simt_sgemm_64x64_8x5_tn_align1::Params)",
+      "label": "random_low",
+      "model": "MiniMaxAI/MiniMax-M2.7",
+      "model_slug": "minimax_m27",
+      "pct_of_gpu": 2.118729919566291,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m27/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "void (anonymous namespace)::per_token_group_quant_8bit_v2_kernel<(anonymous namespace)::NaiveScheduler, 128, 8, __nv_bfloat16, __nv_fp8_e4m3, false, false, false, true, float>(__nv_bfloat16 const*, __nv_fp8_e4m3*, float*, int const*, int, int, int, int, int)",
+      "label": "random_mid",
+      "model": "MiniMaxAI/MiniMax-M2.7",
+      "model_slug": "minimax_m27",
+      "pct_of_gpu": 2.7419564384254125,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m27/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/1"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "void moe_align_block_size_small_batch_expert_kernel<int, 256>(int const*, int*, int*, int*, int, int, unsigned long, bool, int)",
+      "label": "sharegpt_low",
+      "model": "MiniMaxAI/MiniMax-M2.7",
+      "model_slug": "minimax_m27",
+      "pct_of_gpu": 3.588880165247776,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m27/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "sharegpt_high",
+      "model": "MiniMaxAI/MiniMax-M2.7",
+      "model_slug": "minimax_m27",
+      "pct_of_gpu": 32.21786729889171,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m27/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3"
+      ]
+    },
+    {
+      "category": "norm",
+      "kernel": "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloat16*, __nv_bfloat16*, unsigned int, unsigned int, unsigned int, float, float)",
+      "label": "random_low",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 18.448819555878543,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/4"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 32u, 32u, 0u, 768u, 6144u, 128u, 128u, 128u, 129u, 128u, 128u, 128u, 8u, 128u, 128u, 2u, true, 148u, true, (deep_gemm::GemmType)2, false, cutlass::float_e4m3_t, cutlass::float_e4m3_t, cutlass::bfloat16_t, deep_gemm::epilogue::transform::EpilogueIdentity>(int*, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+      "label": "random_low",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 8.90429211517078,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/4"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 32u, 32u, 0u, 768u, 6144u, 128u, 128u, 128u, 129u, 128u, 128u, 128u, 8u, 128u, 128u, 2u, true, 148u, true, (deep_gemm::GemmType)2, false, cutlass::float_e4m3_t, cutlass::float_e4m3_t, cutlass::bfloat16_t, deep_gemm::epilogue::transform::EpilogueIdentity>(int*, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+      "label": "random_mid",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 11.972447180812853,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 32u, 32u, 0u, 6144u, 384u, 128u, 128u, 128u, 129u, 128u, 128u, 128u, 8u, 128u, 128u, 2u, true, 148u, true, (deep_gemm::GemmType)2, false, cutlass::float_e4m3_t, cutlass::float_e4m3_t, cutlass::bfloat16_t, deep_gemm::epilogue::transform::EpilogueIdentity>(int*, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+      "label": "random_mid",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 9.79827876357961,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_mxfp8_block_scaled_matmul_kernel",
+      "label": "random_mid",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 6.873552044989659,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "void (anonymous namespace)::per_token_quant_ue8m0_scatter_kernel<32u, 5u, true>((anonymous namespace)::PerTokenQuantUe8m0ScatterParams)",
+      "label": "random_mid",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 2.064201702269377,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 32u, 32u, 0u, 768u, 6144u, 128u, 128u, 128u, 129u, 128u, 128u, 128u, 8u, 128u, 128u, 2u, true, 148u, true, (deep_gemm::GemmType)2, false, cutlass::float_e4m3_t, cutlass::float_e4m3_t, cutlass::bfloat16_t, deep_gemm::epilogue::transform::EpilogueIdentity>(int*, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+      "label": "random_high",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 14.676411438541908,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/2"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 32u, 32u, 0u, 6144u, 384u, 128u, 128u, 128u, 129u, 128u, 128u, 128u, 8u, 128u, 128u, 2u, true, 148u, true, (deep_gemm::GemmType)2, false, cutlass::float_e4m3_t, cutlass::float_e4m3_t, cutlass::bfloat16_t, deep_gemm::epilogue::transform::EpilogueIdentity>(int*, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+      "label": "random_high",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 10.642762011924033,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/2"
+      ]
+    },
+    {
+      "category": "norm",
+      "kernel": "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloat16*, __nv_bfloat16*, unsigned int, unsigned int, unsigned int, float, float)",
+      "label": "sharegpt_low",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 19.569624122300368,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/4"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 32u, 32u, 0u, 768u, 6144u, 128u, 128u, 128u, 129u, 128u, 128u, 128u, 8u, 128u, 128u, 2u, true, 148u, true, (deep_gemm::GemmType)2, false, cutlass::float_e4m3_t, cutlass::float_e4m3_t, cutlass::bfloat16_t, deep_gemm::epilogue::transform::EpilogueIdentity>(int*, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+      "label": "sharegpt_low",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 8.459973293943586,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/4"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 32u, 32u, 0u, 6144u, 384u, 128u, 128u, 128u, 129u, 128u, 128u, 128u, 8u, 128u, 128u, 2u, true, 148u, true, (deep_gemm::GemmType)2, false, cutlass::float_e4m3_t, cutlass::float_e4m3_t, cutlass::bfloat16_t, deep_gemm::epilogue::transform::EpilogueIdentity>(int*, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+      "label": "sharegpt_low",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 6.2379410424865736,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/4"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void (anonymous namespace)::all_reduce_one_shot_push_kernel<__nv_bfloat16, 8u, true>((anonymous namespace)::AllReducePushData, device::distributed::PushController)",
+      "label": "sharegpt_mid",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 12.102712662469422,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/4"
+      ]
+    },
+    {
+      "category": "norm",
+      "kernel": "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloat16*, __nv_bfloat16*, unsigned int, unsigned int, unsigned int, float, float)",
+      "label": "sharegpt_mid",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 12.082883805072663,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/4"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 32u, 32u, 0u, 768u, 6144u, 128u, 128u, 128u, 129u, 128u, 128u, 128u, 8u, 128u, 128u, 2u, true, 148u, true, (deep_gemm::GemmType)2, false, cutlass::float_e4m3_t, cutlass::float_e4m3_t, cutlass::bfloat16_t, deep_gemm::epilogue::transform::EpilogueIdentity>(int*, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+      "label": "sharegpt_mid",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 10.58698866498621,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/2"
+      ]
+    },
+    {
+      "category": "norm",
+      "kernel": "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloat16*, __nv_bfloat16*, unsigned int, unsigned int, unsigned int, float, float)",
+      "label": "sharegpt_high",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 8.775590954293365,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/4"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 32u, 32u, 0u, 6144u, 384u, 128u, 128u, 128u, 129u, 128u, 128u, 128u, 8u, 128u, 128u, 2u, true, 148u, true, (deep_gemm::GemmType)2, false, cutlass::float_e4m3_t, cutlass::float_e4m3_t, cutlass::bfloat16_t, deep_gemm::epilogue::transform::EpilogueIdentity>(int*, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+      "label": "sharegpt_high",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 8.59091270316491,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/2"
+      ]
+    },
+    {
+      "category": "comm",
+      "kernel": "void (anonymous namespace)::all_reduce_one_shot_push_kernel<__nv_bfloat16, 8u, true>((anonymous namespace)::AllReducePushData, device::distributed::PushController)",
+      "label": "sharegpt_high",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 7.062398180701307,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/4"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "_mxfp8_block_scaled_matmul_kernel",
+      "label": "sharegpt_high",
+      "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+      "model_slug": "minimax_m3",
+      "pct_of_gpu": 4.704861570348201,
+      "reason": "empty_shape",
+      "source_model_index": "llm/minimax_m3/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/2"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "sharegpt_low",
+      "model": "poolside/Laguna-XS.2-FP8",
+      "model_slug": "poolside_laguna_xs2",
+      "pct_of_gpu": 11.018723030640647,
+      "reason": "empty_shape",
+      "source_model_index": "llm/poolside_laguna_xs2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3"
+      ]
+    },
+    {
+      "category": "norm",
+      "kernel": "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloat16*, __nv_bfloat16*, unsigned int, unsigned int, unsigned int, float, float)",
+      "label": "sharegpt_low",
+      "model": "poolside/Laguna-XS.2-FP8",
+      "model_slug": "poolside_laguna_xs2",
+      "pct_of_gpu": 3.102621052142746,
+      "reason": "empty_shape",
+      "source_model_index": "llm/poolside_laguna_xs2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/3"
+      ]
+    },
+    {
+      "category": "moe",
+      "kernel": "fused_moe_kernel",
+      "label": "sharegpt_mid",
+      "model": "poolside/Laguna-XS.2-FP8",
+      "model_slug": "poolside_laguna_xs2",
+      "pct_of_gpu": 19.06502303237887,
+      "reason": "empty_shape",
+      "source_model_index": "llm/poolside_laguna_xs2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/1"
+      ]
+    },
+    {
+      "category": "quant_gemm",
+      "kernel": "nvjet_sm100_tst_128x256_64x6_2x2_2cta_h_bz_TNT",
+      "label": "sharegpt_mid",
+      "model": "poolside/Laguna-XS.2-FP8",
+      "model_slug": "poolside_laguna_xs2",
+      "pct_of_gpu": 2.8321376576844126,
+      "reason": "empty_shape",
+      "source_model_index": "llm/poolside_laguna_xs2/b200/docs/kernel_task_index.json",
+      "top_cpu_ops": [
+        "Torch-Compiled Region: 5/1"
+      ]
+    }
+  ]
+}

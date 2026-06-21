@@ -1,0 +1,3 @@
+- 2026-06-19 13:17:59 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; command=python3 -m sglang.launch_server --model-path meta-llama/Llama-4-Maverick-17B-128E-Instruct --tp 8 --enable-multimodal --context-length 65536 --dtype bfloat16 --trust-remote-code --host 0.0.0.0 --port 30000
+- 2026-06-19 13:18:21 UTC: failed_or_interrupted - exit_code=1; cleaning partial weights
+- 2026-06-19 13:18:21 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--meta-llama--Llama-4-Maverick-17B-128E-Instruct: deleted after failed/interrupted Llama 4 Maverick BF16 run, size_before=absent; lock=/root/.cache/huggingface/hub/.locks/models--meta-llama--Llama-4-Maverick-17B-128E-Instruct

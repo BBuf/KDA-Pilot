@@ -1,0 +1,30 @@
+{
+  "completion_class": "download_failed",
+  "folder": "glm_45",
+  "local_artifact_count": 5,
+  "local_artifact_files": [
+    "llm/glm_45/b200/logs/runner.log",
+    "llm/glm_45/b200/logs/server.log",
+    "llm/glm_45/b200/profile_config.sh",
+    "llm/glm_45/b200/status.json",
+    "llm/glm_45/b200/status.md"
+  ],
+  "local_run_dir": "llm/glm_45/b200",
+  "resume_hint": "Resume from a clean HF cache or retry download; previous partial cache was cleaned.",
+  "resume_scope": "attempted_text_llm",
+  "series": "GLM",
+  "shape_json_count": 0,
+  "source_progress_file": "llm/docs/cookbook_intro_remaining.md",
+  "source_progress_line": 92,
+  "status_json": {
+    "detail": "primary: /root/.cache/huggingface/hub/models--zai-org--GLM-4.5: deleted after failed/interrupted GLM-4.5 BF16 run, size_before=584G; lock=/root/.cache/huggingface/hub/.locks/models--zai-org--GLM-4.5",
+    "model": "zai-org/GLM-4.5",
+    "run_dir": "/data/bbuf/kda-pilot/llm/glm_45/b200",
+    "stage": "weights_cleanup",
+    "updated_at": "2026-06-20 12:07:49 UTC"
+  },
+  "status_summary": "failed + cleaned; no shape artifacts; using live cookbook benchmark deployment command, Docker image `lmsysorg/sglang:latest`, BF16 TP8 on GPUs 0-7; official page benchmark section is AMD-oriented but command is generic SGLang TP8; launched in dedicated container `sglang_bbuf_glm_45` at 2026-06-20T10:33:55Z; progressed to HF cache `576G` / snapshot links `76/93`, then failed at 2026-06-20T12:07:26Z during HF download of `model-00084-of-00093.safetensors` with `httpx.RemoteProtocolError: peer closed connection without sending complete message body`; runner cleaned partial HF cache `584G` at 2026-06-20T12:07:49Z; container removed, GPU/cache clear, logs synced locally",
+  "target_cookbook_page": "GLM/GLM-4.5.md",
+  "target_model": "zai-org/GLM-4.5",
+  "weights_cleanup_observed": true
+}

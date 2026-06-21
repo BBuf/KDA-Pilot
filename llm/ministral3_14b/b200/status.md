@@ -1,0 +1,9 @@
+- 2026-06-20 13:47:42 UTC: server_start - CUDA_VISIBLE_DEVICES=0; command=sglang serve --model-path mistralai/Ministral-3-14B-Instruct-2512 --tp 1 --trust-remote-code --tool-call-parser mistral --host 0.0.0.0 --port 30000
+- 2026-06-20 13:48:28 UTC: failed_or_interrupted - exit_code=1; cleaning partial weights
+- 2026-06-20 13:48:28 UTC: weights_cleanup - primary: /root/.cache/huggingface/hub/models--mistralai--Ministral-3-14B-Instruct-2512: deleted after failed/interrupted Ministral-3-14B-Instruct-2512 run, size_before=17M; lock=/root/.cache/huggingface/hub/.locks/models--mistralai--Ministral-3-14B-Instruct-2512
+- 2026-06-20 13:49:51 UTC: server_start - CUDA_VISIBLE_DEVICES=0; command=sglang serve --model-path mistralai/Ministral-3-14B-Instruct-2512 --tp 1 --trust-remote-code --tool-call-parser mistral --host 0.0.0.0 --port 30000
+- 2026-06-20 13:50:05 UTC: failed_or_interrupted - exit_code=1; cleaning partial weights
+- 2026-06-20 13:50:05 UTC: weights_cleanup - primary: /root/.cache/huggingface/hub/models--mistralai--Ministral-3-14B-Instruct-2512: deleted after failed/interrupted Ministral-3-14B-Instruct-2512 run, size_before=absent; lock=/root/.cache/huggingface/hub/.locks/models--mistralai--Ministral-3-14B-Instruct-2512
+- 2026-06-20 13:52:55 UTC: server_start - CUDA_VISIBLE_DEVICES=0; command=sglang serve --model-path mistralai/Ministral-3-14B-Instruct-2512 --tp 1 --quantization fp8 --trust-remote-code --tool-call-parser mistral --host 0.0.0.0 --port 30000
+- 2026-06-20 13:53:51 UTC: failed_or_interrupted - exit_code=1; cleaning partial weights
+- 2026-06-20 13:53:51 UTC: weights_cleanup - primary: /root/.cache/huggingface/hub/models--mistralai--Ministral-3-14B-Instruct-2512: deleted after failed/interrupted Ministral-3-14B-Instruct-2512 run, size_before=17M; lock=/root/.cache/huggingface/hub/.locks/models--mistralai--Ministral-3-14B-Instruct-2512

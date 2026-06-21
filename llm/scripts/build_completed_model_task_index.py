@@ -34,6 +34,14 @@ def json_dumps(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
 
+def md_cell(value: Any, limit: int | None = None) -> str:
+    text = str(value)
+    text = text.replace("\n", " ").replace("|", "\\|")
+    if limit is not None and len(text) > limit:
+        text = text[: limit - 3] + "..."
+    return text
+
+
 def slugify(value: str, max_len: int = 48) -> str:
     out = re.sub(r"[^a-zA-Z0-9]+", "_", value.lower()).strip("_")
     out = re.sub(r"_+", "_", out)
@@ -504,6 +512,95 @@ def write_global_docs(models: list[dict[str, Any]], docs_dir: Path, generated_at
         )
     audit_md.append("")
     (docs_dir / "completed_shape_capture_audit.md").write_text("\n".join(audit_md))
+
+    write_empty_shape_docs(models, docs_dir, generated_at)
+
+
+def write_empty_shape_docs(models: list[dict[str, Any]], docs_dir: Path, generated_at: str) -> None:
+    rows: list[dict[str, Any]] = []
+    for model in models:
+        for row in model["skipped_rows"]:
+            if row.get("reason") != "empty_shape":
+                continue
+            rows.append(
+                {
+                    "model_slug": model["model_slug"],
+                    "model": model["model"],
+                    "label": row.get("label"),
+                    "category": row.get("category") or "other",
+                    "pct_of_gpu": row.get("pct_of_gpu"),
+                    "kernel": row.get("kernel"),
+                    "top_cpu_ops": row.get("top_cpu_ops") or [],
+                    "reason": "empty_shape",
+                    "source_model_index": f"llm/{model['model_slug']}/b200/docs/kernel_task_index.json",
+                }
+            )
+
+    rows.sort(
+        key=lambda r: (
+            r["model_slug"],
+            LABELS.index(r["label"]) if r.get("label") in LABELS else 999,
+            -(r.get("pct_of_gpu") or 0),
+            r["category"],
+            r.get("kernel") or "",
+        )
+    )
+
+    by_model = Counter(r["model_slug"] for r in rows)
+    by_category = Counter(r["category"] for r in rows)
+    payload = {
+        "generated_at": generated_at,
+        "row_count": len(rows),
+        "policy": "empty-shape rows are not promoted to task cards because torch profiler exposed no non-empty shape_args sample",
+        "by_model": dict(sorted(by_model.items())),
+        "by_category": dict(sorted(by_category.items())),
+        "rows": rows,
+    }
+    (docs_dir / "empty_shape_kernel_rows.json").write_text(
+        json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
+    )
+
+    md = [
+        "# Empty-Shape Kernel Rows",
+        "",
+        f"- Generated at: `{generated_at}`",
+        f"- Empty-shape rows: `{len(rows)}`",
+        "- Promotion status: not promoted to KDA task cards.",
+        "- Reason: the GPU kernel passed the strict `>2%` filter, but every retained profiler sample had empty `shape_args`.",
+        "- Common pattern: the row is attributed only to a `Torch-Compiled Region`, which is not enough to define a reusable kernel shape test.",
+        "",
+        "## By Category",
+        "",
+        "| Category | Rows |",
+        "|---|---:|",
+    ]
+    for category, count in sorted(by_category.items()):
+        md.append(f"| `{md_cell(category)}` | {count} |")
+
+    md.extend(["", "## By Model", "", "| Model slug | Rows |", "|---|---:|"])
+    for model_slug, count in sorted(by_model.items()):
+        md.append(f"| `{md_cell(model_slug)}` | {count} |")
+
+    md.extend(
+        [
+            "",
+            "## Rows",
+            "",
+            "| Model slug | Workload | Category | % GPU | Top CPU ops | Kernel |",
+            "|---|---|---|---:|---|---|",
+        ]
+    )
+    for row in rows:
+        pct = row.get("pct_of_gpu")
+        pct_text = f"{pct:.2f}" if isinstance(pct, (int, float)) else ""
+        top_cpu_ops = ", ".join(f"`{md_cell(x, 80)}`" for x in row["top_cpu_ops"]) or "none"
+        md.append(
+            f"| `{md_cell(row['model_slug'])}` | `{md_cell(row['label'])}` | "
+            f"`{md_cell(row['category'])}` | {pct_text} | {top_cpu_ops} | "
+            f"`{md_cell(row.get('kernel') or '', 180)}` |"
+        )
+    md.append("")
+    (docs_dir / "empty_shape_kernel_rows.md").write_text("\n".join(md))
 
 
 def main() -> int:

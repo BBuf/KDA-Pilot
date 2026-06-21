@@ -1,0 +1,63 @@
+/usr/local/lib/python3.12/dist-packages/torchao/quantization/quant_api.py:1731: SyntaxWarning: invalid escape sequence '\.'
+  """Configuration class for applying different quantization configs to modules or parameters based on their fully qualified names (FQNs).
+Traceback (most recent call last):
+  File "/usr/local/bin/sglang", line 6, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/cli/main.py", line 40, in main
+    serve(args, extra_argv)
+  File "/sgl-workspace/sglang/python/sglang/cli/serve.py", line 97, in serve
+    is_diffusion_model = get_is_diffusion_model(model_path)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/cli/utils.py", line 81, in get_is_diffusion_model
+    if _is_registered_diffusion_model(model_path):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/sgl-workspace/sglang/python/sglang/cli/utils.py", line 30, in _is_registered_diffusion_model
+    from sglang.multimodal_gen.registry import has_registered_diffusion_model_path
+  File "/sgl-workspace/sglang/python/sglang/multimodal_gen/__init__.py", line 2, in <module>
+    from sglang.multimodal_gen.configs.pipeline_configs import PipelineConfig
+  File "/sgl-workspace/sglang/python/sglang/multimodal_gen/configs/pipeline_configs/__init__.py", line 3, in <module>
+    from sglang.multimodal_gen.configs.pipeline_configs.base import (
+  File "/sgl-workspace/sglang/python/sglang/multimodal_gen/configs/pipeline_configs/base.py", line 17, in <module>
+    from sglang.multimodal_gen.configs.models import (
+  File "/sgl-workspace/sglang/python/sglang/multimodal_gen/configs/models/__init__.py", line 4, in <module>
+    from sglang.multimodal_gen.configs.models.dits.base import DiTConfig
+  File "/sgl-workspace/sglang/python/sglang/multimodal_gen/configs/models/dits/__init__.py", line 3, in <module>
+    from sglang.multimodal_gen.configs.models.dits.cosmos3video import Cosmos3VideoConfig
+  File "/sgl-workspace/sglang/python/sglang/multimodal_gen/configs/models/dits/cosmos3video.py", line 6, in <module>
+    from sglang.multimodal_gen.configs.models.dits.base import DiTArchConfig, DiTConfig
+  File "/sgl-workspace/sglang/python/sglang/multimodal_gen/configs/models/dits/base.py", line 8, in <module>
+    from sglang.multimodal_gen.runtime.layers.quantization import QuantizationConfig
+  File "/sgl-workspace/sglang/python/sglang/multimodal_gen/runtime/layers/quantization/__init__.py", line 11, in <module>
+    from sglang.multimodal_gen.runtime.layers.quantization.fp8 import Fp8Config
+  File "/sgl-workspace/sglang/python/sglang/multimodal_gen/runtime/layers/quantization/fp8.py", line 33, in <module>
+    from sglang.srt.layers.quantization.fp8_kernel import (
+  File "/sgl-workspace/sglang/python/sglang/srt/layers/quantization/__init__.py", line 21, in <module>
+    from sglang.srt.layers.quantization.auto_round import AutoRoundConfig
+  File "/sgl-workspace/sglang/python/sglang/srt/layers/quantization/auto_round.py", line 12, in <module>
+    from sglang.srt.layers.quantization.utils import get_scalar_types
+  File "/sgl-workspace/sglang/python/sglang/srt/layers/quantization/utils.py", line 15, in <module>
+    from sglang.srt.layers.quantization.fp8_kernel import scaled_fp8_quant
+  File "/sgl-workspace/sglang/python/sglang/srt/layers/quantization/fp8_kernel.py", line 31, in <module>
+    from sglang.srt.layers import deep_gemm_wrapper
+  File "/sgl-workspace/sglang/python/sglang/srt/layers/deep_gemm_wrapper/__init__.py", line 1, in <module>
+    from .entrypoint import *
+  File "/sgl-workspace/sglang/python/sglang/srt/layers/deep_gemm_wrapper/entrypoint.py", line 8, in <module>
+    from sglang.srt.layers.deep_gemm_wrapper import compile_utils
+  File "/sgl-workspace/sglang/python/sglang/srt/layers/deep_gemm_wrapper/compile_utils.py", line 11, in <module>
+    from sglang.srt.distributed.device_communicators.pynccl_allocator import (
+  File "/sgl-workspace/sglang/python/sglang/srt/distributed/device_communicators/pynccl_allocator.py", line 18, in <module>
+    from sglang.srt.server_args import get_global_server_args
+  File "/sgl-workspace/sglang/python/sglang/srt/server_args.py", line 40, in <module>
+    from sglang.srt.configs.linear_attn_model_registry import (
+  File "/sgl-workspace/sglang/python/sglang/srt/configs/__init__.py", line 4, in <module>
+    from sglang.srt.configs.cohere2_moe import Cohere2MoeConfig
+  File "/sgl-workspace/sglang/python/sglang/srt/configs/cohere2_moe.py", line 15, in <module>
+    @strict
+     ^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/huggingface_hub/dataclasses.py", line 283, in strict
+    return wrap(cls) if cls is not None else wrap
+           ^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/huggingface_hub/dataclasses.py", line 114, in wrap
+    raise StrictDataclassDefinitionError(
+huggingface_hub.errors.StrictDataclassDefinitionError: Class 'Cohere2MoeConfig' must be a dataclass before applying @strict.
