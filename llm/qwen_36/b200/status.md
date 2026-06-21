@@ -1,0 +1,26 @@
+- 2026-06-21 04:54:08 UTC: capture_label - server_start
+- 2026-06-21 04:54:08 UTC: server_start - CUDA_VISIBLE_DEVICES=0; PYTHONPATH=/data/bbuf/repos/sglang-main/python:; command=python3 -m sglang.launch_server --model-path Qwen/Qwen3.6-35B-A3B-FP8 --host 0.0.0.0 --port 30000 --tp-size 1 --mem-fraction-static 0.7 --cuda-graph-backend-decode disabled --cuda-graph-backend-prefill disabled --chunked-prefill-size 32768 --max-running-requests 80 --reasoning-parser qwen3 --tool-call-parser qwen3_coder --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1 --speculative-num-draft-tokens 4 --mm-attention-backend fa4 --attention-backend triton --disable-flashinfer-autotune
+- 2026-06-21 04:57:25 UTC: server_ready - pid=32252, port=30000
+- 2026-06-21 04:57:25 UTC: capture_label - random_low
+- 2026-06-21 04:57:25 UTC: benchmark - random_low: dataset=random, prompts=1, concurrency=1, output_len=8, warmup=0
+- 2026-06-21 04:57:39 UTC: benchmark_done - random_low
+- 2026-06-21 04:57:39 UTC: capture_label - random_mid
+- 2026-06-21 04:57:39 UTC: benchmark - random_mid: dataset=random, prompts=32, concurrency=32, output_len=8, warmup=0
+- 2026-06-21 04:57:58 UTC: benchmark_done - random_mid
+- 2026-06-21 04:57:58 UTC: capture_label - random_high
+- 2026-06-21 04:57:58 UTC: benchmark - random_high: dataset=random, prompts=80, concurrency=80, output_len=8, warmup=0
+- 2026-06-21 04:58:15 UTC: benchmark_done - random_high
+- 2026-06-21 04:58:15 UTC: capture_label - sharegpt_low
+- 2026-06-21 04:58:15 UTC: benchmark - sharegpt_low: dataset=sharegpt, prompts=1, concurrency=1, output_len=8, warmup=0
+- 2026-06-21 04:58:30 UTC: benchmark_done - sharegpt_low
+- 2026-06-21 04:58:30 UTC: capture_label - sharegpt_mid
+- 2026-06-21 04:58:31 UTC: benchmark - sharegpt_mid: dataset=sharegpt, prompts=32, concurrency=32, output_len=8, warmup=0
+- 2026-06-21 04:58:48 UTC: benchmark_done - sharegpt_mid
+- 2026-06-21 04:58:48 UTC: capture_label - sharegpt_high
+- 2026-06-21 04:58:49 UTC: benchmark - sharegpt_high: dataset=sharegpt, prompts=80, concurrency=80, output_len=8, warmup=0
+- 2026-06-21 04:59:11 UTC: benchmark_done - sharegpt_high
+- 2026-06-21 04:59:11 UTC: capture_label - shutdown
+- 2026-06-21 04:59:11 UTC: capture_matrix_done - six workload kernel-interface capture complete
+- 2026-06-21 04:59:18 UTC: weights_cleanup_skipped - clean_weights=0; weight_cache=/root/.cache/huggingface/hub/models--Qwen--Qwen3.6-35B-A3B-FP8; reason=after completed Qwen/Qwen3.6-35B-A3B-FP8 kernel-interface capture run
+- 2026-06-21 04:59:18 UTC: completed - Qwen/Qwen3.6-35B-A3B-FP8 kernel-interface tasks generated
+- 2026-06-21 05:03:03 UTC: manual_weights_cleanup - /root/.cache/huggingface/hub/models--Qwen--Qwen3.6-35B-A3B-FP8 and lock removed after artifact pull

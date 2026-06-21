@@ -1,0 +1,4555 @@
+{
+  "capture_files": [
+    "qwen_36/b200/capture/kernel_api_32395.log"
+  ],
+  "category": "quantization",
+  "evidence_policy": "runtime capture at SGLang kernel Python interface; args/kwargs are direct call parameters, not profiler CPU-op context",
+  "function": "sglang.quant_method.UnquantizedLinearMethod.apply",
+  "hardware": "b200",
+  "labels": [
+    "random_low",
+    "random_mid",
+    "random_high",
+    "sharegpt_low",
+    "sharegpt_mid",
+    "sharegpt_high"
+  ],
+  "model": "Qwen/Qwen3.6-35B-A3B-FP8",
+  "model_slug": "qwen_36",
+  "shape_briefs": [
+    "arg[1]: shape=[1, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[103, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[108, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[11, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[112, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[12, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[12444, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[12655, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[128, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[14472, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[16, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[16543, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[176, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[180, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[2, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[27, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[276, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[28, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[280, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[312, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[32, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[36, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[39, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[1]: shape=[4, 2048], dtype=bfloat16, device=cuda:0, contiguous=True"
+  ],
+  "task_id": "sglang_quant_method_unquantized_linear_method_apply",
+  "total_call_count": 3259,
+  "variant_count": 85,
+  "variants": [
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(4, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 164,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(4, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              4,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(4, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 120,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(4, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              4,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(103, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                103,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(103, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              103,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(103, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                103,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(103, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              103,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(1, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 8,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(1, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              1,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(112, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                112,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(112, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              112,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(12655, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                12655,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(12655, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              12655,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(128, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                128,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(128, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              128,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(36, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                36,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(36, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              36,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(39, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                39,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(39, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              39,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(64, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                64,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(64, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              64,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(112, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                112,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(112, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              112,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(12655, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                12655,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(12655, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              12655,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(128, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                128,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(128, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              128,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(36, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                36,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(36, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              36,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(39, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                39,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(39, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              39,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(64, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                64,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(64, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              64,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(16, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                16,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(16, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              16,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(28, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                28,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(28, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              28,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(32, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(32, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              32,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(9, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                9,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(9, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              9,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(16543, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                16543,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(16543, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              16543,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(176, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                176,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(176, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              176,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(180, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                180,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(180, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              180,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(280, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                280,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(280, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              280,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(39, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                39,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(39, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              39,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(4, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(4, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              4,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(48, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                48,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(48, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              48,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(7834, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                7834,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(7834, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              7834,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(883, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                883,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(883, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              883,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(16543, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                16543,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(16543, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              16543,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(176, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                176,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(176, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              176,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(180, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                180,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(180, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              180,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(280, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                280,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(280, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              280,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(39, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                39,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(39, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              39,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(4, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(4, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              4,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(48, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                48,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(48, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              48,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(7834, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                7834,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(7834, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              7834,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(883, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                883,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(883, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              883,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(1, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(1, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              1,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(12, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                12,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(12, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              12,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(44, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                44,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(44, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              44,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(45, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                45,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(45, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              45,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(70, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                70,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(70, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              70,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(4, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 118,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(4, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              4,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(4, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 88,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(4, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              4,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(685, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                685,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(685, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              685,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(685, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                685,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(685, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              685,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(1, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 6,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(1, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              1,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(128, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                128,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 123,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(128, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              128,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(128, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                128,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 90,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(128, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              128,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(4, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 45,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(4, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              4,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(108, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                108,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(108, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              108,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(12444, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                12444,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(12444, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              12444,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(44, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                44,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(44, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              44,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(45, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                45,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(45, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              45,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(4, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 32,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(4, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              4,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(108, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                108,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(108, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              108,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(12444, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                12444,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(12444, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              12444,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(44, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                44,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(44, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              44,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(45, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                45,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(45, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              45,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(32, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 6,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(32, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              32,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(1, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(1, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              1,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(11, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                11,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(11, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              11,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(27, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                27,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(27, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              27,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(312, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                312,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 123,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(312, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              312,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(8, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                8,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 123,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(8, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              8,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(312, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                312,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 90,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(312, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              312,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(8, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                8,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 90,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(8, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              8,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(16, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                16,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 82,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(16, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              16,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(16, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                16,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 60,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(16, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              16,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(4, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 46,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(4, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              4,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(14472, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                14472,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(14472, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              14472,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(276, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                276,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(276, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              276,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(438, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                438,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(438, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              438,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(45, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                45,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 41,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(45, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              45,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(14472, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                14472,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(14472, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              14472,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(276, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                276,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(276, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              276,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(4, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(4, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              4,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(438, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                438,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(438, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              438,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=MergedColumnParallelLinear(\n      repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)\n    )\n  arg[1]=Tensor(\n      shape=(45, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=MergedColumnParallelLinear(",
+            "repr=MergedColumnParallelLinear(in_features=2048, output_features=64, bias=False, tp_size=1, gather_output=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                45,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 30,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(45, 64)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              45,
+              64
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(2, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                2,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 6,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(2, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              2,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(78, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                78,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 6,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(78, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              78,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(1, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(1, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              1,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=ReplicatedLinear(\n      repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)\n    )\n  arg[1]=Tensor(\n      shape=(69, 2048)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=None",
+          "scalars": [
+            "arg[0]=ReplicatedLinear(",
+            "repr=ReplicatedLinear(in_features=2048, output_features=256, bias=False)",
+            "arg[2]=None"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                69,
+                2048
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=Tensor(\n      shape=(69, 256)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+        "scalars": [],
+        "tensors": [
+          {
+            "device": "cuda:0",
+            "dtype": "bfloat16",
+            "is_contiguous": true,
+            "kind": "tensor",
+            "name": "return",
+            "requires_grad": false,
+            "shape": [
+              69,
+              256
+            ]
+          }
+        ]
+      },
+      "stack": []
+    }
+  ]
+}

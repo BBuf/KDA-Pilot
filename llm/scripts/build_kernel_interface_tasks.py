@@ -51,16 +51,18 @@ def json_key(value: Any) -> str:
 
 def category_for(function: str) -> str:
     lower = function.lower()
-    if "allreduce" in lower or "all_reduce" in lower or "allgather" in lower:
+    if (
+        "allreduce" in lower
+        or "all_reduce" in lower
+        or "allgather" in lower
+        or "all_gather" in lower
+        or "reduce_scatter" in lower
+    ):
         return "comm"
     if "attention" in lower or "flash_attn" in lower or "mla" in lower or "prefill" in lower or "decode" in lower:
         return "attention"
     if "moe" in lower or "expert" in lower:
         return "moe"
-    if "gemm" in lower or "scaled_mm" in lower or "bmm" in lower or "matmul" in lower:
-        return "quant_gemm" if any(x in lower for x in ("fp8", "fp4", "int8", "quant", "mxfp")) else "gemm"
-    if "quant" in lower or "fp8" in lower or "fp4" in lower or "int8" in lower:
-        return "quantization"
     if "norm" in lower or "rms" in lower or "layernorm" in lower:
         return "norm"
     if "rope" in lower or "rotary" in lower:
@@ -69,6 +71,10 @@ def category_for(function: str) -> str:
         return "sampling"
     if "cache" in lower or "kv" in lower or "radix" in lower:
         return "cache"
+    if "gemm" in lower or "scaled_mm" in lower or "bmm" in lower or "matmul" in lower:
+        return "quant_gemm" if any(x in lower for x in ("fp8", "fp4", "int8", "quant", "mxfp")) else "gemm"
+    if "quant" in lower or "fp8" in lower or "fp4" in lower or "int8" in lower:
+        return "quantization"
     return "other"
 
 
@@ -459,7 +465,7 @@ def write_prompt(task_dir: Path, task: dict[str, Any]) -> None:
         "",
         f"- `{task['function']}`",
         "",
-        "Goal: optimize or replace this interface for the GLM-5.2 serving shapes",
+        f"Goal: optimize or replace this interface for the {task['model']} serving shapes",
         "captured on B200. The shapes below come from runtime SGLang kernel API",
         "logging at the Python interface boundary; they are not torch profiler",
         "CPU-op context shapes.",
@@ -518,6 +524,8 @@ def write_prompt(task_dir: Path, task: dict[str, Any]) -> None:
 def write_docs(run_dir: Path, tasks: list[dict[str, Any]], generated_at: str, source_dir: Path) -> None:
     docs_dir = run_dir / "docs"
     docs_dir.mkdir(parents=True, exist_ok=True)
+    model_name = tasks[0]["model"] if tasks else "unknown"
+    model_slug = tasks[0]["model_slug"] if tasks else run_dir.parent.name
     index_tasks = [
         {
             "task_id": task["task_id"],
@@ -533,6 +541,8 @@ def write_docs(run_dir: Path, tasks: list[dict[str, Any]], generated_at: str, so
     ]
     index = {
         "generated_at": generated_at,
+        "model": model_name,
+        "model_slug": model_slug,
         "source_capture_dir": str(source_dir),
         "task_count": len(tasks),
         "tasks": index_tasks,
@@ -543,9 +553,10 @@ def write_docs(run_dir: Path, tasks: list[dict[str, Any]], generated_at: str, so
 
     category_counts = Counter(task["category"] for task in tasks)
     md = [
-        "# GLM-5.2 B200 Kernel Interface Task Index",
+        f"# {model_name} B200 Kernel Interface Task Index",
         "",
         f"- Generated at: `{generated_at}`",
+        f"- Model slug: `{model_slug}`",
         f"- Source capture dir: `{source_dir}`",
         f"- Task count: `{len(tasks)}`",
         "- Evidence policy: runtime capture at SGLang kernel Python interfaces.",

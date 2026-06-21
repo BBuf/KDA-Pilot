@@ -1,0 +1,2450 @@
+{
+  "capture_files": [
+    "qwen_36/b200/capture/kernel_api_32395.log"
+  ],
+  "category": "other",
+  "evidence_policy": "runtime capture at SGLang kernel Python interface; args/kwargs are direct call parameters, not profiler CPU-op context",
+  "function": "sgl_kernel.verify_tree_greedy",
+  "hardware": "b200",
+  "labels": [
+    "random_low",
+    "random_mid",
+    "random_high",
+    "sharegpt_low",
+    "sharegpt_mid",
+    "sharegpt_high"
+  ],
+  "model": "Qwen/Qwen3.6-35B-A3B-FP8",
+  "model_slug": "qwen_36",
+  "shape_briefs": [
+    "accept_index: shape=[1, 4], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_index: shape=[11, 4], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_index: shape=[12, 4], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_index: shape=[16, 4], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_index: shape=[2, 4], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_index: shape=[27, 4], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_index: shape=[28, 4], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_index: shape=[32, 4], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_index: shape=[4, 4], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_index: shape=[44, 4], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_index: shape=[45, 4], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_index: shape=[69, 4], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_index: shape=[70, 4], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_index: shape=[78, 4], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_index: shape=[9, 4], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_token_num: shape=[11], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_token_num: shape=[12], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_token_num: shape=[16], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_token_num: shape=[1], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_token_num: shape=[27], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_token_num: shape=[28], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_token_num: shape=[2], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_token_num: shape=[32], dtype=int32, device=cuda:0, contiguous=True",
+    "accept_token_num: shape=[44], dtype=int32, device=cuda:0, contiguous=True"
+  ],
+  "task_id": "sgl_kernel_verify_tree_greedy",
+  "total_call_count": 32,
+  "variant_count": 20,
+  "variants": [
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(4,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(1, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(1,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                1
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 4,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(112,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(28, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(28,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(28, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(28, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(28, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(28, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(28, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                112
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                28,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                28
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                28,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                28,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                28,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                28,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                28,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(128,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(32, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(32,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(32, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(32, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(32, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(32, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(32, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                32
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(36,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(9, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(9,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(9, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(9, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(9, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(9, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(9, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                36
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                9,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                9
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                9,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                9,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                9,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                9,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                9,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(64,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(16, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(16,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(16, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(16, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(16, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(16, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(16, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                64
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                16,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                16
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                16,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                16,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                16,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                16,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                16,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(176,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(44, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(44,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(44, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(44, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(44, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(44, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(44, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                176
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                44,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                44
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                44,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                44,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                44,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                44,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                44,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(180,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(45, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(45,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(45, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(45, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(45, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(45, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(45, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                180
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                45,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                45
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                45,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                45,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                45,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                45,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                45,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(280,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(70, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(70,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(70, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(70, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(70, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(70, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(70, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                280
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                70,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                70
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                70,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                70,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                70,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                70,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                70,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(4,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(1, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(1,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                1
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(48,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(12, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(12,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(12, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(12, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(12, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(12, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(12, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                48
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                12,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                12
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                12,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                12,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                12,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                12,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                12,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(4,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(1, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(1,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                1
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(128,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(32, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(32,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(32, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(32, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(32, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(32, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(32, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                32
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 3,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(108,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(27, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(27,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(27, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(27, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(27, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(27, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(27, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                108
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                27,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                27
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                27,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                27,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                27,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                27,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                27,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(4,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(1, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(1,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                1
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(44,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(11, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(11,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(11, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(11, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(11, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(11, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(11, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                44
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                11,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                11
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                11,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                11,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                11,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                11,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                11,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(312,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(78, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(78,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(78, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(78, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(78, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(78, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(78, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                312
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                78,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                78
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                78,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                78,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                78,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                78,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                78,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 3,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(8,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(2, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(2,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(2, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(2, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(2, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(2, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(2, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                8
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                2,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                2
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                2,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                2,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                2,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                2,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                2,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 3,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(16,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(4, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(4,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(4, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(4, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(4, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(4, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(4, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                16
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                4,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                4,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                4,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                4,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                4,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                4,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(4,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(1, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(1,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(1, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                1
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 2,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Keyword input arguments:\n  predicts=Tensor(\n      shape=(276,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_index=Tensor(\n      shape=(69, 4)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  accept_token_num=Tensor(\n      shape=(69,)\n      dtype=torch.int32\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  candidates=Tensor(\n      shape=(69, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_index=Tensor(\n      shape=(69, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_token=Tensor(\n      shape=(69, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  retrive_next_sibling=Tensor(\n      shape=(69, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  target_predict=Tensor(\n      shape=(69, 4)\n      dtype=torch.int64\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )",
+          "scalars": [],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "predicts",
+              "requires_grad": false,
+              "shape": [
+                276
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_index",
+              "requires_grad": false,
+              "shape": [
+                69,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int32",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "accept_token_num",
+              "requires_grad": false,
+              "shape": [
+                69
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "candidates",
+              "requires_grad": false,
+              "shape": [
+                69,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_index",
+              "requires_grad": false,
+              "shape": [
+                69,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_token",
+              "requires_grad": false,
+              "shape": [
+                69,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "retrive_next_sibling",
+              "requires_grad": false,
+              "shape": [
+                69,
+                4
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "int64",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "target_predict",
+              "requires_grad": false,
+              "shape": [
+                69,
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 32395,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+[task]
+slug = "srt_layers_moe_flashinfer_trtllm_moe_trtllm_fp8_block_scale_moe_wrapper"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "moe"
+model = "Qwen/Qwen3.6-35B-A3B-FP8"
+model_slug = "qwen_36"
+entry_points = [
+  "srt.layers.moe.flashinfer_trtllm_moe.trtllm_fp8_block_scale_moe_wrapper",
+]
+evidence_json = "docs/evidence.json"
+
+[build]
+language = "python/cuda"
+baseline_entry_point = "baseline/<copied_sglang_interface>::baseline"
+candidate_entry_point = "solution/<candidate_interface>::candidate"
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+use_isolated_runner = true
+required_matched_ratio = 1.0
+
+[source_capture]
+method = "SGLANG_KERNEL_API_LOGLEVEL=3"
+policy = "runtime SGLang kernel Python interface args/kwargs/result, not torch profiler CPU-op context"
+total_call_count = 1909
+variant_count = 52
