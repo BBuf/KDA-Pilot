@@ -1,0 +1,25 @@
+- 2026-06-21 10:23:07 UTC: capture_label - server_start
+- 2026-06-21 10:23:07 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3; PYTHONPATH=/data/bbuf/repos/sglang-main/python:; command=python3 -m sglang.launch_server --model-path internlm/Intern-S2-Preview-FP8 --host 0.0.0.0 --port 31004 --tp-size 4 --mem-fraction-static 0.65 --cuda-graph-backend-decode disabled --cuda-graph-backend-prefill disabled --chunked-prefill-size 32768 --max-running-requests 80 --disable-cuda-graph --disable-piecewise-cuda-graph --trust-remote-code --reasoning-parser qwen3 --tool-call-parser qwen3_coder --quantization fp8 --attention-backend triton --disable-flashinfer-autotune --enforce-disable-flashinfer-allreduce-fusion
+- 2026-06-21 10:24:33 UTC: server_ready - pid=138814, port=31004
+- 2026-06-21 10:24:33 UTC: capture_label - random_low
+- 2026-06-21 10:24:33 UTC: benchmark - random_low: dataset=random, prompts=1, concurrency=1, output_len=8, warmup=0
+- 2026-06-21 10:24:47 UTC: benchmark_done - random_low
+- 2026-06-21 10:24:47 UTC: capture_label - random_mid
+- 2026-06-21 10:24:47 UTC: benchmark - random_mid: dataset=random, prompts=32, concurrency=32, output_len=8, warmup=0
+- 2026-06-21 10:25:04 UTC: benchmark_done - random_mid
+- 2026-06-21 10:25:04 UTC: capture_label - random_high
+- 2026-06-21 10:25:04 UTC: benchmark - random_high: dataset=random, prompts=80, concurrency=80, output_len=8, warmup=0
+- 2026-06-21 10:25:21 UTC: benchmark_done - random_high
+- 2026-06-21 10:25:21 UTC: capture_label - sharegpt_low
+- 2026-06-21 10:25:21 UTC: benchmark - sharegpt_low: dataset=sharegpt, prompts=1, concurrency=1, output_len=8, warmup=0
+- 2026-06-21 10:25:39 UTC: benchmark_done - sharegpt_low
+- 2026-06-21 10:25:39 UTC: capture_label - sharegpt_mid
+- 2026-06-21 10:25:39 UTC: benchmark - sharegpt_mid: dataset=sharegpt, prompts=32, concurrency=32, output_len=8, warmup=0
+- 2026-06-21 10:25:57 UTC: benchmark_done - sharegpt_mid
+- 2026-06-21 10:25:57 UTC: capture_label - sharegpt_high
+- 2026-06-21 10:25:57 UTC: benchmark - sharegpt_high: dataset=sharegpt, prompts=80, concurrency=80, output_len=8, warmup=0
+- 2026-06-21 10:26:20 UTC: benchmark_done - sharegpt_high
+- 2026-06-21 10:26:20 UTC: capture_label - shutdown
+- 2026-06-21 10:26:20 UTC: capture_matrix_done - six workload kernel-interface capture complete
+- 2026-06-21 10:26:39 UTC: weights_cleanup_skipped - clean_weights=0; weight_cache=/root/.cache/huggingface/hub/models--internlm--Intern-S2-Preview-FP8; reason=after completed internlm/Intern-S2-Preview-FP8 kernel-interface capture run
+- 2026-06-21 10:26:39 UTC: completed - internlm/Intern-S2-Preview-FP8 kernel-interface tasks generated

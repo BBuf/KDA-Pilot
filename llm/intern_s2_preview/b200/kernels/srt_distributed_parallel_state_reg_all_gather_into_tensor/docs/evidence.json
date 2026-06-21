@@ -1,0 +1,6085 @@
+{
+  "capture_files": [
+    "/data/bbuf/kda-pilot/llm/intern_s2_preview/b200/capture/kernel_api_138957.log",
+    "/data/bbuf/kda-pilot/llm/intern_s2_preview/b200/capture/kernel_api_138958.log",
+    "/data/bbuf/kda-pilot/llm/intern_s2_preview/b200/capture/kernel_api_138959.log",
+    "/data/bbuf/kda-pilot/llm/intern_s2_preview/b200/capture/kernel_api_138960.log"
+  ],
+  "category": "comm",
+  "evidence_policy": "runtime capture at SGLang kernel Python interface; args/kwargs are direct call parameters, not profiler CPU-op context",
+  "function": "srt.distributed.parallel_state.reg_all_gather_into_tensor",
+  "hardware": "b200",
+  "labels": [
+    "random_low",
+    "random_mid",
+    "random_high",
+    "sharegpt_low",
+    "sharegpt_mid",
+    "sharegpt_high"
+  ],
+  "model": "internlm/Intern-S2-Preview-FP8",
+  "model_slug": "intern_s2_preview",
+  "shape_briefs": [
+    "arg[0]: shape=[104, 62848], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[104, 62848], dtype=bfloat16, device=cuda:1, contiguous=True",
+    "arg[0]: shape=[104, 62848], dtype=bfloat16, device=cuda:2, contiguous=True",
+    "arg[0]: shape=[104, 62848], dtype=bfloat16, device=cuda:3, contiguous=True",
+    "arg[0]: shape=[112, 62848], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[112, 62848], dtype=bfloat16, device=cuda:1, contiguous=True",
+    "arg[0]: shape=[112, 62848], dtype=bfloat16, device=cuda:2, contiguous=True",
+    "arg[0]: shape=[112, 62848], dtype=bfloat16, device=cuda:3, contiguous=True",
+    "arg[0]: shape=[12, 62848], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[12, 62848], dtype=bfloat16, device=cuda:1, contiguous=True",
+    "arg[0]: shape=[12, 62848], dtype=bfloat16, device=cuda:2, contiguous=True",
+    "arg[0]: shape=[12, 62848], dtype=bfloat16, device=cuda:3, contiguous=True",
+    "arg[0]: shape=[124, 62848], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[124, 62848], dtype=bfloat16, device=cuda:1, contiguous=True",
+    "arg[0]: shape=[124, 62848], dtype=bfloat16, device=cuda:2, contiguous=True",
+    "arg[0]: shape=[124, 62848], dtype=bfloat16, device=cuda:3, contiguous=True",
+    "arg[0]: shape=[128, 62848], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[128, 62848], dtype=bfloat16, device=cuda:1, contiguous=True",
+    "arg[0]: shape=[128, 62848], dtype=bfloat16, device=cuda:2, contiguous=True",
+    "arg[0]: shape=[128, 62848], dtype=bfloat16, device=cuda:3, contiguous=True",
+    "arg[0]: shape=[160, 62848], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[160, 62848], dtype=bfloat16, device=cuda:1, contiguous=True",
+    "arg[0]: shape=[160, 62848], dtype=bfloat16, device=cuda:2, contiguous=True",
+    "arg[0]: shape=[160, 62848], dtype=bfloat16, device=cuda:3, contiguous=True"
+  ],
+  "task_id": "srt_distributed_parallel_state_reg_all_gather_into_tensor",
+  "total_call_count": 220,
+  "variant_count": 116,
+  "variants": [
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 5,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 5,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 5,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 5,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(104, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(26, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                104,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                26,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(104, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(26, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                104,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                26,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(104, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(26, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                104,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                26,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(104, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(26, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                104,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                26,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(112, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(28, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                112,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                28,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(112, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(28, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                112,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                28,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(112, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(28, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                112,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                28,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(112, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(28, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                112,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                28,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(12, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(3, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                12,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                3,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(12, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(3, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                12,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                3,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(12, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(3, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                12,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                3,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(12, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(3, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                12,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                3,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(124, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(31, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                124,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                31,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(124, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(31, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                124,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                31,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(124, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(31, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                124,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                31,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(124, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(31, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                124,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                31,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(128, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(32, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                128,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(128, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(32, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                128,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(128, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(32, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                128,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(128, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(32, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                128,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(32, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(8, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                8,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(32, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(8, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                8,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(32, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(8, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                8,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(32, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(8, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                8,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(48, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(12, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                48,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                12,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(48, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(12, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                48,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                12,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(48, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(12, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                48,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                12,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(48, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(12, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                48,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                12,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(60, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(15, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                60,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                15,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(60, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(15, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                60,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                15,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(60, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(15, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                60,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                15,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(60, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(15, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                60,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                15,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(84, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(21, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                84,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                21,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(84, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(21, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                84,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                21,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(84, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(21, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                84,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                21,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(84, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(21, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                84,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                21,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(124, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(31, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                124,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                31,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(124, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(31, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                124,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                31,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(124, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(31, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                124,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                31,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(124, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(31, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                124,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                31,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(160, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(40, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                160,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                40,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(160, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(40, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                160,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                40,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(160, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(40, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                160,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                40,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(160, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(40, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                160,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                40,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(204, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(51, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                204,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                51,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(204, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(51, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                204,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                51,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(204, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(51, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                204,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                51,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(204, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(51, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                204,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                51,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(228, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(57, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                228,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                57,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(228, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(57, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                228,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                57,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(228, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(57, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                228,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                57,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(228, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(57, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                228,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                57,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(236, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(59, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                236,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                59,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(236, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(59, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                236,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                59,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(236, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(59, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                236,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                59,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(236, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(59, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                236,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                59,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(272, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(68, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                272,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                68,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(272, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(68, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                272,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                68,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(272, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(68, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                272,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                68,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(272, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(68, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                272,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                68,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(288, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(72, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                288,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                72,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(288, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(72, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                288,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                72,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(288, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(72, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                288,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                72,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(288, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(72, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                288,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                72,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(44, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(11, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                44,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                11,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(44, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(11, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                44,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                11,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(44, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(11, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                44,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                11,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(44, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(11, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                44,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                11,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(80, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(20, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                20,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(80, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(20, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                20,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(80, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(20, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                20,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(80, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(20, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                20,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(88, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(22, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                88,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                22,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(88, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(22, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                88,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                22,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(88, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(22, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                88,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                22,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(88, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(22, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                88,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                22,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 9,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 9,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 9,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 9,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(128, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(32, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                128,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 8,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(128, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(32, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                128,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 8,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(128, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(32, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                128,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 8,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(128, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(32, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                128,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 8,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(124, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(31, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                124,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                31,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(124, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(31, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                124,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                31,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(124, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(31, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                124,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                31,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(124, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(31, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                124,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                31,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(320, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(80, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                320,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 8,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(320, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(80, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                320,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 8,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(320, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(80, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                320,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 8,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(320, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(80, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                320,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 8,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(316, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(79, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                316,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                79,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(316, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(79, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                316,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                79,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(316, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(79, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                316,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                79,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(316, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(79, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                316,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                79,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 138957,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:1\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:1",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 138958,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:2\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:2",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 138959,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(4, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 62848)\n      dtype=torch.bfloat16\n      device=cuda:3\n      requires_grad=False\n      is_contiguous=True\n    )\nKeyword input arguments:\n  group_name='tp:0'",
+          "scalars": [
+            "group_name='tp:0'"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                4,
+                62848
+              ]
+            },
+            {
+              "device": "cuda:3",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                62848
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 1,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 138960,
+      "result": {
+        "kind": "api_result",
+        "raw": "Output:\n  return=None",
+        "scalars": [
+          "return=None"
+        ],
+        "tensors": []
+      },
+      "stack": []
+    }
+  ]
+}
