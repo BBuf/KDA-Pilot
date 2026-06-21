@@ -11,9 +11,9 @@
 |---|---:|
 | `attention` | 1 |
 | `cache` | 1 |
-| `comm` | 3 |
+| `comm` | 5 |
 | `norm` | 3 |
-| `other` | 6 |
+| `other` | 4 |
 | `quant_gemm` | 1 |
 | `quantization` | 3 |
 | `rope` | 1 |
@@ -39,8 +39,8 @@
 | `sgl_kernel_fast_topk_transform_fused` | `sampling` | `sgl_kernel.fast_topk_transform_fused` | 4246 | 247 | `random_low`, `random_mid`, `random_high`, `sharegpt_low`, `sharegpt_mid`, `sharegpt_high` |
 | `jit_kernel_all_reduce_get_custom_all_reduce_cls_custom_all_reduce_obj_real_all_reduce` | `comm` | `jit_kernel.all_reduce.get_custom_all_reduce_cls.CustomAllReduceObjReal.all_reduce` | 1936 | 296 | `random_low`, `random_mid`, `random_high`, `sharegpt_low`, `sharegpt_mid`, `sharegpt_high` |
 | `srt_distributed_parallel_state_outplace_all_reduce` | `comm` | `srt.distributed.parallel_state.outplace_all_reduce` | 1936 | 296 | `random_low`, `random_mid`, `random_high`, `sharegpt_low`, `sharegpt_mid`, `sharegpt_high` |
-| `srt_distributed_parallel_state_reg_all_gather_into_tensor` | `other` | `srt.distributed.parallel_state.reg_all_gather_into_tensor` | 1288 | 312 | `random_low`, `random_mid`, `random_high`, `sharegpt_low`, `sharegpt_mid`, `sharegpt_high` |
-| `srt_distributed_parallel_state_reg_reduce_scatter_tensor` | `other` | `srt.distributed.parallel_state.reg_reduce_scatter_tensor` | 504 | 80 | `random_mid`, `random_high`, `sharegpt_mid`, `sharegpt_high` |
+| `srt_distributed_parallel_state_reg_all_gather_into_tensor` | `comm` | `srt.distributed.parallel_state.reg_all_gather_into_tensor` | 1288 | 312 | `random_low`, `random_mid`, `random_high`, `sharegpt_low`, `sharegpt_mid`, `sharegpt_high` |
+| `srt_distributed_parallel_state_reg_reduce_scatter_tensor` | `comm` | `srt.distributed.parallel_state.reg_reduce_scatter_tensor` | 504 | 80 | `random_mid`, `random_high`, `sharegpt_mid`, `sharegpt_high` |
 | `srt_distributed_parallel_state_inplace_all_reduce` | `comm` | `srt.distributed.parallel_state.inplace_all_reduce` | 192 | 32 | `random_mid`, `random_high`, `sharegpt_mid`, `sharegpt_high` |
 | `sgl_kernel_build_tree_kernel_efficient` | `other` | `sgl_kernel.build_tree_kernel_efficient` | 187 | 187 | `random_low`, `random_mid`, `random_high`, `sharegpt_low`, `sharegpt_mid`, `sharegpt_high` |
 | `sgl_kernel_verify_tree_greedy` | `other` | `sgl_kernel.verify_tree_greedy` | 187 | 95 | `random_low`, `random_mid`, `random_high`, `sharegpt_low`, `sharegpt_mid`, `sharegpt_high` |

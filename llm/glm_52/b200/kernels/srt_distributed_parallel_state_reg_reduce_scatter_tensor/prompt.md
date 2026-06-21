@@ -15,7 +15,7 @@ CPU-op context shapes.
 
 - Model: `zai-org/GLM-5.2-FP8`
 - Model folder: `llm/glm_52/b200`
-- Category: `other`
+- Category: `comm`
 - Python interface: `srt.distributed.parallel_state.reg_reduce_scatter_tensor`
 - Captured call count: `504`
 - Captured variants: `80`
