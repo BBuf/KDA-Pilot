@@ -1,8 +1,0 @@
-- 2026-06-19 22:10:21 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; command=python3 -m sglang.launch_server --model-path zai-org/GLM-4.7 --reasoning-parser glm47 --tp 8 --host 0.0.0.0 --port 30000
-- 2026-06-19 22:10:41 UTC: failed_or_interrupted - exit_code=1; cleaning partial weights
-- 2026-06-19 22:10:41 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--zai-org--GLM-4.7: deleted after failed/interrupted GLM-4.7 BF16 run, size_before=absent; lock=/root/.cache/huggingface/hub/.locks/models--zai-org--GLM-4.7
-- 2026-06-19 22:14:23 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; command=python3 -m sglang.launch_server --model-path zai-org/GLM-4.7 --reasoning-parser glm45 --tool-call-parser glm47 --tp 8 --host 0.0.0.0 --port 30000
-- 2026-06-19 22:46:23 UTC: server_ready - pid=1513, port=30000
-- 2026-06-19 22:46:23 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
-- 2026-06-19 22:55:00 UTC: failed_or_interrupted - exit_code=1; cleaning partial weights
-- 2026-06-19 22:55:46 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--zai-org--GLM-4.7: deleted after failed/interrupted GLM-4.7 BF16 run, size_before=668G; lock=/root/.cache/huggingface/hub/.locks/models--zai-org--GLM-4.7

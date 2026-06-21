@@ -1,3 +1,0 @@
-- 2026-06-20 10:00:14 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; command=python3 -m sglang.launch_server --model-path Qwen/Qwen3-235B-A22B-Instruct-2507 --tp 8 --host 0.0.0.0 --port 30000
-- 2026-06-20 10:00:14 UTC: failed_or_interrupted - exit_code=1; cleaning partial weights
-- 2026-06-20 10:00:14 UTC: weights_cleanup - primary: /root/.cache/huggingface/hub/models--Qwen--Qwen3-235B-A22B-Instruct-2507: deleted after failed/interrupted Qwen3 235B-A22B Instruct run, size_before=absent; lock=/root/.cache/huggingface/hub/.locks/models--Qwen--Qwen3-235B-A22B-Instruct-2507

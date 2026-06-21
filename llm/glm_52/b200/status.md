@@ -1,17 +1,35 @@
-- 2026-06-19 05:56:48 UTC: dataset_download - downloading ShareGPT dataset to /mnt/local_disk/bbuf/kda-pilot/llm/sharegpt/ShareGPT_V3_unfiltered_cleaned_split.json
-- 2026-06-19 05:56:56 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; command=sglang serve --model-path zai-org/GLM-5.2-FP8 --tp 8 --dp 8 --enable-dp-attention --moe-a2a-backend deepep --speculative-algorithm EAGLE --speculative-num-steps 1 --speculative-eagle-topk 1 --speculative-num-draft-tokens 2 --mem-fraction-static 0.85 --cuda-graph-max-bs 128 --chunked-prefill-size 32768 --max-running-requests 80 --host 0.0.0.0 --port 30000
-- 2026-06-19 06:34:04 UTC: server_ready - pid=228, port=30000
-- 2026-06-19 06:34:04 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
-- 2026-06-19 06:35:10 UTC: extract - random_low: extracting >2% kernel shapes/meta
-- 2026-06-19 06:35:22 UTC: benchmark - random_mid: dataset=random, num_prompts=300, max_concurrency=32
-- 2026-06-19 06:37:39 UTC: extract - random_mid: extracting >2% kernel shapes/meta
-- 2026-06-19 06:37:59 UTC: benchmark - random_high: dataset=random, num_prompts=500, max_concurrency=100
-- 2026-06-19 06:40:07 UTC: extract - random_high: extracting >2% kernel shapes/meta
-- 2026-06-19 06:40:46 UTC: benchmark - sharegpt_low: dataset=sharegpt, num_prompts=10, max_concurrency=1
-- 2026-06-19 06:41:30 UTC: extract - sharegpt_low: extracting >2% kernel shapes/meta
-- 2026-06-19 06:41:43 UTC: benchmark - sharegpt_mid: dataset=sharegpt, num_prompts=300, max_concurrency=32
-- 2026-06-19 06:43:12 UTC: extract - sharegpt_mid: extracting >2% kernel shapes/meta
-- 2026-06-19 06:43:32 UTC: benchmark - sharegpt_high: dataset=sharegpt, num_prompts=500, max_concurrency=100
-- 2026-06-19 06:45:03 UTC: extract - sharegpt_high: extracting >2% kernel shapes/meta
-- 2026-06-19 06:45:50 UTC: completed - GLM-5.2 FP8 benchmark/profile/shape extraction complete
-- 2026-06-19 06:46:13 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--zai-org--GLM-5.2-FP8: deleted after completed run, size_before=704G; lock=/root/.cache/huggingface/hub/.locks/models--zai-org--GLM-5.2-FP8
+- 2026-06-21 02:07:35 UTC: dataset_download - downloading ShareGPT dataset to /data/bbuf/kda-pilot/llm/sharegpt/ShareGPT_V3_unfiltered_cleaned_split.json
+- 2026-06-21 02:07:35 UTC: capture_label - server_start
+- 2026-06-21 02:07:35 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; command=sglang serve --model-path zai-org/GLM-5.2-FP8 --tp 8 --dp 8 --enable-dp-attention --moe-a2a-backend deepep --speculative-algorithm EAGLE --speculative-num-steps 1 --speculative-eagle-topk 1 --speculative-num-draft-tokens 2 --mem-fraction-static 0.85 --cuda-graph-max-bs 128 --chunked-prefill-size 32768 --max-running-requests 80 --host 0.0.0.0 --port 30000
+- 2026-06-21 02:15:49 UTC: manual_capture_plan - outer runner stopped to avoid large duplicate API logs; preserving live server and weight cache; will run compact 6-workload kernel-interface capture: random/sharegpt x low/mid/high
+- 2026-06-21 02:35:50 UTC: server_restart_flashmla - restart with dsa_prefill_backend=flashmla_kv, dsa_decode_backend=flashmla_kv, cuda graph disabled for Python-interface capture
+- 2026-06-21 02:41:33 UTC: server_ready - server ready with flashmla_kv DSA and cuda graph disabled; warmup API logs truncated before workload labels
+- 2026-06-21 02:41:33 UTC: capture_label - random_low
+- 2026-06-21 02:42:00 UTC: benchmark_done - random_low
+- 2026-06-21 02:43:34 UTC: capture_label - random_low
+- 2026-06-21 02:44:01 UTC: benchmark_done - random_low_tokenized
+- 2026-06-21 02:49:37 UTC: capture_label - random_low
+- 2026-06-21 02:53:26 UTC: server_restart_after_random_ids_crash - restart safe cookbook random/sharegpt capture; random-ids abandoned after scheduler crash
+- 2026-06-21 02:58:18 UTC: server_restart_after_gpu_cleanup - GPU memory freed; restart safe cookbook random/sharegpt capture
+- 2026-06-21 03:02:59 UTC: server_ready - server ready; startup API logs truncated; running six-workload capture
+- 2026-06-21 03:02:59 UTC: capture_label - random_low
+- 2026-06-21 03:02:59 UTC: benchmark - random_low: dataset=random, prompts=1, concurrency=1, output_len=8, warmup=0
+- 2026-06-21 03:03:21 UTC: benchmark_done - random_low
+- 2026-06-21 03:03:21 UTC: capture_label - random_mid
+- 2026-06-21 03:03:21 UTC: benchmark - random_mid: dataset=random, prompts=32, concurrency=32, output_len=8, warmup=0
+- 2026-06-21 03:03:56 UTC: benchmark_done - random_mid
+- 2026-06-21 03:03:56 UTC: capture_label - random_high
+- 2026-06-21 03:03:56 UTC: benchmark - random_high: dataset=random, prompts=80, concurrency=80, output_len=8, warmup=0
+- 2026-06-21 03:04:29 UTC: benchmark_done - random_high
+- 2026-06-21 03:04:29 UTC: capture_label - sharegpt_low
+- 2026-06-21 03:04:29 UTC: benchmark - sharegpt_low: dataset=sharegpt, prompts=1, concurrency=1, output_len=8, warmup=0
+- 2026-06-21 03:04:54 UTC: benchmark_done - sharegpt_low
+- 2026-06-21 03:04:54 UTC: capture_label - sharegpt_mid
+- 2026-06-21 03:04:54 UTC: benchmark - sharegpt_mid: dataset=sharegpt, prompts=32, concurrency=32, output_len=8, warmup=0
+- 2026-06-21 03:05:40 UTC: benchmark_done - sharegpt_mid
+- 2026-06-21 03:05:40 UTC: capture_label - sharegpt_high
+- 2026-06-21 03:05:40 UTC: benchmark - sharegpt_high: dataset=sharegpt, prompts=80, concurrency=80, output_len=8, warmup=0
+- 2026-06-21 03:06:32 UTC: benchmark_done - sharegpt_high
+- 2026-06-21 03:06:32 UTC: capture_matrix_done - six workload kernel-interface capture complete
+- 2026-06-21 03:13:10 UTC: cleanup_start - zai-org/GLM-5.2-FP8 weights
+- 2026-06-21 03:13:48 UTC: cleanup_done - zai-org/GLM-5.2-FP8 weights removed

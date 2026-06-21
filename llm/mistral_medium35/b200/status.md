@@ -1,7 +1,0 @@
-- 2026-06-20 03:16:38 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1; command=python3 -m sglang.launch_server --model-path mistralai/Mistral-Medium-3.5-128B --tp 2 --reasoning-parser mistral --tool-call-parser mistral --dtype bfloat16 --speculative-algorithm EAGLE --speculative-draft-model-path mistralai/Mistral-Medium-3.5-128B-EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1 --speculative-num-draft-tokens 4 --mem-fraction-static 0.85 --context-length 32768 --host 0.0.0.0 --port 30000
-- 2026-06-20 03:26:27 UTC: server_ready - pid=1150, port=30000
-- 2026-06-20 03:26:27 UTC: benchmark - random_low: dataset=random, num_prompts=10, max_concurrency=1
-- 2026-06-20 03:27:36 UTC: extract - random_low: extracting >2% kernel shapes/meta
-- 2026-06-20 03:27:37 UTC: failed_or_interrupted - exit_code=1; cleaning partial weights
-- 2026-06-20 03:27:59 UTC: weights_cleanup - primary: /root/.cache/huggingface/hub/models--mistralai--Mistral-Medium-3.5-128B: deleted after failed/interrupted Mistral Medium 3.5 FP8 run, size_before=249G; lock=/root/.cache/huggingface/hub/.locks/models--mistralai--Mistral-Medium-3.5-128B
-- 2026-06-20 03:27:59 UTC: weights_cleanup - extra:mistralai/Mistral-Medium-3.5-128B-EAGLE: /root/.cache/huggingface/hub/models--mistralai--Mistral-Medium-3.5-128B-EAGLE: deleted after failed/interrupted Mistral Medium 3.5 FP8 run, size_before=2.9G; lock=/root/.cache/huggingface/hub/.locks/models--mistralai--Mistral-Medium-3.5-128B-EAGLE

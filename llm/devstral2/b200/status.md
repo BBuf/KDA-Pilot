@@ -1,3 +1,0 @@
-- 2026-06-20 03:36:18 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1; command=python3 -m sglang.launch_server --model-path mistralai/Devstral-2-123B-Instruct-2512 --tp 2 --mem-fraction-static 0.85 --context-length 32768 --host 0.0.0.0 --port 30000
-- 2026-06-20 03:37:02 UTC: failed_or_interrupted - exit_code=1; cleaning partial weights
-- 2026-06-20 03:37:02 UTC: weights_cleanup - primary: /root/.cache/huggingface/hub/models--mistralai--Devstral-2-123B-Instruct-2512: deleted after failed/interrupted Devstral 2 123B FP8 run, size_before=17M; lock=/root/.cache/huggingface/hub/.locks/models--mistralai--Devstral-2-123B-Instruct-2512

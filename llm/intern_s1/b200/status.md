@@ -1,3 +1,0 @@
-- 2026-06-20 01:29:44 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; command=python3 -m sglang.launch_server --model-path internlm/Intern-S1-FP8 --tokenizer-path internlm/Intern-S1 --tp-size 8 --ep 2 --trust-remote-code --host 0.0.0.0 --port 30000
-- 2026-06-20 01:45:52 UTC: failed_or_interrupted - exit_code=1; cleaning partial weights
-- 2026-06-20 01:46:13 UTC: weights_cleanup - /root/.cache/huggingface/hub/models--internlm--Intern-S1-FP8: deleted after failed/interrupted Intern-S1 FP8 run, size_before=232G; lock=/root/.cache/huggingface/hub/.locks/models--internlm--Intern-S1-FP8
