@@ -431,7 +431,10 @@ def write_prompt(task_dir: Path, task: dict[str, Any]) -> None:
     ]
     (task_dir / "config.toml").write_text("\n".join(config) + "\n")
 
-    workload_lines = [f"- `{label}`" for label in task["labels"]]
+    executed_workload_lines = [f"- `{label}`" for label in LABEL_ORDER]
+    observed_workload_lines = [f"- `{label}`" for label in task["labels"]] or ["- none"]
+    missing_labels = [label for label in LABEL_ORDER if label not in set(task["labels"])]
+    not_observed_workload_lines = [f"- `{label}`" for label in missing_labels] or ["- none"]
     shape_lines = [f"- `{md_cell(x, 180)}`" for x in task["shape_briefs"][:12]] or ["- none"]
     variant_lines = []
     for idx, variant in enumerate(task["variants"][:6], start=1):
@@ -471,9 +474,21 @@ def write_prompt(task_dir: Path, task: dict[str, Any]) -> None:
         f"- Captured variants: `{task['variant_count']}`",
         "- Evidence policy: runtime interface capture of args/kwargs/result, not torch-profiler CPU-op shape context.",
         "",
-        "## Workload Coverage",
+        "## Executed Workload Matrix",
         "",
-        *workload_lines,
+        "The capture run executed all workload labels below for this model.",
+        "A specific interface may still be absent from a workload when the",
+        "serving path does not call it for that dataset/concurrency level.",
+        "",
+        *executed_workload_lines,
+        "",
+        "## Observed Workloads For This Interface",
+        "",
+        *observed_workload_lines,
+        "",
+        "## Not Observed For This Interface",
+        "",
+        *not_observed_workload_lines,
         "",
         "## Shape Summary",
         "",
