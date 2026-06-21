@@ -1,0 +1,29 @@
+[task]
+slug = "jit_kernel_kvcache_store_cache"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "cache"
+model = "openai/gpt-oss-120b"
+model_slug = "gpt_oss"
+entry_points = [
+  "jit_kernel.kvcache.store_cache",
+]
+evidence_json = "docs/evidence.json"
+
+[build]
+language = "python/cuda"
+baseline_entry_point = "baseline/<copied_sglang_interface>::baseline"
+candidate_entry_point = "solution/<candidate_interface>::candidate"
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+use_isolated_runner = true
+required_matched_ratio = 1.0
+
+[source_capture]
+method = "SGLANG_KERNEL_API_LOGLEVEL=3"
+policy = "runtime SGLang kernel Python interface args/kwargs/result, not torch profiler CPU-op context"
+total_call_count = 16352
+variant_count = 496

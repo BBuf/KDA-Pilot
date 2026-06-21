@@ -1,0 +1,25 @@
+- 2026-06-21 09:47:56 UTC: capture_label - server_start
+- 2026-06-21 09:47:56 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; PYTHONPATH=/data/bbuf/repos/sglang-main/python:; command=python3 -m sglang.launch_server --model-path openai/gpt-oss-120b --host 0.0.0.0 --port 31003 --tp-size 8 --mem-fraction-static 0.8 --cuda-graph-backend-decode disabled --cuda-graph-backend-prefill disabled --chunked-prefill-size 32768 --max-running-requests 80 --reasoning-parser gpt-oss --tool-call-parser gpt-oss --enforce-disable-flashinfer-allreduce-fusion --attention-backend triton --moe-runner-backend triton --disable-flashinfer-autotune
+- 2026-06-21 09:49:15 UTC: server_ready - pid=102197, port=31003
+- 2026-06-21 09:49:15 UTC: capture_label - random_low
+- 2026-06-21 09:49:15 UTC: benchmark - random_low: dataset=random, prompts=1, concurrency=1, output_len=8, warmup=0
+- 2026-06-21 09:49:32 UTC: benchmark_done - random_low
+- 2026-06-21 09:49:32 UTC: capture_label - random_mid
+- 2026-06-21 09:49:32 UTC: benchmark - random_mid: dataset=random, prompts=32, concurrency=32, output_len=8, warmup=0
+- 2026-06-21 09:49:53 UTC: benchmark_done - random_mid
+- 2026-06-21 09:49:53 UTC: capture_label - random_high
+- 2026-06-21 09:49:53 UTC: benchmark - random_high: dataset=random, prompts=80, concurrency=80, output_len=8, warmup=0
+- 2026-06-21 09:50:15 UTC: benchmark_done - random_high
+- 2026-06-21 09:50:15 UTC: capture_label - sharegpt_low
+- 2026-06-21 09:50:15 UTC: benchmark - sharegpt_low: dataset=sharegpt, prompts=1, concurrency=1, output_len=8, warmup=0
+- 2026-06-21 09:50:39 UTC: benchmark_done - sharegpt_low
+- 2026-06-21 09:50:39 UTC: capture_label - sharegpt_mid
+- 2026-06-21 09:50:39 UTC: benchmark - sharegpt_mid: dataset=sharegpt, prompts=32, concurrency=32, output_len=8, warmup=0
+- 2026-06-21 09:51:00 UTC: benchmark_done - sharegpt_mid
+- 2026-06-21 09:51:00 UTC: capture_label - sharegpt_high
+- 2026-06-21 09:51:00 UTC: benchmark - sharegpt_high: dataset=sharegpt, prompts=80, concurrency=80, output_len=8, warmup=0
+- 2026-06-21 09:51:24 UTC: benchmark_done - sharegpt_high
+- 2026-06-21 09:51:24 UTC: capture_label - shutdown
+- 2026-06-21 09:51:24 UTC: capture_matrix_done - six workload kernel-interface capture complete
+- 2026-06-21 09:51:48 UTC: weights_cleanup_skipped - clean_weights=0; weight_cache=/root/.cache/huggingface/hub/models--openai--gpt-oss-120b; reason=after completed openai/gpt-oss-120b kernel-interface capture run
+- 2026-06-21 09:51:48 UTC: completed - openai/gpt-oss-120b kernel-interface tasks generated
