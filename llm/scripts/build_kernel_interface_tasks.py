@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 
-LABEL_ORDER = (
+DEFAULT_LABEL_ORDER = (
     "random_low",
     "random_mid",
     "random_high",
@@ -264,7 +264,11 @@ def parse_api_log_block(
     }
 
 
-def load_api_logs(capture_dir: Path, status_md: Path) -> list[dict[str, Any]]:
+def order_index(label_order: tuple[str, ...], label: str) -> int:
+    return label_order.index(label) if label in label_order else 999
+
+
+def load_api_logs(capture_dir: Path, status_md: Path, label_order: tuple[str, ...]) -> list[dict[str, Any]]:
     intervals = load_label_intervals(status_md)
     records: list[dict[str, Any]] = []
     for path in sorted(capture_dir.glob("kernel_api_*.log")):
@@ -278,7 +282,7 @@ def load_api_logs(capture_dir: Path, status_md: Path) -> list[dict[str, Any]]:
             if current_function is None or current_ts is None:
                 return
             label = label_for(current_ts, intervals)
-            if label not in LABEL_ORDER:
+            if label not in label_order:
                 return
             if not should_keep_interface(current_function):
                 return
@@ -308,7 +312,11 @@ def load_api_logs(capture_dir: Path, status_md: Path) -> list[dict[str, Any]]:
     return records
 
 
-def load_capture_files(capture_dir: Path, status_md: Path | None = None) -> list[dict[str, Any]]:
+def load_capture_files(
+    capture_dir: Path,
+    status_md: Path | None = None,
+    label_order: tuple[str, ...] = DEFAULT_LABEL_ORDER,
+) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
     for path in sorted(capture_dir.glob("kernel_interface_capture_pid*.json")):
         payload = json.loads(path.read_text())
@@ -320,10 +328,15 @@ def load_capture_files(capture_dir: Path, status_md: Path | None = None) -> list
         return records
     if status_md is None:
         status_md = capture_dir.parent / "status.md"
-    return load_api_logs(capture_dir, status_md)
+    return load_api_logs(capture_dir, status_md, label_order)
 
 
-def aggregate(records: list[dict[str, Any]], model: str, model_slug: str) -> list[dict[str, Any]]:
+def aggregate(
+    records: list[dict[str, Any]],
+    model: str,
+    model_slug: str,
+    label_order: tuple[str, ...],
+) -> list[dict[str, Any]]:
     grouped: dict[str, dict[str, Any]] = {}
     seen_variants: dict[str, dict[str, dict[str, Any]]] = defaultdict(dict)
     for record in records:
@@ -371,7 +384,7 @@ def aggregate(records: list[dict[str, Any]], model: str, model_slug: str) -> lis
 
     tasks = []
     for task in grouped.values():
-        task["labels"].sort(key=lambda x: LABEL_ORDER.index(x) if x in LABEL_ORDER else 999)
+        task["labels"].sort(key=lambda x: order_index(label_order, x))
         task["variant_count"] = len(task["variants"])
         task["capture_files"] = sorted(x for x in task["capture_files"] if x)
         task["shape_briefs"] = sorted(
@@ -383,7 +396,7 @@ def aggregate(records: list[dict[str, Any]], model: str, model_slug: str) -> lis
         )[:24]
         task["variants"].sort(
             key=lambda v: (
-                LABEL_ORDER.index(v["label"]) if v.get("label") in LABEL_ORDER else 999,
+                order_index(label_order, v.get("label", "")),
                 -int(v.get("call_count") or 0),
                 json_key(v.get("args")),
             )
@@ -393,7 +406,7 @@ def aggregate(records: list[dict[str, Any]], model: str, model_slug: str) -> lis
     return tasks
 
 
-def write_prompt(task_dir: Path, task: dict[str, Any]) -> None:
+def write_prompt(task_dir: Path, task: dict[str, Any], label_order: tuple[str, ...]) -> None:
     task_dir.mkdir(parents=True, exist_ok=True)
     for sub in ("baseline", "solution", "bench", "docs", "profile", "ncu", "tests"):
         path = task_dir / sub
@@ -437,9 +450,9 @@ def write_prompt(task_dir: Path, task: dict[str, Any]) -> None:
     ]
     (task_dir / "config.toml").write_text("\n".join(config) + "\n")
 
-    executed_workload_lines = [f"- `{label}`" for label in LABEL_ORDER]
+    executed_workload_lines = [f"- `{label}`" for label in label_order]
     observed_workload_lines = [f"- `{label}`" for label in task["labels"]] or ["- none"]
-    missing_labels = [label for label in LABEL_ORDER if label not in set(task["labels"])]
+    missing_labels = [label for label in label_order if label not in set(task["labels"])]
     not_observed_workload_lines = [f"- `{label}`" for label in missing_labels] or ["- none"]
     shape_lines = [f"- `{md_cell(x, 180)}`" for x in task["shape_briefs"][:12]] or ["- none"]
     variant_lines = []
@@ -521,7 +534,13 @@ def write_prompt(task_dir: Path, task: dict[str, Any]) -> None:
     (task_dir / "prompt.md").write_text("\n".join(prompt) + "\n")
 
 
-def write_docs(run_dir: Path, tasks: list[dict[str, Any]], generated_at: str, source_dir: Path) -> None:
+def write_docs(
+    run_dir: Path,
+    tasks: list[dict[str, Any]],
+    generated_at: str,
+    source_dir: Path,
+    label_order: tuple[str, ...],
+) -> None:
     docs_dir = run_dir / "docs"
     docs_dir.mkdir(parents=True, exist_ok=True)
     model_name = tasks[0]["model"] if tasks else "unknown"
@@ -546,6 +565,7 @@ def write_docs(run_dir: Path, tasks: list[dict[str, Any]], generated_at: str, so
         "source_capture_dir": str(source_dir),
         "task_count": len(tasks),
         "tasks": index_tasks,
+        "workload_labels": list(label_order),
     }
     (docs_dir / "kernel_interface_task_index.json").write_text(
         json.dumps(index, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
@@ -560,6 +580,7 @@ def write_docs(run_dir: Path, tasks: list[dict[str, Any]], generated_at: str, so
         f"- Source capture dir: `{source_dir}`",
         f"- Task count: `{len(tasks)}`",
         "- Evidence policy: runtime capture at SGLang kernel Python interfaces.",
+        f"- Workload labels: {', '.join(f'`{label}`' for label in label_order)}",
         "",
         "## Category Counts",
         "",
@@ -593,19 +614,27 @@ def main() -> int:
     ap.add_argument("--run-dir", required=True)
     ap.add_argument("--model", default="zai-org/GLM-5.2-FP8")
     ap.add_argument("--model-slug", default="glm_52")
+    ap.add_argument(
+        "--label-order",
+        default=",".join(DEFAULT_LABEL_ORDER),
+        help="Comma-separated capture labels to retain and report, in workload order.",
+    )
     ap.add_argument("--write-task-cards", action="store_true")
     args = ap.parse_args()
 
     capture_dir = Path(args.capture_dir)
     run_dir = Path(args.run_dir)
-    records = load_capture_files(capture_dir)
-    tasks = aggregate(records, args.model, args.model_slug)
+    label_order = tuple(label.strip() for label in args.label_order.split(",") if label.strip())
+    if not label_order:
+        raise ValueError("--label-order must contain at least one label")
+    records = load_capture_files(capture_dir, label_order=label_order)
+    tasks = aggregate(records, args.model, args.model_slug, label_order)
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    write_docs(run_dir, tasks, generated_at, capture_dir)
+    write_docs(run_dir, tasks, generated_at, capture_dir, label_order)
     if args.write_task_cards:
         kernels_dir = run_dir / "kernels"
         for task in tasks:
-            write_prompt(kernels_dir / task["task_id"], task)
+            write_prompt(kernels_dir / task["task_id"], task, label_order)
     print(
         f"records={len(records)} tasks={len(tasks)} "
         f"variants={sum(t['variant_count'] for t in tasks)} "

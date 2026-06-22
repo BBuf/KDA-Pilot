@@ -1,0 +1,26 @@
+- 2026-06-22 06:29:26 UTC: capture_label - server_start
+- 2026-06-22 06:29:26 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; PYTHONPATH=/data/bbuf/repos/sglang-main/python:; command=python3 -m sglang.launch_server --model-path LLM-Research/Llama-4-Scout-17B-16E-Instruct --host 0.0.0.0 --port 31006 --tp-size 8 --mem-fraction-static 0.8 --cuda-graph-backend-decode disabled --cuda-graph-backend-prefill disabled --chunked-prefill-size 8192 --max-running-requests 80 --enable-multimodal --context-length 65536 --dtype bfloat16 --trust-remote-code --attention-backend triton --mm-attention-backend fa4 --disable-flashinfer-autotune --enforce-disable-flashinfer-allreduce-fusion --skip-server-warmup
+- 2026-06-22 06:32:18 UTC: server_ready - pid=360041, port=31006
+- 2026-06-22 06:32:18 UTC: capture_label - random_low
+- 2026-06-22 06:32:18 UTC: benchmark - random_low: dataset=random, prompts=1, concurrency=1, output_len=8, warmup=0
+- 2026-06-22 06:32:34 UTC: benchmark_done - random_low
+- 2026-06-22 06:32:34 UTC: capture_label - random_mid
+- 2026-06-22 06:32:34 UTC: benchmark - random_mid: dataset=random, prompts=32, concurrency=32, output_len=8, warmup=0
+- 2026-06-22 06:32:56 UTC: benchmark_done - random_mid
+- 2026-06-22 06:32:56 UTC: capture_label - random_high
+- 2026-06-22 06:32:56 UTC: benchmark - random_high: dataset=random, prompts=80, concurrency=80, output_len=8, warmup=0
+- 2026-06-22 06:33:18 UTC: benchmark_done - random_high
+- 2026-06-22 06:33:18 UTC: capture_label - sharegpt_low
+- 2026-06-22 06:33:18 UTC: benchmark - sharegpt_low: dataset=sharegpt, prompts=1, concurrency=1, output_len=8, warmup=0
+- 2026-06-22 06:33:38 UTC: benchmark_done - sharegpt_low
+- 2026-06-22 06:33:38 UTC: capture_label - sharegpt_mid
+- 2026-06-22 06:33:38 UTC: benchmark - sharegpt_mid: dataset=sharegpt, prompts=32, concurrency=32, output_len=8, warmup=0
+- 2026-06-22 06:34:01 UTC: benchmark_done - sharegpt_mid
+- 2026-06-22 06:34:01 UTC: capture_label - sharegpt_high
+- 2026-06-22 06:34:01 UTC: benchmark - sharegpt_high: dataset=sharegpt, prompts=80, concurrency=80, output_len=8, warmup=0
+- 2026-06-22 06:34:31 UTC: benchmark_done - sharegpt_high
+- 2026-06-22 06:34:31 UTC: capture_label - shutdown
+- 2026-06-22 06:34:31 UTC: capture_matrix_done - six workload kernel-interface capture complete
+- 2026-06-22 06:35:06 UTC: weights_cleanup_skipped - clean_weights=0; weight_cache=/data/bbuf/.cache/modelscope/models/LLM-Research/Llama-4-Scout-17B-16E-Instruct; reason=after completed LLM-Research/Llama-4-Scout-17B-16E-Instruct kernel-interface capture run
+- 2026-06-22 06:35:06 UTC: completed - LLM-Research/Llama-4-Scout-17B-16E-Instruct kernel-interface tasks generated
+- 2026-06-22 06:38:41 UTC: weights_cleanup - /data/bbuf/.cache/modelscope/models/LLM-Research/Llama-4-Scout-17B-16E-Instruct: deleted after completed Llama4 capture, size_before=203G; lock=/data/bbuf/.cache/modelscope/.lock/LLM-Research___Llama-4-Scout-17B-16E-Instruct; temp=/data/bbuf/.cache/modelscope/models/._____temp/LLM-Research/Llama-4-Scout-17B-16E-Instruct

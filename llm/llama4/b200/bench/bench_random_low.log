@@ -1,0 +1,61 @@
+[transformers] `rope_parameters`'s high_freq_factor field must be greater than low_freq_factor, got high_freq_factor=1.0 and low_freq_factor=1.0
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+benchmark_args=Namespace(backend='sglang', base_url=None, host='127.0.0.1', port=31006, ready_check_timeout_sec=60, dataset_name='random', dataset_path='', speed_bench_category=None, speed_bench_output_len=512, model='LLM-Research/Llama-4-Scout-17B-16E-Instruct', served_model_name=None, tokenizer=None, num_prompts=1, sharegpt_output_len=None, sharegpt_context_len=None, random_input_len=1000, random_output_len=8, random_range_ratio=0.0, image_count=1, image_resolution='1080p', random_image_count=False, image_format='jpeg', image_content='random', request_rate=inf, use_trace_timestamps=False, max_concurrency=1, output_file='/data/bbuf/kda-pilot/llm/llama4/b200/bench/random_low.jsonl', output_details=False, print_requests=False, disable_tqdm=True, disable_stream=False, return_logprob=False, top_logprobs_num=0, token_ids_logprob=None, logprob_start_len=-1, return_routed_experts=False, cache_report=False, seed=42, disable_ignore_eos=False, temperature=0.0, top_p=1.0, extra_request_body=None, apply_chat_template=False, profile=False, plot_throughput=False, profile_activities=['CPU', 'GPU'], profile_start_step=None, profile_steps=None, profile_num_steps=None, profile_by_stage=False, profile_stages=None, profile_output_dir=None, profile_prefix=None, lora_name=None, lora_request_distribution='uniform', lora_zipf_alpha=1.5, prompt_suffix='', pd_separated=False, profile_prefill_url=None, profile_decode_url=None, flush_cache=False, warmup_requests=0, tokenize_prompt=False, gsp_num_groups=64, gsp_prompts_per_group=16, gsp_system_prompt_len=2048, gsp_question_len=128, gsp_output_len=256, gsp_range_ratio=1.0, gsp_fast_prepare=False, gsp_send_routing_key=False, gsp_num_turns=1, gsp_ordered=False, gsp_group_distribution='uniform', gsp_zipf_alpha=None, mooncake_slowdown_factor=1.0, mooncake_num_rounds=1, mooncake_workload='conversation', fake_prefill=False, tag=None, header=None)
+Waiting up to 60s for http://127.0.0.1:31006/v1/models to become ready...
+Server ready in 0.0s.
+Fail to load tokenizer config with error=LLM-Research/Llama-4-Scout-17B-16E-Instruct is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'
+If this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`
+
+WARNING It is recommended to use the `Chat` or `Instruct` model for benchmarking.
+Because when the tokenizer counts the output tokens, if there is gibberish, it might count incorrectly.
+
+Namespace(backend='sglang', base_url=None, host='127.0.0.1', port=31006, ready_check_timeout_sec=60, dataset_name='random', dataset_path='', speed_bench_category=None, speed_bench_output_len=512, model='LLM-Research/Llama-4-Scout-17B-16E-Instruct', served_model_name=None, tokenizer=None, num_prompts=1, sharegpt_output_len=None, sharegpt_context_len=None, random_input_len=1000, random_output_len=8, random_range_ratio=0.0, image_count=1, image_resolution='1080p', random_image_count=False, image_format='jpeg', image_content='random', request_rate=inf, use_trace_timestamps=False, max_concurrency=1, output_file='/data/bbuf/kda-pilot/llm/llama4/b200/bench/random_low.jsonl', output_details=False, print_requests=False, disable_tqdm=True, disable_stream=False, return_logprob=False, top_logprobs_num=0, token_ids_logprob=None, logprob_start_len=-1, return_routed_experts=False, cache_report=False, seed=42, disable_ignore_eos=False, temperature=0.0, top_p=1.0, extra_request_body=None, apply_chat_template=False, profile=False, plot_throughput=False, profile_activities=['CPU', 'GPU'], profile_start_step=None, profile_steps=None, profile_num_steps=None, profile_by_stage=False, profile_stages=None, profile_output_dir=None, profile_prefix=None, lora_name=None, lora_request_distribution='uniform', lora_zipf_alpha=1.5, prompt_suffix='', pd_separated=False, profile_prefill_url=None, profile_decode_url=None, flush_cache=False, warmup_requests=0, tokenize_prompt=False, gsp_num_groups=64, gsp_prompts_per_group=16, gsp_system_prompt_len=2048, gsp_question_len=128, gsp_output_len=256, gsp_range_ratio=1.0, gsp_fast_prepare=False, gsp_send_routing_key=False, gsp_num_turns=1, gsp_ordered=False, gsp_group_distribution='uniform', gsp_zipf_alpha=None, mooncake_slowdown_factor=1.0, mooncake_num_rounds=1, mooncake_workload='conversation', fake_prefill=False, tag=None, header=None)
+
+#Input tokens: 102
+#Output tokens: 4
+Starting warmup with 0 sequences...
+Warmup completed with 0 sequences. Starting main benchmark run...
+
+============ Serving Benchmark Result ============
+Backend:                                 sglang
+Traffic request rate:                    inf
+Max request concurrency:                 1
+Successful requests:                     1
+Benchmark duration (s):                  4.13
+Total input tokens:                      102
+Total input text tokens:                 102
+Total generated tokens:                  4
+Total generated tokens (retokenized):    4
+Request throughput (req/s):              0.24
+Input token throughput (tok/s):          24.72
+Output token throughput (tok/s):         0.97
+Peak output token throughput (tok/s):    2.00
+Peak concurrent requests:                1
+Total token throughput (tok/s):          25.69
+Concurrency:                             1.00
+----------------End-to-End Latency----------------
+Mean E2E Latency (ms):                   4120.94
+Median E2E Latency (ms):                 4120.94
+P90 E2E Latency (ms):                    4120.94
+P95 E2E Latency (ms):                    4120.94
+P99 E2E Latency (ms):                    4120.94
+---------------Time to First Token----------------
+Mean TTFT (ms):                          2517.15
+Median TTFT (ms):                        2517.15
+P90 TTFT (ms):                           2517.15
+P95 TTFT (ms):                           2517.15
+P99 TTFT (ms):                           2517.15
+-----Time per Output Token (excl. 1st token)------
+Mean TPOT (ms):                          534.60
+Median TPOT (ms):                        534.60
+P90 TPOT (ms):                           534.60
+P95 TPOT (ms):                           534.60
+P99 TPOT (ms):                           534.60
+---------------Inter-Token Latency----------------
+Mean ITL (ms):                           534.60
+Median ITL (ms):                         534.50
+P90 ITL (ms):                            534.81
+P95 ITL (ms):                            534.85
+P99 ITL (ms):                            534.88
+Max ITL (ms):                            534.89
+==================================================

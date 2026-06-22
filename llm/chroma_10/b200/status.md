@@ -1,0 +1,16 @@
+- 2026-06-22 05:36:08 UTC: server_start - container=chroma_sglang_bbuf_capture; image=flashlabs/chroma:latest; gpu=0; model=/data/bbuf/.cache/modelscope/models/FlashLabs/Chroma-4B
+- 2026-06-22 05:36:33 UTC: server_ready - port=31007
+- 2026-06-22 05:36:33 UTC: capture_label - chroma_audio_low
+- 2026-06-22 05:36:33 UTC: benchmark - chroma_audio_low: audio_prompt=assets/question_audio.wav, requests=1, concurrency=1, max_tokens=32, return_audio=false
+- 2026-06-22 05:36:46 UTC: benchmark_done - chroma_audio_low
+- 2026-06-22 05:36:46 UTC: capture_label - chroma_audio_mid
+- 2026-06-22 05:36:46 UTC: benchmark - chroma_audio_mid: audio_prompt=assets/question_audio.wav, requests=4, concurrency=4, max_tokens=32, return_audio=false
+- 2026-06-22 05:36:57 UTC: benchmark_done - chroma_audio_mid
+- 2026-06-22 05:36:57 UTC: capture_label - chroma_audio_high
+- 2026-06-22 05:36:57 UTC: benchmark - chroma_audio_high: audio_prompt=assets/question_audio.wav, requests=8, concurrency=8, max_tokens=32, return_audio=false
+- 2026-06-22 05:37:19 UTC: benchmark_done - chroma_audio_high
+- 2026-06-22 05:37:19 UTC: capture_label - shutdown
+- 2026-06-22 05:37:19 UTC: capture_matrix_done - chroma audio workload kernel-interface capture complete
+- 2026-06-22 05:37:25 UTC: weights_cleanup_skipped - clean_weights=0; reason=after completed Chroma kernel-interface capture run
+- 2026-06-22 05:37:25 UTC: completed - FlashLabs/Chroma-4B kernel-interface tasks generated
+- 2026-06-22 05:38:43 UTC: weights_cleanup - /data/bbuf/.cache/modelscope/models/FlashLabs/Chroma-4B: deleted after completed Chroma capture, size_before=14G; lock=/data/bbuf/.cache/modelscope/.lock/FlashLabs___Chroma-4B; temp=/data/bbuf/.cache/modelscope/models/._____temp/FlashLabs/Chroma-4B

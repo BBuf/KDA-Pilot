@@ -1,0 +1,126 @@
+{
+  "generated_at": "2026-06-22T05:37:25Z",
+  "model": "FlashLabs/Chroma-4B",
+  "model_slug": "chroma_10",
+  "source_capture_dir": "/data/bbuf/kda-pilot/llm/chroma_10/b200/capture",
+  "task_count": 6,
+  "tasks": [
+    {
+      "category": "quantization",
+      "evidence_json": "../kernels/sglang_srt_layers_quantization_unquant_unquantized_linear_method_apply/docs/evidence.json",
+      "function": "sglang.srt.layers.quantization.unquant.UnquantizedLinearMethod.apply",
+      "labels": [
+        "chroma_audio_low",
+        "chroma_audio_mid",
+        "chroma_audio_high"
+      ],
+      "shape_briefs": [
+        "arg[1]: shape=[1, 11008], dtype=bfloat16, device=cuda:0, contiguous=True",
+        "arg[1]: shape=[1, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+        "arg[1]: shape=[86, 11008], dtype=bfloat16, device=cuda:0, contiguous=True",
+        "arg[1]: shape=[86, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+        "arg[2]: shape=[2560], dtype=bfloat16, device=cuda:0, contiguous=True"
+      ],
+      "task_id": "sglang_srt_layers_quantization_unquant_unquantized_linear_method_apply",
+      "total_call_count": 29328,
+      "variant_count": 24
+    },
+    {
+      "category": "norm",
+      "evidence_json": "../kernels/sglang_srt_layers_layernorm_rmsnorm/docs/evidence.json",
+      "function": "sglang.srt.layers.layernorm.rmsnorm",
+      "labels": [
+        "chroma_audio_low",
+        "chroma_audio_mid",
+        "chroma_audio_high"
+      ],
+      "shape_briefs": [
+        "arg[0]: shape=[1, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+        "arg[0]: shape=[86, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+        "arg[1]: shape=[2048], dtype=bfloat16, device=cuda:0, contiguous=True"
+      ],
+      "task_id": "sglang_srt_layers_layernorm_rmsnorm",
+      "total_call_count": 14868,
+      "variant_count": 6
+    },
+    {
+      "category": "other",
+      "evidence_json": "../kernels/sglang_srt_layers_linear_column_parallel_linear_forward/docs/evidence.json",
+      "function": "sglang.srt.layers.linear.ColumnParallelLinear.forward",
+      "labels": [
+        "chroma_audio_low",
+        "chroma_audio_mid",
+        "chroma_audio_high"
+      ],
+      "shape_briefs": [
+        "arg[0]: shape=[1, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+        "arg[0]: shape=[86, 2048], dtype=bfloat16, device=cuda:0, contiguous=True"
+      ],
+      "task_id": "sglang_srt_layers_linear_column_parallel_linear_forward",
+      "total_call_count": 14664,
+      "variant_count": 6
+    },
+    {
+      "category": "other",
+      "evidence_json": "../kernels/sglang_srt_layers_linear_row_parallel_linear_forward/docs/evidence.json",
+      "function": "sglang.srt.layers.linear.RowParallelLinear.forward",
+      "labels": [
+        "chroma_audio_low",
+        "chroma_audio_mid",
+        "chroma_audio_high"
+      ],
+      "shape_briefs": [
+        "arg[0]: shape=[1, 11008], dtype=bfloat16, device=cuda:0, contiguous=True",
+        "arg[0]: shape=[1, 2048], dtype=bfloat16, device=cuda:0, contiguous=True",
+        "arg[0]: shape=[86, 11008], dtype=bfloat16, device=cuda:0, contiguous=True",
+        "arg[0]: shape=[86, 2048], dtype=bfloat16, device=cuda:0, contiguous=True"
+      ],
+      "task_id": "sglang_srt_layers_linear_row_parallel_linear_forward",
+      "total_call_count": 14664,
+      "variant_count": 12
+    },
+    {
+      "category": "other",
+      "evidence_json": "../kernels/sglang_srt_layers_activation_silu_and_mul/docs/evidence.json",
+      "function": "sglang.srt.layers.activation.silu_and_mul",
+      "labels": [
+        "chroma_audio_low",
+        "chroma_audio_mid",
+        "chroma_audio_high"
+      ],
+      "shape_briefs": [
+        "arg[0]: shape=[1, 22016], dtype=bfloat16, device=cuda:0, contiguous=True",
+        "arg[0]: shape=[86, 22016], dtype=bfloat16, device=cuda:0, contiguous=True",
+        "arg[1]: shape=[1, 11008], dtype=bfloat16, device=cuda:0, contiguous=True",
+        "arg[1]: shape=[86, 11008], dtype=bfloat16, device=cuda:0, contiguous=True"
+      ],
+      "task_id": "sglang_srt_layers_activation_silu_and_mul",
+      "total_call_count": 7332,
+      "variant_count": 6
+    },
+    {
+      "category": "other",
+      "evidence_json": "../kernels/sglang_srt_layers_vocab_parallel_embedding_vocab_parallel_embedding_forward/docs/evidence.json",
+      "function": "sglang.srt.layers.vocab_parallel_embedding.VocabParallelEmbedding.forward",
+      "labels": [
+        "chroma_audio_low",
+        "chroma_audio_mid",
+        "chroma_audio_high"
+      ],
+      "shape_briefs": [
+        "arg[0]: shape=[1, 1], dtype=int64, device=cuda:0, contiguous=True",
+        "arg[0]: shape=[1, 79], dtype=int64, device=cuda:0, contiguous=True",
+        "arg[0]: shape=[1, 86], dtype=int64, device=cuda:0, contiguous=True",
+        "arg[0]: shape=[1], dtype=int64, device=cuda:0, contiguous=True"
+      ],
+      "task_id": "sglang_srt_layers_vocab_parallel_embedding_vocab_parallel_embedding_forward",
+      "total_call_count": 446,
+      "variant_count": 12
+    }
+  ],
+  "workload_labels": [
+    "chroma_audio_low",
+    "chroma_audio_mid",
+    "chroma_audio_high"
+  ]
+}
