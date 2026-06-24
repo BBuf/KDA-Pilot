@@ -1,0 +1,34 @@
+{
+  "model": "openai/gpt-oss-120b",
+  "model_slug": "gpt_oss_120b",
+  "cookbook_cmd": "sglang serve --model-path openai/gpt-oss-120b --tp 8",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=rmsnorm>",
+  "kernel_family": "rmsnorm",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 1/1",
+    "Torch-Compiled Region: 1/2",
+    "aten::copy_",
+    "aten::empty_like",
+    "aten::sum",
+    "aten::view"
+  ],
+  "category": "norm",
+  "gpu_kernels": [
+    "kernel_cutlass_kernel_flashinfernormkernelsrmsnormRMSNormKernel_object_at__tensorptrbf16gm",
+    "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloa"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 2.46,
+    "random_mid": 6.98,
+    "sharegpt_mid": 2.24
+  },
+  "max_pct_of_gpu": 6.98,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[1], [], [], [], [], []]",
+    "[[1], []]",
+    "[[32], [32], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

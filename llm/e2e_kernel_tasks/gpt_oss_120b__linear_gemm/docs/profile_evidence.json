@@ -1,0 +1,52 @@
+{
+  "model": "openai/gpt-oss-120b",
+  "model_slug": "gpt_oss_120b",
+  "cookbook_cmd": "sglang serve --model-path openai/gpt-oss-120b --tp 8",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 1/3",
+    "aten::_to_copy",
+    "aten::_unique2",
+    "aten::add",
+    "aten::as_strided",
+    "aten::cat"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "nvjet_sm100_tst_24x64_64x16_4x1_v_bz_TNN",
+    "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_splitK_bias_TNN",
+    "nvjet_sm100_tst_32x64_64x16_4x2_2cta_h_bz_splitK_bias_TNN",
+    "nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitK_bias_TNT",
+    "nvjet_sm100_tst_64x32_64x16_2x4_2cta_h_bz_splitK_bias_TNT",
+    "nvjet_sm100_tst_64x8_64x16_1x2_h_bz_bias_TNT",
+    "nvjet_sm100_tst_64x8_64x16_2x4_h_bz_bias_TNT",
+    "nvjet_sm100_tst_64x8_64x16_2x4_h_bz_splitK_bias_TNT"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 27.53,
+    "random_mid": 9.67,
+    "random_high": 26.43,
+    "sharegpt_low": 29.79,
+    "sharegpt_mid": 17.52,
+    "sharegpt_high": 20.69
+  },
+  "max_pct_of_gpu": 29.79,
+  "best_scenario": "sharegpt_low",
+  "input_shapes": [
+    "[[0], [], [], [], [], [], []]",
+    "[[1, 201088], [], [], []]",
+    "[[130], [], [], []]",
+    "[[192, 1, 64], [], [], []]",
+    "[[192], [], [], [], [], [], []]",
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[262, 512], []]",
+    "[[320], [320], []]",
+    "[[320], [], [], []]",
+    "[[38], []]",
+    "[[60], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
