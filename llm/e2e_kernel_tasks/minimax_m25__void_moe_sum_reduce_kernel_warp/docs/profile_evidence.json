@@ -1,0 +1,27 @@
+{
+  "model": "MiniMaxAI/MiniMax-M2.5",
+  "model_slug": "minimax_m25",
+  "cookbook_cmd": "sglang serve --model-path MiniMaxAI/MiniMax-M2.5 --tp 8 --ep 8 --reasoning-parser minimax-append-think",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=void_moe_sum_reduce_kernel_warp>",
+  "kernel_family": "void_moe_sum_reduce_kernel_warp",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 5/1",
+    "aten::as_strided"
+  ],
+  "category": "moe",
+  "gpu_kernels": [
+    "void moe_sum_reduce_kernel_warp_token_topk<c10::Half, 8, 4>(c10::Half const*, c10::Half*, "
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_mid": 3.34,
+    "sharegpt_mid": 3.21
+  },
+  "max_pct_of_gpu": 3.34,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[5632, 768], [], [], []]",
+    "[[9216, 1, 128], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

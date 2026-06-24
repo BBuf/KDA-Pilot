@@ -1,0 +1,50 @@
+{
+  "model": "MiniMaxAI/MiniMax-M2.5",
+  "model_slug": "minimax_m25",
+  "cookbook_cmd": "sglang serve --model-path MiniMaxAI/MiniMax-M2.5 --tp 8 --ep 8 --reasoning-parser minimax-append-think",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 5/1",
+    "Torch-Compiled Region: 5/3",
+    "aten::_index_put_impl_",
+    "aten::_local_scalar_dense",
+    "aten::add",
+    "aten::as_strided"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "_w8a8_block_fp8_matmul",
+    "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_128x128x16_1x1x1_3_tnn_align1_bias_f32_relu",
+    "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_128x64x16_1x1x1_3_tnn_align1_bias_f32_relu",
+    "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_32x32x16_1x1x1_3_tnn_align1_bias_f32_relu",
+    "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_64x32x16_1x1x1_3_tnn_align1_bias_f32_relu",
+    "void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_tn_align1>(cutlass_80_simt_sgemm_64x"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 20.52,
+    "random_mid": 19.39,
+    "random_high": 19.55,
+    "sharegpt_low": 22.49,
+    "sharegpt_mid": 21.33,
+    "sharegpt_high": 18.76
+  },
+  "max_pct_of_gpu": 22.49,
+  "best_scenario": "sharegpt_low",
+  "input_shapes": [
+    "[[100], [100], []]",
+    "[[196612], [], [], []]",
+    "[[1], [1], []]",
+    "[[1]]",
+    "[[284], [], [], []]",
+    "[[288, 768], [], [], [], []]",
+    "[[3072, 1, 128], [], [], []]",
+    "[[48, 1, 128], [], [], []]",
+    "[[5632, 768], [], [], []]",
+    "[[640], [640], []]",
+    "[[64859, 1, 64, 128], [], [], []]",
+    "[[64859, 64, 1, 128], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

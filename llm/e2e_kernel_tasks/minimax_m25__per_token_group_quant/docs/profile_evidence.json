@@ -1,0 +1,40 @@
+{
+  "model": "MiniMaxAI/MiniMax-M2.5",
+  "model_slug": "minimax_m25",
+  "cookbook_cmd": "sglang serve --model-path MiniMaxAI/MiniMax-M2.5 --tp 8 --ep 8 --reasoning-parser minimax-append-think",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=per_token_group_quant>",
+  "kernel_family": "per_token_group_quant",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 5/3",
+    "aten::_index_put_impl_",
+    "aten::as_strided",
+    "aten::cat",
+    "aten::narrow",
+    "aten::view"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "void (anonymous namespace)::per_token_group_quant_8bit_v2_kernel<(anonymous namespace)::Na"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 4.16,
+    "random_mid": 3.61,
+    "random_high": 2.63,
+    "sharegpt_low": 4.19,
+    "sharegpt_mid": 3.48,
+    "sharegpt_high": 2.62
+  },
+  "max_pct_of_gpu": 4.19,
+  "best_scenario": "sharegpt_low",
+  "input_shapes": [
+    "[[4097], [], [], [], []]",
+    "[[4150976, 1, 128], []]",
+    "[[48, 1, 128], [], [], []]",
+    "[[5632, 768], [], [], []]",
+    "[[699], [], [], []]",
+    "[[9216, 1, 128], [], [], []]",
+    "[[[64], [576]], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

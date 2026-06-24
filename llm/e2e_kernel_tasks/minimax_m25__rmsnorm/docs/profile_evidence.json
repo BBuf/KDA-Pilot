@@ -1,0 +1,35 @@
+{
+  "model": "MiniMaxAI/MiniMax-M2.5",
+  "model_slug": "minimax_m25",
+  "cookbook_cmd": "sglang serve --model-path MiniMaxAI/MiniMax-M2.5 --tp 8 --ep 8 --reasoning-parser minimax-append-think",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=rmsnorm>",
+  "kernel_family": "rmsnorm",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 5/3",
+    "aten::as_strided",
+    "aten::empty_strided",
+    "aten::permute"
+  ],
+  "category": "norm",
+  "gpu_kernels": [
+    "void flashinfer::norm::FusedAddRMSNormKernel<8u, __half>(__half*, __half*, __half*, unsign"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 2.44,
+    "random_mid": 2.95,
+    "random_high": 2.54,
+    "sharegpt_low": 2.07,
+    "sharegpt_mid": 3.0,
+    "sharegpt_high": 2.19
+  },
+  "max_pct_of_gpu": 3.0,
+  "best_scenario": "sharegpt_mid",
+  "input_shapes": [
+    "[[48, 1, 128], [], [], []]",
+    "[[64859, 1, 64, 128], [], [], []]",
+    "[[64859, 64, 1, 128], []]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
