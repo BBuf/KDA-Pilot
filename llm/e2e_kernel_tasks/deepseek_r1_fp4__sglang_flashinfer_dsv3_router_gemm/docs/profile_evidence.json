@@ -1,0 +1,36 @@
+{
+  "model": "nvidia/DeepSeek-R1-0528-FP4-v2",
+  "model_slug": "deepseek_r1_fp4",
+  "cookbook_cmd": "sglang serve --model-path nvidia/DeepSeek-R1-0528-FP4-v2 --tp 8 --trust-remote-code",
+  "tp": "8",
+  "python_interface": "sglang.flashinfer_dsv3_router_gemm",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_",
+    "aten::empty_strided",
+    "aten::slice",
+    "sglang::flashinfer_dsv3_router_gemm"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "fmhaSm100fKernel_QkvE4m3OBfloat16HQk576HV512HVPerCta256PagedKvDenseP64MultiCtasKvVarSeqQ16",
+    "void flashinfer::trtllm_dsv3_router_gemm::router_gemm_kernel<__nv_bfloat16, float, 128, 8,"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "sharegpt_low": 19.13,
+    "sharegpt_mid": 12.04,
+    "sharegpt_high": 5.7
+  },
+  "max_pct_of_gpu": 19.13,
+  "best_scenario": "sharegpt_low",
+  "input_shapes": [
+    "[[16, 256], [16, 7168], [256, 7168]]",
+    "[[48], [], [], []]",
+    "[[6, 256], [6, 7168], [256, 7168]]",
+    "[[[1, 1], [1, 3]], []]",
+    "[[], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
