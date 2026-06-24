@@ -1,0 +1,51 @@
+{
+  "model": "moonshotai/Kimi-K2.6",
+  "model_slug": "kimi_k26",
+  "cookbook_cmd": "sglang serve --model-path moonshotai/Kimi-K2.6 --tp 8 --reasoning-parser kimi_k2 --tool-call-parser kimi_k2",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=fp8_bmm>",
+  "kernel_family": "fp8_bmm",
+  "profiler_op_provenance": [
+    "aten::_local_scalar_dense",
+    "aten::add",
+    "aten::alias",
+    "aten::as_strided",
+    "aten::clone",
+    "aten::copy_"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x16x256_s3_et128x16_m128x16x16_c1x1",
+    "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x16x256_s3_et128x16_m256x16x16_c2x1",
+    "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x16x256u2_s3_et128x16_m256x16x16_c2",
+    "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x32x256_s3_et128x32_m256x32x16_c2x1",
+    "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x32x256u2_s3_et128x32_m256x32x16_c2",
+    "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x64x256_s3_et128x64_m128x64x16_c1x1",
+    "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x64x256u2_s3_et128x64_m128x64x16_c1"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 4.36,
+    "random_mid": 20.65,
+    "random_high": 21.05,
+    "sharegpt_low": 5.98,
+    "sharegpt_mid": 15.32,
+    "sharegpt_high": 6.16
+  },
+  "max_pct_of_gpu": 21.05,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[0], [0], []]",
+    "[[0], [], [], []]",
+    "[[100], [100], []]",
+    "[[1], [1], []]",
+    "[[1]]",
+    "[[256], [256], []]",
+    "[[257], [], [], []]",
+    "[[2], [2], []]",
+    "[[32], [32], []]",
+    "[[32], [], []]",
+    "[[32], []]",
+    "[[4527, 256], [256, 7168]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
