@@ -1,0 +1,47 @@
+{
+  "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+  "model_slug": "qwen3_coder",
+  "cookbook_cmd": "sglang serve --model-path Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8 --tp 8 --ep 8 --tool-call-parser qwen3_coder",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "aten::_to_copy",
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_",
+    "aten::empty_strided",
+    "aten::slice"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_splitK_TNN",
+    "nvjet_sm100_tst_64x8_64x16_1x2_h_bz_splitK_TNT",
+    "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 1"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 18.12,
+    "random_mid": 3.33,
+    "random_high": 5.88,
+    "sharegpt_low": 16.92,
+    "sharegpt_mid": 4.97,
+    "sharegpt_high": 2.94
+  },
+  "max_pct_of_gpu": 18.12,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[0], [0], []]",
+    "[[17], [], [], []]",
+    "[[1], [1], []]",
+    "[[1], [], [], [], [], [], []]",
+    "[[1]]",
+    "[[2825120, 1, 128], []]",
+    "[[32], [32], []]",
+    "[[4097, 8196], [], [], []]",
+    "[[512], [512], []]",
+    "[[512], [], [], []]",
+    "[[576], [576], []]",
+    "[[6, 1536], [6, 1536], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

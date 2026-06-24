@@ -1,0 +1,37 @@
+{
+  "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+  "model_slug": "qwen3_coder",
+  "cookbook_cmd": "sglang serve --model-path Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8 --tp 8 --ep 8 --tool-call-parser qwen3_coder",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=per_token_group_quant>",
+  "kernel_family": "per_token_group_quant",
+  "profiler_op_provenance": [
+    "aten::copy_",
+    "aten::empty_strided",
+    "aten::index",
+    "aten::sub",
+    "aten::view",
+    "sglang::unified_attention_with_output"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "void per_token_group_quant_8bit_kernel<NaiveScheduler, 128, 8, __nv_bfloat16, c10::Float8_"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 17.25,
+    "random_high": 8.0,
+    "sharegpt_low": 16.25,
+    "sharegpt_mid": 7.58
+  },
+  "max_pct_of_gpu": 17.25,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[17, 1536], [17, 1536], []]",
+    "[[20, 1536], [20, 1, 128], [20, 1, 128], [20, 1536], [], [], [], [], [], [], [],",
+    "[[2825120, 1, 128], []]",
+    "[[31], [31], []]",
+    "[[6, 1536], [6, 1536], []]",
+    "[[8, 1536], [8, 1, 128], [8, 1, 128], [8, 1536], [], [], [], [], [], [], [], [],"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

@@ -1,0 +1,44 @@
+{
+  "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+  "model_slug": "qwen3_coder",
+  "cookbook_cmd": "sglang serve --model-path Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8 --tp 8 --ep 8 --tool-call-parser qwen3_coder",
+  "tp": "8",
+  "python_interface": "sglang.unified_attention_with_output",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "aten::_local_scalar_dense",
+    "aten::add",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::narrow",
+    "aten::resolve_neg"
+  ],
+  "category": "attention",
+  "gpu_kernels": [
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP32MultiCtasKvCgaVarSeqQ16Kv128Stati",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP32VarSeqQ128Kv128PersistentContext",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP32VarSeqQ16Kv128PersistentSwapsAbFo"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 4.68,
+    "random_high": 3.18,
+    "sharegpt_low": 4.71,
+    "sharegpt_mid": 2.67,
+    "sharegpt_high": 6.8
+  },
+  "max_pct_of_gpu": 6.8,
+  "best_scenario": "sharegpt_high",
+  "input_shapes": [
+    "[[1536, 1536], [1536, 1, 128], [1536, 1, 128], [1536, 1536], [], [], [], [], [],",
+    "[[1], [1], []]",
+    "[[1], [], [], [], [], []]",
+    "[[1]]",
+    "[[2560, 1536], [2560, 1, 128], [2560, 1, 128], [2560, 1536], [], [], [], [], [],",
+    "[[66939], [], [], []]",
+    "[[768, 1536], [], [], []]",
+    "[[8], [], [], []]",
+    "[[[1]], [], [], [], [], []]",
+    "[[]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
