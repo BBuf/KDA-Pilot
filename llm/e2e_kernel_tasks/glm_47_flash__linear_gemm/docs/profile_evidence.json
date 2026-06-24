@@ -1,0 +1,38 @@
+{
+  "model": "zai-org/GLM-4.7-Flash",
+  "model_slug": "glm_47_flash",
+  "cookbook_cmd": "sglang serve --model-path zai-org/GLM-4.7-Flash --tp 1 --attention-backend triton --reasoning-parser glm45 --tool-call-parser glm47",
+  "tp": "1",
+  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 5/1",
+    "aten::add",
+    "aten::any",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty_strided"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "nvjet_sm100_tst_128x8_64x12_4x1_v_bz_TNT",
+    "nvjet_sm100_tst_16x64_64x16_4x1_v_bz_TNN",
+    "nvjet_sm100_tst_64x8_64x16_4x1_v_bz_TNT",
+    "nvjet_sm100_tst_64x8_64x16_4x1_v_bz_splitK_TNT"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 15.64,
+    "sharegpt_low": 14.43
+  },
+  "max_pct_of_gpu": 15.64,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[1, 154880]]",
+    "[[1268645], [], [], []]",
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[1], []]",
+    "[[1]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

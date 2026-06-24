@@ -1,0 +1,39 @@
+{
+  "model": "zai-org/GLM-4.7-Flash",
+  "model_slug": "glm_47_flash",
+  "cookbook_cmd": "sglang serve --model-path zai-org/GLM-4.7-Flash --tp 1 --attention-backend triton --reasoning-parser glm45 --tool-call-parser glm47",
+  "tp": "1",
+  "python_interface": "sglang.unified_attention_with_output",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_",
+    "aten::fill_",
+    "sglang::apply_rope_inplace",
+    "sglang::unified_attention_with_output"
+  ],
+  "category": "other",
+  "gpu_kernels": [
+    "_fwd_kernel"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_mid": 41.11,
+    "random_high": 35.25,
+    "sharegpt_low": 6.51,
+    "sharegpt_mid": 75.35,
+    "sharegpt_high": 26.43
+  },
+  "max_pct_of_gpu": 75.35,
+  "best_scenario": "sharegpt_mid",
+  "input_shapes": [
+    "[[1873326, 1, 576], [], [], []]",
+    "[[1], []]",
+    "[[24, 20, 576], [24, 1, 576], [24, 1, 512], [24, 10240], [], [], [], [], [], [],",
+    "[[32], [32], []]",
+    "[[4, 20, 576], [4, 1, 576], [4, 1, 512], [4, 10240], [], [], [], [], [], [], [],",
+    "[[5102], [], [5102, 5], [5102, 64], [5102, 1], [1], [5102, 5], [5102, 5], [], []",
+    "[[80, 20, 576], [80, 1, 576], [80, 1, 512], [80, 10240], [], [], [], [], [], [],"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

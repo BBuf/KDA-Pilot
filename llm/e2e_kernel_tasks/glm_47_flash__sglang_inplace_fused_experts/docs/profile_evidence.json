@@ -1,0 +1,39 @@
+{
+  "model": "zai-org/GLM-4.7-Flash",
+  "model_slug": "glm_47_flash",
+  "cookbook_cmd": "sglang serve --model-path zai-org/GLM-4.7-Flash --tp 1 --attention-backend triton --reasoning-parser glm45 --tool-call-parser glm47",
+  "tp": "1",
+  "python_interface": "sglang.inplace_fused_experts",
+  "kernel_family": "fused_moe_triton",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 5/0",
+    "Torch-Compiled Region: 5/1",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty_strided",
+    "sglang::inplace_fused_experts"
+  ],
+  "category": "moe",
+  "gpu_kernels": [
+    "fused_moe_kernel"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 21.8,
+    "random_mid": 30.39,
+    "random_high": 27.34,
+    "sharegpt_low": 20.23,
+    "sharegpt_mid": 12.17,
+    "sharegpt_high": 29.47
+  },
+  "max_pct_of_gpu": 30.39,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[1163106], [], [], [], []]",
+    "[[1], []]",
+    "[[5102, 2048], [65, 3072, 2048], [65, 2048, 1536], [5102, 5], [5102, 5], [], [],",
+    "[[5528, 2048], [65, 3072, 2048], [65, 2048, 1536], [5528, 5], [5528, 5], [], [],",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "note": "Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) \u2014 single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded)."
+}
