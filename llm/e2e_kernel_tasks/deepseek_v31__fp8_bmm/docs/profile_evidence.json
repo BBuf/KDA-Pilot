@@ -1,0 +1,46 @@
+{
+  "model": "deepseek-ai/DeepSeek-V3.1",
+  "model_slug": "deepseek_v31",
+  "cookbook_cmd": "sglang serve --model-path deepseek-ai/DeepSeek-V3.1 --tp 8 --speculative-algorithm EAGLE --trust-remote-code",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=fp8_bmm>",
+  "kernel_family": "fp8_bmm",
+  "profiler_op_provenance": [
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_",
+    "aten::empty",
+    "aten::resolve_neg",
+    "aten::to"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "bmm_Bfloat16_E4m3E4m3_Fp32_t128x16x128_s6_et64x16_m64x16x32_c1x1x1_rM_TN_transOut_noShfl_d",
+    "bmm_Bfloat16_E4m3E4m3_Fp32_t128x64x128u2_s6_et64x64_m64x64x32_c1x1x1_rM_TN_transOut_noShfl",
+    "bmm_Bfloat16_E4m3E4m3_Fp32_t128x8x128u2_s8_et64x8_m64x8x32_c1x1x1_rM_TN_transOut_noShfl_ds",
+    "bmm_E4m3_E4m3E4m3_Fp32_t128x16x128u2_s6_et64x16_m64x16x32_c1x1x1_rM_TN_transOut_noShfl_dsF",
+    "bmm_E4m3_E4m3E4m3_Fp32_t128x64x128u2_s6_et64x64_m64x64x32_c1x1x1_rM_TN_transOut_noShfl_dsF"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 2.71,
+    "random_mid": 7.09,
+    "sharegpt_mid": 12.14
+  },
+  "max_pct_of_gpu": 12.14,
+  "best_scenario": "sharegpt_mid",
+  "input_shapes": [
+    "[[1]]",
+    "[[256], [], [], [], []]",
+    "[[262], [], [], []]",
+    "[[31]]",
+    "[[32], [], [], []]",
+    "[[32]]",
+    "[[48], [], [], []]",
+    "[[5333, 1, 512], []]",
+    "[[74], [], [], []]",
+    "[[896], [], [], []]",
+    "[[[1]], [], [], [], [], []]",
+    "[[[37], [6]], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
