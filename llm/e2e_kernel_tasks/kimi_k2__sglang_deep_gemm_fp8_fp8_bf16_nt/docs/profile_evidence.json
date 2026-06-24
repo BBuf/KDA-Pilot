@@ -1,0 +1,45 @@
+{
+  "model": "moonshotai/Kimi-K2-Instruct",
+  "model_slug": "kimi_k2",
+  "cookbook_cmd": "sglang serve --model-path moonshotai/Kimi-K2-Instruct --tp 8 --tool-call-parser kimi_k2",
+  "tp": "8",
+  "python_interface": "sglang.deep_gemm_fp8_fp8_bf16_nt",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "aten::_local_scalar_dense",
+    "aten::_to_copy",
+    "aten::argmax",
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "nvjet_sm100_tst_8x64_64x16_4x1_v_bz_TNN",
+    "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 1"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 18.82,
+    "random_mid": 13.6,
+    "sharegpt_low": 23.12,
+    "sharegpt_mid": 3.2,
+    "sharegpt_high": 2.23
+  },
+  "max_pct_of_gpu": 23.12,
+  "best_scenario": "sharegpt_low",
+  "input_shapes": [
+    "[[1], [1], []]",
+    "[[1], [], [], []]",
+    "[[1]]",
+    "[[256], [], [], [], []]",
+    "[[263], [], [], []]",
+    "[[280], [], [], [], []]",
+    "[[32, 163840], [], []]",
+    "[[48, 8, 512], [48, 1, 512], [48, 1, 512], [48, 4096], [], [], [48, 8, 64], [48,",
+    "[[48], [], [], [], []]",
+    "[[6], [], [], []]",
+    "[[8084, 2304], [8084, 5], [7168, 2304], [7168, 5], [8084, 7168]]",
+    "[[8084, 7168], [8084, 14], [4608, 7168], [4608, 14], [8084, 4608]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

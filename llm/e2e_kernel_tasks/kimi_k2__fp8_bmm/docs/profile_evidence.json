@@ -1,0 +1,54 @@
+{
+  "model": "moonshotai/Kimi-K2-Instruct",
+  "model_slug": "kimi_k2",
+  "cookbook_cmd": "sglang serve --model-path moonshotai/Kimi-K2-Instruct --tp 8 --tool-call-parser kimi_k2",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=fp8_bmm>",
+  "kernel_family": "fp8_bmm",
+  "profiler_op_provenance": [
+    "aten::_local_scalar_dense",
+    "aten::add",
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_",
+    "aten::empty_strided"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "bmm_Bfloat16_E4m3E4m3_Fp32_t128x16x128u2_s6_et64x16_m64x16x32_c1x1x1_rM_TN_transOut_noShfl",
+    "bmm_Bfloat16_E4m3E4m3_Fp32_t128x32x128_s6_et64x32_m64x32x32_c1x1x1_rM_TN_transOut_noShfl_d",
+    "bmm_Bfloat16_E4m3E4m3_Fp32_t128x32x128u2_s6_et64x32_m64x32x32_c1x1x1_rM_TN_transOut_noShfl",
+    "bmm_Bfloat16_E4m3E4m3_Fp32_t128x64x128_s6_et64x64_m64x64x32_c1x1x1_rM_TN_transOut_noShfl_d",
+    "bmm_Bfloat16_E4m3E4m3_Fp32_t128x64x128u2_s6_et64x64_m64x64x32_c1x1x1_rM_TN_transOut_noShfl",
+    "bmm_Bfloat16_E4m3E4m3_Fp32_t128x8x128u2_s8_et64x8_m64x8x32_c1x1x1_rM_TN_transOut_noShfl_ds",
+    "bmm_E4m3_E4m3E4m3_Fp32_t128x16x128u2_s6_et64x16_m64x16x32_c1x1x1_rM_TN_transOut_noShfl_dsF",
+    "bmm_E4m3_E4m3E4m3_Fp32_t128x32x128u2_s6_et64x32_m64x32x32_c1x1x1_rM_TN_transOut_noShfl_dsF",
+    "bmm_E4m3_E4m3E4m3_Fp32_t128x64x128u2_s6_et64x64_m64x64x32_c1x1x1_rM_TN_transOut_noShfl_dsF",
+    "bmm_E4m3_E4m3E4m3_Fp32_t128x8x128u2_s8_et64x8_m64x8x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 13.16,
+    "random_mid": 6.77,
+    "random_high": 21.2,
+    "sharegpt_low": 10.91,
+    "sharegpt_mid": 14.13,
+    "sharegpt_high": 38.52
+  },
+  "max_pct_of_gpu": 38.52,
+  "best_scenario": "sharegpt_high",
+  "input_shapes": [
+    "[[100], [100], []]",
+    "[[104, 163840], [], [], []]",
+    "[[104], [], [], []]",
+    "[[1450, 4096], [1450, 4096], []]",
+    "[[1536, 8, 512], [1536, 1, 512], [1536, 1, 512], [1536, 4096], [], [], [1536, 8,",
+    "[[17, 7168], [7168, 20480]]",
+    "[[1], [1], []]",
+    "[[1], [], [], []]",
+    "[[1], [], []]",
+    "[[1], []]",
+    "[[1]]",
+    "[[24], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

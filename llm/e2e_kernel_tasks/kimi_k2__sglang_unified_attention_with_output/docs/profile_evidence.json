@@ -1,0 +1,47 @@
+{
+  "model": "moonshotai/Kimi-K2-Instruct",
+  "model_slug": "kimi_k2",
+  "cookbook_cmd": "sglang serve --model-path moonshotai/Kimi-K2-Instruct --tp 8 --tool-call-parser kimi_k2",
+  "tp": "8",
+  "python_interface": "sglang.unified_attention_with_output",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "aten::_local_scalar_dense",
+    "aten::argmax",
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_",
+    "aten::resolve_neg"
+  ],
+  "category": "attention",
+  "gpu_kernels": [
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16HQk576HV512HVPerCta256PagedKvDenseP64MultiCtasKvVarSe",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16HQk576HV512PagedKvDenseP64MultiCtasKvVarSeqQ8Kv128Sta",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16HQk576HV512PagedKvDenseP64VarSeqQ8Kv128PersistentSwap",
+    "void flashinfer::mla::BatchMLAPagedAttentionKernel<flashinfer::mla::KernelTraits<true, 2u,"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 5.73,
+    "random_high": 2.62,
+    "sharegpt_low": 6.01,
+    "sharegpt_mid": 2.4,
+    "sharegpt_high": 9.49
+  },
+  "max_pct_of_gpu": 9.49,
+  "best_scenario": "sharegpt_high",
+  "input_shapes": [
+    "[[1, 163840], [], []]",
+    "[[1536, 8, 512], [1536, 1, 512], [1536, 1, 512], [1536, 4096], [], [], [1536, 8,",
+    "[[1]]",
+    "[[2112], [2112], []]",
+    "[[255], [], [], []]",
+    "[[25], [], [], []]",
+    "[[320], [320], []]",
+    "[[50], [], [], []]",
+    "[[512], [], [], []]",
+    "[[543], [], [], []]",
+    "[[[1]], [], [], [], [], []]",
+    "[[[320], [38]], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
