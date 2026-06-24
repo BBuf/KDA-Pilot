@@ -1,0 +1,40 @@
+{
+  "model": "LiquidAI/LFM2.5-8B-A1B",
+  "model_slug": "lfm25",
+  "cookbook_cmd": "sglang serve --model-path LiquidAI/LFM2.5-8B-A1B --tp 1 --attention-backend flashinfer --reasoning-parser qwen3 --tool-call-parser lfm2",
+  "tp": "1",
+  "python_interface": "sglang._run_activation_inplace",
+  "profiler_op_provenance": [
+    "aten::copy_",
+    "aten::select",
+    "sglang::_run_activation_inplace"
+  ],
+  "category": "other",
+  "gpu_kernels": [
+    "void (anonymous namespace)::act_and_mul_kernel<__nv_bfloat16, ((anonymous namespace)::Acti"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 2.94,
+    "random_mid": 3.54,
+    "random_high": 4.35,
+    "sharegpt_low": 3.16,
+    "sharegpt_mid": 3.51,
+    "sharegpt_high": 3.73
+  },
+  "max_pct_of_gpu": 4.35,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[1], [], []]",
+    "[[], [16384, 14336], [16384, 7168]]",
+    "[[], [2496, 3584], [2496, 1792]]",
+    "[[], [28772, 3584], [28772, 1792]]",
+    "[[], [30020, 3584], [30020, 1792]]",
+    "[[], [412, 3584], [412, 1792]]",
+    "[[], [65536, 3584], [65536, 1792]]",
+    "[[], [7193, 14336], [7193, 7168]]",
+    "[[], [7505, 14336], [7505, 7168]]",
+    "[[], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "note": "Activation (SiLU/GELU + mul). NOTE: user previously flagged activation as having limited headroom; included for completeness at 4.4% e2e \u2014 deprioritize vs the GEMM/MoE tasks."
+}

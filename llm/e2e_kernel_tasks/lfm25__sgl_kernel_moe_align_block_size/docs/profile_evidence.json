@@ -1,0 +1,24 @@
+{
+  "model": "LiquidAI/LFM2.5-8B-A1B",
+  "model_slug": "lfm25",
+  "cookbook_cmd": "sglang serve --model-path LiquidAI/LFM2.5-8B-A1B --tp 1 --attention-backend flashinfer --reasoning-parser qwen3 --tool-call-parser lfm2",
+  "tp": "1",
+  "python_interface": "sgl_kernel.moe_align_block_size",
+  "profiler_op_provenance": [
+    "sgl_kernel::moe_align_block_size"
+  ],
+  "category": "moe",
+  "gpu_kernels": [
+    "void moe_align_block_size_small_batch_expert_kernel<int, 256>(int const*, int*, int*, int*"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 5.09
+  },
+  "max_pct_of_gpu": 5.09,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[103, 4], [], [], [907], [57], [1], [34], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "note": "sgl_kernel.moe_align_block_size (incl. the small-batch kernel variant); token->expert-block alignment utility for the MoE GEMM."
+}

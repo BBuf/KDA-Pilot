@@ -1,0 +1,38 @@
+{
+  "model": "LiquidAI/LFM2.5-8B-A1B",
+  "model_slug": "lfm25",
+  "cookbook_cmd": "sglang serve --model-path LiquidAI/LFM2.5-8B-A1B --tp 1 --attention-backend flashinfer --reasoning-parser qwen3 --tool-call-parser lfm2",
+  "tp": "1",
+  "python_interface": "<confirm via capture; profiler role=rmsnorm>",
+  "profiler_op_provenance": [
+    "aten::_index_put_impl_",
+    "aten::_unsafe_view",
+    "aten::cat",
+    "aten::copy_",
+    "aten::empty",
+    "aten::empty_strided"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "kernel_cutlass_kernel_flashinfernormkernelsrmsnormRMSNormKernel_object_at__tensorptrbf16gm"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 5.17,
+    "random_mid": 2.21,
+    "sharegpt_low": 4.85,
+    "sharegpt_mid": 2.11
+  },
+  "max_pct_of_gpu": 5.17,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[18, 466682, 2048, 2], [], [18, 1, 2048, 2], [], []]",
+    "[[1], [1], []]",
+    "[[57544, 64], []]",
+    "[[7193, 6144], [], []]",
+    "[[7505, 2048], [2048, 32]]",
+    "[[7505, 8, 64], []]",
+    "[[[6222173], [101]], []]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

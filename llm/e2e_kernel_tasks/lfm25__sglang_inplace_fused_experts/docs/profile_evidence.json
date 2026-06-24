@@ -1,0 +1,33 @@
+{
+  "model": "LiquidAI/LFM2.5-8B-A1B",
+  "model_slug": "lfm25",
+  "cookbook_cmd": "sglang serve --model-path LiquidAI/LFM2.5-8B-A1B --tp 1 --attention-backend flashinfer --reasoning-parser qwen3 --tool-call-parser lfm2",
+  "tp": "1",
+  "python_interface": "sglang.inplace_fused_experts",
+  "profiler_op_provenance": [
+    "sglang::inplace_fused_experts"
+  ],
+  "category": "moe",
+  "gpu_kernels": [
+    "fused_moe_kernel"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 32.96,
+    "random_mid": 50.52,
+    "random_high": 45.03,
+    "sharegpt_low": 34.12,
+    "sharegpt_mid": 47.66,
+    "sharegpt_high": 42.22
+  },
+  "max_pct_of_gpu": 50.52,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[103, 2048], [32, 3584, 2048], [32, 2048, 1792], [103, 4], [103, 4], [], [], []",
+    "[[16384, 2048], [32, 3584, 2048], [32, 2048, 1792], [16384, 4], [16384, 4], [], ",
+    "[[624, 2048], [32, 3584, 2048], [32, 2048, 1792], [624, 4], [624, 4], [], [], []",
+    "[[7193, 2048], [32, 3584, 2048], [32, 2048, 1792], [7193, 4], [7193, 4], [], [],",
+    "[[7505, 2048], [32, 3584, 2048], [32, 2048, 1792], [7505, 4], [7505, 4], [], [],"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "note": "Triton MoE expert-GEMM (srt.layers.moe...inplace_fused_experts) \u2014 the dominant compute at tp=1 and fully single-GPU optimizable; distinct from the comm-fused trtllm MoE path (excluded). 'default MoE kernel config, sub-optimal' warning at serve time => real tuning headroom."
+}
