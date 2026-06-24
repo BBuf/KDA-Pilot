@@ -1,0 +1,28 @@
+{
+  "model": "inclusionAI/Ling-2.6-flash",
+  "model_slug": "ling_26",
+  "cookbook_cmd": "sglang serve --model-path inclusionAI/Ling-2.6-flash --tp 4 --trust-remote-code",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=fused_add_rmsnorm>",
+  "kernel_family": "fused_add_rmsnorm",
+  "profiler_op_provenance": [
+    "aten::view",
+    "sglang::_run_activation_inplace",
+    "sglang::outplace_all_reduce"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_a"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_high": 17.97
+  },
+  "max_pct_of_gpu": 17.97,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[39, 4096], [], []]",
+    "[[39, 4096], []]",
+    "[[], [39, 512], [39, 256]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
