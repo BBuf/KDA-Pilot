@@ -1,0 +1,49 @@
+{
+  "model": "mistralai/Mistral-Small-4-119B-2603",
+  "model_slug": "mistral_small4",
+  "cookbook_cmd": "sglang serve --model-path mistralai/Mistral-Small-4-119B-2603 --tp 1 --reasoning-parser mistral --tool-call-parser mistral",
+  "tp": "1",
+  "python_interface": "<confirm via capture; profiler family=attention>",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "aten::add",
+    "aten::add_",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty",
+    "aten::empty_strided"
+  ],
+  "category": "attention",
+  "gpu_kernels": [
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128SeparateQkvCausalVarSeqQ128Kv128PersistentContext",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128SeparateQkvDenseVarSeqQ128Kv128PersistentContext",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16HQk320HV256PagedKvDenseP64MultiCtasKvCgaVarSeqQ16Kv12",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16HQk320HV256PagedKvDenseP64MultiCtasKvVarSeqQ16Kv128St",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16HQk320HV256PagedKvDenseP64VarSeqQ16Kv128PersistentSwa"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 6.2,
+    "random_mid": 2.68,
+    "random_high": 6.13,
+    "sharegpt_low": 6.44,
+    "sharegpt_mid": 8.32,
+    "sharegpt_high": 7.03
+  },
+  "max_pct_of_gpu": 8.32,
+  "best_scenario": "sharegpt_mid",
+  "input_shapes": [
+    "[[1, 131072], [], [], []]",
+    "[[100], [100], []]",
+    "[[100]]",
+    "[[104, 131072], [], [], []]",
+    "[[1738, 32, 128], [1738, 32], [1738, 32, 128], [1738, 32], [1738, 32, 128], [173",
+    "[[1738, 4096], []]",
+    "[[1], [1], []]",
+    "[[1], [], [], []]",
+    "[[1], [], []]",
+    "[[1]]",
+    "[[32], [32], []]",
+    "[[32], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

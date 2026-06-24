@@ -1,0 +1,47 @@
+{
+  "model": "mistralai/Mistral-Small-4-119B-2603",
+  "model_slug": "mistral_small4",
+  "cookbook_cmd": "sglang serve --model-path mistralai/Mistral-Small-4-119B-2603 --tp 1 --reasoning-parser mistral --tool-call-parser mistral",
+  "tp": "1",
+  "python_interface": "<confirm via capture; profiler family=fp8_bmm>",
+  "kernel_family": "fp8_bmm",
+  "profiler_op_provenance": [
+    "aten::add",
+    "aten::argmax",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty_strided",
+    "aten::index"
+  ],
+  "category": "other",
+  "gpu_kernels": [
+    "bmm_Bfloat16_E4m3E4m3_Fp32_t128x8x256u2_s6_et128x8_m128x8x32_c1x1x1_rM_TN_transOut_schPd2x",
+    "bmm_Bfloat16_E4m3E4m3_Fp32_t128x8x256u2_s6_et128x8_m128x8x32_c1x1x1_rM_TN_transOut_schedS_",
+    "bmm_E4m3_E4m3E4m3_Fp32_BtokBfloat16_t128x8x256_s6_et128x8_m128x8x32_c1x1x1_rM_TN_transOut_",
+    "bmm_E4m3_E4m3E4m3_Fp32_BtokBfloat16_t128x8x256u2_s6_et128x8_m128x8x32_c1x1x1_rM_TN_transOu"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 14.47,
+    "random_mid": 29.44,
+    "random_high": 42.29,
+    "sharegpt_low": 15.1,
+    "sharegpt_mid": 35.91
+  },
+  "max_pct_of_gpu": 42.29,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[1, 131072], [], []]",
+    "[[100, 131072], [], []]",
+    "[[100], [100], []]",
+    "[[100]]",
+    "[[1], [1], []]",
+    "[[1], [], [], []]",
+    "[[1], [], []]",
+    "[[1]]",
+    "[[256], [256], []]",
+    "[[256], [], [], []]",
+    "[[32], [32], []]",
+    "[[32]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
