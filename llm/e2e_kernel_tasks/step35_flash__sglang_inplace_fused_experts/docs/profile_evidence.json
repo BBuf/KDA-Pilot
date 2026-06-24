@@ -1,0 +1,31 @@
+{
+  "model": "stepfun-ai/Step-3.5-Flash",
+  "model_slug": "step35_flash",
+  "cookbook_cmd": "sglang serve --model-path stepfun-ai/Step-3.5-Flash --tp 4 --trust-remote-code --reasoning-parser step3p5",
+  "tp": "4",
+  "python_interface": "sglang.inplace_fused_experts",
+  "kernel_family": "fused_moe_triton",
+  "profiler_op_provenance": [
+    "sglang::inplace_fused_experts"
+  ],
+  "category": "moe",
+  "gpu_kernels": [
+    "fused_moe_kernel"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 14.66,
+    "random_mid": 16.13,
+    "random_high": 14.89,
+    "sharegpt_low": 13.63,
+    "sharegpt_mid": 13.1,
+    "sharegpt_high": 15.8
+  },
+  "max_pct_of_gpu": 16.13,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[16, 4096], [288, 640, 4096], [288, 4096, 320], [16, 8], [16, 8], [], [], [], [",
+    "[[38, 4096], [288, 640, 4096], [288, 4096, 320], [38, 8], [38, 8], [], [], [], ["
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "note": "Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) \u2014 single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded)."
+}

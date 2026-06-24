@@ -1,0 +1,41 @@
+{
+  "model": "stepfun-ai/Step-3.5-Flash",
+  "model_slug": "step35_flash",
+  "cookbook_cmd": "sglang serve --model-path stepfun-ai/Step-3.5-Flash --tp 4 --trust-remote-code --reasoning-parser step3p5",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=void_moe_top_k_256_float_const_b>",
+  "kernel_family": "void_moe_top_k_256_float_const_b",
+  "profiler_op_provenance": [
+    "aten::_index_put_impl_",
+    "aten::add",
+    "aten::cat",
+    "aten::copy_",
+    "aten::detach_",
+    "aten::empty"
+  ],
+  "category": "moe",
+  "gpu_kernels": [
+    "void moeTopK<256>(float const*, bool const*, float*, int*, int, int, int, int, bool, float"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 2.79,
+    "random_mid": 3.09,
+    "random_high": 2.85,
+    "sharegpt_low": 3.0,
+    "sharegpt_mid": 2.88,
+    "sharegpt_high": 3.28
+  },
+  "max_pct_of_gpu": 3.28,
+  "best_scenario": "sharegpt_high",
+  "input_shapes": [
+    "[[1603073], []]",
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[1], []]",
+    "[[1]]",
+    "[[[0], [38]], []]",
+    "[[[1]], [], [], [], [], []]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
