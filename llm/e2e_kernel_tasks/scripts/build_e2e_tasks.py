@@ -21,17 +21,20 @@ FAMILIES = [
     ("causal_conv","causal_conv1d"),
     ("fused_add_rmsnorm","fused_add_rmsnorm"),("rmsnorm","rmsnorm"),("rms_norm","rmsnorm"),("layernorm","layernorm"),
     ("apply_rope","rope"),("rotary","rope"),("rope","rope"),
-    ("silu_and_mul","silu_and_mul"),("swiglu","silu_and_mul"),("silu","silu_and_mul"),
-    ("gelu","gelu_and_mul"),("run_activation","activation"),("activation","activation"),
     ("moe_align","moe_align_block_size"),
     ("fused_experts","fused_moe_triton"),("fused_moe","fused_moe_triton"),
     ("merge_state","merge_state"),
+    # structural kernel types BEFORE activation keys (a gemm/bmm with a fused
+    # silu/swiglu/gelu EPILOGUE is still a gemm/bmm, not a standalone activation):
     ("bmm","fp8_bmm"),
     ("fmha","attention"),("flashinfer","attention"),("batchprefill","attention"),("batchdecode","attention"),
     ("paged","attention"),("flash_fwd","attention"),("fwd_kernel","attention"),("mla","attention_mla"),("attention","attention"),
-    ("static_quant","quant_fp8"),("per_token_group_quant","per_token_group_quant"),("per_token_quant","quant_fp8"),("quant","quant_fp8"),
     ("deep_gemm","linear_gemm"),("scaled_mm","linear_gemm"),("nvjet","linear_gemm"),("cutlass","linear_gemm"),
-    ("sgemm","linear_gemm"),("gemm","linear_gemm"),
+    ("w8a8","linear_gemm"),("sgemm","linear_gemm"),("gemm","linear_gemm"),
+    ("static_quant","quant_fp8"),("per_token_group_quant","per_token_group_quant"),("per_token_quant","quant_fp8"),("quant","quant_fp8"),
+    # activation keys LAST — only match standalone activation kernels:
+    ("silu_and_mul","silu_and_mul"),("swiglu","silu_and_mul"),("silu","silu_and_mul"),
+    ("gelu","gelu_and_mul"),("run_activation","activation"),("activation","activation"),
 ]
 FAMILY_KEYWORDS = {
     "mamba2_ssm":["mamba","ssm","chunk","state_passing","scan"],"causal_conv1d":["causal_conv","conv1d","conv"],
@@ -67,8 +70,9 @@ def excluded(cat, kname, co):
     if cat=="comm": return "comm"
     if any(t in n for t in ("moe::dev","routingcustom","finalizekernel","activationkernel")): return "fused_moe_trtllm"
     if ("trtllm" in c and "moe" in c) or ("trtllm" in n and "moe" in n): return "fused_moe_trtllm"
-    if any(t in n for t in ("all_reduce","all_to_all","reduce_scatter","all_gather","nccl","alltoall")): return "comm"
-    if any(t in c for t in ("all_reduce","outplace_all_reduce","moe_a2a")): return "comm"
+    if any(t in n for t in ("all_reduce","all_to_all","reduce_scatter","all_gather","nccl","alltoall",
+                            "cross_device_reduce","device_reduce","custom_all_reduce")): return "comm"
+    if any(t in c for t in ("all_reduce","outplace_all_reduce","moe_a2a","cross_device_reduce")): return "comm"
     return None
 
 def name_family(fam, clean_weights):
