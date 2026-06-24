@@ -1,0 +1,52 @@
+{
+  "model": "moonshotai/Kimi-K2.5",
+  "model_slug": "kimi_k25",
+  "cookbook_cmd": "sglang serve --model-path moonshotai/Kimi-K2.5 --tp 8 --reasoning-parser kimi_k2 --tool-call-parser kimi_k2",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=fp8_bmm>",
+  "kernel_family": "fp8_bmm",
+  "profiler_op_provenance": [
+    "aten::add",
+    "aten::cat",
+    "aten::copy_",
+    "aten::empty",
+    "aten::empty_strided",
+    "aten::mm"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x16x256_s3_et128x16_m128x16x16_c1x1",
+    "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x16x256_s3_et128x16_m256x16x16_c2x1",
+    "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x16x256u2_s3_et128x16_m256x16x16_c2",
+    "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x32x256_s3_et128x32_m128x32x16_c1x1",
+    "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x32x256_s3_et128x32_m256x32x16_c2x1",
+    "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x32x256u2_s3_et128x32_m128x32x16_c1",
+    "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x32x256u2_s3_et128x32_m256x32x16_c2",
+    "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x64x256_s3_et128x64_m128x64x16_c1x1",
+    "bmm_Bfloat16_MxInt4Bfloat16_castBfloat16_Fp32_Ab32_t128x64x256u2_s3_et128x64_m128x64x16_c1"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 4.66,
+    "random_mid": 18.79,
+    "random_high": 22.72,
+    "sharegpt_low": 5.23,
+    "sharegpt_high": 8.31
+  },
+  "max_pct_of_gpu": 22.72,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[100], [100], []]",
+    "[[100], [], []]",
+    "[[11218, 7168], [7168, 2112]]",
+    "[[15, 7168], [7168, 512]]",
+    "[[1], [1], []]",
+    "[[1]]",
+    "[[2957, 7168]]",
+    "[[2], [2], []]",
+    "[[32], [32], []]",
+    "[[32], [], []]",
+    "[[[11218, 7168]], [], [], [], [], []]",
+    "[[[256]], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
