@@ -1,0 +1,28 @@
+{
+  "model": "nvidia/GLM-5-NVFP4",
+  "model_slug": "glm_5",
+  "cookbook_cmd": "sglang serve --model-path nvidia/GLM-5-NVFP4 --tp 4 --quantization modelopt_fp4 --kv-cache-dtype fp8_e4m3",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=void_anonymous_namespace_fast_ha>",
+  "kernel_family": "void_anonymous_namespace_fast_ha",
+  "profiler_op_provenance": [
+    "aten::as_strided",
+    "aten::item",
+    "sglang::hadamard_transform"
+  ],
+  "category": "other",
+  "gpu_kernels": [
+    "void (anonymous namespace)::fast_hadamard_transform_kernel<(anonymous namespace)::FastHada"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "sharegpt_mid": 2.73,
+    "sharegpt_high": 3.73
+  },
+  "max_pct_of_gpu": 3.73,
+  "best_scenario": "sharegpt_high",
+  "input_shapes": [
+    "[[20784, 32, 128], []]",
+    "[[9962, 32, 128], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

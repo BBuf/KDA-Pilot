@@ -1,0 +1,50 @@
+{
+  "model": "nvidia/GLM-5-NVFP4",
+  "model_slug": "glm_5",
+  "cookbook_cmd": "sglang serve --model-path nvidia/GLM-5-NVFP4 --tp 4 --quantization modelopt_fp4 --kv-cache-dtype fp8_e4m3",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=fp8_bmm>",
+  "kernel_family": "fp8_bmm",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 4/2",
+    "aten::_index_put_impl_",
+    "aten::_local_scalar_dense",
+    "aten::add",
+    "aten::add_",
+    "aten::as_strided"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "bmm_Bfloat16_E2m1E2m1_Fp32_Ab16_Bb16_t128x128x256u2_s6_et128x128_m256x128x64_c2x1x1_rM_TN_",
+    "bmm_Bfloat16_E2m1E2m1_Fp32_Ab16_Bb16_t128x8x512_s5_et128x8_m128x8x64_c1x1x1_rM_TN_transOut",
+    "bmm_E2m1_E2m1E2m1_Fp32_Ab16_Bb16_Cb16_t128x128x512u2_s3x3x3x3x1x3_et128x32_m256x128x64_c2x",
+    "bmm_E2m1_E2m1E2m1_Fp32_Ab16_Bb16_Cb16_t128x16x512u2_s5_et128x16_m128x16x64_c1x1x1_rM_TN_tr",
+    "bmm_E2m1_E2m1E2m1_Fp32_Ab16_Bb16_Cb16_t128x8x512_s5_et128x8_m128x8x64_c1x1x1_rM_TN_transOu",
+    "bmm_E2m1_E2m1E2m1_Fp32_Ab16_Bb16_Cb16_t128x8x512u2_s5_et128x8_m128x8x64_c1x1x1_rM_TN_trans"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 5.5,
+    "random_mid": 19.5,
+    "random_high": 17.7,
+    "sharegpt_low": 5.25,
+    "sharegpt_mid": 14.88,
+    "sharegpt_high": 11.56
+  },
+  "max_pct_of_gpu": 19.5,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[1, 1], [1, 1], []]",
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[201]]",
+    "[[20784, 6144], [6144, 128]]",
+    "[[20784, 6144], [6144, 32], [], [20784, 32]]",
+    "[[2128, 202756], [], [32], [], []]",
+    "[[30796, 1, 64], [30796, 1, 64], []]",
+    "[[30796, 16, 256], [], []]",
+    "[[30796, 16, 64], [30796, 1, 64], [203008, 64], [30796], [], []]",
+    "[[31], [31], []]",
+    "[[31], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

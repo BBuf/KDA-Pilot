@@ -1,0 +1,49 @@
+{
+  "model": "nvidia/GLM-5-NVFP4",
+  "model_slug": "glm_5",
+  "cookbook_cmd": "sglang serve --model-path nvidia/GLM-5-NVFP4 --tp 4 --quantization modelopt_fp4 --kv-cache-dtype fp8_e4m3",
+  "tp": "4",
+  "python_interface": "sglang.flashinfer_fp4_quantize",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 4/2",
+    "Torch-Compiled Region: 4/3",
+    "aten::_local_scalar_dense",
+    "aten::add",
+    "aten::as_strided",
+    "aten::copy_"
+  ],
+  "category": "attention",
+  "gpu_kernels": [
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H256SeparateQkvCausalVarSeqQ128Kv128PersistentContext",
+    "fmhaSm100fKernel_QkvE4m3OBfloat16HQk576HV512HVPerCta128PagedKvDenseStaticTokenSparseP1Mult",
+    "fmhaSm100fKernel_QkvE4m3OBfloat16HQk576HV512PagedKvDenseStaticTokenSparseP1VarSeqQ16Kv128P",
+    "kernel_cutlass_kernel_flashinfergemmkernelsdense_blockscaled_gemm_sm100Sm100BlockScaledPer",
+    "kernel_cutlass_kernel_flashinferquantizationkernelsnvfp4_quantizeNVFP4QuantizeSwizzledKern"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 11.86,
+    "random_mid": 2.03,
+    "random_high": 4.89,
+    "sharegpt_low": 11.4,
+    "sharegpt_mid": 8.39,
+    "sharegpt_high": 13.1
+  },
+  "max_pct_of_gpu": 13.1,
+  "best_scenario": "sharegpt_high",
+  "input_shapes": [
+    "[[1, 1], [1, 1], []]",
+    "[[16873, 16, 256], []]",
+    "[[16873, 3072], [3072, 6144], [16896, 384], [384, 6144], [], [], []]",
+    "[[1], [1], []]",
+    "[[1], [], [], []]",
+    "[[1], [], []]",
+    "[[201]]",
+    "[[20784, 1, 16, 512], []]",
+    "[[20784, 1, 16, 576], []]",
+    "[[30796, 3072], [3072, 1024], [30848, 384], [384, 1024], [], [], []]",
+    "[[30796, 3072], [3072, 6144], [30848, 384], [384, 6144], [], [], []]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
