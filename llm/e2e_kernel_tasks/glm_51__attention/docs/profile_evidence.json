@@ -1,0 +1,24 @@
+{
+  "model": "zai-org/GLM-5.1-FP8",
+  "model_slug": "glm_51",
+  "cookbook_cmd": "sglang serve --model-path zai-org/GLM-5.1-FP8 --tp 8 --tool-call-parser glm47 --reasoning-parser glm45",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=attention>",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "aten::view"
+  ],
+  "category": "attention",
+  "gpu_kernels": [
+    "fmhaSm100fKernel_QkvE4m3OBfloat16HQk576HV512PagedKvDenseStaticTokenSparseP1VarSeqQ8Kv128Pe"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "sharegpt_mid": 3.82
+  },
+  "max_pct_of_gpu": 3.82,
+  "best_scenario": "sharegpt_mid",
+  "input_shapes": [
+    "[[4842, 1, 8, 576], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
