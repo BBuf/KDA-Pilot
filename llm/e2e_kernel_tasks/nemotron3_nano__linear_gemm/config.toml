@@ -1,0 +1,30 @@
+[task]
+slug = "nemotron3_nano__linear_gemm"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "gemm"
+model = "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8"
+model_slug = "nemotron3_nano"
+entry_points = [
+  "<confirm via capture; profiler role=linear_gemm>",
+]
+evidence_json = "docs/profile_evidence.json"
+
+[selection]
+method = "cookbook-aligned torch-profiler e2e share (extract_kernel_shapes >2%)"
+max_pct_of_gpu = 26.74
+best_scenario = "sharegpt_low"
+dataset = "sharegpt"
+concurrency = "1"
+
+[build]
+language = "python/cuda"
+baseline_entry_point = "baseline/<copied_sglang_interface>::baseline"
+candidate_entry_point = "solution/<candidate_interface>::candidate"
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+use_isolated_runner = true
+required_matched_ratio = 1.0

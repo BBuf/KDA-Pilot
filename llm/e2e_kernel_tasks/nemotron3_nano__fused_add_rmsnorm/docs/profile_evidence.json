@@ -1,0 +1,29 @@
+{
+  "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8",
+  "model_slug": "nemotron3_nano",
+  "cookbook_cmd": "python3 -m sglang.launch_server --model-path nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8 --trust-remote-code --max-running-requests 1024",
+  "tp": "1",
+  "python_interface": "<confirm via capture; profiler role=fused_add_rmsnorm>",
+  "profiler_op_provenance": [
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::view"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_a"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 4.41,
+    "sharegpt_low": 4.44
+  },
+  "max_pct_of_gpu": 4.44,
+  "best_scenario": "sharegpt_low",
+  "input_shapes": [
+    "[[1, 131072], [], [], []]",
+    "[[1, 1], [1, 1], []]",
+    "[[1], [1], []]",
+    "[[1], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

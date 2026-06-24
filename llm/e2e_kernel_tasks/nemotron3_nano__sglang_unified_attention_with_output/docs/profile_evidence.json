@@ -1,0 +1,26 @@
+{
+  "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8",
+  "model_slug": "nemotron3_nano",
+  "cookbook_cmd": "python3 -m sglang.launch_server --model-path nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8 --trust-remote-code --max-running-requests 1024",
+  "tp": "1",
+  "python_interface": "sglang.unified_attention_with_output",
+  "profiler_op_provenance": [
+    "aten::mm",
+    "sglang::unified_attention_with_output"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "nvjet_sm100_tst_128x256_64x6_2x1_2cta_v_bz_TNT",
+    "void flashinfer::BatchPrefillWithPagedKVCacheKernel<flashinfer::KernelTraits<(flashinfer::"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "sharegpt_mid": 6.06
+  },
+  "max_pct_of_gpu": 6.06,
+  "best_scenario": "sharegpt_mid",
+  "input_shapes": [
+    "[[13193, 2688], [2688, 10304]]",
+    "[[13312, 4096], [13312, 2, 128], [13312, 2, 128], [13312, 4096], [], [], [], [],"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

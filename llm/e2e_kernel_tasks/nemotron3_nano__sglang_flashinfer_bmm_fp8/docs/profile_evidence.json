@@ -1,0 +1,37 @@
+{
+  "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8",
+  "model_slug": "nemotron3_nano",
+  "cookbook_cmd": "python3 -m sglang.launch_server --model-path nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8 --trust-remote-code --max-running-requests 1024",
+  "tp": "1",
+  "python_interface": "sglang.flashinfer_bmm_fp8",
+  "profiler_op_provenance": [
+    "aten::_local_scalar_dense",
+    "aten::split_with_sizes",
+    "aten::view",
+    "sglang::flashinfer_bmm_fp8"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalIN4cute5tupleIJiiiiEEENS1_10colle",
+    "bmm_Bfloat16_E4m3E4m3_Fp32_t128x64x128_s8_et128x64_m256x64x32_c2x1x1_rM_TN_transOut_schPd2",
+    "bmm_E4m3_E4m3E4m3_Fp32_BtokBfloat16_t128x64x256_s5_et128x64_m256x64x32_c2x1x1_rM_TN_transO"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_mid": 20.68,
+    "random_high": 10.7,
+    "sharegpt_mid": 8.33,
+    "sharegpt_high": 3.78
+  },
+  "max_pct_of_gpu": 20.68,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[13193, 2688], [2688, 10304], [], [], []]",
+    "[[1553, 2688], [2688, 10304], [], [], []]",
+    "[[2936, 2688], [2688, 10304], [], [], []]",
+    "[[8704, 2688], [2688, 10304], [], [], []]",
+    "[[], []]",
+    "[[]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "note": "fp8 batched-GEMM op; profiler also attributes some bmm instances generically (peak ~20.7%); this is the dominant non-mamba fp8 bmm."
+}
