@@ -1,0 +1,25 @@
+{
+  "model": "inclusionAI/Ring-2.5-1T",
+  "model_slug": "ring_25_1t",
+  "cookbook_cmd": "sglang serve --model-path inclusionAI/Ring-2.5-1T --tp 8 --trust-remote-code",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=fused_add_rmsnorm>",
+  "kernel_family": "fused_add_rmsnorm",
+  "profiler_op_provenance": [
+    "aten::nonzero",
+    "sglang::inplace_fused_experts"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_a"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_high": 3.6
+  },
+  "max_pct_of_gpu": 3.6,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[41]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

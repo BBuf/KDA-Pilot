@@ -1,0 +1,25 @@
+{
+  "model": "inclusionAI/Ring-2.5-1T",
+  "model_slug": "ring_25_1t",
+  "cookbook_cmd": "sglang serve --model-path inclusionAI/Ring-2.5-1T --tp 8 --trust-remote-code",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=void_at_native_unrolled_elementw>",
+  "kernel_family": "void_at_native_unrolled_elementw",
+  "profiler_op_provenance": [
+    "aten::copy_",
+    "sglang::_run_activation_inplace"
+  ],
+  "category": "memory_bound",
+  "gpu_kernels": [
+    "void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::Tenso"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_high": 4.96
+  },
+  "max_pct_of_gpu": 4.96,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[16384, 8192], [16384, 8192], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

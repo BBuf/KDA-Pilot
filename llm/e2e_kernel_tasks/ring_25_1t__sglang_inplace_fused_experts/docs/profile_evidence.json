@@ -1,0 +1,42 @@
+{
+  "model": "inclusionAI/Ring-2.5-1T",
+  "model_slug": "ring_25_1t",
+  "cookbook_cmd": "sglang serve --model-path inclusionAI/Ring-2.5-1T --tp 8 --trust-remote-code",
+  "tp": "8",
+  "python_interface": "sglang.inplace_fused_experts",
+  "kernel_family": "fused_moe_triton",
+  "profiler_op_provenance": [
+    "aten::_to_copy",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty",
+    "sglang::inplace_fused_experts"
+  ],
+  "category": "moe",
+  "gpu_kernels": [
+    "fused_moe_kernel"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 12.89,
+    "random_mid": 30.99,
+    "random_high": 32.31,
+    "sharegpt_low": 13.29,
+    "sharegpt_mid": 29.19,
+    "sharegpt_high": 30.42
+  },
+  "max_pct_of_gpu": 32.31,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[14375, 8192], [256, 512, 8192], [256, 8192, 256], [14375, 8], [14375, 8], [], ",
+    "[[16384, 8192], [256, 512, 8192], [256, 8192, 256], [16384, 8], [16384, 8], [], ",
+    "[[256, 8192], [], [], []]",
+    "[[3330, 8192], [256, 512, 8192], [256, 8192, 256], [3330, 8], [3330, 8], [], [],",
+    "[[39, 8192], [256, 512, 8192], [256, 8192, 256], [39, 8], [39, 8], [], [], [], [",
+    "[[44, 256], [], [], [], [], [], []]",
+    "[[44, 8192], [256, 512, 8192], [256, 8192, 256], [44, 8], [44, 8], [], [], [], [",
+    "[[9780, 8192], [256, 512, 8192], [256, 8192, 256], [9780, 8], [9780, 8], [], [],",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "note": "Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) \u2014 single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded)."
+}

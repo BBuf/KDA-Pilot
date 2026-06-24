@@ -1,0 +1,29 @@
+{
+  "model": "inclusionAI/Ring-2.5-1T",
+  "model_slug": "ring_25_1t",
+  "cookbook_cmd": "sglang serve --model-path inclusionAI/Ring-2.5-1T --tp 8 --trust-remote-code",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=void_moe_sum_reduce_warp_per_tok>",
+  "kernel_family": "void_moe_sum_reduce_warp_per_tok",
+  "profiler_op_provenance": [
+    "aten::copy_",
+    "aten::empty",
+    "sgl_kernel::moe_sum_reduce"
+  ],
+  "category": "moe",
+  "gpu_kernels": [
+    "void moe_sum_reduce_warp_per_token_vec_kernel<8>(c10::BFloat16 const*, c10::BFloat16*, lon"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_high": 3.25,
+    "sharegpt_mid": 2.26
+  },
+  "max_pct_of_gpu": 3.25,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[14375, 8, 8192], [14375, 8192], []]",
+    "[[16384, 8, 8192], [16384, 8192], []]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

@@ -1,0 +1,38 @@
+{
+  "model": "inclusionAI/Ring-2.5-1T",
+  "model_slug": "ring_25_1t",
+  "cookbook_cmd": "sglang serve --model-path inclusionAI/Ring-2.5-1T --tp 8 --trust-remote-code",
+  "tp": "8",
+  "python_interface": "sgl_kernel.sgl_per_token_quant_fp8",
+  "kernel_family": "quant_fp8",
+  "profiler_op_provenance": [
+    "aten::copy_",
+    "aten::empty",
+    "aten::reshape",
+    "aten::sub",
+    "aten::view",
+    "sgl_kernel::sgl_per_token_quant_fp8"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "void per_token_quant_fp8_kernel<__nv_bfloat16, __nv_fp8_e4m3, 8, 16, false>(__nv_bfloat16 ",
+    "void per_token_quant_fp8_small_batch_kernel<__nv_bfloat16, __nv_fp8_e4m3, 16>(__nv_bfloat1"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 4.13,
+    "random_mid": 2.67,
+    "random_high": 4.37,
+    "sharegpt_low": 4.19,
+    "sharegpt_mid": 3.23
+  },
+  "max_pct_of_gpu": 4.37,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[14375, 8192], [14375, 8192], [14375, 1]]",
+    "[[16384, 8192], [16384, 8192], [16384, 1]]",
+    "[[1], [1], []]",
+    "[[9780, 8192], [9780, 8192], [9780, 1]]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
