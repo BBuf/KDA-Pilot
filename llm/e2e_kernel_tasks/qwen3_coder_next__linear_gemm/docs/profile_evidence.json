@@ -1,0 +1,55 @@
+{
+  "model": "Qwen/Qwen3-Coder-Next",
+  "model_slug": "qwen3_coder_next",
+  "cookbook_cmd": "sglang serve --model-path Qwen/Qwen3-Coder-Next --tp 2 --tool-call-parser qwen3_coder",
+  "tp": "2",
+  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "aten::_index_put_impl_",
+    "aten::alias",
+    "aten::arange",
+    "aten::argmax",
+    "aten::as_strided",
+    "aten::copy_"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "nvjet_sm100_tst_128x24_64x11_4x2_h_bz_TNT",
+    "nvjet_sm100_tst_128x256_64x6_2x1_2cta_v_bz_TNT",
+    "nvjet_sm100_tst_16x64_64x16_4x1_v_bz_TNN",
+    "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_splitK_TNN",
+    "nvjet_sm100_tst_64x16_64x16_1x2_h_bz_TNT",
+    "nvjet_sm100_tst_64x24_64x16_1x2_h_bz_TNT",
+    "nvjet_sm100_tst_64x24_64x16_4x1_v_bz_TNT",
+    "nvjet_sm100_tst_64x64_64x16_2x1_2cta_v_bz_TNT",
+    "nvjet_sm100_tst_64x8_64x16_2x4_h_bz_TNT",
+    "nvjet_sm100_tst_64x8_64x16_4x1_v_bz_TNT",
+    "nvjet_sm100_tst_8x64_64x16_4x1_v_bz_TNN"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 40.52,
+    "random_mid": 12.37,
+    "random_high": 15.02,
+    "sharegpt_low": 27.03,
+    "sharegpt_mid": 18.76,
+    "sharegpt_high": 16.59
+  },
+  "max_pct_of_gpu": 40.52,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[1, 118, 16, 128], []]",
+    "[[1, 151936], [], [], []]",
+    "[[1, 151936], [], []]",
+    "[[118, 2048], [2048, 512]]",
+    "[[118, 2048], [], [], [], [], []]",
+    "[[16384, 2048], [2048, 6144]]",
+    "[[16384, 4096], [], [], []]",
+    "[[17, 2048], [], [], [], [], []]",
+    "[[17, 2048], []]",
+    "[[17184, 128], []]",
+    "[[1], [1], []]",
+    "[[1], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
