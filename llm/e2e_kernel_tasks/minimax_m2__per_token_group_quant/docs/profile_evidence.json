@@ -1,0 +1,36 @@
+{
+  "model": "MiniMaxAI/MiniMax-M2",
+  "model_slug": "minimax_m2",
+  "cookbook_cmd": "sglang serve --model-path MiniMaxAI/MiniMax-M2 --tp 4 --reasoning-parser minimax-append-think --trust-remote-code",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=per_token_group_quant>",
+  "kernel_family": "per_token_group_quant",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 5/1",
+    "aten::argmax",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty",
+    "aten::lift_fresh"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "void (anonymous namespace)::per_token_group_quant_8bit_v2_kernel<(anonymous namespace)::Na"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 4.72,
+    "random_mid": 2.21,
+    "sharegpt_low": 4.65,
+    "sharegpt_mid": 2.09
+  },
+  "max_pct_of_gpu": 4.72,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[1, 200064], [], []]",
+    "[[1]]",
+    "[[25357, 64, 2, 128], [], [], []]",
+    "[[9468, 2, 128], []]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

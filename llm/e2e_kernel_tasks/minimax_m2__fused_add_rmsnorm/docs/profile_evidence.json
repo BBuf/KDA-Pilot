@@ -1,0 +1,36 @@
+{
+  "model": "MiniMaxAI/MiniMax-M2",
+  "model_slug": "minimax_m2",
+  "cookbook_cmd": "sglang serve --model-path MiniMaxAI/MiniMax-M2 --tp 4 --reasoning-parser minimax-append-think --trust-remote-code",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=fused_add_rmsnorm>",
+  "kernel_family": "fused_add_rmsnorm",
+  "profiler_op_provenance": [
+    "aten::argmax",
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_",
+    "detach_",
+    "gloo:broadcast"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_a"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 6.18,
+    "random_high": 2.57,
+    "sharegpt_low": 6.05
+  },
+  "max_pct_of_gpu": 6.18,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[0], [], [], []]",
+    "[[1, 200064], [], []]",
+    "[[1], [1], []]",
+    "[[1]]",
+    "[[[128]], []]",
+    "[[[384], [44]], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

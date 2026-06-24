@@ -1,0 +1,38 @@
+{
+  "model": "MiniMaxAI/MiniMax-M2",
+  "model_slug": "minimax_m2",
+  "cookbook_cmd": "sglang serve --model-path MiniMaxAI/MiniMax-M2 --tp 4 --reasoning-parser minimax-append-think --trust-remote-code",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=fused_moe_triton>",
+  "kernel_family": "fused_moe_triton",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 5/1",
+    "Torch-Compiled Region: 5/2",
+    "Torch-Compiled Region: 5/3",
+    "aten::as_strided",
+    "aten::empty",
+    "aten::slice"
+  ],
+  "category": "moe",
+  "gpu_kernels": [
+    "fused_moe_kernel"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 23.61,
+    "random_mid": 43.66,
+    "random_high": 48.15,
+    "sharegpt_low": 24.78,
+    "sharegpt_mid": 43.36,
+    "sharegpt_high": 47.91
+  },
+  "max_pct_of_gpu": 48.15,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[25357, 64, 2, 128], [], [], []]",
+    "[[256], [], [], [], []]",
+    "[[2797, 2, 128], []]",
+    "[[9468, 2, 128], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "note": "Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) \u2014 single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded)."
+}
