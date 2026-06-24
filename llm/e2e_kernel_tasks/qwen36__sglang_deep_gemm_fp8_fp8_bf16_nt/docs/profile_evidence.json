@@ -1,0 +1,47 @@
+{
+  "model": "Qwen/Qwen3.6-35B-A3B-FP8",
+  "model_slug": "qwen36",
+  "cookbook_cmd": "sglang serve --model-path Qwen/Qwen3.6-35B-A3B-FP8 --reasoning-parser qwen3 --tool-call-parser qwen3_coder --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1",
+  "tp": "1",
+  "python_interface": "sglang.deep_gemm_fp8_fp8_bf16_nt",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "aten::_local_scalar_dense",
+    "aten::argmax",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty",
+    "aten::fill_"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "nvjet_sm100_tst_192x8_64x8_2x1_v_bz_TNT",
+    "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_splitK_TNN",
+    "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 1"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 25.87,
+    "random_mid": 5.76,
+    "random_high": 4.87,
+    "sharegpt_low": 26.34,
+    "sharegpt_mid": 6.94,
+    "sharegpt_high": 2.12
+  },
+  "max_pct_of_gpu": 26.34,
+  "best_scenario": "sharegpt_low",
+  "input_shapes": [
+    "[[1, 1], [1, 1], []]",
+    "[[1, 1], [], [], [], [], []]",
+    "[[1, 4], []]",
+    "[[11886, 2048], [11886, 4], [12288, 2048], [12288, 4], [11886, 12288]]",
+    "[[15434, 2048], [15434, 4], [12288, 2048], [12288, 4], [15434, 12288]]",
+    "[[17, 2048], [17, 4], [9216, 2048], [9216, 4], [17, 9216]]",
+    "[[192], [], [], []]",
+    "[[32, 16], [32, 16], []]",
+    "[[384], [384], []]",
+    "[[44, 248320], [], []]",
+    "[[49, 2], []]",
+    "[[49], [49], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
