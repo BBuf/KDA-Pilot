@@ -1,0 +1,28 @@
+{
+  "model": "stepfun-ai/Step-3.7-Flash-NVFP4",
+  "model_slug": "step_37_flash",
+  "cookbook_cmd": "sglang serve --model-path stepfun-ai/Step-3.7-Flash-NVFP4 --tp 8 --ep 8 --moe-runner-backend flashinfer_trtllm --kv-cache-dtype fp8_e4m3",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=fp8_bmm>",
+  "kernel_family": "fp8_bmm",
+  "profiler_op_provenance": [
+    "aten::copy_",
+    "aten::slice",
+    "gloo:broadcast"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "bmm_E2m1_E2m1E2m1_Fp32_Ab16_Bb16_Cb16_t128x16x512u2_s5_et128x16_m128x16x64_c1x1x1_rM_TN_tr"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_high": 3.57
+  },
+  "max_pct_of_gpu": 3.57,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[100], [100], []]",
+    "[[1]]",
+    "[[223], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

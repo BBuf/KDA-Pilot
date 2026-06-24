@@ -1,0 +1,39 @@
+{
+  "model": "stepfun-ai/Step-3.7-Flash-NVFP4",
+  "model_slug": "step_37_flash",
+  "cookbook_cmd": "sglang serve --model-path stepfun-ai/Step-3.7-Flash-NVFP4 --tp 8 --ep 8 --moe-runner-backend flashinfer_trtllm --kv-cache-dtype fp8_e4m3",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=fused_add_rmsnorm>",
+  "kernel_family": "fused_add_rmsnorm",
+  "profiler_op_provenance": [
+    "aten::empty",
+    "aten::empty_strided",
+    "aten::mm",
+    "aten::movedim",
+    "gloo:broadcast",
+    "nccl:all_reduce"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_a"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 32.09,
+    "random_high": 3.53,
+    "sharegpt_mid": 21.82
+  },
+  "max_pct_of_gpu": 32.09,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[16, 1, 128], [], [], []]",
+    "[[16, 4096], [4096, 1792]]",
+    "[[1]]",
+    "[[2977, 4096]]",
+    "[[2977, 8], [2977, 8], [2977, 288], [], [288]]",
+    "[[8, 1, 16112], [], []]",
+    "[[], [16, 320], [16, 160]]",
+    "[[], [2977, 320], [2977, 160]]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
