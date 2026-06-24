@@ -1,0 +1,26 @@
+{
+  "model": "Qwen/Qwen3-Next-80B-A3B-Instruct",
+  "model_slug": "qwen3_next",
+  "cookbook_cmd": "sglang serve --model-path Qwen/Qwen3-Next-80B-A3B-Instruct --tp 8",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=rmsnorm>",
+  "kernel_family": "rmsnorm",
+  "profiler_op_provenance": [
+    "aten::copy_"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "kernel_cutlass_kernel_flashinfernormkernelsrmsnormRMSNormKernel_object_at__tensorptrbf16gm"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 2.0,
+    "random_mid": 6.79
+  },
+  "max_pct_of_gpu": 6.79,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[2], [2], []]",
+    "[[33], [33], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

@@ -1,0 +1,49 @@
+{
+  "model": "Qwen/Qwen3-Next-80B-A3B-Instruct",
+  "model_slug": "qwen3_next",
+  "cookbook_cmd": "sglang serve --model-path Qwen/Qwen3-Next-80B-A3B-Instruct --tp 8",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "aten::alias",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::matmul",
+    "aten::mm",
+    "aten::reshape"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "nvjet_sm100_tst_16x64_64x16_4x1_v_bz_TNN",
+    "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_splitK_TNN",
+    "nvjet_sm100_tst_64x8_64x16_1x2_h_bz_TNT",
+    "nvjet_sm100_tst_64x8_64x16_2x4_h_bz_TNT",
+    "nvjet_sm100_tst_64x8_64x16_2x4_h_bz_splitK_TNT"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 41.2,
+    "random_mid": 16.21,
+    "random_high": 29.4,
+    "sharegpt_low": 44.27,
+    "sharegpt_mid": 22.66,
+    "sharegpt_high": 18.96
+  },
+  "max_pct_of_gpu": 44.27,
+  "best_scenario": "sharegpt_low",
+  "input_shapes": [
+    "[[1, 151936], [], [], []]",
+    "[[17, 2048], [2048, 128]]",
+    "[[17, 2048], [2048, 1536]]",
+    "[[17, 2048], [2048, 8]]",
+    "[[17, 2048], []]",
+    "[[1], [1], []]",
+    "[[2048, 64]]",
+    "[[262, 2048], [2048, 128]]",
+    "[[262, 4, 128], []]",
+    "[[32], [32], []]",
+    "[[38, 2048], [2048, 128]]",
+    "[[38, 2048], [2048, 1536]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
