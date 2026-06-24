@@ -1,0 +1,44 @@
+{
+  "model": "deepseek-ai/DeepSeek-V3",
+  "model_slug": "deepseek_v3",
+  "cookbook_cmd": "sglang serve --model-path deepseek-ai/DeepSeek-V3 --tp 8 --speculative-algorithm EAGLE",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "aten::arange",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::mm",
+    "aten::resolve_neg",
+    "aten::slice"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "nvjet_sm100_tst_64x8_64x16_1x4_h_bz_splitK_TNT",
+    "nvjet_sm100_tst_64x8_64x16_2x4_h_bz_splitK_TNT",
+    "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 1"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 19.67,
+    "random_mid": 5.87,
+    "random_high": 7.47,
+    "sharegpt_low": 5.91,
+    "sharegpt_high": 11.9
+  },
+  "max_pct_of_gpu": 19.67,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[1]]",
+    "[[39, 7168], [7168, 256]]",
+    "[[42, 16, 192], [], []]",
+    "[[42, 7168], [7168, 256]]",
+    "[[49], [49], []]",
+    "[[54, 1, 576], [], [], [], []]",
+    "[[54, 7168], [7168, 256]]",
+    "[[], [], [], [0]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
