@@ -1,0 +1,28 @@
+{
+  "model": "moonshotai/Kimi-Linear-48B-A3B-Instruct",
+  "model_slug": "kimi_linear",
+  "cookbook_cmd": "sglang serve --model-path moonshotai/Kimi-Linear-48B-A3B-Instruct --tp 4 --trust-remote-code",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=activation>",
+  "kernel_family": "activation",
+  "profiler_op_provenance": [
+    "aten::copy_",
+    "gloo:broadcast",
+    "sglang::unified_linear_attention_with_output"
+  ],
+  "category": "other",
+  "gpu_kernels": [
+    "void (anonymous namespace)::act_and_mul_kernel<__nv_bfloat16, ((anonymous namespace)::Acti"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 3.37
+  },
+  "max_pct_of_gpu": 3.37,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[1, 38, 8, 128], [1, 38, 8, 128], []]",
+    "[[48, 3072], [1, 48, 8, 128], [1, 48, 8], [1, 48, 8, 128], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "note": "Activation (SiLU/GELU+mul). Prior guidance: limited headroom \u2014 deprioritize."
+}

@@ -1,0 +1,37 @@
+{
+  "model": "moonshotai/Kimi-Linear-48B-A3B-Instruct",
+  "model_slug": "kimi_linear",
+  "cookbook_cmd": "sglang serve --model-path moonshotai/Kimi-Linear-48B-A3B-Instruct --tp 4 --trust-remote-code",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=rmsnorm>",
+  "kernel_family": "rmsnorm",
+  "profiler_op_provenance": [
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty_like",
+    "aten::gt",
+    "aten::lift_fresh",
+    "gloo:broadcast"
+  ],
+  "category": "norm",
+  "gpu_kernels": [
+    "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloa"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 8.58,
+    "sharegpt_low": 25.98,
+    "sharegpt_mid": 16.44
+  },
+  "max_pct_of_gpu": 25.98,
+  "best_scenario": "sharegpt_low",
+  "input_shapes": [
+    "[[1024, 15], [], [], [], [], []]",
+    "[[1024, 38], [], []]",
+    "[[16, 3072], [1, 16, 8, 128], [1, 16, 8], [1, 16, 8, 128], []]",
+    "[[1], []]",
+    "[[1]]",
+    "[[257, 8, 128], [], [], []]",
+    "[[48, 8, 512], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

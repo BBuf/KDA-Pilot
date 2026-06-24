@@ -1,0 +1,45 @@
+{
+  "model": "moonshotai/Kimi-Linear-48B-A3B-Instruct",
+  "model_slug": "kimi_linear",
+  "cookbook_cmd": "sglang serve --model-path moonshotai/Kimi-Linear-48B-A3B-Instruct --tp 4 --trust-remote-code",
+  "tp": "4",
+  "python_interface": "sglang.inplace_fused_experts",
+  "kernel_family": "fused_moe_triton",
+  "profiler_op_provenance": [
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty",
+    "aten::empty_like",
+    "aten::empty_strided",
+    "aten::select"
+  ],
+  "category": "moe",
+  "gpu_kernels": [
+    "fused_moe_kernel"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 14.79,
+    "random_high": 25.03,
+    "sharegpt_low": 4.45,
+    "sharegpt_mid": 10.04,
+    "sharegpt_high": 26.35
+  },
+  "max_pct_of_gpu": 26.35,
+  "best_scenario": "sharegpt_high",
+  "input_shapes": [
+    "[[1024, 15], [], [], [], [], []]",
+    "[[131072, 512], []]",
+    "[[15, 8, 128], [], [], []]",
+    "[[16384, 2304], [256, 512, 2304], [256, 2304, 256], [16384, 8], [16384, 8], [], ",
+    "[[16384, 8, 128], [], [], []]",
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[31], [], []]",
+    "[[48, 3072], [1, 48, 8, 128], [1, 48, 8], [1, 48, 8, 128], []]",
+    "[[55], [], []]",
+    "[[9967, 2304], [256, 512, 2304], [256, 2304, 256], [9967, 8], [9967, 8], [], [],",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "note": "Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) \u2014 single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded)."
+}
