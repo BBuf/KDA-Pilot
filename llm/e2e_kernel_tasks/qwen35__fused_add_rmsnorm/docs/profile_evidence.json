@@ -1,0 +1,30 @@
+{
+  "model": "nvidia/Qwen3.5-397B-A17B-NVFP4",
+  "model_slug": "qwen35",
+  "cookbook_cmd": "sglang serve --model-path nvidia/Qwen3.5-397B-A17B-NVFP4 --tp 4 --reasoning-parser qwen3 --tool-call-parser qwen3_coder",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=fused_add_rmsnorm>",
+  "kernel_family": "fused_add_rmsnorm",
+  "profiler_op_provenance": [
+    "aten::copy_",
+    "aten::empty",
+    "aten::view",
+    "gloo:broadcast"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_a"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_mid": 2.52,
+    "random_high": 3.31
+  },
+  "max_pct_of_gpu": 3.31,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[1], [1], []]",
+    "[[1]]",
+    "[[38, 4096], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

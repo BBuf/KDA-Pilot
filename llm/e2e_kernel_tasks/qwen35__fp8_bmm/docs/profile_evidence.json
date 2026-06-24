@@ -1,0 +1,47 @@
+{
+  "model": "nvidia/Qwen3.5-397B-A17B-NVFP4",
+  "model_slug": "qwen35",
+  "cookbook_cmd": "sglang serve --model-path nvidia/Qwen3.5-397B-A17B-NVFP4 --tp 4 --reasoning-parser qwen3 --tool-call-parser qwen3_coder",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=fp8_bmm>",
+  "kernel_family": "fp8_bmm",
+  "profiler_op_provenance": [
+    "ChunkGatedDeltaRuleFunction",
+    "aten::_local_scalar_dense",
+    "aten::add",
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "bmm_Bfloat16_E2m1E2m1_Fp32_Ab16_Bb16_t128x8x256_s9_et128x8_m128x8x64_c1x1x1_rM_TN_transOut",
+    "bmm_Bfloat16_E2m1E2m1_Fp32_Ab16_Bb16tokFp32_t128x128x256_s6_et128x128_m256x128x64_c2x1x1_r",
+    "bmm_E2m1_E2m1E2m1_Fp32_Ab16_Bb16_Cb16_t128x128x512u2_s3x3x3x3x1x3_et128x32_m256x128x64_c2x",
+    "bmm_E2m1_E2m1E2m1_Fp32_Ab16_Bb16_Cb16_t128x8x512_s5_et128x8_m128x8x64_c1x1x1_rM_TN_transOu",
+    "bmm_E2m1_E2m1E2m1_Fp32_Ab16_Bb16_Cb16_t128x8x512u2_s5_et128x8_m128x8x64_c1x1x1_rM_TN_trans"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_mid": 15.98,
+    "random_high": 13.66,
+    "sharegpt_mid": 2.19,
+    "sharegpt_high": 5.21
+  },
+  "max_pct_of_gpu": 15.98,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[1, 20968, 4, 128], [1, 20968, 4, 128], [1, 20968, 16, 128], [1, 20968, 16], [1",
+    "[[100], [], []]",
+    "[[104], [], [], []]",
+    "[[17070, 16, 128], []]",
+    "[[17070, 4096], [4096, 1]]",
+    "[[17070, 4096], [], [], [], [], [], []]",
+    "[[17070, 4096], []]",
+    "[[1]]",
+    "[[20968, 2048], [2048, 4096]]",
+    "[[3, 32], [3, 32], []]",
+    "[[30758, 4096], []]",
+    "[[31, 62080]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
