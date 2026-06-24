@@ -1,0 +1,47 @@
+{
+  "model": "google/gemma-4-26B-A4B-it",
+  "model_slug": "gemma4",
+  "cookbook_cmd": "sglang serve --model-path google/gemma-4-26B-A4B-it --reasoning-parser gemma4 --tool-call-parser gemma4",
+  "tp": "1",
+  "python_interface": "<confirm via capture; profiler family=attention>",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "aten::_foreach_copy_",
+    "aten::_local_scalar_dense",
+    "aten::_to_copy",
+    "aten::add",
+    "aten::as_strided",
+    "aten::copy_"
+  ],
+  "category": "attention",
+  "gpu_kernels": [
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H256PagedKvSlidingOrChunkedCausalP64MultiCtasKvCgaVar",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H256PagedKvSlidingOrChunkedCausalP64VarSeqQ128Kv128Pe",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H256PagedKvSlidingOrChunkedCausalP64VarSeqQ8Kv128Pers"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 4.07,
+    "random_mid": 5.69,
+    "random_high": 12.04,
+    "sharegpt_low": 4.14,
+    "sharegpt_mid": 6.32,
+    "sharegpt_high": 7.92
+  },
+  "max_pct_of_gpu": 12.04,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[1, 262144], [], [], []]",
+    "[[100]]",
+    "[[104, 262144], [], [], []]",
+    "[[1]]",
+    "[[2816, 4096]]",
+    "[[32, 16], [32, 16], []]",
+    "[[32, 262144], [], [], []]",
+    "[[32]]",
+    "[[384]]",
+    "[[51], [], [], []]",
+    "[[[1], [1], [1], [1]], [[1], [1], [1], [1]], []]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

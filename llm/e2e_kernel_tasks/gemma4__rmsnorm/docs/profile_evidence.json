@@ -1,0 +1,47 @@
+{
+  "model": "google/gemma-4-26B-A4B-it",
+  "model_slug": "gemma4",
+  "cookbook_cmd": "sglang serve --model-path google/gemma-4-26B-A4B-it --reasoning-parser gemma4 --tool-call-parser gemma4",
+  "tp": "1",
+  "python_interface": "<confirm via capture; profiler family=rmsnorm>",
+  "kernel_family": "rmsnorm",
+  "profiler_op_provenance": [
+    "aten::_reshape_alias",
+    "aten::add",
+    "aten::argmax",
+    "aten::as_strided",
+    "aten::clone",
+    "aten::copy_"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "_gemma_dual_rmsnorm_residual_kernel",
+    "_gemma_qkv_rmsnorm_kernel",
+    "kernel_cutlass_kernel_flashinfernormkernelsrmsnormRMSNormKernel_object_at__tensorptrbf16gm"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 18.58,
+    "random_mid": 9.54,
+    "random_high": 7.03,
+    "sharegpt_low": 18.89,
+    "sharegpt_mid": 9.75,
+    "sharegpt_high": 7.46
+  },
+  "max_pct_of_gpu": 18.89,
+  "best_scenario": "sharegpt_low",
+  "input_shapes": [
+    "[[1, 1], [1, 1], []]",
+    "[[1, 262144], [], []]",
+    "[[17, 8192], [], [], []]",
+    "[[1785, 16, 256], [1785, 8, 256], [262400, 256], [1785], [], []]",
+    "[[1785, 8, 256], []]",
+    "[[1902, 2816], [2816, 128]]",
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[1], []]",
+    "[[1]]",
+    "[[2049, 262148], []]",
+    "[[38, 2048], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
