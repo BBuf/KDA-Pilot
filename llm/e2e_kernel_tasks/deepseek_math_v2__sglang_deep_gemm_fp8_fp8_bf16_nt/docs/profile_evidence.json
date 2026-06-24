@@ -1,0 +1,42 @@
+{
+  "model": "deepseek-ai/DeepSeek-Math-V2",
+  "model_slug": "deepseek_math_v2",
+  "cookbook_cmd": "sglang serve --model-path deepseek-ai/DeepSeek-Math-V2 --tp 8 --ep 8 --trust-remote-code",
+  "tp": "8",
+  "python_interface": "sglang.deep_gemm_fp8_fp8_bf16_nt",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 4/2",
+    "aten::_local_scalar_dense",
+    "aten::add",
+    "aten::cat",
+    "aten::copy_",
+    "aten::empty_strided"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "nvjet_sm100_tst_64x16_64x16_2x4_2cta_h_bz_splitK_TNT",
+    "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 1"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 26.11,
+    "random_mid": 5.81,
+    "random_high": 4.12,
+    "sharegpt_low": 18.36,
+    "sharegpt_mid": 5.54
+  },
+  "max_pct_of_gpu": 26.11,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[1, 1], [1, 1], []]",
+    "[[11101, 7168], [11101, 14], [4608, 7168], [4608, 14], [11101, 4608]]",
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[1], []]",
+    "[[1]]",
+    "[[32], [], []]",
+    "[[4097, 45], []]",
+    "[[8661, 7168], [8661, 14], [4608, 7168], [4608, 14], [8661, 4608]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

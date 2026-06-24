@@ -1,0 +1,33 @@
+{
+  "model": "deepseek-ai/DeepSeek-Math-V2",
+  "model_slug": "deepseek_math_v2",
+  "cookbook_cmd": "sglang serve --model-path deepseek-ai/DeepSeek-Math-V2 --tp 8 --ep 8 --trust-remote-code",
+  "tp": "8",
+  "python_interface": "sglang.unified_attention_with_output",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 4/3",
+    "aten::empty",
+    "aten::view",
+    "sglang::unified_attention_with_output"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "fmhaSm100fKernel_QkvE4m3OBfloat16HQk576HV512PagedKvDenseStaticTokenSparseP1VarSeqQ16Kv128P",
+    "void flashinfer::trtllm_dsv3_router_gemm::router_gemm_kernel<__nv_bfloat16, float, 128, 8,"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_high": 4.59,
+    "sharegpt_low": 11.77,
+    "sharegpt_mid": 10.55,
+    "sharegpt_high": 9.65
+  },
+  "max_pct_of_gpu": 11.77,
+  "best_scenario": "sharegpt_low",
+  "input_shapes": [
+    "[[1536, 16, 512], [1536, 1, 512], [1536, 1, 512], [1536, 8192], [], [], [1536, 1",
+    "[[1792, 16, 512], [1792, 1, 512], [1792, 1, 512], [1792, 8192], [], [], [1792, 1",
+    "[[8661, 1, 16, 576], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

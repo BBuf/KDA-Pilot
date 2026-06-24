@@ -1,0 +1,50 @@
+{
+  "model": "deepseek-ai/DeepSeek-Math-V2",
+  "model_slug": "deepseek_math_v2",
+  "cookbook_cmd": "sglang serve --model-path deepseek-ai/DeepSeek-Math-V2 --tp 8 --ep 8 --trust-remote-code",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=fp8_bmm>",
+  "kernel_family": "fp8_bmm",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 4/1",
+    "Torch-Compiled Region: 4/2",
+    "aten::add",
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "bmm_Bfloat16_E4m3E4m3_Fp32_t128x16x128u2_s6_et64x16_m64x16x32_c1x1x1_rM_TN_transOut_noShfl",
+    "bmm_Bfloat16_E4m3E4m3_Fp32_t128x64x128u2_s6_et64x64_m64x64x32_c1x1x1_rM_TN_transOut_noShfl",
+    "bmm_Bfloat16_E4m3E4m3_Fp32_t128x8x128u2_s8_et64x8_m64x8x32_c1x1x1_rM_TN_transOut_noShfl_ds",
+    "bmm_E4m3_E4m3E4m3_Fp32_t128x16x128u2_s6_et64x16_m64x16x32_c1x1x1_rM_TN_transOut_noShfl_dsF",
+    "bmm_E4m3_E4m3E4m3_Fp32_t128x64x128u2_s6_et64x64_m64x64x32_c1x1x1_rM_TN_transOut_noShfl_dsF",
+    "bmm_E4m3_E4m3E4m3_Fp32_t128x8x128_s8_et64x8_m64x8x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_sc",
+    "bmm_E4m3_E4m3E4m3_Fp32_t128x8x128u2_s8_et64x8_m64x8x32_c1x1x1_rM_TN_transOut_noShfl_dsFp8_"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 6.93,
+    "random_high": 24.66,
+    "sharegpt_low": 2.33,
+    "sharegpt_mid": 9.02,
+    "sharegpt_high": 21.99
+  },
+  "max_pct_of_gpu": 24.66,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[1, 1], [1, 1], []]",
+    "[[100], [100], []]",
+    "[[100], [], []]",
+    "[[1], [1], []]",
+    "[[1], [], [], []]",
+    "[[1], [], []]",
+    "[[1]]",
+    "[[32], [32], []]",
+    "[[32], [], []]",
+    "[[3], [3], []]",
+    "[[4097, 163844], [], [], []]",
+    "[[768], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

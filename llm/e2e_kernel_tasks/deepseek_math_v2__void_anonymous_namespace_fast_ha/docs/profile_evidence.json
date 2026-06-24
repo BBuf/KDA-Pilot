@@ -1,0 +1,27 @@
+{
+  "model": "deepseek-ai/DeepSeek-Math-V2",
+  "model_slug": "deepseek_math_v2",
+  "cookbook_cmd": "sglang serve --model-path deepseek-ai/DeepSeek-Math-V2 --tp 8 --ep 8 --trust-remote-code",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=void_anonymous_namespace_fast_ha>",
+  "kernel_family": "void_anonymous_namespace_fast_ha",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 4/1",
+    "sglang::hadamard_transform"
+  ],
+  "category": "other",
+  "gpu_kernels": [
+    "void (anonymous namespace)::fast_hadamard_transform_kernel<(anonymous namespace)::FastHada"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_high": 2.23,
+    "sharegpt_mid": 3.8,
+    "sharegpt_high": 2.17
+  },
+  "max_pct_of_gpu": 3.8,
+  "best_scenario": "sharegpt_mid",
+  "input_shapes": [
+    "[[8661, 64, 128], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
