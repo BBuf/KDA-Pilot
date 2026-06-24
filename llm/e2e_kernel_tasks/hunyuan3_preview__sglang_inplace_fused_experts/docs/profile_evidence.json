@@ -1,0 +1,40 @@
+{
+  "model": "tencent/Hy3-preview",
+  "model_slug": "hunyuan3_preview",
+  "cookbook_cmd": "sglang serve --model-path tencent/Hy3-preview --tp 8 --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1",
+  "tp": "8",
+  "python_interface": "sglang.inplace_fused_experts",
+  "kernel_family": "fused_moe_triton",
+  "profiler_op_provenance": [
+    "aten::as_strided",
+    "aten::empty",
+    "aten::linear",
+    "sglang::inplace_fused_experts"
+  ],
+  "category": "moe",
+  "gpu_kernels": [
+    "fused_moe_kernel"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 15.84,
+    "random_mid": 34.73,
+    "random_high": 20.95,
+    "sharegpt_low": 12.37,
+    "sharegpt_mid": 21.16,
+    "sharegpt_high": 18.92
+  },
+  "max_pct_of_gpu": 34.73,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[1210, 4096], [192, 384, 4096], [192, 4096, 192], [1210, 8], [1210, 8], [], [],",
+    "[[1220, 4096], [192, 384, 4096], [192, 4096, 192], [1220, 8], [1220, 8], [], [],",
+    "[[1220, 4096], [384, 4096], []]",
+    "[[15, 4096], [192, 384, 4096], [192, 4096, 192], [15, 8], [15, 8], [], [], [], [",
+    "[[33056, 64, 1, 128], [], [], []]",
+    "[[38, 4096], [192, 384, 4096], [192, 4096, 192], [38, 8], [38, 8], [], [], [], [",
+    "[[5067, 4096], [192, 384, 4096], [192, 4096, 192], [5067, 8], [5067, 8], [], [],",
+    "[[5067, 4096], [384, 4096], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "note": "Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) \u2014 single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded)."
+}
