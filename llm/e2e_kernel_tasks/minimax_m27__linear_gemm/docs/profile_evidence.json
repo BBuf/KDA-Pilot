@@ -1,0 +1,50 @@
+{
+  "model": "MiniMaxAI/MiniMax-M2.7",
+  "model_slug": "minimax_m27",
+  "cookbook_cmd": "sglang serve --model-path MiniMaxAI/MiniMax-M2.7 --tp 8 --ep 8 --tool-call-parser minimax-m2 --reasoning-parser minimax-append-think",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 5/1",
+    "Torch-Compiled Region: 5/3",
+    "aten::_index_put_impl_",
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_128x128x16_1x1x1_3_tnn_align1_bias_f32_relu",
+    "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_128x64x16_1x1x1_3_tnn_align1_bias_f32_relu",
+    "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_32x32x16_1x1x1_3_tnn_align1_bias_f32_relu",
+    "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_64x32x16_1x1x1_3_tnn_align1_bias_f32_relu",
+    "void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_tn_align1>(cutlass_80_simt_sgemm_64x",
+    "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 1"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 9.98,
+    "random_mid": 12.48,
+    "random_high": 11.13,
+    "sharegpt_low": 10.45,
+    "sharegpt_mid": 12.45,
+    "sharegpt_high": 11.27
+  },
+  "max_pct_of_gpu": 12.48,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[131], [], [], []]",
+    "[[1536, 768], [1536, 1, 128], [1536, 1, 128], [1536, 768], [], [], [], [], [], [",
+    "[[1], [], [], [], []]",
+    "[[1]]",
+    "[[204804], [], [], [], []]",
+    "[[204804], [], [], []]",
+    "[[212, 128], [212, 128], [4148736, 128], [4148736, 128], [212], [], [], []]",
+    "[[330], [], [], []]",
+    "[[388], [], [], [], []]",
+    "[[408], [], [], []]",
+    "[[467], [], [], []]",
+    "[[54182], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

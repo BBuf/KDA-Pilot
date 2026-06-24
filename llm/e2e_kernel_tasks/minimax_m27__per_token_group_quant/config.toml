@@ -1,0 +1,31 @@
+[task]
+slug = "minimax_m27__per_token_group_quant"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "quant_gemm"
+kernel_family = "per_token_group_quant"
+model = "MiniMaxAI/MiniMax-M2.7"
+model_slug = "minimax_m27"
+entry_points = [
+  "<confirm via capture; profiler family=per_token_group_quant>",
+]
+evidence_json = "docs/profile_evidence.json"
+
+[selection]
+method = "cookbook-aligned torch-profiler e2e GPU-time share (extract_kernel_shapes >2%, family-grouped)"
+max_pct_of_gpu = 4.82
+best_scenario = "sharegpt_low"
+dataset = "sharegpt"
+concurrency = "1"
+
+[build]
+language = "python/cuda"
+baseline_entry_point = "baseline/<copied_sglang_interface>::baseline"
+candidate_entry_point = "solution/<candidate_interface>::candidate"
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+use_isolated_runner = true
+required_matched_ratio = 1.0

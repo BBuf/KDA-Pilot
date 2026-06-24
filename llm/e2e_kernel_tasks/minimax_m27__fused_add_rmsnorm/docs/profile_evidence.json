@@ -1,0 +1,45 @@
+{
+  "model": "MiniMaxAI/MiniMax-M2.7",
+  "model_slug": "minimax_m27",
+  "cookbook_cmd": "sglang serve --model-path MiniMaxAI/MiniMax-M2.7 --tp 8 --ep 8 --tool-call-parser minimax-m2 --reasoning-parser minimax-append-think",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=fused_add_rmsnorm>",
+  "kernel_family": "fused_add_rmsnorm",
+  "profiler_op_provenance": [
+    "aten::_foreach_copy_",
+    "aten::add",
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_",
+    "aten::empty_strided"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_a"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 12.36,
+    "random_mid": 3.29,
+    "random_high": 5.75,
+    "sharegpt_low": 12.55,
+    "sharegpt_mid": 2.75,
+    "sharegpt_high": 3.24
+  },
+  "max_pct_of_gpu": 12.55,
+  "best_scenario": "sharegpt_low",
+  "input_shapes": [
+    "[[100], [100], []]",
+    "[[104], [104], []]",
+    "[[1], [1], []]",
+    "[[1], [], [], []]",
+    "[[1], [], []]",
+    "[[32], [32], []]",
+    "[[32], [], []]",
+    "[[512], [], [], []]",
+    "[[729], [], [], []]",
+    "[[96], [], []]",
+    "[[99], [99], []]",
+    "[[[0], [21]], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

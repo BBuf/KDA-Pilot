@@ -1,0 +1,46 @@
+{
+  "model": "MiniMaxAI/MiniMax-M2.7",
+  "model_slug": "minimax_m27",
+  "cookbook_cmd": "sglang serve --model-path MiniMaxAI/MiniMax-M2.7 --tp 8 --ep 8 --tool-call-parser minimax-m2 --reasoning-parser minimax-append-think",
+  "tp": "8",
+  "python_interface": "sglang.unified_attention_with_output",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_",
+    "aten::resolve_neg",
+    "aten::slice",
+    "aten::to"
+  ],
+  "category": "attention",
+  "gpu_kernels": [
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP64MultiCtasKvVarSeqQ8Kv128StaticSwa",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP64VarSeqQ128Kv128PersistentContext",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP64VarSeqQ8Kv128PersistentSwapsAbFor"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 4.42,
+    "random_high": 4.07,
+    "sharegpt_low": 4.69,
+    "sharegpt_mid": 2.85,
+    "sharegpt_high": 5.38
+  },
+  "max_pct_of_gpu": 5.38,
+  "best_scenario": "sharegpt_high",
+  "input_shapes": [
+    "[[1], [], [], [], [], []]",
+    "[[1]]",
+    "[[3072, 768], [3072, 1, 128], [3072, 1, 128], [3072, 768], [], [], [], [], [], [",
+    "[[4148736, 1, 128], []]",
+    "[[5552, 768], [5552, 768], []]",
+    "[[640], [], [], [], []]",
+    "[[64824, 64, 1, 128], [], [], []]",
+    "[[[0], [14]], []]",
+    "[[[1]], [], [], [], [], []]",
+    "[[[448], [19]], []]",
+    "[[[64], [576]], []]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
