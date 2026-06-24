@@ -1,0 +1,41 @@
+{
+  "model": "poolside/Laguna-M.1-NVFP4",
+  "model_slug": "laguna_m1",
+  "cookbook_cmd": "sglang serve --model-path poolside/Laguna-M.1-NVFP4 --tp 8 --trust-remote-code --reasoning-parser poolside_v1 --tool-call-parser poolside_v1",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=compute_expert_blockscale_offset>",
+  "kernel_family": "compute_expert_blockscale_offset",
+  "profiler_op_provenance": [
+    "aten::_local_scalar_dense",
+    "aten::add",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty",
+    "aten::index"
+  ],
+  "category": "moe",
+  "gpu_kernels": [
+    "compute_expert_blockscale_offsets(int const*, int*, int*, int*, long)"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 5.73,
+    "random_high": 2.22,
+    "sharegpt_low": 5.64,
+    "sharegpt_high": 2.33
+  },
+  "max_pct_of_gpu": 5.73,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[256], [256], []]",
+    "[[2816, 1, 128], [], [], []]",
+    "[[4097, 262148], []]",
+    "[[768], [768], []]",
+    "[[99], [], []]",
+    "[[[256]], []]",
+    "[[], [], [], [], [], []]",
+    "[[]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

@@ -1,0 +1,51 @@
+{
+  "model": "poolside/Laguna-M.1-NVFP4",
+  "model_slug": "laguna_m1",
+  "cookbook_cmd": "sglang serve --model-path poolside/Laguna-M.1-NVFP4 --tp 8 --trust-remote-code --reasoning-parser poolside_v1 --tool-call-parser poolside_v1",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "aten::_to_copy",
+    "aten::add",
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_",
+    "aten::detach_"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalINS1_17GroupProblemShapeIN4cute5t",
+    "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_128x128x16_1x1x1_3_tnn_align1_bias_f32_relu",
+    "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_128x64x16_1x1x1_3_tnn_align1_bias_f32_relu",
+    "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_64x64x16_1x1x1_3_tnn_align1_bias_f32_relu",
+    "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_TNN",
+    "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_splitK_TNN",
+    "void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_tn_align1>(cutlass_80_simt_sgemm_64x"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 25.39,
+    "random_mid": 30.37,
+    "random_high": 36.6,
+    "sharegpt_low": 25.53,
+    "sharegpt_mid": 28.22,
+    "sharegpt_high": 35.54
+  },
+  "max_pct_of_gpu": 36.6,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[100], [100], []]",
+    "[[10526, 1024], [10526, 1024], []]",
+    "[[15], [], [], []]",
+    "[[17], [], [], [], [], []]",
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[1]]",
+    "[[2276, 1024], [2276, 1024], []]",
+    "[[256], [256], []]",
+    "[[262148], [], [], []]",
+    "[[2656, 1024], [2656, 1024], []]",
+    "[[2731], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

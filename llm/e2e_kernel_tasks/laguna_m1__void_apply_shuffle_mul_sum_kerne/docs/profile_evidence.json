@@ -1,0 +1,31 @@
+{
+  "model": "poolside/Laguna-M.1-NVFP4",
+  "model_slug": "laguna_m1",
+  "cookbook_cmd": "sglang serve --model-path poolside/Laguna-M.1-NVFP4 --tp 8 --trust-remote-code --reasoning-parser poolside_v1 --tool-call-parser poolside_v1",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=void_apply_shuffle_mul_sum_kerne>",
+  "kernel_family": "void_apply_shuffle_mul_sum_kerne",
+  "profiler_op_provenance": [
+    "aten::copy_",
+    "aten::empty",
+    "sglang::store_cache",
+    "sglang::unified_attention_with_output"
+  ],
+  "category": "other",
+  "gpu_kernels": [
+    "void apply_shuffle_mul_sum_kernel<__nv_bfloat16>(__nv_bfloat16 const*, __nv_bfloat16*, int"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 3.89,
+    "sharegpt_low": 3.8
+  },
+  "max_pct_of_gpu": 3.89,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[48, 1024], [48, 1, 128], [48, 1, 128], [48, 1024], [], [], [], [], [], [], [],",
+    "[[48, 128], [48, 128], [3980352, 128], [3980352, 128], [48], [], [], []]",
+    "[[62193, 64, 1, 128], []]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
