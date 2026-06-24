@@ -1,0 +1,33 @@
+{
+  "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+  "model_slug": "qwen3",
+  "cookbook_cmd": "sglang serve --model-path Qwen/Qwen3-235B-A22B-Instruct-2507 --tp 8",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=rmsnorm>",
+  "kernel_family": "rmsnorm",
+  "profiler_op_provenance": [
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty",
+    "sglang::unified_attention_with_output"
+  ],
+  "category": "norm",
+  "gpu_kernels": [
+    "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloa"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_mid": 3.94,
+    "sharegpt_mid": 3.05
+  },
+  "max_pct_of_gpu": 3.94,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[10752, 1024], [10752, 1, 128], [10752, 1, 128], [10752, 1024], [], [], [], [],",
+    "[[14, 151936], [], [], []]",
+    "[[2500, 1024], [2500, 1024], []]",
+    "[[2500, 8, 128], [], [], [], [], []]",
+    "[[714], [], [], []]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
