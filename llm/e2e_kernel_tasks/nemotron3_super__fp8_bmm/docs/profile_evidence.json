@@ -1,0 +1,50 @@
+{
+  "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",
+  "model_slug": "nemotron3_super",
+  "cookbook_cmd": "sglang serve --model-path nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16 --tp 4 --trust-remote-code",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=fp8_bmm>",
+  "kernel_family": "fp8_bmm",
+  "profiler_op_provenance": [
+    "aten::_to_copy",
+    "aten::argmax",
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_",
+    "aten::empty"
+  ],
+  "category": "other",
+  "gpu_kernels": [
+    "bmm_Bfloat16_Bfloat16Bfloat16_Fp32_t128x16x128_s4_et128x16_m128x16x16_c1x1x1_rM_BN_transOu",
+    "bmm_Bfloat16_Bfloat16Bfloat16_Fp32_t128x16x128_s5_et128x16_m128x16x16_c1x1x1_rM_BN_transOu",
+    "bmm_Bfloat16_Bfloat16Bfloat16_Fp32_t128x16x128u2_s4_et128x16_m128x16x16_c1x1x1_rM_BN_trans",
+    "bmm_Bfloat16_Bfloat16Bfloat16_Fp32_t128x16x128u2_s6_et128x16_m128x16x16_c1x1x1_rM_BN_trans",
+    "bmm_Bfloat16_Bfloat16Bfloat16_Fp32_t128x64x128u2_s5_et128x64_m256x64x16_c2x1x1_rM_BN_trans",
+    "bmm_Bfloat16_Bfloat16Bfloat16_Fp32_t128x8x128_s5_et128x8_m128x8x16_c1x1x1_rM_BN_transOut_s"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 2.99,
+    "random_mid": 11.82,
+    "random_high": 17.99,
+    "sharegpt_low": 2.18,
+    "sharegpt_mid": 17.43,
+    "sharegpt_high": 13.84
+  },
+  "max_pct_of_gpu": 17.99,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[10111, 4096], [], []]",
+    "[[10240, 4096], [10240, 4096], []]",
+    "[[11821680, 1, 128], []]",
+    "[[16384, 4096], [16384, 4096], []]",
+    "[[16384, 4096], [4096, 4640]]",
+    "[[16384, 4096], [], [], [], []]",
+    "[[165], [], [], []]",
+    "[[20, 4096], [20, 4096], []]",
+    "[[30], [30], []]",
+    "[[31], [31], []]",
+    "[[32, 131072], [], []]",
+    "[[32], [32], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

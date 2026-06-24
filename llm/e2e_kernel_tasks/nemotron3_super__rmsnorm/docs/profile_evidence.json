@@ -1,0 +1,45 @@
+{
+  "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",
+  "model_slug": "nemotron3_super",
+  "cookbook_cmd": "sglang serve --model-path nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16 --tp 4 --trust-remote-code",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=rmsnorm>",
+  "kernel_family": "rmsnorm",
+  "profiler_op_provenance": [
+    "aten::copy_",
+    "aten::empty",
+    "aten::expand",
+    "aten::fill_",
+    "aten::mm",
+    "aten::select"
+  ],
+  "category": "norm",
+  "gpu_kernels": [
+    "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloa"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 8.85,
+    "random_mid": 4.14,
+    "random_high": 3.57,
+    "sharegpt_low": 8.42,
+    "sharegpt_mid": 3.62,
+    "sharegpt_high": 3.12
+  },
+  "max_pct_of_gpu": 8.85,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[18, 1024], [18, 1024], []]",
+    "[[18, 2048], [2048, 4096]]",
+    "[[18, 4096], [4096, 4640]]",
+    "[[1], [1], []]",
+    "[[2, 4096], []]",
+    "[[20, 4096], [20, 4096], []]",
+    "[[38, 1024], [38, 1024], []]",
+    "[[38, 4096], [4096, 4640]]",
+    "[[38], [], []]",
+    "[[40, 1025, 2560, 3], [], []]",
+    "[[48, 4096], [48, 4096], []]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

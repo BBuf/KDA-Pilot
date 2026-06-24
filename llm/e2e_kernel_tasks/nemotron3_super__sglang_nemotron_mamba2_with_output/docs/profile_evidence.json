@@ -1,0 +1,35 @@
+{
+  "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",
+  "model_slug": "nemotron3_super",
+  "cookbook_cmd": "sglang serve --model-path nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16 --tp 4 --trust-remote-code",
+  "tp": "4",
+  "python_interface": "sglang.nemotron_mamba2_with_output",
+  "kernel_family": "mamba2_ssm",
+  "profiler_op_provenance": [
+    "aten::as_strided",
+    "aten::matmul",
+    "aten::unsqueeze",
+    "sglang::nemotron_mamba2_with_output"
+  ],
+  "category": "other",
+  "gpu_kernels": [
+    "_chunk_scan_fwd_kernel",
+    "_chunk_state_fwd_kernel",
+    "_state_passing_fwd_kernel"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_mid": 18.12,
+    "random_high": 27.25,
+    "sharegpt_mid": 18.45
+  },
+  "max_pct_of_gpu": 27.25,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[1, 16384, 2, 128], [], [], []]",
+    "[[10240, 4096], [10240, 4096], []]",
+    "[[16384, 4096], [16384, 4096], []]",
+    "[[16384, 4096], [4096, 4640]]",
+    "[[31, 1, 1], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

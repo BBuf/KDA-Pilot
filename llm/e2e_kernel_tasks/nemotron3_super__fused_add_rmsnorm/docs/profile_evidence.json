@@ -1,0 +1,29 @@
+{
+  "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",
+  "model_slug": "nemotron3_super",
+  "cookbook_cmd": "sglang serve --model-path nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16 --tp 4 --trust-remote-code",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=fused_add_rmsnorm>",
+  "kernel_family": "fused_add_rmsnorm",
+  "profiler_op_provenance": [
+    "aten::argmax",
+    "aten::as_strided",
+    "aten::copy_"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_a"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 3.57,
+    "sharegpt_low": 3.45
+  },
+  "max_pct_of_gpu": 3.57,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[1, 131072], [], []]",
+    "[[1], [1], []]",
+    "[[1], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

@@ -1,0 +1,50 @@
+{
+  "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16",
+  "model_slug": "nemotron3_super",
+  "cookbook_cmd": "sglang serve --model-path nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16 --tp 4 --trust-remote-code",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "aten::_to_copy",
+    "aten::argmax",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty",
+    "aten::index_put_"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "nvjet_sm100_tss_32x64_64x16_4x1_v_bz_splitK_TNN",
+    "nvjet_sm100_tst_128x256_64x6_2x1_2cta_v_bz_TNT",
+    "nvjet_sm100_tst_160x192_64x6_1x2_2cta_h_bz_TNN",
+    "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_TNN",
+    "nvjet_sm100_tst_32x64_64x16_4x1_v_bz_splitK_TNN",
+    "nvjet_sm100_tst_64x8_64x16_2x1_v_bz_splitK_TNT"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 18.79,
+    "random_mid": 6.77,
+    "random_high": 9.34,
+    "sharegpt_low": 18.12,
+    "sharegpt_mid": 5.51,
+    "sharegpt_high": 7.85
+  },
+  "max_pct_of_gpu": 18.79,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[1, 131072], [], [], [], []]",
+    "[[1, 131072], [], [], []]",
+    "[[1, 131072], [], []]",
+    "[[10111, 4096], [4096, 4640]]",
+    "[[1025, 32, 64, 128], [], [30, 32, 64, 128], []]",
+    "[[11821680, 1, 128], [], [], []]",
+    "[[14375, 4096], [4096, 4640]]",
+    "[[14599, 4096], [4096, 4640]]",
+    "[[16384, 2048], [2048, 4096]]",
+    "[[16384, 2560], [], [], [], []]",
+    "[[16384, 4096], [4096, 4640]]",
+    "[[1], [1], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
