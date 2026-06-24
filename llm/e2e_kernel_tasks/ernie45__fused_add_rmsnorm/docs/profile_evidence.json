@@ -1,0 +1,31 @@
+{
+  "model": "baidu/ERNIE-4.5-21B-A3B-PT",
+  "model_slug": "ernie45",
+  "cookbook_cmd": "sglang serve --model-path baidu/ERNIE-4.5-21B-A3B-PT --tp 1",
+  "tp": "1",
+  "python_interface": "<confirm via capture; profiler family=fused_add_rmsnorm>",
+  "kernel_family": "fused_add_rmsnorm",
+  "profiler_op_provenance": [
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::resolve_neg",
+    "aten::slice"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_a"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 4.34,
+    "sharegpt_low": 4.46
+  },
+  "max_pct_of_gpu": 4.46,
+  "best_scenario": "sharegpt_low",
+  "input_shapes": [
+    "[[1, 103424], [], [], []]",
+    "[[1, 1], [1, 1], []]",
+    "[[1], [], [], [], []]",
+    "[[1]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

@@ -1,0 +1,45 @@
+{
+  "model": "baidu/ERNIE-4.5-21B-A3B-PT",
+  "model_slug": "ernie45",
+  "cookbook_cmd": "sglang serve --model-path baidu/ERNIE-4.5-21B-A3B-PT --tp 1",
+  "tp": "1",
+  "python_interface": "sglang.unified_attention_with_output",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "aten::argmax",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty",
+    "aten::resolve_neg",
+    "sglang::unified_attention_with_output"
+  ],
+  "category": "attention",
+  "gpu_kernels": [
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP64MultiCtasKvVarSeqQ8Kv128StaticSwa",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP64VarSeqQ128Kv128PersistentContext",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP64VarSeqQ8Kv128PersistentSwapsAbFor"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 5.83,
+    "random_mid": 2.35,
+    "random_high": 8.02,
+    "sharegpt_low": 5.96,
+    "sharegpt_mid": 4.07,
+    "sharegpt_high": 7.81
+  },
+  "max_pct_of_gpu": 8.02,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[0], [], [], []]",
+    "[[100]]",
+    "[[104, 17], [104, 17], []]",
+    "[[11264, 2560], [11264, 4, 128], [11264, 4, 128], [11264, 2560], [], [], [], [],",
+    "[[1], [1], []]",
+    "[[1]]",
+    "[[256], [256], []]",
+    "[[2816, 2560], [2816, 4, 128], [2816, 4, 128], [2816, 2560], [], [], [], [], [],",
+    "[[5120, 2560], [5120, 4, 128], [5120, 4, 128], [5120, 2560], [], [], [], [], [],",
+    "[[55], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

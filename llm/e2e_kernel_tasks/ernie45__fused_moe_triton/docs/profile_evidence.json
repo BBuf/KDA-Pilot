@@ -1,0 +1,28 @@
+{
+  "model": "baidu/ERNIE-4.5-21B-A3B-PT",
+  "model_slug": "ernie45",
+  "cookbook_cmd": "sglang serve --model-path baidu/ERNIE-4.5-21B-A3B-PT --tp 1",
+  "tp": "1",
+  "python_interface": "<confirm via capture; profiler family=fused_moe_triton>",
+  "kernel_family": "fused_moe_triton",
+  "profiler_op_provenance": [
+    "Torch-Compiled Region: 4/1"
+  ],
+  "category": "moe",
+  "gpu_kernels": [
+    "fused_moe_kernel"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 37.0,
+    "random_mid": 63.38,
+    "random_high": 64.96,
+    "sharegpt_low": 35.86,
+    "sharegpt_mid": 62.86,
+    "sharegpt_high": 64.82
+  },
+  "max_pct_of_gpu": 64.96,
+  "best_scenario": "random_high",
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "note": "Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) \u2014 single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded)."
+}
