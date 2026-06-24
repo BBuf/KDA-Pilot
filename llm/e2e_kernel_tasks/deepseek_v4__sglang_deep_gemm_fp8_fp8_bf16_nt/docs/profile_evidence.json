@@ -1,0 +1,39 @@
+{
+  "model": "deepseek-ai/DeepSeek-V4-Flash",
+  "model_slug": "deepseek_v4",
+  "cookbook_cmd": "sglang serve --model-path deepseek-ai/DeepSeek-V4-Flash --tp 4 --moe-runner-backend flashinfer_mxfp4 --trust-remote-code",
+  "tp": "4",
+  "python_interface": "sglang.deep_gemm_fp8_fp8_bf16_nt",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "aten::add",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty",
+    "aten::resolve_neg",
+    "aten::view"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 1",
+    "void deep_gemm::sm100_tf32_hc_prenorm_gemm_impl<24u, 16384u, 64u, 32u, 64u, 2u, 128u, 12u,",
+    "void deep_gemm::sm100_tf32_hc_prenorm_gemm_impl<24u, 16384u, 64u, 32u, 64u, 3u, 128u, 12u,",
+    "void deep_gemm::sm100_tf32_hc_prenorm_gemm_impl<24u, 16384u, 64u, 32u, 64u, 4u, 128u, 12u,"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 5.04,
+    "random_mid": 15.92,
+    "random_high": 9.51,
+    "sharegpt_low": 4.87
+  },
+  "max_pct_of_gpu": 15.92,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[16384, 16384], [], [], []]",
+    "[[1], []]",
+    "[[1]]",
+    "[[4, 1, 4096], [4, 4, 4096], []]",
+    "[[4, 4, 4096], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

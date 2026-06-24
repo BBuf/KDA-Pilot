@@ -1,0 +1,28 @@
+{
+  "model": "deepseek-ai/DeepSeek-V4-Flash",
+  "model_slug": "deepseek_v4",
+  "cookbook_cmd": "sglang serve --model-path deepseek-ai/DeepSeek-V4-Flash --tp 4 --moe-runner-backend flashinfer_mxfp4 --trust-remote-code",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=mhc_post_tilelang_kernel>",
+  "kernel_family": "mhc_post_tilelang_kernel",
+  "profiler_op_provenance": [
+    "aten::empty",
+    "aten::view",
+    "sglang::deep_gemm_fp8_fp8_bf16_nt"
+  ],
+  "category": "other",
+  "gpu_kernels": [
+    "mhc_post_tilelang_kernel"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_mid": 4.23
+  },
+  "max_pct_of_gpu": 4.23,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[38, 1, 64, 512], [1988, 256, 1, 584], [38, 1, 128], [38], [64], [148, 8], [39]",
+    "[[38, 4, 4096], []]",
+    "[[38, 4096], [38, 8], [1536, 4096], [1536, 8], [38, 1536]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

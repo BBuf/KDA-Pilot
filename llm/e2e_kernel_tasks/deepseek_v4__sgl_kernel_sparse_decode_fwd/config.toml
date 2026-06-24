@@ -1,0 +1,31 @@
+[task]
+slug = "deepseek_v4__sgl_kernel_sparse_decode_fwd"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "quant_gemm"
+kernel_family = "attention"
+model = "deepseek-ai/DeepSeek-V4-Flash"
+model_slug = "deepseek_v4"
+entry_points = [
+  "sgl_kernel.sparse_decode_fwd",
+]
+evidence_json = "docs/profile_evidence.json"
+
+[selection]
+method = "cookbook-aligned torch-profiler e2e GPU-time share (extract_kernel_shapes >2%, family-grouped)"
+max_pct_of_gpu = 4.11
+best_scenario = "sharegpt_mid"
+dataset = "sharegpt"
+concurrency = "32"
+
+[build]
+language = "python/cuda"
+baseline_entry_point = "baseline/<copied_sglang_interface>::baseline"
+candidate_entry_point = "solution/<candidate_interface>::candidate"
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+use_isolated_runner = true
+required_matched_ratio = 1.0

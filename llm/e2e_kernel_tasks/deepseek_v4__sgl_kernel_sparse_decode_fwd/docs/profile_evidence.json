@@ -1,0 +1,27 @@
+{
+  "model": "deepseek-ai/DeepSeek-V4-Flash",
+  "model_slug": "deepseek_v4",
+  "cookbook_cmd": "sglang serve --model-path deepseek-ai/DeepSeek-V4-Flash --tp 4 --moe-runner-backend flashinfer_mxfp4 --trust-remote-code",
+  "tp": "4",
+  "python_interface": "sgl_kernel.sparse_decode_fwd",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "sgl_kernel::sparse_decode_fwd"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "void sm100::decode::head64::flash_fwd_splitkv_mla_fp8_sparse_kernel<sm100::decode::head64:"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "sharegpt_mid": 4.11,
+    "sharegpt_high": 2.7
+  },
+  "max_pct_of_gpu": 4.11,
+  "best_scenario": "sharegpt_mid",
+  "input_shapes": [
+    "[[1741, 1, 64, 512], [1988, 256, 1, 584], [1741, 1, 128], [1741], [64], [148, 8]",
+    "[[3286, 1, 64, 512], [1988, 256, 1, 584], [3286, 1, 128], [3286], [64], [148, 8]",
+    "[[3286, 1, 64, 512], [1988, 256, 1, 584], [3286, 1, 128], [3286], [64], [], [], "
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
