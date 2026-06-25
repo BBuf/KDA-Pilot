@@ -27,7 +27,7 @@ import os
 import sys
 
 HEAD_DIM = 128
-SP_SIZE = 2  # DEC-1 default
+SP_SIZE = 2  # default sequence-parallel degree used to build the frozen slice grid
 DTYPES = ("bfloat16", "float16", "float32")
 ORDERS = ("AB", "BA")
 OP_TYPES = ("copy_contiguous", "concat_sequence", "slice_heads_then_concat")

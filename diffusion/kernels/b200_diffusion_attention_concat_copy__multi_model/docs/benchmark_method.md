@@ -2,6 +2,7 @@
 
 ## Harness
 - `bench/benchmark.py` starts from `diffusion/docs/standalone_diffusion_benchmark_template.py` (the required standalone timing harness). Settings come from `config.toml` `[benchmark]`: `warmup_runs=10`, `iterations=200`, `num_trials=7`, `inner_iterations_min=1`, `inner_iterations_max=2048`, `target_sample_us=1000`, `timeout_seconds=900`, `use_isolated_runner=true`, `required_matched_ratio=1.0`.
+- Only deviation from the verbatim template: the argparse defaults for `--inner-iterations-max` and `--timeout-seconds` are set to this task's `config.toml` caps (`2048`, `900`) instead of the template's generic `4096`/`600`, so a default invocation is config-compliant. Timing/scoring logic is unchanged. All documented commands also pass these values explicitly.
 - Primary GPU time from CUDA events; interleaved A/B sampling per trial; inner-loop amplification until each event sample is ≳ `target_sample_us` or the inner cap is hit.
 - Correctness (`bench/correctness.py`) runs before any timing and poisons output buffers.
 
