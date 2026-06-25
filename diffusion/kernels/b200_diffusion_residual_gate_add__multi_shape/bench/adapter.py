@@ -71,6 +71,7 @@ def _validate_against_spec(name: str, tensor: torch.Tensor, spec: dict) -> None:
 
 def make_case(workload: dict, *, device: torch.device, seed: int) -> dict:
     del seed  # benchmark.py already seeded the global generators
+    assert_pinned_gpu(device)
     fn = workload["function"]
     shapes = workload["shapes"]
 
@@ -181,6 +182,27 @@ def call_baseline(workload: dict, inputs, outputs) -> None:
 
 def call_candidate(workload: dict, inputs, outputs) -> None:
     _dispatch(_CANDIDATE_FNS, workload, inputs, outputs)
+
+
+def assert_pinned_gpu(device: torch.device) -> None:
+    """Fail-closed GPU-pinning guard for benchmark/profile runs. Enabled when
+    KDA_REQUIRE_PINNED_GPU is set (remote benchmark mode): REMOTE_GPU_ID must be
+    set and must be the sole visible CUDA device, so every measured number is
+    attributable to one pinned GPU. No-op for local/dev correctness runs."""
+    import os
+    if not os.environ.get("KDA_REQUIRE_PINNED_GPU"):
+        return
+    pinned = (os.environ.get("REMOTE_GPU_ID") or "").strip()
+    if not pinned:
+        raise RuntimeError("REMOTE_GPU_ID must be set when KDA_REQUIRE_PINNED_GPU=1")
+    visible = (os.environ.get("CUDA_VISIBLE_DEVICES") or "").strip()
+    if visible != pinned:
+        raise RuntimeError(
+            f"pinned-GPU contract violated: CUDA_VISIBLE_DEVICES={visible!r} != REMOTE_GPU_ID={pinned!r}"
+        )
+    idx = device.index if getattr(device, "index", None) is not None else 0
+    if idx != 0:
+        raise RuntimeError(f"pinned GPU must be the sole visible device (cuda:0); got {device}")
 
 
 def extra_provenance() -> dict:
