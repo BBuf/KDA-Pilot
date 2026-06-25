@@ -1,0 +1,60 @@
+{
+  "model": "meta-llama/Llama-3.3-70B-Instruct",
+  "model_slug": "llama33_70b",
+  "cookbook_cmd": "sglang serve --model-path meta-llama/Llama-3.3-70B-Instruct --tp 1 --tool-call-parser llama3",
+  "tp": "1",
+  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "aten::_local_scalar_dense",
+    "aten::add",
+    "aten::alias",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "nvjet_sm100_tst_128x256_64x6_2x1_2cta_v_bz_TNT",
+    "nvjet_sm100_tst_128x256_64x6_2x2_2cta_h_bz_TNT",
+    "nvjet_sm100_tst_128x32_64x10_4x1_v_bz_splitK_TNT",
+    "nvjet_sm100_tst_128x48_64x9_4x1_v_bz_splitK_TNT",
+    "nvjet_sm100_tst_128x8_64x12_2x1_v_bz_splitK_TNT",
+    "nvjet_sm100_tst_192x256_64x5_2x1_2cta_v_bz_TNT",
+    "nvjet_sm100_tst_256x24_64x6_2x1_v_bz_splitK_TNT",
+    "nvjet_sm100_tst_256x256_64x4_2x1_2cta_v_bz_TNT",
+    "nvjet_sm100_tst_256x256_64x4_2x2_2cta_h_bz_TNT",
+    "nvjet_sm100_tst_256x8_64x6_2x1_v_bz_splitK_TNT",
+    "nvjet_sm100_tst_320x192_64x4_2x1_2cta_v_bz_TNT",
+    "nvjet_sm100_tst_320x192_64x4_2x2_2cta_h_bz_TNT",
+    "nvjet_sm100_tst_448x64_64x3_2x1_2cta_v_bz_TNT",
+    "nvjet_sm100_tst_512x24_64x3_4x1_v_bz_TNT",
+    "nvjet_sm100_tst_64x8_64x16_2x1_v_bz_splitK_TNT",
+    "nvjet_sm100_tst_64x8_64x16_4x1_v_bz_TNT"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 86.06,
+    "random_mid": 86.6,
+    "random_high": 86.53,
+    "sharegpt_low": 85.57,
+    "sharegpt_mid": 84.35,
+    "sharegpt_high": 85.58
+  },
+  "max_pct_of_gpu": 86.6,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[1, 128256], [], [], []]",
+    "[[1, 128256]]",
+    "[[1, 8192], [8192, 128256]]",
+    "[[103], [], [], []]",
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[1]]",
+    "[[20, 8192], [20, 8, 128], [20, 8, 128], [20, 8192], [], [], [], [], [], [], [],",
+    "[[30], [30], []]",
+    "[[32, 128256], [], [], []]",
+    "[[32], [32], []]",
+    "[[32]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
