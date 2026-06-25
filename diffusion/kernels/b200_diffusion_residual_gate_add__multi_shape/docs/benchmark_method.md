@@ -3,10 +3,12 @@
 ## Harness
 `bench/benchmark.py` starts from the repository standalone timing harness
 (`../../docs/standalone_diffusion_benchmark_template.py`). The timing/scoring
-logic is unchanged; the only addition is an additive provenance merge in
+logic is unchanged; the only deltas are (1) an additive provenance merge in
 `_provenance` (it calls the optional `adapter.extra_provenance()` hook), which
-does not affect measurement. It provides CUDA-event timing, interleaved A/B
-sampling per trial, inner-loop
+does not affect measurement, and (2) `torch.cuda.set_device(args.device)` is
+called before the adapter is imported in `_run_one_workload`, so a non-default
+`--device` builds/reports the candidate for the intended GPU. It provides
+CUDA-event timing, interleaved A/B sampling per trial, inner-loop
 amplification toward `target_sample_us`, fresh random inputs per trial,
 preallocated + poisoned outputs, the equal-weight geometric-mean headline
 (`baseline_median_us / candidate_median_us`), and per-row

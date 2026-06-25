@@ -113,3 +113,19 @@ before and after (`7, NVIDIA B200, 0%, 0 MiB` both), with the fail-closed pin en
   (`/tmp/ncu_full_big.ncu-rep`, `/tmp/ncu_bcast_big.ncu-rep`,
   `/tmp/ncu_full_small.ncu-rep`); not staged for the PR.
 - Per-row roofline table and bound interpretation: `docs/results.md`.
+
+## Round 5 — review-fix re-validation (compute-neutral)
+Two Codex code-review findings fixed: P2 (`bench/benchmark.py` now calls
+`torch.cuda.set_device` before importing/building the adapter) and P3
+(`solution/kernel.cu` `broadcast_add_4d` now requires `out.ndim()==4`). Both are
+host-side only — the device kernels and the timed path for valid inputs are
+byte-identical — so the geomean 2.193x measured in Round 4 stands.
+- New candidate `solution/kernel.cu` sha256: `27f67c5ff283d87b8d56b3c55f8caef749e73c845a8667e063f0b8d479a6c749`
+  (Round-4 benchmark provenance recorded the pre-fix `a450f863…`; the only kernel
+  delta is the added host-side rank reject, which no valid/production row triggers).
+- Correctness re-confirmed on the clean rebuild: `bench/correctness.py --impl both
+  --rows all` = **67/67 PASS** on B200 (GPU 1; report `/tmp/rga_correctness_r5.json`).
+- Benchmark re-run deferred: at fix time all 8 B200 GPUs were busy (util 49-96%) or
+  had standing memory occupancy, so per the idle-GPU rule no timed numbers were
+  collected on a non-idle card. The Round-4 geomean stands (compute-neutral edits);
+  a refresh on an idle GPU is optional and would reproduce the same numbers.

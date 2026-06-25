@@ -348,7 +348,8 @@ void broadcast_add_4d(TensorView a, TensorView b, TensorView out) {
   check_cuda(a, "a");
   check_cuda(b, "b");
   check_cuda(out, "out");
-  CAND_CHECK(b.ndim() == 4 && a.ndim() == 4, "broadcast_add_4d expects 4D a and b");
+  CAND_CHECK(b.ndim() == 4 && a.ndim() == 4 && out.ndim() == 4,
+             "broadcast_add_4d expects 4D a, b, and out");
   CAND_CHECK(b.size(0) == 1, "broadcast_add_4d supports batch size 1 only (a is reused per row)");
   CAND_CHECK(a.size(0) == b.size(0) && a.size(1) == 1, "a must be [1,1,P,D] broadcasting over dim1");
   CAND_CHECK(a.size(2) == b.size(2) && a.size(3) == b.size(3), "a/b inner dims (P,D) must match");

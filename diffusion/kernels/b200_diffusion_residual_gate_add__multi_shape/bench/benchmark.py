@@ -285,10 +285,14 @@ def _stats_dict(stats: Stats) -> dict[str, Any]:
 
 
 def _run_one_workload(workload: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
-    adapter = _load_adapter()
+    # Select the target CUDA device BEFORE importing the adapter: importing it
+    # builds the candidate module, whose gencode/provenance query the current
+    # device, so the device must be set first (else a non-default --device would
+    # build/report for cuda:0).
     device = torch.device(args.device)
     torch.cuda.set_device(device)
     torch.set_grad_enabled(False)
+    adapter = _load_adapter()
 
     baseline_samples: list[float] = []
     candidate_samples: list[float] = []
