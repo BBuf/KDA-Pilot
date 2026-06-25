@@ -1,0 +1,864 @@
+{
+  "schema_version": 1,
+  "task": "b200_diffusion_attention_concat_copy__multi_model",
+  "head_dim": 128,
+  "dtype_default": "bfloat16",
+  "abi": {
+    "op_types": {
+      "copy_contiguous": 0,
+      "concat_sequence": 1,
+      "slice_heads_then_concat": 2
+    },
+    "orders": {
+      "AB": 0,
+      "BA": 1
+    },
+    "note": "op_type/order ints match baseline/binding.py OP_*/ORDER_* and solution/kernel.cu."
+  },
+  "workloads": [
+    {
+      "id": "flux_concat_512_4096_h24",
+      "production": true,
+      "op_type": "concat_sequence",
+      "order": "AB",
+      "dtype": "bfloat16",
+      "seed": 1001,
+      "tensors": {
+        "a": {
+          "shape": [
+            1,
+            512,
+            24,
+            128
+          ]
+        },
+        "b": {
+          "shape": [
+            1,
+            4096,
+            24,
+            128
+          ]
+        }
+      },
+      "output_shape": [
+        1,
+        4608,
+        24,
+        128
+      ],
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "flux2-klein-base",
+        "note": "FLUX.2 cat([prefix512, shard4096]) -> [1,4608,24,128]"
+      }
+    },
+    {
+      "id": "joyai_concat_8048_1004_h32",
+      "production": true,
+      "op_type": "concat_sequence",
+      "order": "AB",
+      "dtype": "bfloat16",
+      "seed": 1002,
+      "tensors": {
+        "a": {
+          "shape": [
+            1,
+            8048,
+            32,
+            128
+          ]
+        },
+        "b": {
+          "shape": [
+            1,
+            1004,
+            32,
+            128
+          ]
+        }
+      },
+      "output_shape": [
+        1,
+        9052,
+        32,
+        128
+      ],
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "joyai-edit",
+        "note": "JoyAI cat([shard8048, suffix1004]) -> [1,9052,32,128]"
+      }
+    },
+    {
+      "id": "flux_copy_4608_h24",
+      "production": true,
+      "op_type": "copy_contiguous",
+      "order": "AB",
+      "dtype": "bfloat16",
+      "seed": 1101,
+      "tensors": {
+        "a": {
+          "shape": [
+            1,
+            4608,
+            24,
+            128
+          ],
+          "source_kind": "head_sliced_view",
+          "full_heads": 48,
+          "head_start": 0
+        }
+      },
+      "output_shape": [
+        1,
+        4608,
+        24,
+        128
+      ],
+      "h_start": 0,
+      "h_local": 24,
+      "inject_nonfinite": false,
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "flux2-klein-base",
+        "note": ""
+      }
+    },
+    {
+      "id": "joyai_copy_8048_h32",
+      "production": true,
+      "op_type": "copy_contiguous",
+      "order": "AB",
+      "dtype": "bfloat16",
+      "seed": 1102,
+      "tensors": {
+        "a": {
+          "shape": [
+            1,
+            8048,
+            32,
+            128
+          ],
+          "source_kind": "head_sliced_view",
+          "full_heads": 64,
+          "head_start": 0
+        }
+      },
+      "output_shape": [
+        1,
+        8048,
+        32,
+        128
+      ],
+      "h_start": 0,
+      "h_local": 32,
+      "inject_nonfinite": false,
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "joyai-edit",
+        "note": ""
+      }
+    },
+    {
+      "id": "joyai_copy_1004_h32",
+      "production": true,
+      "op_type": "copy_contiguous",
+      "order": "AB",
+      "dtype": "bfloat16",
+      "seed": 1103,
+      "tensors": {
+        "a": {
+          "shape": [
+            1,
+            1004,
+            32,
+            128
+          ],
+          "source_kind": "head_sliced_view",
+          "full_heads": 64,
+          "head_start": 0
+        }
+      },
+      "output_shape": [
+        1,
+        1004,
+        32,
+        128
+      ],
+      "h_start": 0,
+      "h_local": 32,
+      "inject_nonfinite": false,
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "joyai-edit",
+        "note": ""
+      }
+    },
+    {
+      "id": "flux_slice_concat_512_4096_h24_sp2_r0_AB",
+      "production": true,
+      "op_type": "slice_heads_then_concat",
+      "order": "AB",
+      "dtype": "bfloat16",
+      "seed": 1201,
+      "tensors": {
+        "prefix": {
+          "shape": [
+            1,
+            512,
+            48,
+            128
+          ],
+          "full_heads": 48
+        },
+        "shard": {
+          "shape": [
+            1,
+            4096,
+            24,
+            128
+          ]
+        }
+      },
+      "h_start": 0,
+      "h_local": 24,
+      "scratch_shape": [
+        1,
+        512,
+        24,
+        128
+      ],
+      "output_shape": [
+        1,
+        4608,
+        24,
+        128
+      ],
+      "inject_nonfinite": false,
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "flux2-klein-base",
+        "sp_size": 2,
+        "sp_rank": 0,
+        "note": "FLUX.2 prefix-first cat([slice(prefix512,h0:24 of 48), shard4096])"
+      }
+    },
+    {
+      "id": "joyai_slice_concat_1004_8048_h32_sp2_r0_BA",
+      "production": true,
+      "op_type": "slice_heads_then_concat",
+      "order": "BA",
+      "dtype": "bfloat16",
+      "seed": 1202,
+      "tensors": {
+        "prefix": {
+          "shape": [
+            1,
+            1004,
+            64,
+            128
+          ],
+          "full_heads": 64
+        },
+        "shard": {
+          "shape": [
+            1,
+            8048,
+            32,
+            128
+          ]
+        }
+      },
+      "h_start": 0,
+      "h_local": 32,
+      "scratch_shape": [
+        1,
+        1004,
+        32,
+        128
+      ],
+      "output_shape": [
+        1,
+        9052,
+        32,
+        128
+      ],
+      "inject_nonfinite": false,
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "joyai-edit",
+        "sp_size": 2,
+        "sp_rank": 0,
+        "note": "JoyAI suffix model: cat([shard8048, slice(suffix1004,h0:32 of 64)])"
+      }
+    },
+    {
+      "id": "flux_slice_concat_512_4096_h24_sp2_r0_BA",
+      "production": false,
+      "op_type": "slice_heads_then_concat",
+      "order": "BA",
+      "dtype": "bfloat16",
+      "seed": 2001,
+      "tensors": {
+        "prefix": {
+          "shape": [
+            1,
+            512,
+            48,
+            128
+          ],
+          "full_heads": 48
+        },
+        "shard": {
+          "shape": [
+            1,
+            4096,
+            24,
+            128
+          ]
+        }
+      },
+      "h_start": 0,
+      "h_local": 24,
+      "scratch_shape": [
+        1,
+        512,
+        24,
+        128
+      ],
+      "output_shape": [
+        1,
+        4608,
+        24,
+        128
+      ],
+      "inject_nonfinite": false,
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "flux2-klein-base",
+        "sp_size": 2,
+        "sp_rank": 0,
+        "note": "opposite order"
+      }
+    },
+    {
+      "id": "joyai_slice_concat_1004_8048_h32_sp2_r0_AB",
+      "production": false,
+      "op_type": "slice_heads_then_concat",
+      "order": "AB",
+      "dtype": "bfloat16",
+      "seed": 2002,
+      "tensors": {
+        "prefix": {
+          "shape": [
+            1,
+            1004,
+            64,
+            128
+          ],
+          "full_heads": 64
+        },
+        "shard": {
+          "shape": [
+            1,
+            8048,
+            32,
+            128
+          ]
+        }
+      },
+      "h_start": 0,
+      "h_local": 32,
+      "scratch_shape": [
+        1,
+        1004,
+        32,
+        128
+      ],
+      "output_shape": [
+        1,
+        9052,
+        32,
+        128
+      ],
+      "inject_nonfinite": false,
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "joyai-edit",
+        "sp_size": 2,
+        "sp_rank": 0,
+        "note": "opposite order"
+      }
+    },
+    {
+      "id": "flux_slice_concat_512_4096_h24_sp2_r1_AB",
+      "production": false,
+      "op_type": "slice_heads_then_concat",
+      "order": "AB",
+      "dtype": "bfloat16",
+      "seed": 2003,
+      "tensors": {
+        "prefix": {
+          "shape": [
+            1,
+            512,
+            48,
+            128
+          ],
+          "full_heads": 48
+        },
+        "shard": {
+          "shape": [
+            1,
+            4096,
+            24,
+            128
+          ]
+        }
+      },
+      "h_start": 24,
+      "h_local": 24,
+      "scratch_shape": [
+        1,
+        512,
+        24,
+        128
+      ],
+      "output_shape": [
+        1,
+        4608,
+        24,
+        128
+      ],
+      "inject_nonfinite": false,
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "flux2-klein-base",
+        "sp_size": 2,
+        "sp_rank": 1,
+        "note": "sp_rank=1, h_start=24"
+      }
+    },
+    {
+      "id": "joyai_slice_concat_1004_8048_h32_sp2_r1_BA",
+      "production": false,
+      "op_type": "slice_heads_then_concat",
+      "order": "BA",
+      "dtype": "bfloat16",
+      "seed": 2004,
+      "tensors": {
+        "prefix": {
+          "shape": [
+            1,
+            1004,
+            64,
+            128
+          ],
+          "full_heads": 64
+        },
+        "shard": {
+          "shape": [
+            1,
+            8048,
+            32,
+            128
+          ]
+        }
+      },
+      "h_start": 32,
+      "h_local": 32,
+      "scratch_shape": [
+        1,
+        1004,
+        32,
+        128
+      ],
+      "output_shape": [
+        1,
+        9052,
+        32,
+        128
+      ],
+      "inject_nonfinite": false,
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "joyai-edit",
+        "sp_size": 2,
+        "sp_rank": 1,
+        "note": "sp_rank=1, h_start=32"
+      }
+    },
+    {
+      "id": "flux_concat_512_4096_h24_BA",
+      "production": false,
+      "op_type": "concat_sequence",
+      "order": "BA",
+      "dtype": "bfloat16",
+      "seed": 2101,
+      "tensors": {
+        "a": {
+          "shape": [
+            1,
+            512,
+            24,
+            128
+          ]
+        },
+        "b": {
+          "shape": [
+            1,
+            4096,
+            24,
+            128
+          ]
+        }
+      },
+      "output_shape": [
+        1,
+        4608,
+        24,
+        128
+      ],
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "flux2-klein-base",
+        "note": "opposite order"
+      }
+    },
+    {
+      "id": "joyai_concat_8048_1004_h32_BA",
+      "production": false,
+      "op_type": "concat_sequence",
+      "order": "BA",
+      "dtype": "bfloat16",
+      "seed": 2102,
+      "tensors": {
+        "a": {
+          "shape": [
+            1,
+            8048,
+            32,
+            128
+          ]
+        },
+        "b": {
+          "shape": [
+            1,
+            1004,
+            32,
+            128
+          ]
+        }
+      },
+      "output_shape": [
+        1,
+        9052,
+        32,
+        128
+      ],
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "joyai-edit",
+        "note": "opposite order"
+      }
+    },
+    {
+      "id": "flux_copy_4608_h24_start24",
+      "production": false,
+      "op_type": "copy_contiguous",
+      "order": "AB",
+      "dtype": "bfloat16",
+      "seed": 2201,
+      "tensors": {
+        "a": {
+          "shape": [
+            1,
+            4608,
+            24,
+            128
+          ],
+          "source_kind": "head_sliced_view",
+          "full_heads": 48,
+          "head_start": 24
+        }
+      },
+      "output_shape": [
+        1,
+        4608,
+        24,
+        128
+      ],
+      "h_start": 24,
+      "h_local": 24,
+      "inject_nonfinite": false,
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "flux2-klein-base",
+        "note": "head_start=24"
+      }
+    },
+    {
+      "id": "nonfinite_copy_small",
+      "production": false,
+      "op_type": "copy_contiguous",
+      "order": "AB",
+      "dtype": "bfloat16",
+      "seed": 2301,
+      "tensors": {
+        "a": {
+          "shape": [
+            1,
+            8,
+            4,
+            128
+          ],
+          "source_kind": "head_sliced_view",
+          "full_heads": 8,
+          "head_start": 2
+        }
+      },
+      "output_shape": [
+        1,
+        8,
+        4,
+        128
+      ],
+      "h_start": 2,
+      "h_local": 4,
+      "inject_nonfinite": true,
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "synthetic",
+        "note": "NaN/Inf preservation"
+      }
+    },
+    {
+      "id": "nonfinite_slice_concat_small",
+      "production": false,
+      "op_type": "slice_heads_then_concat",
+      "order": "AB",
+      "dtype": "bfloat16",
+      "seed": 2302,
+      "tensors": {
+        "prefix": {
+          "shape": [
+            1,
+            4,
+            4,
+            128
+          ],
+          "full_heads": 4
+        },
+        "shard": {
+          "shape": [
+            1,
+            8,
+            2,
+            128
+          ]
+        }
+      },
+      "h_start": 2,
+      "h_local": 2,
+      "scratch_shape": [
+        1,
+        4,
+        2,
+        128
+      ],
+      "output_shape": [
+        1,
+        12,
+        2,
+        128
+      ],
+      "inject_nonfinite": true,
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "synthetic",
+        "sp_size": 2,
+        "sp_rank": 1,
+        "note": "NaN/Inf preservation"
+      }
+    },
+    {
+      "id": "degenerate_prefix1_slice_concat",
+      "production": false,
+      "op_type": "slice_heads_then_concat",
+      "order": "BA",
+      "dtype": "bfloat16",
+      "seed": 2401,
+      "tensors": {
+        "prefix": {
+          "shape": [
+            1,
+            1,
+            4,
+            128
+          ],
+          "full_heads": 4
+        },
+        "shard": {
+          "shape": [
+            1,
+            3,
+            1,
+            128
+          ]
+        }
+      },
+      "h_start": 2,
+      "h_local": 1,
+      "scratch_shape": [
+        1,
+        1,
+        1,
+        128
+      ],
+      "output_shape": [
+        1,
+        4,
+        1,
+        128
+      ],
+      "inject_nonfinite": false,
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "synthetic",
+        "sp_size": 4,
+        "sp_rank": 2,
+        "note": "prefix length 1, single head, sp_size 4"
+      }
+    },
+    {
+      "id": "degenerate_tiny_concat",
+      "production": false,
+      "op_type": "concat_sequence",
+      "order": "AB",
+      "dtype": "bfloat16",
+      "seed": 2402,
+      "tensors": {
+        "a": {
+          "shape": [
+            1,
+            1,
+            1,
+            128
+          ]
+        },
+        "b": {
+          "shape": [
+            1,
+            2,
+            1,
+            128
+          ]
+        }
+      },
+      "output_shape": [
+        1,
+        3,
+        1,
+        128
+      ],
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "synthetic",
+        "note": "tiny"
+      }
+    },
+    {
+      "id": "fp16_copy_small",
+      "production": false,
+      "op_type": "copy_contiguous",
+      "order": "AB",
+      "dtype": "float16",
+      "seed": 2501,
+      "tensors": {
+        "a": {
+          "shape": [
+            1,
+            64,
+            8,
+            128
+          ],
+          "source_kind": "head_sliced_view",
+          "full_heads": 16,
+          "head_start": 8
+        }
+      },
+      "output_shape": [
+        1,
+        64,
+        8,
+        128
+      ],
+      "h_start": 8,
+      "h_local": 8,
+      "inject_nonfinite": false,
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "synthetic",
+        "note": ""
+      }
+    },
+    {
+      "id": "fp32_concat_small",
+      "production": false,
+      "op_type": "concat_sequence",
+      "order": "AB",
+      "dtype": "float32",
+      "seed": 2502,
+      "tensors": {
+        "a": {
+          "shape": [
+            1,
+            17,
+            8,
+            128
+          ]
+        },
+        "b": {
+          "shape": [
+            1,
+            31,
+            8,
+            128
+          ]
+        }
+      },
+      "output_shape": [
+        1,
+        48,
+        8,
+        128
+      ],
+      "atol": 0,
+      "rtol": 0,
+      "source": {
+        "preset": "synthetic",
+        "note": ""
+      }
+    }
+  ]
+}
