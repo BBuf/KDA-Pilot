@@ -16,6 +16,19 @@
 - Candidate (Round 1): initial correct-by-construction scalar transliteration in `solution/kernel.cu` (one thread per output element).
 - Compile flags: `-std=c++17 -O3` + native gencode (sm_100), no `--use_fast_math` (see `docs/benchmark_method.md`).
 
-## Notes
+## Notes (Round 1)
 - Correctness was verified bitwise (`atol=0, rtol=0`) vs both the copied Triton baseline and the torch oracle, plus poison self-test and rejection tests.
-- Initial candidate is slower than baseline (production geomean 0.63×); optimization is the next round. Raw `bench/results.jsonl` is kept on the remote workspace as evidence (excluded from the final PR per the diffusion PR-scope rule).
+- Initial candidate (scalar transliteration) was slower than baseline (production geomean 0.63×); optimization is Round 2. Raw `bench/results.jsonl` is kept on the remote workspace as evidence (excluded from the final PR per the diffusion PR-scope rule).
+
+## Round 2 (2026-06-25) — optimized candidate
+
+Same host/container; GPU 0 selected; idle proof captured per run.
+- GPU 0 compute processes before AND after the canonical benchmark run: **none** (verified via `nvidia-smi -i 0 --query-compute-apps`); 0% utilization throughout. (Cluster GPUs 3–7 ran unrelated jobs; GPU 0 used exclusively.)
+
+Commands:
+- Build + correctness: `CUDA_VISIBLE_DEVICES=0 python bench/correctness.py` → `CORRECTNESS PASS: 13 value cases + non-contiguous positive + poison self-test + rejection tests`.
+- Benchmark (two clean runs): `CUDA_VISIBLE_DEVICES=0 python bench/benchmark.py --workloads bench/workloads.json --out bench/results.jsonl` → production geomean 2.057× and 2.090× (per-row 1.55×–2.44×).
+- NCU (task11): `CUDA_VISIBLE_DEVICES=0 ncu -k regex:cat_pad_flat -c 1 -s 5 --set basic python bench/profile_one.py` → `cat_pad_flat_kernel<uint16,8>`: Compute(SM) 81.2%, DRAM 17.9%, Memory 27.7%, occupancy 54.2% (compute/instruction-bound; memory headroom remains).
+
+Candidate source: `solution/kernel.cu` `cat_pad_flat_kernel` (flat-chunk 16-byte vectorized stores + stride-aware fallback). Result detail in `docs/results.md`.
+- Remote-only artifacts (excluded from the PR): `bench/results.jsonl`, `solution/.build/`, `bench/profile_one.py` (profiling harness), and the NCU run output.

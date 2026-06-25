@@ -1,48 +1,44 @@
 # Results
 
-> **Status: INTERIM (Round 1).** Correctness is verified bitwise on B200 and the
-> immutable baseline numbers are established, but the current candidate is the
-> initial *correct-by-construction scalar* kernel and is **slower than the
-> baseline** (production geometric-mean speedup **0.63×**). This is neither a
-> promotable win nor an evidence-backed no-go yet — the optimized kernel (task9)
-> is the next round.
+> **Status: PROMOTABLE WIN.** The optimized CUDA candidate is bitwise-exact on B200
+> and beats the copied SGLang Triton baseline on every production shape:
+> **production-row geometric-mean speedup ≈ 2.07×** (two clean runs: 2.06× and 2.09×;
+> per-row 1.55×–2.44×). NCU shows the win is real and the kernel is compute/instruction-
+> bound (not bandwidth-bound), so memory headroom remains for a future round.
 
-## Setup
-- GPU: NVIDIA B200 (`ion-b200`, GPU 0, idle before/after); see `docs/run_log.md`.
+## Setup / provenance
+- GPU: NVIDIA B200, host `ion-b200` (`innomatrix-us-adc-smb200-0003`), **GPU 0**, pinned with `CUDA_VISIBLE_DEVICES=0`.
+  - Idle proof: no compute processes on GPU 0 before or after the canonical run; 0% utilization throughout (see `docs/run_log.md`).
 - Baseline: copied SGLang Triton `_fused_cat_pad_5d_kernel` @ `67b2a9e` via destination-passing `baseline/binding.py`.
-- Candidate (this round): scalar one-thread-per-output transliteration (`solution/kernel.cu`).
-- Tolerance: bitwise exact (`atol=0, rtol=0`); all 10 workloads passed the A/B correctness gate. Timing: CUDA events, inner-loop amplification, interleaved A/B (template defaults).
+- Candidate: flat-chunk 16-byte-vectorized-store CUDA kernel (`solution/kernel.cu`, `cat_pad_flat_kernel`), built via tvm-ffi (`-std=c++17 -O3`, native `sm_100`, no fast math).
+- Tolerance: bitwise exact (`atol=0, rtol=0`); all 11 workloads pass the A/B correctness gate; full `bench/correctness.py` PASS (13 value cases + non-contiguous positive + poison + rejection). Timing: CUDA events, inner-loop amplification, interleaved A/B (template).
 
-## Per-shape results (baseline vs initial scalar candidate)
+## Per-shape results (baseline vs optimized candidate; canonical idle-GPU run)
 
-| Workload | Headline | baseline median (µs) | candidate median (µs) | speedup |
-|----------|:--------:|---------------------:|----------------------:|--------:|
-| `prod_c1024_t1_h30_w52__cache1`  | ✅ | 25.512  | 36.172   | 0.705 |
-| `prod_c1024_t1_h30_w52__cache2`  | ✅ | 25.881  | 37.122   | 0.697 |
-| `prod_c1024_t2_h60_w104__cache1` | ✅ | 109.064 | 173.104  | 0.630 |
-| `prod_c1024_t2_h60_w104__cache2` | ✅ | 108.886 | 181.216  | 0.601 |
-| `prod_c512_t4_h120_w208__cache1` | ✅ | 312.360 | 511.120  | 0.611 |
-| `prod_c512_t4_h120_w208__cache2` | ✅ | 313.416 | 524.672  | 0.597 |
-| `prod_c256_t4_h240_w416__cache1` | ✅ | 613.056 | 1002.496 | 0.611 |
-| `prod_c256_t4_h240_w416__cache2` | ✅ | 617.552 | 1032.992 | 0.598 |
-| `reg_cache_null` (non-headline)       | — | 25.437  | 35.029   | 0.726 |
-| `reg_no_pad_cat_only` (non-headline)  | — | 25.264  | 24.680   | 1.024 |
+| Workload | Headline | baseline µs | candidate µs | speedup | candidate GB/s |
+|----------|:--------:|------------:|-------------:|--------:|---------------:|
+| `prod_c1024_t1_h30_w52__cache1`  | ✅ | 30.15  | 14.41  | 2.09 | ~1180 |
+| `prod_c1024_t1_h30_w52__cache2`  | ✅ | 25.53  | 16.51  | 1.55 | ~1224 |
+| `prod_c1024_t2_h60_w104__cache1` | ✅ | 109.52 | 53.54  | 2.05 | ~1722 |
+| `prod_c1024_t2_h60_w104__cache2` | ✅ | 109.02 | 57.47  | 1.90 | ~1826 |
+| `prod_c512_t4_h120_w208__cache1` | ✅ | 313.18 | 136.81 | 2.29 | ~2085 |
+| `prod_c512_t4_h120_w208__cache2` | ✅ | 315.18 | 142.70 | 2.21 | ~2178 |
+| `prod_c256_t4_h240_w416__cache1` | ✅ | 616.05 | 252.02 | 2.44 | ~2247 |
+| `prod_c256_t4_h240_w416__cache2` | ✅ | 615.55 | 262.84 | 2.34 | ~2349 |
+| `reg_cache_null` (non-headline)            | — | 26.59 | 14.40 | 1.85 | — |
+| `reg_no_pad_cat_only` (non-headline)       | — | 25.56 | 10.30 | 2.48 | — |
+| `reg_noncontig_x_hw_transposed` (non-headline) | — | 36.66 | 4.13 | 8.89 | — |
 
-**Production headline:** equal-weight geometric-mean speedup **0.630×** (arith mean 0.631×, min 0.597×, max 0.705×).
+**Production headline:** equal-weight geometric-mean speedup **≈ 2.07×** (run A 2.057×, run B 2.090×; arith mean ≈ 2.09×, min 1.55×, max 2.44×).
 
-## Reading the result
-- The op is DRAM-bandwidth-bound pure data movement. The scalar candidate issues one
-  thread per output element with 64-bit flat-index arithmetic and per-element loads,
-  which underperforms Triton's `block_size=256` vectorized copy — hence 0.6–0.7× on the
-  padded production shapes.
-- The cat-only regression row (`reg_no_pad_cat_only`, a pure contiguous copy with no
-  spatial borders) is already ~1.0×, confirming the deficit is in the bordered/strided
-  interior-copy path, not raw copy throughput.
+## Roofline / NCU evidence (active bound)
+- Bytes moved per row = read(x + cache) + write(full output), bf16. Largest row (`c256…cache1`): ~566 MB → candidate ~2.25 TB/s; per-row candidate bandwidth ranges ~1.18–2.35 TB/s vs baseline ~0.66–1.00 TB/s.
+- B200 HBM peak ≈ 8 TB/s, so the candidate runs at ~15–29% of peak bandwidth.
+- **Nsight Compute** (`cat_pad_flat_kernel<uint16,8>`, largest shape, `ncu --set basic`): **Compute (SM) throughput 81.2%**, DRAM throughput 17.9%, Memory throughput 27.7%, achieved occupancy 54.2%.
+- **Named active bound: instruction/compute-bound**, not memory bandwidth. The per-output-element index arithmetic + predication (interior test, `iw` range check, per-lane row-wrap handling) saturates the SMs while DRAM is far from peak. This is why the kernel wins ~2× yet stays well under bandwidth roofline.
 
-## Next (Round 2)
-- task8 (analyze/KernelWiki): rank optimized designs.
-- task9: row-oriented CTA mapping over `(N,C,D_out,H_out)`, vectorized interior W-copy
-  (alignment-gated, scalar prologue/tail for the `W_l=1` shift), bounded zero-border path,
-  `cache_t=1/2` handling — re-run correctness after each edit, then re-benchmark.
-- task11 (analyze): NCU/roofline (achieved GB/s vs B200 sustainable bandwidth) to confirm
-  the bound and guide edits.
+## Conclusion
+Promotable win: correct (bitwise-exact across production + regression + non-contiguous, with poison/rejection coverage) and a reproducible ~2.07× production geometric-mean speedup over the frozen baseline on an idle B200, with full provenance. The flat-chunk 16-byte-store design fixed both the per-element 64-bit index math (vs the scalar transliteration) and the small-shape thread-utilization problem (vs an intermediate row-per-block attempt).
+
+## Headroom / future optimization (documented, not required by the success bar)
+NCU shows the kernel is instruction-bound with ~3–5× memory headroom. The highest-value next step is a branch-light fast path: detect chunks that are fully interior with no spatial border and no row wrap, and copy them with minimal per-lane predication (and a realignment-aware vectorized read, since the `W_l=1` shift makes the source-to-output mapping offset by one element). Cache-streaming hints (`L1::no_allocate`) and launch-bound/occupancy tuning are second-order per KernelWiki. These are candidate Round 3 work; the current candidate already satisfies the promotion bar.

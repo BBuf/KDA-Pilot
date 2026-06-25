@@ -34,6 +34,13 @@ def fused_causal_conv3d_cat_pad(
     assert width_left == width_right
     assert height_top == height_bottom
 
+    # The upstream kernel reads x/cache with hardcoded C-contiguous stride
+    # formulas, so it is only correct for contiguous inputs. Normalize here so the
+    # standalone A/B comparison is well-defined for the non-contiguous regression
+    # row; this is a no-op for the contiguous production workloads.
+    x = x.contiguous()
+    cache_x = cache_x.contiguous()
+
     bsz, channels, t_size, h_size, w_size = x.shape
     cache_t = cache_x.shape[2]
     expected_shape = (

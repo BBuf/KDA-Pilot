@@ -150,10 +150,35 @@ def run_rejection_tests(device):
     # cache N/C/H/W mismatch (wrong H)
     bad_cache = torch.randn((1, 4, 1, 4, 5), device=device, dtype=torch.bfloat16)
     expect_raise("cache_hw", lambda: _CAND(x, bad_cache, 1, 1, 1, 1, 2, 0, dummy))
-    # non-contiguous x (transpose H/W) must be rejected
-    x_nc = torch.randn((1, 4, 1, 5, 3), device=device, dtype=torch.bfloat16).transpose(3, 4)
-    out_ok = torch.empty(_out_shape((1, 4, 1, 3, 5), 1, (1, 1, 1, 1, 2, 0)), device=device, dtype=torch.bfloat16)
-    expect_raise("noncontig_x", lambda: _CAND(x_nc, cache1, 1, 1, 1, 1, 2, 0, out_ok))
+    return errs
+
+
+def run_noncontig_test(device):
+    """Positive test: non-contiguous x and cache (H/W-transposed views). The
+    stride-aware candidate fallback must match the torch oracle and the baseline
+    (which normalizes non-contiguous inputs via .contiguous())."""
+    pad = (1, 1, 1, 1, 2, 0)
+    g = torch.Generator(device="cpu").manual_seed(303)
+    x = torch.randn((1, 4, 1, 5, 3), generator=g, dtype=torch.float32).to(
+        device=device, dtype=torch.bfloat16).transpose(3, 4)
+    cache = torch.randn((1, 4, 1, 5, 3), generator=g, dtype=torch.float32).to(
+        device=device, dtype=torch.bfloat16).transpose(3, 4)
+    assert not x.is_contiguous() and not cache.is_contiguous()
+    out_shape = _out_shape((1, 4, 1, 3, 5), 1, pad)
+    out_b = torch.empty(out_shape, device=device, dtype=torch.bfloat16)
+    out_c = torch.empty(out_shape, device=device, dtype=torch.bfloat16)
+    _poison(out_b)
+    _poison(out_c)
+    _BASE(x, cache, list(pad), out_b)
+    _CAND(x, cache, pad[0], pad[1], pad[2], pad[3], pad[4], pad[5], out_c)
+    out_o = oracle(x, cache, pad)
+    errs = []
+    if not _exact_equal(out_c, out_o):
+        errs.append("noncontig: candidate != torch oracle (stride-aware fallback)")
+    if not _exact_equal(out_b, out_o):
+        errs.append("noncontig: baseline != torch oracle (after .contiguous())")
+    if not _exact_equal(out_c, out_b):
+        errs.append("noncontig: candidate != baseline")
     return errs
 
 
@@ -189,13 +214,14 @@ def main():
                          device, inject_naninf=True, seed=7)
     all_errs += run_poison_selftest(device)
     all_errs += run_rejection_tests(device)
+    all_errs += run_noncontig_test(device)
 
     if all_errs:
         print(f"CORRECTNESS FAIL ({len(all_errs)} error(s)):")
         for e in all_errs:
             print("  -", e)
         return 1
-    print(f"CORRECTNESS PASS: {len(cases) + 1} value cases + poison self-test + rejection tests")
+    print(f"CORRECTNESS PASS: {len(cases) + 1} value cases + non-contiguous positive + poison self-test + rejection tests")
     return 0
 
 
