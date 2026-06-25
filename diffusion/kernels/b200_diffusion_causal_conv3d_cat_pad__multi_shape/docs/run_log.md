@@ -32,3 +32,11 @@ Commands:
 
 Candidate source: `solution/kernel.cu` `cat_pad_flat_kernel` (flat-chunk 16-byte vectorized stores + stride-aware fallback). Result detail in `docs/results.md`.
 - Remote-only artifacts (excluded from the PR): `bench/results.jsonl`, `solution/.build/`, `bench/profile_one.py` (profiling harness), and the NCU run output.
+
+## Round 3 (2026-06-25) — AC-3 storage-offset coverage + cleanup
+
+- Added a nonzero-storage-offset positive case: `workloads.json` row `reg_noncontig_offset` (x and cache non-contiguous with `storage_offset_elems` 7 and 5) + `bench/correctness.py::run_offset_test` (candidate vs torch oracle vs normalized baseline, bitwise).
+- Removed the forbidden plan-marker comment from `solution/kernel.cu` (`rg "AC-|Milestone|Phase|task[0-9]" solution baseline bench` is clean).
+- Correctness: `CUDA_VISIBLE_DEVICES=7 python bench/correctness.py` → PASS (13 value + non-contiguous positive + **nonzero-storage-offset positive** + poison + rejection).
+- Re-benchmark (frozen workload file changed) on **GPU 7** (`REMOTE_GPU_ID=7`): no compute processes before or after, 0% util / 0 MiB before. `CUDA_VISIBLE_DEVICES=7 python bench/benchmark.py --workloads bench/workloads.json --out bench/results.jsonl` → production geomean **2.060×** (per-row 1.60×–2.45×); all 12 workloads pass the bitwise A/B gate.
+- Note: GPU 0 showed a transient foreign compute process during an earlier Round-3 benchmark attempt; the canonical numbers above are from the clean GPU 7 run. Candidate medians were identical across GPU 0 and GPU 7 (CUDA-event timing isolates the kernel).

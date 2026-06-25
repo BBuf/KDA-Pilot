@@ -182,6 +182,38 @@ def run_noncontig_test(device):
     return errs
 
 
+def run_offset_test(device):
+    """Positive test: non-contiguous x AND cache with NONZERO storage offset.
+    Exercises the candidate's data_ptr + byte_offset + stride handling end-to-end."""
+    pad = (1, 1, 1, 1, 2, 0)
+    g = torch.Generator(device="cpu").manual_seed(404)
+    shape = (1, 4, 1, 3, 5)
+    stride = (60, 15, 15, 1, 3)  # H/W-transposed layout: non-unit W stride
+    x_off, c_off = 7, 5
+    x_base = torch.randn(x_off + 60, generator=g, dtype=torch.float32).to(device=device, dtype=torch.bfloat16)
+    c_base = torch.randn(c_off + 60, generator=g, dtype=torch.float32).to(device=device, dtype=torch.bfloat16)
+    x = torch.as_strided(x_base, shape, stride, storage_offset=x_off)
+    cache = torch.as_strided(c_base, shape, stride, storage_offset=c_off)
+    assert x.storage_offset() == x_off and cache.storage_offset() == c_off
+    assert not x.is_contiguous() and not cache.is_contiguous()
+    out_shape = _out_shape(shape, 1, pad)
+    out_b = torch.empty(out_shape, device=device, dtype=torch.bfloat16)
+    out_c = torch.empty(out_shape, device=device, dtype=torch.bfloat16)
+    _poison(out_b)
+    _poison(out_c)
+    _BASE(x, cache, list(pad), out_b)
+    _CAND(x, cache, pad[0], pad[1], pad[2], pad[3], pad[4], pad[5], out_c)
+    out_o = oracle(x, cache, pad)
+    errs = []
+    if not _exact_equal(out_c, out_o):
+        errs.append("offset: candidate != torch oracle (stride+offset fallback)")
+    if not _exact_equal(out_b, out_o):
+        errs.append("offset: baseline != torch oracle (after .contiguous())")
+    if not _exact_equal(out_c, out_b):
+        errs.append("offset: candidate != baseline")
+    return errs
+
+
 def main():
     if not torch.cuda.is_available():
         print("FAIL: CUDA device required for correctness checks")
@@ -215,13 +247,14 @@ def main():
     all_errs += run_poison_selftest(device)
     all_errs += run_rejection_tests(device)
     all_errs += run_noncontig_test(device)
+    all_errs += run_offset_test(device)
 
     if all_errs:
         print(f"CORRECTNESS FAIL ({len(all_errs)} error(s)):")
         for e in all_errs:
             print("  -", e)
         return 1
-    print(f"CORRECTNESS PASS: {len(cases) + 1} value cases + non-contiguous positive + poison self-test + rejection tests")
+    print(f"CORRECTNESS PASS: {len(cases) + 1} value cases + non-contiguous positive + nonzero-storage-offset positive + poison self-test + rejection tests")
     return 0
 
 

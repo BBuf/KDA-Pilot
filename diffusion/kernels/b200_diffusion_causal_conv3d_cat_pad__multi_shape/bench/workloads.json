@@ -606,5 +606,61 @@
     "seed": 2003,
     "atol": 0.0,
     "rtol": 0.0
+  },
+  {
+    "id": "reg_noncontig_offset",
+    "production": false,
+    "preset": "cosmos3-nano-t2v",
+    "note": "regression: non-contiguous x AND cache with nonzero storage offset; exercises stride + byte_offset handling; positive vs torch oracle (baseline normalizes via .contiguous())",
+    "function": "fused_causal_conv3d_cat_pad",
+    "shapes": {
+      "x": {
+        "shape": [
+          1,
+          4,
+          1,
+          3,
+          5
+        ],
+        "dtype": "bfloat16",
+        "stride": [
+          60,
+          15,
+          15,
+          1,
+          3
+        ],
+        "storage_offset_elems": 7
+      },
+      "cache": {
+        "shape": [
+          1,
+          4,
+          1,
+          3,
+          5
+        ],
+        "dtype": "bfloat16",
+        "stride": [
+          60,
+          15,
+          15,
+          1,
+          3
+        ],
+        "storage_offset_elems": 5
+      }
+    },
+    "padding": [
+      1,
+      1,
+      1,
+      1,
+      2,
+      0
+    ],
+    "seed": 2004,
+    "atol": 0.0,
+    "rtol": 0.0
   }
 ]

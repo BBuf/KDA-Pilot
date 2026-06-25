@@ -1,6 +1,6 @@
 // Candidate CUDA implementation of the fused 5D causal-Conv3D cat/pad copy.
 //
-// Memory-bandwidth-bound pure copy (no arithmetic). Design (AC-5):
+// Memory-bandwidth-bound pure copy (no arithmetic). Optimized flat-chunk design:
 //   * Flat-chunk mapping: each thread owns VEC consecutive output elements
 //     (VEC = 16/sizeof(elem) => 8 bf16 / 4 fp32 = a 16-byte vector). The output
 //     tensor base is 16-byte aligned and chunks are 16-byte aligned off it, so
