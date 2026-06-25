@@ -1,0 +1,41 @@
+{
+  "model": "mistralai/Mistral-Medium-3.5-128B",
+  "model_slug": "mistral_medium35",
+  "cookbook_cmd": "sglang serve --model-path mistralai/Mistral-Medium-3.5-128B --tp 2 --reasoning-parser mistral --tool-call-parser mistral",
+  "tp": "2",
+  "python_interface": "<confirm via capture; profiler family=quant_fp8>",
+  "kernel_family": "quant_fp8",
+  "profiler_op_provenance": [
+    "aten::_local_scalar_dense",
+    "aten::add",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty",
+    "aten::mul"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "_static_quant_fp8"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 3.53,
+    "random_mid": 3.17,
+    "random_high": 3.2,
+    "sharegpt_low": 3.51,
+    "sharegpt_mid": 3.05,
+    "sharegpt_high": 2.33
+  },
+  "max_pct_of_gpu": 3.53,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[14269, 48, 128], [14269, 1, 1]]",
+    "[[14269, 6144], [6144, 12288], [14269, 1], [12288, 1], [], []]",
+    "[[14269], []]",
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[64], [64], []]",
+    "[[9778, 48, 128], [9778, 1, 1]]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

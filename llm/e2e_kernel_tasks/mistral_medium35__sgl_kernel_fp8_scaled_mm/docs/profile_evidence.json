@@ -1,0 +1,45 @@
+{
+  "model": "mistralai/Mistral-Medium-3.5-128B",
+  "model_slug": "mistral_medium35",
+  "cookbook_cmd": "sglang serve --model-path mistralai/Mistral-Medium-3.5-128B --tp 2 --reasoning-parser mistral --tool-call-parser mistral",
+  "tp": "2",
+  "python_interface": "sgl_kernel.fp8_scaled_mm",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "aten::_local_scalar_dense",
+    "aten::add",
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_",
+    "aten::detach_"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalIN4cute5tupleIJiiiiEEENS1_10colle"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 50.27,
+    "random_mid": 9.61,
+    "random_high": 56.06,
+    "sharegpt_low": 49.77,
+    "sharegpt_mid": 63.53,
+    "sharegpt_high": 40.95
+  },
+  "max_pct_of_gpu": 63.53,
+  "best_scenario": "sharegpt_mid",
+  "input_shapes": [
+    "[[100], [], []]",
+    "[[104], [104], []]",
+    "[[11, 12288], [12288, 28672], [11, 1], [28672, 1], [], []]",
+    "[[14269, 6144], []]",
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[1]]",
+    "[[2440, 12288], [12288, 28672], [2440, 1], [28672, 1], [], []]",
+    "[[30, 12288], [12288, 28672], [30, 1], [28672, 1], [], []]",
+    "[[30, 6144], []]",
+    "[[310656, 4, 128], []]",
+    "[[320], [320], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

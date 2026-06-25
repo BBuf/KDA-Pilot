@@ -1,0 +1,28 @@
+{
+  "model": "mistralai/Mistral-Medium-3.5-128B",
+  "model_slug": "mistral_medium35",
+  "cookbook_cmd": "sglang serve --model-path mistralai/Mistral-Medium-3.5-128B --tp 2 --reasoning-parser mistral --tool-call-parser mistral",
+  "tp": "2",
+  "python_interface": "<confirm via capture; profiler family=fused_add_rmsnorm>",
+  "kernel_family": "fused_add_rmsnorm",
+  "profiler_op_provenance": [
+    "aten::add",
+    "aten::view",
+    "sglang::outplace_all_reduce"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_a"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_mid": 6.47
+  },
+  "max_pct_of_gpu": 6.47,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[39, 12288], [12288, 7168], [39, 1], [7168, 1], [], []]",
+    "[[39, 14336], []]",
+    "[[39], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
