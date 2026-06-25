@@ -261,6 +261,25 @@ void attention_concat_copy_candidate(int64_t op_type, int64_t order, int64_t h_s
   const bool aligned = aligned16(a) && (b == nullptr || aligned16(b)) && aligned16(out) &&
                        ((HD * es) % 16 == 0);
 
+  // ---- ABI contract validation (fail loudly before any copy; both paths) ----
+  if (op_type == OP_CONCAT || op_type == OP_SLICE_CONCAT) {
+    CAND_CHECK(order == ORDER_AB || order == ORDER_BA, "order must be 0 (AB) or 1 (BA)");
+    CAND_CHECK(b != nullptr, "concat / slice_concat require source_b");
+  } else if (op_type != OP_COPY) {
+    cand_fail("unknown op_type");
+  }
+  if (op_type == OP_SLICE_CONCAT) {
+    CAND_CHECK(source_a.ndim() == 4, "slice_concat: source_a (prefix) must be 4D");
+    const int full_heads = (int)source_a.size(2);
+    CAND_CHECK(h_local > 0, "slice_concat: h_local must be > 0");
+    CAND_CHECK((int)h_local == H, "slice_concat: h_local must equal output head count");
+    CAND_CHECK(full_heads > (int)h_local,
+               "slice_concat: full-head prefix required (h_full > h_local); pre-sliced prefix rejected");
+    CAND_CHECK(h_start >= 0 && (int)(h_start + h_local) <= full_heads,
+               "slice_concat: head slice out of range");
+    CAND_CHECK(h_start % h_local == 0, "slice_concat: h_start must be a multiple of h_local (sp_rank * h_local)");
+  }
+
   const int dev = output.device().device_id;
   c10::cuda::CUDAGuard guard(static_cast<c10::DeviceIndex>(dev));
   cudaStream_t stream = at::cuda::getCurrentCUDAStream(dev);

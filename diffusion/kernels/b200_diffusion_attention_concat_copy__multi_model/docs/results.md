@@ -2,69 +2,57 @@
 
 ## Outcome
 
-**Evidence-backed WIN.** The candidate CUDA kernel beats the PyTorch/ATen baseline by an **equal-weight geometric-mean speedup of 1.322×** over the 7 production workloads on an idle NVIDIA B200, with **100% bit-exact correctness** (`required_matched_ratio = 1.0`; all 20 workloads, atol=rtol=0, NaN/Inf preserved).
+**Evidence-backed WIN** on the immutable AC-4 grid. Candidate CUDA kernels beat the PyTorch/ATen baseline by an **equal-weight geometric-mean speedup of 1.409×** over the 7 production workloads on an idle NVIDIA B200, with **100% bit-exact correctness** (`required_matched_ratio = 1.0`; all 22 workloads, atol=rtol=0, NaN/Inf preserved) and a passing negative-test matrix.
 
-The win is driven by the two op types where ATen leaves headroom — the strided head-sliced `copy_contiguous` and the fused `slice_heads_then_concat` — while plain `concat_sequence` lands at parity with ATen's already-near-roofline `CatArrayBatchedCopy`, exactly as predicted in `docs/research.md`.
+Measured on the **corrected slice grid** (AC-4 head contract: model `h_full = 24` FLUX.2 / `32` JoyAI, sliced to `h_local = h_full/sp_size = 12 / 16` at `sp_size=2`), replacing the Round 0 48/64-head synthetic grid (now retained only as regression).
 
 ## Promotion Gate
-- Correctness: **PASS** — 20/20 rows bit-exact vs an independent PyTorch oracle (candidate and baseline), poison + negative-control + NaN/Inf preservation all pass (`bench/correctness.py --impl both`).
-- A/A harness validity: **PASS** — baseline-vs-baseline geomean = 1.0002 (no slot bias).
-- Performance: **PASS** — production geomean 1.322× > 1.0.
-- GPU discipline: **PASS** — single idle B200 (id 0), idle before and after, `REMOTE_GPU_ID=0` held constant across correctness/A-A/benchmark.
+- Correctness: **PASS** — 44/44 (baseline + candidate × 22) bit-exact vs an independent PyTorch oracle; poison + negative-control OK.
+- Negative-test matrix: **PASS** — invalid order, pre-sliced prefix, `h_start % h_local != 0`, out-of-range `h_start`, and contiguous copy source are all rejected loudly (validator + candidate kernel).
+- A/A harness validity: **PASS** — baseline-vs-baseline geomean 1.0023.
+- Performance: **PASS** — production geomean 1.409× > 1.0.
+- GPU discipline: **PASS** — single idle B200 (id 0), idle before (`0 %, 4 MiB`) and after (`0 %, 4 MiB`), `REMOTE_GPU_ID=0` constant.
 
 ## Per-Row Results (production, headline geomean)
 
-| Workload | op | speedup | baseline (µs) | candidate (µs) |
-|----------|----|---------|---------------|----------------|
-| flux_concat_512_4096_h24 | concat | 1.000 | 10.283 | 10.286 |
-| joyai_concat_8048_1004_h32 | concat | 0.863 | 24.866 | 28.805 |
-| flux_copy_4608_h24 | copy | 1.828 | 22.714 | 12.429 |
-| joyai_copy_8048_h32 | copy | 2.630 | 74.248 | 28.235 |
-| joyai_copy_1004_h32 | copy | 1.376 | 8.481 | 6.166 |
-| flux_slice_concat_512_4096_h24_sp2_r0_AB | slice+concat | 1.088 | 15.777 | 14.500 |
-| joyai_slice_concat_1004_8048_h32_sp2_r0_BA | slice+concat | 1.139 | 39.281 | 34.488 |
-| **production geomean** | | **1.322** | | |
+| Workload | op | h_full→h_local | speedup | baseline (µs) | candidate (µs) |
+|----------|----|----------------|---------|---------------|----------------|
+| flux_concat_512_4096_h24 | concat | 24 | 0.950 | 9.795 | 10.310 |
+| joyai_concat_8048_1004_h32 | concat | 32 | 0.868 | 25.019 | 28.814 |
+| flux_copy_4608_h24 | copy | 48→24 view | 1.814 | 22.858 | 12.602 |
+| joyai_copy_8048_h32 | copy | 64→32 view | 2.616 | 74.476 | 28.464 |
+| joyai_copy_1004_h32 | copy | 64→32 view | 1.385 | 8.549 | 6.173 |
+| flux_slice_concat_512_4096_hf24_hl12_r0_AB | slice+concat | 24→12 | 1.998 | 20.599 | 10.312 |
+| joyai_slice_concat_1004_8048_hf32_hl16_r0_BA | slice+concat | 32→16 | 1.019 | 20.960 | 20.567 |
+| **production geomean** | | | **1.409** | | |
 
-Regression rows (not in headline) all pass correctness and corroborate the pattern: slice+concat both orders / both sp_ranks 1.10–1.42×; copy 1.41–1.79×; small/degenerate rows 1.5–2.2× (candidate's single launch beats ATen's multi-launch on tiny shapes); plain-concat opposite order 0.93–0.96× (parity). Arithmetic mean 1.42×; min 0.863; max 2.630.
+Regression rows (15, not in headline) all pass correctness; speedups corroborate the pattern (slice both orders/ranks, the 48/64 synthetic variant, copy variants, NaN/Inf, degenerate, fp16/fp32). Arithmetic mean 1.52×; min 0.868; max 2.616.
 
 ## Where the speedup comes from (per-op bytes / achieved bandwidth)
 
-B200 HBM3e peak ≈ 8 TB/s. All three ops are pure memory movement; the question is bytes moved and achieved bandwidth.
+B200 HBM3e peak ≈ 8 TB/s. All ops are pure memory movement; bytes moved and achieved bandwidth decide.
 
-- **copy_contiguous — WIN (1.38–2.63×).** The source is a non-contiguous head-sliced view (models `x[:, :, h0:h1, :].contiguous()`). ATen's generic strided `copy_` under-utilizes bandwidth here; the candidate copies per-`(seq)` contiguous `H·D` blocks with 16 B vectors.
-  - `joyai_copy_8048_h32`: ~132 MB traffic. Candidate 28.2 µs → **4.67 TB/s**; baseline 74.2 µs → **1.78 TB/s** (ATen ~22% of peak on the strided view).
-  - `flux_copy_4608_h24`: ~57 MB. Candidate 12.4 µs → 4.56 TB/s; baseline 22.7 µs → 2.49 TB/s.
-- **slice_heads_then_concat — WIN (1.09–1.14×).** The fusion removes the intermediate contiguous-prefix materialization. Baseline traffic ≈ `4P + 2S` (read prefix, write scratch, read scratch, read shard, write output); fused candidate ≈ `2P + 2S`. Ideal `1 + P/(P+S)` ≈ 1.11× for both production shapes — matched by the measured 1.088× / 1.139×.
-  - `flux_slice AB`: candidate ~56.6 MB / 14.5 µs ≈ 3.90 TB/s; baseline ~62.8 MB / 15.8 µs ≈ 3.98 TB/s — same bandwidth, candidate moves ~10% fewer bytes (no scratch).
-- **concat_sequence — PARITY (1.000 / 0.863).** Both sides are a single bandwidth-bound pass over the same bytes. ATen's `CatArrayBatchedCopy` is near roofline:
-  - `flux_concat`: candidate 10.29 µs ≈ 5.50 TB/s = baseline 10.28 µs (tie).
-  - `joyai_concat`: candidate 28.8 µs ≈ 5.14 TB/s vs baseline 24.9 µs ≈ 5.95 TB/s (ATen ~16% better bandwidth on this large copy). This is the only sub-parity production row; it does not threaten the headline and matches the expected "concat near-parity vs ATen" (research.md).
+- **copy_contiguous — WIN (1.39–2.62×).** Source is a non-contiguous head-sliced view (models `x[:, :, h0:h1, :].contiguous()`); ATen's generic strided `copy_` under-utilizes bandwidth. `joyai_copy_8048`: ~132 MB / 28.5 µs → **4.64 TB/s** candidate vs 74.5 µs → **1.77 TB/s** baseline.
+- **slice_heads_then_concat — WIN (1.02–2.00×).** Two compounding effects: (1) fusion removes the intermediate contiguous-prefix scratch round-trip; (2) on the AC-4 grid the prefix slice is a *strided* head gather (12 of 24 / 16 of 32 heads), so the baseline's `.contiguous()` step is the same slow strided copy ATen does poorly. FLUX (`hf24→hl12`) hits **2.00×** (baseline 20.6 µs strided-contiguous + cat vs candidate 10.3 µs single fused pass). JoyAI (`hf32→hl16`) is **1.02×** — the large 8048 shard copy dominates and dilutes the small-prefix savings.
+- **concat_sequence — PARITY (0.950 / 0.868).** Both sides are one bandwidth-bound pass over identical bytes; ATen `CatArrayBatchedCopy` is near roofline (`joyai_concat` baseline 5.92 TB/s vs candidate 5.14 TB/s). Expected near-parity (research.md); does not threaten the headline.
 
-## Candidate design (final)
-Single exported selector function; the output is decomposed into 1–2 sequence regions written directly to the final buffer:
-- copy / slice-prefix: pitched 16 B block copy of the head-sliced source (the part ATen does inefficiently).
-- plain concat: one coalesced single-launch pass with a segment branch (matches ATen's single-kernel cat).
-- slice shard: one flat coalesced copy.
-A general per-output-vector kernel (correct for any B / non-16 B-aligned layout) is retained as a fallback; every production/regression row (B=1, D=128, 16 B-aligned) takes the fast region path. Optimization iterations: v1 single generic kernel (geomean 0.96, concat slow) → v2 region-based (1.235) → v3 single-launch concat (**1.322**).
+## Candidate design (final, hardened)
+Single exported selector; output decomposed into sequence regions written once: pitched 16 B block gather for head-sliced copy/prefix, single coalesced pass for plain concat, flat copy for the shard. Contract checks reject invalid `order`, `h_local<=0`, `h_start % h_local != 0`, out-of-range `h_start`, pre-sliced prefix, and shape/stride mismatches before any copy. General per-output-vector kernel retained as B>1 / non-16 B-aligned fallback. Optimization trajectory: v1 generic 0.96 → v2 region-based 1.235 → v3 single-launch concat 1.322 (48/64 grid) → v4 corrected AC-4 grid + hardened **1.409**.
 
 ## Environment and provenance
 - Host: `ion-b200` (`innomatrix-us-adc-smb200-0003`), container `sglang_bbuf`, workspace `/home/sglang-omni/bbuf/kda/attn_concat_copy`.
-- GPU: NVIDIA B200 (sm_100), id 0; idle before `0 %, 4 MiB` and after `0 %, 4 MiB`.
+- GPU: NVIDIA B200 (sm_100), id 0; idle before `0 %, 4 MiB`, after `0 %, 4 MiB`.
 - Toolchain: torch 2.11.0+cu130, CUDA 13.0, nvcc 13.0, Python 3.12.3, Linux 6.8.
-- Baseline source: SGLang `main` @ `67b2a9ed0cfba8ec625d3f26548e502646fd914d` (see `docs/baseline_source.md`).
-- Candidate source hash: `solution/kernel.cu` sha256 `73381d63fe2341b6569f1c7cb1f88b4a342887f585b703a81039480ac8d07e7d`.
-- Compile flags: `-std=c++17 -O3 -gencode=arch=compute_100,code=sm_100 -lineinfo`; no `--use_fast_math` (see `docs/benchmark_method.md`).
-- Benchmark settings (config.toml): warmup 10, trials 7, inner-iterations max 2048, target sample 1000 µs, isolated subprocess per workload; CUDA-event interleaved A/B timing; bit-exact compare.
+- Baseline source: SGLang `main` @ `67b2a9ed0cfba8ec625d3f26548e502646fd914d` (`docs/baseline_source.md`).
+- Candidate source hash: `solution/kernel.cu` sha256 `364faf8afcaf8992ee8afa238e489a68b5a0efb1e2c51082ebff38df33562b0a`.
+- Compile flags: `-std=c++17 -O3 -gencode=arch=compute_100,code=sm_100 -lineinfo`; no `--use_fast_math`.
+- Benchmark settings (config.toml): warmup 10, trials 7, inner-iterations max 2048, target 1000 µs, isolated subprocess; CUDA-event interleaved A/B; bit-exact compare.
 
 ## Reproduction
-On `ion-b200`, container `sglang_bbuf`, task dir `/home/sglang-omni/bbuf/kda/attn_concat_copy`, idle GPU 0:
+On `ion-b200`, container `sglang_bbuf`, `/home/sglang-omni/bbuf/kda/attn_concat_copy`, idle GPU 0:
 ```bash
-# freeze check (workloads are immutable)
-python bench/gen_workloads.py --check
-# correctness (bit-exact, both impls)
-CUDA_VISIBLE_DEVICES=0 python bench/correctness.py --impl both --device cuda
-# A/A harness validity (expect geomean ~1.0)
+python bench/gen_workloads.py --check                      # freeze + schema guard
+CUDA_VISIBLE_DEVICES=0 python bench/correctness.py --impl both --device cuda   # 44/44 + negatives
 CUDA_VISIBLE_DEVICES=0 KDA_AA=1 python bench/benchmark.py --out bench/results_aa.jsonl --device cuda:0 --inner-iterations-max 2048 --timeout-seconds 900 --atol 0 --rtol 0
-# headline A/B benchmark
 CUDA_VISIBLE_DEVICES=0 python bench/benchmark.py --out bench/results.jsonl --device cuda:0 --inner-iterations-max 2048 --timeout-seconds 900 --atol 0 --rtol 0
 ```

@@ -28,7 +28,12 @@ WORKLOADS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "workl
 
 def load_workloads():
     with open(WORKLOADS_PATH) as f:
-        return json.load(f)
+        rows = json.load(f)
+    import gen_workloads  # same directory; pure stdlib schema validator
+    errs = gen_workloads.validate_workloads(rows)
+    if errs:
+        raise ValueError("workloads.json failed schema validation:\n  " + "\n  ".join(errs))
+    return rows
 
 
 def _rand(shape, dtype, device, gen):

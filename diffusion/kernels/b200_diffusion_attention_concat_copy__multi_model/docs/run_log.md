@@ -25,6 +25,12 @@
 - A/B: production geomean **1.322** (concat → 1.000 / 0.863 parity; copy 1.38–2.63; slice 1.09–1.14). GPU 0 idle before (`0 %, 4 MiB`) and after (`0 %, 4 MiB`).
 - Final result frozen; see `docs/results.md`.
 
+## Run 5 — Round 1: corrected AC-4 grid + hardened validation (final)
+- Round 0 review found the slice production rows used full_heads=48/64 (output heads 24/32) instead of the immutable AC-4 contract (model h_full=24/32, h_local=h_full/sp_size=12/16). Regenerated the slice production grid to the AC-4 contract (48/64 demoted to regression); enriched `workloads.json` with full per-tensor + scalar schema + a validator (`gen_workloads.py --check` and correctness load); hardened the candidate to reject invalid order / misaligned or out-of-range h_start / pre-sliced prefix; added the AC-3/AC-4 negative-test matrix.
+- Rebuilt on GPU 0 (idle). `gen_workloads.py --check`: schema-valid (22 rows). Correctness `--impl both`: **PASS=44/44** bit-exact, negative_control OK, negative_matrix OK (all invalid rows rejected, incl. kernel-level).
+- A/A: geomean **1.0023**. A/B (corrected grid): production geomean **1.409** — flux_slice (hf24→hl12) 1.998× (strided contiguous + cat vs single fused pass), joyai_slice (hf32→hl16) 1.019× (large shard dominates), copy 1.39–2.62×, concat 0.950/0.868× (parity). GPU 0 idle before (`0 %, 4 MiB`) and after (`0 %, 4 MiB`).
+- Final result frozen; candidate sha256 `364faf8a...`. See `docs/results.md`.
+
 ## Notes
 - No SGLang import/patch at runtime; all benchmark code is task-local.
 - Raw `bench/results.jsonl` / `bench/results_aa.jsonl` kept locally on the remote workspace for evidence; excluded from the PR (definitive numbers are in `docs/results.md`).
