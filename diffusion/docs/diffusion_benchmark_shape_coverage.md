@@ -277,3 +277,102 @@ history, not from a hand-written reduced list.
 Current-preset audit status: `zimage`, `firered-edit-1.1`, `helios`, and
 `ltx23-one-stage` were live no-call for these entry points;
 `hunyuan3d-shape` is runtime-blocked.
+
+## `diffusion_causal_conv3d_cat_pad__multi_shape`
+
+Entry point:
+
+- `causal_conv3d_pad.fused_causal_conv3d_cat_pad`
+
+Fresh B200 capture audit: 2026-06-24, `cosmos3-nano-t2v`,
+`nvidia/Cosmos3-Nano`, 832x480, 9 frames, 4 denoise steps. The all-stage trace
+showed `_fused_cat_pad_5d_kernel` at 11.94 ms. Raw capture:
+
+`/tmp/sglang_profile_b200/outputs/shape_captures/cosmos3-nano-t2v_no_compile_v2.jsonl`
+
+Required live shape rows:
+
+- bf16 contiguous `x=[1,1024,1,30,52]`,
+  `cache=[1,1024,1,30,52]`, padding `[1,1,1,1,2,0]`.
+- bf16 contiguous `x=[1,1024,1,30,52]`,
+  `cache=[1,1024,2,30,52]`, padding `[1,1,1,1,2,0]`.
+- bf16 contiguous `x=[1,1024,2,60,104]`,
+  `cache=[1,1024,1,60,104]`, padding `[1,1,1,1,2,0]`.
+- bf16 contiguous `x=[1,1024,2,60,104]`,
+  `cache=[1,1024,2,60,104]`, padding `[1,1,1,1,2,0]`.
+- bf16 contiguous `x=[1,512,4,120,208]`,
+  `cache=[1,512,1,120,208]`, padding `[1,1,1,1,2,0]`.
+- bf16 contiguous `x=[1,512,4,120,208]`,
+  `cache=[1,512,2,120,208]`, padding `[1,1,1,1,2,0]`.
+- bf16 contiguous `x=[1,256,4,240,416]`,
+  `cache=[1,256,1,240,416]`, padding `[1,1,1,1,2,0]`.
+- bf16 contiguous `x=[1,256,4,240,416]`,
+  `cache=[1,256,2,240,416]`, padding `[1,1,1,1,2,0]`.
+
+Include the low-count cache-null, no-pad, and captured non-contiguous rows as
+regression rows in `bench/workloads.json`.
+
+## `diffusion_attention_concat_copy__multi_model`
+
+Entry source patterns:
+
+- `USPAttention._forward_with_replicated_prefix`
+- `USPAttention._forward_with_replicated_kv_prefix_split`
+- local `contiguous()` plus `torch.cat(..., dim=1)` attention layout patterns
+  in `runtime/layers/attention/layer.py`.
+
+Fresh B200 capture audit: 2026-06-24, retained from torch profiler shapes for
+JoyAI Image Edit and FLUX.2 Klein Base.
+
+Required live shape rows:
+
+- `concat_sequence`: bf16 `a=[1,512,24,128]`, `b=[1,4096,24,128]`,
+  output `[1,4608,24,128]`.
+- `concat_sequence`: bf16 `a=[1,8048,32,128]`, `b=[1,1004,32,128]`,
+  output `[1,9052,32,128]`.
+- `copy_contiguous`: bf16 `[1,4608,24,128]`.
+- `copy_contiguous`: bf16 `[1,8048,32,128]`.
+- `copy_contiguous`: bf16 `[1,1004,32,128]`.
+- `slice_heads_then_concat_sequence`: bf16 prefix/shard rows matching FLUX.2
+  prefix length 512, shard length 4096, heads 24, head dim 128.
+- `slice_heads_then_concat_sequence`: bf16 prefix/shard rows matching JoyAI
+  lengths 1004 and 8048, heads 32, head dim 128.
+
+Current evidence: JoyAI trace showed `CatArrayBatchedCopy` at 521.5 ms and
+large contiguous/copy rows; FLUX.2 Klein Base showed repeated copy/cat rows in
+the replicated-prefix attention path.
+
+## `diffusion_residual_gate_add__multi_shape`
+
+Entry source patterns:
+
+- `LTX2TransformerBlock.forward`
+- `Ideogram4TransformerBlock.forward`
+- FLUX.2 modulation and residual gate expressions in `flux_2.py`.
+
+Fresh B200 capture audit: 2026-06-24, retained from torch profiler shapes for
+LTX-2.3 HQ, Ideogram4 FP8, and FLUX.2 Klein Base.
+
+Required live shape rows:
+
+- `residual_gate_add`: bf16 `residual=[1,8160,4096]`,
+  `update=[1,8160,4096]`, `gate=[1,8160,4096]`.
+- `residual_gate_add`: bf16 `residual=[1,32640,4096]`,
+  `update=[1,32640,4096]`, `gate=[1,1,4096]`.
+- `residual_gate_add`: bf16 `residual=[1,126,2048]`,
+  `update=[1,126,2048]`, `gate=[1,126,2048]`.
+- `residual_gate_add`: bf16 `residual=[1,4096,4608]`,
+  `update=[1,4096,4608]`, `gate=[1,1,4608]`.
+- `residual_gate_add`: bf16 `residual=[1,4608,3072]`,
+  `update=[1,4608,3072]`, `gate=[1,1,3072]`.
+- `residual_gate_add`: bf16 `residual=[1,4096,3072]`,
+  `update=[1,4096,3072]`, `gate=[1,1,3072]`.
+- `residual_gate_add`: bf16 `residual=[1,512,3072]`,
+  `update=[1,512,3072]`, `gate=[1,1,3072]`.
+- `broadcast_add_4d`: bf16 `a=[1,1,3,2048]`, `b=[1,126,3,2048]`,
+  output `[1,126,3,2048]`.
+
+Current evidence: LTX-2.3 HQ trace showed elementwise add at 7260.2 ms and mul
+at 4022.4 ms across all CUDA kernels. These rows are memory-bandwidth tasks;
+GEMM, attention, QKNorm+RoPE, and existing norm/scale/shift kernels are out of
+scope for this family.

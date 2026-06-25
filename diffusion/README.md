@@ -34,6 +34,9 @@ kernels/
   {b200,h200}_diffusion_fuse_scale_shift__multi_shape/
   {b200,h200}_diffusion_cutedsl_norm_tanh_mul_add__multi_shape/
   {b200,h200}_diffusion_cutedsl_norm_scale_shift__multi_shape/
+  b200_diffusion_causal_conv3d_cat_pad__multi_shape/
+  b200_diffusion_attention_concat_copy__multi_model/
+  b200_diffusion_residual_gate_add__multi_shape/
 scripts/
   launch_kda_kernel_task.sh
   launch_kernels/

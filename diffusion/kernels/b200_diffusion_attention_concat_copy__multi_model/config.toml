@@ -1,0 +1,26 @@
+[task]
+slug = "b200_diffusion_attention_concat_copy__multi_model"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "attention_concat_copy"
+entry_points = [
+  "sglang.multimodal_gen.runtime.layers.attention.layer:USPAttention._forward_with_replicated_prefix",
+  "sglang.multimodal_gen.runtime.layers.attention.layer:USPAttention._forward_with_replicated_kv_prefix_split",
+]
+
+[build]
+language = "cuda"
+destination_passing_style = true
+baseline_entry_point = "baseline/kernel.cu::attention_concat_copy_baseline"
+candidate_entry_point = "solution/kernel.cu::attention_concat_copy_candidate"
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+inner_iterations_min = 1
+inner_iterations_max = 2048
+target_sample_us = 1000
+timeout_seconds = 900
+use_isolated_runner = true
+required_matched_ratio = 1.0

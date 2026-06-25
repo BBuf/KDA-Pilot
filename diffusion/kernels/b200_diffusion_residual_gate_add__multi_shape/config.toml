@@ -1,0 +1,27 @@
+[task]
+slug = "b200_diffusion_residual_gate_add__multi_shape"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "residual_gate_add"
+entry_points = [
+  "sglang.multimodal_gen.runtime.models.dits.ltx_2:LTX2TransformerBlock.forward",
+  "sglang.multimodal_gen.runtime.models.dits.ideogram:Ideogram4TransformerBlock.forward",
+  "sglang.multimodal_gen.runtime.models.dits.flux_2",
+]
+
+[build]
+language = "cuda"
+destination_passing_style = true
+baseline_entry_point = "baseline/kernel.cu::residual_gate_add_baseline"
+candidate_entry_point = "solution/kernel.cu::residual_gate_add_candidate"
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+inner_iterations_min = 1
+inner_iterations_max = 2048
+target_sample_us = 1000
+timeout_seconds = 900
+use_isolated_runner = true
+required_matched_ratio = 1.0
