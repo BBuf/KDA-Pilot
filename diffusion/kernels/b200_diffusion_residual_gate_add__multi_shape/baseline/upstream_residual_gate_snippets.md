@@ -1,8 +1,9 @@
 # Upstream residual-gate / broadcast-add source excerpts (provenance)
 
-Verbatim extracts from sgl-project/sglang @ `67b2a9ed0cfba8ec625d3f26548e502646fd914d` (branch main).
+Verbatim extracts from sgl-project/sglang @ `8314247d9de0fa2c58e34756b3e1dbc6cf815dfd` (branch main).
 Evidence for the recovered kernel semantics; the runnable local baseline is
-`baseline/binding.py`. Do not import sglang at runtime.
+`baseline/binding.py`. Do not import sglang at runtime. (Relevant lines are
+byte-identical to the earlier 67b2a9ed resolution.)
 
 ## ideogram.py — Ideogram4TransformerBlock.forward (lines 320-340)
 

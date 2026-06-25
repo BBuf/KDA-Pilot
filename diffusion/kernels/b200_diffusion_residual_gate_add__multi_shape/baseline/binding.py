@@ -1,7 +1,7 @@
 """Local baseline adapters reproducing the profiled PyTorch-eager elementwise
 patterns, exposed through the same destination-passing ABI as the candidate.
 
-Faithful baseline (plan DEC-1): the production callsites run
+Faithful baseline: the production callsites run
 ``out = residual + update * gate`` in eager mode, which the torch profiler shows
 as a separate ``aten::mul`` then ``aten::add`` (two launches plus an
 intermediate tensor). We reproduce exactly that two-op path, but write the

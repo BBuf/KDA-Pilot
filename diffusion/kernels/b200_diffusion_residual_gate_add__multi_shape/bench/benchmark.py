@@ -460,7 +460,7 @@ def _nvidia_smi() -> str:
 
 
 def _provenance(args: argparse.Namespace, workloads: list[dict[str, Any]]) -> dict[str, Any]:
-    return {
+    prov: dict[str, Any] = {
         "task_dir": str(ROOT),
         "command": " ".join(sys.argv),
         "python": sys.version,
@@ -481,6 +481,17 @@ def _provenance(args: argparse.Namespace, workloads: list[dict[str, Any]]) -> di
             "isolated": args.isolated,
         },
     }
+    # Additive only (does not affect timing): merge task-specific provenance
+    # (baseline commit, candidate hash, TVM-FFI/NVCC versions, REMOTE_GPU_ID)
+    # from an optional adapter hook. Before/after GPU idle snapshots are recorded
+    # in docs/run_log.md around the remote benchmark command.
+    try:
+        _extra = getattr(_load_adapter(), "extra_provenance", None)
+        if callable(_extra):
+            prov["task_provenance"] = _extra()
+    except Exception as exc:  # noqa: BLE001
+        prov["task_provenance_error"] = str(exc)
+    return prov
 
 
 def _headline(results: list[dict[str, Any]]) -> dict[str, Any]:

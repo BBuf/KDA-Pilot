@@ -103,8 +103,69 @@ def make_case(workload: dict, *, device: torch.device, seed: int) -> dict:
     }
 
 
+_FLOAT_DTYPES = {torch.bfloat16, torch.float16, torch.float32}
+
+
+def _validate(fn: str, inputs: dict, outputs) -> None:
+    """Shared ABI contract enforced before either implementation runs, so the
+    baseline (eager) and candidate (CUDA host checks) reject the same malformed
+    inputs with identical adapter overhead. Mirrors solution/kernel.cu's host
+    checks: CUDA device, shared float dtype, contiguous, out distinct from
+    inputs, full [.,L,D] or same-rank row-broadcast [.,1,D] gate, B=1 4D add."""
+    out = outputs[0]
+    if fn == _EP_RGA:
+        residual, update, gate = inputs["residual"], inputs["update"], inputs["gate"]
+        tensors = (residual, update, gate, out)
+        if not all(t.is_cuda for t in tensors):
+            raise ValueError("residual/update/gate/out must be CUDA tensors")
+        if residual.dim() < 2:
+            raise ValueError("residual must be at least 2D ([.., D])")
+        if update.shape != residual.shape or out.shape != residual.shape:
+            raise ValueError("update/out shape must match residual")
+        dt = residual.dtype
+        if dt not in _FLOAT_DTYPES or any(t.dtype != dt for t in tensors):
+            raise ValueError("residual/update/gate/out must share a float dtype (bf16/fp16/fp32)")
+        if any(out.data_ptr() == t.data_ptr() for t in (residual, update, gate)):
+            raise ValueError("out must not alias residual/update/gate")
+        if not (residual.is_contiguous() and update.is_contiguous() and out.is_contiguous()):
+            raise ValueError("residual/update/out must be contiguous")
+        D = residual.shape[-1]
+        if gate.shape[-1] != D:
+            raise ValueError("gate last dim must equal residual last dim")
+        if gate.shape == residual.shape:
+            return  # full gate
+        # row-broadcast: same rank, size-1 row dim, all leading dims == 1
+        if gate.dim() != residual.dim() or gate.shape[-2] != 1 or any(
+            s != 1 for s in gate.shape[:-1]
+        ):
+            raise ValueError("gate must be full [.., D] or same-rank row-broadcast [.., 1, D]")
+        if not gate.is_contiguous():
+            raise ValueError("broadcast gate must be contiguous")
+    else:  # broadcast_add_4d
+        a, b = inputs["a"], inputs["b"]
+        tensors = (a, b, out)
+        if not all(t.is_cuda for t in tensors):
+            raise ValueError("a/b/out must be CUDA tensors")
+        if a.dim() != 4 or b.dim() != 4:
+            raise ValueError("broadcast_add_4d expects 4D a and b")
+        if b.shape[0] != 1:
+            raise ValueError("broadcast_add_4d supports batch size 1 only")
+        if a.shape[0] != b.shape[0] or a.shape[1] != 1 or a.shape[2] != b.shape[2] or a.shape[3] != b.shape[3]:
+            raise ValueError("a must be [1,1,P,D] broadcasting over dim1 of b")
+        if out.shape != b.shape:
+            raise ValueError("out shape must match b")
+        dt = b.dtype
+        if dt not in _FLOAT_DTYPES or any(t.dtype != dt for t in tensors):
+            raise ValueError("a/b/out must share a float dtype (bf16/fp16/fp32)")
+        if any(out.data_ptr() == t.data_ptr() for t in (a, b)):
+            raise ValueError("out must not alias a/b")
+        if not (a.is_contiguous() and b.is_contiguous() and out.is_contiguous()):
+            raise ValueError("a/b/out must be contiguous")
+
+
 def _dispatch(fns: dict, workload: dict, inputs: dict, outputs) -> None:
     fn = workload["function"]
+    _validate(fn, inputs, outputs)
     impl = fns[fn]
     if fn == _EP_RGA:
         impl(inputs["residual"], inputs["update"], inputs["gate"], outputs[0])
@@ -118,3 +179,44 @@ def call_baseline(workload: dict, inputs, outputs) -> None:
 
 def call_candidate(workload: dict, inputs, outputs) -> None:
     _dispatch(_CANDIDATE_FNS, workload, inputs, outputs)
+
+
+def extra_provenance() -> dict:
+    """Optional hook consumed by bench/benchmark.py to record the task-specific
+    provenance the standalone contract requires beyond the template defaults:
+    baseline commit, candidate source hash, TVM-FFI / NVCC versions, compile
+    flags, and the pinned REMOTE_GPU_ID."""
+    import hashlib
+    import os
+    import re
+    import subprocess
+
+    info: dict = {
+        "task_slug": "b200_diffusion_residual_gate_add__multi_shape",
+        "target_gpu": "NVIDIA B200",
+        "remote_gpu_id": os.environ.get("REMOTE_GPU_ID"),
+    }
+    kernel = _TASK_ROOT / "solution" / "kernel.cu"
+    if kernel.exists():
+        info["candidate_kernel_sha256"] = hashlib.sha256(kernel.read_bytes()).hexdigest()
+    doc = _TASK_ROOT / "docs" / "baseline_source.md"
+    if doc.exists():
+        m = re.search(r"Resolved commit SHA: `([0-9a-f]{7,40})`", doc.read_text())
+        info["baseline_commit"] = m.group(1) if m else "unknown"
+    try:
+        import tvm_ffi
+        info["tvm_ffi"] = getattr(tvm_ffi, "__version__", "unknown")
+    except Exception:
+        info["tvm_ffi"] = "unavailable"
+    try:
+        from solution.build import candidate_compile_flags
+        info["candidate_compile_flags"] = candidate_compile_flags()
+    except Exception:
+        pass
+    try:
+        nv = subprocess.check_output(["nvcc", "--version"], text=True,
+                                     stderr=subprocess.STDOUT, timeout=5)
+        info["nvcc"] = nv.strip().splitlines()[-1]
+    except Exception:
+        info["nvcc"] = "unavailable"
+    return info

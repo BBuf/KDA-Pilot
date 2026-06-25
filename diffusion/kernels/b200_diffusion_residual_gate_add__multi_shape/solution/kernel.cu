@@ -15,7 +15,7 @@
 // Math: elementwise arithmetic runs in fp32 and stores back in the input dtype
 // (one rounding step). Tolerances follow the contract (bf16/fp16 5e-2,
 // fp32 1e-5); the one-round fp32 form stays inside the bf16 tolerance versus
-// the two-step eager baseline (docs note DEC-2).
+// the two-step eager reference (see docs/benchmark_method.md).
 //
 // Performance structure (B200, ~8 TB/s HBM3e, 148 SMs; bandwidth-bound):
 //   - 16B-vectorized (8 bf16 / 4 fp32) grid-stride fast path gated at runtime
@@ -25,8 +25,8 @@
 //   - The broadcast gate / broadcast `a` operand is reused across rows and is
 //     read through the read-only cache (__ldg); streaming operands use the
 //     default cache policy.
-//   - Output is required distinct from the inputs (out-of-place) and contiguous
-//     (DEC-3): aliasing and unsupported layouts are rejected on the host.
+//   - Output is required distinct from the inputs (out-of-place) and contiguous:
+//     aliasing and unsupported layouts are rejected on the host.
 
 #include <ATen/cuda/CUDAContext.h>
 
@@ -247,7 +247,7 @@ void residual_gate_add(TensorView residual, TensorView update, TensorView gate, 
              "residual/update/gate/out must share dtype");
   CAND_CHECK(is_bf16(dt) || is_f16(dt) || is_f32(dt), "dtype must be bf16, fp16, or fp32");
 
-  // Output must be distinct from every input (out-of-place; DEC-3).
+  // Output must be distinct from every input (out-of-place only).
   CAND_CHECK(out.data_ptr() != residual.data_ptr() && out.data_ptr() != update.data_ptr() &&
                  out.data_ptr() != gate.data_ptr(),
              "out must not alias residual/update/gate");
@@ -261,15 +261,21 @@ void residual_gate_add(TensorView residual, TensorView update, TensorView gate, 
   CAND_CHECK(last_dim(gate) == D, "gate last dim must equal residual last dim");
   GateMode mode;
   bool full = (gate.ndim() == residual.ndim());
-  if (full) {
-    for (int i = 0; i < residual.ndim() && full; ++i) full = (gate.size(i) == residual.size(i));
-  }
+  for (int i = 0; full && i < residual.ndim(); ++i) full = (gate.size(i) == residual.size(i));
   if (full) {
     mode = GateMode::kFull;
   } else {
-    // Accept [B,1,D] / [1,1,D] broadcast: all leading dims size 1 except the
-    // last, total == D.
-    CAND_CHECK(gate.numel() == D, "gate must be full-shape [.., D] or row-broadcast [.., 1, D]");
+    // Row-broadcast gate: same rank as residual, a size-1 row dim, and every
+    // leading dim equal to 1 -- i.e. exactly D contiguous elements reused for
+    // every row (the i%D indexing depends on this). Malformed [B,D] / [D] and
+    // a true B>1 broadcast are rejected rather than silently mishandled.
+    CAND_CHECK(gate.ndim() == residual.ndim(),
+               "gate must be full-shape [.., D] or same-rank row-broadcast [.., 1, D]");
+    CAND_CHECK(gate.size(gate.ndim() - 2) == 1, "row-broadcast gate must have a size-1 row dim");
+    for (int i = 0; i < gate.ndim() - 1; ++i) {
+      CAND_CHECK(gate.size(i) == 1,
+                 "row-broadcast gate leading dims must be 1 (batch>1 broadcast unsupported)");
+    }
     CAND_CHECK(tensor_is_contiguous(gate), "broadcast gate must be contiguous");
     mode = GateMode::kBcastRow;
   }
@@ -342,7 +348,8 @@ void broadcast_add_4d(TensorView a, TensorView b, TensorView out) {
   check_cuda(b, "b");
   check_cuda(out, "out");
   CAND_CHECK(b.ndim() == 4 && a.ndim() == 4, "broadcast_add_4d expects 4D a and b");
-  CAND_CHECK(a.size(0) == b.size(0) && a.size(1) == 1, "a must be [B,1,P,D] broadcasting over dim1");
+  CAND_CHECK(b.size(0) == 1, "broadcast_add_4d supports batch size 1 only (a is reused per row)");
+  CAND_CHECK(a.size(0) == b.size(0) && a.size(1) == 1, "a must be [1,1,P,D] broadcasting over dim1");
   CAND_CHECK(a.size(2) == b.size(2) && a.size(3) == b.size(3), "a/b inner dims (P,D) must match");
   for (int i = 0; i < 4; ++i) CAND_CHECK(out.size(i) == b.size(i), "out shape must match b");
   const DLDataType dt = b.dtype();

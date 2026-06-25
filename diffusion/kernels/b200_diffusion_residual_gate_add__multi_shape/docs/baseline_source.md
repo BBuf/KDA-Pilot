@@ -4,11 +4,18 @@
 
 - Repository: `https://github.com/sgl-project/sglang`
 - Branch: `main`
-- Resolved commit SHA: `67b2a9ed0cfba8ec625d3f26548e502646fd914d`
+- Resolved commit SHA: `8314247d9de0fa2c58e34756b3e1dbc6cf815dfd`
 - Resolution method: `git ls-remote https://github.com/sgl-project/sglang.git refs/heads/main`
 - Resolution time: 2026-06-25 (UTC), at baseline-recovery time for this task.
 - Fetch method: raw file fetch at the resolved commit
-  (`https://raw.githubusercontent.com/sgl-project/sglang/67b2a9ed0cfba8ec625d3f26548e502646fd914d/python/sglang/multimodal_gen/runtime/models/dits/<file>.py`).
+  (`https://raw.githubusercontent.com/sgl-project/sglang/8314247d9de0fa2c58e34756b3e1dbc6cf815dfd/python/sglang/multimodal_gen/runtime/models/dits/<file>.py`).
+- Pin note: an earlier resolution during this task returned
+  `67b2a9ed0cfba8ec625d3f26548e502646fd914d`; upstream `main` advanced to
+  `8314247d…` shortly after. The residual-gate (`residual + update*gate`) and the
+  LTX 4D broadcast-add expressions in `ltx_2.py` / `ideogram.py` / `flux_2.py`
+  are byte-identical between the two commits (verified by diffing the relevant
+  lines), so the recovered semantics are unaffected. This task pins to
+  `8314247d…` as the baseline-recovery commit.
 
 ## Copied / referenced upstream files (at the resolved commit)
 

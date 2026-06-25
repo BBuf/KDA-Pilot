@@ -190,44 +190,55 @@ def run_self_test(device: torch.device) -> list[str]:
 
 
 def run_rejection_tests(device: torch.device, impl: str) -> list[str]:
-    """Invalid inputs must raise on the checked side(s)."""
+    """Invalid inputs must raise on BOTH sides (shared adapter validation runs
+    before either implementation)."""
     failures: list[str] = []
     bf16 = torch.bfloat16
 
-    def expect_raise(tag, side, fn):
+    def expect_raise(tag, call):
         try:
-            fn()
+            call()
             torch.cuda.synchronize()
         except Exception:
             return
-        failures.append(f"rejection {tag}: {side} accepted invalid input")
+        failures.append(f"rejection {tag}: accepted invalid input")
 
     sides = []
+    if impl in ("both", "baseline"):
+        sides.append(("baseline", adapter.call_baseline))
     if impl in ("both", "candidate"):
-        sides.append(("candidate", adapter._CANDIDATE_FNS))
-    # baseline is torch-eager; only the cases torch itself rejects are checked.
+        sides.append(("candidate", adapter.call_candidate))
 
     res = torch.randn(1, 64, 2048, device=device, dtype=bf16)
     upd = torch.randn(1, 64, 2048, device=device, dtype=bf16)
     out = torch.empty_like(res)
-    for side, fns in sides:
-        # malformed gate shape [B, D] (rank/shape mismatch, numel != D)
-        expect_raise("rga-bad-gate-2d", side, lambda f=fns: f[_EP_RGA](
-            res, upd, torch.randn(1, 2048, device=device, dtype=bf16), out))
-        # mismatched gate last dim
-        expect_raise("rga-gate-wrong-D", side, lambda f=fns: f[_EP_RGA](
-            res, upd, torch.randn(1, 1, 1024, device=device, dtype=bf16), out))
-        # dtype mismatch
-        expect_raise("rga-dtype-mismatch", side, lambda f=fns: f[_EP_RGA](
-            res, upd, torch.randn(1, 1, 2048, device=device, dtype=torch.float32), out))
-        # output aliases an input
-        expect_raise("rga-alias-out", side, lambda f=fns: f[_EP_RGA](
-            res, upd, torch.randn(1, 1, 2048, device=device, dtype=bf16), res))
-        # non-contiguous residual
-        nc = torch.randn(1, 64, 4096, device=device, dtype=bf16)[:, :, ::2]
-        expect_raise("rga-noncontig", side, lambda f=fns, x=nc: f[_EP_RGA](
-            x, torch.empty_like(x), torch.randn(1, 1, 2048, device=device, dtype=bf16),
-            torch.empty(1, 64, 2048, device=device, dtype=bf16)))
+    nc = torch.randn(1, 64, 4096, device=device, dtype=bf16)[:, :, ::2]  # non-contiguous
+    rga, bca = {"function": _EP_RGA}, {"function": _EP_BCAST}
+
+    cases = [
+        # tag, workload, inputs, outputs
+        ("rga-bad-gate-2d", rga,
+         {"residual": res, "update": upd, "gate": torch.randn(1, 2048, device=device, dtype=bf16)}, [out]),
+        ("rga-gate-wrong-D", rga,
+         {"residual": res, "update": upd, "gate": torch.randn(1, 1, 1024, device=device, dtype=bf16)}, [out]),
+        ("rga-dtype-mismatch", rga,
+         {"residual": res, "update": upd, "gate": torch.randn(1, 1, 2048, device=device, dtype=torch.float32)}, [out]),
+        ("rga-gate-leaddim-not1", rga,
+         {"residual": res, "update": upd, "gate": torch.randn(2, 1, 2048, device=device, dtype=bf16)}, [out]),
+        ("rga-alias-out", rga,
+         {"residual": res, "update": upd, "gate": torch.randn(1, 1, 2048, device=device, dtype=bf16)}, [res]),
+        ("rga-noncontig", rga,
+         {"residual": nc, "update": torch.empty(1, 64, 2048, device=device, dtype=bf16),
+          "gate": torch.randn(1, 1, 2048, device=device, dtype=bf16)},
+         [torch.empty(1, 64, 2048, device=device, dtype=bf16)]),
+        ("bcast-batch-gt1", bca,
+         {"a": torch.randn(2, 1, 3, 8, device=device, dtype=bf16),
+          "b": torch.randn(2, 5, 3, 8, device=device, dtype=bf16)},
+         [torch.empty(2, 5, 3, 8, device=device, dtype=bf16)]),
+    ]
+    for side, call in sides:
+        for tag, wl, inp, outs in cases:
+            expect_raise(f"{tag}:{side}", lambda c=call, w=wl, i=inp, o=outs: c(w, i, o))
     return failures
 
 
