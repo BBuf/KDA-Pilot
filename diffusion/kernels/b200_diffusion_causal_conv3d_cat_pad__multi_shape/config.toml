@@ -10,7 +10,11 @@ entry_points = [
 [build]
 language = "cuda"
 destination_passing_style = true
-baseline_entry_point = "baseline/kernel.cu::causal_conv3d_cat_pad_baseline"
+# Upstream baseline is Triton/Python; it is exposed through a local
+# destination-passing launcher (output passed last) with the same ABI as the
+# candidate, mirroring the b200_diffusion_fuse_scale_shift__multi_shape precedent.
+# The candidate is CUDA built via tvm-ffi.
+baseline_entry_point = "baseline/binding.py::fused_causal_conv3d_cat_pad"
 candidate_entry_point = "solution/kernel.cu::causal_conv3d_cat_pad_candidate"
 
 [benchmark]
