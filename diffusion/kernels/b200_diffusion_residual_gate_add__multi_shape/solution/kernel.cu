@@ -29,6 +29,7 @@
 //     aliasing and unsupported layouts are rejected on the host.
 
 #include <ATen/cuda/CUDAContext.h>
+#include <c10/cuda/CUDAGuard.h>
 
 #include <cuda_bf16.h>
 #include <cuda_fp16.h>
@@ -281,7 +282,14 @@ void residual_gate_add(TensorView residual, TensorView update, TensorView gate, 
     mode = GateMode::kBcastRow;
   }
 
-  cudaStream_t stream = at::cuda::getCurrentCUDAStream();
+  // All operands must share one CUDA device; guard so the launch targets that
+  // device regardless of the process's current device (multi-GPU safety).
+  const int dev = residual.device().device_id;
+  CAND_CHECK(update.device().device_id == dev && gate.device().device_id == dev &&
+                 out.device().device_id == dev,
+             "residual/update/gate/out must be on the same CUDA device");
+  const c10::cuda::CUDAGuard device_guard(static_cast<c10::DeviceIndex>(dev));
+  cudaStream_t stream = at::cuda::getCurrentCUDAStream(dev);
   if (residual.numel() == 0) return;
   if (is_bf16(dt)) {
     launch_rga<__nv_bfloat16>(residual, update, gate, out, mode, stream);
@@ -363,7 +371,13 @@ void broadcast_add_4d(TensorView a, TensorView b, TensorView out) {
              "a/b/out must be contiguous");
 
   const int64_t inner = a.size(2) * a.size(3);  // P * D, the broadcast period
-  cudaStream_t stream = at::cuda::getCurrentCUDAStream();
+  // Same-device guard (multi-GPU safety): launch on the inputs' device, not the
+  // process-current one.
+  const int dev = b.device().device_id;
+  CAND_CHECK(a.device().device_id == dev && out.device().device_id == dev,
+             "a/b/out must be on the same CUDA device");
+  const c10::cuda::CUDAGuard device_guard(static_cast<c10::DeviceIndex>(dev));
+  cudaStream_t stream = at::cuda::getCurrentCUDAStream(dev);
   if (b.numel() == 0) return;
   if (is_bf16(dt)) {
     launch_bcast_add<__nv_bfloat16>(a, b, out, inner, stream);

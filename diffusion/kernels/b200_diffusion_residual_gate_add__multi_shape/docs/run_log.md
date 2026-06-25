@@ -129,3 +129,16 @@ byte-identical — so the geomean 2.193x measured in Round 4 stands.
   had standing memory occupancy, so per the idle-GPU rule no timed numbers were
   collected on a non-idle card. The Round-4 geomean stands (compute-neutral edits);
   a refresh on an idle GPU is optional and would reproduce the same numbers.
+
+## Round 7 — review fix: multi-GPU device guard (compute-neutral)
+Codex review P2: the exported kernels launched on the process-current device's
+stream rather than the input tensors' device. Fixed in `solution/kernel.cu`: both
+`residual_gate_add` and `broadcast_add_4d` now validate all operands share one CUDA
+device id and install a `c10::cuda::CUDAGuard(dev)` + take that device's stream
+before launching. On a single visible GPU (the pinned runs) the guard is a no-op
+(the tensor device is already current), so the timed path and the Round-4 geomean
+2.193x are unchanged.
+- New candidate `solution/kernel.cu` sha256: `a6ab9c86e7ecf2c056d00c568e8895d0fbbf9dcac1494c78a71d569500725fc8`.
+- Rebuilt on B200 (GPU 1); `bench/correctness.py --impl both --rows all` = **67/67
+  PASS** (report `/tmp/rga_correctness_r7.json`). Benchmark re-run deferred (no
+  fully-idle GPU; compute-neutral on single-GPU).

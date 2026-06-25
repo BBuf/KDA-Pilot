@@ -26,13 +26,14 @@ rejection tests. See `docs/baseline_source.md` for the contract rationale.
   on GPU 7, idle before/after (0%/0MiB). See `docs/run_log.md`. (Earlier rounds
   also ran on GPU 2/GPU 0; those are superseded by this unified GPU-7 chain.)
 - Baseline source: sgl-project/sglang `main` @ `8314247d9de0fa2c58e34756b3e1dbc6cf815dfd`
-  (`docs/baseline_source.md`). Candidate `solution/kernel.cu` sha256: benchmark
-  provenance recorded `a450f863…`; after the Round-5 review fixes (P2 harness
-  device-ordering, P3 host-side `out.ndim()==4` reject) the source is `27f67c5f…`.
-  Both are compute-identical on the timed device path (the only kernel delta is a
-  host-side reject of >4D `out`, which no production/valid row triggers), so the
-  measured geomean stands; correctness was re-confirmed 67/67 on the `27f67c5f…`
-  build (see `docs/run_log.md`).
+  (`docs/baseline_source.md`). Candidate `solution/kernel.cu` sha256: the Round-4
+  benchmark was measured on `a450f863…`; subsequent review fixes are host-side and
+  compute-neutral on the timed single-GPU path — R5 added a `out.ndim()==4` reject
+  (`27f67c5f…`), R7 added same-device validation + a `CUDAGuard` (no-op when the
+  tensor device is already current) giving the current source `a6ab9c86…` (R6 was
+  adapter-only, kernel unchanged). The device kernels and the valid-input timed
+  path are identical across these, so the measured geomean stands; correctness was
+  re-confirmed 67/67 on each rebuild (see `docs/run_log.md`).
 
 ## Final commands (all on GPU 7)
 ```bash
