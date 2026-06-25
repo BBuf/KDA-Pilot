@@ -93,5 +93,23 @@ Headline: **geomean 2.1990x**, arithmetic mean 2.3411x, min 1.2028x, max 3.3356x
   | ltx2_full_s8160_c4096 (full) | 72.09 | 55.80 | 51.3us | 60.5% | 16320x256 | DRAM bottleneck |
   | ltx2_bcast_s32640_c4096 (bcast) | 59.53 | 69.77 | 195.7us | 50.6% | 65280x256 | SM/instruction-leaning |
   | ltx2_full_s126_c2048 (full) | 3.72 | 3.14 | 6.4us | 12.8% | 126x256 | grid < 148 SMs (launch-bound) |
-- Raw `.ncu-rep` and the scratch profile harness (`/tmp/rga_profile.py`) are kept
-  on the remote under `/tmp` (ignored; excluded from the PR).
+- (R3 NCU was captured to stdout via `--set basic`, not saved as `.ncu-rep`; the
+  scratch harness is `/tmp/rga_profile.py`. The Round-4 reruns below save the raw
+  `.ncu-rep` files.)
+
+## Round 4 — UNIFIED final evidence on one pinned GPU (GPU 7, idle)
+Per the plan's AC-6 (one `REMOTE_GPU_ID` reused across correctness/benchmark/
+profile), all final evidence is collected on a single physical GPU (7), idle
+before and after (`7, NVIDIA B200, 0%, 0 MiB` both), with the fail-closed pin env
+`KDA_REQUIRE_PINNED_GPU=1 REMOTE_GPU_ID=7 CUDA_VISIBLE_DEVICES=7` on every command.
+- Correctness: `bench/correctness.py --impl both --rows all` -> **67/67 PASS**
+  (report `/tmp/rga_correctness_final.json`).
+- Benchmark: `bench/benchmark.py --out bench/results.jsonl` -> 8/8 rows PASS,
+  geomean **2.193x**; `results.jsonl` provenance `remote_gpu_id=7`,
+  baseline_commit 8314247d, candidate sha256 a450f863.
+- NCU (`-o /tmp/ncu_<row>`, GPU 7): full_big DRAM 72.49% / SM 55.73%; bcast_big
+  DRAM 59.45% / SM 69.68% (occ 50.5%); full_small DRAM 3.77% / SM 3.06%
+  (grid 126 < 148 SMs). Raw `.ncu-rep` saved under the ignored remote `/tmp`
+  (`/tmp/ncu_full_big.ncu-rep`, `/tmp/ncu_bcast_big.ncu-rep`,
+  `/tmp/ncu_full_small.ncu-rep`); not staged for the PR.
+- Per-row roofline table and bound interpretation: `docs/results.md`.
