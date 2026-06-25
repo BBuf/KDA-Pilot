@@ -27,8 +27,6 @@ TASK_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if TASK_ROOT not in sys.path:
     sys.path.insert(0, TASK_ROOT)
 
-import torch  # noqa: E402
-
 import cases  # noqa: E402  (same directory)
 from baseline.binding import attention_concat_copy_baseline as _BASELINE  # noqa: E402
 
