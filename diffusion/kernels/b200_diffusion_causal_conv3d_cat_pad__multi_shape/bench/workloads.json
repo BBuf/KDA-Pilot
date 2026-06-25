@@ -110,5 +110,35 @@
     "seed": 1008,
     "atol": 0.0,
     "rtol": 0.0
+  },
+  {
+    "id": "reg_cache_null",
+    "production": false,
+    "preset": "cosmos3-nano-t2v",
+    "note": "regression: cache-null = depth-0 cache tensor (cache_t=0); low-weight, excluded from headline geomean",
+    "function": "fused_causal_conv3d_cat_pad",
+    "shapes": {
+      "x": {"shape": [1, 1024, 1, 30, 52], "dtype": "bfloat16"},
+      "cache": {"shape": [1, 1024, 0, 30, 52], "dtype": "bfloat16"}
+    },
+    "padding": [1, 1, 1, 1, 2, 0],
+    "seed": 2001,
+    "atol": 0.0,
+    "rtol": 0.0
+  },
+  {
+    "id": "reg_no_pad_cat_only",
+    "production": false,
+    "preset": "cosmos3-nano-t2v",
+    "note": "regression: no spatial/extra-depth pad (cat-only, eff depth_left=0); low-weight, excluded from headline geomean",
+    "function": "fused_causal_conv3d_cat_pad",
+    "shapes": {
+      "x": {"shape": [1, 1024, 1, 30, 52], "dtype": "bfloat16"},
+      "cache": {"shape": [1, 1024, 1, 30, 52], "dtype": "bfloat16"}
+    },
+    "padding": [0, 0, 0, 0, 1, 0],
+    "seed": 2002,
+    "atol": 0.0,
+    "rtol": 0.0
   }
 ]

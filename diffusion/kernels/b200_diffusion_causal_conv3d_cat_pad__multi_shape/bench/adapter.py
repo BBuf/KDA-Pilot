@@ -98,3 +98,45 @@ def call_baseline(workload: dict, inputs, outputs) -> None:
 def call_candidate(workload: dict, inputs, outputs) -> None:
     p = inputs["padding"]
     _CANDIDATE_FN(inputs["x"], inputs["cache"], p[0], p[1], p[2], p[3], p[4], p[5], outputs[0])
+
+
+def _as_list(x):
+    return list(x) if isinstance(x, (list, tuple)) else [x]
+
+
+def compare_outputs(workload, baseline_outputs, candidate_outputs, tolerance):
+    """Bitwise A/B comparison for this exact cat+pad copy op.
+
+    The op performs no arithmetic, so baseline and candidate must be bit-identical
+    (NaN/Inf payloads and signed zeros included). The benchmark template's default
+    comparator uses float tolerance and rejects any NaN/Inf, which is wrong here;
+    this override compares raw element bits via an integer view. ``tolerance`` is
+    ignored on purpose (the contract is atol=0, rtol=0)."""
+    del tolerance
+    base = _as_list(baseline_outputs)
+    cand = _as_list(candidate_outputs)
+    if len(base) != len(cand):
+        return {"ok": False, "max_abs": float("inf"), "max_rel": float("inf"),
+                "message": f"output count mismatch: baseline={len(base)} candidate={len(cand)}"}
+    for idx, (lhs, rhs) in enumerate(zip(base, cand)):
+        if tuple(lhs.shape) != tuple(rhs.shape):
+            return {"ok": False, "max_abs": float("inf"), "max_rel": float("inf"),
+                    "message": f"output {idx} shape mismatch: {tuple(lhs.shape)} vs {tuple(rhs.shape)}"}
+        if lhs.dtype != rhs.dtype:
+            return {"ok": False, "max_abs": float("inf"), "max_rel": float("inf"),
+                    "message": f"output {idx} dtype mismatch: {lhs.dtype} vs {rhs.dtype}"}
+        es = lhs.element_size()
+        iview = {2: torch.int16, 4: torch.int32, 8: torch.int64}.get(es)
+        if iview is None:
+            return {"ok": False, "max_abs": float("inf"), "max_rel": float("inf"),
+                    "message": f"output {idx} unsupported element size {es}"}
+        li = lhs.detach().contiguous().view(iview)
+        ri = rhs.detach().contiguous().view(iview)
+        if not torch.equal(li, ri):
+            mism = li != ri
+            n = int(mism.sum().item())
+            nz = mism.flatten().nonzero(as_tuple=False)
+            first = int(nz[0].item()) if nz.numel() else -1
+            return {"ok": False, "max_abs": float("inf"), "max_rel": float("inf"),
+                    "message": f"output {idx}: {n} bitwise mismatch(es) (exact copy required); first flat index {first}"}
+    return {"ok": True, "max_abs": 0.0, "max_rel": 0.0, "message": ""}
