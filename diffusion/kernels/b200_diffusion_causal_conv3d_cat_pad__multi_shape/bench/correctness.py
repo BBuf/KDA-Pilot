@@ -153,39 +153,44 @@ def run_rejection_tests(device):
     return errs
 
 
+def _check_noncontig_case(tag, x, cache, padding, logical_shape, device):
+    """Shared driver for non-contiguous positive tests: run baseline + candidate
+    into poisoned outputs, then check both bitwise against the torch oracle. The
+    stride-aware candidate must match the oracle and the baseline (which normalizes
+    non-contiguous inputs via .contiguous())."""
+    out_shape = _out_shape(logical_shape, cache.shape[2], padding)
+    out_b = torch.empty(out_shape, device=device, dtype=torch.bfloat16)
+    out_c = torch.empty(out_shape, device=device, dtype=torch.bfloat16)
+    _poison(out_b)
+    _poison(out_c)
+    p = padding
+    _BASE(x, cache, list(p), out_b)
+    _CAND(x, cache, p[0], p[1], p[2], p[3], p[4], p[5], out_c)
+    out_o = oracle(x, cache, p)
+    errs = []
+    if not _exact_equal(out_c, out_o):
+        errs.append(f"{tag}: candidate != torch oracle (stride-aware fallback)")
+    if not _exact_equal(out_b, out_o):
+        errs.append(f"{tag}: baseline != torch oracle (after .contiguous())")
+    if not _exact_equal(out_c, out_b):
+        errs.append(f"{tag}: candidate != baseline")
+    return errs
+
+
 def run_noncontig_test(device):
-    """Positive test: non-contiguous x and cache (H/W-transposed views). The
-    stride-aware candidate fallback must match the torch oracle and the baseline
-    (which normalizes non-contiguous inputs via .contiguous())."""
-    pad = (1, 1, 1, 1, 2, 0)
+    """Positive test: non-contiguous x and cache (H/W-transposed views)."""
     g = torch.Generator(device="cpu").manual_seed(303)
     x = torch.randn((1, 4, 1, 5, 3), generator=g, dtype=torch.float32).to(
         device=device, dtype=torch.bfloat16).transpose(3, 4)
     cache = torch.randn((1, 4, 1, 5, 3), generator=g, dtype=torch.float32).to(
         device=device, dtype=torch.bfloat16).transpose(3, 4)
     assert not x.is_contiguous() and not cache.is_contiguous()
-    out_shape = _out_shape((1, 4, 1, 3, 5), 1, pad)
-    out_b = torch.empty(out_shape, device=device, dtype=torch.bfloat16)
-    out_c = torch.empty(out_shape, device=device, dtype=torch.bfloat16)
-    _poison(out_b)
-    _poison(out_c)
-    _BASE(x, cache, list(pad), out_b)
-    _CAND(x, cache, pad[0], pad[1], pad[2], pad[3], pad[4], pad[5], out_c)
-    out_o = oracle(x, cache, pad)
-    errs = []
-    if not _exact_equal(out_c, out_o):
-        errs.append("noncontig: candidate != torch oracle (stride-aware fallback)")
-    if not _exact_equal(out_b, out_o):
-        errs.append("noncontig: baseline != torch oracle (after .contiguous())")
-    if not _exact_equal(out_c, out_b):
-        errs.append("noncontig: candidate != baseline")
-    return errs
+    return _check_noncontig_case("noncontig", x, cache, (1, 1, 1, 1, 2, 0), (1, 4, 1, 3, 5), device)
 
 
 def run_offset_test(device):
-    """Positive test: non-contiguous x AND cache with NONZERO storage offset.
-    Exercises the candidate's data_ptr + byte_offset + stride handling end-to-end."""
-    pad = (1, 1, 1, 1, 2, 0)
+    """Positive test: non-contiguous x AND cache with NONZERO storage offset
+    (exercises the candidate's data_ptr + byte_offset + stride handling end-to-end)."""
     g = torch.Generator(device="cpu").manual_seed(404)
     shape = (1, 4, 1, 3, 5)
     stride = (60, 15, 15, 1, 3)  # H/W-transposed layout: non-unit W stride
@@ -196,22 +201,7 @@ def run_offset_test(device):
     cache = torch.as_strided(c_base, shape, stride, storage_offset=c_off)
     assert x.storage_offset() == x_off and cache.storage_offset() == c_off
     assert not x.is_contiguous() and not cache.is_contiguous()
-    out_shape = _out_shape(shape, 1, pad)
-    out_b = torch.empty(out_shape, device=device, dtype=torch.bfloat16)
-    out_c = torch.empty(out_shape, device=device, dtype=torch.bfloat16)
-    _poison(out_b)
-    _poison(out_c)
-    _BASE(x, cache, list(pad), out_b)
-    _CAND(x, cache, pad[0], pad[1], pad[2], pad[3], pad[4], pad[5], out_c)
-    out_o = oracle(x, cache, pad)
-    errs = []
-    if not _exact_equal(out_c, out_o):
-        errs.append("offset: candidate != torch oracle (stride+offset fallback)")
-    if not _exact_equal(out_b, out_o):
-        errs.append("offset: baseline != torch oracle (after .contiguous())")
-    if not _exact_equal(out_c, out_b):
-        errs.append("offset: candidate != baseline")
-    return errs
+    return _check_noncontig_case("offset", x, cache, (1, 1, 1, 1, 2, 0), shape, device)
 
 
 def main():
