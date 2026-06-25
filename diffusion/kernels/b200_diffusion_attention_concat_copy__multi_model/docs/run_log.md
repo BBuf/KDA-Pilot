@@ -37,6 +37,11 @@
 - A/A: geomean **0.9996**. A/B: production geomean **1.406** (flux_slice 1.90×, joyai_slice 1.00×, copy 1.38–2.62×, concat parity). GPU 0 idle before (`0 %, 4 MiB`) and after (`0 %, 4 MiB`).
 - Final result frozen; candidate sha256 `5e042273...`. See `docs/results.md`.
 
+## Run 7 — Round 4: code-review validation hardening (B>1 / shape contract)
+- Codex code review (review phase) raised two [P2] ABI-validation gaps: source-dimension checks omitted `size(0)==B`/`D`, and the output check allowed a padded `B>1` batch stride. Fixed both in `solution/kernel.cu`: every source dim (batch, seq, head, head_dim) is validated against the output before launch, and `check_4d_contig_output` now requires a dense batch stride for non-size-1 batch. Added CUDA negatives for source-batch mismatch and padded output batch stride.
+- Rebuilt on B200 (correctness ran on GPU 0). Correctness `--impl both`: **PASS=48/48** bit-exact, negative_control OK, negative_matrix OK (incl. the 2 new rejections).
+- These are host-side O(1) checks before the kernel launch; the copy/concat/slice data paths are byte-identical, so the Round 2 idle-GPU-0 headline (geomean 1.406×) is unaffected. No fully-idle B200 was free at re-measure time (GPUs 0/7 newly occupied); a confirmation A/B on GPU 2 (0% util, 5.7 GB co-resident — interleaved A/B is robust to a dormant co-resident allocation) gave production geomean **1.3924×** (24/24), corroborating no regression. The headline remains the Round 2 clean-GPU measurement.
+
 ## Notes
 - No SGLang import/patch at runtime; all benchmark code is task-local.
 - Raw `bench/results.jsonl` / `bench/results_aa.jsonl` kept locally on the remote workspace for evidence; excluded from the PR (definitive numbers are in `docs/results.md`).

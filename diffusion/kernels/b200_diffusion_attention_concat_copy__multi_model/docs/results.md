@@ -8,7 +8,7 @@ Measured on the model-head AC grid (FLUX.2 `h_full=24 → h_local=12`, JoyAI `h_
 
 ## Promotion Gate
 - Correctness: **PASS** — 48/48 (baseline + candidate × 24) bit-exact vs an independent PyTorch oracle; poison + negative-control OK.
-- Negative-test matrix: **PASS** — rejected loudly (validator + candidate kernel): invalid order, `h_local<=0`, `h_start % h_local != 0`, out-of-range `h_start`, pre-sliced prefix, contiguous copy source, sequence-strided concat source, non-dense slice shard/prefix, dtype mismatch, and shape mismatch.
+- Negative-test matrix: **PASS** — rejected loudly (validator + candidate kernel): invalid order, `h_local<=0`, `h_start % h_local != 0`, out-of-range `h_start`, pre-sliced prefix, contiguous copy source, sequence-strided concat source, non-dense slice shard/prefix, dtype mismatch, shape mismatch, source batch mismatch, and non-dense (padded) output batch stride.
 - A/A harness validity: **PASS** — baseline-vs-baseline geomean 0.9996.
 - Performance: **PASS** — production geomean 1.406× > 1.0.
 - GPU discipline: **PASS** — single idle B200 (id 0), idle before (`0 %, 4 MiB`) and after (`0 %, 4 MiB`), `REMOTE_GPU_ID=0` constant.
@@ -37,7 +37,7 @@ B200 HBM3e peak ≈ 8 TB/s. All ops are pure memory movement.
 - **concat_sequence — PARITY (0.999 / 0.866).** Both sides are one bandwidth-bound pass over identical bytes; ATen `CatArrayBatchedCopy` is near roofline. Expected near-parity; does not threaten the headline.
 
 ## Candidate design (final, hardened)
-Single exported selector; output decomposed into sequence regions written once: pitched 16 B block gather for head-sliced copy/prefix, single coalesced pass for plain concat, flat copy for the shard. Before any copy the candidate validates the exact supported layout and rejects otherwise: `order ∈ {0,1}`, `h_local>0`, `h_full>h_local` (no pre-sliced prefix), `h_start % h_local == 0`, in-range `h_start`, dense strides for concat/shard/output and the full-head prefix, a genuinely non-contiguous head-sliced copy source, and matching head-dim/shape/dtype. A general per-output-vector kernel is retained as the B>1 / non-16 B-aligned fallback. Optimization trajectory: v1 0.96 → v2 region-based 1.235 → v3 single-launch concat 1.322 → corrected AC grid + hardening **1.406**.
+Single exported selector; output decomposed into sequence regions written once: pitched 16 B block gather for head-sliced copy/prefix, single coalesced pass for plain concat, flat copy for the shard. Before any copy the candidate validates the exact supported layout and rejects otherwise: `order ∈ {0,1}`, `h_local>0`, `h_full>h_local` (no pre-sliced prefix), `h_start % h_local == 0`, in-range `h_start`, dense strides for concat/shard/output (incl. a dense output batch stride for `B>1`) and the full-head prefix, a genuinely non-contiguous head-sliced copy source, and every source dimension (batch/seq/head/head_dim) matching the output (plus dtype). A general per-output-vector kernel is retained as the B>1 / non-16 B-aligned fallback. Optimization trajectory: v1 0.96 → v2 region-based 1.235 → v3 single-launch concat 1.322 → corrected AC grid + hardening **1.406**.
 
 ## Environment and provenance
 - Host: `ion-b200` (`innomatrix-us-adc-smb200-0003`), container `sglang_bbuf`, workspace `/home/sglang-omni/bbuf/kda/attn_concat_copy`.

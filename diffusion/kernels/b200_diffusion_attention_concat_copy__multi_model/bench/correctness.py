@@ -119,6 +119,16 @@ def run_negative_matrix(impls, device):
         _expect_reject(lambda: cand(OP_CONCAT, 0, 0, 8,
                                     torch.randn(1, 4, 8, 128, device=device, dtype=dt), cat_b, None, bad_out),
                        "kernel: concat shape mismatch", errors)
+        # source batch mismatch (output B=1, source B=2) must be rejected
+        a_b2 = torch.randn(2, 4, 8, 128, device=device, dtype=dt)
+        _expect_reject(lambda: cand(OP_CONCAT, 0, 0, 8, a_b2, cat_b, None, cat_out),
+                       "kernel: source batch mismatch", errors)
+        # non-dense (padded) output batch stride for B>1 must be rejected
+        out_padded = torch.empty(2, 10, 8, 128, device=device, dtype=dt)[:, :8]  # [2,8,8,128], stride(0) padded
+        a2 = torch.randn(2, 4, 8, 128, device=device, dtype=dt)
+        b2 = torch.randn(2, 4, 8, 128, device=device, dtype=dt)
+        _expect_reject(lambda: cand(OP_CONCAT, 0, 0, 8, a2, b2, None, out_padded),
+                       "kernel: non-dense output batch stride", errors)
     return errors
 
 

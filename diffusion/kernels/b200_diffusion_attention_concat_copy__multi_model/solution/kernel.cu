@@ -226,6 +226,8 @@ inline void check_4d_contig_output(const TensorView& out) {
   CAND_CHECK(out.stride(3) == 1, "output last dim must be contiguous");
   CAND_CHECK(out.stride(2) == out.size(3), "output heads must be contiguous");
   CAND_CHECK(out.stride(1) == out.size(2) * out.size(3), "output seq must be contiguous");
+  CAND_CHECK(out.size(0) == 1 || out.stride(0) == out.size(1) * out.size(2) * out.size(3),
+             "output batch stride must be dense (no padded B>1 view)");
 }
 
 }  // namespace
@@ -296,6 +298,22 @@ void attention_concat_copy_candidate(int64_t op_type, int64_t order, int64_t h_s
       CAND_CHECK(is_contiguous(source_a), "slice_concat: prefix (source_a) must be a dense full-head tensor");
       CAND_CHECK(is_contiguous(sb), "slice_concat: shard (source_b) must be dense/contiguous");
     }
+  }
+
+  // full shape validation: every source dim (batch, seq, head, head_dim) vs output
+  CAND_CHECK(source_a.ndim() == 4, "source_a must be 4D");
+  CAND_CHECK(source_a.size(0) == B && source_a.size(3) == D, "source_a batch/head_dim must match output");
+  if (op_type == OP_COPY) {
+    CAND_CHECK(source_a.size(1) == OutSeq && source_a.size(2) == H, "copy: source_a shape must match output");
+  } else {
+    const TensorView sb_shape = source_b.value();
+    CAND_CHECK(sb_shape.ndim() == 4 && sb_shape.size(0) == B && sb_shape.size(3) == D,
+               "source_b batch/head_dim must match output");
+    CAND_CHECK(source_a.size(1) + sb_shape.size(1) == OutSeq,
+               "first+second segment seq length must equal output seq");
+    CAND_CHECK(sb_shape.size(2) == H, "source_b head count must equal output H");
+    if (op_type == OP_CONCAT)
+      CAND_CHECK(source_a.size(2) == H, "concat: source_a head count must equal output H");
   }
 
   if (op_type == OP_SLICE_CONCAT) {
