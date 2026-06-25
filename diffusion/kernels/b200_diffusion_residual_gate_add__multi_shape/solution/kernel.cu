@@ -4,7 +4,7 @@
 // first, output tensor last; every launch on torch's current CUDA stream).
 //
 // Reference semantics (recovered upstream @ sgl-project/sglang main
-// 67b2a9ed0cfba8ec625d3f26548e502646fd914d; see docs/baseline_source.md):
+// 8314247d9de0fa2c58e34756b3e1dbc6cf815dfd; see docs/baseline_source.md):
 //   residual_gate_add(residual, update, gate, out):
 //       out = residual + update * gate
 //       gate is full-shape [B,L,D] (== residual) or row-broadcast [B,1,D].
@@ -263,6 +263,7 @@ void residual_gate_add(TensorView residual, TensorView update, TensorView gate, 
   bool full = (gate.ndim() == residual.ndim());
   for (int i = 0; full && i < residual.ndim(); ++i) full = (gate.size(i) == residual.size(i));
   if (full) {
+    CAND_CHECK(tensor_is_contiguous(gate), "full-shape gate must be contiguous");
     mode = GateMode::kFull;
   } else {
     // Row-broadcast gate: same rank as residual, a size-1 row dim, and every

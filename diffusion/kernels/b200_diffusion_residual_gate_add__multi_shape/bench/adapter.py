@@ -133,6 +133,8 @@ def _validate(fn: str, inputs: dict, outputs) -> None:
         if gate.shape[-1] != D:
             raise ValueError("gate last dim must equal residual last dim")
         if gate.shape == residual.shape:
+            if not gate.is_contiguous():
+                raise ValueError("full-shape gate must be contiguous")
             return  # full gate
         # row-broadcast: same rank, size-1 row dim, all leading dims == 1
         if gate.dim() != residual.dim() or gate.shape[-2] != 1 or any(
