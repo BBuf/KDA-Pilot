@@ -1,0 +1,43 @@
+{
+  "model": "zai-org/GLM-4.6-FP8",
+  "model_slug": "glm_46",
+  "cookbook_cmd": "sglang serve --model-path zai-org/GLM-4.6-FP8 --tp 8 --reasoning-parser glm45 --tool-call-parser glm45 --attention-backend fa4",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=attention>",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "FlashAttnVarlenFunc",
+    "aten::_index_put_impl_",
+    "aten::as_strided",
+    "aten::empty",
+    "aten::item",
+    "aten::slice"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "kernel_cutlass_kernel_flash_attncuteflash_fwd_sm100FlashAttentionForwardSm100_object_at__t"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 5.31,
+    "random_mid": 3.66,
+    "random_high": 4.22,
+    "sharegpt_low": 9.32,
+    "sharegpt_mid": 6.87,
+    "sharegpt_high": 7.67
+  },
+  "max_pct_of_gpu": 9.32,
+  "best_scenario": "sharegpt_low",
+  "input_shapes": [
+    "[[103, 12, 128], [19176, 128, 1, 128], [19176, 128, 1, 128], [], [2], [], [], [1",
+    "[[1536, 1536], [], [], []]",
+    "[[1971, 12, 128], [19176, 128, 1, 128], [19176, 128, 1, 128], [], [6], [], [], [",
+    "[[2027, 12, 128], [19176, 128, 1, 128], [19176, 128, 1, 128], [], [42], [], [], ",
+    "[[256], [], [], [], []]",
+    "[[7276, 12, 128], [19176, 128, 1, 128], [19176, 128, 1, 128], [], [15], [], [], ",
+    "[[80, 12, 128], [19176, 128, 1, 128], [19176, 128, 1, 128], [], [2], [], [], [1]",
+    "[[8125, 12, 128], [19176, 128, 1, 128], [19176, 128, 1, 128], [], [27], [], [], ",
+    "[[8192, 1536], [], [], [], []]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

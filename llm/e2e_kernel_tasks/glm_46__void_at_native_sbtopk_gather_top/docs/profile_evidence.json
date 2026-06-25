@@ -1,0 +1,30 @@
+{
+  "model": "zai-org/GLM-4.6-FP8",
+  "model_slug": "glm_46",
+  "cookbook_cmd": "sglang serve --model-path zai-org/GLM-4.6-FP8 --tp 8 --reasoning-parser glm45 --tool-call-parser glm45 --attention-backend fa4",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=void_at_native_sbtopk_gather_top>",
+  "kernel_family": "void_at_native_sbtopk_gather_top",
+  "profiler_op_provenance": [
+    "FlashAttnVarlenFunc",
+    "aten::detach",
+    "aten::fill_",
+    "sglang::unified_attention_with_output"
+  ],
+  "category": "moe",
+  "gpu_kernels": [
+    "void at::native::sbtopk::gatherTopK<float, unsigned int, 2, false>(at::cuda::detail::Tenso"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_mid": 6.07,
+    "sharegpt_high": 5.32
+  },
+  "max_pct_of_gpu": 6.07,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[2193, 12, 128]]",
+    "[[8125, 12, 128], [19176, 128, 1, 128], [19176, 128, 1, 128], [], [27], [], [], ",
+    "[[8192, 1536], [8192, 1, 128], [8192, 1, 128], [8192, 1536], [], [], [], [], [],"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
