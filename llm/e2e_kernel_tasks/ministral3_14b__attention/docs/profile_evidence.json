@@ -1,0 +1,46 @@
+{
+  "model": "mistralai/Ministral-3-14B-Instruct-2512",
+  "model_slug": "ministral3_14b",
+  "cookbook_cmd": "sglang serve --model-path mistralai/Ministral-3-14B-Instruct-2512 --tp 1 --trust-remote-code",
+  "tp": "1",
+  "python_interface": "<confirm via capture; profiler family=attention>",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "aten::_index_put_impl_",
+    "aten::add",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::empty_strided",
+    "aten::index"
+  ],
+  "category": "attention",
+  "gpu_kernels": [
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP64MultiCtasKvVarSeqQ8Kv128StaticSwa",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP64VarSeqQ128Kv128PersistentContext",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP64VarSeqQ8Kv128PersistentSwapsAbFor"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 6.21,
+    "random_mid": 6.48,
+    "random_high": 17.59,
+    "sharegpt_low": 6.5,
+    "sharegpt_mid": 13.23,
+    "sharegpt_high": 18.54
+  },
+  "max_pct_of_gpu": 18.54,
+  "best_scenario": "sharegpt_high",
+  "input_shapes": [
+    "[[100], [100], []]",
+    "[[100]]",
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[1]]",
+    "[[2727], [], [], []]",
+    "[[32, 131072], [], [], []]",
+    "[[32], [32], []]",
+    "[[32]]",
+    "[[512], [], [], []]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

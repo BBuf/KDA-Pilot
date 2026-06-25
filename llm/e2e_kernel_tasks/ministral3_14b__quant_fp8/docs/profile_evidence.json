@@ -1,0 +1,41 @@
+{
+  "model": "mistralai/Ministral-3-14B-Instruct-2512",
+  "model_slug": "ministral3_14b",
+  "cookbook_cmd": "sglang serve --model-path mistralai/Ministral-3-14B-Instruct-2512 --tp 1 --trust-remote-code",
+  "tp": "1",
+  "python_interface": "<confirm via capture; profiler family=quant_fp8>",
+  "kernel_family": "quant_fp8",
+  "profiler_op_provenance": [
+    "aten::_local_scalar_dense",
+    "aten::add",
+    "aten::copy_",
+    "aten::cumsum",
+    "aten::empty",
+    "aten::empty_like"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "_static_quant_fp8"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 6.68,
+    "random_mid": 5.36,
+    "random_high": 4.72,
+    "sharegpt_low": 6.61,
+    "sharegpt_mid": 5.08,
+    "sharegpt_high": 4.9
+  },
+  "max_pct_of_gpu": 6.68,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[1228, 5120], []]",
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[1], []]",
+    "[[32], [32], []]",
+    "[[42], [], []]",
+    "[[], [], [], [], [], []]",
+    "[[]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

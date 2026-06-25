@@ -1,0 +1,37 @@
+{
+  "model": "mistralai/Ministral-3-14B-Instruct-2512",
+  "model_slug": "ministral3_14b",
+  "cookbook_cmd": "sglang serve --model-path mistralai/Ministral-3-14B-Instruct-2512 --tp 1 --trust-remote-code",
+  "tp": "1",
+  "python_interface": "sglang._run_activation_inplace",
+  "kernel_family": "activation",
+  "profiler_op_provenance": [
+    "aten::copy_",
+    "aten::empty_strided",
+    "sglang::_run_activation_inplace"
+  ],
+  "category": "other",
+  "gpu_kernels": [
+    "void (anonymous namespace)::act_and_mul_kernel<__nv_bfloat16, ((anonymous namespace)::Acti"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 2.84,
+    "random_mid": 5.33,
+    "random_high": 4.13,
+    "sharegpt_mid": 5.06,
+    "sharegpt_high": 4.13
+  },
+  "max_pct_of_gpu": 5.33,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[1], [1], []]",
+    "[[], [1228, 32768], [1228, 16384]]",
+    "[[], [1316, 32768], [1316, 16384]]",
+    "[[], [39, 32768], [39, 16384]]",
+    "[[], [6642, 32768], [6642, 16384]]",
+    "[[], [8384, 32768], [8384, 16384]]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "note": "Activation (SiLU/GELU+mul). Prior guidance: limited headroom \u2014 deprioritize."
+}

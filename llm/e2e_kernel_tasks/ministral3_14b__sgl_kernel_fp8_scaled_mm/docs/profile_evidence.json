@@ -1,0 +1,46 @@
+{
+  "model": "mistralai/Ministral-3-14B-Instruct-2512",
+  "model_slug": "ministral3_14b",
+  "cookbook_cmd": "sglang serve --model-path mistralai/Ministral-3-14B-Instruct-2512 --tp 1 --trust-remote-code",
+  "tp": "1",
+  "python_interface": "sgl_kernel.fp8_scaled_mm",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "aten::_index_put_impl_",
+    "aten::add",
+    "aten::argmax",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::mm"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalIN4cute5tupleIJiiiiEEENS1_10colle",
+    "nvjet_sm100_tst_128x8_64x12_2x1_v_bz_TNT"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 61.43,
+    "random_mid": 69.38,
+    "random_high": 56.8,
+    "sharegpt_low": 60.67,
+    "sharegpt_mid": 63.77,
+    "sharegpt_high": 54.72
+  },
+  "max_pct_of_gpu": 69.38,
+  "best_scenario": "random_mid",
+  "input_shapes": [
+    "[[1, 5120], [5120, 131072]]",
+    "[[100, 131072], [], []]",
+    "[[100]]",
+    "[[1055, 5120], [5120, 32768], [1055, 1], [32768, 1], [], []]",
+    "[[1228, 5120], [5120, 32768], [1228, 1], [32768, 1], [], []]",
+    "[[1316, 5120], [5120, 32768], [1316, 1], [32768, 1], [], []]",
+    "[[1], [1], []]",
+    "[[1], [], [], [], [], [], []]",
+    "[[1], [], []]",
+    "[[1]]",
+    "[[2049], [], [100], [], []]",
+    "[[2049], [], [32], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

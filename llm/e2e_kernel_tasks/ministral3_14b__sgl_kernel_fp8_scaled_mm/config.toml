@@ -1,0 +1,31 @@
+[task]
+slug = "ministral3_14b__sgl_kernel_fp8_scaled_mm"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "gemm"
+kernel_family = "linear_gemm"
+model = "mistralai/Ministral-3-14B-Instruct-2512"
+model_slug = "ministral3_14b"
+entry_points = [
+  "sgl_kernel.fp8_scaled_mm",
+]
+evidence_json = "docs/profile_evidence.json"
+
+[selection]
+method = "cookbook-aligned torch-profiler e2e GPU-time share (extract_kernel_shapes >2%, family-grouped)"
+max_pct_of_gpu = 69.38
+best_scenario = "random_mid"
+dataset = "random"
+concurrency = "32"
+
+[build]
+language = "python/cuda"
+baseline_entry_point = "baseline/<copied_sglang_interface>::baseline"
+candidate_entry_point = "solution/<candidate_interface>::candidate"
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+use_isolated_runner = true
+required_matched_ratio = 1.0
