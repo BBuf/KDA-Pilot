@@ -53,12 +53,12 @@ and fp32 `atol=rtol=1e-5`, with NaN/Inf rejection.
 
 ## Reporting (per the contract)
 Headline: equal-weight geomean over all 8 production rows. Secondary diagnostics
-(planned, AC-7): a residual-gate-only geomean and a call-count-weighted view (the
-4D broadcast row has little fusion headroom and is reported with its speed-of-
-light ceiling). Final results, per-row speed-of-light/roofline tables, and NCU
-evidence land in `docs/results.md`.
+(a residual-gate-only geomean and a call-count-weighted view) and the per-row
+speed-of-light/roofline table with NCU-derived bounds are reported in
+`docs/results.md` (the 4D broadcast row has little fusion headroom and is
+reported with its speed-of-light ceiling).
 
-## Remote / GPU (AC-6)
+## Remote / GPU
 All correctness, benchmark, profiler, and NCU runs execute on B200 (host
 `ion-b200`). An idle GPU is selected via `nvidia-smi`, its id exported as
 `REMOTE_GPU_ID`, and reused across baseline/candidate/correctness/benchmark/

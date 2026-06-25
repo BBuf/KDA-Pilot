@@ -144,7 +144,7 @@ def build_grid_rows(quick: bool) -> list[dict]:
     for dt in dts:
         for (S, P, D) in [(126, 3, 2048), (1, 3, 2048), (40, 4, 1024), (17, 3, 130)]:
             rows.append(_bcast_spec(f"grid_bcast_s{S}_p{P}_d{D}_{dt}", 1, S, P, D, dt))
-    # Deterministic zero/sign coverage (AC-4): zeros + positive + negative values.
+    # Deterministic zero/sign coverage: zeros + positive + negative values.
     for gm in ("full", "bcast"):
         rows.append({**_rga_spec(f"grid_rga_{gm}_zerosign", 1, 64, 2048, "bfloat16", gm),
                      "fill": "zerosign"})
@@ -160,7 +160,7 @@ def build_grid_rows(quick: bool) -> list[dict]:
     return rows
 
 
-# Deterministic pattern with zeros, positive, and negative values (AC-4 sign/zero
+# Deterministic pattern with zeros, positive, and negative values (sign/zero
 # coverage). gate==0 -> out==residual; negative gate flips the update sign.
 _ZEROSIGN_PATTERN = (0.0, 1.5, -2.0, 0.0, 0.75, -1.0, 3.0, -0.25)
 
