@@ -55,7 +55,7 @@ as separate `aten::mul` then `aten::add` launches plus a hot 4D broadcast add.
 
 - Oracle (fp32, one-round): `residual_gate_add` -> `(residual.float() + update.float() * gate.float()).to(out_dtype)`;
   `broadcast_add_4d` -> `(a.float() + b.float()).to(out_dtype)` with `a` broadcast over the seq dim.
-- Baseline implementation (DEC-1, faithful eager): `baseline/binding.py` reproduces the
+- Baseline implementation (faithful eager): `baseline/binding.py` reproduces the
   profiled two-op eager path (`update*gate` into a cached preallocated scratch buffer,
   then `+residual` into the output) for `residual_gate_add`, and a single eager broadcast
   add for `broadcast_add_4d`. Exposed through a destination-passing ABI identical to the

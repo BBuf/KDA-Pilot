@@ -77,6 +77,21 @@ Headline: **geomean 2.1990x**, arithmetic mean 2.3411x, min 1.2028x, max 3.3356x
   Eager baseline (~5 full passes incl. temp write/read + 2 launches + 2 dispatches)
   ~ 1337 MB in 419.032 us -> ~3.19 TB/s; the candidate's win is the eliminated
   temp traffic + one launch + one dispatch.
-- Full per-row speed-of-light/bytes/%peak table and NCU evidence (>=1 large
-  full-gate, >=1 large broadcast-gate, >=1 small/launch-bound row) are deferred to
-  the next round's `docs/results.md` (task10/task11).
+- Full per-row speed-of-light/bytes/%peak table and the NCU bound interpretation
+  are in `docs/results.md` (collected in the round below).
+
+## Round 3 — strict-pinned reruns + NCU (GPU 0, idle)
+- GPU 0 idle before: `0, NVIDIA B200, 0%, 0 MiB`; after: idle.
+- Correctness rerun (strict pin: `KDA_REQUIRE_PINNED_GPU=1 REMOTE_GPU_ID=0
+  CUDA_VISIBLE_DEVICES=0 python bench/correctness.py --impl both --rows all
+  --report /tmp/rga_correctness_final.json`): **67/67 PASS** (adds AC-4 zero/sign
+  rows + repeated-seed rows over the R2 56/56). The pin guard was active.
+- NCU (`ncu --set basic --launch-skip 6 --launch-count 1`, GPU 0) on the three
+  representative rows:
+  | row | DRAM % | Compute(SM) % | NCU duration | occupancy | grid | NCU bound |
+  |---|---:|---:|---:|---:|---|---|
+  | ltx2_full_s8160_c4096 (full) | 72.09 | 55.80 | 51.3us | 60.5% | 16320x256 | DRAM bottleneck |
+  | ltx2_bcast_s32640_c4096 (bcast) | 59.53 | 69.77 | 195.7us | 50.6% | 65280x256 | SM/instruction-leaning |
+  | ltx2_full_s126_c2048 (full) | 3.72 | 3.14 | 6.4us | 12.8% | 126x256 | grid < 148 SMs (launch-bound) |
+- Raw `.ncu-rep` and the scratch profile harness (`/tmp/rga_profile.py`) are kept
+  on the remote under `/tmp` (ignored; excluded from the PR).

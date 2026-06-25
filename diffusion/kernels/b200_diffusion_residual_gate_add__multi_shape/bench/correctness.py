@@ -144,13 +144,44 @@ def build_grid_rows(quick: bool) -> list[dict]:
     for dt in dts:
         for (S, P, D) in [(126, 3, 2048), (1, 3, 2048), (40, 4, 1024), (17, 3, 130)]:
             rows.append(_bcast_spec(f"grid_bcast_s{S}_p{P}_d{D}_{dt}", 1, S, P, D, dt))
+    # Deterministic zero/sign coverage (AC-4): zeros + positive + negative values.
+    for gm in ("full", "bcast"):
+        rows.append({**_rga_spec(f"grid_rga_{gm}_zerosign", 1, 64, 2048, "bfloat16", gm),
+                     "fill": "zerosign"})
+    rows.append({**_bcast_spec("grid_bcast4d_zerosign", 1, 40, 3, 2048, "bfloat16"),
+                 "fill": "zerosign"})
+    # Repeated randomized seeds for representative rows (distinct id -> distinct
+    # seed = 90000 + row_index), covering full, broadcast, tail-D, and 4D.
+    for k in (2, 3):
+        rows.append(_rga_spec(f"grid_rga_full_repeat{k}", 1, 4096, 4096, "bfloat16", "full"))
+        rows.append(_rga_spec(f"grid_rga_bcast_repeat{k}", 1, 4096, 4096, "bfloat16", "bcast"))
+        rows.append(_rga_spec(f"grid_rga_tailD_repeat{k}", 1, 128, 2047, "bfloat16", "full"))
+        rows.append(_bcast_spec(f"grid_bcast4d_repeat{k}", 1, 126, 3, 2048, "bfloat16"))
     return rows
+
+
+# Deterministic pattern with zeros, positive, and negative values (AC-4 sign/zero
+# coverage). gate==0 -> out==residual; negative gate flips the update sign.
+_ZEROSIGN_PATTERN = (0.0, 1.5, -2.0, 0.0, 0.75, -1.0, 3.0, -0.25)
+
+
+def _apply_zerosign(case: dict) -> None:
+    pat = torch.tensor(_ZEROSIGN_PATTERN)
+    for t in case["inputs"].values():
+        if torch.is_tensor(t) and t.is_floating_point():
+            n = t.numel()
+            reps = (n + len(_ZEROSIGN_PATTERN) - 1) // len(_ZEROSIGN_PATTERN)
+            vals = pat.to(device=t.device, dtype=t.dtype).repeat(reps)[:n]
+            t.view(-1).copy_(vals)
 
 
 def _build_case(spec: dict, device: torch.device, seed: int) -> dict:
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
-    return adapter.make_case(spec, device=device, seed=seed)
+    case = adapter.make_case(spec, device=device, seed=seed)
+    if spec.get("fill") == "zerosign":
+        _apply_zerosign(case)
+    return case
 
 
 def run_row(spec: dict, device: torch.device, impl: str, row_index: int) -> list[str]:

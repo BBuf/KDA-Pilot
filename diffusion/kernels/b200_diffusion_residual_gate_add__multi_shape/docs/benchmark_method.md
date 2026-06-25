@@ -1,9 +1,12 @@
 # Benchmark Method
 
 ## Harness
-`bench/benchmark.py` is the unmodified repository standalone timing harness,
-copied verbatim from `../../docs/standalone_diffusion_benchmark_template.py`. It
-provides CUDA-event timing, interleaved A/B sampling per trial, inner-loop
+`bench/benchmark.py` starts from the repository standalone timing harness
+(`../../docs/standalone_diffusion_benchmark_template.py`). The timing/scoring
+logic is unchanged; the only addition is an additive provenance merge in
+`_provenance` (it calls the optional `adapter.extra_provenance()` hook), which
+does not affect measurement. It provides CUDA-event timing, interleaved A/B
+sampling per trial, inner-loop
 amplification toward `target_sample_us`, fresh random inputs per trial,
 preallocated + poisoned outputs, the equal-weight geometric-mean headline
 (`baseline_median_us / candidate_median_us`), and per-row
@@ -20,7 +23,7 @@ Both sides use a destination-passing ABI with the output tensor passed last:
 - `residual_gate_add(residual, update, gate, out)`
 - `broadcast_add_4d(a, b, out)`
 
-Baseline (`baseline/binding.py`) is the faithful PyTorch-eager path (plan DEC-1):
+Baseline (`baseline/binding.py`) is the faithful PyTorch-eager path:
 `residual_gate_add` runs `torch.mul(update, gate, out=scratch)` then
 `torch.add(residual, scratch, out=out)` — the profiled two-launch `mul`+`add`
 pattern — with a cached, preallocated scratch buffer so the timed steady state
@@ -43,7 +46,7 @@ the `diffusion_residual_gate_add__multi_shape` section of
 scoring, and timing rules are frozen before tuning; changing any of them requires
 deleting old results and remeasuring both baseline and candidate.
 
-## Numerics / tolerances (plan DEC-2)
+## Numerics / tolerances
 Candidate accumulates in fp32 and rounds once. Correctness compares candidate vs
 an fp32 one-round oracle and vs the baseline, within bf16/fp16 `atol=rtol=5e-2`
 and fp32 `atol=rtol=1e-5`, with NaN/Inf rejection.
