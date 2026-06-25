@@ -1,0 +1,41 @@
+{
+  "model": "mistralai/Devstral-2-123B-Instruct-2512",
+  "model_slug": "devstral2",
+  "cookbook_cmd": "sglang serve --model-path mistralai/Devstral-2-123B-Instruct-2512 --tp 8 --reasoning-parser mistral --tool-call-parser mistral",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=rmsnorm>",
+  "kernel_family": "rmsnorm",
+  "profiler_op_provenance": [
+    "aten::cat",
+    "aten::copy_",
+    "aten::slice",
+    "gloo:broadcast",
+    "sglang::store_cache",
+    "sglang::unified_attention_with_output"
+  ],
+  "category": "norm",
+  "gpu_kernels": [
+    "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloa"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_mid": 8.32,
+    "random_high": 6.15,
+    "sharegpt_mid": 8.45,
+    "sharegpt_high": 5.53
+  },
+  "max_pct_of_gpu": 8.45,
+  "best_scenario": "sharegpt_mid",
+  "input_shapes": [
+    "[[1240, 1536], [1240, 1536], []]",
+    "[[1280, 1536], [1280, 1, 128], [1280, 1, 128], [1280, 1536], [], [], [], [], [],",
+    "[[1392, 128], [1392, 128], [3200384, 128], [3200384, 128], [1392], [], [], []]",
+    "[[1392, 1536], [1392, 1536], []]",
+    "[[1], [1], []]",
+    "[[1]]",
+    "[[7807, 128], [7807, 128], [3200384, 128], [3200384, 128], [7807], [], [], []]",
+    "[[8192, 1536], [], [], [], []]",
+    "[[8704, 1536], [], [], [], []]",
+    "[[[1], [39375]], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

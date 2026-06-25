@@ -1,0 +1,46 @@
+{
+  "model": "mistralai/Devstral-2-123B-Instruct-2512",
+  "model_slug": "devstral2",
+  "cookbook_cmd": "sglang serve --model-path mistralai/Devstral-2-123B-Instruct-2512 --tp 8 --reasoning-parser mistral --tool-call-parser mistral",
+  "tp": "8",
+  "python_interface": "sglang.unified_attention_with_output",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "aten::_to_copy",
+    "aten::add",
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_",
+    "aten::empty"
+  ],
+  "category": "attention",
+  "gpu_kernels": [
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP64MultiCtasKvVarSeqQ16Kv128StaticSw",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP64VarSeqQ128Kv128PersistentContext",
+    "fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP64VarSeqQ16Kv128PersistentSwapsAbFo"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 5.94,
+    "random_high": 5.05,
+    "sharegpt_low": 6.11,
+    "sharegpt_mid": 3.29,
+    "sharegpt_high": 10.47
+  },
+  "max_pct_of_gpu": 10.47,
+  "best_scenario": "sharegpt_high",
+  "input_shapes": [
+    "[[100], [], []]",
+    "[[1280, 1536], [1280, 1, 128], [1280, 1, 128], [1280, 1536], [], [], [], [], [],",
+    "[[1280, 1536], [], [], []]",
+    "[[15, 8, 16384], [15, 8, 16384], []]",
+    "[[193], [], [], []]",
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[1], []]",
+    "[[4097, 262148], [], [], []]",
+    "[[480, 1536], [480, 1, 128], [480, 1, 128], [480, 1536], [], [], [], [], [], [],",
+    "[[768], [], [], [], []]",
+    "[[8641, 1536], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

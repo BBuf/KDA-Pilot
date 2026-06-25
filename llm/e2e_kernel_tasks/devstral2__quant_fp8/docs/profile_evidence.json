@@ -1,0 +1,44 @@
+{
+  "model": "mistralai/Devstral-2-123B-Instruct-2512",
+  "model_slug": "devstral2",
+  "cookbook_cmd": "sglang serve --model-path mistralai/Devstral-2-123B-Instruct-2512 --tp 8 --reasoning-parser mistral --tool-call-parser mistral",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=quant_fp8>",
+  "kernel_family": "quant_fp8",
+  "profiler_op_provenance": [
+    "aten::add",
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_",
+    "aten::empty",
+    "aten::slice"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "_static_quant_fp8"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 6.6,
+    "random_mid": 4.5,
+    "random_high": 4.08,
+    "sharegpt_low": 6.58,
+    "sharegpt_mid": 4.52,
+    "sharegpt_high": 4.17
+  },
+  "max_pct_of_gpu": 6.6,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[1392, 1536], [1392, 1536], []]",
+    "[[1536, 1536], [1536, 1, 128], [1536, 1, 128], [1536, 1536], [], [], [], [], [],",
+    "[[192], [], [], [], []]",
+    "[[1], []]",
+    "[[1]]",
+    "[[734], [], [], []]",
+    "[[7807, 1536], [7807, 1536], []]",
+    "[[8192, 1536], [], [], [], []]",
+    "[[8704, 1536], [], [], [], []]",
+    "[[[1], [39375]], []]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
