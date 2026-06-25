@@ -1,0 +1,31 @@
+[task]
+slug = "glm_45__rmsnorm"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "norm"
+kernel_family = "rmsnorm"
+model = "zai-org/GLM-4.5-FP8"
+model_slug = "glm_45"
+entry_points = [
+  "<confirm via capture; profiler family=rmsnorm>",
+]
+evidence_json = "docs/profile_evidence.json"
+
+[selection]
+method = "cookbook-aligned torch-profiler e2e GPU-time share (extract_kernel_shapes >2%, family-grouped)"
+max_pct_of_gpu = 3.48
+best_scenario = "sharegpt_mid"
+dataset = "sharegpt"
+concurrency = "32"
+
+[build]
+language = "python/cuda"
+baseline_entry_point = "baseline/<copied_sglang_interface>::baseline"
+candidate_entry_point = "solution/<candidate_interface>::candidate"
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+use_isolated_runner = true
+required_matched_ratio = 1.0

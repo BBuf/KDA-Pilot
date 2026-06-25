@@ -1,0 +1,46 @@
+{
+  "model": "zai-org/GLM-4.5-FP8",
+  "model_slug": "glm_45",
+  "cookbook_cmd": "sglang serve --model-path zai-org/GLM-4.5-FP8 --tp 8 --reasoning-parser glm45 --tool-call-parser glm45 --attention-backend fa4",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "aten::_to_copy",
+    "aten::add",
+    "aten::as_strided",
+    "aten::cat",
+    "aten::copy_",
+    "aten::empty"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "_ZN7cutlass13device_kernelINS_4gemm6kernel13GemmUniversalIN4cute5tupleIJiiiiEEENS1_10colle",
+    "cutlass3x_sm100_tensorop_s128x64x8tf32gemm_f32_f32_f32_f32_f32_128x64x32_0_tnn_align4_2sm_"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 7.1,
+    "random_mid": 2.19,
+    "random_high": 2.71,
+    "sharegpt_low": 6.7,
+    "sharegpt_mid": 2.22,
+    "sharegpt_high": 2.83
+  },
+  "max_pct_of_gpu": 7.1,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[100], [100], []]",
+    "[[19181, 128, 1, 128]]",
+    "[[1], [1], []]",
+    "[[1], [], [], [], [], [], []]",
+    "[[1], [], []]",
+    "[[1], []]",
+    "[[1]]",
+    "[[32], [32], []]",
+    "[[32], [], []]",
+    "[[32], []]",
+    "[[4097, 131076], [], [32], [], []]",
+    "[[4097, 131076], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

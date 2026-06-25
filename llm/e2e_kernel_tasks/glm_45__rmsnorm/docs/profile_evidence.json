@@ -1,0 +1,30 @@
+{
+  "model": "zai-org/GLM-4.5-FP8",
+  "model_slug": "glm_45",
+  "cookbook_cmd": "sglang serve --model-path zai-org/GLM-4.5-FP8 --tp 8 --reasoning-parser glm45 --tool-call-parser glm45 --attention-backend fa4",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=rmsnorm>",
+  "kernel_family": "rmsnorm",
+  "profiler_op_provenance": [
+    "aten::clone",
+    "aten::copy_",
+    "aten::fill_",
+    "sglang::store_cache"
+  ],
+  "category": "norm",
+  "gpu_kernels": [
+    "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloa"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_mid": 2.71,
+    "sharegpt_mid": 3.48
+  },
+  "max_pct_of_gpu": 3.48,
+  "best_scenario": "sharegpt_mid",
+  "input_shapes": [
+    "[[1], []]",
+    "[[7639, 1536], []]",
+    "[[8125, 1536], [8125, 1536], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

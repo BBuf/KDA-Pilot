@@ -1,0 +1,41 @@
+{
+  "model": "zai-org/GLM-4.5-FP8",
+  "model_slug": "glm_45",
+  "cookbook_cmd": "sglang serve --model-path zai-org/GLM-4.5-FP8 --tp 8 --reasoning-parser glm45 --tool-call-parser glm45 --attention-backend fa4",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=fused_moe_triton>",
+  "kernel_family": "fused_moe_triton",
+  "profiler_op_provenance": [
+    "FlashAttnVarlenFunc",
+    "aten::clone",
+    "aten::copy_",
+    "aten::detach",
+    "aten::empty",
+    "aten::fill_"
+  ],
+  "category": "moe",
+  "gpu_kernels": [
+    "fused_moe_kernel"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 19.87,
+    "random_mid": 31.27,
+    "random_high": 34.9,
+    "sharegpt_low": 17.99,
+    "sharegpt_mid": 30.52,
+    "sharegpt_high": 30.44
+  },
+  "max_pct_of_gpu": 34.9,
+  "best_scenario": "random_high",
+  "input_shapes": [
+    "[[0], [], []]",
+    "[[103, 12, 128], [19181, 128, 1, 128], [19181, 128, 1, 128], [], [2], [], [], [1",
+    "[[112, 1536], [112, 1, 128], [112, 1, 128], [112, 1536], [], [], [], [], [], [],",
+    "[[1], [1], []]",
+    "[[1], []]",
+    "[[7639, 1536], []]",
+    "[[80, 1536], [80, 1, 128], [80, 1, 128], [80, 1536], [], [], [], [], [], [], [],"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "note": "Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) \u2014 single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded)."
+}
