@@ -46,8 +46,7 @@ def _load_impl(name):
 
 
 def run(impls, device):
-    data = cases.load_workloads()
-    workloads = data["workloads"]
+    workloads = cases.load_workloads()  # top-level list of workload rows
     fns = {name: _load_impl(name) for name in impls}
 
     n_pass = 0

@@ -69,7 +69,15 @@ def call_baseline(workload, inputs, outputs):
               inputs.source_a, inputs.source_b, inputs.scratch, outputs[0])
 
 
+# A/A harness-validity switch: when KDA_AA=1 the candidate slot runs the BASELINE,
+# so the reported geomean should be ~1.0 (proves the interleaved A/B timing has no
+# systematic slot bias). Used only for the validity run, never the headline result.
+_AA = os.environ.get("KDA_AA") == "1"
+
+
 def call_candidate(workload, inputs, outputs):
+    if _AA:
+        return call_baseline(workload, inputs, outputs)
     if _CANDIDATE is None:
         raise RuntimeError("candidate not available: build solution/ (tvm_ffi.cpp.load) on a CUDA device")
     _CANDIDATE(inputs.op_type, inputs.order, inputs.h_start, inputs.h_local,

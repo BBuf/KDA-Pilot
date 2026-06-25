@@ -170,18 +170,9 @@ def build_workloads():
     rows.append(concat_row("fp32_concat_small", False, "synthetic",
                           [1, 17, 8, 128], [1, 31, 8, 128], "AB", dtype="float32", seed=2502))
 
-    return {
-        "schema_version": 1,
-        "task": "b200_diffusion_attention_concat_copy__multi_model",
-        "head_dim": HEAD_DIM,
-        "dtype_default": "bfloat16",
-        "abi": {
-            "op_types": {"copy_contiguous": 0, "concat_sequence": 1, "slice_heads_then_concat": 2},
-            "orders": {"AB": 0, "BA": 1},
-            "note": "op_type/order ints match baseline/binding.py OP_*/ORDER_* and solution/kernel.cu.",
-        },
-        "workloads": rows,
-    }
+    # Top-level JSON list (required by standalone_diffusion_benchmark_template.py).
+    # ABI op_type/order int mapping lives in bench/cases.py and docs/benchmark_method.md.
+    return rows
 
 
 def main():
@@ -189,7 +180,7 @@ def main():
     ap.add_argument("--check", action="store_true", help="fail if workloads.json is stale")
     args = ap.parse_args()
 
-    data = build_workloads()
+    data = build_workloads()  # top-level list of workload rows
     rendered = json.dumps(data, indent=2) + "\n"
 
     if args.check:
@@ -206,8 +197,8 @@ def main():
 
     with open(WORKLOADS_PATH, "w") as f:
         f.write(rendered)
-    n_prod = sum(1 for r in data["workloads"] if r["production"])
-    print(f"wrote {WORKLOADS_PATH}: {len(data['workloads'])} rows ({n_prod} production)")
+    n_prod = sum(1 for r in data if r["production"])
+    print(f"wrote {WORKLOADS_PATH}: {len(data)} rows ({n_prod} production)")
     return 0
 
 
