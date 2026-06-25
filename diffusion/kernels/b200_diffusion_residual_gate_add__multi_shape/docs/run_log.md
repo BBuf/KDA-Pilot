@@ -142,3 +142,29 @@ before launching. On a single visible GPU (the pinned runs) the guard is a no-op
 - Rebuilt on B200 (GPU 1); `bench/correctness.py --impl both --rows all` = **67/67
   PASS** (report `/tmp/rga_correctness_r7.json`). Benchmark re-run deferred (no
   fully-idle GPU; compute-neutral on single-GPU).
+
+## Round 8 — review fix: benchmark provenance device-order (re-validated on GPU 7)
+Codex review P2: `bench/benchmark.py::main()` collected provenance
+(`_provenance` -> `_gpu_name()` + adapter `extra_provenance()`/candidate build)
+BEFORE setting the CUDA device, so a non-default `--device` would record cuda:0's
+name/SM/compile-flags while workloads ran on `args.device`. Fixed: `main()` now
+calls `torch.cuda.set_device(torch.device(args.device))` before `_provenance()`,
+mirroring the R5 `_run_one_workload` device-first pattern. Harness-only — the
+candidate `solution/kernel.cu` is unchanged (hash still
+`a6ab9c86…`), and on a pinned single-visible-GPU run the current device already
+equals `args.device`, so the fix is compute-neutral.
+- An idle GPU was available this round, so both gates were re-run fresh on the
+  unified-evidence card (physical **GPU 7**, strict pin
+  `KDA_REQUIRE_PINNED_GPU=1 REMOTE_GPU_ID=7 CUDA_VISIBLE_DEVICES=7`):
+  - `bench/correctness.py --impl both --rows all` -> **67/67 PASS**
+    (report `/tmp/rga_correctness_r8.json`).
+  - `bench/benchmark.py --out bench/results.jsonl` -> **8/8 PASS**, geomean
+    **2.186x** (min 1.186x, max 3.277x) — reproduces the Round-4 2.193x within
+    run-to-run noise (per-row deltas < 1%). `results.jsonl` provenance now records
+    `gpu=NVIDIA B200`, `remote_gpu_id=7`, `candidate_kernel_sha256=a6ab9c86…`,
+    `baseline_commit=8314247d…` (1 provenance + 8 result + 1 summary events).
+  - Idle evidence GPU 7: before `7, NVIDIA B200, 0%, 0 MiB`. After my run returned,
+    an unrelated job landed on GPU 7 (post-run snapshot `7, …, 96%, ~42 GB`); the
+    measured times matching Round-4's idle-GPU numbers within noise confirm the
+    measurement window itself was uncontended (heavy contention would have inflated
+    and de-stabilized the per-row times, which it did not).

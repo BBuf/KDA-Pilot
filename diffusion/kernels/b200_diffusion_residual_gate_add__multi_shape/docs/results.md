@@ -33,7 +33,11 @@ rejection tests. See `docs/baseline_source.md` for the contract rationale.
   tensor device is already current) giving the current source `a6ab9c86…` (R6 was
   adapter-only, kernel unchanged). The device kernels and the valid-input timed
   path are identical across these, so the measured geomean stands; correctness was
-  re-confirmed 67/67 on each rebuild (see `docs/run_log.md`).
+  re-confirmed 67/67 on each rebuild (see `docs/run_log.md`). R8 was harness-only
+  (`bench/benchmark.py` now sets the selected CUDA device before collecting
+  provenance, so a non-default `--device` records the right GPU/SM/flags); the
+  candidate hash is unchanged and both gates were re-run fresh on idle GPU 7
+  (67/67, geomean 2.186x).
 
 ## Final commands (all on GPU 7)
 ```bash
@@ -81,7 +85,9 @@ secondary views are reported):
 The win is "fused single CUDA kernel vs the faithful eager two-op production path"
 — it removes one kernel launch, the intermediate temp's full write+read, and one
 Python dispatch; it is not a single-kernel-vs-single-kernel algorithmic speedup.
-(Run-to-run the headline geomean is stable: 2.199x on GPU 2, 2.193x on GPU 7.)
+(Run-to-run the headline geomean is stable: 2.199x on GPU 2, 2.193x on GPU 7, and
+2.186x on a fresh GPU-7 re-run after the Round-8 benchmark-provenance fix — all
+within run-to-run noise, per-row deltas < 1%.)
 
 ## Roofline / speed-of-light (AC-7), GPU 7
 Candidate byte model (bf16, 2 B/elem): full gate ~8 B/elem (r+u+g read, out write);

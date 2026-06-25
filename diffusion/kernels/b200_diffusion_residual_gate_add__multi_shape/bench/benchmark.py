@@ -556,6 +556,13 @@ def main() -> int:
         raise SystemExit(f"no workloads selected from {args.workloads}")
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
+    # Make the selected CUDA device current BEFORE collecting provenance: both
+    # _gpu_name() and the adapter's candidate build / extra_provenance() query the
+    # process-current device, so a non-default --device must be set first or
+    # results.jsonl would cite cuda:0's name / SM capability / compile flags while
+    # the workloads actually run on args.device. (_run_one_workload re-sets it per
+    # run/subprocess; this covers the parent-process provenance collection.)
+    torch.cuda.set_device(torch.device(args.device))
     provenance = _provenance(args, workloads)
     results: list[dict[str, Any]] = []
     with args.out.open("w") as f:
