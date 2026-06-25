@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Generate + validate the frozen bench/workloads.json (top-level JSON list).
 
-Each row carries a full self-describing schema (AC-5): per-tensor
+Each row carries a full self-describing schema: per-tensor
 shape/dtype/stride/layout plus scalar op_type/order/h_local/h_full/h_start/
 num_rep/seed/atol/rtol/production. bench/cases.py builds tensors deterministically
 from these recipes; bench/adapter.py and bench/correctness.py reuse them so the
 baseline, candidate, and oracle see identical inputs.
 
-slice_heads_then_concat uses the model head contract (AC-4): the full-head prefix
+slice_heads_then_concat uses the model head contract: the full-head prefix
 has the model head count h_full (24 FLUX.2 / 32 JoyAI) and is sliced to
 h_local = h_full // sp_size (12 / 16 at sp_size=2) at h_start = sp_rank * h_local.
 The 48/64-head synthetic-profiler variant (output heads = profiled 24/32) is kept
@@ -127,7 +127,7 @@ def build_workloads():
     rows.append(copy_row("joyai_copy_1004_h32", True, "joyai-edit",
                         [1, 1004, 32, 128], full_heads=64, head_start=0, seed=1103))
 
-    # slice_heads_then_concat — AC-4 model head contract: h_full = model heads (24/32),
+    # slice_heads_then_concat — model head contract: h_full = model heads (24/32),
     # h_local = h_full / sp_size (12/16 at sp_size=2).
     rows.append(slice_row("flux_slice_concat_512_4096_hf24_hl12_r0_AB", True, "flux2-klein-base",
                         prefix_len=512, shard_len=4096, h_full=24, h_local=12, sp_rank=0, order="AB",
@@ -147,6 +147,11 @@ def build_workloads():
                         512, 4096, 24, 12, 1, "AB", seed=2003, note="sp_rank=1, h_start=12"))
     rows.append(slice_row("joyai_slice_concat_hf32_hl16_r1_BA", False, "joyai-edit",
                         1004, 8048, 32, 16, 1, "BA", seed=2004, note="sp_rank=1, h_start=16"))
+    # complete the order x rank cross product for the model-grid slice rows
+    rows.append(slice_row("flux_slice_concat_hf24_hl12_r1_BA", False, "flux2-klein-base",
+                        512, 4096, 24, 12, 1, "BA", seed=2005, note="sp_rank=1, h_start=12, opposite order"))
+    rows.append(slice_row("joyai_slice_concat_hf32_hl16_r1_AB", False, "joyai-edit",
+                        1004, 8048, 32, 16, 1, "AB", seed=2006, note="sp_rank=1, h_start=16, opposite order"))
     # synthetic profiler-shape variant: output heads match the profiled 24/32 (full_heads 48/64).
     rows.append(slice_row("flux_slice_concat_synth_hf48_hl24_r0_AB", False, "flux2-klein-base",
                         512, 4096, 48, 24, 0, "AB", seed=2051,
@@ -185,7 +190,7 @@ def build_workloads():
 
 
 # --------------------------------------------------------------------------
-# Schema validator (AC-5 + AC-3/AC-4 workload audit). Pure dict checks, no torch.
+# Schema validator + workload audit. Pure dict checks, no torch.
 # --------------------------------------------------------------------------
 _ROW_SCALARS = ("id", "production", "function", "op_type", "order", "h_local", "h_full",
                 "h_start", "num_rep", "seed", "dtype", "atol", "rtol", "output_shape", "tensors")
@@ -268,13 +273,38 @@ def validate_workloads(rows):
             if pref.get("shape", [0, 0])[1] + shard.get("shape", [0, 0])[1] != r["output_shape"][1]:
                 _err(errs, rid, "slice P+Sshard != output seq")
 
-    # production grid audit (AC-3/AC-4): required shape-coverage outputs must be present
-    prod_out = {tuple(r["output_shape"]) for r in rows if r.get("production")}
-    required = {(1, 4608, 24, 128), (1, 9052, 32, 128), (1, 8048, 32, 128), (1, 1004, 32, 128),
-                (1, 4608, 12, 128), (1, 9052, 16, 128)}
-    missing = required - prod_out
-    if missing:
-        _err(errs, "<production>", f"missing required production output shapes: {sorted(missing)}")
+    # exact production-contract audit: each required row must exist with the exact tuple
+    # (op_type, preset, order, h_full, h_local, h_start, output_shape).
+    required = {
+        "flux_concat_512_4096_h24": ("concat_sequence", "flux2-klein-base", "AB", 24, 24, 0, [1, 4608, 24, 128]),
+        "joyai_concat_8048_1004_h32": ("concat_sequence", "joyai-edit", "AB", 32, 32, 0, [1, 9052, 32, 128]),
+        "flux_copy_4608_h24": ("copy_contiguous", "flux2-klein-base", "AB", 48, 24, 0, [1, 4608, 24, 128]),
+        "joyai_copy_8048_h32": ("copy_contiguous", "joyai-edit", "AB", 64, 32, 0, [1, 8048, 32, 128]),
+        "joyai_copy_1004_h32": ("copy_contiguous", "joyai-edit", "AB", 64, 32, 0, [1, 1004, 32, 128]),
+        "flux_slice_concat_512_4096_hf24_hl12_r0_AB":
+            ("slice_heads_then_concat", "flux2-klein-base", "AB", 24, 12, 0, [1, 4608, 12, 128]),
+        "joyai_slice_concat_1004_8048_hf32_hl16_r0_BA":
+            ("slice_heads_then_concat", "joyai-edit", "BA", 32, 16, 0, [1, 9052, 16, 128]),
+    }
+    by_id = {r.get("id"): r for r in rows}
+    prod_ids = {r.get("id") for r in rows if r.get("production")}
+    for rid, want in required.items():
+        if rid not in prod_ids:
+            _err(errs, "<production>", f"required production row '{rid}' missing or not marked production")
+            continue
+        r = by_id[rid]
+        got = (r.get("op_type"), r.get("source", {}).get("preset"), r.get("order"),
+               r.get("h_full"), r.get("h_local"), r.get("h_start"), r.get("output_shape"))
+        if got != want:
+            _err(errs, rid, f"production contract mismatch: got {got} != required {want}")
+    # secondary: the model-grid slice rows must cover both orders x {rank0, rank1} per model
+    slice_matrix = {(r["source"].get("preset"), r["order"], r["h_start"])
+                    for r in rows if r["op_type"] == "slice_heads_then_concat" and r["h_full"] in (24, 32)}
+    for preset, hl in (("flux2-klein-base", 12), ("joyai-edit", 16)):
+        for order in ("AB", "BA"):
+            for hs in (0, hl):
+                if (preset, order, hs) not in slice_matrix:
+                    _err(errs, "<slice-matrix>", f"missing slice row {preset} order={order} h_start={hs}")
     return errs
 
 

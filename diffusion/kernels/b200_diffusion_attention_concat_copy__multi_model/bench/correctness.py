@@ -55,7 +55,7 @@ def _expect_reject(fn, label, errors):
 
 
 def run_negative_matrix(impls, device):
-    """AC-3/AC-4 negative tests: invalid workloads must be rejected.
+    """Negative tests: invalid workloads must be rejected.
 
     Validator-level rejections (CPU-safe) cover the workload audit; kernel-level
     rejections (CUDA) cover the candidate's ABI contract checks.
@@ -89,6 +89,36 @@ def run_negative_matrix(impls, device):
         prefix_presliced = torch.randn(1, 512, 12, 128, device=device, dtype=dt)  # full_heads==h_local
         _expect_reject(lambda: cand(OP_SLICE, 0, 0, 12, prefix_presliced, shard, None, out),
                        "kernel: pre-sliced prefix", errors)
+
+        OP_CONCAT = cases.OP["concat_sequence"]
+        OP_COPY = cases.OP["copy_contiguous"]
+        # sequence-strided (non-dense) concat source must be rejected, not silently copied as dense
+        cat_a_strided = torch.randn(1, 8, 8, 128, device=device, dtype=dt)[:, ::2]  # [1,4,8,128], stride(1)=2*H*D
+        cat_b = torch.randn(1, 4, 8, 128, device=device, dtype=dt)
+        cat_out = torch.empty(1, 8, 8, 128, device=device, dtype=dt)
+        _expect_reject(lambda: cand(OP_CONCAT, 0, 0, 8, cat_a_strided, cat_b, None, cat_out),
+                       "kernel: sequence-strided concat source", errors)
+        # non-dense slice shard / prefix must be rejected
+        shard_strided = torch.randn(1, 8192, 12, 128, device=device, dtype=dt)[:, ::2]  # [1,4096,12,128] non-dense
+        _expect_reject(lambda: cand(OP_SLICE, 0, 0, 12, prefix, shard_strided, None, out),
+                       "kernel: non-dense slice shard", errors)
+        prefix_strided = torch.randn(1, 1024, 24, 128, device=device, dtype=dt)[:, ::2]  # [1,512,24,128] non-dense
+        _expect_reject(lambda: cand(OP_SLICE, 0, 0, 12, prefix_strided, shard, None, out),
+                       "kernel: non-dense slice prefix", errors)
+        # contiguous copy source (stride(1)==H*D, no real work) must be rejected
+        copy_contig = torch.randn(1, 8, 4, 128, device=device, dtype=dt)
+        copy_out = torch.empty(1, 8, 4, 128, device=device, dtype=dt)
+        _expect_reject(lambda: cand(OP_COPY, 0, 0, 4, copy_contig, None, None, copy_out),
+                       "kernel: contiguous copy source", errors)
+        # dtype mismatch (output dtype != source dtype) must be rejected
+        out_fp16 = torch.empty(1, 4608, 12, 128, device=device, dtype=torch.float16)
+        _expect_reject(lambda: cand(OP_SLICE, 0, 0, 12, prefix, shard, None, out_fp16),
+                       "kernel: dtype mismatch", errors)
+        # shape mismatch (Sa+Sb != OutSeq) must be rejected
+        bad_out = torch.empty(1, 9, 8, 128, device=device, dtype=dt)
+        _expect_reject(lambda: cand(OP_CONCAT, 0, 0, 8,
+                                    torch.randn(1, 4, 8, 128, device=device, dtype=dt), cat_b, None, bad_out),
+                       "kernel: concat shape mismatch", errors)
     return errors
 
 

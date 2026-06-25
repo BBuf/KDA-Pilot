@@ -67,6 +67,17 @@ inline bool same_dtype(DLDataType a, DLDataType b) {
 inline bool aligned16(const void* p) {
   return (reinterpret_cast<uintptr_t>(p) & 0xF) == 0;
 }
+
+// Standard dense/contiguous check (size-1 dims have free stride).
+inline bool is_contiguous(const TensorView& t) {
+  int64_t expect = 1;
+  for (int i = t.ndim() - 1; i >= 0; --i) {
+    if (t.size(i) == 1) continue;
+    if (t.stride(i) != expect) return false;
+    expect *= t.size(i);
+  }
+  return true;
+}
 inline int64_t grid_for(int64_t total) {
   int64_t g = (total + BLOCK - 1) / BLOCK;
   if (g < 1) g = 1;
@@ -268,6 +279,25 @@ void attention_concat_copy_candidate(int64_t op_type, int64_t order, int64_t h_s
   } else if (op_type != OP_COPY) {
     cand_fail("unknown op_type");
   }
+
+  // exact supported-layout enforcement (reject unsupported strides / contiguous copy loudly)
+  if (op_type == OP_COPY) {
+    CAND_CHECK(source_a.ndim() == 4, "copy: source_a must be 4D");
+    CAND_CHECK(source_a.stride(2) == D, "copy: source_a head-dim stride must equal D");
+    CAND_CHECK(source_a.stride(1) % D == 0 && source_a.stride(1) > (int64_t)H * D,
+               "copy: source_a must be a non-contiguous head-sliced view (stride(1) > H*D)");
+  } else {  // OP_CONCAT or OP_SLICE_CONCAT
+    const TensorView sb = source_b.value();
+    CAND_CHECK(sb.stride(sb.ndim() - 1) == 1, "source_b last dim must be contiguous");
+    if (op_type == OP_CONCAT) {
+      CAND_CHECK(is_contiguous(source_a) && is_contiguous(sb),
+                 "concat: source_a and source_b must be dense/contiguous");
+    } else {
+      CAND_CHECK(is_contiguous(source_a), "slice_concat: prefix (source_a) must be a dense full-head tensor");
+      CAND_CHECK(is_contiguous(sb), "slice_concat: shard (source_b) must be dense/contiguous");
+    }
+  }
+
   if (op_type == OP_SLICE_CONCAT) {
     CAND_CHECK(source_a.ndim() == 4, "slice_concat: source_a (prefix) must be 4D");
     const int full_heads = (int)source_a.size(2);

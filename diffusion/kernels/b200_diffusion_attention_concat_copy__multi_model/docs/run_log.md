@@ -31,6 +31,12 @@
 - A/A: geomean **1.0023**. A/B (corrected grid): production geomean **1.409** — flux_slice (hf24→hl12) 1.998× (strided contiguous + cat vs single fused pass), joyai_slice (hf32→hl16) 1.019× (large shard dominates), copy 1.39–2.62×, concat 0.950/0.868× (parity). GPU 0 idle before (`0 %, 4 MiB`) and after (`0 %, 4 MiB`).
 - Final result frozen; candidate sha256 `364faf8a...`. See `docs/results.md`.
 
+## Run 6 — Round 2: layout enforcement + full negative matrix + cross-product grid (final)
+- Round 1 review found the candidate fast path could silently mis-handle non-dense strides, the slice regression grid missed 2 order×rank rows, the production audit was shape-set-only, and implementation comments contained plan markers. Fixed all four: `solution/kernel.cu` now validates exact supported layouts (dense concat/shard/prefix, non-contiguous head-sliced copy source, head-dim/shape/dtype) and rejects otherwise; added the 2 missing slice rows (full order×rank matrix); replaced the audit with an exact per-row production-contract check; removed `AC-` markers from code.
+- Rebuilt on idle GPU 0. `gen_workloads.py --check`: schema + contract valid (24 rows). Correctness `--impl both`: **PASS=48/48** bit-exact, negative_control OK, **negative_matrix OK** including the new kernel-level rejections (sequence-strided concat, non-dense slice shard/prefix, contiguous copy source, dtype mismatch, shape mismatch).
+- A/A: geomean **0.9996**. A/B: production geomean **1.406** (flux_slice 1.90×, joyai_slice 1.00×, copy 1.38–2.62×, concat parity). GPU 0 idle before (`0 %, 4 MiB`) and after (`0 %, 4 MiB`).
+- Final result frozen; candidate sha256 `5e042273...`. See `docs/results.md`.
+
 ## Notes
 - No SGLang import/patch at runtime; all benchmark code is task-local.
 - Raw `bench/results.jsonl` / `bench/results_aa.jsonl` kept locally on the remote workspace for evidence; excluded from the PR (definitive numbers are in `docs/results.md`).

@@ -672,6 +672,144 @@
     }
   },
   {
+    "id": "flux_slice_concat_hf24_hl12_r1_BA",
+    "production": false,
+    "function": "slice_heads_then_concat",
+    "op_type": "slice_heads_then_concat",
+    "order": "BA",
+    "h_local": 12,
+    "h_full": 24,
+    "h_start": 12,
+    "num_rep": 512,
+    "seed": 2005,
+    "dtype": "bfloat16",
+    "atol": 0,
+    "rtol": 0,
+    "tensors": {
+      "prefix": {
+        "shape": [
+          1,
+          512,
+          24,
+          128
+        ],
+        "dtype": "bfloat16",
+        "stride": [
+          1572864,
+          3072,
+          128,
+          1
+        ],
+        "layout": "contiguous",
+        "full_heads": 24
+      },
+      "shard": {
+        "shape": [
+          1,
+          4096,
+          12,
+          128
+        ],
+        "dtype": "bfloat16",
+        "stride": [
+          6291456,
+          1536,
+          128,
+          1
+        ],
+        "layout": "contiguous"
+      }
+    },
+    "scratch_shape": [
+      1,
+      512,
+      12,
+      128
+    ],
+    "output_shape": [
+      1,
+      4608,
+      12,
+      128
+    ],
+    "inject_nonfinite": false,
+    "source": {
+      "preset": "flux2-klein-base",
+      "sp_size": 2,
+      "sp_rank": 1,
+      "note": "sp_rank=1, h_start=12, opposite order"
+    }
+  },
+  {
+    "id": "joyai_slice_concat_hf32_hl16_r1_AB",
+    "production": false,
+    "function": "slice_heads_then_concat",
+    "op_type": "slice_heads_then_concat",
+    "order": "AB",
+    "h_local": 16,
+    "h_full": 32,
+    "h_start": 16,
+    "num_rep": 1004,
+    "seed": 2006,
+    "dtype": "bfloat16",
+    "atol": 0,
+    "rtol": 0,
+    "tensors": {
+      "prefix": {
+        "shape": [
+          1,
+          1004,
+          32,
+          128
+        ],
+        "dtype": "bfloat16",
+        "stride": [
+          4112384,
+          4096,
+          128,
+          1
+        ],
+        "layout": "contiguous",
+        "full_heads": 32
+      },
+      "shard": {
+        "shape": [
+          1,
+          8048,
+          16,
+          128
+        ],
+        "dtype": "bfloat16",
+        "stride": [
+          16482304,
+          2048,
+          128,
+          1
+        ],
+        "layout": "contiguous"
+      }
+    },
+    "scratch_shape": [
+      1,
+      1004,
+      16,
+      128
+    ],
+    "output_shape": [
+      1,
+      9052,
+      16,
+      128
+    ],
+    "inject_nonfinite": false,
+    "source": {
+      "preset": "joyai-edit",
+      "sp_size": 2,
+      "sp_rank": 1,
+      "note": "sp_rank=1, h_start=16, opposite order"
+    }
+  },
+  {
     "id": "flux_slice_concat_synth_hf48_hl24_r0_AB",
     "production": false,
     "function": "slice_heads_then_concat",
