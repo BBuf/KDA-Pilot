@@ -21,6 +21,7 @@
 // tvm-ffi as `causal_conv3d_cat_pad_candidate`.
 
 #include <ATen/cuda/CUDAContext.h>
+#include <c10/cuda/CUDAGuard.h>
 
 #include <cuda_bf16.h>
 #include <cuda_fp16.h>
@@ -264,6 +265,13 @@ void causal_conv3d_cat_pad_candidate(
   const char* x_p = static_cast<const char*>(x.data_ptr()) + x.byte_offset();
   const char* c_p = static_cast<const char*>(cache.data_ptr()) + cache.byte_offset();
 
+  // Match the baseline wrapper's device context: require cache/output on the same
+  // CUDA device as x, and guard the current device to x's device so a multi-GPU
+  // caller launches on the right device/stream (no-op for the single-device path).
+  const int x_dev = x.device().device_id;
+  CAND_CHECK(cache.device().device_id == x_dev, "cache must be on the same CUDA device as x");
+  CAND_CHECK(output.device().device_id == x_dev, "output must be on the same CUDA device as x");
+  const c10::cuda::CUDAGuard device_guard{static_cast<c10::DeviceIndex>(x_dev)};
   cudaStream_t stream = at::cuda::getCurrentCUDAStream();
 
   const bool x_contig = tensor_is_contiguous(x);
