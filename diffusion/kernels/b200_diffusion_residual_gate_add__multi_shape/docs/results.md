@@ -9,6 +9,13 @@ bandwidth/launch-bound as expected for elementwise traffic, and the analyze pass
 optimization as modest, conditional upside — so the generic vectorized candidate
 is accepted as the final implementation for this task.
 
+Scope: the ABI is batch-1 (every frozen production row is B=1). Full gate
+`[1,L,D]`, row-broadcast gate `[1,1,D]`, and 4D `a=[1,1,P,D]`/`b=[1,S,P,D]` are
+supported; a true B>1 broadcast is deliberately out of scope and is rejected
+symmetrically on both the candidate and the eager baseline (shared
+`bench/adapter.py::_validate`), with `rga-gate-leaddim-not1` and `bcast-batch-gt1`
+rejection tests. See `docs/baseline_source.md` for the contract rationale.
+
 ## Environment
 - Host `ion-b200` (`innomatrix-us-adc-smb200-0003`), container `sglang_bbuf`
   (`lmsysorg/sglang:dev`); torch 2.11.0+cu130, CUDA 13.0, tvm-ffi 0.1.9, nvcc 13.0.

@@ -14,6 +14,7 @@ solution/kernel.cu via tvm-ffi. No sglang import anywhere in this process
 
 from __future__ import annotations
 
+import functools
 import sys
 from pathlib import Path
 
@@ -39,16 +40,21 @@ _DTYPES = {
 _EP_RGA = "residual_gate_add"
 _EP_BCAST = "broadcast_add_4d"
 
-_candidate_module = load_candidate_module()
-
 _BASELINE_FNS = {
     _EP_RGA: _baseline.residual_gate_add,
     _EP_BCAST: _baseline.broadcast_add_4d,
 }
-_CANDIDATE_FNS = {
-    _EP_RGA: _candidate_module.residual_gate_add,
-    _EP_BCAST: _candidate_module.broadcast_add_4d,
-}
+
+
+@functools.lru_cache(maxsize=1)
+def _candidate_fns() -> dict:
+    # Build the candidate lazily (NOT at import): tvm-ffi's build queries the
+    # current CUDA device for gencode/provenance, so it must run AFTER the caller
+    # selects its target device (correctness.py / benchmark.py call
+    # torch.cuda.set_device first). Importing this module therefore stays cheap
+    # and device-independent.
+    m = load_candidate_module()
+    return {_EP_RGA: m.residual_gate_add, _EP_BCAST: m.broadcast_add_4d}
 
 
 def _randn(shape, dtype, device):
@@ -181,7 +187,7 @@ def call_baseline(workload: dict, inputs, outputs) -> None:
 
 
 def call_candidate(workload: dict, inputs, outputs) -> None:
-    _dispatch(_CANDIDATE_FNS, workload, inputs, outputs)
+    _dispatch(_candidate_fns(), workload, inputs, outputs)
 
 
 def assert_pinned_gpu(device: torch.device) -> None:

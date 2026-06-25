@@ -47,6 +47,21 @@ Two elementwise operator families, all bf16 in production:
   Production row: `a=[1,1,3,2048]`, `b=[1,126,3,2048]`, `out=[1,126,3,2048]`;
   `out[0,s,p,d] = a[0,0,p,d] + b[0,s,p,d]`.
 
+### Supported shape contract: batch size 1 (B=1)
+
+Every frozen production row is B=1, so the standalone kernel ABI deliberately
+supports only B=1: `residual_gate_add` accepts a full gate `[1,L,D]` or a
+row-broadcast gate `[1,1,D]`; `broadcast_add_4d` accepts `a=[1,1,P,D]`,
+`b=[1,S,P,D]`. A true batched broadcast (B>1 — e.g. gate `[B,1,D]` or
+`b=[B,S,P,D]` with B>1, which eager PyTorch would broadcast per batch) is OUT OF
+SCOPE and is rejected on BOTH sides: the candidate via its CUDA host checks, and
+the eager baseline via the shared `bench/adapter.py::_validate` (which runs before
+either implementation). This keeps the ABI symmetric and reward-hack-resistant;
+the `rga-gate-leaddim-not1` and `bcast-batch-gt1` rejection tests cover it.
+Supporting B>1 would add per-vector batch index arithmetic to the
+bandwidth-critical path for a shape absent from the frozen workload, so it is
+documented as out-of-scope rather than implemented.
+
 These callsites are PyTorch-eager elementwise ops. The torch profiler (see
 `../../docs/sglang_recent_diffusion_b200_profile_audit_2026-06-24.md`) shows them
 as separate `aten::mul` then `aten::add` launches plus a hot 4D broadcast add.

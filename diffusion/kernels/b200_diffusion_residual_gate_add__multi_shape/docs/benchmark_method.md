@@ -25,6 +25,10 @@ Both sides use a destination-passing ABI with the output tensor passed last:
 - `residual_gate_add(residual, update, gate, out)`
 - `broadcast_add_4d(a, b, out)`
 
+Both ops are batch-1 only (every production row is B=1); a true B>1 broadcast is
+deliberately out of scope and rejected symmetrically on both sides (see
+`docs/baseline_source.md`).
+
 Baseline (`baseline/binding.py`) is the faithful PyTorch-eager path:
 `residual_gate_add` runs `torch.mul(update, gate, out=scratch)` then
 `torch.add(residual, scratch, out=out)` — the profiled two-launch `mul`+`add`
