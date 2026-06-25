@@ -12,8 +12,21 @@ entry_points = [
 [build]
 language = "cuda"
 destination_passing_style = true
-baseline_entry_point = "baseline/kernel.cu::residual_gate_add_baseline"
-candidate_entry_point = "solution/kernel.cu::residual_gate_add_candidate"
+# The upstream "kernel" is PyTorch-eager elementwise math (residual + update*gate
+# and a 4D broadcast add), not a CUDA/Triton kernel. Per the standalone contract
+# (and the b200_diffusion_fuse_scale_shift precedent for non-CUDA upstreams), the
+# baseline is exposed through local destination-passing Python launchers in
+# baseline/binding.py with the same ABI as the candidate (outputs passed last);
+# the candidate is the fused CUDA module from solution/kernel.cu. One entry per
+# public op. (Reconciled from the generator's singular kernel.cu default; plan DEC-1.)
+baseline_entry_points = [
+  "baseline/binding.py::residual_gate_add",
+  "baseline/binding.py::broadcast_add_4d",
+]
+candidate_entry_points = [
+  "solution/kernel.cu::residual_gate_add",
+  "solution/kernel.cu::broadcast_add_4d",
+]
 
 [benchmark]
 warmup_runs = 10
