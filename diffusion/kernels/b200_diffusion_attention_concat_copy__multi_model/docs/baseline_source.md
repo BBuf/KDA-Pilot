@@ -18,7 +18,7 @@ The latest `main` commit was resolved fresh at baseline-recovery time (not a sta
 
 | Local path | Upstream path @ `67b2a9ed` | What it is | sha256 |
 |------------|----------------------------|------------|--------|
-| `baseline/sglang_uspattention_excerpt.py` | `python/sglang/multimodal_gen/runtime/layers/attention/layer.py` (lines 809–990) | Verbatim excerpt of the `USPAttention` replicated-prefix / replicated-kv-prefix / replicated-suffix methods — the exact attention prefix head-slice + `.contiguous()` + `torch.cat(dim=1)` memory-movement pattern this task models | `e87694fddcf3d26ac7ea368ee829624be9db42820b06e82c2f2a87a29c133dcf` (excerpt, incl. header) |
+| `baseline/sglang_uspattention_excerpt.py.txt` | `python/sglang/multimodal_gen/runtime/layers/attention/layer.py` (lines 809–990) | Verbatim excerpt of the `USPAttention` replicated-prefix / replicated-kv-prefix / replicated-suffix methods — the exact attention prefix head-slice + `.contiguous()` + `torch.cat(dim=1)` memory-movement pattern this task models | `e87694fddcf3d26ac7ea368ee829624be9db42820b06e82c2f2a87a29c133dcf` (excerpt, incl. header) |
 
 Full-file checksum (the upstream `layer.py` blob @ `67b2a9ed`, before excerpting): `094bd4ccc9171a61230f9ed10a4e2a23a4dd0dd91b6917a068cc25e8f0d4665b` (990 lines).
 
@@ -46,7 +46,7 @@ Tensors are `[B, S, H, D]`, bf16. The three standalone workload types modeled fr
 - `bench/` — frozen workloads, correctness oracle, benchmark adapter, and the standard timing harness.
 
 ## Local Edit Log (complete)
-1. `baseline/sglang_uspattention_excerpt.py`: prepended a non-behavioral provenance header comment block (source URL/commit/path/lines/checksums/resolution time). The method bodies (lines 809–990) are otherwise verbatim from the upstream blob. No code lines were altered.
+1. `baseline/sglang_uspattention_excerpt.py.txt`: prepended a non-behavioral provenance header comment block (source URL/commit/path/lines/checksums/resolution time). The method bodies (lines 809–990) are otherwise verbatim from the upstream blob. No code lines were altered.
 
 ## Why The Baseline Stays Python (ATen)
 
