@@ -129,6 +129,13 @@ def run_negative_matrix(impls, device):
         b2 = torch.randn(2, 4, 8, 128, device=device, dtype=dt)
         _expect_reject(lambda: cand(OP_CONCAT, 0, 0, 8, a2, b2, None, out_padded),
                        "kernel: non-dense output batch stride", errors)
+        # cross-CUDA-device inputs must be rejected (needs >=2 visible devices)
+        if torch.cuda.device_count() >= 2:
+            src_d1 = torch.randn(1, 4, 8, 128, device="cuda:1", dtype=dt)
+            shard_d1 = torch.randn(1, 4, 8, 128, device="cuda:1", dtype=dt)
+            out_d0 = torch.empty(1, 8, 8, 128, device="cuda:0", dtype=dt)
+            _expect_reject(lambda: cand(OP_CONCAT, 0, 0, 8, src_d1, shard_d1, None, out_d0),
+                           "kernel: cross-device source vs output", errors)
     return errors
 
 

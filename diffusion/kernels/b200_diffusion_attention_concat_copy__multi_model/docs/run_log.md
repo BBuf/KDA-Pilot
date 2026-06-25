@@ -29,18 +29,23 @@
 - Round 0 review found the slice production rows used full_heads=48/64 (output heads 24/32) instead of the immutable AC-4 contract (model h_full=24/32, h_local=h_full/sp_size=12/16). Regenerated the slice production grid to the AC-4 contract (48/64 demoted to regression); enriched `workloads.json` with full per-tensor + scalar schema + a validator (`gen_workloads.py --check` and correctness load); hardened the candidate to reject invalid order / misaligned or out-of-range h_start / pre-sliced prefix; added the AC-3/AC-4 negative-test matrix.
 - Rebuilt on GPU 0 (idle). `gen_workloads.py --check`: schema-valid (22 rows). Correctness `--impl both`: **PASS=44/44** bit-exact, negative_control OK, negative_matrix OK (all invalid rows rejected, incl. kernel-level).
 - A/A: geomean **1.0023**. A/B (corrected grid): production geomean **1.409** — flux_slice (hf24→hl12) 1.998× (strided contiguous + cat vs single fused pass), joyai_slice (hf32→hl16) 1.019× (large shard dominates), copy 1.39–2.62×, concat 0.950/0.868× (parity). GPU 0 idle before (`0 %, 4 MiB`) and after (`0 %, 4 MiB`).
-- Final result frozen; candidate sha256 `364faf8a...`. See `docs/results.md`.
+- Round 1 candidate sha256 `364faf8a...` (historical). See `docs/results.md` for the current authoritative hash.
 
 ## Run 6 — Round 2: layout enforcement + full negative matrix + cross-product grid (final)
 - Round 1 review found the candidate fast path could silently mis-handle non-dense strides, the slice regression grid missed 2 order×rank rows, the production audit was shape-set-only, and implementation comments contained plan markers. Fixed all four: `solution/kernel.cu` now validates exact supported layouts (dense concat/shard/prefix, non-contiguous head-sliced copy source, head-dim/shape/dtype) and rejects otherwise; added the 2 missing slice rows (full order×rank matrix); replaced the audit with an exact per-row production-contract check; removed `AC-` markers from code.
 - Rebuilt on idle GPU 0. `gen_workloads.py --check`: schema + contract valid (24 rows). Correctness `--impl both`: **PASS=48/48** bit-exact, negative_control OK, **negative_matrix OK** including the new kernel-level rejections (sequence-strided concat, non-dense slice shard/prefix, contiguous copy source, dtype mismatch, shape mismatch).
 - A/A: geomean **0.9996**. A/B: production geomean **1.406** (flux_slice 1.90×, joyai_slice 1.00×, copy 1.38–2.62×, concat parity). GPU 0 idle before (`0 %, 4 MiB`) and after (`0 %, 4 MiB`).
-- Final result frozen; candidate sha256 `5e042273...`. See `docs/results.md`.
+- Round 2 candidate sha256 `5e042273...` (historical). See `docs/results.md` for the current authoritative hash.
 
 ## Run 7 — Round 4: code-review validation hardening (B>1 / shape contract)
 - Codex code review (review phase) raised two [P2] ABI-validation gaps: source-dimension checks omitted `size(0)==B`/`D`, and the output check allowed a padded `B>1` batch stride. Fixed both in `solution/kernel.cu`: every source dim (batch, seq, head, head_dim) is validated against the output before launch, and `check_4d_contig_output` now requires a dense batch stride for non-size-1 batch. Added CUDA negatives for source-batch mismatch and padded output batch stride.
 - Rebuilt on B200 (correctness ran on GPU 0). Correctness `--impl both`: **PASS=48/48** bit-exact, negative_control OK, negative_matrix OK (incl. the 2 new rejections).
 - These are host-side O(1) checks before the kernel launch; the copy/concat/slice data paths are byte-identical, so the Round 2 idle-GPU-0 headline (geomean 1.406×) is unaffected. No fully-idle B200 was free at re-measure time (GPUs 0/7 newly occupied); a confirmation A/B on GPU 2 (0% util, 5.7 GB co-resident — interleaved A/B is robust to a dormant co-resident allocation) gave production geomean **1.3924×** (24/24), corroborating no regression. The headline remains the Round 2 clean-GPU measurement.
+
+## Run 8 — Round 5: cross-device rejection + provenance hash refresh
+- Codex code review raised [P2] (cross-CUDA-device inputs accepted) and [P3] (stale recorded kernel hash). Fixed: `solution/kernel.cu` now requires `source_a`/`source_b` `device_id == output` before taking data pointers; `bench/correctness.py` adds a cross-device negative test (guarded by `device_count()>=2`). `docs/results.md` provenance hash refreshed to the committed kernel `4f102e04...`.
+- Host-side device check only; data path byte-identical, headline (1.406×, idle GPU 0) unaffected. Rebuilt on B200; correctness `--impl both` PASS=48/48 bit-exact, negative_matrix OK (incl. cross-device rejection when ≥2 devices visible).
+- Current committed `solution/kernel.cu` sha256: `4f102e045d6fa595679d51a0b2f25605fab740df77ce6527987dba389eeb9c44`.
 
 ## Notes
 - No SGLang import/patch at runtime; all benchmark code is task-local.

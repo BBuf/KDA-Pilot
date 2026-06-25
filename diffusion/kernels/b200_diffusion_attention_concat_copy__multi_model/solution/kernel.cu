@@ -240,6 +240,8 @@ void attention_concat_copy_candidate(int64_t op_type, int64_t order, int64_t h_s
 
   CAND_CHECK(output.device().device_type == kDLCUDA, "output must be a CUDA tensor");
   CAND_CHECK(source_a.device().device_type == kDLCUDA, "source_a must be a CUDA tensor");
+  CAND_CHECK(source_a.device().device_id == output.device().device_id,
+             "source_a must be on the same CUDA device as output");
   check_4d_contig_output(output);
   const DLDataType dt = output.dtype();
   CAND_CHECK(same_dtype(source_a.dtype(), dt), "source_a dtype must match output");
@@ -264,6 +266,8 @@ void attention_concat_copy_candidate(int64_t op_type, int64_t order, int64_t h_s
   if (source_b.has_value()) {
     const TensorView sb = source_b.value();
     CAND_CHECK(sb.device().device_type == kDLCUDA, "source_b must be a CUDA tensor");
+    CAND_CHECK(sb.device().device_id == output.device().device_id,
+               "source_b must be on the same CUDA device as output");
     CAND_CHECK(sb.stride(sb.ndim() - 1) == 1, "source_b last dim must be contiguous");
     b = data_of<char>(sb);
     bS = sb.stride(1);
