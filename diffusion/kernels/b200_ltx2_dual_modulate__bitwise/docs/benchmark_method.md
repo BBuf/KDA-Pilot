@@ -30,5 +30,9 @@ Status: initialized in Round 0. Numbers are filled after the remote B200 phase.
   and reuse it (via `CUDA_VISIBLE_DEVICES`) for build, correctness, benchmark,
   profiler, and NCU. Record before/after idle state and toolchain versions.
 
-## Versions (filled in remote phase)
-- torch / CUDA runtime / driver / nvcc / tvm-ffi: TBD
+## Versions (recorded from the validation run)
+- torch `2.11.0+cu130`, CUDA runtime `13.0`, nvcc `13.0.88`, tvm-ffi `0.1.9`,
+  Python `3.12.3`.
+- Host `innomatrix-us-adc-smb200-0003`, container `sglang_bbuf_pr29315`,
+  GPU NVIDIA B200 (`REMOTE_GPU_ID=5`).
+- See `docs/results.md` for per-shape numbers (geomean speedup 2.55×, 8/8 bitwise).

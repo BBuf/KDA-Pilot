@@ -63,10 +63,16 @@ def ltx2_dual_modulate_baseline(
     d = _check_x(x)
     for name, p in (("scale0", scale0), ("shift0", shift0), ("scale1", scale1), ("shift1", shift1)):
         _check_param(p, d, name)
+    # A [B, D] param broadcasts over the sequence dim (per-batch, per-channel);
+    # insert the missing axis before expanding so expand_as is valid for all three
+    # supported layouts ([B, D], [B, 1, D], [B, S, D]).
+    def _exp(p: torch.Tensor) -> torch.Tensor:
+        return (p.unsqueeze(1) if p.dim() == 2 else p).expand_as(x)
+
     normed = F.rms_norm(x, normalized_shape=(d,), eps=float(eps))
     # Destination-passing: final op writes straight into the preallocated output.
-    torch.add(normed * (1 + scale0.expand_as(x)), shift0.expand_as(x), out=y0)
-    torch.add(normed * (1 + scale1.expand_as(x)), shift1.expand_as(x), out=y1)
+    torch.add(normed * (1 + _exp(scale0)), _exp(shift0), out=y0)
+    torch.add(normed * (1 + _exp(scale1)), _exp(shift1), out=y1)
 
 
 def ltx2_ca_dual_modulate_from_temb_baseline(
