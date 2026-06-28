@@ -18,7 +18,6 @@
 #include <tvm/ffi/function.h>
 #endif
 
-#include <algorithm>
 #include <cstdint>
 #include <sstream>
 #include <stdexcept>
