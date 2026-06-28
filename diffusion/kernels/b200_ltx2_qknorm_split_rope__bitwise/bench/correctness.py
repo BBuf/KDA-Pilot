@@ -11,7 +11,7 @@ Sections:
      RMSNorm), with a sensitivity guard proving the data exercises the
      round-first-then-addcmul distinction.
   4. candidate reject tests: adapter.call_candidate on mutated REAL cases must
-     raise ValueError before any kernel launch (AC-7).
+     raise ValueError before any kernel launch.
   5. support-helper tests (pure Python, no GPU): split_rope_support_status.
 
 Fail-closed: in normal mode any FAIL or SKIP in the CUDA sections (1-4), or CUDA
@@ -213,7 +213,7 @@ def _candidate_reject_tests(device):
     expect_reject("reject_qcos_last_stride", mut(q_cos=wide), base_out)
     expect_reject("reject_qsin_shape",
                   mut(q_sin=torch.zeros(2, 4, 16, 16, dtype=torch.bfloat16, device=device)), base_out)
-    # device: CPU tensors with valid dtype/shape must still reject (B4)
+    # device: CPU tensors with valid dtype/shape must still reject
     expect_reject("reject_qcos_cpu", mut(q_cos=base_in["q_cos"].to(cpu)), base_out)
     expect_reject("reject_out_cpu", base_in, [base_out[0].to(cpu), base_out[1]])
     if torch.cuda.device_count() > 1:
@@ -228,7 +228,7 @@ def _candidate_reject_tests(device):
 
     # mutate-after-accept: the SAME inputs/outputs objects, mutated in place into an
     # unsupported config, must still reject (proves validation is not bypassed by a
-    # per-identity cache — B5).
+    # per-call-skipping cache; validation must run on every call).
     mca = adapter.make_case(wl, device=device, seed=909)
     mca_in, mca_out = mca["inputs"], mca["candidate_outputs"]
     try:
@@ -269,6 +269,11 @@ def _support_helper_tests():
           torch.zeros(2, 16, 256, dtype=bf16), torch.zeros(2, 16, 256, dtype=bf16))
     bad_last = torch.zeros(2, 4, 16, 64, dtype=bf16)[..., ::2]
     check("reject_cos_last_stride", False, good_x, bad_last, bad_last.clone())
+    # cos/sin batch or sequence-length not matching x must reject
+    check("reject_cos_batch_mismatch", False, good_x,
+          torch.zeros(1, 4, 16, 32, dtype=bf16), torch.zeros(1, 4, 16, 32, dtype=bf16))
+    check("reject_cos_seq_mismatch", False, good_x,
+          torch.zeros(2, 4, 15, 32, dtype=bf16), torch.zeros(2, 4, 15, 32, dtype=bf16))
     return results
 
 

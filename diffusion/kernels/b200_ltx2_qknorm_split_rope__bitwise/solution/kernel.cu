@@ -1,6 +1,6 @@
-// Candidate CUDA implementation of the LTX2 split rotary embedding (stage 2 of
-// the staged Q/K-norm + split-RoPE candidate; stage 1 RMSNorm is reused from
-// torch.nn.RMSNorm in solution/candidate.py so it is bit-exact by construction).
+// Candidate CUDA implementation of the LTX2 split rotary embedding. The full
+// candidate composes torch.nn.RMSNorm (reused unchanged, bit-exact by
+// construction) with this fused split-RoPE kernel; see solution/candidate.py.
 //
 // Bit-exactness target (the eager fallback of upstream apply_split_rotary_emb):
 //   out_first  = (first * cos)  - sin * second
@@ -15,8 +15,8 @@
 //
 // cos/sin are indexed via their real strides (production layout is physically
 // [B,S,num_heads,head_dim/2] viewed [B,num_heads,S,head_dim/2]); q/k and the
-// output are contiguous [B,S,H]. Unsupported configs are rejected at the Python
-// layer (baseline/ltx2_split_rope.py:split_rope_support_status).
+// output are contiguous [B,S,H]. Unsupported configs are rejected before launch
+// by solution/candidate.py:validate_candidate_inputs (the authoritative entry gate).
 //
 // ABI: destination-passing, output last, current CUDA stream. Exported via
 // tvm-ffi as `ltx2_split_rope_candidate`.
@@ -65,10 +65,10 @@ __global__ void ltx2_split_rope_kernel(
     const float cv = __bfloat162float(cos[coff]);
     const float sv = __bfloat162float(sin[soff]);
 
-    // Stage A: round (first*cos) and (second*cos) to bf16 (matches split_x*cos_u).
+    // First, round (first*cos) and (second*cos) to bf16 (matches split_x*cos_u).
     const float fc = __bfloat162float(__float2bfloat16_rn(first * cv));
     const float sc = __bfloat162float(__float2bfloat16_rn(second * cv));
-    // Stage B: addcmul in fp32, single bf16 round (no contraction with Stage A).
+    // Then add the sine term in fp32, single bf16 round (not contracted with the above).
     out[i_first] = __float2bfloat16_rn(__fmaf_rn(-sv, second, fc));
     out[i_second] = __float2bfloat16_rn(__fmaf_rn(sv, first, sc));
   }

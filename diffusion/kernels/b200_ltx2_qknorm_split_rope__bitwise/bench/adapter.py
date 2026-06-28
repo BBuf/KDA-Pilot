@@ -9,7 +9,7 @@ Required API (see bench/benchmark.py header):
 
 Baseline = task-local PyTorch eager oracle (baseline/reference.py), forcing the
 eager split-RoPE expression. Candidate = optimized kernel exposed by solution/
-(not yet built in Round 0). Comparison is BIT-EXACT (torch.equal on an int16
+(built separately under solution/). Comparison is BIT-EXACT (torch.equal on an int16
 bitcast); tolerances are forbidden. Imports nothing from sglang.
 """
 
@@ -112,7 +112,7 @@ def _load_candidate():
         from solution.candidate import run_candidate  # type: ignore
     except Exception as exc:  # noqa: BLE001
         raise RuntimeError(
-            "solution candidate not available yet (Round 0 scaffold). Build the "
+            "solution candidate not available yet. Build the "
             "candidate kernel under solution/ and expose run_candidate(inputs, outputs) "
             f"writing q_out/k_out into outputs[0]/outputs[1]. Import error: {exc}"
         ) from exc

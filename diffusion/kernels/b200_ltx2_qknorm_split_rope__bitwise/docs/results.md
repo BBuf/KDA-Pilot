@@ -111,10 +111,12 @@ NCU was NOT run this round (not required for acceptance).
 - Baseline source: SGLang `main` @ `aaa31eb0a11e09f9511bade5e815907ec0b91fa0`
   (`apply_split_rotary_emb` eager fallback). See `docs/baseline_source.md`.
 - Candidate source hash (AC-9): `solution/kernel.cu` sha256
-  `01d105cf0b9540b120e1ebe334e4a2d29d37ea94249e1d29ce182ed8008f8f09` (unchanged
-  across Round 1/2; the kernel itself was bit-exact from Round 0 — Round 1/2
-  hardened the Python validation/reject path in `solution/candidate.py`). Built via
-  `tvm_ffi.cpp.load` (sm_100 gencode, `-std=c++17 -O3 -lineinfo`, no fast-math).
+  `983fb2791b9343f141a0332c303e9ef3ef53aaffc22d49f7aefe8b0ff7788024`. The compiled
+  code is unchanged since the kernel was first written (it was bit-exact from the
+  start); later rounds hardened the Python validation/reject path, and this round
+  edited only `kernel.cu` comments — the B200 correctness re-run confirms it stays
+  bit-exact. Built via `tvm_ffi.cpp.load` (sm_100 gencode, `-std=c++17 -O3 -lineinfo`,
+  no fast-math).
 - Host: `ion-b200` (`innomatrix-us-adc-smb200-0003`), container `sglang_bbuf_pr29315`,
   task workspace `/tmp/ltx2_task`.
 - GPU: NVIDIA B200, **id 5** (only GPU visible under `CUDA_VISIBLE_DEVICES=5`),

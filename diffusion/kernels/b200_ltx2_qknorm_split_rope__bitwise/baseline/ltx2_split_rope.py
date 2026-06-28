@@ -130,4 +130,8 @@ def split_rope_support_status(
         )
     if cos.shape != sin.shape:
         return False, f"cos shape {tuple(cos.shape)} != sin shape {tuple(sin.shape)}"
+    if cos.shape[0] != x.shape[0]:
+        return False, f"cos batch {cos.shape[0]} != x batch {x.shape[0]}"
+    if cos.shape[2] != x.shape[1]:
+        return False, f"cos seq length {cos.shape[2]} != x seq length {x.shape[1]}"
     return True, "supported"

@@ -1,11 +1,10 @@
 """Candidate entry point for the bench harness.
 
-Staged design (plan lower bound):
-  Stage 1 — RMSNorm: reuse the torch.nn.RMSNorm modules passed in `inputs`, so
-            the norm output is bit-identical to the oracle by construction.
-  Stage 2 — split RoPE: a single fused bit-exact CUDA kernel (solution/kernel.cu)
-            replaces the eager `split_x*cos` + two `addcmul_` ops, preserving the
-            exact rounding.
+The candidate has two parts:
+  - RMSNorm: reuse the torch.nn.RMSNorm modules passed in `inputs`, so the norm
+            output is bit-identical to the oracle by construction.
+  - split RoPE: a single fused bit-exact CUDA kernel (solution/kernel.cu) replaces
+            the eager `split_x*cos` + two `addcmul_` ops, preserving the exact rounding.
 
 `run_candidate(inputs, outputs)` validates the inputs on EVERY call (so in-place
 mutation of an already-seen dict/list can never bypass the gate), raising
@@ -116,10 +115,10 @@ def run_candidate(inputs, outputs):
     # per-call safety gate (a production integration would hoist it to setup — the
     # pure-compute speedup measured without it is reported in docs/results.md).
     validate_candidate_inputs(inputs, outputs)
-    # Stage 1: bit-exact RMSNorm via the same torch modules the oracle uses.
+    # RMSNorm reused from the same torch modules the oracle uses (bit-exact).
     q_normed = inputs["q_norm"](inputs["q"])
     k_normed = inputs["k_norm"](inputs["k"])
-    # Stage 2: fused bit-exact split RoPE (custom CUDA kernel), destination-passing.
+    # Fused bit-exact split RoPE (custom CUDA kernel), destination-passing.
     mod = _module()
     mod.ltx2_split_rope_candidate(q_normed, inputs["q_cos"], inputs["q_sin"], outputs[0])
     mod.ltx2_split_rope_candidate(k_normed, inputs["k_cos"], inputs["k_sin"], outputs[1])
