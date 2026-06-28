@@ -3,17 +3,19 @@
 The candidate must be BIT-FOR-BIT equal (`torch.equal`, atol=rtol=0) to an
 INDEPENDENT pure-PyTorch oracle (defined here, not imported from baseline/) for both
 operations across: production rows; the canonical regression grid crossed with the
-[B,D]/[B,1,D]/[B,S,D] param layouts; the CA grid crossed with table dtype {bf16,fp32}
-and temb_seq in {1,S}; the D=8192 boundary; repeated fixed-seed reproducibility. The
-baseline module is also checked against the same oracle. Output buffers are
-NaN-poisoned before each run so a skipped kernel is caught. Unsupported inputs must
-raise on BOTH the baseline and the candidate.
+[B,D]/[B,1,D]/[B,S,D] param layouts (uniform AND every independent mix); the CA grid
+crossed with table dtype {bf16,fp32} and temb_seq in {1,S}; padded (non-compact,
+last-dim-contiguous) tables; the D=8192 boundary; fixed-seed reproducibility. The
+baseline module is checked against the same oracle. Output buffers are NaN-poisoned
+before each run so a skipped kernel is caught. Unsupported inputs (including
+non-contiguous temb) must raise on BOTH the baseline and the candidate.
 
 Run on a B200:  python bench/correctness.py    (exit 0 iff all checks pass)
 """
 
 from __future__ import annotations
 
+import itertools
 import sys
 from pathlib import Path
 
@@ -65,21 +67,23 @@ def oracle_explicit(x, s0, h0, s1, h1, eps=_EPS):
 def oracle_ca(x, temb, table, eps=_EPS):
     b, s, d = x.shape
     temb_seq = temb.shape[1]
+    # reshape (not view) so a non-compact, last-dim-contiguous table is handled.
     s0, h0, s1, h1 = (
-        table.to(dtype=x.dtype).view(1, 1, 4, d) + temb.reshape(b, temb_seq, 4, d)
+        table.to(dtype=x.dtype).reshape(1, 1, 4, d) + temb.reshape(b, temb_seq, 4, d)
     ).unbind(dim=2)
     normed = F.rms_norm(x, (d,), eps=eps)
     return (normed * (1 + s0) + h0, normed * (1 + s1) + h1)
 
 
-def _explicit_params(B_, S, D, layout, device):
+def _one_param(B_, S, D, layout, device):
     shape = {"BD": (B_, D), "B1D": (B_, 1, D), "BSD": (B_, S, D)}[layout]
-    return [torch.randn(shape, device=device, dtype=torch.bfloat16) for _ in range(4)]
+    return torch.randn(shape, device=device, dtype=torch.bfloat16)
 
 
-def case_explicit(B_, S, D, layout, tag):
+def case_explicit(B_, S, D, layouts, tag):
+    """layouts: 4-tuple of {BD,B1D,BSD}, one per scale0/shift0/scale1/shift1."""
     x = torch.randn(B_, S, D, device=_DEV, dtype=torch.bfloat16)
-    s0, h0, s1, h1 = _explicit_params(B_, S, D, layout, _DEV)
+    s0, h0, s1, h1 = (_one_param(B_, S, D, l, _DEV) for l in layouts)
     r0, r1 = oracle_explicit(x, s0, h0, s1, h1)
     yb0, yb1 = torch.empty_like(x), torch.empty_like(x)
     yc0, yc1 = torch.empty_like(x), torch.empty_like(x)
@@ -92,10 +96,19 @@ def case_explicit(B_, S, D, layout, tag):
     _check(f"explicit/{tag}/base_y1", torch.equal(r1, yb1), "baseline != oracle")
 
 
-def case_ca(B_, S, D, table_dtype, temb_seq, tag):
+def _make_table(D, table_dtype, pad, device):
+    if pad:
+        parent = torch.randn(4, D + pad, device=device, dtype=table_dtype)
+        t = parent[:, :D]  # [4,D], last-dim contiguous, row stride D+pad > D
+        assert t.stride(0) == D + pad and t.stride(1) == 1
+        return t
+    return torch.randn(4, D, device=device, dtype=table_dtype)
+
+
+def case_ca(B_, S, D, table_dtype, temb_seq, tag, table_pad=0):
     x = torch.randn(B_, S, D, device=_DEV, dtype=torch.bfloat16)
     temb = torch.randn(B_, temb_seq, 4 * D, device=_DEV, dtype=torch.bfloat16)
-    table = torch.randn(4, D, device=_DEV, dtype=table_dtype)
+    table = _make_table(D, table_dtype, table_pad, _DEV)
     r0, r1 = oracle_ca(x, temb, table)
     yb0, yb1 = torch.empty_like(x), torch.empty_like(x)
     yc0, yc1 = torch.empty_like(x), torch.empty_like(x)
@@ -126,15 +139,23 @@ def main():
 
     print("[production rows]")
     for B_, S, D in [(2, 1536, 4096), (2, 126, 2048), (1, 6144, 4096), (1, 126, 2048)]:
-        case_explicit(B_, S, D, "B1D", f"prod_{B_}x{S}x{D}")
+        case_explicit(B_, S, D, ("B1D",) * 4, f"prod_{B_}x{S}x{D}")
         case_ca(B_, S, D, torch.bfloat16, 1, f"prod_{B_}x{S}x{D}")
 
-    print("[regression grid x explicit param layouts]")
+    print("[regression grid x uniform explicit param layouts]")
     for B_ in (1, 2, 4):
         for S in (6, 33, 128, 257):
             for D in (512, 1024, 1536, 3072):
                 for layout in ("BD", "B1D", "BSD"):
-                    case_explicit(B_, S, D, layout, f"grid_{B_}x{S}x{D}_{layout}")
+                    case_explicit(B_, S, D, (layout,) * 4, f"grid_{B_}x{S}x{D}_{layout}")
+
+    print("[independent mixed explicit param layouts: 81 combinations]")
+    short = {"BD": "d", "B1D": "1", "BSD": "s"}
+    for combo in itertools.product(("BD", "B1D", "BSD"), repeat=4):
+        tag = "mix_" + "".join(short[c] for c in combo)
+        case_explicit(2, 128, 1024, combo, tag)
+    # A production-sized mixed row.
+    case_explicit(2, 1536, 4096, ("BD", "B1D", "BSD", "B1D"), "mix_prod_2x1536x4096")
 
     print("[regression grid x CA table dtype x temb_seq]")
     for B_ in (1, 2, 4):
@@ -144,14 +165,19 @@ def main():
                     for tseq in (1, S):
                         case_ca(B_, S, D, td, tseq, f"grid_{B_}x{S}x{D}_{td}_ts{tseq}")
 
+    print("[padded (non-compact, last-dim-contiguous) tables]")
+    for td in (torch.bfloat16, torch.float32):
+        for tseq in (1, 128):
+            case_ca(2, 128, 1024, td, tseq, f"padtab_{td}_ts{tseq}", table_pad=64)
+
     print("[D=8192 boundary]")
-    case_explicit(1, 8, 8192, "B1D", "D8192")
+    case_explicit(1, 8, 8192, ("B1D",) * 4, "D8192")
     case_ca(1, 8, 8192, torch.float32, 8, "D8192")
 
     print("[reproducibility: same seed -> identical bits]")
     torch.manual_seed(123)
     x = torch.randn(2, 64, 1024, device=_DEV, dtype=torch.bfloat16)
-    s0, h0, s1, h1 = _explicit_params(2, 64, 1024, "B1D", _DEV)
+    s0, h0, s1, h1 = (_one_param(2, 64, 1024, "B1D", _DEV) for _ in range(4))
     a0, a1 = torch.empty_like(x), torch.empty_like(x)
     b0, b1 = torch.empty_like(x), torch.empty_like(x)
     _candidate.ltx2_dual_modulate_candidate(x, s0, h0, s1, h1, _EPS, a0, a1)
@@ -197,6 +223,12 @@ def main():
         expect_raises(f"baseline/{name}", lambda b=build: b(_baseline.ltx2_dual_modulate_baseline))
         expect_raises(f"candidate/{name}", lambda b=build: b(_candidate.ltx2_dual_modulate_candidate))
 
+    # Non-compact temb (sliced last dim) and bad table/temb shapes.
+    def noncompact_temb(D):
+        parent = torch.randn(2, 1, 4 * D + 64, device=_DEV, dtype=torch.bfloat16)
+        t = parent[:, :, : 4 * D]  # stride(1) = 4D+64 != 4D -> non-compact
+        assert t.stride(2) == 1 and t.stride(1) != 4 * D
+        return t
     ca_cases = {
         "table_wrong_rows": lambda f: f(g(2, 8, 512),
                                         torch.randn(2, 1, 4 * 512, device=_DEV, dtype=torch.bfloat16),
@@ -204,6 +236,9 @@ def main():
                                         _EPS, o(2, 8, 512), o(2, 8, 512)),
         "temb_wrong_last": lambda f: f(g(2, 8, 512),
                                        torch.randn(2, 1, 3 * 512, device=_DEV, dtype=torch.bfloat16),
+                                       torch.randn(4, 512, device=_DEV, dtype=torch.bfloat16),
+                                       _EPS, o(2, 8, 512), o(2, 8, 512)),
+        "temb_noncompact": lambda f: f(g(2, 8, 512), noncompact_temb(512),
                                        torch.randn(4, 512, device=_DEV, dtype=torch.bfloat16),
                                        _EPS, o(2, 8, 512), o(2, 8, 512)),
     }

@@ -1,8 +1,8 @@
 // Shared host-side helpers for the LTX2 dual-modulation baseline and candidate.
 // Included by both baseline/kernel.cu and solution/kernel.cu so the two sides
 // perform BYTE-IDENTICAL input validation and reject the same unsupported rows
-// (AC-1 ABI parity, AC-5 rejection). Also provides the TensorView -> at::Tensor
-// view used to call ATen `rms_norm` inside the kernel call path.
+// (identical ABI and rejection behavior on both sides). Also provides the
+// TensorView -> at::Tensor view used to call ATen `rms_norm` in the call path.
 
 #pragma once
 
@@ -90,6 +90,11 @@ struct ParamStrides {
   int64_t ss;  // stride over sequence (0 when broadcast over S)
 };
 
+struct TableInfo {
+  bool f32;    // scale_shift_table is float32 (else bfloat16)
+  int64_t s0;  // table row stride (rows are last-dim contiguous, may be padded)
+};
+
 inline Dims check_x(const TensorView& x) {
   LTX2_CHECK(x.device().device_type == kDLCUDA, "x must be a CUDA tensor");
   LTX2_CHECK(is_bf16(x.dtype()), "x must be bfloat16");
@@ -135,10 +140,15 @@ inline int64_t check_temb(const TensorView& t, const Dims& dm) {
              "temb_scale_shift seq dim must be 1 or S");
   LTX2_CHECK(t.size(2) == 4 * dm.D,
              "temb_scale_shift last dimension must be 4*D");
+  // The plan contract requires a contiguous temb; the kernel indexes it as fully
+  // compact, so reject any non-compact (e.g. sliced/padded) view.
+  LTX2_CHECK(t.stride(2) == 1 && t.stride(1) == 4 * dm.D &&
+                 t.stride(0) == temb_seq * 4 * dm.D,
+             "temb_scale_shift must be contiguous");
   return temb_seq;
 }
 
-inline bool check_table(const TensorView& t, const Dims& dm) {
+inline TableInfo check_table(const TensorView& t, const Dims& dm) {
   LTX2_CHECK(t.device().device_type == kDLCUDA,
              "scale_shift_table must be a CUDA tensor");
   LTX2_CHECK(last_dim_contiguous(t),
@@ -148,7 +158,7 @@ inline bool check_table(const TensorView& t, const Dims& dm) {
   bool f32 = is_f32(t.dtype());
   LTX2_CHECK(f32 || is_bf16(t.dtype()),
              "scale_shift_table must be bfloat16 or float32");
-  return f32;
+  return {f32, t.stride(0)};  // row stride may exceed D (padded/sliced view)
 }
 
 inline void check_output(const TensorView& y, const Dims& dm, const char* name) {

@@ -59,8 +59,10 @@ void ltx2_ca_dual_modulate_from_temb_baseline(TensorView x,
   at::Tensor xt = as_tensor(x);
   at::Tensor tb = as_tensor(temb_scale_shift);
   at::Tensor table = as_tensor(scale_shift_table);
-  // scale_shift_table.to(x.dtype).view(1,1,4,D) + temb.reshape(B,temb_seq,4,D)
-  at::Tensor combined = table.to(xt.scalar_type()).view({1, 1, 4, dm.D}) +
+  // scale_shift_table.to(x.dtype) -> [1,1,4,D] + temb -> [B,temb_seq,4,D].
+  // reshape (not view) so a last-dim-contiguous but non-compact table row stride is
+  // handled by an explicit copy, matching the candidate's row-stride indexing.
+  at::Tensor combined = table.to(xt.scalar_type()).reshape({1, 1, 4, dm.D}) +
                         tb.reshape({dm.B, temb_seq, 4, dm.D});
   std::vector<at::Tensor> parts = combined.unbind(2);  // scale0, shift0, scale1, shift1
   at::Tensor normed =

@@ -1,8 +1,9 @@
 """Build and load the candidate CUDA module via tvm-ffi.
 
-Compiles solution/kernel.cu into a tvm-ffi module exposing the destination-passing
-affine entry points (`ltx2_dual_modulate_candidate`,
-`ltx2_ca_dual_modulate_from_temb_candidate`). Uses ``tvm_ffi.cpp.load`` directly
+Compiles solution/kernel.cu into a tvm-ffi module exposing the full-operation
+destination-passing entry points (`ltx2_dual_modulate_candidate`,
+`ltx2_ca_dual_modulate_from_temb_candidate`), each taking `x`, params/temb/table,
+scalar `eps`, and outputs last. Uses ``tvm_ffi.cpp.load`` directly
 plus torch's include/library paths for ``at::cuda::getCurrentCUDAStream``. No sglang
 import.
 

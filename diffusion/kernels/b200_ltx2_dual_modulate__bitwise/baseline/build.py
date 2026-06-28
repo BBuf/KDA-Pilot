@@ -3,7 +3,7 @@
 Compiles baseline/kernel.cu (the eager-via-ATen reference) into a tvm-ffi module
 exposing the full-operation destination-passing entry points. Uses the SAME
 builder and flags as solution/build.py so baseline and candidate share an
-identical build path (AC-1). No sglang import.
+identical build path. No sglang import.
 """
 
 from __future__ import annotations
