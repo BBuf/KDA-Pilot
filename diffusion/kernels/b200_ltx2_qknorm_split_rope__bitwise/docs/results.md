@@ -5,92 +5,98 @@
 **Bit-exact net improvement.** The candidate (reused `torch.nn.RMSNorm` + a single
 fused split-RoPE CUDA kernel) is byte-for-byte equal (`torch.equal`, zero
 tolerance) to the PyTorch eager baseline on all eight production rows, a regression
-grid, and adversarial rounding-boundary inputs, while delivering an **equal-weight
-geometric-mean speedup of ~2.56×** over the eager fallback on B200, faster on every
-production row.
+grid, and adversarial rounding-boundary inputs, while running faster than the eager
+fallback on every production row. As-shipped end-to-end geomean **~1.96×**
+(includes the candidate's per-call safety validation); **kernel-only ~2.56×** with
+that validation hoisted to setup as a production integration would (see "Validation
+cost" below).
 
 ## Correctness gate (no tolerance; `torch.equal` on int16 bitcast) — `failures=0, skipped=0`
 
 - Production rows (Section 1): **8/8 bit-equal** (q_out and k_out).
 - Regression grid (Section 2): **12/12 bit-equal** (`head_dim∈{64,128}`, `num_heads=32`, `B∈{1,2}`, seq ∈ {129,126,257,1536}, cross-attn unequal Q/K).
-- Adversarial rounding-boundary, stage-level (Section 3): **bit-equal**, with a
-  sensitivity guard that tripped on **3419 elements** — a deliberately-wrong
-  single-fp32-expression reference (no intermediate bf16 round of `first*cos`)
-  differs from the eager fallback on those elements, proving the boundary data
-  actually exercises the round-first-then-`addcmul` distinction, and the candidate
-  matches the *correct* eager value.
+- Adversarial rounding-boundary, stage-level (Section 3): **bit-equal**, sensitivity
+  guard tripped on **3419 elements** (a single-fp32-expression reference without the
+  intermediate bf16 round differs from the eager fallback there, proving the data
+  exercises the round-first-then-`addcmul` distinction; the candidate matches the
+  *correct* eager value).
 - Candidate reject path, via `adapter.call_candidate` on mutated real cases
-  (Section 4): **12/12** — base case accepted; TP≠1, non-`RMSNorm`, eps mismatch,
-  fp32 weights, non-bf16 q, non-contiguous q, `head_dim` mismatch, 3-D cos,
-  last-dim stride≠1, bad output shape, bad output dtype all raise `ValueError`
-  before any kernel launch.
+  (Section 4): **21/21** — base accepted; rejects (all raise `ValueError` before any
+  kernel launch) for TP≠1, non-`RMSNorm` and `RMSNorm` subclass, eps mismatch, fp32
+  weights, non-bf16 q AND k, non-contiguous q AND k, `head_dim` mismatch, q_cos 3-D,
+  q_cos/k_sin dtype, q_cos last-stride≠1, q_sin shape, **CPU cos / CPU output
+  (wrong-device)**, bad output shape/dtype/contiguity, and a **mutate-after-accept**
+  case (the same inputs object mutated in place into an unsupported config still
+  rejects — no validation-cache bypass).
 - Support-helper unit tests (Section 5): **7/7**.
-- The runner is fail-closed: in normal mode any FAIL **or SKIP** in the CUDA
-  sections (or CUDA unavailable) exits non-zero.
+- Fail-closed: in normal mode any FAIL **or SKIP** in the CUDA sections (or CUDA
+  unavailable) exits non-zero.
 
-## Per-shape performance (B200, GPU 5, CUDA events, median over 7 trials)
+## Per-shape performance (B200, GPU 5, CUDA events, median over 7 trials; as-shipped, per-call validation)
 
 | Workload | baseline med (µs) | candidate med (µs) | speedup | candidate p10–p90 |
 |----------|------------------:|-------------------:|--------:|-------------------|
-| stage1 video self q1536 k1536 d128 | 216.91 | 157.32 | 1.379× | 157.05–157.62 |
-| stage1 audio self q126 k126 d64 | 128.51 | 26.47 | 4.854× | 23.47–28.57 |
-| stage1 audio→video q1536 k126 d64 | 127.66 | 52.25 | 2.443× | 52.16–52.63 |
-| stage1 video→audio q126 k1536 d64 | 183.91 | 53.02 | 3.468× | 52.55–54.70 |
-| stage2 video self q6144 k6144 d128 | 410.42 | 291.81 | 1.406× | 290.97–292.35 |
-| stage2 audio self q126 k126 d64 | 180.08 | 36.86 | 4.886× | 36.55–37.46 |
-| stage2 audio→video q6144 k126 d64 | 193.51 | 87.91 | 2.201× | 87.60–88.29 |
-| stage2 video→audio q126 k6144 d64 | 187.58 | 88.19 | 2.127× | 87.87–88.32 |
+| stage1 video self q1536 k1536 d128 | 217.29 | 160.21 | 1.356× | 160.01–160.58 |
+| stage1 audio self q126 k126 d64 | 114.79 | 42.92 | 2.674× | 39.35–45.63 |
+| stage1 audio→video q1536 k126 d64 | 178.48 | 66.75 | 2.674× | 56.60–69.38 |
+| stage1 video→audio q126 k1536 d64 | 131.77 | 53.21 | 2.476× | 53.04–53.37 |
+| stage2 video self q6144 k6144 d128 | 404.46 | 295.81 | 1.367× | 295.21–297.49 |
+| stage2 audio self q126 k126 d64 | 139.80 | 50.13 | 2.789× | 44.21–52.19 |
+| stage2 audio→video q6144 k126 d64 | 133.26 | 89.20 | 1.494× | 88.31–89.35 |
+| stage2 video→audio q126 k6144 d64 | 138.63 | 88.75 | 1.562× | 88.37–89.21 |
 
-**Headline:** geomean **2.557×**, arithmetic mean 2.846×, min 1.379×, max 4.886× (8/8 production rows passed).
+**Headline (as-shipped):** geomean **1.955×**, arithmetic mean 2.049×, min 1.356×, max 2.789× (8/8 production rows passed).
 
-### Measurement note (honest variability)
+### Validation cost (as-shipped vs kernel-only)
 
-The candidate is faster on every row in every run. The **geomean varies run-to-run
-(~2.56×–2.71× observed)** because the eager baseline's small/cross rows are
-launch/host-overhead-bound (their ~130–220 µs is dominated by per-launch CPU
-overhead, not tensor size) and therefore sensitive to host-CPU contention from
-other jobs on the shared box; the candidate (single GPU-bound kernel) is stable
-(its p10–p90 spread is tight). The reported numbers are from the final candidate
-(with validate-once; see `docs/benchmark_method.md`). The win is robust: min
-per-row ≥ 1.38× even on the worst row, under contention.
+For safety (AC-7), `run_candidate` validates its inputs on EVERY call and rejects
+unsupported configs before any kernel launch (it can never be bypassed by in-place
+mutation). That validation is ~15 µs of CPU metadata checks per call. In a
+production integration the shapes/configs are static, so validation is a one-time
+setup gate, not a per-token-batch cost. Two measurements bracket this:
+- **As-shipped, per-call validation in the timed path:** geomean **1.955×** (table above).
+- **Kernel-only (validation hoisted/cached to setup):** geomean **~2.56×**
+  (measured in a validate-once configuration; per-row the candidate medians drop to
+  ~26–37 µs on the small audio rows). This reflects the production-representative
+  cost of the kernel itself.
+
+Either way the candidate is bit-exact and faster on every row.
+
+### Measurement variability (honest)
+
+The candidate is faster on every row in every run, but the geomean varies run-to-run
+because the eager baseline's small/cross rows are launch/host-overhead-bound
+(~115–220 µs dominated by per-launch CPU overhead, not tensor size) and thus
+sensitive to host-CPU contention from other jobs on the shared box. The candidate
+(one GPU-bound kernel) is stable (tight p10–p90). Both sides are measured under
+identical settings in the same run, so each A/B ratio is fair.
 
 ## Roofline-style rationale (active bound)
 
 Memory-bound elementwise + small-reduction op. The eager baseline runs split-RoPE
 as a chain of separate ATen ops (`reshape/swapaxes` → `split_x*cos` → two
 `addcmul_` → `reshape/swapaxes`), each a kernel launch reading/writing bf16
-intermediates through HBM plus fixed launch overhead.
-- **Small / cross rows (S=126):** dominated by fixed per-launch overhead, so
-  collapsing the chain into one fused kernel yields 2.4–4.9×.
-- **Large video-self rows (S=1536/6144, d=128):** HBM traffic + the shared
-  (`torch`) RMSNorm dominate, so the gain is ~1.40×; the fused kernel reads
-  `q_normed`+`cos`+`sin` once and writes `out` once — near the memory-bound floor
-  for the RoPE stage. The remaining headroom is the shared RMSNorm.
+intermediates through HBM plus fixed launch overhead. Small/cross rows (S=126) are
+launch-overhead-bound, so collapsing the chain into one fused kernel yields the
+large speedups; large video-self rows (S=1536/6144, d=128) are HBM- + shared-RMSNorm-
+bound, so the gain is ~1.36×. The fused kernel reads `q_normed`+`cos`+`sin` once and
+writes `out` once — near the memory-bound floor for the RoPE stage; the remaining
+headroom is the shared RMSNorm.
 
 ## Optimization directions (Codex `analyze`; for a future upper-bound round)
 
-Ranked by benefit-vs-risk for pushing the large d128 rows past 1.40× while keeping
+Ranked by benefit-vs-risk for pushing the large d128 rows past ~1.36× while keeping
 strict bit-exactness:
-1. **Vectorized 128-bit bf16 load/store** for the RoPE fast path — 5–15% on large
-   rows, low bit-exactness risk (arithmetic order/round points unchanged), medium effort.
+1. **Vectorized 128-bit bf16 load/store** for the RoPE fast path — 5–15% on large rows, low bit-exactness risk, medium effort.
 2. **Shape specialization d64 vs d128** — 5–12%, low–medium risk, medium effort.
-3. **Fuse RMSNorm into the kernel** (eliminate the `q_normed` HBM round-trip) —
-   highest benefit (~15–35% on large rows) but **high bit-exactness risk** and high
-   effort: must clone torch RMSNorm's fp32 reduction order/tree, eps placement in
-   `rsqrt(mean(x*x)+eps)`, rsqrt-vs-sqrt+reciprocal, weight-multiply order, and the
-   exact bf16 downcast point. First-try bit-exact probability ~20–35%. De-risk by
-   first building a standalone RMSNorm that is bit-exact vs torch on all
-   production/regression/adversarial rows, then composing, then removing the intermediate.
+3. **Fuse RMSNorm into the kernel** (eliminate the `q_normed` HBM round-trip) — highest benefit (~15–35% on large rows) but **high bit-exactness risk** (must clone torch RMSNorm's fp32 reduction order/tree, eps placement, rsqrt-vs-sqrt+reciprocal, weight-multiply order, exact downcast point; ~20–35% first-try) and high effort. De-risk via a standalone bit-exact RMSNorm first, then compose, then remove the intermediate.
 4. Occupancy/block-size tuning — NCU-gated, 0–10%.
 
 **NCU decision:** a roofline rationale is sufficient to ACCEPT the staged candidate
-(bit-exact, clear win). NCU is warranted only for the next edit targeting the large
-rows; a short pass on one large video-self row should answer: (a) is DRAM/L2
-throughput near roofline or is there memory-instruction inefficiency (→ vectorize
-first)?; (b) are bytes/sector and load/store transactions clean for the strided
-cos/sin, or is alignment wasting traffic?; (c) do eligible-warps/occupancy/stalls
-point to latency/occupancy tuning instead of HBM-byte reduction? NCU was NOT run
-this round (not required for acceptance).
+(bit-exact, clear win). NCU is warranted only for a future edit targeting the large
+rows; a short pass on one large video-self row should answer: DRAM/L2 throughput vs
+roofline; bytes/sector for the strided cos/sin; eligible-warps/occupancy/stalls.
+NCU was NOT run this round (not required for acceptance).
 
 ## How the bit-exactness is achieved
 
@@ -98,22 +104,23 @@ this round (not required for acceptance).
 - **Split RoPE:** the CUDA kernel rounds `first*cos`/`second*cos` to bf16 first
   (matching `split_x*cos`), then adds the sine term via fp32 `__fmaf_rn` + one bf16
   round (`__float2bfloat16_rn`), matching PyTorch `addcmul_` (fp32 opmath). No
-  `--use_fast_math`; cos/sin indexed via real strides. The hypothesis was confirmed
-  bit-exact on B200 on the first attempt.
+  `--use_fast_math`; cos/sin indexed via real strides.
 
 ## Provenance
 
 - Baseline source: SGLang `main` @ `aaa31eb0a11e09f9511bade5e815907ec0b91fa0`
   (`apply_split_rotary_emb` eager fallback). See `docs/baseline_source.md`.
 - Candidate source hash (AC-9): `solution/kernel.cu` sha256
-  `01d105cf0b9540b120e1ebe334e4a2d29d37ea94249e1d29ce182ed8008f8f09`; built via
+  `01d105cf0b9540b120e1ebe334e4a2d29d37ea94249e1d29ce182ed8008f8f09` (unchanged
+  across Round 1/2; the kernel itself was bit-exact from Round 0 — Round 1/2
+  hardened the Python validation/reject path in `solution/candidate.py`). Built via
   `tvm_ffi.cpp.load` (sm_100 gencode, `-std=c++17 -O3 -lineinfo`, no fast-math).
 - Host: `ion-b200` (`innomatrix-us-adc-smb200-0003`), container `sglang_bbuf_pr29315`,
   task workspace `/tmp/ltx2_task`.
-- GPU: NVIDIA B200, **id 5**, used consistently for build + correctness + benchmark.
-  Idle throughout: a separate pre-benchmark `nvidia-smi -i 5` read `0% util, 0 MiB`;
-  the benchmark's own captured `nvidia_smi_before/after` read `0% util` with ≤4 MiB
-  residual on GPU 5 (other GPUs were busy — id 5 was the idle card selected).
+- GPU: NVIDIA B200, **id 5** (only GPU visible under `CUDA_VISIBLE_DEVICES=5`),
+  used consistently for build + correctness + benchmark; idle throughout (a separate
+  `nvidia-smi -i 5` pre-check read 0% util / 0 MiB; the benchmark's captured
+  before/after read 0% util with ≤4 MiB residual).
 - Env: torch 2.11.0+cu130, CUDA 13.0, tvm_ffi 0.1.9.
 - Benchmark settings: warmup 10, trials 7, inner-loop amplification to ≥1000 µs
   (CUDA events, A/B interleave, isolated subprocess). See `docs/benchmark_method.md`.
@@ -125,7 +132,7 @@ this round (not required for acceptance).
 ssh ion-b200 'docker exec -e CUDA_VISIBLE_DEVICES=5 sglang_bbuf_pr29315 \
   bash -lc "cd /tmp/ltx2_task && python bench/correctness.py"'   # -> failures=0 skipped=0
 ssh ion-b200 'docker exec -e CUDA_VISIBLE_DEVICES=5 sglang_bbuf_pr29315 \
-  bash -lc "cd /tmp/ltx2_task && python bench/benchmark.py"'      # -> geomean 2.56x
+  bash -lc "cd /tmp/ltx2_task && python bench/benchmark.py"'      # -> geomean 1.96x (as-shipped)
 ```
 
 Raw `bench/results.jsonl` is kept locally as evidence (git-ignored; excluded from the PR).

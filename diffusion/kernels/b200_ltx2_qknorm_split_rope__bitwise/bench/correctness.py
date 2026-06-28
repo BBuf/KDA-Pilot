@@ -176,6 +176,11 @@ def _candidate_reject_tests(device):
         d.update(overrides)
         return d
 
+    cpu = torch.device("cpu")
+
+    class _RMSNormSubclass(torch.nn.RMSNorm):
+        pass
+
     # First confirm the unmutated base case is ACCEPTED (so we are not trivially
     # rejecting everything).
     try:
@@ -184,22 +189,57 @@ def _candidate_reject_tests(device):
     except Exception as exc:  # noqa: BLE001
         results.append(("base_accepted", "FAIL", f"valid case rejected: {exc}"))
 
+    # config / norm
     expect_reject("reject_tp_ne_1", mut(tp_world_size=2), base_out)
     expect_reject("reject_non_rmsnorm",
                   mut(q_norm=torch.nn.LayerNorm(hidden, dtype=torch.bfloat16, device=device)), base_out)
+    expect_reject("reject_rmsnorm_subclass",
+                  mut(q_norm=_RMSNormSubclass(hidden, eps=1e-6, dtype=torch.bfloat16, device=device)), base_out)
     expect_reject("reject_eps_mismatch",
                   mut(q_norm=build_rms_norm(base_in["q_norm_weight"], 1e-5)), base_out)
     expect_reject("reject_fp32_weights",
                   mut(q_norm=torch.nn.RMSNorm(hidden, eps=1e-6, dtype=torch.float32, device=device)), base_out)
+    # q/k tensors (both sides)
     expect_reject("reject_non_bf16_q", mut(q=base_in["q"].float()), base_out)
+    expect_reject("reject_non_bf16_k", mut(k=base_in["k"].float()), base_out)
     expect_reject("reject_noncontig_q", mut(q=base_in["q"].transpose(1, 2)), base_out)
+    expect_reject("reject_noncontig_k", mut(k=base_in["k"].transpose(1, 2)), base_out)
     expect_reject("reject_head_dim_mismatch", mut(head_dim=128), base_out)  # 4*128=512 != H 256
-    expect_reject("reject_cos_3d", mut(q_cos=base_in["q_cos"].reshape(2, 4 * 16, 32)), base_out)
+    # cos/sin (dtype, rank, stride, shape, both sides)
+    expect_reject("reject_qcos_3d", mut(q_cos=base_in["q_cos"].reshape(2, 4 * 16, 32)), base_out)
+    expect_reject("reject_qcos_dtype", mut(q_cos=base_in["q_cos"].float()), base_out)
+    expect_reject("reject_ksin_dtype", mut(k_sin=base_in["k_sin"].float()), base_out)
     wide = torch.zeros(2, 4, 16, 64, dtype=torch.bfloat16, device=device)[..., ::2]  # last stride 2
-    expect_reject("reject_cos_last_stride", mut(q_cos=wide), base_out)
+    expect_reject("reject_qcos_last_stride", mut(q_cos=wide), base_out)
+    expect_reject("reject_qsin_shape",
+                  mut(q_sin=torch.zeros(2, 4, 16, 16, dtype=torch.bfloat16, device=device)), base_out)
+    # device: CPU tensors with valid dtype/shape must still reject (B4)
+    expect_reject("reject_qcos_cpu", mut(q_cos=base_in["q_cos"].to(cpu)), base_out)
+    expect_reject("reject_out_cpu", base_in, [base_out[0].to(cpu), base_out[1]])
+    if torch.cuda.device_count() > 1:
+        expect_reject("reject_out_wrong_gpu",
+                      base_in, [base_out[0].to(torch.device("cuda:1")), base_out[1]])
+    # outputs (shape, dtype, contiguity)
     expect_reject("reject_out_shape",
                   base_in, [torch.empty(2, 16, hidden + 8, dtype=torch.bfloat16, device=device), base_out[1]])
     expect_reject("reject_out_dtype", base_in, [base_out[0].float(), base_out[1]])
+    noncontig_out = torch.empty(2, 16, hidden * 2, dtype=torch.bfloat16, device=device)[..., ::2]
+    expect_reject("reject_out_noncontig", base_in, [noncontig_out, base_out[1]])
+
+    # mutate-after-accept: the SAME inputs/outputs objects, mutated in place into an
+    # unsupported config, must still reject (proves validation is not bypassed by a
+    # per-identity cache — B5).
+    mca = adapter.make_case(wl, device=device, seed=909)
+    mca_in, mca_out = mca["inputs"], mca["candidate_outputs"]
+    try:
+        adapter.call_candidate(wl, mca_in, mca_out)   # accepted
+        mca_in["head_dim"] = 128                       # in-place mutation -> H mismatch
+        adapter.call_candidate(wl, mca_in, mca_out)
+        results.append(("reject_mutate_after_accept", "FAIL", "no ValueError after in-place mutation"))
+    except ValueError as exc:
+        results.append(("reject_mutate_after_accept", "PASS", str(exc)[:90]))
+    except Exception as exc:  # noqa: BLE001
+        results.append(("reject_mutate_after_accept", "FAIL", f"wrong exception {type(exc).__name__}: {exc}"))
     return results
 
 

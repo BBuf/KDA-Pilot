@@ -51,30 +51,33 @@ so the comparison is fair.
   correctness, and benchmark). Idle before (0% util, 0 MiB) and after (0% util,
   4 MiB); other GPUs were busy, so id 5 was selected and used consistently.
 
-## Candidate entry validation (timed-path fairness)
+## Candidate entry validation (every call) and its benchmark cost
 
-`run_candidate` validates its inputs (clean reject of unsupported configs, AC-7)
-but does so **once per (inputs, outputs) object identity** (`solution/candidate.py`
-`_VALIDATED` cache; the validated objects are held so their ids cannot be reused).
-Validation is a per-config gate, not per-invocation compute, so it must not sit in
-the benchmark's timed inner loop — that would add candidate-only wrapper overhead
-and understate the kernel speedup. With validate-once, warmup triggers validation
-and the timed calls skip it; any new/mutated input (e.g. a negative test) has a
-fresh identity and is validated on first use. (An earlier measurement that
-validated on every call showed ~6–8 µs candidate-side overhead on the tiny rows,
-which is exactly the kind of asymmetric wrapper cost the standalone contract
-forbids; validate-once removes it.)
+`run_candidate` validates its inputs on EVERY call and raises `ValueError` before
+any RMSNorm/kernel launch when anything is unsupported (AC-7). Validation runs every
+call (no identity cache) so it cannot be bypassed by in-place mutation of an
+already-used inputs dict / outputs list — a per-identity cache was tried in Round 1
+and correctly flagged as unsafe (in-place mutation keeps the same object id), so it
+was removed. The error messages are built lazily (only on failure) to keep the
+success path to cheap metadata checks (~15 µs of torch dtype/shape/stride/device
+reads per call).
+
+This ~15 µs is a candidate-only per-call cost in the timed loop, so the as-shipped
+benchmark (geomean ~1.96×) is conservative. In a production integration the
+shapes/configs are static and validation is a one-time setup gate, not a per-call
+cost; the kernel-only geomean (validation hoisted/cached to setup) is ~2.56×. Both
+are reported in `docs/results.md`; the as-shipped number is the headline.
 
 ## Measurement variability
 
-The candidate is faster on every row in every run, but the geomean varies
-(~2.56×–2.71× observed across runs) because the eager baseline's small/cross rows
-are launch/host-overhead-bound (~130–220 µs dominated by per-launch CPU overhead,
-not tensor size) and thus sensitive to host-CPU contention from other jobs on the
-shared box. The candidate (one GPU-bound kernel) is stable (tight p10–p90). Both
-sides are measured under identical settings in the same run, so each A/B ratio is
-fair; the cross-run spread is a property of the contention-sensitive eager
-baseline, reported honestly rather than cherry-picked.
+The candidate is faster on every row in every run, but the geomean varies run-to-run
+because the eager baseline's small/cross rows are launch/host-overhead-bound
+(~115–220 µs dominated by per-launch CPU overhead, not tensor size) and thus
+sensitive to host-CPU contention from other jobs on the shared box. The candidate
+(one GPU-bound kernel) is stable (tight p10–p90). Both sides are measured under
+identical settings in the same run, so each A/B ratio is fair; the cross-run spread
+is a property of the contention-sensitive eager baseline, reported honestly rather
+than cherry-picked.
 
 ## Standalone contract
 
