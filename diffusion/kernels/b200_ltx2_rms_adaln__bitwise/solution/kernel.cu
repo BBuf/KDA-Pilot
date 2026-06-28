@@ -223,6 +223,17 @@ void ltx2_rms_adaln_candidate(TensorView x, TensorView scale, TensorView shift,
   auto* out_ptr = reinterpret_cast<__nv_bfloat16*>(
       static_cast<char*>(output.data_ptr()) + output.byte_offset());
 
+  // The kernel issues 16-byte (uint4) vector loads/stores. A contiguous tensor
+  // view with a nonzero storage offset passes the contiguity gate but can be
+  // only bf16-aligned; fail closed so the adapter routes it to the eager
+  // fallback rather than performing a misaligned vector access. (D % 256 == 0
+  // and the per-row/column offsets are 16B multiples, so only the base pointers
+  // can be misaligned.)
+  auto aligned16 = [](const void* p) { return (reinterpret_cast<uintptr_t>(p) & 0xF) == 0; };
+  CAND_CHECK(aligned16(normed_ptr) && aligned16(scale_ptr) && aligned16(shift_ptr) &&
+                 aligned16(out_ptr),
+             "scale/shift/output must be 16-byte aligned for the vectorized path");
+
   const int rows = static_cast<int>(B * S);
   const int vecD = static_cast<int>(D / 8);
   int threads = std::min(1024, std::max(32, ((vecD + 31) / 32) * 32));

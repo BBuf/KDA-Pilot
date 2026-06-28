@@ -160,6 +160,10 @@ def in_gate(x, scale, shift) -> bool:
     B, S, D = x.shape
     if D % 256 != 0 or D > 8192:
         return False
+    # The kernel issues 16-byte vector loads on scale/shift; a contiguous view
+    # with a nonzero storage offset can be only bf16-aligned -> route to fallback.
+    if scale.data_ptr() % 16 != 0 or shift.data_ptr() % 16 != 0:
+        return False
     return (layout_mode(scale, B, S, D) is not None
             and layout_mode(shift, B, S, D) is not None)
 
@@ -171,7 +175,9 @@ def call_baseline(workload: dict, inputs, outputs) -> None:
 
 def call_candidate(workload: dict, inputs, outputs) -> None:
     x, scale, shift, eps = inputs["x"], inputs["scale"], inputs["shift"], inputs["eps"]
-    if in_gate(x, scale, shift):
+    # in_gate covers x/scale/shift; the output is vectorized too, so it must also
+    # be 16-byte aligned for the optimized path (else eager fallback).
+    if in_gate(x, scale, shift) and outputs[0].data_ptr() % 16 == 0:
         _CANDIDATE_FNS[workload["function"]](x, scale, shift, eps, outputs[0])
     else:
         outputs[0].copy_(eager_rms_adaln(x, scale, shift, eps))

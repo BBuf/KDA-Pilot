@@ -22,13 +22,13 @@ Primary metric: `baseline_median_us / candidate_median_us`; headline = equal-wei
 
 | Workload | x shape | baseline median (µs) | candidate median (µs) | candidate std (µs) | speedup |
 |----------|---------|----------------------|------------------------|--------------------|---------|
-| ltx23_stage1_video_s1536_d4096_full | [2,1536,4096] | 57.584 | 28.994 | 0.023 | 1.986x |
-| ltx23_stage1_audio_s126_d2048_full | [2,126,2048] | 37.240 | 19.176 | 0.285 | 1.942x |
-| ltx23_stage2_video_s6144_d4096_full | [1,6144,4096] | 106.680 | 54.164 | 0.172 | 1.970x |
-| ltx23_stage2_audio_s126_d2048_full | [1,126,2048] | 36.903 | 18.854 | 0.260 | 1.957x |
+| ltx23_stage1_video_s1536_d4096_full | [2,1536,4096] | 57.574 | 29.061 | 0.042 | 1.981x |
+| ltx23_stage1_audio_s126_d2048_full | [2,126,2048] | 37.024 | 20.002 | 0.290 | 1.851x |
+| ltx23_stage2_video_s6144_d4096_full | [1,6144,4096] | 106.046 | 53.826 | 0.062 | 1.970x |
+| ltx23_stage2_audio_s126_d2048_full | [1,126,2048] | 37.397 | 19.420 | 0.319 | 1.926x |
 
-- **Geometric-mean speedup: 1.964x** (arithmetic mean 1.964x; min 1.942x; max 1.986x). All 4 PASSED the bitwise gate before timing.
-- Timing: standalone template, isolated subprocess runner, 7 trials, CUDA-event inner-loop amplification (~1000µs samples), interleaved A/B. Full samples + mean/min/p10/p90 in the result JSON (kept local, not staged). An earlier run measured geomean 2.009x; the ~1.96–2.0x band is run-to-run variance on the shared box (GPU 6 isolated and idle for both).
+- **Geometric-mean speedup: 1.931x** (min 1.851x; max 1.981x). All 4 PASSED the bitwise gate before timing.
+- Timing: standalone template, isolated subprocess runner, 7 trials, CUDA-event inner-loop amplification (~1000µs samples), interleaved A/B. Full samples + mean/min/p10/p90 in the result JSON (kept local, not staged). Across runs the geomean sits in a ~1.93–2.01x band (run-to-run variance on the shared box; GPU 6 isolated and idle for every run); the table above is the latest (Round 3) run for the current candidate sha.
 
 ## NCU-backed analysis (task12 — `profile/staged_20260629/REPORT.md`)
 
@@ -57,7 +57,7 @@ NCU on the candidate's `rms_adaln_modulation_kernel` (the shared `at::rms_norm` 
 - Host `ion-b200` (innomatrix-us-adc-smb200-0003), container `sglang_bbuf`, GPU id **6**, NVIDIA B200. GPU 6 idle before (0% util, ~0 MiB) and after (0% util, ~0 MiB) for both correctness and benchmark — see `docs/run_log.md`.
 - torch 2.12.1+cu130, CUDA 13.0, tvm_ffi 0.1.9, nvcc CUDA 13.0, cc (gcc) 13.3.0.
 - Compile flags (symmetric, both sides): `-std=c++17 -O3 -gencode=arch=compute_100,code=sm_100`, torch linkage, **no `--use_fast_math`**.
-- Baseline upstream commit: `aaa31eb0a11e09f9511bade5e815907ec0b91fa0` (SGLang `main`). Candidate `solution/kernel.cu` sha256: `39e243ed62581364a87f7de2cf86f4a3b47367305963de1853517997520041ef`.
+- Baseline upstream commit: `aaa31eb0a11e09f9511bade5e815907ec0b91fa0` (SGLang `main`). Candidate `solution/kernel.cu` sha256: `6d4ac255209be953b299dfd7fe02a1355ad2ee9dd985418e688f80d60f6959a8`.
 
 ## PR scope
 Final staged diff contains kernel code (`baseline/`, `solution/`), local ABI/adapter + correctness/benchmark/probe harness (`bench/`), provenance/results/dispatch/numerics notes + the curated NCU `profile/staged_20260629/REPORT.md`. Raw NCU `.ncu-rep`, benchmark JSON, build dirs, and `__pycache__` are kept local only (`.gitignore`); `.humanize*` is untracked.

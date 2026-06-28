@@ -70,6 +70,16 @@ ssh ion-b200 'docker exec sglang_bbuf bash -lc "cd <task> && CUDA_VISIBLE_DEVICE
 ```
 Raw artifacts kept local (gitignored): `/tmp/*.json` (container), `profile/staged_20260629/*.ncu-rep`, `*/.build*`. Only `profile/staged_20260629/REPORT.md` is tracked (curated).
 
+## Round 3 (review fix — 16-byte alignment gate; GPU 6 re-verified idle: before/after `6, 0%, ~0 MiB`)
+Added a 16-byte alignment gate on the vectorized pointers (kernel `CAND_CHECK` + `adapter.in_gate`/`call_candidate`) so contiguous-but-offset (bf16-aligned) views fall back instead of doing misaligned `uint4` accesses. Re-validated:
+```bash
+ssh ion-b200 'docker exec sglang_bbuf bash -lc "cd <task> && CUDA_VISIBLE_DEVICES=6 python3 bench/correctness.py --impl both"'
+#  -> rows=69/69 failures=0 ; PASS (bitwise) (incl. new misaligned-scale + misaligned-output rows)
+ssh ion-b200 'docker exec sglang_bbuf bash -lc "cd <task> && CUDA_VISIBLE_DEVICES=6 python3 bench/benchmark.py --out /tmp/bench3.json"'
+#  -> 4/4 PASSED ; geomean 1.931 ; candidate sha 6d4ac255...
+```
+The alignment check is host-side only (before launch); the profiled modulation kernel is unchanged, so `profile/staged_20260629/REPORT.md` remains valid.
+
 ## Notes
 - The login MOTD banner prints on every `ssh ion-b200 '...'`; filter it when capturing structured output.
 - A second container `sglang_bbuf_pr29315` (the 2026-06-28 LTX2.3 shape-capture container) is also running on this host; it was not used for this task.

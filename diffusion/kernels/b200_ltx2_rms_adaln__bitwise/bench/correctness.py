@@ -226,6 +226,16 @@ def run_out_of_gate_tests(device: torch.device) -> list[str]:
     def t(shape, dtype=bf16, dev=device):
         return torch.randn(shape, device=dev, dtype=dtype)
 
+    def mis(shape, dev=device):
+        # contiguous bf16 view with a nonzero storage offset -> base pointer is
+        # bf16-aligned but NOT 16-byte aligned (exercises the alignment gate).
+        n = 1
+        for s in shape:
+            n *= s
+        v = torch.randn(n + 8, device=dev, dtype=bf16).narrow(0, 1, n).view(*shape)
+        assert v.is_contiguous() and v.data_ptr() % 16 != 0
+        return v
+
     B, S, D = 2, 64, 2048
     # tag -> (kind, x, scale, shift)
     cases = {
@@ -245,6 +255,8 @@ def run_out_of_gate_tests(device: torch.device) -> list[str]:
         # BF1D non-divisible frames (sibling convention BF1D=(B,F,1,D)): x=[1,1000,3072],
         # scale/shift=[1,7,1,3072], S % F = 1000 % 7 != 0 -> reject.
         "bf1d_nondiv": ("reject", t([1, 1000, 3072]), t([1, 7, 1, 3072]), t([1, 7, 1, 3072])),
+        # contiguous but 16B-misaligned scale -> fallback (eager handles any alignment)
+        "misaligned_scale": ("fallback", t([B, S, D]), mis([B, S, D]), t([B, S, D])),
     }
 
     def _raw_fails_closed(tag, x, scale, shift):
@@ -277,6 +289,24 @@ def run_out_of_gate_tests(device: torch.device) -> list[str]:
             if not raised:
                 failures.append(f"out_of_gate[{tag}]: public candidate accepted a reject-row (must raise a controlled error)")
         failures += _raw_fails_closed(tag, x, scale, shift)
+
+    # misaligned (contiguous, nonzero-offset) OUTPUT -> public path must fall back
+    # bit-exact; raw kernel must fail closed.
+    xx, ss, hh = t([B, S, D]), t([B, S, D]), t([B, S, D])
+    inp = {"x": xx, "scale": ss, "shift": hh, "eps": eps}
+    mis_out = [mis([B, S, D])]
+    try:
+        adapter.call_candidate({"function": _EP}, inp, mis_out)
+        torch.cuda.synchronize()
+        failures += _bw("misaligned_output:fallback-vs-oracle", oracle(inp), mis_out)
+    except Exception as exc:  # noqa: BLE001
+        failures.append(f"out_of_gate[misaligned_output]: public candidate raised instead of fallback: {exc}")
+    try:
+        adapter._CANDIDATE_FNS[_EP](xx, ss, hh, eps, mis([B, S, D]))
+        torch.cuda.synchronize()
+        failures.append("out_of_gate[misaligned_output]: raw kernel accepted misaligned output (must fail closed)")
+    except Exception:
+        pass
 
     # cross-device (only when more than one GPU is visible)
     if torch.cuda.device_count() > 1:
