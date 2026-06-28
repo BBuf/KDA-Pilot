@@ -122,4 +122,12 @@ def split_rope_support_status(
         return False, f"cos/sin must be 4-D (split layout), got {cos.ndim}-D"
     if x.shape[-1] % 2 != 0:
         return False, f"x last dim {x.shape[-1]} is not even"
+    expected_h = cos.shape[1] * 2 * cos.shape[3]
+    if x.shape[-1] != expected_h:
+        return False, (
+            f"x hidden {x.shape[-1]} != num_heads*head_dim "
+            f"({cos.shape[1]}*{2 * cos.shape[3]} = {expected_h})"
+        )
+    if cos.shape != sin.shape:
+        return False, f"cos shape {tuple(cos.shape)} != sin shape {tuple(sin.shape)}"
     return True, "supported"

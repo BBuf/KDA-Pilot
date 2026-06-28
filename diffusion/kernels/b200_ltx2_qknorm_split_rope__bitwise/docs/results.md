@@ -4,72 +4,116 @@
 
 **Bit-exact net improvement.** The candidate (reused `torch.nn.RMSNorm` + a single
 fused split-RoPE CUDA kernel) is byte-for-byte equal (`torch.equal`, zero
-tolerance) to the PyTorch eager baseline on all eight production rows, the
-regression grid, and adversarial rounding-boundary inputs, while delivering an
-**equal-weight geometric-mean speedup of 2.71×** over the eager fallback on B200.
+tolerance) to the PyTorch eager baseline on all eight production rows, a regression
+grid, and adversarial rounding-boundary inputs, while delivering an **equal-weight
+geometric-mean speedup of ~2.56×** over the eager fallback on B200, faster on every
+production row.
 
-## Correctness gate (no tolerance; `torch.equal` on int16 bitcast)
+## Correctness gate (no tolerance; `torch.equal` on int16 bitcast) — `failures=0, skipped=0`
 
-- Production rows: **8/8 bit-equal** (q_out and k_out).
-- Regression grid (`head_dim∈{64,128}`, `num_heads=32`, `B∈{1,2}`, seq ∈ {129,126,257,1536}, cross-attn unequal Q/K): **12/12 bit-equal**.
-- Adversarial rounding-boundary (`d128`, S=257): **bit-equal**.
-- Reject/negative tests (TP≠1, non-bf16, non-contiguous x, interleaved/3-D cos, cos last-dim stride≠1): **6/6 reject as expected**.
-- `failures=0, skipped=0`.
+- Production rows (Section 1): **8/8 bit-equal** (q_out and k_out).
+- Regression grid (Section 2): **12/12 bit-equal** (`head_dim∈{64,128}`, `num_heads=32`, `B∈{1,2}`, seq ∈ {129,126,257,1536}, cross-attn unequal Q/K).
+- Adversarial rounding-boundary, stage-level (Section 3): **bit-equal**, with a
+  sensitivity guard that tripped on **3419 elements** — a deliberately-wrong
+  single-fp32-expression reference (no intermediate bf16 round of `first*cos`)
+  differs from the eager fallback on those elements, proving the boundary data
+  actually exercises the round-first-then-`addcmul` distinction, and the candidate
+  matches the *correct* eager value.
+- Candidate reject path, via `adapter.call_candidate` on mutated real cases
+  (Section 4): **12/12** — base case accepted; TP≠1, non-`RMSNorm`, eps mismatch,
+  fp32 weights, non-bf16 q, non-contiguous q, `head_dim` mismatch, 3-D cos,
+  last-dim stride≠1, bad output shape, bad output dtype all raise `ValueError`
+  before any kernel launch.
+- Support-helper unit tests (Section 5): **7/7**.
+- The runner is fail-closed: in normal mode any FAIL **or SKIP** in the CUDA
+  sections (or CUDA unavailable) exits non-zero.
 
 ## Per-shape performance (B200, GPU 5, CUDA events, median over 7 trials)
 
-| Workload | baseline med (µs) | candidate med (µs) | speedup | baseline p10–p90 | candidate p10–p90 |
-|----------|------------------:|-------------------:|--------:|------------------|-------------------|
-| stage1 video self q1536 k1536 d128 | 221.18 | 158.19 | 1.398× | 219.56–225.40 | 157.94–158.82 |
-| stage1 audio self q126 k126 d64 | 182.91 | 37.09 | 4.932× | 181.50–187.06 | 36.63–38.00 |
-| stage1 audio→video q1536 k126 d64 | 191.96 | 52.84 | 3.633× | 183.16–194.59 | 52.76–53.01 |
-| stage1 video→audio q126 k1536 d64 | 186.18 | 52.81 | 3.526× | 183.14–194.00 | 52.72–52.97 |
-| stage2 video self q6144 k6144 d128 | 408.42 | 291.87 | 1.399× | 406.77–412.01 | 290.91–292.53 |
-| stage2 audio self q126 k126 d64 | 189.33 | 37.15 | 5.096× | 188.29–199.41 | 36.56–38.27 |
-| stage2 audio→video q6144 k126 d64 | 185.93 | 87.86 | 2.116× | 178.42–191.01 | 87.32–88.27 |
-| stage2 video→audio q126 k6144 d64 | 189.72 | 88.01 | 2.156× | 185.88–192.40 | 87.75–88.38 |
+| Workload | baseline med (µs) | candidate med (µs) | speedup | candidate p10–p90 |
+|----------|------------------:|-------------------:|--------:|-------------------|
+| stage1 video self q1536 k1536 d128 | 216.91 | 157.32 | 1.379× | 157.05–157.62 |
+| stage1 audio self q126 k126 d64 | 128.51 | 26.47 | 4.854× | 23.47–28.57 |
+| stage1 audio→video q1536 k126 d64 | 127.66 | 52.25 | 2.443× | 52.16–52.63 |
+| stage1 video→audio q126 k1536 d64 | 183.91 | 53.02 | 3.468× | 52.55–54.70 |
+| stage2 video self q6144 k6144 d128 | 410.42 | 291.81 | 1.406× | 290.97–292.35 |
+| stage2 audio self q126 k126 d64 | 180.08 | 36.86 | 4.886× | 36.55–37.46 |
+| stage2 audio→video q6144 k126 d64 | 193.51 | 87.91 | 2.201× | 87.60–88.29 |
+| stage2 video→audio q126 k6144 d64 | 187.58 | 88.19 | 2.127× | 87.87–88.32 |
 
-**Headline:** geomean **2.706×**, arithmetic mean 3.032×, min 1.398×, max 5.096× (8/8 production rows passed).
+**Headline:** geomean **2.557×**, arithmetic mean 2.846×, min 1.379×, max 4.886× (8/8 production rows passed).
+
+### Measurement note (honest variability)
+
+The candidate is faster on every row in every run. The **geomean varies run-to-run
+(~2.56×–2.71× observed)** because the eager baseline's small/cross rows are
+launch/host-overhead-bound (their ~130–220 µs is dominated by per-launch CPU
+overhead, not tensor size) and therefore sensitive to host-CPU contention from
+other jobs on the shared box; the candidate (single GPU-bound kernel) is stable
+(its p10–p90 spread is tight). The reported numbers are from the final candidate
+(with validate-once; see `docs/benchmark_method.md`). The win is robust: min
+per-row ≥ 1.38× even on the worst row, under contention.
 
 ## Roofline-style rationale (active bound)
 
-This is a memory-bound elementwise + small-reduction op. The eager baseline runs
-the split-RoPE as a chain of separate ATen ops — `reshape/swapaxes` →
-`split_x*cos` → two `addcmul_` → `reshape/swapaxes` — each a separate kernel
-launch that reads/writes bf16 intermediates through HBM, plus fixed per-launch
-overhead.
+Memory-bound elementwise + small-reduction op. The eager baseline runs split-RoPE
+as a chain of separate ATen ops (`reshape/swapaxes` → `split_x*cos` → two
+`addcmul_` → `reshape/swapaxes`), each a kernel launch reading/writing bf16
+intermediates through HBM plus fixed launch overhead.
+- **Small / cross rows (S=126):** dominated by fixed per-launch overhead, so
+  collapsing the chain into one fused kernel yields 2.4–4.9×.
+- **Large video-self rows (S=1536/6144, d=128):** HBM traffic + the shared
+  (`torch`) RMSNorm dominate, so the gain is ~1.40×; the fused kernel reads
+  `q_normed`+`cos`+`sin` once and writes `out` once — near the memory-bound floor
+  for the RoPE stage. The remaining headroom is the shared RMSNorm.
 
-- **Small / cross rows (S=126):** total time is dominated by fixed per-launch
-  overhead (~180–190 µs regardless of the tiny tensor), so collapsing the RoPE
-  chain into one fused kernel yields 3.5–5.1×.
-- **Large video-self rows (S=1536/6144, d=128):** HBM traffic dominates and the
-  RMSNorm (shared, `torch`) is a large fixed cost on both sides, so the gain is
-  ~1.40×; the fused kernel still removes the `split_x*cos` intermediate write/read
-  and extra launches. The candidate reads `q_normed`+`cos`+`sin` once and writes
-  `out` once — near the memory-bound floor for the RoPE stage. The remaining
-  headroom is the shared RMSNorm, which a future fused RMSNorm+RoPE kernel
-  (upper bound) could attack.
+## Optimization directions (Codex `analyze`; for a future upper-bound round)
+
+Ranked by benefit-vs-risk for pushing the large d128 rows past 1.40× while keeping
+strict bit-exactness:
+1. **Vectorized 128-bit bf16 load/store** for the RoPE fast path — 5–15% on large
+   rows, low bit-exactness risk (arithmetic order/round points unchanged), medium effort.
+2. **Shape specialization d64 vs d128** — 5–12%, low–medium risk, medium effort.
+3. **Fuse RMSNorm into the kernel** (eliminate the `q_normed` HBM round-trip) —
+   highest benefit (~15–35% on large rows) but **high bit-exactness risk** and high
+   effort: must clone torch RMSNorm's fp32 reduction order/tree, eps placement in
+   `rsqrt(mean(x*x)+eps)`, rsqrt-vs-sqrt+reciprocal, weight-multiply order, and the
+   exact bf16 downcast point. First-try bit-exact probability ~20–35%. De-risk by
+   first building a standalone RMSNorm that is bit-exact vs torch on all
+   production/regression/adversarial rows, then composing, then removing the intermediate.
+4. Occupancy/block-size tuning — NCU-gated, 0–10%.
+
+**NCU decision:** a roofline rationale is sufficient to ACCEPT the staged candidate
+(bit-exact, clear win). NCU is warranted only for the next edit targeting the large
+rows; a short pass on one large video-self row should answer: (a) is DRAM/L2
+throughput near roofline or is there memory-instruction inefficiency (→ vectorize
+first)?; (b) are bytes/sector and load/store transactions clean for the strided
+cos/sin, or is alignment wasting traffic?; (c) do eligible-warps/occupancy/stalls
+point to latency/occupancy tuning instead of HBM-byte reduction? NCU was NOT run
+this round (not required for acceptance).
 
 ## How the bit-exactness is achieved
 
 - **RMSNorm:** reused `torch.nn.RMSNorm(H, eps)` unchanged (bit-exact by construction).
-- **Split RoPE:** the CUDA kernel rounds `first*cos` / `second*cos` to bf16 first
-  (matching the standalone `split_x*cos_u`), then adds the sine term with an fp32
-  fused-multiply-add and a single bf16 round (`__fmaf_rn` + `__float2bfloat16_rn`),
-  matching PyTorch's `addcmul_` (fp32 opmath). No `--use_fast_math`; cos/sin
-  indexed via real strides (non-contiguous production layout). The fp32-fma
-  hypothesis was confirmed bit-exact on B200 on the first attempt.
+- **Split RoPE:** the CUDA kernel rounds `first*cos`/`second*cos` to bf16 first
+  (matching `split_x*cos`), then adds the sine term via fp32 `__fmaf_rn` + one bf16
+  round (`__float2bfloat16_rn`), matching PyTorch `addcmul_` (fp32 opmath). No
+  `--use_fast_math`; cos/sin indexed via real strides. The hypothesis was confirmed
+  bit-exact on B200 on the first attempt.
 
 ## Provenance
 
 - Baseline source: SGLang `main` @ `aaa31eb0a11e09f9511bade5e815907ec0b91fa0`
   (`apply_split_rotary_emb` eager fallback). See `docs/baseline_source.md`.
-- Candidate: `solution/kernel.cu` (committed at `62f511a84`), built via
+- Candidate source hash (AC-9): `solution/kernel.cu` sha256
+  `01d105cf0b9540b120e1ebe334e4a2d29d37ea94249e1d29ce182ed8008f8f09`; built via
   `tvm_ffi.cpp.load` (sm_100 gencode, `-std=c++17 -O3 -lineinfo`, no fast-math).
 - Host: `ion-b200` (`innomatrix-us-adc-smb200-0003`), container `sglang_bbuf_pr29315`,
   task workspace `/tmp/ltx2_task`.
-- GPU: NVIDIA B200, **id 5**, idle before (0% util, 0 MiB) and after (0% util, 4 MiB);
-  other GPUs busy — id 5 used consistently for build + correctness + benchmark.
+- GPU: NVIDIA B200, **id 5**, used consistently for build + correctness + benchmark.
+  Idle throughout: a separate pre-benchmark `nvidia-smi -i 5` read `0% util, 0 MiB`;
+  the benchmark's own captured `nvidia_smi_before/after` read `0% util` with ≤4 MiB
+  residual on GPU 5 (other GPUs were busy — id 5 was the idle card selected).
 - Env: torch 2.11.0+cu130, CUDA 13.0, tvm_ffi 0.1.9.
 - Benchmark settings: warmup 10, trials 7, inner-loop amplification to ≥1000 µs
   (CUDA events, A/B interleave, isolated subprocess). See `docs/benchmark_method.md`.
@@ -77,13 +121,11 @@ overhead.
 ## Exact commands
 
 ```bash
-# build + correctness + benchmark, pinned to the idle B200 (GPU 5):
+# pinned to the idle B200 (GPU 5):
 ssh ion-b200 'docker exec -e CUDA_VISIBLE_DEVICES=5 sglang_bbuf_pr29315 \
-  bash -lc "cd /tmp/ltx2_task && python -c \"from solution.build import load_candidate_module; load_candidate_module()\""'
+  bash -lc "cd /tmp/ltx2_task && python bench/correctness.py"'   # -> failures=0 skipped=0
 ssh ion-b200 'docker exec -e CUDA_VISIBLE_DEVICES=5 sglang_bbuf_pr29315 \
-  bash -lc "cd /tmp/ltx2_task && python bench/correctness.py"'
-ssh ion-b200 'docker exec -e CUDA_VISIBLE_DEVICES=5 sglang_bbuf_pr29315 \
-  bash -lc "cd /tmp/ltx2_task && python bench/benchmark.py"'
+  bash -lc "cd /tmp/ltx2_task && python bench/benchmark.py"'      # -> geomean 2.56x
 ```
 
 Raw `bench/results.jsonl` is kept locally as evidence (git-ignored; excluded from the PR).
