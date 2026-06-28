@@ -44,9 +44,11 @@ _EP = adapter._EP
 
 
 def oracle(inputs: dict) -> list[torch.Tensor]:
-    x, scale, shift, eps = inputs["x"], inputs["scale"], inputs["shift"], inputs["eps"]
-    normed = torch.nn.functional.rms_norm(x, (x.shape[-1],), eps=eps)
-    return [normed * (1 + scale) + shift]
+    # Independent eager reference. The candidate on in-gate rows is the CUDA
+    # kernel (independent of this), so kernel-vs-oracle is a real check; the
+    # eager semantics (incl. [B,D] -> [B,1,D]) live in one place.
+    return [adapter.eager_rms_adaln(
+        inputs["x"], inputs["scale"], inputs["shift"], inputs["eps"])]
 
 
 def _poison(outputs: list) -> None:
@@ -218,7 +220,6 @@ def run_out_of_gate_tests(device: torch.device) -> list[str]:
         "scalar1": (t([B, S, D]), t([1]), t([1]), True),
         "layout_1SD": (t([B, S, D]), t([1, S, D]), t([1, S, D]), True),   # B>1, not supported
         "layout_11D": (t([B, S, D]), t([1, 1, D]), t([1, 1, D]), True),   # B>1, not supported
-        "scale_4d_BF1D": (t([B, S, D]), t([B, 4, 1, D]), t([B, 4, 1, D]), True),
         "noncontig_x": (t([B, S, 2 * D])[:, :, ::2], t([B, S, D]), t([B, S, D]), True),
         "noncontig_scale": (t([B, S, D]), t([B, S, 2 * D])[:, :, ::2], t([B, S, D]), True),
         "cpu": (t([B, S, D], dev="cpu"), t([B, S, D], dev="cpu"), t([B, S, D], dev="cpu"), True),

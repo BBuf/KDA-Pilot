@@ -95,6 +95,12 @@ void ltx2_rms_adaln_baseline(TensorView x, TensorView scale, TensorView shift,
   const c10::cuda::CUDAGuard guard(xt.device());
   const int64_t D = xt.size(xt.dim() - 1);
 
+  // A 2D [B,D] scale/shift is per-(batch,channel) modulation broadcast over S
+  // (semantically [B,1,D]); PyTorch will not broadcast a bare [B,D] against
+  // [B,S,D], so unsqueeze it. [D]/[B,1,D]/[B,S,D] already broadcast directly.
+  if (st.dim() == 2) st = st.unsqueeze(1);
+  if (sht.dim() == 2) sht = sht.unsqueeze(1);
+
   // Exact eager op order; each op rounds to bf16 just as Python eager does.
   at::Tensor normed = at::rms_norm(xt, {D}, /*weight=*/{}, /*eps=*/eps);
   at::Tensor y = normed * (st + 1) + sht;  // (st + 1) == Python's (1 + scale)

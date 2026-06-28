@@ -109,9 +109,17 @@ def make_case(workload: dict, *, device: torch.device, seed: int) -> dict:
 
 
 def eager_rms_adaln(x, scale, shift, eps):
-    """The exact eager oracle, used as the out-of-gate fallback."""
+    """The exact eager oracle, also used as the out-of-gate fallback.
+
+    A 2D [B, D] scale/shift is per-(batch, channel) modulation broadcast over the
+    sequence, i.e. semantically [B, 1, D] (matches the kernel's PERBATCH mode);
+    PyTorch will not broadcast a bare [B, D] against [B, S, D], so unsqueeze it.
+    [D], [B, 1, D], and [B, S, D] already broadcast directly.
+    """
     normed = torch.nn.functional.rms_norm(x, (x.shape[-1],), eps=eps)
-    return normed * (1 + scale) + shift
+    s = scale.unsqueeze(-2) if scale.dim() == 2 else scale
+    h = shift.unsqueeze(-2) if shift.dim() == 2 else shift
+    return normed * (1 + s) + h
 
 
 def layout_mode(mod: torch.Tensor, B: int, S: int, D: int):
