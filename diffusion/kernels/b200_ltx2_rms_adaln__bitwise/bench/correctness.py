@@ -83,8 +83,13 @@ def _bw(tag: str, ref: list, got: list) -> list[str]:
 # in-gate grid (all supported layouts, incl. mixed), bf16, D % 256 == 0
 # ---------------------------------------------------------------------------
 
-_GRID = (
-    # (B, S, D)
+# Canonical "CuTe DSL Norm Scale Shift" grid for this task, adapted to the
+# rank-3 RMS-AdaLN ABI: the contract's 4D (B,S,F,D) shapes are flattened to
+# x=[B, S*F, D]. (1,1024,8,3072)->[1,8192,3072]; (4,512,16,3072)->[4,8192,3072].
+# D=3072 (% 256 == 0, <= 8192).
+_CANONICAL = ((1, 8192, 3072), (4, 8192, 3072))
+# Smaller smoke shapes for fast iteration (only behind --quick; NOT the grid).
+_SMOKE = (
     (1, 6, 256), (2, 33, 2048), (1, 128, 4096), (4, 64, 3072),
     (2, 257, 2048), (1, 1536, 4096), (2, 126, 2048),
 )
@@ -111,15 +116,23 @@ def _spec(rid, B, S, D, scale_layout, shift_layout, eps=1e-6) -> dict:
 
 def build_ingate_rows(quick: bool) -> list[dict]:
     rows = []
-    grid = _GRID[::3] if quick else _GRID
     pure = ("full", "perbatch", "perbatch1", "perchan")
     mixed = (("full", "perchan"), ("perbatch", "full"), ("perchan", "perbatch1"))
-    for n, (B, S, D) in enumerate(grid):
+    # Canonical adapted grid (the contract grid): every supported layout + mixed.
+    canon = _CANONICAL[:1] if quick else _CANONICAL
+    for (B, S, D) in canon:
+        for lay in pure:
+            rows.append(_spec(f"canon_{lay}_b{B}_s{S}_d{D}", B, S, D, lay, lay, 1e-6))
+        for sl, hl in mixed:
+            rows.append(_spec(f"canon_mix_{sl}-{hl}_b{B}_s{S}_d{D}", B, S, D, sl, hl, 1e-6))
+    # Smoke rows: extra breadth (small shapes, eps sweep). Subset under --quick.
+    smoke = _SMOKE[::4] if quick else _SMOKE
+    for n, (B, S, D) in enumerate(smoke):
         eps = 1e-6 if n % 2 == 0 else 1e-5
         for lay in pure:
-            rows.append(_spec(f"grid_{lay}_b{B}_s{S}_d{D}_eps{eps}", B, S, D, lay, lay, eps))
+            rows.append(_spec(f"smoke_{lay}_b{B}_s{S}_d{D}_eps{eps}", B, S, D, lay, lay, eps))
         for sl, hl in mixed:
-            rows.append(_spec(f"grid_mix_{sl}-{hl}_b{B}_s{S}_d{D}", B, S, D, sl, hl, eps))
+            rows.append(_spec(f"smoke_mix_{sl}-{hl}_b{B}_s{S}_d{D}", B, S, D, sl, hl, eps))
     return rows
 
 
@@ -200,8 +213,12 @@ def run_self_test(device: torch.device) -> list[str]:
 
 
 def run_out_of_gate_tests(device: torch.device) -> list[str]:
-    """Out-of-gate inputs: public candidate must eager-fallback bit-exact, and
-    the raw kernel must fail closed (throw)."""
+    """Out-of-gate inputs. Two kinds:
+      - 'fallback': eager can compute the row, so the public candidate must
+        eager-fallback bit-exact vs the oracle.
+      - 'reject': eager cannot compute the row (rank-incompatible / mixed-device),
+        so the public candidate must raise a controlled error.
+    In BOTH kinds the raw kernel must fail closed (throw before any launch)."""
     failures = []
     eps = 1e-6
     bf16 = torch.bfloat16
@@ -210,44 +227,70 @@ def run_out_of_gate_tests(device: torch.device) -> list[str]:
         return torch.randn(shape, device=dev, dtype=dtype)
 
     B, S, D = 2, 64, 2048
-    # tag -> (x, scale, shift, expect_raw_throw)
+    # tag -> (kind, x, scale, shift)
     cases = {
-        "fp16": (t([B, S, D], torch.float16), t([B, S, D], torch.float16), t([B, S, D], torch.float16), True),
-        "fp32": (t([B, S, D], torch.float32), t([B, S, D], torch.float32), t([B, S, D], torch.float32), True),
-        "D_not_mult256": (t([B, S, 2050]), t([B, S, 2050]), t([B, S, 2050]), True),
-        "D_too_big": (t([1, 8, 8448]), t([1, 8, 8448]), t([1, 8, 8448]), True),
-        "rank4_x": (t([1, 8, 2, D]), t([1, 8, 2, D]), t([1, 8, 2, D]), True),
-        "scalar1": (t([B, S, D]), t([1]), t([1]), True),
-        "layout_1SD": (t([B, S, D]), t([1, S, D]), t([1, S, D]), True),   # B>1, not supported
-        "layout_11D": (t([B, S, D]), t([1, 1, D]), t([1, 1, D]), True),   # B>1, not supported
-        "noncontig_x": (t([B, S, 2 * D])[:, :, ::2], t([B, S, D]), t([B, S, D]), True),
-        "noncontig_scale": (t([B, S, D]), t([B, S, 2 * D])[:, :, ::2], t([B, S, D]), True),
-        "cpu": (t([B, S, D], dev="cpu"), t([B, S, D], dev="cpu"), t([B, S, D], dev="cpu"), True),
+        "fp16": ("fallback", t([B, S, D], torch.float16), t([B, S, D], torch.float16), t([B, S, D], torch.float16)),
+        "fp32": ("fallback", t([B, S, D], torch.float32), t([B, S, D], torch.float32), t([B, S, D], torch.float32)),
+        "D_not_mult256": ("fallback", t([B, S, 2050]), t([B, S, 2050]), t([B, S, 2050])),
+        "D_too_big": ("fallback", t([1, 8, 8448]), t([1, 8, 8448]), t([1, 8, 8448])),
+        "rank4_x": ("fallback", t([1, 8, 2, D]), t([1, 8, 2, D]), t([1, 8, 2, D])),
+        "scalar1": ("fallback", t([B, S, D]), t([1]), t([1])),
+        "layout_1SD": ("fallback", t([B, S, D]), t([1, S, D]), t([1, S, D])),   # B>1, not supported
+        "layout_11D": ("fallback", t([B, S, D]), t([1, 1, D]), t([1, 1, D])),   # B>1, not supported
+        "noncontig_x": ("fallback", t([B, S, 2 * D])[:, :, ::2], t([B, S, D]), t([B, S, D])),
+        "noncontig_scale": ("fallback", t([B, S, D]), t([B, S, 2 * D])[:, :, ::2], t([B, S, D])),
+        "cpu_all": ("fallback", t([B, S, D], dev="cpu"), t([B, S, D], dev="cpu"), t([B, S, D], dev="cpu")),
+        # device fail-closed: CUDA x + CPU scale/shift -> reject (eager device mismatch)
+        "cuda_x_cpu_scale": ("reject", t([B, S, D]), t([B, S, D], dev="cpu"), t([B, S, D], dev="cpu")),
+        # BF1D non-divisible frames (sibling convention BF1D=(B,F,1,D)): x=[1,1000,3072],
+        # scale/shift=[1,7,1,3072], S % F = 1000 % 7 != 0 -> reject.
+        "bf1d_nondiv": ("reject", t([1, 1000, 3072]), t([1, 7, 1, 3072]), t([1, 7, 1, 3072])),
     }
 
-    for tag, (x, scale, shift, expect_throw) in cases.items():
+    def _raw_fails_closed(tag, x, scale, shift):
+        raw_out = torch.empty(tuple(x.shape), device=x.device, dtype=x.dtype)
+        try:
+            adapter._CANDIDATE_FNS[_EP](x, scale, shift, eps, raw_out)
+            if x.is_cuda:
+                torch.cuda.synchronize()
+            return [f"out_of_gate[{tag}]: raw kernel accepted out-of-gate input (must fail closed)"]
+        except Exception:
+            return []  # expected
+
+    for tag, (kind, x, scale, shift) in cases.items():
         inputs = {"x": x, "scale": scale, "shift": shift, "eps": eps}
-        # 1) public candidate path must eager-fallback bit-exact vs oracle
         out = [torch.empty_like(x)]
         _poison(out)
+        raised = False
         try:
             adapter.call_candidate({"function": _EP}, inputs, out)
             if x.is_cuda:
                 torch.cuda.synchronize()
-        except Exception as exc:  # noqa: BLE001
-            failures.append(f"out_of_gate[{tag}]: public candidate raised instead of falling back: {exc}")
-            continue
-        failures += _bw(f"out_of_gate[{tag}]:fallback-vs-oracle", oracle(inputs), out)
-        # 2) raw kernel must fail closed
-        if expect_throw:
-            raw_out = torch.empty_like(x)
-            try:
-                adapter._CANDIDATE_FNS[_EP](x, scale, shift, eps, raw_out)
-                if x.is_cuda:
-                    torch.cuda.synchronize()
-                failures.append(f"out_of_gate[{tag}]: raw kernel accepted out-of-gate input (must fail closed)")
-            except Exception:
-                pass  # expected
+        except Exception:  # noqa: BLE001
+            raised = True
+        if kind == "fallback":
+            if raised:
+                failures.append(f"out_of_gate[{tag}]: public candidate raised instead of bit-exact fallback")
+            else:
+                failures += _bw(f"out_of_gate[{tag}]:fallback-vs-oracle", oracle(inputs), out)
+        else:  # reject
+            if not raised:
+                failures.append(f"out_of_gate[{tag}]: public candidate accepted a reject-row (must raise a controlled error)")
+        failures += _raw_fails_closed(tag, x, scale, shift)
+
+    # cross-device (only when more than one GPU is visible)
+    if torch.cuda.device_count() > 1:
+        x = t([B, S, D]); sc = t([B, S, D], dev="cuda:1"); sh = t([B, S, D], dev="cuda:1")
+        inputs = {"x": x, "scale": sc, "shift": sh, "eps": eps}
+        out = [torch.empty_like(x)]; _poison(out)
+        raised = False
+        try:
+            adapter.call_candidate({"function": _EP}, inputs, out); torch.cuda.synchronize()
+        except Exception:  # noqa: BLE001
+            raised = True
+        if not raised:
+            failures.append("out_of_gate[cross_device]: public candidate accepted cross-device (must raise)")
+        failures += _raw_fails_closed("cross_device", x, sc, sh)
     return failures
 
 

@@ -8,7 +8,7 @@
 ## Correctness comparison (bitwise — tolerance forbidden)
 - `bench/adapter.py` defines `compare_outputs(...)`, which the template uses in place of its default tolerance comparator (`benchmark.py:300` → `getattr(adapter, "compare_outputs", _default_compare)`).
 - Comparison = raw integer-storage equality (`view(uint16)` for bf16/fp16, `view(int32)` for fp32) via `torch.equal`, plus NaN/Inf rejection. `atol=rtol=0`.
-- `bench/correctness.py` additionally checks baseline and candidate against an independent PyTorch eager oracle (`rms_norm(x,(D,),eps)*(1+scale)+shift`, bf16) and against each other, with output poisoning before every run and a poison self-test.
+- `bench/correctness.py` additionally checks baseline and candidate against an independent PyTorch eager oracle (`rms_norm(x,(D,),eps)*(1+scale)+shift`, bf16) and against each other, with output poisoning before every run and a poison self-test. A 2D `[B,D]` scale/shift is applied as `[B,1,D]` (per-(batch,channel) broadcast over the sequence; see `docs/baseline_source.md`).
 
 ## ABI (symmetric)
 - Baseline: `baseline/kernel.cu::ltx2_rms_adaln_baseline` — ATen eager (`at::rms_norm` + `*(1+scale)+shift`) wrapped in the destination-passing tvm-ffi ABI.
@@ -18,8 +18,8 @@
 - Adapter overhead: `call_baseline`/`call_candidate` both dispatch through one-line function tables; the candidate adds a cheap Python support-gate check (a few comparisons) that routes out-of-gate inputs to an eager fallback. Under CUDA-event inner-loop amplification this Python overhead is <0.1% of a ~1000us sample and is not part of the measured GPU region.
 
 ## Support gate / fallback
-- Optimized kernel path (timed): bf16, CUDA, contiguous, rank-3 `[B,S,D]`, `D % 256 == 0`, `D <= 8192`, scale/shift layout in `{[D],[B,D],[B,1,D],[B,S,D]}`. The four production rows are all in-gate (full `[B,S,D]`).
-- Out-of-gate inputs (not benchmarked): the raw kernel fails closed (throws); the public adapter routes them to the eager fallback (bit-exact). In-gate rows ALWAYS exercise the kernel (no silent masking).
+- Optimized kernel path (timed): bf16, CUDA, contiguous, rank-3 `[B,S,D]`, `D % 256 == 0`, `D <= 8192`, **all tensors (x/scale/shift/output) on the same CUDA device**, scale/shift layout in `{[D],[B,D],[B,1,D],[B,S,D]}`. The four production rows are all in-gate (full `[B,S,D]`).
+- The Python gate (`adapter.in_gate`/`layout_mode`) mirrors the raw kernel's shape- and device-based gate exactly. Out-of-gate inputs (not benchmarked): the raw kernel fails closed (throws before any launch — including CPU/cross-device scale/shift, which would otherwise hand host pointers to a CUDA launch); the public adapter routes computable rows to the eager fallback (bit-exact) and raises a controlled error on rank-/device-incompatible rows. In-gate rows ALWAYS exercise the kernel (no silent masking).
 
 ## Status
-- Code authored locally; **not yet built/validated on GPU**. Remote build, bitwise correctness, and benchmark on B200 (`ion-b200`) are the next step; results + per-shape table + roofline go to `docs/results.md`, run evidence to `docs/run_log.md`.
+- **Built and validated on B200 (`ion-b200`, GPU 6, idle).** `bench/correctness.py --impl both` → 69/69 bitwise PASS; `bench/benchmark.py` → 4/4 PASS, geomean ~1.96x. Per-shape table + roofline in `docs/results.md`; NCU evidence in `profile/staged_20260629/REPORT.md`; run evidence in `docs/run_log.md`; candidate-direction decision in `docs/dispatch.md`.

@@ -131,7 +131,7 @@ def layout_mode(mod: torch.Tensor, B: int, S: int, D: int):
     S == B. scale and shift are classified independently; the kernel reads each
     with its own broadcast base, so mixed supported layouts are accepted.
     """
-    if mod.dtype != torch.bfloat16 or not mod.is_contiguous():
+    if not mod.is_cuda or mod.dtype != torch.bfloat16 or not mod.is_contiguous():
         return None
     shp = tuple(mod.shape)
     if shp == (D,):
@@ -145,10 +145,17 @@ def layout_mode(mod: torch.Tensor, B: int, S: int, D: int):
 
 def in_gate(x, scale, shift) -> bool:
     """True iff the optimized kernel accepts this row (exact mirror of
-    solution/kernel.cu's fail-closed gate). Otherwise -> eager fallback."""
+    solution/kernel.cu's fail-closed gate). Otherwise -> eager fallback.
+
+    Requires all tensors on the same CUDA device; a CUDA x with a CPU or
+    cross-device scale/shift must NOT enter the raw kernel (would hand host /
+    wrong-device pointers to a CUDA launch).
+    """
     if not x.is_cuda or x.dtype != torch.bfloat16:
         return False
     if x.dim() != 3 or not x.is_contiguous():
+        return False
+    if scale.device != x.device or shift.device != x.device:
         return False
     B, S, D = x.shape
     if D % 256 != 0 or D > 8192:

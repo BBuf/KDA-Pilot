@@ -48,6 +48,28 @@ ssh ion-b200 'docker exec sglang_bbuf bash -lc "cd <task> && \
 - `/tmp/bench_results.json` (container): full per-row stats + samples + provenance.extended. Copied to the local scratchpad evidence dir.
 - `.build/` (container, root-owned): compiled `.so` for baseline + candidate.
 
+## Round 2 (same host/container; GPU id 6 re-verified idle: before/after `6, 0%, 0 MiB`)
+After the device-gate fix, canonical-grid + BF1D + device correctness rows, and the task10/task12 work:
+```bash
+# task10 bounded fused attempt (probe: custom single-kernel RMS reduction vs at::rms_norm)
+ssh ion-b200 'docker exec sglang_bbuf bash -lc "cd <task> && CUDA_VISIBLE_DEVICES=6 python3 bench/probe_fused.py"'
+#  -> DIFFER on large rows (43-248/row, ~0.0002%, 1 ULP); EQUAL on small audio rows
+#  -> fully-fused single kernel NO-GO (see docs/dispatch.md)
+
+# full correctness (canonical adapted grid + BF1D rejection + device fail-closed)
+ssh ion-b200 'docker exec sglang_bbuf bash -lc "cd <task> && CUDA_VISIBLE_DEVICES=6 python3 bench/correctness.py --impl both --report /tmp/corr_full.json"'
+#  -> rows=69/69 failures=0 ; PASS (bitwise)
+
+# task12 NCU (staged candidate modulation kernel), privileged container, CAP_SYS_ADMIN
+ssh ion-b200 'docker exec sglang_bbuf bash -lc "cd <task> && CUDA_VISIBLE_DEVICES=6 ncu -k regex:rms_adaln_modulation -s 5 -c 1 -o profile/staged_20260629/<video|audio> --metrics <set> python3 bench/profile_one.py B S D"'
+#  -> profile/staged_20260629/{video,audio}.ncu-rep (local); metrics in profile/staged_20260629/REPORT.md
+
+# benchmark rerun (current candidate sha 39e243ed...)
+ssh ion-b200 'docker exec sglang_bbuf bash -lc "cd <task> && CUDA_VISIBLE_DEVICES=6 python3 bench/benchmark.py --out /tmp/bench_results2.json"'
+#  -> 4/4 PASSED ; geomean_speedup=1.964
+```
+Raw artifacts kept local (gitignored): `/tmp/*.json` (container), `profile/staged_20260629/*.ncu-rep`, `*/.build*`. Only `profile/staged_20260629/REPORT.md` is tracked (curated).
+
 ## Notes
 - The login MOTD banner prints on every `ssh ion-b200 '...'`; filter it when capturing structured output.
 - A second container `sglang_bbuf_pr29315` (the 2026-06-28 LTX2.3 shape-capture container) is also running on this host; it was not used for this task.

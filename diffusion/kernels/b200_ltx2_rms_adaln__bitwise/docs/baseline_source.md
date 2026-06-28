@@ -41,3 +41,6 @@ y = normed * (1 + scale) + shift
 ```
 
 Per-operation bf16 rounding boundaries (eager): (1) `rms_norm` (fp32 reduction, bf16 store) → (2) `1 + scale` (bf16) → (3) `normed * (1+scale)` (bf16) → (4) `+ shift` (bf16). The candidate must preserve all four.
+
+### Broadcast convention for compressed scale/shift layouts
+Supported scale/shift layouts are `[D]`, `[B,D]`, `[B,1,D]`, `[B,S,D]`. PyTorch right-aligns shapes for broadcasting, so a **bare 2D `[B,D]`** does NOT broadcast against `[B,S,D]` (it would collide on the sequence dim unless `S==B`). In AdaLN a `[B,D]` modulation is per-(batch,channel) applied over the sequence, i.e. semantically `[B,1,D]`. The task-local oracle, the ATen baseline (`baseline/kernel.cu`), and the candidate's PERBATCH mode therefore all treat a 2D `[B,D]` scale/shift as `[B,1,D]` (unsqueeze at dim -2). `[D]`, `[B,1,D]`, and `[B,S,D]` broadcast directly. (Production rows are full `[B,S,D]`.)

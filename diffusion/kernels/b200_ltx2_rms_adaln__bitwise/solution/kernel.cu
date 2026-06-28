@@ -175,6 +175,16 @@ void ltx2_rms_adaln_candidate(TensorView x, TensorView scale, TensorView shift,
                               double eps, TensorView output) {
   // ---- fail-closed support gate ----
   CAND_CHECK(x.device().device_type == kDLCUDA, "x must be a CUDA tensor");
+  // All tensors must be CUDA on x's device before any pointer is used (a CPU or
+  // cross-device scale/shift/output would hand host/wrong-device pointers to a
+  // CUDA launch -> illegal access). Fail closed here; the adapter falls back.
+  const int x_dev = x.device().device_id;
+  CAND_CHECK(scale.device().device_type == kDLCUDA && scale.device().device_id == x_dev,
+             "scale must be a CUDA tensor on x's device");
+  CAND_CHECK(shift.device().device_type == kDLCUDA && shift.device().device_id == x_dev,
+             "shift must be a CUDA tensor on x's device");
+  CAND_CHECK(output.device().device_type == kDLCUDA && output.device().device_id == x_dev,
+             "output must be a CUDA tensor on x's device");
   CAND_CHECK(is_bf16(x.dtype()), "x must be bfloat16 for the optimized path");
   CAND_CHECK(is_bf16(scale.dtype()) && is_bf16(shift.dtype()),
              "scale/shift must be bfloat16 for the optimized path");
