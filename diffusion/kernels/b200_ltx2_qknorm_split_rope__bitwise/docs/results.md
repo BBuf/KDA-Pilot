@@ -28,7 +28,7 @@ cost" below).
   (wrong-device)**, bad output shape/dtype/contiguity, and a **mutate-after-accept**
   case (the same inputs object mutated in place into an unsupported config still
   rejects — no validation-cache bypass).
-- Support-helper unit tests (Section 5): **7/7**.
+- Support-helper unit tests (Section 5): **9/9** (includes two added rejects for cos/sin whose batch or sequence length does not match `x`).
 - Fail-closed: in normal mode any FAIL **or SKIP** in the CUDA sections (or CUDA
   unavailable) exits non-zero.
 
