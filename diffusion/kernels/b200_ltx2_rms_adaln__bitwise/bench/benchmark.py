@@ -459,8 +459,66 @@ def _nvidia_smi() -> str:
         return f"unavailable: {exc}"
 
 
+# --- task-local additive extended provenance (AC-5) -------------------------
+def _file_sha256(path: Path) -> str:
+    import hashlib
+    try:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+    except Exception as exc:  # noqa: BLE001
+        return f"unavailable: {exc}"
+
+
+def _baseline_commit() -> str:
+    import re
+    try:
+        txt = (ROOT / "docs" / "baseline_source.md").read_text()
+        m = re.search(r"Resolved commit:\s*`([0-9a-f]{7,40})`", txt)
+        return m.group(1) if m else "unavailable"
+    except Exception as exc:  # noqa: BLE001
+        return f"unavailable: {exc}"
+
+
+def _tool_first_line(cmd: list[str]) -> str:
+    try:
+        out = subprocess.run(cmd, capture_output=True, text=True, timeout=20)
+        blob = out.stdout or out.stderr
+        return blob.strip().splitlines()[0] if blob.strip() else "unavailable"
+    except Exception as exc:  # noqa: BLE001
+        return f"unavailable: {exc}"
+
+
+def _extended_provenance() -> dict[str, Any]:
+    info: dict[str, Any] = {
+        "baseline_upstream_commit": _baseline_commit(),
+        "source_sha256": {
+            "baseline/kernel.cu": _file_sha256(ROOT / "baseline" / "kernel.cu"),
+            "solution/kernel.cu": _file_sha256(ROOT / "solution" / "kernel.cu"),
+            "baseline/upstream_reference.py": _file_sha256(ROOT / "baseline" / "upstream_reference.py"),
+        },
+        "candidate_sha256": _file_sha256(ROOT / "solution" / "kernel.cu"),
+        "nvcc": _tool_first_line(["nvcc", "--version"]),
+        "cc": _tool_first_line(["cc", "--version"]),
+        "nvidia_smi_after": _nvidia_smi(),
+    }
+    if str(ROOT) not in sys.path:
+        sys.path.insert(0, str(ROOT))
+    try:
+        from solution.build import candidate_compile_flags
+        from baseline.build import baseline_compile_flags
+        info["candidate_compile_flags"] = candidate_compile_flags()
+        info["baseline_compile_flags"] = baseline_compile_flags()
+    except Exception as exc:  # noqa: BLE001
+        info["compile_flags"] = f"unavailable: {exc}"
+    try:
+        import tvm_ffi
+        info["tvm_ffi"] = getattr(tvm_ffi, "__version__", "unknown")
+    except Exception as exc:  # noqa: BLE001
+        info["tvm_ffi"] = f"unavailable: {exc}"
+    return info
+
+
 def _provenance(args: argparse.Namespace, workloads: list[dict[str, Any]]) -> dict[str, Any]:
-    return {
+    prov = {
         "task_dir": str(ROOT),
         "command": " ".join(sys.argv),
         "python": sys.version,
@@ -481,6 +539,8 @@ def _provenance(args: argparse.Namespace, workloads: list[dict[str, Any]]) -> di
             "isolated": args.isolated,
         },
     }
+    prov["extended"] = _extended_provenance()
+    return prov
 
 
 def _headline(results: list[dict[str, Any]]) -> dict[str, Any]:
@@ -522,11 +582,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--warmup-runs", type=int, default=10)
     parser.add_argument("--num-trials", type=int, default=7)
     parser.add_argument("--inner-iterations-min", type=int, default=1)
-    parser.add_argument("--inner-iterations-max", type=int, default=4096)
+    # Defaults aligned with config.toml [benchmark] for this task.
+    parser.add_argument("--inner-iterations-max", type=int, default=2048)
     parser.add_argument("--target-sample-us", type=float, default=1000.0)
-    parser.add_argument("--timeout-seconds", type=int, default=600)
-    parser.add_argument("--atol", type=float, default=1e-2)
-    parser.add_argument("--rtol", type=float, default=1e-2)
+    parser.add_argument("--timeout-seconds", type=int, default=900)
+    # Bitwise task: tolerance is unused (adapter.compare_outputs enforces uint16
+    # equality); defaults pinned to 0.0 to reflect the zero-tolerance contract.
+    parser.add_argument("--atol", type=float, default=0.0)
+    parser.add_argument("--rtol", type=float, default=0.0)
     parser.add_argument("--no-isolated", dest="isolated", action="store_false")
     parser.set_defaults(isolated=True)
     return parser.parse_args()

@@ -99,12 +99,6 @@ inline bool tensor_is_contiguous(const TensorView& t) {
   return true;
 }
 
-inline int64_t numel_of(const TensorView& t) {
-  int64_t n = 1;
-  for (int i = 0; i < t.ndim(); ++i) n *= t.size(i);
-  return n;
-}
-
 // Broadcast modes for scale/shift over x=[B,S,D] (row r in [0,R), col c in [0,D)):
 //   PERCHAN  ([D])            -> idx = c
 //   PERBATCH ([B,D]/[B,1,D])  -> idx = (r / S) * D + c
@@ -118,31 +112,33 @@ union Vec16 {
   T elems[16 / sizeof(T)];
 };
 
+// Per-row base offset into a scale/shift buffer for a given broadcast mode.
+// scale and shift are classified independently so mixed layouts (e.g. full
+// scale + per-channel shift) match ATen's element-wise broadcasting exactly.
+__device__ __forceinline__ long bcast_row_base(int mode, int row, int S, int D) {
+  if (mode == FULL) return static_cast<long>(row) * D;
+  if (mode == PERBATCH) return static_cast<long>(row / S) * D;
+  return 0L;  // PERCHAN
+}
+
 // One block per row; 8-wide (16B) vectorized columns; grid-stride within the row.
-template <int MODE>
 __global__ void rms_adaln_modulation_kernel(const __nv_bfloat16* __restrict__ normed,
                                             const __nv_bfloat16* __restrict__ scale,
                                             const __nv_bfloat16* __restrict__ shift,
                                             __nv_bfloat16* __restrict__ out,
-                                            int S, int D) {
+                                            int S, int D, int mode_s, int mode_h) {
   constexpr int kPerVec = 8;  // 16 bytes / sizeof(bf16)
   const int row = blockIdx.x;
   const long row_base = static_cast<long>(row) * D;
-  long mod_base;
-  if (MODE == FULL) {
-    mod_base = row_base;
-  } else if (MODE == PERBATCH) {
-    mod_base = static_cast<long>(row / S) * D;
-  } else {  // PERCHAN
-    mod_base = 0L;
-  }
+  const long s_base = bcast_row_base(mode_s, row, S, D);
+  const long h_base = bcast_row_base(mode_h, row, S, D);
   const int vecD = D / kPerVec;
   for (int v = threadIdx.x; v < vecD; v += blockDim.x) {
     const int c = v * kPerVec;
     Vec16<__nv_bfloat16> n, s, h, o;
     n.raw = *reinterpret_cast<const uint4*>(normed + row_base + c);
-    s.raw = *reinterpret_cast<const uint4*>(scale + mod_base + c);
-    h.raw = *reinterpret_cast<const uint4*>(shift + mod_base + c);
+    s.raw = *reinterpret_cast<const uint4*>(scale + s_base + c);
+    h.raw = *reinterpret_cast<const uint4*>(shift + h_base + c);
 #pragma unroll
     for (int k = 0; k < kPerVec; ++k) {
       const float nf = __bfloat162float(n.elems[k]);
@@ -157,14 +153,21 @@ __global__ void rms_adaln_modulation_kernel(const __nv_bfloat16* __restrict__ no
   }
 }
 
+// Shape-based classification (mirrors adapter.in_gate exactly). Only the four
+// contract layouts are accepted; anything else fails closed (the public adapter
+// routes those rows to the eager fallback). numel is NOT used, to avoid
+// misclassifying colliding shapes (e.g. [S,D] when S==B).
 int classify_mode(const TensorView& m, int64_t B, int64_t S, int64_t D,
                   const char* name) {
-  const int64_t n = numel_of(m);
-  if (n == D) return PERCHAN;
-  if (n == B * D) return PERBATCH;     // [B,D] or [B,1,D]
-  if (n == B * S * D) return FULL;     // [B,S,D]
-  cand_fail(name, " has unsupported broadcast layout (numel=", n,
-            ", expected ", D, ", ", B * D, ", or ", B * S * D, ")");
+  const int nd = m.ndim();
+  if (nd == 1 && m.size(0) == D) return PERCHAN;                                  // [D]
+  if (nd == 2 && m.size(0) == B && m.size(1) == D) return PERBATCH;              // [B,D]
+  if (nd == 3 && m.size(0) == B && m.size(1) == 1 && m.size(2) == D)            // [B,1,D]
+    return PERBATCH;
+  if (nd == 3 && m.size(0) == B && m.size(1) == S && m.size(2) == D)            // [B,S,D]
+    return FULL;
+  cand_fail(name, " has unsupported broadcast layout; expected one of "
+                  "[D], [B,D], [B,1,D], [B,S,D]");
 }
 
 // ltx2_rms_adaln_candidate(x, scale, shift, eps, output)
@@ -191,10 +194,10 @@ void ltx2_rms_adaln_candidate(TensorView x, TensorView scale, TensorView shift,
   CAND_CHECK(scale.size(scale.ndim() - 1) == D && shift.size(shift.ndim() - 1) == D,
              "scale/shift last dim must equal D");
 
+  // scale and shift classified independently; the kernel reads each with its
+  // own broadcast base, so mixed supported layouts are handled (matching ATen).
   const int mode_s = classify_mode(scale, B, S, D, "scale");
   const int mode_h = classify_mode(shift, B, S, D, "shift");
-  CAND_CHECK(mode_s == mode_h,
-             "scale and shift must share the same broadcast layout");
 
   // ---- Stage 1: exact ATen RMSNorm (bit-identical to the baseline's normed) ----
   at::Tensor xt = view_as_aten(x);
@@ -216,23 +219,9 @@ void ltx2_rms_adaln_candidate(TensorView x, TensorView scale, TensorView shift,
   cudaStream_t stream = at::cuda::getCurrentCUDAStream();
   dim3 grid(rows);
 
-  switch (mode_s) {
-    case PERCHAN:
-      rms_adaln_modulation_kernel<PERCHAN><<<grid, threads, 0, stream>>>(
-          normed_ptr, scale_ptr, shift_ptr, out_ptr, static_cast<int>(S),
-          static_cast<int>(D));
-      break;
-    case PERBATCH:
-      rms_adaln_modulation_kernel<PERBATCH><<<grid, threads, 0, stream>>>(
-          normed_ptr, scale_ptr, shift_ptr, out_ptr, static_cast<int>(S),
-          static_cast<int>(D));
-      break;
-    default:
-      rms_adaln_modulation_kernel<FULL><<<grid, threads, 0, stream>>>(
-          normed_ptr, scale_ptr, shift_ptr, out_ptr, static_cast<int>(S),
-          static_cast<int>(D));
-      break;
-  }
+  rms_adaln_modulation_kernel<<<grid, threads, 0, stream>>>(
+      normed_ptr, scale_ptr, shift_ptr, out_ptr, static_cast<int>(S),
+      static_cast<int>(D), mode_s, mode_h);
 }
 
 }  // namespace

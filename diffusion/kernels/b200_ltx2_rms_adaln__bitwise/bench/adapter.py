@@ -114,15 +114,30 @@ def eager_rms_adaln(x, scale, shift, eps):
     return normed * (1 + scale) + shift
 
 
-def _supported_layout(mod: torch.Tensor, B: int, S: int, D: int) -> bool:
+def layout_mode(mod: torch.Tensor, B: int, S: int, D: int):
+    """Shape-based classifier mirroring solution/kernel.cu::classify_mode EXACTLY.
+
+    Returns 'perchan' | 'perbatch' | 'full', or None if unsupported (so the
+    public candidate routes the row to the eager fallback). Shape-based (not
+    numel-based) to avoid misclassifying colliding shapes such as [S, D] when
+    S == B. scale and shift are classified independently; the kernel reads each
+    with its own broadcast base, so mixed supported layouts are accepted.
+    """
     if mod.dtype != torch.bfloat16 or not mod.is_contiguous():
-        return False
-    if mod.shape[-1] != D:
-        return False
-    return mod.numel() in (D, B * D, B * S * D)
+        return None
+    shp = tuple(mod.shape)
+    if shp == (D,):
+        return "perchan"
+    if shp == (B, D) or shp == (B, 1, D):
+        return "perbatch"
+    if shp == (B, S, D):
+        return "full"
+    return None
 
 
 def in_gate(x, scale, shift) -> bool:
+    """True iff the optimized kernel accepts this row (exact mirror of
+    solution/kernel.cu's fail-closed gate). Otherwise -> eager fallback."""
     if not x.is_cuda or x.dtype != torch.bfloat16:
         return False
     if x.dim() != 3 or not x.is_contiguous():
@@ -130,7 +145,8 @@ def in_gate(x, scale, shift) -> bool:
     B, S, D = x.shape
     if D % 256 != 0 or D > 8192:
         return False
-    return _supported_layout(scale, B, S, D) and _supported_layout(shift, B, S, D)
+    return (layout_mode(scale, B, S, D) is not None
+            and layout_mode(shift, B, S, D) is not None)
 
 
 def call_baseline(workload: dict, inputs, outputs) -> None:

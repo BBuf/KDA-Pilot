@@ -1,9 +1,9 @@
 # Benchmark Method — b200_ltx2_rms_adaln__bitwise
 
 ## Harness
-- `bench/benchmark.py` is the verbatim copy of `diffusion/docs/standalone_diffusion_benchmark_template.py` (579 lines, sha recorded at commit time). Timing policy (isolated subprocess runner, CUDA-event inner-loop amplification toward ~1000us, interleaved A/B per trial, median/mean/std/min/p10/p90, equal-weight geometric-mean headline) is unmodified.
-- Settings from `config.toml [benchmark]`: `warmup_runs=10`, `iterations=200`, `num_trials=7`, `inner_iterations_min=1`, `inner_iterations_max=2048`, `target_sample_us=1000`, `timeout_seconds=900`, `use_isolated_runner=true`, `required_matched_ratio=1.0`.
-- **Planned additive enhancement (next round, verified on GPU):** an `_extended_provenance` block recording baseline commit, candidate source sha256, and compile flags directly in the result JSON. Until then this provenance lives in `docs/baseline_source.md` and `docs/results.md`. The template already records command, environment, GPU id/state, and timing settings.
+- `bench/benchmark.py` starts from `diffusion/docs/standalone_diffusion_benchmark_template.py`. The timing policy (isolated subprocess runner, CUDA-event inner-loop amplification toward ~1000us, interleaved A/B per trial, median/mean/std/min/p10/p90, equal-weight geometric-mean headline) is unmodified. Two additive task-local changes: (a) argparse timing defaults aligned with `config.toml [benchmark]`; (b) an `_extended_provenance` block merged into `_provenance()`.
+- Settings from `config.toml [benchmark]` (now also the argparse defaults): `warmup_runs=10`, `num_trials=7`, `inner_iterations_min=1`, `inner_iterations_max=2048`, `target_sample_us=1000`, `timeout_seconds=900`, `use_isolated_runner=true`, `required_matched_ratio=1.0`.
+- **Extended provenance (implemented):** result JSON's `provenance.extended` records the baseline upstream commit, sha256 of `baseline/kernel.cu` / `solution/kernel.cu` / `baseline/upstream_reference.py`, the candidate sha256, baseline & candidate compile-flag sets, `nvcc`/`cc`/`tvm_ffi` versions, and `nvidia_smi_after`. The template body already records command, environment, torch/cuda versions, GPU id/name, `nvidia_smi_before`, and timing settings.
 
 ## Correctness comparison (bitwise — tolerance forbidden)
 - `bench/adapter.py` defines `compare_outputs(...)`, which the template uses in place of its default tolerance comparator (`benchmark.py:300` → `getattr(adapter, "compare_outputs", _default_compare)`).
