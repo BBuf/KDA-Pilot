@@ -1,0 +1,25 @@
+# Benchmark Method — b200_ltx2_rms_adaln__bitwise
+
+## Harness
+- `bench/benchmark.py` is the verbatim copy of `diffusion/docs/standalone_diffusion_benchmark_template.py` (579 lines, sha recorded at commit time). Timing policy (isolated subprocess runner, CUDA-event inner-loop amplification toward ~1000us, interleaved A/B per trial, median/mean/std/min/p10/p90, equal-weight geometric-mean headline) is unmodified.
+- Settings from `config.toml [benchmark]`: `warmup_runs=10`, `iterations=200`, `num_trials=7`, `inner_iterations_min=1`, `inner_iterations_max=2048`, `target_sample_us=1000`, `timeout_seconds=900`, `use_isolated_runner=true`, `required_matched_ratio=1.0`.
+- **Planned additive enhancement (next round, verified on GPU):** an `_extended_provenance` block recording baseline commit, candidate source sha256, and compile flags directly in the result JSON. Until then this provenance lives in `docs/baseline_source.md` and `docs/results.md`. The template already records command, environment, GPU id/state, and timing settings.
+
+## Correctness comparison (bitwise — tolerance forbidden)
+- `bench/adapter.py` defines `compare_outputs(...)`, which the template uses in place of its default tolerance comparator (`benchmark.py:300` → `getattr(adapter, "compare_outputs", _default_compare)`).
+- Comparison = raw integer-storage equality (`view(uint16)` for bf16/fp16, `view(int32)` for fp32) via `torch.equal`, plus NaN/Inf rejection. `atol=rtol=0`.
+- `bench/correctness.py` additionally checks baseline and candidate against an independent PyTorch eager oracle (`rms_norm(x,(D,),eps)*(1+scale)+shift`, bf16) and against each other, with output poisoning before every run and a poison self-test.
+
+## ABI (symmetric)
+- Baseline: `baseline/kernel.cu::ltx2_rms_adaln_baseline` — ATen eager (`at::rms_norm` + `*(1+scale)+shift`) wrapped in the destination-passing tvm-ffi ABI.
+- Candidate: `solution/kernel.cu::ltx2_rms_adaln_candidate` — `at::rms_norm` (shared, bit-identical `normed`) + one fused modulation kernel.
+- Both: `TVM_FFI_DLL_EXPORT_TYPED_FUNC`, `tvm::ffi::TensorView` inputs first / output last (destination-passing), launch on `at::cuda::getCurrentCUDAStream()`.
+- Both built by `tvm_ffi.cpp.load` with identical flags: `-std=c++17 -O3` + device-native `-gencode`, torch linkage (`-lc10 -lc10_cuda -ltorch_cpu -ltorch_cuda`). **No `--use_fast_math`** (recovered upstream baseline is plain eager).
+- Adapter overhead: `call_baseline`/`call_candidate` both dispatch through one-line function tables; the candidate adds a cheap Python support-gate check (a few comparisons) that routes out-of-gate inputs to an eager fallback. Under CUDA-event inner-loop amplification this Python overhead is <0.1% of a ~1000us sample and is not part of the measured GPU region.
+
+## Support gate / fallback
+- Optimized kernel path (timed): bf16, CUDA, contiguous, rank-3 `[B,S,D]`, `D % 256 == 0`, `D <= 8192`, scale/shift layout in `{[D],[B,D],[B,1,D],[B,S,D]}`. The four production rows are all in-gate (full `[B,S,D]`).
+- Out-of-gate inputs (not benchmarked): the raw kernel fails closed (throws); the public adapter routes them to the eager fallback (bit-exact). In-gate rows ALWAYS exercise the kernel (no silent masking).
+
+## Status
+- Code authored locally; **not yet built/validated on GPU**. Remote build, bitwise correctness, and benchmark on B200 (`ion-b200`) are the next step; results + per-shape table + roofline go to `docs/results.md`, run evidence to `docs/run_log.md`.

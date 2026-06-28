@@ -1,0 +1,179 @@
+"""Benchmark adapter for b200_ltx2_rms_adaln__bitwise.
+
+Supplies tensor construction and the two ABI calls for bench/benchmark.py.
+``call_baseline`` and ``call_candidate`` route through one shared dispatch over
+pre-resolved function tables so both sides pay near-identical adapter overhead;
+neither allocates output tensors (outputs are preallocated in ``make_case`` and
+poisoned/timed by the benchmark template).
+
+- Baseline: baseline/kernel.cu -> ATen eager (bit-identical to Python eager).
+- Candidate: solution/kernel.cu -> at::rms_norm + fused modulation kernel.
+
+The candidate is gate-routed in Python: in-gate inputs (the production rows)
+ALWAYS exercise the optimized kernel (no silent masking of kernel bugs);
+out-of-gate inputs take an explicit eager fallback (bit-exact). The raw kernel
+itself fails closed (throws) on out-of-gate inputs -- see bench/correctness.py.
+
+Bitwise comparison is supplied via the optional ``compare_outputs`` hook (raw
+uint16/int storage equality + torch.equal); this overrides the benchmark
+template's tolerance comparator because this task forbids tolerance.
+
+No sglang import anywhere in this process (asserted below).
+"""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+_TASK_ROOT = Path(__file__).resolve().parents[1]
+if str(_TASK_ROOT) not in sys.path:
+    sys.path.insert(0, str(_TASK_ROOT))
+
+import torch
+
+from baseline.build import load_baseline_module
+from solution.build import load_candidate_module
+
+assert not any(
+    name == "sglang" or name.startswith("sglang.") for name in sys.modules
+), "standalone contract violation: sglang imported at benchmark runtime"
+
+_DTYPES = {
+    "bfloat16": torch.bfloat16,
+    "float16": torch.float16,
+    "float32": torch.float32,
+}
+
+# Integer reinterpretation for raw-storage (byte-level) comparison.
+_INT_VIEW = {
+    torch.bfloat16: torch.uint16,
+    torch.float16: torch.uint16,
+    torch.float32: torch.int32,
+}
+
+_EP = "rms_adaln"
+
+_baseline_module = load_baseline_module()
+_candidate_module = load_candidate_module()
+
+_BASELINE_FNS = {_EP: _baseline_module.ltx2_rms_adaln_baseline}
+_CANDIDATE_FNS = {_EP: _candidate_module.ltx2_rms_adaln_candidate}
+
+
+def _randn(shape, dtype, device):
+    return torch.randn(shape, device=device, dtype=dtype)
+
+
+def _validate_against_spec(name: str, tensor: torch.Tensor, spec: dict) -> None:
+    if list(tensor.shape) != list(spec["shape"]):
+        raise ValueError(
+            f"{name}: constructed shape {tuple(tensor.shape)} != frozen spec {spec['shape']}"
+        )
+    want_stride = spec.get("stride")
+    if want_stride is not None and list(tensor.stride()) != list(want_stride):
+        raise ValueError(
+            f"{name}: constructed stride {tuple(tensor.stride())} != frozen spec {want_stride}"
+        )
+
+
+def make_case(workload: dict, *, device: torch.device, seed: int) -> dict:
+    del seed  # benchmark.py / correctness.py already seeded the generators
+    shapes = workload["shapes"]
+    x = _randn(shapes["x"]["shape"], _DTYPES[shapes["x"]["dtype"]], device)
+    scale = _randn(shapes["scale"]["shape"], _DTYPES[shapes["scale"]["dtype"]], device)
+    shift = _randn(shapes["shift"]["shape"], _DTYPES[shapes["shift"]["dtype"]], device)
+    _validate_against_spec("x", x, shapes["x"])
+    _validate_against_spec("scale", scale, shapes["scale"])
+    _validate_against_spec("shift", shift, shapes["shift"])
+    inputs = {
+        "x": x,
+        "scale": scale,
+        "shift": shift,
+        "eps": float(workload.get("eps", 1e-6)),
+    }
+    return {
+        "inputs": inputs,
+        "baseline_outputs": [torch.empty_like(x)],
+        "candidate_outputs": [torch.empty_like(x)],
+        "tolerance": {
+            "atol": float(workload.get("atol", 0.0)),
+            "rtol": float(workload.get("rtol", 0.0)),
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
+# eager fallback + support gate (mirror solution/kernel.cu's gate exactly)
+# ---------------------------------------------------------------------------
+
+
+def eager_rms_adaln(x, scale, shift, eps):
+    """The exact eager oracle, used as the out-of-gate fallback."""
+    normed = torch.nn.functional.rms_norm(x, (x.shape[-1],), eps=eps)
+    return normed * (1 + scale) + shift
+
+
+def _supported_layout(mod: torch.Tensor, B: int, S: int, D: int) -> bool:
+    if mod.dtype != torch.bfloat16 or not mod.is_contiguous():
+        return False
+    if mod.shape[-1] != D:
+        return False
+    return mod.numel() in (D, B * D, B * S * D)
+
+
+def in_gate(x, scale, shift) -> bool:
+    if not x.is_cuda or x.dtype != torch.bfloat16:
+        return False
+    if x.dim() != 3 or not x.is_contiguous():
+        return False
+    B, S, D = x.shape
+    if D % 256 != 0 or D > 8192:
+        return False
+    return _supported_layout(scale, B, S, D) and _supported_layout(shift, B, S, D)
+
+
+def call_baseline(workload: dict, inputs, outputs) -> None:
+    fn = _BASELINE_FNS[workload["function"]]
+    fn(inputs["x"], inputs["scale"], inputs["shift"], inputs["eps"], outputs[0])
+
+
+def call_candidate(workload: dict, inputs, outputs) -> None:
+    x, scale, shift, eps = inputs["x"], inputs["scale"], inputs["shift"], inputs["eps"]
+    if in_gate(x, scale, shift):
+        _CANDIDATE_FNS[workload["function"]](x, scale, shift, eps, outputs[0])
+    else:
+        outputs[0].copy_(eager_rms_adaln(x, scale, shift, eps))
+
+
+# ---------------------------------------------------------------------------
+# bitwise comparison hook (overrides the template's tolerance default)
+# ---------------------------------------------------------------------------
+
+
+def bitwise_equal(a: torch.Tensor, b: torch.Tensor) -> bool:
+    if a.shape != b.shape or a.dtype != b.dtype:
+        return False
+    iv = _INT_VIEW.get(a.dtype)
+    if iv is None:
+        return bool(torch.equal(a, b))
+    return bool(torch.equal(a.contiguous().view(iv), b.contiguous().view(iv)))
+
+
+def compare_outputs(workload, baseline_outputs, candidate_outputs, tolerance):
+    del tolerance  # this task forbids tolerance; bitwise only
+    if len(baseline_outputs) != len(candidate_outputs):
+        return {"ok": False, "max_abs": float("inf"), "max_rel": float("inf"),
+                "message": "output count mismatch"}
+    for i, (b, c) in enumerate(zip(baseline_outputs, candidate_outputs)):
+        cf = c.float()
+        if torch.isnan(cf).any() or torch.isinf(cf).any():
+            return {"ok": False, "max_abs": float("inf"), "max_rel": float("inf"),
+                    "message": f"output[{i}]: NaN/Inf in candidate"}
+        if not bitwise_equal(b, c):
+            diff = (cf - b.float()).abs()
+            n = int((cf != b.float()).sum().item())
+            return {"ok": False, "max_abs": float(diff.max().item()), "max_rel": 0.0,
+                    "message": f"output[{i}]: not bitwise equal "
+                               f"({n} elems differ, max_abs={diff.max().item():.3e})"}
+    return {"ok": True, "max_abs": 0.0, "max_rel": 0.0, "message": "bitwise equal"}
