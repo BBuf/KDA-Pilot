@@ -5,7 +5,7 @@ All remote access via the `ion-b200` Claude Code skill (SSH alias `ion-b200`).
 
 ## Host / container
 
-- Host: `innomatrix-us-adc-smb200-0003` (ssh alias `ion-b200`), login user `sglang-omni`
+- Host: `ion-b200` (ssh alias `ion-b200`), login user `sglang-omni`
 - Container: `sglang_bbuf` — running (Up 47 hours at snapshot time). Per skill contract it is created with `--privileged --cap-add=SYS_ADMIN --security-opt seccomp=unconfined` (NCU-capable); an `ncu --set basic` smoke check will be re-verified before the first profiling run.
 - Remote task workspace: `REMOTE_KDA_DIR=/home/sglang-omni/bbuf/kda_runs/b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape/20260604-074122-rlcr0`
 

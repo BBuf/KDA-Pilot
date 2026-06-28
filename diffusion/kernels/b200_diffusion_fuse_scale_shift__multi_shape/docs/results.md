@@ -12,7 +12,7 @@ dispatch needed — the candidate wins every row outright).
 
 ## Environment and provenance
 
-- Host: ion-b200 (`innomatrix-us-adc-smb200-0003`), container `sglang_bbuf`,
+- Host: ion-b200, container `sglang_bbuf`,
   task workspace `/home/sglang-omni/bbuf/kda_pilot/k11_b200_fuse_scale_shift`.
 - GPU: NVIDIA B200 (sm_100, 183359 MiB), `REMOTE_GPU_ID=0`, pinned via
   `CUDA_VISIBLE_DEVICES=0` for every command; GPU 0 idle before/after each

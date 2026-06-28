@@ -90,6 +90,7 @@ CLAUDE_EFFORT="${CLAUDE_EFFORT:-max}"
 case "$TASK_SLUG" in
   b200_*)
     TARGET_GPU_LABEL="B200"
+    # Keep B200 runners behind the public community alias; do not embed internal hostnames.
     REMOTE_HOST_HINT="ion-b200"
     ;;
   h200_*)

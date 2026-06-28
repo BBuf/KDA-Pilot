@@ -61,7 +61,7 @@ GPU state: no GPU work yet (local scaffold only; macOS host has no CUDA).
 
 ## 2026-06-04 — Remote bring-up + baseline freeze (ion-b200)
 
-- Host `innomatrix-us-adc-smb200-0003`, container `sglang_bbuf` (Up 2 days),
+- Host `ion-b200`, container `sglang_bbuf` (Up 2 days),
   task workspace `/home/sglang-omni/bbuf/kda_pilot/k11_b200_fuse_scale_shift`.
 - Toolchain: torch 2.11.0+cu130, triton 3.6.0, tvm_ffi 0.1.9, nvcc CUDA 13.0
   (build 36424714), driver 580.126.20. GPU: NVIDIA B200, 183359 MiB.

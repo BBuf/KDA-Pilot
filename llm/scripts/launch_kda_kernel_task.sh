@@ -104,6 +104,7 @@ TASK_ARCH="$(sed -n 's/^[[:space:]]*arch[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\
 case "${TASK_ARCH}::/$TASK_DIR/" in
   b200::*|*/b200/*)
     TARGET_GPU_LABEL="B200"
+    # Keep B200 runners behind the public community alias; do not embed internal hostnames.
     REMOTE_HOST_HINT="ion-b200"
     ;;
   h200::*|*/h200/*)

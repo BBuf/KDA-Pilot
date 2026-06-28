@@ -37,7 +37,7 @@ exists at repo root and remains the export contract.
 
 ## Round-2 environment rules (deltas vs round 1)
 
-- Round-1 numbers came from host `innomatrix-us-adc-smb200-0003`; this round runs on
+- Round-1 numbers came from host `ion-b200`; this round runs on
   `ion-b200` (via the local `ion-b200` skill, container `sglang_bbuf`). Round-1
   numbers are lineage context only — every claim this round is re-measured fresh.
 - Baseline pin: container-current sglang commit, recorded in provenance, plus a

@@ -1,7 +1,7 @@
 # Remote Run Log — b200_diffusion_attention_concat_copy__multi_model
 
 ## Environment
-- Host: `ion-b200` (`innomatrix-us-adc-smb200-0003`), user `sglang-omni`.
+- Host: `ion-b200`, user `sglang-omni`.
 - Container: `sglang_bbuf` (image `lmsysorg/sglang:dev`, profiler-capable flags).
 - Workspace: `/home/sglang-omni/bbuf/kda/attn_concat_copy` (task files streamed from the local worktree; `.humanize`/`.build`/scratch excluded).
 - Toolchain: torch 2.11.0+cu130, CUDA 13.0, nvcc 13.0, ncu present, tvm_ffi present, Python 3.12.3.

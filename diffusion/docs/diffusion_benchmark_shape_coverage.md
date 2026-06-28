@@ -54,6 +54,120 @@ Invalid or blocked runs, not usable as shape coverage:
   kernel row after several minutes and was stopped. Treat this preset as
   runtime-blocked, not as a no-call proof.
 
+## Fresh Capture Audit: 2026-06-28 LTX2 Bitwise Tasks
+
+Valid native SGLang capture:
+
+- `Lightricks/LTX-2.3` on B200 (`ion-b200`), container
+  `sglang_bbuf_pr29315`, worktree
+  `/home/sglang-omni/bbuf/tmp/ltx2_shape_capture_main`, commit
+  `828411e6f1` (`origin/main`). Command shape:
+  `CUDA_VISIBLE_DEVICES=5,6 HF_HUB_OFFLINE=1 LTX2_SHAPE_CAPTURE_PATH=...`
+  `sglang generate --model-path Lightricks/LTX-2.3 --prompt "A cat and a dog baking a cake together in a kitchen."`
+  `--width 768 --height 512 --num-frames 121 --seed 42 --num-gpus 2`
+  `--cfg-parallel-size 2 --pipeline-class-name LTX2TwoStagePipeline`
+  `--ltx2-two-stage-device-mode original --num-inference-steps 1`
+  `--warmup false --enable-torch-compile false --no-save-output`.
+  The run completed and emitted 42 target rows:
+  18 `rms_adaln`, 12 `qknorm_split_rope_pair`, 6 `dual_modulate`, and
+  6 `ca_dual_modulate_from_temb`.
+
+Blocked run:
+
+- `Lightricks/LTX-2` on the same B200 setup failed before denoise because the
+  local Hugging Face cache snapshot
+  `47da56e2ad66ce4125a9922b4a8826bf407f9d0a` was incomplete: the transformer
+  index was present but all 8 transformer safetensors shards were missing.
+  Do not treat that failed run as shape coverage.
+
+## `b200_ltx2_rms_adaln__bitwise`
+
+Entry points:
+
+- `sglang.multimodal_gen.runtime.models.dits.ltx_2:_ltx2_rms_adaln`
+- `sglang.multimodal_gen.runtime.models.dits.ltx_2:_ltx2_try_fused_rms_adaln`
+
+Required live shape rows from the 2026-06-28 LTX2.3 capture:
+
+- first stage video self-attention / prompt-Q / MLP:
+  `x=[2,1536,4096]`, `scale/shift=[2,1536,4096]`, bf16 contiguous,
+  `eps=1e-6`.
+- first stage audio self-attention / prompt-Q / MLP:
+  `x=[2,126,2048]`, `scale/shift=[2,126,2048]`, bf16 contiguous,
+  `eps=1e-6`.
+- second stage video self-attention / prompt-Q / MLP:
+  `x=[1,6144,4096]`, `scale/shift=[1,6144,4096]`, bf16 contiguous,
+  `eps=1e-6`.
+- second stage audio self-attention / prompt-Q / MLP:
+  `x=[1,126,2048]`, `scale/shift=[1,126,2048]`, bf16 contiguous,
+  `eps=1e-6`.
+
+## `b200_ltx2_dual_modulate__bitwise`
+
+Entry points:
+
+- `sglang.multimodal_gen.runtime.models.dits.ltx_2:_ltx2_try_fused_rmsnorm_dual_modulate`
+- `sglang.multimodal_gen.runtime.models.dits.ltx_2:_ltx2_try_fused_rmsnorm_ca_dual_modulate`
+
+Required live explicit dual-modulation rows from the 2026-06-28 LTX2.3
+capture:
+
+- first stage video AV cross-attention: `x=[2,1536,4096]`,
+  `scale0/shift0/scale1/shift1=[2,1,4096]`, bf16, `eps=1e-6`.
+- first stage audio AV cross-attention: `x=[2,126,2048]`,
+  `scale0/shift0/scale1/shift1=[2,1,2048]`, bf16, `eps=1e-6`.
+- second stage video AV cross-attention: `x=[1,6144,4096]`,
+  `scale0/shift0/scale1/shift1=[1,1,4096]`, bf16, `eps=1e-6`.
+- second stage audio AV cross-attention: `x=[1,126,2048]`,
+  `scale0/shift0/scale1/shift1=[1,1,2048]`, bf16, `eps=1e-6`.
+
+Required live cross-attention-from-timestep rows:
+
+- first stage video AV cross-attention: `x=[2,1536,4096]`,
+  `temb_scale_shift=[2,1,16384]`, `scale_shift_table=[4,4096]` bf16,
+  `eps=1e-6`.
+- first stage audio AV cross-attention: `x=[2,126,2048]`,
+  `temb_scale_shift=[2,1,8192]`, `scale_shift_table=[4,2048]` bf16,
+  `eps=1e-6`.
+- second stage video AV cross-attention: `x=[1,6144,4096]`,
+  `temb_scale_shift=[1,1,16384]`, `scale_shift_table=[4,4096]` bf16,
+  `eps=1e-6`.
+- second stage audio AV cross-attention: `x=[1,126,2048]`,
+  `temb_scale_shift=[1,1,8192]`, `scale_shift_table=[4,2048]` bf16,
+  `eps=1e-6`.
+
+## `b200_ltx2_qknorm_split_rope__bitwise`
+
+Entry points:
+
+- `sglang.multimodal_gen.runtime.models.dits.ltx_2:_ltx2_try_fused_qknorm_split_rope`
+- `sglang.multimodal_gen.runtime.models.dits.ltx_2:apply_split_rotary_emb`
+
+Required live shape rows from the 2026-06-28 LTX2.3 capture. All rows use
+bf16 contiguous `q/k`, bf16 non-contiguous split-RoPE cos/sin tensors with
+last-dim stride 1, `num_heads=32`, and `eps=1e-6`.
+
+- first stage video self-attention: `q/k=[2,1536,4096]`, `head_dim=128`,
+  `cos/sin=[2,32,1536,64]`.
+- first stage audio self-attention: `q/k=[2,126,2048]`, `head_dim=64`,
+  `cos/sin=[2,32,126,32]`.
+- first stage audio-to-video cross-attention: `q=[2,1536,2048]`,
+  `k=[2,126,2048]`, `head_dim=64`, `q cos/sin=[2,32,1536,32]`,
+  `k cos/sin=[2,32,126,32]`.
+- first stage video-to-audio cross-attention: `q=[2,126,2048]`,
+  `k=[2,1536,2048]`, `head_dim=64`, `q cos/sin=[2,32,126,32]`,
+  `k cos/sin=[2,32,1536,32]`.
+- second stage video self-attention: `q/k=[1,6144,4096]`, `head_dim=128`,
+  `cos/sin=[1,32,6144,64]`.
+- second stage audio self-attention: `q/k=[1,126,2048]`, `head_dim=64`,
+  `cos/sin=[1,32,126,32]`.
+- second stage audio-to-video cross-attention: `q=[1,6144,2048]`,
+  `k=[1,126,2048]`, `head_dim=64`, `q cos/sin=[1,32,6144,32]`,
+  `k cos/sin=[1,32,126,32]`.
+- second stage video-to-audio cross-attention: `q=[1,126,2048]`,
+  `k=[1,6144,2048]`, `head_dim=64`, `q cos/sin=[1,32,126,32]`,
+  `k cos/sin=[1,32,6144,32]`.
+
 ## Known Gaps To Audit
 
 - `firered-edit-1.1`, `ltx23-one-stage`, `helios`, and `zimage` were
@@ -69,9 +183,10 @@ Invalid or blocked runs, not usable as shape coverage:
 - `flux` and `flux2` remain blocked by gated Hugging Face access. Do not mark
   their shapes complete until rerun with an authorized token and a native
   SGLang backend log.
-- `ltx23-two-stage-cfg-parallel` remains blocked. The H200 run failed with OOM;
-  a B200 retry needs a completed `Lightricks/LTX-2.3` cache before it can be a
-  valid shape capture.
+- `ltx23-two-stage-cfg-parallel` was blocked in the 2026-06-03 audit, but the
+  2026-06-28 B200 LTX2.3 capture above completed for the three bitwise LTX2
+  task entry points. Any other target entry point in that preset still needs
+  its own live capture.
 - `hunyuan3d-shape` remains blocked by current SGLang runtime behavior. Do not
   treat the failed runs as no-call evidence.
 

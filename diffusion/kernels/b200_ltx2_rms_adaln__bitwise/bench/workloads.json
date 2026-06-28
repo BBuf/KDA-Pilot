@@ -1,0 +1,74 @@
+[
+  {
+    "id": "ltx23_stage1_video_s1536_d4096_full",
+    "production": true,
+    "preset": "ltx23-two-stage-cfg-parallel",
+    "function": "rms_adaln",
+    "sites": ["video_msa", "video_prompt_q", "video_mlp"],
+    "shapes": {
+      "x": {"shape": [2, 1536, 4096], "dtype": "bfloat16", "stride": [6291456, 4096, 1]},
+      "scale": {"shape": [2, 1536, 4096], "dtype": "bfloat16", "stride": [6291456, 4096, 1]},
+      "shift": {"shape": [2, 1536, 4096], "dtype": "bfloat16", "stride": [6291456, 4096, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939601,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "container": "sglang_bbuf_pr29315", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28", "sglang_commit": "828411e6f1"}
+  },
+  {
+    "id": "ltx23_stage1_audio_s126_d2048_full",
+    "production": true,
+    "preset": "ltx23-two-stage-cfg-parallel",
+    "function": "rms_adaln",
+    "sites": ["audio_msa", "audio_prompt_q", "audio_mlp"],
+    "shapes": {
+      "x": {"shape": [2, 126, 2048], "dtype": "bfloat16", "stride": [258048, 2048, 1]},
+      "scale": {"shape": [2, 126, 2048], "dtype": "bfloat16", "stride": [258048, 2048, 1]},
+      "shift": {"shape": [2, 126, 2048], "dtype": "bfloat16", "stride": [258048, 2048, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939602,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "container": "sglang_bbuf_pr29315", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28", "sglang_commit": "828411e6f1"}
+  },
+  {
+    "id": "ltx23_stage2_video_s6144_d4096_full",
+    "production": true,
+    "preset": "ltx23-two-stage-cfg-parallel",
+    "function": "rms_adaln",
+    "sites": ["video_msa", "video_prompt_q", "video_mlp"],
+    "shapes": {
+      "x": {"shape": [1, 6144, 4096], "dtype": "bfloat16", "stride": [25165824, 4096, 1]},
+      "scale": {"shape": [1, 6144, 4096], "dtype": "bfloat16", "stride": [25165824, 4096, 1]},
+      "shift": {"shape": [1, 6144, 4096], "dtype": "bfloat16", "stride": [25165824, 4096, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939603,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "container": "sglang_bbuf_pr29315", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28", "sglang_commit": "828411e6f1"}
+  },
+  {
+    "id": "ltx23_stage2_audio_s126_d2048_full",
+    "production": true,
+    "preset": "ltx23-two-stage-cfg-parallel",
+    "function": "rms_adaln",
+    "sites": ["audio_msa", "audio_prompt_q", "audio_mlp"],
+    "shapes": {
+      "x": {"shape": [1, 126, 2048], "dtype": "bfloat16", "stride": [258048, 2048, 1]},
+      "scale": {"shape": [1, 126, 2048], "dtype": "bfloat16", "stride": [258048, 2048, 1]},
+      "shift": {"shape": [1, 126, 2048], "dtype": "bfloat16", "stride": [258048, 2048, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939604,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "container": "sglang_bbuf_pr29315", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28", "sglang_commit": "828411e6f1"}
+  }
+]

@@ -1,7 +1,7 @@
 # Remote Run Log
 
 ## Environment (2026-06-25)
-- Host: `ion-b200` → `innomatrix-us-adc-smb200-0003`; user `sglang-omni`; container `sglang_bbuf` (Up 10 days, image `lmsysorg/sglang:dev`).
+- Host: `ion-b200`; user `sglang-omni`; container `sglang_bbuf` (Up 10 days, image `lmsysorg/sglang:dev`).
 - Remote task workspace: `/home/sglang-omni/bbuf/kda/k17_ccc` (synced from the local task folder via `tar | docker exec -i`, excluding `.humanize`/`.git`/pycache).
 - GPU selection: physical **GPU 0** (`REMOTE_GPU_ID=0`), NVIDIA B200, 183359 MiB. Pinned with `CUDA_VISIBLE_DEVICES=0` for build, correctness, and benchmark.
   - Idle proof: GPU 0 before = `0 %, 4 MiB`, no compute processes; after = `0 %, 4 MiB`. (GPUs 3–6 were running unrelated jobs; GPUs 0/2/7 idle — GPU 0 used throughout.)

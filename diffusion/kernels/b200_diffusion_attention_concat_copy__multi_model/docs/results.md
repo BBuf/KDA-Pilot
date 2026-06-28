@@ -40,7 +40,7 @@ Across 3 back-to-back clean idle-GPU-0 runs the production geomean was **1.296, 
 Single exported selector; output decomposed into sequence regions written once: pitched 16 B block gather for head-sliced copy/prefix, single coalesced pass for plain concat, flat copy for the shard. Before any copy the candidate validates the exact supported layout and rejects otherwise: `order ∈ {0,1}`, `h_local>0`, `h_full>h_local` (no pre-sliced prefix), `h_start % h_local == 0`, in-range `h_start`, dense strides for concat/shard/output (incl. a dense output batch stride for `B>1`) and the full-head prefix, a genuinely non-contiguous head-sliced copy source, every source dimension (batch/seq/head/head_dim) matching the output, matching dtype, and every source tensor on the same CUDA device as the output. A general per-output-vector kernel is retained as the B>1 / non-16 B-aligned fallback. Optimization trajectory: v1 0.96 → v2 region-based 1.235 → v3 single-launch concat ≈1.3–1.4.
 
 ## Environment and provenance
-- Host: `ion-b200` (`innomatrix-us-adc-smb200-0003`), container `sglang_bbuf`, workspace `/home/sglang-omni/bbuf/kda/attn_concat_copy`.
+- Host: `ion-b200`, container `sglang_bbuf`, workspace `/home/sglang-omni/bbuf/kda/attn_concat_copy`.
 - GPU: NVIDIA B200 (sm_100), id 0; idle before `0 %, 4 MiB`, after `0 %, 4 MiB`.
 - Toolchain: torch 2.11.0+cu130, CUDA 13.0, nvcc 13.0, Python 3.12.3, Linux 6.8.
 - Baseline source: SGLang `main` @ `67b2a9ed0cfba8ec625d3f26548e502646fd914d` (`docs/baseline_source.md`).

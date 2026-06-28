@@ -28,7 +28,7 @@ symmetrically on both the candidate and the eager baseline (shared
 rejection tests. See `docs/baseline_source.md` for the contract rationale.
 
 ## Environment
-- Host `ion-b200` (`innomatrix-us-adc-smb200-0003`), container `sglang_bbuf`
+- Host `ion-b200`, container `sglang_bbuf`
   (`lmsysorg/sglang:dev`); torch 2.11.0+cu130, CUDA 13.0, tvm-ffi 0.1.9, nvcc 13.0.
 - NVIDIA B200 (192 GB HBM3e, 148 SMs, ~8 TB/s nominal; NCU sustained ref ~7.2 TB/s).
 - **All final evidence is on ONE pinned idle GPU: physical GPU 7**

@@ -2,7 +2,7 @@
 
 Fresh evidence on the SGLang `jit_kernel`/tvm-ffi stack (the round that clears the
 "Blocked" row in `../../docs/tvm_ffi_benchmark_status.md`). Environment: `ion-b200`
-(`innomatrix-us-adc-smb200-0003`), container `sglang_bbuf`, physical GPU 1 (NVIDIA B200,
+(`ion-b200`), container `sglang_bbuf`, physical GPU 1 (NVIDIA B200,
 idle-verified before/after every run), `PYTHONPATH` pinned to the bbuf checkout at SGLang
 `0b65588c1`, task commits `aaf8275b6` → `355f3bf2a`. Raw rows: `benchmark.csv`; raw logs:
 `REMOTE_KDA_DIR=/home/sglang-omni/bbuf/kda_runs/b200_diffusion_qknorm_rope__multi_shape/20260604-185755-r9/logs/`.

@@ -17,7 +17,7 @@
   (`bench/evidence/r6-final/allgpu_{before,after}.txt`) show GPU 1 at
   **0% util / 0 MiB with zero compute apps both times** (GPUs 2-7 carried
   unrelated jobs throughout).
-- Environment: ion-b200 (innomatrix-us-adc-smb200-0003), container
+- Environment: ion-b200, container
   sglang_bbuf, GPU 1, torch 2.11.0+cu130, CUDA 13.0, SGLang baseline commit
   edb1b3f8f5. `candidate_src_hash=d0f645a016cb` in every r6 row = the joint
   hash of the CURRENT `src/csrc/norm_scale_shift.cuh` + `src/wrapper.py` +

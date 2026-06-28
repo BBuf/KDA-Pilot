@@ -64,7 +64,7 @@ beyond-noise win on >=1 targeted bucket.
 
 ## Environment re-pin (2026-06-04, AC-2)
 
-- Host `ion-b200` (`innomatrix-us-adc-smb200-0003`), container `sglang_bbuf`, GPU 1 (NVIDIA B200, idle-gated), driver 580.126.20.
+- Host `ion-b200`, container `sglang_bbuf`, GPU 1 (NVIDIA B200, idle-gated), driver 580.126.20.
 - SGLang checkout `/sgl-workspace/sglang` @ `edb1b3f8f5ab066af1e9b6ee8e8738fadcfa77e7` (version `0.0.0.dev1+gedb1b3f8f`) — **rewound vs the 2026-06-01 pin** `0b65588c…` (`0.5.12.dev472`): the old pin is NOT an ancestor of the current HEAD.
 - torch 2.11.0+cu130, triton 3.6.0, nvcc cuda_13.0 (V13.0.48 build 36424714), tvm_ffi 0.1.9.
 - Remote workspace: `/home/sglang-omni/bbuf/kda_runs/b200_diffusion_rotary_embedding__multi_shape/2026-06-04_17-45-46/kernel`.

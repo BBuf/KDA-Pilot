@@ -1,0 +1,32 @@
+[task]
+slug = "b200_ltx2_rms_adaln__bitwise"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "ltx2_rms_adaln"
+entry_points = [
+  "sglang.multimodal_gen.runtime.models.dits.ltx_2:_ltx2_rms_adaln",
+  "sglang.multimodal_gen.runtime.models.dits.ltx_2:_ltx2_try_fused_rms_adaln",
+]
+
+[build]
+language = "cuda"
+destination_passing_style = true
+baseline_entry_point = "baseline/kernel.cu::ltx2_rms_adaln_baseline"
+candidate_entry_point = "solution/kernel.cu::ltx2_rms_adaln_candidate"
+
+[correctness]
+bitwise_required = true
+comparison = "torch_equal"
+forbid_tolerance = true
+baseline = "pytorch_eager"
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+inner_iterations_min = 1
+inner_iterations_max = 2048
+target_sample_us = 1000
+timeout_seconds = 900
+use_isolated_runner = true
+required_matched_ratio = 1.0

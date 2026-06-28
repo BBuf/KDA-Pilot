@@ -1,7 +1,7 @@
 # Remote B200 Run Log
 
 ## Environment (AC-6)
-- Host: `ion-b200` (`innomatrix-us-adc-smb200-0003`), user `sglang-omni`.
+- Host: `ion-b200`, user `sglang-omni`.
 - Container: `sglang_bbuf` (`lmsysorg/sglang:dev`).
 - Toolchain: torch `2.11.0+cu130`, torch.version.cuda `13.0`, tvm-ffi `0.1.9`,
   nvcc `cuda_13.0.r13.0` (V13.0.88).

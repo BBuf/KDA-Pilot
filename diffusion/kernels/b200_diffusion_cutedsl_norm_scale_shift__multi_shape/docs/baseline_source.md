@@ -16,7 +16,7 @@
 
 ## Recovery environment
 
-- Host: `ion-b200` (`innomatrix-us-adc-smb200-0003`), container: `sglang_bbuf`
+- Host: `ion-b200`, container: `sglang_bbuf`
 - GPU for this task: `REMOTE_GPU_ID=0`, NVIDIA B200,
   uuid `GPU-a4d97fda-2684-94c9-4291-c6b291c0eb33` (idle at selection: 0% util,
   0 MiB used; GPUs 4-7 were busy with an unrelated sglang serving job)

@@ -2,7 +2,7 @@
 
 ## Environment
 
-- Host: `ion-b200` (`innomatrix-us-adc-smb200-0003`), container `sglang_bbuf`
+- Host: `ion-b200`, container `sglang_bbuf`
   (lmsysorg/sglang:dev, privileged + SYS_ADMIN for NCU).
 - Task-owned remote workspace:
   `/home/sglang-omni/bbuf/kda/k07_b200_diffusion_group_norm_silu__multi_shape`

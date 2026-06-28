@@ -37,6 +37,9 @@ kernels/
   b200_diffusion_causal_conv3d_cat_pad__multi_shape/
   b200_diffusion_attention_concat_copy__multi_model/
   b200_diffusion_residual_gate_add__multi_shape/
+  b200_ltx2_dual_modulate__bitwise/
+  b200_ltx2_rms_adaln__bitwise/
+  b200_ltx2_qknorm_split_rope__bitwise/
 scripts/
   launch_kda_kernel_task.sh
   launch_kernels/
@@ -97,6 +100,9 @@ task prompt for an agent run:
 ```bash
 # run from the repo root
 diffusion/scripts/launch_kernels/k03_b200_diffusion_qknorm_rope__multi_shape.sh
+diffusion/scripts/launch_kernels/k20_b200_ltx2_dual_modulate__bitwise.sh
+diffusion/scripts/launch_kernels/k21_b200_ltx2_rms_adaln__bitwise.sh
+diffusion/scripts/launch_kernels/k22_b200_ltx2_qknorm_split_rope__bitwise.sh
 ```
 
 Set `KDA_NO_CLAUDE=1` to prepare the worktree without launching Claude.

@@ -1,6 +1,6 @@
 # SGLang jit_kernel Export & Drop-In Replacement Evidence
 
-Date: 2026-06-04 — host `innomatrix-us-adc-smb200-0003` (ion-b200), container
+Date: 2026-06-04 — host `ion-b200` (ion-b200), container
 `sglang_bbuf`, GPU 0 (`GPU-a4d97fda-2684-94c9-4291-c6b291c0eb33`), SGLang checkout
 `/sgl-workspace/sglang @ edb1b3f8f` (patched for measurement, then restored clean —
 the applied diff is preserved verbatim in `export/sglang_drop_in.patch`).

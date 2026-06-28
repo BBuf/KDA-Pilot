@@ -7,7 +7,7 @@
 > compute/instruction-bound (not bandwidth-bound), so memory headroom remains.
 
 ## Setup / provenance
-- GPU: NVIDIA B200, host `ion-b200` (`innomatrix-us-adc-smb200-0003`). Canonical run on **GPU 7**, pinned with `CUDA_VISIBLE_DEVICES=7`.
+- GPU: NVIDIA B200, host `ion-b200`. Canonical run on **GPU 7**, pinned with `CUDA_VISIBLE_DEVICES=7`.
   - Idle proof (canonical run): GPU 7 had **no compute processes** before or after, 0% utilization, 0 MiB used. Earlier consistent runs used GPU 0 (see `docs/run_log.md`).
 - Baseline: copied SGLang Triton `_fused_cat_pad_5d_kernel` @ `67b2a9e` via destination-passing `baseline/binding.py`.
 - Candidate: flat-chunk 16-byte-vectorized-store CUDA kernel (`solution/kernel.cu`, `cat_pad_flat_kernel`) + stride-aware fallback, built via tvm-ffi (`-std=c++17 -O3`, native `sm_100`, no fast math).

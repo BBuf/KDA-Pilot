@@ -49,7 +49,7 @@ the local `profile/final_lb_k8_full/` mirror holds the parsed summaries
 ---
 
 Living evidence document; chronology below.
-Host `innomatrix-us-adc-smb200-0003` (ion-b200), container `sglang_bbuf`, GPU 0
+Host `ion-b200` (ion-b200), container `sglang_bbuf`, GPU 0
 (`GPU-a4d97fda-2684-94c9-4291-c6b291c0eb33`, NVIDIA B200, 148 SMs), SGLang
 `main@edb1b3f8f`, torch 2.11.0+cu130, CUDA 13.0.
 

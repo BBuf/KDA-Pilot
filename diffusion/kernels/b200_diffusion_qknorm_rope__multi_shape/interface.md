@@ -135,7 +135,7 @@ here is a diagnostic, not the production result.)**
 
 ## Frozen Baseline (Round 3 refreeze, symmetric timing, NVIDIA B200)
 
-- Host `innomatrix-us-adc-smb200-0003`, physical GPU 4 (NVIDIA B200, idle 0% util),
+- Host `ion-b200`, physical GPU 4 (NVIDIA B200, idle 0% util),
   container `sglang_bbuf`, local commit `68a32061` (resolves the asymmetric-baseline
   timing of the Round 2 freeze: the direct fused-baseline callable is resolved once
   before timing, symmetric with the candidate path).

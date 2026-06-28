@@ -15,6 +15,7 @@ Tasks:
 
 - `b200_diffusion_qknorm_rope__multi_shape`
 - `h200_diffusion_qknorm_rope__multi_shape`
+- `b200_ltx2_qknorm_split_rope__bitwise`
 
 Canonical source: `python/sglang/jit_kernel/tests/diffusion/test_qknorm_rope.py`.
 
@@ -114,12 +115,18 @@ Oracle: FlashInfer-style `apply_rope_with_cos_sin_cache_inplace`.
 For `apply_ltx2_split_rotary_emb`, use the production split-rotary rows from
 `diffusion_benchmark_shape_coverage.md` as the regression contract.
 
+For `b200_ltx2_qknorm_split_rope__bitwise`, tolerance is not allowed. The
+candidate must be bit-wise equal to the task-local PyTorch eager baseline:
+`q_norm(q)`, `k_norm(k)`, then SGLang-style `apply_split_rotary_emb` on Q and
+K. Compare both outputs with `torch.equal`.
+
 ## Scale Shift
 
 Tasks:
 
 - `b200_diffusion_fuse_scale_shift__multi_shape`
 - `h200_diffusion_fuse_scale_shift__multi_shape`
+- `b200_ltx2_dual_modulate__bitwise`
 
 Canonical source:
 `python/sglang/jit_kernel/tests/diffusion/test_qwen_image_modulation.py`.
@@ -140,6 +147,11 @@ Regression grid:
 
 The simple `fuse_scale_shift_kernel` must also cover both 2D `(B, C)` and 4D
 `(B, F, 1, C)` scale/shift layouts.
+
+For `b200_ltx2_dual_modulate__bitwise`, tolerance is not allowed. The candidate
+must be bit-wise equal to the task-local PyTorch eager baseline for both
+explicit dual modulation and cross-attention dual modulation from
+`temb_scale_shift`. Compare both output tensors with `torch.equal`.
 
 ## CuTe DSL Norm + Tanh + Mul + Add
 
@@ -172,6 +184,7 @@ Tasks:
 
 - `b200_diffusion_cutedsl_norm_scale_shift__multi_shape`
 - `h200_diffusion_cutedsl_norm_scale_shift__multi_shape`
+- `b200_ltx2_rms_adaln__bitwise`
 
 Canonical source:
 `python/sglang/jit_kernel/tests/diffusion/test_fused_norm_scale_shift.py`.
@@ -193,3 +206,8 @@ Regression grid:
 Oracle: `norm(x) * (1 + scale) + shift`, with scale/shift broadcasting across
 the listed layouts. The residual variant additionally consumes `residual` and
 `gate` and outputs both `y` and `res_out`.
+
+For `b200_ltx2_rms_adaln__bitwise`, tolerance is not allowed. The candidate
+must be bit-wise equal to the task-local PyTorch eager baseline
+`torch.nn.functional.rms_norm(x, (D,), eps=eps) * (1 + scale) + shift`.
+Compare the final output with `torch.equal`.

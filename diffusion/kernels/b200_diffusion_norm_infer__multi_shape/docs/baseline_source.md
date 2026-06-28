@@ -9,7 +9,7 @@ baseline remains the comparator for the round-1-compatible rebaseline rows).
 - Repo: https://github.com/sgl-project/sglang
 - Pin: container-installed editable checkout `/sgl-workspace/sglang` @ `edb1b3f8f`
   (torch 2.11.0+cu130, CUDA 13.0 container `sglang_bbuf` on `ion-b200`
-  = `innomatrix-us-adc-smb200-0003`)
+  = `ion-b200`)
 - Drift check vs round-1 provenance commit `0b65588c1`:
   `git diff 0b65588c1 edb1b3f8f -- <both files>` → **empty** (byte-identical),
   working tree clean for both paths. Recorded 2026-06-04.

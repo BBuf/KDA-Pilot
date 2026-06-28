@@ -1,0 +1,154 @@
+[
+  {
+    "id": "ltx23_stage1_video_explicit_s1536_d4096_bcast1",
+    "production": true,
+    "preset": "ltx23-two-stage-cfg-parallel",
+    "function": "dual_modulate",
+    "site": "video_av_ca",
+    "shapes": {
+      "x": {"shape": [2, 1536, 4096], "dtype": "bfloat16", "stride": [6291456, 4096, 1]},
+      "scale0": {"shape": [2, 1, 4096], "dtype": "bfloat16", "stride": [16384, 16384, 1]},
+      "shift0": {"shape": [2, 1, 4096], "dtype": "bfloat16", "stride": [16384, 16384, 1]},
+      "scale1": {"shape": [2, 1, 4096], "dtype": "bfloat16", "stride": [16384, 16384, 1]},
+      "shift1": {"shape": [2, 1, 4096], "dtype": "bfloat16", "stride": [16384, 16384, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939201,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "container": "sglang_bbuf_pr29315", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28", "sglang_commit": "828411e6f1"}
+  },
+  {
+    "id": "ltx23_stage1_audio_explicit_s126_d2048_bcast1",
+    "production": true,
+    "preset": "ltx23-two-stage-cfg-parallel",
+    "function": "dual_modulate",
+    "site": "audio_av_ca",
+    "shapes": {
+      "x": {"shape": [2, 126, 2048], "dtype": "bfloat16", "stride": [258048, 2048, 1]},
+      "scale0": {"shape": [2, 1, 2048], "dtype": "bfloat16", "stride": [8192, 8192, 1]},
+      "shift0": {"shape": [2, 1, 2048], "dtype": "bfloat16", "stride": [8192, 8192, 1]},
+      "scale1": {"shape": [2, 1, 2048], "dtype": "bfloat16", "stride": [8192, 8192, 1]},
+      "shift1": {"shape": [2, 1, 2048], "dtype": "bfloat16", "stride": [8192, 8192, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939202,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "container": "sglang_bbuf_pr29315", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28", "sglang_commit": "828411e6f1"}
+  },
+  {
+    "id": "ltx23_stage2_video_explicit_s6144_d4096_bcast1",
+    "production": true,
+    "preset": "ltx23-two-stage-cfg-parallel",
+    "function": "dual_modulate",
+    "site": "video_av_ca",
+    "shapes": {
+      "x": {"shape": [1, 6144, 4096], "dtype": "bfloat16", "stride": [25165824, 4096, 1]},
+      "scale0": {"shape": [1, 1, 4096], "dtype": "bfloat16", "stride": [16384, 16384, 1]},
+      "shift0": {"shape": [1, 1, 4096], "dtype": "bfloat16", "stride": [16384, 16384, 1]},
+      "scale1": {"shape": [1, 1, 4096], "dtype": "bfloat16", "stride": [16384, 16384, 1]},
+      "shift1": {"shape": [1, 1, 4096], "dtype": "bfloat16", "stride": [16384, 16384, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939203,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "container": "sglang_bbuf_pr29315", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28", "sglang_commit": "828411e6f1"}
+  },
+  {
+    "id": "ltx23_stage2_audio_explicit_s126_d2048_bcast1",
+    "production": true,
+    "preset": "ltx23-two-stage-cfg-parallel",
+    "function": "dual_modulate",
+    "site": "audio_av_ca",
+    "shapes": {
+      "x": {"shape": [1, 126, 2048], "dtype": "bfloat16", "stride": [258048, 2048, 1]},
+      "scale0": {"shape": [1, 1, 2048], "dtype": "bfloat16", "stride": [8192, 8192, 1]},
+      "shift0": {"shape": [1, 1, 2048], "dtype": "bfloat16", "stride": [8192, 8192, 1]},
+      "scale1": {"shape": [1, 1, 2048], "dtype": "bfloat16", "stride": [8192, 8192, 1]},
+      "shift1": {"shape": [1, 1, 2048], "dtype": "bfloat16", "stride": [8192, 8192, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939204,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "container": "sglang_bbuf_pr29315", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28", "sglang_commit": "828411e6f1"}
+  },
+  {
+    "id": "ltx23_stage1_video_temb_s1536_d4096_bcast1",
+    "production": true,
+    "preset": "ltx23-two-stage-cfg-parallel",
+    "function": "ca_dual_modulate_from_temb",
+    "site": "video_av_ca",
+    "shapes": {
+      "x": {"shape": [2, 1536, 4096], "dtype": "bfloat16", "stride": [6291456, 4096, 1]},
+      "temb_scale_shift": {"shape": [2, 1, 16384], "dtype": "bfloat16", "stride": [16384, 16384, 1]},
+      "scale_shift_table": {"shape": [4, 4096], "dtype": "bfloat16", "stride": [4096, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939205,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "container": "sglang_bbuf_pr29315", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28", "sglang_commit": "828411e6f1"}
+  },
+  {
+    "id": "ltx23_stage1_audio_temb_s126_d2048_bcast1",
+    "production": true,
+    "preset": "ltx23-two-stage-cfg-parallel",
+    "function": "ca_dual_modulate_from_temb",
+    "site": "audio_av_ca",
+    "shapes": {
+      "x": {"shape": [2, 126, 2048], "dtype": "bfloat16", "stride": [258048, 2048, 1]},
+      "temb_scale_shift": {"shape": [2, 1, 8192], "dtype": "bfloat16", "stride": [8192, 8192, 1]},
+      "scale_shift_table": {"shape": [4, 2048], "dtype": "bfloat16", "stride": [2048, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939206,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "container": "sglang_bbuf_pr29315", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28", "sglang_commit": "828411e6f1"}
+  },
+  {
+    "id": "ltx23_stage2_video_temb_s6144_d4096_bcast1",
+    "production": true,
+    "preset": "ltx23-two-stage-cfg-parallel",
+    "function": "ca_dual_modulate_from_temb",
+    "site": "video_av_ca",
+    "shapes": {
+      "x": {"shape": [1, 6144, 4096], "dtype": "bfloat16", "stride": [25165824, 4096, 1]},
+      "temb_scale_shift": {"shape": [1, 1, 16384], "dtype": "bfloat16", "stride": [16384, 16384, 1]},
+      "scale_shift_table": {"shape": [4, 4096], "dtype": "bfloat16", "stride": [4096, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939207,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "container": "sglang_bbuf_pr29315", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28", "sglang_commit": "828411e6f1"}
+  },
+  {
+    "id": "ltx23_stage2_audio_temb_s126_d2048_bcast1",
+    "production": true,
+    "preset": "ltx23-two-stage-cfg-parallel",
+    "function": "ca_dual_modulate_from_temb",
+    "site": "audio_av_ca",
+    "shapes": {
+      "x": {"shape": [1, 126, 2048], "dtype": "bfloat16", "stride": [258048, 2048, 1]},
+      "temb_scale_shift": {"shape": [1, 1, 8192], "dtype": "bfloat16", "stride": [8192, 8192, 1]},
+      "scale_shift_table": {"shape": [4, 2048], "dtype": "bfloat16", "stride": [2048, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939208,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "container": "sglang_bbuf_pr29315", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28", "sglang_commit": "828411e6f1"}
+  }
+]

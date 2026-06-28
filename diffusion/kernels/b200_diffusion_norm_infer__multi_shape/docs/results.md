@@ -1,7 +1,7 @@
 # Round-2 results — b200_diffusion_norm_infer__multi_shape
 
 Continuation on the promoted round-1 state (PR #23). Environment: `ion-b200`
-(= `innomatrix-us-adc-smb200-0003`), container `sglang_bbuf`, GPU 1 (idle;
+(= `ion-b200`), container `sglang_bbuf`, GPU 1 (idle;
 host otherwise loaded: other GPUs 53–97%), sglang `edb1b3f8f` (baseline files
 drift-checked byte-identical to round-1 pin `0b65588c1`), CUDA 13.0,
 torch 2.11.0+cu130, driver 580.126.20, fresh per-round `TVM_FFI_CACHE_DIR`.

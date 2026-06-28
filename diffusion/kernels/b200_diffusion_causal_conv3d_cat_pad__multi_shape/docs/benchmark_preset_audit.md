@@ -6,7 +6,7 @@
 - Original capture audit: 2026-06-24 (recorded in `../../docs/sglang_recent_diffusion_b200_profile_audit_2026-06-24.md` and `../../docs/diffusion_benchmark_shape_coverage.md`).
 
 ## Capture availability (re-checked 2026-06-25 on ion-b200)
-- The capture file `/tmp/sglang_profile_b200/outputs/shape_captures/cosmos3-nano-t2v_no_compile_v2.jsonl` is **no longer present** on `ion-b200` (host `innomatrix-us-adc-smb200-0003`); `/tmp` was cleared since the 2026-06-24 audit. A recursive search under `/tmp` and `/home/sglang-omni` found no `cosmos3-nano-t2v_no_compile*.jsonl`.
+- The capture file `/tmp/sglang_profile_b200/outputs/shape_captures/cosmos3-nano-t2v_no_compile_v2.jsonl` is **no longer present** on `ion-b200` (host `ion-b200`); `/tmp` was cleared since the 2026-06-24 audit. A recursive search under `/tmp` and `/home/sglang-omni` found no `cosmos3-nano-t2v_no_compile*.jsonl`.
 - Consequence: the exact captured regression-row tensor metadata (cache-null / no-pad / non-contiguous) cannot be freshly extracted from the original capture.
 
 ## Production (headline) rows — retained
