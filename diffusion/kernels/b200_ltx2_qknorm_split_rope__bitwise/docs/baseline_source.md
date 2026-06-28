@@ -103,12 +103,18 @@ and (for norm inputs) validated by the adapter.
 - Workloads were captured at SGLang commit `828411e6f1` (container
   `sglang_bbuf_pr29315`). The baseline is copied from the latest `main`
   (`aaa31eb0…`) per the diffusion-kernel rule.
-- Status: the eager `apply_split_rotary_emb` expression copied here is treated as
-  the bit-exact reference. A targeted diff of `apply_split_rotary_emb` /
-  `torch.nn.RMSNorm` usage between `828411e6f1` and `aaa31eb0…` is QUEUED for the
-  remote phase (fetch `ltx_2.py` at `828411e6f1` and compare the two functions).
-  If a relevant semantic drift is found, it will be surfaced before finalizing
-  (the captured workloads assume the capture-time semantics).
+- Status: DONE (best-effort). `828411e6f1` is not reachable on the public
+  `sgl-project/sglang` remote (`git fetch origin 828411e6f1` → "couldn't find
+  remote ref"); it is a PR-era container commit absent from public `main` history,
+  so a direct function diff is not possible. This is acceptable because: (a) the
+  bit-exactness gate compares candidate vs the eager oracle, **both** built from
+  current `main` (`aaa31eb0…`), which is the integration target per the
+  latest-`main` rule; (b) the captured workloads supply tensor **shapes** only —
+  values are regenerated from seeds in `make_case` — so capture-time numeric
+  semantics do not enter the comparison; (c) the eager `apply_split_rotary_emb`
+  expression (`split_x*cos` then two `addcmul_`) is simple and stable. Residual
+  risk is low. If a future integration pins a specific commit, re-run the diff
+  against that commit.
 
 ## Pending user decisions in effect (defaults applied; see refined-plan.md)
 
