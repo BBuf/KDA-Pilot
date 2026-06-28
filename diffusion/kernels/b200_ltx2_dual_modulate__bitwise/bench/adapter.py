@@ -63,39 +63,44 @@ def _validate_against_spec(name: str, tensor: torch.Tensor, spec: dict) -> None:
         )
 
 
-def _make_explicit_params(shapes, device):
-    """scale0/shift0/scale1/shift1 are recorded as views with stride [4D, 4D, 1]
-    (slices of a packed [B, 1, 4D] parent). Reproduce that layout so the frozen
-    strides match and the broadcast-over-S path is exercised."""
-    spec = shapes["scale0"]
-    b, mid, d = spec["shape"]
+def _contig_stride(shape) -> list:
+    st = [1] * len(shape)
+    for i in range(len(shape) - 2, -1, -1):
+        st[i] = st[i + 1] * shape[i + 1]
+    return st
+
+
+def _from_spec(spec: dict, device) -> torch.Tensor:
+    """Build a tensor matching the frozen spec's shape AND stride. Contiguous specs
+    use a plain randn; any non-contiguous spec (the packed [B,1,D] production params,
+    or [B,D]/[B,S,D] layouts) is reproduced exactly via as_strided over a randn parent
+    of sufficient storage."""
+    shape = list(spec["shape"])
     dtype = _DTYPES[spec["dtype"]]
-    want_stride = spec.get("stride")
-    packed_last = want_stride[0] if want_stride else d
-    parent = _randn((b, mid, packed_last), dtype, device)
-    out = {}
-    for i, name in enumerate(("scale0", "shift0", "scale1", "shift1")):
-        out[name] = parent[:, :, i * d : (i + 1) * d]
-        _validate_against_spec(name, out[name], shapes[name])
-    return out
+    stride = spec.get("stride")
+    if stride is None or list(stride) == _contig_stride(shape):
+        return _randn(shape, dtype, device)
+    storage = 1 + sum((s - 1) * st for s, st in zip(shape, stride) if s > 0)
+    return _randn((storage,), dtype, device).as_strided(shape, list(stride))
 
 
 def make_case(workload: dict, *, device: torch.device, seed: int) -> dict:
     del seed  # benchmark.py already seeded the global generators
     fn = workload["function"]
     shapes = workload["shapes"]
-    x = _randn(shapes["x"]["shape"], _DTYPES[shapes["x"]["dtype"]], device)
+    x = _from_spec(shapes["x"], device)
     _validate_against_spec("x", x, shapes["x"])
     eps = float(workload.get("eps", 1e-6))
 
     if fn == _EXPLICIT:
-        inputs = {"x": x, "eps": eps, **_make_explicit_params(shapes, device)}
+        inputs = {"x": x, "eps": eps}
+        for name in ("scale0", "shift0", "scale1", "shift1"):
+            inputs[name] = _from_spec(shapes[name], device)
+            _validate_against_spec(name, inputs[name], shapes[name])
     elif fn == _CA:
-        temb = _randn(shapes["temb_scale_shift"]["shape"],
-                      _DTYPES[shapes["temb_scale_shift"]["dtype"]], device)
+        temb = _from_spec(shapes["temb_scale_shift"], device)
         _validate_against_spec("temb_scale_shift", temb, shapes["temb_scale_shift"])
-        table = _randn(shapes["scale_shift_table"]["shape"],
-                       _DTYPES[shapes["scale_shift_table"]["dtype"]], device)
+        table = _from_spec(shapes["scale_shift_table"], device)
         _validate_against_spec("scale_shift_table", table, shapes["scale_shift_table"])
         inputs = {"x": x, "eps": eps, "temb_scale_shift": temb, "scale_shift_table": table}
     else:

@@ -20,6 +20,8 @@
 
 #include "../ltx2_dual_modulate_common.cuh"
 
+#include <c10/cuda/CUDAGuard.h>
+
 namespace {
 
 using ltx2::as_tensor;
@@ -122,6 +124,8 @@ void ltx2_dual_modulate_candidate(TensorView x, TensorView scale0,
                                   TensorView shift1, double eps, TensorView y0,
                                   TensorView y1) {
   Dims dm = check_x(x);
+  // Run on x's device (not necessarily the current device) for multi-GPU safety.
+  const c10::cuda::CUDAGuard device_guard(static_cast<c10::DeviceIndex>(dm.dev));
   // Each param is validated and broadcast independently ([B,D]/[B,1,D]/[B,S,D]).
   ParamStrides s0 = check_explicit_param(scale0, dm, "scale0");
   ParamStrides h0 = check_explicit_param(shift0, dm, "shift0");
@@ -150,6 +154,8 @@ void ltx2_ca_dual_modulate_from_temb_candidate(TensorView x,
                                                double eps, TensorView y0,
                                                TensorView y1) {
   Dims dm = check_x(x);
+  // Run on x's device (not necessarily the current device) for multi-GPU safety.
+  const c10::cuda::CUDAGuard device_guard(static_cast<c10::DeviceIndex>(dm.dev));
   int64_t temb_seq = check_temb(temb_scale_shift, dm);
   TableInfo ti = check_table(scale_shift_table, dm);
   check_output(y0, dm, "y0");

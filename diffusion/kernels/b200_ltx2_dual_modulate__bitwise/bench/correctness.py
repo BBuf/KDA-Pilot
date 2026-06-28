@@ -260,6 +260,33 @@ def main():
         expect_raises(f"baseline/{name}", lambda b=build: b(_baseline.ltx2_ca_dual_modulate_from_temb_baseline))
         expect_raises(f"candidate/{name}", lambda b=build: b(_candidate.ltx2_ca_dual_modulate_from_temb_candidate))
 
+    if torch.cuda.device_count() >= 2:
+        print("[multi-GPU: candidate honors x.device via CUDAGuard]")
+        torch.cuda.set_device(0)  # current device 0; the tensors live on device 1
+        d1 = "cuda:1"
+        xm = torch.randn(2, 64, 1024, device=d1, dtype=torch.bfloat16)
+        pm = [torch.randn(2, 1, 1024, device=d1, dtype=torch.bfloat16) for _ in range(4)]
+        rm0, rm1 = oracle_explicit(xm, *pm)
+        ym0, ym1 = torch.empty_like(xm), torch.empty_like(xm)
+        _candidate.ltx2_dual_modulate_candidate(xm, *pm, _EPS, ym0, ym1)
+        torch.cuda.synchronize(d1)
+        _check("multigpu/explicit_y0", torch.equal(rm0, ym0), "wrong on non-current device")
+        _check("multigpu/explicit_y1", torch.equal(rm1, ym1), "wrong on non-current device")
+        tm = torch.randn(2, 1, 4 * 1024, device=d1, dtype=torch.bfloat16)
+        tbl = torch.randn(4, 1024, device=d1, dtype=torch.bfloat16)
+        cm0, cm1 = oracle_ca(xm, tm, tbl)
+        yc0, yc1 = torch.empty_like(xm), torch.empty_like(xm)
+        _candidate.ltx2_ca_dual_modulate_from_temb_candidate(xm, tm, tbl, _EPS, yc0, yc1)
+        torch.cuda.synchronize(d1)
+        _check("multigpu/ca_y0", torch.equal(cm0, yc0), "wrong on non-current device")
+        _check("multigpu/ca_y1", torch.equal(cm1, yc1), "wrong on non-current device")
+        ybad = torch.empty(2, 64, 1024, device="cuda:0", dtype=torch.bfloat16)
+        expect_raises("multigpu/cross_device_output",
+                      lambda: _candidate.ltx2_dual_modulate_candidate(xm, *pm, _EPS, ybad, ym1))
+        torch.cuda.set_device(0)
+    else:
+        print("[multi-GPU: skipped — fewer than 2 visible CUDA devices]")
+
     print(f"\n=== correctness: {_n_pass} passed, {_n_fail} failed ===")
     if _n_fail:
         for f in _failures[:50]:

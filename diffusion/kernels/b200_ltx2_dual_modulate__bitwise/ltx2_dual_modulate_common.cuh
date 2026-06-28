@@ -83,6 +83,7 @@ inline bool last_dim_contiguous(const TensorView& t) {
 
 struct Dims {
   int64_t B, S, D;
+  int dev;  // CUDA device id of x; every tensor must share it
 };
 
 struct ParamStrides {
@@ -103,7 +104,7 @@ inline Dims check_x(const TensorView& x) {
   int64_t D = x.size(2);
   LTX2_CHECK(D % 256 == 0 && D <= 8192,
              "hidden size must be divisible by 256 and <= 8192 (got ", D, ")");
-  return {x.size(0), x.size(1), D};
+  return {x.size(0), x.size(1), D, x.device().device_id};
 }
 
 // Accepts exactly [B, D], [B, 1, D], or [B, S, D] (bf16, CUDA, last-dim
@@ -112,6 +113,7 @@ inline Dims check_x(const TensorView& x) {
 inline ParamStrides check_explicit_param(const TensorView& p, const Dims& dm,
                                          const char* name) {
   LTX2_CHECK(p.device().device_type == kDLCUDA, name, " must be a CUDA tensor");
+  LTX2_CHECK(p.device().device_id == dm.dev, name, " must be on x's CUDA device");
   LTX2_CHECK(is_bf16(p.dtype()), name, " must be bfloat16");
   LTX2_CHECK(last_dim_contiguous(p), name, " last dimension must be contiguous");
   if (p.ndim() == 2) {
@@ -130,6 +132,8 @@ inline ParamStrides check_explicit_param(const TensorView& p, const Dims& dm,
 inline int64_t check_temb(const TensorView& t, const Dims& dm) {
   LTX2_CHECK(t.device().device_type == kDLCUDA,
              "temb_scale_shift must be a CUDA tensor");
+  LTX2_CHECK(t.device().device_id == dm.dev,
+             "temb_scale_shift must be on x's CUDA device");
   LTX2_CHECK(is_bf16(t.dtype()), "temb_scale_shift must be bfloat16");
   LTX2_CHECK(last_dim_contiguous(t),
              "temb_scale_shift last dimension must be contiguous");
@@ -151,6 +155,8 @@ inline int64_t check_temb(const TensorView& t, const Dims& dm) {
 inline TableInfo check_table(const TensorView& t, const Dims& dm) {
   LTX2_CHECK(t.device().device_type == kDLCUDA,
              "scale_shift_table must be a CUDA tensor");
+  LTX2_CHECK(t.device().device_id == dm.dev,
+             "scale_shift_table must be on x's CUDA device");
   LTX2_CHECK(last_dim_contiguous(t),
              "scale_shift_table last dimension must be contiguous");
   LTX2_CHECK(t.ndim() == 2 && t.size(0) == 4 && t.size(1) == dm.D,
@@ -163,6 +169,7 @@ inline TableInfo check_table(const TensorView& t, const Dims& dm) {
 
 inline void check_output(const TensorView& y, const Dims& dm, const char* name) {
   LTX2_CHECK(y.device().device_type == kDLCUDA, name, " must be a CUDA tensor");
+  LTX2_CHECK(y.device().device_id == dm.dev, name, " must be on x's CUDA device");
   LTX2_CHECK(is_bf16(y.dtype()), name, " must be bfloat16");
   LTX2_CHECK(y.ndim() == 3 && y.size(0) == dm.B && y.size(1) == dm.S &&
                  y.size(2) == dm.D,
