@@ -11,17 +11,15 @@ entry_points = [
 [build]
 language = "cuda"
 destination_passing_style = true
-# Upstream LTX2 dual modulation is pure PyTorch eager (RMSNormNoWeight ->
-# F.rms_norm; see docs/baseline_source.md). Per the sibling precedent
-# (b200_diffusion_fuse_scale_shift__multi_shape, whose config likewise exposes a
-# non-CUDA upstream through baseline/binding.py), the baseline is exposed through
-# local destination-passing Python launchers with the SAME ABI as the candidate.
-# The candidate computes the identical F.rms_norm in PyTorch (bit-identical) and
-# fuses the dual affine in CUDA (solution/kernel.cu). `language = "cuda"` refers
-# to the candidate.
+# Both baseline and candidate are full-operation TVM-FFI CUDA entries taking
+# (x, params/temb/table, double eps, outputs last). The baseline runs the eager
+# semantics via ATen (at::rms_norm + dual affine); the candidate computes the same
+# at::rms_norm inside the call path and fuses the dual affine. Validation is shared
+# (ltx2_dual_modulate_common.cuh) so both sides reject identically. Built via
+# tvm_ffi.cpp.load with identical flags (no --use_fast_math).
 baseline_entry_points = [
-  "baseline/binding.py::ltx2_dual_modulate_baseline",
-  "baseline/binding.py::ltx2_ca_dual_modulate_from_temb_baseline",
+  "baseline/kernel.cu::ltx2_dual_modulate_baseline",
+  "baseline/kernel.cu::ltx2_ca_dual_modulate_from_temb_baseline",
 ]
 candidate_entry_points = [
   "solution/kernel.cu::ltx2_dual_modulate_candidate",

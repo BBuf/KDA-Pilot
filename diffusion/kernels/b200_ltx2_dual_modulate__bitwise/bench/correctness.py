@@ -1,14 +1,15 @@
 """Bitwise correctness gate for b200_ltx2_dual_modulate__bitwise.
 
-The candidate must be BIT-FOR-BIT equal (`torch.equal`, atol=rtol=0) to the
-PyTorch eager baseline for both operations across the production rows, the
-canonical regression grid (diffusion_correctness_contract.md, Scale-Shift), the
-fp32 `scale_shift_table` path, `temb_seq in {1, S}`, and all explicit param
-layouts. Output buffers are NaN-poisoned before each run so a skipped/zero kernel
-is caught. Unsupported inputs must be rejected (raise) on both sides.
+The candidate must be BIT-FOR-BIT equal (`torch.equal`, atol=rtol=0) to an
+INDEPENDENT pure-PyTorch oracle (defined here, not imported from baseline/) for both
+operations across: production rows; the canonical regression grid crossed with the
+[B,D]/[B,1,D]/[B,S,D] param layouts; the CA grid crossed with table dtype {bf16,fp32}
+and temb_seq in {1,S}; the D=8192 boundary; repeated fixed-seed reproducibility. The
+baseline module is also checked against the same oracle. Output buffers are
+NaN-poisoned before each run so a skipped kernel is caught. Unsupported inputs must
+raise on BOTH the baseline and the candidate.
 
-Run on a B200:  python bench/correctness.py
-Exit code 0 iff every check passes.
+Run on a B200:  python bench/correctness.py    (exit 0 iff all checks pass)
 """
 
 from __future__ import annotations
@@ -23,25 +24,17 @@ if str(_TASK_ROOT) not in sys.path:
 import torch
 import torch.nn.functional as F
 
-import baseline.binding as B
+from baseline.build import load_baseline_module
 from solution.build import load_candidate_module
 
-_cand = load_candidate_module()
+_baseline = load_baseline_module()
+_candidate = load_candidate_module()
 _DEV = "cuda"
 _EPS = 1e-6
 
 _n_pass = 0
 _n_fail = 0
 _failures: list[str] = []
-
-
-def _poison(outs):
-    for t in outs:
-        t.fill_(float("nan"))
-
-
-def _rms(x, eps=_EPS):
-    return F.rms_norm(x, normalized_shape=(x.shape[-1],), eps=eps)
 
 
 def _check(tag: str, cond: bool, detail: str = "") -> None:
@@ -54,44 +47,65 @@ def _check(tag: str, cond: bool, detail: str = "") -> None:
         print(f"  FAIL {tag}: {detail}")
 
 
+def _poison(*outs):
+    for t in outs:
+        t.fill_(float("nan"))
+
+
+# ---- Independent pure-PyTorch oracle (the authoritative reference) ----
+def _bc(p):
+    return p.unsqueeze(1) if p.dim() == 2 else p
+
+
+def oracle_explicit(x, s0, h0, s1, h1, eps=_EPS):
+    normed = F.rms_norm(x, (x.shape[-1],), eps=eps)
+    return (normed * (1 + _bc(s0)) + _bc(h0), normed * (1 + _bc(s1)) + _bc(h1))
+
+
+def oracle_ca(x, temb, table, eps=_EPS):
+    b, s, d = x.shape
+    temb_seq = temb.shape[1]
+    s0, h0, s1, h1 = (
+        table.to(dtype=x.dtype).view(1, 1, 4, d) + temb.reshape(b, temb_seq, 4, d)
+    ).unbind(dim=2)
+    normed = F.rms_norm(x, (d,), eps=eps)
+    return (normed * (1 + s0) + h0, normed * (1 + s1) + h1)
+
+
 def _explicit_params(B_, S, D, layout, device):
-    """Build (scale0, shift0, scale1, shift1) for the requested broadcast layout."""
-    if layout == "BD":
-        shape = (B_, D)
-    elif layout == "B1D":
-        shape = (B_, 1, D)
-    elif layout == "BSD":
-        shape = (B_, S, D)
-    else:
-        raise ValueError(layout)
+    shape = {"BD": (B_, D), "B1D": (B_, 1, D), "BSD": (B_, S, D)}[layout]
     return [torch.randn(shape, device=device, dtype=torch.bfloat16) for _ in range(4)]
 
 
 def case_explicit(B_, S, D, layout, tag):
     x = torch.randn(B_, S, D, device=_DEV, dtype=torch.bfloat16)
-    scale0, shift0, scale1, shift1 = _explicit_params(B_, S, D, layout, _DEV)
-    y0_b, y1_b = torch.empty_like(x), torch.empty_like(x)
-    y0_c, y1_c = torch.empty_like(x), torch.empty_like(x)
-    B.ltx2_dual_modulate_baseline(x, scale0, shift0, scale1, shift1, _EPS, y0_b, y1_b)
-    _poison([y0_c, y1_c])
-    normed = _rms(x)
-    _cand.ltx2_dual_modulate_candidate(normed, scale0, shift0, scale1, shift1, y0_c, y1_c)
-    _check(f"explicit/{tag}/y0", torch.equal(y0_b, y0_c), "not bitwise equal")
-    _check(f"explicit/{tag}/y1", torch.equal(y1_b, y1_c), "not bitwise equal")
+    s0, h0, s1, h1 = _explicit_params(B_, S, D, layout, _DEV)
+    r0, r1 = oracle_explicit(x, s0, h0, s1, h1)
+    yb0, yb1 = torch.empty_like(x), torch.empty_like(x)
+    yc0, yc1 = torch.empty_like(x), torch.empty_like(x)
+    _poison(yc0, yc1)
+    _candidate.ltx2_dual_modulate_candidate(x, s0, h0, s1, h1, _EPS, yc0, yc1)
+    _baseline.ltx2_dual_modulate_baseline(x, s0, h0, s1, h1, _EPS, yb0, yb1)
+    _check(f"explicit/{tag}/cand_y0", torch.equal(r0, yc0), "candidate != oracle")
+    _check(f"explicit/{tag}/cand_y1", torch.equal(r1, yc1), "candidate != oracle")
+    _check(f"explicit/{tag}/base_y0", torch.equal(r0, yb0), "baseline != oracle")
+    _check(f"explicit/{tag}/base_y1", torch.equal(r1, yb1), "baseline != oracle")
 
 
 def case_ca(B_, S, D, table_dtype, temb_seq, tag):
     x = torch.randn(B_, S, D, device=_DEV, dtype=torch.bfloat16)
     temb = torch.randn(B_, temb_seq, 4 * D, device=_DEV, dtype=torch.bfloat16)
     table = torch.randn(4, D, device=_DEV, dtype=table_dtype)
-    y0_b, y1_b = torch.empty_like(x), torch.empty_like(x)
-    y0_c, y1_c = torch.empty_like(x), torch.empty_like(x)
-    B.ltx2_ca_dual_modulate_from_temb_baseline(x, temb, table, _EPS, y0_b, y1_b)
-    _poison([y0_c, y1_c])
-    normed = _rms(x)
-    _cand.ltx2_ca_dual_modulate_from_temb_candidate(normed, temb, table, y0_c, y1_c)
-    _check(f"ca/{tag}/y0", torch.equal(y0_b, y0_c), "not bitwise equal")
-    _check(f"ca/{tag}/y1", torch.equal(y1_b, y1_c), "not bitwise equal")
+    r0, r1 = oracle_ca(x, temb, table)
+    yb0, yb1 = torch.empty_like(x), torch.empty_like(x)
+    yc0, yc1 = torch.empty_like(x), torch.empty_like(x)
+    _poison(yc0, yc1)
+    _candidate.ltx2_ca_dual_modulate_from_temb_candidate(x, temb, table, _EPS, yc0, yc1)
+    _baseline.ltx2_ca_dual_modulate_from_temb_baseline(x, temb, table, _EPS, yb0, yb1)
+    _check(f"ca/{tag}/cand_y0", torch.equal(r0, yc0), "candidate != oracle")
+    _check(f"ca/{tag}/cand_y1", torch.equal(r1, yc1), "candidate != oracle")
+    _check(f"ca/{tag}/base_y0", torch.equal(r0, yb0), "baseline != oracle")
+    _check(f"ca/{tag}/base_y1", torch.equal(r1, yb1), "baseline != oracle")
 
 
 def expect_raises(tag, thunk):
@@ -110,70 +124,96 @@ def main():
         print("CUDA not available; this gate must run on a B200.")
         return 2
 
-    # Production rows (D in {2048, 4096}; B in {1,2}; S in {126,1536,6144}).
     print("[production rows]")
     for B_, S, D in [(2, 1536, 4096), (2, 126, 2048), (1, 6144, 4096), (1, 126, 2048)]:
         case_explicit(B_, S, D, "B1D", f"prod_{B_}x{S}x{D}")
         case_ca(B_, S, D, torch.bfloat16, 1, f"prod_{B_}x{S}x{D}")
 
-    # Canonical regression grid (Scale-Shift section), bf16.
-    print("[regression grid]")
+    print("[regression grid x explicit param layouts]")
     for B_ in (1, 2, 4):
         for S in (6, 33, 128, 257):
             for D in (512, 1024, 1536, 3072):
-                case_explicit(B_, S, D, "B1D", f"grid_{B_}x{S}x{D}")
-                case_ca(B_, S, D, torch.bfloat16, 1, f"grid_{B_}x{S}x{D}")
+                for layout in ("BD", "B1D", "BSD"):
+                    case_explicit(B_, S, D, layout, f"grid_{B_}x{S}x{D}_{layout}")
 
-    # Explicit param layouts.
-    print("[param layouts]")
-    for layout in ("BD", "B1D", "BSD"):
-        case_explicit(2, 128, 1024, layout, f"layout_{layout}")
+    print("[regression grid x CA table dtype x temb_seq]")
+    for B_ in (1, 2, 4):
+        for S in (6, 33, 128, 257):
+            for D in (512, 1024, 1536, 3072):
+                for td in (torch.bfloat16, torch.float32):
+                    for tseq in (1, S):
+                        case_ca(B_, S, D, td, tseq, f"grid_{B_}x{S}x{D}_{td}_ts{tseq}")
 
-    # fp32 scale_shift_table + temb_seq == S.
-    print("[ca variants]")
-    case_ca(2, 128, 1024, torch.float32, 1, "table_fp32")
-    case_ca(2, 128, 1024, torch.bfloat16, 128, "temb_seq_S")
-    case_ca(2, 128, 1024, torch.float32, 128, "table_fp32_temb_seq_S")
+    print("[D=8192 boundary]")
+    case_explicit(1, 8, 8192, "B1D", "D8192")
+    case_ca(1, 8, 8192, torch.float32, 8, "D8192")
 
-    # Poison self-test: skipping the candidate must be detected.
-    print("[poison self-test]")
-    x = torch.randn(2, 64, 512, device=_DEV, dtype=torch.bfloat16)
-    s0, h0, s1, h1 = _explicit_params(2, 64, 512, "B1D", _DEV)
-    yb0, yb1 = torch.empty_like(x), torch.empty_like(x)
+    print("[reproducibility: same seed -> identical bits]")
+    torch.manual_seed(123)
+    x = torch.randn(2, 64, 1024, device=_DEV, dtype=torch.bfloat16)
+    s0, h0, s1, h1 = _explicit_params(2, 64, 1024, "B1D", _DEV)
+    a0, a1 = torch.empty_like(x), torch.empty_like(x)
+    b0, b1 = torch.empty_like(x), torch.empty_like(x)
+    _candidate.ltx2_dual_modulate_candidate(x, s0, h0, s1, h1, _EPS, a0, a1)
+    _candidate.ltx2_dual_modulate_candidate(x, s0, h0, s1, h1, _EPS, b0, b1)
+    _check("repro", torch.equal(a0, b0) and torch.equal(a1, b1), "non-deterministic")
+
+    print("[poison self-test: skipped kernel detected]")
     yc0, yc1 = torch.empty_like(x), torch.empty_like(x)
-    B.ltx2_dual_modulate_baseline(x, s0, h0, s1, h1, _EPS, yb0, yb1)
-    _poison([yc0, yc1])  # deliberately do NOT run the candidate
-    _check("poison_selftest", not torch.equal(yb0, yc0), "poison not detected")
+    _poison(yc0, yc1)
+    r0, _ = oracle_explicit(x, s0, h0, s1, h1)
+    _check("poison_selftest", not torch.equal(r0, yc0), "poison not detected")
 
-    # Rejection of unsupported rows (both baseline and candidate).
-    print("[rejection]")
-    good = lambda B_, S, D: torch.randn(B_, S, D, device=_DEV, dtype=torch.bfloat16)
+    print("[rejection: both sides must raise]")
+    g = lambda B_, S, D: torch.randn(B_, S, D, device=_DEV, dtype=torch.bfloat16)
     p = lambda B_, D: torch.randn(B_, 1, D, device=_DEV, dtype=torch.bfloat16)
-    expect_raises("baseline/non_bf16_x", lambda: B.ltx2_dual_modulate_baseline(
-        torch.randn(2, 8, 512, device=_DEV, dtype=torch.float16),
-        p(2, 512), p(2, 512), p(2, 512), p(2, 512), _EPS,
-        torch.empty(2, 8, 512, device=_DEV, dtype=torch.float16),
-        torch.empty(2, 8, 512, device=_DEV, dtype=torch.float16)))
-    expect_raises("baseline/D_not_mult_256", lambda: B.ltx2_dual_modulate_baseline(
-        good(2, 8, 300), p(2, 300), p(2, 300), p(2, 300), p(2, 300), _EPS,
-        good(2, 8, 300), good(2, 8, 300)))
-    expect_raises("baseline/D_gt_8192", lambda: B.ltx2_dual_modulate_baseline(
-        good(2, 8, 8448), p(2, 8448), p(2, 8448), p(2, 8448), p(2, 8448), _EPS,
-        good(2, 8, 8448), good(2, 8, 8448)))
-    expect_raises("baseline/param_hidden_mismatch", lambda: B.ltx2_dual_modulate_baseline(
-        good(2, 8, 512), p(2, 256), p(2, 512), p(2, 512), p(2, 512), _EPS,
-        good(2, 8, 512), good(2, 8, 512)))
-    x_good = good(2, 8, 512)
-    nm = _rms(x_good)
-    expect_raises("candidate/D_not_mult_256", lambda: _cand.ltx2_dual_modulate_candidate(
-        _rms(good(2, 8, 300)), p(2, 300), p(2, 300), p(2, 300), p(2, 300),
-        good(2, 8, 300), good(2, 8, 300)))
-    expect_raises("candidate/param_hidden_mismatch", lambda: _cand.ltx2_dual_modulate_candidate(
-        nm, p(2, 256), p(2, 512), p(2, 512), p(2, 512), x_good, x_good))
+    o = lambda B_, S, D: torch.empty(B_, S, D, device=_DEV, dtype=torch.bfloat16)
+    explicit_cases = {
+        "non_cuda_x": lambda f: f(torch.randn(2, 8, 512, dtype=torch.bfloat16),
+                                  p(2, 512), p(2, 512), p(2, 512), p(2, 512), _EPS,
+                                  o(2, 8, 512), o(2, 8, 512)),
+        "non_bf16_x": lambda f: f(torch.randn(2, 8, 512, device=_DEV, dtype=torch.float16),
+                                  p(2, 512), p(2, 512), p(2, 512), p(2, 512), _EPS,
+                                  torch.empty(2, 8, 512, device=_DEV, dtype=torch.float16),
+                                  torch.empty(2, 8, 512, device=_DEV, dtype=torch.float16)),
+        "noncontig_last_x": lambda f: f(g(2, 8, 1024)[:, :, ::2], p(2, 512), p(2, 512),
+                                        p(2, 512), p(2, 512), _EPS, o(2, 8, 512), o(2, 8, 512)),
+        "D_not_mult_256": lambda f: f(g(2, 8, 300), p(2, 300), p(2, 300), p(2, 300),
+                                      p(2, 300), _EPS, g(2, 8, 300), g(2, 8, 300)),
+        "D_gt_8192": lambda f: f(g(2, 8, 8448), p(2, 8448), p(2, 8448), p(2, 8448),
+                                 p(2, 8448), _EPS, g(2, 8, 8448), g(2, 8, 8448)),
+        "param_hidden_mismatch": lambda f: f(g(2, 8, 512), p(2, 256), p(2, 512),
+                                             p(2, 512), p(2, 512), _EPS, o(2, 8, 512), o(2, 8, 512)),
+        "param_rank1": lambda f: f(g(2, 8, 512),
+                                   torch.randn(512, device=_DEV, dtype=torch.bfloat16),
+                                   p(2, 512), p(2, 512), p(2, 512), _EPS, o(2, 8, 512), o(2, 8, 512)),
+        "param_wrong_batch": lambda f: f(g(2, 8, 512), p(1, 512), p(2, 512), p(2, 512),
+                                         p(2, 512), _EPS, o(2, 8, 512), o(2, 8, 512)),
+        "param_wrong_seq": lambda f: f(g(2, 8, 512),
+                                       torch.randn(2, 2, 512, device=_DEV, dtype=torch.bfloat16),
+                                       p(2, 512), p(2, 512), p(2, 512), _EPS, o(2, 8, 512), o(2, 8, 512)),
+    }
+    for name, build in explicit_cases.items():
+        expect_raises(f"baseline/{name}", lambda b=build: b(_baseline.ltx2_dual_modulate_baseline))
+        expect_raises(f"candidate/{name}", lambda b=build: b(_candidate.ltx2_dual_modulate_candidate))
+
+    ca_cases = {
+        "table_wrong_rows": lambda f: f(g(2, 8, 512),
+                                        torch.randn(2, 1, 4 * 512, device=_DEV, dtype=torch.bfloat16),
+                                        torch.randn(5, 512, device=_DEV, dtype=torch.bfloat16),
+                                        _EPS, o(2, 8, 512), o(2, 8, 512)),
+        "temb_wrong_last": lambda f: f(g(2, 8, 512),
+                                       torch.randn(2, 1, 3 * 512, device=_DEV, dtype=torch.bfloat16),
+                                       torch.randn(4, 512, device=_DEV, dtype=torch.bfloat16),
+                                       _EPS, o(2, 8, 512), o(2, 8, 512)),
+    }
+    for name, build in ca_cases.items():
+        expect_raises(f"baseline/{name}", lambda b=build: b(_baseline.ltx2_ca_dual_modulate_from_temb_baseline))
+        expect_raises(f"candidate/{name}", lambda b=build: b(_candidate.ltx2_ca_dual_modulate_from_temb_candidate))
 
     print(f"\n=== correctness: {_n_pass} passed, {_n_fail} failed ===")
     if _n_fail:
-        for f in _failures:
+        for f in _failures[:50]:
             print(f"  - {f}")
         return 1
     return 0

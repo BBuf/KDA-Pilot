@@ -1,6 +1,7 @@
 # Benchmark Method
 
-Status: initialized in Round 0. Numbers are filled after the remote B200 phase.
+Status: validated on B200 (full-op TVM-FFI CUDA ABI for both baseline and
+candidate). Per-shape numbers and provenance are in `docs/results.md`.
 
 ## Harness
 - `bench/benchmark.py` is copied verbatim from

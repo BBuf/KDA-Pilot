@@ -1,16 +1,10 @@
 """Benchmark adapter for b200_ltx2_dual_modulate__bitwise.
 
-Supplies tensor construction and the two ABI calls for bench/benchmark.py.
-Both ``call_baseline`` and ``call_candidate`` compute the same PyTorch
-``F.rms_norm`` (identical, hence bit-identical) and differ only in the affine:
-the baseline runs the eager affine (baseline/binding.py); the candidate runs the
-fused CUDA affine kernel built from solution/kernel.cu. Outputs ``y0``/``y1`` are
-preallocated in ``make_case`` and never allocated in the timed path.
-
-``compare_outputs`` enforces BITWISE equality with ``torch.equal`` (this task's
-contract: atol=rtol=0), overriding the template's default allclose comparator.
-
-No sglang import anywhere in this process (asserted below).
+Both the baseline and the candidate are full-operation TVM-FFI CUDA modules taking
+`(x, params/temb/table, eps, y0, y1)`; the adapter just constructs tensors and
+dispatches. Neither call allocates the output tensors (preallocated in make_case).
+`compare_outputs` enforces BITWISE equality with `torch.equal` (this task's
+contract), overriding the template's allclose default. No sglang import.
 """
 
 from __future__ import annotations
@@ -23,9 +17,8 @@ if str(_TASK_ROOT) not in sys.path:
     sys.path.insert(0, str(_TASK_ROOT))
 
 import torch
-import torch.nn.functional as F
 
-import baseline.binding as _baseline
+from baseline.build import load_baseline_module
 from solution.build import load_candidate_module
 
 assert not any(
@@ -41,7 +34,17 @@ _DTYPES = {
 _EXPLICIT = "dual_modulate"
 _CA = "ca_dual_modulate_from_temb"
 
+_baseline = load_baseline_module()
 _candidate = load_candidate_module()
+
+_BASELINE_FNS = {
+    _EXPLICIT: _baseline.ltx2_dual_modulate_baseline,
+    _CA: _baseline.ltx2_ca_dual_modulate_from_temb_baseline,
+}
+_CANDIDATE_FNS = {
+    _EXPLICIT: _candidate.ltx2_dual_modulate_candidate,
+    _CA: _candidate.ltx2_ca_dual_modulate_from_temb_candidate,
+}
 
 
 def _randn(shape, dtype, device):
@@ -62,17 +65,16 @@ def _validate_against_spec(name: str, tensor: torch.Tensor, spec: dict) -> None:
 
 def _make_explicit_params(shapes, device):
     """scale0/shift0/scale1/shift1 are recorded as views with stride [4D, 4D, 1]
-    (i.e. slices of a packed [B, 1, 4D] parent). Reproduce that layout so the
-    frozen strides match and the broadcast-over-S path is exercised."""
+    (slices of a packed [B, 1, 4D] parent). Reproduce that layout so the frozen
+    strides match and the broadcast-over-S path is exercised."""
     spec = shapes["scale0"]
     b, mid, d = spec["shape"]
     dtype = _DTYPES[spec["dtype"]]
     want_stride = spec.get("stride")
     packed_last = want_stride[0] if want_stride else d
     parent = _randn((b, mid, packed_last), dtype, device)
-    names = ("scale0", "shift0", "scale1", "shift1")
     out = {}
-    for i, name in enumerate(names):
+    for i, name in enumerate(("scale0", "shift0", "scale1", "shift1")):
         out[name] = parent[:, :, i * d : (i + 1) * d]
         _validate_against_spec(name, out[name], shapes[name])
     return out
@@ -87,70 +89,47 @@ def make_case(workload: dict, *, device: torch.device, seed: int) -> dict:
     eps = float(workload.get("eps", 1e-6))
 
     if fn == _EXPLICIT:
-        params = _make_explicit_params(shapes, device)
-        inputs = {"x": x, "eps": eps, **params}
+        inputs = {"x": x, "eps": eps, **_make_explicit_params(shapes, device)}
     elif fn == _CA:
-        temb = _randn(
-            shapes["temb_scale_shift"]["shape"],
-            _DTYPES[shapes["temb_scale_shift"]["dtype"]],
-            device,
-        )
+        temb = _randn(shapes["temb_scale_shift"]["shape"],
+                      _DTYPES[shapes["temb_scale_shift"]["dtype"]], device)
         _validate_against_spec("temb_scale_shift", temb, shapes["temb_scale_shift"])
-        table = _randn(
-            shapes["scale_shift_table"]["shape"],
-            _DTYPES[shapes["scale_shift_table"]["dtype"]],
-            device,
-        )
+        table = _randn(shapes["scale_shift_table"]["shape"],
+                       _DTYPES[shapes["scale_shift_table"]["dtype"]], device)
         _validate_against_spec("scale_shift_table", table, shapes["scale_shift_table"])
         inputs = {"x": x, "eps": eps, "temb_scale_shift": temb, "scale_shift_table": table}
     else:
         raise ValueError(f"unknown function {fn!r}")
 
-    baseline_outputs = [torch.empty_like(x), torch.empty_like(x)]
-    candidate_outputs = [torch.empty_like(x), torch.empty_like(x)]
     return {
         "inputs": inputs,
-        "baseline_outputs": baseline_outputs,
-        "candidate_outputs": candidate_outputs,
+        "baseline_outputs": [torch.empty_like(x), torch.empty_like(x)],
+        "candidate_outputs": [torch.empty_like(x), torch.empty_like(x)],
         "tolerance": {"atol": float(workload.get("atol", 0.0)), "rtol": float(workload.get("rtol", 0.0))},
     }
 
 
-def call_baseline(workload: dict, inputs, outputs) -> None:
+def _dispatch(fns, workload, inputs, outputs) -> None:
     fn = workload["function"]
+    impl = fns[fn]
     if fn == _EXPLICIT:
-        _baseline.ltx2_dual_modulate_baseline(
-            inputs["x"], inputs["scale0"], inputs["shift0"], inputs["scale1"],
-            inputs["shift1"], inputs["eps"], outputs[0], outputs[1],
-        )
+        impl(inputs["x"], inputs["scale0"], inputs["shift0"], inputs["scale1"],
+             inputs["shift1"], inputs["eps"], outputs[0], outputs[1])
     else:
-        _baseline.ltx2_ca_dual_modulate_from_temb_baseline(
-            inputs["x"], inputs["temb_scale_shift"], inputs["scale_shift_table"],
-            inputs["eps"], outputs[0], outputs[1],
-        )
+        impl(inputs["x"], inputs["temb_scale_shift"], inputs["scale_shift_table"],
+             inputs["eps"], outputs[0], outputs[1])
+
+
+def call_baseline(workload: dict, inputs, outputs) -> None:
+    _dispatch(_BASELINE_FNS, workload, inputs, outputs)
 
 
 def call_candidate(workload: dict, inputs, outputs) -> None:
-    fn = workload["function"]
-    x = inputs["x"]
-    # RMS is computed by PyTorch (identical to the baseline); the kernel fuses the
-    # affine. F.rms_norm allocates `normed` on both sides symmetrically.
-    normed = F.rms_norm(x, normalized_shape=(x.shape[-1],), eps=inputs["eps"])
-    if fn == _EXPLICIT:
-        _candidate.ltx2_dual_modulate_candidate(
-            normed, inputs["scale0"], inputs["shift0"], inputs["scale1"],
-            inputs["shift1"], outputs[0], outputs[1],
-        )
-    else:
-        _candidate.ltx2_ca_dual_modulate_from_temb_candidate(
-            normed, inputs["temb_scale_shift"], inputs["scale_shift_table"],
-            outputs[0], outputs[1],
-        )
+    _dispatch(_CANDIDATE_FNS, workload, inputs, outputs)
 
 
 def compare_outputs(workload, baseline_outputs, candidate_outputs, tolerance) -> dict:
     """Bitwise gate: every output tensor must be torch.equal (atol=rtol=0)."""
-    max_abs = 0.0
     for i, (b, c) in enumerate(zip(baseline_outputs, candidate_outputs)):
         if b.shape != c.shape or b.dtype != c.dtype:
             return {"ok": False, "max_abs": float("inf"), "max_rel": float("inf"),
@@ -159,4 +138,4 @@ def compare_outputs(workload, baseline_outputs, candidate_outputs, tolerance) ->
             diff = (b.to(torch.float32) - c.to(torch.float32)).abs()
             return {"ok": False, "max_abs": float(diff.max()), "max_rel": float("nan"),
                     "message": f"output {i} not bitwise equal (torch.equal failed)"}
-    return {"ok": True, "max_abs": max_abs, "max_rel": 0.0, "message": "bitwise equal"}
+    return {"ok": True, "max_abs": 0.0, "max_rel": 0.0, "message": "bitwise equal"}
