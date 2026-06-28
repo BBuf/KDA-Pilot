@@ -194,6 +194,8 @@ def main():
     g = lambda B_, S, D: torch.randn(B_, S, D, device=_DEV, dtype=torch.bfloat16)
     p = lambda B_, D: torch.randn(B_, 1, D, device=_DEV, dtype=torch.bfloat16)
     o = lambda B_, S, D: torch.empty(B_, S, D, device=_DEV, dtype=torch.bfloat16)
+    # non-compact output view: stride(1) = 2D != D
+    nc = lambda B_, S, D: torch.empty(B_, S, 2 * D, device=_DEV, dtype=torch.bfloat16)[:, :, :D]
     explicit_cases = {
         "non_cuda_x": lambda f: f(torch.randn(2, 8, 512, dtype=torch.bfloat16),
                                   p(2, 512), p(2, 512), p(2, 512), p(2, 512), _EPS,
@@ -218,6 +220,10 @@ def main():
         "param_wrong_seq": lambda f: f(g(2, 8, 512),
                                        torch.randn(2, 2, 512, device=_DEV, dtype=torch.bfloat16),
                                        p(2, 512), p(2, 512), p(2, 512), _EPS, o(2, 8, 512), o(2, 8, 512)),
+        "noncompact_y0": lambda f: f(g(2, 8, 512), p(2, 512), p(2, 512), p(2, 512),
+                                     p(2, 512), _EPS, nc(2, 8, 512), o(2, 8, 512)),
+        "noncompact_y1": lambda f: f(g(2, 8, 512), p(2, 512), p(2, 512), p(2, 512),
+                                     p(2, 512), _EPS, o(2, 8, 512), nc(2, 8, 512)),
     }
     for name, build in explicit_cases.items():
         expect_raises(f"baseline/{name}", lambda b=build: b(_baseline.ltx2_dual_modulate_baseline))
@@ -241,6 +247,14 @@ def main():
         "temb_noncompact": lambda f: f(g(2, 8, 512), noncompact_temb(512),
                                        torch.randn(4, 512, device=_DEV, dtype=torch.bfloat16),
                                        _EPS, o(2, 8, 512), o(2, 8, 512)),
+        "noncompact_y0": lambda f: f(g(2, 8, 512),
+                                     torch.randn(2, 1, 4 * 512, device=_DEV, dtype=torch.bfloat16),
+                                     torch.randn(4, 512, device=_DEV, dtype=torch.bfloat16),
+                                     _EPS, nc(2, 8, 512), o(2, 8, 512)),
+        "noncompact_y1": lambda f: f(g(2, 8, 512),
+                                     torch.randn(2, 1, 4 * 512, device=_DEV, dtype=torch.bfloat16),
+                                     torch.randn(4, 512, device=_DEV, dtype=torch.bfloat16),
+                                     _EPS, o(2, 8, 512), nc(2, 8, 512)),
     }
     for name, build in ca_cases.items():
         expect_raises(f"baseline/{name}", lambda b=build: b(_baseline.ltx2_ca_dual_modulate_from_temb_baseline))

@@ -167,7 +167,10 @@ inline void check_output(const TensorView& y, const Dims& dm, const char* name) 
   LTX2_CHECK(y.ndim() == 3 && y.size(0) == dm.B && y.size(1) == dm.S &&
                  y.size(2) == dm.D,
              name, " shape must equal [B, S, D]");
-  LTX2_CHECK(last_dim_contiguous(y), name, " last dimension must be contiguous");
+  // Outputs are written compactly (y[idx]); require a fully compact [B,S,D] tensor
+  // so an accepted non-compact destination view can never be written incorrectly.
+  LTX2_CHECK(y.stride(2) == 1 && y.stride(1) == dm.D && y.stride(0) == dm.S * dm.D,
+             name, " must be contiguous (compact [B, S, D])");
 }
 
 }  // namespace ltx2

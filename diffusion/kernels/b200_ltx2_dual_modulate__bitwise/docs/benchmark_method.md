@@ -36,4 +36,5 @@ candidate). Per-shape numbers and provenance are in `docs/results.md`.
   Python `3.12.3`.
 - Host `innomatrix-us-adc-smb200-0003`, container `sglang_bbuf_pr29315`,
   GPU NVIDIA B200 (`REMOTE_GPU_ID=5`).
-- See `docs/results.md` for per-shape numbers (geomean speedup 2.55×, 8/8 bitwise).
+- See `docs/results.md` for per-shape numbers and the headline geomean speedup
+  (8/8 bitwise); that file is the single source of truth for the measured numbers.
