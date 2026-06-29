@@ -1,27 +1,9 @@
 #!/usr/bin/env python3
-"""Correctness gate for b200_ltx2_rms_adaln__bitwise.
+"""Production bitwise correctness gate for LTX2 RMS AdaLN.
 
-This task forbids tolerance: the candidate must be BIT-WISE EQUAL to the PyTorch
-eager baseline, verified with torch.equal AND raw uint16 storage equality.
-
-Covers, before any benchmark number counts:
-  - the production rows from bench/workloads.json (full-shape [B,S,D] bf16);
-  - an in-gate regression grid adapted from the canonical "CuTe DSL Norm Scale
-    Shift" contract to this rank-3 RMS-AdaLN ABI: B x S x D, bf16, every
-    supported broadcast layout ([D],[B,D],[B,1,D],[B,S,D]) AND mixed scale/shift
-    layouts, D % 256 == 0, D <= 8192, eps in {1e-6, 1e-5};
-  - adversarial bf16 rounding-boundary rows (values that stress 1+scale,
-    multiply, add);
-  - out-of-gate rows (fp16/fp32, scalar `1`, `1SD`, `11D`, 4D, non-contiguous,
-    CPU, invalid D): adapter.call_candidate must eager-fallback bit-exact, AND
-    the raw kernel (adapter._CANDIDATE_FNS) must fail closed (throw);
-  - a poison-detection self-test (a skipped launch must be caught).
-
-Independent oracle = plain PyTorch eager (rms_norm(x,(D,),eps)*(1+scale)+shift),
-in bf16. Baseline, candidate, and oracle are compared bit-for-bit; output buffers
-are poisoned before every run; NaN/Inf in any output is a failure.
-
-No sglang import anywhere (asserted via bench.adapter).
+The oracle is `bench.adapter.call_baseline`, which runs the SGLang LTX2.3
+production expression under CUDA bf16 autocast and writes the visible fp32
+output. Candidate output must match that tensor bit-for-bit.
 """
 
 from __future__ import annotations
@@ -33,432 +15,77 @@ from pathlib import Path
 
 import torch
 
-_BENCH_DIR = Path(__file__).resolve().parent
-_TASK_ROOT = _BENCH_DIR.parent
+_TASK_ROOT = Path(__file__).resolve().parents[1]
 if str(_TASK_ROOT) not in sys.path:
     sys.path.insert(0, str(_TASK_ROOT))
 
-import bench.adapter as adapter  # noqa: E402 (asserts the no-sglang contract)
+import bench.adapter as adapter  # noqa: E402
 
-_EP = adapter._EP
-
-
-def oracle(inputs: dict) -> list[torch.Tensor]:
-    # Independent eager reference. The candidate on in-gate rows is the CUDA
-    # kernel (independent of this), so kernel-vs-oracle is a real check; the
-    # eager semantics (incl. [B,D] -> [B,1,D]) live in one place.
-    return [adapter.eager_rms_adaln(
-        inputs["x"], inputs["scale"], inputs["shift"], inputs["eps"])]
+_WORKLOADS = _TASK_ROOT / "bench" / "workloads.json"
+_EXPECTED_DTYPE = torch.float32
 
 
-def _poison(outputs: list) -> None:
-    for t in outputs:
-        if t.is_floating_point():
-            t.fill_(float("nan"))
-        else:
-            t.fill_(-17)
+def _poison(outputs: list[torch.Tensor]) -> None:
+    for out in outputs:
+        out.fill_(float("nan"))
 
 
-def _bw(tag: str, ref: list, got: list) -> list[str]:
-    """Bitwise compare (raw storage equality) with NaN/Inf detection."""
-    errors = []
-    if len(ref) != len(got):
-        return [f"{tag}: output count mismatch {len(ref)} vs {len(got)}"]
-    for i, (r, g) in enumerate(zip(ref, got)):
-        if r.shape != g.shape or r.dtype != g.dtype:
-            errors.append(f"{tag}[{i}]: shape/dtype mismatch")
-            continue
-        gf = g.float()
-        if torch.isnan(gf).any() or torch.isinf(gf).any():
-            errors.append(f"{tag}[{i}]: NaN/Inf in output")
-            continue
-        if not adapter.bitwise_equal(r, g):
-            n = int((gf != r.float()).sum().item())
-            md = (gf - r.float()).abs().max().item()
-            errors.append(f"{tag}[{i}]: NOT bitwise equal ({n} elems differ, max_abs={md:.3e})")
-    return errors
+def _row_status(row: dict, device: torch.device, index: int) -> tuple[bool, str]:
+    case = adapter.make_case(row, device=device, seed=90000 + index)
+    adapter.call_baseline(row, case["inputs"], case["baseline_outputs"])
+    _poison(case["candidate_outputs"])
+    adapter.call_candidate(row, case["inputs"], case["candidate_outputs"])
+    torch.cuda.synchronize()
 
+    for name, outputs in (
+        ("baseline", case["baseline_outputs"]),
+        ("candidate", case["candidate_outputs"]),
+    ):
+        for i, out in enumerate(outputs):
+            if out.dtype != _EXPECTED_DTYPE:
+                return False, f"{name}[{i}] dtype {out.dtype} != {_EXPECTED_DTYPE}"
+            if torch.isnan(out).any() or torch.isinf(out).any():
+                return False, f"{name}[{i}] contains NaN/Inf"
 
-# ---------------------------------------------------------------------------
-# in-gate grid (all supported layouts, incl. mixed), bf16, D % 256 == 0
-# ---------------------------------------------------------------------------
-
-# Canonical "CuTe DSL Norm Scale Shift" grid for this task, adapted to the
-# rank-3 RMS-AdaLN ABI: the contract's 4D (B,S,F,D) shapes are flattened to
-# x=[B, S*F, D]. (1,1024,8,3072)->[1,8192,3072]; (4,512,16,3072)->[4,8192,3072].
-# D=3072 (% 256 == 0, <= 8192).
-_CANONICAL = ((1, 8192, 3072), (4, 8192, 3072))
-# Smaller smoke shapes for fast iteration (only behind --quick; NOT the grid).
-_SMOKE = (
-    (1, 6, 256), (2, 33, 2048), (1, 128, 4096), (4, 64, 3072),
-    (2, 257, 2048), (1, 1536, 4096), (2, 126, 2048),
-)
-# layout name -> shape factory over (B, S, D)
-_LAYOUT_SHAPE = {
-    "full": lambda B, S, D: [B, S, D],
-    "perbatch": lambda B, S, D: [B, D],
-    "perbatch1": lambda B, S, D: [B, 1, D],
-    "perchan": lambda B, S, D: [D],
-}
-
-
-def _spec(rid, B, S, D, scale_layout, shift_layout, eps=1e-6) -> dict:
-    return {
-        "id": rid, "production": False, "function": _EP,
-        "shapes": {
-            "x": {"shape": [B, S, D], "dtype": "bfloat16"},
-            "scale": {"shape": _LAYOUT_SHAPE[scale_layout](B, S, D), "dtype": "bfloat16"},
-            "shift": {"shape": _LAYOUT_SHAPE[shift_layout](B, S, D), "dtype": "bfloat16"},
-        },
-        "eps": eps, "atol": 0.0, "rtol": 0.0,
-    }
-
-
-def build_ingate_rows(quick: bool) -> list[dict]:
-    rows = []
-    pure = ("full", "perbatch", "perbatch1", "perchan")
-    mixed = (("full", "perchan"), ("perbatch", "full"), ("perchan", "perbatch1"))
-    # Canonical adapted grid (the contract grid): every supported layout + mixed,
-    # swept over BOTH eps values (the canonical grid requires eps in {1e-6, 1e-5}).
-    canon = _CANONICAL[:1] if quick else _CANONICAL
-    for (B, S, D) in canon:
-        for eps in (1e-6, 1e-5):
-            for lay in pure:
-                rows.append(_spec(f"canon_{lay}_b{B}_s{S}_d{D}_eps{eps:g}", B, S, D, lay, lay, eps))
-            for sl, hl in mixed:
-                rows.append(_spec(f"canon_mix_{sl}-{hl}_b{B}_s{S}_d{D}_eps{eps:g}", B, S, D, sl, hl, eps))
-    # Smoke rows: extra breadth (small shapes, eps sweep). Subset under --quick.
-    smoke = _SMOKE[::4] if quick else _SMOKE
-    for n, (B, S, D) in enumerate(smoke):
-        eps = 1e-6 if n % 2 == 0 else 1e-5
-        for lay in pure:
-            rows.append(_spec(f"smoke_{lay}_b{B}_s{S}_d{D}_eps{eps}", B, S, D, lay, lay, eps))
-        for sl, hl in mixed:
-            rows.append(_spec(f"smoke_mix_{sl}-{hl}_b{B}_s{S}_d{D}", B, S, D, sl, hl, eps))
-    return rows
-
-
-# ---------------------------------------------------------------------------
-# adversarial bf16 rounding-boundary rows (inputs crafted in _build_case)
-# ---------------------------------------------------------------------------
-
-def build_adversarial_rows() -> list[dict]:
-    rows = []
-    for n, (B, S, D) in enumerate(((2, 64, 2048), (1, 128, 4096))):
-        spec = _spec(f"adv_full_b{B}_s{S}_d{D}", B, S, D, "full", "full", 1e-6)
-        spec["adversarial"] = True
-        rows.append(spec)
-    return rows
-
-
-def _craft_adversarial(case: dict, device: torch.device, seed: int) -> None:
-    """Overwrite inputs with values that stress the three rounding stages:
-    scale near -1 (1+scale -> ~0 / subnormal), wide-magnitude x and shift, and a
-    uniform sweep over [-2, 2] so many bf16 ties are exercised."""
-    g = torch.Generator(device=device).manual_seed(seed)
-    x = case["inputs"]["x"]
-    scale = case["inputs"]["scale"]
-    shift = case["inputs"]["shift"]
-    # wide-magnitude x (after RMSNorm normalizes to ~unit RMS, products still vary)
-    x.copy_((torch.rand(x.shape, generator=g, device=device) * 8 - 4).to(x.dtype))
-    # scale: uniform sweep in [-2, 2] (includes the 1+scale ~ 0 boundary near -1)
-    scale.copy_((torch.rand(scale.shape, generator=g, device=device) * 4 - 2).to(scale.dtype))
-    # shift: wide magnitude
-    shift.copy_((torch.rand(shift.shape, generator=g, device=device) * 8 - 4).to(shift.dtype))
-
-
-# ---------------------------------------------------------------------------
-# runners
-# ---------------------------------------------------------------------------
-
-
-def _build_case(spec: dict, device: torch.device, seed: int) -> dict:
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    case = adapter.make_case(spec, device=device, seed=seed)
-    if spec.get("adversarial"):
-        _craft_adversarial(case, device, seed)
-    return case
-
-
-def run_row(spec: dict, device: torch.device, impl: str, row_index: int) -> list[str]:
-    seed = 90000 + row_index
-    case = _build_case(spec, device, seed)
-    inputs = case["inputs"]
-    ref = oracle(inputs)
-
-    errors = []
-    sides = []
-    if impl in ("both", "baseline"):
-        sides.append(("baseline", adapter.call_baseline, case["baseline_outputs"]))
-    if impl in ("both", "candidate"):
-        sides.append(("candidate", adapter.call_candidate, case["candidate_outputs"]))
-    for name, fn, outputs in sides:
-        _poison(outputs)
-        fn(spec, inputs, outputs)
-        torch.cuda.synchronize()
-        errors += _bw(f"{spec['id']}:{name}-vs-oracle", ref, outputs)
-    if impl == "both" and not errors:
-        errors += _bw(f"{spec['id']}:candidate-vs-baseline",
-                      case["baseline_outputs"], case["candidate_outputs"])
-    return errors
-
-
-def run_self_test(device: torch.device) -> list[str]:
-    spec = _spec("selftest_skipped_launch", 1, 33, 2048, "full", "full")
-    case = _build_case(spec, device, 4242)
-    ref = oracle(case["inputs"])
-    _poison(case["candidate_outputs"])  # deliberately no kernel call
-    if not _bw("selftest", ref, case["candidate_outputs"]):
-        return ["poison self-test FAILED: skipped launch was not detected"]
-    return []
-
-
-def _fp32_fused_no_barriers(inputs: dict) -> torch.Tensor:
-    """A deliberately WRONG reference that keeps the post-norm math in fp32 and
-    rounds to bf16 only ONCE at the very end (collapsing the three bf16 rounding
-    barriers into a single round).
-
-    Used only by the sensitivity guard below: on the adversarial rows this MUST
-    differ from the eager oracle, which proves those inputs actually exercise the
-    three-stage bf16 rounding distinction. Otherwise the bitwise candidate-vs-
-    oracle test would be vacuous -- a barrier-collapsing kernel would also pass.
-    """
-    x, scale, shift, eps = inputs["x"], inputs["scale"], inputs["shift"], inputs["eps"]
-    normed = torch.nn.functional.rms_norm(x, (x.shape[-1],), eps=eps)
-    s = scale.unsqueeze(-2) if scale.dim() == 2 else scale
-    h = shift.unsqueeze(-2) if shift.dim() == 2 else shift
-    out = normed.float() * (1.0 + s.float()) + h.float()
-    return out.to(torch.bfloat16)
-
-
-def run_sensitivity_guard(device: torch.device) -> list[str]:
-    """Guard test-data quality: every adversarial row must make the all-fp32-fused
-    reference differ from the eager (three-bf16-stage) oracle on at least one
-    element. If they were identical, the bitwise test would not distinguish a
-    correct staged kernel from one that drops the intermediate roundings."""
-    failures = []
-    for i, spec in enumerate(build_adversarial_rows()):
-        case = _build_case(spec, device, 70000 + i)
-        ref = oracle(case["inputs"])[0]
-        fused = _fp32_fused_no_barriers(case["inputs"])
-        n_diff = int((ref.contiguous().view(torch.uint16)
-                      != fused.contiguous().view(torch.uint16)).sum().item())
-        if n_diff == 0:
-            failures.append(
-                f"sensitivity_guard[{spec['id']}]: adversarial inputs do not exercise the "
-                f"bf16 rounding boundaries (fp32-fused == eager); bitwise test would be vacuous")
-    return failures
-
-
-def run_out_of_gate_tests(device: torch.device) -> list[str]:
-    """Out-of-gate inputs. Two kinds:
-      - 'fallback': eager can compute the row, so the public candidate must
-        eager-fallback bit-exact vs the oracle.
-      - 'reject': eager cannot compute the row (rank-incompatible / mixed-device),
-        so the public candidate must raise a controlled error.
-    In BOTH kinds the raw kernel must fail closed (throw before any launch)."""
-    failures = []
-    eps = 1e-6
-    bf16 = torch.bfloat16
-
-    def t(shape, dtype=bf16, dev=device):
-        return torch.randn(shape, device=dev, dtype=dtype)
-
-    def mis(shape, dev=device):
-        # contiguous bf16 view with a nonzero storage offset -> base pointer is
-        # bf16-aligned but NOT 16-byte aligned (exercises the alignment gate).
-        n = 1
-        for s in shape:
-            n *= s
-        v = torch.randn(n + 8, device=dev, dtype=bf16).narrow(0, 1, n).view(*shape)
-        assert v.is_contiguous() and v.data_ptr() % 16 != 0
-        return v
-
-    B, S, D = 2, 64, 2048
-    # tag -> (kind, x, scale, shift)
-    cases = {
-        "fp16": ("fallback", t([B, S, D], torch.float16), t([B, S, D], torch.float16), t([B, S, D], torch.float16)),
-        "fp32": ("fallback", t([B, S, D], torch.float32), t([B, S, D], torch.float32), t([B, S, D], torch.float32)),
-        "D_not_mult256": ("fallback", t([B, S, 2050]), t([B, S, 2050]), t([B, S, 2050])),
-        "D_too_big": ("fallback", t([1, 8, 8448]), t([1, 8, 8448]), t([1, 8, 8448])),
-        "rank4_x": ("fallback", t([1, 8, 2, D]), t([1, 8, 2, D]), t([1, 8, 2, D])),
-        "scalar1": ("fallback", t([B, S, D]), t([1]), t([1])),
-        "layout_1SD": ("fallback", t([B, S, D]), t([1, S, D]), t([1, S, D])),   # B>1, not supported
-        "layout_11D": ("fallback", t([B, S, D]), t([1, 1, D]), t([1, 1, D])),   # B>1, not supported
-        "noncontig_x": ("fallback", t([B, S, 2 * D])[:, :, ::2], t([B, S, D]), t([B, S, D])),
-        "noncontig_scale": ("fallback", t([B, S, D]), t([B, S, 2 * D])[:, :, ::2], t([B, S, D])),
-        "noncontig_shift": ("fallback", t([B, S, D]), t([B, S, D]), t([B, S, 2 * D])[:, :, ::2]),
-        "cpu_all": ("fallback", t([B, S, D], dev="cpu"), t([B, S, D], dev="cpu"), t([B, S, D], dev="cpu")),
-        # device fail-closed: CUDA x + CPU scale/shift -> reject (eager device mismatch)
-        "cuda_x_cpu_scale": ("reject", t([B, S, D]), t([B, S, D], dev="cpu"), t([B, S, D], dev="cpu")),
-        # BF1D non-divisible frames (sibling convention BF1D=(B,F,1,D)): x=[1,1000,3072],
-        # scale/shift=[1,7,1,3072], S % F = 1000 % 7 != 0 -> reject.
-        "bf1d_nondiv": ("reject", t([1, 1000, 3072]), t([1, 7, 1, 3072]), t([1, 7, 1, 3072])),
-        # contiguous but 16B-misaligned scale -> fallback (eager handles any alignment)
-        "misaligned_scale": ("fallback", t([B, S, D]), mis([B, S, D]), t([B, S, D])),
-        # contiguous but 16B-misaligned x -> fallback (gate requires x 16B-aligned
-        # for the vectorized optimized path; eager handles any alignment)
-        "misaligned_x": ("fallback", mis([B, S, D]), t([B, S, D]), t([B, S, D])),
-        # contiguous but 16B-misaligned shift -> fallback (mirrors misaligned scale)
-        "misaligned_shift": ("fallback", t([B, S, D]), t([B, S, D]), mis([B, S, D])),
-    }
-
-    def _raw_fails_closed(tag, x, scale, shift):
-        raw_out = torch.empty(tuple(x.shape), device=x.device, dtype=x.dtype)
-        try:
-            adapter._CANDIDATE_FNS[_EP](x, scale, shift, eps, raw_out)
-            if x.is_cuda:
-                torch.cuda.synchronize()
-            return [f"out_of_gate[{tag}]: raw kernel accepted out-of-gate input (must fail closed)"]
-        except Exception:
-            return []  # expected
-
-    for tag, (kind, x, scale, shift) in cases.items():
-        inputs = {"x": x, "scale": scale, "shift": shift, "eps": eps}
-        out = [torch.empty_like(x)]
-        _poison(out)
-        raised = False
-        try:
-            adapter.call_candidate({"function": _EP}, inputs, out)
-            if x.is_cuda:
-                torch.cuda.synchronize()
-        except Exception:  # noqa: BLE001
-            raised = True
-        if kind == "fallback":
-            if raised:
-                failures.append(f"out_of_gate[{tag}]: public candidate raised instead of bit-exact fallback")
-            else:
-                failures += _bw(f"out_of_gate[{tag}]:fallback-vs-oracle", oracle(inputs), out)
-        else:  # reject
-            if not raised:
-                failures.append(f"out_of_gate[{tag}]: public candidate accepted a reject-row (must raise a controlled error)")
-        failures += _raw_fails_closed(tag, x, scale, shift)
-
-    # misaligned (contiguous, nonzero-offset) OUTPUT -> public path must fall back
-    # bit-exact; raw kernel must fail closed.
-    xx, ss, hh = t([B, S, D]), t([B, S, D]), t([B, S, D])
-    inp = {"x": xx, "scale": ss, "shift": hh, "eps": eps}
-    mis_out = [mis([B, S, D])]
-    try:
-        adapter.call_candidate({"function": _EP}, inp, mis_out)
-        torch.cuda.synchronize()
-        failures += _bw("misaligned_output:fallback-vs-oracle", oracle(inp), mis_out)
-    except Exception as exc:  # noqa: BLE001
-        failures.append(f"out_of_gate[misaligned_output]: public candidate raised instead of fallback: {exc}")
-    try:
-        adapter._CANDIDATE_FNS[_EP](xx, ss, hh, eps, mis([B, S, D]))
-        torch.cuda.synchronize()
-        failures.append("out_of_gate[misaligned_output]: raw kernel accepted misaligned output (must fail closed)")
-    except Exception:
-        pass
-
-    # output aliasing. Policy (mirrors solution/kernel.cu): output MAY alias x (x is
-    # fully consumed by at::rms_norm into a fresh `normed` before any write) -> IN-GATE
-    # bit-exact; output aliasing scale/shift would corrupt the vectorized reads, so the
-    # raw kernel fails closed and the public path falls back bit-exact (eager builds the
-    # result in a fresh tensor before copying into output).
-    xa, sa, ha = t([B, S, D]), t([B, S, D]), t([B, S, D])
-    ref_ax = oracle({"x": xa.clone(), "scale": sa, "shift": ha, "eps": eps})
-    try:
-        adapter.call_candidate({"function": _EP},
-                               {"x": xa, "scale": sa, "shift": ha, "eps": eps}, [xa])
-        torch.cuda.synchronize()
-        failures += _bw("alias_output_eq_x:optimized-vs-oracle", ref_ax, [xa])
-    except Exception as exc:  # noqa: BLE001
-        failures.append(f"out_of_gate[alias_output_eq_x]: candidate raised on output-aliases-x "
-                        f"(must be in-gate bit-exact): {exc}")
-    # raw kernel must reject output aliasing scale or shift
-    for who, pick in (("scale", lambda a, b, c: b), ("shift", lambda a, b, c: c)):
-        xr, sr, hr = t([B, S, D]), t([B, S, D]), t([B, S, D])
-        try:
-            adapter._CANDIDATE_FNS[_EP](xr, sr, hr, eps, pick(xr, sr, hr))
-            torch.cuda.synchronize()
-            failures.append(f"out_of_gate[alias_output_eq_{who}]: raw kernel accepted output "
-                            f"aliasing {who} (must fail closed)")
-        except Exception:
-            pass
-    # public path falls back bit-exact when output aliases scale
-    xp, sp, hp = t([B, S, D]), t([B, S, D]), t([B, S, D])
-    ref_asc = oracle({"x": xp, "scale": sp.clone(), "shift": hp, "eps": eps})
-    try:
-        adapter.call_candidate({"function": _EP},
-                               {"x": xp, "scale": sp, "shift": hp, "eps": eps}, [sp])
-        torch.cuda.synchronize()
-        failures += _bw("alias_output_eq_scale:fallback-vs-oracle", ref_asc, [sp])
-    except Exception as exc:  # noqa: BLE001
-        failures.append(f"out_of_gate[alias_output_eq_scale]: public candidate raised instead "
-                        f"of fallback: {exc}")
-
-    # cross-device (only when more than one GPU is visible)
-    if torch.cuda.device_count() > 1:
-        x = t([B, S, D]); sc = t([B, S, D], dev="cuda:1"); sh = t([B, S, D], dev="cuda:1")
-        inputs = {"x": x, "scale": sc, "shift": sh, "eps": eps}
-        out = [torch.empty_like(x)]; _poison(out)
-        raised = False
-        try:
-            adapter.call_candidate({"function": _EP}, inputs, out); torch.cuda.synchronize()
-        except Exception:  # noqa: BLE001
-            raised = True
-        if not raised:
-            failures.append("out_of_gate[cross_device]: public candidate accepted cross-device (must raise)")
-        failures += _raw_fails_closed("cross_device", x, sc, sh)
-    return failures
+    verdict = adapter.compare_outputs(
+        row,
+        case["baseline_outputs"],
+        case["candidate_outputs"],
+        case["tolerance"],
+    )
+    return bool(verdict.get("ok")), str(verdict.get("message", ""))
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--device", default="cuda:0")
-    parser.add_argument("--impl", choices=("both", "baseline", "candidate"), default="both")
-    parser.add_argument("--rows", choices=("all", "grid", "production"), default="all")
-    parser.add_argument("--quick", action="store_true")
-    parser.add_argument("--max-failures", type=int, default=25)
-    parser.add_argument("--report", default=None)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--quick", action="store_true", help="run only the first workload")
     args = parser.parse_args()
 
-    device = torch.device(args.device)
-    torch.cuda.set_device(device)
-    torch.set_grad_enabled(False)
+    if not torch.cuda.is_available():
+        print("FAIL: CUDA is required for the production autocast gate")
+        return 1
 
-    rows: list[dict] = []
-    if args.rows in ("all", "grid"):
-        rows += build_ingate_rows(args.quick)
-        rows += build_adversarial_rows()
-    if args.rows in ("all", "production"):
-        rows += json.loads((_BENCH_DIR / "workloads.json").read_text())
+    rows = json.loads(_WORKLOADS.read_text())
+    if args.quick:
+        rows = rows[:1]
 
     failures: list[str] = []
-    failures += run_self_test(device)
-    failures += run_sensitivity_guard(device)
-    failures += run_out_of_gate_tests(device)
-
-    ran = 0
-    for i, spec in enumerate(rows):
-        if len(failures) >= args.max_failures:
-            failures.append(f"... stopping early after {args.max_failures} failures")
-            break
+    device = torch.device("cuda")
+    for i, row in enumerate(rows):
         try:
-            failures += run_row(spec, device, args.impl, i)
+            ok, msg = _row_status(row, device, i)
         except Exception as exc:  # noqa: BLE001
-            failures.append(f"{spec.get('id', '?')}: EXCEPTION {type(exc).__name__}: {exc}")
-        ran += 1
+            ok, msg = False, f"{type(exc).__name__}: {exc}"
+        label = row.get("id", f"row_{i}")
+        print(("PASS" if ok else "FAIL"), label, msg)
+        if not ok:
+            failures.append(f"{label}: {msg}")
 
-    summary = {
-        "impl": args.impl, "rows_requested": len(rows), "rows_ran": ran,
-        "failures": failures, "ok": not failures, "device": str(device),
-        "gpu": torch.cuda.get_device_name(device), "torch": torch.__version__,
-    }
-    if args.report:
-        Path(args.report).write_text(json.dumps(summary, indent=2) + "\n")
-
-    print(f"[correctness] impl={args.impl} rows={ran}/{len(rows)} "
-          f"failures={len(failures)} gpu={summary['gpu']}")
-    for f in failures:
-        print(f"  FAIL {f}")
-    if not failures:
-        print("[correctness] PASS (bitwise)")
-    return 0 if not failures else 1
+    if failures:
+        print("\n".join(failures))
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())

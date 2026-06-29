@@ -170,7 +170,7 @@ inline TableInfo check_table(const TensorView& t, const Dims& dm) {
 inline void check_output(const TensorView& y, const Dims& dm, const char* name) {
   LTX2_CHECK(y.device().device_type == kDLCUDA, name, " must be a CUDA tensor");
   LTX2_CHECK(y.device().device_id == dm.dev, name, " must be on x's CUDA device");
-  LTX2_CHECK(is_bf16(y.dtype()), name, " must be bfloat16");
+  LTX2_CHECK(is_f32(y.dtype()), name, " must be float32");
   LTX2_CHECK(y.ndim() == 3 && y.size(0) == dm.B && y.size(1) == dm.S &&
                  y.size(2) == dm.D,
              name, " shape must equal [B, S, D]");

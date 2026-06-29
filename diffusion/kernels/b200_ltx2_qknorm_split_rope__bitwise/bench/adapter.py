@@ -7,8 +7,8 @@ Required API (see bench/benchmark.py header):
     call_candidate(workload, inputs, outputs) -> None
     compare_outputs(workload, baseline_outputs, candidate_outputs, tolerance) -> dict
 
-Baseline = task-local PyTorch eager oracle (baseline/reference.py), forcing the
-eager split-RoPE expression. Candidate = optimized kernel exposed by solution/
+Baseline = task-local SGLang production oracle (baseline/reference.py), including
+the bf16 split-RoPE Triton fast path for live rows. Candidate = optimized kernel exposed by solution/
 (built separately under solution/). Comparison is BIT-EXACT (torch.equal on an int16
 bitcast); tolerances are forbidden. Imports nothing from sglang.
 """
@@ -31,6 +31,14 @@ _DTYPE = {
 }
 
 _TWO_PI = 6.283185307179586
+
+
+def _production_autocast(device: torch.device):
+    return torch.autocast(
+        device_type=device.type,
+        dtype=torch.bfloat16,
+        enabled=device.type == "cuda",
+    )
 
 
 def _build_contiguous(shape, dtype, device, gen):
@@ -93,10 +101,11 @@ def make_case(workload, *, device, seed):
 
 
 def call_baseline(workload, inputs, outputs):
-    q_out, k_out = qknorm_split_rope_reference(
-        inputs["q"], inputs["k"], inputs["q_norm"], inputs["k_norm"],
-        (inputs["q_cos"], inputs["q_sin"]), (inputs["k_cos"], inputs["k_sin"]),
-    )
+    with _production_autocast(inputs["q"].device):
+        q_out, k_out = qknorm_split_rope_reference(
+            inputs["q"], inputs["k"], inputs["q_norm"], inputs["k_norm"],
+            (inputs["q_cos"], inputs["q_sin"]), (inputs["k_cos"], inputs["k_sin"]),
+        )
     outputs[0].copy_(q_out)
     outputs[1].copy_(k_out)
 
@@ -121,7 +130,8 @@ def _load_candidate():
 
 
 def call_candidate(workload, inputs, outputs):
-    _load_candidate()(inputs, outputs)
+    with _production_autocast(inputs["q"].device):
+        _load_candidate()(inputs, outputs)
 
 
 def compare_outputs(workload, baseline_outputs, candidate_outputs, tolerance):

@@ -18,8 +18,7 @@ destination_passing_style = true
 # (ltx2_dual_modulate_common.cuh) so both sides reject identically. Built via
 # tvm_ffi.cpp.load with identical flags (no --use_fast_math).
 baseline_entry_points = [
-  "baseline/kernel.cu::ltx2_dual_modulate_baseline",
-  "baseline/kernel.cu::ltx2_ca_dual_modulate_from_temb_baseline",
+  "bench/adapter.py::call_baseline",
 ]
 candidate_entry_points = [
   "solution/kernel.cu::ltx2_dual_modulate_candidate",
@@ -30,7 +29,11 @@ candidate_entry_points = [
 bitwise_required = true
 comparison = "torch_equal"
 forbid_tolerance = true
-baseline = "pytorch_eager"
+baseline = "sglang_ltx23_production"
+production_autocast = true
+dit_precision = "bfloat16"
+visible_output_dtype = "float32"
+require_no_exception_fallback = true
 
 [benchmark]
 warmup_runs = 10

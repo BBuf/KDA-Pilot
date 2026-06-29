@@ -18,9 +18,9 @@ Target SGLang diffusion source patterns to copy as local baseline:
   audio-to-video and video-to-audio cross-attention modulation path.
 
 Goal: produce a standalone optimized kernel pair for LTX2 dual modulation that
-is **bit-wise equal** to the PyTorch eager baseline for every supported row, so
-the result can later replace the SGLang path without changing diffusion CI
-golden outputs.
+is **bit-wise equal** to the real SGLang LTX2.3 production baseline for every
+supported row, so the result can later replace the SGLang path without changing
+diffusion CI golden outputs.
 
 Before writing an optimized kernel, read and follow:
 
@@ -30,8 +30,19 @@ Before writing an optimized kernel, read and follow:
 
 ## Required Baseline Semantics
 
-Implement the local PyTorch eager baseline first. The candidate must match this
-baseline with `torch.equal` / byte-level equality. Tolerances are forbidden.
+Implement the local SGLang production baseline first. The candidate must match
+this baseline with `torch.equal` / byte-level equality. Tolerances are forbidden.
+The production denoising loop uses:
+
+- `server_args.disable_autocast=false`
+- `dit_precision=bf16`
+- `torch.autocast(device_type="cuda", dtype=torch.bfloat16, enabled=True)`
+  around the transformer call.
+
+For the live LTX2.3 rows, both dual-modulation outputs are visible fp32 tensors.
+The candidate ABI must write fp32 outputs bit-for-bit equal to the production
+expression. A fused path that treats the autocast `rms_norm` result as bf16 is
+wrong even if a standalone eager test appears to pass.
 
 ### Explicit dual modulation
 
@@ -45,9 +56,10 @@ Inputs:
 Baseline:
 
 ```python
-normed = torch.nn.functional.rms_norm(x, normalized_shape=(D,), eps=eps)
-y0 = normed * (1 + scale0.expand_as(x)) + shift0.expand_as(x)
-y1 = normed * (1 + scale1.expand_as(x)) + shift1.expand_as(x)
+with torch.autocast(device_type="cuda", dtype=torch.bfloat16, enabled=True):
+    normed = torch.nn.functional.rms_norm(x, normalized_shape=(D,), eps=eps)
+    y0 = normed * (1 + scale0.expand_as(x)) + shift0.expand_as(x)
+    y1 = normed * (1 + scale1.expand_as(x)) + shift1.expand_as(x)
 ```
 
 ### Cross-attention dual modulation from timestep embedding
@@ -65,21 +77,28 @@ Inputs:
 Baseline:
 
 ```python
-temb_seq = temb_scale_shift.shape[1]
-assert temb_seq in (1, S)
-scale0, shift0, scale1, shift1 = (
-    scale_shift_table.to(dtype=x.dtype).view(1, 1, 4, D)
-    + temb_scale_shift.reshape(B, temb_seq, 4, D)
-).unbind(dim=2)
-normed = torch.nn.functional.rms_norm(x, normalized_shape=(D,), eps=eps)
-y0 = normed * (1 + scale0) + shift0
-y1 = normed * (1 + scale1) + shift1
+with torch.autocast(device_type="cuda", dtype=torch.bfloat16, enabled=True):
+    temb_seq = temb_scale_shift.shape[1]
+    assert temb_seq in (1, S)
+    scale0, shift0, scale1, shift1 = (
+        scale_shift_table.to(dtype=temb_scale_shift.dtype).view(1, 1, 4, D)
+        + temb_scale_shift.reshape(B, temb_seq, 4, D)
+    ).unbind(dim=2)
+    normed = torch.nn.functional.rms_norm(x, normalized_shape=(D,), eps=eps)
+    y0 = normed * (1 + scale0) + shift0
+    y1 = normed * (1 + scale1) + shift1
 ```
 
-The optimized candidate must preserve PyTorch's visible rounding points. Do not
-reassociate multiply/add operations if doing so changes bfloat16 output bits.
-If one monolithic fusion cannot be bit-wise exact, split the candidate into
-multiple kernels that match the PyTorch operation boundaries.
+The optimized candidate must preserve production-visible rounding and promotion
+points under autocast. Do not reassociate multiply/add operations if doing so
+changes fp32 output bits. If one monolithic fusion cannot be bit-wise exact,
+split the candidate into multiple kernels that match the production operation
+boundaries.
+
+Hot-path exception fallback is not success. Unsupported rows must be rejected by
+cheap Python/C++ preflight guards before launching the raw kernel; repeated
+dtype/shape exceptions inside the benchmark or SGLang integration count as a
+regression even if the fallback output is correct.
 
 ## Required Workload Rows
 
@@ -170,8 +189,8 @@ explicit dispatcher if one generic kernel cannot win simultaneously on CI
 `S in {1536,6144}` and HQ `S in {8160,32640}` video rows. It is acceptable to
 dispatch separately for explicit dual modulation versus CA-from-timestep, for
 video versus audio, and for each video sequence-length bucket, as long as every
-selected path is bit-wise equal to the PyTorch baseline and unsupported shapes
-fail closed or fall back to the exact eager implementation.
+selected path is bit-wise equal to the production baseline and unsupported
+shapes fail closed or fall back to the exact production implementation.
 
 Do not claim success from an average speedup if one of the production shape
 families regresses. Report per-shape timings and explain the dispatcher choice.
@@ -189,13 +208,14 @@ answers:
 
 1. Copy the relevant upstream SGLang snippets into `baseline/` and record the
    exact source commit in `docs/baseline_source.md`.
-2. Implement a task-local PyTorch eager baseline adapter with the exact
-   semantics above.
+2. Implement a task-local SGLang production baseline adapter with the exact
+   autocast semantics above.
 3. Expose the candidate through the exact same ABI in `solution/`.
 4. Verify the seeded `bench/workloads.json`, copy the standard template to
    `bench/benchmark.py`, implement `bench/adapter.py`, and create
    `bench/correctness.py`.
-5. Make correctness fail on any non-bitwise result. Use `torch.equal`, not
+5. Make correctness fail on any non-bitwise result, output dtype mismatch, NaN,
+   Inf, or hot exception fallback. Use `torch.equal`, not
    `torch.testing.assert_close`.
 
 Do not import, patch, or monkey-patch SGLang during correctness or benchmark

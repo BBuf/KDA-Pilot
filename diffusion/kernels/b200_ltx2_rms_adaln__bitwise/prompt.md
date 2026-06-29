@@ -17,8 +17,8 @@ Target SGLang diffusion source patterns to copy as local baseline:
 - `sglang.multimodal_gen.runtime.layers.layernorm:RMSNormNoWeight`
 
 Goal: produce an optimized RMS AdaLN kernel for LTX2 that is **bit-wise equal**
-to the PyTorch eager baseline, so the eventual SGLang replacement does not
-change diffusion CI golden outputs.
+to the real SGLang LTX2.3 production baseline, so the eventual SGLang
+replacement does not change diffusion CI golden outputs.
 
 Before writing an optimized kernel, read and follow:
 
@@ -27,6 +27,18 @@ Before writing an optimized kernel, read and follow:
 - `../../docs/diffusion_correctness_contract.md`
 
 ## Required Baseline Semantics
+
+This task is no longer allowed to target standalone PyTorch eager in isolation.
+The correctness oracle is the expression as executed by SGLang's denoising loop:
+
+- `server_args.disable_autocast=false`
+- `dit_precision=bf16`
+- `torch.autocast(device_type="cuda", dtype=torch.bfloat16, enabled=True)`
+  is active around the transformer call.
+
+For the live LTX2.3 rows, the visible output of the expression below is fp32.
+The candidate ABI must therefore write fp32 outputs bit-for-bit equal to the
+production expression. Writing bf16 because `x` is bf16 is a task failure.
 
 Inputs:
 
@@ -39,20 +51,26 @@ Inputs:
 Baseline:
 
 ```python
-normed = torch.nn.functional.rms_norm(x, normalized_shape=(D,), eps=eps)
-y = normed * (1 + scale) + shift
+with torch.autocast(device_type="cuda", dtype=torch.bfloat16, enabled=True):
+    normed = torch.nn.functional.rms_norm(x, normalized_shape=(D,), eps=eps)
+    y = normed * (1 + scale) + shift
 ```
 
-The task-local baseline must execute the PyTorch eager operations in this order
+The task-local baseline must execute this production expression in this order
 and use the same broadcasting semantics as the original `ltx_2.py` fallback.
-The candidate must match the final `y` with `torch.equal` / byte-level equality.
-Tolerances are forbidden.
+The candidate must match the final fp32 `y` with `torch.equal` / byte-level
+equality. Tolerances are forbidden.
 
-The optimized candidate must preserve PyTorch's visible rounding points. Do not
-use a generic fused RMSNorm-scale-shift kernel if it changes bfloat16 output
-bits. If a single fused kernel cannot be bit-wise exact, use a staged candidate
-that still reduces launch or memory overhead while matching PyTorch operation
-boundaries.
+The optimized candidate must preserve production-visible rounding and promotion
+points under autocast. Do not reinterpret an autocast `rms_norm` result as bf16;
+that was the root cause of prior NaN/Inf failures. If a single fused kernel
+cannot be bit-wise exact, use a staged candidate that still reduces launch or
+memory overhead while matching the production operation boundaries.
+
+Hot-path exception fallback is not success. Unsupported rows must be rejected by
+cheap Python/C++ preflight guards before launching the raw kernel; repeated
+dtype/shape exceptions inside the benchmark or SGLang integration count as a
+regression even if the fallback output is correct.
 
 ## Required Workload Rows
 
@@ -122,8 +140,8 @@ In fact, prefer an explicit shape table or dispatcher when a single generic
 kernel loses on either the CI rows or the HQ PR rows. It is acceptable to
 dispatch separately for video `S in {1536,6144,8160,32640}` and audio
 `S=126`, and for `D in {4096,2048}`, as long as every selected path is
-bit-wise equal to the PyTorch baseline and unsupported shapes fail closed or
-fall back to the exact eager implementation.
+bit-wise equal to the production baseline and unsupported shapes fail closed or
+fall back to the exact production implementation.
 
 Do not claim success from an average speedup if one of the production shape
 families regresses. Report per-shape timings and explain the dispatcher choice.
@@ -145,13 +163,14 @@ Support gates must be explicit and fail closed:
 
 1. Copy the relevant upstream SGLang snippets into `baseline/` and record the
    exact source commit in `docs/baseline_source.md`.
-2. Implement a task-local PyTorch eager baseline adapter with the exact
-   semantics above.
+2. Implement a task-local SGLang production baseline adapter with the exact
+   autocast semantics above.
 3. Expose the candidate through the exact same ABI in `solution/`.
 4. Verify the seeded `bench/workloads.json`, copy the standard template to
    `bench/benchmark.py`, implement `bench/adapter.py`, and create
    `bench/correctness.py`.
-5. Make correctness fail on any non-bitwise result. Use `torch.equal`, not
+5. Make correctness fail on any non-bitwise result, output dtype mismatch, NaN,
+   Inf, or hot exception fallback. Use `torch.equal`, not
    `torch.testing.assert_close`.
 
 Do not import, patch, or monkey-patch SGLang during correctness or benchmark

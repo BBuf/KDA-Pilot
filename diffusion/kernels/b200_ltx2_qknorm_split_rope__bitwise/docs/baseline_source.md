@@ -13,20 +13,18 @@
 
 | Local file | Copied from (upstream) | Notes |
 |------------|------------------------|-------|
-| `baseline/ltx2_split_rope.py` | `ltx_2.py` `apply_interleaved_rotary_emb` (lines 177-183) + `apply_split_rotary_emb` (lines 186-239) | `apply_interleaved_rotary_emb` verbatim. `apply_split_rotary_emb_eager` = upstream eager fallback (lines 208-239) verbatim with the fast-path dispatch removed (see Local edits). |
-| `baseline/reference.py` | LTX2Attention forward order (lines 751-773) + `self.q_norm/k_norm = torch.nn.RMSNorm(inner_dim, eps)` (lines 677-678) | Task-local oracle adapter; mirrors the eager attention path. Not a verbatim file copy (it is the task adapter that composes the copied functions). |
+| `baseline/ltx2_split_rope.py` | `ltx_2.py` `apply_interleaved_rotary_emb` (lines 177-183) + `apply_split_rotary_emb` (lines 186-239) + `jit_kernel/diffusion/triton/ltx2_rotary.py` | Task-local production dispatcher. Live bf16 CUDA rows enter the vendored Triton fast path; unsupported/debug rows use the eager fallback. |
+| `baseline/reference.py` | LTX2Attention forward order (lines 751-773) + `self.q_norm/k_norm = torch.nn.RMSNorm(inner_dim, eps)` (lines 677-678) | Task-local production oracle adapter; mirrors the attention path under denoising autocast. Not a verbatim file copy (it is the task adapter that composes the copied functions). |
 
 ## Local edits (intentional)
 
-1. **Fast-path dispatch removed to force the eager reference.** Upstream
+1. **Fast-path dispatch restored for the production oracle.** Upstream
    `apply_split_rotary_emb` (lines 190-206) dispatches to a bf16 Triton kernel
    `sglang.jit_kernel.diffusion.triton.ltx2_rotary.apply_ltx2_split_rotary_emb`
-   for the production input shape (x 3-D, cos/sin 4-D, all bf16, cuda, x
-   contiguous). That Triton fast path is exactly the optimized kernel this task
-   is **replacing**, and the source prompt requires bit-equality to the **eager**
-   reference. `apply_split_rotary_emb_eager()` keeps the eager fallback math
-   (lines 208-239) verbatim and removes the dispatch branch, so the oracle never
-   enters the fast path and never imports sglang. Verified by `split_rope_support_status`.
+   for the live production input shape (x 3-D, cos/sin 4-D, all bf16, cuda, x
+   contiguous). The task-local oracle now vendors that Triton kernel and keeps
+   the same dispatcher condition. Removing this branch was the reason earlier
+   KDA candidates were bitwise only against forced eager, not against SGLang CI.
 
 ## Note on the config entry point
 
@@ -34,9 +32,10 @@
 `sglang.multimodal_gen.runtime.models.dits.ltx_2:_ltx2_try_fused_qknorm_split_rope`.
 That symbol **does not exist** in upstream `main` at `aaa31eb0…` — it was part of
 the closed PR #29399 and was never merged. The bit-exact reference is therefore
-the eager path (`torch.nn.RMSNorm` + `apply_split_rotary_emb` eager fallback),
-which the source prompt designates as the baseline. `apply_split_rotary_emb` IS
-present upstream and is copied.
+the production path (`torch.nn.RMSNorm` + `apply_split_rotary_emb` including its
+bf16 Triton fast path), which is what current SGLang CI and benchmarks execute.
+`apply_split_rotary_emb` is present upstream and is copied locally without an
+SGLang runtime import.
 
 ## Extracted exact semantics (the candidate must match these bit-for-bit)
 
@@ -65,7 +64,11 @@ k_out = apply_split_rotary_emb(k, (k_cos, k_sin))
   `y = (x.float() * inv).to(bf16)`, `return y * weight.to(bf16)`. This is a
   DIFFERENT module and is NOT used (the task rejects TP != 1).
 
-### Split RoPE (`apply_split_rotary_emb` eager fallback)
+### Split RoPE (`apply_split_rotary_emb` production dispatcher)
+
+For live LTX2.3 rows, the dispatcher enters the copied Triton fast path from
+`sglang.jit_kernel.diffusion.triton.ltx2_rotary`. The eager fallback below is
+kept only for unsupported/debug rows and for documenting the fallback math.
 
 - Split is **half/half** along `head_dim` (first `head_dim/2` = `first_x`, second
   `head_dim/2` = `second_x`); **NOT interleaved**.
@@ -107,18 +110,18 @@ and (for norm inputs) validated by the adapter.
   `sgl-project/sglang` remote (`git fetch origin 828411e6f1` → "couldn't find
   remote ref"); it is a PR-era container commit absent from public `main` history,
   so a direct function diff is not possible. This is acceptable because: (a) the
-  bit-exactness gate compares candidate vs the eager oracle, **both** built from
-  current `main` (`aaa31eb0…`), which is the integration target per the
+  bit-exactness gate compares candidate vs the production oracle, **both** built
+  from current `main` (`aaa31eb0…`), which is the integration target per the
   latest-`main` rule; (b) the captured workloads supply tensor **shapes** only —
   values are regenerated from seeds in `make_case` — so capture-time numeric
-  semantics do not enter the comparison; (c) the eager `apply_split_rotary_emb`
-  expression (`split_x*cos` then two `addcmul_`) is simple and stable. Residual
-  risk is low. If a future integration pins a specific commit, re-run the diff
-  against that commit.
+  semantics do not enter the comparison; (c) the production
+  `apply_split_rotary_emb` fast-path dispatcher is vendored task-locally.
+  Residual risk is low. If a future integration pins a specific commit, re-run
+  the diff against that commit.
 
 ## Pending user decisions in effect (defaults applied; see refined-plan.md)
 
-- DEC-1: benchmark baseline = PyTorch eager fallback through a matched adapter.
+- DEC-1: benchmark baseline = SGLang production split-RoPE dispatcher through a matched adapter.
 - DEC-2: copy from latest `main` + drift audit vs `828411e6f1` (above).
 - DEC-3: require production grid (num_heads=32, head_dim in {64,128}); treat
   head_dim=256 / num_heads in {8,16,24} as optional with clean reject.

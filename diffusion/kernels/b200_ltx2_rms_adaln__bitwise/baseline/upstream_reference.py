@@ -2,7 +2,8 @@
 
 This is a PROVENANCE / contract-reference artifact only. It is NOT imported at
 correctness or benchmark runtime (the standalone contract forbids importing
-sglang). The numeric oracle is plain PyTorch eager; see bench/correctness.py.
+sglang). The numeric oracle is the production autocast expression implemented in
+bench/adapter.py and checked by bench/correctness.py.
 Full provenance: docs/baseline_source.md.
 
   repo:   https://github.com/sgl-project/sglang
@@ -19,8 +20,8 @@ NOTE on entry-point names: config.toml names the entry points
 upstream `main` at the resolved commit (grep count 0). They were the *proposed*
 fused helpers of the closed PR sgl-project/sglang#29396 (never merged). The real
 upstream semantics live inline at the modulation callsites, over
-`RMSNormNoWeight`. The recovered baseline is therefore the inline eager pattern
-below, which is what the task must match bit-for-bit.
+`RMSNormNoWeight`. The source expression below must be evaluated under the
+SGLang denoising autocast context and matched bit-for-bit.
 
 ================================================================================
 layernorm.py  (lines 298-307, verbatim)
@@ -50,15 +51,13 @@ ltx_2.py  (relevant lines, verbatim)
     )
 
 ================================================================================
-Recovered task-local eager baseline semantics (bf16 inputs, eps default 1e-6):
+Recovered task-local production baseline semantics (bf16 inputs, eps default 1e-6):
 
-    normed = torch.nn.functional.rms_norm(x, normalized_shape=(D,), eps=eps)
-    y = normed * (1 + scale) + shift
+    with torch.autocast(device_type="cuda", dtype=torch.bfloat16, enabled=True):
+        normed = torch.nn.functional.rms_norm(x, normalized_shape=(D,), eps=eps)
+        y = normed * (1 + scale) + shift
 
-Operation boundaries (PyTorch eager, each rounds to bf16):
-    1) normed   = rms_norm(x, (D,), eps)        # fp32 reduction, store bf16
-    2) one_plus = (1 + scale)                   # bf16
-    3) mul      = normed * one_plus             # bf16
-    4) y        = mul + shift                   # bf16
+For live LTX2.3 rows the visible y tensor is fp32 under production autocast. Do
+not assume a bf16 destination just because the inputs are bf16.
 ================================================================================
 """

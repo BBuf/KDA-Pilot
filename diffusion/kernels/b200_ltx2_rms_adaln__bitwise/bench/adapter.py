@@ -1,24 +1,10 @@
 """Benchmark adapter for b200_ltx2_rms_adaln__bitwise.
 
-Supplies tensor construction and the two ABI calls for bench/benchmark.py.
-``call_baseline`` and ``call_candidate`` route through one shared dispatch over
-pre-resolved function tables so both sides pay near-identical adapter overhead;
-neither allocates output tensors (outputs are preallocated in ``make_case`` and
-poisoned/timed by the benchmark template).
-
-- Baseline: baseline/kernel.cu -> ATen eager (bit-identical to Python eager).
-- Candidate: solution/kernel.cu -> at::rms_norm + fused modulation kernel.
-
-The candidate is gate-routed in Python: in-gate inputs (the production rows)
-ALWAYS exercise the optimized kernel (no silent masking of kernel bugs);
-out-of-gate inputs take an explicit eager fallback (bit-exact). The raw kernel
-itself fails closed (throws) on out-of-gate inputs -- see bench/correctness.py.
-
-Bitwise comparison is supplied via the optional ``compare_outputs`` hook (raw
-uint16/int storage equality + torch.equal); this overrides the benchmark
-template's tolerance comparator because this task forbids tolerance.
-
-No sglang import anywhere in this process (asserted below).
+The oracle here is the real SGLang LTX2.3 production expression, not a plain
+eager approximation: the denoising loop runs under CUDA bf16 autocast, and the
+visible result of ``F.rms_norm(x) * (1 + scale) + shift`` is fp32 for the live
+rows. Candidate kernels must match that fp32 tensor bit-for-bit and must not rely
+on hot exception-driven fallback.
 """
 
 from __future__ import annotations
@@ -31,9 +17,6 @@ if str(_TASK_ROOT) not in sys.path:
     sys.path.insert(0, str(_TASK_ROOT))
 
 import torch
-
-from baseline.build import load_baseline_module
-from solution.build import load_candidate_module
 
 assert not any(
     name == "sglang" or name.startswith("sglang.") for name in sys.modules
@@ -54,11 +37,32 @@ _INT_VIEW = {
 
 _EP = "rms_adaln"
 
-_baseline_module = load_baseline_module()
-_candidate_module = load_candidate_module()
+_CANDIDATE_FNS = None
 
-_BASELINE_FNS = {_EP: _baseline_module.ltx2_rms_adaln_baseline}
-_CANDIDATE_FNS = {_EP: _candidate_module.ltx2_rms_adaln_candidate}
+
+def _production_autocast(device: torch.device):
+    return torch.autocast(
+        device_type=device.type,
+        dtype=torch.bfloat16,
+        enabled=device.type == "cuda",
+    )
+
+
+def _load_candidate_fns():
+    global _CANDIDATE_FNS
+    if _CANDIDATE_FNS is not None:
+        return _CANDIDATE_FNS
+    try:
+        from solution.build import load_candidate_module  # type: ignore
+    except Exception as exc:  # noqa: BLE001
+        raise RuntimeError(
+            "solution candidate is intentionally empty. Generate solution/build.py "
+            "and solution/kernel.cu, exposing ltx2_rms_adaln_candidate, before "
+            f"calling the candidate. Import error: {exc}"
+        ) from exc
+    module = load_candidate_module()
+    _CANDIDATE_FNS = {_EP: module.ltx2_rms_adaln_candidate}
+    return _CANDIDATE_FNS
 
 
 def _randn(shape, dtype, device):
@@ -94,8 +98,8 @@ def make_case(workload: dict, *, device: torch.device, seed: int) -> dict:
     }
     return {
         "inputs": inputs,
-        "baseline_outputs": [torch.empty_like(x)],
-        "candidate_outputs": [torch.empty_like(x)],
+        "baseline_outputs": [torch.empty_like(x, dtype=torch.float32)],
+        "candidate_outputs": [torch.empty_like(x, dtype=torch.float32)],
         "tolerance": {
             "atol": float(workload.get("atol", 0.0)),
             "rtol": float(workload.get("rtol", 0.0)),
@@ -109,17 +113,18 @@ def make_case(workload: dict, *, device: torch.device, seed: int) -> dict:
 
 
 def eager_rms_adaln(x, scale, shift, eps):
-    """The exact eager oracle, also used as the out-of-gate fallback.
+    """The exact production oracle, also used as the out-of-gate fallback.
 
     A 2D [B, D] scale/shift is per-(batch, channel) modulation broadcast over the
     sequence, i.e. semantically [B, 1, D] (matches the kernel's PERBATCH mode);
     PyTorch will not broadcast a bare [B, D] against [B, S, D], so unsqueeze it.
     [D], [B, 1, D], and [B, S, D] already broadcast directly.
     """
-    normed = torch.nn.functional.rms_norm(x, (x.shape[-1],), eps=eps)
     s = scale.unsqueeze(-2) if scale.dim() == 2 else scale
     h = shift.unsqueeze(-2) if shift.dim() == 2 else shift
-    return normed * (1 + s) + h
+    with _production_autocast(x.device):
+        normed = torch.nn.functional.rms_norm(x, (x.shape[-1],), eps=eps)
+        return normed * (1 + s) + h
 
 
 def layout_mode(mod: torch.Tensor, B: int, S: int, D: int):
@@ -191,7 +196,7 @@ def optimized_in_gate(x, scale, shift, output) -> bool:
     checks and the aliasing policy. Otherwise the public candidate routes the row
     to the eager fallback.
 
-    Output must be a same-device bf16 [B,S,D] contiguous, 16-byte-aligned buffer
+    Output must be a same-device fp32 [B,S,D] contiguous, 16-byte-aligned buffer
     that does NOT overlap scale or shift (those overlaps would corrupt the kernel's
     vectorized reads, so the raw kernel rejects them). Output overlapping x IS
     allowed: x is fully consumed by at::rms_norm into a fresh `normed` buffer before
@@ -201,7 +206,7 @@ def optimized_in_gate(x, scale, shift, output) -> bool:
         return False
     if not output.is_cuda or output.device != x.device:
         return False
-    if output.dtype != torch.bfloat16:
+    if output.dtype != torch.float32:
         return False
     if list(output.shape) != list(x.shape) or not output.is_contiguous():
         return False
@@ -213,8 +218,11 @@ def optimized_in_gate(x, scale, shift, output) -> bool:
 
 
 def call_baseline(workload: dict, inputs, outputs) -> None:
-    fn = _BASELINE_FNS[workload["function"]]
-    fn(inputs["x"], inputs["scale"], inputs["shift"], inputs["eps"], outputs[0])
+    if workload["function"] != _EP:
+        raise ValueError(f"unknown function {workload['function']!r}")
+    outputs[0].copy_(
+        eager_rms_adaln(inputs["x"], inputs["scale"], inputs["shift"], inputs["eps"])
+    )
 
 
 def call_candidate(workload: dict, inputs, outputs) -> None:
@@ -225,7 +233,8 @@ def call_candidate(workload: dict, inputs, outputs) -> None:
     # result in a fresh tensor before copying into output (safe even when output
     # aliases scale/shift); rows eager itself cannot compute raise a controlled error.
     if optimized_in_gate(x, scale, shift, outputs[0]):
-        _CANDIDATE_FNS[workload["function"]](x, scale, shift, eps, outputs[0])
+        with _production_autocast(x.device):
+            _load_candidate_fns()[workload["function"]](x, scale, shift, eps, outputs[0])
     else:
         outputs[0].copy_(eager_rms_adaln(x, scale, shift, eps))
 

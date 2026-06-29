@@ -11,14 +11,18 @@ entry_points = [
 [build]
 language = "cuda"
 destination_passing_style = true
-baseline_entry_point = "baseline/kernel.cu::ltx2_rms_adaln_baseline"
+baseline_entry_point = "bench/adapter.py::call_baseline"
 candidate_entry_point = "solution/kernel.cu::ltx2_rms_adaln_candidate"
 
 [correctness]
 bitwise_required = true
 comparison = "torch_equal"
 forbid_tolerance = true
-baseline = "pytorch_eager"
+baseline = "sglang_ltx23_production"
+production_autocast = true
+dit_precision = "bfloat16"
+visible_output_dtype = "float32"
+require_no_exception_fallback = true
 
 [benchmark]
 warmup_runs = 10
