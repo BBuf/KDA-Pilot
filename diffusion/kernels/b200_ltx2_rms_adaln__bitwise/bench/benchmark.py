@@ -459,7 +459,7 @@ def _nvidia_smi() -> str:
         return f"unavailable: {exc}"
 
 
-# --- task-local additive extended provenance (AC-5) -------------------------
+# --- task-local additive extended provenance -------------------------------
 def _file_sha256(path: Path) -> str:
     import hashlib
     try:

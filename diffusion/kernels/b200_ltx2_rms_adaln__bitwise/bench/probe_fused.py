@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""task10 bounded fused-attempt probe.
+"""Bounded fully-fused-attempt feasibility probe.
 
 Decides whether a fully-fused single kernel (RMS reduction + modulation in one
 pass) can be bit-wise exact. The gate is: does a custom single-kernel fp32 RMS
@@ -102,7 +102,7 @@ def main() -> int:
               "kernel NO-GO; staged path (reuse at::rms_norm) is the production choice.")
     else:
         print("[probe] RESULT: normed bit-exact on every row/seed/mode -> fully-fused single "
-              "kernel is feasible (would still need to pass the full AC-3/AC-6 gates).")
+              "kernel is feasible (would still need to pass the full bitwise + no-regression gates).")
     return 1 if any_mismatch else 0
 
 

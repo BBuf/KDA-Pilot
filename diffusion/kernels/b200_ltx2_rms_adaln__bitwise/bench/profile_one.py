@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""NCU profiling driver for the candidate's fused modulation kernel (task12).
+"""NCU profiling driver for the candidate's fused modulation kernel.
 
 Runs `ltx2_rms_adaln_candidate` on a given `[B,S,D]` shape so Nsight Compute can
 capture `rms_adaln_modulation_kernel`. Usage:

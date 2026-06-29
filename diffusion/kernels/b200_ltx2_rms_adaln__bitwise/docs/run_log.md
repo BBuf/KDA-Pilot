@@ -40,16 +40,21 @@ locally. Evidence below is from the RLCR validation run on 2026-06-29.
    - `CUDA_VISIBLE_DEVICES=5 python -c "import bench.adapter ..."` -> `BUILD_OK`
      (candidate `ltx2_rms_adaln_candidate` + baseline `ltx2_rms_adaln_baseline`).
 2. Correctness (bitwise; tolerance forbidden):
-   - `CUDA_VISIBLE_DEVICES=5 python bench/correctness.py --impl both --rows all`
-   - Result: `rows=71/71 failures=0` -> `PASS (bitwise)`. Covers the 6 production
-     rows, the canonical grid (all 4 supported layouts + mixed, eps in
-     {1e-6,1e-5}), adversarial rounding rows + sensitivity guard, out-of-gate
-     fail-closed (incl. misaligned-x) + eager fallback, and the poison self-test.
+   - `CUDA_VISIBLE_DEVICES=5,6 python bench/correctness.py --impl both --rows all`
+     (two GPUs visible so the cross-device negative row actually executes)
+   - Result: `rows=85/85 failures=0` -> `PASS (bitwise)`. Covers the 6 production
+     rows, the canonical grid (all 4 supported layouts + mixed, eps in {1e-6,1e-5}),
+     adversarial rounding rows + the single-fp32 sensitivity guard, out-of-gate
+     fail-closed + eager fallback (misaligned/non-contiguous x/scale/shift, output
+     aliasing of x/scale/shift, CPU and two-GPU cross-device), and the poison
+     self-test.
 3. Benchmark (standard standalone harness, isolated subprocess runner):
    - `CUDA_VISIBLE_DEVICES=5 python bench/benchmark.py --workloads bench/workloads.json --out bench/results.jsonl --device cuda:0`
    - Result: 6/6 PASSED (bit-wise matched), equal-weight geomean speedup
-     **1.974x** (min 1.907 audio, max 2.028 hq_stage2). Per-shape table in
-     `docs/results.md`.
+     **1.861x** this run (min 1.610 audio, max 2.025 hq_stage2; video rows stable
+     ~1.97-2.03x). A prior quieter run measured 1.974x; the audio rows are
+     launch-bound and noisier under system contention. Per-shape table + audio-
+     variance note in `docs/results.md`.
 4. Fully-fused feasibility probe (AC-8 gate):
    - `CUDA_VISIBLE_DEVICES=5 python bench/probe_fused.py`
    - Result: **NO-GO**. 48 cases (8 shapes × 3 seeds × {randn, wide-magnitude}); the

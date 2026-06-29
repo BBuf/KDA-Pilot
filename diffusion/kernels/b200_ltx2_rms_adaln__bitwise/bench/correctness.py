@@ -118,13 +118,15 @@ def build_ingate_rows(quick: bool) -> list[dict]:
     rows = []
     pure = ("full", "perbatch", "perbatch1", "perchan")
     mixed = (("full", "perchan"), ("perbatch", "full"), ("perchan", "perbatch1"))
-    # Canonical adapted grid (the contract grid): every supported layout + mixed.
+    # Canonical adapted grid (the contract grid): every supported layout + mixed,
+    # swept over BOTH eps values (the canonical grid requires eps in {1e-6, 1e-5}).
     canon = _CANONICAL[:1] if quick else _CANONICAL
     for (B, S, D) in canon:
-        for lay in pure:
-            rows.append(_spec(f"canon_{lay}_b{B}_s{S}_d{D}", B, S, D, lay, lay, 1e-6))
-        for sl, hl in mixed:
-            rows.append(_spec(f"canon_mix_{sl}-{hl}_b{B}_s{S}_d{D}", B, S, D, sl, hl, 1e-6))
+        for eps in (1e-6, 1e-5):
+            for lay in pure:
+                rows.append(_spec(f"canon_{lay}_b{B}_s{S}_d{D}_eps{eps:g}", B, S, D, lay, lay, eps))
+            for sl, hl in mixed:
+                rows.append(_spec(f"canon_mix_{sl}-{hl}_b{B}_s{S}_d{D}_eps{eps:g}", B, S, D, sl, hl, eps))
     # Smoke rows: extra breadth (small shapes, eps sweep). Subset under --quick.
     smoke = _SMOKE[::4] if quick else _SMOKE
     for n, (B, S, D) in enumerate(smoke):
@@ -286,6 +288,7 @@ def run_out_of_gate_tests(device: torch.device) -> list[str]:
         "layout_11D": ("fallback", t([B, S, D]), t([1, 1, D]), t([1, 1, D])),   # B>1, not supported
         "noncontig_x": ("fallback", t([B, S, 2 * D])[:, :, ::2], t([B, S, D]), t([B, S, D])),
         "noncontig_scale": ("fallback", t([B, S, D]), t([B, S, 2 * D])[:, :, ::2], t([B, S, D])),
+        "noncontig_shift": ("fallback", t([B, S, D]), t([B, S, D]), t([B, S, 2 * D])[:, :, ::2]),
         "cpu_all": ("fallback", t([B, S, D], dev="cpu"), t([B, S, D], dev="cpu"), t([B, S, D], dev="cpu")),
         # device fail-closed: CUDA x + CPU scale/shift -> reject (eager device mismatch)
         "cuda_x_cpu_scale": ("reject", t([B, S, D]), t([B, S, D], dev="cpu"), t([B, S, D], dev="cpu")),
@@ -297,6 +300,8 @@ def run_out_of_gate_tests(device: torch.device) -> list[str]:
         # contiguous but 16B-misaligned x -> fallback (gate requires x 16B-aligned
         # for the vectorized optimized path; eager handles any alignment)
         "misaligned_x": ("fallback", mis([B, S, D]), t([B, S, D]), t([B, S, D])),
+        # contiguous but 16B-misaligned shift -> fallback (mirrors misaligned scale)
+        "misaligned_shift": ("fallback", t([B, S, D]), t([B, S, D]), mis([B, S, D])),
     }
 
     def _raw_fails_closed(tag, x, scale, shift):
@@ -347,6 +352,43 @@ def run_out_of_gate_tests(device: torch.device) -> list[str]:
         failures.append("out_of_gate[misaligned_output]: raw kernel accepted misaligned output (must fail closed)")
     except Exception:
         pass
+
+    # output aliasing. Policy (mirrors solution/kernel.cu): output MAY alias x (x is
+    # fully consumed by at::rms_norm into a fresh `normed` before any write) -> IN-GATE
+    # bit-exact; output aliasing scale/shift would corrupt the vectorized reads, so the
+    # raw kernel fails closed and the public path falls back bit-exact (eager builds the
+    # result in a fresh tensor before copying into output).
+    xa, sa, ha = t([B, S, D]), t([B, S, D]), t([B, S, D])
+    ref_ax = oracle({"x": xa.clone(), "scale": sa, "shift": ha, "eps": eps})
+    try:
+        adapter.call_candidate({"function": _EP},
+                               {"x": xa, "scale": sa, "shift": ha, "eps": eps}, [xa])
+        torch.cuda.synchronize()
+        failures += _bw("alias_output_eq_x:optimized-vs-oracle", ref_ax, [xa])
+    except Exception as exc:  # noqa: BLE001
+        failures.append(f"out_of_gate[alias_output_eq_x]: candidate raised on output-aliases-x "
+                        f"(must be in-gate bit-exact): {exc}")
+    # raw kernel must reject output aliasing scale or shift
+    for who, pick in (("scale", lambda a, b, c: b), ("shift", lambda a, b, c: c)):
+        xr, sr, hr = t([B, S, D]), t([B, S, D]), t([B, S, D])
+        try:
+            adapter._CANDIDATE_FNS[_EP](xr, sr, hr, eps, pick(xr, sr, hr))
+            torch.cuda.synchronize()
+            failures.append(f"out_of_gate[alias_output_eq_{who}]: raw kernel accepted output "
+                            f"aliasing {who} (must fail closed)")
+        except Exception:
+            pass
+    # public path falls back bit-exact when output aliases scale
+    xp, sp, hp = t([B, S, D]), t([B, S, D]), t([B, S, D])
+    ref_asc = oracle({"x": xp, "scale": sp.clone(), "shift": hp, "eps": eps})
+    try:
+        adapter.call_candidate({"function": _EP},
+                               {"x": xp, "scale": sp, "shift": hp, "eps": eps}, [sp])
+        torch.cuda.synchronize()
+        failures += _bw("alias_output_eq_scale:fallback-vs-oracle", ref_asc, [sp])
+    except Exception as exc:  # noqa: BLE001
+        failures.append(f"out_of_gate[alias_output_eq_scale]: public candidate raised instead "
+                        f"of fallback: {exc}")
 
     # cross-device (only when more than one GPU is visible)
     if torch.cuda.device_count() > 1:

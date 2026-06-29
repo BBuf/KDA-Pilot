@@ -144,8 +144,10 @@ def layout_mode(mod: torch.Tensor, B: int, S: int, D: int):
 
 
 def in_gate(x, scale, shift) -> bool:
-    """True iff the optimized kernel accepts this row (exact mirror of
-    solution/kernel.cu's fail-closed gate). Otherwise -> eager fallback.
+    """True iff the optimized kernel accepts x/scale/shift (mirrors the raw
+    solution/kernel.cu gate for those inputs). The FULL optimized-path gate,
+    including the output tensor and its aliasing policy, is optimized_in_gate()
+    below; the public candidate uses that. Otherwise -> eager fallback.
 
     Requires all tensors on the same CUDA device; a CUDA x with a CPU or
     cross-device scale/shift must NOT enter the raw kernel (would hand host /
@@ -162,13 +164,52 @@ def in_gate(x, scale, shift) -> bool:
         return False
     # The optimized kernel issues 16-byte vector loads/stores; it requires every
     # vectorized base pointer (x / scale / shift; the output is checked in
-    # call_candidate) to be 16-byte aligned. A contiguous view with a nonzero
+    # optimized_in_gate) to be 16-byte aligned. A contiguous view with a nonzero
     # storage offset can be only bf16-aligned -> route such rows to the eager
     # fallback. This mirrors the raw kernel's alignment gate exactly.
     if x.data_ptr() % 16 != 0 or scale.data_ptr() % 16 != 0 or shift.data_ptr() % 16 != 0:
         return False
     return (layout_mode(scale, B, S, D) is not None
             and layout_mode(shift, B, S, D) is not None)
+
+
+def _overlaps(a: torch.Tensor, b: torch.Tensor) -> bool:
+    """True iff the storage byte ranges of a and b intersect on the same device
+    (numel-based extent, matching the raw kernel's overlap check)."""
+    if a.device != b.device:
+        return False
+    a0 = a.data_ptr()
+    a1 = a0 + a.numel() * a.element_size()
+    b0 = b.data_ptr()
+    b1 = b0 + b.numel() * b.element_size()
+    return a0 < b1 and b0 < a1
+
+
+def optimized_in_gate(x, scale, shift, output) -> bool:
+    """True iff the raw optimized kernel accepts (x, scale, shift, output) -- the
+    EXACT mirror of solution/kernel.cu's fail-closed gate, INCLUDING the output
+    checks and the aliasing policy. Otherwise the public candidate routes the row
+    to the eager fallback.
+
+    Output must be a same-device bf16 [B,S,D] contiguous, 16-byte-aligned buffer
+    that does NOT overlap scale or shift (those overlaps would corrupt the kernel's
+    vectorized reads, so the raw kernel rejects them). Output overlapping x IS
+    allowed: x is fully consumed by at::rms_norm into a fresh `normed` buffer before
+    the modulation kernel writes any output element.
+    """
+    if not in_gate(x, scale, shift):
+        return False
+    if not output.is_cuda or output.device != x.device:
+        return False
+    if output.dtype != torch.bfloat16:
+        return False
+    if list(output.shape) != list(x.shape) or not output.is_contiguous():
+        return False
+    if output.data_ptr() % 16 != 0:
+        return False
+    if _overlaps(output, scale) or _overlaps(output, shift):
+        return False
+    return True
 
 
 def call_baseline(workload: dict, inputs, outputs) -> None:
@@ -178,9 +219,12 @@ def call_baseline(workload: dict, inputs, outputs) -> None:
 
 def call_candidate(workload: dict, inputs, outputs) -> None:
     x, scale, shift, eps = inputs["x"], inputs["scale"], inputs["shift"], inputs["eps"]
-    # in_gate covers x/scale/shift; the output is vectorized too, so it must also
-    # be 16-byte aligned for the optimized path (else eager fallback).
-    if in_gate(x, scale, shift) and outputs[0].data_ptr() % 16 == 0:
+    # The optimized path runs only when the full raw-kernel gate accepts every
+    # tensor (x/scale/shift AND output, incl. alignment and the scale/shift alias
+    # rejection). Any other row takes the bit-exact eager fallback, which builds the
+    # result in a fresh tensor before copying into output (safe even when output
+    # aliases scale/shift); rows eager itself cannot compute raise a controlled error.
+    if optimized_in_gate(x, scale, shift, outputs[0]):
         _CANDIDATE_FNS[workload["function"]](x, scale, shift, eps, outputs[0])
     else:
         outputs[0].copy_(eager_rms_adaln(x, scale, shift, eps))

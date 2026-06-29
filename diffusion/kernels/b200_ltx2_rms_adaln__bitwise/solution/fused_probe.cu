@@ -1,4 +1,4 @@
-// Fully-fused feasibility probe for b200_ltx2_rms_adaln__bitwise (AC-8 / task10).
+// Fully-fused feasibility probe for b200_ltx2_rms_adaln__bitwise.
 //
 // Question: can a custom single-kernel fp32 RMS reduction reproduce
 // at::rms_norm's bf16 `normed` BIT-FOR-BIT? If it cannot on any required row,
