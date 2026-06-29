@@ -160,9 +160,12 @@ def in_gate(x, scale, shift) -> bool:
     B, S, D = x.shape
     if D % 256 != 0 or D > 8192:
         return False
-    # The kernel issues 16-byte vector loads on scale/shift; a contiguous view
-    # with a nonzero storage offset can be only bf16-aligned -> route to fallback.
-    if scale.data_ptr() % 16 != 0 or shift.data_ptr() % 16 != 0:
+    # The optimized kernel issues 16-byte vector loads/stores; it requires every
+    # vectorized base pointer (x / scale / shift; the output is checked in
+    # call_candidate) to be 16-byte aligned. A contiguous view with a nonzero
+    # storage offset can be only bf16-aligned -> route such rows to the eager
+    # fallback. This mirrors the raw kernel's alignment gate exactly.
+    if x.data_ptr() % 16 != 0 or scale.data_ptr() % 16 != 0 or shift.data_ptr() % 16 != 0:
         return False
     return (layout_mode(scale, B, S, D) is not None
             and layout_mode(shift, B, S, D) is not None)

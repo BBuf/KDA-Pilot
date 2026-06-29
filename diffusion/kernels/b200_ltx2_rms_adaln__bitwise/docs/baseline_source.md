@@ -8,6 +8,7 @@
 - Resolution method: `git ls-remote https://github.com/sgl-project/sglang.git refs/heads/main` and the GitHub trees/raw API.
 - Resolution time: 2026-06-29 (UTC).
 - Production-capture cross-reference: `bench/workloads.json` rows were captured at sglang commit `828411e6f1` (host `ion-b200`, container `sglang_bbuf_pr29315`, `Lightricks/LTX-2.3`). The eager oracle (`F.rms_norm`) is commit-stable, so the slightly newer `main` commit used for recovery does not change the numeric target.
+- RLCR re-resolution (2026-06-29, loop start): upstream `main` HEAD advanced to `bb74ed4a8da02b4f142191eedac824471cfb1ec6`. Both RMS-AdaLN source files are **byte-identical** at `bb74ed4a` vs the recorded `aaa31eb` (same sha256: `layernorm.py` = `e4389a39...`, `ltx_2.py` = `ff3fd96e...`). Therefore `RMSNormNoWeight.forward_native = F.rms_norm`, the inline modulation callsites (`self.rms_norm(x, norm_eps) * (1 + scale) + shift`), and `norm_eps = 1e-6` are unchanged; the recorded baseline at `aaa31eb` remains current and authoritative. Config-named entry points `_ltx2_rms_adaln` / `_ltx2_try_fused_rms_adaln` confirmed still absent from `main`.
 
 ## Files fetched (verbatim upstream)
 
