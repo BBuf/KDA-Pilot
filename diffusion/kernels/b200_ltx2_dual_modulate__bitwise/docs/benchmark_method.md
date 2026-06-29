@@ -1,7 +1,10 @@
 # Benchmark Method
 
-Status: validated on B200 (full-op TVM-FFI CUDA ABI for both baseline and
-candidate). Per-shape numbers and provenance are in `docs/results.md`.
+Status: validated on B200 on 2026-06-29 (full-op TVM-FFI CUDA ABI for both baseline
+and candidate; candidate is `solution/kernel.cu`). A fresh run on an idle B200 produced
+a bit-exact correctness gate of 1815/0 and a 12/12-bitwise A/B benchmark (geomean
+3.54×, no production regression). Per-shape numbers and provenance are in
+`docs/results.md` and `docs/run_log.md`.
 
 ## Harness
 - `bench/benchmark.py` is copied verbatim from
@@ -37,4 +40,5 @@ candidate). Per-shape numbers and provenance are in `docs/results.md`.
 - Host `innomatrix-us-adc-smb200-0003`, container `sglang_bbuf_pr29315`,
   GPU NVIDIA B200 (`REMOTE_GPU_ID=5`).
 - See `docs/results.md` for per-shape numbers and the headline geomean speedup
-  (8/8 bitwise); that file is the single source of truth for the measured numbers.
+  (12/12 bitwise, geomean 3.54×); that file is the single source of truth for the
+  measured numbers.

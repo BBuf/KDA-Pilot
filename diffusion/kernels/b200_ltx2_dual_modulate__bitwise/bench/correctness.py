@@ -16,6 +16,7 @@ Run on a B200:  python bench/correctness.py    (exit 0 iff all checks pass)
 from __future__ import annotations
 
 import itertools
+import json
 import sys
 from pathlib import Path
 
@@ -121,6 +122,87 @@ def case_ca(B_, S, D, table_dtype, temb_seq, tag, table_pad=0):
     _check(f"ca/{tag}/base_y1", torch.equal(r1, yb1), "baseline != oracle")
 
 
+# ---- All 12 frozen production rows from bench/workloads.json, built with their EXACT
+# shapes AND strides (as_strided over a randn parent for any non-compact spec, e.g. the
+# packed [B,1,D] production params whose batch stride is 4*D), checked candidate AND
+# baseline against the independent oracle. This covers the HQ S=8160/S=32640 rows and the
+# non-compact production strides that the synthetic compact tensors above do not. ----
+_DTYPES = {"bfloat16": torch.bfloat16, "float16": torch.float16, "float32": torch.float32}
+
+
+def _contig_stride(shape):
+    st = [1] * len(shape)
+    for i in range(len(shape) - 2, -1, -1):
+        st[i] = st[i + 1] * shape[i + 1]
+    return st
+
+
+def _from_spec(spec):
+    shape = list(spec["shape"])
+    dtype = _DTYPES[spec["dtype"]]
+    stride = spec.get("stride")
+    if stride is None or list(stride) == _contig_stride(shape):
+        return torch.randn(shape, device=_DEV, dtype=dtype)
+    storage = 1 + sum((s - 1) * st for s, st in zip(shape, stride) if s > 0)
+    return torch.randn((storage,), device=_DEV, dtype=dtype).as_strided(shape, list(stride))
+
+
+def case_production_spec(row):
+    fn = row["function"]
+    shapes = row["shapes"]
+    eps = float(row.get("eps", _EPS))
+    tag = row["id"]
+    x = _from_spec(shapes["x"])
+    yb0, yb1 = torch.empty_like(x), torch.empty_like(x)
+    yc0, yc1 = torch.empty_like(x), torch.empty_like(x)
+    _poison(yc0, yc1)
+    if fn == "dual_modulate":
+        s0, h0 = _from_spec(shapes["scale0"]), _from_spec(shapes["shift0"])
+        s1, h1 = _from_spec(shapes["scale1"]), _from_spec(shapes["shift1"])
+        r0, r1 = oracle_explicit(x, s0, h0, s1, h1, eps)
+        _candidate.ltx2_dual_modulate_candidate(x, s0, h0, s1, h1, eps, yc0, yc1)
+        _baseline.ltx2_dual_modulate_baseline(x, s0, h0, s1, h1, eps, yb0, yb1)
+    elif fn == "ca_dual_modulate_from_temb":
+        temb = _from_spec(shapes["temb_scale_shift"])
+        table = _from_spec(shapes["scale_shift_table"])
+        r0, r1 = oracle_ca(x, temb, table, eps)
+        _candidate.ltx2_ca_dual_modulate_from_temb_candidate(x, temb, table, eps, yc0, yc1)
+        _baseline.ltx2_ca_dual_modulate_from_temb_baseline(x, temb, table, eps, yb0, yb1)
+    else:
+        _check(f"prodspec/{tag}", False, f"unknown function {fn!r}")
+        return
+    _check(f"prodspec/{tag}/cand_y0", torch.equal(r0, yc0), "candidate != oracle")
+    _check(f"prodspec/{tag}/cand_y1", torch.equal(r1, yc1), "candidate != oracle")
+    _check(f"prodspec/{tag}/base_y0", torch.equal(r0, yb0), "baseline != oracle")
+    _check(f"prodspec/{tag}/base_y1", torch.equal(r1, yb1), "baseline != oracle")
+
+
+def _misaligned_compact_like(x):
+    """A compact [B,S,D] output whose data_ptr is offset by one bf16 (2 bytes) so it is
+    NOT 16-byte aligned -> forces the candidate's scalar fallback path. Still passes
+    check_output (compact strides); only the base pointer is misaligned."""
+    B_, S, D = x.shape
+    parent = torch.empty(B_ * S * D + 8, device=_DEV, dtype=torch.bfloat16)
+    return parent.narrow(0, 1, B_ * S * D).view(B_, S, D)
+
+
+def case_scalar_fallback(B_, S, D, fn, tag):
+    x = torch.randn(B_, S, D, device=_DEV, dtype=torch.bfloat16)
+    yc0, yc1 = _misaligned_compact_like(x), _misaligned_compact_like(x)
+    _poison(yc0, yc1)
+    if fn == "explicit":
+        s0, h0, s1, h1 = (_one_param(B_, S, D, "B1D", _DEV) for _ in range(4))
+        r0, r1 = oracle_explicit(x, s0, h0, s1, h1)
+        _candidate.ltx2_dual_modulate_candidate(x, s0, h0, s1, h1, _EPS, yc0, yc1)
+    else:
+        temb = torch.randn(B_, 1, 4 * D, device=_DEV, dtype=torch.bfloat16)
+        table = torch.randn(4, D, device=_DEV, dtype=torch.bfloat16)
+        r0, r1 = oracle_ca(x, temb, table)
+        _candidate.ltx2_ca_dual_modulate_from_temb_candidate(x, temb, table, _EPS, yc0, yc1)
+    _check(f"scalarfb/{tag}/y0", torch.equal(r0, yc0), "scalar-fallback candidate != oracle")
+    _check(f"scalarfb/{tag}/y1", torch.equal(r1, yc1), "scalar-fallback candidate != oracle")
+
+
 def expect_raises(tag, thunk):
     try:
         thunk()
@@ -141,6 +223,10 @@ def main():
     for B_, S, D in [(2, 1536, 4096), (2, 126, 2048), (1, 6144, 4096), (1, 126, 2048)]:
         case_explicit(B_, S, D, ("B1D",) * 4, f"prod_{B_}x{S}x{D}")
         case_ca(B_, S, D, torch.bfloat16, 1, f"prod_{B_}x{S}x{D}")
+
+    print("[production workloads.json rows: exact frozen shapes/strides vs oracle]")
+    for _row in json.loads((_TASK_ROOT / "bench" / "workloads.json").read_text()):
+        case_production_spec(_row)
 
     print("[regression grid x uniform explicit param layouts]")
     for B_ in (1, 2, 4):
@@ -169,6 +255,10 @@ def main():
     for td in (torch.bfloat16, torch.float32):
         for tseq in (1, 128):
             case_ca(2, 128, 1024, td, tseq, f"padtab_{td}_ts{tseq}", table_pad=64)
+
+    print("[scalar fallback: misaligned (non-16B) compact output forces scalar path]")
+    case_scalar_fallback(2, 130, 1024, "explicit", "explicit_2x130x1024")
+    case_scalar_fallback(1, 64, 2048, "ca", "ca_1x64x2048")
 
     print("[D=8192 boundary]")
     case_explicit(1, 8, 8192, ("B1D",) * 4, "D8192")

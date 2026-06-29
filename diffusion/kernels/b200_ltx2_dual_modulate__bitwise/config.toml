@@ -36,9 +36,12 @@ baseline = "pytorch_eager"
 warmup_runs = 10
 iterations = 200
 num_trials = 7
+# Matches docs/standalone_diffusion_benchmark_template.py / bench/benchmark.py argparse
+# defaults so a plain `python bench/benchmark.py` honors this config (the template is the
+# source of truth for timing policy; do not fork it).
 inner_iterations_min = 1
-inner_iterations_max = 2048
+inner_iterations_max = 4096
 target_sample_us = 1000
-timeout_seconds = 900
+timeout_seconds = 600
 use_isolated_runner = true
 required_matched_ratio = 1.0
