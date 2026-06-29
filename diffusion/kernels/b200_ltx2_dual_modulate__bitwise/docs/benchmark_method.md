@@ -2,7 +2,7 @@
 
 Status: validated on B200 on 2026-06-29 (full-op TVM-FFI CUDA ABI for both baseline
 and candidate; candidate is `solution/kernel.cu`). A fresh run on an idle B200 produced
-a bit-exact correctness gate of 1815/0 and a 12/12-bitwise A/B benchmark (geomean
+a bit-exact correctness gate of 1819/0 and a 12/12-bitwise A/B benchmark (geomean
 3.54×, no production regression). Per-shape numbers and provenance are in
 `docs/results.md` and `docs/run_log.md`.
 

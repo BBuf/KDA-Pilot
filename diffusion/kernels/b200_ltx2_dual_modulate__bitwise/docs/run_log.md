@@ -35,9 +35,11 @@ CUDA_VISIBLE_DEVICES=5 python -c "from solution.build import load_candidate_modu
 CUDA_VISIBLE_DEVICES=5,6 python bench/correctness.py        # -> 1819 passed, 0 failed
 # per-shape A/B benchmark
 CUDA_VISIBLE_DEVICES=5 python bench/benchmark.py --out bench/results.jsonl   # -> 12/12 PASSED, geomean 3.54x
-# Nsight Compute (representative rows)
-CUDA_VISIBLE_DEVICES=5 ncu --set basic -k regex:affine -c 1 -o profile/round0_ncu/video_s32640 python ncu_run.py 1 32640 4096 explicit
-CUDA_VISIBLE_DEVICES=5 ncu --set basic -k regex:affine -c 1 -o profile/round0_ncu/audio_s126 python ncu_run.py 1 126 2048 explicit
+# Nsight Compute (representative rows) — via the checked-in replay harness bench/ncu_run.py
+CUDA_VISIBLE_DEVICES=5 ncu --set basic -k regex:affine -c 1 -o profile/ncu/video_s32640 \
+  python bench/ncu_run.py --workload-id ltx23_hq_pr29392_stage2_video_explicit_s32640_d4096_bcast1 --iters 1
+CUDA_VISIBLE_DEVICES=5 ncu --set basic -k regex:affine -c 1 -o profile/ncu/audio_s126 \
+  python bench/ncu_run.py --workload-id ltx23_stage1_audio_explicit_s126_d2048_bcast1 --iters 1
 ```
 
 ## Outcome

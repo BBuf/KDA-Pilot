@@ -6,7 +6,7 @@
   (`torch.equal`, atol=rtol=0).
 - **Equal-weight geometric mean speedup: 3.54×** over the 12 production rows.
 - Arithmetic mean 3.65×, **min 2.42×** (no production shape regresses), max 5.18×.
-- Independent-oracle correctness gate: **1815 checks passed, 0 failed** on B200.
+- Independent-oracle correctness gate: **1819 checks passed, 0 failed** on B200.
 
 ## Provenance
 
@@ -118,9 +118,9 @@ Nsight Compute (`--set basic`) on the vectorized `explicit_affine_kernel_vec`:
   Compute(SM) 55.7%, Achieved Occupancy 64.8% → **L1TEX-bound on the scalar broadcast
   param-load instructions** (the params are cached, so DRAM stays low; the load-issue
   rate saturates the memory pipe).
-- audio `S=126`: Memory 9.5%, DRAM 1.0%, Occupancy 12.5% → **launch/latency-bound** (only
-  0.26M elements). The 4–5× win here comes from collapsing the eager path's many kernel
-  launches into `rms_norm` + one fused kernel.
+- audio `S=126` (stage1, `[2,126,2048]`): Memory 18.9%, DRAM 2.0%, Occupancy 19.9% →
+  **launch/latency-bound** (~0.5M elements). The 4–5× win here comes from collapsing the
+  eager path's many kernel launches into `rms_norm` + one fused kernel.
 
 **Conclusion:** correct and target-complete. A single bit-exact kernel pair beats the
 eager baseline on every production shape (geomean 3.54×, no regression). The remaining
