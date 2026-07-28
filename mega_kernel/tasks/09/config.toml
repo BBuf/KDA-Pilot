@@ -1,32 +1,32 @@
 [task]
 slug = "megatasks/09 (moe_megakernel_bs1)"
-arch = "b300"
-target_gpu = "8x NVIDIA B300 SXM6 AC (sm_103)"
-target_host = "glm52-bs1-opt (rx devbox pool)"
+arch = "gb300"
+target_gpu = "2x4 NVIDIA GB300 (sm_103, cross-node MNNVL)"
+target_host = "k3-gsm8k-tp8 (rx devbox, resident, shared with Kimi-K3)"
 remote_container = "none"
-remote_workdir = "/scratch/kda_bs1/mega09"
+remote_workdir = "/scratch/users/bbuf/kda_bs1/mega09"
 family = "moe_megakernel"
 kernel_family = "persistent fused MoE: routing -> gemm1 -> SiLU -> gemm2 -> finalize(+shared add)"
 model = "zai-org/GLM-5.2-FP8"
 model_slug = "glm_52"
-serving_context = "bs=1 MTP @ 381.42: per MoE layer (75 verify calls/iter T=6) the chain routing(4.7-6.6us) + gemm1(23us) + act(4.2us) + gemm2(16us) + finalize-fused(6.8us) ~= 55-60us across 5-7 launches; pool = MoE GEMM 2.87 ms/iter (trtllm-gen cubin) + aux 1.75 ms/iter, ON the critical path"
+serving_context = "bs=1 MTP @ 393.40 (PR #32633): per MoE layer (76 chains/iter T=6) routing(6.0us) + gemm1(21.9us) + act(6.8us) + gemm2(16.5us) + finalize(7.3us) ~= 58us across 5-7 launches; GEMMs near BW floor (~82% eff) -> realistic pool = aux ~1.5 ms/iter + launch boundaries, ON the critical path"
 entry_points = [
   "replace: flashinfer trtllm_fp8_block_scale_moe cubin chain (bypassed path)",
-  "sources to reuse: flashinfer RoutingKernel.cuh (JIT source), sglang jit_kernel/moe_finalize_fuse_shared, CUTLASS SM100 blockwise fp8 GEMM (see LEARNINGS: beats DeepGEMM 1.128x at M<=6, loses only to cuBLAS bf16 which does not apply to MoE fp8)",
+  "sources to reuse: R15 glm_fused_router.cuh (byte-identical routing+top8+pack, sglang bbuf/glm52-bs1-450), flashinfer RoutingKernel.cuh (JIT source), sglang kernels/ops moe finalize sources, CUTLASS SM100 blockwise fp8 GEMM (LEARNINGS: beats DeepGEMM 1.128x at M<=6; fp8-dense-vs-bf16 verdict does not apply to MoE fp8)",
 ]
-port_target = "sglang python/sglang/jit_kernel/ (new module: bs1_moe_megakernel)"
+port_target = "sglang python/sglang/kernels/ (jit_kernel/ was deleted; new module under kernels/jit/csrc + kernels/ops/moe)"
 shapes_doc = "SHAPES.md"
 results = "RESULTS_SM103.md"
 
 [baseline]
-serving = "trtllm-gen fp8 block-scale MoE via flashinfer 0.6.12 (cubin, 82% BW-eff measured on gemms) + separate routing/act + our deferred-finalize"
-prior_art = "TileRT: whole-model piped_prefetch kernels, occupancy=1 via 168 regs (see TileRT_讨论材料); mega_kernel task 01 proved sync-point/critical-path savings convert ~1:1"
+serving = "trtllm-gen fp8 block-scale MoE via flashinfer 0.6.15 (cubin, 82% BW-eff measured on gemms) + separate routing/act + deferred-finalize; baseline branch = sgl-project/sglang PR #32633"
+prior_art = "TileRT piped_prefetch/occupancy=1 (TileRT_讨论材料 + MiniTileRT); R15 fused-router kernel: byte-identical routing+top8+pack segment ready to reuse (sglang bbuf/glm52-bs1-450 branch, glm_fused_router.cuh) + byte-equivalence harness (benchmark_round15_fused_router.py); GB300 conversion calibration: exposed critical-path kernel savings convert 50-80%"
 
 [benchmark]
 mode = "single-GPU CUDA-graph replay on frozen [T,*] shapes, cold-L2 (rotate >=48 weight copies: 32 local experts x fp8 block weights are the dominant bytes)"
-gate = "per-layer chain (T=6, 32 local experts, top-8+shared): fused kernel <= 42us (>=1.35x vs 55-60us 5-launch chain) AND fp32-oracle rel <= 2e-2 AND weight-bytes/s >= 85% of cubin gemm pair; e2e sanity >= 383 + accept >= 3.80 + official 3x40"
+gate = "per-layer chain (T=6, 32 local experts, top-8+shared): fused kernel <= 42us AND fp32-oracle rel <= 2e-2 AND weight-bytes/s >= 85% of cubin gemm pair; NO PDL anywhere (LEARNINGS #GB300-1); e2e sanity >= 395 + accept 3.80-3.90 + official 3x40 + GSM8K >= 0.94"
 device = "1 GPU dev; 8-GPU serving e2e"
 
 [deliverable]
 route = "persistent single kernel per MoE layer call: CTA-resident loop over (routing -> expert tiles gemm1 -> silu-mul -> gemm2 -> weighted finalize + shared add), fp8 block dequant in-tile, TMA/LDG.128 weight streaming, no intermediate global round-trips; fall back to stock chain for T>6 or non-bypassed formats"
-expected_e2e = "-0.6 to -1.2 ms/iter if >=1.35x on the chain (biggest single pool on the board)"
+expected_e2e = "-1.2 to -1.5 ms/iter realistic (aux chain + launch boundaries; do NOT budget the 4.6ms gross pool -- GEMMs are at BW floor)"

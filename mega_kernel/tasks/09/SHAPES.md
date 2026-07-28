@@ -7,16 +7,20 @@ moe_intermediate 2048(TP8 → 每 rank 256),fp8 128×128 block 量化,激活 bf1
 
 | 站点 | T | 说明 |
 |---|---:|---|
-| verify 图(75 个 MoE 层) | 6 | 主战场;routing_logits [6,256],hidden [6,6144] |
+| verify 图(76 个 MoE 链/迭代,含 draft-extend) | 6 | 主战场;routing_logits [6,256],hidden [6,6144] |
 | draft/extend(1 层 MTP) | 1 / 6 | 同构小流量 |
 
 链条(当前 5-7 个 kernel,目标 1 个):
 routing [T,256]→top8 ids/weights → gemm1: 选中专家 w13 [2×256,6144]fp8 × x_q [T,6144]fp8
 → SiLU-mul [T,256] → gemm2: w2 [6144,256]fp8 → finalize: top-8 加权和 + shared expert
 输出加法([T,6144] bf16 输出)。注意 defer-finalize 语义(shared 已在 finalize 融合)。
-每层权重字节(local 32 专家)≈ 32×(2×256×6144 + 6144×256)×1B ≈ 151MB → T=6 时纯读
-@3.5TB/s ≈ 43µs——**但 top-8 只激活 ≤8/32 local 专家,实际读 ~38MB ≈ 11µs**;当前
-gemm 对 39µs 说明离带宽还有 3× 余量,巨核的机会在减少 launch/等待与提高专家级并行。
+每层权重字节(local 32 专家)≈ 32×(2×256×6144 + 6144×256)×1B ≈ 151MB;T=6 时
+top-8 跨 6 token 唯一激活专家最多 48 个 slot,实际读 ~38MB。GB300 实测(393.40 配置
+trace):gemm1 21.9µs + gemm2 16.5µs = 38.4µs ≈ 带宽账相符(trtllm-gen ~82% BW-eff),
+**GEMM 本体余量很小**;aux 链 routing 6.0 + act 6.8 + finalize 7.3 ≈ 20µs/层 +
+5-7 次 launch 边界才是巨核的主要收益来源(quant 3.0µs 已在 serving 侧挪 alt 流,
+不在本链)。
 
-复核:profile 60 步,按 kernel 名统计链条各环节 n/iter×µs;从 moe_runner 调用点 dump
-一次真实 routing_logits/bias/scale。
+复核:profile 60-100 步(bounded),按 grid 指纹统计链条各环节 n/iter×µs(对照表在
+战役 LEDGER R5);从 moe_runner 调用点 dump 一次真实 routing_logits/bias/scale。
+routed packed 格式注意:(id<<16)|bf16(weight),权重需自带 ×2.5(LEARNINGS #GB300-7)。
