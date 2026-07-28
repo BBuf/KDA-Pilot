@@ -5,9 +5,7 @@ target_gpu = "NVIDIA B200"
 family = "ernie_adaln_residual_gate"
 entry_points = [
   "sglang.multimodal_gen.runtime.models.dits.ernie_image:ErnieImageSharedAdaLNBlock.forward",
-  "sglang.multimodal_gen.runtime.models.dits.ernie_image:_ernie_norm_scale_shift",
-  "sglang.multimodal_gen.runtime.models.dits.ernie_image:_ernie_scale_residual_norm_scale_shift",
-  "sglang.multimodal_gen.runtime.models.dits.ernie_image:_ernie_residual_gate_add",
+  "sglang.multimodal_gen.runtime.layers.layernorm:RMSNorm.forward_cuda",
 ]
 
 [build]

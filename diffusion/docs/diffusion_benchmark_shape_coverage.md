@@ -168,6 +168,35 @@ last-dim stride 1, `num_heads=32`, and `eps=1e-6`.
   `k=[1,6144,2048]`, `head_dim=64`, `q cos/sin=[1,32,126,32]`,
   `k cos/sin=[1,32,6144,32]`.
 
+## `b200_vsa_fused_compress_topk__bitwise`
+
+Research rows from FastVideo PR 1421, to be retained until replaced or
+augmented by a fresh SGLang VSA capture:
+
+- `B=1`, `H=12`, `D=128`, BF16, `block_elements=64`;
+- sequence length `10240`, `num_blocks=160`, `topk=16`;
+- sequence length `40960`, `num_blocks=640`, `topk=64`;
+- sequence length `49152`, `num_blocks=768`;
+- sequence length `102400`, `num_blocks=1600`, `topk=160`;
+- sequence length `115200`, `num_blocks=1800`.
+
+Required SGLang partial-tile audit rows:
+
+- latent grid `(5,32,32)`, VSA tile `(4,4,4)`;
+- latent grid `(21,30,52)`, VSA tile `(4,4,4)`;
+- latent grid `(21,60,104)`, VSA tile `(4,4,4)`.
+
+Capture the exact head count, sparsity ratio, padded sequence length,
+`variable_block_sizes`, strides, and gate layout from current SGLang before
+tuning. B200 is required for final performance evidence.
+
+Task-definition validation on 2026-07-29 used an H100 80GB HBM3 and a local
+CUDA 13.0 build of FastVideo commit
+`1b2b2a0161bc6b3b80158d1fa6380a051c6530c7`. Its
+`tests/test_fused_compress_topk.py` suite passed `13/13`. This validates the
+portable upstream implementation and test harness on SM90, but it does not
+prove the stricter KDA tie-order bitwise contract or any B200 speedup.
+
 ## Known Gaps To Audit
 
 - `firered-edit-1.1`, `ltx23-one-stage`, `helios`, and `zimage` were

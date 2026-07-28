@@ -24,6 +24,8 @@ docs/
   diffusion_kernel_rules.md
   ghostty_claude_code_workflow.md
   diffusion_benchmark_shape_coverage.md
+  h100_sol_attention_quality_gate.md
+  b200_fp4_attention_quality_gate.md
   standalone_diffusion_benchmark.md
   standalone_diffusion_benchmark_template.py
 kernels/
@@ -42,6 +44,7 @@ kernels/
   b200_ltx2_qknorm_split_rope__bitwise/
   b200_wan_vae_rmsnorm_silu__bitwise/
   b200_ernie_adaln_residual_gate__bitwise/
+  b200_vsa_fused_compress_topk__bitwise/
 scripts/
   launch_kda_kernel_task.sh
   launch_kernels/
@@ -73,6 +76,11 @@ Canonical regression grids live in
 [`docs/diffusion_correctness_contract.md`](docs/diffusion_correctness_contract.md).
 The production preset and shape audit lives in
 [`docs/diffusion_benchmark_shape_coverage.md`](docs/diffusion_benchmark_shape_coverage.md).
+Approximate SOL Attention and architecture-specific FP4 attention remain
+experiment-only until they satisfy
+[`docs/h100_sol_attention_quality_gate.md`](docs/h100_sol_attention_quality_gate.md)
+and
+[`docs/b200_fp4_attention_quality_gate.md`](docs/b200_fp4_attention_quality_gate.md).
 Every task prompt requires the agent to follow these documents.
 
 ## Benchmark Principle
@@ -107,6 +115,7 @@ diffusion/scripts/launch_kernels/k21_b200_ltx2_rms_adaln__bitwise.sh
 diffusion/scripts/launch_kernels/k22_b200_ltx2_qknorm_split_rope__bitwise.sh
 diffusion/scripts/launch_kernels/k23_b200_wan_vae_rmsnorm_silu__bitwise.sh
 diffusion/scripts/launch_kernels/k23_b200_ernie_adaln_residual_gate__bitwise.sh
+diffusion/scripts/launch_kernels/k24_b200_vsa_fused_compress_topk__bitwise.sh
 ```
 
 Set `KDA_NO_CLAUDE=1` to prepare the worktree without launching Claude.

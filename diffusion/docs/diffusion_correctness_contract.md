@@ -211,3 +211,30 @@ For `b200_ltx2_rms_adaln__bitwise`, tolerance is not allowed. The candidate
 must be bit-wise equal to the task-local PyTorch eager baseline
 `torch.nn.functional.rms_norm(x, (D,), eps=eps) * (1 + scale) + shift`.
 Compare the final output with `torch.equal`.
+
+## VSA Block Compression + TopK
+
+Task:
+
+- `b200_vsa_fused_compress_topk__bitwise`
+
+Block-compression regression grid:
+
+- `B=1`, `H=12`, `D=128`, `block_elements=64`, BF16;
+- sequence lengths `10240`, `40960`, `49152`, `102400`, `115200`;
+- variable final-block sizes in `[1, 63]`;
+- CUDA int32 and int64 `variable_block_sizes`.
+
+The exact oracle is FP32 `sum(dim=3)`, FP32 division by the variable block
+size, then one BF16 cast. Compare with `torch.equal`.
+
+TopK-mask regression grid:
+
+- KV-block counts `160`, `640`, `768`, `1600`, `1800`, `2048`, `4096`;
+- TopK ratios `0.1`, `0.25`, and `0.5`;
+- `-inf` masking ratios `0.1`, `0.3`, `0.5`, and `0.8`;
+- distinct-score, all-equal, and boundary-tie rows.
+
+The oracle is `torch.topk(...).indices` followed by a bool zero/scatter mask.
+The candidate must match the mask with `torch.equal`, including selected
+indices on tie rows, and every row must contain exactly `topk` true entries.

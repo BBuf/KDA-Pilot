@@ -2,6 +2,17 @@
 
 Target GPU: NVIDIA B200.
 
+Research baseline verified against:
+
+- repository: `https://github.com/sgl-project/sglang`
+- branch: `main`
+- commit: `86ee545388677733df8da4cf8726c13d7b445875`
+- verified: `2026-07-29`
+
+Resolve `main` again when the task is launched and record the then-current
+commit in `docs/baseline_source.md`. The commit above is the task-definition
+audit point, not permission to use a stale baseline.
+
 This task replaces the closed / abandoned SGLang PR direction:
 
 - `sgl-project/sglang#30170` (`ERNIE-Image fused AdaLN / residual-gate fast path`)
@@ -15,10 +26,14 @@ validation evidence.
 Target SGLang diffusion source patterns to copy as local baseline:
 
 - `sglang.multimodal_gen.runtime.models.dits.ernie_image:ErnieImageSharedAdaLNBlock.forward`
-- `sglang.multimodal_gen.runtime.models.dits.ernie_image:_ernie_norm_scale_shift`
-- `sglang.multimodal_gen.runtime.models.dits.ernie_image:_ernie_scale_residual_norm_scale_shift`
-- `sglang.multimodal_gen.runtime.models.dits.ernie_image:_ernie_residual_gate_add`
-- `sglang.multimodal_gen.runtime.layers.layernorm:RMSNorm`
+- `sglang.multimodal_gen.runtime.layers.layernorm:RMSNorm.forward_cuda`
+- `sglang.multimodal_gen.runtime.layers.layernorm:RMSNorm.forward_native`
+
+The three historical helper names `_ernie_norm_scale_shift`,
+`_ernie_scale_residual_norm_scale_shift`, and `_ernie_residual_gate_add` no
+longer exist on current SGLang `main`. Do not recreate them as the baseline.
+The authoritative production boundaries are the eager expressions in
+`ErnieImageSharedAdaLNBlock.forward` and the current CUDA RMSNorm dispatch.
 
 Goal: produce optimized ERNIE AdaLN / residual-gate fused kernels that are
 **bit-wise equal** to the real SGLang ERNIE-Image Turbo production baseline in
