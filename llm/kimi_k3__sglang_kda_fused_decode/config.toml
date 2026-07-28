@@ -1,0 +1,33 @@
+[task]
+slug = "kimi_k3__sglang_kda_fused_decode"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "attention"
+kernel_family = "kda_fused_decode"
+model = "moonshotai/Kimi-K3"
+model_slug = "kimi_k3"
+entry_points = [
+  "sglang.kernels.ops.attention.kda_fused_decode.kda_fused_decode",
+]
+evidence_json = "docs/profile_evidence.json"
+shape_source_json = "docs/captured_kernel_api_shapes.json"
+workloads_json = "bench/workloads.json"
+
+[selection]
+method = "serving-profile GPU-time headroom (extract_kernel_shapes >2%, family-grouped; provenance only)"
+max_pct_of_gpu = 3.61
+best_scenario = "random_high"
+dataset = "random"
+concurrency = "100"
+
+[build]
+language = "python/cuda"
+baseline_entry_point = "baseline/<copied_sglang_interface>::baseline"
+candidate_entry_point = "solution/<candidate_interface>::candidate"
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+use_isolated_runner = true
+required_matched_ratio = 1.0

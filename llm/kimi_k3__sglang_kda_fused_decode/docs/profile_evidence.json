@@ -1,0 +1,28 @@
+{
+  "model": "moonshotai/Kimi-K3",
+  "model_slug": "kimi_k3",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
+  "tp": "8",
+  "capture_provenance_note": "Kimi-K3 is a 3T-parameter hybrid model whose weights need 2 nodes, so the cookbook profile and the kernel-API shapes were captured on a 2x4 GB300 (sm_103) TP=8 deployment; the standalone kernel optimization itself runs single-GPU on the B200 lane (all three kernels require only SM100+). The captured shapes are the contract, not the capture host.",
+  "python_interface": "sglang.kernels.ops.attention.kda_fused_decode.kda_fused_decode",
+  "kernel_family": "kda_fused_decode",
+  "profiler_op_provenance": [],
+  "category": "attention",
+  "gpu_kernels": [
+    "void (anonymous namespace)::kda_decode_fusion_many_heads_kernel<true, true, 12, 12, true, "
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 2.89,
+    "random_mid": 2.66,
+    "random_high": 3.61,
+    "sharegpt_low": 0.3,
+    "sharegpt_mid": 2.59,
+    "sharegpt_high": 0.7
+  },
+  "max_pct_of_gpu": 3.61,
+  "best_scenario": "random_high",
+  "input_shapes": [],
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}

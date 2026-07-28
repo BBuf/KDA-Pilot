@@ -294,6 +294,42 @@ TORCH_OP_OVERLOAD_TARGETS: dict[str, tuple[str, ...]] = {
         "sglang_per_token_group_quant_fp8",
         "sglang_per_token_group_quant_fp8_row_padded",
     ),
+    # Kimi-K3 hot Python interfaces (hybrid KDA + MLA, latent MoE, SiTU).
+    "sglang.kernels.ops.gemm.cutedsl_bf16_gemm": (
+        "cutedsl_bf16_gemm",
+        "cutedsl_bf16_gemm_out",
+    ),
+    "sglang.kernels.ops.gemm.tiny_gemm": (
+        "tiny_n_gemm_bf16",
+        "tiny_k_gemm_bf16",
+    ),
+    "sglang.kernels.ops.attention.kda_fused_decode": (
+        "kda_fused_decode",
+    ),
+    "sglang.kernels.ops.quantization.per_token_group_quant": (
+        "per_token_group_quant",
+    ),
+    "sglang.kernels.ops.moe.moe_route_radix": (
+        "route_radix",
+    ),
+    "sglang.kernels.ops.moe.moe_fused_gate": (
+        "moe_fused_gate",
+    ),
+    "sglang.kernels.ops.kimi_k3.activation": (
+        "situ_and_mul",
+    ),
+    # The production attention-residual path is AttnResidual.forward ->
+    # _aggregate -> _aggregate_fast/_aggregate_fused (aggregate_stream is only
+    # the dspark aux-capture entry), so record the dispatcher and both fast
+    # paths. Intra-module calls resolve through module globals at call time, so
+    # patching the module attribute reaches them.
+    "sglang.srt.layers.attn_residual": (
+        "_aggregate",
+        "_aggregate_fast",
+        "_aggregate_fused",
+        "_aggregate_fused_add",
+        "aggregate_stream",
+    ),
 }
 
 _lock = threading.Lock()

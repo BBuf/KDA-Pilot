@@ -1,0 +1,127 @@
+{
+  "model": "moonshotai/Kimi-K3",
+  "model_slug": "kimi_k3",
+  "sglang_commit": "kimi-k3 @32e2db02d",
+  "purpose": "GPU-kernel-name prefix -> launching SGLang Python interface, verified by reading the sglang sources at the commit above. Used as the provenance source for build_e2e_tasks.py when a CPU+GPU profiler trace is unavailable: on this 2-node GB300 K3 deployment the profiler records continuously from arm until num_steps is reached, so any CPU-activities trace large enough to cover serving concurrency trips the request watchdog while exporting.",
+  "map": [
+    {
+      "kernel_prefix": "kernel_cutlass_kernel_TgvGemmCuteExtKernel",
+      "interface": "sglang.kernels.ops.gemm.cutedsl_bf16_gemm.cutedsl_bf16_gemm",
+      "source": "python/sglang/kernels/ops/gemm/cutedsl_bf16_gemm.py",
+      "note": "CuTe-DSL TGV bf16 GEMM (SM100/SM103), selected by --bf16-gemm-backend auto/cutedsl; also reached through cutedsl_bf16_gemm_out for caller-owned output buffers.",
+      "task_name": "sglang_cutedsl_tgv_bf16_gemm"
+    },
+    {
+      "kernel_prefix": "nvjet_",
+      "interface": "torch.nn.functional.linear",
+      "source": "cuBLASLt heuristic kernels behind torch linear / torch.mm",
+      "note": "Dense bf16 GEMM shapes the TGV dispatch declines (larger M); the standalone task target is the same GEMM contract.",
+      "task_name": "torch_linear_bf16"
+    },
+    {
+      "kernel_prefix": "bmm_MxE4m3_MxE2m1MxE4m3",
+      "interface": "sglang.kernels.ops.moe.trtllm_gen_moe.trtllm_fp4_block_scale_routed_moe",
+      "source": "python/sglang/kernels/ops/moe/trtllm_gen_moe.py",
+      "note": "trtllm-gen SiTU MoE w4a8 batched GEMM (vendor cubin). Excluded from task generation as the vendor fused-MoE path.",
+      "exclude": "fused_moe_trtllm"
+    },
+    {
+      "kernel_prefix": "bmm_Bfloat16_MxE2m1MxE4m3",
+      "interface": "sglang.kernels.ops.moe.trtllm_gen_moe.trtllm_fp4_block_scale_routed_moe",
+      "source": "python/sglang/kernels/ops/moe/trtllm_gen_moe.py",
+      "note": "trtllm-gen SiTU MoE w4a16 batched GEMM (vendor cubin). Excluded, same reason.",
+      "exclude": "fused_moe_trtllm"
+    },
+    {
+      "kernel_prefix": "moe::dev::",
+      "interface": "sglang.kernels.ops.moe.trtllm_gen_moe.trtllm_fp4_block_scale_routed_moe",
+      "source": "python/sglang/kernels/ops/moe/trtllm_gen_moe.py",
+      "note": "In-op routing / finalize kernels of the vendor fused MoE. Excluded.",
+      "exclude": "fused_moe_trtllm"
+    },
+    {
+      "kernel_prefix": "kda_decode_fusion_many_heads_kernel",
+      "interface": "sglang.kernels.ops.attention.kda_fused_decode.kda_fused_decode",
+      "source": "python/sglang/kernels/ops/attention/kda_fused_decode.py",
+      "note": "Fused KDA decode step: conv1d state update + delta rule + gated RMSNorm in one launch (69 KDA layers per token).",
+      "task_name": "sglang_kda_fused_decode"
+    },
+    {
+      "kernel_prefix": "attn_res_fused_tma_kernel",
+      "interface": "sglang.srt.layers.attn_residual._aggregate",
+      "source": "python/sglang/srt/layers/attn_residual.py",
+      "note": "K3 attention-residual aggregation (score rows -> softmax -> weighted sum -> RMSNorm). Production entry is AttnResidual.forward -> _aggregate -> _aggregate_fast (TMA fast path, SM100+ at hidden 7168) / _aggregate_fused.",
+      "task_name": "sglang_attn_res_aggregate"
+    },
+    {
+      "kernel_prefix": "attn_res_score",
+      "interface": "sglang.srt.layers.attn_residual._aggregate",
+      "source": "python/sglang/srt/layers/attn_residual.py",
+      "note": "K3 attention-residual aggregation (score rows -> softmax -> weighted sum -> RMSNorm). Production entry is AttnResidual.forward -> _aggregate -> _aggregate_fast (TMA fast path, SM100+ at hidden 7168) / _aggregate_fused.",
+      "task_name": "sglang_attn_res_aggregate"
+    },
+    {
+      "kernel_prefix": "route_radix_kernel",
+      "interface": "sglang.kernels.ops.moe.moe_route_radix.route_radix",
+      "source": "python/sglang/kernels/ops/moe/moe_route_radix.py",
+      "note": "Register-resident radix-select router over [M, 896] logits, top-16 in one pass; dispatched from moe_fused_gate.",
+      "task_name": "sglang_moe_route_radix"
+    },
+    {
+      "kernel_prefix": "per_token_group_quant",
+      "interface": "sglang.kernels.ops.quantization.per_token_group_quant.per_token_group_quant",
+      "source": "python/sglang/kernels/ops/quantization/per_token_group_quant.py",
+      "note": "MXFP8 per-token-group quantization of the routed MoE activations (group 32, packed UE8M0 scales).",
+      "task_name": "per_token_group_quant"
+    },
+    {
+      "kernel_prefix": "situ_and_mul_kernel",
+      "interface": "sglang.kernels.ops.kimi_k3.activation.situ_and_mul",
+      "source": "python/sglang/kernels/ops/kimi_k3/activation.py",
+      "note": "SiTuGLU activation of the shared-expert branch: beta*tanh(gate/beta)*sigmoid(gate)*up.",
+      "task_name": "sglang_situ_and_mul"
+    },
+    {
+      "kernel_prefix": "tiny_n_gemm_kernel",
+      "interface": "sglang.kernels.ops.gemm.tiny_gemm.tiny_n_gemm_bf16",
+      "source": "python/sglang/kernels/ops/gemm/tiny_gemm.py",
+      "note": "Skinny-N bf16 GEMV specialization used by the KDA b/f_a projection chain at decode.",
+      "task_name": "sglang_tiny_gemm_bf16"
+    },
+    {
+      "kernel_prefix": "tiny_k_gemm_kernel",
+      "interface": "sglang.kernels.ops.gemm.tiny_gemm.tiny_k_gemm_bf16",
+      "source": "python/sglang/kernels/ops/gemm/tiny_gemm.py",
+      "note": "Skinny-K bf16 GEMV specialization used by the KDA f_b projection at decode.",
+      "task_name": "sglang_tiny_gemm_bf16"
+    },
+    {
+      "kernel_prefix": "flash_fwd_splitkv_mla",
+      "interface": "flashinfer.decode.trtllm_batch_decode_with_kv_cache_mla",
+      "source": "--decode-attention-backend trtllm_mla",
+      "note": "MLA decode attention for the 24 full-attention layers (kv_lora 512 + rope 64).",
+      "task_name": "flashinfer_trtllm_batch_decode_mla"
+    },
+    {
+      "kernel_prefix": "fmha",
+      "interface": "flashinfer.prefill.trtllm_ragged_attention_deepseek",
+      "source": "--prefill-attention-backend trtllm_mla",
+      "note": "MLA prefill attention.",
+      "task_name": "flashinfer_trtllm_ragged_attention"
+    },
+    {
+      "kernel_prefix": "all_reduce_",
+      "interface": "sglang.srt.layers.k3_ar_fusion.all_reduce",
+      "source": "python/sglang/srt/layers/k3_ar_fusion.py",
+      "note": "K3 fused all-reduce family (MNNVL push/pull, AR+RMSNorm, finalize-in-collective). Communication: excluded from task generation.",
+      "exclude": "comm"
+    },
+    {
+      "kernel_prefix": "set_mla_kv_concat_q",
+      "interface": "sglang.kernels.ops.attention.set_mla_kv_concat_q",
+      "source": "python/sglang/kernels/ops/attention/",
+      "note": "MLA decode prologue: KV scatter + q concat in one kernel, PDL-armed ahead of the attention kernel.",
+      "task_name": "sglang_set_mla_kv_concat_q"
+    }
+  ]
+}

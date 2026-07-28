@@ -1,0 +1,1019 @@
+{
+  "model": "moonshotai/Kimi-K3",
+  "task": "kimi_k3__sglang_attn_res_aggregate",
+  "source": "fresh_sglang_kernel_api_capture",
+  "capture_note": "Captured on a 2x4 GB300 devbox (sm_103, aarch64), sglang kimi-k3 @32e2db02d, moonshotai/Kimi-K3 tp=8 across 2 nodes, CUDA graphs disabled so every kernel keeps a Python launcher, 2026-07-28. Records are Python kernel-interface call contracts (tensor metadata only; no tensor values). Kimi-K3 issues 92 MoE and 93 attention layers per forward pass, so the hook's 256-calls-per-interface cap fills during the readiness generation that precedes the marked scenarios: entries are labelled 'unmarked' rather than carrying a scenario name. The set still spans both regimes - M=1 decode rows (TGV GEMM 1x7168) and M=76 batched rows (attention-residual, KDA fused decode).",
+  "markers": [
+    {
+      "end_time": 1785241333.6405065,
+      "payload": {
+        "max_new_tokens": 8,
+        "text_chars": 19200
+      },
+      "scenario": "sharegpt_low_long_prompt",
+      "start_time": 1785241330.6237357
+    },
+    {
+      "end_time": 1785241338.5835407,
+      "payload": {
+        "max_new_tokens": 16,
+        "text_chars": 576
+      },
+      "scenario": "random_low_short_prompt",
+      "start_time": 1785241333.6409159
+    },
+    {
+      "end_time": 1785241340.2163672,
+      "payload": {
+        "concurrency": 16,
+        "max_new_tokens": 4,
+        "text_chars": 19200
+      },
+      "scenario": "sharegpt_mid_concurrency16_long_prompt",
+      "start_time": 1785241338.5837903
+    }
+  ],
+  "workload_count": 10,
+  "workloads": [
+    {
+      "id": "_aggregate__unmarked__0001__76x7168_76x8x7168",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": null,
+      "function": "sglang.srt.layers.attn_residual._aggregate",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        },
+        1,
+        {
+          "kind": "ReplicatedLinear"
+        },
+        {
+          "kind": "RMSNorm"
+        },
+        {
+          "kind": "RMSNorm"
+        }
+      ],
+      "kwargs": {
+        "write_bank_row": false
+      },
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          76,
+          7168
+        ],
+        "storage_offset": 0,
+        "stride": [
+          7168,
+          1
+        ]
+      }
+    },
+    {
+      "id": "_aggregate_fast__unmarked__0002__76x7168_76x8x7168",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": null,
+      "function": "sglang.srt.layers.attn_residual._aggregate_fast",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        },
+        1,
+        {
+          "kind": "ReplicatedLinear"
+        },
+        {
+          "kind": "RMSNorm"
+        },
+        {
+          "kind": "RMSNorm"
+        }
+      ],
+      "kwargs": {
+        "write_bank_row": false
+      },
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          76,
+          7168
+        ],
+        "storage_offset": 0,
+        "stride": [
+          7168,
+          1
+        ]
+      }
+    },
+    {
+      "id": "_aggregate__unmarked__0003__76x7168_76x8x7168",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": null,
+      "function": "sglang.srt.layers.attn_residual._aggregate",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        },
+        1,
+        {
+          "kind": "ReplicatedLinear"
+        },
+        {
+          "kind": "RMSNorm"
+        },
+        {
+          "kind": "RMSNorm"
+        }
+      ],
+      "kwargs": {
+        "write_bank_row": true
+      },
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          76,
+          7168
+        ],
+        "storage_offset": 0,
+        "stride": [
+          7168,
+          1
+        ]
+      }
+    },
+    {
+      "id": "_aggregate_fast__unmarked__0004__76x7168_76x8x7168",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": null,
+      "function": "sglang.srt.layers.attn_residual._aggregate_fast",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        },
+        1,
+        {
+          "kind": "ReplicatedLinear"
+        },
+        {
+          "kind": "RMSNorm"
+        },
+        {
+          "kind": "RMSNorm"
+        }
+      ],
+      "kwargs": {
+        "write_bank_row": true
+      },
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          76,
+          7168
+        ],
+        "storage_offset": 0,
+        "stride": [
+          7168,
+          1
+        ]
+      }
+    },
+    {
+      "id": "_aggregate__unmarked__0005__76x7168_76x8x7168",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": null,
+      "function": "sglang.srt.layers.attn_residual._aggregate",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        },
+        2,
+        {
+          "kind": "ReplicatedLinear"
+        },
+        {
+          "kind": "RMSNorm"
+        },
+        {
+          "kind": "RMSNorm"
+        }
+      ],
+      "kwargs": {
+        "write_bank_row": false
+      },
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          76,
+          7168
+        ],
+        "storage_offset": 0,
+        "stride": [
+          7168,
+          1
+        ]
+      }
+    },
+    {
+      "id": "_aggregate_fast__unmarked__0006__76x7168_76x8x7168",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": null,
+      "function": "sglang.srt.layers.attn_residual._aggregate_fast",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        },
+        2,
+        {
+          "kind": "ReplicatedLinear"
+        },
+        {
+          "kind": "RMSNorm"
+        },
+        {
+          "kind": "RMSNorm"
+        }
+      ],
+      "kwargs": {
+        "write_bank_row": false
+      },
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          76,
+          7168
+        ],
+        "storage_offset": 0,
+        "stride": [
+          7168,
+          1
+        ]
+      }
+    },
+    {
+      "id": "_aggregate__unmarked__0007__76x7168_76x8x7168",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": null,
+      "function": "sglang.srt.layers.attn_residual._aggregate",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        },
+        2,
+        {
+          "kind": "ReplicatedLinear"
+        },
+        {
+          "kind": "RMSNorm"
+        },
+        {
+          "kind": "RMSNorm"
+        }
+      ],
+      "kwargs": {
+        "write_bank_row": true
+      },
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          76,
+          7168
+        ],
+        "storage_offset": 0,
+        "stride": [
+          7168,
+          1
+        ]
+      }
+    },
+    {
+      "id": "_aggregate_fast__unmarked__0008__76x7168_76x8x7168",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": null,
+      "function": "sglang.srt.layers.attn_residual._aggregate_fast",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        },
+        2,
+        {
+          "kind": "ReplicatedLinear"
+        },
+        {
+          "kind": "RMSNorm"
+        },
+        {
+          "kind": "RMSNorm"
+        }
+      ],
+      "kwargs": {
+        "write_bank_row": true
+      },
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          76,
+          7168
+        ],
+        "storage_offset": 0,
+        "stride": [
+          7168,
+          1
+        ]
+      }
+    },
+    {
+      "id": "_aggregate__unmarked__0009__76x7168_76x8x7168",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": null,
+      "function": "sglang.srt.layers.attn_residual._aggregate",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        },
+        3,
+        {
+          "kind": "ReplicatedLinear"
+        },
+        {
+          "kind": "RMSNorm"
+        },
+        {
+          "kind": "RMSNorm"
+        }
+      ],
+      "kwargs": {
+        "write_bank_row": false
+      },
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          76,
+          7168
+        ],
+        "storage_offset": 0,
+        "stride": [
+          7168,
+          1
+        ]
+      }
+    },
+    {
+      "id": "_aggregate_fast__unmarked__0010__76x7168_76x8x7168",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": null,
+      "function": "sglang.srt.layers.attn_residual._aggregate_fast",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            7168,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            76,
+            8,
+            7168
+          ],
+          "storage_offset": 0,
+          "stride": [
+            57344,
+            7168,
+            1
+          ]
+        },
+        3,
+        {
+          "kind": "ReplicatedLinear"
+        },
+        {
+          "kind": "RMSNorm"
+        },
+        {
+          "kind": "RMSNorm"
+        }
+      ],
+      "kwargs": {
+        "write_bank_row": false
+      },
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          76,
+          7168
+        ],
+        "storage_offset": 0,
+        "stride": [
+          7168,
+          1
+        ]
+      }
+    }
+  ]
+}

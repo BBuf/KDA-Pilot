@@ -290,6 +290,22 @@ TASK_EXACT_RULES = {
         ".grouped_topk",
         ".biased_grouped_topk",
     ),
+    # Kimi-K3: the dense bf16 GEMM task owns the TGV dispatch entries and the
+    # skinny KDA projection GEMVs; attention-residual records the production
+    # dispatcher (aggregate_stream is only the dspark aux entry).
+    "kimi_k3__sglang_cutedsl_tgv_bf16_gemm": (
+        "cutedsl_bf16_gemm",
+        "cutedsl_bf16_gemm_out",
+        "tiny_n_gemm_bf16",
+        "tiny_k_gemm_bf16",
+    ),
+    "kimi_k3__sglang_attn_res_aggregate": (
+        "attn_residual._aggregate",
+        "attn_residual.aggregate_stream",
+    ),
+    "kimi_k3__sglang_kda_fused_decode": (
+        "kda_fused_decode",
+    ),
 }
 
 TASK_DUPLICATE_RULES = {
@@ -466,6 +482,42 @@ def compact_workload(row: dict[str, Any], scenario: str | None, ordinal: int) ->
     }
 
 
+SHAPE_SECTION = "## Fresh captured kernel API shapes"
+
+
+def refresh_evidence_doc(
+    path: Path, workload_count: int, capture_note: str, functions: list[str]
+) -> None:
+    """Replace the shape section of profile_evidence.md with the populated one.
+
+    Keeps the generated doc honest after a capture: workload count, capture note
+    and covered interfaces instead of the "populate before RLCR" stub.
+    """
+    if not path.is_file():
+        return
+    text = path.read_text(encoding="utf-8")
+    start = text.find(SHAPE_SECTION)
+    if start < 0:
+        return
+    end = text.find("\n## ", start + len(SHAPE_SECTION))
+    tail = text[end:] if end >= 0 else ""
+    covered = "\n".join(f"- `{fn}`" for fn in functions)
+    section = f"""{SHAPE_SECTION}
+
+- Shape source: `docs/captured_kernel_api_shapes.json`
+- Standalone workloads: `bench/workloads.json`
+- Workload count: {workload_count}
+- Capture note: {capture_note}
+
+Functions covered:
+{covered}
+
+The old profiler `input_shapes` strings were noisy and are no longer an acceptance source.
+Use the task-local workload file above for standalone single-GPU correctness and benchmark work.
+"""
+    path.write_text(section + tail, encoding="utf-8")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--records", nargs="+", required=True)
@@ -545,9 +597,13 @@ def main() -> None:
             json.dumps(workloads, indent=2) + "\n",
             encoding="utf-8",
         )
+        functions = sorted({w["function"] for w in workloads})
+        refresh_evidence_doc(
+            docs_dir / "profile_evidence.md", len(workloads), args.capture_note, functions
+        )
         summary["tasks"][task] = {
             "workload_count": len(workloads),
-            "functions": sorted({w["function"] for w in workloads}),
+            "functions": functions,
         }
 
     print(json.dumps(summary, indent=2))

@@ -26,11 +26,17 @@ FAMILIES = [
     ("moe_align","moe_align_block_size"),
     ("fused_experts","fused_moe_triton"),("fused_moe","fused_moe_triton"),
     ("merge_state","merge_state"),
+    # Kimi-K3 kernel families (hybrid KDA/MLA stack, latent MoE)
+    ("attn_res","attn_residual"),
+    ("kda_decode_fusion","kda_fused_decode"),("kda_","kda_linear_attn"),
+    ("route_radix","moe_route_radix"),("situ_and_mul","situ_and_mul"),
+
     # structural kernel types BEFORE activation keys (a gemm/bmm with a fused
     # silu/swiglu/gelu EPILOGUE is still a gemm/bmm, not a standalone activation):
     ("bmm","fp8_bmm"),
     ("fmha","attention"),("flashinfer","attention"),("batchprefill","attention"),("batchdecode","attention"),
     ("paged","attention"),("flash_fwd","attention"),("fwd_kernel","attention"),("mla","attention_mla"),("attention","attention"),
+    ("splitkreduce","linear_gemm"),
     ("deep_gemm","linear_gemm"),("scaled_mm","linear_gemm"),("nvjet","linear_gemm"),("cutlass","linear_gemm"),
     ("w8a8","linear_gemm"),("sgemm","linear_gemm"),("gemm","linear_gemm"),
     ("static_quant","quant_fp8"),("per_token_group_quant","per_token_group_quant"),("per_token_quant","quant_fp8"),("quant","quant_fp8"),
@@ -43,6 +49,9 @@ FAMILY_KEYWORDS = {
     "attention":["attention","mha","flash","paged","prefill","decode"],"attention_mla":["mla","attention"],
     "rope":["rope","rotary"],"fused_moe_triton":["fused_experts","fused_moe","experts"],
     "moe_align_block_size":["moe_align"],"merge_state":["merge_state"],
+    "attn_residual":["attn_res","aggregate"],"kda_fused_decode":["kda","fused_decode"],
+    "kda_linear_attn":["kda","linear_attn"],"moe_route_radix":["route_radix","radix","gate"],
+    "situ_and_mul":["situ"],
     "rmsnorm":["rmsnorm","rms_norm"],"fused_add_rmsnorm":["rmsnorm","fused_add"],"layernorm":["layernorm"],
     "silu_and_mul":["silu","swiglu","mul","gate_up"],"gelu_and_mul":["gelu"],"activation":["activation"],
     "fp8_bmm":["bmm"],"quant_fp8":["quant"],"per_token_group_quant":["quant","group"],
@@ -67,8 +76,26 @@ def clean_op(samples, top):
         if m: return f"{m.group(1)}.{m.group(2)}"
     return None
 
+IFACE_MAP = []  # from --interface-map: [(prefix_lower, interface, exclude, task_name)]
+
+
+def iface_lookup(kname):
+    interface, exclude, _ = iface_lookup3(kname)
+    return interface, exclude
+
+
+def iface_lookup3(kname):
+    n = kname.lower()
+    for prefix, interface, exclude, task_name in IFACE_MAP:
+        if prefix in n:
+            return interface, exclude, task_name
+    return None, None, None
+
+
 def excluded(cat, kname, co):
     n=kname.lower(); c=(co or "").lower()
+    _, mapped_exclude = iface_lookup(kname)
+    if mapped_exclude: return mapped_exclude
     if cat=="comm": return "comm"
     if any(t in n for t in ("moe::dev","routingcustom","finalizekernel","activationkernel")): return "fused_moe_trtllm"
     if ("trtllm" in c and "moe" in c) or ("trtllm" in n and "moe" in n): return "fused_moe_trtllm"
@@ -90,7 +117,18 @@ def main():
     ap.add_argument("--shapes-dir",required=True); ap.add_argument("--model",required=True)
     ap.add_argument("--model-slug",required=True); ap.add_argument("--cookbook-cmd",required=True)
     ap.add_argument("--tp",default="1"); ap.add_argument("--out-dir",required=True); ap.add_argument("--threshold",type=float,default=3.0)
+    ap.add_argument("--provenance-note",default="",
+                    help="extra sentence for prompt.md / profile_evidence.md, e.g. when the capture "
+                         "host differs from the single-GPU optimization target")
+    ap.add_argument("--interface-map",help="optional JSON of kernel-prefix -> Python interface (+ optional "
+                                          "exclude reason); used for vendor exclusions and for naming kernels "
+                                          "whose launcher registers no torch op")
     a=ap.parse_args()
+
+    if a.interface_map:
+        for row in json.load(open(a.interface_map))["map"]:
+            IFACE_MAP.append((row["kernel_prefix"].lower(), row["interface"],
+                              row.get("exclude"), row.get("task_name")))
 
     ops=defaultdict(lambda:{"labels":defaultdict(float),"kernels":set(),"cats":defaultdict(float),
                             "shapes":set(),"prov":set(),"clean":defaultdict(float)})
@@ -119,14 +157,20 @@ def main():
         maxpct=max(e["labels"].values())
         if maxpct<a.threshold: lowpct.append((fam,maxpct)); continue
         name=name_family(fam,e["clean"]); clean=name in e["clean"]
-        op_slug=slugify(name); task=f"{a.model_slug}__{op_slug}"
+        mapped=None; mapped_task_name=None
+        if not clean:
+            for kname in sorted(e["kernels"]):
+                mapped,_,mapped_task_name=iface_lookup3(kname)
+                if mapped: break
+            if mapped: name=mapped
+        op_slug=slugify(mapped_task_name or name); task=f"{a.model_slug}__{op_slug}"
         d=os.path.join(a.out_dir,task); os.makedirs(os.path.join(d,"docs"),exist_ok=True)
         for sub in ("baseline","solution","bench","tests"):
             os.makedirs(os.path.join(d,sub),exist_ok=True); open(os.path.join(d,sub,".gitkeep"),"w").close()
         cat=max(e["cats"],key=lambda x:e["cats"][x])
         per={l:round(e["labels"][l],2) for l in LABELS if e["labels"].get(l,0)>0}
         best=max(e["labels"],key=lambda l:e["labels"][l]); dset,conc=best.rsplit("_",1)
-        entry=name if clean else f"fresh_capture_required::{fam}"
+        entry=name if (clean or mapped) else f"fresh_capture_required::{fam}"
         note=""
         if fam=="fused_moe_triton": note="Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) — single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded)."
         if fam=="activation": note="Activation (SiLU/GELU+mul). Prior guidance: limited headroom — deprioritize."
@@ -166,7 +210,7 @@ required_matched_ratio = 1.0
 """)
         ev={"model":a.model,"model_slug":a.model_slug,
             "cookbook_cmd":"omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
-            "tp":a.tp,
+            "tp":a.tp,"capture_provenance_note":a.provenance_note,
             "python_interface":entry,"kernel_family":fam,"profiler_op_provenance":sorted(e["prov"])[:6],
             "category":cat,"gpu_kernels":sorted(e["kernels"]),"pct_of_gpu_by_scenario":per,
             "max_pct_of_gpu":round(maxpct,2),"best_scenario":best,"input_shapes":[],
@@ -184,6 +228,7 @@ required_matched_ratio = 1.0
 provenance and headroom context, not the validation path. {'Clean Python interface (profiler provenance).' if clean else 'Profiler kernel-family; fresh kernel API workload capture required before RLCR.'}
 {(chr(10)+'> '+note+chr(10)) if note else ''}
 - Model: `{a.model}` (slug `{a.model_slug}`, tp={a.tp})
+{('- Capture provenance: ' + a.provenance_note + chr(10)) if a.provenance_note else ''}
 - Python interface: `{entry}`
 - Kernel family: `{fam}`  ·  Category: `{cat}`
 - GPU kernel(s): {', '.join('`'+k+'`' for k in sorted(e['kernels']))}
@@ -221,14 +266,14 @@ Target GPU: NVIDIA B200. Optimize the SGLang kernel behind:
 profile, peak `{best}`) — a serving-profile headroom signal used to select this
 standalone kernel task. Family `{fam}`, category `{cat}`.{(' '+note) if note else ''}
 
-See `docs/profile_evidence.md` for the per-scenario %-of-GPU and GPU kernel
+{(a.provenance_note + chr(10) + chr(10)) if a.provenance_note else ''}See `docs/profile_evidence.md` for the per-scenario %-of-GPU and GPU kernel
 selection provenance, then use `bench/workloads.json` as the standalone shape
 source. For the normal RLCR loop, optimize and validate via the task-local
 standalone benchmark on one idle target GPU, without adding external
 runtime-readiness or fleet-level A/B gates. Follow
 `llm/docs/llm_kernel_optimization_rules.md` (CUDA, no DSL) + `llm/docs/llm_correctness_contract.md`.
 """)
-        summary.append((task,cat,fam,maxpct,best,clean))
+        summary.append((task,cat,fam,maxpct,best,"yes" if clean else ("mapped" if mapped else "role")))
 
     with open(os.path.join(a.out_dir,f"_INDEX_{a.model_slug}.md"),"w") as f:
         f.write(f"# {a.model_slug} — standalone kernel task selection\n\n- Model: `{a.model}` (tp={a.tp})\n")
@@ -236,7 +281,7 @@ runtime-readiness or fleet-level A/B gates. Follow
         f.write(f"- Kept: max serving-profile GPU-time share `>= {a.threshold}%`, non-comm, non-trtllm-MoE\n\n")
         f.write("| task | category | family | max % GPU | peak scenario | clean op |\n|---|---|---|---:|---|---|\n")
         for t,cat,fam,mp,bl,cl in sorted(summary,key=lambda x:-x[3]):
-            f.write(f"| `{t}` | {cat} | {fam} | {mp:.1f}% | {bl} | {'yes' if cl else 'role'} |\n")
+            f.write(f"| `{t}` | {cat} | {fam} | {mp:.1f}% | {bl} | {cl} |\n")
         f.write(f"\n## Dropped < {a.threshold}%\n\n");
         for nm,mp in sorted(lowpct,key=lambda x:-x[1])[:15]: f.write(f"- {nm}: {mp:.1f}%\n")
         f.write("\n## Excluded (comm / trtllm fused-MoE)\n\n"); seen=set()
@@ -246,7 +291,7 @@ runtime-readiness or fleet-level A/B gates. Follow
 
     print(f"KEPT {len(summary)} (>= {a.threshold}%):")
     for t,cat,fam,mp,bl,cl in sorted(summary,key=lambda x:-x[3]):
-        print(f"  {mp:5.1f}%  {t}  [{cat}/{fam}, {bl}, {'CLEAN' if cl else 'role'}]")
+        print(f"  {mp:5.1f}%  {t}  [{cat}/{fam}, {bl}, {cl}]")
     print(f"  dropped<thr: {len(lowpct)}; excluded comm/trtllm-moe: {len(set(d[0] for d in dropped))}")
 
 if __name__=="__main__": main()
