@@ -2,6 +2,17 @@
 
 Target GPU: NVIDIA B200.
 
+Research baseline verified against:
+
+- repository: `https://github.com/sgl-project/sglang`
+- branch: `main`
+- commit: `86ee545388677733df8da4cf8726c13d7b445875`
+- verified: `2026-07-29`
+
+Resolve `main` again when the task is launched and record the then-current
+commit in `docs/baseline_source.md`. All four configured entry points still
+exist at the audit commit.
+
 This task replaces the closed SGLang PR:
 
 - `sgl-project/sglang#30171` (`[diffusion] Fuse Wan VAE RMSNorm SiLU`)

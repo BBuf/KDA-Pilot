@@ -1,0 +1,43 @@
+[task]
+slug = "b200_vsa_fused_compress_topk__bitwise"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "vsa_fused_compress_topk"
+entry_points = [
+  "sglang.multimodal_gen.runtime.layers.attention.backends.video_sparse_attn:VideoSparseAttentionImpl.forward",
+  "vsa:video_sparse_attn",
+]
+
+[build]
+language = "cuda"
+destination_passing_style = true
+baseline_entry_points = [
+  "bench/adapter.py::call_baseline_block_mean",
+  "bench/adapter.py::call_baseline_topk_mask",
+]
+candidate_entry_points = [
+  "solution/kernel.cu::vsa_block_mean_candidate",
+  "solution/kernel.cu::vsa_topk_mask_candidate",
+]
+
+[correctness]
+bitwise_required = true
+comparison = "torch_equal"
+forbid_tolerance = true
+baseline = "sglang_vsa_effective_pipeline"
+input_dtype = "bfloat16"
+accumulation_dtype = "float32"
+block_elements = 64
+head_dim = 128
+require_no_exception_fallback = true
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+inner_iterations_min = 1
+inner_iterations_max = 2048
+target_sample_us = 1000
+timeout_seconds = 900
+use_isolated_runner = true
+required_matched_ratio = 1.0
