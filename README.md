@@ -233,4 +233,4 @@ base likewise credits the original KDA project.
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=BBuf/KDA-Pilot&type=Date)](https://star-history.com/#BBuf/KDA-Pilot&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=BBuf/KDA-Pilot&type=Date)](https://star-history.dera.page/#BBuf/KDA-Pilot&Date)
