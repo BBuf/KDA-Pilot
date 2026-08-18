@@ -1,0 +1,33 @@
+    [task]
+    slug = "qwen38_nvfp4__gdn_ba_proj_fold"
+    arch = "sm120"
+    target_gpu = "NVIDIA RTX PRO 6000 Blackwell"
+    family = "gemv_fusion"
+    kernel_family = "bf16_skinny_gemv"
+    model = "RadixArk/Qwen3.8-27B-NVFP4"
+    model_revision = "5b4377e580aebdd1b9a8e918b406cb28ad9bff8a"
+    model_slug = "qwen38_nvfp4"
+    entry_points = [
+      "sglang.srt.models.qwen3_5 (in_proj_ba linear)",
+    ]
+    evidence_json = "docs/profile_evidence.md"
+    workloads_json = "bench/workloads.json"
+
+    [selection]
+    method = "bs=1 decode torch-profiler GPU-time share on target GPU (2026-08-14 capture); DSpark verify-tier analysis"
+    max_pct_of_gpu = 3.8
+    best_scenario = "bs1_decode_4k1k"
+    dataset = "random"
+    concurrency = "1"
+    serving_goal = "DSpark bs=1 output throughput, 4k-in/1k-out"
+
+    [shapes]
+    source = "derived_pending_capture"
+    m_tiers = [1, 2, 4, 6, 8, 16]
+    refresh = "DSpark capture per llm/_INDEX_qwen38_nvfp4_dspark.md"
+
+    [build]
+    language = "python/cuda"
+
+[gate]
+rule = "geomean speedup vs cuBLAS dot/reduce pair; single-launch requirement for variant 1"

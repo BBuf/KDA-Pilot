@@ -1,0 +1,392 @@
+[
+ {
+  "id": "gdn_verify_recurrent__T2",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang linear-attn verify backend (triton fused_recurrent path)",
+  "tensors": {
+   "q": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     2,
+     16,
+     128
+    ],
+    "stride": [
+     4096,
+     2048,
+     128,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "k": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     2,
+     16,
+     128
+    ],
+    "stride": [
+     4096,
+     2048,
+     128,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "v": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     2,
+     48,
+     128
+    ],
+    "stride": [
+     12288,
+     6144,
+     128,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "b": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     2,
+     48
+    ],
+    "stride": [
+     96,
+     48,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "a": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     2,
+     48
+    ],
+    "stride": [
+     96,
+     48,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "ssm_state": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     48,
+     128,
+     128
+    ],
+    "stride": [
+     786432,
+     16384,
+     128,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "conv_state": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     16384,
+     4
+    ],
+    "stride": [
+     65536,
+     4,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  },
+  "note": "per layer x48; exact verify-tier T distribution pending DSpark capture"
+ },
+ {
+  "id": "gdn_verify_recurrent__T4",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang linear-attn verify backend (triton fused_recurrent path)",
+  "tensors": {
+   "q": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     4,
+     16,
+     128
+    ],
+    "stride": [
+     8192,
+     2048,
+     128,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "k": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     4,
+     16,
+     128
+    ],
+    "stride": [
+     8192,
+     2048,
+     128,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "v": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     4,
+     48,
+     128
+    ],
+    "stride": [
+     24576,
+     6144,
+     128,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "b": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     4,
+     48
+    ],
+    "stride": [
+     192,
+     48,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "a": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     4,
+     48
+    ],
+    "stride": [
+     192,
+     48,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "ssm_state": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     48,
+     128,
+     128
+    ],
+    "stride": [
+     786432,
+     16384,
+     128,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "conv_state": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     16384,
+     4
+    ],
+    "stride": [
+     65536,
+     4,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  },
+  "note": "per layer x48; exact verify-tier T distribution pending DSpark capture"
+ },
+ {
+  "id": "gdn_verify_recurrent__T8",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang linear-attn verify backend (triton fused_recurrent path)",
+  "tensors": {
+   "q": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     8,
+     16,
+     128
+    ],
+    "stride": [
+     16384,
+     2048,
+     128,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "k": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     8,
+     16,
+     128
+    ],
+    "stride": [
+     16384,
+     2048,
+     128,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "v": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     8,
+     48,
+     128
+    ],
+    "stride": [
+     49152,
+     6144,
+     128,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "b": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     8,
+     48
+    ],
+    "stride": [
+     384,
+     48,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "a": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     8,
+     48
+    ],
+    "stride": [
+     384,
+     48,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "ssm_state": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     48,
+     128,
+     128
+    ],
+    "stride": [
+     786432,
+     16384,
+     128,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   "conv_state": {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     16384,
+     4
+    ],
+    "stride": [
+     65536,
+     4,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  },
+  "note": "per layer x48; exact verify-tier T distribution pending DSpark capture"
+ }
+]

@@ -1,0 +1,1514 @@
+[
+ {
+  "id": "fp8_skinny__gdn_in_proj_qkvz__1x5120x16384",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_decode",
+  "function": "sglang.kernels.ops.gemm.sm120_fp8_gemv.sm120_fp8_gemv",
+  "role": "gdn_in_proj_qkvz",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     1,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     5120,
+     16384
+    ],
+    "stride": [
+     16384,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 1
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     16384
+    ],
+    "stride": [
+     16384,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__gdn_in_proj_qkvz__2x5120x16384",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "gdn_in_proj_qkvz",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     2,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     5120,
+     16384
+    ],
+    "stride": [
+     16384,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 2
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     2,
+     16384
+    ],
+    "stride": [
+     16384,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__gdn_in_proj_qkvz__4x5120x16384",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "gdn_in_proj_qkvz",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     4,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     5120,
+     16384
+    ],
+    "stride": [
+     16384,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 4
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     4,
+     16384
+    ],
+    "stride": [
+     16384,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__gdn_in_proj_qkvz__6x5120x16384",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "gdn_in_proj_qkvz",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     6,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     5120,
+     16384
+    ],
+    "stride": [
+     16384,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 6
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     6,
+     16384
+    ],
+    "stride": [
+     16384,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__gdn_in_proj_qkvz__8x5120x16384",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "gdn_in_proj_qkvz",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     8,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     5120,
+     16384
+    ],
+    "stride": [
+     16384,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 8
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     8,
+     16384
+    ],
+    "stride": [
+     16384,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__gdn_in_proj_qkvz__16x5120x16384",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "gdn_in_proj_qkvz",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     16,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     5120,
+     16384
+    ],
+    "stride": [
+     16384,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 16
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     16,
+     16384
+    ],
+    "stride": [
+     16384,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__gdn_out_proj__1x6144x5120",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_decode",
+  "function": "sglang.kernels.ops.gemm.sm120_fp8_gemv.sm120_fp8_gemv",
+  "role": "gdn_out_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     1,
+     6144
+    ],
+    "stride": [
+     6144,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     6144,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 1
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__gdn_out_proj__2x6144x5120",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "gdn_out_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     2,
+     6144
+    ],
+    "stride": [
+     6144,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     6144,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 2
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     2,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__gdn_out_proj__4x6144x5120",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "gdn_out_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     4,
+     6144
+    ],
+    "stride": [
+     6144,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     6144,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 4
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     4,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__gdn_out_proj__6x6144x5120",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "gdn_out_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     6,
+     6144
+    ],
+    "stride": [
+     6144,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     6144,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 6
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     6,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__gdn_out_proj__8x6144x5120",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "gdn_out_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     8,
+     6144
+    ],
+    "stride": [
+     6144,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     6144,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 8
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     8,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__gdn_out_proj__16x6144x5120",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "gdn_out_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     16,
+     6144
+    ],
+    "stride": [
+     6144,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     6144,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 16
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     16,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__attn_qkv_proj__1x5120x8192",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_decode",
+  "function": "sglang.kernels.ops.gemm.sm120_fp8_gemv.sm120_fp8_gemv",
+  "role": "attn_qkv_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     1,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     5120,
+     8192
+    ],
+    "stride": [
+     8192,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 1
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     8192
+    ],
+    "stride": [
+     8192,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__attn_qkv_proj__2x5120x8192",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "attn_qkv_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     2,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     5120,
+     8192
+    ],
+    "stride": [
+     8192,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 2
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     2,
+     8192
+    ],
+    "stride": [
+     8192,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__attn_qkv_proj__4x5120x8192",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "attn_qkv_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     4,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     5120,
+     8192
+    ],
+    "stride": [
+     8192,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 4
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     4,
+     8192
+    ],
+    "stride": [
+     8192,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__attn_qkv_proj__6x5120x8192",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "attn_qkv_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     6,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     5120,
+     8192
+    ],
+    "stride": [
+     8192,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 6
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     6,
+     8192
+    ],
+    "stride": [
+     8192,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__attn_qkv_proj__8x5120x8192",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "attn_qkv_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     8,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     5120,
+     8192
+    ],
+    "stride": [
+     8192,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 8
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     8,
+     8192
+    ],
+    "stride": [
+     8192,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__attn_qkv_proj__16x5120x8192",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "attn_qkv_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     16,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     5120,
+     8192
+    ],
+    "stride": [
+     8192,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 16
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     16,
+     8192
+    ],
+    "stride": [
+     8192,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__attn_o_proj__1x6144x5120",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_decode",
+  "function": "sglang.kernels.ops.gemm.sm120_fp8_gemv.sm120_fp8_gemv",
+  "role": "attn_o_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     1,
+     6144
+    ],
+    "stride": [
+     6144,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     6144,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 1
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     1,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__attn_o_proj__2x6144x5120",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "attn_o_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     2,
+     6144
+    ],
+    "stride": [
+     6144,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     6144,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 2
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     2,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__attn_o_proj__4x6144x5120",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "attn_o_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     4,
+     6144
+    ],
+    "stride": [
+     6144,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     6144,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 4
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     4,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__attn_o_proj__6x6144x5120",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "attn_o_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     6,
+     6144
+    ],
+    "stride": [
+     6144,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     6144,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 6
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     6,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__attn_o_proj__8x6144x5120",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "attn_o_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     8,
+     6144
+    ],
+    "stride": [
+     6144,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     6144,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 8
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     8,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ },
+ {
+  "id": "fp8_skinny__attn_o_proj__16x6144x5120",
+  "production": true,
+  "source": "derived_pending_capture",
+  "scenario": "bs1_dspark_verify",
+  "function": "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+  "role": "attn_o_proj",
+  "args": [
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     16,
+     6144
+    ],
+    "stride": [
+     6144,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   },
+   {
+    "dtype": "torch.float8_e4m3fn",
+    "kind": "tensor",
+    "shape": [
+     6144,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": false,
+    "storage_offset": 0
+   }
+  ],
+  "kwargs": {
+   "alpha": {
+    "kind": "scalar_tensor",
+    "dtype": "torch.float32",
+    "note": "input_scale*weight_scale folded"
+   },
+   "M": 16
+  },
+  "result": [
+   {
+    "dtype": "torch.bfloat16",
+    "kind": "tensor",
+    "shape": [
+     16,
+     5120
+    ],
+    "stride": [
+     5120,
+     1
+    ],
+    "is_contiguous": true,
+    "storage_offset": 0
+   }
+  ],
+  "weight_layout": "[K,N] transposed view of [N,K]-contiguous"
+ }
+]

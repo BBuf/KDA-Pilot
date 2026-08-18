@@ -1,0 +1,34 @@
+    [task]
+    slug = "qwen38_nvfp4__fp4_w4a4_skinny_gemm"
+    arch = "sm120"
+    target_gpu = "NVIDIA RTX PRO 6000 Blackwell"
+    family = "quant_gemm"
+    kernel_family = "fp4_skinny_gemm"
+    model = "RadixArk/Qwen3.8-27B-NVFP4"
+    model_revision = "5b4377e580aebdd1b9a8e918b406cb28ad9bff8a"
+    model_slug = "qwen38_nvfp4"
+    entry_points = [
+      "sglang.srt.layers.quantization.modelopt_quant.fp4_gemm",
+  "flashinfer.fp4_quantize",
+    ]
+    evidence_json = "docs/profile_evidence.md"
+    workloads_json = "bench/workloads.json"
+
+    [selection]
+    method = "bs=1 decode torch-profiler GPU-time share on target GPU (2026-08-14 capture); DSpark verify-tier analysis"
+    max_pct_of_gpu = 50.5
+    best_scenario = "bs1_decode_4k1k"
+    dataset = "random"
+    concurrency = "1"
+    serving_goal = "DSpark bs=1 output throughput, 4k-in/1k-out"
+
+    [shapes]
+    source = "derived_pending_capture"
+    m_tiers = [1, 2, 4, 6, 8, 16]
+    refresh = "DSpark capture per llm/_INDEX_qwen38_nvfp4_dspark.md"
+
+    [build]
+    language = "python/cuda"
+
+[gate]
+rule = "geomean speedup incl. activation-transform time in timed region; no row regression; lm_head rows mandatory"
