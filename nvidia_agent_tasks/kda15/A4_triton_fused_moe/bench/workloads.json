@@ -1,0 +1,1832 @@
+{
+  "task": "A4_triton_fused_moe",
+  "model": "LiquidAI/LFM2.5-8B-A1B",
+  "source_manifest": "shape_manifest.json",
+  "selection_rule": "top-10 signatures per op by real-traffic call count, plus the smallest and largest input footprint, plus one signature per capture group; warmup-only signatures excluded",
+  "ops": [
+    {
+      "op": "triton_fused_moe_gemm",
+      "total_real_calls": 427506,
+      "distinct_real_signatures": 1138,
+      "rows": [
+        {
+          "row_id": "triton_fused_moe_gemm#00",
+          "group": "random_1k1k_cc1",
+          "real_calls": 47652,
+          "kept_because": [
+            "top-10 by call count",
+            "operating-point coverage: random_1k1k_cc1",
+            "operating-point coverage: gsm8k_5shot_cc1",
+            "operating-point coverage: random_1k1k_cc256"
+          ],
+          "args": {
+            "A": {
+              "shape": [
+                1,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 2048,
+              "bytes": 4096
+            },
+            "B": {
+              "shape": [
+                32,
+                3584,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                7340032,
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 234881024,
+              "bytes": 469762048
+            },
+            "bias": null,
+            "C": {
+              "shape": [
+                4,
+                3584
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                3584,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 14336,
+              "bytes": 28672
+            },
+            "A_scale": null,
+            "B_scale": null,
+            "B_zp": null,
+            "topk_weights": {
+              "shape": [
+                1,
+                4
+              ],
+              "dtype": "float32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 4,
+              "bytes": 16
+            },
+            "topk_ids": {
+              "shape": [
+                1,
+                4
+              ],
+              "dtype": "int32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 4,
+              "bytes": 16
+            },
+            "sorted_token_ids": {
+              "shape": [
+                64
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 64,
+              "bytes": 256
+            },
+            "expert_ids": {
+              "shape": [
+                4
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 4,
+              "bytes": 16
+            },
+            "num_tokens_post_padded": {
+              "shape": [
+                1
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 1,
+              "bytes": 4
+            },
+            "mul_routed_weight": false,
+            "top_k": 4,
+            "config": {
+              "BLOCK_SIZE_M": 16,
+              "BLOCK_SIZE_N": 32,
+              "BLOCK_SIZE_K": 64,
+              "GROUP_SIZE_M": 1
+            },
+            "compute_type": {
+              "repr": "dtype"
+            },
+            "use_fp8_w8a8": false,
+            "use_int8_w8a8": false,
+            "use_int8_w8a16": false,
+            "use_int4_w4a16": false,
+            "per_channel_quant": false,
+            "block_shape": null,
+            "b_use_tma": false,
+            "c_sorted": false,
+            "filter_expert": false,
+            "fuse_swiglu": false
+          },
+          "output": null,
+          "signature": "A=1x2048:bfloat16|B=32x3584x2048:bfloat16|C=4x3584:bfloat16|topk_weights=1x4:float32|topk_ids=1x4:int32|sorted_token_ids=64:int32|expert_ids=4:int32|num_tokens_post_padded=1:int32|top_k=4"
+        },
+        {
+          "row_id": "triton_fused_moe_gemm#01",
+          "group": "random_1k1k_cc1",
+          "real_calls": 47652,
+          "kept_because": [
+            "top-10 by call count",
+            "smallest input footprint"
+          ],
+          "args": {
+            "A": {
+              "shape": [
+                4,
+                1792
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                1792,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 7168,
+              "bytes": 14336
+            },
+            "B": {
+              "shape": [
+                32,
+                2048,
+                1792
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                3670016,
+                1792,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 117440512,
+              "bytes": 234881024
+            },
+            "bias": null,
+            "C": {
+              "shape": [
+                1,
+                4,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                8192,
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 8192,
+              "bytes": 16384
+            },
+            "A_scale": null,
+            "B_scale": null,
+            "B_zp": null,
+            "topk_weights": {
+              "shape": [
+                1,
+                4
+              ],
+              "dtype": "float32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 4,
+              "bytes": 16
+            },
+            "topk_ids": {
+              "shape": [
+                1,
+                4
+              ],
+              "dtype": "int32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 4,
+              "bytes": 16
+            },
+            "sorted_token_ids": {
+              "shape": [
+                64
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 64,
+              "bytes": 256
+            },
+            "expert_ids": {
+              "shape": [
+                4
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 4,
+              "bytes": 16
+            },
+            "num_tokens_post_padded": {
+              "shape": [
+                1
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 1,
+              "bytes": 4
+            },
+            "mul_routed_weight": true,
+            "top_k": 1,
+            "config": {
+              "BLOCK_SIZE_M": 16,
+              "BLOCK_SIZE_N": 32,
+              "BLOCK_SIZE_K": 64,
+              "GROUP_SIZE_M": 1
+            },
+            "compute_type": {
+              "repr": "dtype"
+            },
+            "use_fp8_w8a8": false,
+            "use_int8_w8a8": false,
+            "use_int8_w8a16": false,
+            "use_int4_w4a16": false,
+            "per_channel_quant": false,
+            "block_shape": null,
+            "a_use_tma": false,
+            "b_use_tma": false,
+            "filter_expert": false,
+            "fuse_sum_all_reduce": false,
+            "router_topk": 4
+          },
+          "output": null,
+          "signature": "A=4x1792:bfloat16|B=32x2048x1792:bfloat16|C=1x4x2048:bfloat16|topk_weights=1x4:float32|topk_ids=1x4:int32|sorted_token_ids=64:int32|expert_ids=4:int32|num_tokens_post_padded=1:int32|top_k=1|router_topk=4"
+        },
+        {
+          "row_id": "triton_fused_moe_gemm#02",
+          "group": "random_1k1k_cc16",
+          "real_calls": 25564,
+          "kept_because": [
+            "top-10 by call count",
+            "operating-point coverage: random_1k1k_cc16",
+            "operating-point coverage: gsm8k_16shot_cc16"
+          ],
+          "args": {
+            "A": {
+              "shape": [
+                16,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 32768,
+              "bytes": 65536
+            },
+            "B": {
+              "shape": [
+                32,
+                3584,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                7340032,
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 234881024,
+              "bytes": 469762048
+            },
+            "bias": null,
+            "C": {
+              "shape": [
+                64,
+                3584
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                3584,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 229376,
+              "bytes": 458752
+            },
+            "A_scale": null,
+            "B_scale": null,
+            "B_zp": null,
+            "topk_weights": {
+              "shape": [
+                16,
+                4
+              ],
+              "dtype": "float32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 64,
+              "bytes": 256
+            },
+            "topk_ids": {
+              "shape": [
+                16,
+                4
+              ],
+              "dtype": "int32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 64,
+              "bytes": 256
+            },
+            "sorted_token_ids": {
+              "shape": [
+                559
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 559,
+              "bytes": 2236
+            },
+            "expert_ids": {
+              "shape": [
+                35
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 35,
+              "bytes": 140
+            },
+            "num_tokens_post_padded": {
+              "shape": [
+                1
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 1,
+              "bytes": 4
+            },
+            "mul_routed_weight": false,
+            "top_k": 4,
+            "config": {
+              "BLOCK_SIZE_M": 16,
+              "BLOCK_SIZE_N": 32,
+              "BLOCK_SIZE_K": 64,
+              "GROUP_SIZE_M": 1
+            },
+            "compute_type": {
+              "repr": "dtype"
+            },
+            "use_fp8_w8a8": false,
+            "use_int8_w8a8": false,
+            "use_int8_w8a16": false,
+            "use_int4_w4a16": false,
+            "per_channel_quant": false,
+            "block_shape": null,
+            "b_use_tma": false,
+            "c_sorted": false,
+            "filter_expert": false,
+            "fuse_swiglu": false
+          },
+          "output": null,
+          "signature": "A=16x2048:bfloat16|B=32x3584x2048:bfloat16|C=64x3584:bfloat16|topk_weights=16x4:float32|topk_ids=16x4:int32|sorted_token_ids=559:int32|expert_ids=35:int32|num_tokens_post_padded=1:int32|top_k=4"
+        },
+        {
+          "row_id": "triton_fused_moe_gemm#03",
+          "group": "random_1k1k_cc16",
+          "real_calls": 25564,
+          "kept_because": [
+            "top-10 by call count"
+          ],
+          "args": {
+            "A": {
+              "shape": [
+                64,
+                1792
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                1792,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 114688,
+              "bytes": 229376
+            },
+            "B": {
+              "shape": [
+                32,
+                2048,
+                1792
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                3670016,
+                1792,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 117440512,
+              "bytes": 234881024
+            },
+            "bias": null,
+            "C": {
+              "shape": [
+                16,
+                4,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                8192,
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 131072,
+              "bytes": 262144
+            },
+            "A_scale": null,
+            "B_scale": null,
+            "B_zp": null,
+            "topk_weights": {
+              "shape": [
+                16,
+                4
+              ],
+              "dtype": "float32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 64,
+              "bytes": 256
+            },
+            "topk_ids": {
+              "shape": [
+                16,
+                4
+              ],
+              "dtype": "int32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 64,
+              "bytes": 256
+            },
+            "sorted_token_ids": {
+              "shape": [
+                559
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 559,
+              "bytes": 2236
+            },
+            "expert_ids": {
+              "shape": [
+                35
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 35,
+              "bytes": 140
+            },
+            "num_tokens_post_padded": {
+              "shape": [
+                1
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 1,
+              "bytes": 4
+            },
+            "mul_routed_weight": true,
+            "top_k": 1,
+            "config": {
+              "BLOCK_SIZE_M": 16,
+              "BLOCK_SIZE_N": 32,
+              "BLOCK_SIZE_K": 64,
+              "GROUP_SIZE_M": 1
+            },
+            "compute_type": {
+              "repr": "dtype"
+            },
+            "use_fp8_w8a8": false,
+            "use_int8_w8a8": false,
+            "use_int8_w8a16": false,
+            "use_int4_w4a16": false,
+            "per_channel_quant": false,
+            "block_shape": null,
+            "a_use_tma": false,
+            "b_use_tma": false,
+            "filter_expert": false,
+            "fuse_sum_all_reduce": false,
+            "router_topk": 4
+          },
+          "output": null,
+          "signature": "A=64x1792:bfloat16|B=32x2048x1792:bfloat16|C=16x4x2048:bfloat16|topk_weights=16x4:float32|topk_ids=16x4:int32|sorted_token_ids=559:int32|expert_ids=35:int32|num_tokens_post_padded=1:int32|top_k=1|router_topk=4"
+        },
+        {
+          "row_id": "triton_fused_moe_gemm#04",
+          "group": "random_4k512_cc8",
+          "real_calls": 15708,
+          "kept_because": [
+            "top-10 by call count",
+            "operating-point coverage: random_4k512_cc8"
+          ],
+          "args": {
+            "A": {
+              "shape": [
+                8,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 16384,
+              "bytes": 32768
+            },
+            "B": {
+              "shape": [
+                32,
+                3584,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                7340032,
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 234881024,
+              "bytes": 469762048
+            },
+            "bias": null,
+            "C": {
+              "shape": [
+                32,
+                3584
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                3584,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 114688,
+              "bytes": 229376
+            },
+            "A_scale": null,
+            "B_scale": null,
+            "B_zp": null,
+            "topk_weights": {
+              "shape": [
+                8,
+                4
+              ],
+              "dtype": "float32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 32,
+              "bytes": 128
+            },
+            "topk_ids": {
+              "shape": [
+                8,
+                4
+              ],
+              "dtype": "int32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 32,
+              "bytes": 128
+            },
+            "sorted_token_ids": {
+              "shape": [
+                512
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 512,
+              "bytes": 2048
+            },
+            "expert_ids": {
+              "shape": [
+                32
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 32,
+              "bytes": 128
+            },
+            "num_tokens_post_padded": {
+              "shape": [
+                1
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 1,
+              "bytes": 4
+            },
+            "mul_routed_weight": false,
+            "top_k": 4,
+            "config": {
+              "BLOCK_SIZE_M": 16,
+              "BLOCK_SIZE_N": 32,
+              "BLOCK_SIZE_K": 64,
+              "GROUP_SIZE_M": 1
+            },
+            "compute_type": {
+              "repr": "dtype"
+            },
+            "use_fp8_w8a8": false,
+            "use_int8_w8a8": false,
+            "use_int8_w8a16": false,
+            "use_int4_w4a16": false,
+            "per_channel_quant": false,
+            "block_shape": null,
+            "b_use_tma": false,
+            "c_sorted": false,
+            "filter_expert": false,
+            "fuse_swiglu": false
+          },
+          "output": null,
+          "signature": "A=8x2048:bfloat16|B=32x3584x2048:bfloat16|C=32x3584:bfloat16|topk_weights=8x4:float32|topk_ids=8x4:int32|sorted_token_ids=512:int32|expert_ids=32:int32|num_tokens_post_padded=1:int32|top_k=4"
+        },
+        {
+          "row_id": "triton_fused_moe_gemm#05",
+          "group": "random_4k512_cc8",
+          "real_calls": 15708,
+          "kept_because": [
+            "top-10 by call count"
+          ],
+          "args": {
+            "A": {
+              "shape": [
+                32,
+                1792
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                1792,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 57344,
+              "bytes": 114688
+            },
+            "B": {
+              "shape": [
+                32,
+                2048,
+                1792
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                3670016,
+                1792,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 117440512,
+              "bytes": 234881024
+            },
+            "bias": null,
+            "C": {
+              "shape": [
+                8,
+                4,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                8192,
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 65536,
+              "bytes": 131072
+            },
+            "A_scale": null,
+            "B_scale": null,
+            "B_zp": null,
+            "topk_weights": {
+              "shape": [
+                8,
+                4
+              ],
+              "dtype": "float32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 32,
+              "bytes": 128
+            },
+            "topk_ids": {
+              "shape": [
+                8,
+                4
+              ],
+              "dtype": "int32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 32,
+              "bytes": 128
+            },
+            "sorted_token_ids": {
+              "shape": [
+                512
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 512,
+              "bytes": 2048
+            },
+            "expert_ids": {
+              "shape": [
+                32
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 32,
+              "bytes": 128
+            },
+            "num_tokens_post_padded": {
+              "shape": [
+                1
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 1,
+              "bytes": 4
+            },
+            "mul_routed_weight": true,
+            "top_k": 1,
+            "config": {
+              "BLOCK_SIZE_M": 16,
+              "BLOCK_SIZE_N": 32,
+              "BLOCK_SIZE_K": 64,
+              "GROUP_SIZE_M": 1
+            },
+            "compute_type": {
+              "repr": "dtype"
+            },
+            "use_fp8_w8a8": false,
+            "use_int8_w8a8": false,
+            "use_int8_w8a16": false,
+            "use_int4_w4a16": false,
+            "per_channel_quant": false,
+            "block_shape": null,
+            "a_use_tma": false,
+            "b_use_tma": false,
+            "filter_expert": false,
+            "fuse_sum_all_reduce": false,
+            "router_topk": 4
+          },
+          "output": null,
+          "signature": "A=32x1792:bfloat16|B=32x2048x1792:bfloat16|C=8x4x2048:bfloat16|topk_weights=8x4:float32|topk_ids=8x4:int32|sorted_token_ids=512:int32|expert_ids=32:int32|num_tokens_post_padded=1:int32|top_k=1|router_topk=4"
+        },
+        {
+          "row_id": "triton_fused_moe_gemm#06",
+          "group": "gsm8k_accuracy_200",
+          "real_calls": 7700,
+          "kept_because": [
+            "top-10 by call count",
+            "operating-point coverage: gsm8k_accuracy_200",
+            "operating-point coverage: sharegpt_cc32"
+          ],
+          "args": {
+            "A": {
+              "shape": [
+                32,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 65536,
+              "bytes": 131072
+            },
+            "B": {
+              "shape": [
+                32,
+                3584,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                7340032,
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 234881024,
+              "bytes": 469762048
+            },
+            "bias": null,
+            "C": {
+              "shape": [
+                128,
+                3584
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                3584,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 458752,
+              "bytes": 917504
+            },
+            "A_scale": null,
+            "B_scale": null,
+            "B_zp": null,
+            "topk_weights": {
+              "shape": [
+                32,
+                4
+              ],
+              "dtype": "float32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 128,
+              "bytes": 512
+            },
+            "topk_ids": {
+              "shape": [
+                32,
+                4
+              ],
+              "dtype": "int32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 128,
+              "bytes": 512
+            },
+            "sorted_token_ids": {
+              "shape": [
+                623
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 623,
+              "bytes": 2492
+            },
+            "expert_ids": {
+              "shape": [
+                39
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 39,
+              "bytes": 156
+            },
+            "num_tokens_post_padded": {
+              "shape": [
+                1
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 1,
+              "bytes": 4
+            },
+            "mul_routed_weight": false,
+            "top_k": 4,
+            "config": {
+              "BLOCK_SIZE_M": 16,
+              "BLOCK_SIZE_N": 32,
+              "BLOCK_SIZE_K": 64,
+              "GROUP_SIZE_M": 1
+            },
+            "compute_type": {
+              "repr": "dtype"
+            },
+            "use_fp8_w8a8": false,
+            "use_int8_w8a8": false,
+            "use_int8_w8a16": false,
+            "use_int4_w4a16": false,
+            "per_channel_quant": false,
+            "block_shape": null,
+            "b_use_tma": false,
+            "c_sorted": false,
+            "filter_expert": false,
+            "fuse_swiglu": false
+          },
+          "output": null,
+          "signature": "A=32x2048:bfloat16|B=32x3584x2048:bfloat16|C=128x3584:bfloat16|topk_weights=32x4:float32|topk_ids=32x4:int32|sorted_token_ids=623:int32|expert_ids=39:int32|num_tokens_post_padded=1:int32|top_k=4"
+        },
+        {
+          "row_id": "triton_fused_moe_gemm#07",
+          "group": "gsm8k_accuracy_200",
+          "real_calls": 7700,
+          "kept_because": [
+            "top-10 by call count"
+          ],
+          "args": {
+            "A": {
+              "shape": [
+                128,
+                1792
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                1792,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 229376,
+              "bytes": 458752
+            },
+            "B": {
+              "shape": [
+                32,
+                2048,
+                1792
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                3670016,
+                1792,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 117440512,
+              "bytes": 234881024
+            },
+            "bias": null,
+            "C": {
+              "shape": [
+                32,
+                4,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                8192,
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 262144,
+              "bytes": 524288
+            },
+            "A_scale": null,
+            "B_scale": null,
+            "B_zp": null,
+            "topk_weights": {
+              "shape": [
+                32,
+                4
+              ],
+              "dtype": "float32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 128,
+              "bytes": 512
+            },
+            "topk_ids": {
+              "shape": [
+                32,
+                4
+              ],
+              "dtype": "int32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 128,
+              "bytes": 512
+            },
+            "sorted_token_ids": {
+              "shape": [
+                623
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 623,
+              "bytes": 2492
+            },
+            "expert_ids": {
+              "shape": [
+                39
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 39,
+              "bytes": 156
+            },
+            "num_tokens_post_padded": {
+              "shape": [
+                1
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 1,
+              "bytes": 4
+            },
+            "mul_routed_weight": true,
+            "top_k": 1,
+            "config": {
+              "BLOCK_SIZE_M": 16,
+              "BLOCK_SIZE_N": 32,
+              "BLOCK_SIZE_K": 64,
+              "GROUP_SIZE_M": 1
+            },
+            "compute_type": {
+              "repr": "dtype"
+            },
+            "use_fp8_w8a8": false,
+            "use_int8_w8a8": false,
+            "use_int8_w8a16": false,
+            "use_int4_w4a16": false,
+            "per_channel_quant": false,
+            "block_shape": null,
+            "a_use_tma": false,
+            "b_use_tma": false,
+            "filter_expert": false,
+            "fuse_sum_all_reduce": false,
+            "router_topk": 4
+          },
+          "output": null,
+          "signature": "A=128x1792:bfloat16|B=32x2048x1792:bfloat16|C=32x4x2048:bfloat16|topk_weights=32x4:float32|topk_ids=32x4:int32|sorted_token_ids=623:int32|expert_ids=39:int32|num_tokens_post_padded=1:int32|top_k=1|router_topk=4"
+        },
+        {
+          "row_id": "triton_fused_moe_gemm#08",
+          "group": "gsm8k_5shot_cc32",
+          "real_calls": 6754,
+          "kept_because": [
+            "top-10 by call count",
+            "operating-point coverage: gsm8k_5shot_cc32"
+          ],
+          "args": {
+            "A": {
+              "shape": [
+                2,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 4096,
+              "bytes": 8192
+            },
+            "B": {
+              "shape": [
+                32,
+                3584,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                7340032,
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 234881024,
+              "bytes": 469762048
+            },
+            "bias": null,
+            "C": {
+              "shape": [
+                8,
+                3584
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                3584,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 28672,
+              "bytes": 57344
+            },
+            "A_scale": null,
+            "B_scale": null,
+            "B_zp": null,
+            "topk_weights": {
+              "shape": [
+                2,
+                4
+              ],
+              "dtype": "float32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 8,
+              "bytes": 32
+            },
+            "topk_ids": {
+              "shape": [
+                2,
+                4
+              ],
+              "dtype": "int32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 8,
+              "bytes": 32
+            },
+            "sorted_token_ids": {
+              "shape": [
+                128
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 128,
+              "bytes": 512
+            },
+            "expert_ids": {
+              "shape": [
+                8
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 8,
+              "bytes": 32
+            },
+            "num_tokens_post_padded": {
+              "shape": [
+                1
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 1,
+              "bytes": 4
+            },
+            "mul_routed_weight": false,
+            "top_k": 4,
+            "config": {
+              "BLOCK_SIZE_M": 16,
+              "BLOCK_SIZE_N": 32,
+              "BLOCK_SIZE_K": 64,
+              "GROUP_SIZE_M": 1
+            },
+            "compute_type": {
+              "repr": "dtype"
+            },
+            "use_fp8_w8a8": false,
+            "use_int8_w8a8": false,
+            "use_int8_w8a16": false,
+            "use_int4_w4a16": false,
+            "per_channel_quant": false,
+            "block_shape": null,
+            "b_use_tma": false,
+            "c_sorted": false,
+            "filter_expert": false,
+            "fuse_swiglu": false
+          },
+          "output": null,
+          "signature": "A=2x2048:bfloat16|B=32x3584x2048:bfloat16|C=8x3584:bfloat16|topk_weights=2x4:float32|topk_ids=2x4:int32|sorted_token_ids=128:int32|expert_ids=8:int32|num_tokens_post_padded=1:int32|top_k=4"
+        },
+        {
+          "row_id": "triton_fused_moe_gemm#09",
+          "group": "gsm8k_5shot_cc32",
+          "real_calls": 6754,
+          "kept_because": [
+            "top-10 by call count"
+          ],
+          "args": {
+            "A": {
+              "shape": [
+                8,
+                1792
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                1792,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 14336,
+              "bytes": 28672
+            },
+            "B": {
+              "shape": [
+                32,
+                2048,
+                1792
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                3670016,
+                1792,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 117440512,
+              "bytes": 234881024
+            },
+            "bias": null,
+            "C": {
+              "shape": [
+                2,
+                4,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                8192,
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 16384,
+              "bytes": 32768
+            },
+            "A_scale": null,
+            "B_scale": null,
+            "B_zp": null,
+            "topk_weights": {
+              "shape": [
+                2,
+                4
+              ],
+              "dtype": "float32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 8,
+              "bytes": 32
+            },
+            "topk_ids": {
+              "shape": [
+                2,
+                4
+              ],
+              "dtype": "int32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 8,
+              "bytes": 32
+            },
+            "sorted_token_ids": {
+              "shape": [
+                128
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 128,
+              "bytes": 512
+            },
+            "expert_ids": {
+              "shape": [
+                8
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 8,
+              "bytes": 32
+            },
+            "num_tokens_post_padded": {
+              "shape": [
+                1
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 1,
+              "bytes": 4
+            },
+            "mul_routed_weight": true,
+            "top_k": 1,
+            "config": {
+              "BLOCK_SIZE_M": 16,
+              "BLOCK_SIZE_N": 32,
+              "BLOCK_SIZE_K": 64,
+              "GROUP_SIZE_M": 1
+            },
+            "compute_type": {
+              "repr": "dtype"
+            },
+            "use_fp8_w8a8": false,
+            "use_int8_w8a8": false,
+            "use_int8_w8a16": false,
+            "use_int4_w4a16": false,
+            "per_channel_quant": false,
+            "block_shape": null,
+            "a_use_tma": false,
+            "b_use_tma": false,
+            "filter_expert": false,
+            "fuse_sum_all_reduce": false,
+            "router_topk": 4
+          },
+          "output": null,
+          "signature": "A=8x1792:bfloat16|B=32x2048x1792:bfloat16|C=2x4x2048:bfloat16|topk_weights=2x4:float32|topk_ids=2x4:int32|sorted_token_ids=128:int32|expert_ids=8:int32|num_tokens_post_padded=1:int32|top_k=1|router_topk=4"
+        },
+        {
+          "row_id": "triton_fused_moe_gemm#10",
+          "group": "gsm8k_16shot_cc16",
+          "real_calls": 22,
+          "kept_because": [
+            "largest input footprint"
+          ],
+          "args": {
+            "A": {
+              "shape": [
+                16384,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 33554432,
+              "bytes": 67108864
+            },
+            "B": {
+              "shape": [
+                32,
+                3584,
+                2048
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                7340032,
+                2048,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 234881024,
+              "bytes": 469762048
+            },
+            "bias": null,
+            "C": {
+              "shape": [
+                65536,
+                3584
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                3584,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 234881024,
+              "bytes": 469762048
+            },
+            "A_scale": null,
+            "B_scale": null,
+            "B_zp": null,
+            "topk_weights": {
+              "shape": [
+                16384,
+                4
+              ],
+              "dtype": "float32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 65536,
+              "bytes": 262144
+            },
+            "topk_ids": {
+              "shape": [
+                16384,
+                4
+              ],
+              "dtype": "int32",
+              "stride": [
+                4,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 65536,
+              "bytes": 262144
+            },
+            "sorted_token_ids": {
+              "shape": [
+                67615
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 67615,
+              "bytes": 270460
+            },
+            "expert_ids": {
+              "shape": [
+                1057
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 1057,
+              "bytes": 4228
+            },
+            "num_tokens_post_padded": {
+              "shape": [
+                1
+              ],
+              "dtype": "int32",
+              "stride": [
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 1,
+              "bytes": 4
+            },
+            "mul_routed_weight": false,
+            "top_k": 4,
+            "config": {
+              "BLOCK_SIZE_M": 64,
+              "BLOCK_SIZE_N": 64,
+              "BLOCK_SIZE_K": 32,
+              "GROUP_SIZE_M": 8
+            },
+            "compute_type": {
+              "repr": "dtype"
+            },
+            "use_fp8_w8a8": false,
+            "use_int8_w8a8": false,
+            "use_int8_w8a16": false,
+            "use_int4_w4a16": false,
+            "per_channel_quant": false,
+            "block_shape": null,
+            "b_use_tma": false,
+            "c_sorted": false,
+            "filter_expert": false,
+            "fuse_swiglu": false
+          },
+          "output": null,
+          "signature": "A=16384x2048:bfloat16|B=32x3584x2048:bfloat16|C=65536x3584:bfloat16|topk_weights=16384x4:float32|topk_ids=16384x4:int32|sorted_token_ids=67615:int32|expert_ids=1057:int32|num_tokens_post_padded=1:int32|top_k=4"
+        }
+      ]
+    }
+  ],
+  "capture_provenance": {
+    "model": "/scratch/models/lfm25",
+    "slug": "lfm25",
+    "server_args": "--trust-remote-code --attention-backend flashinfer --reasoning-parser qwen3 --tool-call-parser lfm2",
+    "capture_modifiers": [
+      "--disable-cuda-graph (python-level ops are invisible inside a captured graph)",
+      "tensors phase adds --disable-radix-cache (radix cache rewrites mamba/state pool rows outside the kernel call and breaks the state chain; shapes phase keeps radix ON so prefix-hit-driven chunk lengths stay realistic)"
+    ],
+    "host": "light-face-hides-fin-03-1 (RadixArk devbox b300-diffusion-kernel-opt)",
+    "gpus_used": "1",
+    "sglang_commit": "43226af",
+    "environment": {
+      "torch": "2.13.0+cu130",
+      "triton": "3.7.1",
+      "transformers": "5.12.1",
+      "gpu": "NVIDIA B300 SXM6 AC"
+    },
+    "capture_matrix": [
+      {
+        "phase": "shapes",
+        "group": "random_1k1k_cc1",
+        "started_utc": "11:45:36",
+        "Output token throughput": "59.42",
+        "Mean TTFT": "78.67"
+      },
+      {
+        "phase": "shapes",
+        "group": "random_1k1k_cc16",
+        "started_utc": "11:46:34",
+        "Output token throughput": "620.60",
+        "Mean TTFT": "91.58"
+      },
+      {
+        "phase": "shapes",
+        "group": "random_1k1k_cc256",
+        "started_utc": "11:47:27",
+        "Output token throughput": "4551.77",
+        "Mean TTFT": "587.70"
+      },
+      {
+        "phase": "shapes",
+        "group": "random_4k512_cc8",
+        "started_utc": "11:48:12",
+        "Output token throughput": "349.37",
+        "Mean TTFT": "116.95"
+      },
+      {
+        "phase": "shapes",
+        "group": "sharegpt_cc32",
+        "started_utc": "11:48:50",
+        "Output token throughput": "647.79",
+        "Mean TTFT": "165.67"
+      },
+      {
+        "phase": "shapes",
+        "group": "gsm8k_5shot_cc1",
+        "started_utc": "11:49:35",
+        "Accuracy": "1.000",
+        "Invalid": "0.000"
+      },
+      {
+        "phase": "shapes",
+        "group": "gsm8k_5shot_cc32",
+        "started_utc": "11:49:51",
+        "Accuracy": "0.484",
+        "Invalid": "0.000"
+      },
+      {
+        "phase": "shapes",
+        "group": "gsm8k_16shot_cc16",
+        "started_utc": "11:50:19",
+        "Accuracy": "0.875",
+        "Invalid": "0.000"
+      },
+      {
+        "phase": "shapes",
+        "group": "gsm8k_accuracy_200",
+        "started_utc": "11:50:40",
+        "Accuracy": "0.365",
+        "Invalid": "0.005"
+      },
+      {
+        "phase": "tensors",
+        "group": "gsm8k_5shot_cc1",
+        "started_utc": "11:58:30",
+        "Accuracy": "1.000",
+        "Invalid": "0.000"
+      },
+      {
+        "phase": "tensors",
+        "group": "gsm8k_16shot_cc16",
+        "started_utc": "11:58:45",
+        "Accuracy": "0.875",
+        "Invalid": "0.000"
+      },
+      {
+        "phase": "tensors",
+        "group": "random_1k1k_cc16",
+        "started_utc": "11:59:01",
+        "Output token throughput": "620.60",
+        "Mean TTFT": "91.58"
+      }
+    ],
+    "workload_sources": [
+      "sglang.bench_serving --dataset-name random (cookbook operating points)",
+      "sglang.bench_serving --dataset-name sharegpt",
+      "benchmark/gsm8k/bench_sglang.py (real GSM8K, 2/5/16-shot, incl. a 200-question accuracy run)"
+    ]
+  }
+}

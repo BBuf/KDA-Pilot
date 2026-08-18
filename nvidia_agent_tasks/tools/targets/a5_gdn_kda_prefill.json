@@ -1,0 +1,102 @@
+[
+ {
+  "module": "sglang.kernels.ops.attention.fla.chunk",
+  "attr": "chunk_gated_delta_rule_fwd",
+  "op": "gdn_chunk_prefill",
+  "shape_from": [
+   "q",
+   "k"
+  ],
+  "state_args": [
+   "initial_state"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.chunk_delta_h",
+  "attr": "chunk_gated_delta_rule_fwd_h",
+  "op": "gdn_chunk_delta_h",
+  "shape_from": [
+   "k",
+   "w"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.chunk_o",
+  "attr": "chunk_fwd_o",
+  "op": "gdn_chunk_o",
+  "shape_from": [
+   "q",
+   "h"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.wy_fast",
+  "attr": "recompute_w_u_fwd",
+  "op": "gdn_recompute_w_u",
+  "shape_from": [
+   "k",
+   "v"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.fused_recurrent",
+  "attr": "fused_recurrent_gated_delta_rule_fwd",
+  "op": "gdn_fused_recurrent_decode",
+  "shape_from": [
+   "q"
+  ],
+  "state_args": [
+   "initial_state"
+  ],
+  "tensors": true,
+  "chain": 16
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.fused_recurrent",
+  "attr": "fused_recurrent_gdn",
+  "op": "gdn_fused_recurrent_entry",
+  "shape_from": [
+   "q"
+  ],
+  "tensors": false
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.kda",
+  "attr": "chunk_kda_fwd",
+  "op": "kda_chunk_prefill",
+  "shape_from": [
+   "q",
+   "k"
+  ],
+  "state_args": [
+   "initial_state"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.kda",
+  "attr": "fused_recurrent_kda_fwd",
+  "op": "kda_fused_recurrent_decode",
+  "shape_from": [
+   "q"
+  ],
+  "state_args": [
+   "initial_state"
+  ],
+  "tensors": true,
+  "chain": 16
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.kda",
+  "attr": "kda_gate_chunk_cumsum",
+  "op": "kda_gate_chunk_cumsum",
+  "shape_from": [
+   "g"
+  ],
+  "tensors": true
+ }
+]

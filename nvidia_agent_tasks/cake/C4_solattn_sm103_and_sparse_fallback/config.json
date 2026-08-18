@@ -1,0 +1,42 @@
+{
+  "task": {
+    "slug": "C4_solattn_sm103_and_sparse_fallback",
+    "target_agent": "CAKE / kernel-design",
+    "model": "MiniMaxAI/MiniMax-H3 (NVlabs Sol-Attn as the sparse backend)",
+    "arch": "b300",
+    "target_gpu": "NVIDIA B300 SXM6 (sm_103)",
+    "ops": [
+      "sparse attention backend selection + dense fallback path"
+    ]
+  },
+  "capture": {
+    "cookbook_command": "sglang serve <H3 snapshot> --attention-backend sol_attn --component-attention-backends '{\"text_encoder\":\"fa\"}'",
+    "measured_share": "H3 step budget: attention 48% / GEMM 35% / NCCL a2a 8%"
+  },
+  "environment": {
+    "host": "light-face-hides-fin-03-1 (RadixArk devbox b300-diffusion-kernel-opt)",
+    "gpu": "8x NVIDIA B300 SXM6 AC, sm_103, 288 GB/card, single node",
+    "sglang": "main @ 43226af (python/sglang, editable install)",
+    "torch": "2.13.0+cu130",
+    "triton": "3.7.1",
+    "flashinfer": "0.6.17",
+    "sgl_kernel": "0.4.6.post1",
+    "transformers": "5.12.1",
+    "capture_date": "2026-08-18 (UTC)"
+  },
+  "build": {
+    "baseline_dir": "baseline/",
+    "candidate_dir": "solution/",
+    "language": "cuda / cute-dsl / triton (candidate's choice)"
+  },
+  "benchmark": {
+    "timing": "cuda graph replay, interleaved A/B",
+    "warmup_runs": 10,
+    "iterations": 200,
+    "num_trials": 7,
+    "contract": "../../docs/measurement_contract.md"
+  },
+  "correctness": {
+    "contract": "../../docs/anti_hack_contract.md"
+  }
+}

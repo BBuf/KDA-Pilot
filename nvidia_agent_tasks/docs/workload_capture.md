@@ -1,0 +1,93 @@
+# How the workloads were captured
+
+Every workload in this handoff comes from a model that was actually serving, on
+the hardware named in each task's `config.json`, launched with the command from
+its **SGLang cookbook recipe** - not from a shape guess and not from a
+microbenchmark script.
+
+## Pipeline
+
+```
+cookbook launch command  (+ 2 capture-only modifiers, see below)
+        |
+        v
+sitecustomize -> tools/nvcap.py     wraps the kernel entry points named in
+        |                          tools/targets/<task>.json in every process
+        v
+capture matrix: sequence length x concurrency x dataset, one label per run
+        |
+        +--> shape_manifest.json    every call: shapes/dtypes/strides/contiguity
+        |                           + scalars + output, aggregated per signature
+        |                           with a real-traffic call count
+        +--> tensors/<group>/<shape>/   real inputs, real outputs, real state
+                                        rows before and after the call
+        |
+        v
+tools/build_workloads.py -> <task>/bench/workloads.json
+```
+
+## The capture matrix
+
+Each model is walked through the same operating points, so the resulting shape
+set spans the space instead of one point:
+
+| group | workload | why it is in the set |
+| --- | --- | --- |
+| `random_1k1k_cc1` | `bench_serving` random 1024 in / 1024 out, concurrency 1 | latency point; smallest decode batch |
+| `random_1k1k_cc16` | same, concurrency 16 | balanced point |
+| `random_1k1k_cc256` | same, concurrency 256 | the cookbook's own benchmark point for several of these models |
+| `random_4k512_cc8` | 4096 in / 512 out, concurrency 8 | prefill-heavy chunk lengths |
+| `sharegpt_cc32` | ShareGPT, concurrency 32 | real prompt-length distribution, ragged batches |
+| `gsm8k_5shot_cc1` | **real GSM8K**, 5-shot, serial | real token distribution at batch 1 |
+| `gsm8k_5shot_cc32` | **real GSM8K**, 5-shot, 32-way | real data under real batching |
+| `gsm8k_16shot_cc16` | **real GSM8K**, 16-shot, 16-way | long real prompts (16-shot context) |
+| `gsm8k_accuracy_{100,200}` | **real GSM8K** accuracy run | records the accuracy of the very run the shapes came from |
+
+The GSM8K groups exist for two reasons: they are the only groups whose token
+*content* is real (synthetic random prompts have unrealistic token statistics and,
+for gated architectures, unrealistic gate/decay statistics), and the accuracy
+number proves the capture came from a correctly serving model rather than from a
+misconfigured one. Accuracies are recorded per model in
+`<task>/docs/capture_provenance.md`.
+
+## The two capture-only modifiers, and why each is required
+
+1. **`--disable-cuda-graph`** - inside a captured CUDA graph the Python layer runs
+   once at capture time, so per-step calls are never observed. This changes speed,
+   never numerics. Every shape in the manifest is therefore a shape the real
+   scheduler produced; only the *timing* of that run is unrepresentative.
+2. **`--disable-radix-cache`, tensor phase only** - with the radix cache on, the
+   mamba/state pool's `extra_buffer` strategy takes several state slots per
+   request and does boundary copy-on-write, which rewrites pool rows *outside*
+   the kernel call and breaks the state chain (we measured only 6 of 15 steps
+   chaining). With it off, 15/15 chain byte-exactly.
+
+   The shape phase keeps the radix cache **on**, because prefix-hit rate changes
+   the prefill chunk-length distribution - turning it off makes the shapes
+   unrealistic. Hence: **shapes with radix on, tensors with radix off.** The two
+   are deliberately captured in separate passes and must not be merged.
+
+## Warmup is separated, not filtered by hand
+
+Calls seen while no capture-group label was active - start-up, CUDA-graph
+capture, autotuning, dummy runs - land in `warmup_only_shapes` and are never
+selected into a workload set. This matters: warmup shapes are often the *largest*
+shapes a process ever sees (max-batch graph capture), so treating them as traffic
+would systematically mis-tune the kernel.
+
+## What is in the tensor bundles
+
+Per selected shape signature: every input tensor, every output tensor, and for
+state-carrying ops the state rows the call actually touched, both before and
+after. Multi-slot state pools are stored only as the touched rows plus metadata
+for the full pool. Expert weight tensors and KV pools are metadata-only (too
+large); for KV the *gathered* rows the call reads are stored, which is the real
+working set.
+
+State-carrying decode ops are captured as **chains**: N consecutive calls of the
+same signature, so a candidate can be validated on accumulated state rather than
+on one step. See `anti_hack_contract.md` for why that is the gate.
+
+Repo copies are trimmed subsets (smallest / median / largest per op, plus one
+chain per op) with an `INDEX.json`; the full bundles stay on the capture box and
+can be regenerated by re-running the pipeline above.
