@@ -26,6 +26,9 @@ The first five have a shipped SGLang kernel that a candidate has to beat; the la
 three need a kernel designed (or a vendor kernel fixed) because there is no drop-in
 baseline that wins today.
 
+[`SHAPES.md`](SHAPES.md) lists the shape family of every op in every task in one
+place (regenerate with `python tools/dump_shapes.py > SHAPES.md`).
+
 ## What every task carries
 
 ```
