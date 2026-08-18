@@ -1,0 +1,48 @@
+{
+  "note": "trimmed subset of the full capture; full bundle stays on the capture box",
+  "total_bytes": 15194209.0,
+  "entries": [
+    {
+      "op": "triton_decode_attention",
+      "group": "gsm8k_16shot_cc16",
+      "shape_dir": "triton_decode_attention__q12x20x576",
+      "bytes": 1660065,
+      "chain_steps": 0
+    },
+    {
+      "op": "triton_decode_attention",
+      "group": "random_1k1k_cc16",
+      "shape_dir": "triton_decode_attention__q1x20x576",
+      "bytes": 10800635,
+      "chain_steps": 0
+    },
+    {
+      "op": "triton_decode_attention_grouped",
+      "group": "gsm8k_16shot_cc16",
+      "shape_dir": "triton_decode_attention_grouped__q12x20x576",
+      "bytes": 1660059,
+      "chain_steps": 0
+    },
+    {
+      "op": "triton_extend_attention",
+      "group": "gsm8k_16shot_cc16",
+      "shape_dir": "triton_extend_attention__q_extend2906x20x256_k_extend2906x20x256",
+      "bytes": 8059,
+      "chain_steps": 0
+    },
+    {
+      "op": "triton_fused_moe_gemm",
+      "group": "gsm8k_5shot_cc1",
+      "shape_dir": "triton_fused_moe_gemm__A1x2048_B65x3072x2048",
+      "bytes": 49139,
+      "chain_steps": 0
+    },
+    {
+      "op": "triton_fused_moe_gemm",
+      "group": "gsm8k_16shot_cc16",
+      "shape_dir": "triton_fused_moe_gemm__A81920x1536_B65x2048x1536",
+      "bytes": 1016252,
+      "chain_steps": 0
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "op": "dsa_compress_norm_rope_store",
+  "group": "gsm8k_16shot_cc16",
+  "scalars": {
+    "norm_eps": 1e-06,
+    "page_size": 64,
+    "use_fp4": false,
+    "bf16_store": false
+  },
+  "tensors": {
+    "in_kv": {
+      "shape": [
+        3905,
+        512
+      ],
+      "dtype": "float32",
+      "stride": [
+        512,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 1999360,
+      "bytes": 7997440,
+      "file": "in_kv.pt"
+    },
+    "in_norm_weight": {
+      "shape": [
+        512
+      ],
+      "dtype": "float32",
+      "stride": [
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 512,
+      "bytes": 2048,
+      "file": "in_norm_weight.pt"
+    },
+    "in_out_loc": {
+      "shape": [
+        15626
+      ],
+      "dtype": "int64",
+      "stride": [
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 15626,
+      "bytes": 125008,
+      "file": "in_out_loc.pt"
+    }
+  },
+  "metadata_only": {
+    "in_freq_cis": {
+      "shape": [
+        1048576,
+        32
+      ],
+      "dtype": "complex64",
+      "stride": [
+        32,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 33554432,
+      "bytes": 268435456,
+      "not_saved": "exceeds NVCAP_MAX_TENSOR_MB"
+    },
+    "in_kvcache": {
+      "shape": [
+        100358,
+        37440
+      ],
+      "dtype": "uint8",
+      "stride": [
+        37440,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 3757403520,
+      "bytes": 3757403520,
+      "not_saved": "exceeds NVCAP_MAX_TENSOR_MB"
+    }
+  },
+  "gathered": {},
+  "bytes_on_disk": 8129203
+}

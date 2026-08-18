@@ -7,46 +7,102 @@ recapture rather than editing this file.
 
 ## `deepseek_v4_flash__dsa_sparse_attention`
 
-**`dsa_compress_forward`** — 576,603 real calls, 1,722 distinct signatures, 11 rows kept
+### workloads.json — model `deepseek-ai/DeepSeek-V4-Flash`
+
+**`dsa_compress_forward`** — 183,527 real calls, 209 distinct signatures, 11 rows kept
 
 - `kv_score_buffer[T, N, M]` float32 — T ∈ {259, 40143} — N ∈ {4, 128} — M ∈ {512, 1024, 2048}
-- `kv_score_input[T, N]` float32 — T ∈ {1, 8, 16, 32, 15415} — N ∈ {512, 1024, 2048}
+- `kv_score_input[T, N]` float32 — T ∈ {1, 13, 16, 32, 15636} — N ∈ {512, 1024, 2048}
 - `ape[T, N]` float32 — T ∈ {8, 128} — N ∈ {128, 512}
 
-**`dsa_compress_norm_rope_store`** — 576,603 real calls, 1,743 distinct signatures, 12 rows kept
+**`dsa_compress_norm_rope_store`** — 183,526 real calls, 209 distinct signatures, 11 rows kept
 
-- `kv[T, N]` float32 — T ∈ {0, 1, 8, 16, 32, 3852} — N ∈ {128, 512}
+- `kv[T, N]` float32 — T ∈ {1, 13, 16, 32, 3907} — N ∈ {128, 512}
 - `norm_weight[T]` float32 — T ∈ {128, 512}
 - `freq_cis[1048576, 32]` complex64
-- `out_loc[T]` int64 — T ∈ {1, 2, 8, 16, 32, 15415}
+- `out_loc[T]` int64 — T ∈ {1, 13, 16, 32, 15636}
 - `kvcache[100358, T]` uint8 — T ∈ {1728, 8448, 37440}
 
-**`dsa_fused_q_indexer_rope_hadamard_quant`** — 195,301 real calls, 574 distinct signatures, 6 rows kept
+**`dsa_fused_q_indexer_rope_hadamard_quant`** — 62,164 real calls, 70 distinct signatures, 8 rows kept
 
-- `q_input[T, 64, 128]` bfloat16 — T ∈ {1, 6, 8, 16, 32, 15415}
-- `weight[T, 64]` bfloat16 — T ∈ {1, 6, 8, 16, 32, 15415}
+- `q_input[T, 64, 128]` bfloat16 — T ∈ {1, 2, 10, 11, 13, 16, 32, 15636}
+- `weight[T, 64]` bfloat16 — T ∈ {1, 2, 10, 11, 13, 16, 32, 15636}
 - `freqs_cis[1048576, 32]` complex64
-- `positions[T]` int32 — T ∈ {1, 6, 8, 16, 32, 15415}
+- `positions[T]` int32 — T ∈ {1, 2, 10, 11, 13, 16, 32, 15636}
 
-**`dsa_topk_transform_v2`** — 189,085 real calls, 348 distinct signatures, 6 rows kept
+**`dsa_indexer_logits_deepgemm_DEFAULT`** — 62,164 real calls, 70 distinct signatures, 8 rows kept
 
-- `scores[T, 262208]` float32 **non-contiguous** — T ∈ {1, 6, 8, 16, 32, 256}
-- `seq_lens[T]` int32 — T ∈ {1, 6, 8, 16, 32, 256}
-- `page_tables[T, 4097]` int32 — T ∈ {1, 6, 8, 16, 32, 256}
-- `out_page_indices[T, 512]` int32 — T ∈ {1, 6, 8, 16, 32, 256}
-- `metadata[T, 2]` int32 — T ∈ {2, 7, 9, 17, 33, 257}
+- `q[T, 1, 64, 128]` float8_e4m3fn — T ∈ {1, 2, 10, 11, 13, 16, 32, 15636}
+- `kv_cache[100358, 64, 1, 132]` uint8
+- `weights[T, 64]` float32 — T ∈ {1, 2, 10, 11, 13, 16, 32, 15636}
+- `context_lens[T, 1]` int32 — T ∈ {1, 2, 10, 11, 13, 16, 32, 15636}
+- `block_table[T, N]` int32 — T ∈ {1, 2, 10, 11, 13, 16, 32, 15636} — N ∈ {12, 4097}
+- `schedule_meta[149, 2]` int32
 
-**`dsa_paged_mqa_logits_metadata`** — 9,301 real calls, 574 distinct signatures, 6 rows kept
+**`dsa_topk_transform_v2`** — 59,808 real calls, 43 distinct signatures, 7 rows kept
 
-- `seq_lens[T, 1]` int32 — T ∈ {1, 6, 8, 16, 32, 15415}
+- `scores[T, 262208]` float32 **non-contiguous** — T ∈ {1, 2, 10, 11, 13, 16, 32}
+- `seq_lens[T]` int32 — T ∈ {1, 2, 10, 11, 13, 16, 32}
+- `page_tables[T, 4097]` int32 — T ∈ {1, 2, 10, 11, 13, 16, 32}
+- `out_page_indices[T, 512]` int32 — T ∈ {1, 2, 10, 11, 13, 16, 32}
+- `metadata[T, 2]` int32 — T ∈ {2, 3, 11, 12, 14, 17, 33}
 
-**`dsa_topk_transform`** — 6,216 real calls, 233 distinct signatures, 18 rows kept
+**`dsa_sparse_attention_flash_mla_alt`** — 4,825 real calls, 80 distinct signatures, 12 rows kept
 
-- `scores[T, N]` float32 **non-contiguous** — T ∈ {2, 103, 194, 198, 199, 202, 204, 206, 207, 211, ...} — N ∈ {64, 192, 256, 768, 832}
-- `seq_lens[T]` int32 — T ∈ {2, 103, 194, 198, 199, 202, 204, 206, 207, 211, ...}
-- `page_tables[T, N]` int32 — T ∈ {2, 103, 194, 198, 199, 202, 204, 206, 207, 211, ...} — N ∈ {1, 3, 4, 12, 13}
-- `out_page_indices[T, 512]` int32 — T ∈ {2, 103, 194, 198, 199, 202, 204, 206, 207, 211, ...}
-- `out_raw_indices[T, 512]` int32 — T ∈ {2, 103, 194, 198, 199, 202, 204, 206, 207, 211, ...}
+- `q[T, 64, 512]` bfloat16 — T ∈ {696, 704, 710, 719, 733, 742, 2885, 15074, 15636}
+- `kv[T, 1, 512]` bfloat16 — T ∈ {696, 715, 747, 870, 880, 887, 898, 916, 927, 3606, ...}
+- `indices[T, 1, N]` int32 — T ∈ {696, 704, 710, 719, 733, 742, 2885, 15074, 15636} — N ∈ {128, 256, 640}
+- `attn_sink[64]` float32
+- `topk_length[T]` int32 — T ∈ {696, 704, 710, 719, 733, 742, 2885, 15074, 15636}
+
+**`dsa_paged_mqa_logits_metadata`** — 2,964 real calls, 70 distinct signatures, 8 rows kept
+
+- `seq_lens[T, 1]` int32 — T ∈ {1, 2, 10, 11, 13, 16, 32, 15636}
+
+**`dsa_topk_transform`** — 2,356 real calls, 27 distinct signatures, 10 rows kept
+
+- `scores[T, N]` float32 **non-contiguous** — T ∈ {696, 704, 710, 719, 733, 742, 2885, 7417, 15074, 15636} — N ∈ {192, 256, 768}
+- `seq_lens[T]` int32 — T ∈ {696, 704, 710, 719, 733, 742, 2885, 7417, 15074, 15636}
+- `page_tables[T, N]` int32 — T ∈ {696, 704, 710, 719, 733, 742, 2885, 7417, 15074, 15636} — N ∈ {3, 4, 12}
+- `out_page_indices[T, 512]` int32 — T ∈ {696, 704, 710, 719, 733, 742, 2885, 7417, 15074, 15636}
+- `out_raw_indices[T, 512]` int32 — T ∈ {696, 704, 710, 719, 733, 742, 2885, 7417, 15074, 15636}
+
+### workloads_mhc.json — model `deepseek-ai/DeepSeek-V4-Flash`
+
+**`mhc_pre_big_fuse_with_norm_tilelang`** — 155,492 real calls, 34 distinct signatures, 9 rows kept
+
+- `gemm_out_mul[T, N, 24]` float32 — T ∈ {1, 64} — N ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `gemm_out_sqrsum[T, N]` float32 — T ∈ {1, 64} — N ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `hc_scale[3]` float32
+- `hc_base[24]` float32
+- `residual[T, 4, 4096]` bfloat16 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `post_mix[T, 4]` float32 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `comb_mix[T, 16]` float32 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `layer_input[T, 4096]` bfloat16 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `norm_weight[4096]` bfloat16
+
+**`mhc_pre`** — 155,492 real calls, 34 distinct signatures, 9 rows kept
+
+- `residual[T, 4, 4096]` bfloat16 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `fn[24, 16384]` float32
+- `hc_scale[3]` float32
+- `hc_base[24]` float32
+- `norm_weight[4096]` bfloat16
+
+**`mhc_post_tilelang`** — 155,492 real calls, 34 distinct signatures, 9 rows kept
+
+- `a[T, 4, 4]` float32 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `b[T, 4, 4096]` bfloat16 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `c[T, 4]` float32 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `d[T, 4096]` bfloat16 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `x[T, 4, 4096]` bfloat16 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+
+**`mhc_post`** — 155,492 real calls, 34 distinct signatures, 9 rows kept
+
+- `x[T, 4096]` bfloat16 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `residual[T, 4, 4096]` bfloat16 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `post_layer_mix[T, 4]` float32 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `comb_res_mix[T, 4, 4]` float32 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
 
 
 ## `diffusion__attention_backend_fa4_vs_cudnn`
@@ -354,6 +410,8 @@ recapture rather than editing this file.
 
 ## `qwen3_next__gdn_chunk_prefill`
 
+### workloads.json — model `Qwen/Qwen3-Next-80B-A3B-Instruct`
+
 **`gdn_recompute_w_u`** — 3,744 real calls, 13 distinct signatures, 11 rows kept
 
 - `k[1, T, 2, 128]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
@@ -395,4 +453,23 @@ recapture rather than editing this file.
 - `initial_state_indices[T]` int32 — T ∈ {1, 2, 7, 31}
 - `cu_seqlens[T]` int32 — T ∈ {2, 3, 8, 32}
 - `chunk_indices[T, 2]` int32 — T ∈ {1, 2, 7, 11, 13, 14, 65, 260, 264}
+
+### workloads_decode.json — model `Qwen/Qwen3-Next-80B-A3B-Instruct`
+
+**`gdn_decode_causal_conv1d_update`** — 8 real calls, 1 distinct signatures, 1 rows kept
+
+- `x[1, 1024]` bfloat16
+- `conv_state[10715, 1024, 3]` bfloat16
+- `weight[1024, 4]` bfloat16
+- `conv_state_indices[1]` int32
+
+**`gdn_decode_packed_triton`** — 8 real calls, 1 distinct signatures, 1 rows kept
+
+- `mixed_qkv[1, 1024]` bfloat16
+- `a[1, 4]` bfloat16
+- `b[1, 4]` bfloat16
+- `A_log[4]` float32
+- `dt_bias[4]` bfloat16
+- `ssm_states[10715, 4, 128, 128]` float32
+- `cache_indices[1]` int32
 

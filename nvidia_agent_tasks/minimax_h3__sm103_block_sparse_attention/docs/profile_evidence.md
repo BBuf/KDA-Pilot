@@ -32,3 +32,33 @@ To capture the sparse arm's block-schedule metadata, re-run the same command wit
 backend selected; the capture hook already wraps
 `SubBlockSparseAttentionImpl.forward` / `forward_varlen`. Expect ~25% of requests to hang - that
 is the bug this task is about.
+
+## The sparse arm is runnable on sm_103, and here is the exact recipe
+
+`bench/run_sparse_arm.sh` is the script we ran tonight; it completed a full 49-step
+generation on 4x B300 without hanging (the hang is ~25% per request, so a single clean run
+proves nothing about the bug - it proves the recipe works). What it needs:
+
+* the SGLang worktree with the two SM103 enablement commits (`Enable SubBlock sparse
+  attention on SM103`, `Support renamed FlashInfer blk64 entry point`) plus the local
+  patch to `subblock_sparse_attn.py`;
+* the patched FlashInfer checkout on `PYTHONPATH` (the upstream blk64 kernel is built
+  `-gencode=arch=compute_100a,code=sm_100a`, so **sm_103 has no cubin** and the backend's
+  own guard only compares the major version - it accepts 10.3 and fails later);
+* `SGLANG_SUBBLOCK_SM103_BSA=1`;
+* `--attention-backend subblock_sparse_attn --attention-backend-config
+  '{"sparsity":0.75,"n_k":4,"n_q":4,"skip_first_steps":10,"skip_first_layers":0,"min_seq_len":4096}'`.
+
+Note `min_seq_len: 4096`: every sequence below it takes the dense fallback, which is why
+H3's 24-26 token audio components never enter the sparse path - see
+`minimax_h3__sparse_backend_fallback`.
+
+### Capture gap, stated plainly
+
+Our hook wrapped `SubBlockSparseAttentionImpl.forward` / `forward_varlen` and the run did
+use the backend ("Using subblock_sparse_attn attention backend"), yet those entries
+recorded 0 calls while the text-encoder's FA path recorded 4 - i.e. the DiT worker
+processes did not report. So this task ships the dense reference shapes, the schedule
+parameters above, the forensics, and a runnable recipe, but **not** a captured BSA payload.
+The block grid is derivable: 37,736 tokens per rank, `n_q=n_k=4`, sparsity 0.75, head_dim
+128 (the kernel's hard limit), skipping the first 10 steps and no layers.

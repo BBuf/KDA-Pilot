@@ -1,0 +1,134 @@
+{
+  "op": "dsa_indexer_logits_deepgemm_DEFAULT",
+  "group": "gsm8k_5shot_cc1",
+  "scalars": {
+    "max_context_len": 192,
+    "clean_logits": false
+  },
+  "tensors": {
+    "in_q": {
+      "shape": [
+        719,
+        1,
+        64,
+        128
+      ],
+      "dtype": "float8_e4m3fn",
+      "stride": [
+        8192,
+        8192,
+        128,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 5890048,
+      "bytes": 5890048,
+      "file": "in_q.pt"
+    },
+    "in_weights": {
+      "shape": [
+        719,
+        64
+      ],
+      "dtype": "float32",
+      "stride": [
+        64,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 46016,
+      "bytes": 184064,
+      "file": "in_weights.pt"
+    },
+    "in_context_lens": {
+      "shape": [
+        719,
+        1
+      ],
+      "dtype": "int32",
+      "stride": [
+        1,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 719,
+      "bytes": 2876,
+      "file": "in_context_lens.pt"
+    },
+    "in_block_table": {
+      "shape": [
+        719,
+        3
+      ],
+      "dtype": "int32",
+      "stride": [
+        3,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 2157,
+      "bytes": 8628,
+      "file": "in_block_table.pt"
+    },
+    "in_schedule_meta": {
+      "shape": [
+        149,
+        2
+      ],
+      "dtype": "int32",
+      "stride": [
+        2,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 298,
+      "bytes": 1192,
+      "file": "in_schedule_meta.pt"
+    },
+    "out": {
+      "shape": [
+        719,
+        192
+      ],
+      "dtype": "float32",
+      "stride": [
+        256,
+        1
+      ],
+      "contiguous": false,
+      "device": "cuda",
+      "numel": 138048,
+      "bytes": 552192,
+      "file": "out.pt"
+    }
+  },
+  "metadata_only": {
+    "in_kv_cache": {
+      "shape": [
+        100358,
+        64,
+        1,
+        132
+      ],
+      "dtype": "uint8",
+      "stride": [
+        8448,
+        132,
+        132,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 847824384,
+      "bytes": 847824384,
+      "not_saved": "skip_args"
+    }
+  },
+  "gathered": {},
+  "bytes_on_disk": 6648450
+}

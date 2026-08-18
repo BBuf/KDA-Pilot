@@ -17,3 +17,46 @@ Representative shapes:
 Read `capture_provenance.md` for the two findings that shape this task: the FLA
 Triton chunk path is live on B300 while the FLA *recurrent decode* path is not, and
 the synthetic-output groups were replaced by real GSM8K groups on this model.
+
+## Update: the decode kernel is Triton, and its state chain is verified
+
+Measured tonight on the same box, with CUDA graphs **enabled** (the real deployment),
+TP8, random 1024-in / 256-out at concurrency 16. Full table in
+`../docs/profiles/kernel_shapes_qwen3_next.json`, 99.7% of GPU time accounted for:
+
+| block | share | biggest single kernel |
+| --- | ---: | --- |
+| MoE (trtllm bmm / routing / finalize) | 30.79% | 8.44% |
+| GEMM (nvjet / cublas) | 26.12% | 6.11% |
+| collectives | 18.67% | 11.89% |
+| full attention (Triton unified) | 6.39% | `_fwd_grouped_kernel_stage1` 3.43% |
+| **GDN linear attention** | **4.39%** | **`fused_recurrent_gated_delta_rule_packed_decode_kernel` 3.56%** |
+| causal conv1d | 1.67% | `_causal_conv1d_update_kernel` |
+| elementwise / norm / act | 6.06% | `act_and_mul` 2.15% |
+
+So the live GDN target on B300 is `TritonGDNKernel.packed_decode` at **3.56% of GPU
+time** - a Triton kernel, above our 3% bar on its own. Correction to the earlier note in
+this task: decode is **not** served by the CuteDSL / FlashInfer GDN kernels on this build.
+We wrapped all three and only the Triton one fired.
+
+The chunk-prefill kernels are small *at this operating point* (0.33% + 0.14% + 0.14%)
+because the input is 1k tokens. They scale with prompt length, and the captured rows
+include the real long-prompt shapes (T up to 16,289 from the 16-shot GSM8K groups), so
+tune against those rows rather than against this profile's share.
+
+### Verified decode state chains (the correctness oracle)
+
+`bench/tensors/` ships two chains of 16 consecutive real decode steps, both **15/15
+links byte-identical** (`tools/verify_state_chain.py`):
+
+* `gdn_decode_packed_triton__mixed_qkv1x1024` - the GDN SSM state (`ssm_states` rows,
+  sliced by `cache_indices`), 8.8 MB.
+* `gdn_decode_causal_conv1d_update__x1x1024` - the conv state, 836 KB.
+
+Prefill payloads (`bench/tensors_prefill/`) cover the chunk pipeline at T = 3,407 and
+16,289 with the fp32 `initial_state` pool rows.
+
+Chain capture needed two things to be right, both of which matter if you re-capture:
+`--disable-radix-cache` (the mamba pool's `extra_buffer` strategy rewrites rows outside
+the kernel call otherwise) and pinning the chain to one layer instance via its `A_log`
+pointer - consecutive same-shape calls are different layers, not consecutive time steps.

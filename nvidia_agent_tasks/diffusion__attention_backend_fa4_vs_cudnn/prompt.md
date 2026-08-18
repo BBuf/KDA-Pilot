@@ -1,4 +1,4 @@
-# FA4 CuTe loses to cuDNN SDPA on diffusion attention shapes (sm_100/sm_103)
+# Diffusion attention backend on sm_103: short-sequence FA4 gap + a dispatch that must see layout
 
 **Task:** `diffusion__attention_backend_fa4_vs_cudnn`
 
@@ -21,15 +21,23 @@ PyTorch reference; the bar is the shipped kernel.
 
 ## Why we are asking for this one
 
-- We measured cuDNN 9.19 SDPA beating the vendored FA4 CuTe kernel on all 11 real
-  diffusion attention shapes we tried, by 1.24x-1.98x (Wan2.2-5B self 8.90 -> 6.84 ms;
-  A14B 112 -> 87 ms; LingBot-506K 1416 -> 1021 ms; H3 image 1.98x), which was worth
-  1.132x end-to-end on Wan2.2-5B. We now default sm_100 diffusion attention to cuDNN
-  because of it.
-- That is a kernel-side gap on your side of the stack: either FA4's tile/stage selection
-  is wrong for these shapes, or the diffusion regime (no causal mask, no KV cache,
-  100k-500k tokens, head_dim 128) is simply untuned. A kernel-design agent sweeping the
-  FA4 configuration space on these exact shapes is the cheapest way to close it.
+- **Corrected premise, measured tonight on B300.** Our August campaign found cuDNN 9.19
+  SDPA beating the vendored FA4 CuTe kernel by 1.24-1.98x on 11 real diffusion shapes,
+  which is why SGLang defaults sm_100+ diffusion attention to cuDNN. That **does not
+  reproduce on sm_103 with the current stack**: with the layout the model really uses
+  (q/k/v as slices of one fused QKV buffer) FA4 is *faster* on every large shape by
+  4-5%. Full table in `docs/profile_evidence.md`, raw numbers in `bench/fa4_*.json`.
+- **What is left is real but narrower.** FA4 is **1.24x slower than cuDNN at 24-26
+  tokens** (14-16 heads, head_dim 128) - that is MiniMax-H3's audio tower, which FA4
+  served 200 times in a single captured request, and it is also the branch a sparse
+  backend falls back to. Closing that regime is ask #1.
+- **The dispatch predicate has to see the layout, not only the shape**: at 15.6k and
+  32.7k tokens cuDNN wins 1.14-1.17x on contiguous tensors and loses 0.95x on
+  fused-QKV slices. Ask #2 is a predicate (or a kernel) that does not flip with a
+  stride change.
+- Ask #3, if you have a B200 handy: re-verify the older 1.24-1.98x gap with the current
+  wheel. If it still holds there, FA4's tuning is generation-specific and both of us
+  should encode that instead of hard-coding a backend per architecture.
 
 ## Correctness gate
 

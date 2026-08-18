@@ -1,32 +1,292 @@
 [
-  {"module": "sglang.kernels.ops.attention.dsa.tilelang_kernel", "attr": "tilelang_sparse_fwd",
-   "op": "dsa_tilelang_sparse_attention", "shape_from": ["q", "indices"], "tensors": true},
-  {"module": "sglang.kernels.ops.attention.dsa.tilelang_kernel", "attr": "dpsk_v4_fp8_attention_fwd",
-   "op": "dsa_tilelang_fp8_sparse_attention", "shape_from": ["q"], "tensors": true},
-  {"module": "sglang.kernels.ops.attention.dsa.tilelang_kernel", "attr": "tilelang_fp8_paged_mqa_logits",
-   "op": "dsa_indexer_paged_mqa_logits_tilelang", "shape_from": ["q"], "tensors": true},
-  {"module": "sglang.kernels.ops.attention.dsa.tilelang_kernel", "attr": "fp8_index",
-   "op": "dsa_indexer_fp8_index", "shape_from": ["q"], "tensors": true},
-  {"module": "sglang.kernels.ops.attention.dsa.tilelang_kernel", "attr": "act_quant",
-   "op": "dsa_indexer_act_quant", "shape_from": ["x"], "tensors": true},
-  {"module": "sglang.kernels.ops.attention.dsa.paged_mqa_logits", "attr": "deepgemm_paged_mqa_logits_native",
-   "op": "dsa_indexer_paged_mqa_logits_deepgemm", "shape_from": ["q"], "tensors": true},
-  {"module": "sglang.kernels.ops.attention.dsa.paged_mqa_logits", "attr": "deepgemm_paged_mqa_logits_split",
-   "op": "dsa_indexer_paged_mqa_logits_deepgemm_split", "shape_from": ["q"], "tensors": true},
-  {"module": "sglang.kernels.ops.attention.dsa.paged_mqa_logits", "attr": "cutedsl_paged_mqa_logits",
-   "op": "dsa_indexer_paged_mqa_logits_cutedsl", "shape_from": ["q"], "tensors": true},
-  {"module": "sglang.kernels.ops.attention.dsa.triton_sparse_mla", "attr": "triton_sparse_mla_fwd",
-   "op": "dsa_triton_sparse_mla", "shape_from": ["q", "indices"], "tensors": true},
-  {"module": "sglang.kernels.ops.attention.dsv4.topk", "attr": "topk_transform_512",
-   "op": "dsa_topk_transform", "shape_from": ["score"], "tensors": true},
-  {"module": "sglang.kernels.ops.attention.dsv4.topk", "attr": "topk_transform_512_v2",
-   "op": "dsa_topk_transform_v2", "shape_from": ["score"], "tensors": true},
-  {"module": "sglang.kernels.ops.attention.dsv4.compress", "attr": "compress_forward",
-   "op": "dsa_compress_forward", "shape_from": ["x"], "tensors": true},
-  {"module": "sglang.kernels.ops.attention.dsv4.compress", "attr": "compress_norm_rope_store",
-   "op": "dsa_compress_norm_rope_store", "shape_from": ["x"], "tensors": true},
-  {"module": "sglang.kernels.ops.attention.dsv4.elementwise", "attr": "fused_q_indexer_rope_hadamard_quant",
-   "op": "dsa_fused_q_indexer_rope_hadamard_quant", "shape_from": ["q"], "tensors": true},
-  {"module": "sglang.kernels.ops.attention.dsv4.attn", "attr": "get_paged_mqa_logits_metadata",
-   "op": "dsa_paged_mqa_logits_metadata", "shape_from": ["seq_lens"], "tensors": false}
+ {
+  "module": "sglang.kernels.ops.attention.dsa.tilelang_kernel",
+  "attr": "tilelang_sparse_fwd",
+  "op": "dsa_tilelang_sparse_attention",
+  "shape_from": [
+   "q",
+   "indices"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.dsa.tilelang_kernel",
+  "attr": "dpsk_v4_fp8_attention_fwd",
+  "op": "dsa_tilelang_fp8_sparse_attention",
+  "shape_from": [
+   "q"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.dsa.tilelang_kernel",
+  "attr": "tilelang_fp8_paged_mqa_logits",
+  "op": "dsa_indexer_paged_mqa_logits_tilelang",
+  "shape_from": [
+   "q"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.dsa.tilelang_kernel",
+  "attr": "fp8_index",
+  "op": "dsa_indexer_fp8_index",
+  "shape_from": [
+   "q"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.dsa.tilelang_kernel",
+  "attr": "act_quant",
+  "op": "dsa_indexer_act_quant",
+  "shape_from": [
+   "x"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.dsa.paged_mqa_logits",
+  "attr": "deepgemm_paged_mqa_logits_native",
+  "op": "dsa_indexer_paged_mqa_logits_deepgemm",
+  "shape_from": [
+   "q"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.dsa.paged_mqa_logits",
+  "attr": "deepgemm_paged_mqa_logits_split",
+  "op": "dsa_indexer_paged_mqa_logits_deepgemm_split",
+  "shape_from": [
+   "q"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.dsa.paged_mqa_logits",
+  "attr": "cutedsl_paged_mqa_logits",
+  "op": "dsa_indexer_paged_mqa_logits_cutedsl",
+  "shape_from": [
+   "q"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.dsa.triton_sparse_mla",
+  "attr": "triton_sparse_mla_fwd",
+  "op": "dsa_triton_sparse_mla",
+  "shape_from": [
+   "q",
+   "indices"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.dsv4.topk",
+  "attr": "topk_transform_512",
+  "op": "dsa_topk_transform",
+  "shape_from": [
+   "score"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.dsv4.topk",
+  "attr": "topk_transform_512_v2",
+  "op": "dsa_topk_transform_v2",
+  "shape_from": [
+   "score"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.dsv4.compress",
+  "attr": "compress_forward",
+  "op": "dsa_compress_forward",
+  "shape_from": [
+   "x"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.dsv4.compress",
+  "attr": "compress_norm_rope_store",
+  "op": "dsa_compress_norm_rope_store",
+  "shape_from": [
+   "x"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.dsv4.elementwise",
+  "attr": "fused_q_indexer_rope_hadamard_quant",
+  "op": "dsa_fused_q_indexer_rope_hadamard_quant",
+  "shape_from": [
+   "q"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.dsv4.attn",
+  "attr": "get_paged_mqa_logits_metadata",
+  "op": "dsa_paged_mqa_logits_metadata",
+  "shape_from": [
+   "seq_lens"
+  ],
+  "tensors": false
+ },
+ {
+  "module": "deep_gemm",
+  "attr": "fp8_paged_mqa_logits",
+  "op": "dsa_indexer_logits_deepgemm_DEFAULT",
+  "shape_from": [
+   "q",
+   "kv_cache"
+  ],
+  "tensors": true,
+  "skip_args": [
+   "kv_cache"
+  ]
+ },
+ {
+  "module": "deep_gemm",
+  "attr": "fp8_fp4_paged_mqa_logits",
+  "op": "dsa_indexer_logits_deepgemm_fp4",
+  "shape_from": [
+   "q"
+  ],
+  "tensors": true,
+  "skip_args": [
+   "kv_cache"
+  ]
+ },
+ {
+  "module": "sgl_kernel",
+  "attr": "flash_mla_sparse_fwd",
+  "op": "dsa_sparse_attention_flash_mla_DEFAULT",
+  "shape_from": [
+   "q",
+   "indices"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sgl_kernel.flash_mla",
+  "attr": "flash_mla_sparse_fwd",
+  "op": "dsa_sparse_attention_flash_mla_alt",
+  "shape_from": [
+   "q",
+   "indices"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sgl_kernel",
+  "attr": "flash_mla_with_kvcache",
+  "op": "dsa_mla_with_kvcache",
+  "shape_from": [
+   "q"
+  ],
+  "tensors": false
+ },
+ {
+  "module": "sglang.srt.layers.attention.deepseek_v4_backend",
+  "attr": "DeepSeekV4AttnBackend.forward_decode",
+  "op": "dsv4_backend_forward_decode",
+  "shape_from": [
+   "q"
+  ],
+  "tensors": false
+ },
+ {
+  "module": "sglang.srt.layers.attention.deepseek_v4_backend",
+  "attr": "DeepSeekV4AttnBackend.forward_extend",
+  "op": "dsv4_backend_forward_extend",
+  "shape_from": [
+   "q"
+  ],
+  "tensors": false
+ },
+ {
+  "module": "sglang.kernels.ops.layernorm.mhc",
+  "attr": "mhc_pre",
+  "op": "mhc_pre",
+  "shape_from": [
+   "x"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.layernorm.mhc",
+  "attr": "mhc_post",
+  "op": "mhc_post",
+  "shape_from": [
+   "x"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.layernorm.mhc",
+  "attr": "mhc_pre_big_fuse_with_norm_tilelang",
+  "op": "mhc_pre_big_fuse_with_norm_tilelang",
+  "shape_from": [
+   "x"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.layernorm.mhc",
+  "attr": "mhc_pre_big_fuse_tilelang",
+  "op": "mhc_pre_big_fuse_tilelang",
+  "shape_from": [
+   "x"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.layernorm.mhc",
+  "attr": "mhc_post_tilelang",
+  "op": "mhc_post_tilelang",
+  "shape_from": [
+   "x"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.layernorm.mhc",
+  "attr": "mhc_fused_post_pre",
+  "op": "mhc_fused_post_pre",
+  "shape_from": [
+   "x"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.layernorm.mhc",
+  "attr": "mhc_fused_post_pre_fma_tilelang",
+  "op": "mhc_fused_post_pre_fma_tilelang",
+  "shape_from": [
+   "x"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.layernorm.mhc",
+  "attr": "mhc_pre_gemm_sqrsum_tilelang",
+  "op": "mhc_pre_gemm_sqrsum_tilelang",
+  "shape_from": [
+   "x"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.layernorm.mhc",
+  "attr": "hc_split_sinkhorn",
+  "op": "mhc_hc_split_sinkhorn",
+  "shape_from": [
+   "x"
+  ],
+  "tensors": true
+ }
 ]

@@ -14,20 +14,38 @@ we paid for.
 | task | model | kernel(s) | measured share | workload data |
 | --- | --- | --- | --- | --- |
 | [`nemotron3_nano__mamba2_ssm`](nemotron3_nano__mamba2_ssm) | NVIDIA Nemotron-3-Nano-30B-A3B-FP8 | Triton `ssd_*` chunk pipeline + `causal_conv1d_*` | **55.8%** of serving GPU time | 123 rows / 9 ops + a verified 16-step real state chain |
-| [`glm47_flash__triton_attention`](glm47_flash__triton_attention) | GLM-4.7-Flash | `decode_attention_fwd`, `extend_attention_fwd` | **75.3%** | 86 rows / 3 ops (incl. a Qwen3-Next shape family) |
-| [`deepseek_v4_flash__dsa_sparse_attention`](deepseek_v4_flash__dsa_sparse_attention) | DeepSeek-V4-Flash | indexer quant, top-k transform, compress+rope+store | 576k + 195k + 189k real calls | 59 rows / 6 ops |
+| [`glm47_flash__triton_attention`](glm47_flash__triton_attention) | GLM-4.7-Flash | `decode_attention_fwd`, `extend_attention_fwd` | **75.3%** (Qwen3-Next runs the same kernels at 6.39%) | 86 rows / 3 ops, 15 MB real tensors |
+| [`deepseek_v4_flash__dsa_sparse_attention`](deepseek_v4_flash__dsa_sparse_attention) | DeepSeek-V4-Flash | whole DSA chain: compress -> q-indexer -> **deep_gemm logits** -> top-k -> **flash_mla sparse core**, plus the **mHC TileLang** kernels | front end **8.46%** aggregate, sparse core **7.50%**, mHC **8.06%** of serving GPU time | 111 rows / 12 ops, 35 MB real tensors |
 | [`lfm25__triton_fused_moe`](lfm25__triton_fused_moe) | LFM2.5-8B-A1B (+ GLM-4.7-Flash) | `invoke_fused_moe_kernel` and friends | **50.5%** / 30.4% | 19 rows, two expert geometries + real routing tensors |
-| [`qwen3_next__gdn_chunk_prefill`](qwen3_next__gdn_chunk_prefill) | Qwen3-Next-80B-A3B | FLA `chunk_gated_delta_rule_fwd` + sub-kernels | 3,744 real calls / 13 signatures | 44 rows / 4 ops |
+| [`qwen3_next__gdn_chunk_prefill`](qwen3_next__gdn_chunk_prefill) | Qwen3-Next-80B-A3B | FLA chunk prefill + **`TritonGDNKernel.packed_decode`** | decode kernel **3.56%** of GPU time; GDN family 4.39% | 46 rows, **2 verified 16-step state chains** |
 | [`minimax_h3__sm103_block_sparse_attention`](minimax_h3__sm103_block_sparse_attention) | MiniMax-H3 | **write a new** sm_103 sub-block block-sparse forward | the sparse arm is the only backend beating cache-only on B300 (10.37 s vs 11.16 s) | dense reference shapes + deadlock forensics |
-| [`diffusion__attention_backend_fa4_vs_cudnn`](diffusion__attention_backend_fa4_vs_cudnn) | Wan2.2-TI2V-5B, MiniMax-H3 | FA4 CuTe forward on diffusion shapes | attention is 48-70% of a denoise step; cuDNN wins 1.24-1.98x on 11 real shapes | 16 rows from two models |
+| [`diffusion__attention_backend_fa4_vs_cudnn`](diffusion__attention_backend_fa4_vs_cudnn) | Wan2.2-TI2V-5B, MiniMax-H3 | FA4 CuTe vs cuDNN SDPA dispatch | measured tonight: FA4 **wins** 4-5% on long shapes, **loses 1.24x** at 24-26 tokens | 16 rows + 2 measured timing tables |
 | [`minimax_h3__sparse_backend_fallback`](minimax_h3__sparse_backend_fallback) | MiniMax-H3 | sparse backend selection + its dense fallback | audio-tower step 44 -> 191 ms under the sparse backend eats most of the win | 8 rows, both towers |
 
 The first five have a shipped SGLang kernel that a candidate has to beat; the last
 three need a kernel designed (or a vendor kernel fixed) because there is no drop-in
 baseline that wins today.
 
-[`SHAPES.md`](SHAPES.md) lists the shape family of every op in every task in one
-place (regenerate with `python tools/dump_shapes.py > SHAPES.md`).
+[`SHAPES.md`](SHAPES.md) lists the shape family of every op in every task in one place
+(regenerate with `python tools/dump_shapes.py > SHAPES.md`).
+[`docs/profiles/`](docs/profiles) holds the raw per-kernel GPU-time tables the shares
+above come from.
+
+## Running a task
+
+```bash
+python tools/check_task.py <task>        # is the package complete? (CPU only, doubles as CI)
+python tools/bench_harness.py <task>     # baseline-only timing, per row
+# ...write solution/entry.py with the same OPS keys...
+python tools/bench_harness.py <task> --json report.json    # interleaved A/B + gates
+```
+
+`tools/bench_harness.py` implements the measurement contract so each agent does not have
+to re-derive it: CUDA-graph timing, interleaved arms, preallocated outputs, `copy_` restore
+for in-place kernels with the restore cost subtracted, correctness before performance, and
+for state-carrying kernels the chained final-state gate. `tools/verify_state_chain.py`
+proves a shipped chain actually chains; `tools/check_hacks.py` prints the statistics that
+let a synthetic-Gaussian verifier be fooled.
 
 ## What every task carries
 

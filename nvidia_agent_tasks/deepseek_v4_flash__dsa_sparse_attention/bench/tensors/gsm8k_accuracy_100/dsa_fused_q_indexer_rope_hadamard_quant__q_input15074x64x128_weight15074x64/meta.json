@@ -1,0 +1,113 @@
+{
+  "op": "dsa_fused_q_indexer_rope_hadamard_quant",
+  "group": "gsm8k_accuracy_100",
+  "scalars": {
+    "weight_scale": 0.011048543456039806
+  },
+  "tensors": {
+    "in_weight": {
+      "shape": [
+        15074,
+        64
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+        64,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 964736,
+      "bytes": 1929472,
+      "file": "in_weight.pt"
+    },
+    "in_positions": {
+      "shape": [
+        15074
+      ],
+      "dtype": "int32",
+      "stride": [
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 15074,
+      "bytes": 60296,
+      "file": "in_positions.pt"
+    },
+    "out_1": {
+      "shape": [
+        15074,
+        64,
+        1
+      ],
+      "dtype": "float32",
+      "stride": [
+        64,
+        1,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 964736,
+      "bytes": 3858944,
+      "file": "out_1.pt"
+    }
+  },
+  "metadata_only": {
+    "in_q_input": {
+      "shape": [
+        15074,
+        64,
+        128
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+        8192,
+        128,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 123486208,
+      "bytes": 246972416,
+      "not_saved": "exceeds NVCAP_MAX_TENSOR_MB"
+    },
+    "in_freqs_cis": {
+      "shape": [
+        1048576,
+        32
+      ],
+      "dtype": "complex64",
+      "stride": [
+        32,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 33554432,
+      "bytes": 268435456,
+      "not_saved": "exceeds NVCAP_MAX_TENSOR_MB"
+    },
+    "out_0": {
+      "shape": [
+        15074,
+        64,
+        128
+      ],
+      "dtype": "float8_e4m3fn",
+      "stride": [
+        8192,
+        128,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 123486208,
+      "bytes": 123486208,
+      "not_saved": "exceeds NVCAP_MAX_TENSOR_MB"
+    }
+  },
+  "gathered": {},
+  "bytes_on_disk": 5853406
+}

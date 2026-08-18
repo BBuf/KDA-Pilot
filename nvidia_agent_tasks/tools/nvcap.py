@@ -76,6 +76,8 @@ _chain_id: dict = {}          # (group, shape_id) -> identity of the chained ins
 _targets: list = []
 _installed = False
 _log_once: set = set()
+_pending: list = []           # specs whose module was not patchable yet
+_calls_seen = [0]
 
 
 def _warn(msg: str) -> None:
@@ -354,6 +356,9 @@ def _wrap(fn, spec):
     index_arg = spec.get("index_arg")
 
     def wrapper(*args, **kwargs):
+        _calls_seen[0] += 1
+        if _pending and _calls_seen[0] % 256 == 1:
+            _retry_pending()
         if _OPS and op not in _OPS:
             return fn(*args, **kwargs)
         try:
@@ -434,6 +439,28 @@ def _wrap(fn, spec):
     return wrapper
 
 
+def _retry_pending() -> None:
+    if not _pending:
+        return
+    still = []
+    for mod_name, spec in _pending:
+        try:
+            mod = sys.modules.get(spec["module"]) or importlib.import_module(spec["module"])
+            obj = mod
+            parts = spec["attr"].split(".")
+            for p in parts[:-1]:
+                obj = getattr(obj, p)
+            fn = getattr(obj, parts[-1])
+            if getattr(fn, "_nvcap_wrapped", False):
+                continue
+            setattr(obj, parts[-1], _wrap(fn, spec))
+            print("[nvcap] wrapped (retry) %s.%s as op=%s"
+                  % (spec["module"], spec["attr"], spec.get("op") or spec["attr"]), flush=True)
+        except Exception:
+            still.append((mod_name, spec))
+    _pending[:] = still
+
+
 def _patch_module(mod, specs) -> None:
     for spec in specs:
         attr = spec["attr"]
@@ -449,7 +476,11 @@ def _patch_module(mod, specs) -> None:
             print("[nvcap] wrapped %s.%s as op=%s" % (mod.__name__, attr, spec.get("op") or attr),
                   flush=True)
         except Exception as exc:
-            _warn("cannot wrap %s.%s: %r" % (spec.get("module"), attr, exc))
+            # a module that is still executing (circular import) cannot be patched
+            # yet; retry later from the call path rather than losing the target
+            _pending.append((mod.__name__ if hasattr(mod, "__name__") else spec["module"], spec))
+            _warn("cannot wrap %s.%s yet (%r) - queued for retry"
+                  % (spec.get("module"), attr, exc))
 
 
 class _Finder(importlib.abc.MetaPathFinder):
