@@ -50,3 +50,28 @@ target for this model.
 `bench/tensors/A1_conv1d_decode_chain16/` holds 16 consecutive real decode steps of
 `causal_conv1d_update` (state rows before and after each step, byte-chained) - that is the
 correctness oracle described in `../../docs/anti_hack_contract.md`.
+
+## The shipped chain is verified, not asserted
+
+```
+$ python tools/verify_state_chain.py \
+    kda15/A1_nemotron3_nano__mamba2_ssm/bench/tensors/A1_conv1d_decode_chain16
+chain: 16 steps, state tensors: conv_state
+  step000 -> step001 : byte-identical   (this step changed the state by 100.3%)
+  ...
+  step014 -> step015 : byte-identical   (this step changed the state by 91.9%)
+15 links byte-identical, 0 mismatched
+verdict: chain is a valid ground truth - gate a candidate on the FINAL state
+```
+
+Two capture details that had to be right for this to hold, and which will matter if
+you recapture:
+
+* **`--disable-radix-cache` during the tensor pass.** With the radix cache on, the
+  mamba state pool's `extra_buffer` strategy rewrites pool rows outside the kernel
+  call and the chain breaks.
+* **The chain must be pinned to one layer.** Consecutive calls with the same shape
+  come from *different layers* of the same forward pass, not from consecutive time
+  steps. The capture pins a chain to one instance by the identity of its per-layer
+  weight tensor (`chain_key` in the target config). Our first attempt did not, and
+  produced 16 steps that looked like a chain and linked 0/15.

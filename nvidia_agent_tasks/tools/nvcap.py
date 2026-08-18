@@ -72,6 +72,7 @@ _bytes: dict = {}             # group -> bytes written
 _shapes_per_op: dict = {}     # (group, op) -> folders written
 _saved: set = set()           # (group, shape_id) already saved
 _steps: dict = {}             # (group, shape_id) -> consecutive steps saved
+_chain_id: dict = {}          # (group, shape_id) -> identity of the chained instance
 _targets: list = []
 _installed = False
 _log_once: set = set()
@@ -224,8 +225,12 @@ def _cpu(t):
 
 
 def _rows(state, idx):
-    """Slice the rows a call actually touched out of a big state pool."""
-    t = _torch()
+    """Slice the rows a call actually touched out of a big state pool.
+
+    Returns (cpu_slice, gpu_index). The index is returned on its ORIGINAL device:
+    slicing the post-call state with a CPU index would raise, which silently cost
+    us the state_after half of a capture once.
+    """
     if not _is_tensor(state):
         return None, None
     if not _is_tensor(idx):
@@ -234,7 +239,7 @@ def _rows(state, idx):
         good = idx[idx >= 0]
         if good.numel() == 0:
             return None, None
-        return state.index_select(0, good).detach().to("cpu", copy=True), good.detach().cpu()
+        return state.index_select(0, good).detach().to("cpu", copy=True), good
     except Exception:
         return None, None
 
@@ -308,10 +313,13 @@ def _save_payload(op, group, bound, out, spec, state_before, state_rows, step=0)
         put("state_before_" + name, sb)
         after = bound.get(name)
         rows = (state_rows or {}).get(name)
-        sa, _ = _rows(after, rows) if rows is not None else (_cpu(after) if _is_tensor(after) else None, None)
+        if rows is not None:
+            sa, _ = _rows(after, rows)
+        else:
+            sa = _cpu(after) if _is_tensor(after) else None
         put("state_after_" + name, sa)
         if rows is not None:
-            put("state_rows_" + name, rows)
+            put("state_rows_" + name, rows.detach().to("cpu", copy=True))
     if isinstance(out, (tuple, list)):
         for i, o in enumerate(out[:8]):
             put("out_%d" % i, o)
@@ -364,7 +372,21 @@ def _wrap(fn, spec):
                     n = _shapes_per_op.get((group, op), 0)
                     used = _bytes.get(group, 0)
                     seen = (group, sid) in _saved
-                    if used < _BUDGET and (not seen or _steps.get((group, sid), 1) < chain):
+                    same_instance = True
+                    if chain > 1 and spec.get("chain_key"):
+                        # consecutive calls of one shape usually come from
+                        # DIFFERENT layers, not from consecutive time steps of one
+                        # layer. Pin the chain to one instance by the identity of a
+                        # per-layer tensor (its weight), so the saved steps really
+                        # do chain through the same state rows.
+                        kt = bound.get(spec["chain_key"])
+                        ident = int(kt.data_ptr()) if _is_tensor(kt) else None
+                        prev = _chain_id.get((group, sid))
+                        if prev is None:
+                            _chain_id[(group, sid)] = ident
+                        else:
+                            same_instance = (ident == prev)
+                    if same_instance and used < _BUDGET and (not seen or _steps.get((group, sid), 1) < chain):
                         if not seen and n >= _MAX_PER_OP:
                             pass  # this op already has enough distinct shapes
                         else:

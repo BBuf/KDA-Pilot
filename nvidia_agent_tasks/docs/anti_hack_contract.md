@@ -25,9 +25,11 @@ S_t = S_{t-1} * Diag(alpha_t) + beta_t * (v_t - S_{t-1} * Diag(alpha_t) * k_t) *
 
 Our own replay-SSM work failed exactly here: every per-step output looked correct
 while the state quietly drifted. Per-step tolerance cannot see it; the chained
-final-state comparison can. For reference, the per-step relative change of the
-state in these captures is 14-20%, which is the scale against which a deviation
-should be judged.
+final-state comparison can. For scale, the per-step relative change of the state
+differs per kernel and is printed by `tools/verify_state_chain.py`: ~92-120% for the
+rolling conv1d window in A1 (the window turns over every step), and 14-20% for a
+linear-attention SSM state - judge a deviation against that kernel's own number, not
+against a fixed tolerance.
 
 ## Gate 2: real inputs, because the shortcuts are distribution-dependent
 
@@ -52,7 +54,8 @@ Three concrete shortcuts that pass a synthetic-Gaussian verifier:
    recall and *only the chained final-state gate detects it*.
 
 `tools/check_hacks.py` prints these numbers on the shipped tensors so the gate can
-be sanity-checked against them.
+be sanity-checked against them, and `tools/verify_state_chain.py` proves a shipped
+chain actually chains (A1's ships verified: 15/15 links byte-identical).
 
 ## Gate 3: real-workload structure the synthetic path never produces
 

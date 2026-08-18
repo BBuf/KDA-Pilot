@@ -1,6 +1,6 @@
 {
   "op": "causal_conv1d_decode",
-  "group": "random_1k1k_cc16",
+  "group": "gsm8k_5shot_cc1",
   "scalars": {
     "activation": "silu"
   },
@@ -83,6 +83,24 @@
       "bytes": 36864,
       "file": "state_before_conv_state.pt"
     },
+    "state_after_conv_state": {
+      "shape": [
+        1,
+        6144,
+        3
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+        18432,
+        3,
+        1
+      ],
+      "contiguous": true,
+      "device": "cpu",
+      "numel": 18432,
+      "bytes": 36864,
+      "file": "state_after_conv_state.pt"
+    },
     "state_rows_conv_state": {
       "shape": [
         1
@@ -135,5 +153,5 @@
     }
   },
   "gathered": {},
-  "bytes_on_disk": 134128
+  "bytes_on_disk": 172738
 }
