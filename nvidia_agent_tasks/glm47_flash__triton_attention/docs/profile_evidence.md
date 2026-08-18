@@ -33,3 +33,10 @@ fallback. GSM8K accuracy of the capture run: **0.820** (100 questions, 5-shot).
 
 The KV pool is multi-GB, so payloads store the gathered rows a call actually reads; rebuild a
 compact pool from `in_k_buffer__gathered` + `in_k_buffer__rows`.
+
+## Note on the MoE data from this capture
+
+The same capture run also recorded 571,044 Triton fused-MoE calls (GLM-4.7-Flash is
+a MoE model). Those rows now live with the kernel they belong to, in
+`../../lfm25__triton_fused_moe/bench/workloads_glm47_flash.json`, so this task is
+attention only.

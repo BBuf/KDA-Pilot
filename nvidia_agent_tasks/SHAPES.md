@@ -106,17 +106,6 @@ recapture rather than editing this file.
 
 ### workloads.json — model `zai-org/GLM-4.7-Flash`
 
-**`triton_fused_moe_gemm`** — 571,044 real calls, 420 distinct signatures, 8 rows kept
-
-- `A[T, N]` bfloat16 — T ∈ {1, 2, 5, 10, 16, 32, 80, 16384} — N ∈ {1536, 2048}
-- `B[65, T, N]` bfloat16 — T ∈ {2048, 3072} — N ∈ {1536, 2048}
-- `C` ['[1, 5, 2048]', '[10, 3072]', '[16, 5, 2048]', '[160, 3072]']
-- `topk_weights[T, 5]` float32 — T ∈ {1, 2, 16, 32, 16384}
-- `topk_ids[T, 5]` int32 — T ∈ {1, 2, 16, 32, 16384}
-- `sorted_token_ids[T]` int32 — T ∈ {80, 160, 1070, 1150, 86078}
-- `expert_ids[T]` int32 — T ∈ {5, 10, 67, 72, 1345}
-- `num_tokens_post_padded[1]` int32
-
 **`triton_decode_attention_grouped`** — 286,419 real calls, 5,010 distinct signatures, 18 rows kept
 
 - `q[T, 20, 576]` bfloat16 — T ∈ {1, 2, 16, 32, 33}
@@ -194,6 +183,8 @@ recapture rather than editing this file.
 
 ## `lfm25__triton_fused_moe`
 
+### workloads.json — model `LiquidAI/LFM2.5-8B-A1B`
+
 **`triton_fused_moe_gemm`** — 427,506 real calls, 1,138 distinct signatures, 11 rows kept
 
 - `A[T, N]` bfloat16 — T ∈ {1, 2, 4, 8, 16, 32, 64, 128, 16384} — N ∈ {1792, 2048}
@@ -203,6 +194,19 @@ recapture rather than editing this file.
 - `topk_ids[T, 4]` int32 — T ∈ {1, 2, 8, 16, 32, 16384}
 - `sorted_token_ids[T]` int32 — T ∈ {64, 128, 512, 559, 623, 67615}
 - `expert_ids[T]` int32 — T ∈ {4, 8, 32, 35, 39, 1057}
+- `num_tokens_post_padded[1]` int32
+
+### workloads_glm47_flash.json — model `zai-org/GLM-4.7-Flash`
+
+**`triton_fused_moe_gemm`** — 571,044 real calls, 420 distinct signatures, 8 rows kept
+
+- `A[T, N]` bfloat16 — T ∈ {1, 2, 5, 10, 16, 32, 80, 16384} — N ∈ {1536, 2048}
+- `B[65, T, N]` bfloat16 — T ∈ {2048, 3072} — N ∈ {1536, 2048}
+- `C` ['[1, 5, 2048]', '[10, 3072]', '[16, 5, 2048]', '[160, 3072]']
+- `topk_weights[T, 5]` float32 — T ∈ {1, 2, 16, 32, 16384}
+- `topk_ids[T, 5]` int32 — T ∈ {1, 2, 16, 32, 16384}
+- `sorted_token_ids[T]` int32 — T ∈ {80, 160, 1070, 1150, 86078}
+- `expert_ids[T]` int32 — T ∈ {5, 10, 67, 72, 1345}
 - `num_tokens_post_padded[1]` int32
 
 

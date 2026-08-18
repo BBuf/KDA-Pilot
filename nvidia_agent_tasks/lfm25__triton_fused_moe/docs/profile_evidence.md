@@ -1,4 +1,4 @@
-# Profile evidence: Triton fused MoE (LFM2.5-8B-A1B)
+# Profile evidence: Triton fused MoE (LFM2.5-8B-A1B + GLM-4.7-Flash)
 
 ## `workloads.json` (model: `LiquidAI/LFM2.5-8B-A1B`)
 
@@ -24,3 +24,23 @@ LFM2.5 and **223,652** times on GLM-4.7-Flash, so both shape families are live.
 Expert weights are metadata-only in the payload (too large to ship) - their shape/dtype/scale
 layout is recorded. The activation and routing side is real, which is where the distribution
 matters: real routing is skewed and that changes tile occupancy.
+
+## Second shape family: GLM-4.7-Flash
+
+`bench/workloads_glm47_flash.json` carries the same kernel from a different expert
+geometry, captured in the GLM-4.7-Flash run (its serving command and GSM8K accuracy
+of 0.820 are in `../../glm47_flash__triton_attention/docs/capture_provenance.md`):
+
+| | LFM2.5-8B-A1B | GLM-4.7-Flash |
+| --- | --- | --- |
+| real calls | 427,506 | 571,044 |
+| distinct signatures | 1,138 | 420 |
+| experts / top-k | 32 / top-4 | 65 / top-5 |
+| activation width | 1792, 2048 | 1536, 2048 |
+| expert weight block | `[32, 2048 or 3584, ...]` | `[65, 2048 or 3072, ...]` |
+| token counts seen | 1, 2, 4, 8, 16, 32, 64, 128 ... 16384 | 1, 2, 5, 10, 16, 32, 80 ... 16384 |
+
+Two families matter here because the routing distribution, not just the GEMM shape,
+drives tile occupancy: `sorted_token_ids` reaches 67,615 on LFM2.5 and 86,078 on
+GLM-4.7-Flash, and `expert_ids` 1,057 vs 1,345 padded blocks. A candidate that only
+tunes one geometry will regress the other.

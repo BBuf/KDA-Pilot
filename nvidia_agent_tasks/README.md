@@ -14,9 +14,9 @@ we paid for.
 | task | model | kernel(s) | measured share | workload data |
 | --- | --- | --- | --- | --- |
 | [`nemotron3_nano__mamba2_ssm`](nemotron3_nano__mamba2_ssm) | NVIDIA Nemotron-3-Nano-30B-A3B-FP8 | Triton `ssd_*` chunk pipeline + `causal_conv1d_*` | **55.8%** of serving GPU time | 123 rows / 9 ops + a verified 16-step real state chain |
-| [`glm47_flash__triton_attention`](glm47_flash__triton_attention) | GLM-4.7-Flash | `decode_attention_fwd`, `extend_attention_fwd` | **75.3%** | 94 rows / 4 ops (incl. a Qwen3-Next shape family) |
+| [`glm47_flash__triton_attention`](glm47_flash__triton_attention) | GLM-4.7-Flash | `decode_attention_fwd`, `extend_attention_fwd` | **75.3%** | 86 rows / 3 ops (incl. a Qwen3-Next shape family) |
 | [`deepseek_v4_flash__dsa_sparse_attention`](deepseek_v4_flash__dsa_sparse_attention) | DeepSeek-V4-Flash | indexer quant, top-k transform, compress+rope+store | 576k + 195k + 189k real calls | 59 rows / 6 ops |
-| [`lfm25__triton_fused_moe`](lfm25__triton_fused_moe) | LFM2.5-8B-A1B (+ GLM-4.7-Flash) | `invoke_fused_moe_kernel` and friends | **50.5%** / 30.4% | 11 rows + real routing tensors |
+| [`lfm25__triton_fused_moe`](lfm25__triton_fused_moe) | LFM2.5-8B-A1B (+ GLM-4.7-Flash) | `invoke_fused_moe_kernel` and friends | **50.5%** / 30.4% | 19 rows, two expert geometries + real routing tensors |
 | [`qwen3_next__gdn_chunk_prefill`](qwen3_next__gdn_chunk_prefill) | Qwen3-Next-80B-A3B | FLA `chunk_gated_delta_rule_fwd` + sub-kernels | 3,744 real calls / 13 signatures | 44 rows / 4 ops |
 | [`minimax_h3__sm103_block_sparse_attention`](minimax_h3__sm103_block_sparse_attention) | MiniMax-H3 | **write a new** sm_103 sub-block block-sparse forward | the sparse arm is the only backend beating cache-only on B300 (10.37 s vs 11.16 s) | dense reference shapes + deadlock forensics |
 | [`diffusion__attention_backend_fa4_vs_cudnn`](diffusion__attention_backend_fa4_vs_cudnn) | Wan2.2-TI2V-5B, MiniMax-H3 | FA4 CuTe forward on diffusion shapes | attention is 48-70% of a denoise step; cuDNN wins 1.24-1.98x on 11 real shapes | 16 rows from two models |
