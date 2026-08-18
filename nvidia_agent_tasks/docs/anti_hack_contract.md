@@ -73,15 +73,18 @@ These are in the captured data and a candidate must handle them:
 
 ## Gate 4: bit-exactness where we require it
 
-Diffusion fusion tasks (B2, C3) are gated on **bit-exact** output - md5-identical
-frames - because a 1e-6 difference compounds over 50 denoise steps into visible
-drift. We have met this bar before by replicating aten LayerNorm at SASS level
+Where a diffusion change is meant to be lossless we gate on **bit-exact** output -
+md5-identical frames - because a 1e-6 difference compounds over 50 denoise steps into
+visible drift. We have met that bar before by replicating aten LayerNorm at SASS level
 (Welford accumulation order, FFMA sequence, `rcp`/`rsqrtf` choice), so it is
 achievable, not aspirational.
 
-Lossy tasks (C1, C4 - sparse attention) are gated on a perceptual budget instead:
-LPIPS mean <= 0.35 / max <= 0.42 against the fixed-seed dense reference on our
-3-prompt set. C2 (attention backend) is gated on PSNR mean >= 28 dB / min >= 25 dB.
+The two sparse-attention tasks (`minimax_h3__sm103_block_sparse_attention`,
+`minimax_h3__sparse_backend_fallback`) are lossy by construction and are gated on a
+perceptual budget instead: LPIPS mean <= 0.35 / max <= 0.42 against the fixed-seed
+dense reference on our 3-prompt set. `diffusion__attention_backend_fa4_vs_cudnn`
+is gated on PSNR mean >= 28 dB / min >= 25 dB, since bf16 backend freedom makes
+bit-exactness the wrong ask there.
 
 ## What "faster" is measured against
 

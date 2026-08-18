@@ -1,0 +1,766 @@
+{
+  "task": "minimax_h3__sm103_block_sparse_attention",
+  "model": "MiniMaxAI/MiniMax-H3",
+  "source_manifest": "shape_manifest.json",
+  "selection_rule": "top-10 signatures per op by real-traffic call count, plus the smallest and largest input footprint, plus one signature per capture group; warmup-only signatures excluded",
+  "ops": [
+    {
+      "op": "diffusion_attention_cudnn_sdpa",
+      "total_real_calls": 216,
+      "distinct_real_signatures": 4,
+      "rows": [
+        {
+          "row_id": "diffusion_attention_cudnn_sdpa#00",
+          "group": "h3_t2va_speed_4gpu",
+          "real_calls": 200,
+          "kept_because": [
+            "top-10 by call count",
+            "smallest input footprint",
+            "operating-point coverage: h3_t2va_speed_4gpu"
+          ],
+          "args": {
+            "self": {
+              "repr": "DynamicCudnnSDPAImpl"
+            },
+            "query": {
+              "shape": [
+                1,
+                26,
+                16,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                53248,
+                2048,
+                128,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 53248,
+              "bytes": 106496
+            },
+            "key": {
+              "shape": [
+                1,
+                26,
+                2,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                6656,
+                256,
+                128,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 6656,
+              "bytes": 13312
+            },
+            "value": {
+              "shape": [
+                1,
+                26,
+                2,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                6656,
+                256,
+                128,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 6656,
+              "bytes": 13312
+            },
+            "attn_metadata": null
+          },
+          "output": {
+            "shape": [
+              1,
+              26,
+              16,
+              128
+            ],
+            "dtype": "bfloat16",
+            "stride": [
+              53248,
+              2048,
+              128,
+              1
+            ],
+            "contiguous": true,
+            "device": "cuda",
+            "numel": 53248,
+            "bytes": 106496
+          },
+          "signature": "query=1x26x16x128:bfloat16|key=1x26x2x128:bfloat16|value=1x26x2x128:bfloat16"
+        },
+        {
+          "row_id": "diffusion_attention_cudnn_sdpa#01",
+          "group": "h3_t2va_speed_4gpu",
+          "real_calls": 8,
+          "kept_because": [
+            "top-10 by call count"
+          ],
+          "args": {
+            "self": {
+              "repr": "DynamicCudnnSDPAImpl"
+            },
+            "query": {
+              "shape": [
+                1,
+                26,
+                28,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                279552,
+                10752,
+                128,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 93184,
+              "bytes": 186368
+            },
+            "key": {
+              "shape": [
+                1,
+                26,
+                28,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                279552,
+                10752,
+                128,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 93184,
+              "bytes": 186368
+            },
+            "value": {
+              "shape": [
+                1,
+                26,
+                28,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                279552,
+                10752,
+                128,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 93184,
+              "bytes": 186368
+            },
+            "attn_metadata": null
+          },
+          "output": {
+            "shape": [
+              1,
+              26,
+              28,
+              128
+            ],
+            "dtype": "bfloat16",
+            "stride": [
+              93184,
+              3584,
+              128,
+              1
+            ],
+            "contiguous": true,
+            "device": "cuda",
+            "numel": 93184,
+            "bytes": 186368
+          },
+          "signature": "query=1x26x28x128:bfloat16!c|key=1x26x28x128:bfloat16!c|value=1x26x28x128:bfloat16!c"
+        },
+        {
+          "row_id": "diffusion_attention_cudnn_sdpa#02",
+          "group": "h3_t2va_speed_4gpu",
+          "real_calls": 4,
+          "kept_because": [
+            "top-10 by call count",
+            "largest input footprint"
+          ],
+          "args": {
+            "self": {
+              "repr": "DynamicCudnnSDPAImpl"
+            },
+            "query": {
+              "shape": [
+                1,
+                37736,
+                14,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                202868736,
+                5376,
+                384,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 67622912,
+              "bytes": 135245824
+            },
+            "key": {
+              "shape": [
+                1,
+                37736,
+                14,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                202868736,
+                5376,
+                384,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 67622912,
+              "bytes": 135245824
+            },
+            "value": {
+              "shape": [
+                1,
+                37736,
+                14,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                202868736,
+                5376,
+                384,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 67622912,
+              "bytes": 135245824
+            },
+            "attn_metadata": null
+          },
+          "output": {
+            "shape": [
+              1,
+              37736,
+              14,
+              128
+            ],
+            "dtype": "bfloat16",
+            "stride": [
+              67622912,
+              1792,
+              128,
+              1
+            ],
+            "contiguous": true,
+            "device": "cuda",
+            "numel": 67622912,
+            "bytes": 135245824
+          },
+          "signature": "query=1x37736x14x128:bfloat16!c|key=1x37736x14x128:bfloat16!c|value=1x37736x14x128:bfloat16!c"
+        },
+        {
+          "row_id": "diffusion_attention_cudnn_sdpa#03",
+          "group": "h3_t2va_speed_4gpu",
+          "real_calls": 4,
+          "kept_because": [
+            "top-10 by call count"
+          ],
+          "args": {
+            "self": {
+              "repr": "DynamicCudnnSDPAImpl"
+            },
+            "query": {
+              "shape": [
+                1,
+                24,
+                14,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                129024,
+                5376,
+                384,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 43008,
+              "bytes": 86016
+            },
+            "key": {
+              "shape": [
+                1,
+                24,
+                14,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                129024,
+                5376,
+                384,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 43008,
+              "bytes": 86016
+            },
+            "value": {
+              "shape": [
+                1,
+                24,
+                14,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                129024,
+                5376,
+                384,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 43008,
+              "bytes": 86016
+            },
+            "attn_metadata": null
+          },
+          "output": {
+            "shape": [
+              1,
+              24,
+              14,
+              128
+            ],
+            "dtype": "bfloat16",
+            "stride": [
+              43008,
+              1792,
+              128,
+              1
+            ],
+            "contiguous": true,
+            "device": "cuda",
+            "numel": 43008,
+            "bytes": 86016
+          },
+          "signature": "query=1x24x14x128:bfloat16!c|key=1x24x14x128:bfloat16!c|value=1x24x14x128:bfloat16!c"
+        }
+      ]
+    },
+    {
+      "op": "diffusion_attention_fa4",
+      "total_real_calls": 200,
+      "distinct_real_signatures": 1,
+      "rows": [
+        {
+          "row_id": "diffusion_attention_fa4#00",
+          "group": "h3_t2va_speed_4gpu",
+          "real_calls": 200,
+          "kept_because": [
+            "top-10 by call count",
+            "smallest input footprint",
+            "largest input footprint",
+            "operating-point coverage: h3_t2va_speed_4gpu"
+          ],
+          "args": {
+            "self": {
+              "repr": "FlashAttentionImpl"
+            },
+            "query": {
+              "shape": [
+                1,
+                26,
+                16,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                53248,
+                2048,
+                128,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 53248,
+              "bytes": 106496
+            },
+            "key": {
+              "shape": [
+                1,
+                26,
+                2,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                6656,
+                256,
+                128,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 6656,
+              "bytes": 13312
+            },
+            "value": {
+              "shape": [
+                1,
+                26,
+                2,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                6656,
+                256,
+                128,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 6656,
+              "bytes": 13312
+            },
+            "attn_metadata": null
+          },
+          "output": {
+            "shape": [
+              1,
+              26,
+              16,
+              128
+            ],
+            "dtype": "bfloat16",
+            "stride": [
+              53248,
+              2048,
+              128,
+              1
+            ],
+            "contiguous": true,
+            "device": "cuda",
+            "numel": 53248,
+            "bytes": 106496
+          },
+          "signature": "query=1x26x16x128:bfloat16|key=1x26x2x128:bfloat16|value=1x26x2x128:bfloat16"
+        }
+      ]
+    },
+    {
+      "op": "diffusion_attention_sdpa",
+      "total_real_calls": 16,
+      "distinct_real_signatures": 3,
+      "rows": [
+        {
+          "row_id": "diffusion_attention_sdpa#00",
+          "group": "h3_t2va_speed_4gpu",
+          "real_calls": 8,
+          "kept_because": [
+            "top-10 by call count",
+            "operating-point coverage: h3_t2va_speed_4gpu"
+          ],
+          "args": {
+            "self": {
+              "repr": "CudnnSDPAImpl"
+            },
+            "query": {
+              "shape": [
+                1,
+                26,
+                28,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                279552,
+                10752,
+                128,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 93184,
+              "bytes": 186368
+            },
+            "key": {
+              "shape": [
+                1,
+                26,
+                28,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                279552,
+                10752,
+                128,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 93184,
+              "bytes": 186368
+            },
+            "value": {
+              "shape": [
+                1,
+                26,
+                28,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                279552,
+                10752,
+                128,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 93184,
+              "bytes": 186368
+            },
+            "attn_metadata": null
+          },
+          "output": {
+            "shape": [
+              1,
+              26,
+              28,
+              128
+            ],
+            "dtype": "bfloat16",
+            "stride": [
+              93184,
+              3584,
+              128,
+              1
+            ],
+            "contiguous": true,
+            "device": "cuda",
+            "numel": 93184,
+            "bytes": 186368
+          },
+          "signature": "query=1x26x28x128:bfloat16!c|key=1x26x28x128:bfloat16!c|value=1x26x28x128:bfloat16!c"
+        },
+        {
+          "row_id": "diffusion_attention_sdpa#01",
+          "group": "h3_t2va_speed_4gpu",
+          "real_calls": 4,
+          "kept_because": [
+            "top-10 by call count",
+            "largest input footprint"
+          ],
+          "args": {
+            "self": {
+              "repr": "CudnnSDPAImpl"
+            },
+            "query": {
+              "shape": [
+                1,
+                37736,
+                14,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                202868736,
+                5376,
+                384,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 67622912,
+              "bytes": 135245824
+            },
+            "key": {
+              "shape": [
+                1,
+                37736,
+                14,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                202868736,
+                5376,
+                384,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 67622912,
+              "bytes": 135245824
+            },
+            "value": {
+              "shape": [
+                1,
+                37736,
+                14,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                202868736,
+                5376,
+                384,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 67622912,
+              "bytes": 135245824
+            },
+            "attn_metadata": null
+          },
+          "output": {
+            "shape": [
+              1,
+              37736,
+              14,
+              128
+            ],
+            "dtype": "bfloat16",
+            "stride": [
+              67622912,
+              1792,
+              128,
+              1
+            ],
+            "contiguous": true,
+            "device": "cuda",
+            "numel": 67622912,
+            "bytes": 135245824
+          },
+          "signature": "query=1x37736x14x128:bfloat16!c|key=1x37736x14x128:bfloat16!c|value=1x37736x14x128:bfloat16!c"
+        },
+        {
+          "row_id": "diffusion_attention_sdpa#02",
+          "group": "h3_t2va_speed_4gpu",
+          "real_calls": 4,
+          "kept_because": [
+            "top-10 by call count",
+            "smallest input footprint"
+          ],
+          "args": {
+            "self": {
+              "repr": "CudnnSDPAImpl"
+            },
+            "query": {
+              "shape": [
+                1,
+                24,
+                14,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                129024,
+                5376,
+                384,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 43008,
+              "bytes": 86016
+            },
+            "key": {
+              "shape": [
+                1,
+                24,
+                14,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                129024,
+                5376,
+                384,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 43008,
+              "bytes": 86016
+            },
+            "value": {
+              "shape": [
+                1,
+                24,
+                14,
+                128
+              ],
+              "dtype": "bfloat16",
+              "stride": [
+                129024,
+                5376,
+                384,
+                1
+              ],
+              "contiguous": false,
+              "device": "cuda",
+              "numel": 43008,
+              "bytes": 86016
+            },
+            "attn_metadata": null
+          },
+          "output": {
+            "shape": [
+              1,
+              24,
+              14,
+              128
+            ],
+            "dtype": "bfloat16",
+            "stride": [
+              43008,
+              1792,
+              128,
+              1
+            ],
+            "contiguous": true,
+            "device": "cuda",
+            "numel": 43008,
+            "bytes": 86016
+          },
+          "signature": "query=1x24x14x128:bfloat16!c|key=1x24x14x128:bfloat16!c|value=1x24x14x128:bfloat16!c"
+        }
+      ]
+    }
+  ]
+}

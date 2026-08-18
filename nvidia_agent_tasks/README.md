@@ -1,33 +1,30 @@
-# SGLang kernel tasks for NVIDIA's kernel agents (KDA 1.5 / CAKE)
+# SGLang kernel tasks for NVIDIA's kernel agents
 
-Ten kernel optimization tasks cut from SGLang and SGLang-diffusion, each with the
-real serving workload behind it. Two folders, split by what the agent is being
-asked to do:
-
-* [`kda15/`](kda15/) - **there is a shipped kernel and we want it beaten.** Frozen
-  production shapes, the copied SGLang baseline, real captured tensors, a
-  correctness gate. Five tasks (A1-A5).
-* [`cake/`](cake/) - **there is no drop-in baseline.** A kernel has to be designed
-  (or a vendor kernel is losing and needs to be fixed). Five tasks (C1-C4, B2).
+Eight kernel optimization tasks cut from SGLang and SGLang-diffusion, each with the
+real serving workload behind it: frozen production shapes with their real-traffic
+call counts, the copied SGLang baseline, real captured tensors where they fit, and a
+correctness gate.
 
 Read [`docs/measurement_contract.md`](docs/measurement_contract.md) first - it is
-the acceptance criterion, and it is stricter than "faster in isolation" for
-reasons we paid for.
+the acceptance criterion, and it is stricter than "faster in isolation" for reasons
+we paid for.
 
 ## The tasks
 
-| id | task | model | kernel(s) | measured share | workload data |
-| --- | --- | --- | --- | --- | --- |
-| A1 | [Mamba-2 SSM chunk scan + causal conv1d](kda15/A1_nemotron3_nano__mamba2_ssm) | NVIDIA Nemotron-3-Nano-30B-A3B-FP8 | Triton `ssd_*` + `causal_conv1d_*` | **55.8%** of serving GPU time | 123 rows, 9 ops, 16-step real state chain |
-| A2 | [Triton unified attention](kda15/A2_glm47_flash__triton_attention) | GLM-4.7-Flash | `decode_attention_fwd`, `extend_attention_fwd` | **75.3%** | 58 rows, 4 ops |
-| A3 | [DSA sparse attention](kda15/A3_dsv4_flash__dsa_sparse_attention) | DeepSeek-V4-Flash | indexer quant / top-k / compress | 576k+195k+189k real calls | 59 rows, 6 ops |
-| A4 | [Triton fused MoE](kda15/A4_triton_fused_moe) | LFM2.5-8B-A1B (+ GLM-4.7-Flash) | `invoke_fused_moe_kernel` | **50.5%** / 30.4% | 11 rows + real routing tensors |
-| A5 | [GDN chunk prefill + recurrent decode](kda15/A5_qwen3_next__gdn_prefill) | Qwen3-Next-80B-A3B | FLA `chunk_*`, `fused_recurrent_*`, `kda.*` | 1152 real calls/group on the chunk path | see task |
-| C1 | [New sm_103 sub-block BSA kernel](cake/C1_sm103_subblock_bsa) | MiniMax-H3 | block-sparse attention forward | sparse arm is the only backend beating cache-only on B300 (10.37 s vs 11.16 s) | dense reference shapes + deadlock forensics |
-| C2 | [FA4 CuTe loses to cuDNN on diffusion shapes](cake/C2_diffusion_attention_fa4_vs_cudnn) | Wan2.2-TI2V-5B, MiniMax-H3 | FA4 CuTe forward | attention is 48-70% of a denoise step; cuDNN wins 1.24-1.98x on 11 real shapes | captured shapes from both models |
-| C3 | [Video VAE conv3d + GroupNorm/SiLU](cake/C3_video_vae_conv3d_groupnorm) | Qwen-Image / FLUX.2 / Hunyuan VAEs | `causal_conv3d_cat_pad`, `group_norm_silu` | our fused kernels are already 2.06x / 2.31x; layout change is worth ~3x more | entry points identified, shapes to capture (see task) |
-| C4 | [Sol-Attn on sm_103 + sparse dense-fallback](cake/C4_solattn_sm103_and_sparse_fallback) | MiniMax-H3 | sparse backend + fallback path | audio-tower step 44 -> 191 ms under the sparse backend eats most of the win | captured audio/video tower shapes |
-| B2 | [Fused DiT gate+residual+norm+shift/scale](cake/B2_dit_gate_resid_norm_modulate) | Wan2.2, Qwen-Image, Z-Image, H3 | `fused_ln_modulate` family | 1-4% of a step - **lowest priority, say so if you skip it** | 4 rows, real shapes |
+| task | model | kernel(s) | measured share | workload data |
+| --- | --- | --- | --- | --- |
+| [`nemotron3_nano__mamba2_ssm`](nemotron3_nano__mamba2_ssm) | NVIDIA Nemotron-3-Nano-30B-A3B-FP8 | Triton `ssd_*` chunk pipeline + `causal_conv1d_*` | **55.8%** of serving GPU time | 123 rows / 9 ops + a verified 16-step real state chain |
+| [`glm47_flash__triton_attention`](glm47_flash__triton_attention) | GLM-4.7-Flash | `decode_attention_fwd`, `extend_attention_fwd` | **75.3%** | 94 rows / 4 ops (incl. a Qwen3-Next shape family) |
+| [`deepseek_v4_flash__dsa_sparse_attention`](deepseek_v4_flash__dsa_sparse_attention) | DeepSeek-V4-Flash | indexer quant, top-k transform, compress+rope+store | 576k + 195k + 189k real calls | 59 rows / 6 ops |
+| [`lfm25__triton_fused_moe`](lfm25__triton_fused_moe) | LFM2.5-8B-A1B (+ GLM-4.7-Flash) | `invoke_fused_moe_kernel` and friends | **50.5%** / 30.4% | 11 rows + real routing tensors |
+| [`qwen3_next__gdn_chunk_prefill`](qwen3_next__gdn_chunk_prefill) | Qwen3-Next-80B-A3B | FLA `chunk_gated_delta_rule_fwd` + sub-kernels | 3,744 real calls / 13 signatures | 44 rows / 4 ops |
+| [`minimax_h3__sm103_block_sparse_attention`](minimax_h3__sm103_block_sparse_attention) | MiniMax-H3 | **write a new** sm_103 sub-block block-sparse forward | the sparse arm is the only backend beating cache-only on B300 (10.37 s vs 11.16 s) | dense reference shapes + deadlock forensics |
+| [`diffusion__attention_backend_fa4_vs_cudnn`](diffusion__attention_backend_fa4_vs_cudnn) | Wan2.2-TI2V-5B, MiniMax-H3 | FA4 CuTe forward on diffusion shapes | attention is 48-70% of a denoise step; cuDNN wins 1.24-1.98x on 11 real shapes | 16 rows from two models |
+| [`minimax_h3__sparse_backend_fallback`](minimax_h3__sparse_backend_fallback) | MiniMax-H3 | sparse backend selection + its dense fallback | audio-tower step 44 -> 191 ms under the sparse backend eats most of the win | 8 rows, both towers |
+
+The first five have a shipped SGLang kernel that a candidate has to beat; the last
+three need a kernel designed (or a vendor kernel fixed) because there is no drop-in
+baseline that wins today.
 
 ## What every task carries
 
@@ -47,17 +44,16 @@ solution/                    empty - the candidate goes here
 
 Every model was served with **its SGLang cookbook command** on 8x B300 SXM6
 (sm_103), then walked through a fixed matrix of operating points - random 1k/1k at
-concurrency 1/16/256, a prefill-heavy 4k/512 point, ShareGPT at concurrency 32,
-and **real GSM8K** at 5-shot serial, 5-shot 32-way, 16-shot 16-way, plus a
-100-200 question accuracy run. The accuracy of that very run is recorded per task
-(e.g. DeepSeek-V4-Flash **0.980**, GLM-4.7-Flash **0.820**, Nemotron-3-Nano and
-LFM2.5 in their provenance files), so the shapes are demonstrably from a
-correctly serving model.
+concurrency 1/16/256, a prefill-heavy 4k/512 point, ShareGPT at concurrency 32, and
+**real GSM8K** at 5-shot serial, 5-shot 32-way, 16-shot 16-way, plus a 100-200
+question accuracy run. The accuracy of that very run is recorded per task
+(DeepSeek-V4-Flash **0.980**, Qwen3-Next **1.000**, GLM-4.7-Flash **0.820**, and so
+on), so the shapes are demonstrably from a correctly serving model.
 
 Two capture-only modifiers and the reason for each, plus the
 shapes-with-radix-cache-on / tensors-with-radix-cache-off split, are documented in
-[`docs/workload_capture.md`](docs/workload_capture.md). The capture tooling is in
-[`tools/`](tools/) and regenerates everything:
+[`docs/workload_capture.md`](docs/workload_capture.md). The tooling in
+[`tools/`](tools/) regenerates everything:
 
 ```bash
 # 1. serve with the cookbook command + the capture hook
@@ -84,17 +80,20 @@ python tools/build_workloads.py --manifest cap/<slug>/shape_manifest.json \
 
 * **Communication kernels and the TRT-LLM fused-MoE path** - your ground, and our
   profiles exclude them by construction.
-* **More elementwise fusion in diffusion** - we swept the ecosystem for this in
-  August and concluded SGLang is already at the frontier; our elementwise kernels
-  sit at 70-88% of achievable bandwidth, and the whole remaining elementwise
-  residue is 1-4% of a step. B2 is the one exception, and it is explicitly the
-  lowest-priority task here.
+* **Elementwise fusion in diffusion** - we swept the ecosystem for this in August
+  and concluded SGLang is already at the frontier: our elementwise kernels sit at
+  70-88% of achievable bandwidth and the entire remaining residue is 1-4% of a step.
+  A fused DiT gate+residual+norm+shift/scale task was drafted and cut for exactly
+  this reason.
+* **Video VAE decode kernels** - real target, wrong time: the fused conv3d /
+  GroupNorm-SiLU kernels are not called by the model we had staged (Wan2.2 has its
+  own decoder), and the models that do call them were not captured in this pass. We
+  would rather hand it over with shapes than without.
 * **Programmatic Dependent Launch in diffusion** - measured ceiling below 0.5% of
   step time at these kernel granularities.
-* **Kernels that are dead on the recommended path.** A3's evidence section names
-  the DSA entry points that fired 0 times on the cookbook B300 recipe; please do
-  not spend cycles there.
+* **Kernels that are dead on the recommended path.** Each task's evidence section
+  names the entry points that fired **zero** times on the cookbook recipe - the DSA
+  task in particular - so no cycles go to code the deployment never runs.
 
-Everything in here is reproducible from the tooling in `tools/` plus the command
-in each task's `docs/capture_provenance.md`. If a number looks wrong, that is the
-path to check it.
+Everything here is reproducible from `tools/` plus the command in each task's
+`docs/capture_provenance.md`. If a number looks wrong, that is the path to check it.

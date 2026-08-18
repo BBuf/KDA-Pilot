@@ -1,0 +1,48 @@
+{
+  "task": {
+    "slug": "nemotron3_nano__mamba2_ssm",
+    "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8",
+    "arch": "b300",
+    "target_gpu": "NVIDIA B300 SXM6 (sm_103)",
+    "ops": [
+      "mamba2_chunk_scan_combined_fwd",
+      "mamba2_chunk_scan",
+      "mamba2_chunk_state",
+      "mamba2_chunk_state_varlen",
+      "mamba2_chunk_cumsum",
+      "mamba2_state_passing",
+      "causal_conv1d_prefill",
+      "causal_conv1d_decode"
+    ]
+  },
+  "capture": {
+    "cookbook_command": "python3 -m sglang.launch_server --model-path nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8 --trust-remote-code --max-running-requests 1024 --host 0.0.0.0 --port 30000",
+    "measured_share": "55.8% of total serving GPU time (peak scenario: ShareGPT, concurrency 32)"
+  },
+  "environment": {
+    "host": "light-face-hides-fin-03-1 (RadixArk devbox b300-diffusion-kernel-opt)",
+    "gpu": "8x NVIDIA B300 SXM6 AC, sm_103, 288 GB/card, single node",
+    "sglang": "main @ 43226af (python/sglang, editable install)",
+    "torch": "2.13.0+cu130",
+    "triton": "3.7.1",
+    "flashinfer": "0.6.17",
+    "sgl_kernel": "0.4.6.post1",
+    "transformers": "5.12.1",
+    "capture_date": "2026-08-18 (UTC)"
+  },
+  "build": {
+    "baseline_dir": "baseline/",
+    "candidate_dir": "solution/",
+    "language": "cuda / cute-dsl / triton (candidate's choice)"
+  },
+  "benchmark": {
+    "timing": "cuda graph replay, interleaved A/B",
+    "warmup_runs": 10,
+    "iterations": 200,
+    "num_trials": 7,
+    "contract": "../docs/measurement_contract.md"
+  },
+  "correctness": {
+    "contract": "../docs/anti_hack_contract.md"
+  }
+}
