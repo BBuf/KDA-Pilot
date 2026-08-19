@@ -1,6 +1,6 @@
 # SGLang kernel tasks for NVIDIA's kernel agents
 
-Nine kernel optimization tasks cut from SGLang and SGLang-diffusion, each with the
+Twelve kernel optimization tasks cut from SGLang and SGLang-diffusion, each with the
 real serving workload behind it: frozen production shapes with their real-traffic
 call counts, the copied SGLang baseline, real captured tensors where they fit, and a
 correctness gate.
@@ -21,6 +21,9 @@ we paid for.
 | [`qwen3_next__gdn_chunk_prefill`](qwen3_next__gdn_chunk_prefill) | Qwen3-Next-80B-A3B | FLA chunk prefill + **`TritonGDNKernel.packed_decode`** | GDN family **2.8-5.3%** across four operating points (decode kernel 2.0-3.6%, chunk prefill peaks 2.5% at 8k in) | 56 rows / 7 ops, **2 verified 16-step state chains** |
 | [`kimi_k3__tgv_bf16_tiny_gemm`](kimi_k3__tgv_bf16_tiny_gemm) | Kimi-K3 (2.8T, TP8) | `cutedsl_bf16_gemm` (CuTe TGV) + the `tiny_n/k_gemm` fast paths and their dispatcher | TGV **7.69%** at cc16 / **41.2%** at batch 1; tiny_n **1.64%** | 46 rows / 5 entry points, 15 MB real tensors |
 | [`kimi_k3__kda_linear_attention`](kimi_k3__kda_linear_attention) | Kimi-K3 (2.8T, TP8) | `kda_fused_decode` (JIT CUDA) + KDA chunk prefill | **3.55%** family (decode kernel 2.81%) | 22 rows, 308k decode calls + a verified state chain |
+| [`qwen38_nvfp4__fp4_w4a4_skinny_gemm`](qwen38_nvfp4__fp4_w4a4_skinny_gemm) | Qwen3.8-27B NVFP4 (SM120) | flashinfer `mm_fp4` + `fp4_quantize` + fused silu-quant | **40.7%** of the DSpark verify step (50.5% of plain decode) | 16 rows / 3 ops, real M∈{1,8,9} + 4k-prefill activations |
+| [`qwen38_nvfp4__fp8_verify_skinny_gemm`](qwen38_nvfp4__fp8_verify_skinny_gemm) | Qwen3.8-27B NVFP4 (SM120) | `sm120_fp8_gemv` (M=1) + `apply_fp8_linear` cuBLAS route (M=9) | **~27%** of the DSpark verify step after falling off the M=1 fast path; 34.0% of plain decode | 8 rows / 2 ops, real M=1 payload |
+| [`qwen38_nvfp4__gdn_sigmoid_gating_verify`](qwen38_nvfp4__gdn_sigmoid_gating_verify) | Qwen3.8-27B NVFP4 (SM120) | `fused_sigmoid_gating_delta_rule_update` + qkvzba split + conv1d update | **~5.3%** of the verify step, sequential in draft length | 3 rows / 3 ops, T=9 exact (DSPARK block 8) |
 | [`minimax_h3__sm103_block_sparse_attention`](minimax_h3__sm103_block_sparse_attention) | MiniMax-H3 | **write a new** sm_103 sub-block block-sparse forward | the sparse arm is the only backend beating cache-only on B300 (10.37 s vs 11.16 s) | 9 rows of dense reference, including one **real 37,736-token** call + deadlock forensics |
 
 Eight of them have a shipped SGLang kernel that a candidate has to beat. The ninth,

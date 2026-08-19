@@ -425,6 +425,71 @@ recapture rather than editing this file.
 - `out[1, T, 64, 64]` bfloat16 — T ∈ {5, 66, 16384}
 
 
+## `qwen38_nvfp4__fp4_w4a4_skinny_gemm`
+
+**`qwen38_fp4_gemm`** — 193,162 real calls, 9 distinct signatures, 9 rows kept
+
+- `input[T, N]` uint8 — T ∈ {1, 9, 4369} — N ∈ {2560, 8704}
+- `weight[T, N]` uint8 **non-contiguous** — T ∈ {5120, 34816, 248320} — N ∈ {2560, 8704}
+- `input_sf[T, N]` float8_e4m3fn — T ∈ {128, 4480} — N ∈ {320, 1088}
+- `weight_sf[T, N]` float8_e4m3fn — T ∈ {5120, 34816, 248320} — N ∈ {320, 1088}
+- `alpha[1]` float32
+
+**`qwen38_fp4_quantize`** — 97,288 real calls, 3 distinct signatures, 3 rows kept
+
+- `input[T, 5120]` bfloat16 — T ∈ {1, 8, 9}
+- `global_scale[1]` float32
+
+**`qwen38_silu_fp4_quantize`** — 95,618 real calls, 4 distinct signatures, 4 rows kept
+
+- `a[1, T, 34816]` bfloat16 — T ∈ {1, 9, 4096, 4369}
+- `mask[1]` int32
+- `a_global_sf[1]` float32
+
+
+## `qwen38_nvfp4__fp8_verify_skinny_gemm`
+
+**`qwen38_fp8_gemv`** — 135,168 real calls, 4 distinct signatures, 4 rows kept
+
+- `x_fp8[1, T]` float8_e4m3fn — T ∈ {5120, 6144}
+- `w_fp8[T, N]` float8_e4m3fn **non-contiguous** — T ∈ {5120, 6144} — N ∈ {5120, 8192, 16384}
+- `alpha[1]` float32
+
+**`qwen38_fp8_linear`** — 11,584 real calls, 4 distinct signatures, 4 rows kept
+
+- `input[9, T]` bfloat16 — T ∈ {5120, 6144}
+- `weight[T, N]` float8_e4m3fn **non-contiguous** — T ∈ {5120, 6144} — N ∈ {5120, 8192, 16384}
+- `weight_scale[1]` float32
+- `input_scale[1]` float32
+
+
+## `qwen38_nvfp4__gdn_sigmoid_gating_verify`
+
+**`qwen38_gdn_gating_update`** — 2,784 real calls, 1 distinct signatures, 1 rows kept
+
+- `A_log[48]` float32
+- `a[1, 9, 48]` bfloat16
+- `dt_bias[48]` float32
+- `q[1, 9, 16, 128]` bfloat16
+- `k[1, 9, 16, 128]` bfloat16
+- `v[1, 9, 48, 128]` bfloat16
+- `b[1, 9, 48]` bfloat16
+- `initial_state_source[1, 48, 128, 128]` bfloat16
+- `initial_state_indices[1]` int64
+- `cu_seqlens[2]` int32
+
+**`qwen38_qkvzba_split`** — 2,880 real calls, 1 distinct signatures, 1 rows kept
+
+- `mixed_qkvz[9, 16384]` bfloat16
+- `mixed_ba[9, 96]` bfloat16
+
+**`qwen38_conv1d_update`** — 2,784 real calls, 1 distinct signatures, 1 rows kept
+
+- `x[9, 16384]` bfloat16
+- `conv_state[1, 16384, 4]` bfloat16
+- `weight[16384, 4]` bfloat16
+
+
 ## `qwen3_next__gdn_chunk_prefill`
 
 ### workloads.json — model `Qwen/Qwen3-Next-80B-A3B-Instruct`

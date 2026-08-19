@@ -1,0 +1,635 @@
+{
+ "task": "qwen38_nvfp4__fp8_verify_skinny_gemm",
+ "model": "RadixArk/Qwen3.8-27B-NVFP4@554ebba9b",
+ "source_manifest": "nvcap shape manifests + DSpark decode torch-profiler trace (docs/capture_provenance.md)",
+ "selection_rule": "every distinct production signature at bs=1; verify tier M=T=9 is exact (DSPARK block 8)",
+ "ops": [
+  {
+   "op": "qwen38_fp8_gemv",
+   "total_real_calls": 135168,
+   "distinct_real_signatures": 4,
+   "rows_with_payload": 1,
+   "rows": [
+    {
+     "row_id": "qwen38_fp8_gemv#gdn_in_proj_qkvz_m1",
+     "group": "nospec_bs1_4k1k",
+     "real_calls": 50688,
+     "kept_because": [
+      "M=1 plain decode (captured, 135168 calls total)"
+     ],
+     "args": {
+      "x_fp8": {
+       "shape": [
+        1,
+        5120
+       ],
+       "dtype": "float8_e4m3fn",
+       "stride": [
+        5120,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 5120,
+       "bytes": 5120
+      },
+      "w_fp8": {
+       "shape": [
+        5120,
+        16384
+       ],
+       "dtype": "float8_e4m3fn",
+       "stride": [
+        1,
+        5120
+       ],
+       "contiguous": false,
+       "device": "cuda",
+       "numel": 83886080,
+       "bytes": 83886080
+      },
+      "alpha": {
+       "shape": [
+        1
+       ],
+       "dtype": "float32",
+       "stride": [
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 1,
+       "bytes": 4
+      }
+     },
+     "output": {
+      "shape": [
+       1,
+       16384
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+       16384,
+       1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 16384,
+      "bytes": 32768
+     },
+     "payload_dir": "tensors/nospec_bs1_4k1k/qwen38_fp8_gemv__x_fp81x5120_w_fp816384x5120",
+     "note": "weight is the [K,N] transposed view of an [N,K]-contiguous buffer; role=gdn_in_proj_qkvz"
+    },
+    {
+     "row_id": "qwen38_fp8_gemv#gdn_out_proj_m1",
+     "group": "nospec_bs1_4k1k",
+     "real_calls": 50688,
+     "kept_because": [
+      "M=1 plain decode (captured, 135168 calls total)"
+     ],
+     "args": {
+      "x_fp8": {
+       "shape": [
+        1,
+        6144
+       ],
+       "dtype": "float8_e4m3fn",
+       "stride": [
+        6144,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 6144,
+       "bytes": 6144
+      },
+      "w_fp8": {
+       "shape": [
+        6144,
+        5120
+       ],
+       "dtype": "float8_e4m3fn",
+       "stride": [
+        1,
+        6144
+       ],
+       "contiguous": false,
+       "device": "cuda",
+       "numel": 31457280,
+       "bytes": 31457280
+      },
+      "alpha": {
+       "shape": [
+        1
+       ],
+       "dtype": "float32",
+       "stride": [
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 1,
+       "bytes": 4
+      }
+     },
+     "output": {
+      "shape": [
+       1,
+       5120
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+       5120,
+       1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 5120,
+      "bytes": 10240
+     },
+     "note": "weight is the [K,N] transposed view of an [N,K]-contiguous buffer; role=gdn_out_proj"
+    },
+    {
+     "row_id": "qwen38_fp8_gemv#attn_qkv_proj_m1",
+     "group": "nospec_bs1_4k1k",
+     "real_calls": 16896,
+     "kept_because": [
+      "M=1 plain decode (captured, 135168 calls total)"
+     ],
+     "args": {
+      "x_fp8": {
+       "shape": [
+        1,
+        5120
+       ],
+       "dtype": "float8_e4m3fn",
+       "stride": [
+        5120,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 5120,
+       "bytes": 5120
+      },
+      "w_fp8": {
+       "shape": [
+        5120,
+        8192
+       ],
+       "dtype": "float8_e4m3fn",
+       "stride": [
+        1,
+        5120
+       ],
+       "contiguous": false,
+       "device": "cuda",
+       "numel": 41943040,
+       "bytes": 41943040
+      },
+      "alpha": {
+       "shape": [
+        1
+       ],
+       "dtype": "float32",
+       "stride": [
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 1,
+       "bytes": 4
+      }
+     },
+     "output": {
+      "shape": [
+       1,
+       8192
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+       8192,
+       1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 8192,
+      "bytes": 16384
+     },
+     "note": "weight is the [K,N] transposed view of an [N,K]-contiguous buffer; role=attn_qkv_proj"
+    },
+    {
+     "row_id": "qwen38_fp8_gemv#attn_o_proj_m1",
+     "group": "nospec_bs1_4k1k",
+     "real_calls": 16896,
+     "kept_because": [
+      "M=1 plain decode (captured, 135168 calls total)"
+     ],
+     "args": {
+      "x_fp8": {
+       "shape": [
+        1,
+        6144
+       ],
+       "dtype": "float8_e4m3fn",
+       "stride": [
+        6144,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 6144,
+       "bytes": 6144
+      },
+      "w_fp8": {
+       "shape": [
+        6144,
+        5120
+       ],
+       "dtype": "float8_e4m3fn",
+       "stride": [
+        1,
+        6144
+       ],
+       "contiguous": false,
+       "device": "cuda",
+       "numel": 31457280,
+       "bytes": 31457280
+      },
+      "alpha": {
+       "shape": [
+        1
+       ],
+       "dtype": "float32",
+       "stride": [
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 1,
+       "bytes": 4
+      }
+     },
+     "output": {
+      "shape": [
+       1,
+       5120
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+       5120,
+       1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 5120,
+      "bytes": 10240
+     },
+     "note": "weight is the [K,N] transposed view of an [N,K]-contiguous buffer; role=attn_o_proj"
+    }
+   ]
+  },
+  {
+   "op": "qwen38_fp8_linear",
+   "total_real_calls": 11584,
+   "distinct_real_signatures": 4,
+   "rows_with_payload": 0,
+   "rows": [
+    {
+     "row_id": "qwen38_fp8_linear#gdn_in_proj_qkvz_m9",
+     "group": "dspark_bs1_4k1k",
+     "real_calls": 1448,
+     "kept_because": [
+      "DSpark verify tier M=9 (exact: block 8); trace shows the family at ~27% of the verify step on tiny-M cuBLAS tiles"
+     ],
+     "args": {
+      "input": {
+       "shape": [
+        9,
+        5120
+       ],
+       "dtype": "bfloat16",
+       "stride": [
+        5120,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 46080,
+       "bytes": 92160
+      },
+      "weight": {
+       "shape": [
+        5120,
+        16384
+       ],
+       "dtype": "float8_e4m3fn",
+       "stride": [
+        1,
+        5120
+       ],
+       "contiguous": false,
+       "device": "cuda",
+       "numel": 83886080,
+       "bytes": 83886080
+      },
+      "weight_scale": {
+       "shape": [
+        1
+       ],
+       "dtype": "float32",
+       "stride": [
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 1,
+       "bytes": 4
+      },
+      "input_scale": {
+       "shape": [
+        1
+       ],
+       "dtype": "float32",
+       "stride": [
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 1,
+       "bytes": 4
+      }
+     },
+     "output": {
+      "shape": [
+       9,
+       16384
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+       16384,
+       1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 147456,
+      "bytes": 294912
+     },
+     "note": "per-tensor static; role=gdn_in_proj_qkvz"
+    },
+    {
+     "row_id": "qwen38_fp8_linear#gdn_out_proj_m9",
+     "group": "dspark_bs1_4k1k",
+     "real_calls": 1448,
+     "kept_because": [
+      "DSpark verify tier M=9 (exact: block 8); trace shows the family at ~27% of the verify step on tiny-M cuBLAS tiles"
+     ],
+     "args": {
+      "input": {
+       "shape": [
+        9,
+        6144
+       ],
+       "dtype": "bfloat16",
+       "stride": [
+        6144,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 55296,
+       "bytes": 110592
+      },
+      "weight": {
+       "shape": [
+        6144,
+        5120
+       ],
+       "dtype": "float8_e4m3fn",
+       "stride": [
+        1,
+        6144
+       ],
+       "contiguous": false,
+       "device": "cuda",
+       "numel": 31457280,
+       "bytes": 31457280
+      },
+      "weight_scale": {
+       "shape": [
+        1
+       ],
+       "dtype": "float32",
+       "stride": [
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 1,
+       "bytes": 4
+      },
+      "input_scale": {
+       "shape": [
+        1
+       ],
+       "dtype": "float32",
+       "stride": [
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 1,
+       "bytes": 4
+      }
+     },
+     "output": {
+      "shape": [
+       9,
+       5120
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+       5120,
+       1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 46080,
+      "bytes": 92160
+     },
+     "note": "per-tensor static; role=gdn_out_proj"
+    },
+    {
+     "row_id": "qwen38_fp8_linear#attn_qkv_proj_m9",
+     "group": "dspark_bs1_4k1k",
+     "real_calls": 482,
+     "kept_because": [
+      "DSpark verify tier M=9 (exact: block 8); trace shows the family at ~27% of the verify step on tiny-M cuBLAS tiles"
+     ],
+     "args": {
+      "input": {
+       "shape": [
+        9,
+        5120
+       ],
+       "dtype": "bfloat16",
+       "stride": [
+        5120,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 46080,
+       "bytes": 92160
+      },
+      "weight": {
+       "shape": [
+        5120,
+        8192
+       ],
+       "dtype": "float8_e4m3fn",
+       "stride": [
+        1,
+        5120
+       ],
+       "contiguous": false,
+       "device": "cuda",
+       "numel": 41943040,
+       "bytes": 41943040
+      },
+      "weight_scale": {
+       "shape": [
+        1
+       ],
+       "dtype": "float32",
+       "stride": [
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 1,
+       "bytes": 4
+      },
+      "input_scale": {
+       "shape": [
+        1
+       ],
+       "dtype": "float32",
+       "stride": [
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 1,
+       "bytes": 4
+      }
+     },
+     "output": {
+      "shape": [
+       9,
+       8192
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+       8192,
+       1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 73728,
+      "bytes": 147456
+     },
+     "note": "per-tensor static; role=attn_qkv_proj"
+    },
+    {
+     "row_id": "qwen38_fp8_linear#attn_o_proj_m9",
+     "group": "dspark_bs1_4k1k",
+     "real_calls": 482,
+     "kept_because": [
+      "DSpark verify tier M=9 (exact: block 8); trace shows the family at ~27% of the verify step on tiny-M cuBLAS tiles"
+     ],
+     "args": {
+      "input": {
+       "shape": [
+        9,
+        6144
+       ],
+       "dtype": "bfloat16",
+       "stride": [
+        6144,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 55296,
+       "bytes": 110592
+      },
+      "weight": {
+       "shape": [
+        6144,
+        5120
+       ],
+       "dtype": "float8_e4m3fn",
+       "stride": [
+        1,
+        6144
+       ],
+       "contiguous": false,
+       "device": "cuda",
+       "numel": 31457280,
+       "bytes": 31457280
+      },
+      "weight_scale": {
+       "shape": [
+        1
+       ],
+       "dtype": "float32",
+       "stride": [
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 1,
+       "bytes": 4
+      },
+      "input_scale": {
+       "shape": [
+        1
+       ],
+       "dtype": "float32",
+       "stride": [
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 1,
+       "bytes": 4
+      }
+     },
+     "output": {
+      "shape": [
+       9,
+       5120
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+       5120,
+       1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 46080,
+      "bytes": 92160
+     },
+     "note": "per-tensor static; role=attn_o_proj"
+    }
+   ]
+  }
+ ],
+ "capture_provenance": {
+  "host": "jimmy-sglang-kimi-ae1a-node-2 (GCP sglang-jax-1126, asia-east1-a)",
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition (sm_120)",
+  "serve_cmd": "python3 -m sglang.launch_server --model-path <snap> --trust-remote-code --tp-size 1 --disable-radix-cache --mem-fraction-static 0.85 --max-running-requests 8 --cuda-graph-max-bs 8 --mamba-ssm-dtype bfloat16 --kv-cache-dtype fp8_e4m3 --speculative-algorithm DSPARK --speculative-draft-model-path RadixArk/Qwen3.8-27B-0811-DSpark-Stage2 --speculative-dspark-block-size 8",
+  "bench": "bs=1 4k-in/1k-out: no-spec 66.7 tok/s (ITL 14.78 ms); DSpark 153.3 tok/s (ITL 3.48 ms, accept 3.47) - 2.30x. Verify forwards are fixed M=T=9 (block 8 + 1)."
+ }
+}

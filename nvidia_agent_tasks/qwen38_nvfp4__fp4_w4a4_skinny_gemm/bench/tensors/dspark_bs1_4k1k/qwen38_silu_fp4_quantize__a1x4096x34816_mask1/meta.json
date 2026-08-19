@@ -1,0 +1,100 @@
+{
+ "op": "qwen38_silu_fp4_quantize",
+ "group": "dspark_bs1_4k1k",
+ "scalars": {},
+ "tensors": {
+  "in_mask": {
+   "shape": [
+    1
+   ],
+   "dtype": "int32",
+   "stride": [
+    1
+   ],
+   "contiguous": true,
+   "device": "cuda",
+   "numel": 1,
+   "bytes": 4,
+   "file": "in_mask.pt"
+  },
+  "in_a_global_sf": {
+   "shape": [
+    1
+   ],
+   "dtype": "float32",
+   "stride": [
+    1
+   ],
+   "contiguous": true,
+   "device": "cuda",
+   "numel": 1,
+   "bytes": 4,
+   "file": "in_a_global_sf.pt"
+  },
+  "out_1": {
+   "shape": [
+    32,
+    4,
+    32,
+    4,
+    272,
+    1
+   ],
+   "dtype": "float8_e4m3fn",
+   "stride": [
+    16,
+    4,
+    139264,
+    1,
+    512,
+    4456448
+   ],
+   "contiguous": false,
+   "device": "cuda",
+   "numel": 4456448,
+   "bytes": 4456448,
+   "file": "out_1.pt"
+  }
+ },
+ "metadata_only": {
+  "in_a": {
+   "shape": [
+    1,
+    4096,
+    34816
+   ],
+   "dtype": "bfloat16",
+   "stride": [
+    142606336,
+    34816,
+    1
+   ],
+   "contiguous": true,
+   "device": "cuda",
+   "numel": 142606336,
+   "bytes": 285212672,
+   "not_saved": "exceeds NVCAP_MAX_TENSOR_MB"
+  },
+  "out_0": {
+   "shape": [
+    4096,
+    8704,
+    1
+   ],
+   "dtype": "uint8",
+   "stride": [
+    8704,
+    1,
+    35651584
+   ],
+   "contiguous": true,
+   "device": "cuda",
+   "numel": 35651584,
+   "bytes": 35651584,
+   "file": "out_0.pt",
+   "not_saved": "pruned: exceeds repo payload budget; reconstruct from checkpoint"
+  }
+ },
+ "gathered": {},
+ "bytes_on_disk": 40114297
+}

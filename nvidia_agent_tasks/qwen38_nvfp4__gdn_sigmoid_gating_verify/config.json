@@ -1,0 +1,23 @@
+{
+ "task": {
+  "slug": "qwen38_nvfp4__gdn_sigmoid_gating_verify",
+  "model": "RadixArk/Qwen3.8-27B-NVFP4",
+  "arch": "sm120",
+  "target_gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition (sm_120)",
+  "ops": [
+   "qwen38_gdn_gating_update",
+   "qwen38_qkvzba_split",
+   "qwen38_conv1d_update"
+  ]
+ },
+ "capture": {
+  "cookbook_command": "python3 -m sglang.launch_server --model-path <snap> --trust-remote-code --tp-size 1 --disable-radix-cache --mem-fraction-static 0.85 --max-running-requests 8 --cuda-graph-max-bs 8 --mamba-ssm-dtype bfloat16 --kv-cache-dtype fp8_e4m3 --speculative-algorithm DSPARK --speculative-draft-model-path RadixArk/Qwen3.8-27B-0811-DSpark-Stage2 --speculative-dspark-block-size 8",
+  "measured_share": "GDN verify family ~5.3% of the DSpark verify step (gating update 2.6% + qkvzba split 1.4% + conv update 1.3%), sequential in draft length"
+ },
+ "environment": {
+  "host": "jimmy-sglang-kimi-ae1a-node-2 (GCP sglang-jax-1126, asia-east1-a)",
+  "sglang": "main@8922bb98e2 + #34859 + #34934",
+  "flashinfer": "0.6.18",
+  "torch": "2.13.0+cu130"
+ }
+}
