@@ -119,6 +119,15 @@ python tools/build_workloads.py --manifest cap/<slug>/shape_manifest.json \
   half of the block-sparse one (the same backend's `min_seq_len` path), so it is folded
   into `minimax_h3__sm103_block_sparse_attention` as a gate condition instead of standing
   alone.
+* **Two MoE-adjacent kernels from our internal evaluation harness** - GLM-4.5 biased
+  grouped top-k and GLM-4.6 `moe_sum_reduce`. Our own alignment audit found that this
+  family is fused away by trtllm routing on the recommended Blackwell fp8 deployment
+  (verified 0 occurrences on the GLM-5.2 default path), and the captures that made them
+  look hot used a non-recommended backend. They can come back the moment someone
+  re-verifies them on the cookbook recipe. GLM-4.5's fused-MoE *geometry* (160 experts,
+  top-9, hidden 5120) is a different story: worth adding as a third shape family on
+  `lfm25__triton_fused_moe`, but after a re-capture rather than by importing recorded
+  shapes.
 * **Video VAE decode kernels** - real target, wrong time: the fused conv3d /
   GroupNorm-SiLU kernels are not called by the model we had staged (Wan2.2 has its
   own decoder), and the models that do call them were not captured in this pass. We
