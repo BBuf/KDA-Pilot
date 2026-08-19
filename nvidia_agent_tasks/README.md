@@ -35,11 +35,30 @@ above come from.
 ## Running a task
 
 ```bash
-python tools/check_task.py <task>        # is the package complete? (CPU only, doubles as CI)
-python tools/bench_harness.py <task>     # baseline-only timing, per row
+python tools/check_task.py <task>          # package complete? (CPU only, doubles as CI)
+python <task>/tests/test_contract.py       # rows, OPS coverage, sources, chains (CPU only)
+python tools/bench_harness.py <task>       # baseline timing per row (GPU)
 # ...write solution/entry.py with the same OPS keys...
 python tools/bench_harness.py <task> --json report.json    # interleaved A/B + gates
 ```
+
+**Verified on 1x B300 with SGLang main @ 43226af: 37 of the 45 op-rows produce a
+CUDA-graph-timed baseline straight from the recorded workload.** The remaining 8 need a
+few lines in that task's `RECONSTRUCT` hook, because the capture can record an argument's
+contents but not the object around it (a plan namedtuple, a bound method's instance);
+each task's `bench/README.md` names exactly which ones and why, and the harness reports
+them as `NOT RUNNABLE` with the missing argument named instead of aborting the run.
+
+| task | ops timing today |
+| --- | --- |
+| `nemotron3_nano__mamba2_ssm` | 9 / 9 |
+| `glm47_flash__triton_attention` | 6 / 6 |
+| `kimi_k3__tgv_bf16_tiny_gemm` | 5 / 5 |
+| `kimi_k3__kda_linear_attention` | 2 / 2 |
+| `lfm25__triton_fused_moe` | 2 / 2 |
+| `qwen3_next__gdn_chunk_prefill` | 5 / 6 |
+| `deepseek_v4_flash__dsa_sparse_attention` | 8 / 12 |
+| `minimax_h3__sm103_block_sparse_attention` | 0 / 3 (backend impls need an instance) |
 
 `tools/bench_harness.py` implements the measurement contract so each agent does not have
 to re-derive it: CUDA-graph timing, interleaved arms, preallocated outputs, `copy_` restore

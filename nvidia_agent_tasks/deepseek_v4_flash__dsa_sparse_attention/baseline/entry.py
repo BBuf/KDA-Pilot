@@ -62,3 +62,9 @@ OPS = {
     "mhc_post":
         lambda **kw: _call("sglang.kernels.ops.layernorm.mhc", "mhc_post", kw),
 }
+
+
+# Arguments the capture could not serialize (a triton dtype, a plan struct) are rebuilt
+# here, once per task, so every workload row becomes runnable. The harness calls
+# RECONSTRUCT[op](kwargs) before dispatch.
+RECONSTRUCT: dict = {}

@@ -42,3 +42,9 @@ OPS = {
     "k3_kda_chunk_prefill":
         lambda **kw: _call("sglang.kernels.ops.attention.fla.kda", "chunk_kda_fwd", kw),
 }
+
+
+# Arguments the capture could not serialize (a triton dtype, a plan struct) are rebuilt
+# here, once per task, so every workload row becomes runnable. The harness calls
+# RECONSTRUCT[op](kwargs) before dispatch.
+RECONSTRUCT: dict = {}

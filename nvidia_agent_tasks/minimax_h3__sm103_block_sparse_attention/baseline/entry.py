@@ -44,3 +44,9 @@ OPS = {
     "diffusion_attention_sdpa":
         lambda **kw: _call("sglang.multimodal_gen.runtime.layers.attention.backends.sdpa", "SDPAImpl.forward", kw),
 }
+
+
+# Arguments the capture could not serialize (a triton dtype, a plan struct) are rebuilt
+# here, once per task, so every workload row becomes runnable. The harness calls
+# RECONSTRUCT[op](kwargs) before dispatch.
+RECONSTRUCT: dict = {}

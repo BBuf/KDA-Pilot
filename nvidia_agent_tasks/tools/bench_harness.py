@@ -32,6 +32,7 @@ Nothing here imports SGLang at run time: the baseline is the copied source in
 from __future__ import annotations
 
 import argparse
+import glob
 import importlib.util
 import json
 import os
@@ -80,14 +81,37 @@ def _alloc(info: dict, device: str = "cuda") -> torch.Tensor:
     return t
 
 
+def _row_shapes(row: dict) -> dict:
+    return {k: tuple(v["shape"]) for k, v in row["args"].items()
+            if isinstance(v, dict) and "shape" in v}
+
+
 def load_payload(task_dir: str, row: dict) -> dict:
-    """Real tensors for this row, if the task shipped a payload folder for it."""
-    root = os.path.join(task_dir, "bench", "tensors")
-    if not os.path.isdir(root):
+    """Real tensors for this row: the payload folder whose shapes match it.
+
+    Matching matters - a task ships several payload folders and the wrong one silently
+    feeds a candidate the wrong shapes.
+    """
+    roots = [d for d in glob.glob(os.path.join(task_dir, "bench", "tensors*")) if os.path.isdir(d)]
+    if not roots:
         return {}
     want = row.get("payload_dir")
-    cands = [os.path.join(root, want)] if want else [
-        os.path.join(root, d) for d in sorted(os.listdir(root))]
+    cands = []
+    for root in roots:
+        if want and os.path.isdir(os.path.join(root, want)):
+            cands.append(os.path.join(root, want))
+        for grp in sorted(os.listdir(root)):
+            gp = os.path.join(root, grp)
+            if not os.path.isdir(gp):
+                continue
+            if os.path.exists(os.path.join(gp, "meta.json")) or glob.glob(os.path.join(gp, "step*")):
+                cands.append(gp)
+            for sd in sorted(os.listdir(gp)):
+                p = os.path.join(gp, sd)
+                if os.path.isdir(p):
+                    cands.append(p)
+    want_shapes = _row_shapes(row)
+    scored = []
     for c in cands:
         meta_p = os.path.join(c, "meta.json")
         if not os.path.exists(meta_p):
@@ -103,11 +127,30 @@ def load_payload(task_dir: str, row: dict) -> dict:
             f = os.path.join(base, info["file"])
             if os.path.exists(f):
                 got[name] = torch.load(f, map_location="cuda")
-        if got:
-            got["__meta__"] = meta
-            got["__dir__"] = c
-            return got
-    return {}
+        if not got:
+            continue
+        score = sum(1 for k, sh in want_shapes.items()
+                    if torch.is_tensor(got.get("in_" + k)) and tuple(got["in_" + k].shape) == sh)
+        got["__meta__"] = meta
+        got["__dir__"] = c
+        scored.append((score, c, got))
+    if not scored:
+        return {}
+    scored.sort(key=lambda x: -x[0])
+    best_score, best_dir, best = scored[0]
+    if best_score == 0:
+        return {}
+    return best
+
+
+def _holds_tensor_meta(x) -> bool:
+    if isinstance(x, dict):
+        if "shape" in x and "dtype" in x:
+            return True
+        return any(_holds_tensor_meta(v) for v in x.values())
+    if isinstance(x, list):
+        return any(_holds_tensor_meta(v) for v in x)
+    return False
 
 
 def build_inputs(task_dir: str, row: dict) -> dict:
@@ -122,7 +165,21 @@ def build_inputs(task_dir: str, row: dict) -> dict:
             else:
                 kwargs[name] = _alloc(info)
                 source[name] = "allocated"
-        elif not isinstance(info, dict):
+        elif isinstance(info, dict) and "repr" in info:
+            # an object the capture could not serialize (a triton dtype, a plan struct).
+            # baseline/entry.py's RECONSTRUCT hook is where a task rebuilds it.
+            source[name] = "needs RECONSTRUCT (%s)" % info["repr"]
+        elif isinstance(info, (dict, list)) and _holds_tensor_meta(info):
+            # e.g. a plan / namedtuple whose fields include tensors: the capture recorded
+            # their metadata, not the object. RECONSTRUCT rebuilds it.
+            source[name] = "needs RECONSTRUCT (structured arg with tensors)"
+        elif isinstance(info, dict):
+            kwargs[name] = info          # plain config dict of scalars
+            source[name] = "config"
+        elif isinstance(info, list):
+            kwargs[name] = info
+            source[name] = "list"
+        else:
             kwargs[name] = info
             source[name] = "scalar"
     return {"kwargs": kwargs, "source": source, "payload": payload}
@@ -226,8 +283,11 @@ def load_entry(path: str, name: str):
     spec.loader.exec_module(mod)
     ops = getattr(mod, "OPS", None)
     run = getattr(mod, "run", None)
+    fix = getattr(mod, "RECONSTRUCT", {}) or {}
     if ops:
         def dispatch(_op=None, **kwargs):
+            if _op in fix:
+                kwargs = fix[_op](kwargs)
             fn = ops.get(_op)
             if fn is None:
                 raise KeyError("%s does not implement op %r (has: %s)"
@@ -279,18 +339,44 @@ def main() -> None:
                 continue
             rows = o["rows"][: args.rows] if args.rows else o["rows"]
             for r in rows:
-                built = build_inputs(args.task_dir, r)
+                try:
+                    built = build_inputs(args.task_dir, r)
+                except Exception as exc:
+                    report["rows"].append({"row_id": r["row_id"], "op": o["op"],
+                                           "status": "input build failed: %r" % (exc,)})
+                    print("%-34s %-22s  input build failed: %s" % (r["row_id"], r["group"], exc))
+                    continue
                 kb = built["kwargs"]
                 kc = {k: (v.clone() if torch.is_tensor(v) else v) for k, v in kb.items()}
-                ref = base_run(_op=o["op"],
-                               **{k: (v.clone() if torch.is_tensor(v) else v) for k, v in kb.items()})
+                try:
+                    ref = base_run(_op=o["op"],
+                                   **{k: (v.clone() if torch.is_tensor(v) else v)
+                                      for k, v in kb.items()})
+                except Exception as exc:
+                    msg = str(exc).strip().splitlines()[-1][:150]
+                    need = [k for k, v in built["source"].items() if str(v).startswith("needs")]
+                    rec = {"row_id": r["row_id"], "op": o["op"], "group": r["group"],
+                           "status": "not runnable from the recorded row: %s" % msg,
+                           "needs": need}
+                    report["rows"].append(rec)
+                    print("%-34s %-22s  NOT RUNNABLE: %s%s"
+                          % (r["row_id"], r["group"], msg,
+                             ("   (rebuild in baseline/entry.py RECONSTRUCT: %s)" % ", ".join(need))
+                             if need else ""))
+                    continue
                 entry = {"row_id": r["row_id"], "op": o["op"], "group": r["group"],
                          "real_calls": r["real_calls"],
                          "inputs": built["source"]}
                 if cand_run is None:
                     entry["status"] = "baseline only (no solution/entry.py yet)"
-                    tb = _graph_time(lambda **kw: base_run(_op=o["op"], **kw), kb, args.iters, None)
-                    entry["baseline_us"] = round(tb, 3)
+                    try:
+                        tb = _graph_time(lambda **kw: base_run(_op=o["op"], **kw), kb, args.iters, None)
+                        entry["baseline_us"] = round(tb, 3)
+                    except Exception as exc:
+                        msg = str(exc).strip().splitlines()[-1][:160] if str(exc).strip() else repr(exc)
+                        entry["status"] = "not runnable from the recorded row: %s" % msg
+                        entry["needs"] = [k for k, v in built["source"].items()
+                                          if str(v).startswith("needs")]
                 else:
                     got = cand_run(_op=o["op"],
                                    **{k: (v.clone() if torch.is_tensor(v) else v) for k, v in kb.items()})
@@ -309,7 +395,19 @@ def main() -> None:
                                      baseline_trials=[round(x, 3) for x in bs],
                                      candidate_trials=[round(x, 3) for x in cs])
                 report["rows"].append(entry)
-                print(json.dumps(entry)[:400], flush=True)
+                # one compact line per row; the full record goes to --json
+                bits = ["%-34s %-22s" % (entry["row_id"], entry["group"])]
+                if "baseline_us" in entry:
+                    bits.append("base %8.3f us" % entry["baseline_us"])
+                if "candidate_us" in entry:
+                    bits.append("cand %8.3f us  %.3fx" % (entry["candidate_us"], entry["speedup"]))
+                if "correct" in entry:
+                    bits.append("correct=%s (%s)" % (entry["correct"], entry["correctness_detail"]))
+                if entry.get("status"):
+                    bits.append(entry["status"])
+                real = sum(1 for v in entry["inputs"].values() if v == "real")
+                bits.append("[%d/%d inputs real]" % (real, len(entry["inputs"])))
+                print("  ".join(bits), flush=True)
 
     sp = [r["speedup"] for r in report["rows"] if r.get("speedup")]
     if sp:

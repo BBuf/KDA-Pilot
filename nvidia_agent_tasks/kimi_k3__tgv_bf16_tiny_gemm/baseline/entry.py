@@ -48,3 +48,9 @@ OPS = {
     "k3_tiny_k_gemm_bf16":
         lambda **kw: _call("sglang.kernels.ops.gemm.tiny_gemm", "tiny_k_gemm_bf16", kw),
 }
+
+
+# Arguments the capture could not serialize (a triton dtype, a plan struct) are rebuilt
+# here, once per task, so every workload row becomes runnable. The harness calls
+# RECONSTRUCT[op](kwargs) before dispatch.
+RECONSTRUCT: dict = {}

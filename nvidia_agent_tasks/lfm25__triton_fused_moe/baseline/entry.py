@@ -40,3 +40,19 @@ OPS = {
     "triton_fused_moe_gemm":
         lambda **kw: _call("sglang.kernels.ops.moe.fused_moe_triton_kernels", "invoke_fused_moe_kernel", kw),
 }
+
+
+def _moe_fix(kw: dict) -> dict:
+    """`compute_type` is a triton dtype - the capture records the type name only."""
+    import triton.language as tl
+    import torch
+
+    a = kw.get("A")
+    dt = a.dtype if torch.is_tensor(a) else torch.bfloat16
+    kw["compute_type"] = {torch.bfloat16: tl.bfloat16,
+                          torch.float16: tl.float16}.get(dt, tl.bfloat16)
+    kw.setdefault("bias", None)
+    return kw
+
+
+RECONSTRUCT = {"triton_fused_moe_gemm": _moe_fix}

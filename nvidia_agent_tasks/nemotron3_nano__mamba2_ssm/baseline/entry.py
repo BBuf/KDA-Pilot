@@ -56,3 +56,27 @@ OPS = {
     "mamba2_chunk_scan_combined":
         lambda **kw: _call("sglang.kernels.ops.mamba.triton_ops.ssd_combined", "mamba_chunk_scan_combined", kw),
 }
+
+
+# Arguments the capture could not serialize (a triton dtype, a plan struct) are rebuilt
+# here, once per task, so every workload row becomes runnable. The harness calls
+# RECONSTRUCT[op](kwargs) before dispatch.
+def _mamba2_fix(kw: dict) -> dict:
+    """The captured row does not carry `state_dtype`.
+
+    Without it the combined entry allocates its internal states buffer with x's dtype
+    (bf16) while `initial_states` is fp32, and the Triton kernel fails to unify
+    `prev_states_ptr` across the two branches. The deployment passes fp32 here.
+    """
+    import torch
+
+    kw.setdefault("state_dtype", torch.float32)
+    if kw.get("state_dtype") is None:
+        kw["state_dtype"] = torch.float32
+    return kw
+
+
+RECONSTRUCT = {
+    "mamba2_chunk_scan_combined_fwd": _mamba2_fix,
+    "mamba2_chunk_scan_combined": _mamba2_fix,
+}
