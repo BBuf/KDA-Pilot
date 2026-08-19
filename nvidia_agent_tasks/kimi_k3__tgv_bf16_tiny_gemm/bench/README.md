@@ -48,6 +48,19 @@ than reporting nonsense for every row after it.
 
 
 
+
+## Real-tensor coverage
+
+```
+kimi_k3__tgv_bf16_tiny_gemm                   53 rows,  53 with payload (100%),   77/  95 data args real ( 81%)
+```
+
+Rows with a payload run on tensors captured from the live model; the rest fall back
+to tensors allocated to the recorded shape/dtype/stride. Weights and whole state or
+KV pools are never shipped - the first would mean distributing model weights, the
+second ships as the touched rows - so they are excluded from the arg count and
+recorded as metadata instead. `python tools/coverage.py kimi_k3__tgv_bf16_tiny_gemm` recomputes this.
+
 ## Measurement regime
 
 * **Timing is `triton.testing.do_bench` around a captured CUDA graph** (`--timer do_bench`,

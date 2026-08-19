@@ -1,0 +1,23 @@
+{
+ "triton_fused_moe_gemm": [
+  "A=1x2048:bfloat16|B=32x3584x2048:bfloat16|C=4x3584:bfloat16|topk_weights=1x4:float32|topk_ids=1x4:int32|sorted_token_ids=64:int32|expert_ids=4:int32|num_tokens_post_padded=1:int32|top_k=4",
+  "A=4x1792:bfloat16|B=32x2048x1792:bfloat16|C=1x4x2048:bfloat16|topk_weights=1x4:float32|topk_ids=1x4:int32|sorted_token_ids=64:int32|expert_ids=4:int32|num_tokens_post_padded=1:int32|top_k=1|router_topk=4",
+  "A=16x2048:bfloat16|B=32x3584x2048:bfloat16|C=64x3584:bfloat16|topk_weights=16x4:float32|topk_ids=16x4:int32|sorted_token_ids=559:int32|expert_ids=35:int32|num_tokens_post_padded=1:int32|top_k=4",
+  "A=64x1792:bfloat16|B=32x2048x1792:bfloat16|C=16x4x2048:bfloat16|topk_weights=16x4:float32|topk_ids=16x4:int32|sorted_token_ids=559:int32|expert_ids=35:int32|num_tokens_post_padded=1:int32|top_k=1|router_topk=4",
+  "A=8x2048:bfloat16|B=32x3584x2048:bfloat16|C=32x3584:bfloat16|topk_weights=8x4:float32|topk_ids=8x4:int32|sorted_token_ids=512:int32|expert_ids=32:int32|num_tokens_post_padded=1:int32|top_k=4",
+  "A=32x1792:bfloat16|B=32x2048x1792:bfloat16|C=8x4x2048:bfloat16|topk_weights=8x4:float32|topk_ids=8x4:int32|sorted_token_ids=512:int32|expert_ids=32:int32|num_tokens_post_padded=1:int32|top_k=1|router_topk=4",
+  "A=32x2048:bfloat16|B=32x3584x2048:bfloat16|C=128x3584:bfloat16|topk_weights=32x4:float32|topk_ids=32x4:int32|sorted_token_ids=623:int32|expert_ids=39:int32|num_tokens_post_padded=1:int32|top_k=4",
+  "A=128x1792:bfloat16|B=32x2048x1792:bfloat16|C=32x4x2048:bfloat16|topk_weights=32x4:float32|topk_ids=32x4:int32|sorted_token_ids=623:int32|expert_ids=39:int32|num_tokens_post_padded=1:int32|top_k=1|router_topk=4",
+  "A=2x2048:bfloat16|B=32x3584x2048:bfloat16|C=8x3584:bfloat16|topk_weights=2x4:float32|topk_ids=2x4:int32|sorted_token_ids=128:int32|expert_ids=8:int32|num_tokens_post_padded=1:int32|top_k=4",
+  "A=8x1792:bfloat16|B=32x2048x1792:bfloat16|C=2x4x2048:bfloat16|topk_weights=2x4:float32|topk_ids=2x4:int32|sorted_token_ids=128:int32|expert_ids=8:int32|num_tokens_post_padded=1:int32|top_k=1|router_topk=4",
+  "A=16384x2048:bfloat16|B=32x3584x2048:bfloat16|C=65536x3584:bfloat16|topk_weights=16384x4:float32|topk_ids=16384x4:int32|sorted_token_ids=67615:int32|expert_ids=1057:int32|num_tokens_post_padded=1:int32|top_k=4",
+  "A=1x2048:bfloat16|B=65x3072x2048:bfloat16|C=5x3072:bfloat16|topk_weights=1x5:float32|topk_ids=1x5:int32|sorted_token_ids=80:int32|expert_ids=5:int32|num_tokens_post_padded=1:int32|top_k=5",
+  "A=5x1536:bfloat16|B=65x2048x1536:bfloat16|C=1x5x2048:bfloat16|topk_weights=1x5:float32|topk_ids=1x5:int32|sorted_token_ids=80:int32|expert_ids=5:int32|num_tokens_post_padded=1:int32|top_k=1|router_topk=5",
+  "A=16x2048:bfloat16|B=65x3072x2048:bfloat16|C=80x3072:bfloat16|topk_weights=16x5:float32|topk_ids=16x5:int32|sorted_token_ids=1070:int32|expert_ids=67:int32|num_tokens_post_padded=1:int32|top_k=5",
+  "A=80x1536:bfloat16|B=65x2048x1536:bfloat16|C=16x5x2048:bfloat16|topk_weights=16x5:float32|topk_ids=16x5:int32|sorted_token_ids=1070:int32|expert_ids=67:int32|num_tokens_post_padded=1:int32|top_k=1|router_topk=5",
+  "A=2x2048:bfloat16|B=65x3072x2048:bfloat16|C=10x3072:bfloat16|topk_weights=2x5:float32|topk_ids=2x5:int32|sorted_token_ids=160:int32|expert_ids=10:int32|num_tokens_post_padded=1:int32|top_k=5",
+  "A=10x1536:bfloat16|B=65x2048x1536:bfloat16|C=2x5x2048:bfloat16|topk_weights=2x5:float32|topk_ids=2x5:int32|sorted_token_ids=160:int32|expert_ids=10:int32|num_tokens_post_padded=1:int32|top_k=1|router_topk=5",
+  "A=16384x2048:bfloat16|B=65x3072x2048:bfloat16|C=81920x3072:bfloat16|topk_weights=16384x5:float32|topk_ids=16384x5:int32|sorted_token_ids=86078:int32|expert_ids=1345:int32|num_tokens_post_padded=1:int32|top_k=5",
+  "A=32x2048:bfloat16|B=65x3072x2048:bfloat16|C=160x3072:bfloat16|topk_weights=32x5:float32|topk_ids=32x5:int32|sorted_token_ids=1150:int32|expert_ids=72:int32|num_tokens_post_padded=1:int32|top_k=5"
+ ]
+}

@@ -124,6 +124,35 @@ ships a chain).
 | [`docs/baseline_policy.md`](docs/baseline_policy.md) | baseline = the shipped SGLang kernel at a pinned commit, never a naive PyTorch reference |
 | [`docs/workload_capture.md`](docs/workload_capture.md) | provenance of every shape, and warmup vs real traffic |
 
+## Real-tensor coverage
+
+The workload rows are frozen production shapes; wherever we could, the **tensors are the
+captured ones too**, because a verifier fed Gaussian noise can be satisfied by a shortcut
+that only works on Gaussians (see `docs/anti_hack_contract.md`).
+
+```
+task                                          rows  with payload   data args real
+kimi_k3__tgv_bf16_tiny_gemm                     53    53 (100%)      77/95   (81%)
+kimi_k3__kda_linear_attention                   19    19 (100%)      74/152  (49%)
+lfm25__triton_fused_moe                         15    15 (100%)      50/105  (48%)
+qwen3_next__gdn_chunk_prefill                   46    34 ( 74%)      49/293  (17%)
+nemotron3_nano__mamba2_ssm                     100    69 ( 69%)     188/594  (32%)
+glm47_flash__triton_attention                   86    43 ( 50%)     128/602  (21%)
+deepseek_v4_flash__dsa_sparse_attention        111    52 ( 47%)     105/453  (23%)
+minimax_h3__sm103_block_sparse_attention         8     0 (  0%)       0/24    (0%)
+TOTAL                                          438   285 ( 65%)     671/2318 (29%)
+```
+
+`python tools/coverage.py` recomputes it. Two categories are deliberately **not** shipped
+and are excluded from the arg count: model weights (distributing them is not ours to do,
+and one 6016x7168 bf16 weight alone is 86 MB) and whole state/KV pools (the rows a call
+actually touches ship instead). Both are recorded as metadata with shape, dtype and
+quantisation flags, so an equivalent can be allocated.
+
+Rows without a payload run on allocated tensors. The harness says so per row, and it
+refuses to judge a row whose baseline does not reproduce on them - see
+`docs/measurement_contract.md`.
+
 ## Out of scope, and why
 
 * **Communication kernels and the TRT-LLM fused-MoE path.** Your ground; our profiles

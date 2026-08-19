@@ -31,10 +31,30 @@ def _bytes_of(args: dict) -> int:
     return n
 
 
-def select(rows: list, top: int) -> list:
+def _row_inputs(r: dict) -> dict:
+    return {"in_" + k: tuple(v["shape"]) for k, v in r["args"].items()
+            if isinstance(v, dict) and "shape" in v}
+
+
+def _payload_hits(r: dict, payloads: list) -> int:
+    """How many of this row's inputs a shipped payload can supply."""
+    want = _row_inputs(r)
+    best = 0
+    for shapes in payloads or []:
+        hits = sum(1 for k, sh in shapes.items() if want.get(k) == sh)
+        best = max(best, hits)
+    return best
+
+
+def select(rows: list, top: int, with_payload: set = None) -> list:
     if not rows:
         return []
-    ranked = sorted(rows, key=lambda r: -r["count"])
+    if with_payload:
+        # a row whose tensors we actually captured is worth more than a row we would have
+        # to invent inputs for: rank by how much of it is real, then by call count
+        ranked = sorted(rows, key=lambda r: (-_payload_hits(r, with_payload), -r["count"]))
+    else:
+        ranked = sorted(rows, key=lambda r: -r["count"])
     keep, seen = [], set()
 
     def add(r, why):
@@ -71,9 +91,23 @@ def main() -> None:
     ap.add_argument("--task", default="")
     ap.add_argument("--model", default="")
     ap.add_argument("--provenance", default="", help="path to capture_provenance.json to embed")
+    ap.add_argument("--payloads", default="",
+                    help="tensors dir from the SAME capture: rows that have a payload are "
+                         "kept first, so every shipped row runs on real tensors")
     args = ap.parse_args()
 
     man = json.load(open(args.manifest))
+    have_payload = {}
+    if args.payloads and os.path.isdir(args.payloads):
+        import glob as _glob
+        for meta_p in _glob.glob(os.path.join(args.payloads, "**", "meta.json"), recursive=True):
+            meta = json.load(open(meta_p))
+            # the same rule tools/workload.py uses at run time: a payload matches a row
+            # when its input tensors agree on shape; oversized inputs (weights, pools) are
+            # metadata in the payload and simply do not participate
+            shapes = {k: tuple(v["shape"]) for k, v in meta.get("tensors", {}).items()
+                      if k.startswith("in_")}
+            have_payload.setdefault(meta.get("op"), []).append(shapes)
     real = man["real_workload_shapes"]
     want = [o for o in args.ops.split(",") if o]
     ops = {}
@@ -96,11 +130,12 @@ def main() -> None:
         out["capture_provenance"] = json.load(open(args.provenance))
 
     for op, rows in sorted(ops.items(), key=lambda kv: -sum(r["count"] for r in kv[1])):
-        kept = select(rows, args.top)
+        kept = select(rows, args.top, have_payload.get(op))
         out["ops"].append({
             "op": op,
             "total_real_calls": sum(r["count"] for r in rows),
             "distinct_real_signatures": len(rows),
+            "rows_with_payload": sum(1 for k in kept if _payload_hits(k, have_payload.get(op))),
             "rows": [{
                 "row_id": "%s#%02d" % (op, i),
                 "group": k["group"],

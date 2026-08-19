@@ -28,6 +28,9 @@ Environment:
   NVCAP_OPS                  comma-separated op allowlist        (default all)
   NVCAP_NO_TENSORS=1         manifest only, skip tensor payloads
   NVCAP_MAX_TENSOR_MB        per-tensor payload cap              (default 96)
+  NVCAP_TARGET_SIGS          JSON {op: [signature, ...]} - capture tensors for exactly
+                             these call signatures (the rows a task actually ships) and
+                             ignore the per-op/byte budgets for them
 
 Config format (list of targets):
   [
@@ -65,6 +68,15 @@ _CAPTURE_RANK = int(os.environ.get("NVCAP_RANK", "0"))
 _OPS = [x for x in os.environ.get("NVCAP_OPS", "").split(",") if x]
 _NO_TENSORS = os.environ.get("NVCAP_NO_TENSORS", "0") == "1"
 _MAX_TENSOR = int(float(os.environ.get("NVCAP_MAX_TENSOR_MB", "96")) * 1024 * 1024)
+_TARGETS_PATH = os.environ.get("NVCAP_TARGET_SIGS")
+_TARGET_SIGS: dict = {}
+if _TARGETS_PATH:
+    try:
+        with open(_TARGETS_PATH) as _fh:
+            _TARGET_SIGS = {k: set(v) for k, v in json.load(_fh).items()}
+    except Exception as _exc:  # pragma: no cover
+        print("[nvcap] cannot read NVCAP_TARGET_SIGS=%s: %r" % (_TARGETS_PATH, _exc),
+              file=sys.stderr)
 
 _lock = threading.RLock()
 _manifest: dict = {}          # sig_key -> record
@@ -370,6 +382,40 @@ def _wrap(fn, spec):
         do_payload = False
         step = 0
         chain = int(spec.get("chain", 1))
+        wanted_sig = None
+        if _TARGET_SIGS and want_tensors and _rank() == _CAPTURE_RANK:
+            sig = _sig_of(bound)
+            if sig in _TARGET_SIGS.get(op, ()):        # a signature this task ships
+                wanted_sig = sig
+        if wanted_sig is not None:
+            with _lock:
+                key = ("__target__", op, wanted_sig)
+                n = _steps.get(key, 0)
+                if n < chain:
+                    _steps[key] = n + 1
+                    do_payload, step = True, n
+            if do_payload:
+                try:
+                    idx = bound.get(index_arg) if index_arg else None
+                    state_before, state_rows = {}, {}
+                    for name in state_args:
+                        sb, rws = _rows(bound.get(name), idx)
+                        if sb is not None:
+                            state_before[name] = sb
+                            state_rows[name] = rws
+                except Exception:
+                    state_before, state_rows = {}, {}
+                out = fn(*args, **kwargs)
+                try:
+                    _record_manifest(op, group if group != "warmup" else "targeted", bound, out)
+                    written = _save_payload(op, "targeted", bound, out, spec,
+                                            state_before, state_rows, step)
+                    with _lock:
+                        _bytes["targeted"] = _bytes.get("targeted", 0) + written
+                    dump_manifest()
+                except Exception as exc:
+                    _warn("targeted record failed for %s: %r" % (op, exc))
+                return out
         if want_tensors and group != "warmup" and _rank() == _CAPTURE_RANK:
             try:
                 sid = _shape_id(op, bound, spec)

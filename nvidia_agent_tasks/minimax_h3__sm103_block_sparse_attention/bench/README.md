@@ -59,6 +59,19 @@ than reporting nonsense for every row after it.
 
 
 
+
+## Real-tensor coverage
+
+```
+minimax_h3__sm103_block_sparse_attention       8 rows,   0 with payload (  0%),    0/  24 data args real (  0%)
+```
+
+Rows with a payload run on tensors captured from the live model; the rest fall back
+to tensors allocated to the recorded shape/dtype/stride. Weights and whole state or
+KV pools are never shipped - the first would mean distributing model weights, the
+second ships as the touched rows - so they are excluded from the arg count and
+recorded as metadata instead. `python tools/coverage.py minimax_h3__sm103_block_sparse_attention` recomputes this.
+
 ## Measurement regime
 
 * **Timing is `triton.testing.do_bench` around a captured CUDA graph** (`--timer do_bench`,
