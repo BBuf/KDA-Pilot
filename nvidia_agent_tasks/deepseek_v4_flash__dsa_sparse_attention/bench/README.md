@@ -58,6 +58,28 @@ A row whose integer index arguments had to be allocated can address out of bound
 the CUDA context down; the harness and the test detect that, name the row, and stop rather
 than reporting nonsense for every row after it.
 
+
+## Correctness tolerances
+
+`torch.testing.assert_close` with the rtol/atol **SGLang's own test for that
+kernel uses** - not a threshold invented for this handoff. Same numbers in
+`../config.json::correctness.tolerances`, table in `tools/tolerances.py`.
+
+| op | rtol | atol | copied from |
+| --- | ---: | ---: | --- |
+| `dsa_compress_forward` | 0.01 | 0.02 | `test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22` |
+| `dsa_compress_norm_rope_store` | 0.01 | 0.02 | `test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22` |
+| `dsa_fused_q_indexer_rope_hadamard_quant` | 0.01 | 0.02 | `test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22` |
+| `dsa_indexer_logits_deepgemm_DEFAULT` | 0.01 | 0.02 | `test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22` |
+| `dsa_topk_transform_v2` | 0.0 | 0.0 | `test/registered/kernels/ops/attention/test_dsa_transform_index.py:120` |
+| `dsa_sparse_attention_flash_mla_alt` | 0.01 | 0.02 | `test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22` |
+| `dsa_paged_mqa_logits_metadata` | 0.0 | 0.0 | `test/registered/kernels/ops/attention/test_dsa_transform_index.py:120` |
+| `dsa_topk_transform` | 0.0 | 0.0 | `test/registered/kernels/ops/attention/test_dsa_transform_index.py:120` |
+| `mhc_pre_big_fuse_with_norm_tilelang` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
+| `mhc_pre` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
+| `mhc_post_tilelang` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
+| `mhc_post` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
+
 ## What is in here
 
 | file | contents |

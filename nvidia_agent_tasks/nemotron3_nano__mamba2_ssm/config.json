@@ -44,6 +44,90 @@
     "contract": "../docs/measurement_contract.md"
   },
   "correctness": {
-    "contract": "../docs/anti_hack_contract.md"
+    "contract": "../docs/anti_hack_contract.md",
+    "tolerances": {
+      "causal_conv1d_decode": {
+        "family": "causal_conv1d",
+        "op": "causal_conv1d_decode",
+        "source": "test/registered/layers/mamba/test_causal_conv1d.py:163-165",
+        "note": "bf16 branch is the one these rows hit (silu activation).",
+        "rtol": 0.01,
+        "atol": 0.05,
+        "dtype": "bfloat16"
+      },
+      "mamba2_chunk_cumsum": {
+        "family": "mamba2_ssd",
+        "op": "mamba2_chunk_cumsum",
+        "source": "test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248",
+        "note": "SGLang's own comment: 'the bfloat16 case requires higher thresholds, to be investigated'. Long sequences use 5e-3/1e-2 at line 340-343.",
+        "rtol": 0.05,
+        "atol": 0.05,
+        "dtype": "bfloat16"
+      },
+      "mamba2_chunk_state": {
+        "family": "mamba2_ssd",
+        "op": "mamba2_chunk_state",
+        "source": "test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248",
+        "note": "SGLang's own comment: 'the bfloat16 case requires higher thresholds, to be investigated'. Long sequences use 5e-3/1e-2 at line 340-343.",
+        "rtol": 0.05,
+        "atol": 0.05,
+        "dtype": "bfloat16"
+      },
+      "causal_conv1d_prefill": {
+        "family": "causal_conv1d",
+        "op": "causal_conv1d_prefill",
+        "source": "test/registered/layers/mamba/test_causal_conv1d.py:163-165",
+        "note": "bf16 branch is the one these rows hit (silu activation).",
+        "rtol": 0.01,
+        "atol": 0.05,
+        "dtype": "bfloat16"
+      },
+      "mamba2_state_passing": {
+        "family": "mamba2_ssd",
+        "op": "mamba2_state_passing",
+        "source": "test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248",
+        "note": "SGLang's own comment: 'the bfloat16 case requires higher thresholds, to be investigated'. Long sequences use 5e-3/1e-2 at line 340-343.",
+        "rtol": 0.05,
+        "atol": 0.05,
+        "dtype": "bfloat16"
+      },
+      "mamba2_chunk_scan": {
+        "family": "mamba2_ssd",
+        "op": "mamba2_chunk_scan",
+        "source": "test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248",
+        "note": "SGLang's own comment: 'the bfloat16 case requires higher thresholds, to be investigated'. Long sequences use 5e-3/1e-2 at line 340-343.",
+        "rtol": 0.05,
+        "atol": 0.05,
+        "dtype": "bfloat16"
+      },
+      "mamba2_chunk_state_varlen": {
+        "family": "mamba2_ssd",
+        "op": "mamba2_chunk_state_varlen",
+        "source": "test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248",
+        "note": "SGLang's own comment: 'the bfloat16 case requires higher thresholds, to be investigated'. Long sequences use 5e-3/1e-2 at line 340-343.",
+        "rtol": 0.05,
+        "atol": 0.05,
+        "dtype": "bfloat16"
+      },
+      "mamba2_chunk_scan_combined_fwd": {
+        "family": "mamba2_ssd",
+        "op": "mamba2_chunk_scan_combined_fwd",
+        "source": "test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248",
+        "note": "SGLang's own comment: 'the bfloat16 case requires higher thresholds, to be investigated'. Long sequences use 5e-3/1e-2 at line 340-343.",
+        "rtol": 0.05,
+        "atol": 0.05,
+        "dtype": "bfloat16"
+      },
+      "mamba2_chunk_scan_combined": {
+        "family": "mamba2_ssd",
+        "op": "mamba2_chunk_scan_combined",
+        "source": "test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248",
+        "note": "SGLang's own comment: 'the bfloat16 case requires higher thresholds, to be investigated'. Long sequences use 5e-3/1e-2 at line 340-343.",
+        "rtol": 0.05,
+        "atol": 0.05,
+        "dtype": "bfloat16"
+      }
+    },
+    "policy": "rtol/atol are copied from SGLang's own test for each kernel (source cited per op). Do not loosen them in a task; if a tolerance is wrong, fix it upstream and re-copy."
   }
 }

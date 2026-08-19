@@ -47,6 +47,112 @@
     "contract": "../docs/measurement_contract.md"
   },
   "correctness": {
-    "contract": "../docs/anti_hack_contract.md"
+    "contract": "../docs/anti_hack_contract.md",
+    "tolerances": {
+      "dsa_compress_forward": {
+        "family": "attention_splitkv",
+        "op": "dsa_compress_forward",
+        "source": "test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22",
+        "rtol": 0.01,
+        "atol": 0.02,
+        "dtype": "bfloat16"
+      },
+      "dsa_compress_norm_rope_store": {
+        "family": "attention_splitkv",
+        "op": "dsa_compress_norm_rope_store",
+        "source": "test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22",
+        "rtol": 0.01,
+        "atol": 0.02,
+        "dtype": "bfloat16"
+      },
+      "dsa_fused_q_indexer_rope_hadamard_quant": {
+        "family": "attention_splitkv",
+        "op": "dsa_fused_q_indexer_rope_hadamard_quant",
+        "source": "test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22",
+        "rtol": 0.01,
+        "atol": 0.02,
+        "dtype": "bfloat16"
+      },
+      "dsa_indexer_logits_deepgemm_DEFAULT": {
+        "family": "attention_splitkv",
+        "op": "dsa_indexer_logits_deepgemm_DEFAULT",
+        "source": "test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22",
+        "rtol": 0.01,
+        "atol": 0.02,
+        "dtype": "bfloat16"
+      },
+      "dsa_topk_transform_v2": {
+        "family": "dsa_index_transform",
+        "op": "dsa_topk_transform_v2",
+        "source": "test/registered/kernels/ops/attention/test_dsa_transform_index.py:120",
+        "note": "rtol=0, atol=0 - an index transform is exact or it is wrong.",
+        "exact": true,
+        "rtol": 0.0,
+        "atol": 0.0
+      },
+      "dsa_sparse_attention_flash_mla_alt": {
+        "family": "attention_splitkv",
+        "op": "dsa_sparse_attention_flash_mla_alt",
+        "source": "test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22",
+        "rtol": 0.01,
+        "atol": 0.02,
+        "dtype": "bfloat16"
+      },
+      "dsa_paged_mqa_logits_metadata": {
+        "family": "dsa_index_transform",
+        "op": "dsa_paged_mqa_logits_metadata",
+        "source": "test/registered/kernels/ops/attention/test_dsa_transform_index.py:120",
+        "note": "rtol=0, atol=0 - an index transform is exact or it is wrong.",
+        "exact": true,
+        "rtol": 0.0,
+        "atol": 0.0
+      },
+      "dsa_topk_transform": {
+        "family": "dsa_index_transform",
+        "op": "dsa_topk_transform",
+        "source": "test/registered/kernels/ops/attention/test_dsa_transform_index.py:120",
+        "note": "rtol=0, atol=0 - an index transform is exact or it is wrong.",
+        "exact": true,
+        "rtol": 0.0,
+        "atol": 0.0
+      },
+      "mhc_pre_big_fuse_with_norm_tilelang": {
+        "family": "triton_attention",
+        "op": "mhc_pre_big_fuse_with_norm_tilelang",
+        "source": "test/registered/attention/test_triton_attention_kernels.py:309",
+        "note": "the same file uses 1e-2/2e-2 for the split-kv comparison at line 401; we take the tighter extend/decode number.",
+        "rtol": 0.01,
+        "atol": 0.001,
+        "dtype": "bfloat16"
+      },
+      "mhc_pre": {
+        "family": "triton_attention",
+        "op": "mhc_pre",
+        "source": "test/registered/attention/test_triton_attention_kernels.py:309",
+        "note": "the same file uses 1e-2/2e-2 for the split-kv comparison at line 401; we take the tighter extend/decode number.",
+        "rtol": 0.01,
+        "atol": 0.001,
+        "dtype": "bfloat16"
+      },
+      "mhc_post_tilelang": {
+        "family": "triton_attention",
+        "op": "mhc_post_tilelang",
+        "source": "test/registered/attention/test_triton_attention_kernels.py:309",
+        "note": "the same file uses 1e-2/2e-2 for the split-kv comparison at line 401; we take the tighter extend/decode number.",
+        "rtol": 0.01,
+        "atol": 0.001,
+        "dtype": "bfloat16"
+      },
+      "mhc_post": {
+        "family": "triton_attention",
+        "op": "mhc_post",
+        "source": "test/registered/attention/test_triton_attention_kernels.py:309",
+        "note": "the same file uses 1e-2/2e-2 for the split-kv comparison at line 401; we take the tighter extend/decode number.",
+        "rtol": 0.01,
+        "atol": 0.001,
+        "dtype": "bfloat16"
+      }
+    },
+    "policy": "rtol/atol are copied from SGLang's own test for each kernel (source cited per op). Do not loosen them in a task; if a tolerance is wrong, fix it upstream and re-copy."
   }
 }

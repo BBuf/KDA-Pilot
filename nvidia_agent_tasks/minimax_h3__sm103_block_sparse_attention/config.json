@@ -38,6 +38,33 @@
     "contract": "../docs/measurement_contract.md"
   },
   "correctness": {
-    "contract": "../docs/anti_hack_contract.md"
+    "contract": "../docs/anti_hack_contract.md",
+    "tolerances": {
+      "diffusion_attention_cudnn_sdpa": {
+        "family": "attention_splitkv",
+        "op": "diffusion_attention_cudnn_sdpa",
+        "source": "test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22",
+        "rtol": 0.01,
+        "atol": 0.02,
+        "dtype": "bfloat16"
+      },
+      "diffusion_attention_fa4": {
+        "family": "attention_splitkv",
+        "op": "diffusion_attention_fa4",
+        "source": "test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22",
+        "rtol": 0.01,
+        "atol": 0.02,
+        "dtype": "bfloat16"
+      },
+      "diffusion_attention_sdpa": {
+        "family": "attention_splitkv",
+        "op": "diffusion_attention_sdpa",
+        "source": "test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22",
+        "rtol": 0.01,
+        "atol": 0.02,
+        "dtype": "bfloat16"
+      }
+    },
+    "policy": "rtol/atol are copied from SGLang's own test for each kernel (source cited per op). Do not loosen them in a task; if a tolerance is wrong, fix it upstream and re-copy."
   }
 }

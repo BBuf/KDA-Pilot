@@ -36,6 +36,18 @@
     "contract": "../docs/measurement_contract.md"
   },
   "correctness": {
-    "contract": "../docs/anti_hack_contract.md"
+    "contract": "../docs/anti_hack_contract.md",
+    "tolerances": {
+      "triton_fused_moe_gemm": {
+        "family": "triton_fused_moe",
+        "op": "triton_fused_moe_gemm",
+        "source": "test/registered/moe/test_triton_fused_moe.py:45-49",
+        "note": "SGLang compares the fused MoE against a torch-naive MoE at 1e-5; the LoRA MoE kernel test uses 1e-2/1e-2 (test_fused_moe_lora_kernel.py:378) for a fused-vs-fused comparison.",
+        "rtol": 1e-05,
+        "atol": 1e-05,
+        "dtype": "bfloat16"
+      }
+    },
+    "policy": "rtol/atol are copied from SGLang's own test for each kernel (source cited per op). Do not loosen them in a task; if a tolerance is wrong, fix it upstream and re-copy."
   }
 }

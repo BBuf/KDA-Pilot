@@ -46,6 +46,19 @@ A row whose integer index arguments had to be allocated can address out of bound
 the CUDA context down; the harness and the test detect that, name the row, and stop rather
 than reporting nonsense for every row after it.
 
+
+## Correctness tolerances
+
+`torch.testing.assert_close` with the rtol/atol **SGLang's own test for that
+kernel uses** - not a threshold invented for this handoff. Same numbers in
+`../config.json::correctness.tolerances`, table in `tools/tolerances.py`.
+
+| op | rtol | atol | copied from |
+| --- | ---: | ---: | --- |
+| `triton_decode_attention_grouped` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
+| `triton_decode_attention` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
+| `triton_extend_attention` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
+
 ## What is in here
 
 | file | contents |

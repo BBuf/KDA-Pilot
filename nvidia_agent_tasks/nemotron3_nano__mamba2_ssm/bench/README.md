@@ -46,6 +46,25 @@ A row whose integer index arguments had to be allocated can address out of bound
 the CUDA context down; the harness and the test detect that, name the row, and stop rather
 than reporting nonsense for every row after it.
 
+
+## Correctness tolerances
+
+`torch.testing.assert_close` with the rtol/atol **SGLang's own test for that
+kernel uses** - not a threshold invented for this handoff. Same numbers in
+`../config.json::correctness.tolerances`, table in `tools/tolerances.py`.
+
+| op | rtol | atol | copied from |
+| --- | ---: | ---: | --- |
+| `causal_conv1d_decode` | 0.01 | 0.05 | `test/registered/layers/mamba/test_causal_conv1d.py:163-165` |
+| `mamba2_chunk_cumsum` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
+| `mamba2_chunk_state` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
+| `causal_conv1d_prefill` | 0.01 | 0.05 | `test/registered/layers/mamba/test_causal_conv1d.py:163-165` |
+| `mamba2_state_passing` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
+| `mamba2_chunk_scan` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
+| `mamba2_chunk_state_varlen` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
+| `mamba2_chunk_scan_combined_fwd` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
+| `mamba2_chunk_scan_combined` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
+
 ## What is in here
 
 | file | contents |

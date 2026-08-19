@@ -46,6 +46,21 @@ A row whose integer index arguments had to be allocated can address out of bound
 the CUDA context down; the harness and the test detect that, name the row, and stop rather
 than reporting nonsense for every row after it.
 
+
+## Correctness tolerances
+
+`torch.testing.assert_close` with the rtol/atol **SGLang's own test for that
+kernel uses** - not a threshold invented for this handoff. Same numbers in
+`../config.json::correctness.tolerances`, table in `tools/tolerances.py`.
+
+| op | rtol | atol | copied from |
+| --- | ---: | ---: | --- |
+| `k3_cutedsl_tgv_bf16_gemm_out` | 0.02 | 2.5 | `test/registered/kernels/ops/gemm/test_cutedsl_bf16_gemm.py:53` |
+| `k3_tiny_gemm` | 0.001 | 0.001 | `test/registered/kernels/ops/test_kimi_k3_prerequisite_ops.py:385-386` |
+| `k3_cutedsl_tgv_bf16_gemm` | 0.02 | 2.5 | `test/registered/kernels/ops/gemm/test_cutedsl_bf16_gemm.py:53` |
+| `k3_tiny_n_gemm_bf16` | 0.001 | 0.001 | `test/registered/kernels/ops/test_kimi_k3_prerequisite_ops.py:385-386` |
+| `k3_tiny_k_gemm_bf16` | 0.001 | 0.001 | `test/registered/kernels/ops/test_kimi_k3_prerequisite_ops.py:385-386` |
+
 ## What is in here
 
 | file | contents |

@@ -16,12 +16,38 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 
 import torch
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import tolerances  # noqa: E402  per-op rtol/atol copied from SGLang's own tests
 
-def compare(mode: str, ref, got, tol: float = 2e-2):
-    """-> (ok: bool|None, detail: str). None means 'this gate needs the chain runner'."""
+
+def tol_for(op: str, ref=None) -> dict:
+    """The rtol/atol SGLang's own test uses for this op (see tools/tolerances.py)."""
+    dt = "bfloat16"
+    if torch.is_tensor(ref):
+        dt = str(ref.dtype).replace("torch.", "")
+    elif isinstance(ref, (tuple, list)) and ref and torch.is_tensor(ref[0]):
+        dt = str(ref[0].dtype).replace("torch.", "")
+    return tolerances.get(op, dt)
+
+
+def compare(mode: str, ref, got, op: str = "", rtol: float = None, atol: float = None):
+    """-> (ok: bool|None, detail: str). None means 'this gate needs the chain runner'.
+
+    Numeric comparisons use `torch.testing.assert_close` semantics with the rtol/atol
+    SGLang's own test for that kernel uses; nothing here is a hand-picked threshold.
+    """
+    t = tol_for(op, ref)
+    if rtol is None:
+        rtol = t["rtol"]
+    if atol is None:
+        atol = t["atol"]
+    src = t.get("source", "")
+    if t.get("exact") and mode not in ("index_set",):
+        mode = "bitexact"
     if mode == "index_set":
         def flat(x):
             return set(x.flatten().tolist()) if torch.is_tensor(x) else set(x)
@@ -40,13 +66,19 @@ def compare(mode: str, ref, got, tol: float = 2e-2):
     if mode == "chained_state":
         return None, ("chained-state gate: use replay_chain(); a per-call comparison is not "
                       "the gate for this kernel")
-    # tolerance
+    # numeric, with SGLang's tolerances
     def one(r, g):
-        r, g = r.float(), g.float()
         if r.shape != g.shape:
             return None, "shape mismatch %s vs %s" % (list(r.shape), list(g.shape))
-        rel = float((r - g).abs().max() / r.abs().max().clamp_min(1e-30))
-        return rel < tol, "max rel err %.3g (tol %g)" % (rel, tol)
+        try:
+            torch.testing.assert_close(g.float(), r.float(), rtol=rtol, atol=atol)
+            ok, why = True, ""
+        except AssertionError as exc:
+            ok, why = False, str(exc).strip().splitlines()[0][:120]
+        diff = (r.float() - g.float()).abs()
+        worst = float((diff / (r.float().abs() + atol)).max())
+        return ok, ("assert_close rtol=%g atol=%g [%s]%s  (worst elementwise %.3g)"
+                    % (rtol, atol, src, "" if ok else " FAILED: " + why, worst))
     if isinstance(ref, (tuple, list)):
         parts = [one(r, g) for r, g in zip(ref, got) if torch.is_tensor(r) and torch.is_tensor(g)]
         ok = all(p[0] for p in parts) if parts else None
@@ -111,13 +143,23 @@ def replay_chain(chain_dir: str, steps: list, static_dir: str | None, call, stat
         ref_final = rec.get("state_after_" + state_arg, ref_final)
     if ref_final is None:
         raise RuntimeError("chain has no state_after_%s to compare against" % state_arg)
-    denom = ref_final.float().abs().max().clamp_min(1e-30)
-    final_err = float((running.float() - ref_final.float()).abs().max() / denom)
+    abs_err = float((running.float() - ref_final.float()).abs().max())
+    denom = float(ref_final.float().abs().max())
     return {"steps": len(steps), "state_arg": state_arg,
-            "max_per_step_output_rel_err": out_err, "final_state_rel_err": final_err}
+            "state_dtype": str(ref_final.dtype).replace("torch.", ""),
+            "max_per_step_output_rel_err": out_err,
+            "final_state_abs_err": abs_err,
+            "final_state_rel_err": abs_err / max(denom, 1e-30)}
 
 
-def chained_verdict(res: dict, tol: float = 2e-2) -> tuple:
-    ok = res["final_state_rel_err"] < tol
-    return ok, ("final state rel err %.3g over %d chained steps (per-step output max %.3g)"
-                % (res["final_state_rel_err"], res["steps"], res["max_per_step_output_rel_err"]))
+def chained_verdict(res: dict, op: str = "", rtol: float = None, atol: float = None) -> tuple:
+    """The chained gate uses the same per-op tolerance as the single-call gate."""
+    # the tolerance branch follows the state's dtype, the way SGLang's tests do
+    t = tolerances.get(op or "", res.get("state_dtype", "bfloat16"))
+    rtol = t["rtol"] if rtol is None else rtol
+    atol = t["atol"] if atol is None else atol
+    ok = res["final_state_rel_err"] <= max(rtol, 1e-12) or res["final_state_abs_err"] <= atol
+    return ok, ("final state: rel %.3g / abs %.3g vs rtol=%g atol=%g [%s] over %d chained "
+                "steps (per-step output max rel %.3g)"
+                % (res["final_state_rel_err"], res["final_state_abs_err"], rtol, atol,
+                   t.get("source", ""), res["steps"], res["max_per_step_output_rel_err"]))

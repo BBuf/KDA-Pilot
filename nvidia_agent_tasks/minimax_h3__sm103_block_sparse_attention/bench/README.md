@@ -57,6 +57,19 @@ A row whose integer index arguments had to be allocated can address out of bound
 the CUDA context down; the harness and the test detect that, name the row, and stop rather
 than reporting nonsense for every row after it.
 
+
+## Correctness tolerances
+
+`torch.testing.assert_close` with the rtol/atol **SGLang's own test for that
+kernel uses** - not a threshold invented for this handoff. Same numbers in
+`../config.json::correctness.tolerances`, table in `tools/tolerances.py`.
+
+| op | rtol | atol | copied from |
+| --- | ---: | ---: | --- |
+| `diffusion_attention_cudnn_sdpa` | 0.01 | 0.02 | `test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22` |
+| `diffusion_attention_fa4` | 0.01 | 0.02 | `test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22` |
+| `diffusion_attention_sdpa` | 0.01 | 0.02 | `test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22` |
+
 ## What is in here
 
 | file | contents |

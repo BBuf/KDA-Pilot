@@ -83,6 +83,26 @@ achievable, not aspirational.
 perceptual budget instead: LPIPS mean <= 0.35 / max <= 0.42 against the fixed-seed dense
 reference on our 3-prompt set, plus no regression on the non-sparse branch.
 
+## Where the numbers in the gate come from
+
+Nothing in this directory picks a tolerance by hand. Every numeric gate uses
+`torch.testing.assert_close` with the **rtol/atol that SGLang's own test for that kernel
+uses**, and each task's `config.json` records the value together with the test file and
+line it was copied from (`tools/tolerances.py` is the table; `python tools/tolerances.py`
+prints it). Examples: `causal_conv1d` bf16 1e-2/5e-2
+(`test/registered/layers/mamba/test_causal_conv1d.py:163-165`), the Mamba-2 SSD pipeline
+5e-2/5e-2 (`test_mamba_ssm_ssd.py:244-248`, where SGLang's own comment notes the bf16 case
+needs the looser threshold), GDN chunk 1e-2/2e-2
+(`test_chunk_gated_delta_rule.py:28-29`), KDA fused decode 2e-2/2e-2 with the conv half
+asserted exactly (`test_kda_fused_decode.py:207-209`), Triton attention 1e-2/1e-3
+(`test_triton_attention_kernels.py:309`), Triton fused MoE 1e-5/1e-5
+(`test_triton_fused_moe.py:45-49`), the CuTe TGV GEMM 2e-2/2.5
+(`test_cutedsl_bf16_gemm.py:53`), and index transforms exactly
+(`test_dsa_transform_index.py:120`).
+
+If one of those tolerances is wrong for a kernel, the fix is upstream in SGLang's test,
+not looser in a task here.
+
 ## What "faster" is measured against
 
 The baseline is the **shipped SGLang implementation**, copied into each task's

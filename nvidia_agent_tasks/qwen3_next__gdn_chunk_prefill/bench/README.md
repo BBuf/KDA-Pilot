@@ -55,6 +55,22 @@ A row whose integer index arguments had to be allocated can address out of bound
 the CUDA context down; the harness and the test detect that, name the row, and stop rather
 than reporting nonsense for every row after it.
 
+
+## Correctness tolerances
+
+`torch.testing.assert_close` with the rtol/atol **SGLang's own test for that
+kernel uses** - not a threshold invented for this handoff. Same numbers in
+`../config.json::correctness.tolerances`, table in `tools/tolerances.py`.
+
+| op | rtol | atol | copied from |
+| --- | ---: | ---: | --- |
+| `gdn_recompute_w_u` | 0.01 | 0.02 | `test/registered/attention/test_chunk_gated_delta_rule.py:28-29` |
+| `gdn_chunk_delta_h` | 0.01 | 0.02 | `test/registered/attention/test_chunk_gated_delta_rule.py:28-29` |
+| `gdn_chunk_o` | 0.01 | 0.02 | `test/registered/attention/test_chunk_gated_delta_rule.py:28-29` |
+| `gdn_chunk_prefill` | 0.01 | 0.02 | `test/registered/attention/test_chunk_gated_delta_rule.py:28-29` |
+| `gdn_decode_causal_conv1d_update` | 0.01 | 0.05 | `test/registered/layers/mamba/test_causal_conv1d.py:163-165` |
+| `gdn_decode_packed_triton` | 0.02 | 0.02 | `test/registered/kernels/ops/attention/test_kda_fused_decode.py:207-208` |
+
 ## What is in here
 
 | file | contents |

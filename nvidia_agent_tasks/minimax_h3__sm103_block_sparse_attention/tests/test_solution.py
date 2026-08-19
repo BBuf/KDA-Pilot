@@ -67,7 +67,8 @@ def test_candidate_matches_baseline():
                                 "address out of bounds" % row["row_id"])
                 break
             continue
-        ok, detail = gates.compare("tolerance" if MODE == "chained_state" else MODE, ref, got)
+        ok, detail = gates.compare("tolerance" if MODE == "chained_state" else MODE,
+                                   ref, got, op=op)
         checked += 1
         if ok is False:
             failures.append("%s (%s): %s" % (row["row_id"], row["group"], detail))
@@ -92,7 +93,7 @@ def test_chained_state_gate():
                 op = cand
         res = gates.replay_chain(chain_dir, steps, static,
                                  lambda **kw: _call(sol, op, kw))
-        ok, detail = gates.chained_verdict(res)
+        ok, detail = gates.chained_verdict(res, op=op)
         found += 1
         print("%s -> %s" % (os.path.basename(chain_dir), detail))
         assert ok, "%s: %s" % (chain_dir, detail)

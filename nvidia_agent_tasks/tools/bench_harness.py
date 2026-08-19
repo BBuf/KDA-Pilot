@@ -123,8 +123,8 @@ def interleaved(base_fn, cand_fn, kwargs_b, kwargs_c, iters: int, trials: int,
 # --------------------------------------------------------------------------- #
 # correctness
 # --------------------------------------------------------------------------- #
-def compare(mode: str, ref, got, payload: dict) -> tuple:
-    return gates.compare(mode, ref, got)
+def compare(mode: str, ref, got, payload: dict, op: str = "") -> tuple:
+    return gates.compare(mode, ref, got, op=op)
 
 
 def _unused_compare(mode: str, ref, got, payload: dict) -> tuple:
@@ -270,7 +270,7 @@ def main() -> None:
                 else:
                     got = cand_run(_op=o["op"],
                                    **{k: (v.clone() if torch.is_tensor(v) else v) for k, v in kb.items()})
-                    ok, detail = compare(mode, ref, got, built["payload"])
+                    ok, detail = compare(mode, ref, got, built["payload"], op=o["op"])
                     entry["correct"] = ok
                     entry["correctness_detail"] = detail
                     if ok is False:

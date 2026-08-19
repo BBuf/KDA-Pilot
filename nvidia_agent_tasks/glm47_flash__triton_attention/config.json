@@ -38,6 +38,36 @@
     "contract": "../docs/measurement_contract.md"
   },
   "correctness": {
-    "contract": "../docs/anti_hack_contract.md"
+    "contract": "../docs/anti_hack_contract.md",
+    "tolerances": {
+      "triton_decode_attention_grouped": {
+        "family": "triton_attention",
+        "op": "triton_decode_attention_grouped",
+        "source": "test/registered/attention/test_triton_attention_kernels.py:309",
+        "note": "the same file uses 1e-2/2e-2 for the split-kv comparison at line 401; we take the tighter extend/decode number.",
+        "rtol": 0.01,
+        "atol": 0.001,
+        "dtype": "bfloat16"
+      },
+      "triton_decode_attention": {
+        "family": "triton_attention",
+        "op": "triton_decode_attention",
+        "source": "test/registered/attention/test_triton_attention_kernels.py:309",
+        "note": "the same file uses 1e-2/2e-2 for the split-kv comparison at line 401; we take the tighter extend/decode number.",
+        "rtol": 0.01,
+        "atol": 0.001,
+        "dtype": "bfloat16"
+      },
+      "triton_extend_attention": {
+        "family": "triton_attention",
+        "op": "triton_extend_attention",
+        "source": "test/registered/attention/test_triton_attention_kernels.py:309",
+        "note": "the same file uses 1e-2/2e-2 for the split-kv comparison at line 401; we take the tighter extend/decode number.",
+        "rtol": 0.01,
+        "atol": 0.001,
+        "dtype": "bfloat16"
+      }
+    },
+    "policy": "rtol/atol are copied from SGLang's own test for each kernel (source cited per op). Do not loosen them in a task; if a tolerance is wrong, fix it upstream and re-copy."
   }
 }

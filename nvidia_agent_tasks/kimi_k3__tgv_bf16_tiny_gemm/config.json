@@ -41,6 +41,54 @@
   },
   "correctness": {
     "contract": "../docs/anti_hack_contract.md",
-    "mode": "tolerance"
+    "mode": "tolerance",
+    "tolerances": {
+      "k3_cutedsl_tgv_bf16_gemm_out": {
+        "family": "cutedsl_bf16_gemm",
+        "op": "k3_cutedsl_tgv_bf16_gemm_out",
+        "source": "test/registered/kernels/ops/gemm/test_cutedsl_bf16_gemm.py:53",
+        "note": "atol is large because the reference is an fp32 matmul cast to bf16; the accumulation order differs, so absolute error scales with K.",
+        "rtol": 0.02,
+        "atol": 2.5,
+        "dtype": "bfloat16"
+      },
+      "k3_tiny_gemm": {
+        "family": "tiny_gemm",
+        "op": "k3_tiny_gemm",
+        "source": "test/registered/kernels/ops/test_kimi_k3_prerequisite_ops.py:385-386",
+        "note": "compared in double precision against x @ w.T.",
+        "rtol": 0.001,
+        "atol": 0.001,
+        "dtype": "bfloat16"
+      },
+      "k3_cutedsl_tgv_bf16_gemm": {
+        "family": "cutedsl_bf16_gemm",
+        "op": "k3_cutedsl_tgv_bf16_gemm",
+        "source": "test/registered/kernels/ops/gemm/test_cutedsl_bf16_gemm.py:53",
+        "note": "atol is large because the reference is an fp32 matmul cast to bf16; the accumulation order differs, so absolute error scales with K.",
+        "rtol": 0.02,
+        "atol": 2.5,
+        "dtype": "bfloat16"
+      },
+      "k3_tiny_n_gemm_bf16": {
+        "family": "tiny_gemm",
+        "op": "k3_tiny_n_gemm_bf16",
+        "source": "test/registered/kernels/ops/test_kimi_k3_prerequisite_ops.py:385-386",
+        "note": "compared in double precision against x @ w.T.",
+        "rtol": 0.001,
+        "atol": 0.001,
+        "dtype": "bfloat16"
+      },
+      "k3_tiny_k_gemm_bf16": {
+        "family": "tiny_gemm",
+        "op": "k3_tiny_k_gemm_bf16",
+        "source": "test/registered/kernels/ops/test_kimi_k3_prerequisite_ops.py:385-386",
+        "note": "compared in double precision against x @ w.T.",
+        "rtol": 0.001,
+        "atol": 0.001,
+        "dtype": "bfloat16"
+      }
+    },
+    "policy": "rtol/atol are copied from SGLang's own test for each kernel (source cited per op). Do not loosen them in a task; if a tolerance is wrong, fix it upstream and re-copy."
   }
 }
