@@ -42,147 +42,12 @@ import time
 
 import torch
 
-DTYPES = {
-    "bfloat16": torch.bfloat16, "float16": torch.float16, "float32": torch.float32,
-    "float64": torch.float64, "int64": torch.int64, "int32": torch.int32,
-    "int16": torch.int16, "int8": torch.int8, "uint8": torch.uint8, "bool": torch.bool,
-    "float8_e4m3fn": getattr(torch, "float8_e4m3fn", torch.uint8),
-    "complex64": torch.complex64,
-}
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import gates       # noqa: E402  the shared correctness judge
+import workload    # noqa: E402  the shared input builder
 
-
-# --------------------------------------------------------------------------- #
-# building a row's inputs
-# --------------------------------------------------------------------------- #
-def _alloc(info: dict, device: str = "cuda") -> torch.Tensor:
-    dt = DTYPES.get(info["dtype"], torch.float32)
-    shape = tuple(info["shape"])
-    if dt.is_floating_point:
-        t = torch.randn(shape, device=device, dtype=torch.float32).to(dt)
-    elif dt == torch.bool:
-        t = torch.zeros(shape, device=device, dtype=dt)
-    elif dt.is_complex:
-        t = torch.randn(shape, device=device, dtype=torch.float32).to(torch.complex64)
-    else:
-        t = torch.zeros(shape, device=device, dtype=dt)
-    stride = info.get("stride")
-    if stride and not info.get("contiguous", True):
-        # reproduce a non-contiguous view over a larger buffer, because several of
-        # these kernels really are fed slices of a fused buffer
-        try:
-            numel = 1
-            for s, st in zip(shape, stride):
-                numel = max(numel, (s - 1) * st + 1)
-            base = torch.zeros(numel, device=device, dtype=dt)
-            base[: t.numel()] = t.reshape(-1)[: min(numel, t.numel())]
-            t = base.as_strided(shape, tuple(stride))
-        except Exception:
-            pass
-    return t
-
-
-def _row_shapes(row: dict) -> dict:
-    return {k: tuple(v["shape"]) for k, v in row["args"].items()
-            if isinstance(v, dict) and "shape" in v}
-
-
-def load_payload(task_dir: str, row: dict) -> dict:
-    """Real tensors for this row: the payload folder whose shapes match it.
-
-    Matching matters - a task ships several payload folders and the wrong one silently
-    feeds a candidate the wrong shapes.
-    """
-    roots = [d for d in glob.glob(os.path.join(task_dir, "bench", "tensors*")) if os.path.isdir(d)]
-    if not roots:
-        return {}
-    want = row.get("payload_dir")
-    cands = []
-    for root in roots:
-        if want and os.path.isdir(os.path.join(root, want)):
-            cands.append(os.path.join(root, want))
-        for grp in sorted(os.listdir(root)):
-            gp = os.path.join(root, grp)
-            if not os.path.isdir(gp):
-                continue
-            if os.path.exists(os.path.join(gp, "meta.json")) or glob.glob(os.path.join(gp, "step*")):
-                cands.append(gp)
-            for sd in sorted(os.listdir(gp)):
-                p = os.path.join(gp, sd)
-                if os.path.isdir(p):
-                    cands.append(p)
-    want_shapes = _row_shapes(row)
-    scored = []
-    for c in cands:
-        meta_p = os.path.join(c, "meta.json")
-        if not os.path.exists(meta_p):
-            sub = sorted(d for d in os.listdir(c) if d.startswith("step")) if os.path.isdir(c) else []
-            if sub:
-                meta_p = os.path.join(c, sub[0], "meta.json")
-        if not os.path.exists(meta_p):
-            continue
-        meta = json.load(open(meta_p))
-        base = os.path.dirname(meta_p)
-        got = {}
-        for name, info in meta["tensors"].items():
-            f = os.path.join(base, info["file"])
-            if os.path.exists(f):
-                got[name] = torch.load(f, map_location="cuda")
-        if not got:
-            continue
-        score = sum(1 for k, sh in want_shapes.items()
-                    if torch.is_tensor(got.get("in_" + k)) and tuple(got["in_" + k].shape) == sh)
-        got["__meta__"] = meta
-        got["__dir__"] = c
-        scored.append((score, c, got))
-    if not scored:
-        return {}
-    scored.sort(key=lambda x: -x[0])
-    best_score, best_dir, best = scored[0]
-    if best_score == 0:
-        return {}
-    return best
-
-
-def _holds_tensor_meta(x) -> bool:
-    if isinstance(x, dict):
-        if "shape" in x and "dtype" in x:
-            return True
-        return any(_holds_tensor_meta(v) for v in x.values())
-    if isinstance(x, list):
-        return any(_holds_tensor_meta(v) for v in x)
-    return False
-
-
-def build_inputs(task_dir: str, row: dict) -> dict:
-    payload = load_payload(task_dir, row)
-    kwargs, source = {}, {}
-    for name, info in row["args"].items():
-        if isinstance(info, dict) and "shape" in info:
-            real = payload.get("in_" + name)
-            if real is not None and list(real.shape) == list(info["shape"]):
-                kwargs[name] = real.clone()
-                source[name] = "real"
-            else:
-                kwargs[name] = _alloc(info)
-                source[name] = "allocated"
-        elif isinstance(info, dict) and "repr" in info:
-            # an object the capture could not serialize (a triton dtype, a plan struct).
-            # baseline/entry.py's RECONSTRUCT hook is where a task rebuilds it.
-            source[name] = "needs RECONSTRUCT (%s)" % info["repr"]
-        elif isinstance(info, (dict, list)) and _holds_tensor_meta(info):
-            # e.g. a plan / namedtuple whose fields include tensors: the capture recorded
-            # their metadata, not the object. RECONSTRUCT rebuilds it.
-            source[name] = "needs RECONSTRUCT (structured arg with tensors)"
-        elif isinstance(info, dict):
-            kwargs[name] = info          # plain config dict of scalars
-            source[name] = "config"
-        elif isinstance(info, list):
-            kwargs[name] = info
-            source[name] = "list"
-        else:
-            kwargs[name] = info
-            source[name] = "scalar"
-    return {"kwargs": kwargs, "source": source, "payload": payload}
+build_inputs = workload.build_inputs
+load_payload = workload.load_payload
 
 
 # --------------------------------------------------------------------------- #
@@ -238,10 +103,20 @@ def _graph_time(fn, kwargs, iters: int, restore: dict | None) -> float:
 
 def interleaved(base_fn, cand_fn, kwargs_b, kwargs_c, iters: int, trials: int,
                 restore_b=None, restore_c=None):
+    """Alternate which arm goes first each trial.
+
+    Running the candidate second in every trial hands it warmer clocks and caches: with an
+    identity candidate that bias measured ~2% on this box. Swapping the order per trial
+    centres it.
+    """
     b, c = [], []
-    for _ in range(trials):
-        b.append(_graph_time(base_fn, kwargs_b, iters, restore_b))
-        c.append(_graph_time(cand_fn, kwargs_c, iters, restore_c))
+    for t in range(trials):
+        if t % 2 == 0:
+            b.append(_graph_time(base_fn, kwargs_b, iters, restore_b))
+            c.append(_graph_time(cand_fn, kwargs_c, iters, restore_c))
+        else:
+            c.append(_graph_time(cand_fn, kwargs_c, iters, restore_c))
+            b.append(_graph_time(base_fn, kwargs_b, iters, restore_b))
     return statistics.median(b), statistics.median(c), b, c
 
 
@@ -249,6 +124,10 @@ def interleaved(base_fn, cand_fn, kwargs_b, kwargs_c, iters: int, trials: int,
 # correctness
 # --------------------------------------------------------------------------- #
 def compare(mode: str, ref, got, payload: dict) -> tuple:
+    return gates.compare(mode, ref, got)
+
+
+def _unused_compare(mode: str, ref, got, payload: dict) -> tuple:
     if mode == "index_set":
         a = ref.flatten().tolist() if torch.is_tensor(ref) else ref
         b = got.flatten().tolist() if torch.is_tensor(got) else got
@@ -377,6 +256,17 @@ def main() -> None:
                         entry["status"] = "not runnable from the recorded row: %s" % msg
                         entry["needs"] = [k for k, v in built["source"].items()
                                           if str(v).startswith("needs")]
+                        if not workload.cuda_alive():
+                            entry["status"] += "  [CUDA context lost - later rows cannot run]"
+                            report["rows"].append(entry)
+                            print("%-34s %-22s  %s" % (r["row_id"], r["group"], entry["status"]))
+                            print("\nStopping: a row took the CUDA context down with it. Re-run the "
+                                  "remaining ops one at a time with --op <op>, and give that row real "
+                                  "tensors (an integer index argument allocated to zeros can address "
+                                  "out of bounds).")
+                            if args.json:
+                                json.dump(report, open(args.json, "w"), indent=2)
+                            return
                 else:
                     got = cand_run(_op=o["op"],
                                    **{k: (v.clone() if torch.is_tensor(v) else v) for k, v in kb.items()})

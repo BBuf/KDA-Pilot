@@ -43,7 +43,9 @@ python tools/bench_harness.py <task> --json report.json    # interleaved A/B + g
 ```
 
 **Verified on 1x B300 with SGLang main @ 43226af: 37 of the 45 op-rows produce a
-CUDA-graph-timed baseline straight from the recorded workload.** The remaining 8 need a
+CUDA-graph-timed baseline straight from the recorded workload, and the whole A/B path was
+validated with an identity candidate - 1.002x geomean with every gate green, which is also
+the harness's measurement floor.** The remaining 8 need a
 few lines in that task's `RECONSTRUCT` hook, because the capture can record an argument's
 contents but not the object around it (a plan namedtuple, a bound method's instance);
 each task's `bench/README.md` names exactly which ones and why, and the harness reports
@@ -109,6 +111,11 @@ python tools/build_workloads.py --manifest cap/<slug>/shape_manifest.json \
 ```
 
 ## Contracts
+
+Each task also carries `solution/entry.py.template` (the OPS skeleton to fill in),
+`tests/test_contract.py` (package integrity, CPU-only) and `tests/test_solution.py` (the
+correctness gate for a candidate, including the chained final-state gate where the task
+ships a chain).
 
 | doc | what it fixes |
 | --- | --- |
