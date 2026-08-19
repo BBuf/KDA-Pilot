@@ -219,10 +219,31 @@ recapture rather than editing this file.
 
 ## `kimi_k3__tgv_bf16_tiny_gemm`
 
-**`k3_tiny_gemm`** — 627,088 real calls, 96 distinct signatures, 13 rows kept
+**`k3_cutedsl_tgv_bf16_gemm_out`** — 571,784 real calls, 21 distinct signatures, 11 rows kept
 
-- `x[T, N]` bfloat16 **non-contiguous** — T ∈ {1, 10, 11, 13, 16, 32, 16167} — N ∈ {128, 7168}
+- `x[T, N]` bfloat16 — T ∈ {1, 3, 4, 7} — N ∈ {768, 1536, 7168}
+- `weight[T, N]` bfloat16 — T ∈ {6016, 7168} — N ∈ {768, 1536, 7168}
+- `out[T, N]` bfloat16 — T ∈ {1, 3, 4, 7} — N ∈ {6016, 7168}
+
+**`k3_tiny_gemm`** — 433,920 real calls, 44 distinct signatures, 11 rows kept
+
+- `x[T, N]` bfloat16 **non-contiguous** — T ∈ {1, 10, 11, 13, 16, 16178} — N ∈ {128, 7168}
 - `w[T, N]` bfloat16 — T ∈ {144, 1536} — N ∈ {128, 7168}
+
+**`k3_cutedsl_tgv_bf16_gemm`** — 244,624 real calls, 36 distinct signatures, 11 rows kept
+
+- `x[T, N]` bfloat16 — T ∈ {1, 3, 4, 7} — N ∈ {1536, 4224, 7168}
+- `weight[T, N]` bfloat16 — T ∈ {1536, 2304, 6144, 7168} — N ∈ {1536, 4224, 7168}
+
+**`k3_tiny_n_gemm_bf16`** — 213,096 real calls, 15 distinct signatures, 10 rows kept
+
+- `x[T, 7168]` bfloat16 — T ∈ {1, 3, 4, 10, 11, 12, 13, 14, 15, 16}
+- `w[144, 7168]` bfloat16
+
+**`k3_tiny_k_gemm_bf16`** — 163,416 real calls, 11 distinct signatures, 10 rows kept
+
+- `x[T, 128]` bfloat16 **non-contiguous** — T ∈ {1, 3, 4, 5, 6, 7, 9, 10, 11, 12}
+- `w[1536, 128]` bfloat16
 
 
 ## `lfm25__triton_fused_moe`

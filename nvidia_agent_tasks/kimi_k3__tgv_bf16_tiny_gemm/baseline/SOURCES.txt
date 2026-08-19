@@ -1,12 +1,9 @@
 # copied verbatim from SGLang main @ 43226af (python/sglang, editable install)
+#
+# Two entry points that dispatch to two different kernels - see docs/profile_evidence.md:
+#   kernels/ops/gemm/cutedsl_bf16_gemm.py :: cutedsl_bf16_gemm  -> TgvGemmCuteExtKernel_*
+#   kernels/ops/kimi_k3/__init__.py       :: kimi_k3_tiny_gemm  -> sglang::tiny_n_gemm_kernel
+#                                                                / tiny_k_gemm_kernel
+python/sglang/kernels/ops/gemm/cutedsl_bf16_gemm.py
+python/sglang/kernels/ops/gemm/tiny_gemm.py
 python/sglang/kernels/ops/kimi_k3/__init__.py
-python/sglang/kernels/ops/kimi_k3/activation.py
-python/sglang/kernels/ops/kimi_k3/all_reduce.py
-python/sglang/kernels/ops/kimi_k3/attn_res.py
-python/sglang/kernels/ops/kimi_k3/attn_res_hip.py
-python/sglang/kernels/ops/kimi_k3/gemm_ag.py
-python/sglang/kernels/ops/kimi_k3/gemm_ar.py
-python/sglang/kernels/ops/kimi_k3/kda_decode_mtp.py
-python/sglang/kernels/ops/kimi_k3/mla_output_gate.py
-python/sglang/kernels/ops/kimi_k3/moe.py
-python/sglang/kernels/ops/kimi_k3/sp_collective.py
