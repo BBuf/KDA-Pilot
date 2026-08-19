@@ -20,7 +20,7 @@ we paid for.
 | [`glm45__fp8_fused_moe`](glm45__fp8_fused_moe) | GLM-4.5-FP8 (355B, TP8) | the FP8 arm of `invoke_fused_moe_kernel` **and** the whole `fused_experts_impl` dispatch | **51.5%** of serving GPU time in the expert GEMM alone, **64.3%** for the dispatch | 17 rows / 2 entry points, 16 of 17 on captured tensors |
 | [`qwen3_next__gdn_chunk_prefill`](qwen3_next__gdn_chunk_prefill) | Qwen3-Next-80B-A3B | FLA chunk prefill + **`TritonGDNKernel.packed_decode`** | GDN family **2.8-5.3%** across four operating points (decode kernel 2.0-3.6%, chunk prefill peaks 2.5% at 8k in) | 56 rows / 7 ops, **2 verified 16-step state chains** |
 | [`kimi_k3__tgv_bf16_tiny_gemm`](kimi_k3__tgv_bf16_tiny_gemm) | Kimi-K3 (2.8T, TP8) | `cutedsl_bf16_gemm` (CuTe TGV) + the `tiny_n/k_gemm` fast paths and their dispatcher | TGV **7.69%** at cc16 / **41.2%** at batch 1; tiny_n **1.64%** | 46 rows / 5 entry points, 15 MB real tensors |
-| [`kimi_k3__kda_linear_attention`](kimi_k3__kda_linear_attention) | Kimi-K3 (2.8T, TP8) | `kda_fused_decode` (JIT CUDA) + KDA chunk prefill | **3.55%** family (decode kernel 2.81%) | 16 rows, 308k decode calls + a verified state chain |
+| [`kimi_k3__kda_linear_attention`](kimi_k3__kda_linear_attention) | Kimi-K3 (2.8T, TP8) | `kda_fused_decode` (JIT CUDA) + KDA chunk prefill | **3.55%** family (decode kernel 2.81%) | 22 rows, 308k decode calls + a verified state chain |
 | [`minimax_h3__sm103_block_sparse_attention`](minimax_h3__sm103_block_sparse_attention) | MiniMax-H3 | **write a new** sm_103 sub-block block-sparse forward | the sparse arm is the only backend beating cache-only on B300 (10.37 s vs 11.16 s) | 9 rows of dense reference, including one **real 37,736-token** call + deadlock forensics |
 
 Eight of them have a shipped SGLang kernel that a candidate has to beat. The ninth,
@@ -43,8 +43,8 @@ python tools/bench_harness.py <task>       # baseline timing per row (GPU)
 python tools/bench_harness.py <task> --json report.json    # interleaved A/B + gates
 ```
 
-**Verified on 1x B300 with SGLang main @ 43226af: 39 of the 44 ops produce a
-CUDA-graph-timed baseline straight from the recorded workload, over 307 of 374 workload
+**Verified on 1x B300 with SGLang main @ 43226af: 40 of the 44 ops produce a
+CUDA-graph-timed baseline straight from the recorded workload, over 313 of 380 workload
 rows, and the whole A/B path was validated with an identity candidate - 1.002x geomean
 with every gate green, which is also the harness's measurement floor.** A row that does
 not time is one with no captured payload of its own: its integer segment arguments
@@ -62,7 +62,7 @@ uninitialised memory. Each task's `bench/README.md` says which rows those are.
 | `glm45__fp8_fused_moe` | 2 / 2 | 17 / 17 |
 | `lfm25__triton_fused_moe` | 1 / 1 | 14 / 14 |
 | `deepseek_v4_flash__dsa_sparse_attention` | 8 / 12 (4 ops need a plan object rebuilt in `RECONSTRUCT`) | 42 / 78 |
-| `kimi_k3__kda_linear_attention` | 1 / 2 (chunk prefill needs the real gate `g`) | 9 / 16 |
+| `kimi_k3__kda_linear_attention` | 2 / 2 | 15 / 22 (the long prefill rows ship as shapes: their gate alone is ~50 MB) |
 
 `tools/bench_harness.py` implements the measurement contract so each agent does not have
 to re-derive it: CUDA-graph timing, interleaved arms, preallocated outputs, `copy_` restore
@@ -140,15 +140,15 @@ that only works on Gaussians (see `docs/anti_hack_contract.md`).
 ```
 task                                          rows  with payload   data args real
 lfm25__triton_fused_moe                        14    14 (100%)     80/98  ( 82%)
+kimi_k3__kda_linear_attention                  22    21 ( 95%)     114/176  ( 65%)
 glm45__fp8_fused_moe                           17    16 ( 94%)     59/82  ( 72%)
 glm47_flash__triton_attention                  82    74 ( 90%)     399/574  ( 70%)
-kimi_k3__kda_linear_attention                  16    13 ( 81%)     58/128  ( 45%)
 minimax_h3__sm103_block_sparse_attention        9     7 ( 78%)     21/27  ( 78%)
 kimi_k3__tgv_bf16_tiny_gemm                    46    35 ( 76%)     59/80  ( 74%)
 deepseek_v4_flash__dsa_sparse_attention        78    55 ( 71%)     182/323  ( 56%)
 qwen3_next__gdn_chunk_prefill                  56    38 ( 68%)     172/279  ( 62%)
 nemotron3_nano__mamba2_ssm                     56    32 ( 57%)     88/297  ( 30%)
-TOTAL                                         374   284 ( 76%)     1118/1888 ( 59%)
+TOTAL                                         380   292 ( 77%)     1174/1936 ( 61%)
 ```
 
 `python tools/coverage.py` recomputes it. A payload counts for a row only when the call it

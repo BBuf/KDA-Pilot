@@ -19,7 +19,7 @@ real captured tensors for a row whenever this task ships a payload that matches 
 
 ## What runs today
 
-Verified on 1x B300 with SGLang main @ 43226af: **1 of 2 ops produce a CUDA-graph-timed baseline**, over **9 of 16 workload rows**. `k3_kda_chunk_prefill` is the exception: its gate `g` is not shipped for every row, and an allocated Gaussian gate overflows the log-space decay, so the harness prints NO VALID REFERENCE rather than judging against Inf.
+Verified on 1x B300 with SGLang main @ 43226af: **2 of 2 ops produce a CUDA-graph-timed baseline**, over **15 of 22 workload rows**. The seven that do not are the long chunk-prefill rows: their gate `g` alone is ~50 MB per row, so those rows ship as shapes only, and an allocated Gaussian gate overflows the log-space decay - the harness prints NO VALID REFERENCE rather than judging against Inf. The six chunk-prefill rows that do run carry the real gate, and so do all nine decode rows.
 
 ## Dropping a candidate in
 
@@ -48,7 +48,7 @@ than reporting nonsense for every row after it.
 ## Real-tensor coverage
 
 ```
-kimi_k3__kda_linear_attention                 16 rows,  13 with payload ( 81%),   58/ 128 data args real ( 45%)
+kimi_k3__kda_linear_attention                 22 rows,  21 with payload ( 95%),  114/ 176 data args real ( 65%)
 ```
 
 Rows with a payload run on tensors captured from the live model; the rest fall back
@@ -91,8 +91,9 @@ kernel uses** - not a threshold invented for this handoff. Same numbers in
 | `target_signatures.json` | the exact signatures the tensor capture was pointed at |
 | `tensors/` | real captured tensors (inputs, outputs, state rows) |
 | `workloads.json` | frozen call signatures with their real-traffic call counts |
+| `workloads_kda_chunk_prefill.json` | frozen call signatures with their real-traffic call counts |
 
 | op | real calls | rows | rows with real tensors | workload file |
 | --- | ---: | ---: | ---: | --- |
 | `k3_kda_fused_decode` | 308,024 | 9 | 9 | `workloads.json` |
-| `k3_kda_chunk_prefill` | 5,520 | 7 | 4 | `workloads.json` |
+| `k3_kda_chunk_prefill` | 16,016 | 13 | 13 | `workloads_kda_chunk_prefill.json` |
