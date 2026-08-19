@@ -117,8 +117,15 @@ def compare(mode: str, ref, got, op: str = "", rtol: float = None, atol: float =
                 ref.shape == got.shape and torch.equal(ref, got)
         return ok, "bit-exact" if ok else "NOT bit-exact"
     if mode == "chained_state":
-        return None, ("chained-state gate: use replay_chain(); a per-call comparison is not "
-                      "the gate for this kernel")
+        # The authoritative gate for a state-carrying kernel is the chained final state
+        # (replay_chain, run by tests/test_solution.py). Returning None here left the
+        # per-row line reading `correct=None` next to a speedup, which is a hole: a
+        # candidate could return anything and still be timed. Fall through to the
+        # per-call comparison as a floor, and say which gate this is.
+        mode = "tolerance"
+        chained_floor = True
+    else:
+        chained_floor = False
     # numeric, with SGLang's tolerances
     def one(r, g):
         if r.shape != g.shape:
@@ -132,13 +139,21 @@ def compare(mode: str, ref, got, op: str = "", rtol: float = None, atol: float =
         worst = float((diff / (r.float().abs() + atol)).max())
         return ok, ("assert_close rtol=%g atol=%g [%s]%s  (worst elementwise %.3g)"
                     % (rtol, atol, src, "" if ok else " FAILED: " + why, worst))
+    def label(result):
+        ok, detail = result
+        if chained_floor and detail:
+            detail += ("  [per-call floor; the authoritative gate for this kernel is the "
+                       "chained final state - tests/test_solution.py]")
+        return ok, detail
+
     if isinstance(ref, (tuple, list)):
         parts = [one(r, g) for r, g in zip(ref, got) if torch.is_tensor(r) and torch.is_tensor(g)]
         ok = all(p[0] for p in parts) if parts else None
-        return ok, "; ".join(p[1] for p in parts)
+        return label((ok, "; ".join(p[1] for p in parts)))
     if not (torch.is_tensor(ref) and torch.is_tensor(got)):
-        return None, "output is not a tensor; write a task-specific comparison"
-    return one(ref, got)
+        return None, ("output is not a tensor and the op declares no destination argument; "
+                      "add OUTPUT_ARGS[op] in baseline/entry.py or a task-specific comparison")
+    return label(one(ref, got))
 
 
 def load_step(step_dir: str, static_dir: str | None) -> dict:

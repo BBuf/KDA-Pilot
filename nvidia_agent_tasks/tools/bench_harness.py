@@ -164,6 +164,28 @@ def interleaved(base_fn, cand_fn, kwargs_b, kwargs_c, iters: int, trials: int,
 # --------------------------------------------------------------------------- #
 # correctness
 # --------------------------------------------------------------------------- #
+# Kernels that write through a caller-owned destination and return None. Without
+# this the gate had nothing to compare and printed `correct=None` next to a
+# speedup - a candidate could have returned garbage and still scored. A task can
+# override the list per op with OUTPUT_ARGS in baseline/entry.py.
+_OUTPUT_ARG_NAMES = ("o", "out", "output", "C", "y", "attn_out", "out_ptr", "dst")
+
+
+def _output_args(mod, op: str, kwargs: dict) -> tuple:
+    declared = (getattr(mod, "OUTPUT_ARGS", {}) or {}).get(op)
+    names = declared if declared else _OUTPUT_ARG_NAMES
+    return tuple(n for n in names if torch.is_tensor(kwargs.get(n)))
+
+
+def _result(returned, kwargs: dict, names: tuple):
+    """What to compare: the return value, or the destinations it wrote through."""
+    if returned is not None:
+        return returned
+    if not names:
+        return None
+    if len(names) == 1:
+        return kwargs[names[0]]
+    return tuple(kwargs[n] for n in names)
 def _row_tokens(row: dict) -> int:
     """The row's token count, for the gates that need one number off the row.
 
@@ -217,7 +239,7 @@ def load_entry(path: str, name: str):
     ``OPS = {"<op name>": callable}`` (tasks whose workload covers several ops).
     """
     if not os.path.exists(path):
-        return None
+        return None, {}, None
     spec = importlib.util.spec_from_file_location(name, path)
     mod = importlib.util.module_from_spec(spec)
     sys.modules[name] = mod
@@ -237,12 +259,12 @@ def load_entry(path: str, name: str):
                 raise KeyError("%s does not implement op %r (has: %s)"
                                % (os.path.basename(path), _op, ", ".join(sorted(ops))))
             return fn(**kwargs)
-        return dispatch, fix
+        return dispatch, fix, mod
     if run:
         def only(_op=None, **kwargs):
             return run(**kwargs)
-        return only, fix
-    return None, {}
+        return only, fix, mod
+    return None, {}, None
 
 
 def main() -> None:
@@ -272,9 +294,9 @@ def main() -> None:
         for f in os.listdir(os.path.join(args.task_dir, "bench"))
         if f.startswith("workloads") and f.endswith(".json"))
 
-    base_run, base_fix = load_entry(
+    base_run, base_fix, base_mod = load_entry(
         os.path.join(args.task_dir, "baseline", "entry.py"), "task_baseline")
-    cand_run, cand_fix = load_entry(
+    cand_run, cand_fix, _ = load_entry(
         os.path.join(args.task_dir, "solution", "entry.py"), "task_solution")
     if base_run is None:
         raise SystemExit(
@@ -337,9 +359,10 @@ def main() -> None:
                         return
                     continue
                 try:
-                    ref = base_run(_op=o["op"],
-                                   **{k: (v.clone() if torch.is_tensor(v) else v)
-                                      for k, v in kb.items()})
+                    ref_kwargs = {k: (v.clone() if torch.is_tensor(v) else v)
+                                  for k, v in kb.items()}
+                    out_names = _output_args(base_mod, o["op"], ref_kwargs)
+                    ref = _result(base_run(_op=o["op"], **ref_kwargs), ref_kwargs, out_names)
                 except Exception as exc:
                     msg = str(exc).strip().splitlines()[-1][:150]
                     need = [k for k, v in built["source"].items() if str(v).startswith("needs")]
@@ -381,9 +404,13 @@ def main() -> None:
                                 json.dump(report, open(args.json, "w"), indent=2)
                             return
                 else:
-                    got = cand_run(_op=o["op"],
-                                   **{k: (v.clone() if torch.is_tensor(v) else v) for k, v in kb.items()})
+                    got_kwargs = {k: (v.clone() if torch.is_tensor(v) else v)
+                                  for k, v in kb.items()}
+                    got = _result(cand_run(_op=o["op"], **got_kwargs), got_kwargs, out_names)
                     ok, detail = compare(mode, ref, got, built["payload"], op=o["op"], row=r)
+                    if out_names and detail:
+                        detail += "  [compared the destination argument%s %s]" % (
+                            "s" if len(out_names) > 1 else "", ", ".join(out_names))
                     entry["correct"] = ok
                     entry["correctness_detail"] = detail
                     if ok is False:
