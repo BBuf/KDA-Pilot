@@ -57,7 +57,7 @@ _FLUSH = {}
 
 
 def l2_flush_buffer():
-    """A buffer big enough that writing it evicts L2 (2x its size), allocated once."""
+    """Fallback flush buffer (2x L2) for the built-in timer."""
     dev = torch.cuda.current_device()
     if dev not in _FLUSH:
         l2 = torch.cuda.get_device_properties(dev).L2_cache_size
@@ -65,22 +65,11 @@ def l2_flush_buffer():
     return _FLUSH[dev]
 
 
-def _graph_time(fn, kwargs, iters: int, restore: dict | None, l2: str = "cold") -> float:
-    """Median us per call.
-
-    `l2="cold"` flushes L2 before every call and brackets **only the call** with the event
-    pair, the way `triton.testing.do_bench` does - so the flush cost is not in the number,
-    but the kernel does not get to reuse the previous iteration's cache lines either. That
-    matters here: B300 has 132.6 MB of L2, enough to hold an m=1 GEMM's whole weight, while
-    in a real decode step ~1900 other kernels run between two calls of the same one.
-
-    `l2="hot"` keeps the old behaviour (one replay after another, cache warm) for comparison.
-    """
-    flush = l2_flush_buffer() if l2 == "cold" else None
+def _capture(fn, kwargs):
+    """Capture one call into a CUDA graph, or return None if it is not capturable."""
     for _ in range(3):
         fn(**kwargs)
     torch.cuda.synchronize()
-    graph = None
     try:
         g = torch.cuda.CUDAGraph()
         st = torch.cuda.Stream()
@@ -92,9 +81,25 @@ def _graph_time(fn, kwargs, iters: int, restore: dict | None, l2: str = "cold") 
         with torch.cuda.graph(g):
             fn(**kwargs)
         torch.cuda.synchronize()
-        graph = g
+        return g
     except Exception:
-        graph = None            # not capturable: host branching or dynamic allocation
+        return None
+
+
+def _time(fn, kwargs, iters: int, restore: dict | None, l2: str = "cold",
+          timer: str = "do_bench") -> float:
+    """Median us per call.
+
+    `timer="do_bench"` (default) hands the call to `triton.testing.do_bench`, which is what
+    Triton, CUTLASS-style harnesses and SGLang's own kernel benchmarks use: it clears L2
+    before every run, brackets each run with its own event pair, and sizes the repetition
+    count from a time budget. We give it a **CUDA-graph replay** rather than the eager call,
+    because do_bench would otherwise fold per-launch overhead into a 4-8 us kernel (an MoE
+    decode kernel measured 401 us eager vs 53 us replayed for us).
+
+    `timer="graph"` keeps the built-in loop (flush + event pair per call) for comparison.
+    """
+    graph = _capture(fn, kwargs)
 
     def one_call():
         if graph is not None:
@@ -105,12 +110,18 @@ def _graph_time(fn, kwargs, iters: int, restore: dict | None, l2: str = "cold") 
                     kwargs[k].copy_(v)
             fn(**kwargs)
 
+    if timer == "do_bench":
+        from triton.testing import do_bench
+        ms = do_bench(one_call, warmup=25, rep=50, return_mode="median")
+        return ms * 1000.0
+
+    flush = l2_flush_buffer() if l2 == "cold" else None
     starts = [torch.cuda.Event(True) for _ in range(iters)]
     ends = [torch.cuda.Event(True) for _ in range(iters)]
     torch.cuda.synchronize()
     for i in range(iters):
         if flush is not None:
-            flush.zero_()       # outside the event pair on purpose
+            flush.zero_()
         starts[i].record()
         one_call()
         ends[i].record()
@@ -118,7 +129,6 @@ def _graph_time(fn, kwargs, iters: int, restore: dict | None, l2: str = "cold") 
     per_call = sorted(s_.elapsed_time(e_) * 1000.0 for s_, e_ in zip(starts, ends))
     med = per_call[len(per_call) // 2]
     if graph is None and restore:
-        # eager fallback pays the copy_ restore inside the window; measure and subtract it
         st_, en_ = torch.cuda.Event(True), torch.cuda.Event(True)
         torch.cuda.synchronize(); st_.record()
         for _ in range(iters):
@@ -129,8 +139,11 @@ def _graph_time(fn, kwargs, iters: int, restore: dict | None, l2: str = "cold") 
     return med
 
 
+_graph_time = _time
+
+
 def interleaved(base_fn, cand_fn, kwargs_b, kwargs_c, iters: int, trials: int,
-                restore_b=None, restore_c=None, l2: str = "cold"):
+                restore_b=None, restore_c=None, l2: str = "cold", timer: str = "do_bench"):
     """Alternate which arm goes first each trial.
 
     Running the candidate second in every trial hands it warmer clocks and caches: with an
@@ -140,11 +153,11 @@ def interleaved(base_fn, cand_fn, kwargs_b, kwargs_c, iters: int, trials: int,
     b, c = [], []
     for t in range(trials):
         if t % 2 == 0:
-            b.append(_graph_time(base_fn, kwargs_b, iters, restore_b, l2))
-            c.append(_graph_time(cand_fn, kwargs_c, iters, restore_c, l2))
+            b.append(_time(base_fn, kwargs_b, iters, restore_b, l2, timer))
+            c.append(_time(cand_fn, kwargs_c, iters, restore_c, l2, timer))
         else:
-            c.append(_graph_time(cand_fn, kwargs_c, iters, restore_c, l2))
-            b.append(_graph_time(base_fn, kwargs_b, iters, restore_b, l2))
+            c.append(_time(cand_fn, kwargs_c, iters, restore_c, l2, timer))
+            b.append(_time(base_fn, kwargs_b, iters, restore_b, l2, timer))
     return statistics.median(b), statistics.median(c), b, c
 
 
@@ -215,6 +228,10 @@ def main() -> None:
     ap.add_argument("--rows", type=int, default=0, help="0 = all rows")
     ap.add_argument("--iters", type=int, default=200)
     ap.add_argument("--trials", type=int, default=7)
+    ap.add_argument("--timer", choices=["do_bench", "graph"], default="do_bench",
+                    help="do_bench (default): triton.testing.do_bench around a captured "
+                         "CUDA graph - it clears L2 before every run and sizes the "
+                         "repetitions itself; graph: the built-in flush+event loop")
     ap.add_argument("--l2", choices=["cold", "hot", "both"], default="cold",
                     help="cold (default): flush L2 before every call, the way a kernel is "
                          "entered in a real step; hot: back-to-back replays; both: report each")
@@ -239,7 +256,8 @@ def main() -> None:
             "baseline source and exposes run(**kwargs) with the argument names used in\n"
             "bench/workloads.json, then the same for solution/entry.py." % args.task_dir)
 
-    report = {"task": os.path.basename(os.path.abspath(args.task_dir)),
+    report = {"timer": args.timer, "l2": args.l2,
+              "task": os.path.basename(os.path.abspath(args.task_dir)),
               "correctness_mode": mode, "gpu": torch.cuda.get_device_name(0),
               "timestamp_unix": int(time.time()), "rows": []}
     for wf in wl_files:
@@ -297,8 +315,8 @@ def main() -> None:
                     entry["status"] = "baseline only (no solution/entry.py yet)"
                     try:
                         for regime in (["cold", "hot"] if args.l2 == "both" else [args.l2]):
-                            tb = _graph_time(lambda **kw: base_run(_op=o["op"], **kw),
-                                             kb, args.iters, None, regime)
+                            tb = _time(lambda **kw: base_run(_op=o["op"], **kw),
+                                       kb, args.iters, None, regime, args.timer)
                             entry["baseline_us" if regime == args.l2 or args.l2 == "both"
                                   and regime == "cold" else "baseline_us_hot"] = round(tb, 3)
                         entry["l2"] = args.l2
@@ -330,7 +348,8 @@ def main() -> None:
                         tb, tc, bs, cs = interleaved(
                             lambda **kw: base_run(_op=o["op"], **kw),
                             lambda **kw: cand_run(_op=o["op"], **kw),
-                            kb, kc, args.iters, args.trials, l2=args.l2 if args.l2 != "both" else "cold")
+                            kb, kc, args.iters, args.trials,
+                            l2=args.l2 if args.l2 != "both" else "cold", timer=args.timer)
                         entry["l2"] = "cold" if args.l2 == "both" else args.l2
                         def spread(xs):
                             return (max(xs) - min(xs)) / statistics.median(xs) if len(xs) > 1 else 0.0

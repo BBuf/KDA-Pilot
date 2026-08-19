@@ -19,7 +19,26 @@ So each task states the kernel's measured share of real serving GPU time, and
 the acceptance criterion is: standalone speedup **and** a plausible, stated path
 to end-to-end effect on the operating point where that share was measured.
 
-## 2. Flush L2 before every call
+## 2. Timing primitive: `triton.testing.do_bench` around a captured CUDA graph
+
+The timer of record is **`triton.testing.do_bench`** - the same one Triton, CUTLASS-style
+harnesses and SGLang's own kernel benchmarks use - so nobody has to audit a bespoke timing
+loop. It clears L2 before every run, brackets each run with its own event pair, and sizes
+the repetition count from a time budget (warmup 25 ms, rep 50 ms, median reported).
+
+The one adaptation: we hand it a **CUDA-graph replay**, not the eager call. do_bench would
+otherwise fold per-launch overhead into kernels that take 4-8 us, and per-launch overhead is
+what a real deployment removes with graphs (an MoE decode kernel measured 401 us eager vs
+53 us replayed here). `--timer graph` runs our own flush+event loop instead, and on the K3
+GEMM rows the two agree to 0.1%:
+
+| row | do_bench | built-in loop |
+| --- | ---: | ---: |
+| `cutedsl_bf16_gemm_out` | 14.176 us | 14.176 us |
+| `tiny_gemm` m=1 | 8.032 us | 8.032 us |
+| `cutedsl_bf16_gemm` 6016x7168 | 26.496 us | 26.496 us |
+
+## 3. Flush L2 before every call
 
 B300 has **132.6 MB of L2** - enough to hold an m=1 GEMM's entire weight. Replaying a
 kernel back to back therefore measures it reading its own leftovers, while in a real decode
@@ -40,7 +59,7 @@ That is 58-82% - large enough that a bandwidth-saving candidate would look far l
 in the hot regime than it is. `--l2 hot` and `--l2 both` remain available for comparison,
 and the regime is recorded in every row of the JSON report.
 
-## 3. Time inside a CUDA graph, not in eager
+## 4. Time inside a CUDA graph, not in eager
 
 Eager launch overhead dominates small kernels and inflates any "before" number.
 Measured on this hardware class: an MoE decode kernel is 401 us eager and 53 us
@@ -52,7 +71,7 @@ Corollary: do not multiply per-launch cost by kernel count to claim a launch
 overhead budget. With ~1.5x kernel overlap the floor is overlapped too; the
 saving only converts 1:1 for kernels removed from the critical path.
 
-## 4. A reference you cannot reproduce is not a reference
+## 5. A reference you cannot reproduce is not a reference
 
 Before any comparison, the harness calls the baseline **three times on identical inputs**
 and rejects the row if the outputs contain NaN/Inf or disagree beyond the op's tolerance.
@@ -66,7 +85,7 @@ Rows are also marked when their integer index arguments are synthetic, and when 
 across trials exceeds 10% - a speedup from an unstable row is noise until the instability
 is fixed.
 
-## 5. Nsight Compute durations are inflated
+## 6. Nsight Compute durations are inflated
 
 Per-kernel replay inflates absolute time: `ncu` reported 21.50 us for a GEMV
 that CUDA-graph timing measures at 14.91 us. Use ncu for *bottleneck attribution*
@@ -76,7 +95,7 @@ that CUDA-graph timing measures at 14.91 us. Use ncu for *bottleneck attribution
 Low occupancy is not automatically a bug: a TMA GEMV at 13% occupancy and
 0.6 waves was running at 72% of HBM peak.
 
-## 6. Microbenchmark traps that produced wrong conclusions here
+## 7. Microbenchmark traps that produced wrong conclusions here
 
 * **Weights must exceed L2.** A 4-copy rotation of a 22 MB weight fits entirely
   in B300 L2 and inverted a known-good result to 0.87x. Size the working set
@@ -94,20 +113,20 @@ Low occupancy is not automatically a bug: a TMA GEMV at 13% occupancy and
   sign of a launch-gap measurement for us. Any timing claim must come from an
   un-profiled run.
 
-## 7. Noise floors on this box
+## 8. Noise floors on this box
 
 At the decode operating points we use, 1 tok/s is ~120 us/step. Trace noise is
 +-20-35 us of summed kernel duration, +-10 us of span; cross-restart end-to-end
 noise is +-200 us. A single end-to-end A/B therefore cannot resolve one kernel
 candidate - attribute per kernel inside one trace, then confirm the sum.
 
-## 8. Correctness gates before performance is even read
+## 9. Correctness gates before performance is even read
 
 See `anti_hack_contract.md`. A candidate that fails the correctness gate has no
 performance number, and "within tolerance" is not the gate for state-carrying
 kernels - the chained final-state comparison is.
 
-## 9. What to report
+## 10. What to report
 
 For each task: kernel time (graph-timed) baseline vs candidate per workload row,
 geomean, the correctness gate result, the ncu evidence for the claimed

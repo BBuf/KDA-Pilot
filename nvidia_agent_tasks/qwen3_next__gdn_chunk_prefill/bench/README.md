@@ -59,9 +59,12 @@ than reporting nonsense for every row after it.
 
 ## Measurement regime
 
-* **L2 is flushed before every call** (`--l2 cold`, the default): a buffer twice the size of
-  B300's 132.6 MB L2 is written before each call, and the event pair brackets only the call,
-  so the flush is not in the number. Back-to-back replay (`--l2 hot`) reads 58-82% faster on
+* **Timing is `triton.testing.do_bench` around a captured CUDA graph** (`--timer do_bench`,
+  the default). do_bench clears L2 before every run, brackets each run with its own event
+  pair and sizes the repetitions from a time budget; the graph keeps per-launch overhead out
+  of kernels that take single-digit microseconds. `--timer graph` runs our own flush+event
+  loop instead - the two agree to 0.1% on the K3 GEMM rows.
+* **L2 is cold on every call.** Back-to-back replay with a warm L2 reads 58-82% faster on
   these rows - see `../docs/measurement_contract.md`.
 * **The baseline is called three times on identical inputs before anything is judged.** A row
   whose reference contains NaN/Inf or does not reproduce is printed as `NO VALID REFERENCE`
