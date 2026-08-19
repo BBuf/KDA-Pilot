@@ -5,18 +5,17 @@
     "arch": "b300",
     "target_gpu": "NVIDIA B300 SXM6 (sm_103)",
     "ops": [
-      "gdn_chunk_prefill",
+      "gdn_recompute_w_u",
       "gdn_chunk_delta_h",
       "gdn_chunk_o",
-      "gdn_recompute_w_u",
-      "gdn_fused_recurrent_decode",
-      "kda_chunk_prefill",
-      "kda_fused_recurrent_decode"
+      "gdn_chunk_prefill",
+      "gdn_decode_causal_conv1d_update",
+      "gdn_decode_packed_triton"
     ]
   },
   "capture": {
     "cookbook_command": "python -m sglang.launch_server --model Qwen/Qwen3-Next-80B-A3B-Instruct --tp 8 --host 0.0.0.0 --port 8000",
-    "measured_share": "linear_gemm 44.3% / rmsnorm 6.8% in the earlier sweep; the GDN kernels themselves are measured per call in this capture (see profile_evidence.md)"
+    "measured_share": "the GDN family is **2.76-5.34%** of serving GPU time across four operating points, of which the decode kernel (`TritonGDNKernel.packed_decode`) is **2.0-3.6%** and the chunk-prefill kernels peak at **2.51%** around 8k input. Measured with CUDA graphs enabled, TP8; the four-point table is in `docs/profile_evidence.md`."
   },
   "environment": {
     "host": "light-face-hides-fin-03-1 (RadixArk devbox b300-diffusion-kernel-opt)",

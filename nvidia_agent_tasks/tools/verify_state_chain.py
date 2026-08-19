@@ -12,6 +12,10 @@ import glob, os, sys, torch
 
 d = sys.argv[1]
 steps = sorted(glob.glob(os.path.join(d, "step*")))
+static = os.path.join(d, "static")
+if os.path.isdir(static):
+    print("compact chain: %d tensors are per-step invariant and live in static/"
+          % len(glob.glob(os.path.join(static, "*.pt"))))
 if len(steps) < 2:
     raise SystemExit("need at least two steps in %s" % d)
 names = {os.path.basename(f)[len("state_after_"):-3]

@@ -9,7 +9,7 @@
 python3 -m sglang.launch_server --model-path LiquidAI/LFM2.5-8B-A1B --trust-remote-code --attention-backend flashinfer --reasoning-parser qwen3 --tool-call-parser lfm2
 ```
 
-**Measured share:** 50.5% of total serving GPU time on LFM2.5 (peak: random, concurrency 32); 30.4% on GLM-4.7-Flash
+**Measured share:** **50.5%** of total serving GPU time on LFM2.5 and **30.4%** on GLM-4.7-Flash (cookbook-aligned profiler sweep, peak scenario random at concurrency 32). Tonight's capture confirms the call counts on both models.
 
 ## Kernels in scope
 

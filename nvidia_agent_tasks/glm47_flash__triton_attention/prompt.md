@@ -9,7 +9,7 @@
 python -m sglang.launch_server --model zai-org/GLM-4.7-Flash --reasoning-parser glm45 --tool-call-parser glm47 --attention-backend triton --tp 1 --host 0.0.0.0 --port 8000
 ```
 
-**Measured share:** 75.3% of total serving GPU time (peak scenario: ShareGPT, concurrency 32)
+**Measured share:** **75.3%** of total serving GPU time (cookbook-aligned profiler sweep, peak scenario ShareGPT at concurrency 32). Tonight's capture confirms the call counts on the same recipe, and the same kernels are **50.8%** of Qwen3-Next at 32k input.
 
 ## Kernels in scope
 

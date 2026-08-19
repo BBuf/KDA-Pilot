@@ -38,9 +38,11 @@ naive PyTorch reference; the bar is the shipped kernel.
 
 ## Correctness gate
 
-- State-carrying: the chained final-state gate. `bench/tensors/` ships consecutive real
-  decode steps whose state links are byte-identical, verified by
-  `tools/verify_state_chain.py`.
+- State-carrying: the chained final-state gate. `bench/tensors/kda_decode_chain8_bs1/`
+  ships **8 consecutive real decode steps of one layer at batch 1**, whose state links are
+  byte-identical (7/7, `tools/verify_state_chain.py`). The layer's invariant tensors live
+  once in `static/`, and the conv-state pool is stored as the touched rows - see
+  `CHAIN.json`.
 - Prefill: output plus `final_state` against the baseline on the captured ragged
   `cu_seqlens`.
 

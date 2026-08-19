@@ -9,7 +9,7 @@
 python -m sglang.launch_server --model Qwen/Qwen3-Next-80B-A3B-Instruct --tp 8 --host 0.0.0.0 --port 8000
 ```
 
-**Measured share:** linear_gemm 44.3% / rmsnorm 6.8% in the earlier sweep; the GDN kernels themselves are measured per call in this capture (see profile_evidence.md)
+**Measured share:** the GDN family is **2.76-5.34%** of serving GPU time across four operating points, of which the decode kernel (`TritonGDNKernel.packed_decode`) is **2.0-3.6%** and the chunk-prefill kernels peak at **2.51%** around 8k input. Measured with CUDA graphs enabled, TP8; the four-point table is in `docs/profile_evidence.md`.
 
 ## Kernels in scope
 

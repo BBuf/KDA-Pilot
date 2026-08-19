@@ -9,7 +9,7 @@
 sglang serve --model-path deepseek-ai/DeepSeek-V4-Flash --tp 4
 ```
 
-**Measured share:** see docs/profile_evidence.md - measured per kernel in this capture; GLM-5.2 (same DSA family) shows attention 14.2% / fp8_bmm 25.0% on the cookbook path
+**Measured share:** the DSA front end is **8.46%** of serving GPU time as a cluster of 20 kernels (no single one above 1%), the sparse attention core **7.50%**, and the mHC TileLang kernels **8.06%** - measured with CUDA graphs enabled at random 1k/256 concurrency 16, TP4. Per-kernel table in `docs/profile_evidence.md`.
 
 ## Kernels in scope
 

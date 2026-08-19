@@ -9,7 +9,7 @@
 python3 -m sglang.launch_server --model-path nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8 --trust-remote-code --max-running-requests 1024 --host 0.0.0.0 --port 30000
 ```
 
-**Measured share:** 55.8% of total serving GPU time (peak scenario: ShareGPT, concurrency 32)
+**Measured share:** **55.8%** of total serving GPU time (cookbook-aligned profiler sweep, peak scenario ShareGPT at concurrency 32; 22.7-55.8% across the six scenarios). Tonight's capture confirms the call counts and shapes on the same recipe.
 
 ## Kernels in scope
 

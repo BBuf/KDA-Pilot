@@ -42,7 +42,11 @@ def check_baseline(task: str) -> None:
     src = os.path.join(task, "baseline", "SOURCES.txt")
     if not os.path.exists(src):
         return fail(task, "baseline/SOURCES.txt missing")
-    listed = [l.strip() for l in open(src) if l.strip() and not l.startswith("#")]
+    listed = []
+    for line in open(src):
+        line = line.split("#", 1)[0].strip()   # inline "# role" comments are documentation
+        if line:
+            listed.append(line)
     if not listed:
         return fail(task, "baseline/SOURCES.txt lists no files")
     for rel in listed:
@@ -89,10 +93,13 @@ def check_payloads(task: str) -> None:
     for m in metas:
         meta = json.load(open(m))
         base = os.path.dirname(m)
+        # a compact chain hoists its per-step-invariant tensors into <chain>/static/
+        static = os.path.join(os.path.dirname(base), "static")
         for name, info in meta.get("tensors", {}).items():
-            if not os.path.exists(os.path.join(base, info.get("file", ""))):
-                fail(task, "payload %s references missing %s"
-                     % (os.path.relpath(base, task), info.get("file")))
+            f = info.get("file", "")
+            if os.path.exists(os.path.join(base, f)) or os.path.exists(os.path.join(static, f)):
+                continue
+            fail(task, "payload %s references missing %s" % (os.path.relpath(base, task), f))
     for d in sorted(glob.glob(os.path.join(root, "*"))):
         steps = sorted(glob.glob(os.path.join(d, "step*")))
         if len(steps) < 2:
