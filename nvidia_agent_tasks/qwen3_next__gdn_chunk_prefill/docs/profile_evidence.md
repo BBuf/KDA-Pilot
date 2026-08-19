@@ -60,3 +60,36 @@ Chain capture needed two things to be right, both of which matter if you re-capt
 `--disable-radix-cache` (the mamba pool's `extra_buffer` strategy rewrites rows outside
 the kernel call otherwise) and pinning the chain to one layer instance via its `A_log`
 pointer - consecutive same-shape calls are different layers, not consecutive time steps.
+
+## The share depends on the operating point - four of them, measured
+
+One number was not enough here, so we profiled four points on the same server (TP8,
+CUDA graphs on, B300). Raw tables: `../docs/profiles/qwen3_next_points/`.
+
+| operating point | GDN family | of which `packed_decode` | chunk-prefill kernels | full attention (Triton) |
+| --- | ---: | ---: | ---: | ---: |
+| 8k in / 64 out, cc 8 | **5.34%** | 2.41% | **2.51%** | 24.60% |
+| 32k in / 64 out, cc 4 | 2.76% | 2.04% | 0.52% | **50.78%** |
+| 1k in / 256 out, cc 16 | 4.20% | 3.41% | 0.58% | 6.11% |
+| 1k in / 1k out, cc 32 | 4.01% | 3.61% | 0.32% | 7.64% |
+
+Reading it:
+
+* **The GDN decode kernel is steady at 2.0-3.6%** of GPU time no matter the shape of the
+  workload. That is the floor to expect from optimizing it, and it is a Triton kernel, so
+  the floor is reachable.
+* **The chunk-prefill kernels peak at 2.51% around 8k input** and fall off on both sides:
+  at 1k there is barely any prefill to do, and at 32k the *full-attention* layers take
+  over the profile so everything else shrinks in relative terms.
+* **The real story at long context is the other kernel family**: Qwen3-Next is a hybrid,
+  and its 1-in-4 full-attention layers run on the Triton unified backend -
+  `_fwd_grouped_kernel_stage1` alone is **35.9%** of GPU time at 32k input, and the family
+  is **50.8%**. That is the same kernel as `glm47_flash__triton_attention`, whose task
+  already ships a Qwen3-Next shape family (`bench/workloads_qwen3_next_secondary.json`
+  there). If you only have budget for one Qwen3-Next kernel, that is the one.
+
+Why the absolute numbers are modest for an 80B model: at TP8 the linear-attention state is
+split 8 ways (2 K/V heads and 4 V heads per rank), while MoE (21-31%), GEMM (20-26%) and
+collectives (16-19%) are what the GPU spends its time on. A linear-attention kernel being
+a few percent is the architecture working as intended, not the kernel being unimportant -
+it is per-token work that never grows with context.
