@@ -53,56 +53,84 @@ load_payload = workload.load_payload
 # --------------------------------------------------------------------------- #
 # timing
 # --------------------------------------------------------------------------- #
-def _graph_time(fn, kwargs, iters: int, restore: dict | None) -> float:
-    """Median us per call, timed inside a captured graph when possible."""
+_FLUSH = {}
+
+
+def l2_flush_buffer():
+    """A buffer big enough that writing it evicts L2 (2x its size), allocated once."""
+    dev = torch.cuda.current_device()
+    if dev not in _FLUSH:
+        l2 = torch.cuda.get_device_properties(dev).L2_cache_size
+        _FLUSH[dev] = torch.empty(int(2 * l2) // 4, dtype=torch.int32, device="cuda")
+    return _FLUSH[dev]
+
+
+def _graph_time(fn, kwargs, iters: int, restore: dict | None, l2: str = "cold") -> float:
+    """Median us per call.
+
+    `l2="cold"` flushes L2 before every call and brackets **only the call** with the event
+    pair, the way `triton.testing.do_bench` does - so the flush cost is not in the number,
+    but the kernel does not get to reuse the previous iteration's cache lines either. That
+    matters here: B300 has 132.6 MB of L2, enough to hold an m=1 GEMM's whole weight, while
+    in a real decode step ~1900 other kernels run between two calls of the same one.
+
+    `l2="hot"` keeps the old behaviour (one replay after another, cache warm) for comparison.
+    """
+    flush = l2_flush_buffer() if l2 == "cold" else None
     for _ in range(3):
         fn(**kwargs)
     torch.cuda.synchronize()
+    graph = None
     try:
         g = torch.cuda.CUDAGraph()
-        s = torch.cuda.Stream()
-        s.wait_stream(torch.cuda.current_stream())
-        with torch.cuda.stream(s):
+        st = torch.cuda.Stream()
+        st.wait_stream(torch.cuda.current_stream())
+        with torch.cuda.stream(st):
             for _ in range(3):
                 fn(**kwargs)
-        torch.cuda.current_stream().wait_stream(s)
+        torch.cuda.current_stream().wait_stream(st)
         with torch.cuda.graph(g):
             fn(**kwargs)
         torch.cuda.synchronize()
-        start, end = torch.cuda.Event(True), torch.cuda.Event(True)
-        start.record()
-        for _ in range(iters):
-            g.replay()
-        end.record()
-        torch.cuda.synchronize()
-        return start.elapsed_time(end) * 1000.0 / iters
+        graph = g
     except Exception:
-        # not capturable (host-side branching, dynamic allocation): fall back to
-        # eager, and the report says so
-        start, end = torch.cuda.Event(True), torch.cuda.Event(True)
-        torch.cuda.synchronize()
-        start.record()
-        for _ in range(iters):
+        graph = None            # not capturable: host branching or dynamic allocation
+
+    def one_call():
+        if graph is not None:
+            graph.replay()
+        else:
             if restore:
                 for k, v in restore.items():
                     kwargs[k].copy_(v)
             fn(**kwargs)
-        end.record()
-        torch.cuda.synchronize()
-        total = start.elapsed_time(end) * 1000.0 / iters
-        if restore:
-            start.record()
-            for _ in range(iters):
-                for k, v in restore.items():
-                    kwargs[k].copy_(v)
-            end.record()
-            torch.cuda.synchronize()
-            total -= start.elapsed_time(end) * 1000.0 / iters
-        return total
+
+    starts = [torch.cuda.Event(True) for _ in range(iters)]
+    ends = [torch.cuda.Event(True) for _ in range(iters)]
+    torch.cuda.synchronize()
+    for i in range(iters):
+        if flush is not None:
+            flush.zero_()       # outside the event pair on purpose
+        starts[i].record()
+        one_call()
+        ends[i].record()
+    torch.cuda.synchronize()
+    per_call = sorted(s_.elapsed_time(e_) * 1000.0 for s_, e_ in zip(starts, ends))
+    med = per_call[len(per_call) // 2]
+    if graph is None and restore:
+        # eager fallback pays the copy_ restore inside the window; measure and subtract it
+        st_, en_ = torch.cuda.Event(True), torch.cuda.Event(True)
+        torch.cuda.synchronize(); st_.record()
+        for _ in range(iters):
+            for k, v in restore.items():
+                kwargs[k].copy_(v)
+        en_.record(); torch.cuda.synchronize()
+        med -= st_.elapsed_time(en_) * 1000.0 / iters
+    return med
 
 
 def interleaved(base_fn, cand_fn, kwargs_b, kwargs_c, iters: int, trials: int,
-                restore_b=None, restore_c=None):
+                restore_b=None, restore_c=None, l2: str = "cold"):
     """Alternate which arm goes first each trial.
 
     Running the candidate second in every trial hands it warmer clocks and caches: with an
@@ -112,11 +140,11 @@ def interleaved(base_fn, cand_fn, kwargs_b, kwargs_c, iters: int, trials: int,
     b, c = [], []
     for t in range(trials):
         if t % 2 == 0:
-            b.append(_graph_time(base_fn, kwargs_b, iters, restore_b))
-            c.append(_graph_time(cand_fn, kwargs_c, iters, restore_c))
+            b.append(_graph_time(base_fn, kwargs_b, iters, restore_b, l2))
+            c.append(_graph_time(cand_fn, kwargs_c, iters, restore_c, l2))
         else:
-            c.append(_graph_time(cand_fn, kwargs_c, iters, restore_c))
-            b.append(_graph_time(base_fn, kwargs_b, iters, restore_b))
+            c.append(_graph_time(cand_fn, kwargs_c, iters, restore_c, l2))
+            b.append(_graph_time(base_fn, kwargs_b, iters, restore_b, l2))
     return statistics.median(b), statistics.median(c), b, c
 
 
@@ -187,6 +215,9 @@ def main() -> None:
     ap.add_argument("--rows", type=int, default=0, help="0 = all rows")
     ap.add_argument("--iters", type=int, default=200)
     ap.add_argument("--trials", type=int, default=7)
+    ap.add_argument("--l2", choices=["cold", "hot", "both"], default="cold",
+                    help="cold (default): flush L2 before every call, the way a kernel is "
+                         "entered in a real step; hot: back-to-back replays; both: report each")
     ap.add_argument("--workloads", default="")
     ap.add_argument("--json", default="")
     args = ap.parse_args()
@@ -227,6 +258,22 @@ def main() -> None:
                     continue
                 kb = built["kwargs"]
                 kc = {k: (v.clone() if torch.is_tensor(v) else v) for k, v in kb.items()}
+                trust_ok, trust_why = True, ""
+                try:
+                    trust_ok, trust_why = gates.reference_is_trustworthy(
+                        lambda **kw: base_run(_op=o["op"], **kw), kb, o["op"])
+                except Exception as exc:
+                    trust_ok, trust_why = False, "baseline raised: %s" % str(exc).splitlines()[-1][:110]
+                if not trust_ok:
+                    rec = {"row_id": r["row_id"], "op": o["op"], "group": r["group"],
+                           "status": "NO VALID REFERENCE: %s" % trust_why,
+                           "inputs": built["source"]}
+                    report["rows"].append(rec)
+                    print("%-34s %-22s  NO VALID REFERENCE: %s" % (r["row_id"], r["group"], trust_why))
+                    if not workload.cuda_alive():
+                        print("\nStopping: the CUDA context is gone.")
+                        return
+                    continue
                 try:
                     ref = base_run(_op=o["op"],
                                    **{k: (v.clone() if torch.is_tensor(v) else v)
@@ -249,8 +296,12 @@ def main() -> None:
                 if cand_run is None:
                     entry["status"] = "baseline only (no solution/entry.py yet)"
                     try:
-                        tb = _graph_time(lambda **kw: base_run(_op=o["op"], **kw), kb, args.iters, None)
-                        entry["baseline_us"] = round(tb, 3)
+                        for regime in (["cold", "hot"] if args.l2 == "both" else [args.l2]):
+                            tb = _graph_time(lambda **kw: base_run(_op=o["op"], **kw),
+                                             kb, args.iters, None, regime)
+                            entry["baseline_us" if regime == args.l2 or args.l2 == "both"
+                                  and regime == "cold" else "baseline_us_hot"] = round(tb, 3)
+                        entry["l2"] = args.l2
                     except Exception as exc:
                         msg = str(exc).strip().splitlines()[-1][:160] if str(exc).strip() else repr(exc)
                         entry["status"] = "not runnable from the recorded row: %s" % msg
@@ -279,24 +330,41 @@ def main() -> None:
                         tb, tc, bs, cs = interleaved(
                             lambda **kw: base_run(_op=o["op"], **kw),
                             lambda **kw: cand_run(_op=o["op"], **kw),
-                            kb, kc, args.iters, args.trials)
+                            kb, kc, args.iters, args.trials, l2=args.l2 if args.l2 != "both" else "cold")
+                        entry["l2"] = "cold" if args.l2 == "both" else args.l2
+                        def spread(xs):
+                            return (max(xs) - min(xs)) / statistics.median(xs) if len(xs) > 1 else 0.0
+                        sb, sc = spread(bs), spread(cs)
                         entry.update(baseline_us=round(tb, 3), candidate_us=round(tc, 3),
                                      speedup=round(tb / tc, 4) if tc else None,
                                      baseline_trials=[round(x, 3) for x in bs],
-                                     candidate_trials=[round(x, 3) for x in cs])
+                                     candidate_trials=[round(x, 3) for x in cs],
+                                     trial_spread={"baseline": round(sb, 4), "candidate": round(sc, 4)})
+                        if max(sb, sc) > 0.10:
+                            entry["unstable"] = True
+                            entry["status"] = ("trial spread %.0f%% - treat this row's speedup as "
+                                               "noise until it is stabilised" % (100 * max(sb, sc)))
                 report["rows"].append(entry)
                 # one compact line per row; the full record goes to --json
                 bits = ["%-34s %-22s" % (entry["row_id"], entry["group"])]
                 if "baseline_us" in entry:
                     bits.append("base %8.3f us" % entry["baseline_us"])
+                if "baseline_us_hot" in entry:
+                    bits.append("(hot-L2 %7.3f us)" % entry["baseline_us_hot"])
                 if "candidate_us" in entry:
                     bits.append("cand %8.3f us  %.3fx" % (entry["candidate_us"], entry["speedup"]))
+                if entry.get("trial_spread"):
+                    bits.append("spread %.0f/%.0f%%" % (100 * entry["trial_spread"]["baseline"],
+                                                        100 * entry["trial_spread"]["candidate"]))
                 if "correct" in entry:
                     bits.append("correct=%s (%s)" % (entry["correct"], entry["correctness_detail"]))
                 if entry.get("status"):
                     bits.append(entry["status"])
                 real = sum(1 for v in entry["inputs"].values() if v == "real")
                 bits.append("[%d/%d inputs real]" % (real, len(entry["inputs"])))
+                if built.get("allocated_index_args"):
+                    bits.append("[synthetic index args: %s]"
+                                % ",".join(built["allocated_index_args"][:3]))
                 print("  ".join(bits), flush=True)
 
     sp = [r["speedup"] for r in report["rows"] if r.get("speedup")]

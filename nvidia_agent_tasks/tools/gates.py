@@ -163,3 +163,51 @@ def chained_verdict(res: dict, op: str = "", rtol: float = None, atol: float = N
                 "steps (per-step output max rel %.3g)"
                 % (res["final_state_rel_err"], res["final_state_abs_err"], rtol, atol,
                    t.get("source", ""), res["steps"], res["max_per_step_output_rel_err"]))
+
+
+def reference_is_trustworthy(call, kwargs, op: str = "") -> tuple:
+    """Run the baseline twice on identical inputs before judging anything.
+
+    A row whose inputs had to be allocated (because the task does not ship a payload for
+    it) can drive a segment-based kernel with index arrays full of zeros: parts of the
+    output are then never written, so the "reference" is uninitialized memory that differs
+    between runs and can contain NaN. Judging a candidate against that is worse than not
+    judging it. -> (ok, detail)
+    """
+    import copy
+
+    def snap(x):
+        return {k: (v.clone() if torch.is_tensor(v) else copy.copy(v)) for k, v in x.items()}
+
+    # three calls, not two: with an index argument allocated to zeros several sequences can
+    # map to the same state slot and race, which is intermittent - two calls sometimes agree
+    kws = [snap(kwargs) for _ in range(3)]
+    rets = [call(**k) for k in kws]
+    first_kwargs, second_kwargs = kws[0], kws[1]
+    r1, r2 = rets[0], rets[1]
+
+    def tensors(ret, kw):
+        out = [t for t in (ret if isinstance(ret, (tuple, list)) else [ret]) if torch.is_tensor(t)]
+        out += [v for k, v in kw.items() if torch.is_tensor(v) and k in ("out", "output", "o")]
+        return out
+
+    a, b = tensors(r1, first_kwargs), tensors(r2, second_kwargs)
+    c = tensors(rets[2], kws[2])
+    if not a:
+        return True, "no tensor output to check"
+    for t in a:
+        if torch.isnan(t.float()).any() or torch.isinf(t.float()).any():
+            return False, ("baseline output contains NaN/Inf on these inputs - the row needs "
+                           "real tensors (index/segment arguments allocated to zeros leave "
+                           "part of the output unwritten)")
+    t = tol_for(op, a[0])
+    for x, y in list(zip(a, b)) + list(zip(a, c)):
+        if x.shape != y.shape:
+            return False, "baseline is not shape-stable across identical calls"
+        try:
+            torch.testing.assert_close(y.float(), x.float(), rtol=t["rtol"], atol=t["atol"])
+        except AssertionError:
+            return False, ("two identical baseline calls disagree beyond rtol=%g atol=%g - "
+                           "the reference is not reproducible from these inputs"
+                           % (t["rtol"], t["atol"]))
+    return True, "baseline reproduces itself"

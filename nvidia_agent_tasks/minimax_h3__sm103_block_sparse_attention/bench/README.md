@@ -58,6 +58,20 @@ the CUDA context down; the harness and the test detect that, name the row, and s
 than reporting nonsense for every row after it.
 
 
+
+## Measurement regime
+
+* **L2 is flushed before every call** (`--l2 cold`, the default): a buffer twice the size of
+  B300's 132.6 MB L2 is written before each call, and the event pair brackets only the call,
+  so the flush is not in the number. Back-to-back replay (`--l2 hot`) reads 58-82% faster on
+  these rows - see `../docs/measurement_contract.md`.
+* **The baseline is called three times on identical inputs before anything is judged.** A row
+  whose reference contains NaN/Inf or does not reproduce is printed as `NO VALID REFERENCE`
+  and excluded, rather than judged against uninitialized memory.
+* **Per-row trial spread is reported**, and a row whose spread exceeds 10% is marked
+  unstable - its speedup is noise until that is fixed.
+* Rows whose integer index arguments had to be synthesised are flagged in the row line.
+
 ## Correctness tolerances
 
 `torch.testing.assert_close` with the rtol/atol **SGLang's own test for that

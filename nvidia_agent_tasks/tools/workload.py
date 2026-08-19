@@ -117,7 +117,11 @@ def build_inputs(task_dir: str, row: dict) -> dict:
         else:
             kwargs[name] = info
             source[name] = "config" if isinstance(info, (dict, list)) else "scalar"
-    return {"kwargs": kwargs, "source": source, "payload": payload}
+    risky = [n for n, v in kwargs.items()
+             if torch.is_tensor(v) and not v.is_floating_point() and source.get(n) == "allocated"
+             and v.numel() > 1]
+    return {"kwargs": kwargs, "source": source, "payload": payload,
+            "allocated_index_args": risky}
 
 
 def iter_rows(task_dir: str, op: str = "", limit: int = 0):

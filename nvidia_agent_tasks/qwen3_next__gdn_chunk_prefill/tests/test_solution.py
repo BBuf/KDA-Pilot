@@ -56,6 +56,11 @@ def test_candidate_matches_baseline():
             continue
         built = workload.build_inputs(TASK, row)
         kw = built["kwargs"]
+        trust, why = gates.reference_is_trustworthy(lambda **k: _call(base, op, k), kw, op)
+        if not trust:
+            skipped += 1
+            print("skip %s: %s" % (row["row_id"], why))
+            continue
         try:
             ref = _call(base, op, {k: (v.clone() if torch.is_tensor(v) else v) for k, v in kw.items()})
             got = _call(sol, op, {k: (v.clone() if torch.is_tensor(v) else v) for k, v in kw.items()})
