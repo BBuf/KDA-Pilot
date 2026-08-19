@@ -51,6 +51,12 @@ def alloc(info: dict, device: str = "cuda") -> torch.Tensor:
             for s, st in zip(shape, stride):
                 numel = max(numel, (s - 1) * st + 1)
             base = torch.zeros(numel, device=device, dtype=dt)
+            # `t` is freshly drawn and contiguous here, so `reshape(-1)` is a view;
+            # it is only ever read from. Do not copy this idiom to a tensor that has
+            # to be written through: `reshape(-1)` on a strided tensor silently
+            # returns a *copy*, and writing to the copy leaves the real tensor
+            # untouched. Use `view(-1)` (which raises instead of copying) or index
+            # along the last dimension.
             flat = t.reshape(-1)
             base[: min(numel, flat.numel())] = flat[: min(numel, flat.numel())]
             t = base.as_strided(shape, tuple(stride))

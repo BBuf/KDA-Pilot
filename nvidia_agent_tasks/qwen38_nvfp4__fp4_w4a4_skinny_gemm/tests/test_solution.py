@@ -1,6 +1,6 @@
-"""Correctness gate for a candidate kernel in `glm45__fp8_fused_moe`.
+"""Correctness gate for a candidate kernel in `qwen38_nvfp4__fp4_w4a4_skinny_gemm`.
 
-    python glm45__fp8_fused_moe/tests/test_solution.py        # or: pytest glm45__fp8_fused_moe/tests
+    python qwen38_nvfp4__fp4_w4a4_skinny_gemm/tests/test_solution.py        # or: pytest qwen38_nvfp4__fp4_w4a4_skinny_gemm/tests
 
 Skips cleanly when `solution/entry.py` does not exist yet, so it is safe to run on a
 fresh checkout. When a candidate is present it runs **every workload row** through the

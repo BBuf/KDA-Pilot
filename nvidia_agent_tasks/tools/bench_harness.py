@@ -164,8 +164,29 @@ def interleaved(base_fn, cand_fn, kwargs_b, kwargs_c, iters: int, trials: int,
 # --------------------------------------------------------------------------- #
 # correctness
 # --------------------------------------------------------------------------- #
-def compare(mode: str, ref, got, payload: dict, op: str = "") -> tuple:
-    return gates.compare(mode, ref, got, op=op)
+def _row_tokens(row: dict) -> int:
+    """The row's token count, for the gates that need one number off the row.
+
+    The swizzled NVFP4 scale block is padded to 128-row tiles and only the first
+    `tokens` rows are written, so this is where the comparison stops. See
+    gates.written_scale_rows.
+    """
+    if not row:
+        return 0
+    for name in ("a", "input", "x"):
+        spec = row["args"].get(name)
+        if isinstance(spec, dict) and spec.get("shape"):
+            shape = spec["shape"]
+            return int(shape[-2]) if len(shape) >= 2 else int(shape[0])
+    return 0
+
+
+def compare(mode: str, ref, got, payload: dict, op: str = "", row: dict = None) -> tuple:
+    # A few gates need one number off the row rather than off the tensors: the
+    # swizzled NVFP4 scale block is padded to 128-row tiles and only the first
+    # `tokens` rows are written, so the row's token count says where the comparison
+    # stops. See gates.written_scale_rows.
+    return gates.compare(mode, ref, got, op=op, tokens=_row_tokens(row))
 
 
 def _unused_compare(mode: str, ref, got, payload: dict) -> tuple:
@@ -206,19 +227,22 @@ def load_entry(path: str, name: str):
     fix = getattr(mod, "RECONSTRUCT", {}) or {}
     if ops:
         def dispatch(_op=None, **kwargs):
-            if _op in fix:
-                kwargs = fix[_op](kwargs)
+            # RECONSTRUCT is deliberately NOT applied here: it repairs the inputs, and
+            # input repair inside the timed region is measured as kernel time. It cost
+            # an identity candidate 1.75x on the GDN gating row before this moved out -
+            # a candidate that simply omitted the hook would have "won" by skipping the
+            # cu_seqlens rebuild. The caller applies it once, at build time.
             fn = ops.get(_op)
             if fn is None:
                 raise KeyError("%s does not implement op %r (has: %s)"
                                % (os.path.basename(path), _op, ", ".join(sorted(ops))))
             return fn(**kwargs)
-        return dispatch
+        return dispatch, fix
     if run:
         def only(_op=None, **kwargs):
             return run(**kwargs)
-        return only
-    return None
+        return only, fix
+    return None, {}
 
 
 def main() -> None:
@@ -248,8 +272,10 @@ def main() -> None:
         for f in os.listdir(os.path.join(args.task_dir, "bench"))
         if f.startswith("workloads") and f.endswith(".json"))
 
-    base_run = load_entry(os.path.join(args.task_dir, "baseline", "entry.py"), "task_baseline")
-    cand_run = load_entry(os.path.join(args.task_dir, "solution", "entry.py"), "task_solution")
+    base_run, base_fix = load_entry(
+        os.path.join(args.task_dir, "baseline", "entry.py"), "task_baseline")
+    cand_run, cand_fix = load_entry(
+        os.path.join(args.task_dir, "solution", "entry.py"), "task_solution")
     if base_run is None:
         raise SystemExit(
             "no baseline/entry.py in %s.\nWrite a ten-line wrapper that imports the copied\n"
@@ -276,10 +302,28 @@ def main() -> None:
                     continue
                 kb = built["kwargs"]
                 kc = {k: (v.clone() if torch.is_tensor(v) else v) for k, v in kb.items()}
+                # Repair each arm's inputs once, outside every timed region. The two arms
+                # get their own hook, so a candidate that needs a different reconstruction
+                # can ship one - and neither pays for the other's.
+                try:
+                    if o["op"] in (base_fix or {}):
+                        kb = base_fix[o["op"]](kb)
+                    if cand_run is not None and o["op"] in (cand_fix or {}):
+                        kc = cand_fix[o["op"]](kc)
+                    elif cand_run is not None and o["op"] in (base_fix or {}):
+                        # A candidate without its own hook is fed the baseline's
+                        # reconstruction, not raw rows: the inputs are the contract.
+                        kc = base_fix[o["op"]](kc)
+                except Exception as exc:
+                    report["rows"].append({"row_id": r["row_id"], "op": o["op"],
+                                           "status": "RECONSTRUCT failed: %r" % (exc,)})
+                    print("%-34s %-22s  RECONSTRUCT failed: %s" % (r["row_id"], r["group"], exc))
+                    continue
                 trust_ok, trust_why = True, ""
                 try:
                     trust_ok, trust_why = gates.reference_is_trustworthy(
-                        lambda **kw: base_run(_op=o["op"], **kw), kb, o["op"])
+                        lambda **kw: base_run(_op=o["op"], **kw), kb, o["op"],
+                        tokens=_row_tokens(r))
                 except Exception as exc:
                     trust_ok, trust_why = False, "baseline raised: %s" % str(exc).splitlines()[-1][:110]
                 if not trust_ok:
@@ -339,7 +383,7 @@ def main() -> None:
                 else:
                     got = cand_run(_op=o["op"],
                                    **{k: (v.clone() if torch.is_tensor(v) else v) for k, v in kb.items()})
-                    ok, detail = compare(mode, ref, got, built["payload"], op=o["op"])
+                    ok, detail = compare(mode, ref, got, built["payload"], op=o["op"], row=r)
                     entry["correct"] = ok
                     entry["correctness_detail"] = detail
                     if ok is False:

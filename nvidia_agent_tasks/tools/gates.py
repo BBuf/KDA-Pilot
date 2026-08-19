@@ -34,7 +34,58 @@ def tol_for(op: str, ref=None) -> dict:
     return tolerances.get(op, dt)
 
 
-def compare(mode: str, ref, got, op: str = "", rtol: float = None, atol: float = None):
+def written_scale_rows(scale, tokens: int):
+    """Which rows of a swizzled NVFP4 scale block the kernel actually wrote.
+
+    `flashinfer.silu_and_mul_scaled_nvfp4_experts_quantize` returns its scale
+    factors in the 6-D swizzled layout `[32, 4, ceil(T/128), 4, K/32, 1]`, where
+    token row `r` lives at `(r % 32, (r // 32) % 4, r // 128)`. The row count is
+    padded up to a multiple of 128 and the padding rows are never written, so their
+    bytes are whatever the allocator last left there: two calls with byte-identical
+    inputs return scale blocks that differ outside the written rows, and a
+    bit-exact gate over the whole tensor fails the *reference against itself* on
+    every row where `T % 128 != 0` while passing where T is already a multiple of
+    128.
+
+    Comparing the written rows only is also the stricter gate: the padding is not
+    part of the kernel's output, and a candidate that skips a row it should have
+    written now fails instead of hiding in allocator noise.
+    """
+    lanes, groups, tiles = scale.shape[0], scale.shape[1], scale.shape[2]
+    row = (torch.arange(tiles, device=scale.device).view(1, 1, tiles) * (lanes * groups)
+           + torch.arange(groups, device=scale.device).view(1, groups, 1) * lanes
+           + torch.arange(lanes, device=scale.device).view(lanes, 1, 1))
+    return row < tokens
+
+
+def _compare_swizzled_quantize(ref, got, tokens: int):
+    """out0 (packed nibbles, exactly T rows) in full; out1 over the written rows."""
+    if not (isinstance(ref, (tuple, list)) and isinstance(got, (tuple, list))):
+        return None, "expected (packed, scale) from a quantizer"
+    if len(ref) != len(got):
+        return False, "candidate returned %d outputs, reference %d" % (len(got), len(ref))
+    if not torch.equal(got[0].view(torch.uint8), ref[0].view(torch.uint8)):
+        return False, "packed output is NOT bit-exact"
+    r, g = ref[1], got[1]
+    if r.shape != g.shape:
+        return False, "scale shape %s != %s" % (list(g.shape), list(r.shape))
+    if r.dim() != 6:
+        ok = torch.equal(g.view(torch.uint8), r.view(torch.uint8))
+        return ok, "scale block bit-exact" if ok else "scale block NOT bit-exact"
+    keep = written_scale_rows(r, tokens)
+    rb = r.view(torch.uint8)[keep]
+    gb = g.view(torch.uint8)[keep]
+    if torch.equal(rb, gb):
+        return True, ("bit-exact: packed output in full, scale block over the %d written "
+                      "rows of %d (the 128-row padding is never written - see "
+                      "gates.written_scale_rows)" % (int(keep.sum()), keep.numel()))
+    n = int((rb != gb).sum())
+    return False, ("scale block differs in %d of %d bytes inside the written rows"
+                   % (n, rb.numel()))
+
+
+def compare(mode: str, ref, got, op: str = "", rtol: float = None, atol: float = None,
+            tokens: int = 0):
     """-> (ok: bool|None, detail: str). None means 'this gate needs the chain runner'.
 
     Numeric comparisons use `torch.testing.assert_close` semantics with the rtol/atol
@@ -46,6 +97,8 @@ def compare(mode: str, ref, got, op: str = "", rtol: float = None, atol: float =
     if atol is None:
         atol = t["atol"]
     src = t.get("source", "")
+    if op == "qwen38_silu_fp4_quantize" and tokens:
+        return _compare_swizzled_quantize(ref, got, tokens)
     if t.get("exact") and mode not in ("index_set",):
         mode = "bitexact"
     if mode == "index_set":
@@ -165,7 +218,24 @@ def chained_verdict(res: dict, op: str = "", rtol: float = None, atol: float = N
                    t.get("source", ""), res["steps"], res["max_per_step_output_rel_err"]))
 
 
-def reference_is_trustworthy(call, kwargs, op: str = "") -> tuple:
+def _swizzle_written(t, op: str, tokens: int):
+    """Restrict a padded NVFP4 scale block to the rows the kernel writes.
+
+    Used by `reference_is_trustworthy` for the same reason `compare` uses it: the
+    128-row padding is never written, so its bytes are allocator leftovers. They
+    can be NaN, and they differ between two allocations - which made the trust
+    check report "baseline output contains NaN/Inf" and "two identical baseline
+    calls disagree" on a reference that is in fact perfectly reproducible where it
+    writes.
+    """
+    if op != "qwen38_silu_fp4_quantize" or not tokens or not torch.is_tensor(t):
+        return t
+    if t.dim() != 6:
+        return t
+    return t.view(torch.uint8)[written_scale_rows(t, tokens)]
+
+
+def reference_is_trustworthy(call, kwargs, op: str = "", tokens: int = 0) -> tuple:
     """Run the baseline twice on identical inputs before judging anything.
 
     A row whose inputs had to be allocated (because the task does not ship a payload for
@@ -193,6 +263,9 @@ def reference_is_trustworthy(call, kwargs, op: str = "") -> tuple:
 
     a, b = tensors(r1, first_kwargs), tensors(r2, second_kwargs)
     c = tensors(rets[2], kws[2])
+    a = [_swizzle_written(t, op, tokens) for t in a]
+    b = [_swizzle_written(t, op, tokens) for t in b]
+    c = [_swizzle_written(t, op, tokens) for t in c]
     if not a:
         return True, "no tensor output to check"
     for t in a:

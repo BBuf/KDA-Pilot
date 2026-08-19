@@ -34,6 +34,16 @@ def _entry(kind):
     return m
 
 
+def _row_tokens(row):
+    """The token count a shape-derived gate needs off the row (see gates.compare)."""
+    for name in ("a", "input", "x"):
+        spec = row["args"].get(name)
+        if isinstance(spec, dict) and spec.get("shape"):
+            shape = spec["shape"]
+            return int(shape[-2]) if len(shape) >= 2 else int(shape[0])
+    return 0
+
+
 def _call(mod, op, kwargs):
     fix = getattr(mod, "RECONSTRUCT", {}) or {}
     if op in fix:
@@ -56,7 +66,8 @@ def test_candidate_matches_baseline():
             continue
         built = workload.build_inputs(TASK, row)
         kw = built["kwargs"]
-        trust, why = gates.reference_is_trustworthy(lambda **k: _call(base, op, k), kw, op)
+        trust, why = gates.reference_is_trustworthy(lambda **k: _call(base, op, k), kw, op,
+                                                      tokens=_row_tokens(row))
         if not trust:
             skipped += 1
             print("skip %s: %s" % (row["row_id"], why))
@@ -73,7 +84,7 @@ def test_candidate_matches_baseline():
                 break
             continue
         ok, detail = gates.compare("tolerance" if MODE == "chained_state" else MODE,
-                                   ref, got, op=op)
+                                   ref, got, op=op, tokens=_row_tokens(row))
         checked += 1
         if ok is False:
             failures.append("%s (%s): %s" % (row["row_id"], row["group"], detail))

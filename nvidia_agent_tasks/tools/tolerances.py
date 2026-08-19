@@ -71,11 +71,30 @@ TOLERANCES = {
         "source": "test/registered/kernels/ops/test_kimi_k3_prerequisite_ops.py:385-386",
         "note": "compared in double precision against x @ w.T."},
 
+    # ---- NVFP4 / FP8 on sm_120 (Qwen3.8-27B) --------------------------------
+    "nvfp4_gemm": {
+        "bfloat16": (1e-2, 2e-2),
+        "source": "test/registered/attention/test_chunk_gated_delta_rule.py:28-29",
+        "note": ("SGLang ships no dedicated mm_fp4 test; this is the same fallback "
+                 "tolerance its linear-attention tests use for a bf16 output built "
+                 "from a low-precision accumulation.")},
+    "fp8_linear": {
+        "bfloat16": (2e-2, 1.0),
+        "source": "test/registered/kernels/ops/gemm/test_fp8_blockwise_gemm.py:73-75",
+        "note": ("atol is 1.0 because the reference is an fp32 matmul cast to bf16: "
+                 "absolute error scales with K, which is 5120-16384 on these rows.")},
+
     # ---- exact gates -------------------------------------------------------
     "dsa_index_transform": {
         "exact": True,
         "source": "test/registered/kernels/ops/attention/test_dsa_transform_index.py:120",
         "note": "rtol=0, atol=0 - an index transform is exact or it is wrong."},
+    "packed_bytes": {
+        "exact": True,
+        "source": "test/registered/moe/test_triton_fused_moe.py:45-49",
+        "note": ("A quantizer's outputs are packed nibbles and e4m3 scale blocks, and a "
+                 "split/reshape/cat only moves bytes: any difference is a different "
+                 "encoding, not rounding. Bit-exact or wrong.")},
     "diffusion_conv3d_cat_pad": {
         "exact": True,
         "source": "test/registered/kernels/ops/diffusion/test_causal_conv3d_cat_pad.py:73"},
@@ -142,6 +161,15 @@ OP_FAMILY = {
     "diffusion_attention_fa4": "attention_splitkv",
     "diffusion_attention_sdpa": "attention_splitkv",
     "diffusion_causal_conv3d_cat_pad": "diffusion_conv3d_cat_pad",
+    # qwen38_nvfp4__* (sm_120 verify tier)
+    "qwen38_fp4_gemm": "nvfp4_gemm",
+    "qwen38_fp4_quantize": "packed_bytes",
+    "qwen38_silu_fp4_quantize": "packed_bytes",
+    "qwen38_fp8_gemv": "fp8_linear",
+    "qwen38_fp8_linear": "fp8_linear",
+    "qwen38_gdn_gating_update": "kda_decode",
+    "qwen38_qkvzba_split": "packed_bytes",
+    "qwen38_conv1d_update": "causal_conv1d",
 }
 
 DEFAULT = {"rtol": 1e-2, "atol": 2e-2,

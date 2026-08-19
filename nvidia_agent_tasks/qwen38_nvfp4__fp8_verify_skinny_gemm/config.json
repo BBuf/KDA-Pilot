@@ -1,22 +1,65 @@
 {
- "task": {
-  "slug": "qwen38_nvfp4__fp8_verify_skinny_gemm",
-  "model": "RadixArk/Qwen3.8-27B-NVFP4",
-  "arch": "sm120",
-  "target_gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition (sm_120)",
-  "ops": [
-   "qwen38_fp8_gemv",
-   "qwen38_fp8_linear"
-  ]
- },
- "capture": {
-  "cookbook_command": "python3 -m sglang.launch_server --model-path <snap> --trust-remote-code --tp-size 1 --disable-radix-cache --mem-fraction-static 0.85 --max-running-requests 8 --cuda-graph-max-bs 8 --mamba-ssm-dtype bfloat16 --kv-cache-dtype fp8_e4m3 --speculative-algorithm DSPARK --speculative-draft-model-path RadixArk/Qwen3.8-27B-0811-DSpark-Stage2 --speculative-dspark-block-size 8",
-  "measured_share": "34.0% of plain-decode (sm120_fp8_gemv); ~27% of DSpark verify step after falling to cuBLAS tiny-M tiles"
- },
- "environment": {
-  "host": "jimmy-sglang-kimi-ae1a-node-2 (GCP sglang-jax-1126, asia-east1-a)",
-  "sglang": "main@8922bb98e2 + #34859 + #34934",
-  "flashinfer": "0.6.18",
-  "torch": "2.13.0+cu130"
- }
+  "task": {
+    "slug": "qwen38_nvfp4__fp8_verify_skinny_gemm",
+    "model": "RadixArk/Qwen3.8-27B-NVFP4",
+    "arch": "sm120",
+    "target_gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition (sm_120)",
+    "ops": [
+      "qwen38_fp8_gemv",
+      "qwen38_fp8_linear"
+    ]
+  },
+  "capture": {
+    "cookbook_command": "python3 -m sglang.launch_server --model-path <snap> --trust-remote-code --tp-size 1 --disable-radix-cache --mem-fraction-static 0.85 --max-running-requests 8 --cuda-graph-max-bs 8 --mamba-ssm-dtype bfloat16 --kv-cache-dtype fp8_e4m3 --speculative-algorithm DSPARK --speculative-draft-model-path RadixArk/Qwen3.8-27B-0811-DSpark-Stage2 --speculative-dspark-block-size 8",
+    "measured_share": "34.0% of plain-decode (sm120_fp8_gemv); ~27% of DSpark verify step after falling to cuBLAS tiny-M tiles"
+  },
+  "environment": {
+    "host": "jimmy-sglang-kimi-ae1a-node-2 (GCP sglang-jax-1126, asia-east1-a)",
+    "sglang": "main@8922bb98e2 + #34859 + #34934",
+    "flashinfer": "0.6.18",
+    "torch": "2.13.0+cu130"
+  },
+  "build": {
+    "baseline_dir": "baseline/",
+    "candidate_dir": "solution/",
+    "language": "cuda / cute-dsl / triton (candidate's choice)"
+  },
+  "benchmark": {
+    "timing": "triton.testing.do_bench around a captured CUDA graph, L2 cold, interleaved A/B",
+    "warmup_runs": 10,
+    "iterations": 200,
+    "num_trials": 7,
+    "contract": "../docs/measurement_contract.md"
+  },
+  "correctness": {
+    "contract": "../docs/anti_hack_contract.md",
+    "mode": "tolerance",
+    "tolerances": {
+      "qwen38_fp8_gemv": {
+        "family": "fp8_linear",
+        "op": "qwen38_fp8_gemv",
+        "source": "test/registered/kernels/ops/gemm/test_fp8_blockwise_gemm.py:73-75",
+        "note": "atol is 1.0 because the reference is an fp32 matmul cast to bf16: absolute error scales with K, which is 5120-16384 on these rows.",
+        "rtol": 0.02,
+        "atol": 1.0,
+        "dtype": "bfloat16"
+      },
+      "qwen38_fp8_linear": {
+        "family": "fp8_linear",
+        "op": "qwen38_fp8_linear",
+        "source": "test/registered/kernels/ops/gemm/test_fp8_blockwise_gemm.py:73-75",
+        "note": "atol is 1.0 because the reference is an fp32 matmul cast to bf16: absolute error scales with K, which is 5120-16384 on these rows.",
+        "rtol": 0.02,
+        "atol": 1.0,
+        "dtype": "bfloat16"
+      }
+    },
+    "policy": "rtol/atol are copied from SGLang's own test for each kernel (source cited per op). Do not loosen them in a task; if a tolerance is wrong, fix it upstream and re-copy.",
+    "notes": [
+      "`qwen38_fp8_gemv` templates its kernel on the (N, K) it reads off the weight, so RECONSTRUCT re-orients the recorded [K, N]. `qwen38_fp8_linear` takes the recorded orientation as-is."
+    ]
+  },
+  "workload": {
+    "real_tensor_coverage": "8 rows,   4 with payload ( 50%),    6/  20 data args real ( 30%)"
+  }
 }
