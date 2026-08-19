@@ -1,0 +1,246 @@
+{
+  "op": "triton_decode_attention_grouped",
+  "group": "gsm8k_5shot_cc32",
+  "scalars": {
+    "max_kv_splits": 8,
+    "sm_scale_withk": 0.0625,
+    "v_scale": 1.0,
+    "logit_cap": 0.0,
+    "sinks": null,
+    "xai_temperature_len": -1,
+    "has_mla": false,
+    "use_pdl": true,
+    "page_size": 1,
+    "score_mod": null,
+    "aux_tensors": null
+  },
+  "tensors": {
+    "in_q": {
+      "shape": [
+        28,
+        2,
+        256
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+        512,
+        256,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 14336,
+      "bytes": 28672,
+      "file": "in_q.pt"
+    },
+    "in_k_buffer__rows": {
+      "shape": [
+        26029
+      ],
+      "dtype": "int64",
+      "stride": [
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 26029,
+      "bytes": 208232,
+      "file": "in_k_buffer__rows.pt"
+    },
+    "in_v_buffer__rows": {
+      "shape": [
+        26029
+      ],
+      "dtype": "int64",
+      "stride": [
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 26029,
+      "bytes": 208232,
+      "file": "in_v_buffer__rows.pt"
+    },
+    "in_o": {
+      "shape": [
+        28,
+        2,
+        256
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+        512,
+        256,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 14336,
+      "bytes": 28672,
+      "file": "in_o.pt"
+    },
+    "in_kv_indptr": {
+      "shape": [
+        29
+      ],
+      "dtype": "int32",
+      "stride": [
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 29,
+      "bytes": 116,
+      "file": "in_kv_indptr.pt"
+    },
+    "in_kv_indices": {
+      "shape": [
+        26029
+      ],
+      "dtype": "int64",
+      "stride": [
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 26029,
+      "bytes": 208232,
+      "file": "in_kv_indices.pt"
+    },
+    "in_attn_logits": {
+      "shape": [
+        28,
+        2,
+        8,
+        256
+      ],
+      "dtype": "float32",
+      "stride": [
+        4096,
+        2048,
+        256,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 114688,
+      "bytes": 458752,
+      "file": "in_attn_logits.pt"
+    },
+    "in_attn_lse": {
+      "shape": [
+        28,
+        2,
+        8
+      ],
+      "dtype": "float32",
+      "stride": [
+        16,
+        8,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 448,
+      "bytes": 1792,
+      "file": "in_attn_lse.pt"
+    },
+    "in_num_kv_splits": {
+      "shape": [
+        28
+      ],
+      "dtype": "int32",
+      "stride": [
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 28,
+      "bytes": 112,
+      "file": "in_num_kv_splits.pt"
+    }
+  },
+  "metadata_only": {
+    "in_k_buffer__gathered": {
+      "shape": [
+        26029,
+        1,
+        256
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+        256,
+        256,
+        1
+      ],
+      "contiguous": true,
+      "device": "cpu",
+      "numel": 6663424,
+      "bytes": 13326848,
+      "file": "in_k_buffer__gathered.pt",
+      "not_saved": "weight-like tensor 13.3 MB - allocate to this shape/dtype"
+    },
+    "in_v_buffer__gathered": {
+      "shape": [
+        26029,
+        1,
+        256
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+        256,
+        256,
+        1
+      ],
+      "contiguous": true,
+      "device": "cpu",
+      "numel": 6663424,
+      "bytes": 13326848,
+      "file": "in_v_buffer__gathered.pt",
+      "not_saved": "weight-like tensor 13.3 MB - allocate to this shape/dtype"
+    }
+  },
+  "gathered": {
+    "k_buffer": {
+      "index_arg": "kv_indices",
+      "full": {
+        "shape": [
+          9357913,
+          1,
+          256
+        ],
+        "dtype": "bfloat16",
+        "stride": [
+          256,
+          256,
+          1
+        ],
+        "contiguous": true,
+        "device": "cuda",
+        "numel": 2395625728,
+        "bytes": 4791251456
+      }
+    },
+    "v_buffer": {
+      "index_arg": "kv_indices",
+      "full": {
+        "shape": [
+          9357913,
+          1,
+          256
+        ],
+        "dtype": "bfloat16",
+        "stride": [
+          256,
+          256,
+          1
+        ],
+        "contiguous": true,
+        "device": "cuda",
+        "numel": 2395625728,
+        "bytes": 4791251456
+      }
+    }
+  },
+  "bytes_on_disk": 27814018
+}

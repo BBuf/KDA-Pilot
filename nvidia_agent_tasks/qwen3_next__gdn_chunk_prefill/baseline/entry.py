@@ -37,6 +37,8 @@ def _call(module, attr, kwargs):
 
 
 OPS = {
+    "gdn_gating":
+        lambda **kw: _call("sglang.kernels.ops.attention.fla.fused_gdn_gating", "fused_gdn_gating", kw),
     "gdn_recompute_w_u":
         lambda **kw: _call("sglang.kernels.ops.attention.fla.wy_fast", "recompute_w_u_fwd", kw),
     "gdn_chunk_delta_h":

@@ -113,6 +113,8 @@ OP_FAMILY = {
     "triton_extend_attention": "triton_attention",
     # lfm25__triton_fused_moe
     "triton_fused_moe_gemm": "triton_fused_moe",
+    # glm45__fp8_fused_moe - the FP8 arm of the same kernel plus its dispatch level
+    "moe_fused_experts_fp8": "triton_fused_moe",
     "triton_moe_act_and_mul": "triton_fused_moe",
     "triton_moe_sum_reduce": "triton_fused_moe",
     "moe_align_block_size": "dsa_index_transform",     # a permutation: exact

@@ -1,0 +1,135 @@
+{
+  "op": "dsa_indexer_logits_deepgemm_DEFAULT",
+  "group": "gsm8k_16shot_cc16",
+  "scalars": {
+    "max_context_len": 262208,
+    "clean_logits": false
+  },
+  "tensors": {
+    "in_q": {
+      "shape": [
+        12,
+        1,
+        64,
+        128
+      ],
+      "dtype": "float8_e4m3fn",
+      "stride": [
+        8192,
+        8192,
+        128,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 98304,
+      "bytes": 98304,
+      "file": "in_q.pt"
+    },
+    "in_weights": {
+      "shape": [
+        12,
+        64
+      ],
+      "dtype": "float32",
+      "stride": [
+        64,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 768,
+      "bytes": 3072,
+      "file": "in_weights.pt"
+    },
+    "in_context_lens": {
+      "shape": [
+        12,
+        1
+      ],
+      "dtype": "int32",
+      "stride": [
+        1,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 12,
+      "bytes": 48,
+      "file": "in_context_lens.pt"
+    },
+    "in_block_table": {
+      "shape": [
+        12,
+        4097
+      ],
+      "dtype": "int32",
+      "stride": [
+        4097,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 49164,
+      "bytes": 196656,
+      "file": "in_block_table.pt"
+    },
+    "in_schedule_meta": {
+      "shape": [
+        149,
+        2
+      ],
+      "dtype": "int32",
+      "stride": [
+        2,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 298,
+      "bytes": 1192,
+      "file": "in_schedule_meta.pt"
+    }
+  },
+  "metadata_only": {
+    "in_kv_cache": {
+      "shape": [
+        100316,
+        64,
+        1,
+        132
+      ],
+      "dtype": "uint8",
+      "stride": [
+        8448,
+        132,
+        132,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 847469568,
+      "bytes": 847469568,
+      "not_saved": "skip_args"
+    },
+    "out": {
+      "shape": [
+        12,
+        262208
+      ],
+      "dtype": "float32",
+      "stride": [
+        262400,
+        1
+      ],
+      "contiguous": false,
+      "device": "cuda",
+      "numel": 3146496,
+      "bytes": 12585984,
+      "file": "out.pt",
+      "not_saved": "oversized tensor 12.6 MB - allocate to this shape/dtype"
+    }
+  },
+  "gathered": {},
+  "bytes_on_disk": 12894658
+}

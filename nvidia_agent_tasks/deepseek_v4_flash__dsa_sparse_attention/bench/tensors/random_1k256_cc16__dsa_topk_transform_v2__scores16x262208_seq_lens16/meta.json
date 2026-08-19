@@ -1,0 +1,92 @@
+{
+  "op": "dsa_topk_transform_v2",
+  "group": "random_1k256_cc16",
+  "scalars": {
+    "page_size": 64
+  },
+  "tensors": {
+    "in_seq_lens": {
+      "shape": [
+        16
+      ],
+      "dtype": "int32",
+      "stride": [
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 16,
+      "bytes": 64,
+      "file": "in_seq_lens.pt"
+    },
+    "in_page_tables": {
+      "shape": [
+        16,
+        4097
+      ],
+      "dtype": "int32",
+      "stride": [
+        4097,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 65552,
+      "bytes": 262208,
+      "file": "in_page_tables.pt"
+    },
+    "in_out_page_indices": {
+      "shape": [
+        16,
+        512
+      ],
+      "dtype": "int32",
+      "stride": [
+        512,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 8192,
+      "bytes": 32768,
+      "file": "in_out_page_indices.pt"
+    },
+    "in_metadata": {
+      "shape": [
+        17,
+        2
+      ],
+      "dtype": "int32",
+      "stride": [
+        2,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 34,
+      "bytes": 136,
+      "file": "in_metadata.pt"
+    }
+  },
+  "metadata_only": {
+    "in_scores": {
+      "shape": [
+        16,
+        262208
+      ],
+      "dtype": "float32",
+      "stride": [
+        262400,
+        1
+      ],
+      "contiguous": false,
+      "device": "cuda",
+      "numel": 4195328,
+      "bytes": 16781312,
+      "file": "in_scores.pt",
+      "not_saved": "oversized tensor 16.8 MB - allocate to this shape/dtype"
+    }
+  },
+  "gathered": {},
+  "bytes_on_disk": 17084568
+}
