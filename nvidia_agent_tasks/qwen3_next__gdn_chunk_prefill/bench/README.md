@@ -30,6 +30,31 @@ not the object around it:
 The harness reports those rows as `NOT RUNNABLE` with the missing argument
 named, and keeps going with the rest.
 
+
+## Dropping a candidate in
+
+```bash
+cp solution/entry.py.template solution/entry.py     # implement the ops listed there
+python tools/bench_harness.py qwen3_next__gdn_chunk_prefill --json report.json
+python qwen3_next__gdn_chunk_prefill/tests/test_solution.py
+```
+
+`solution/entry.py` exposes the same `OPS` keys as `baseline/entry.py`, so the harness
+calls both arms with identical inputs. The path is validated end to end with an identity
+candidate (one that just calls the baseline): **1.002x geomean with every gate green**,
+which is also this harness's measurement floor - trials alternate which arm runs first,
+because running the candidate second in every trial was worth ~2% on its own.
+
+`tests/test_solution.py` runs the same gate without timing: every row through
+`config.json::correctness.mode`, plus - where the task ships a state chain - the chained
+final-state gate (`gates.replay_chain` feeds each step's produced state into the next and
+compares the final one; on the identity candidate that reads `final state rel err 0 over
+N chained steps`).
+
+A row whose integer index arguments had to be allocated can address out of bounds and take
+the CUDA context down; the harness and the test detect that, name the row, and stop rather
+than reporting nonsense for every row after it.
+
 ## What is in here
 
 | file | contents |
