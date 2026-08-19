@@ -49,4 +49,39 @@ OPS = {
 # Arguments the capture could not serialize (a triton dtype, a plan struct) are rebuilt
 # here, once per task, so every workload row becomes runnable. The harness calls
 # RECONSTRUCT[op](kwargs) before dispatch.
-RECONSTRUCT: dict = {}
+def _impl(module: str, cls: str):
+    """Build the attention backend instance the bound method needs.
+
+    The capture records `self` as a repr - an attention impl is not serializable - so the
+    row cannot supply it. Every constructor argument is derivable from the row itself:
+    head counts and head size from the query/key shapes, the softmax scale from the head
+    size. `causal=False` because this is a video DiT: MiniMax-H3 attends bidirectionally
+    over the whole latent sequence, which is exactly why a block-sparse selector has
+    something to choose from.
+    """
+    def build(kw: dict) -> dict:
+        if "self" in kw and not isinstance(kw["self"], dict):
+            return kw
+        import importlib
+        q, k = kw["query"], kw["key"]
+        head_size = int(q.shape[-1])
+        obj = getattr(importlib.import_module(module), cls)(
+            num_heads=int(q.shape[-2]), head_size=head_size, causal=False,
+            softmax_scale=head_size ** -0.5, num_kv_heads=int(k.shape[-2]))
+        kw["self"] = obj
+        kw.setdefault("attn_metadata", None)
+        return kw
+    return build
+
+
+SDPA = "sglang.multimodal_gen.runtime.layers.attention.backends.sdpa"
+FA = "sglang.multimodal_gen.runtime.layers.attention.backends.flash_attn"
+
+# Arguments the capture could not serialize (a triton dtype, a plan struct, the instance
+# behind a bound method) are rebuilt here, once per task, so every workload row becomes
+# runnable. The harness calls RECONSTRUCT[op](kwargs) before dispatch.
+RECONSTRUCT = {
+    "diffusion_attention_cudnn_sdpa": _impl(SDPA, "DynamicCudnnSDPAImpl"),
+    "diffusion_attention_sdpa": _impl(SDPA, "SDPAImpl"),
+    "diffusion_attention_fa4": _impl(FA, "FlashAttentionImpl"),
+}

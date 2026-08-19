@@ -23,6 +23,9 @@ import json
 import os
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from payload_match import payload_conflicts  # noqa: E402  same rule the harness uses
+
 # Not shipped by design, and recorded as metadata instead:
 #   * weights - shipping them would mean shipping model weights (one 6016x7168 bf16 is 86 MB)
 #   * whole state/KV pools - the touched rows ship instead (state_before_*/__rows)
@@ -62,6 +65,8 @@ def report(task: str) -> dict:
                 for dirpath, op, shapes in idx:
                     if op and op != o["op"]:
                         continue
+                    if payload_conflicts(dirpath, r):
+                        continue
                     hits = sum(1 for k in data_args if shapes.get("in_" + k) == want[k])
                     if hits > best_hits:
                         best, best_hits = dirpath, hits
@@ -69,6 +74,17 @@ def report(task: str) -> dict:
                 st["real"] += best_hits
                 st["with_payload"] += 1 if best_hits else 0
     return per_op
+
+
+def line(task: str, per_op: dict) -> str:
+    """The one-line summary used by the CLI and by each task's bench/README.md."""
+    rows = sum(v["rows"] for v in per_op.values())
+    wp = sum(v["with_payload"] for v in per_op.values())
+    real = sum(v["real"] for v in per_op.values())
+    args = sum(v["data_args"] for v in per_op.values())
+    return ("%-44s %3d rows, %3d with payload (%3.0f%%), %4d/%4d data args real (%3.0f%%)"
+            % (os.path.basename(os.path.normpath(task)), rows, wp, 100 * wp / max(rows, 1),
+               real, args, 100 * real / max(args, 1)))
 
 
 def main() -> None:
@@ -83,8 +99,7 @@ def main() -> None:
         real = sum(v["real"] for v in per_op.values())
         args = sum(v["data_args"] for v in per_op.values())
         grand = [grand[0] + rows, grand[1] + wp, grand[2] + real, grand[3] + args]
-        print("%-44s %3d rows, %3d with payload (%3.0f%%), %4d/%4d data args real (%3.0f%%)"
-              % (t, rows, wp, 100 * wp / max(rows, 1), real, args, 100 * real / max(args, 1)))
+        print(line(t, per_op))
         for op, v in sorted(per_op.items(), key=lambda kv: -kv[1]["rows"]):
             print("      %-40s %3d rows  %3d payload  %4d/%4d args"
                   % (op, v["rows"], v["with_payload"], v["real"], v["data_args"]))

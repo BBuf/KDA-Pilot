@@ -21,6 +21,10 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from payload_match import payload_conflicts  # noqa: E402  shared with the run-time harness
 
 
 def _bytes_of(args: dict) -> int:
@@ -37,16 +41,25 @@ def _row_inputs(r: dict) -> dict:
 
 
 def _payload_hits(r: dict, payloads: list) -> int:
-    """How many of this row's inputs a shipped payload can supply."""
+    """How many of this row's inputs a shipped payload can supply.
+
+    A payload whose folder name records shapes that contradict this row is skipped, not
+    scored: when the large tensors were too big to ship, two calls of very different
+    sequence length match equally well on their small arguments, and the row would then
+    silently run on another call's segment arrays. Same rule as `tools/payload_match.py`
+    uses at run time.
+    """
     want = _row_inputs(r)
     best = 0
-    for shapes in payloads or []:
+    for path, shapes in payloads or []:
+        if payload_conflicts(path, r):
+            continue
         hits = sum(1 for k, sh in shapes.items() if want.get(k) == sh)
         best = max(best, hits)
     return best
 
 
-def select(rows: list, top: int, with_payload: set = None) -> list:
+def select(rows: list, top: int, with_payload: set = None, max_unbacked: int = 0) -> list:
     if not rows:
         return []
     if with_payload:
@@ -79,6 +92,17 @@ def select(rows: list, top: int, with_payload: set = None) -> list:
         groups.setdefault(r["group"], r)
     for g, r in groups.items():
         add(r, "operating-point coverage: %s" % g)
+    if max_unbacked:
+        # A row with no payload of its own runs on tensors allocated to its shape. Those
+        # rows still carry a real production shape, but they cannot show a candidate what
+        # the real distribution looks like - so keep only a few of them per op, and keep
+        # the ones that widen the shape range (smallest / largest footprint) first.
+        backed = [r for r in keep if _payload_hits(r, with_payload)]
+        unbacked = [r for r in keep if not _payload_hits(r, with_payload)]
+        unbacked.sort(key=lambda r: (0 if any("footprint" in w for w in r["kept_because"]) else 1,
+                                     -r["count"]))
+        order = {id(r): i for i, r in enumerate(keep)}
+        keep = sorted(backed + unbacked[:max_unbacked], key=lambda r: order[id(r)])
     return keep
 
 
@@ -91,6 +115,8 @@ def main() -> None:
     ap.add_argument("--task", default="")
     ap.add_argument("--model", default="")
     ap.add_argument("--provenance", default="", help="path to capture_provenance.json to embed")
+    ap.add_argument("--max-unbacked", type=int, default=0,
+                    help="cap the rows per op that have no payload of their own (0 = no cap)")
     ap.add_argument("--payloads", default="",
                     help="tensors dir from the SAME capture: rows that have a payload are "
                          "kept first, so every shipped row runs on real tensors")
@@ -107,7 +133,8 @@ def main() -> None:
             # metadata in the payload and simply do not participate
             shapes = {k: tuple(v["shape"]) for k, v in meta.get("tensors", {}).items()
                       if k.startswith("in_")}
-            have_payload.setdefault(meta.get("op"), []).append(shapes)
+            have_payload.setdefault(meta.get("op"), []).append(
+                (os.path.dirname(meta_p), shapes))
     real = man["real_workload_shapes"]
     want = [o for o in args.ops.split(",") if o]
     ops = {}
@@ -130,7 +157,7 @@ def main() -> None:
         out["capture_provenance"] = json.load(open(args.provenance))
 
     for op, rows in sorted(ops.items(), key=lambda kv: -sum(r["count"] for r in kv[1])):
-        kept = select(rows, args.top, have_payload.get(op))
+        kept = select(rows, args.top, have_payload.get(op), args.max_unbacked)
         out["ops"].append({
             "op": op,
             "total_real_calls": sum(r["count"] for r in rows),

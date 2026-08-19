@@ -9,188 +9,213 @@ recapture rather than editing this file.
 
 ### workloads.json — model `deepseek-ai/DeepSeek-V4-Flash`
 
-**`dsa_compress_forward`** — 183,527 real calls, 209 distinct signatures, 11 rows kept
+**`dsa_compress_forward`** — 271,820 real calls, 267 distinct signatures, 7 rows kept
 
-- `kv_score_buffer[T, N, M]` float32 — T ∈ {259, 40143} — N ∈ {4, 128} — M ∈ {512, 1024, 2048}
-- `kv_score_input[T, N]` float32 — T ∈ {1, 13, 16, 32, 15636} — N ∈ {512, 1024, 2048}
+- `kv_score_buffer[T, N, M]` float32 — T ∈ {259, 40127} — N ∈ {4, 128} — M ∈ {512, 1024, 2048}
+- `kv_score_input[T, N]` float32 — T ∈ {1, 16, 32, 15636} — N ∈ {512, 1024, 2048}
 - `ape[T, N]` float32 — T ∈ {8, 128} — N ∈ {128, 512}
 
-**`dsa_compress_norm_rope_store`** — 183,526 real calls, 209 distinct signatures, 11 rows kept
+**`dsa_compress_norm_rope_store`** — 271,820 real calls, 267 distinct signatures, 9 rows kept
 
-- `kv[T, N]` float32 — T ∈ {1, 13, 16, 32, 3907} — N ∈ {128, 512}
+- `kv[T, N]` float32 — T ∈ {0, 1, 16, 32, 3907} — N ∈ {128, 512}
 - `norm_weight[T]` float32 — T ∈ {128, 512}
 - `freq_cis[1048576, 32]` complex64
-- `out_loc[T]` int64 — T ∈ {1, 13, 16, 32, 15636}
-- `kvcache[100358, T]` uint8 — T ∈ {1728, 8448, 37440}
+- `out_loc[T]` int64 — T ∈ {1, 16, 32, 100, 15636}
+- `kvcache[100316, T]` uint8 — T ∈ {1728, 8448, 37440}
 
-**`dsa_fused_q_indexer_rope_hadamard_quant`** — 62,164 real calls, 70 distinct signatures, 8 rows kept
+**`dsa_fused_q_indexer_rope_hadamard_quant`** — 92,068 real calls, 89 distinct signatures, 7 rows kept
 
-- `q_input[T, 64, 128]` bfloat16 — T ∈ {1, 2, 10, 11, 13, 16, 32, 15636}
-- `weight[T, 64]` bfloat16 — T ∈ {1, 2, 10, 11, 13, 16, 32, 15636}
+- `q_input[T, 64, 128]` bfloat16 — T ∈ {1, 10, 11, 13, 14, 32, 15636}
+- `weight[T, 64]` bfloat16 — T ∈ {1, 10, 11, 13, 14, 32, 15636}
 - `freqs_cis[1048576, 32]` complex64
-- `positions[T]` int32 — T ∈ {1, 2, 10, 11, 13, 16, 32, 15636}
+- `positions[T]` int32 — T ∈ {1, 10, 11, 13, 14, 32, 15636}
 
-**`dsa_indexer_logits_deepgemm_DEFAULT`** — 62,164 real calls, 70 distinct signatures, 8 rows kept
+**`dsa_indexer_logits_deepgemm_DEFAULT`** — 92,068 real calls, 89 distinct signatures, 7 rows kept
 
-- `q[T, 1, 64, 128]` float8_e4m3fn — T ∈ {1, 2, 10, 11, 13, 16, 32, 15636}
-- `kv_cache[100358, 64, 1, 132]` uint8
-- `weights[T, 64]` float32 — T ∈ {1, 2, 10, 11, 13, 16, 32, 15636}
-- `context_lens[T, 1]` int32 — T ∈ {1, 2, 10, 11, 13, 16, 32, 15636}
-- `block_table[T, N]` int32 — T ∈ {1, 2, 10, 11, 13, 16, 32, 15636} — N ∈ {12, 4097}
+- `q[T, 1, 64, 128]` float8_e4m3fn — T ∈ {1, 12, 13, 14, 15, 31, 15636}
+- `kv_cache[100316, 64, 1, 132]` uint8
+- `weights[T, 64]` float32 — T ∈ {1, 12, 13, 14, 15, 31, 15636}
+- `context_lens[T, 1]` int32 — T ∈ {1, 12, 13, 14, 15, 31, 15636}
+- `block_table[T, N]` int32 — T ∈ {1, 12, 13, 14, 15, 31, 15636} — N ∈ {12, 4097}
 - `schedule_meta[149, 2]` int32
 
-**`dsa_topk_transform_v2`** — 59,808 real calls, 43 distinct signatures, 7 rows kept
+**`dsa_topk_transform_v2`** — 89,548 real calls, 60 distinct signatures, 8 rows kept
 
-- `scores[T, 262208]` float32 **non-contiguous** — T ∈ {1, 2, 10, 11, 13, 16, 32}
-- `seq_lens[T]` int32 — T ∈ {1, 2, 10, 11, 13, 16, 32}
-- `page_tables[T, 4097]` int32 — T ∈ {1, 2, 10, 11, 13, 16, 32}
-- `out_page_indices[T, 512]` int32 — T ∈ {1, 2, 10, 11, 13, 16, 32}
-- `metadata[T, 2]` int32 — T ∈ {2, 3, 11, 12, 14, 17, 33}
+- `scores[T, 262208]` float32 **non-contiguous** — T ∈ {1, 12, 13, 14, 15, 16, 27, 32}
+- `seq_lens[T]` int32 — T ∈ {1, 12, 13, 14, 15, 16, 27, 32}
+- `page_tables[T, 4097]` int32 — T ∈ {1, 12, 13, 14, 15, 16, 27, 32}
+- `out_page_indices[T, 512]` int32 — T ∈ {1, 12, 13, 14, 15, 16, 27, 32}
+- `metadata[T, 2]` int32 — T ∈ {2, 13, 14, 15, 16, 17, 28, 33}
 
-**`dsa_sparse_attention_flash_mla_alt`** — 4,825 real calls, 80 distinct signatures, 12 rows kept
+**`dsa_sparse_attention_flash_mla_alt`** — 5,160 real calls, 87 distinct signatures, 4 rows kept
 
-- `q[T, 64, 512]` bfloat16 — T ∈ {696, 704, 710, 719, 733, 742, 2885, 15074, 15636}
-- `kv[T, 1, 512]` bfloat16 — T ∈ {696, 715, 747, 870, 880, 887, 898, 916, 927, 3606, ...}
-- `indices[T, 1, N]` int32 — T ∈ {696, 704, 710, 719, 733, 742, 2885, 15074, 15636} — N ∈ {128, 256, 640}
+- `q[T, 64, 512]` bfloat16 — T ∈ {100, 103, 664, 15636}
+- `kv[T, 1, 512]` bfloat16 — T ∈ {100, 128, 664, 20203}
+- `indices[T, 1, N]` int32 — T ∈ {100, 103, 664, 15636} — N ∈ {128, 640}
 - `attn_sink[64]` float32
-- `topk_length[T]` int32 — T ∈ {696, 704, 710, 719, 733, 742, 2885, 15074, 15636}
+- `topk_length[T]` int32 — T ∈ {100, 103, 664, 15636}
 
-**`dsa_paged_mqa_logits_metadata`** — 2,964 real calls, 70 distinct signatures, 8 rows kept
+**`dsa_paged_mqa_logits_metadata`** — 4,388 real calls, 89 distinct signatures, 3 rows kept
 
-- `seq_lens[T, 1]` int32 — T ∈ {1, 2, 10, 11, 13, 16, 32, 15636}
+- `seq_lens[T, 1]` int32 — T ∈ {1, 16, 15636}
 
-**`dsa_topk_transform`** — 2,356 real calls, 27 distinct signatures, 10 rows kept
+**`dsa_topk_transform`** — 2,520 real calls, 29 distinct signatures, 8 rows kept
 
-- `scores[T, N]` float32 **non-contiguous** — T ∈ {696, 704, 710, 719, 733, 742, 2885, 7417, 15074, 15636} — N ∈ {192, 256, 768}
-- `seq_lens[T]` int32 — T ∈ {696, 704, 710, 719, 733, 742, 2885, 7417, 15074, 15636}
-- `page_tables[T, N]` int32 — T ∈ {696, 704, 710, 719, 733, 742, 2885, 7417, 15074, 15636} — N ∈ {3, 4, 12}
-- `out_page_indices[T, 512]` int32 — T ∈ {696, 704, 710, 719, 733, 742, 2885, 7417, 15074, 15636}
-- `out_raw_indices[T, 512]` int32 — T ∈ {696, 704, 710, 719, 733, 742, 2885, 7417, 15074, 15636}
+- `scores[T, N]` float32 **non-contiguous** — T ∈ {100, 103, 131, 696, 733, 12570, 15106, 15636} — N ∈ {64, 192, 256, 768}
+- `seq_lens[T]` int32 — T ∈ {100, 103, 131, 696, 733, 12570, 15106, 15636}
+- `page_tables[T, N]` int32 — T ∈ {100, 103, 131, 696, 733, 12570, 15106, 15636} — N ∈ {1, 3, 4, 12}
+- `out_page_indices[T, 512]` int32 — T ∈ {100, 103, 131, 696, 733, 12570, 15106, 15636}
+- `out_raw_indices[T, 512]` int32 — T ∈ {100, 103, 131, 696, 733, 12570, 15106, 15636}
 
 ### workloads_mhc.json — model `deepseek-ai/DeepSeek-V4-Flash`
 
-**`mhc_pre_big_fuse_with_norm_tilelang`** — 155,492 real calls, 34 distinct signatures, 9 rows kept
+**`mhc_pre_big_fuse_with_norm_tilelang`** — 377,052 real calls, 89 distinct signatures, 6 rows kept
 
-- `gemm_out_mul[T, N, 24]` float32 — T ∈ {1, 64} — N ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
-- `gemm_out_sqrsum[T, N]` float32 — T ∈ {1, 64} — N ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `gemm_out_mul[T, N, 24]` float32 — T ∈ {1, 64} — N ∈ {1, 10, 11, 16, 29, 15636}
+- `gemm_out_sqrsum[T, N]` float32 — T ∈ {1, 64} — N ∈ {1, 10, 11, 16, 29, 15636}
 - `hc_scale[3]` float32
 - `hc_base[24]` float32
-- `residual[T, 4, 4096]` bfloat16 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
-- `post_mix[T, 4]` float32 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
-- `comb_mix[T, 16]` float32 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
-- `layer_input[T, 4096]` bfloat16 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `residual[T, 4, 4096]` bfloat16 — T ∈ {1, 10, 11, 16, 29, 15636}
+- `post_mix[T, 4]` float32 — T ∈ {1, 10, 11, 16, 29, 15636}
+- `comb_mix[T, 16]` float32 — T ∈ {1, 10, 11, 16, 29, 15636}
+- `layer_input[T, 4096]` bfloat16 — T ∈ {1, 10, 11, 16, 29, 15636}
 - `norm_weight[4096]` bfloat16
 
-**`mhc_pre`** — 155,492 real calls, 34 distinct signatures, 9 rows kept
+**`mhc_pre`** — 377,052 real calls, 89 distinct signatures, 4 rows kept
 
-- `residual[T, 4, 4096]` bfloat16 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `residual[T, 4, 4096]` bfloat16 — T ∈ {1, 3, 16, 15636}
 - `fn[24, 16384]` float32
 - `hc_scale[3]` float32
 - `hc_base[24]` float32
 - `norm_weight[4096]` bfloat16
 
-**`mhc_post_tilelang`** — 155,492 real calls, 34 distinct signatures, 9 rows kept
+**`mhc_post_tilelang`** — 377,048 real calls, 89 distinct signatures, 8 rows kept
 
-- `a[T, 4, 4]` float32 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
-- `b[T, 4, 4096]` bfloat16 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
-- `c[T, 4]` float32 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
-- `d[T, 4096]` bfloat16 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
-- `x[T, 4, 4096]` bfloat16 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `a[T, 4, 4]` float32 — T ∈ {1, 3, 16, 23, 32, 2922, 5134, 15636}
+- `b[T, 4, 4096]` bfloat16 — T ∈ {1, 3, 16, 23, 32, 2922, 5134, 15636}
+- `c[T, 4]` float32 — T ∈ {1, 3, 16, 23, 32, 2922, 5134, 15636}
+- `d[T, 4096]` bfloat16 — T ∈ {1, 3, 16, 23, 32, 2922, 5134, 15636}
+- `x[T, 4, 4096]` bfloat16 — T ∈ {1, 3, 16, 23, 32, 2922, 5134, 15636}
 
-**`mhc_post`** — 155,492 real calls, 34 distinct signatures, 9 rows kept
+**`mhc_post`** — 377,048 real calls, 89 distinct signatures, 7 rows kept
 
-- `x[T, 4096]` bfloat16 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
-- `residual[T, 4, 4096]` bfloat16 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
-- `post_layer_mix[T, 4]` float32 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
-- `comb_res_mix[T, 4, 4]` float32 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
+- `x[T, 4096]` bfloat16 — T ∈ {1, 3, 16, 23, 2922, 5134, 15636}
+- `residual[T, 4, 4096]` bfloat16 — T ∈ {1, 3, 16, 23, 2922, 5134, 15636}
+- `post_layer_mix[T, 4]` float32 — T ∈ {1, 3, 16, 23, 2922, 5134, 15636}
+- `comb_res_mix[T, 4, 4]` float32 — T ∈ {1, 3, 16, 23, 2922, 5134, 15636}
+
+
+## `glm45__fp8_fused_moe`
+
+**`triton_fused_moe_gemm`** — 1,604,864 real calls, 178 distinct signatures, 8 rows kept
+
+- `A[T, N]` bfloat16 — T ∈ {1, 9, 14, 15, 16, 32, 135, 146439} — N ∈ {192, 5120}
+- `B[161, T, N]` float8_e4m3fn — T ∈ {384, 5120} — N ∈ {192, 5120}
+- `C` ['[1, 9, 5120]', '[126, 384]', '[135, 384]', '[144, 384]']
+- `B_scale[161, T, 1]` float32 — T ∈ {384, 5120}
+- `topk_weights[T, 9]` float32 — T ∈ {1, 14, 15, 16, 32, 16271}
+- `topk_ids[T, 9]` int32 — T ∈ {1, 14, 15, 16, 32, 16271}
+- `sorted_token_ids[T]` int32 — T ∈ {576, 8064, 8640, 9216, 10494, 167013}
+- `expert_ids[T]` int32 — T ∈ {9, 126, 135, 144, 164, 1305}
+- `num_tokens_post_padded[1]` int32
+
+**`moe_fused_experts_fp8`** — 802,432 real calls, 89 distinct signatures, 9 rows kept
+
+- `hidden_states[T, 5120]` bfloat16 — T ∈ {1, 11, 13, 15, 16, 24, 26, 32, 16271}
+- `w1[161, 384, 5120]` float8_e4m3fn
+- `w2[161, 5120, 192]` float8_e4m3fn
+- `topk_weights[T, 9]` float32 — T ∈ {1, 11, 13, 15, 16, 24, 26, 32, 16271}
+- `topk_ids[T, 9]` int32 — T ∈ {1, 11, 13, 15, 16, 24, 26, 32, 16271}
+- `w1_scale[161, 384, 1]` float32
+- `w2_scale[161, 5120, 1]` float32
 
 
 ## `glm47_flash__triton_attention`
 
 ### workloads.json — model `zai-org/GLM-4.7-Flash`
 
-**`triton_decode_attention_grouped`** — 286,419 real calls, 5,010 distinct signatures, 18 rows kept
+**`triton_decode_attention_grouped`** — 52,923 real calls, 1,002 distinct signatures, 15 rows kept
 
-- `q[T, 20, 576]` bfloat16 — T ∈ {1, 2, 16, 32, 33}
+- `q[T, 20, 576]` bfloat16 — T ∈ {1, 7, 8, 9, 10, 11, 12, 22, 32}
 - `k_buffer[3689231, 1, 576]` bfloat16
 - `v_buffer[3689231, 1, 512]` bfloat16 **non-contiguous**
-- `o[T, 20, 512]` bfloat16 — T ∈ {1, 2, 16, 32, 33}
-- `kv_indptr[T]` int32 — T ∈ {2, 3, 17, 33, 34}
-- `kv_indices[T]` int64 — T ∈ {73, 108, 109, 110, 111, 112, 113, 114, 115, 116, ...}
-- `attn_logits[T, 20, 256, 512]` float32 — T ∈ {1, 2, 16, 32, 33}
-- `attn_lse[T, 20, 256]` float32 — T ∈ {1, 2, 16, 32, 33}
-- `num_kv_splits[T]` int32 — T ∈ {1, 2, 16, 32, 33}
+- `o[T, 20, 512]` bfloat16 — T ∈ {1, 7, 8, 9, 10, 11, 12, 22, 32}
+- `kv_indptr[T]` int32 — T ∈ {2, 8, 9, 10, 11, 12, 13, 23, 33}
+- `kv_indices[T]` int64 — T ∈ {104, 737, 4125, 4485, 4970, 5149, 5481, 17744, 21520, 24706, ...}
+- `attn_logits[T, 20, 256, 512]` float32 — T ∈ {1, 7, 8, 9, 10, 11, 12, 22, 32}
+- `attn_lse[T, 20, 256]` float32 — T ∈ {1, 7, 8, 9, 10, 11, 12, 22, 32}
+- `num_kv_splits[T]` int32 — T ∈ {1, 7, 8, 9, 10, 11, 12, 22, 32}
 
-**`triton_decode_attention`** — 286,419 real calls, 5,010 distinct signatures, 18 rows kept
+**`triton_decode_attention`** — 52,923 real calls, 1,002 distinct signatures, 15 rows kept
 
-- `q[T, 20, 576]` bfloat16 — T ∈ {1, 2, 16, 32, 33}
+- `q[T, 20, 576]` bfloat16 — T ∈ {1, 7, 8, 9, 10, 11, 12, 22, 32}
 - `k_buffer[3689231, 1, 576]` bfloat16
 - `v_buffer[3689231, 1, 512]` bfloat16 **non-contiguous**
-- `o[T, 20, 512]` bfloat16 — T ∈ {1, 2, 16, 32, 33}
-- `kv_indptr[T]` int32 — T ∈ {2, 3, 17, 33, 34}
-- `kv_indices[T]` int64 — T ∈ {73, 108, 109, 110, 111, 112, 113, 114, 115, 116, ...}
-- `attn_logits[T, 20, 256, 512]` float32 — T ∈ {1, 2, 16, 32, 33}
-- `attn_lse[T, 20, 256]` float32 — T ∈ {1, 2, 16, 32, 33}
-- `num_kv_splits[T]` int32 — T ∈ {1, 2, 16, 32, 33}
+- `o[T, 20, 512]` bfloat16 — T ∈ {1, 7, 8, 9, 10, 11, 12, 22, 32}
+- `kv_indptr[T]` int32 — T ∈ {2, 8, 9, 10, 11, 12, 13, 23, 33}
+- `kv_indices[T]` int64 — T ∈ {104, 737, 4125, 4485, 4970, 5149, 5481, 17744, 21520, 24706, ...}
+- `attn_logits[T, 20, 256, 512]` float32 — T ∈ {1, 7, 8, 9, 10, 11, 12, 22, 32}
+- `attn_lse[T, 20, 256]` float32 — T ∈ {1, 7, 8, 9, 10, 11, 12, 22, 32}
+- `num_kv_splits[T]` int32 — T ∈ {1, 7, 8, 9, 10, 11, 12, 22, 32}
 
-**`triton_extend_attention`** — 5,311 real calls, 104 distinct signatures, 14 rows kept
+**`triton_extend_attention`** — 1,410 real calls, 29 distinct signatures, 11 rows kept
 
-- `q_extend[T, 20, N]` bfloat16 — T ∈ {1, 42, 46, 49, 51, 74, 91, 102, 436, 617, ...} — N ∈ {256, 576}
-- `k_extend[T, N, M]` bfloat16 — T ∈ {1, 42, 46, 49, 51, 74, 91, 102, 436, 617, ...} — N ∈ {1, 20} — M ∈ {256, 576}
-- `v_extend[T, N, M]` bfloat16 — T ∈ {1, 42, 46, 49, 51, 74, 91, 102, 436, 617, ...} — N ∈ {1, 20} — M ∈ {256, 512}
-- `o_extend[T, 20, N]` bfloat16 — T ∈ {1, 42, 46, 49, 51, 74, 91, 102, 436, 617, ...} — N ∈ {256, 512}
+- `q_extend[T, 20, N]` bfloat16 — T ∈ {100, 103, 699, 707, 722, 736, 2906, 5124, 16384} — N ∈ {256, 576}
+- `k_extend[T, N, M]` bfloat16 — T ∈ {100, 103, 699, 707, 722, 736, 2906, 5124, 16384} — N ∈ {1, 20} — M ∈ {256, 576}
+- `v_extend[T, N, M]` bfloat16 — T ∈ {100, 103, 699, 707, 722, 736, 2906, 5124, 16384} — N ∈ {1, 20} — M ∈ {256, 512}
+- `o_extend[T, 20, N]` bfloat16 — T ∈ {100, 103, 699, 707, 722, 736, 2906, 5124, 16384} — N ∈ {256, 512}
 - `k_buffer[3689231, 1, 576]` bfloat16
 - `v_buffer[3689231, 1, 512]` bfloat16 **non-contiguous**
-- `qo_indptr[T]` int64 — T ∈ {2, 9}
-- `kv_indptr[T]` int32 — T ∈ {2, 9}
-- `kv_indices[T]` int64 — T ∈ {0, 1, 102, 103, 671, 728, 735, 5824}
+- `qo_indptr[T]` int64 — T ∈ {2, 7, 8, 16, 24}
+- `kv_indptr[T]` int32 — T ∈ {2, 7, 8, 16, 24}
+- `kv_indices[T]` int64 — T ∈ {0, 1676}
 
 ### workloads_qwen3_next_secondary.json — model `Qwen/Qwen3-Next-80B-A3B-Instruct`
 
-**`triton_decode_attention_grouped`** — 258,992 real calls, 2,617 distinct signatures, 13 rows kept
+**`triton_decode_attention_grouped`** — 139,976 real calls, 1,334 distinct signatures, 14 rows kept
 
-- `q[T, 2, 256]` bfloat16 — T ∈ {1, 2, 3, 32}
+- `q[T, 2, 256]` bfloat16 — T ∈ {1, 14, 28, 32}
 - `k_buffer[9357913, 1, 256]` bfloat16
 - `v_buffer[9357913, 1, 256]` bfloat16
-- `o[T, 2, 256]` bfloat16 — T ∈ {1, 2, 3, 32}
-- `kv_indptr[T]` int32 — T ∈ {2, 3, 4, 33}
-- `kv_indices[T]` int64 — T ∈ {104, 105, 106, 107, 108, 109, 110, 111, 1458, 2295, ...}
-- `attn_logits[T, 2, 8, 256]` float32 — T ∈ {1, 2, 3, 32}
-- `attn_lse[T, 2, 8]` float32 — T ∈ {1, 2, 3, 32}
-- `num_kv_splits[T]` int32 — T ∈ {1, 2, 3, 32}
+- `o[T, 2, 256]` bfloat16 — T ∈ {1, 14, 28, 32}
+- `kv_indptr[T]` int32 — T ∈ {2, 15, 29, 33}
+- `kv_indices[T]` int64 — T ∈ {104, 858, 859, 860, 861, 862, 863, 864, 865, 866, ...}
+- `attn_logits[T, 2, 8, 256]` float32 — T ∈ {1, 14, 28, 32}
+- `attn_lse[T, 2, 8]` float32 — T ∈ {1, 14, 28, 32}
+- `num_kv_splits[T]` int32 — T ∈ {1, 14, 28, 32}
 
-**`triton_decode_attention`** — 258,988 real calls, 2,617 distinct signatures, 13 rows kept
+**`triton_decode_attention`** — 139,976 real calls, 1,334 distinct signatures, 14 rows kept
 
-- `q[T, 2, 256]` bfloat16 — T ∈ {1, 2, 3, 32}
+- `q[T, 2, 256]` bfloat16 — T ∈ {1, 14, 28, 32}
 - `k_buffer[9357913, 1, 256]` bfloat16
 - `v_buffer[9357913, 1, 256]` bfloat16
-- `o[T, 2, 256]` bfloat16 — T ∈ {1, 2, 3, 32}
-- `kv_indptr[T]` int32 — T ∈ {2, 3, 4, 33}
-- `kv_indices[T]` int64 — T ∈ {104, 105, 106, 107, 108, 109, 110, 111, 1458, 2295, ...}
-- `attn_logits[T, 2, 8, 256]` float32 — T ∈ {1, 2, 3, 32}
-- `attn_lse[T, 2, 8]` float32 — T ∈ {1, 2, 3, 32}
-- `num_kv_splits[T]` int32 — T ∈ {1, 2, 3, 32}
+- `o[T, 2, 256]` bfloat16 — T ∈ {1, 14, 28, 32}
+- `kv_indptr[T]` int32 — T ∈ {2, 15, 29, 33}
+- `kv_indices[T]` int64 — T ∈ {104, 858, 859, 860, 861, 862, 863, 864, 865, 866, ...}
+- `attn_logits[T, 2, 8, 256]` float32 — T ∈ {1, 14, 28, 32}
+- `attn_lse[T, 2, 8]` float32 — T ∈ {1, 14, 28, 32}
+- `num_kv_splits[T]` int32 — T ∈ {1, 14, 28, 32}
 
-**`triton_extend_attention`** — 1,248 real calls, 13 distinct signatures, 10 rows kept
+**`triton_extend_attention`** — 2,976 real calls, 30 distinct signatures, 13 rows kept
 
-- `q_extend[T, 2, 256]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 854, 857, 15972, 16384}
-- `k_extend[T, 1, 256]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 854, 857, 15972, 16384}
-- `v_extend[T, 1, 256]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 854, 857, 15972, 16384}
-- `o_extend[T, 2, 256]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 854, 857, 15972, 16384}
+- `q_extend[T, 2, 256]` bfloat16 — T ∈ {100, 103, 131, 308, 344, 386, 414, 819, 828, 850, ...}
+- `k_extend[T, 1, 256]` bfloat16 — T ∈ {100, 103, 131, 308, 344, 386, 414, 819, 828, 850, ...}
+- `v_extend[T, 1, 256]` bfloat16 — T ∈ {100, 103, 131, 308, 344, 386, 414, 819, 828, 850, ...}
+- `o_extend[T, 2, 256]` bfloat16 — T ∈ {100, 103, 131, 308, 344, 386, 414, 819, 828, 850, ...}
 - `k_buffer[9357913, 1, 256]` bfloat16
 - `v_buffer[9357913, 1, 256]` bfloat16
-- `qo_indptr[T]` int64 — T ∈ {2, 8, 32}
-- `kv_indptr[T]` int32 — T ∈ {2, 8, 32}
-- `kv_indices[T]` int64 — T ∈ {0, 64, 704, 832, 5376}
+- `qo_indptr[T]` int64 — T ∈ {2, 7}
+- `kv_indptr[T]` int32 — T ∈ {2, 7}
+- `kv_indices[T]` int64 — T ∈ {0, 2783}
 
 
 ## `kimi_k3__kda_linear_attention`
 
-**`k3_kda_fused_decode`** — 308,024 real calls, 38 distinct signatures, 10 rows kept
+**`k3_kda_fused_decode`** — 308,024 real calls, 38 distinct signatures, 9 rows kept
 
-- `mixed_qkv[T, 4608]` bfloat16 **non-contiguous** — T ∈ {1, 2, 3, 10, 11, 13, 16, 21, 24, 32}
-- `a[T, 1536]` bfloat16 — T ∈ {1, 2, 3, 10, 11, 13, 16, 21, 24, 32}
-- `b[T, 12]` bfloat16 **non-contiguous** — T ∈ {1, 2, 3, 10, 11, 13, 16, 21, 24, 32}
+- `mixed_qkv[T, 4608]` bfloat16 **non-contiguous** — T ∈ {1, 2, 3, 10, 11, 13, 16, 24, 32}
+- `a[T, 1536]` bfloat16 — T ∈ {1, 2, 3, 10, 11, 13, 16, 24, 32}
+- `b[T, 12]` bfloat16 **non-contiguous** — T ∈ {1, 2, 3, 10, 11, 13, 16, 24, 32}
 - `conv_states[274, 3, 4608]` bfloat16
 - `w_q_t[4, 1536]` float32
 - `w_k_t[4, 1536]` float32
@@ -198,51 +223,51 @@ recapture rather than editing this file.
 - `conv_bias[4608]` float32
 - `A_log[12]` float32
 - `dt_bias[1536]` float32
-- `onorm_g[T, 1536]` bfloat16 **non-contiguous** — T ∈ {1, 2, 3, 10, 11, 13, 16, 21, 24, 32}
+- `onorm_g[T, 1536]` bfloat16 **non-contiguous** — T ∈ {1, 2, 3, 10, 11, 13, 16, 24, 32}
 - `onorm_weight[128]` float32
 - `ssm_states[274, 12, 128, 128]` float32
-- `cache_indices[T]` int32 — T ∈ {1, 2, 3, 10, 11, 13, 16, 21, 24, 32}
+- `cache_indices[T]` int32 — T ∈ {1, 2, 3, 10, 11, 13, 16, 24, 32}
 
-**`k3_kda_chunk_prefill`** — 5,520 real calls, 10 distinct signatures, 9 rows kept
+**`k3_kda_chunk_prefill`** — 5,520 real calls, 10 distinct signatures, 7 rows kept
 
-- `q[1, T, 12, 128]` bfloat16 — T ∈ {694, 717, 730, 2917, 6835, 11425, 15591, 16143, 16167}
-- `k[1, T, 12, 128]` bfloat16 — T ∈ {694, 717, 730, 2917, 6835, 11425, 15591, 16143, 16167}
-- `v[1, T, 12, 128]` bfloat16 — T ∈ {694, 717, 730, 2917, 6835, 11425, 15591, 16143, 16167}
-- `g[1, T, 12, 128]` bfloat16 — T ∈ {694, 717, 730, 2917, 6835, 11425, 15591, 16143, 16167}
-- `beta[1, T, 12]` float32 — T ∈ {694, 717, 730, 2917, 6835, 11425, 15591, 16143, 16167}
+- `q[1, T, 12, 128]` bfloat16 — T ∈ {694, 717, 730, 2917, 11425, 16143, 16167}
+- `k[1, T, 12, 128]` bfloat16 — T ∈ {694, 717, 730, 2917, 11425, 16143, 16167}
+- `v[1, T, 12, 128]` bfloat16 — T ∈ {694, 717, 730, 2917, 11425, 16143, 16167}
+- `g[1, T, 12, 128]` bfloat16 — T ∈ {694, 717, 730, 2917, 11425, 16143, 16167}
+- `beta[1, T, 12]` float32 — T ∈ {694, 717, 730, 2917, 11425, 16143, 16167}
 - `initial_state[274, 12, 128, 128]` float32
-- `initial_state_indices[T]` int32 — T ∈ {1, 4, 6, 7, 10, 22}
-- `cu_seqlens[T]` int32 — T ∈ {2, 5, 7, 8, 11, 23}
+- `initial_state_indices[T]` int32 — T ∈ {1, 4, 6, 7}
+- `cu_seqlens[T]` int32 — T ∈ {2, 5, 7, 8}
 - `A_log[1, 1, 12, 1]` float32
 - `dt_bias[1536]` float32
 
 
 ## `kimi_k3__tgv_bf16_tiny_gemm`
 
-**`k3_cutedsl_tgv_bf16_gemm_out`** — 571,784 real calls, 21 distinct signatures, 11 rows kept
+**`k3_cutedsl_tgv_bf16_gemm_out`** — 571,784 real calls, 21 distinct signatures, 12 rows kept
 
-- `x[T, N]` bfloat16 — T ∈ {1, 3, 4, 7} — N ∈ {768, 1536, 7168}
+- `x[T, N]` bfloat16 — T ∈ {1, 3, 4, 5, 7} — N ∈ {768, 1536, 7168}
 - `weight[T, N]` bfloat16 — T ∈ {6016, 7168} — N ∈ {768, 1536, 7168}
-- `out[T, N]` bfloat16 — T ∈ {1, 3, 4, 7} — N ∈ {6016, 7168}
+- `out[T, N]` bfloat16 — T ∈ {1, 3, 4, 5, 7} — N ∈ {6016, 7168}
 
-**`k3_tiny_gemm`** — 433,920 real calls, 44 distinct signatures, 11 rows kept
+**`k3_tiny_gemm`** — 433,920 real calls, 44 distinct signatures, 7 rows kept
 
-- `x[T, N]` bfloat16 **non-contiguous** — T ∈ {1, 10, 11, 13, 16, 16178} — N ∈ {128, 7168}
+- `x[T, N]` bfloat16 **non-contiguous** — T ∈ {1, 10, 11, 16, 16178} — N ∈ {128, 7168}
 - `w[T, N]` bfloat16 — T ∈ {144, 1536} — N ∈ {128, 7168}
 
-**`k3_cutedsl_tgv_bf16_gemm`** — 244,624 real calls, 36 distinct signatures, 11 rows kept
+**`k3_cutedsl_tgv_bf16_gemm`** — 244,624 real calls, 36 distinct signatures, 12 rows kept
 
-- `x[T, N]` bfloat16 — T ∈ {1, 3, 4, 7} — N ∈ {1536, 4224, 7168}
+- `x[T, N]` bfloat16 — T ∈ {1, 3, 4, 5, 7} — N ∈ {1536, 4224, 7168}
 - `weight[T, N]` bfloat16 — T ∈ {1536, 2304, 6144, 7168} — N ∈ {1536, 4224, 7168}
 
-**`k3_tiny_n_gemm_bf16`** — 213,096 real calls, 15 distinct signatures, 10 rows kept
+**`k3_tiny_n_gemm_bf16`** — 213,096 real calls, 15 distinct signatures, 4 rows kept
 
-- `x[T, 7168]` bfloat16 — T ∈ {1, 3, 4, 10, 11, 12, 13, 14, 15, 16}
+- `x[T, 7168]` bfloat16 — T ∈ {1, 11, 13, 16}
 - `w[144, 7168]` bfloat16
 
-**`k3_tiny_k_gemm_bf16`** — 163,416 real calls, 11 distinct signatures, 10 rows kept
+**`k3_tiny_k_gemm_bf16`** — 163,416 real calls, 11 distinct signatures, 11 rows kept
 
-- `x[T, 128]` bfloat16 **non-contiguous** — T ∈ {1, 3, 4, 5, 6, 7, 9, 10, 11, 12}
+- `x[T, 128]` bfloat16 **non-contiguous** — T ∈ {1, 2, 3, 4, 5, 6, 7, 9, 10, 11, ...}
 - `w[1536, 128]` bfloat16
 
 
@@ -250,38 +275,38 @@ recapture rather than editing this file.
 
 ### workloads.json — model `LiquidAI/LFM2.5-8B-A1B`
 
-**`triton_fused_moe_gemm`** — 427,506 real calls, 1,138 distinct signatures, 11 rows kept
+**`triton_fused_moe_gemm`** — 427,506 real calls, 1,138 distinct signatures, 5 rows kept
 
-- `A[T, N]` bfloat16 — T ∈ {1, 2, 4, 8, 16, 32, 64, 128, 16384} — N ∈ {1792, 2048}
+- `A[T, N]` bfloat16 — T ∈ {1, 4, 32, 128, 16384} — N ∈ {1792, 2048}
 - `B[32, T, N]` bfloat16 — T ∈ {2048, 3584} — N ∈ {1792, 2048}
-- `C` ['[1, 4, 2048]', '[128, 3584]', '[16, 4, 2048]', '[2, 4, 2048]']
-- `topk_weights[T, 4]` float32 — T ∈ {1, 2, 8, 16, 32, 16384}
-- `topk_ids[T, 4]` int32 — T ∈ {1, 2, 8, 16, 32, 16384}
-- `sorted_token_ids[T]` int32 — T ∈ {64, 128, 512, 559, 623, 67615}
-- `expert_ids[T]` int32 — T ∈ {4, 8, 32, 35, 39, 1057}
+- `C` ['[1, 4, 2048]', '[128, 3584]', '[32, 4, 2048]', '[4, 3584]']
+- `topk_weights[T, 4]` float32 — T ∈ {1, 32, 16384}
+- `topk_ids[T, 4]` int32 — T ∈ {1, 32, 16384}
+- `sorted_token_ids[T]` int32 — T ∈ {64, 623, 67615}
+- `expert_ids[T]` int32 — T ∈ {4, 39, 1057}
 - `num_tokens_post_padded[1]` int32
 
 ### workloads_glm47_flash.json — model `zai-org/GLM-4.7-Flash`
 
-**`triton_fused_moe_gemm`** — 571,044 real calls, 420 distinct signatures, 8 rows kept
+**`triton_fused_moe_gemm`** — 106,352 real calls, 174 distinct signatures, 9 rows kept
 
-- `A[T, N]` bfloat16 — T ∈ {1, 2, 5, 10, 16, 32, 80, 16384} — N ∈ {1536, 2048}
+- `A[T, N]` bfloat16 — T ∈ {1, 5, 13, 14, 15, 65, 70, 75, 16384} — N ∈ {1536, 2048}
 - `B[65, T, N]` bfloat16 — T ∈ {2048, 3072} — N ∈ {1536, 2048}
-- `C` ['[1, 5, 2048]', '[10, 3072]', '[16, 5, 2048]', '[160, 3072]']
-- `topk_weights[T, 5]` float32 — T ∈ {1, 2, 16, 32, 16384}
-- `topk_ids[T, 5]` int32 — T ∈ {1, 2, 16, 32, 16384}
-- `sorted_token_ids[T]` int32 — T ∈ {80, 160, 1070, 1150, 86078}
-- `expert_ids[T]` int32 — T ∈ {5, 10, 67, 72, 1345}
+- `C` ['[1, 5, 2048]', '[13, 5, 2048]', '[14, 5, 2048]', '[15, 5, 2048]']
+- `topk_weights[T, 5]` float32 — T ∈ {1, 13, 14, 15, 16384}
+- `topk_ids[T, 5]` int32 — T ∈ {1, 13, 14, 15, 16384}
+- `sorted_token_ids[T]` int32 — T ∈ {80, 1040, 1060, 1065, 86078}
+- `expert_ids[T]` int32 — T ∈ {5, 65, 67, 1345}
 - `num_tokens_post_padded[1]` int32
 
 
 ## `minimax_h3__sm103_block_sparse_attention`
 
-**`diffusion_attention_cudnn_sdpa`** — 216 real calls, 4 distinct signatures, 4 rows kept
+**`diffusion_attention_cudnn_sdpa`** — 216 real calls, 4 distinct signatures, 5 rows kept
 
-- `query[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {14, 16, 28}
-- `key[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {2, 14, 28}
-- `value[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {2, 14, 28}
+- `query[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {1, 14, 16, 28}
+- `key[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {1, 2, 14, 28}
+- `value[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {1, 2, 14, 28}
 
 **`diffusion_attention_fa4`** — 200 real calls, 1 distinct signatures, 1 rows kept
 
@@ -298,149 +323,173 @@ recapture rather than editing this file.
 
 ## `nemotron3_nano__mamba2_ssm`
 
-**`causal_conv1d_decode`** — 275,863 real calls, 348 distinct signatures, 5 rows kept
+**`causal_conv1d_decode`** — 275,863 real calls, 348 distinct signatures, 3 rows kept
 
-- `x[T, 6144]` bfloat16 **non-contiguous** — T ∈ {1, 8, 16, 32, 256}
+- `x[T, 6144]` bfloat16 **non-contiguous** — T ∈ {1, 30, 256}
 - `conv_state[2183, 6144, 3]` bfloat16
 - `weight[6144, 4]` bfloat16
 - `bias[6144]` bfloat16
-- `conv_state_indices[T]` int32 — T ∈ {1, 8, 16, 32, 256}
+- `conv_state_indices[T]` int32 — T ∈ {1, 30, 256}
 
-**`mamba2_chunk_cumsum`** — 7,130 real calls, 217 distinct signatures, 14 rows kept
+**`mamba2_chunk_cumsum`** — 7,130 real calls, 217 distinct signatures, 8 rows kept
 
-- `dt[1, T, 64]` bfloat16 **non-contiguous** — T ∈ {2, 59, 66, 71, 72, 75, 79, 81, 92, 93, ...}
+- `dt[1, T, 64]` bfloat16 **non-contiguous** — T ∈ {2, 59, 100, 103, 271, 436, 854, 16384}
 - `A[64]` float32
 - `dt_bias[64]` bfloat16
 
-**`mamba2_chunk_state`** — 7,130 real calls, 217 distinct signatures, 14 rows kept
+**`mamba2_chunk_state`** — 7,130 real calls, 217 distinct signatures, 5 rows kept
 
-- `B[1, T, 8, 128]` bfloat16 **non-contiguous** — T ∈ {2, 59, 66, 71, 72, 75, 79, 81, 92, 93, ...}
-- `x[1, T, 64, 64]` bfloat16 **non-contiguous** — T ∈ {2, 59, 66, 71, 72, 75, 79, 81, 92, 93, ...}
-- `dt[1, 64, T, 128]` float32 — T ∈ {1, 7, 17, 128}
-- `dA_cumsum[1, 64, T, 128]` float32 — T ∈ {1, 7, 17, 128}
-- `seq_idx[1, T]` int32 — T ∈ {2, 59, 66, 71, 72, 75, 79, 81, 92, 93, ...}
+- `B[1, T, 8, 128]` bfloat16 **non-contiguous** — T ∈ {2, 66, 100, 103, 16384}
+- `x[1, T, 64, 64]` bfloat16 **non-contiguous** — T ∈ {2, 66, 100, 103, 16384}
+- `dt[1, 64, T, 128]` float32 — T ∈ {1, 128}
+- `dA_cumsum[1, 64, T, 128]` float32 — T ∈ {1, 128}
+- `seq_idx[1, T]` int32 — T ∈ {2, 66, 100, 103, 16384}
 
-**`causal_conv1d_prefill`** — 7,130 real calls, 222 distinct signatures, 15 rows kept
+**`causal_conv1d_prefill`** — 7,130 real calls, 222 distinct signatures, 9 rows kept
 
-- `x[6144, T]` bfloat16 **non-contiguous** — T ∈ {2, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
+- `x[6144, T]` bfloat16 **non-contiguous** — T ∈ {2, 66, 79, 16384}
 - `weight[6144, 4]` bfloat16
 - `bias[6144]` bfloat16
 - `conv_states[2183, 6144, 3]` bfloat16
-- `query_start_loc[T]` int32 — T ∈ {2, 36}
-- `cache_indices[T]` int32 — T ∈ {1, 35}
-- `has_initial_state[T]` bool — T ∈ {1, 35}
+- `query_start_loc[T]` int32 — T ∈ {2, 8, 30, 32, 33, 34, 36}
+- `cache_indices[T]` int32 — T ∈ {1, 7, 29, 31, 32, 33, 35}
+- `has_initial_state[T]` bool — T ∈ {1, 7, 29, 31, 32, 33, 35}
 
 **`mamba2_state_passing`** — 7,130 real calls, 223 distinct signatures, 15 rows kept
 
-- `states[1, T, 64, 8192]` float32 — T ∈ {1, 7, 25, 128}
-- `dA_cumsum[1, 64, T, 128]` float32 — T ∈ {1, 7, 25, 128}
+- `states[1, T, 64, 8192]` float32 — T ∈ {1, 6, 7, 128}
+- `dA_cumsum[1, 64, T, 128]` float32 — T ∈ {1, 6, 7, 128}
+- `seq_idx[1, T]` int32 — T ∈ {5, 66, 662, 664, 700, 712, 734, 748, 770, 806, ...}
 - `initial_states[T, 64, 8192]` float32 — T ∈ {1, 35}
-- `seq_idx[1, T]` int32 — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
 - `chunk_offsets[T]` int32 — T ∈ {1, 162}
 
-**`mamba2_chunk_scan`** — 7,130 real calls, 223 distinct signatures, 15 rows kept
+**`mamba2_chunk_scan`** — 7,130 real calls, 223 distinct signatures, 5 rows kept
 
-- `cb[1, T, 8, 128, 128]` float32 — T ∈ {1, 7, 25, 128}
-- `x[1, T, 64, 64]` bfloat16 **non-contiguous** — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
-- `dt[1, 64, T, 128]` float32 — T ∈ {1, 7, 25, 128}
-- `dA_cumsum[1, 64, T, 128]` float32 — T ∈ {1, 7, 25, 128}
-- `C[1, T, 8, 128]` bfloat16 **non-contiguous** — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
-- `states[1, T, 64, 64, 128]` float32 — T ∈ {1, 7, 25, 128}
+- `cb[1, T, 8, 128, 128]` float32 — T ∈ {1, 128}
+- `x[1, T, 64, 64]` bfloat16 **non-contiguous** — T ∈ {5, 66, 100, 16384}
+- `dt[1, 64, T, 128]` float32 — T ∈ {1, 128}
+- `dA_cumsum[1, 64, T, 128]` float32 — T ∈ {1, 128}
+- `C[1, T, 8, 128]` bfloat16 **non-contiguous** — T ∈ {5, 66, 100, 16384}
+- `states[1, T, 64, 64, 128]` float32 — T ∈ {1, 128}
 - `D[64]` bfloat16
-- `seq_idx[1, T]` int32 — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
+- `seq_idx[1, T]` int32 — T ∈ {5, 66, 100, 16384}
 - `chunk_indices[T]` int32 — T ∈ {1, 162}
 - `chunk_offsets[T]` int32 — T ∈ {1, 162}
 - `initial_states[T, 64, 64, 128]` float32 — T ∈ {1, 35}
-- `out[1, T, 64, 64]` bfloat16 — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
+- `out[1, T, 64, 64]` bfloat16 — T ∈ {5, 66, 100, 16384}
 
-**`mamba2_chunk_state_varlen`** — 7,130 real calls, 223 distinct signatures, 15 rows kept
+**`mamba2_chunk_state_varlen`** — 7,130 real calls, 223 distinct signatures, 3 rows kept
 
-- `B[T, 8, 128]` bfloat16 **non-contiguous** — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
-- `x[T, 64, 64]` bfloat16 **non-contiguous** — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
-- `dt[64, T, 128]` float32 — T ∈ {1, 7, 25, 128}
-- `dA_cumsum[64, T, 128]` float32 — T ∈ {1, 7, 25, 128}
+- `B[T, 8, 128]` bfloat16 **non-contiguous** — T ∈ {5, 66, 16384}
+- `x[T, 64, 64]` bfloat16 **non-contiguous** — T ∈ {5, 66, 16384}
+- `dt[64, T, 128]` float32 — T ∈ {1, 128}
+- `dA_cumsum[64, T, 128]` float32 — T ∈ {1, 128}
 - `cu_seqlens[T]` int32 — T ∈ {2, 36}
-- `chunk_states[T, 64, 64, 128]` float32 — T ∈ {1, 7, 25, 128}
+- `chunk_states[T, 64, 64, 128]` float32 — T ∈ {1, 128}
 - `initial_states[T, 64, 64, 128]` float32 — T ∈ {1, 35}
 
-**`mamba2_chunk_scan_combined_fwd`** — 7,130 real calls, 223 distinct signatures, 15 rows kept
+**`mamba2_chunk_scan_combined_fwd`** — 7,130 real calls, 223 distinct signatures, 5 rows kept
 
-- `x[1, T, 64, 64]` bfloat16 **non-contiguous** — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
-- `dt[1, T, 64]` bfloat16 **non-contiguous** — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
+- `x[1, T, 64, 64]` bfloat16 **non-contiguous** — T ∈ {5, 66, 103, 16384}
+- `dt[1, T, 64]` bfloat16 **non-contiguous** — T ∈ {5, 66, 103, 16384}
 - `A[64]` float32
-- `B[1, T, 8, 128]` bfloat16 **non-contiguous** — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
-- `C[1, T, 8, 128]` bfloat16 **non-contiguous** — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
+- `B[1, T, 8, 128]` bfloat16 **non-contiguous** — T ∈ {5, 66, 103, 16384}
+- `C[1, T, 8, 128]` bfloat16 **non-contiguous** — T ∈ {5, 66, 103, 16384}
+- `D[64]` bfloat16
+- `dt_bias[64]` bfloat16
+- `seq_idx[1, T]` int32 — T ∈ {5, 66, 103, 16384}
+- `cu_seqlens[T]` int32 — T ∈ {2, 36}
+- `out[1, T, 64, 64]` bfloat16 — T ∈ {5, 66, 103, 16384}
+- `initial_states[T, 64, 64, 128]` float32 — T ∈ {1, 35}
+- `chunk_indices[T]` int32 — T ∈ {1, 162}
+- `chunk_offsets[T]` int32 — T ∈ {1, 162}
+
+**`mamba2_chunk_scan_combined`** — 7,130 real calls, 223 distinct signatures, 3 rows kept
+
+- `x[1, T, 64, 64]` bfloat16 **non-contiguous** — T ∈ {5, 66, 16384}
+- `dt[1, T, 64]` bfloat16 **non-contiguous** — T ∈ {5, 66, 16384}
+- `A[64]` float32
+- `B[1, T, 8, 128]` bfloat16 **non-contiguous** — T ∈ {5, 66, 16384}
+- `C[1, T, 8, 128]` bfloat16 **non-contiguous** — T ∈ {5, 66, 16384}
 - `D[64]` bfloat16
 - `dt_bias[64]` bfloat16
 - `initial_states[T, 64, 64, 128]` float32 — T ∈ {1, 35}
-- `seq_idx[1, T]` int32 — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
+- `seq_idx[1, T]` int32 — T ∈ {5, 66, 16384}
 - `chunk_indices[T]` int32 — T ∈ {1, 162}
 - `chunk_offsets[T]` int32 — T ∈ {1, 162}
 - `cu_seqlens[T]` int32 — T ∈ {2, 36}
-- `out[1, T, 64, 64]` bfloat16 — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
-
-**`mamba2_chunk_scan_combined`** — 7,130 real calls, 223 distinct signatures, 15 rows kept
-
-- `x[1, T, 64, 64]` bfloat16 **non-contiguous** — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
-- `dt[1, T, 64]` bfloat16 **non-contiguous** — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
-- `A[64]` float32
-- `B[1, T, 8, 128]` bfloat16 **non-contiguous** — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
-- `C[1, T, 8, 128]` bfloat16 **non-contiguous** — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
-- `D[64]` bfloat16
-- `dt_bias[64]` bfloat16
-- `initial_states[T, 64, 64, 128]` float32 — T ∈ {1, 35}
-- `seq_idx[1, T]` int32 — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
-- `chunk_indices[T]` int32 — T ∈ {1, 162}
-- `chunk_offsets[T]` int32 — T ∈ {1, 162}
-- `cu_seqlens[T]` int32 — T ∈ {2, 36}
-- `out[1, T, 64, 64]` bfloat16 — T ∈ {5, 59, 66, 71, 72, 75, 79, 81, 86, 92, ...}
+- `out[1, T, 64, 64]` bfloat16 — T ∈ {5, 66, 16384}
 
 
 ## `qwen3_next__gdn_chunk_prefill`
 
 ### workloads.json — model `Qwen/Qwen3-Next-80B-A3B-Instruct`
 
-**`gdn_recompute_w_u`** — 3,744 real calls, 13 distinct signatures, 11 rows kept
+**`gdn_decode_causal_conv1d_update`** — 412,712 real calls, 60 distinct signatures, 8 rows kept
 
-- `k[1, T, 2, 128]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
-- `v[1, T, 4, 128]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
-- `beta[1, T, 4]` float32 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
-- `g_cumsum[1, T, 4]` float32 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
-- `A[1, T, 4, 64]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
-- `cu_seqlens[T]` int32 — T ∈ {2, 3, 8, 32}
-- `chunk_indices[T, 2]` int32 — T ∈ {1, 2, 7, 11, 13, 14, 65, 260, 264}
+- `x[T, 1024]` bfloat16 — T ∈ {1, 2, 3, 5, 6, 13, 16, 32}
+- `conv_state[10715, 1024, 3]` bfloat16
+- `weight[1024, 4]` bfloat16
+- `conv_state_indices[T]` int32 — T ∈ {1, 2, 3, 5, 6, 13, 16, 32}
 
-**`gdn_chunk_delta_h`** — 3,744 real calls, 13 distinct signatures, 11 rows kept
+**`gdn_decode_packed_triton`** — 412,712 real calls, 60 distinct signatures, 8 rows kept
 
-- `k[1, T, 2, 128]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
-- `w[1, T, 4, 128]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
-- `u[1, T, 4, 128]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
-- `g[1, T, 4]` float32 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
+- `mixed_qkv[T, 1024]` bfloat16 — T ∈ {1, 2, 3, 5, 6, 13, 16, 32}
+- `a[T, 4]` bfloat16 — T ∈ {1, 2, 3, 5, 6, 13, 16, 32}
+- `b[T, 4]` bfloat16 — T ∈ {1, 2, 3, 5, 6, 13, 16, 32}
+- `A_log[4]` float32
+- `dt_bias[4]` bfloat16
+- `ssm_states[10715, 4, 128, 128]` float32
+- `cache_indices[T]` int32 — T ∈ {1, 2, 3, 5, 6, 13, 16, 32}
+
+**`gdn_gating`** — 8,928 real calls, 30 distinct signatures, 12 rows kept
+
+- `A_log[4]` float32
+- `a[T, 4]` bfloat16 — T ∈ {100, 103, 819, 828, 850, 857, 2477, 3407, 10708, 15686, ...}
+- `b[T, 4]` bfloat16 — T ∈ {100, 103, 819, 828, 850, 857, 2477, 3407, 10708, 15686, ...}
+- `dt_bias[4]` bfloat16
+
+**`gdn_recompute_w_u`** — 8,928 real calls, 30 distinct signatures, 5 rows kept
+
+- `k[1, T, 2, 128]` bfloat16 — T ∈ {100, 103, 828, 857, 16289}
+- `v[1, T, 4, 128]` bfloat16 — T ∈ {100, 103, 828, 857, 16289}
+- `beta[1, T, 4]` float32 — T ∈ {100, 103, 828, 857, 16289}
+- `g_cumsum[1, T, 4]` float32 — T ∈ {100, 103, 828, 857, 16289}
+- `A[1, T, 4, 64]` bfloat16 — T ∈ {100, 103, 828, 857, 16289}
+- `cu_seqlens[T]` int32 — T ∈ {2, 6}
+- `chunk_indices[T, 2]` int32 — T ∈ {2, 13, 14, 256}
+
+**`gdn_chunk_delta_h`** — 8,928 real calls, 30 distinct signatures, 7 rows kept
+
+- `k[1, T, 2, 128]` bfloat16 — T ∈ {100, 103, 131, 308, 819, 857, 16289}
+- `w[1, T, 4, 128]` bfloat16 — T ∈ {100, 103, 131, 308, 819, 857, 16289}
+- `u[1, T, 4, 128]` bfloat16 — T ∈ {100, 103, 131, 308, 819, 857, 16289}
+- `g[1, T, 4]` float32 — T ∈ {100, 103, 131, 308, 819, 857, 16289}
 - `initial_state[10715, 4, 128, 128]` float32
-- `initial_state_indices[T]` int32 — T ∈ {1, 2, 7, 31}
-- `cu_seqlens[T]` int32 — T ∈ {2, 3, 8, 32}
-- `chunk_indices[T, 2]` int32 — T ∈ {1, 2, 7, 11, 13, 14, 65, 260, 264}
+- `initial_state_indices[T]` int32 — T ∈ {1, 5}
+- `cu_seqlens[T]` int32 — T ∈ {2, 6}
+- `chunk_indices[T, 2]` int32 — T ∈ {2, 3, 5, 13, 14, 256}
 
-**`gdn_chunk_o`** — 3,744 real calls, 13 distinct signatures, 11 rows kept
+**`gdn_chunk_o`** — 8,928 real calls, 30 distinct signatures, 7 rows kept
 
-- `q[1, T, 2, 128]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
-- `k[1, T, 2, 128]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
-- `v[1, T, 4, 128]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
-- `h[1, T, 4, 128, 128]` bfloat16 — T ∈ {1, 2, 7, 11, 13, 14, 65, 260, 264}
-- `g[1, T, 4]` float32 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
-- `cu_seqlens[T]` int32 — T ∈ {2, 3, 8, 32}
+- `q[1, T, 2, 128]` bfloat16 — T ∈ {100, 103, 131, 308, 819, 857, 16289}
+- `k[1, T, 2, 128]` bfloat16 — T ∈ {100, 103, 131, 308, 819, 857, 16289}
+- `v[1, T, 4, 128]` bfloat16 — T ∈ {100, 103, 131, 308, 819, 857, 16289}
+- `h[1, T, 4, 128, 128]` bfloat16 — T ∈ {2, 3, 5, 13, 14, 256}
+- `g[1, T, 4]` float32 — T ∈ {100, 103, 131, 308, 819, 857, 16289}
+- `cu_seqlens[T]` int32 — T ∈ {2, 6}
 
-**`gdn_chunk_prefill`** — 3,744 real calls, 13 distinct signatures, 11 rows kept
+**`gdn_chunk_prefill`** — 8,928 real calls, 30 distinct signatures, 7 rows kept
 
-- `q[1, T, 2, 128]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
-- `k[1, T, 2, 128]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
-- `v[1, T, 4, 128]` bfloat16 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
-- `g[1, T, 4]` float32 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
-- `beta[1, T, 4]` float32 — T ∈ {25, 39, 103, 436, 665, 819, 854, 857, 4100, 15972, ...}
+- `q[1, T, 2, 128]` bfloat16 — T ∈ {100, 103, 131, 308, 819, 857, 16289}
+- `k[1, T, 2, 128]` bfloat16 — T ∈ {100, 103, 131, 308, 819, 857, 16289}
+- `v[1, T, 4, 128]` bfloat16 — T ∈ {100, 103, 131, 308, 819, 857, 16289}
+- `g[1, T, 4]` float32 — T ∈ {100, 103, 131, 308, 819, 857, 16289}
+- `beta[1, T, 4]` float32 — T ∈ {100, 103, 131, 308, 819, 857, 16289}
 - `initial_state[10715, 4, 128, 128]` float32
-- `initial_state_indices[T]` int32 — T ∈ {1, 2, 7, 31}
-- `cu_seqlens[T]` int32 — T ∈ {2, 3, 8, 32}
-- `chunk_indices[T, 2]` int32 — T ∈ {1, 2, 7, 11, 13, 14, 65, 260, 264}
+- `initial_state_indices[T]` int32 — T ∈ {1, 5}
+- `cu_seqlens[T]` int32 — T ∈ {2, 6}
+- `chunk_indices[T, 2]` int32 — T ∈ {2, 3, 5, 13, 14, 256}
 
 ### workloads_decode.json — model `Qwen/Qwen3-Next-80B-A3B-Instruct`
 

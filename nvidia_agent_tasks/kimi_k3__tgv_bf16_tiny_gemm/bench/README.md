@@ -19,8 +19,7 @@ real captured tensors for a row whenever this task ships a payload that matches 
 
 ## What runs today
 
-Verified on 1x B300 with SGLang main @ 43226af: **5 of 5 ops produce a CUDA-graph-timed baseline** from the recorded rows.
-
+Verified on 1x B300 with SGLang main @ 43226af: **5 of 5 ops produce a CUDA-graph-timed baseline**, over **46 of 46 workload rows**.
 
 ## Dropping a candidate in
 
@@ -46,13 +45,10 @@ A row whose integer index arguments had to be allocated can address out of bound
 the CUDA context down; the harness and the test detect that, name the row, and stop rather
 than reporting nonsense for every row after it.
 
-
-
-
 ## Real-tensor coverage
 
 ```
-kimi_k3__tgv_bf16_tiny_gemm                   53 rows,  53 with payload (100%),   77/  95 data args real ( 81%)
+kimi_k3__tgv_bf16_tiny_gemm                   46 rows,  35 with payload ( 76%),   59/  80 data args real ( 74%)
 ```
 
 Rows with a payload run on tensors captured from the live model; the rest fall back
@@ -69,7 +65,7 @@ recorded as metadata instead. `python tools/coverage.py kimi_k3__tgv_bf16_tiny_g
   of kernels that take single-digit microseconds. `--timer graph` runs our own flush+event
   loop instead - the two agree to 0.1% on the K3 GEMM rows.
 * **L2 is cold on every call.** Back-to-back replay with a warm L2 reads 58-82% faster on
-  these rows - see `../docs/measurement_contract.md`.
+  these rows - see `../../docs/measurement_contract.md`.
 * **The baseline is called three times on identical inputs before anything is judged.** A row
   whose reference contains NaN/Inf or does not reproduce is printed as `NO VALID REFERENCE`
   and excluded, rather than judged against uninitialized memory.
@@ -85,23 +81,24 @@ kernel uses** - not a threshold invented for this handoff. Same numbers in
 
 | op | rtol | atol | copied from |
 | --- | ---: | ---: | --- |
+| `k3_cutedsl_tgv_bf16_gemm` | 0.02 | 2.5 | `test/registered/kernels/ops/gemm/test_cutedsl_bf16_gemm.py:53` |
 | `k3_cutedsl_tgv_bf16_gemm_out` | 0.02 | 2.5 | `test/registered/kernels/ops/gemm/test_cutedsl_bf16_gemm.py:53` |
 | `k3_tiny_gemm` | 0.001 | 0.001 | `test/registered/kernels/ops/test_kimi_k3_prerequisite_ops.py:385-386` |
-| `k3_cutedsl_tgv_bf16_gemm` | 0.02 | 2.5 | `test/registered/kernels/ops/gemm/test_cutedsl_bf16_gemm.py:53` |
-| `k3_tiny_n_gemm_bf16` | 0.001 | 0.001 | `test/registered/kernels/ops/test_kimi_k3_prerequisite_ops.py:385-386` |
 | `k3_tiny_k_gemm_bf16` | 0.001 | 0.001 | `test/registered/kernels/ops/test_kimi_k3_prerequisite_ops.py:385-386` |
+| `k3_tiny_n_gemm_bf16` | 0.001 | 0.001 | `test/registered/kernels/ops/test_kimi_k3_prerequisite_ops.py:385-386` |
 
 ## What is in here
 
 | file | contents |
 | --- | --- |
-| `workloads*.json` | frozen call signatures with their real-traffic call counts |
+| `target_signatures.json` | the exact signatures the tensor capture was pointed at |
 | `tensors/` | real captured tensors (inputs, outputs, state rows) |
+| `workloads.json` | frozen call signatures with their real-traffic call counts |
 
-| op | real calls | rows |
-| --- | ---: | ---: |
-| `k3_cutedsl_tgv_bf16_gemm_out` | 571,784 | 11 |
-| `k3_tiny_gemm` | 433,920 | 11 |
-| `k3_cutedsl_tgv_bf16_gemm` | 244,624 | 11 |
-| `k3_tiny_n_gemm_bf16` | 213,096 | 10 |
-| `k3_tiny_k_gemm_bf16` | 163,416 | 10 |
+| op | real calls | rows | rows with real tensors | workload file |
+| --- | ---: | ---: | ---: | --- |
+| `k3_cutedsl_tgv_bf16_gemm_out` | 571,784 | 12 | 11 | `workloads.json` |
+| `k3_tiny_gemm` | 433,920 | 7 | 4 | `workloads.json` |
+| `k3_cutedsl_tgv_bf16_gemm` | 244,624 | 12 | 11 | `workloads.json` |
+| `k3_tiny_n_gemm_bf16` | 213,096 | 4 | 1 | `workloads.json` |
+| `k3_tiny_k_gemm_bf16` | 163,416 | 11 | 8 | `workloads.json` |

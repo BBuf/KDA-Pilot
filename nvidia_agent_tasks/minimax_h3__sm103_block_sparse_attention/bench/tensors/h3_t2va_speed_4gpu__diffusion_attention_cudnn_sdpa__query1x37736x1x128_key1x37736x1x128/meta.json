@@ -1,0 +1,68 @@
+{
+  "op": "diffusion_attention_cudnn_sdpa",
+  "group": "h3_t2va_speed_4gpu",
+  "scalars": {},
+  "tensors": {
+    "in_query": {
+      "shape": [
+        1,
+        37736,
+        1,
+        128
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+        4830208,
+        128,
+        128,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 4830208,
+      "bytes": 9660416,
+      "file": "in_query.pt"
+    },
+    "in_key": {
+      "shape": [
+        1,
+        37736,
+        1,
+        128
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+        4830208,
+        128,
+        128,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 4830208,
+      "bytes": 9660416,
+      "file": "in_key.pt"
+    },
+    "in_value": {
+      "shape": [
+        1,
+        37736,
+        1,
+        128
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+        4830208,
+        128,
+        128,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 4830208,
+      "bytes": 9660416,
+      "file": "in_value.pt"
+    }
+  },
+  "note": "head 0 of the real 14-head production call. The full row is 3 x 135 MB of strided views into a fused QKV buffer (stride 5376/384) and cannot be shipped; these are the same values for one head, made contiguous. Sequence length is untouched at 37,736, which is what a block-sparse selector has to reason about."
+}

@@ -19,8 +19,7 @@ real captured tensors for a row whenever this task ships a payload that matches 
 
 ## What runs today
 
-Verified on 1x B300 with SGLang main @ 43226af: **6 of 6 ops produce a CUDA-graph-timed baseline** from the recorded rows.
-
+Verified on 1x B300 with SGLang main @ 43226af: **3 of 3 ops produce a CUDA-graph-timed baseline**, over **74 of 82 workload rows**. The rows that do not time are the ones with no payload of their own: their integer segment arguments allocate to zeros, and the harness refuses to judge a reference built on that.
 
 ## Dropping a candidate in
 
@@ -46,13 +45,10 @@ A row whose integer index arguments had to be allocated can address out of bound
 the CUDA context down; the harness and the test detect that, name the row, and stop rather
 than reporting nonsense for every row after it.
 
-
-
-
 ## Real-tensor coverage
 
 ```
-glm47_flash__triton_attention                 86 rows,  43 with payload ( 50%),  128/ 602 data args real ( 21%)
+glm47_flash__triton_attention                 82 rows,  74 with payload ( 90%),  399/ 574 data args real ( 70%)
 ```
 
 Rows with a payload run on tensors captured from the live model; the rest fall back
@@ -69,7 +65,7 @@ recorded as metadata instead. `python tools/coverage.py glm47_flash__triton_atte
   of kernels that take single-digit microseconds. `--timer graph` runs our own flush+event
   loop instead - the two agree to 0.1% on the K3 GEMM rows.
 * **L2 is cold on every call.** Back-to-back replay with a warm L2 reads 58-82% faster on
-  these rows - see `../docs/measurement_contract.md`.
+  these rows - see `../../docs/measurement_contract.md`.
 * **The baseline is called three times on identical inputs before anything is judged.** A row
   whose reference contains NaN/Inf or does not reproduce is printed as `NO VALID REFERENCE`
   and excluded, rather than judged against uninitialized memory.
@@ -85,22 +81,24 @@ kernel uses** - not a threshold invented for this handoff. Same numbers in
 
 | op | rtol | atol | copied from |
 | --- | ---: | ---: | --- |
-| `triton_decode_attention_grouped` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
 | `triton_decode_attention` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
+| `triton_decode_attention_grouped` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
 | `triton_extend_attention` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
 
 ## What is in here
 
 | file | contents |
 | --- | --- |
-| `workloads*.json` | frozen call signatures with their real-traffic call counts |
+| `target_signatures.json` | the exact signatures the tensor capture was pointed at |
 | `tensors/` | real captured tensors (inputs, outputs, state rows) |
+| `workloads.json` | frozen call signatures with their real-traffic call counts |
+| `workloads_qwen3_next_secondary.json` | frozen call signatures with their real-traffic call counts |
 
-| op | real calls | rows |
-| --- | ---: | ---: |
-| `triton_decode_attention_grouped` | 286,419 | 18 |
-| `triton_decode_attention` | 286,419 | 18 |
-| `triton_extend_attention` | 5,311 | 14 |
-| `triton_decode_attention_grouped` | 258,992 | 13 |
-| `triton_decode_attention` | 258,988 | 13 |
-| `triton_extend_attention` | 1,248 | 10 |
+| op | real calls | rows | rows with real tensors | workload file |
+| --- | ---: | ---: | ---: | --- |
+| `triton_decode_attention_grouped` | 52,923 | 15 | 12 | `workloads.json` |
+| `triton_decode_attention` | 52,923 | 15 | 12 | `workloads.json` |
+| `triton_extend_attention` | 1,410 | 11 | 11 | `workloads.json` |
+| `triton_decode_attention_grouped` | 139,976 | 14 | 13 | `workloads_qwen3_next_secondary.json` |
+| `triton_decode_attention` | 139,976 | 14 | 13 | `workloads_qwen3_next_secondary.json` |
+| `triton_extend_attention` | 2,976 | 13 | 13 | `workloads_qwen3_next_secondary.json` |

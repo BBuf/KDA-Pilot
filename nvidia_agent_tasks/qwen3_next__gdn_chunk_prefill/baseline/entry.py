@@ -57,4 +57,21 @@ OPS = {
 # Arguments the capture could not serialize (a triton dtype, a plan struct) are rebuilt
 # here, once per task, so every workload row becomes runnable. The harness calls
 # RECONSTRUCT[op](kwargs) before dispatch.
-RECONSTRUCT: dict = {}
+def _gdn_kernel(kw: dict) -> dict:
+    """`packed_decode` is a bound method; the capture records `self` as a repr.
+
+    `TritonGDNKernel` is a stateless dispatcher (its base class declares only abstract
+    methods and no constructor state), so instantiating it here reproduces exactly what
+    the server calls - there is no per-layer state hiding in the instance.
+    """
+    if "self" in kw and not isinstance(kw["self"], dict):
+        return kw
+    from sglang.srt.layers.attention.linear.kernels.gdn_triton import TritonGDNKernel
+    kw["self"] = TritonGDNKernel()
+    return kw
+
+
+# Arguments the capture could not serialize (a triton dtype, a plan struct, the instance
+# behind a bound method) are rebuilt here, once per task, so every workload row becomes
+# runnable. The harness calls RECONSTRUCT[op](kwargs) before dispatch.
+RECONSTRUCT = {"gdn_decode_packed_triton": _gdn_kernel}

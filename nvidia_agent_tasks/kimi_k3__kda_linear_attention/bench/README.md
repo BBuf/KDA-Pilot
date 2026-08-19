@@ -19,8 +19,7 @@ real captured tensors for a row whenever this task ships a payload that matches 
 
 ## What runs today
 
-Verified on 1x B300 with SGLang main @ 43226af: **2 of 2 ops produce a CUDA-graph-timed baseline** from the recorded rows.
-
+Verified on 1x B300 with SGLang main @ 43226af: **1 of 2 ops produce a CUDA-graph-timed baseline**, over **9 of 16 workload rows**. `k3_kda_chunk_prefill` is the exception: its gate `g` is not shipped for every row, and an allocated Gaussian gate overflows the log-space decay, so the harness prints NO VALID REFERENCE rather than judging against Inf.
 
 ## Dropping a candidate in
 
@@ -46,13 +45,10 @@ A row whose integer index arguments had to be allocated can address out of bound
 the CUDA context down; the harness and the test detect that, name the row, and stop rather
 than reporting nonsense for every row after it.
 
-
-
-
 ## Real-tensor coverage
 
 ```
-kimi_k3__kda_linear_attention                 19 rows,  19 with payload (100%),   74/ 152 data args real ( 49%)
+kimi_k3__kda_linear_attention                 16 rows,  13 with payload ( 81%),   58/ 128 data args real ( 45%)
 ```
 
 Rows with a payload run on tensors captured from the live model; the rest fall back
@@ -69,7 +65,7 @@ recorded as metadata instead. `python tools/coverage.py kimi_k3__kda_linear_atte
   of kernels that take single-digit microseconds. `--timer graph` runs our own flush+event
   loop instead - the two agree to 0.1% on the K3 GEMM rows.
 * **L2 is cold on every call.** Back-to-back replay with a warm L2 reads 58-82% faster on
-  these rows - see `../docs/measurement_contract.md`.
+  these rows - see `../../docs/measurement_contract.md`.
 * **The baseline is called three times on identical inputs before anything is judged.** A row
   whose reference contains NaN/Inf or does not reproduce is printed as `NO VALID REFERENCE`
   and excluded, rather than judged against uninitialized memory.
@@ -85,17 +81,18 @@ kernel uses** - not a threshold invented for this handoff. Same numbers in
 
 | op | rtol | atol | copied from |
 | --- | ---: | ---: | --- |
-| `k3_kda_fused_decode` | 0.02 | 0.02 | `test/registered/kernels/ops/attention/test_kda_fused_decode.py:207-208` |
 | `k3_kda_chunk_prefill` | 0.01 | 0.02 | `test/registered/attention/test_chunk_gated_delta_rule.py:28-29` |
+| `k3_kda_fused_decode` | 0.02 | 0.02 | `test/registered/kernels/ops/attention/test_kda_fused_decode.py:207-208` |
 
 ## What is in here
 
 | file | contents |
 | --- | --- |
-| `workloads*.json` | frozen call signatures with their real-traffic call counts |
+| `target_signatures.json` | the exact signatures the tensor capture was pointed at |
 | `tensors/` | real captured tensors (inputs, outputs, state rows) |
+| `workloads.json` | frozen call signatures with their real-traffic call counts |
 
-| op | real calls | rows |
-| --- | ---: | ---: |
-| `k3_kda_fused_decode` | 308,024 | 10 |
-| `k3_kda_chunk_prefill` | 5,520 | 9 |
+| op | real calls | rows | rows with real tensors | workload file |
+| --- | ---: | ---: | ---: | --- |
+| `k3_kda_fused_decode` | 308,024 | 9 | 9 | `workloads.json` |
+| `k3_kda_chunk_prefill` | 5,520 | 7 | 4 | `workloads.json` |

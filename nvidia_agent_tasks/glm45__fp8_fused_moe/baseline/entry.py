@@ -32,12 +32,47 @@ COPIED = {
 }
 
 
+_PUBLISHED = False
+
+
+def _publish_runtime_config() -> None:
+    """`fused_experts_impl` reads the `exec` config namespace, which only exists inside a
+    running server ("config namespace 'exec' not published"). Publishing a default
+    ServerArgs is the standalone equivalent: it sets no MoE-specific knob, it only makes
+    the namespace exist, so the kernel takes exactly the branches it takes in the server.
+    """
+    global _PUBLISHED
+    if _PUBLISHED:
+        return
+    import dataclasses
+
+    from sglang.srt import runtime_context
+    from sglang.srt.server_args import ServerArgs
+    if not runtime_context._CONTEXT.is_config_namespace_published("exec"):
+        # ServerArgs.__post_init__ resolves the model on the hub, which a kernel benchmark
+        # has no business doing; build the dataclass at its declared defaults instead, so
+        # every namespace exists with the value the server would use when nothing is set.
+        sa = ServerArgs.__new__(ServerArgs)
+        for f in dataclasses.fields(ServerArgs):
+            if f.default is not dataclasses.MISSING:
+                v = f.default
+            elif f.default_factory is not dataclasses.MISSING:
+                v = f.default_factory()
+            else:
+                v = None
+            setattr(sa, f.name, v)
+        sa.model_path = "unused-for-kernel-benchmarks"
+        runtime_context.publish(sa, role="engine")
+    _PUBLISHED = True
+
+
 def _sym(module, attr):
     rel = COPIED.get(module, "")
     return load(module, attr, __file__, rel)
 
 
 def _call(module, attr, kwargs):
+    _publish_runtime_config()
     fn = _sym(module, attr)
     try:
         return fn(**kwargs)

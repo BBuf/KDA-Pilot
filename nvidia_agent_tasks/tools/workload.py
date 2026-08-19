@@ -24,6 +24,8 @@ import os
 
 import torch
 
+from payload_match import payload_conflicts  # noqa: E402  shared with tools/coverage.py
+
 DTYPES = {
     "bfloat16": torch.bfloat16, "float16": torch.float16, "float32": torch.float32,
     "float64": torch.float64, "int64": torch.int64, "int32": torch.int32,
@@ -81,6 +83,8 @@ def load_payload(task_dir: str, row: dict) -> dict:
     want = _row_shapes(row)
     best, best_score = {}, 0
     for c in cands:
+        if payload_conflicts(c, row):
+            continue
         meta = json.load(open(os.path.join(c, "meta.json")))
         got = {}
         static = os.path.join(os.path.dirname(c), "static")

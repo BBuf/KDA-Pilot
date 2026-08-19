@@ -19,8 +19,7 @@ real captured tensors for a row whenever this task ships a payload that matches 
 
 ## What runs today
 
-Verified on 1x B300 with SGLang main @ 43226af: **9 of 9 ops produce a CUDA-graph-timed baseline** from the recorded rows.
-
+Verified on 1x B300 with SGLang main @ 43226af: **9 of 9 ops produce a CUDA-graph-timed baseline**, over **44 of 56 workload rows**. The rows that do not time are the ones with no payload of their own: their integer segment arguments allocate to zeros, and the harness refuses to judge a reference built on that.
 
 ## Dropping a candidate in
 
@@ -46,13 +45,10 @@ A row whose integer index arguments had to be allocated can address out of bound
 the CUDA context down; the harness and the test detect that, name the row, and stop rather
 than reporting nonsense for every row after it.
 
-
-
-
 ## Real-tensor coverage
 
 ```
-nemotron3_nano__mamba2_ssm                   100 rows,  69 with payload ( 69%),  188/ 594 data args real ( 32%)
+nemotron3_nano__mamba2_ssm                    56 rows,  32 with payload ( 57%),   88/ 297 data args real ( 30%)
 ```
 
 Rows with a payload run on tensors captured from the live model; the rest fall back
@@ -69,7 +65,7 @@ recorded as metadata instead. `python tools/coverage.py nemotron3_nano__mamba2_s
   of kernels that take single-digit microseconds. `--timer graph` runs our own flush+event
   loop instead - the two agree to 0.1% on the K3 GEMM rows.
 * **L2 is cold on every call.** Back-to-back replay with a warm L2 reads 58-82% faster on
-  these rows - see `../docs/measurement_contract.md`.
+  these rows - see `../../docs/measurement_contract.md`.
 * **The baseline is called three times on identical inputs before anything is judged.** A row
   whose reference contains NaN/Inf or does not reproduce is printed as `NO VALID REFERENCE`
   and excluded, rather than judged against uninitialized memory.
@@ -86,30 +82,31 @@ kernel uses** - not a threshold invented for this handoff. Same numbers in
 | op | rtol | atol | copied from |
 | --- | ---: | ---: | --- |
 | `causal_conv1d_decode` | 0.01 | 0.05 | `test/registered/layers/mamba/test_causal_conv1d.py:163-165` |
-| `mamba2_chunk_cumsum` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
-| `mamba2_chunk_state` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
 | `causal_conv1d_prefill` | 0.01 | 0.05 | `test/registered/layers/mamba/test_causal_conv1d.py:163-165` |
-| `mamba2_state_passing` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
+| `mamba2_chunk_cumsum` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
 | `mamba2_chunk_scan` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
-| `mamba2_chunk_state_varlen` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
-| `mamba2_chunk_scan_combined_fwd` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
 | `mamba2_chunk_scan_combined` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
+| `mamba2_chunk_scan_combined_fwd` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
+| `mamba2_chunk_state` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
+| `mamba2_chunk_state_varlen` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
+| `mamba2_state_passing` | 0.05 | 0.05 | `test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248` |
 
 ## What is in here
 
 | file | contents |
 | --- | --- |
-| `workloads*.json` | frozen call signatures with their real-traffic call counts |
+| `target_signatures.json` | the exact signatures the tensor capture was pointed at |
 | `tensors/` | real captured tensors (inputs, outputs, state rows) |
+| `workloads.json` | frozen call signatures with their real-traffic call counts |
 
-| op | real calls | rows |
-| --- | ---: | ---: |
-| `causal_conv1d_decode` | 275,863 | 5 |
-| `mamba2_chunk_cumsum` | 7,130 | 14 |
-| `mamba2_chunk_state` | 7,130 | 14 |
-| `causal_conv1d_prefill` | 7,130 | 15 |
-| `mamba2_state_passing` | 7,130 | 15 |
-| `mamba2_chunk_scan` | 7,130 | 15 |
-| `mamba2_chunk_state_varlen` | 7,130 | 15 |
-| `mamba2_chunk_scan_combined_fwd` | 7,130 | 15 |
-| `mamba2_chunk_scan_combined` | 7,130 | 15 |
+| op | real calls | rows | rows with real tensors | workload file |
+| --- | ---: | ---: | ---: | --- |
+| `causal_conv1d_decode` | 275,863 | 3 | 3 | `workloads.json` |
+| `mamba2_chunk_cumsum` | 7,130 | 8 | 5 | `workloads.json` |
+| `mamba2_chunk_state` | 7,130 | 5 | 2 | `workloads.json` |
+| `causal_conv1d_prefill` | 7,130 | 9 | 6 | `workloads.json` |
+| `mamba2_state_passing` | 7,130 | 15 | 12 | `workloads.json` |
+| `mamba2_chunk_scan` | 7,130 | 5 | 2 | `workloads.json` |
+| `mamba2_chunk_state_varlen` | 7,130 | 3 | 0 | `workloads.json` |
+| `mamba2_chunk_scan_combined_fwd` | 7,130 | 5 | 2 | `workloads.json` |
+| `mamba2_chunk_scan_combined` | 7,130 | 3 | 0 | `workloads.json` |

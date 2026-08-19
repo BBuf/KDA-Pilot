@@ -19,20 +19,7 @@ real captured tensors for a row whenever this task ships a payload that matches 
 
 ## What runs today
 
-Verified on 1x B300 with SGLang main @ 43226af: **8 of 12 ops produce a CUDA-graph-timed baseline** from the recorded rows.
-
-The rest need a small reconstruction step in `baseline/entry.py`'s
-`RECONSTRUCT` hook, because the capture could record an argument's contents but
-not the object around it:
-
-* `dsa_compress_forward` - takes a CompressorPrefillPlan/DecodePlan namedtuple; the capture recorded its tensor fields, so RECONSTRUCT can rebuild it
-* `dsa_compress_norm_rope_store` - same plan object
-* `mhc_pre` - reads the tensor-parallel group; run under a single-rank torch.distributed init, or call the *_tilelang entry directly (which does time)
-* `mhc_post` - same
-
-The harness reports those rows as `NOT RUNNABLE` with the missing argument
-named, and keeps going with the rest.
-
+Verified on 1x B300 with SGLang main @ 43226af: **8 of 12 ops produce a CUDA-graph-timed baseline**, over **42 of 78 workload rows**. The four that do not are the ones whose arguments are a plan object or a paged-KV pool descriptor the capture cannot serialize; each needs a few lines in `baseline/entry.py::RECONSTRUCT`.
 
 ## Dropping a candidate in
 
@@ -58,13 +45,10 @@ A row whose integer index arguments had to be allocated can address out of bound
 the CUDA context down; the harness and the test detect that, name the row, and stop rather
 than reporting nonsense for every row after it.
 
-
-
-
 ## Real-tensor coverage
 
 ```
-deepseek_v4_flash__dsa_sparse_attention      111 rows,  52 with payload ( 47%),  105/ 453 data args real ( 23%)
+deepseek_v4_flash__dsa_sparse_attention       78 rows,  55 with payload ( 71%),  182/ 323 data args real ( 56%)
 ```
 
 Rows with a payload run on tensors captured from the live model; the rest fall back
@@ -81,7 +65,7 @@ recorded as metadata instead. `python tools/coverage.py deepseek_v4_flash__dsa_s
   of kernels that take single-digit microseconds. `--timer graph` runs our own flush+event
   loop instead - the two agree to 0.1% on the K3 GEMM rows.
 * **L2 is cold on every call.** Back-to-back replay with a warm L2 reads 58-82% faster on
-  these rows - see `../docs/measurement_contract.md`.
+  these rows - see `../../docs/measurement_contract.md`.
 * **The baseline is called three times on identical inputs before anything is judged.** A row
   whose reference contains NaN/Inf or does not reproduce is printed as `NO VALID REFERENCE`
   and excluded, rather than judged against uninitialized memory.
@@ -101,34 +85,36 @@ kernel uses** - not a threshold invented for this handoff. Same numbers in
 | `dsa_compress_norm_rope_store` | 0.01 | 0.02 | `test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22` |
 | `dsa_fused_q_indexer_rope_hadamard_quant` | 0.01 | 0.02 | `test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22` |
 | `dsa_indexer_logits_deepgemm_DEFAULT` | 0.01 | 0.02 | `test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22` |
-| `dsa_topk_transform_v2` | 0.0 | 0.0 | `test/registered/kernels/ops/attention/test_dsa_transform_index.py:120` |
-| `dsa_sparse_attention_flash_mla_alt` | 0.01 | 0.02 | `test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22` |
 | `dsa_paged_mqa_logits_metadata` | 0.0 | 0.0 | `test/registered/kernels/ops/attention/test_dsa_transform_index.py:120` |
+| `dsa_sparse_attention_flash_mla_alt` | 0.01 | 0.02 | `test/registered/attention/test_verify_splitkv.py:40-41 and test_verify_shared_kv.py:19-22` |
 | `dsa_topk_transform` | 0.0 | 0.0 | `test/registered/kernels/ops/attention/test_dsa_transform_index.py:120` |
-| `mhc_pre_big_fuse_with_norm_tilelang` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
-| `mhc_pre` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
-| `mhc_post_tilelang` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
+| `dsa_topk_transform_v2` | 0.0 | 0.0 | `test/registered/kernels/ops/attention/test_dsa_transform_index.py:120` |
 | `mhc_post` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
+| `mhc_post_tilelang` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
+| `mhc_pre` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
+| `mhc_pre_big_fuse_with_norm_tilelang` | 0.01 | 0.001 | `test/registered/attention/test_triton_attention_kernels.py:309` |
 
 ## What is in here
 
 | file | contents |
 | --- | --- |
-| `workloads*.json` | frozen call signatures with their real-traffic call counts |
+| `target_signatures.json` | the exact signatures the tensor capture was pointed at |
 | `tensors/` | real captured tensors (inputs, outputs, state rows) |
 | `tensors_mhc/` | real captured tensors (inputs, outputs, state rows) |
+| `workloads.json` | frozen call signatures with their real-traffic call counts |
+| `workloads_mhc.json` | frozen call signatures with their real-traffic call counts |
 
-| op | real calls | rows |
-| --- | ---: | ---: |
-| `dsa_compress_forward` | 183,527 | 11 |
-| `dsa_compress_norm_rope_store` | 183,526 | 11 |
-| `dsa_fused_q_indexer_rope_hadamard_quant` | 62,164 | 8 |
-| `dsa_indexer_logits_deepgemm_DEFAULT` | 62,164 | 8 |
-| `dsa_topk_transform_v2` | 59,808 | 7 |
-| `dsa_sparse_attention_flash_mla_alt` | 4,825 | 12 |
-| `dsa_paged_mqa_logits_metadata` | 2,964 | 8 |
-| `dsa_topk_transform` | 2,356 | 10 |
-| `mhc_pre_big_fuse_with_norm_tilelang` | 155,492 | 9 |
-| `mhc_pre` | 155,492 | 9 |
-| `mhc_post_tilelang` | 155,492 | 9 |
-| `mhc_post` | 155,492 | 9 |
+| op | real calls | rows | rows with real tensors | workload file |
+| --- | ---: | ---: | ---: | --- |
+| `dsa_compress_forward` | 271,820 | 7 | 7 | `workloads.json` |
+| `dsa_compress_norm_rope_store` | 271,820 | 9 | 8 | `workloads.json` |
+| `dsa_fused_q_indexer_rope_hadamard_quant` | 92,068 | 7 | 6 | `workloads.json` |
+| `dsa_indexer_logits_deepgemm_DEFAULT` | 92,068 | 7 | 6 | `workloads.json` |
+| `dsa_topk_transform_v2` | 89,548 | 8 | 6 | `workloads.json` |
+| `dsa_sparse_attention_flash_mla_alt` | 5,160 | 4 | 1 | `workloads.json` |
+| `dsa_paged_mqa_logits_metadata` | 4,388 | 3 | 0 | `workloads.json` |
+| `dsa_topk_transform` | 2,520 | 8 | 5 | `workloads.json` |
+| `mhc_pre_big_fuse_with_norm_tilelang` | 377,052 | 6 | 6 | `workloads_mhc.json` |
+| `mhc_pre` | 377,052 | 4 | 1 | `workloads_mhc.json` |
+| `mhc_post_tilelang` | 377,048 | 8 | 5 | `workloads_mhc.json` |
+| `mhc_post` | 377,048 | 7 | 4 | `workloads_mhc.json` |

@@ -1,7 +1,7 @@
 {
-  "task": "dsv4_flash",
-  "model": "/scratch/models/dsv4_flash",
-  "source_manifest": "shape_manifest.json",
+  "task": "deepseek_v4_flash__dsa_sparse_attention",
+  "model": "deepseek-ai/DeepSeek-V4-Flash",
+  "source_manifest": "dsv4_flash_real.json",
   "selection_rule": "top-12 signatures per op by real-traffic call count, plus the smallest and largest input footprint, plus one signature per capture group; warmup-only signatures excluded",
   "ops": [
     {
@@ -707,7 +707,7 @@
       "op": "dsa_compress_norm_rope_store",
       "total_real_calls": 271820,
       "distinct_real_signatures": 267,
-      "rows_with_payload": 9,
+      "rows_with_payload": 8,
       "rows": [
         {
           "row_id": "dsa_compress_norm_rope_store#00",
@@ -2875,6 +2875,132 @@
         },
         {
           "row_id": "dsa_indexer_logits_deepgemm_DEFAULT#03",
+          "group": "gsm8k_5shot_cc32",
+          "real_calls": 1092,
+          "kept_because": [
+            "top-12 by call count"
+          ],
+          "args": {
+            "q": {
+              "shape": [
+                31,
+                1,
+                64,
+                128
+              ],
+              "dtype": "float8_e4m3fn",
+              "stride": [
+                8192,
+                8192,
+                128,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 253952,
+              "bytes": 253952
+            },
+            "kv_cache": {
+              "shape": [
+                100316,
+                64,
+                1,
+                132
+              ],
+              "dtype": "uint8",
+              "stride": [
+                8448,
+                132,
+                132,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 847469568,
+              "bytes": 847469568
+            },
+            "weights": {
+              "shape": [
+                31,
+                64
+              ],
+              "dtype": "float32",
+              "stride": [
+                64,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 1984,
+              "bytes": 7936
+            },
+            "context_lens": {
+              "shape": [
+                31,
+                1
+              ],
+              "dtype": "int32",
+              "stride": [
+                1,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 31,
+              "bytes": 124
+            },
+            "block_table": {
+              "shape": [
+                31,
+                4097
+              ],
+              "dtype": "int32",
+              "stride": [
+                4097,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 127007,
+              "bytes": 508028
+            },
+            "schedule_meta": {
+              "shape": [
+                149,
+                2
+              ],
+              "dtype": "int32",
+              "stride": [
+                2,
+                1
+              ],
+              "contiguous": true,
+              "device": "cuda",
+              "numel": 298,
+              "bytes": 1192
+            },
+            "max_context_len": 262208,
+            "clean_logits": false
+          },
+          "output": {
+            "shape": [
+              31,
+              262208
+            ],
+            "dtype": "float32",
+            "stride": [
+              262400,
+              1
+            ],
+            "contiguous": false,
+            "device": "cuda",
+            "numel": 8128448,
+            "bytes": 32513792
+          },
+          "signature": "q=31x1x64x128:float8_e4m3fn|kv_cache=100316x64x1x132:uint8|weights=31x64:float32|context_lens=31x1:int32|block_table=31x4097:int32|schedule_meta=149x2:int32|max_context_len=262208"
+        },
+        {
+          "row_id": "dsa_indexer_logits_deepgemm_DEFAULT#04",
           "group": "random_1k256_cc16",
           "real_calls": 756,
           "kept_because": [
@@ -3000,7 +3126,7 @@
           "signature": "q=14x1x64x128:float8_e4m3fn|kv_cache=100316x64x1x132:uint8|weights=14x64:float32|context_lens=14x1:int32|block_table=14x4097:int32|schedule_meta=149x2:int32|max_context_len=262208"
         },
         {
-          "row_id": "dsa_indexer_logits_deepgemm_DEFAULT#04",
+          "row_id": "dsa_indexer_logits_deepgemm_DEFAULT#05",
           "group": "gsm8k_16shot_cc16",
           "real_calls": 336,
           "kept_because": [
@@ -3126,7 +3252,7 @@
           "signature": "q=12x1x64x128:float8_e4m3fn|kv_cache=100316x64x1x132:uint8|weights=12x64:float32|context_lens=12x1:int32|block_table=12x4097:int32|schedule_meta=149x2:int32|max_context_len=262208"
         },
         {
-          "row_id": "dsa_indexer_logits_deepgemm_DEFAULT#05",
+          "row_id": "dsa_indexer_logits_deepgemm_DEFAULT#06",
           "group": "gsm8k_16shot_cc16",
           "real_calls": 84,
           "kept_because": [
@@ -3957,7 +4083,7 @@
       "op": "dsa_sparse_attention_flash_mla_alt",
       "total_real_calls": 5160,
       "distinct_real_signatures": 87,
-      "rows_with_payload": 13,
+      "rows_with_payload": 1,
       "rows": [
         {
           "row_id": "dsa_sparse_attention_flash_mla_alt#00",
@@ -4102,284 +4228,6 @@
         {
           "row_id": "dsa_sparse_attention_flash_mla_alt#01",
           "group": "random_1k256_cc16",
-          "real_calls": 84,
-          "kept_because": [
-            "top-12 by call count"
-          ],
-          "args": {
-            "q": {
-              "shape": [
-                664,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 21757952,
-              "bytes": 43515904
-            },
-            "kv": {
-              "shape": [
-                830,
-                1,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                512,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 424960,
-              "bytes": 849920
-            },
-            "indices": {
-              "shape": [
-                664,
-                1,
-                640
-              ],
-              "dtype": "int32",
-              "stride": [
-                640,
-                640,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 424960,
-              "bytes": 1699840
-            },
-            "sm_scale": 0.04419417382415922,
-            "d_v": 512,
-            "attn_sink": {
-              "shape": [
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 64,
-              "bytes": 256
-            },
-            "topk_length": {
-              "shape": [
-                664
-              ],
-              "dtype": "int32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 664,
-              "bytes": 2656
-            }
-          },
-          "output": [
-            {
-              "shape": [
-                664,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 21757952,
-              "bytes": 43515904
-            },
-            {
-              "shape": [
-                664,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 42496,
-              "bytes": 169984
-            },
-            {
-              "shape": [
-                664,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 42496,
-              "bytes": 169984
-            }
-          ],
-          "signature": "q=664x64x512:bfloat16|kv=830x1x512:bfloat16|indices=664x1x640:int32|sm_scale=0.04419417382415922|d_v=512|attn_sink=64:float32|topk_length=664:int32"
-        },
-        {
-          "row_id": "dsa_sparse_attention_flash_mla_alt#02",
-          "group": "random_1k256_cc16",
-          "real_calls": 80,
-          "kept_because": [
-            "top-12 by call count"
-          ],
-          "args": {
-            "q": {
-              "shape": [
-                664,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 21757952,
-              "bytes": 43515904
-            },
-            "kv": {
-              "shape": [
-                669,
-                1,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                512,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 342528,
-              "bytes": 685056
-            },
-            "indices": {
-              "shape": [
-                664,
-                1,
-                256
-              ],
-              "dtype": "int32",
-              "stride": [
-                256,
-                256,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 169984,
-              "bytes": 679936
-            },
-            "sm_scale": 0.04419417382415922,
-            "d_v": 512,
-            "attn_sink": {
-              "shape": [
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 64,
-              "bytes": 256
-            },
-            "topk_length": {
-              "shape": [
-                664
-              ],
-              "dtype": "int32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 664,
-              "bytes": 2656
-            }
-          },
-          "output": [
-            {
-              "shape": [
-                664,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 21757952,
-              "bytes": 43515904
-            },
-            {
-              "shape": [
-                664,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 42496,
-              "bytes": 169984
-            },
-            {
-              "shape": [
-                664,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 42496,
-              "bytes": 169984
-            }
-          ],
-          "signature": "q=664x64x512:bfloat16|kv=669x1x512:bfloat16|indices=664x1x256:int32|sm_scale=0.04419417382415922|d_v=512|attn_sink=64:float32|topk_length=664:int32"
-        },
-        {
-          "row_id": "dsa_sparse_attention_flash_mla_alt#03",
-          "group": "random_1k256_cc16",
           "real_calls": 168,
           "kept_because": [
             "top-12 by call count"
@@ -4517,983 +4365,7 @@
           "signature": "q=103x64x512:bfloat16|kv=128x1x512:bfloat16|indices=103x1x640:int32|sm_scale=0.04419417382415922|d_v=512|attn_sink=64:float32|topk_length=103:int32"
         },
         {
-          "row_id": "dsa_sparse_attention_flash_mla_alt#04",
-          "group": "random_1k256_cc16",
-          "real_calls": 160,
-          "kept_because": [
-            "top-12 by call count"
-          ],
-          "args": {
-            "q": {
-              "shape": [
-                103,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 3375104,
-              "bytes": 6750208
-            },
-            "kv": {
-              "shape": [
-                104,
-                1,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                512,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 53248,
-              "bytes": 106496
-            },
-            "indices": {
-              "shape": [
-                103,
-                1,
-                256
-              ],
-              "dtype": "int32",
-              "stride": [
-                256,
-                256,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 26368,
-              "bytes": 105472
-            },
-            "sm_scale": 0.04419417382415922,
-            "d_v": 512,
-            "attn_sink": {
-              "shape": [
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 64,
-              "bytes": 256
-            },
-            "topk_length": {
-              "shape": [
-                103
-              ],
-              "dtype": "int32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 103,
-              "bytes": 412
-            }
-          },
-          "output": [
-            {
-              "shape": [
-                103,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 3375104,
-              "bytes": 6750208
-            },
-            {
-              "shape": [
-                103,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 6592,
-              "bytes": 26368
-            },
-            {
-              "shape": [
-                103,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 6592,
-              "bytes": 26368
-            }
-          ],
-          "signature": "q=103x64x512:bfloat16|kv=104x1x512:bfloat16|indices=103x1x256:int32|sm_scale=0.04419417382415922|d_v=512|attn_sink=64:float32|topk_length=103:int32"
-        },
-        {
-          "row_id": "dsa_sparse_attention_flash_mla_alt#05",
-          "group": "gsm8k_5shot_cc1",
-          "real_calls": 84,
-          "kept_because": [
-            "top-12 by call count",
-            "operating-point coverage: gsm8k_5shot_cc1"
-          ],
-          "args": {
-            "q": {
-              "shape": [
-                733,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 24018944,
-              "bytes": 48037888
-            },
-            "kv": {
-              "shape": [
-                916,
-                1,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                512,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 468992,
-              "bytes": 937984
-            },
-            "indices": {
-              "shape": [
-                733,
-                1,
-                640
-              ],
-              "dtype": "int32",
-              "stride": [
-                640,
-                640,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 469120,
-              "bytes": 1876480
-            },
-            "sm_scale": 0.04419417382415922,
-            "d_v": 512,
-            "attn_sink": {
-              "shape": [
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 64,
-              "bytes": 256
-            },
-            "topk_length": {
-              "shape": [
-                733
-              ],
-              "dtype": "int32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 733,
-              "bytes": 2932
-            }
-          },
-          "output": [
-            {
-              "shape": [
-                733,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 24018944,
-              "bytes": 48037888
-            },
-            {
-              "shape": [
-                733,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 46912,
-              "bytes": 187648
-            },
-            {
-              "shape": [
-                733,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 46912,
-              "bytes": 187648
-            }
-          ],
-          "signature": "q=733x64x512:bfloat16|kv=916x1x512:bfloat16|indices=733x1x640:int32|sm_scale=0.04419417382415922|d_v=512|attn_sink=64:float32|topk_length=733:int32"
-        },
-        {
-          "row_id": "dsa_sparse_attention_flash_mla_alt#06",
-          "group": "gsm8k_5shot_cc1",
-          "real_calls": 84,
-          "kept_because": [
-            "top-12 by call count",
-            "operating-point coverage: gsm8k_5shot_cc32"
-          ],
-          "args": {
-            "q": {
-              "shape": [
-                696,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 22806528,
-              "bytes": 45613056
-            },
-            "kv": {
-              "shape": [
-                870,
-                1,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                512,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 445440,
-              "bytes": 890880
-            },
-            "indices": {
-              "shape": [
-                696,
-                1,
-                640
-              ],
-              "dtype": "int32",
-              "stride": [
-                640,
-                640,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 445440,
-              "bytes": 1781760
-            },
-            "sm_scale": 0.04419417382415922,
-            "d_v": 512,
-            "attn_sink": {
-              "shape": [
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 64,
-              "bytes": 256
-            },
-            "topk_length": {
-              "shape": [
-                696
-              ],
-              "dtype": "int32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 696,
-              "bytes": 2784
-            }
-          },
-          "output": [
-            {
-              "shape": [
-                696,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 22806528,
-              "bytes": 45613056
-            },
-            {
-              "shape": [
-                696,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 44544,
-              "bytes": 178176
-            },
-            {
-              "shape": [
-                696,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 44544,
-              "bytes": 178176
-            }
-          ],
-          "signature": "q=696x64x512:bfloat16|kv=870x1x512:bfloat16|indices=696x1x640:int32|sm_scale=0.04419417382415922|d_v=512|attn_sink=64:float32|topk_length=696:int32"
-        },
-        {
-          "row_id": "dsa_sparse_attention_flash_mla_alt#07",
-          "group": "gsm8k_5shot_cc1",
-          "real_calls": 84,
-          "kept_because": [
-            "top-12 by call count"
-          ],
-          "args": {
-            "q": {
-              "shape": [
-                719,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 23560192,
-              "bytes": 47120384
-            },
-            "kv": {
-              "shape": [
-                898,
-                1,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                512,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 459776,
-              "bytes": 919552
-            },
-            "indices": {
-              "shape": [
-                719,
-                1,
-                640
-              ],
-              "dtype": "int32",
-              "stride": [
-                640,
-                640,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 460160,
-              "bytes": 1840640
-            },
-            "sm_scale": 0.04419417382415922,
-            "d_v": 512,
-            "attn_sink": {
-              "shape": [
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 64,
-              "bytes": 256
-            },
-            "topk_length": {
-              "shape": [
-                719
-              ],
-              "dtype": "int32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 719,
-              "bytes": 2876
-            }
-          },
-          "output": [
-            {
-              "shape": [
-                719,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 23560192,
-              "bytes": 47120384
-            },
-            {
-              "shape": [
-                719,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 46016,
-              "bytes": 184064
-            },
-            {
-              "shape": [
-                719,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 46016,
-              "bytes": 184064
-            }
-          ],
-          "signature": "q=719x64x512:bfloat16|kv=898x1x512:bfloat16|indices=719x1x640:int32|sm_scale=0.04419417382415922|d_v=512|attn_sink=64:float32|topk_length=719:int32"
-        },
-        {
-          "row_id": "dsa_sparse_attention_flash_mla_alt#08",
-          "group": "gsm8k_5shot_cc1",
-          "real_calls": 84,
-          "kept_because": [
-            "top-12 by call count"
-          ],
-          "args": {
-            "q": {
-              "shape": [
-                704,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 23068672,
-              "bytes": 46137344
-            },
-            "kv": {
-              "shape": [
-                880,
-                1,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                512,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 450560,
-              "bytes": 901120
-            },
-            "indices": {
-              "shape": [
-                704,
-                1,
-                640
-              ],
-              "dtype": "int32",
-              "stride": [
-                640,
-                640,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 450560,
-              "bytes": 1802240
-            },
-            "sm_scale": 0.04419417382415922,
-            "d_v": 512,
-            "attn_sink": {
-              "shape": [
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 64,
-              "bytes": 256
-            },
-            "topk_length": {
-              "shape": [
-                704
-              ],
-              "dtype": "int32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 704,
-              "bytes": 2816
-            }
-          },
-          "output": [
-            {
-              "shape": [
-                704,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 23068672,
-              "bytes": 46137344
-            },
-            {
-              "shape": [
-                704,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 45056,
-              "bytes": 180224
-            },
-            {
-              "shape": [
-                704,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 45056,
-              "bytes": 180224
-            }
-          ],
-          "signature": "q=704x64x512:bfloat16|kv=880x1x512:bfloat16|indices=704x1x640:int32|sm_scale=0.04419417382415922|d_v=512|attn_sink=64:float32|topk_length=704:int32"
-        },
-        {
-          "row_id": "dsa_sparse_attention_flash_mla_alt#09",
-          "group": "gsm8k_16shot_cc16",
-          "real_calls": 84,
-          "kept_because": [
-            "top-12 by call count",
-            "operating-point coverage: gsm8k_16shot_cc16"
-          ],
-          "args": {
-            "q": {
-              "shape": [
-                2922,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 95748096,
-              "bytes": 191496192
-            },
-            "kv": {
-              "shape": [
-                3652,
-                1,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                512,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 1869824,
-              "bytes": 3739648
-            },
-            "indices": {
-              "shape": [
-                2922,
-                1,
-                640
-              ],
-              "dtype": "int32",
-              "stride": [
-                640,
-                640,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 1870080,
-              "bytes": 7480320
-            },
-            "sm_scale": 0.04419417382415922,
-            "d_v": 512,
-            "attn_sink": {
-              "shape": [
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 64,
-              "bytes": 256
-            },
-            "topk_length": {
-              "shape": [
-                2922
-              ],
-              "dtype": "int32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 2922,
-              "bytes": 11688
-            }
-          },
-          "output": [
-            {
-              "shape": [
-                2922,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 95748096,
-              "bytes": 191496192
-            },
-            {
-              "shape": [
-                2922,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 187008,
-              "bytes": 748032
-            },
-            {
-              "shape": [
-                2922,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 187008,
-              "bytes": 748032
-            }
-          ],
-          "signature": "q=2922x64x512:bfloat16|kv=3652x1x512:bfloat16|indices=2922x1x640:int32|sm_scale=0.04419417382415922|d_v=512|attn_sink=64:float32|topk_length=2922:int32"
-        },
-        {
-          "row_id": "dsa_sparse_attention_flash_mla_alt#10",
-          "group": "gsm8k_16shot_cc16",
-          "real_calls": 84,
-          "kept_because": [
-            "top-12 by call count"
-          ],
-          "args": {
-            "q": {
-              "shape": [
-                15589,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 510820352,
-              "bytes": 1021640704
-            },
-            "kv": {
-              "shape": [
-                20035,
-                1,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                512,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 10257920,
-              "bytes": 20515840
-            },
-            "indices": {
-              "shape": [
-                15589,
-                1,
-                640
-              ],
-              "dtype": "int32",
-              "stride": [
-                640,
-                640,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 9976960,
-              "bytes": 39907840
-            },
-            "sm_scale": 0.04419417382415922,
-            "d_v": 512,
-            "attn_sink": {
-              "shape": [
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 64,
-              "bytes": 256
-            },
-            "topk_length": {
-              "shape": [
-                15589
-              ],
-              "dtype": "int32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 15589,
-              "bytes": 62356
-            }
-          },
-          "output": [
-            {
-              "shape": [
-                15589,
-                64,
-                512
-              ],
-              "dtype": "bfloat16",
-              "stride": [
-                32768,
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 510820352,
-              "bytes": 1021640704
-            },
-            {
-              "shape": [
-                15589,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 997696,
-              "bytes": 3990784
-            },
-            {
-              "shape": [
-                15589,
-                64
-              ],
-              "dtype": "float32",
-              "stride": [
-                64,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 997696,
-              "bytes": 3990784
-            }
-          ],
-          "signature": "q=15589x64x512:bfloat16|kv=20035x1x512:bfloat16|indices=15589x1x640:int32|sm_scale=0.04419417382415922|d_v=512|attn_sink=64:float32|topk_length=15589:int32"
-        },
-        {
-          "row_id": "dsa_sparse_attention_flash_mla_alt#11",
+          "row_id": "dsa_sparse_attention_flash_mla_alt#02",
           "group": "gsm8k_16shot_cc16",
           "real_calls": 84,
           "kept_because": [
@@ -5633,7 +4505,7 @@
           "signature": "q=15636x64x512:bfloat16|kv=20203x1x512:bfloat16|indices=15636x1x640:int32|sm_scale=0.04419417382415922|d_v=512|attn_sink=64:float32|topk_length=15636:int32"
         },
         {
-          "row_id": "dsa_sparse_attention_flash_mla_alt#12",
+          "row_id": "dsa_sparse_attention_flash_mla_alt#03",
           "group": "random_1k256_cc16",
           "real_calls": 8,
           "kept_because": [
@@ -5871,265 +4743,6 @@
         },
         {
           "row_id": "dsa_paged_mqa_logits_metadata#02",
-          "group": "random_1k256_cc16",
-          "real_calls": 272,
-          "kept_because": [
-            "top-12 by call count"
-          ],
-          "args": {
-            "seq_lens": {
-              "shape": [
-                3,
-                1
-              ],
-              "dtype": "int32",
-              "stride": [
-                1,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 3,
-              "bytes": 12
-            },
-            "page_size": 64,
-            "num_sm": 148
-          },
-          "output": {
-            "shape": [
-              149,
-              2
-            ],
-            "dtype": "int32",
-            "stride": [
-              2,
-              1
-            ],
-            "contiguous": true,
-            "device": "cuda",
-            "numel": 298,
-            "bytes": 1192
-          },
-          "signature": "seq_lens=3x1:int32|page_size=64|num_sm=148"
-        },
-        {
-          "row_id": "dsa_paged_mqa_logits_metadata#03",
-          "group": "random_1k256_cc16",
-          "real_calls": 148,
-          "kept_because": [
-            "top-12 by call count"
-          ],
-          "args": {
-            "seq_lens": {
-              "shape": [
-                5,
-                1
-              ],
-              "dtype": "int32",
-              "stride": [
-                1,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 5,
-              "bytes": 20
-            },
-            "page_size": 64,
-            "num_sm": 148
-          },
-          "output": {
-            "shape": [
-              149,
-              2
-            ],
-            "dtype": "int32",
-            "stride": [
-              2,
-              1
-            ],
-            "contiguous": true,
-            "device": "cuda",
-            "numel": 298,
-            "bytes": 1192
-          },
-          "signature": "seq_lens=5x1:int32|page_size=64|num_sm=148"
-        },
-        {
-          "row_id": "dsa_paged_mqa_logits_metadata#04",
-          "group": "random_1k256_cc16",
-          "real_calls": 140,
-          "kept_because": [
-            "top-12 by call count"
-          ],
-          "args": {
-            "seq_lens": {
-              "shape": [
-                6,
-                1
-              ],
-              "dtype": "int32",
-              "stride": [
-                1,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 6,
-              "bytes": 24
-            },
-            "page_size": 64,
-            "num_sm": 148
-          },
-          "output": {
-            "shape": [
-              149,
-              2
-            ],
-            "dtype": "int32",
-            "stride": [
-              2,
-              1
-            ],
-            "contiguous": true,
-            "device": "cuda",
-            "numel": 298,
-            "bytes": 1192
-          },
-          "signature": "seq_lens=6x1:int32|page_size=64|num_sm=148"
-        },
-        {
-          "row_id": "dsa_paged_mqa_logits_metadata#05",
-          "group": "gsm8k_16shot_cc16",
-          "real_calls": 132,
-          "kept_because": [
-            "top-12 by call count"
-          ],
-          "args": {
-            "seq_lens": {
-              "shape": [
-                13,
-                1
-              ],
-              "dtype": "int32",
-              "stride": [
-                1,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 13,
-              "bytes": 52
-            },
-            "page_size": 64,
-            "num_sm": 148
-          },
-          "output": {
-            "shape": [
-              149,
-              2
-            ],
-            "dtype": "int32",
-            "stride": [
-              2,
-              1
-            ],
-            "contiguous": true,
-            "device": "cuda",
-            "numel": 298,
-            "bytes": 1192
-          },
-          "signature": "seq_lens=13x1:int32|page_size=64|num_sm=148"
-        },
-        {
-          "row_id": "dsa_paged_mqa_logits_metadata#06",
-          "group": "gsm8k_5shot_cc32",
-          "real_calls": 108,
-          "kept_because": [
-            "top-12 by call count",
-            "operating-point coverage: gsm8k_5shot_cc32"
-          ],
-          "args": {
-            "seq_lens": {
-              "shape": [
-                32,
-                1
-              ],
-              "dtype": "int32",
-              "stride": [
-                1,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 32,
-              "bytes": 128
-            },
-            "page_size": 64,
-            "num_sm": 148
-          },
-          "output": {
-            "shape": [
-              149,
-              2
-            ],
-            "dtype": "int32",
-            "stride": [
-              2,
-              1
-            ],
-            "contiguous": true,
-            "device": "cuda",
-            "numel": 298,
-            "bytes": 1192
-          },
-          "signature": "seq_lens=32x1:int32|page_size=64|num_sm=148"
-        },
-        {
-          "row_id": "dsa_paged_mqa_logits_metadata#07",
-          "group": "gsm8k_16shot_cc16",
-          "real_calls": 72,
-          "kept_because": [
-            "top-12 by call count"
-          ],
-          "args": {
-            "seq_lens": {
-              "shape": [
-                11,
-                1
-              ],
-              "dtype": "int32",
-              "stride": [
-                1,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 11,
-              "bytes": 44
-            },
-            "page_size": 64,
-            "num_sm": 148
-          },
-          "output": {
-            "shape": [
-              149,
-              2
-            ],
-            "dtype": "int32",
-            "stride": [
-              2,
-              1
-            ],
-            "contiguous": true,
-            "device": "cuda",
-            "numel": 298,
-            "bytes": 1192
-          },
-          "signature": "seq_lens=11x1:int32|page_size=64|num_sm=148"
-        },
-        {
-          "row_id": "dsa_paged_mqa_logits_metadata#08",
           "group": "gsm8k_16shot_cc16",
           "real_calls": 4,
           "kept_because": [
@@ -6788,350 +5401,6 @@
         },
         {
           "row_id": "dsa_topk_transform#07",
-          "group": "gsm8k_5shot_cc1",
-          "real_calls": 84,
-          "kept_because": [
-            "top-12 by call count"
-          ],
-          "args": {
-            "scores": {
-              "shape": [
-                719,
-                192
-              ],
-              "dtype": "float32",
-              "stride": [
-                256,
-                1
-              ],
-              "contiguous": false,
-              "device": "cuda",
-              "numel": 138048,
-              "bytes": 552192
-            },
-            "seq_lens": {
-              "shape": [
-                719
-              ],
-              "dtype": "int32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 719,
-              "bytes": 2876
-            },
-            "page_tables": {
-              "shape": [
-                719,
-                3
-              ],
-              "dtype": "int32",
-              "stride": [
-                3,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 2157,
-              "bytes": 8628
-            },
-            "out_page_indices": {
-              "shape": [
-                719,
-                512
-              ],
-              "dtype": "int32",
-              "stride": [
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 368128,
-              "bytes": 1472512
-            },
-            "page_size": 64,
-            "out_raw_indices": {
-              "shape": [
-                719,
-                512
-              ],
-              "dtype": "int32",
-              "stride": [
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 368128,
-              "bytes": 1472512
-            }
-          },
-          "output": null,
-          "signature": "scores=719x192:float32!c|seq_lens=719:int32|page_tables=719x3:int32|out_page_indices=719x512:int32|page_size=64|out_raw_indices=719x512:int32"
-        },
-        {
-          "row_id": "dsa_topk_transform#08",
-          "group": "gsm8k_5shot_cc1",
-          "real_calls": 84,
-          "kept_because": [
-            "top-12 by call count"
-          ],
-          "args": {
-            "scores": {
-              "shape": [
-                704,
-                192
-              ],
-              "dtype": "float32",
-              "stride": [
-                256,
-                1
-              ],
-              "contiguous": false,
-              "device": "cuda",
-              "numel": 135168,
-              "bytes": 540672
-            },
-            "seq_lens": {
-              "shape": [
-                704
-              ],
-              "dtype": "int32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 704,
-              "bytes": 2816
-            },
-            "page_tables": {
-              "shape": [
-                704,
-                3
-              ],
-              "dtype": "int32",
-              "stride": [
-                3,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 2112,
-              "bytes": 8448
-            },
-            "out_page_indices": {
-              "shape": [
-                704,
-                512
-              ],
-              "dtype": "int32",
-              "stride": [
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 360448,
-              "bytes": 1441792
-            },
-            "page_size": 64,
-            "out_raw_indices": {
-              "shape": [
-                704,
-                512
-              ],
-              "dtype": "int32",
-              "stride": [
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 360448,
-              "bytes": 1441792
-            }
-          },
-          "output": null,
-          "signature": "scores=704x192:float32!c|seq_lens=704:int32|page_tables=704x3:int32|out_page_indices=704x512:int32|page_size=64|out_raw_indices=704x512:int32"
-        },
-        {
-          "row_id": "dsa_topk_transform#09",
-          "group": "gsm8k_16shot_cc16",
-          "real_calls": 84,
-          "kept_because": [
-            "top-12 by call count"
-          ],
-          "args": {
-            "scores": {
-              "shape": [
-                2922,
-                768
-              ],
-              "dtype": "float32",
-              "stride": [
-                768,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 2244096,
-              "bytes": 8976384
-            },
-            "seq_lens": {
-              "shape": [
-                2922
-              ],
-              "dtype": "int32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 2922,
-              "bytes": 11688
-            },
-            "page_tables": {
-              "shape": [
-                2922,
-                12
-              ],
-              "dtype": "int32",
-              "stride": [
-                12,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 35064,
-              "bytes": 140256
-            },
-            "out_page_indices": {
-              "shape": [
-                2922,
-                512
-              ],
-              "dtype": "int32",
-              "stride": [
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 1496064,
-              "bytes": 5984256
-            },
-            "page_size": 64,
-            "out_raw_indices": {
-              "shape": [
-                2922,
-                512
-              ],
-              "dtype": "int32",
-              "stride": [
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 1496064,
-              "bytes": 5984256
-            }
-          },
-          "output": null,
-          "signature": "scores=2922x768:float32|seq_lens=2922:int32|page_tables=2922x12:int32|out_page_indices=2922x512:int32|page_size=64|out_raw_indices=2922x512:int32"
-        },
-        {
-          "row_id": "dsa_topk_transform#10",
-          "group": "gsm8k_16shot_cc16",
-          "real_calls": 84,
-          "kept_because": [
-            "top-12 by call count"
-          ],
-          "args": {
-            "scores": {
-              "shape": [
-                15589,
-                768
-              ],
-              "dtype": "float32",
-              "stride": [
-                768,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 11972352,
-              "bytes": 47889408
-            },
-            "seq_lens": {
-              "shape": [
-                15589
-              ],
-              "dtype": "int32",
-              "stride": [
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 15589,
-              "bytes": 62356
-            },
-            "page_tables": {
-              "shape": [
-                15589,
-                12
-              ],
-              "dtype": "int32",
-              "stride": [
-                12,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 187068,
-              "bytes": 748272
-            },
-            "out_page_indices": {
-              "shape": [
-                15589,
-                512
-              ],
-              "dtype": "int32",
-              "stride": [
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 7981568,
-              "bytes": 31926272
-            },
-            "page_size": 64,
-            "out_raw_indices": {
-              "shape": [
-                15589,
-                512
-              ],
-              "dtype": "int32",
-              "stride": [
-                512,
-                1
-              ],
-              "contiguous": true,
-              "device": "cuda",
-              "numel": 7981568,
-              "bytes": 31926272
-            }
-          },
-          "output": null,
-          "signature": "scores=15589x768:float32|seq_lens=15589:int32|page_tables=15589x12:int32|out_page_indices=15589x512:int32|page_size=64|out_raw_indices=15589x512:int32"
-        },
-        {
-          "row_id": "dsa_topk_transform#11",
           "group": "gsm8k_16shot_cc16",
           "real_calls": 84,
           "kept_because": [
@@ -7221,7 +5490,7 @@
     }
   ],
   "capture_provenance": {
-    "model": "/scratch/models/dsv4_flash",
+    "model": "deepseek-ai/DeepSeek-V4-Flash",
     "slug": "dsv4_flash",
     "server_args": "--tp 4 --trust-remote-code --moe-runner-backend flashinfer_mxfp4 --mem-fraction-static 0.85",
     "capture_modifiers": [
@@ -7239,73 +5508,28 @@
     },
     "capture_matrix": [
       {
-        "phase": "shapes",
-        "group": "random_1k1k_cc1",
-        "started_utc": "12:27:20",
-        "Output token throughput": "13.18",
-        "Mean TTFT": "966.40"
-      },
-      {
-        "phase": "shapes",
-        "group": "random_1k1k_cc16",
-        "started_utc": "12:30:21",
-        "Output token throughput": "134.20",
-        "Mean TTFT": "1886.30"
-      },
-      {
-        "phase": "shapes",
-        "group": "random_1k1k_cc256",
-        "started_utc": "12:33:45",
-        "Output token throughput": "576.57",
-        "Mean TTFT": "6483.08"
-      },
-      {
-        "phase": "shapes",
-        "group": "random_4k512_cc8",
-        "started_utc": "12:37:49",
-        "Output token throughput": "67.98",
-        "Mean TTFT": "2076.73"
-      },
-      {
-        "phase": "shapes",
-        "group": "sharegpt_cc32",
-        "started_utc": "12:39:58",
-        "Output token throughput": "101.36",
-        "Mean TTFT": "3332.57"
-      },
-      {
-        "phase": "shapes",
         "group": "gsm8k_5shot_cc1",
-        "started_utc": "12:42:46",
-        "Accuracy": "1.000",
-        "Invalid": "0.000"
+        "gsm8k_accuracy": "1.000"
       },
       {
-        "phase": "shapes",
-        "group": "gsm8k_5shot_cc32",
-        "started_utc": "12:43:24",
-        "Accuracy": "0.984",
-        "Invalid": "0.000"
-      },
-      {
-        "phase": "shapes",
         "group": "gsm8k_16shot_cc16",
-        "started_utc": "12:45:13",
-        "Accuracy": "1.000",
-        "Invalid": "0.000"
+        "gsm8k_accuracy": "1.000"
       },
       {
-        "phase": "shapes",
-        "group": "gsm8k_accuracy_200",
-        "started_utc": "12:46:35",
-        "Accuracy": "0.980",
-        "Invalid": "0.000"
+        "group": "gsm8k_5shot_cc32",
+        "gsm8k_accuracy": "1.000"
+      },
+      {
+        "group": "random_1k256_cc16",
+        "output_token_throughput_tok_s": "63.01"
       }
     ],
     "workload_sources": [
-      "sglang.bench_serving --dataset-name random (cookbook operating points)",
-      "sglang.bench_serving --dataset-name sharegpt",
-      "benchmark/gsm8k/bench_sglang.py (real GSM8K, 2/5/16-shot, incl. a 200-question accuracy run)"
-    ]
+      "benchmark/gsm8k/bench_sglang.py --num-questions 4 --num-shots 5 --parallel 1",
+      "benchmark/gsm8k/bench_sglang.py --num-questions 16 --num-shots 16 --parallel 16",
+      "benchmark/gsm8k/bench_sglang.py --num-questions 32 --num-shots 5 --parallel 32",
+      "sglang.bench_serving --dataset-name random --random-input-len 1024 --random-output-len 256 --num-prompts 32 --max-concurrency 16"
+    ],
+    "note": "Every row in this file comes from one of these four groups; the accuracy column is the GSM8K score of the very run the tensors were taken from."
   }
 }

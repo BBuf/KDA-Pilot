@@ -1,39 +1,57 @@
 # Capture provenance
 
+## `bench/workloads.json`
+
 | field | value |
 | --- | --- |
-| model | `/scratch/models/glm47_flash` |
+| model | zai-org/GLM-4.7-Flash |
 | serving args | `--trust-remote-code --reasoning-parser glm45 --tool-call-parser glm47 --attention-backend triton --tp 1` |
 | host | light-face-hides-fin-03-1 (RadixArk devbox b300-diffusion-kernel-opt) |
-| GPUs used | 2 |
+| GPUs used | 4 |
 | SGLang commit | `43226af` |
 | torch / triton / transformers | 2.13.0+cu130 / 3.7.1 / 5.12.1 |
 | GPU | NVIDIA B300 SXM6 AC |
 
-## Capture-only modifiers
+### Capture-only modifiers
 
 - --disable-cuda-graph (python-level ops are invisible inside a captured graph)
 - tensors phase adds --disable-radix-cache (radix cache rewrites mamba/state pool rows outside the kernel call and breaks the state chain; shapes phase keeps radix ON so prefix-hit-driven chunk lengths stay realistic)
 
-## Workload sources
+### Operating points walked
 
-- sglang.bench_serving --dataset-name random (cookbook operating points)
-- sglang.bench_serving --dataset-name sharegpt
-- benchmark/gsm8k/bench_sglang.py (real GSM8K, 2/5/16-shot, incl. a 200-question accuracy run)
+| group | command | GSM8K accuracy | output tok/s |
+| --- | --- | ---: | ---: |
+| `gsm8k_5shot_cc1` | `benchmark/gsm8k/bench_sglang.py --num-questions 4 --num-shots 5 --parallel 1` | 1.000 | - |
+| `gsm8k_16shot_cc16` | `benchmark/gsm8k/bench_sglang.py --num-questions 16 --num-shots 16 --parallel 16` | 1.000 | - |
+| `gsm8k_5shot_cc32` | `benchmark/gsm8k/bench_sglang.py --num-questions 32 --num-shots 5 --parallel 32` | 0.781 | - |
+| `random_1k256_cc16` | `sglang.bench_serving --dataset-name random --random-input-len 1024 --random-output-len 256 --num-prompts 32 --max-concurrency 16` | - | 30.40 |
 
-## Capture matrix actually walked
+Every row in this file comes from one of these four groups; the accuracy column is the GSM8K score of the very run the tensors were taken from.
 
-| group | phase | started (UTC) | GSM8K accuracy | throughput / TTFT |
-| --- | --- | --- | --- | --- |
-| `random_1k1k_cc1` | shapes | 11:45:36 | - | 5.51 |
-| `random_1k1k_cc16` | shapes | 11:52:32 | - | - |
-| `sharegpt_cc32` | short | 12:15:14 | - | 8.56 |
-| `gsm8k_5shot_cc1` | short | 12:30:41 | 1.000 | - |
-| `gsm8k_5shot_cc32` | short | 12:34:09 | 0.750 | - |
-| `gsm8k_16shot_cc16` | short | 12:39:30 | 1.000 | - |
-| `gsm8k_accuracy_100` | short | 12:43:50 | 0.820 | - |
+## `bench/workloads_qwen3_next_secondary.json`
 
-Real GSM8K accuracy on the very run these shapes came from is the sanity check
-that the capture is from a correctly serving model. `bench/workloads.json` carries
-the per-signature real-traffic call counts; `../docs/workload_capture.md`
-explains the selection rule and the two capture-only modifiers.
+| field | value |
+| --- | --- |
+| model | Qwen/Qwen3-Next-80B-A3B-Instruct |
+| serving args | `--trust-remote-code --attention-backend triton --tp 8` |
+| host | light-face-hides-fin-03-1 (RadixArk devbox b300-diffusion-kernel-opt) |
+| GPUs used | 0,1,2,3,4,5,6,7 |
+| SGLang commit | `43226af` |
+| torch / triton / transformers | 2.13.0+cu130 / 3.7.1 / 5.12.1 |
+| GPU | NVIDIA B300 SXM6 AC |
+
+### Capture-only modifiers
+
+- --disable-cuda-graph (python-level ops are invisible inside a captured graph)
+- tensors phase adds --disable-radix-cache (radix cache rewrites mamba/state pool rows outside the kernel call and breaks the state chain; shapes phase keeps radix ON so prefix-hit-driven chunk lengths stay realistic)
+
+### Operating points walked
+
+| group | command | GSM8K accuracy | output tok/s |
+| --- | --- | ---: | ---: |
+| `gsm8k_5shot_cc1` | `benchmark/gsm8k/bench_sglang.py --num-questions 4 --num-shots 5 --parallel 1` | 1.000 | - |
+| `gsm8k_16shot_cc16` | `benchmark/gsm8k/bench_sglang.py --num-questions 16 --num-shots 16 --parallel 16` | 1.000 | - |
+| `gsm8k_5shot_cc32` | `benchmark/gsm8k/bench_sglang.py --num-questions 32 --num-shots 5 --parallel 32` | 0.969 | - |
+| `random_1k256_cc16` | `sglang.bench_serving --dataset-name random --random-input-len 1024 --random-output-len 256 --num-prompts 32 --max-concurrency 16` | - | 25.21 |
+
+Every row in this file comes from one of these four groups; the accuracy column is the GSM8K score of the very run the tensors were taken from.

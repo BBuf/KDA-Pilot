@@ -19,19 +19,7 @@ real captured tensors for a row whenever this task ships a payload that matches 
 
 ## What runs today
 
-Verified on 1x B300 with SGLang main @ 43226af: **0 of 3 ops produce a CUDA-graph-timed baseline** from the recorded rows.
-
-The rest need a small reconstruction step in `baseline/entry.py`'s
-`RECONSTRUCT` hook, because the capture could record an argument's contents but
-not the object around it:
-
-* `diffusion_attention_cudnn_sdpa` - bound method on the backend impl; RECONSTRUCT must instantiate it with the recorded head geometry
-* `diffusion_attention_fa4` - same
-* `diffusion_attention_sdpa` - same
-
-The harness reports those rows as `NOT RUNNABLE` with the missing argument
-named, and keeps going with the rest.
-
+Verified on 1x B300 with SGLang main @ 43226af: **3 of 3 ops produce a CUDA-graph-timed baseline**, over **9 of 9 workload rows**. These need the SGLang-diffusion checkout on `PYTHONPATH` (`PYTHONPATH=<sglang-diffusion>/python python tools/bench_harness.py ...`); the attention backends live in `sglang.multimodal_gen`.
 
 ## Dropping a candidate in
 
@@ -57,13 +45,10 @@ A row whose integer index arguments had to be allocated can address out of bound
 the CUDA context down; the harness and the test detect that, name the row, and stop rather
 than reporting nonsense for every row after it.
 
-
-
-
 ## Real-tensor coverage
 
 ```
-minimax_h3__sm103_block_sparse_attention       8 rows,   0 with payload (  0%),    0/  24 data args real (  0%)
+minimax_h3__sm103_block_sparse_attention       9 rows,   7 with payload ( 78%),   21/  27 data args real ( 78%)
 ```
 
 Rows with a payload run on tensors captured from the live model; the rest fall back
@@ -80,7 +65,7 @@ recorded as metadata instead. `python tools/coverage.py minimax_h3__sm103_block_
   of kernels that take single-digit microseconds. `--timer graph` runs our own flush+event
   loop instead - the two agree to 0.1% on the K3 GEMM rows.
 * **L2 is cold on every call.** Back-to-back replay with a warm L2 reads 58-82% faster on
-  these rows - see `../docs/measurement_contract.md`.
+  these rows - see `../../docs/measurement_contract.md`.
 * **The baseline is called three times on identical inputs before anything is judged.** A row
   whose reference contains NaN/Inf or does not reproduce is printed as `NO VALID REFERENCE`
   and excluded, rather than judged against uninitialized memory.
@@ -104,10 +89,12 @@ kernel uses** - not a threshold invented for this handoff. Same numbers in
 
 | file | contents |
 | --- | --- |
-| `workloads*.json` | frozen call signatures with their real-traffic call counts |
+| `target_signatures.json` | the exact signatures the tensor capture was pointed at |
+| `tensors/` | real captured tensors (inputs, outputs, state rows) |
+| `workloads_dense_reference.json` | frozen call signatures with their real-traffic call counts |
 
-| op | real calls | rows |
-| --- | ---: | ---: |
-| `diffusion_attention_cudnn_sdpa` | 216 | 4 |
-| `diffusion_attention_fa4` | 200 | 1 |
-| `diffusion_attention_sdpa` | 16 | 3 |
+| op | real calls | rows | rows with real tensors | workload file |
+| --- | ---: | ---: | ---: | --- |
+| `diffusion_attention_cudnn_sdpa` | 216 | 5 | 3 | `workloads_dense_reference.json` |
+| `diffusion_attention_fa4` | 200 | 1 | 1 | `workloads_dense_reference.json` |
+| `diffusion_attention_sdpa` | 16 | 3 | 2 | `workloads_dense_reference.json` |
