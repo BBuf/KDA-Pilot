@@ -184,6 +184,47 @@ recapture rather than editing this file.
 - `kv_indices[T]` int64 — T ∈ {0, 64, 704, 832, 5376}
 
 
+## `kimi_k3__kda_linear_attention`
+
+**`k3_kda_fused_decode`** — 308,024 real calls, 38 distinct signatures, 10 rows kept
+
+- `mixed_qkv[T, 4608]` bfloat16 **non-contiguous** — T ∈ {1, 2, 3, 10, 11, 13, 16, 21, 24, 32}
+- `a[T, 1536]` bfloat16 — T ∈ {1, 2, 3, 10, 11, 13, 16, 21, 24, 32}
+- `b[T, 12]` bfloat16 **non-contiguous** — T ∈ {1, 2, 3, 10, 11, 13, 16, 21, 24, 32}
+- `conv_states[274, 3, 4608]` bfloat16
+- `w_q_t[4, 1536]` float32
+- `w_k_t[4, 1536]` float32
+- `w_v_t[4, 1536]` float32
+- `conv_bias[4608]` float32
+- `A_log[12]` float32
+- `dt_bias[1536]` float32
+- `onorm_g[T, 1536]` bfloat16 **non-contiguous** — T ∈ {1, 2, 3, 10, 11, 13, 16, 21, 24, 32}
+- `onorm_weight[128]` float32
+- `ssm_states[274, 12, 128, 128]` float32
+- `cache_indices[T]` int32 — T ∈ {1, 2, 3, 10, 11, 13, 16, 21, 24, 32}
+
+**`k3_kda_chunk_prefill`** — 5,520 real calls, 10 distinct signatures, 9 rows kept
+
+- `q[1, T, 12, 128]` bfloat16 — T ∈ {694, 717, 730, 2917, 6835, 11425, 15591, 16143, 16167}
+- `k[1, T, 12, 128]` bfloat16 — T ∈ {694, 717, 730, 2917, 6835, 11425, 15591, 16143, 16167}
+- `v[1, T, 12, 128]` bfloat16 — T ∈ {694, 717, 730, 2917, 6835, 11425, 15591, 16143, 16167}
+- `g[1, T, 12, 128]` bfloat16 — T ∈ {694, 717, 730, 2917, 6835, 11425, 15591, 16143, 16167}
+- `beta[1, T, 12]` float32 — T ∈ {694, 717, 730, 2917, 6835, 11425, 15591, 16143, 16167}
+- `initial_state[274, 12, 128, 128]` float32
+- `initial_state_indices[T]` int32 — T ∈ {1, 4, 6, 7, 10, 22}
+- `cu_seqlens[T]` int32 — T ∈ {2, 5, 7, 8, 11, 23}
+- `A_log[1, 1, 12, 1]` float32
+- `dt_bias[1536]` float32
+
+
+## `kimi_k3__tgv_bf16_tiny_gemm`
+
+**`k3_tiny_gemm`** — 627,088 real calls, 96 distinct signatures, 13 rows kept
+
+- `x[T, N]` bfloat16 **non-contiguous** — T ∈ {1, 10, 11, 13, 16, 32, 16167} — N ∈ {128, 7168}
+- `w[T, N]` bfloat16 — T ∈ {144, 1536} — N ∈ {128, 7168}
+
+
 ## `lfm25__triton_fused_moe`
 
 ### workloads.json — model `LiquidAI/LFM2.5-8B-A1B`
