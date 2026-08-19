@@ -340,6 +340,9 @@ def main() -> None:
                     report["rows"].append({"row_id": r["row_id"], "op": o["op"],
                                            "status": "RECONSTRUCT failed: %r" % (exc,)})
                     print("%-34s %-22s  RECONSTRUCT failed: %s" % (r["row_id"], r["group"], exc))
+                    if not workload.cuda_alive():
+                        print("\nStopping: the CUDA context is gone.")
+                        break
                     continue
                 trust_ok, trust_why = True, ""
                 try:
@@ -374,6 +377,10 @@ def main() -> None:
                           % (r["row_id"], r["group"], msg,
                              ("   (rebuild in baseline/entry.py RECONSTRUCT: %s)" % ", ".join(need))
                              if need else ""))
+                    if not workload.cuda_alive():
+                        print("\nStopping: the CUDA context is gone - the last runnable row "
+                              "before %s left it poisoned." % r["row_id"])
+                        break
                     continue
                 entry = {"row_id": r["row_id"], "op": o["op"], "group": r["group"],
                          "real_calls": r["real_calls"],
@@ -416,11 +423,28 @@ def main() -> None:
                     if ok is False:
                         entry["status"] = "REJECTED on correctness - no timing reported"
                     else:
-                        tb, tc, bs, cs = interleaved(
-                            lambda **kw: base_run(_op=o["op"], **kw),
-                            lambda **kw: cand_run(_op=o["op"], **kw),
-                            kb, kc, args.iters, args.trials,
-                            l2=args.l2 if args.l2 != "both" else "cold", timer=args.timer)
+                        # A row excluded earlier can leave an illegal access in flight: it
+                        # is asynchronous and sticky, so it surfaces here, inside a later
+                        # row's graph capture, and used to take the whole sweep down with a
+                        # raw AcceleratorError naming the wrong row. Report it against the
+                        # row that is actually running and stop.
+                        try:
+                            tb, tc, bs, cs = interleaved(
+                                lambda **kw: base_run(_op=o["op"], **kw),
+                                lambda **kw: cand_run(_op=o["op"], **kw),
+                                kb, kc, args.iters, args.trials,
+                                l2=args.l2 if args.l2 != "both" else "cold", timer=args.timer)
+                        except Exception as exc:
+                            entry["status"] = "timing failed: %s" % str(exc).splitlines()[0][:140]
+                            report["rows"].append(entry)
+                            print("%-34s %-22s  TIMING FAILED: %s"
+                                  % (r["row_id"], r["group"], entry["status"]))
+                            if not workload.cuda_alive():
+                                print("\nStopping: the CUDA context is gone. The rows printed "
+                                      "as NO VALID REFERENCE above are the likely cause - one "
+                                      "of them indexed out of bounds.")
+                                break
+                            continue
                         entry["l2"] = "cold" if args.l2 == "both" else args.l2
                         def spread(xs):
                             return (max(xs) - min(xs)) / statistics.median(xs) if len(xs) > 1 else 0.0

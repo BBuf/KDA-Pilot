@@ -156,8 +156,15 @@ def chains(task_dir: str):
 
 
 def cuda_alive() -> bool:
-    """A row that indexes out of bounds poisons the context for everything after it."""
+    """A row that indexes out of bounds poisons the context for everything after it.
+
+    The launch that did it may not be the call that reports it: an illegal access is
+    asynchronous and sticky, so without an explicit synchronize here the error surfaces
+    inside a *later* row's graph capture and the whole sweep dies with a raw
+    AcceleratorError naming the wrong row. Synchronize first, then probe.
+    """
     try:
+        torch.cuda.synchronize()
         torch.zeros(1, device="cuda").add_(1)
         torch.cuda.synchronize()
         return True
