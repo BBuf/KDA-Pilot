@@ -98,45 +98,25 @@ python tools/build_workloads.py --manifest cap/<slug>/shape_manifest.json \
 | [`docs/baseline_policy.md`](docs/baseline_policy.md) | baseline = the shipped SGLang kernel at a pinned commit, never a naive PyTorch reference |
 | [`docs/workload_capture.md`](docs/workload_capture.md) | provenance of every shape, and warmup vs real traffic |
 
-## What we deliberately did not ask for
+## Out of scope, and why
 
-* **Communication kernels and the TRT-LLM fused-MoE path** - your ground, and our
-  profiles exclude them by construction.
-* **Elementwise fusion in diffusion** - we swept the ecosystem for this in August
-  and concluded SGLang is already at the frontier: our elementwise kernels sit at
-  70-88% of achievable bandwidth and the entire remaining residue is 1-4% of a step.
-  A fused DiT gate+residual+norm+shift/scale task was drafted and cut for exactly
-  this reason.
-* **The diffusion attention backend (FA4 CuTe vs cuDNN SDPA).** We drafted this one on
-  the strength of an August B200 result - cuDNN beating the vendored FA4 kernel by
-  1.24-1.98x on 11 real shapes - and then failed to reproduce it on sm_103. With the
-  fused-QKV slice layout the DiT actually uses, FA4 is 4-5% *faster* on every large
-  shape; cuDNN only wins at 24-26 tokens (1.24x) and on contiguous mid-size shapes.
-  The measured tables and the captured shapes are kept in
-  [`docs/profiles/`](docs/profiles) because they are real and reusable, but the task is
-  retired: what is left is a dispatch decision on our side, not a kernel for you.
-* **The sparse-backend dense fallback.** Was a separate task; it is really the second
-  half of the block-sparse one (the same backend's `min_seq_len` path), so it is folded
-  into `minimax_h3__sm103_block_sparse_attention` as a gate condition instead of standing
-  alone.
-* **Two MoE-adjacent kernels from our internal evaluation harness** - GLM-4.5 biased
-  grouped top-k and GLM-4.6 `moe_sum_reduce`. Our own alignment audit found that this
-  family is fused away by trtllm routing on the recommended Blackwell fp8 deployment
-  (verified 0 occurrences on the GLM-5.2 default path), and the captures that made them
-  look hot used a non-recommended backend. They can come back the moment someone
-  re-verifies them on the cookbook recipe. GLM-4.5's fused-MoE *geometry* (160 experts,
-  top-9, hidden 5120) is a different story: worth adding as a third shape family on
-  `lfm25__triton_fused_moe`, but after a re-capture rather than by importing recorded
-  shapes.
-* **Video VAE decode kernels** - real target, wrong time: the fused conv3d /
-  GroupNorm-SiLU kernels are not called by the model we had staged (Wan2.2 has its
-  own decoder), and the models that do call them were not captured in this pass. We
-  would rather hand it over with shapes than without.
-* **Programmatic Dependent Launch in diffusion** - measured ceiling below 0.5% of
-  step time at these kernel granularities.
-* **Kernels that are dead on the recommended path.** Each task's evidence section
-  names the entry points that fired **zero** times on the cookbook recipe - the DSA
-  task in particular - so no cycles go to code the deployment never runs.
+* **Communication kernels and the TRT-LLM fused-MoE path.** Your ground; our profiles
+  exclude them by construction.
+* **Elementwise fusion in diffusion.** SGLang's elementwise kernels already run at 70-88%
+  of achievable bandwidth and the entire remaining residue is 1-4% of a denoise step, so
+  the ceiling is a pass-count saving, not a kernel win.
+* **The diffusion attention backend.** On sm_103 the vendored FA4 CuTe kernel is 4-5%
+  *faster* than cuDNN SDPA on every large shape with the fused-QKV layout the DiT
+  actually uses; cuDNN only wins below ~26 tokens. What is left is a dispatch predicate on
+  our side. The measured tables and captured shapes are in
+  [`docs/profiles/`](docs/profiles) if they are useful to you.
+* **Programmatic Dependent Launch in diffusion.** Measured ceiling below 0.5% of step time
+  at these kernel granularities.
+* **Kernels that are dead on the recommended path.** Each task's evidence section names the
+  entry points that fired **zero** times on the cookbook recipe - the DSA task in
+  particular - so no cycles go to code the deployment never runs. The same rule kept a few
+  MoE-adjacent kernels out of this set entirely: on the recommended Blackwell fp8 path
+  they are fused into trtllm routing.
 
 Everything here is reproducible from `tools/` plus the command in each task's
 `docs/capture_provenance.md`. If a number looks wrong, that is the path to check it.

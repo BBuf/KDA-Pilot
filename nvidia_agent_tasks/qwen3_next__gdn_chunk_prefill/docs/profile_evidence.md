@@ -18,7 +18,7 @@ Read `capture_provenance.md` for the two findings that shape this task: the FLA
 Triton chunk path is live on B300 while the FLA *recurrent decode* path is not, and
 the synthetic-output groups were replaced by real GSM8K groups on this model.
 
-## Update: the decode kernel is Triton, and its state chain is verified
+## The decode kernel is Triton, and its state chain is verified
 
 Measured tonight on the same box, with CUDA graphs **enabled** (the real deployment),
 TP8, random 1024-in / 256-out at concurrency 16. Full table in
@@ -35,9 +35,9 @@ TP8, random 1024-in / 256-out at concurrency 16. Full table in
 | elementwise / norm / act | 6.06% | `act_and_mul` 2.15% |
 
 So the live GDN target on B300 is `TritonGDNKernel.packed_decode` at **3.56% of GPU
-time** - a Triton kernel, above our 3% bar on its own. Correction to the earlier note in
-this task: decode is **not** served by the CuteDSL / FlashInfer GDN kernels on this build.
-We wrapped all three and only the Triton one fired.
+time** - a Triton kernel, above our 3% bar on its own. Decode is **not** served by the CuteDSL or
+FlashInfer GDN kernels on this build - we wrapped all three and only the Triton one
+fired.
 
 The chunk-prefill kernels are small *at this operating point* (0.33% + 0.14% + 0.14%)
 because the input is 1k tokens. They scale with prompt length, and the captured rows

@@ -3,7 +3,7 @@
 ## The pipeline, and where each captured op sits in it
 
 `forward_c4_indexer` runs this chain per layer, per forward pass. Every stage below is
-now captured (an earlier pass missed two of them, see "corrections"):
+captured, so the whole chain is covered:
 
 | # | stage | captured op | real calls |
 | --- | --- | --- | ---: |
@@ -49,14 +49,13 @@ Read that carefully, because it changes what to optimize:
   (155,492 real calls per entry point, 34 distinct signatures), tensors:
   `bench/tensors_mhc/`.
 
-## Corrections to the first pass (kept visible on purpose)
+## What does not run on the recommended path
 
-* Stages 3 and 5 were **missing** from the first capture. The default indexer-logits
-  implementation is imported *directly from the `deep_gemm` package*
+* Where stages 3 and 5 actually live is worth knowing before you go looking: the default
+  indexer-logits implementation is imported *directly from the `deep_gemm` package*
   (`from deep_gemm import fp8_paged_mqa_logits`), bypassing SGLang's own wrapper, and the
-  sparse core comes from `sgl_kernel`. We had wrapped only the SGLang-side wrappers, so
-  both read as "0 calls". They are captured now.
-* Still 0 calls on the cookbook recipe, and therefore **not** targets:
+  sparse core comes from `sgl_kernel`.
+* **0 calls** on the cookbook recipe, and therefore **not** targets:
   `tilelang_sparse_fwd`, `dpsk_v4_fp8_attention_fwd`, `triton_sparse_mla_fwd`,
   `tilelang_fp8_paged_mqa_logits`, the CuTe-DSL and split DeepGEMM logits wrappers, and
   `fp8_fp4_paged_mqa_logits` (that one needs `--enable-deepseek-v4-fp4-indexer`).

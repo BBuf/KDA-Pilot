@@ -63,7 +63,7 @@ parameters above, the forensics, and a runnable recipe, but **not** a captured B
 The block grid is derivable: 37,736 tokens per rank, `n_q=n_k=4`, sparsity 0.75, head_dim
 128 (the kernel's hard limit), skipping the first 10 steps and no layers.
 
-## The dense fallback next to it (was a separate task, folded in here)
+## The dense fallback next to it
 
 With a sparse backend active, every sequence below the backend's `min_seq_len` (4096 in
 the shipped config) takes a dense fallback, and on H3 that fallback is expensive enough
