@@ -79,12 +79,9 @@ visible drift. We have met that bar before by replicating aten LayerNorm at SASS
 (Welford accumulation order, FFMA sequence, `rcp`/`rsqrtf` choice), so it is
 achievable, not aspirational.
 
-The two sparse-attention tasks (`minimax_h3__sm103_block_sparse_attention`,
-`minimax_h3__sparse_backend_fallback`) are lossy by construction and are gated on a
-perceptual budget instead: LPIPS mean <= 0.35 / max <= 0.42 against the fixed-seed
-dense reference on our 3-prompt set. `diffusion__attention_backend_fa4_vs_cudnn`
-is gated on PSNR mean >= 28 dB / min >= 25 dB, since bf16 backend freedom makes
-bit-exactness the wrong ask there.
+`minimax_h3__sm103_block_sparse_attention` is lossy by construction and is gated on a
+perceptual budget instead: LPIPS mean <= 0.35 / max <= 0.42 against the fixed-seed dense
+reference on our 3-prompt set, plus no regression on the non-sparse branch.
 
 ## What "faster" is measured against
 

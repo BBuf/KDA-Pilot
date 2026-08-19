@@ -105,59 +105,6 @@ recapture rather than editing this file.
 - `comb_res_mix[T, 4, 4]` float32 — T ∈ {1, 3, 4, 9, 24, 25, 31, 32, 15021}
 
 
-## `diffusion__attention_backend_fa4_vs_cudnn`
-
-### workloads_h3.json — model `MiniMaxAI/MiniMax-H3`
-
-**`diffusion_attention_cudnn_sdpa`** — 216 real calls, 4 distinct signatures, 4 rows kept
-
-- `query[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {14, 16, 28}
-- `key[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {2, 14, 28}
-- `value[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {2, 14, 28}
-
-**`diffusion_attention_fa4`** — 200 real calls, 1 distinct signatures, 1 rows kept
-
-- `query[1, 26, 16, 128]` bfloat16
-- `key[1, 26, 2, 128]` bfloat16
-- `value[1, 26, 2, 128]` bfloat16
-
-**`diffusion_attention_sdpa`** — 16 real calls, 3 distinct signatures, 3 rows kept
-
-- `query[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {14, 28}
-- `key[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {14, 28}
-- `value[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {14, 28}
-
-### workloads_wan.json — model `Wan-AI/Wan2.2-TI2V-5B-Diffusers`
-
-**`diffusion_attention_sdpa`** — 60 real calls, 2 distinct signatures, 2 rows kept
-
-- `query[1, 8190, 24, 128]` bfloat16
-- `key[1, T, 24, 128]` bfloat16 — T ∈ {512, 8190}
-- `value[1, T, 24, 128]` bfloat16 — T ∈ {512, 8190}
-
-**`diffusion_attention_cudnn_sdpa`** — 60 real calls, 2 distinct signatures, 2 rows kept
-
-- `query[1, 8190, 24, 128]` bfloat16
-- `key[1, T, 24, 128]` bfloat16 — T ∈ {512, 8190}
-- `value[1, T, 24, 128]` bfloat16 — T ∈ {512, 8190}
-
-**`diffusion_fused_scale_residual_norm_scale_shift`** — 60 real calls, 2 distinct signatures, 2 rows kept
-
-- `residual[1, 8190, 3072]` bfloat16
-- `x[1, 8190, 3072]` bfloat16
-- `gate[1, 1, 3072]` float32
-- `weight[3072]` float32
-- `bias[3072]` float32
-- `scale` ['[1, 1, 3072]', '[1]']
-- `shift` ['[1, 1, 3072]', '[1]']
-
-**`diffusion_fused_norm_scale_shift`** — 31 real calls, 2 distinct signatures, 2 rows kept
-
-- `x[1, 8190, 3072]` bfloat16
-- `scale[1, 1, 3072]` float32
-- `shift[1, 1, 3072]` float32
-
-
 ## `glm47_flash__triton_attention`
 
 ### workloads.json — model `zai-org/GLM-4.7-Flash`
@@ -267,27 +214,6 @@ recapture rather than editing this file.
 
 
 ## `minimax_h3__sm103_block_sparse_attention`
-
-**`diffusion_attention_cudnn_sdpa`** — 216 real calls, 4 distinct signatures, 4 rows kept
-
-- `query[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {14, 16, 28}
-- `key[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {2, 14, 28}
-- `value[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {2, 14, 28}
-
-**`diffusion_attention_fa4`** — 200 real calls, 1 distinct signatures, 1 rows kept
-
-- `query[1, 26, 16, 128]` bfloat16
-- `key[1, 26, 2, 128]` bfloat16
-- `value[1, 26, 2, 128]` bfloat16
-
-**`diffusion_attention_sdpa`** — 16 real calls, 3 distinct signatures, 3 rows kept
-
-- `query[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {14, 28}
-- `key[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {14, 28}
-- `value[1, T, N, 128]` bfloat16 **non-contiguous** — T ∈ {24, 26, 37736} — N ∈ {14, 28}
-
-
-## `minimax_h3__sparse_backend_fallback`
 
 **`diffusion_attention_cudnn_sdpa`** — 216 real calls, 4 distinct signatures, 4 rows kept
 

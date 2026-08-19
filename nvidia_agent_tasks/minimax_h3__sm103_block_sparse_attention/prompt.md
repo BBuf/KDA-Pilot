@@ -62,7 +62,7 @@ concurrency x dataset) matrix - not a single shape.
   under cuda-gdb with lineinfo.
 - A second, independent lever sits next to this one: under the sub-block backend the
   non-sparse branch falls back to a slow path (audio-tower steps go 44 ms -> 191 ms),
-  which eats most of the sparse win. See task `minimax_h3__sparse_backend_fallback`.
+  which eats most of the sparse win, so the gate below also requires that the non-sparse branch stays at its dense cost. Step-level numbers are in `docs/profile_evidence.md`.
 
 ## Deliverable
 
