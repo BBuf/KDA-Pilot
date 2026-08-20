@@ -29,6 +29,11 @@ TOLERANCES = {
                  "for a fused-vs-fused comparison.")},
 
     # ---- GEMM --------------------------------------------------------------
+    "triton_attention": {
+        "bfloat16": (1e-2, 1e-3),
+        "source": "test/registered/attention/test_triton_attention_kernels.py:309",
+        "note": ("the same file uses 1e-2/2e-2 for the split-kv comparison at line 401; "
+                 "we take the tighter extend/decode number.")},
     "causal_conv1d": {
         "bfloat16": (1e-2, 5e-2), "float16": (3e-3, 5e-3), "float32": (3e-4, 1e-3),
         "source": "test/registered/layers/mamba/test_causal_conv1d.py:163-165",
@@ -78,6 +83,10 @@ TOLERANCES = {
 # op -> family
 # --------------------------------------------------------------------------- #
 OP_FAMILY = {
+    # glm47_flash__mla_decode_grouped
+    "triton_decode_attention_grouped": "triton_attention",
+    # qwen3_next__gdn_packed_decode
+    "gdn_decode_packed_triton": "kda_decode",
     # lfm25__triton_fused_moe
     "triton_fused_moe_gemm": "triton_fused_moe",
     # glm45__fp8_fused_moe - the FP8 arm of the same kernel plus its dispatch level

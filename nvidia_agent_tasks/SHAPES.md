@@ -30,6 +30,20 @@ recapture rather than editing this file.
 - `w2_scale[161, 5120, 1]` float32
 
 
+## `glm47_flash__mla_decode_grouped`
+
+**`triton_decode_attention_grouped`** — 52,923 real calls, 1,002 distinct signatures, 15 rows kept
+
+- `q[T, 20, 576]` bfloat16 — T ∈ {1, 7, 8, 9, 10, 11, 12, 22, 32}
+- `k_buffer[3689231, 1, 576]` bfloat16
+- `v_buffer[3689231, 1, 512]` bfloat16 **non-contiguous**
+- `o[T, 20, 512]` bfloat16 — T ∈ {1, 7, 8, 9, 10, 11, 12, 22, 32}
+- `kv_indptr[T]` int32 — T ∈ {2, 8, 9, 10, 11, 12, 13, 23, 33}
+- `kv_indices[T]` int64 — T ∈ {104, 737, 4125, 4485, 4970, 5149, 5481, 17744, 21520, 24706, ...}
+- `attn_logits[T, 20, 256, 512]` float32 — T ∈ {1, 7, 8, 9, 10, 11, 12, 22, 32}
+- `attn_lse[T, 20, 256]` float32 — T ∈ {1, 7, 8, 9, 10, 11, 12, 22, 32}
+- `num_kv_splits[T]` int32 — T ∈ {1, 7, 8, 9, 10, 11, 12, 22, 32}
+
 
 ## `kimi_k3__tgv_bf16_tiny_gemm`
 
@@ -87,8 +101,6 @@ recapture rather than editing this file.
 - `sorted_token_ids[T]` int32 — T ∈ {80, 1040, 1060, 1065, 86078}
 - `expert_ids[T]` int32 — T ∈ {5, 65, 67, 1345}
 - `num_tokens_post_padded[1]` int32
-
-
 
 
 ## `qwen38_nvfp4__fp4_w4a4_skinny_gemm`
@@ -155,4 +167,16 @@ recapture rather than editing this file.
 - `conv_state[1, 16384, 4]` bfloat16
 - `weight[16384, 4]` bfloat16
 
+
+## `qwen3_next__gdn_packed_decode`
+
+**`gdn_decode_packed_triton`** — 412,712 real calls, 60 distinct signatures, 8 rows kept
+
+- `mixed_qkv[T, 1024]` bfloat16 — T ∈ {1, 2, 3, 5, 6, 13, 16, 32}
+- `a[T, 4]` bfloat16 — T ∈ {1, 2, 3, 5, 6, 13, 16, 32}
+- `b[T, 4]` bfloat16 — T ∈ {1, 2, 3, 5, 6, 13, 16, 32}
+- `A_log[4]` float32
+- `dt_bias[4]` bfloat16
+- `ssm_states[10715, 4, 128, 128]` float32
+- `cache_indices[T]` int32 — T ∈ {1, 2, 3, 5, 6, 13, 16, 32}
 
