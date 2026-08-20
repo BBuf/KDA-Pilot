@@ -15,42 +15,10 @@ from __future__ import annotations
 # --------------------------------------------------------------------------- #
 TOLERANCES = {
     # ---- Mamba-2 / conv1d --------------------------------------------------
-    "causal_conv1d": {
-        "bfloat16": (1e-2, 5e-2), "float16": (3e-3, 5e-3), "float32": (3e-4, 1e-3),
-        "source": "test/registered/layers/mamba/test_causal_conv1d.py:163-165",
-        "note": "bf16 branch is the one these rows hit (silu activation)."},
-    "mamba2_ssd": {
-        "bfloat16": (5e-2, 5e-2), "float32": (5e-3, 8e-3),
-        "source": "test/registered/layers/mamba/test_mamba_ssm_ssd.py:244-248",
-        "note": ("SGLang's own comment: 'the bfloat16 case requires higher thresholds, "
-                 "to be investigated'. Long sequences use 5e-3/1e-2 at line 340-343.")},
-    "sconv_cache": {
-        "bfloat16": (2e-2, 2e-2),
-        "source": "test/registered/kernels/ops/mamba/test_sconv_cache.py:164"},
 
     # ---- linear attention (GDN / KDA) --------------------------------------
-    "gdn_chunk": {
-        "bfloat16": (1e-2, 2e-2),
-        "source": "test/registered/attention/test_chunk_gated_delta_rule.py:28-29"},
-    "kda_decode": {
-        "bfloat16": (2e-2, 2e-2),
-        "source": "test/registered/kernels/ops/attention/test_kda_fused_decode.py:207-208",
-        "note": ("the same test asserts the conv state with rtol=0, atol=0 (line 209) - "
-                 "the conv half is exact, only the SSM half carries tolerance.")},
-    "kda_mtp_ring": {
-        "bfloat16": (2e-2, 3e-2),
-        "source": "test/registered/kernels/test_kda_mtp_cutedsl_replayssm_ring.py:177"},
 
     # ---- attention ---------------------------------------------------------
-    "triton_attention": {
-        "bfloat16": (1e-2, 1e-3),
-        "source": "test/registered/attention/test_triton_attention_kernels.py:309",
-        "note": ("the same file uses 1e-2/2e-2 for the split-kv comparison at line 401; "
-                 "we take the tighter extend/decode number.")},
-    "attention_splitkv": {
-        "bfloat16": (1e-2, 2e-2), "float8_e4m3fn": (2e-2, 8e-2),
-        "source": "test/registered/attention/test_verify_splitkv.py:40-41 and "
-                  "test_verify_shared_kv.py:19-22"},
 
     # ---- MoE ---------------------------------------------------------------
     "triton_fused_moe": {
@@ -61,6 +29,15 @@ TOLERANCES = {
                  "for a fused-vs-fused comparison.")},
 
     # ---- GEMM --------------------------------------------------------------
+    "causal_conv1d": {
+        "bfloat16": (1e-2, 5e-2), "float16": (3e-3, 5e-3), "float32": (3e-4, 1e-3),
+        "source": "test/registered/layers/mamba/test_causal_conv1d.py:163-165",
+        "note": "bf16 branch is the one these rows hit (silu activation)."},
+    "kda_decode": {
+        "bfloat16": (2e-2, 2e-2),
+        "source": "test/registered/kernels/ops/attention/test_kda_fused_decode.py:207-208",
+        "note": ("the same test asserts the conv state with rtol=0, atol=0 (line 209) - "
+                 "the conv half is exact, only the SSM half carries tolerance.")},
     "cutedsl_bf16_gemm": {
         "bfloat16": (2e-2, 2.5),
         "source": "test/registered/kernels/ops/gemm/test_cutedsl_bf16_gemm.py:53",
@@ -95,37 +72,12 @@ TOLERANCES = {
         "note": ("A quantizer's outputs are packed nibbles and e4m3 scale blocks, and a "
                  "split/reshape/cat only moves bytes: any difference is a different "
                  "encoding, not rounding. Bit-exact or wrong.")},
-    "diffusion_conv3d_cat_pad": {
-        "exact": True,
-        "source": "test/registered/kernels/ops/diffusion/test_causal_conv3d_cat_pad.py:73"},
 }
 
 # --------------------------------------------------------------------------- #
 # op -> family
 # --------------------------------------------------------------------------- #
 OP_FAMILY = {
-    # nemotron3_nano__mamba2_ssm
-    "causal_conv1d_prefill": "causal_conv1d",
-    "causal_conv1d_decode": "causal_conv1d",
-    "gdn_decode_causal_conv1d_update": "causal_conv1d",
-    "mamba2_chunk_scan_combined_fwd": "mamba2_ssd",
-    "mamba2_chunk_scan_combined": "mamba2_ssd",
-    "mamba2_chunk_scan": "mamba2_ssd",
-    "mamba2_chunk_state": "mamba2_ssd",
-    "mamba2_chunk_state_varlen": "mamba2_ssd",
-    "mamba2_chunk_cumsum": "mamba2_ssd",
-    "mamba2_state_passing": "mamba2_ssd",
-    # qwen3_next__gdn_chunk_prefill
-    "gdn_chunk_prefill": "gdn_chunk",
-    "gdn_chunk_delta_h": "gdn_chunk",
-    "gdn_chunk_o": "gdn_chunk",
-    "gdn_recompute_w_u": "gdn_chunk",
-    "gdn_gating": "gdn_chunk",
-    "gdn_decode_packed_triton": "kda_decode",
-    # glm47_flash__triton_attention
-    "triton_decode_attention": "triton_attention",
-    "triton_decode_attention_grouped": "triton_attention",
-    "triton_extend_attention": "triton_attention",
     # lfm25__triton_fused_moe
     "triton_fused_moe_gemm": "triton_fused_moe",
     # glm45__fp8_fused_moe - the FP8 arm of the same kernel plus its dispatch level
@@ -139,11 +91,6 @@ OP_FAMILY = {
     "k3_tiny_gemm": "tiny_gemm",
     "k3_tiny_n_gemm_bf16": "tiny_gemm",
     "k3_tiny_k_gemm_bf16": "tiny_gemm",
-    # minimax_h3__sm103_block_sparse_attention (dense reference arm)
-    "diffusion_attention_cudnn_sdpa": "attention_splitkv",
-    "diffusion_attention_fa4": "attention_splitkv",
-    "diffusion_attention_sdpa": "attention_splitkv",
-    "diffusion_causal_conv3d_cat_pad": "diffusion_conv3d_cat_pad",
     # qwen38_nvfp4__* (sm_120 verify tier)
     "qwen38_fp4_gemm": "nvfp4_gemm",
     "qwen38_fp4_quantize": "packed_bytes",

@@ -20,6 +20,8 @@ import sys
 
 import torch
 
+from derive_inputs import _READ_POOL_FOR
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import tolerances  # noqa: E402  per-op rtol/atol copied from SGLang's own tests
 
@@ -250,6 +252,11 @@ def _swizzle_written(t, op: str, tokens: int):
     return t.view(torch.uint8)[written_scale_rows(t, tokens)]
 
 
+_READ_ONLY_POOLS = frozenset(
+    name for pools in _READ_POOL_FOR.values() for name in pools
+)
+
+
 def reference_is_trustworthy(call, kwargs, op: str = "", tokens: int = 0) -> tuple:
     """Run the baseline twice on identical inputs before judging anything.
 
@@ -262,7 +269,15 @@ def reference_is_trustworthy(call, kwargs, op: str = "", tokens: int = 0) -> tup
     import copy
 
     def snap(x):
-        return {k: (v.clone() if torch.is_tensor(v) else copy.copy(v)) for k, v in x.items()}
+        # Read-only pools are shared, not copied. They are the multi-gigabyte KV and
+        # req-to-token tables, so three copies is over 10 GB of allocation per row for
+        # tensors no kernel here writes - and on a row whose kv extent is 0 the third
+        # copy faults with an illegal access, which took the whole glm47 sweep down.
+        # `_READ_POOL_FOR` is the same declaration derive_inputs uses to bound their
+        # index arrays, so read-only is not a guess.
+        return {k: (v if k in _READ_ONLY_POOLS
+                    else (v.clone() if torch.is_tensor(v) else copy.copy(v)))
+                for k, v in x.items()}
 
     # three calls, not two: with an index argument allocated to zeros several sequences can
     # map to the same state slot and race, which is intermittent - two calls sometimes agree

@@ -29,7 +29,8 @@ matters: real routing is skewed and that changes tile occupancy.
 
 `bench/workloads_glm47_flash.json` carries the same kernel from a different expert
 geometry, captured in the GLM-4.7-Flash run (its serving command and GSM8K accuracy
-of 0.820 are in `../../glm47_flash__triton_attention/docs/capture_provenance.md`):
+of 0.820 are recorded in `bench/workloads_glm47_flash.json`; the GLM-4.7-Flash
+attention task that shared this capture is no longer part of the set):
 
 | | LFM2.5-8B-A1B | GLM-4.7-Flash |
 | --- | --- | --- |

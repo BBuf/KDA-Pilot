@@ -324,7 +324,7 @@ def main() -> None:
                     print("%-34s %-22s  input build failed: %s" % (r["row_id"], r["group"], exc))
                     continue
                 kb = built["kwargs"]
-                kc = {k: (v.clone() if torch.is_tensor(v) else v) for k, v in kb.items()}
+                kc = workload.clone_kwargs(kb)
                 # Repair each arm's inputs once, outside every timed region. The two arms
                 # get their own hook, so a candidate that needs a different reconstruction
                 # can ship one - and neither pays for the other's.
@@ -363,8 +363,7 @@ def main() -> None:
                         return
                     continue
                 try:
-                    ref_kwargs = {k: (v.clone() if torch.is_tensor(v) else v)
-                                  for k, v in kb.items()}
+                    ref_kwargs = workload.clone_kwargs(kb)
                     out_names = _output_args(base_mod, o["op"], ref_kwargs)
                     ref = _result(base_run(_op=o["op"], **ref_kwargs), ref_kwargs, out_names)
                 except Exception as exc:
@@ -412,8 +411,7 @@ def main() -> None:
                                 json.dump(report, open(args.json, "w"), indent=2)
                             return
                 else:
-                    got_kwargs = {k: (v.clone() if torch.is_tensor(v) else v)
-                                  for k, v in kb.items()}
+                    got_kwargs = workload.clone_kwargs(kb)
                     got = _result(cand_run(_op=o["op"], **got_kwargs), got_kwargs, out_names)
                     ok, detail = compare(mode, ref, got, built["payload"], op=o["op"], row=r)
                     if out_names and detail:
@@ -459,6 +457,21 @@ def main() -> None:
                             entry["unstable"] = True
                             entry["status"] = ("trial spread %.0f%% - treat this row's speedup as "
                                                "noise until it is stabilised" % (100 * max(sb, sc)))
+                # Attribute an asynchronous fault to the row that caused it. Without this
+                # a row can be timed, report a clean speedup, and leave an illegal access
+                # in flight that only surfaces several rows later - which is how
+                # mamba2_chunk_scan_combined_fwd#03 came to be blamed for a fault it did
+                # not cause (it runs clean on its own).
+                try:
+                    torch.cuda.synchronize()
+                except Exception as exc:
+                    entry["status"] = ("this row left the CUDA context in an error state: %s"
+                                       % str(exc).splitlines()[0][:120])
+                    entry.pop("speedup", None)
+                    print("%-34s %-22s  POISONED THE CONTEXT: %s"
+                          % (r["row_id"], r["group"], entry["status"]))
+                    report["rows"].append(entry)
+                    break
                 report["rows"].append(entry)
                 # one compact line per row; the full record goes to --json
                 bits = ["%-34s %-22s" % (entry["row_id"], entry["group"])]

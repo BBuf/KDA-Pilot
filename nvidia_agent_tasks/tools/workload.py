@@ -38,6 +38,14 @@ DTYPES = {
 def alloc(info: dict, device: str = "cuda") -> torch.Tensor:
     dt = DTYPES.get(info["dtype"], torch.float32)
     shape = tuple(info["shape"])
+    if 0 in shape:
+        # A zero-element tensor allocated directly has `data_ptr() == 0`, and the
+        # kernel is then handed a null pointer for an argument production always
+        # hands a valid one: an empty `kv_indices` in production is an empty *slice*
+        # of the live index buffer. Triton faults on the address arithmetic even
+        # though every load is masked off, which is what killed the glm47 extend rows.
+        return torch.zeros(1, device=device, dtype=dt).as_strided(
+            shape, tuple(0 for _ in shape))
     if dt.is_floating_point:
         t = torch.randn(shape, device=device, dtype=torch.float32).to(dt)
     elif dt.is_complex:
@@ -63,6 +71,26 @@ def alloc(info: dict, device: str = "cuda") -> torch.Tensor:
         except Exception:
             pass
     return t
+
+
+def clone_kwargs(kwargs: dict) -> dict:
+    """Clone a row's tensors, keeping the "this came from the capture" stamp.
+
+    `Tensor.clone()` drops Python attributes, so cloning with a plain comprehension
+    hands the copy to RECONSTRUCT as if every tensor had been drawn at random. The
+    two benchmark arms then get *different inputs* - one keeps its recorded
+    addresses, the other has them derived over the top - which is not a comparison.
+    """
+    out = {}
+    for name, value in kwargs.items():
+        if not torch.is_tensor(value):
+            out[name] = value
+            continue
+        copy = value.clone()
+        if getattr(value, "_kda_real", False):
+            copy._kda_real = True
+        out[name] = copy
+    return out
 
 
 def holds_tensor_meta(x) -> bool:
@@ -116,6 +144,11 @@ def build_inputs(task_dir: str, row: dict) -> dict:
             real = payload.get("in_" + name)
             if real is not None and list(real.shape) == list(info["shape"]):
                 kwargs[name] = real.clone()
+                # Stamped so RECONSTRUCT leaves it alone: a derived address is a
+                # stand-in for data we do not have, and it must never displace data
+                # we do. The clone drops the stamp, which is why it is set here on
+                # the copy the kernel will actually see rather than on the payload.
+                kwargs[name]._kda_real = True
                 source[name] = "real"
             else:
                 kwargs[name] = alloc(info)

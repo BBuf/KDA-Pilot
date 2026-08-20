@@ -79,10 +79,6 @@ visible drift. We have met that bar before by replicating aten LayerNorm at SASS
 (Welford accumulation order, FFMA sequence, `rcp`/`rsqrtf` choice), so it is
 achievable, not aspirational.
 
-`minimax_h3__sm103_block_sparse_attention` is lossy by construction and is gated on a
-perceptual budget instead: LPIPS mean <= 0.35 / max <= 0.42 against the fixed-seed dense
-reference on our 3-prompt set, plus no regression on the non-sparse branch.
-
 ## Where the numbers in the gate come from
 
 Nothing in this directory picks a tolerance by hand. Every numeric gate uses
