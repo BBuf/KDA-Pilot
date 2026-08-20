@@ -15,7 +15,6 @@ we paid for.
 | --- | --- | --- | --- | --- |
 | [`nemotron3_nano__mamba2_ssm`](nemotron3_nano__mamba2_ssm) | NVIDIA Nemotron-3-Nano-30B-A3B-FP8 | Triton `ssd_*` chunk pipeline + `causal_conv1d_*` | **55.8%** of serving GPU time | 56 rows / 9 ops + a verified 16-step real state chain |
 | [`glm47_flash__triton_attention`](glm47_flash__triton_attention) | GLM-4.7-Flash | `decode_attention_fwd`, `extend_attention_fwd` | **75.3%**; the same kernels are **50.8%** of Qwen3-Next at 32k input | 82 rows / 3 ops across two models, 90% on captured tensors |
-| [`deepseek_v4_flash__dsa_sparse_attention`](deepseek_v4_flash__dsa_sparse_attention) | DeepSeek-V4-Flash | whole DSA chain: compress -> q-indexer -> **deep_gemm logits** -> top-k -> **flash_mla sparse core**, plus the **mHC TileLang** kernels | front end **8.46%** aggregate, sparse core **7.50%**, mHC **8.06%** of serving GPU time | 78 rows / 12 ops, 21 MB real tensors |
 | [`lfm25__triton_fused_moe`](lfm25__triton_fused_moe) | LFM2.5-8B-A1B (+ GLM-4.7-Flash) | `invoke_fused_moe_kernel` and friends | **50.5%** / 30.4% | 14 rows, two expert geometries + real routing tensors |
 | [`glm45__fp8_fused_moe`](glm45__fp8_fused_moe) | GLM-4.5-FP8 (355B, TP8) | the FP8 arm of `invoke_fused_moe_kernel` **and** the whole `fused_experts_impl` dispatch | **51.5%** of serving GPU time in the expert GEMM alone, **64.3%** for the dispatch | 17 rows / 2 entry points, 16 of 17 on captured tensors |
 | [`qwen3_next__gdn_chunk_prefill`](qwen3_next__gdn_chunk_prefill) | Qwen3-Next-80B-A3B | FLA chunk prefill + **`TritonGDNKernel.packed_decode`** | GDN family **2.8-5.3%** across four operating points (decode kernel 2.0-3.6%, chunk prefill peaks 2.5% at 8k in) | 56 rows / 7 ops, **2 verified 16-step state chains** |
@@ -25,7 +24,7 @@ we paid for.
 | [`qwen38_nvfp4__gdn_sigmoid_gating_verify`](qwen38_nvfp4__gdn_sigmoid_gating_verify) | Qwen3.8-27B NVFP4 (SM120) | `fused_sigmoid_gating_delta_rule_update` + qkvzba split + conv1d update | **~5.3%** of the verify step, sequential in draft length | 3 rows / 3 ops, T=9 exact (DSPARK block 8) |
 | [`minimax_h3__sm103_block_sparse_attention`](minimax_h3__sm103_block_sparse_attention) | MiniMax-H3 | **write a new** sm_103 sub-block block-sparse forward | the sparse arm is the only backend beating cache-only on B300 (10.37 s vs 11.16 s) | 9 rows of dense reference, including one **real 37,736-token** call + deadlock forensics |
 
-Seven of them have a shipped SGLang kernel that a candidate has to beat. The eighth,
+Six of them have a shipped SGLang kernel that a candidate has to beat. The seventh,
 `minimax_h3__sm103_block_sparse_attention`, is a new-kernel task: the existing sub-block
 BSA implementation deadlocks on sm_103, so there is nothing to beat, only something to
 replace.
@@ -63,7 +62,6 @@ uninitialised memory. Each task's `bench/README.md` says which rows those are.
 | `minimax_h3__sm103_block_sparse_attention` | 3 / 3 (needs the SGLang-diffusion checkout on `PYTHONPATH`) | 9 / 9 |
 | `glm45__fp8_fused_moe` | 2 / 2 | 17 / 17 |
 | `lfm25__triton_fused_moe` | 1 / 1 | 14 / 14 |
-| `deepseek_v4_flash__dsa_sparse_attention` | 8 / 12 (4 ops need a plan object rebuilt in `RECONSTRUCT`) | 42 / 78 |
 
 `tools/bench_harness.py` implements the measurement contract so each agent does not have
 to re-derive it: CUDA-graph timing, interleaved arms, preallocated outputs, `copy_` restore
@@ -145,10 +143,9 @@ glm45__fp8_fused_moe                           17    16 ( 94%)     59/82  ( 72%)
 glm47_flash__triton_attention                  82    74 ( 90%)     399/574  ( 70%)
 minimax_h3__sm103_block_sparse_attention        9     7 ( 78%)     21/27  ( 78%)
 kimi_k3__tgv_bf16_tiny_gemm                    46    35 ( 76%)     59/80  ( 74%)
-deepseek_v4_flash__dsa_sparse_attention        78    55 ( 71%)     182/323  ( 56%)
 qwen3_next__gdn_chunk_prefill                  56    38 ( 68%)     172/279  ( 62%)
 nemotron3_nano__mamba2_ssm                     56    32 ( 57%)     88/297  ( 30%)
-TOTAL                                         358   271 ( 76%)     1060/1760 ( 60%)
+TOTAL                                         280   216 ( 77%)     878/1437 ( 61%)
 ```
 
 `python tools/coverage.py` recomputes it. A payload counts for a row only when the call it
