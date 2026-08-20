@@ -127,7 +127,28 @@ def _experts_fix(kw: dict) -> dict:
     return kw
 
 
-RECONSTRUCT = {
+
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "..", "tools"))
+from derive_inputs import derive as _derive  # noqa: E402  shared address-argument repair
+
+
+_TASK_FIX = {
     "triton_fused_moe_gemm": _gemm_fix,
     "moe_fused_experts_fp8": _experts_fix,
 }
+
+
+def _repair(op):
+    """`derive()` first - it repairs the address-like arguments every row has - then the
+    task's own hook for what only this task knows."""
+    task_hook = _TASK_FIX.get(op)
+
+    def run(kw):
+        kw = _derive(kw)
+        return task_hook(kw) if task_hook else kw
+
+    return run
+
+
+RECONSTRUCT = {op: _repair(op) for op in set(list(_TASK_FIX) + ['triton_fused_moe_gemm', 'moe_fused_experts_fp8', 'triton_moe_act_and_mul', 'triton_moe_sum_reduce', 'moe_align_block_size', 'triton_fused_moe_gemm', 'moe_fused_experts_fp8'])}

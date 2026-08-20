@@ -80,8 +80,29 @@ FA = "sglang.multimodal_gen.runtime.layers.attention.backends.flash_attn"
 # Arguments the capture could not serialize (a triton dtype, a plan struct, the instance
 # behind a bound method) are rebuilt here, once per task, so every workload row becomes
 # runnable. The harness calls RECONSTRUCT[op](kwargs) before dispatch.
-RECONSTRUCT = {
+
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "..", "tools"))
+from derive_inputs import derive as _derive  # noqa: E402  shared address-argument repair
+
+
+_TASK_FIX = {
     "diffusion_attention_cudnn_sdpa": _impl(SDPA, "DynamicCudnnSDPAImpl"),
     "diffusion_attention_sdpa": _impl(SDPA, "SDPAImpl"),
     "diffusion_attention_fa4": _impl(FA, "FlashAttentionImpl"),
 }
+
+
+def _repair(op):
+    """`derive()` first - it repairs the address-like arguments every row has - then the
+    task's own hook for what only this task knows."""
+    task_hook = _TASK_FIX.get(op)
+
+    def run(kw):
+        kw = _derive(kw)
+        return task_hook(kw) if task_hook else kw
+
+    return run
+
+
+RECONSTRUCT = {op: _repair(op) for op in set(list(_TASK_FIX) + ['diffusion_attention_cudnn_sdpa', 'diffusion_attention_fa4', 'diffusion_attention_sdpa', 'diffusion_attention_cudnn_sdpa', 'diffusion_attention_sdpa', 'diffusion_attention_fa4'])}

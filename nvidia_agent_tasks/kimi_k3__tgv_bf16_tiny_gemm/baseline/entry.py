@@ -53,4 +53,9 @@ OPS = {
 # Arguments the capture could not serialize (a triton dtype, a plan struct) are rebuilt
 # here, once per task, so every workload row becomes runnable. The harness calls
 # RECONSTRUCT[op](kwargs) before dispatch.
-RECONSTRUCT: dict = {}
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "..", "tools"))
+from derive_inputs import derive as _derive  # noqa: E402  shared address-argument repair
+
+
+RECONSTRUCT = {op: _derive for op in ['k3_cutedsl_tgv_bf16_gemm_out', 'k3_tiny_gemm', 'k3_cutedsl_tgv_bf16_gemm', 'k3_tiny_n_gemm_bf16', 'k3_tiny_k_gemm_bf16']}

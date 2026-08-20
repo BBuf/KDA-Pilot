@@ -67,4 +67,10 @@ OPS = {
 # Arguments the capture could not serialize (a triton dtype, a plan struct) are rebuilt
 # here, once per task, so every workload row becomes runnable. The harness calls
 # RECONSTRUCT[op](kwargs) before dispatch.
-RECONSTRUCT: dict = {}
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "..", "tools"))
+from derive_inputs import derive as _derive  # noqa: E402  shared address-argument repair
+from runtime_context import ensure as _ensure_runtime  # noqa: E402  TP group + published config
+
+
+RECONSTRUCT = {op: _derive for op in ['dsa_compress_forward', 'dsa_compress_norm_rope_store', 'dsa_fused_q_indexer_rope_hadamard_quant', 'dsa_topk_transform_v2', 'dsa_sparse_attention_flash_mla_alt', 'dsa_paged_mqa_logits_metadata', 'dsa_topk_transform', 'mhc_pre_big_fuse_with_norm_tilelang', 'mhc_pre', 'mhc_post_tilelang', 'mhc_post']}

@@ -74,4 +74,25 @@ def _gdn_kernel(kw: dict) -> dict:
 # Arguments the capture could not serialize (a triton dtype, a plan struct, the instance
 # behind a bound method) are rebuilt here, once per task, so every workload row becomes
 # runnable. The harness calls RECONSTRUCT[op](kwargs) before dispatch.
-RECONSTRUCT = {"gdn_decode_packed_triton": _gdn_kernel}
+
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "..", "tools"))
+from derive_inputs import derive as _derive  # noqa: E402  shared address-argument repair
+
+
+_TASK_FIX = {"gdn_decode_packed_triton": _gdn_kernel}
+
+
+def _repair(op):
+    """`derive()` first - it repairs the address-like arguments every row has - then the
+    task's own hook for what only this task knows."""
+    task_hook = _TASK_FIX.get(op)
+
+    def run(kw):
+        kw = _derive(kw)
+        return task_hook(kw) if task_hook else kw
+
+    return run
+
+
+RECONSTRUCT = {op: _repair(op) for op in set(list(_TASK_FIX) + ['gdn_gating', 'gdn_recompute_w_u', 'gdn_chunk_delta_h', 'gdn_chunk_o', 'gdn_chunk_prefill', 'gdn_decode_causal_conv1d_update', 'gdn_decode_packed_triton'])}

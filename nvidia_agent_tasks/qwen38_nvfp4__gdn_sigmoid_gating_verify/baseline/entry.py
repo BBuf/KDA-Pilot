@@ -129,8 +129,29 @@ def _split_geometry(kw: dict) -> dict:
     return kw
 
 
-RECONSTRUCT = {
+
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "..", "tools"))
+from derive_inputs import derive as _derive  # noqa: E402  shared address-argument repair
+
+
+_TASK_FIX = {
     "qwen38_gdn_gating_update": _common,
     "qwen38_qkvzba_split": _split_geometry,
     "qwen38_conv1d_update": lambda kw: _conv1d_update(_common(kw)),
 }
+
+
+def _repair(op):
+    """`derive()` first - it repairs the address-like arguments every row has - then the
+    task's own hook for what only this task knows."""
+    task_hook = _TASK_FIX.get(op)
+
+    def run(kw):
+        kw = _derive(kw)
+        return task_hook(kw) if task_hook else kw
+
+    return run
+
+
+RECONSTRUCT = {op: _repair(op) for op in set(list(_TASK_FIX) + ['qwen38_gdn_gating_update', 'qwen38_qkvzba_split', 'qwen38_conv1d_update', 'initial_state_indices', 'conv_state_indices', 'cache_indices'])}

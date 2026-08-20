@@ -87,7 +87,28 @@ def _fp8_linear_inputs(kw: dict) -> dict:
     return kw
 
 
-RECONSTRUCT = {
+
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "..", "tools"))
+from derive_inputs import derive as _derive  # noqa: E402  shared address-argument repair
+
+
+_TASK_FIX = {
     "qwen38_fp8_gemv": _fp8_gemv_inputs,
     "qwen38_fp8_linear": _fp8_linear_inputs,
 }
+
+
+def _repair(op):
+    """`derive()` first - it repairs the address-like arguments every row has - then the
+    task's own hook for what only this task knows."""
+    task_hook = _TASK_FIX.get(op)
+
+    def run(kw):
+        kw = _derive(kw)
+        return task_hook(kw) if task_hook else kw
+
+    return run
+
+
+RECONSTRUCT = {op: _repair(op) for op in set(list(_TASK_FIX) + ['qwen38_fp8_gemv', 'qwen38_fp8_linear', 'qwen38_fp8_gemv', 'qwen38_fp8_linear'])}

@@ -168,7 +168,8 @@ def interleaved(base_fn, cand_fn, kwargs_b, kwargs_c, iters: int, trials: int,
 # this the gate had nothing to compare and printed `correct=None` next to a
 # speedup - a candidate could have returned garbage and still scored. A task can
 # override the list per op with OUTPUT_ARGS in baseline/entry.py.
-_OUTPUT_ARG_NAMES = ("o", "out", "output", "C", "y", "attn_out", "out_ptr", "dst")
+_OUTPUT_ARG_NAMES = ("o", "o_extend", "out", "output", "C", "y", "attn_out",
+                     "out_ptr", "dst", "mixed_qkv")
 
 
 def _output_args(mod, op: str, kwargs: dict) -> tuple:
