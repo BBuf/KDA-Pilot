@@ -122,10 +122,6 @@ OP_FAMILY = {
     "gdn_recompute_w_u": "gdn_chunk",
     "gdn_gating": "gdn_chunk",
     "gdn_decode_packed_triton": "kda_decode",
-    # kimi_k3__kda_linear_attention
-    "k3_kda_fused_decode": "kda_decode",
-    "k3_kda_packed_decode": "kda_decode",
-    "k3_kda_chunk_prefill": "gdn_chunk",
     # glm47_flash__triton_attention
     "triton_decode_attention": "triton_attention",
     "triton_decode_attention_grouped": "triton_attention",

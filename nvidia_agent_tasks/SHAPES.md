@@ -209,43 +209,6 @@ recapture rather than editing this file.
 - `kv_indices[T]` int64 — T ∈ {0, 2783}
 
 
-## `kimi_k3__kda_linear_attention`
-
-### workloads.json — model `moonshotai/Kimi-K3`
-
-**`k3_kda_fused_decode`** — 308,024 real calls, 38 distinct signatures, 9 rows kept
-
-- `mixed_qkv[T, 4608]` bfloat16 **non-contiguous** — T ∈ {1, 2, 3, 10, 11, 13, 16, 24, 32}
-- `a[T, 1536]` bfloat16 — T ∈ {1, 2, 3, 10, 11, 13, 16, 24, 32}
-- `b[T, 12]` bfloat16 **non-contiguous** — T ∈ {1, 2, 3, 10, 11, 13, 16, 24, 32}
-- `conv_states[274, 3, 4608]` bfloat16
-- `w_q_t[4, 1536]` float32
-- `w_k_t[4, 1536]` float32
-- `w_v_t[4, 1536]` float32
-- `conv_bias[4608]` float32
-- `A_log[12]` float32
-- `dt_bias[1536]` float32
-- `onorm_g[T, 1536]` bfloat16 **non-contiguous** — T ∈ {1, 2, 3, 10, 11, 13, 16, 24, 32}
-- `onorm_weight[128]` float32
-- `ssm_states[274, 12, 128, 128]` float32
-- `cache_indices[T]` int32 — T ∈ {1, 2, 3, 10, 11, 13, 16, 24, 32}
-
-### workloads_kda_chunk_prefill.json — model `moonshotai/Kimi-K3`
-
-**`k3_kda_chunk_prefill`** — 16,016 real calls, 29 distinct signatures, 13 rows kept
-
-- `q[1, T, 12, 128]` bfloat16 — T ∈ {100, 103, 131, 308, 344, 414, 730, 5110, 6863, 11425, ...}
-- `k[1, T, 12, 128]` bfloat16 — T ∈ {100, 103, 131, 308, 344, 414, 730, 5110, 6863, 11425, ...}
-- `v[1, T, 12, 128]` bfloat16 — T ∈ {100, 103, 131, 308, 344, 414, 730, 5110, 6863, 11425, ...}
-- `g[1, T, 12, 128]` bfloat16 — T ∈ {100, 103, 131, 308, 344, 414, 730, 5110, 6863, 11425, ...}
-- `beta[1, T, 12]` float32 — T ∈ {100, 103, 131, 308, 344, 414, 730, 5110, 6863, 11425, ...}
-- `initial_state[274, 12, 128, 128]` float32
-- `initial_state_indices[T]` int32 — T ∈ {1, 4, 6, 7, 10, 15, 22}
-- `cu_seqlens[T]` int32 — T ∈ {2, 5, 7, 8, 11, 16, 23}
-- `A_log[1, 1, 12, 1]` float32
-- `dt_bias[1536]` float32
-
-
 ## `kimi_k3__tgv_bf16_tiny_gemm`
 
 **`k3_cutedsl_tgv_bf16_gemm_out`** — 571,784 real calls, 21 distinct signatures, 12 rows kept

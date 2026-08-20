@@ -2,14 +2,14 @@
 
 ```bash
 # 1. does the package have everything?  (CPU only, no SGLang import)
-python tools/check_task.py kimi_k3__kda_linear_attention
-python kimi_k3__kda_linear_attention/tests/test_contract.py
+python tools/check_task.py qwen38_nvfp4__fp4_w4a4_skinny_gemm
+python qwen38_nvfp4__fp4_w4a4_skinny_gemm/tests/test_contract.py
 
 # 2. time the baseline on every workload row (needs a GPU + the SGLang env)
-python tools/bench_harness.py kimi_k3__kda_linear_attention
+python tools/bench_harness.py qwen38_nvfp4__fp4_w4a4_skinny_gemm
 
 # 3. write solution/entry.py with the same OPS keys, then A/B it
-python tools/bench_harness.py kimi_k3__kda_linear_attention --json report.json
+python tools/bench_harness.py qwen38_nvfp4__fp4_w4a4_skinny_gemm --json report.json
 ```
 
 The harness times inside a CUDA graph, interleaves the two arms, restores in-place
@@ -19,14 +19,14 @@ real captured tensors for a row whenever this task ships a payload that matches 
 
 ## What runs today
 
-Verified on 1x B300 with SGLang main @ 43226af: **2 of 2 ops produce a CUDA-graph-timed baseline**, over **15 of 22 workload rows**. The seven that do not are the long chunk-prefill rows: their gate `g` alone is ~50 MB per row, so those rows ship as shapes only, and an allocated Gaussian gate overflows the log-space decay - the harness prints NO VALID REFERENCE rather than judging against Inf. The six chunk-prefill rows that do run carry the real gate, and so do all nine decode rows.
+Not yet re-verified on a GPU box after the latest capture; `python tools/bench_harness.py qwen38_nvfp4__fp4_w4a4_skinny_gemm` reports it in one run.
 
 ## Dropping a candidate in
 
 ```bash
 cp solution/entry.py.template solution/entry.py     # implement the ops listed there
-python tools/bench_harness.py kimi_k3__kda_linear_attention --json report.json
-python kimi_k3__kda_linear_attention/tests/test_solution.py
+python tools/bench_harness.py qwen38_nvfp4__fp4_w4a4_skinny_gemm --json report.json
+python qwen38_nvfp4__fp4_w4a4_skinny_gemm/tests/test_solution.py
 ```
 
 `solution/entry.py` exposes the same `OPS` keys as `baseline/entry.py`, so the harness
@@ -48,14 +48,14 @@ than reporting nonsense for every row after it.
 ## Real-tensor coverage
 
 ```
-kimi_k3__kda_linear_attention                 22 rows,  21 with payload ( 95%),  114/ 176 data args real ( 65%)
+qwen38_nvfp4__fp4_w4a4_skinny_gemm            16 rows,   6 with payload ( 38%),   10/  45 data args real ( 22%)
 ```
 
 Rows with a payload run on tensors captured from the live model; the rest fall back
 to tensors allocated to the recorded shape/dtype/stride. Weights and whole state or
 KV pools are never shipped - the first would mean distributing model weights, the
 second ships as the touched rows - so they are excluded from the arg count and
-recorded as metadata instead. `python tools/coverage.py kimi_k3__kda_linear_attention` recomputes this.
+recorded as metadata instead. `python tools/coverage.py qwen38_nvfp4__fp4_w4a4_skinny_gemm` recomputes this.
 
 ## Measurement regime
 
@@ -81,19 +81,19 @@ kernel uses** - not a threshold invented for this handoff. Same numbers in
 
 | op | rtol | atol | copied from |
 | --- | ---: | ---: | --- |
-| `k3_kda_chunk_prefill` | 0.01 | 0.02 | `test/registered/attention/test_chunk_gated_delta_rule.py:28-29` |
-| `k3_kda_fused_decode` | 0.02 | 0.02 | `test/registered/kernels/ops/attention/test_kda_fused_decode.py:207-208` |
+| `qwen38_fp4_gemm` | 0.01 | 0.02 | `test/registered/attention/test_chunk_gated_delta_rule.py:28-29` |
+| `qwen38_fp4_quantize` | 0.0 | 0.0 | `test/registered/moe/test_triton_fused_moe.py:45-49` |
+| `qwen38_silu_fp4_quantize` | 0.0 | 0.0 | `test/registered/moe/test_triton_fused_moe.py:45-49` |
 
 ## What is in here
 
 | file | contents |
 | --- | --- |
-| `target_signatures.json` | the exact signatures the tensor capture was pointed at |
 | `tensors/` | real captured tensors (inputs, outputs, state rows) |
 | `workloads.json` | frozen call signatures with their real-traffic call counts |
-| `workloads_kda_chunk_prefill.json` | frozen call signatures with their real-traffic call counts |
 
 | op | real calls | rows | rows with real tensors | workload file |
 | --- | ---: | ---: | ---: | --- |
-| `k3_kda_fused_decode` | 308,024 | 9 | 9 | `workloads.json` |
-| `k3_kda_chunk_prefill` | 16,016 | 13 | 13 | `workloads_kda_chunk_prefill.json` |
+| `qwen38_fp4_gemm` | 193,162 | 9 | 1 | `workloads.json` |
+| `qwen38_fp4_quantize` | 97,288 | 3 | 3 | `workloads.json` |
+| `qwen38_silu_fp4_quantize` | 95,618 | 4 | 3 | `workloads.json` |
