@@ -1,0 +1,24 @@
+{
+    "name": "sglang_baseline_a4f8cd",
+    "definition": "glm47_mla_decode_grouped_h20_ckv512_kpe64",
+    "author": "sglang",
+    "spec": {
+        "language": "python",
+        "target_hardware": [
+            "NVIDIA B300",
+            "NVIDIA H200"
+        ],
+        "entry_point": "main.py::run",
+        "dependencies": [
+            "sglang",
+            "triton"
+        ],
+        "destination_passing_style": true
+    },
+    "sources": [
+        {
+            "path": "main.py",
+            "content": "\"\"\"Baseline: the SGLang kernel this task is asking a candidate to beat.\n\nNot a PyTorch reference - `decode_attention_fwd_grouped` is the kernel GLM-4.7-Flash\nactually serves decode with, so the number to clear is a real one.\n\"\"\"\n\nfrom sglang.kernels.ops.attention.decode_attention import decode_attention_fwd_grouped\n\n\ndef run(\n    q,\n    k_buffer,\n    v_buffer,\n    o,\n    kv_indptr,\n    kv_indices,\n    attn_logits,\n    attn_lse,\n    num_kv_splits,\n    max_kv_splits,\n    sm_scale_withk,\n    v_scale,\n    logit_cap=0.0,\n    sinks=None,\n    xai_temperature_len=-1,\n    has_mla=False,\n    use_pdl=False,\n    page_size=1,\n    score_mod=None,\n    aux_tensors=None,\n):\n    decode_attention_fwd_grouped(\n        q,\n        k_buffer,\n        v_buffer,\n        o,\n        kv_indptr,\n        kv_indices,\n        attn_logits,\n        attn_lse,\n        num_kv_splits,\n        max_kv_splits,\n        sm_scale_withk,\n        v_scale,\n        logit_cap=logit_cap,\n        sinks=sinks,\n        xai_temperature_len=xai_temperature_len,\n        has_mla=has_mla,\n        use_pdl=use_pdl,\n        page_size=page_size,\n        score_mod=score_mod,\n        aux_tensors=aux_tensors,\n    )\n    return o\n"
+        }
+    ]
+}
