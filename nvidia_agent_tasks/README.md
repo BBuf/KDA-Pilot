@@ -1,7 +1,7 @@
 # SGLang kernel tasks for NVIDIA's kernel agents
 
-Twelve kernel optimization tasks cut from SGLang and SGLang-diffusion, each with the
-real serving workload behind it: frozen production shapes with their real-traffic
+Six kernel optimization tasks cut from SGLang, each with the real serving workload
+behind it: frozen production shapes with their real-traffic
 call counts, the copied SGLang baseline, real captured tensors where they fit, and a
 correctness gate.
 
@@ -38,20 +38,28 @@ python tools/bench_harness.py <task>       # baseline timing per row (GPU)
 python tools/bench_harness.py <task> --json report.json    # interleaved A/B + gates
 ```
 
-**Verified on 1x B300 with SGLang main @ 43226af: 38 of the 42 ops produce a
-CUDA-graph-timed baseline straight from the recorded workload, over 298 of 358 workload
-rows, and the whole A/B path was validated with an identity candidate - 1.002x geomean
-with every gate green, which is also the harness's measurement floor.** A row that does
-not time is one with no captured payload of its own: its integer segment arguments
-allocate to zeros, the baseline then writes only part of its output, and the harness
-prints `NO VALID REFERENCE` and excludes the row rather than judging a candidate against
-uninitialised memory. Each task's `bench/README.md` says which rows those are.
+**Every op and every row times and gates. On 1x B300 with SGLang main @ 43226af the
+three sm_103 packages produce a CUDA-graph-timed baseline for 8 of 8 ops over 77 of 77
+rows; on 1x RTX PRO 6000 Blackwell the three sm_120 packages do the same for 8 of 8 ops
+over 27 of 27 rows.** The A/B path is validated by running each task's own baseline as
+its candidate: geomean 1.0060x (kimi_k3), 1.0001x (glm45) and 0.9985x (lfm25), every
+gate green, which is also the harness's measurement floor.
 
-| task | ops timing today | rows timing today |
-| --- | --- | ---: |
-| `kimi_k3__tgv_bf16_tiny_gemm` | 5 / 5 | 46 / 46 |
-| `glm45__fp8_fused_moe` | 2 / 2 | 17 / 17 |
-| `lfm25__triton_fused_moe` | 1 / 1 | 14 / 14 |
+Getting there meant fixing the input repair rather than excluding rows. A row whose
+integer segment arguments are allocated instead of captured used to leave part of the
+output unwritten, and the harness printed `NO VALID REFERENCE` and dropped it;
+`tools/derive_inputs.py` now reconstructs those arguments from the row itself - prefix
+sums over the array each indptr actually segments, pool-bounded indices, distinct state
+slots or an explicit refusal - and never overwrites an argument the capture shipped.
+
+| task | board | ops timing today | rows timing today |
+| --- | --- | --- | ---: |
+| `kimi_k3__tgv_bf16_tiny_gemm` | B300 | 5 / 5 | 46 / 46 |
+| `glm45__fp8_fused_moe` | B300 | 2 / 2 | 17 / 17 |
+| `lfm25__triton_fused_moe` | B300 | 1 / 1 | 14 / 14 |
+| `qwen38_nvfp4__fp4_w4a4_skinny_gemm` | RTX PRO 6000 | 3 / 3 | 16 / 16 |
+| `qwen38_nvfp4__fp8_verify_skinny_gemm` | RTX PRO 6000 | 2 / 2 | 8 / 8 |
+| `qwen38_nvfp4__gdn_sigmoid_gating_verify` | RTX PRO 6000 | 3 / 3 | 3 / 3 |
 
 `tools/bench_harness.py` implements the measurement contract so each agent does not have
 to re-derive it: CUDA-graph timing, interleaved arms, preallocated outputs, `copy_` restore
