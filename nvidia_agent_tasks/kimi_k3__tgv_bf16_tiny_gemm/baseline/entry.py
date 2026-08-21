@@ -14,7 +14,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "tools"))
 from baseline_loader import load  # noqa: E402
 
-COPIED = {'sglang.kernels.ops.gemm.cutedsl_bf16_gemm': 'kernels/ops/gemm/cutedsl_bf16_gemm.py', 'sglang.kernels.ops.kimi_k3': '', 'sglang.kernels.ops.gemm.tiny_gemm': 'kernels/ops/gemm/tiny_gemm.py'}
+COPIED = {'sglang.kernels.ops.kimi_k3': '', 'sglang.kernels.ops.gemm.tiny_gemm': 'kernels/ops/gemm/tiny_gemm.py'}
 
 
 def _sym(module, attr):
@@ -37,12 +37,8 @@ def _call(module, attr, kwargs):
 
 
 OPS = {
-    "k3_cutedsl_tgv_bf16_gemm_out":
-        lambda **kw: _call("sglang.kernels.ops.gemm.cutedsl_bf16_gemm", "cutedsl_bf16_gemm_out", kw),
     "k3_tiny_gemm":
         lambda **kw: _call("sglang.kernels.ops.kimi_k3", "kimi_k3_tiny_gemm", kw),
-    "k3_cutedsl_tgv_bf16_gemm":
-        lambda **kw: _call("sglang.kernels.ops.gemm.cutedsl_bf16_gemm", "cutedsl_bf16_gemm", kw),
     "k3_tiny_n_gemm_bf16":
         lambda **kw: _call("sglang.kernels.ops.gemm.tiny_gemm", "tiny_n_gemm_bf16", kw),
     "k3_tiny_k_gemm_bf16":
@@ -58,4 +54,4 @@ _sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), 
 from derive_inputs import derive as _derive  # noqa: E402  shared address-argument repair
 
 
-RECONSTRUCT = {op: _derive for op in ['k3_cutedsl_tgv_bf16_gemm_out', 'k3_tiny_gemm', 'k3_cutedsl_tgv_bf16_gemm', 'k3_tiny_n_gemm_bf16', 'k3_tiny_k_gemm_bf16']}
+RECONSTRUCT = {op: _derive for op in ['k3_tiny_gemm', 'k3_tiny_n_gemm_bf16', 'k3_tiny_k_gemm_bf16']}

@@ -47,21 +47,10 @@ recapture rather than editing this file.
 
 ## `kimi_k3__tgv_bf16_tiny_gemm`
 
-**`k3_cutedsl_tgv_bf16_gemm_out`** — 571,784 real calls, 21 distinct signatures, 12 rows kept
-
-- `x[T, N]` bfloat16 — T ∈ {1, 3, 4, 5, 7} — N ∈ {768, 1536, 7168}
-- `weight[T, N]` bfloat16 — T ∈ {6016, 7168} — N ∈ {768, 1536, 7168}
-- `out[T, N]` bfloat16 — T ∈ {1, 3, 4, 5, 7} — N ∈ {6016, 7168}
-
 **`k3_tiny_gemm`** — 433,920 real calls, 44 distinct signatures, 7 rows kept
 
 - `x[T, N]` bfloat16 **non-contiguous** — T ∈ {1, 10, 11, 16, 16178} — N ∈ {128, 7168}
 - `w[T, N]` bfloat16 — T ∈ {144, 1536} — N ∈ {128, 7168}
-
-**`k3_cutedsl_tgv_bf16_gemm`** — 244,624 real calls, 36 distinct signatures, 12 rows kept
-
-- `x[T, N]` bfloat16 — T ∈ {1, 3, 4, 5, 7} — N ∈ {1536, 4224, 7168}
-- `weight[T, N]` bfloat16 — T ∈ {1536, 2304, 6144, 7168} — N ∈ {1536, 4224, 7168}
 
 **`k3_tiny_n_gemm_bf16`** — 213,096 real calls, 15 distinct signatures, 4 rows kept
 

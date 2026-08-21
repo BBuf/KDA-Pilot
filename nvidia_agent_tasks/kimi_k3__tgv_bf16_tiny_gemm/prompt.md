@@ -1,4 +1,4 @@
-# Low-latency BF16 GEMM on the Kimi-K3 decode path
+# Low-latency BF16 tiny GEMM on the Kimi-K3 decode path
 
 **Task:** `kimi_k3__tgv_bf16_tiny_gemm`
 
@@ -11,16 +11,20 @@ python3 -m sglang.launch_server --model-path moonshotai/Kimi-K3 \
   --reasoning-parser kimi_k3 --tool-call-parser kimi_k3
 ```
 
-**Measured share:** the CuTe TGV kernels are **7.69%** of serving GPU time at random
-1k/256 concurrency 16 and **41.2%** at batch 1 - the regime this path exists for; the
-`tiny_n_gemm` fast path is a further **1.64%**.
+**Target:** NVIDIA H200 (sm_90a).
 
-## Kernels in scope - two entry points, two different kernels
+**Measured share:** the `tiny_n_gemm` fast path is **1.64%** of serving GPU time at
+random 1k/256 concurrency 16. The task also covers `tiny_k_gemm_bf16` and the K3
+dispatcher that selects these fast paths.
+
+The directory keeps its original slug for compatibility. The two CuTe TGV entry points
+from the B300 capture are not part of this H200 task: they require SM100 features and do
+not run on Hopper.
+
+## Kernels in scope
 
 | entry point | kernel it produces | real calls | signatures |
 | --- | --- | ---: | ---: |
-| `kernels/ops/gemm/cutedsl_bf16_gemm.py::cutedsl_bf16_gemm_out` | `TgvGemmCuteExtKernel_*` | 571,784 | 21 |
-| `...::cutedsl_bf16_gemm` | same family | 244,624 | 36 |
 | `kernels/ops/kimi_k3/__init__.py::kimi_k3_tiny_gemm` | dispatcher only, no kernel | 433,920 | 44 |
 | `kernels/ops/gemm/tiny_gemm.py::tiny_n_gemm_bf16` | `sglang::tiny_n_gemm_kernel` | 213,096 | 15 |
 | `...::tiny_k_gemm_bf16` | `sglang::tiny_k_gemm_kernel` | 163,416 | 11 |
@@ -31,19 +35,15 @@ python3 -m sglang.launch_server --model-path moonshotai/Kimi-K3 \
 dispatch tables are part of the problem - a kernel with a wider profitable range moves
 more traffic than a faster kernel alone.
 
-Baseline sources are copied into `baseline/` from SGLang main @ 43226af: the CuTe TGV
-implementation, the tiny-GEMM implementations, and the K3 dispatcher.
+Baseline sources are copied into `baseline/` from SGLang main @ 43226af: the tiny-GEMM
+implementations and the K3 dispatcher.
 
 ## Why we are asking for this one
 
-- Kimi-K3 decode issues ~302 GEMM launches per step, one per layer per projection, with
-  different k (7168, 1536, 768, 4224). At batch 1 they are the largest single block of GPU
-  time in the model, which is why the CuTe TGV path exists at all.
-- **Read this before tuning.** We already swept the full TGV tactic ladder on the six real
-  m=1 shapes: total available saving from retuning is **1.6 us/step = 0.01 tok/s**, and the
-  shipped tactic 18 is best on 4 of 6 shapes and within 0.05 us on the rest. The ask is a
-  better kernel, not a better tactic - and the bar is a CuTe kernel already at **72% of HBM
-  peak** on the hottest (6016,7168) m=1 shape.
+- Kimi-K3 decode issues many small GEMMs per step. The shipped dispatcher only uses the
+  specialized tiny kernels for narrow shape ranges, then falls back to `F.linear`.
+- Tune for H200 and preserve the dispatch semantics. Expanding a fast path is useful only
+  if every newly covered row remains correct and faster than the current fallback.
 - Launch count is part of the budget: a trivial in-graph elementwise kernel costs 2.20 us
   on this box, so a candidate that removes launches from the 302 wins more than one that
   shaves each of them.
@@ -58,8 +58,9 @@ implementation, the tiny-GEMM implementations, and the K3 dispatcher.
 
 ## Workload
 
-`bench/workloads.json`: 53 rows across the five entry points, captured on 8x B300
-(TP8) with real GSM8K at 5-shot serial and 16-shot 16-way, **accuracy 1.000 on both**.
+`bench/workloads.json`: 22 rows across the three H200-compatible entry points. The
+production shapes and tensors were captured on 8x B300 (TP8) with real GSM8K at 5-shot
+serial and 16-shot 16-way, **accuracy 1.000 on both**; benchmark results are H200 results.
 `bench/tensors/` holds real inputs and outputs. Provenance in `docs/capture_provenance.md`.
 
 ## Deliverable

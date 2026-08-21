@@ -17,7 +17,7 @@ we paid for.
 | [`glm45__fp8_fused_moe`](glm45__fp8_fused_moe) | GLM-4.5-FP8 (355B, TP8) | the FP8 arm of `invoke_fused_moe_kernel` **and** the whole `fused_experts_impl` dispatch | **51.5%** of serving GPU time in the expert GEMM alone, **64.3%** for the dispatch | 17 rows / 2 entry points, 16 of 17 on captured tensors |
 | [`glm47_flash__mla_decode_grouped`](glm47_flash__mla_decode_grouped) | GLM-4.7-Flash | `decode_attention_fwd_grouped` (absorbed MLA, page_size 1) | **75.3%** of serving GPU time for the Triton attention family | 15 rows / 1 op, real page tables against a 3.7M-row pool |
 | [`qwen3_next__gdn_packed_decode`](qwen3_next__gdn_packed_decode) | Qwen3-Next-80B-A3B | `TritonGDNKernel.packed_decode` | **2.0-3.6%** of serving GPU time, **266,688** recorded calls | 8 rows / 1 op, B=1 ships a 16-step decode chain |
-| [`kimi_k3__tgv_bf16_tiny_gemm`](kimi_k3__tgv_bf16_tiny_gemm) | Kimi-K3 (2.8T, TP8) | `cutedsl_bf16_gemm` (CuTe TGV) + the `tiny_n/k_gemm` fast paths and their dispatcher | TGV **7.69%** at cc16 / **41.2%** at batch 1; tiny_n **1.64%** | 46 rows / 5 entry points, 15 MB real tensors |
+| [`kimi_k3__tgv_bf16_tiny_gemm`](kimi_k3__tgv_bf16_tiny_gemm) | Kimi-K3 (2.8T, TP8) | the H200-compatible `tiny_n/k_gemm` fast paths and their dispatcher; legacy slug retained | tiny_n **1.64%** | 22 rows / 3 entry points, production B300 shapes retargeted to H200 |
 | [`qwen38_nvfp4__fp4_w4a4_skinny_gemm`](qwen38_nvfp4__fp4_w4a4_skinny_gemm) | Qwen3.8-27B NVFP4 (SM120) | flashinfer `mm_fp4` + `fp4_quantize` + fused silu-quant | **40.7%** of the DSpark verify step (50.5% of plain decode) | 16 rows / 3 ops, real M∈{1,8,9} + 4k-prefill activations |
 | [`qwen38_nvfp4__fp8_verify_skinny_gemm`](qwen38_nvfp4__fp8_verify_skinny_gemm) | Qwen3.8-27B NVFP4 (SM120) | `sm120_fp8_gemv` (M=1) + `apply_fp8_linear` cuBLAS route (M=9) | **~27%** of the DSpark verify step after falling off the M=1 fast path; 34.0% of plain decode | 8 rows / 2 ops, real M=1 payload |
 | [`qwen38_nvfp4__gdn_sigmoid_gating_verify`](qwen38_nvfp4__gdn_sigmoid_gating_verify) | Qwen3.8-27B NVFP4 (SM120) | `fused_sigmoid_gating_delta_rule_update` + qkvzba split + conv1d update | **~5.3%** of the verify step, sequential in draft length | 3 rows / 3 ops, T=9 exact (DSPARK block 8) |
@@ -41,11 +41,12 @@ python tools/bench_harness.py <task> --json report.json    # interleaved A/B + g
 ```
 
 **Every op and every row times and gates. On 1x B300 with SGLang main @ 43226af the
-five sm_103 packages produce a CUDA-graph-timed baseline for 10 of 10 ops over 100 of
-100 rows; on 1x RTX PRO 6000 Blackwell the three sm_120 packages do the same for 8 of 8 ops
-over 27 of 27 rows.** The A/B path is validated by running each task's own baseline as
-its candidate: geomean 1.0054x (glm47 MLA decode), 1.0002x (qwen3-next GDN decode),
-1.0060x (kimi_k3), 1.0001x (glm45) and 0.9985x (lfm25), every gate green, which is also the harness's measurement floor.
+four sm_103 packages produce a CUDA-graph-timed baseline for 5 of 5 ops over 54 of
+54 rows; the Kimi tiny-GEMM task targets H200 with 3 ops over 22 rows; on 1x RTX PRO
+6000 Blackwell the three sm_120 packages do the same for 8 of 8 ops over 27 of 27 rows.**
+The A/B path is validated by running each task's own baseline as its candidate; Kimi's
+H200 identity geomean is 0.9982x at 10/200/7 timing, which is the harness's measurement
+floor for that task.
 
 Getting there meant fixing the input repair rather than excluding rows. A row whose
 integer segment arguments are allocated instead of captured used to leave part of the
@@ -58,7 +59,7 @@ slots or an explicit refusal - and never overwrites an argument the capture ship
 | --- | --- | --- | ---: |
 | `glm47_flash__mla_decode_grouped` | B300 | 1 / 1 | 15 / 15 |
 | `qwen3_next__gdn_packed_decode` | B300 | 1 / 1 | 8 / 8 |
-| `kimi_k3__tgv_bf16_tiny_gemm` | B300 | 5 / 5 | 46 / 46 |
+| `kimi_k3__tgv_bf16_tiny_gemm` | H200 | 3 / 3 | 22 / 22 |
 | `glm45__fp8_fused_moe` | B300 | 2 / 2 | 17 / 17 |
 | `lfm25__triton_fused_moe` | B300 | 1 / 1 | 14 / 14 |
 | `qwen38_nvfp4__fp4_w4a4_skinny_gemm` | RTX PRO 6000 | 3 / 3 | 16 / 16 |
@@ -144,11 +145,11 @@ lfm25__triton_fused_moe                       14    14 (100%)     80/98  ( 82%)
 qwen3_next__gdn_packed_decode                  8     8 (100%)     20/48  ( 42%)
 glm45__fp8_fused_moe                          17    16 ( 94%)     59/82  ( 72%)
 glm47_flash__mla_decode_grouped               15    12 ( 80%)     67/105  ( 64%)
-kimi_k3__tgv_bf16_tiny_gemm                   46    35 ( 76%)     59/80  ( 74%)
+kimi_k3__tgv_bf16_tiny_gemm                   22    13 ( 59%)     26/44  ( 59%)
 qwen38_nvfp4__fp8_verify_skinny_gemm           8     4 ( 50%)     6/20  ( 30%)
 qwen38_nvfp4__fp4_w4a4_skinny_gemm            16     6 ( 38%)     10/45  ( 22%)
 qwen38_nvfp4__gdn_sigmoid_gating_verify        3     0 (  0%)     0/11  (  0%)
-TOTAL                                        127    95 ( 75%)     301/489 ( 62%)
+TOTAL                                        103    73 ( 71%)     268/453 ( 59%)
 ```
 
 `python tools/coverage.py` recomputes it. A payload counts for a row only when the call it

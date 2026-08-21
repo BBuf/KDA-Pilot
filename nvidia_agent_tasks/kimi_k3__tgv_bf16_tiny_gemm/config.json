@@ -2,30 +2,29 @@
   "task": {
     "slug": "kimi_k3__tgv_bf16_tiny_gemm",
     "model": "moonshotai/Kimi-K3",
-    "arch": "b300",
-    "target_gpu": "NVIDIA B300 SXM6 (sm_103)",
+    "arch": "h200",
+    "target_gpu": "NVIDIA H200 (sm_90a)",
     "ops": [
-      "k3_cutedsl_tgv_bf16_gemm_out",
       "k3_tiny_gemm",
-      "k3_cutedsl_tgv_bf16_gemm",
       "k3_tiny_n_gemm_bf16",
       "k3_tiny_k_gemm_bf16"
     ]
   },
   "capture": {
     "cookbook_command": "python3 -m sglang.launch_server --model-path moonshotai/Kimi-K3 --trust-remote-code --tp-size 8 --mem-fraction-static 0.85 --reasoning-parser kimi_k3 --tool-call-parser kimi_k3",
-    "measured_share": "the CuTe TGV kernels are **7.69%** of serving GPU time at random 1k/256 concurrency 16 and **41.2%** at batch 1 - the regime this path exists for; the `tiny_n_gemm` fast path is a further **1.64%**."
+    "measured_share": "the portable `tiny_n_gemm` fast path is **1.64%** of serving GPU time at random 1k/256 concurrency 16; this H200 task also includes the K3 dispatcher and `tiny_k_gemm_bf16`. The SM100-only CuTe TGV entry points are intentionally excluded."
   },
   "environment": {
-    "host": "light-face-hides-fin-03-1 (RadixArk devbox b300-diffusion-kernel-opt)",
-    "gpu": "8x NVIDIA B300 SXM6 AC, sm_103, 288 GB/card, single node",
+    "host": "ion8-h200",
+    "gpu": "NVIDIA H200, sm_90a",
     "sglang": "main @ 43226af (python/sglang, editable install)",
     "torch": "2.13.0+cu130",
     "triton": "3.7.1",
     "flashinfer": "0.6.17",
     "sgl_kernel": "0.4.6.post1",
     "transformers": "5.12.1",
-    "capture_date": "2026-08-18 (UTC)"
+    "capture_date": "2026-08-18 (UTC)",
+    "retarget_note": "The production shapes and tensors were captured on B300. The optimization target is H200; the two CuTe TGV entry points were removed because they require SM100 features and do not run on Hopper."
   },
   "build": {
     "baseline_dir": "baseline/",
@@ -43,15 +42,6 @@
     "contract": "../docs/anti_hack_contract.md",
     "mode": "tolerance",
     "tolerances": {
-      "k3_cutedsl_tgv_bf16_gemm_out": {
-        "family": "cutedsl_bf16_gemm",
-        "op": "k3_cutedsl_tgv_bf16_gemm_out",
-        "source": "test/registered/kernels/ops/gemm/test_cutedsl_bf16_gemm.py:53",
-        "note": "atol is large because the reference is an fp32 matmul cast to bf16; the accumulation order differs, so absolute error scales with K.",
-        "rtol": 0.02,
-        "atol": 2.5,
-        "dtype": "bfloat16"
-      },
       "k3_tiny_gemm": {
         "family": "tiny_gemm",
         "op": "k3_tiny_gemm",
@@ -59,15 +49,6 @@
         "note": "compared in double precision against x @ w.T.",
         "rtol": 0.001,
         "atol": 0.001,
-        "dtype": "bfloat16"
-      },
-      "k3_cutedsl_tgv_bf16_gemm": {
-        "family": "cutedsl_bf16_gemm",
-        "op": "k3_cutedsl_tgv_bf16_gemm",
-        "source": "test/registered/kernels/ops/gemm/test_cutedsl_bf16_gemm.py:53",
-        "note": "atol is large because the reference is an fp32 matmul cast to bf16; the accumulation order differs, so absolute error scales with K.",
-        "rtol": 0.02,
-        "atol": 2.5,
         "dtype": "bfloat16"
       },
       "k3_tiny_n_gemm_bf16": {
@@ -92,6 +73,6 @@
     "policy": "rtol/atol are copied from SGLang's own test for each kernel (source cited per op). Do not loosen them in a task; if a tolerance is wrong, fix it upstream and re-copy."
   },
   "workload": {
-    "real_tensor_coverage": "46 rows,  35 with payload ( 76%),   59/  80 data args real ( 74%)"
+    "real_tensor_coverage": "22 rows, 13 with payload (59%), 26/44 data args real (59%)"
   }
 }
