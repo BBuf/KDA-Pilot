@@ -1,0 +1,209 @@
+{
+  "name": "glm47_mla_decode_grouped_h20_ckv512_kpe64",
+  "group": "attention",
+  "builder": "attention",
+  "op_type": "attention",
+  "description": "GLM-4.7-Flash absorbed-MLA grouped decode attention, page_size 1. One query token per sequence attends over that sequence's pages in the paged KV pool; the pool row is 576 wide (512 compressed KV + 64 rope key) and the value tensor is the same row truncated to 512, which is why the capture recorded v_buffer with stride 576. Shapes, page tables and split counts come from GLM-4.7-Flash served with its own SGLang cookbook command on 8x B300 (GSM8K 0.820 on the capture run).",
+  "tags": [
+    "stage:decode",
+    "status:verified",
+    "model:glm-4.7-flash",
+    "layout:mla-absorbed",
+    "page_size:1"
+  ],
+  "capture": {
+    "task": "glm47_flash__triton_attention",
+    "op": "triton_decode_attention_grouped",
+    "scalars": [
+      "max_kv_splits",
+      "sm_scale_withk",
+      "v_scale",
+      "logit_cap",
+      "has_mla",
+      "use_pdl",
+      "page_size"
+    ]
+  },
+  "size_rule": {
+    "axis": "len_kv_indices",
+    "large_at": 8192,
+    "why": "Decode work scales with the pages walked, not with the batch: the two long-history points (17.7k and 21.5k pages) are the bandwidth-bound regime, the 4-5k ones are launch/occupancy bound."
+  },
+  "axes": {
+    "num_seqs": {
+      "type": "var",
+      "description": "Decode batch: one query token per sequence."
+    },
+    "num_q_heads": {
+      "type": "const",
+      "value": 20,
+      "description": "Query heads after TP sharding."
+    },
+    "qk_head_dim": {
+      "type": "const",
+      "value": 576,
+      "description": "Pool row width: 512 compressed KV + 64 rope key."
+    },
+    "kv_lora_rank": {
+      "type": "const",
+      "value": 512,
+      "description": "Compressed-KV width, which is also the value width."
+    },
+    "kv_pool_rows": {
+      "type": "var",
+      "description": "Rows in the paged KV pool the server allocated."
+    },
+    "len_kv_indptr": {
+      "type": "var",
+      "description": "num_seqs + 1."
+    },
+    "len_kv_indices": {
+      "type": "var",
+      "description": "Total pages across the batch."
+    },
+    "max_kv_splits": {
+      "type": "var",
+      "description": "Split-K depth the scratch buffers are sized for."
+    }
+  },
+  "constraints": [
+    "len_kv_indptr == num_seqs + 1",
+    "kv_indptr[0] == 0 and kv_indptr is non-decreasing",
+    "len_kv_indices == kv_indptr[-1]",
+    "kv_indices.max() < kv_pool_rows",
+    "v_buffer is k_buffer[..., :kv_lora_rank] - the same storage, not a copy",
+    "page_size == 1 and has_mla is True"
+  ],
+  "inputs": {
+    "q": {
+      "shape": [
+        "num_seqs",
+        "num_q_heads",
+        "qk_head_dim"
+      ],
+      "dtype": "bfloat16",
+      "description": "Query, one token per sequence."
+    },
+    "k_buffer": {
+      "shape": [
+        "kv_pool_rows",
+        1,
+        "qk_head_dim"
+      ],
+      "dtype": "bfloat16",
+      "description": "Paged KV pool. The benchmark allocates the recorded geometry and fills only the pages kv_indices names, so the addresses, the strides and the number of distinct pages a sequence walks are the captured ones while the page contents are drawn - the same split the native gdn_prefill task makes between its real cu_seqlens and its drawn q/k/v. The capture recorded which pages this row reads but not their 24 MB of contents."
+    },
+    "v_buffer": {
+      "shape": [
+        "kv_pool_rows",
+        1,
+        "kv_lora_rank"
+      ],
+      "dtype": "bfloat16",
+      "description": "A view of k_buffer truncated to the compressed-KV width (stride qk_head_dim)."
+    },
+    "o": {
+      "shape": [
+        "num_seqs",
+        "num_q_heads",
+        "kv_lora_rank"
+      ],
+      "dtype": "bfloat16",
+      "description": "Destination. The kernel writes through it and returns None."
+    },
+    "kv_indptr": {
+      "shape": [
+        "len_kv_indptr"
+      ],
+      "dtype": "int32",
+      "description": "Per-sequence page-table offsets."
+    },
+    "kv_indices": {
+      "shape": [
+        "len_kv_indices"
+      ],
+      "dtype": "int64",
+      "description": "Page indices into the pool."
+    },
+    "attn_logits": {
+      "shape": [
+        "num_seqs",
+        "num_q_heads",
+        "max_kv_splits",
+        "kv_lora_rank"
+      ],
+      "dtype": "float32",
+      "description": "Split-K partial accumulator. Written before read."
+    },
+    "attn_lse": {
+      "shape": [
+        "num_seqs",
+        "num_q_heads",
+        "max_kv_splits"
+      ],
+      "dtype": "float32",
+      "description": "Split-K log-sum-exp. Written before read."
+    },
+    "num_kv_splits": {
+      "shape": [
+        "num_seqs"
+      ],
+      "dtype": "int32",
+      "description": "Per-sequence split count chosen by the scheduler."
+    },
+    "max_kv_splits": {
+      "shape": null,
+      "dtype": "int32"
+    },
+    "sm_scale_withk": {
+      "shape": null,
+      "dtype": "float32"
+    },
+    "v_scale": {
+      "shape": null,
+      "dtype": "float32"
+    },
+    "logit_cap": {
+      "shape": null,
+      "dtype": "float32"
+    },
+    "has_mla": {
+      "shape": null,
+      "dtype": "bool"
+    },
+    "use_pdl": {
+      "shape": null,
+      "dtype": "bool"
+    },
+    "page_size": {
+      "shape": null,
+      "dtype": "int32"
+    }
+  },
+  "outputs": {
+    "o": {
+      "shape": [
+        "num_seqs",
+        "num_q_heads",
+        "kv_lora_rank"
+      ],
+      "dtype": "bfloat16",
+      "description": "Attention output, written through the o argument."
+    }
+  },
+  "baseline": {
+    "entry_point": "main.py::run",
+    "sources": [
+      "main.py"
+    ],
+    "dependencies": [
+      "sglang",
+      "triton"
+    ],
+    "target_hardware": [
+      "NVIDIA B300",
+      "NVIDIA H200"
+    ],
+    "destination_passing_style": true
+  }
+}

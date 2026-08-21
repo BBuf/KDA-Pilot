@@ -1,0 +1,24 @@
+{
+    "name": "sglang_baseline_f4847d",
+    "definition": "qwen3next_gdn_packed_decode_hv4_d128",
+    "author": "sglang",
+    "spec": {
+        "language": "python",
+        "target_hardware": [
+            "NVIDIA B300",
+            "NVIDIA H200"
+        ],
+        "entry_point": "main.py::run",
+        "dependencies": [
+            "sglang",
+            "triton"
+        ],
+        "destination_passing_style": false
+    },
+    "sources": [
+        {
+            "path": "main.py",
+            "content": "\"\"\"Baseline: the SGLang kernel this task is asking a candidate to beat.\n\n`TritonGDNKernel` is a stateless dispatcher - the capture recorded `self` as a repr\nbecause it carries no tensors - so constructing one here is equivalent to the bound\nmethod the model calls.\n\"\"\"\n\nfrom sglang.srt.layers.attention.linear.kernels.gdn_triton import TritonGDNKernel\n\n_KERNEL = None\n\n\ndef run(\n    mixed_qkv,\n    a,\n    b,\n    A_log,\n    dt_bias,\n    scale,\n    ssm_states,\n    cache_indices,\n    num_v_heads,\n    head_v_dim,\n):\n    global _KERNEL\n    if _KERNEL is None:\n        _KERNEL = TritonGDNKernel()\n    out = _KERNEL.packed_decode(\n        mixed_qkv,\n        a,\n        b,\n        A_log=A_log,\n        dt_bias=dt_bias,\n        scale=float(scale),\n        ssm_states=ssm_states,\n        cache_indices=cache_indices,\n        num_v_heads=int(num_v_heads),\n        head_v_dim=int(head_v_dim),\n    )\n    # The state pool is the second output, returned by reference so the gate can see it\n    # at no cost inside the timed call. Comparing only `out` would pass a candidate that\n    # advances the state wrongly - the error would surface as drift on the next token,\n    # not here. Each arm gets its own cloned pool, so a candidate that corrupts a slot\n    # (or writes a slot it does not own) fails on this output.\n    return out, ssm_states\n"
+        }
+    ]
+}

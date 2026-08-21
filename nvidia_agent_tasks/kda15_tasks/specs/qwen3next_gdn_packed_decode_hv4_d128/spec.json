@@ -1,0 +1,177 @@
+{
+  "name": "qwen3next_gdn_packed_decode_hv4_d128",
+  "group": "gdn",
+  "builder": "gdn",
+  "op_type": "gdn",
+  "description": "Qwen3-Next-80B-A3B packed Gated-Delta-Net decode: one token per sequence, QKV unpacked from the fused projection, gating and the recurrent update fused into a single Triton kernel, and the SSM state slot updated in place. This is the decode counterpart to gdn_prefill and the highest-traffic linear-attention kernel in the capture (266,688 recorded calls). Shapes and state slots come from Qwen3-Next served with its own SGLang cookbook command on 8x B300 (GSM8K 1.000 on the capture run).",
+  "tags": [
+    "stage:decode",
+    "status:verified",
+    "model:qwen3-next",
+    "layout:k-last",
+    "state:in-place"
+  ],
+  "capture": {
+    "task": "qwen3_next__gdn_chunk_prefill",
+    "op": "gdn_decode_packed_triton",
+    "scalars": [
+      "scale",
+      "num_v_heads",
+      "head_v_dim"
+    ]
+  },
+  "size_rule": {
+    "axis": "num_seqs",
+    "large_at": 8
+  },
+  "axes": {
+    "num_seqs": {
+      "type": "var",
+      "description": "Decode batch: one token per sequence."
+    },
+    "num_slots": {
+      "type": "var",
+      "description": "State slots the server allocated in the SSM pool."
+    },
+    "num_v_heads": {
+      "type": "const",
+      "value": 4,
+      "description": "Value heads after TP sharding (HV)."
+    },
+    "num_qk_heads": {
+      "type": "const",
+      "value": 2,
+      "description": "Query/key heads (H). Recovered from the packed width exactly as the kernel recovers it: HV / H = 2."
+    },
+    "head_v_dim": {
+      "type": "const",
+      "value": 128,
+      "description": "Value dimension (V)."
+    },
+    "head_k_dim": {
+      "type": "const",
+      "value": 128,
+      "description": "Key dimension (K)."
+    },
+    "qkv_dim": {
+      "type": "const",
+      "value": 1024,
+      "description": "Packed projection width: H*K + H*K + HV*V."
+    }
+  },
+  "constraints": [
+    "qkv_dim == 2 * num_qk_heads * head_k_dim + num_v_heads * head_v_dim",
+    "cache_indices holds num_seqs *distinct* slots below num_slots - two sequences sharing a slot is a read-modify-write race, not a slower kernel",
+    "ssm_states is updated in place: the slots named by cache_indices are both input and output",
+    "q and k are L2-normalised inside the kernel (use_qk_l2norm_in_kernel=True)"
+  ],
+  "inputs": {
+    "mixed_qkv": {
+      "shape": [
+        "num_seqs",
+        "qkv_dim"
+      ],
+      "dtype": "bfloat16",
+      "description": "Fused QKV projection output after the causal conv1d. Unpacks as q[H,K], k[H,K], v[HV,V]."
+    },
+    "a": {
+      "shape": [
+        "num_seqs",
+        "num_v_heads"
+      ],
+      "dtype": "bfloat16",
+      "description": "Decay input. g = exp(-exp(A_log) * softplus(a + dt_bias))."
+    },
+    "b": {
+      "shape": [
+        "num_seqs",
+        "num_v_heads"
+      ],
+      "dtype": "bfloat16",
+      "description": "Update-gate input. beta = sigmoid(b)."
+    },
+    "A_log": {
+      "shape": [
+        "num_v_heads"
+      ],
+      "dtype": "float32",
+      "description": "Log decay parameter (learnable)."
+    },
+    "dt_bias": {
+      "shape": [
+        "num_v_heads"
+      ],
+      "dtype": "bfloat16",
+      "description": "Decay bias (learnable)."
+    },
+    "scale": {
+      "shape": null,
+      "dtype": "float32",
+      "description": "Output scale, head_k_dim ** -0.5."
+    },
+    "ssm_states": {
+      "shape": [
+        "num_slots",
+        "num_v_heads",
+        "head_v_dim",
+        "head_k_dim"
+      ],
+      "dtype": "float32",
+      "description": "Full state pool in k-last layout, updated in place. Only the slots this batch owns are materialised: the benchmark allocates the recorded geometry and writes the captured state at its captured slots, so strides and addressing are real and untouched slots are never read."
+    },
+    "cache_indices": {
+      "shape": [
+        "num_seqs"
+      ],
+      "dtype": "int32",
+      "description": "Per-sequence state slot."
+    },
+    "num_v_heads": {
+      "shape": null,
+      "dtype": "int32",
+      "description": "Value-head count, passed to the kernel (same value as the axis)."
+    },
+    "head_v_dim": {
+      "shape": null,
+      "dtype": "int32",
+      "description": "Value dimension, passed to the kernel (same value as the axis)."
+    }
+  },
+  "outputs": {
+    "out": {
+      "shape": [
+        1,
+        "num_seqs",
+        "num_v_heads",
+        "head_v_dim"
+      ],
+      "dtype": "bfloat16",
+      "description": "Decode output, returned (a transposed view of the kernel's [B,1,HV,V] buffer)."
+    },
+    "ssm_states": {
+      "shape": [
+        "num_slots",
+        "num_v_heads",
+        "head_v_dim",
+        "head_k_dim"
+      ],
+      "dtype": "float32",
+      "description": "The same pool, with this batch's slots advanced by one step. Comparing only `out` would miss a candidate that drifts the state underneath a correct-looking output."
+    }
+  },
+  "baseline": {
+    "entry_point": "main.py::run",
+    "sources": [
+      "main.py"
+    ],
+    "dependencies": [
+      "sglang",
+      "triton"
+    ],
+    "target_hardware": [
+      "NVIDIA B300",
+      "NVIDIA H200"
+    ],
+    "destination_passing_style": false
+  }
+}

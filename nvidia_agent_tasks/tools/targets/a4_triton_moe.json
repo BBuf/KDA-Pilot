@@ -1,0 +1,11 @@
+[
+  {"module": "sglang.kernels.ops.moe.fused_moe_triton_kernels", "attr": "invoke_fused_moe_kernel",
+   "op": "triton_fused_moe_gemm", "shape_from": ["A", "B"],
+   "skip_args": ["B", "B_scale", "b", "b_scale"], "tensors": true},
+  {"module": "sglang.kernels.ops.moe.fused_moe_triton_kernels", "attr": "act_and_mul_triton",
+   "op": "triton_moe_act_and_mul", "shape_from": ["input"], "tensors": true},
+  {"module": "sglang.kernels.ops.moe.fused_moe_triton_kernels", "attr": "moe_sum_reduce_triton",
+   "op": "triton_moe_sum_reduce", "shape_from": ["input"], "tensors": true},
+  {"module": "sglang.kernels.ops.moe.moe_align", "attr": "moe_align_block_size",
+   "op": "moe_align_block_size", "shape_from": ["topk_ids"], "tensors": true}
+]

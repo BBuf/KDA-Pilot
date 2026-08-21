@@ -1,0 +1,70 @@
+# Low-latency BF16 tiny GEMM on the Kimi-K3 decode path
+
+**Task:** `kimi_k3__tgv_bf16_tiny_gemm`
+
+**Model:** `moonshotai/Kimi-K3` (2.8T mxfp4, TP8)
+**Serving command this workload came from (the deployment we run in production):**
+
+```bash
+python3 -m sglang.launch_server --model-path moonshotai/Kimi-K3 \
+  --trust-remote-code --tp-size 8 --mem-fraction-static 0.85 \
+  --reasoning-parser kimi_k3 --tool-call-parser kimi_k3
+```
+
+**Target:** NVIDIA H200 (sm_90a).
+
+**Measured share:** the `tiny_n_gemm` fast path is **1.64%** of serving GPU time at
+random 1k/256 concurrency 16. The task also covers `tiny_k_gemm_bf16` and the K3
+dispatcher that selects these fast paths.
+
+The directory keeps its original slug for compatibility. The two CuTe TGV entry points
+from the B300 capture are not part of this H200 task: they require SM100 features and do
+not run on Hopper.
+
+## Kernels in scope
+
+| entry point | kernel it produces | real calls | signatures |
+| --- | --- | ---: | ---: |
+| `kernels/ops/kimi_k3/__init__.py::kimi_k3_tiny_gemm` | dispatcher only, no kernel | 433,920 | 44 |
+| `kernels/ops/gemm/tiny_gemm.py::tiny_n_gemm_bf16` | `sglang::tiny_n_gemm_kernel` | 213,096 | 15 |
+| `...::tiny_k_gemm_bf16` | `sglang::tiny_k_gemm_kernel` | 163,416 | 11 |
+
+`kimi_k3_tiny_gemm` is a shape dispatcher, not a kernel: it routes
+`(n,k)=(144,7168)` with `m<=16` and `(896,7168)` with `m<=8` to `tiny_n_gemm_bf16`,
+`(1536,128)` with `m<=12` to `tiny_k_gemm_bf16`, and everything else to `F.linear`. The
+dispatch tables are part of the problem - a kernel with a wider profitable range moves
+more traffic than a faster kernel alone.
+
+Baseline sources are copied into `baseline/` from SGLang main @ 43226af: the tiny-GEMM
+implementations and the K3 dispatcher.
+
+## Why we are asking for this one
+
+- Kimi-K3 decode issues many small GEMMs per step. The shipped dispatcher only uses the
+  specialized tiny kernels for narrow shape ranges, then falls back to `F.linear`.
+- Tune for H200 and preserve the dispatch semantics. Expanding a fast path is useful only
+  if every newly covered row remains correct and faster than the current fallback.
+- Launch count is part of the budget: a trivial in-graph elementwise kernel costs 2.20 us
+  on this box, so a candidate that removes launches from the 302 wins more than one that
+  shaves each of them.
+
+## Correctness gate
+
+- Stateless: exact-shape output comparison per row against the copied baseline.
+- The m=1 and small-m rows dominate; a candidate that only wins at larger m has not moved
+  this model.
+- If you widen a dispatch range, the newly covered rows must still beat `F.linear`, which
+  is what they fall back to today.
+
+## Workload
+
+`bench/workloads.json`: 22 rows across the three H200-compatible entry points. The
+production shapes and tensors were captured on 8x B300 (TP8) with real GSM8K at 5-shot
+serial and 16-shot 16-way, **accuracy 1.000 on both**; benchmark results are H200 results.
+`bench/tensors/` holds real inputs and outputs. Provenance in `docs/capture_provenance.md`.
+
+## Deliverable
+
+1. Kernel source in `solution/`, exposing the same `OPS` keys as `baseline/entry.py`.
+2. `python tools/bench_harness.py kimi_k3__tgv_bf16_tiny_gemm --json report.json` output.
+3. The correctness-gate result, and Nsight Compute evidence for any bottleneck claim.

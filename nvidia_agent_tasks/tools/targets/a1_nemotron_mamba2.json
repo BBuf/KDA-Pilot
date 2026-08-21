@@ -1,0 +1,101 @@
+[
+ {
+  "module": "sglang.kernels.ops.mamba.triton_ops.ssd_combined",
+  "attr": "_mamba_chunk_scan_combined_fwd",
+  "op": "mamba2_chunk_scan_combined_fwd",
+  "shape_from": [
+   "x",
+   "dt"
+  ],
+  "state_args": [
+   "initial_states"
+  ],
+  "tensors": true,
+  "chain": 4,
+  "chain_key": "A"
+ },
+ {
+  "module": "sglang.kernels.ops.mamba.triton_ops.ssd_combined",
+  "attr": "mamba_chunk_scan_combined",
+  "op": "mamba2_chunk_scan_combined",
+  "shape_from": [
+   "x"
+  ],
+  "tensors": false
+ },
+ {
+  "module": "sglang.kernels.ops.mamba.triton_ops.ssd_chunk_scan",
+  "attr": "_chunk_scan_fwd",
+  "op": "mamba2_chunk_scan",
+  "shape_from": [
+   "x",
+   "C"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.mamba.triton_ops.ssd_chunk_state",
+  "attr": "_chunk_state_fwd",
+  "op": "mamba2_chunk_state",
+  "shape_from": [
+   "x",
+   "B"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.mamba.triton_ops.ssd_chunk_state",
+  "attr": "chunk_state_varlen",
+  "op": "mamba2_chunk_state_varlen",
+  "shape_from": [
+   "x"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.mamba.triton_ops.ssd_chunk_state",
+  "attr": "_chunk_cumsum_fwd",
+  "op": "mamba2_chunk_cumsum",
+  "shape_from": [
+   "dt"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.mamba.triton_ops.ssd_state_passing",
+  "attr": "_state_passing_fwd",
+  "op": "mamba2_state_passing",
+  "shape_from": [
+   "states"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.mamba.causal_conv1d_triton",
+  "attr": "causal_conv1d_fn",
+  "op": "causal_conv1d_prefill",
+  "shape_from": [
+   "x"
+  ],
+  "state_args": [
+   "conv_states"
+  ],
+  "index_arg": "cache_indices",
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.mamba.causal_conv1d_triton",
+  "attr": "causal_conv1d_update",
+  "op": "causal_conv1d_decode",
+  "shape_from": [
+   "x"
+  ],
+  "state_args": [
+   "conv_state"
+  ],
+  "index_arg": "conv_state_indices",
+  "tensors": true,
+  "chain": 16,
+  "chain_key": "weight"
+ }
+]

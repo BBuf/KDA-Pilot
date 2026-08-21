@@ -306,6 +306,24 @@ TORCH_OP_OVERLOAD_TARGETS: dict[str, tuple[str, ...]] = {
     "sglang.kernels.ops.attention.kda_fused_decode": (
         "kda_fused_decode",
     ),
+    # KDA prefill + the packed decode variant. The previous capture only hooked
+    # kda_fused_decode, which is why the shape set had no prefill entries at all
+    # -- the profiler run it came from was pointed at a decode step.
+    "sglang.kernels.ops.attention.kda_packed_decode": (
+        "kda_packed_decode",
+    ),
+    "sglang.kernels.ops.attention.linear.kda_nvidia_prefill": (
+        "chunk_kda_fwd",
+    ),
+    "sglang.kernels.ops.attention.linear.kda_nvidia_prefill.chunk_fwd": (
+        "chunk_kda_fwd",
+    ),
+    "sglang.kernels.ops.attention.linear.kda_ptx_prefill": (
+        "chunk_kda_fwd",
+    ),
+    "sglang.kernels.ops.attention.fla.kda": (
+        "chunk_kda",
+    ),
     "sglang.kernels.ops.quantization.per_token_group_quant": (
         "per_token_group_quant",
     ),

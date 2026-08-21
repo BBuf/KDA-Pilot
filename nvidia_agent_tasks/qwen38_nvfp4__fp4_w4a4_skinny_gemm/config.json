@@ -1,0 +1,76 @@
+{
+  "task": {
+    "slug": "qwen38_nvfp4__fp4_w4a4_skinny_gemm",
+    "model": "RadixArk/Qwen3.8-27B-NVFP4",
+    "arch": "sm120",
+    "target_gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition (sm_120)",
+    "ops": [
+      "qwen38_fp4_gemm",
+      "qwen38_fp4_quantize",
+      "qwen38_silu_fp4_quantize"
+    ]
+  },
+  "capture": {
+    "cookbook_command": "python3 -m sglang.launch_server --model-path <snap> --trust-remote-code --tp-size 1 --disable-radix-cache --mem-fraction-static 0.85 --max-running-requests 8 --cuda-graph-max-bs 8 --mamba-ssm-dtype bfloat16 --kv-cache-dtype fp8_e4m3 --speculative-algorithm DSPARK --speculative-draft-model-path RadixArk/Qwen3.8-27B-0811-DSpark-Stage2 --speculative-dspark-block-size 8",
+    "measured_share": "fp4 GEMM 40.7% of DSpark verify step / 50.5% of plain decode; act-quant kernels a further ~3%"
+  },
+  "environment": {
+    "host": "jimmy-sglang-kimi-ae1a-node-2 (GCP sglang-jax-1126, asia-east1-a)",
+    "sglang": "main@8922bb98e2 + #34859 + #34934",
+    "flashinfer": "0.6.18",
+    "torch": "2.13.0+cu130"
+  },
+  "build": {
+    "baseline_dir": "baseline/",
+    "candidate_dir": "solution/",
+    "language": "cuda / cute-dsl / triton (candidate's choice)"
+  },
+  "benchmark": {
+    "timing": "triton.testing.do_bench around a captured CUDA graph, L2 cold, interleaved A/B",
+    "warmup_runs": 10,
+    "iterations": 200,
+    "num_trials": 7,
+    "contract": "../docs/measurement_contract.md"
+  },
+  "correctness": {
+    "contract": "../docs/anti_hack_contract.md",
+    "mode": "tolerance",
+    "tolerances": {
+      "qwen38_fp4_gemm": {
+        "family": "nvfp4_gemm",
+        "op": "qwen38_fp4_gemm",
+        "source": "test/registered/attention/test_chunk_gated_delta_rule.py:28-29",
+        "note": "SGLang ships no dedicated mm_fp4 test; this is the same fallback tolerance its linear-attention tests use for a bf16 output built from a low-precision accumulation.",
+        "rtol": 0.01,
+        "atol": 0.02,
+        "dtype": "bfloat16"
+      },
+      "qwen38_fp4_quantize": {
+        "family": "packed_bytes",
+        "op": "qwen38_fp4_quantize",
+        "source": "test/registered/moe/test_triton_fused_moe.py:45-49",
+        "note": "A quantizer's outputs are packed nibbles and e4m3 scale blocks, and a split/reshape/cat only moves bytes: any difference is a different encoding, not rounding. Bit-exact or wrong.",
+        "exact": true,
+        "rtol": 0.0,
+        "atol": 0.0
+      },
+      "qwen38_silu_fp4_quantize": {
+        "family": "packed_bytes",
+        "op": "qwen38_silu_fp4_quantize",
+        "source": "test/registered/moe/test_triton_fused_moe.py:45-49",
+        "note": "A quantizer's outputs are packed nibbles and e4m3 scale blocks, and a split/reshape/cat only moves bytes: any difference is a different encoding, not rounding. Bit-exact or wrong.",
+        "exact": true,
+        "rtol": 0.0,
+        "atol": 0.0
+      }
+    },
+    "policy": "rtol/atol are copied from SGLang's own test for each kernel (source cited per op). Do not loosen them in a task; if a tolerance is wrong, fix it upstream and re-copy.",
+    "notes": [
+      "`qwen38_silu_fp4_quantize` returns a scale block in the 6-D swizzled layout padded to 128-row tiles; the padding rows are never written, so the gate covers the written rows only (tools/gates.py::written_scale_rows). Comparing the whole tensor fails the reference against itself wherever T % 128 != 0.",
+      "`out_dtype` and `out_features` are scalars the shape capture cannot record and are rebuilt in baseline/entry.py::RECONSTRUCT, as is the transposed weight view mm_fp4 requires."
+    ]
+  },
+  "workload": {
+    "real_tensor_coverage": "16 rows,   6 with payload ( 38%),   10/  45 data args real ( 22%)"
+  }
+}

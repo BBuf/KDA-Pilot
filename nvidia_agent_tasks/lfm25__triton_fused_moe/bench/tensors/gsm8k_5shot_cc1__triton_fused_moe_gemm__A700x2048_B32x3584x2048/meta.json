@@ -1,0 +1,153 @@
+{
+  "op": "triton_fused_moe_gemm",
+  "group": "gsm8k_5shot_cc1",
+  "scalars": {
+    "bias": null,
+    "A_scale": null,
+    "B_scale": null,
+    "B_zp": null,
+    "mul_routed_weight": false,
+    "top_k": 4,
+    "use_fp8_w8a8": false,
+    "use_int8_w8a8": false,
+    "use_int8_w8a16": false,
+    "use_int4_w4a16": false,
+    "per_channel_quant": false,
+    "block_shape": null,
+    "b_use_tma": false,
+    "c_sorted": false,
+    "filter_expert": false,
+    "fuse_swiglu": false
+  },
+  "tensors": {
+    "in_A": {
+      "shape": [
+        700,
+        2048
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+        2048,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 1433600,
+      "bytes": 2867200,
+      "file": "in_A.pt"
+    },
+    "in_topk_weights": {
+      "shape": [
+        700,
+        4
+      ],
+      "dtype": "float32",
+      "stride": [
+        4,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 2800,
+      "bytes": 11200,
+      "file": "in_topk_weights.pt"
+    },
+    "in_topk_ids": {
+      "shape": [
+        700,
+        4
+      ],
+      "dtype": "int32",
+      "stride": [
+        4,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 2800,
+      "bytes": 11200,
+      "file": "in_topk_ids.pt"
+    },
+    "in_sorted_token_ids": {
+      "shape": [
+        4879
+      ],
+      "dtype": "int32",
+      "stride": [
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 4879,
+      "bytes": 19516,
+      "file": "in_sorted_token_ids.pt"
+    },
+    "in_expert_ids": {
+      "shape": [
+        77
+      ],
+      "dtype": "int32",
+      "stride": [
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 77,
+      "bytes": 308,
+      "file": "in_expert_ids.pt"
+    },
+    "in_num_tokens_post_padded": {
+      "shape": [
+        1
+      ],
+      "dtype": "int32",
+      "stride": [
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 1,
+      "bytes": 4,
+      "file": "in_num_tokens_post_padded.pt"
+    }
+  },
+  "metadata_only": {
+    "in_B": {
+      "shape": [
+        32,
+        3584,
+        2048
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+        7340032,
+        2048,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 234881024,
+      "bytes": 469762048,
+      "not_saved": "skip_args"
+    },
+    "in_C": {
+      "shape": [
+        2800,
+        3584
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+        3584,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 10035200,
+      "bytes": 20070400,
+      "file": "in_C.pt",
+      "not_saved": "oversized tensor 20.1 MB - allocate to this shape/dtype"
+    }
+  },
+  "gathered": {},
+  "bytes_on_disk": 22991045
+}

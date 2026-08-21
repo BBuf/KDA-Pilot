@@ -1,0 +1,173 @@
+{
+  "op": "moe_fused_experts_fp8",
+  "group": "gsm8k_16shot_cc16",
+  "scalars": {
+    "b1": null,
+    "b2": null,
+    "inplace": true,
+    "activation": "silu",
+    "is_gated": true,
+    "apply_router_weight_on_input": false,
+    "use_fp8_w8a8": true,
+    "use_int8_w8a8": false,
+    "use_int8_w8a16": false,
+    "use_int4_w4a16": false,
+    "per_channel_quant": true,
+    "w1_zp": null,
+    "w2_zp": null,
+    "a1_scale": null,
+    "a2_scale": null,
+    "block_shape": null,
+    "no_combine": false,
+    "routed_scaling_factor": 2.5,
+    "gemm1_alpha": null,
+    "gemm1_limit": null,
+    "filter_expert": false,
+    "swiglu_limit": null,
+    "gate_up_interleaved": true,
+    "a1_q": null,
+    "fuse_swiglu_interleaved": false
+  },
+  "tensors": {
+    "in_hidden_states": {
+      "shape": [
+        16,
+        5120
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+        5120,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 81920,
+      "bytes": 163840,
+      "file": "in_hidden_states.pt"
+    },
+    "in_topk_weights": {
+      "shape": [
+        16,
+        9
+      ],
+      "dtype": "float32",
+      "stride": [
+        9,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 144,
+      "bytes": 576,
+      "file": "in_topk_weights.pt"
+    },
+    "in_topk_ids": {
+      "shape": [
+        16,
+        9
+      ],
+      "dtype": "int32",
+      "stride": [
+        9,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 144,
+      "bytes": 576,
+      "file": "in_topk_ids.pt"
+    },
+    "out": {
+      "shape": [
+        16,
+        5120
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+        5120,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 81920,
+      "bytes": 163840,
+      "file": "out.pt"
+    }
+  },
+  "metadata_only": {
+    "in_w1": {
+      "shape": [
+        161,
+        384,
+        5120
+      ],
+      "dtype": "float8_e4m3fn",
+      "stride": [
+        1966080,
+        5120,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 316538880,
+      "bytes": 316538880,
+      "not_saved": "skip_args"
+    },
+    "in_w2": {
+      "shape": [
+        161,
+        5120,
+        192
+      ],
+      "dtype": "float8_e4m3fn",
+      "stride": [
+        983040,
+        192,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 158269440,
+      "bytes": 158269440,
+      "not_saved": "skip_args"
+    },
+    "in_w1_scale": {
+      "shape": [
+        161,
+        384,
+        1
+      ],
+      "dtype": "float32",
+      "stride": [
+        384,
+        1,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 61824,
+      "bytes": 247296,
+      "not_saved": "skip_args"
+    },
+    "in_w2_scale": {
+      "shape": [
+        161,
+        5120,
+        1
+      ],
+      "dtype": "float32",
+      "stride": [
+        5120,
+        1,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 824320,
+      "bytes": 3297280,
+      "not_saved": "skip_args"
+    }
+  },
+  "gathered": {},
+  "bytes_on_disk": 335195
+}

@@ -1,0 +1,74 @@
+{
+ "op": "qwen38_fp8_gemv",
+ "group": "nospec_bs1_4k1k",
+ "scalars": {},
+ "tensors": {
+  "in_x_fp8": {
+   "shape": [
+    1,
+    5120
+   ],
+   "dtype": "float8_e4m3fn",
+   "stride": [
+    5120,
+    1
+   ],
+   "contiguous": true,
+   "device": "cuda",
+   "numel": 5120,
+   "bytes": 5120,
+   "file": "in_x_fp8.pt"
+  },
+  "in_alpha": {
+   "shape": [
+    1
+   ],
+   "dtype": "float32",
+   "stride": [
+    1
+   ],
+   "contiguous": true,
+   "device": "cuda",
+   "numel": 1,
+   "bytes": 4,
+   "file": "in_alpha.pt"
+  },
+  "out": {
+   "shape": [
+    1,
+    16384
+   ],
+   "dtype": "bfloat16",
+   "stride": [
+    16384,
+    1
+   ],
+   "contiguous": true,
+   "device": "cuda",
+   "numel": 16384,
+   "bytes": 32768,
+   "file": "out.pt"
+  }
+ },
+ "metadata_only": {
+  "in_w_fp8": {
+   "shape": [
+    16384,
+    5120
+   ],
+   "dtype": "float8_e4m3fn",
+   "stride": [
+    5120,
+    1
+   ],
+   "contiguous": true,
+   "device": "cuda",
+   "numel": 83886080,
+   "bytes": 83886080,
+   "file": "in_w_fp8.pt",
+   "not_saved": "pruned: exceeds repo payload budget; reconstruct from checkpoint"
+  }
+ },
+ "gathered": {},
+ "bytes_on_disk": 83930333
+}

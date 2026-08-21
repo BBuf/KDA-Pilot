@@ -1,0 +1,19 @@
+"""Candidate for `glm47_flash__mla_decode_grouped`.
+
+Expose the same `OPS` keys as `baseline/entry.py` and the harness will A/B you row by
+row. Arguments arrive exactly as the capture recorded them:
+
+    q, k_buffer, v_buffer, o, kv_indptr, kv_indices, attn_logits, attn_lse, num_kv_splits, max_kv_splits, sm_scale_withk, v_scale, ...
+
+If your kernel needs an argument reconstructed differently from the baseline, ship your
+own `RECONSTRUCT` - it runs once per arm at build time, never inside the timed region,
+so a candidate is never charged for input repair (and never gets a free 1.7x by
+skipping it).
+"""
+
+
+def _run(**kwargs):
+    raise NotImplementedError("implement the candidate kernel here")
+
+
+OPS = {"triton_decode_attention_grouped": _run}

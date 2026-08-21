@@ -1,0 +1,251 @@
+[
+ {
+  "module": "sglang.kernels.ops.attention.fla.chunk",
+  "attr": "chunk_gated_delta_rule_fwd",
+  "op": "gdn_chunk_prefill",
+  "shape_from": [
+   "q",
+   "k"
+  ],
+  "state_args": [
+   "initial_state"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.chunk_delta_h",
+  "attr": "chunk_gated_delta_rule_fwd_h",
+  "op": "gdn_chunk_delta_h",
+  "shape_from": [
+   "k",
+   "w"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.chunk_o",
+  "attr": "chunk_fwd_o",
+  "op": "gdn_chunk_o",
+  "shape_from": [
+   "q",
+   "h"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.wy_fast",
+  "attr": "recompute_w_u_fwd",
+  "op": "gdn_recompute_w_u",
+  "shape_from": [
+   "k",
+   "v"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.fused_recurrent",
+  "attr": "fused_recurrent_gated_delta_rule_fwd",
+  "op": "gdn_fused_recurrent_decode",
+  "shape_from": [
+   "q"
+  ],
+  "state_args": [
+   "initial_state"
+  ],
+  "tensors": true,
+  "chain": 16,
+  "chain_key": "q"
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.fused_recurrent",
+  "attr": "fused_recurrent_gdn",
+  "op": "gdn_fused_recurrent_entry",
+  "shape_from": [
+   "q"
+  ],
+  "tensors": false,
+  "chain_key": "q"
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.kda",
+  "attr": "chunk_kda_fwd",
+  "op": "kda_chunk_prefill",
+  "shape_from": [
+   "q",
+   "k"
+  ],
+  "state_args": [
+   "initial_state"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.kda",
+  "attr": "fused_recurrent_kda_fwd",
+  "op": "kda_fused_recurrent_decode",
+  "shape_from": [
+   "q"
+  ],
+  "state_args": [
+   "initial_state"
+  ],
+  "tensors": true,
+  "chain": 16,
+  "chain_key": "q"
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.kda",
+  "attr": "kda_gate_chunk_cumsum",
+  "op": "kda_gate_chunk_cumsum",
+  "shape_from": [
+   "g"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.cutedsl_gdn",
+  "attr": "cutedsl_fused_sigmoid_gating_delta_rule_update",
+  "op": "gdn_decode_cutedsl_sigmoid_gating_update",
+  "shape_from": [
+   "q"
+  ],
+  "state_args": [
+   "ssm_state"
+  ],
+  "index_arg": "cu_seqlens",
+  "chain": 16,
+  "chain_key": "A_log",
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.fused_sigmoid_gating_recurrent",
+  "attr": "fused_sigmoid_gating_delta_rule_update",
+  "op": "gdn_decode_fused_sigmoid_gating_update",
+  "shape_from": [
+   "q"
+  ],
+  "state_args": [
+   "initial_state",
+   "ssm_state"
+  ],
+  "chain": 16,
+  "chain_key": "A_log",
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.cutedsl_gdn_mtp_ring",
+  "attr": "run_gdn_decode_bf16state",
+  "op": "gdn_decode_bf16state_mtp",
+  "shape_from": [
+   "q"
+  ],
+  "chain": 8,
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.linear.gdn_blackwell",
+  "attr": "chunk_gated_delta_rule_cutedsl",
+  "op": "gdn_prefill_cutedsl_blackwell",
+  "shape_from": [
+   "q",
+   "k"
+  ],
+  "state_args": [
+   "initial_state"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.attention.linear.gdn_blackwell",
+  "attr": "prepare_metadata_cutedsl",
+  "op": "gdn_prepare_metadata_cutedsl",
+  "shape_from": [
+   "cu_seqlens"
+  ],
+  "tensors": false
+ },
+ {
+  "module": "sglang.kernels.ops.attention.fla.fused_gdn_gating",
+  "attr": "fused_gdn_gating",
+  "op": "gdn_gating",
+  "shape_from": [
+   "a"
+  ],
+  "tensors": true
+ },
+ {
+  "module": "sglang.srt.layers.attention.linear.gdn_backend",
+  "attr": "GDNAttnBackend.forward_decode",
+  "op": "gdn_backend_forward_decode",
+  "shape_from": [
+   "q"
+  ],
+  "tensors": false
+ },
+ {
+  "module": "sglang.srt.layers.attention.linear.gdn_backend",
+  "attr": "GDNKernelDispatcher.dispatch",
+  "op": "gdn_kernel_dispatch",
+  "tensors": false
+ },
+ {
+  "module": "sglang.srt.layers.attention.linear.kernels.gdn_cutedsl",
+  "attr": "CuteDSLGDNKernel.packed_decode",
+  "op": "gdn_decode_packed_cutedsl",
+  "shape_from": [
+   "mixed_qkv"
+  ],
+  "state_args": [
+   "ssm_states"
+  ],
+  "index_arg": "cache_indices",
+  "chain": 16,
+  "chain_key": "A_log",
+  "tensors": true
+ },
+ {
+  "module": "sglang.srt.layers.attention.linear.kernels.gdn_triton",
+  "attr": "TritonGDNKernel.packed_decode",
+  "op": "gdn_decode_packed_triton",
+  "shape_from": [
+   "mixed_qkv"
+  ],
+  "state_args": [
+   "ssm_states"
+  ],
+  "index_arg": "cache_indices",
+  "chain": 16,
+  "chain_key": "A_log",
+  "tensors": true
+ },
+ {
+  "module": "sglang.srt.layers.attention.linear.kernels.gdn_flashinfer",
+  "attr": "FlashInferGDNKernel.packed_decode",
+  "op": "gdn_decode_packed_flashinfer",
+  "shape_from": [
+   "mixed_qkv"
+  ],
+  "state_args": [
+   "ssm_states"
+  ],
+  "index_arg": "cache_indices",
+  "chain": 16,
+  "chain_key": "A_log",
+  "tensors": true
+ },
+ {
+  "module": "sglang.kernels.ops.mamba.causal_conv1d_triton",
+  "attr": "causal_conv1d_update",
+  "op": "gdn_decode_causal_conv1d_update",
+  "shape_from": [
+   "x"
+  ],
+  "state_args": [
+   "conv_state"
+  ],
+  "index_arg": "conv_state_indices",
+  "chain": 16,
+  "chain_key": "weight",
+  "tensors": true
+ }
+]

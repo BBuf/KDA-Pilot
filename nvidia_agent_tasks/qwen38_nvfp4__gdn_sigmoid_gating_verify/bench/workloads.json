@@ -1,0 +1,316 @@
+{
+ "task": "qwen38_nvfp4__gdn_sigmoid_gating_verify",
+ "model": "RadixArk/Qwen3.8-27B-NVFP4@554ebba9b",
+ "source_manifest": "nvcap shape manifests + DSpark decode torch-profiler trace (docs/capture_provenance.md)",
+ "selection_rule": "every distinct production signature at bs=1; verify tier M=T=9 is exact (DSPARK block 8)",
+ "ops": [
+  {
+   "op": "qwen38_gdn_gating_update",
+   "total_real_calls": 2784,
+   "distinct_real_signatures": 1,
+   "rows_with_payload": 0,
+   "rows": [
+    {
+     "row_id": "qwen38_gdn_gating_update#t9",
+     "group": "dspark_bs1_4k1k",
+     "real_calls": 2784,
+     "kept_because": [
+      "DSpark verify tier T=9 (exact); 2.6% of verify step, sequential in T"
+     ],
+     "args": {
+      "A_log": {
+       "shape": [
+        48
+       ],
+       "dtype": "float32",
+       "stride": [
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 48,
+       "bytes": 192
+      },
+      "a": {
+       "shape": [
+        1,
+        9,
+        48
+       ],
+       "dtype": "bfloat16",
+       "stride": [
+        432,
+        48,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 432,
+       "bytes": 864
+      },
+      "dt_bias": {
+       "shape": [
+        48
+       ],
+       "dtype": "float32",
+       "stride": [
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 48,
+       "bytes": 192
+      },
+      "softplus_beta": 1.0,
+      "softplus_threshold": 20.0,
+      "q": {
+       "shape": [
+        1,
+        9,
+        16,
+        128
+       ],
+       "dtype": "bfloat16",
+       "stride": [
+        18432,
+        2048,
+        128,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 18432,
+       "bytes": 36864
+      },
+      "k": {
+       "shape": [
+        1,
+        9,
+        16,
+        128
+       ],
+       "dtype": "bfloat16",
+       "stride": [
+        18432,
+        2048,
+        128,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 18432,
+       "bytes": 36864
+      },
+      "v": {
+       "shape": [
+        1,
+        9,
+        48,
+        128
+       ],
+       "dtype": "bfloat16",
+       "stride": [
+        55296,
+        6144,
+        128,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 55296,
+       "bytes": 110592
+      },
+      "b": {
+       "shape": [
+        1,
+        9,
+        48
+       ],
+       "dtype": "bfloat16",
+       "stride": [
+        432,
+        48,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 432,
+       "bytes": 864
+      },
+      "initial_state_source": {
+       "shape": [
+        1,
+        48,
+        128,
+        128
+       ],
+       "dtype": "bfloat16",
+       "stride": [
+        786432,
+        16384,
+        128,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 786432,
+       "bytes": 1572864
+      },
+      "initial_state_indices": {
+       "shape": [
+        1
+       ],
+       "dtype": "int64",
+       "stride": [
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 1,
+       "bytes": 8
+      },
+      "scale": null,
+      "use_qk_l2norm_in_kernel": true,
+      "cu_seqlens": {
+       "shape": [
+        2
+       ],
+       "dtype": "int32",
+       "stride": [
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 2,
+       "bytes": 8
+      },
+      "is_kda": false,
+      "lower_bound": null
+     },
+     "note": "states update functionally for draft rollback; bf16 state pool (--mamba-ssm-dtype bfloat16)"
+    }
+   ]
+  },
+  {
+   "op": "qwen38_qkvzba_split",
+   "total_real_calls": 2880,
+   "distinct_real_signatures": 1,
+   "rows_with_payload": 0,
+   "rows": [
+    {
+     "row_id": "qwen38_qkvzba_split#t9",
+     "group": "dspark_bs1_4k1k",
+     "real_calls": 2880,
+     "kept_because": [
+      "1.4% of verify step"
+     ],
+     "args": {
+      "mixed_qkvz": {
+       "shape": [
+        9,
+        16384
+       ],
+       "dtype": "bfloat16",
+       "stride": [
+        16384,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 147456,
+       "bytes": 294912
+      },
+      "mixed_ba": {
+       "shape": [
+        9,
+        96
+       ],
+       "dtype": "bfloat16",
+       "stride": [
+        96,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 864,
+       "bytes": 1728
+      }
+     },
+     "note": "split/reshape/cat contiguous variant; 16 k-heads/48 v-heads x128, ratio 3"
+    }
+   ]
+  },
+  {
+   "op": "qwen38_conv1d_update",
+   "total_real_calls": 2784,
+   "distinct_real_signatures": 1,
+   "rows_with_payload": 0,
+   "rows": [
+    {
+     "row_id": "qwen38_conv1d_update#t9",
+     "group": "dspark_bs1_4k1k",
+     "real_calls": 2784,
+     "kept_because": [
+      "1.3% of verify step"
+     ],
+     "args": {
+      "x": {
+       "shape": [
+        9,
+        16384
+       ],
+       "dtype": "bfloat16",
+       "stride": [
+        16384,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 147456,
+       "bytes": 294912
+      },
+      "conv_state": {
+       "shape": [
+        1,
+        16384,
+        4
+       ],
+       "dtype": "bfloat16",
+       "stride": [
+        65536,
+        4,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 65536,
+       "bytes": 131072
+      },
+      "weight": {
+       "shape": [
+        16384,
+        4
+       ],
+       "dtype": "bfloat16",
+       "stride": [
+        4,
+        1
+       ],
+       "contiguous": true,
+       "device": "cuda",
+       "numel": 65536,
+       "bytes": 131072
+      }
+     },
+     "note": "causal conv1d update over the draft window; conv kernel 4"
+    }
+   ]
+  }
+ ],
+ "capture_provenance": {
+  "host": "jimmy-sglang-kimi-ae1a-node-2 (GCP sglang-jax-1126, asia-east1-a)",
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition (sm_120)",
+  "serve_cmd": "python3 -m sglang.launch_server --model-path <snap> --trust-remote-code --tp-size 1 --disable-radix-cache --mem-fraction-static 0.85 --max-running-requests 8 --cuda-graph-max-bs 8 --mamba-ssm-dtype bfloat16 --kv-cache-dtype fp8_e4m3 --speculative-algorithm DSPARK --speculative-draft-model-path RadixArk/Qwen3.8-27B-0811-DSpark-Stage2 --speculative-dspark-block-size 8",
+  "bench": "bs=1 4k-in/1k-out: no-spec 66.7 tok/s (ITL 14.78 ms); DSpark 153.3 tok/s (ITL 3.48 ms, accept 3.47) - 2.30x. Verify forwards are fixed M=T=9 (block 8 + 1)."
+ }
+}

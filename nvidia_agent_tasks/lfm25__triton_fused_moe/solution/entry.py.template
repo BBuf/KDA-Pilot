@@ -1,0 +1,26 @@
+"""Candidate entry point for `lfm25__triton_fused_moe`.
+
+Copy this file to `entry.py` in the same directory, then point each op at your kernel.
+The harness and the tests call `OPS[<op>](**row_args)` with exactly the arguments the
+capture recorded, so the signature you implement is the production signature.
+
+    python tools/bench_harness.py lfm25__triton_fused_moe --json report.json   # interleaved A/B + gates
+    python lfm25__triton_fused_moe/tests/test_solution.py                      # correctness only
+
+Rules that the harness enforces, so you do not have to re-derive them:
+  * timing happens inside a CUDA graph, interleaved with the baseline;
+  * a row that fails its correctness gate gets no speedup reported;
+  * for state-carrying kernels the gate is the chained final state, not per-step error.
+
+If an argument arrives missing, add it to RECONSTRUCT below (same shape as the
+baseline's hook) rather than changing the row: the rows are the production shapes.
+"""
+
+OPS = {
+    "triton_fused_moe_gemm":
+        lambda **kw: my_triton_fused_moe_gemm(**kw),        # TODO: your kernel
+}
+
+# Optional, same contract as baseline/entry.py: rebuild arguments the capture could not
+# serialize (a plan object, an instance behind a bound method, a Triton dtype).
+RECONSTRUCT: dict = {}

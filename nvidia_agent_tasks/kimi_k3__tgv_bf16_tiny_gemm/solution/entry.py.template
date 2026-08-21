@@ -1,0 +1,30 @@
+"""Candidate entry point for `kimi_k3__tgv_bf16_tiny_gemm`.
+
+Copy this file to `entry.py` in the same directory, then point each op at your kernel.
+The harness and the tests call `OPS[<op>](**row_args)` with exactly the arguments the
+capture recorded, so the signature you implement is the production signature.
+
+    python tools/bench_harness.py kimi_k3__tgv_bf16_tiny_gemm --json report.json   # interleaved A/B + gates
+    python kimi_k3__tgv_bf16_tiny_gemm/tests/test_solution.py                      # correctness only
+
+Rules that the harness enforces, so you do not have to re-derive them:
+  * timing happens inside a CUDA graph, interleaved with the baseline;
+  * a row that fails its correctness gate gets no speedup reported;
+  * for state-carrying kernels the gate is the chained final state, not per-step error.
+
+If an argument arrives missing, add it to RECONSTRUCT below (same shape as the
+baseline's hook) rather than changing the row: the rows are the production shapes.
+"""
+
+OPS = {
+    "k3_tiny_gemm":
+        lambda **kw: my_k3_tiny_gemm(**kw),        # TODO: your kernel
+    "k3_tiny_n_gemm_bf16":
+        lambda **kw: my_k3_tiny_n_gemm_bf16(**kw),        # TODO: your kernel
+    "k3_tiny_k_gemm_bf16":
+        lambda **kw: my_k3_tiny_k_gemm_bf16(**kw),        # TODO: your kernel
+}
+
+# Optional, same contract as baseline/entry.py: rebuild arguments the capture could not
+# serialize (a plan object, an instance behind a bound method, a Triton dtype).
+RECONSTRUCT: dict = {}

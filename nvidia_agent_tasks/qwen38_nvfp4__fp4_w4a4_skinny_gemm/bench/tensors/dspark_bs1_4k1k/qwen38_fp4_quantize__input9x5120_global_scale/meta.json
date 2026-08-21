@@ -1,0 +1,75 @@
+{
+  "op": "qwen38_fp4_quantize",
+  "group": "dspark_bs1_4k1k",
+  "scalars": {
+    "sf_vec_size": 16,
+    "sf_use_ue8m0": false,
+    "is_sf_swizzled_layout": true,
+    "is_sf_8x4_layout": false,
+    "enable_pdl": null,
+    "backend": "cuda"
+  },
+  "tensors": {
+    "in_input": {
+      "shape": [
+        9,
+        5120
+      ],
+      "dtype": "bfloat16",
+      "stride": [
+        5120,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 46080,
+      "bytes": 92160,
+      "file": "in_input.pt"
+    },
+    "in_global_scale": {
+      "shape": [],
+      "dtype": "float32",
+      "stride": [],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 1,
+      "bytes": 4,
+      "file": "in_global_scale.pt"
+    },
+    "out_0": {
+      "shape": [
+        9,
+        2560
+      ],
+      "dtype": "uint8",
+      "stride": [
+        2560,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 23040,
+      "bytes": 23040,
+      "file": "out_0.pt"
+    },
+    "out_1": {
+      "shape": [
+        128,
+        320
+      ],
+      "dtype": "uint8",
+      "stride": [
+        320,
+        1
+      ],
+      "contiguous": true,
+      "device": "cuda",
+      "numel": 40960,
+      "bytes": 40960,
+      "file": "out_1.pt"
+    }
+  },
+  "metadata_only": {},
+  "gathered": {},
+  "bytes_on_disk": 162375
+}

@@ -1,0 +1,17 @@
+[
+  {"module": "sglang.kernels.ops.attention.extend_attention", "attr": "extend_attention_fwd",
+   "op": "triton_extend_attention", "shape_from": ["q_extend", "k_extend"],
+   "gather_args": {"k_buffer": "kv_indices", "v_buffer": "kv_indices"}, "tensors": true},
+  {"module": "sglang.kernels.ops.attention.extend_attention", "attr": "extend_attention_fwd_unified",
+   "op": "triton_extend_attention_unified", "shape_from": ["q_extend", "k_extend"],
+   "gather_args": {"k_buffer": "kv_indices", "v_buffer": "kv_indices"}, "tensors": true},
+  {"module": "sglang.kernels.ops.attention.decode_attention", "attr": "decode_attention_fwd",
+   "op": "triton_decode_attention", "shape_from": ["q"],
+   "gather_args": {"k_buffer": "kv_indices", "v_buffer": "kv_indices"}, "tensors": true},
+  {"module": "sglang.kernels.ops.attention.decode_attention", "attr": "decode_attention_fwd_grouped",
+   "op": "triton_decode_attention_grouped", "shape_from": ["q"],
+   "gather_args": {"k_buffer": "kv_indices", "v_buffer": "kv_indices"}, "tensors": true},
+  {"module": "sglang.kernels.ops.attention.decode_attention", "attr": "decode_attention_fwd_normal",
+   "op": "triton_decode_attention_normal", "shape_from": ["q"],
+   "gather_args": {"k_buffer": "kv_indices", "v_buffer": "kv_indices"}, "tensors": true}
+]
